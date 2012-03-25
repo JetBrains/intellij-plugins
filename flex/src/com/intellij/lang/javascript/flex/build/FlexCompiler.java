@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.CommonBundle;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -24,9 +25,11 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
@@ -35,6 +38,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -221,20 +225,64 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   public boolean validateConfiguration(final CompileScope scope) {
+    final StringBuilder errors = new StringBuilder();
+
     try {
-      // todo add quick fixes to ConfigurationException
       final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile = getModulesAndBCsToCompile(scope);
-
       for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
-        validateConfiguration(scope, moduleAndBC.first, moduleAndBC.second);
-      }
+        final StringBuilder s = new StringBuilder();
 
+        final Consumer<String> errorConsumer = new Consumer<String>() {
+          @Override
+          public void consume(final String message) {
+            if (s.length() > 0) {
+              s.append("\n");
+            }
+            s.append("- ").append(message);
+          }
+        };
+
+        validateConfiguration(moduleAndBC.first, moduleAndBC.second, false, errorConsumer);
+
+        if (moduleAndBC.second.getNature().isMobilePlatform() && moduleAndBC.second.getNature().isApp()) {
+          final RunConfiguration runConfig = CompileStepBeforeRun.getRunConfiguration(scope);
+          if (runConfig instanceof FlashRunConfiguration) {
+            final FlashRunnerParameters params = ((FlashRunConfiguration)runConfig).getRunnerParameters();
+            if (moduleAndBC.first.getName().equals(params.getModuleName()) &&
+                moduleAndBC.second.getName().equals(params.getBCName()) &&
+                params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
+              checkPackagingOptions(moduleAndBC.second.getAndroidPackagingOptions(), errorConsumer);
+            }
+          }
+        }
+
+        if (s.length() > 0) {
+          if (errors.length() > 0) errors.append("\n\n");
+
+          errors.append(FlexBundle.message("bc.0.of.module.1", moduleAndBC.second.getName(), moduleAndBC.first.getName()))
+            .append(":\n").append(s);
+        }
+      }
       checkSimilarOutputFiles(modulesAndBCsToCompile);
     }
     catch (ConfigurationException e) {
-      final String title =
-        ConfigurationException.DEFAULT_TITLE.equals(e.getTitle()) ? FlexBundle.message("project.setup.problem.title") : e.getTitle();
-      Messages.showErrorDialog(e.getMessage(), title);
+      if (errors.length() > 0) errors.append("\n\n");
+      errors.append("- ").append(e.getMessage());
+    }
+
+    if (errors.length() > 0) {
+      final int choice =
+        Messages.showDialog(errors.toString(), FlexBundle.message("project.setup.problem.title"),
+                            new String[]{FlexBundle.message("open.project.structure"), CommonBundle.message("button.cancel")},
+                            0, Messages.getErrorIcon());
+      if (choice == 0) {
+        final Module[] modules = scope.getAffectedModules();
+        if (modules.length > 0) {
+          ShowSettingsUtil.getInstance().editConfigurable(modules[0].getProject(),
+                                                          ProjectStructureConfigurable.getInstance(modules[0].getProject()));
+        }
+      }
+
       return false;
     }
 
@@ -390,14 +438,16 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
   }
 
-  private static void validateConfiguration(final CompileScope scope,
-                                            final Module module, final FlexIdeBuildConfiguration bc) throws ConfigurationException {
+  private static void validateConfiguration(final Module module,
+                                            final FlexIdeBuildConfiguration bc,
+                                            final boolean checkPackaging,
+                                            final Consumer<String> errorConsumer) {
     assert !bc.isSkipCompile();
     final String moduleName = module.getName();
 
     final Sdk sdk = bc.getSdk();
     if (sdk == null) {
-      throw new ConfigurationException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+      errorConsumer.consume(FlexBundle.message("sdk.not.set"));
     }
 
     InfoFromConfigFile info = InfoFromConfigFile.DEFAULT;
@@ -406,8 +456,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     if (!additionalConfigFilePath.isEmpty()) {
       final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
       if (additionalConfigFile == null || additionalConfigFile.isDirectory()) {
-        throw new ConfigurationException(
-          FlexBundle.message("additional.config.file.not.found", additionalConfigFilePath, bc.getName(), moduleName));
+        errorConsumer.consume(FlexBundle.message("additional.config.file.not.found", additionalConfigFilePath));
       }
       if (!bc.isTempBCForCompilation()) {
         info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(additionalConfigFilePath);
@@ -417,65 +466,62 @@ public class FlexCompiler implements SourceProcessingCompiler {
     final BuildConfigurationNature nature = bc.getNature();
 
     if (!nature.isLib() && info.getMainClass(module) == null && bc.getMainClass().isEmpty()) {
-      throw new ConfigurationException(FlexBundle.message("main.class.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+      errorConsumer.consume(FlexBundle.message("main.class.not.set"));
       // real main class validation is done later in CompilerConfigGenerator
     }
 
     if (info.getOutputFileName() == null && info.getOutputFolderPath() == null) {
       if (bc.getOutputFileName().isEmpty()) {
-        throw new ConfigurationException(FlexBundle.message("output.file.name.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+        errorConsumer.consume(FlexBundle.message("output.file.name.not.set"));
       }
 
       if (!nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swf")) {
-        throw new ConfigurationException(
-          FlexBundle.message("output.file.name.must.have.2.extension.for.bc.0.of.module.1", bc.getName(), moduleName, "swf"));
+        errorConsumer.consume(FlexBundle.message("output.file.wrong.extension", "swf"));
       }
 
       if (nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swc")) {
-        throw new ConfigurationException(
-          FlexBundle.message("output.file.name.must.have.2.extension.for.bc.0.of.module.1", bc.getName(), moduleName, "swc"));
+        errorConsumer.consume(FlexBundle.message("output.file.wrong.extension", "swc"));
       }
 
       if (bc.getOutputFolder().isEmpty()) {
-        throw new ConfigurationException(FlexBundle.message("output.folder.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+        errorConsumer.consume(FlexBundle.message("output.folder.not.set"));
       }
     }
 
     if (nature.isWebPlatform() && nature.isApp() && bc.isUseHtmlWrapper()) {
       if (bc.getWrapperTemplatePath().isEmpty()) {
-        throw new ConfigurationException(FlexBundle.message("html.template.folder.not.set.for.bc.0.of.module.1", bc.getName(), moduleName));
+        errorConsumer.consume(FlexBundle.message("html.template.folder.not.set"));
       }
       final VirtualFile templateDir = LocalFileSystem.getInstance().findFileByPath(bc.getWrapperTemplatePath());
       if (templateDir == null || !templateDir.isDirectory()) {
-        throw new ConfigurationException(FlexBundle.message("html.template.folder.not.found.for.bc.0.of.module.1.2",
-                                                            bc.getName(), moduleName, bc.getWrapperTemplatePath()));
+        errorConsumer.consume(FlexBundle.message("html.template.folder.not.found", bc.getWrapperTemplatePath()));
       }
-      final VirtualFile templateFile = templateDir.findChild(CreateHtmlWrapperTemplateDialog.HTML_WRAPPER_TEMPLATE_FILE_NAME);
-      if (templateFile == null) {
-        throw new ConfigurationException(
-          FlexBundle.message("no.index.template.html.file.bc.0.of.module.1.2", bc.getName(), moduleName, bc.getWrapperTemplatePath()));
-      }
-
-      try {
-        if (!VfsUtilCore.loadText(templateFile).contains(FlexCompilationUtils.SWF_MACRO)) {
-          throw new ConfigurationException(FlexBundle.message("no.swf.macro.in.template.bc.0.of.module.1.2", bc.getName(), moduleName,
-                                                              FileUtil.toSystemDependentName(templateFile.getPath())));
+      else {
+        final VirtualFile templateFile = templateDir.findChild(CreateHtmlWrapperTemplateDialog.HTML_WRAPPER_TEMPLATE_FILE_NAME);
+        if (templateFile == null) {
+          errorConsumer.consume(FlexBundle.message("no.index.template.html.file", bc.getWrapperTemplatePath()));
         }
-      }
-      catch (IOException e) {
-        throw new ConfigurationException(FlexBundle.message("failed.to.load.file", templateFile.getPath(), e.getMessage()));
+        else {
+          try {
+            if (!VfsUtilCore.loadText(templateFile).contains(FlexCompilationUtils.SWF_MACRO)) {
+              errorConsumer.consume(FlexBundle.message("no.swf.macro.in.template", FileUtil.toSystemDependentName(templateFile.getPath())));
+            }
+          }
+          catch (IOException e) {
+            errorConsumer.consume(
+              FlexBundle.message("failed.to.load.template.file", FileUtil.toSystemDependentName(templateFile.getPath()), e.getMessage()));
+          }
+        }
       }
     }
 
     if (BCUtils.canHaveRuntimeStylesheets(bc)) {
       for (String cssPath : bc.getCssFilesToCompile()) {
         if (!cssPath.toLowerCase().endsWith(".css")) {
-          throw new ConfigurationException(FlexBundle.message("not.css.runtime.stylesheet.bc.0.of.module.1", bc.getName(), moduleName,
-                                                              FileUtil.toSystemDependentName(cssPath)));
+          errorConsumer.consume(FlexBundle.message("not.a.css.runtime.stylesheet", FileUtil.toSystemDependentName(cssPath)));
         }
-        if (LocalFileSystem.getInstance().findFileByPath(cssPath) == null) {
-          throw new ConfigurationException(
-            FlexBundle.message("css.not.found.bc.0.of.module.1", bc.getName(), moduleName, FileUtil.toSystemDependentName(cssPath)));
+        else if (LocalFileSystem.getInstance().findFileByPath(cssPath) == null) {
+          errorConsumer.consume(FlexBundle.message("css.not.found", bc.getName(), moduleName, FileUtil.toSystemDependentName(cssPath)));
         }
       }
     }
@@ -483,27 +529,13 @@ public class FlexCompiler implements SourceProcessingCompiler {
     if (nature.isLib()) {
       for (String path : bc.getCompilerOptions().getFilesToIncludeInSWC()) {
         if (LocalFileSystem.getInstance().findFileByPath(path) == null) {
-          throw new ConfigurationException(FlexBundle.message("file.to.include.in.swc.not.found.bc.0.of.module.1", bc.getName(), moduleName,
-                                                              FileUtil.toSystemDependentName(path)));
+          errorConsumer.consume(FlexBundle.message("file.to.include.in.swc.not.found", FileUtil.toSystemDependentName(path)));
         }
       }
     }
 
-    if (nature.isMobilePlatform() && nature.isApp()) {
-      final RunConfiguration runConfig = CompileStepBeforeRun.getRunConfiguration(scope);
-      if (runConfig instanceof FlashRunConfiguration) {
-        final FlashRunnerParameters params = ((FlashRunConfiguration)runConfig).getRunnerParameters();
-        if (moduleName.equals(params.getModuleName()) &&
-            bc.getName().equals(params.getBCName()) &&
-            params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
-          try {
-            checkPackagingOptions(bc.getAndroidPackagingOptions());
-          }
-          catch (ConfigurationException e) {
-            throw new ConfigurationException(FlexBundle.message("bc.0.of.module.1.2", bc.getName(), moduleName, e.getMessage()));
-          }
-        }
-      }
+    if (checkPackaging) {
+      checkPackagingOptions(bc, errorConsumer);
     }
 
     // This verification is disabled because Vladimir Krivosheev has app on app dependency because he needs predictable compilation order.
@@ -534,14 +566,42 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
   }
 
-  public static void checkPackagingOptions(final AirPackagingOptions packagingOptions) throws ConfigurationException {
+  public static void checkPackagingOptions(final FlexIdeBuildConfiguration bc, final Consumer<String> errorConsumer) {
+    if (bc.getOutputType() != OutputType.Application) return;
+
+    if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
+      checkPackagingOptions(bc.getAirDesktopPackagingOptions(), errorConsumer);
+    }
+    else if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
+      if (bc.getAndroidPackagingOptions().isEnabled()) {
+        checkPackagingOptions(bc.getAndroidPackagingOptions(), errorConsumer);
+      }
+      if (bc.getIosPackagingOptions().isEnabled()) {
+        checkPackagingOptions(bc.getIosPackagingOptions(), errorConsumer);
+      }
+    }
+  }
+
+  private static void checkPackagingOptions(final AirPackagingOptions packagingOptions, final Consumer<String> errorConsumer) {
     final String device = packagingOptions instanceof AndroidPackagingOptions
                           ? "Android"
                           : packagingOptions instanceof IosPackagingOptions
                             ? "iOS"
                             : "";
+    if (!packagingOptions.isUseGeneratedDescriptor()) {
+      if (packagingOptions.getCustomDescriptorPath().isEmpty()) {
+        errorConsumer.consume(FlexBundle.message("custom.descriptor.not.set", device));
+      }
+      else {
+        final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(packagingOptions.getCustomDescriptorPath());
+        if (descriptorFile == null || descriptorFile.isDirectory()) {
+          errorConsumer.consume(FlexBundle.message("custom.descriptor.not.found", device, FileUtil.toSystemDependentName(packagingOptions.getCustomDescriptorPath())));
+        }
+      }
+    }
+
     if (packagingOptions.getPackageFileName().isEmpty()) {
-      throw new ConfigurationException(FlexBundle.message("package.file.name.not.set", device));
+      errorConsumer.consume(FlexBundle.message("package.file.name.not.set", device));
     }
 
     for (FilePathAndPathInPackage entry : packagingOptions.getFilesToPackage()) {
@@ -552,22 +612,22 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
 
       if (fullPath.isEmpty()) {
-        throw new ConfigurationException(FlexBundle.message("packaging.options.empty.file.name", device));
+        errorConsumer.consume(FlexBundle.message("packaging.options.empty.file.name", device));
       }
+      else {
+        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fullPath);
+        if (file == null) {
+          errorConsumer.consume(FlexBundle.message("packaging.options.file.not.found", device, FileUtil.toSystemDependentName(fullPath)));
+        }
 
-      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(fullPath);
-      if (file == null) {
-        throw new ConfigurationException(
-          FlexBundle.message("packaging.options.file.not.found", device, FileUtil.toSystemDependentName(fullPath)));
-      }
+        if (relPathInPackage.length() == 0) {
+          errorConsumer.consume(FlexBundle.message("packaging.options.empty.relative.path", device));
+        }
 
-      if (relPathInPackage.length() == 0) {
-        throw new ConfigurationException(FlexBundle.message("packaging.options.empty.relative.path", device));
-      }
-
-      if (file.isDirectory() && !fullPath.endsWith("/" + relPathInPackage)) {
-        throw new ConfigurationException(
-          FlexBundle.message("packaging.options.relative.path.not.matches", device, FileUtil.toSystemDependentName(relPathInPackage)));
+        if (file != null && file.isDirectory() && !fullPath.endsWith("/" + relPathInPackage)) {
+          errorConsumer.consume(
+            FlexBundle.message("packaging.options.relative.path.not.matches", device, FileUtil.toSystemDependentName(relPathInPackage)));
+        }
       }
     }
 
@@ -575,13 +635,14 @@ public class FlexCompiler implements SourceProcessingCompiler {
     if (packagingOptions instanceof IosPackagingOptions) {
       final String provisioningProfilePath = signingOptions.getProvisioningProfilePath();
       if (provisioningProfilePath.isEmpty()) {
-        throw new ConfigurationException(FlexBundle.message("ios.provisioning.profile.not.set"));
+        errorConsumer.consume(FlexBundle.message("ios.provisioning.profile.not.set"));
       }
-
-      final VirtualFile provisioningProfile = LocalFileSystem.getInstance().findFileByPath(provisioningProfilePath);
-      if (provisioningProfile == null || provisioningProfile.isDirectory()) {
-        throw new ConfigurationException(
-          FlexBundle.message("ios.provisioning.profile.not.found", FileUtil.toSystemDependentName(provisioningProfilePath)));
+      else {
+        final VirtualFile provisioningProfile = LocalFileSystem.getInstance().findFileByPath(provisioningProfilePath);
+        if (provisioningProfile == null || provisioningProfile.isDirectory()) {
+          errorConsumer
+            .consume(FlexBundle.message("ios.provisioning.profile.not.found", FileUtil.toSystemDependentName(provisioningProfilePath)));
+        }
       }
     }
 
@@ -589,12 +650,13 @@ public class FlexCompiler implements SourceProcessingCompiler {
     if (!tempCertificate) {
       final String keystorePath = signingOptions.getKeystorePath();
       if (keystorePath.isEmpty()) {
-        throw new ConfigurationException(FlexBundle.message("keystore.not.set", device));
+        errorConsumer.consume(FlexBundle.message("keystore.not.set", device));
       }
-
-      final VirtualFile keystore = LocalFileSystem.getInstance().findFileByPath(keystorePath);
-      if (keystore == null || keystore.isDirectory()) {
-        throw new ConfigurationException(FlexBundle.message("keystore.not.found", device, FileUtil.toSystemDependentName(keystorePath)));
+      else {
+        final VirtualFile keystore = LocalFileSystem.getInstance().findFileByPath(keystorePath);
+        if (keystore == null || keystore.isDirectory()) {
+          errorConsumer.consume(FlexBundle.message("keystore.not.found", device, FileUtil.toSystemDependentName(keystorePath)));
+        }
       }
     }
   }

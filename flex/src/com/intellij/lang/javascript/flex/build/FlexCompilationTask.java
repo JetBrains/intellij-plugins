@@ -64,8 +64,9 @@ public abstract class FlexCompilationTask {
     if (!myBC.isTempBCForCompilation() && !additionalConfigFilePath.isEmpty()) {
       final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
       if (additionalConfigFile == null) {
-        throw new IOException(FlexBundle.message("additional.config.file.not.found", additionalConfigFilePath, myBC.getName(),
-                                                 myModule.getName()));
+        throw new IOException(
+          FlexBundle.message("additional.config.file.not.found.for.bc.0.of.module.1", additionalConfigFilePath, myBC.getName(),
+                             myModule.getName()));
       }
       configFiles.add(additionalConfigFile);
     }

@@ -8,15 +8,16 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConf
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.util.Consumer;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
@@ -200,11 +201,18 @@ public class AirPackageDialog extends DialogWrapper {
         }
       }
 
-      try {
-        checkPackagingOptions(bc);
-      }
-      catch (ConfigurationException e) {
-        return new ValidationInfo(FlexBundle.message("can.not.package.bc", bc.getName(), e.getMessage()));
+      final Ref<String> firstErrorRef = new Ref<String>();
+      FlexCompiler.checkPackagingOptions(bc, new Consumer<String>() {
+        public void consume(final String error) {
+          if (firstErrorRef.isNull()) {
+            firstErrorRef.set(error);
+          }
+        }
+      });
+
+      // todo better error reporting. May be just mention that errors exist in some BC and provide link to Project Structure
+      if (!firstErrorRef.isNull()) {
+        return new ValidationInfo(FlexBundle.message("can.not.package.bc", bc.getName(), firstErrorRef.get()));
       }
     }
 
@@ -218,20 +226,6 @@ public class AirPackageDialog extends DialogWrapper {
 
     saveParameters();
     super.doOKAction();
-  }
-
-  private static void checkPackagingOptions(final FlexIdeBuildConfiguration bc) throws ConfigurationException {
-    if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
-      FlexCompiler.checkPackagingOptions(bc.getAirDesktopPackagingOptions());
-    }
-    else {
-      if (bc.getAndroidPackagingOptions().isEnabled()) {
-        FlexCompiler.checkPackagingOptions(bc.getAndroidPackagingOptions());
-      }
-      if (bc.getIosPackagingOptions().isEnabled()) {
-        FlexCompiler.checkPackagingOptions(bc.getIosPackagingOptions());
-      }
-    }
   }
 
   private static boolean checkDisabledCompilation(final Project project,

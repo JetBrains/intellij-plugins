@@ -20,10 +20,7 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.ReadonlyStatusHandler;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.*;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.text.StringTokenizer;
@@ -248,10 +245,11 @@ public class FlexCompilationUtils {
               if (file == templateFile) {
                 final String wrapperText;
                 try {
-                  wrapperText = VfsUtil.loadText(file);
+                  wrapperText = VfsUtilCore.loadText(file);
                 }
                 catch (IOException e) {
-                  return new FlexCompilerException(FlexBundle.message("failed.to.load.file", file.getPath(), e.getMessage()));
+                  return new FlexCompilerException(
+                    FlexBundle.message("failed.to.load.template.file", file.getPresentableUrl(), e.getMessage()));
                 }
 
                 if (!wrapperText.contains(SWF_MACRO)) {
@@ -265,7 +263,7 @@ public class FlexCompilationUtils {
                 }
                 catch (IOException e) {
                   return new FlexCompilerException(
-                    FlexBundle.message("failed.to.create.file", wrapperFileName, outputDir.getPath(), e.getMessage()));
+                    FlexBundle.message("failed.to.create.file", wrapperFileName, outputDir.getPresentableUrl(), e.getMessage()));
                 }
               }
               else {

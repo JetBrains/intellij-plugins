@@ -420,14 +420,22 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     if (!packagingOptions.isUseGeneratedDescriptor()) {
       if (packagingOptions.getCustomDescriptorPath().isEmpty()) {
         final String key =
-          android ? "android.custom.descriptor.not.set" : ios ? "ios.custom.descriptor.not.set" : "custom.descriptor.not.set";
+          android
+          ? "bc.0.module.1.android.custom.descriptor.not.set"
+          : ios ? "bc.0.module.1.ios.custom.descriptor.not.set" : "bc.0.module.1.custom.descriptor.not.set";
         throw new RuntimeConfigurationError(FlexBundle.message(key, getBCName(), getModuleName()));
       }
-      else if (LocalFileSystem.getInstance().findFileByPath(packagingOptions.getCustomDescriptorPath()) == null) {
-        final String key =
-          android ? "android.custom.descriptor.not.found" : ios ? "ios.custom.descriptor.not.found" : "custom.descriptor.not.found";
-        throw new RuntimeConfigurationError(FlexBundle.message(key, getBCName(), getModuleName(),
-                                                               FileUtil.toSystemDependentName(packagingOptions.getCustomDescriptorPath())));
+      else {
+        final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(packagingOptions.getCustomDescriptorPath());
+        if (descriptorFile == null || descriptorFile.isDirectory()) {
+          final String key = android
+                             ? "bc.0.module.1.android.custom.descriptor.not.found"
+                             : ios ? "bc.0.module.1.ios.custom.descriptor.not.found"
+                                   : "bc.0.module.1.custom.descriptor.not.found";
+          throw new RuntimeConfigurationError(
+            FlexBundle.message(key, getBCName(), getModuleName(),
+                               FileUtil.toSystemDependentName(packagingOptions.getCustomDescriptorPath())));
+        }
       }
     }
   }
