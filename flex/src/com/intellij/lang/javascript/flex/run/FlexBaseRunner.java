@@ -33,6 +33,10 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConf
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationListener;
+import com.intellij.notification.NotificationType;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -79,6 +83,9 @@ import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDes
  * Time: 8:16:33 PM
  */
 public abstract class FlexBaseRunner extends GenericProgramRunner {
+
+  public static final NotificationGroup COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup(
+    FlexBundle.message("check.flash.app.compiled.before.launch.notification.group"), ToolWindowId.RUN, false);
 
   public static final RunProfileState EMPTY_RUN_STATE = new RunProfileState() {
     public ExecutionResult execute(final Executor executor, @NotNull final ProgramRunner runner) throws ExecutionException {
@@ -484,30 +491,31 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   private static void showMakeBeforeRunTurnedOffWarning(final Project project,
                                                         final RunnerAndConfigurationSettings configuration,
                                                         final boolean isDebug) {
-    final HyperlinkListener listener = new HyperlinkAdapter() {
-      protected void hyperlinkActivated(final HyperlinkEvent e) {
-        RunDialog.editConfiguration(project, configuration, FlexBundle.message("edit.configuration.title"));
+    final String message = FlexBundle.message("run.when.compile.before.run.turned.off");
+    COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener() {
+      public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          RunDialog.editConfiguration(project, configuration, FlexBundle.message("edit.configuration.title"));
+        }
       }
-    };
-    ToolWindowManager.getInstance(project).notifyByBalloon(isDebug ? ToolWindowId.DEBUG : ToolWindowId.RUN, MessageType.WARNING,
-                                                           FlexBundle.message("run.when.compile.before.run.turned.off"), null, listener);
+    }).notify(project);
   }
 
   private static void showBCCompilationSkippedWarning(final Module module, final FlexIdeBuildConfiguration bc, final boolean isDebug) {
-    final HyperlinkListener listener = new HyperlinkAdapter() {
-      protected void hyperlinkActivated(final HyperlinkEvent e) {
-        final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
-        ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
-          public void run() {
-            Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(module, bc);
-            projectStructureConfigurable.navigateTo(p, true);
-          }
-        });
+    final String message = FlexBundle.message("run.when.ide.builder.turned.off", bc.getName(), module.getName());
+    COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener() {
+      public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          notification.expire();
+          final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
+          ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
+            public void run() {
+              Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(module, bc);
+              projectStructureConfigurable.navigateTo(p, true);
+            }
+          });
+        }
       }
-    };
-
-    ToolWindowManager.getInstance(module.getProject())
-      .notifyByBalloon(isDebug ? ToolWindowId.DEBUG : ToolWindowId.RUN, MessageType.WARNING,
-                       FlexBundle.message("run.when.ide.builder.turned.off", bc.getName(), module.getName()), null, listener);
+    }).notify(module.getProject());
   }
 }

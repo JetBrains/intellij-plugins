@@ -188,9 +188,11 @@ public class AirPackageAction extends DumbAwareAction {
 
           final NotificationListener listener = new NotificationListener() {
             public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
-              notification.expire();
-              final String packagePath = event.getDescription();
-              ShowFilePathAction.open(new File(PathUtil.getParentPath(packagePath)), new File(packagePath));
+              if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                notification.expire();
+                final String packagePath = event.getDescription();
+                ShowFilePathAction.open(new File(PathUtil.getParentPath(packagePath)), new File(packagePath));
+              }
             }
           };
 
