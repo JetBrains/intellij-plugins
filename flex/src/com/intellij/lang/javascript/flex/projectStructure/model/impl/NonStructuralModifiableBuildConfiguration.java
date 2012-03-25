@@ -164,4 +164,9 @@ public class NonStructuralModifiableBuildConfiguration implements FlexIdeBuildCo
   public String getDescription() {
     return myOriginal.getDescription();
   }
+
+  @Override
+  public String getStatisticsEntry() {
+    return myOriginal.getStatisticsEntry();
+  }
 }

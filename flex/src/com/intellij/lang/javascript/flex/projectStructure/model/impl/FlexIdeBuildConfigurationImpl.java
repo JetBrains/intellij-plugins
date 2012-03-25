@@ -333,6 +333,50 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     return myName + ": " + getNature().toString();
   }
 
+  @Override
+  public String getStatisticsEntry() {
+    StringBuilder s = new StringBuilder();
+    switch (myTargetPlatform) {
+      case Web:
+        s.append("Web");
+        break;
+      case Desktop:
+        s.append("Desktop");
+        break;
+      case Mobile:
+        s.append("Mobile");
+        if (myAndroidPackagingOptions.isEnabled() && myIosPackagingOptions.isEnabled()) {
+          s.append("(a+i)");
+        }
+        else if (myAndroidPackagingOptions.isEnabled()) {
+          s.append("(a)");
+        }
+        else if (myIosPackagingOptions.isEnabled()) {
+          s.append("(i)");
+        }
+        break;
+      default:
+        assert false : myTargetPlatform;
+    }
+    s.append(" ");
+    s.append(myPureAs ? "AS" : "Flex");
+    s.append(" ");
+    switch (myOutputType) {
+      case Application:
+        s.append("app");
+        break;
+      case Library:
+        s.append("lib");
+        break;
+      case RuntimeLoadedModule:
+        s.append("rlm");
+        break;
+      default:
+        assert false : myOutputType;
+    }
+    return s.toString();
+  }
+
   public FlexBuildConfigurationState getState(final @Nullable ComponentManager componentManager) {
     FlexBuildConfigurationState state = new FlexBuildConfigurationState();
     state.AIR_DESKTOP_PACKAGING_OPTIONS = myAirDesktopPackagingOptions.getState();

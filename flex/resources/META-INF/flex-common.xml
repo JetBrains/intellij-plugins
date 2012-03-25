@@ -150,6 +150,8 @@
 
     <resolveScopeProvider implementation="com.intellij.lang.javascript.flex.MxmlResolveScopeProvider"/>
 
+    <statistics.usagesCollector implementation="com.intellij.lang.javascript.flex.projectStructure.FlashBuildConfigurationsUsagesCollector"/>
+
     <localInspection language="ECMA Script Level 4" shortName="FlexUnitClassInProductSourceInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testclassinproductsource.displayname" groupKey="flexunit.inspections.group"
                      enabledByDefault="true" level="WARNING"

@@ -93,4 +93,6 @@ public interface FlexIdeBuildConfiguration {
   String getShortText();
 
   String getDescription();
+
+  String getStatisticsEntry();
 }
