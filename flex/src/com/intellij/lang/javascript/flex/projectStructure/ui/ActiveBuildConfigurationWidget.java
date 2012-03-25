@@ -105,7 +105,7 @@ public class ActiveBuildConfigurationWidget {
     private final JLabel myEnabledLabel = new JLabel();
     private final JLabel myDisabledLabel = new JLabel(FlexBundle.message("active.bc.widget.empty.text"));
     private final JPanel myPanel;
-    private final JLabel myUpDownLabel = new JLabel(ARROWS_ICON);;
+    private final JLabel myUpDownLabel = new JLabel(ARROWS_ICON);
 
     private MyWidget(@NotNull Project project) {
       super(project);
@@ -136,6 +136,7 @@ public class ActiveBuildConfigurationWidget {
         }
       };
 
+      myPanel.setOpaque(false);
       myPanel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
       myPanel.setBorder(WidgetBorder.INSTANCE);
       GridBagConstraints c =
