@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.project.Project;
@@ -373,6 +374,10 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
         break;
       default:
         assert false : myOutputType;
+    }
+    Sdk sdk = getSdk();
+    if (sdk != null && sdk.getSdkType() == FlexmojosSdkType.getInstance()) {
+      s.append(" (mvn)");
     }
     return s.toString();
   }
