@@ -179,12 +179,7 @@ public class AirPackageDialog extends DialogWrapper {
       }
 
       final BuildConfigurationNature nature = bc.getNature();
-      if (nature.isDesktopPlatform()) {
-        if (bc.getAirDesktopPackagingOptions().getPackageFileName().isEmpty()) {
-          return new ValidationInfo(FlexBundle.message("can.not.package.bc", bc.getName(), "package file name is not set"));
-        }
-      }
-      else {
+      if (nature.isMobilePlatform()) {
         if (!bc.getAndroidPackagingOptions().isEnabled() && !bc.getIosPackagingOptions().isEnabled()) {
           return new ValidationInfo(FlexBundle.message("can.not.package.bc", bc.getName(), "both Android and iOS packaging disabled"));
         }
