@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.FlexBCTree;
+import com.intellij.lang.javascript.flex.build.FlashProjectStructureProblem;
 import com.intellij.lang.javascript.flex.build.FlexCompiler;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
@@ -202,10 +203,10 @@ public class AirPackageDialog extends DialogWrapper {
       }
 
       final Ref<String> firstErrorRef = new Ref<String>();
-      FlexCompiler.checkPackagingOptions(bc, new Consumer<String>() {
-        public void consume(final String error) {
+      FlexCompiler.checkPackagingOptions(bc, new Consumer<FlashProjectStructureProblem>() {
+        public void consume(final FlashProjectStructureProblem problem) {
           if (firstErrorRef.isNull()) {
-            firstErrorRef.set(error);
+            firstErrorRef.set(problem.errorMessage);
           }
         }
       });

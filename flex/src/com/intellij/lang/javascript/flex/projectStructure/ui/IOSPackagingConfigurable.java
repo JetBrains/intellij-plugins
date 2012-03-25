@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableIosPackagingOptions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Computable;
@@ -7,6 +8,7 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.Nls;
 
 public class IOSPackagingConfigurable extends AirPackagingConfigurableBase<ModifiableIosPackagingOptions> {
+  public static final String TAB_NAME = FlexBundle.message("bc.tab.ios.packaging.display.name");
 
   public IOSPackagingConfigurable(final Module module, final ModifiableIosPackagingOptions model,
                                   final Computable<String> mainClassComputable,
@@ -20,6 +22,6 @@ public class IOSPackagingConfigurable extends AirPackagingConfigurableBase<Modif
 
   @Nls
   public String getDisplayName() {
-    return "iOS";
+    return TAB_NAME;
   }
 }

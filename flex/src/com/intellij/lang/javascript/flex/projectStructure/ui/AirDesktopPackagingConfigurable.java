@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAirDesktopPackagingOptions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Computable;
@@ -7,6 +8,7 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.Nls;
 
 public class AirDesktopPackagingConfigurable extends AirPackagingConfigurableBase<ModifiableAirDesktopPackagingOptions> {
+  public static final String TAB_NAME = FlexBundle.message("bc.tab.air.desktop.display.name");
 
   public AirDesktopPackagingConfigurable(final Module module,
                                          final ModifiableAirDesktopPackagingOptions model,
@@ -21,6 +23,6 @@ public class AirDesktopPackagingConfigurable extends AirPackagingConfigurableBas
 
   @Nls
   public String getDisplayName() {
-    return "AIR Package";
+    return TAB_NAME;
   }
 }

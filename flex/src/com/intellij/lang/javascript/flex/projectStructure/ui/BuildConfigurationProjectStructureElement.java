@@ -1,11 +1,12 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.build.FlashProjectStructureProblem;
+import com.intellij.lang.javascript.flex.build.FlexCompiler;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.libraries.Library;
@@ -14,6 +15,7 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigur
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.*;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,13 +58,14 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
     FlexProjectConfigurationEditor editor = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor();
     final ModulesConfigurator modulesConfigurator = myContext.getModulesConfigurator();
 
+    /*
     final SdkEntry sdkEntry = myBc.getDependencies().getSdkEntry();
     if (sdkEntry == null) {
       Pair<String, Object> location =
         Pair.<String, Object>create(DependenciesConfigurable.LOCATION, DependenciesConfigurable.Location.SDK);
 
       PlaceInProjectStructure place = new PlaceInBuildConfiguration(this, DependenciesConfigurable.TAB_NAME, location);
-      problemsHolder.registerProblem(FlexBundle.message("bc.problem.no.sdk"), null, ProjectStructureProblemType.error("flex-bc-sdk"),
+      problemsHolder.registerProblem(FlexBundle.message("bc.problem.no.sdk"), null, ProjectStructureProblemType.error("sdk"),
                                      place, null);
     }
     else {
@@ -75,6 +78,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
                                        ProjectStructureProblemType.error("flex-bc-sdk"), place, null);
       }
     }
+    */
 
     for (DependencyEntry entry : myBc.getDependencies().getEntries()) {
       if (entry instanceof BuildConfigurationEntry) {
@@ -104,6 +108,14 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
         }
       }
     }
+
+    FlexCompiler.checkConfiguration(myModule, myBc, true, new Consumer<FlashProjectStructureProblem>() {
+      public void consume(final FlashProjectStructureProblem problem) {
+        PlaceInProjectStructure place =
+          new PlaceInBuildConfiguration(BuildConfigurationProjectStructureElement.this, problem.tabName, problem.location);
+        problemsHolder.registerProblem(problem.errorMessage, null, ProjectStructureProblemType.error(problem.errorId), place, null);
+      }
+    });
   }
 
   @Override

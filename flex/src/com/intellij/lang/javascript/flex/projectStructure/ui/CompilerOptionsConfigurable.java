@@ -33,6 +33,7 @@ import com.intellij.ui.treeStructure.treetable.ListTreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
+import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
@@ -66,6 +67,8 @@ import java.util.List;
 import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions.ResourceFilesMode;
 
 public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> {
+  public static final String TAB_NAME = FlexBundle.message("bc.tab.compiler.options.display.name");
+
   private JPanel myMainPanel;
 
   private TreeTable myTreeTable;
@@ -104,6 +107,9 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private final ModifiableCompilerOptions myModel;
   private final Map<String, String> myCurrentOptions;
   private boolean myMapModified;
+
+  private final EventDispatcher<UserActivityListener> myUserActivityDispatcher;
+  private boolean myFreeze;
 
   private final Collection<OptionsListener> myListeners = new ArrayList<OptionsListener>();
   private final Disposable myDisposable = Disposer.newDisposable();
@@ -144,7 +150,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     myNature = nature;
     myDependenciesConfigurable = dependenciesConfigurable;
     myName = myMode == Mode.BC
-             ? FlexBundle.message("compiler.options.title")
+             ? TAB_NAME
              : myMode == Mode.Module
                ? FlexBundle.message("default.compiler.options.for.module.title", module.getName())
                : FlexBundle.message("default.compiler.options.for.project.title", project.getName());
@@ -205,6 +211,29 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     // seems we don't need it for small amount of options
     myShowAllOptionsCheckBox.setSelected(true);
     myShowAllOptionsCheckBox.setVisible(false);
+
+    UserActivityWatcher watcher = new UserActivityWatcher();
+    watcher.register(myMainPanel);
+    myUserActivityDispatcher = EventDispatcher.create(UserActivityListener.class);
+    watcher.addUserActivityListener(new UserActivityListener() {
+      @Override
+      public void stateChanged() {
+        if (myFreeze) {
+          return;
+        }
+        myUserActivityDispatcher.getMulticaster().stateChanged();
+      }
+    }, myDisposable);
+  }
+
+  public void addUserActivityListener(final UserActivityListener listener, final Disposable disposable) {
+    myUserActivityDispatcher.addListener(listener, disposable);
+  }
+
+  public void removeUserActivityListeners() {
+    for (UserActivityListener listener : myUserActivityDispatcher.getListeners()) {
+      myUserActivityDispatcher.removeListener(listener);
+    }
   }
 
   private void updateFilesToIncludeInSWCText() {
@@ -312,7 +341,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   public String getBannerSlogan() {
-    return "Compiler Options";
+    return getDisplayName();
   }
 
   public Icon getIcon() {
@@ -369,23 +398,29 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   public void reset() {
-    myCurrentOptions.clear();
-    myCurrentOptions.putAll(myModel.getAllOptions());
-    myMapModified = false;
-    updateTreeTable();
+    myFreeze = true;
+    try {
+      myCurrentOptions.clear();
+      myCurrentOptions.putAll(myModel.getAllOptions());
+      myMapModified = false;
+      updateTreeTable();
 
-    final ResourceFilesMode mode = myModel.getResourceFilesMode();
-    myCopyResourceFilesCheckBox.setSelected(mode != ResourceFilesMode.None);
-    myCopyAllResourcesRadioButton.setSelected(mode == ResourceFilesMode.None || mode == ResourceFilesMode.All);
-    myRespectResourcePatternsRadioButton.setSelected(mode == ResourceFilesMode.ResourcePatterns);
-    updateResourcesControls();
+      final ResourceFilesMode mode = myModel.getResourceFilesMode();
+      myCopyResourceFilesCheckBox.setSelected(mode != ResourceFilesMode.None);
+      myCopyAllResourcesRadioButton.setSelected(mode == ResourceFilesMode.None || mode == ResourceFilesMode.All);
+      myRespectResourcePatternsRadioButton.setSelected(mode == ResourceFilesMode.ResourcePatterns);
+      updateResourcesControls();
 
-    myFilesToIncludeInSWC = myModel.getFilesToIncludeInSWC();
-    updateFilesToIncludeInSWCText();
+      myFilesToIncludeInSWC = myModel.getFilesToIncludeInSWC();
+      updateFilesToIncludeInSWCText();
 
-    myConfigFileTextWithBrowse.setText(FileUtil.toSystemDependentName(myModel.getAdditionalConfigFilePath()));
-    myAdditionalOptionsField.setText(myModel.getAdditionalOptions());
-    updateAdditionalOptionsControls();
+      myConfigFileTextWithBrowse.setText(FileUtil.toSystemDependentName(myModel.getAdditionalConfigFilePath()));
+      myAdditionalOptionsField.setText(myModel.getAdditionalOptions());
+      updateAdditionalOptionsControls();
+    }
+    finally {
+      myFreeze = false;
+    }
   }
 
   public void disposeUIResources() {

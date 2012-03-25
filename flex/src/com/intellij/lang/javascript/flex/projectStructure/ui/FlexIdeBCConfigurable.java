@@ -61,7 +61,7 @@ import java.util.*;
 public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<ModifiableFlexIdeBuildConfiguration>
   implements CompositeConfigurable.Item {
 
-  public static final String TAB_NAME = FlexBundle.message("general.tab.display.name");
+  public static final String TAB_NAME = FlexBundle.message("bc.tab.general.display.name");
   private JPanel myMainPanel;
 
   private JLabel myNatureLabel;
@@ -258,15 +258,19 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       myDependenciesConfigurable.disposeUIResources();
     }
     if (myCompilerOptionsConfigurable != null) {
+      myCompilerOptionsConfigurable.removeUserActivityListeners();
       myCompilerOptionsConfigurable.disposeUIResources();
     }
     if (myAirDesktopPackagingConfigurable != null) {
+      myAirDesktopPackagingConfigurable.removeUserActivityListeners();
       myAirDesktopPackagingConfigurable.disposeUIResources();
     }
     if (myAndroidPackagingConfigurable != null) {
+      myAndroidPackagingConfigurable.removeUserActivityListeners();
       myAndroidPackagingConfigurable.disposeUIResources();
     }
     if (myIOSPackagingConfigurable != null) {
+      myIOSPackagingConfigurable.removeUserActivityListeners();
       myIOSPackagingConfigurable.disposeUIResources();
     }
 
@@ -275,6 +279,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
 
     myCompilerOptionsConfigurable =
       new CompilerOptionsConfigurable(myModule, nature, myDependenciesConfigurable, myConfiguration.getCompilerOptions());
+    myCompilerOptionsConfigurable.addUserActivityListener(myUserActivityListener, myDisposable);
 
     myCompilerOptionsConfigurable.addAdditionalOptionsListener(new CompilerOptionsConfigurable.OptionsListener() {
       public void configFileChanged(final String additionalConfigFilePath) {
@@ -322,16 +327,27 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
                                                                               androidEnabledComputable, iosEnabledComputable,
                                                                               createdDescriptorConsumer)
                                         : null;
+    if (myAirDesktopPackagingConfigurable != null) {
+      myAirDesktopPackagingConfigurable.addUserActivityListener(myUserActivityListener, myDisposable);
+    }
+
     myAndroidPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
                                      ? new AndroidPackagingConfigurable(myModule, myConfiguration.getAndroidPackagingOptions(),
                                                                         mainClassComputable, airVersionComputable, androidEnabledComputable,
                                                                         iosEnabledComputable, createdDescriptorConsumer)
                                      : null;
+    if (myAndroidPackagingConfigurable != null) {
+      myAndroidPackagingConfigurable.addUserActivityListener(myUserActivityListener, myDisposable);
+    }
+
     myIOSPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
                                  ? new IOSPackagingConfigurable(myModule, myConfiguration.getIosPackagingOptions(), mainClassComputable,
                                                                 airVersionComputable, androidEnabledComputable, iosEnabledComputable,
                                                                 createdDescriptorConsumer)
                                  : null;
+    if (myIOSPackagingConfigurable != null) {
+      myIOSPackagingConfigurable.addUserActivityListener(myUserActivityListener, myDisposable);
+    }
   }
 
   private void checkIfConfigFileOverridesOptions(final String configFilePath) {

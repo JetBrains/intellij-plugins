@@ -5,12 +5,17 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.FilesToPackageForm;
 import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.ui.UserActivityListener;
+import com.intellij.ui.UserActivityWatcher;
 import com.intellij.util.Consumer;
+import com.intellij.util.EventDispatcher;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
@@ -39,6 +44,10 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   private final Computable<Boolean> myIOSEnabledComputable;
   private final Consumer<String> myCreatedDescriptorConsumer;
 
+  private final Disposable myDisposable;
+  private final EventDispatcher<UserActivityListener> myUserActivityDispatcher;
+  private boolean myFreeze;
+
   public AirPackagingConfigurableBase(final Module module,
                                       final T model,
                                       final Computable<String> mainClassComputable,
@@ -62,6 +71,30 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
         updateControls();
       }
     });
+
+    myDisposable = Disposer.newDisposable();
+    UserActivityWatcher watcher = new UserActivityWatcher();
+    watcher.register(myMainPanel);
+    myUserActivityDispatcher = EventDispatcher.create(UserActivityListener.class);
+    watcher.addUserActivityListener(new UserActivityListener() {
+      @Override
+      public void stateChanged() {
+        if (myFreeze) {
+          return;
+        }
+        myUserActivityDispatcher.getMulticaster().stateChanged();
+      }
+    }, myDisposable);
+  }
+
+  public void addUserActivityListener(final UserActivityListener listener, final Disposable disposable) {
+    myUserActivityDispatcher.addListener(listener, disposable);
+  }
+
+  public void removeUserActivityListeners() {
+    for (UserActivityListener listener : myUserActivityDispatcher.getListeners()) {
+      myUserActivityDispatcher.removeListener(listener);
+    }
   }
 
   private void updateControls() {
@@ -96,17 +129,23 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   }
 
   public void reset() {
-    myEnabledCheckBox.setVisible(isAndroid || isIOS);
+    myFreeze = true;
+    try {
+      myEnabledCheckBox.setVisible(isAndroid || isIOS);
 
-    if (isAndroid) myEnabledCheckBox.setSelected(((AndroidPackagingOptions)myModel).isEnabled());
-    if (isIOS) myEnabledCheckBox.setSelected(((IosPackagingOptions)myModel).isEnabled());
+      if (isAndroid) myEnabledCheckBox.setSelected(((AndroidPackagingOptions)myModel).isEnabled());
+      if (isIOS) myEnabledCheckBox.setSelected(((IosPackagingOptions)myModel).isEnabled());
 
-    myAirDescriptorForm.resetFrom(myModel);
-    myPackageFileNameTextField.setText(myModel.getPackageFileName());
-    myFilesToPackageForm.resetFrom(myModel.getFilesToPackage());
-    mySigningOptionsForm.resetFrom(myModel.getSigningOptions());
+      myAirDescriptorForm.resetFrom(myModel);
+      myPackageFileNameTextField.setText(myModel.getPackageFileName());
+      myFilesToPackageForm.resetFrom(myModel.getFilesToPackage());
+      mySigningOptionsForm.resetFrom(myModel.getSigningOptions());
 
-    updateControls();
+      updateControls();
+    }
+    finally {
+      myFreeze = false;
+    }
   }
 
   public boolean isModified() {
@@ -136,6 +175,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   }
 
   public void disposeUIResources() {
+    Disposer.dispose(myDisposable);
   }
 
   private void createUIComponents() {

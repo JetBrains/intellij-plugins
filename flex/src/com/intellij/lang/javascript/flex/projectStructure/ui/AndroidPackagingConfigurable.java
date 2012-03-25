@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAndroidPackagingOptions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Computable;
@@ -7,10 +8,11 @@ import com.intellij.util.Consumer;
 import org.jetbrains.annotations.Nls;
 
 public class AndroidPackagingConfigurable extends AirPackagingConfigurableBase<ModifiableAndroidPackagingOptions> {
+  public static final String TAB_NAME = FlexBundle.message("bc.tab.android.display.name");
 
   public AndroidPackagingConfigurable(final Module module,
                                       final ModifiableAndroidPackagingOptions model,
-                                      final Computable<String>mainClassComputable,
+                                      final Computable<String> mainClassComputable,
                                       final Computable<String> airVersionComputable,
                                       final Computable<Boolean> androidEnabledComputable,
                                       final Computable<Boolean> iosEnabledComputable,
@@ -21,6 +23,6 @@ public class AndroidPackagingConfigurable extends AirPackagingConfigurableBase<M
 
   @Nls
   public String getDisplayName() {
-    return "Android";
+    return TAB_NAME;
   }
 }

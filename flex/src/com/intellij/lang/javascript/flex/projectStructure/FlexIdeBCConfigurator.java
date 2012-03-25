@@ -174,11 +174,6 @@ public class FlexIdeBCConfigurator {
     return new Runnable() {
       public void run() {
         final CompositeConfigurable compositeConfigurable = myConfigurablesMap.get(bc);
-        try {
-          compositeConfigurable.apply(); // this won't be needed if UserActivityWatcher watches all tabs
-        }
-        catch (ConfigurationException ignored) {/**/}
-
         final BuildConfigurationNature oldNature = bc.getNature();
         final AddBuildConfigurationDialog dialog =
           new AddBuildConfigurationDialog(myConfigEditor.getProject(), FlexBundle.message("change.bc.type.title"),

@@ -82,7 +82,7 @@ import java.util.*;
 import java.util.List;
 
 public class DependenciesConfigurable extends NamedConfigurable<Dependencies> implements Place.Navigator {
-  public static final String TAB_NAME = FlexBundle.message("dependencies.tab.display.name");
+  public static final String TAB_NAME = FlexBundle.message("bc.tab.dependencies.display.name");
   public static final String LOCATION = DependenciesConfigurable.class.getName() + ".location";
 
   private static final Icon MISSING_BC_ICON = null;
@@ -833,12 +833,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     myTablePanel.add(
       ToolbarDecorator.createDecorator(myTable)
-      .setAddAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          addItem(button);
-        }
-      }).setRemoveAction(new AnActionButtonRunnable() {
+        .setAddAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            addItem(button);
+          }
+        }).setRemoveAction(new AnActionButtonRunnable() {
         @Override
         public void run(AnActionButton anActionButton) {
           removeSelection();
@@ -942,7 +942,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
         return null;
       }
-
     }, myDisposable);
 
     myConfigEditor.addModulesModelChangeListener(new FlexProjectConfigurationEditor.ModulesModelChangeListener() {
