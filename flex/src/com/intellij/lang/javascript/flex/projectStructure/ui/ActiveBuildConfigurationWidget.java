@@ -1,11 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ProjectTopics;
-import com.intellij.codeInsight.hint.HintManager;
-import com.intellij.codeInsight.hint.HintManagerImpl;
-import com.intellij.codeInsight.hint.HintUtil;
-import com.intellij.ide.IdeTooltip;
-import com.intellij.ide.IdeTooltipManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
@@ -30,6 +25,8 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget;
+import com.intellij.ui.HintHint;
+import com.intellij.ui.LightweightHint;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -162,9 +159,8 @@ public class ActiveBuildConfigurationWidget {
             popup.show(new RelativePoint(e.getComponent(), at));
           }
           else {
-            // TODO show tooltip on click
-            //MouseEvent phantom = new MouseEvent(myDisabledLabel, MouseEvent.MOUSE_MOVED, System.currentTimeMillis(), 0, 0, 0, 0, false);
-            //IdeTooltipManager.getInstance().mouseMoved(phantom);
+            HintHint hintHint = new HintHint(e).setShowImmediately(true).setAwtTooltip(true);
+            new LightweightHint(new JLabel(myDisabledLabel.getToolTipText())).show(myPanel, e.getX(), e.getY(), myPanel, hintHint);
           }
         }
       };
