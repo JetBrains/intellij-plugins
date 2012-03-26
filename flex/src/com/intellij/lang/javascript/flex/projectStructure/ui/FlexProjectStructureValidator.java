@@ -45,7 +45,7 @@ public class FlexProjectStructureValidator extends ProjectStructureValidator {
     if (element instanceof ModuleProjectStructureElement) {
       Module module = ((ModuleProjectStructureElement)element).getModule();
       if (ModuleType.get(module) == FlexModuleType.getInstance()) {
-        // all the usages will be reported for Flex build configurations
+        // all the usages will be reported for Flash build configurations
         return Collections.emptyList();
       }
     }
