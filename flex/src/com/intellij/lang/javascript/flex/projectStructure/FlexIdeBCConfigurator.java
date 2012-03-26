@@ -27,6 +27,7 @@ import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesModifiableModel;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
+import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureDaemonAnalyzer;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
@@ -230,10 +231,15 @@ public class FlexIdeBCConfigurator {
         }
       });
 
+    final ProjectStructureDaemonAnalyzer daemonAnalyzer =
+      ProjectStructureConfigurable.getInstance(myConfigEditor.getProject()).getContext().getDaemonAnalyzer();
+
     for (ModifiableFlexIdeBuildConfiguration bc : configsToRemove) {
       CompositeConfigurable configurable = myConfigurablesMap.remove(bc);
+      daemonAnalyzer.removeElement(configurable.getProjectStructureElement());
       configurable.disposeUIResources();
     }
+
     myEventDispatcher.getMulticaster().moduleRemoved(module);
   }
 
@@ -277,6 +283,9 @@ public class FlexIdeBCConfigurator {
 
   public void removeConfiguration(final ModifiableFlexIdeBuildConfiguration configuration) {
     CompositeConfigurable configurable = myConfigurablesMap.remove(configuration);
+    ProjectStructureConfigurable.getInstance(myConfigEditor.getProject()).getContext().getDaemonAnalyzer()
+      .removeElement(configurable.getProjectStructureElement());
+
     myEventDispatcher.getMulticaster().buildConfigurationRemoved(FlexIdeBCConfigurable.unwrap(configurable));
   }
 
