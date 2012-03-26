@@ -309,21 +309,6 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   }
 
   private void renderDocument(@NotNull final Module module, @NotNull final XmlFile psiFile, boolean debug, AsyncResult<DocumentInfo> result) {
-    //if (documentOpening) {
-    //  result.setRejected();
-    //  LOG.error("documentOpening must be false");
-    //  return result;
-    //}
-
-    //result.doWhenProcessed(new Runnable() {
-    //  @Override
-    //  public void run() {
-    //    documentOpening = false;
-    //  }
-    //});
-
-    //documentOpening = true;
-
     final boolean appClosed = isApplicationClosed();
     boolean hasError = true;
     try {
@@ -562,6 +547,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
       while (!processed.get()) {
         try {
+          //noinspection BusyWait
           Thread.sleep(5);
         }
         catch (InterruptedException e) {
