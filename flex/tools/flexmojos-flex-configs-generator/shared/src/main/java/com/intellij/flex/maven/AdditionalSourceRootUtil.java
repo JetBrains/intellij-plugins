@@ -1,6 +1,7 @@
 package com.intellij.flex.maven;
 
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
@@ -42,6 +43,15 @@ public final class AdditionalSourceRootUtil {
     catch (ExpressionEvaluationException e) {
       logger.error("Can't evaluate " + value, e);
       return null;
+    }
+  }
+
+  public static void addResourcesAsCompileSourceRoots(MavenProject project) {
+    for (Resource resource : project.getResources()) {
+      File resourceFolder = new File(resource.getDirectory());
+      if (resourceFolder.exists() && resourceFolder.isDirectory()) {
+        addCompilerSourceRoot(project, resourceFolder);
+      }
     }
   }
 

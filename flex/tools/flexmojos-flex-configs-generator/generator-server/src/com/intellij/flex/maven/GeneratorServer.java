@@ -4,6 +4,7 @@ import org.apache.maven.DefaultMaven;
 import org.apache.maven.artifact.InvalidRepositoryException;
 import org.apache.maven.execution.*;
 import org.apache.maven.lifecycle.internal.ThreadConfigurationService;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MavenPluginManager;
@@ -132,6 +133,12 @@ public class GeneratorServer {
         if (plugin.getGroupId().equals("org.sonatype.flexmojos")) {
           if (flexmojosMojoExecution == null && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
             flexmojosMojoExecution = maven.createMojoExecution(plugin, "compile-" + project.getPackaging(), project);
+            for (Dependency dependency : plugin.getDependencies()) {
+              if (dependency.getArtifactId().equals("flexmojos-threadlocaltoolkit-wrapper")) {
+                AdditionalSourceRootUtil.addResourcesAsCompileSourceRoots(project);
+                break;
+              }
+            }
           }
           else if (!flexmojosGeneratorFound && plugin.getArtifactId().equals("flexmojos-generator-mojo")) {
             AdditionalSourceRootUtil.addByGeneratorMojo(maven.createMojoExecution(plugin, "generate", project), session, project, getLogger());
