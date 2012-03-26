@@ -442,10 +442,12 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     }
 
     final FileOutputStream fileOut = new FileOutputStream(resultFile);
+    final AccessToken token = ReadAction.start();
     try {
       writeResourceBundle(resourceBundle, fileOut, sourceId);
     }
     finally {
+      token.finish();
       fileOut.close();
     }
   }
