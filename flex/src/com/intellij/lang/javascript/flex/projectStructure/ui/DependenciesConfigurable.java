@@ -359,7 +359,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     public void onDoubleClick() {
       if (canEdit()) {
-        editLibrary(orderEntry);
+        editLibrary(this);
       }
     }
 
@@ -455,15 +455,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     public void onDoubleClick() {
-      Library liveLibrary = findLiveLibrary();
-      if (liveLibrary != null) {
-        final BaseLibrariesConfigurable librariesConfigurable =
-          LibraryTablesRegistrar.APPLICATION_LEVEL.equals(liveLibrary.getTable().getTableLevel()) ? GlobalLibrariesConfigurable
-            .getInstance(project) : ProjectLibrariesConfigurable.getInstance(project);
-        Place place = new Place().putPath(ProjectStructureConfigurable.CATEGORY, librariesConfigurable)
-          .putPath(MasterDetailsComponent.TREE_OBJECT, liveLibrary);
-        ProjectStructureConfigurable.getInstance(project).navigateTo(place, true);
-      }
+      editLibrary(this);
     }
 
     public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
@@ -499,7 +491,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     public boolean canEdit() {
-      return false;
+      return true;
     }
 
     @Override
@@ -847,7 +839,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         @Override
         public void run(AnActionButton button) {
           MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
-          editLibrary(((ModuleLibraryItem)item).orderEntry);
+          if (item instanceof SharedLibraryItem) {
+            editLibrary((SharedLibraryItem)item);
+          }
+          if (item instanceof ModuleLibraryItem) {
+            editLibrary(((ModuleLibraryItem)item));
+          }
         }
       }).setRemoveActionUpdater(new AnActionButtonUpdater() {
         @Override
@@ -1031,7 +1028,26 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     return null;
   }
 
-  private void editLibrary(LibraryOrderEntry entry) {
+  private void editLibrary(final SharedLibraryItem item) {
+    final Library liveLibrary = item.findLiveLibrary();
+    if (liveLibrary != null) {
+      final BaseLibrariesConfigurable librariesConfigurable =
+        LibraryTablesRegistrar.APPLICATION_LEVEL.equals(liveLibrary.getTable().getTableLevel())
+        ? GlobalLibrariesConfigurable.getInstance(myProject)
+        : ProjectLibrariesConfigurable.getInstance(myProject);
+      final Place place = new Place()
+        .putPath(ProjectStructureConfigurable.CATEGORY, librariesConfigurable)
+        .putPath(MasterDetailsComponent.TREE_OBJECT, liveLibrary);
+      ProjectStructureConfigurable.getInstance(myProject).navigateTo(place, true);
+    }
+  }
+
+  private void editLibrary(ModuleLibraryItem item) {
+    if (!item.canEdit()) return;
+
+    final LibraryOrderEntry entry = item.orderEntry;
+    assert entry != null;
+
     Library library = entry.getLibrary();
     if (library == null) {
       return;
