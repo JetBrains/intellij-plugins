@@ -1710,26 +1710,18 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   public void libraryReplaced(@NotNull final Library library, @Nullable final Library replacement) {
-    if (myReset) {
-      // look in UI as there is no way to find just-created-and-then-renamed library in model
-      List<MyTableItem> items = myTable.getItems();
-      for (int i = 0; i < items.size(); i++) {
-        MyTableItem item = items.get(i);
-        if (item instanceof SharedLibraryItem && ((SharedLibraryItem)item).findLiveLibrary() == library) {
-          removeItems(Collections.singleton(item), replacement == null);
-          break;
-        }
-      }
-      if (replacement != null) {
-        addSharedLibraries(Collections.singletonList(replacement));
+    assert myReset;
+    // look in UI as there is no way to find just-created-and-then-renamed library in model
+    List<MyTableItem> items = myTable.getItems();
+    for (int i = 0; i < items.size(); i++) {
+      MyTableItem item = items.get(i);
+      if (item instanceof SharedLibraryItem && ((SharedLibraryItem)item).findLiveLibrary() == library) {
+        removeItems(Collections.singleton(item), replacement == null);
+        break;
       }
     }
-    else {
-      List<ModifiableDependencyEntry> entries = myDependencies.getModifiableEntries();
-      for (int i = 0; i < entries.size(); i++) {
-        ModifiableDependencyEntry entry = entries.get(i);
-      }
-      reset();
+    if (replacement != null) {
+      addSharedLibraries(Collections.singletonList(replacement));
     }
   }
 
