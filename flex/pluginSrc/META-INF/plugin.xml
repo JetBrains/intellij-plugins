@@ -1,6 +1,13 @@
 <idea-plugin version="2" xmlns:xi="http://www.w3.org/2001/XInclude">
-  <name>Flex Support</name>
-  <description>Provides support for developing Adobe Flex applications</description>
+  <name>Flash/Flex Support</name>
+  <description>
+    <![CDATA[Provides integration with Flex SDK and thus lets you develop content for the various Adobe runtimes. Using this plugin, you can:<br>
+      <ul>
+        <li>Write, analyze and refactor your ActionScript and MXML code.</li>
+        <li>Build applications for the various platforms such as Adobe Flash Player, Adobe AIR and Adobe AIR mobile.</li>
+        <li>Run, debug, test, package and deploy your applications.</li>
+      </ul>
+    ]]></description>
   <id>com.intellij.flex</id>
   <version>1.0</version>
   <category>HTML/JavaScript Development</category>
