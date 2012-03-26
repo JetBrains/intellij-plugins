@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.Dependencies;
@@ -11,6 +12,7 @@ import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurab
 import com.intellij.lang.javascript.flex.projectStructure.ui.DependenciesConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexProjectStructureUtil;
+import com.intellij.lang.javascript.flex.run.FlashRunConfigurationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
@@ -27,7 +29,6 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureEx
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.ActionCallback;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.Function;
@@ -35,7 +36,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import javax.swing.tree.TreeNode;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,7 +44,6 @@ import java.util.List;
 public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
 
   final FlexIdeBCConfigurator myConfigurator;
-  private static final Icon ICON = IconLoader.getIcon("buildConfig.png");
 
   public FlexBuildConfigurationsExtension() {
     myConfigurator = new FlexIdeBCConfigurator();
@@ -133,7 +132,8 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
                                                final Project project,
                                                final MasterDetailsComponent.MyNode root) {
     final Collection<AnAction> actions = new ArrayList<AnAction>(2);
-    actions.add(new DumbAwareAction("Build Configuration", "Create Build Configuration", ICON) {
+    actions.add(new DumbAwareAction(FlexBundle.message("create.bc.action.text"), FlexBundle.message("create.bc.action.description"),
+                                    FlashRunConfigurationType.ICON) {
       public void update(final AnActionEvent e) {
         e.getPresentation().setVisible(getFlexModuleForNode(selectedNodeRetriever.compute()) != null);
       }

@@ -12,7 +12,7 @@ import javax.swing.*;
 
 public class FlashRunConfigurationType implements ConfigurationType {
 
-  private static final Icon ICON = IconLoader.getIcon("flash_run_config.png");
+  public static final Icon ICON = IconLoader.getIcon("/images/flash_run_config.png");
   public static final String TYPE = "FlashRunConfigurationType";
   public static final String DISPLAY_NAME = "Flash App";
 

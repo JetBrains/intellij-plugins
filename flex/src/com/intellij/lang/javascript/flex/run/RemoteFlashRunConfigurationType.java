@@ -12,7 +12,7 @@ import javax.swing.*;
 
 public class RemoteFlashRunConfigurationType implements ConfigurationType {
 
-  private static final Icon ICON = IconLoader.getIcon("flash_remote_debug.png");
+  private static final Icon ICON = IconLoader.getIcon("/images/flash_remote_debug.png");
   public static final String TYPE = "RemoteFlashRunConfigurationType";
   public static final String DISPLAY_NAME = "Remote Flash Debug";
 
