@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure.detection;
 
 import com.intellij.ide.util.projectWizard.importSources.DetectedProjectRoot;
 import com.intellij.ide.util.projectWizard.importSources.DetectedSourceRoot;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -15,7 +16,7 @@ public class FlexModuleSourceRoot extends DetectedSourceRoot {
   @NotNull
   @Override
   public String getRootTypeName() {
-    return "Flex";
+    return FlexBundle.message("autodetected.source.root.type");
   }
 
   public boolean canContainRoot(@NotNull final DetectedProjectRoot root) {
