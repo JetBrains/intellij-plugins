@@ -191,7 +191,7 @@ public class AirPackageAction extends DumbAwareAction {
               if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                 notification.expire();
                 final String packagePath = event.getDescription();
-                ShowFilePathAction.open(new File(PathUtil.getParentPath(packagePath)), new File(packagePath));
+                ShowFilePathAction.openFile(new File(packagePath));
               }
             }
           };
