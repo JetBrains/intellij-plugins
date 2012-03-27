@@ -1,14 +1,10 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.TripleFunction;
 
@@ -19,6 +15,11 @@ public class LibrarySorterTest extends MxmlTestBase {
   @Override
   protected String generateSdkName(String version) {
     return getName();
+  }
+
+  @Override
+  protected Disposable getSdkParentDisposable() {
+    return myModule;
   }
 
   @Override
@@ -41,19 +42,6 @@ public class LibrarySorterTest extends MxmlTestBase {
       addLibrary(sdkModificator, path + "lib_1.swc");
       addLibrary(sdkModificator, path + "lib_2.swc");
     }
-
-    Disposer.register(myModule, new Disposable() {
-      @Override
-      public void dispose() {
-        final AccessToken token = WriteAction.start();
-        try {
-          ProjectJdkTable.getInstance().removeJdk(sdk);
-        }
-        finally {
-          token.finish();
-        }
-      }
-    });
   }
 
   @Flex(version="4.1")

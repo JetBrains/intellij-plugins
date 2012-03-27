@@ -72,21 +72,23 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     doSetupFlexSdk(myModule, flexSdkRootPath, annotation == null ? TargetPlatform.Desktop : annotation.platform(), flexVersion);
   }
 
+  protected Disposable getSdkParentDisposable() {
+    return ApplicationManager.getApplication();
+  }
+
   private void doSetupFlexSdk(final Module module, final String flexSdkRootPath, final TargetPlatform targetPlatform, final String sdkVersion) {
-    final AccessToken token = WriteAction.start();
-    try {
-      final String sdkName = generateSdkName(sdkVersion);
-      Sdk sdk = ProjectJdkTable.getInstance().findJdk(sdkName);
-      if (sdk == null) {
-        final FlexSdkType2 sdkType = FlexSdkType2.getInstance();
+    final String sdkName = generateSdkName(sdkVersion);
+    Sdk sdk = ProjectJdkTable.getInstance().findJdk(sdkName);
+    final Sdk finalSdk;
+    if (sdk == null) {
+      final AccessToken token = WriteAction.start();
+      try {
+        FlexSdkType2 sdkType = FlexSdkType2.getInstance();
         sdk = PeerFactory.getInstance().createProjectJdk(sdkType.suggestSdkName(null, flexSdkRootPath), "", flexSdkRootPath, sdkType);
-        assert sdk != null;
-        // we have own logic about setupSdkPaths
-        //sdkType.setupSdkPaths(sdk);
         ProjectJdkTable.getInstance().addJdk(sdk);
 
-        final Sdk finalSdk = sdk;
-        Disposer.register(ApplicationManager.getApplication(), new Disposable() {
+        finalSdk = sdk;
+        Disposer.register(getSdkParentDisposable(), new Disposable() {
           @Override
           public void dispose() {
             final AccessToken t = WriteAction.start();
@@ -98,25 +100,27 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
             }
           }
         });
+
+        final SdkModificator modificator = sdk.getSdkModificator();
+        modificator.setName(sdkName);
+        modificator.setVersionString(FlexSdkUtils.readFlexSdkVersion(sdk.getHomeDirectory()));
+        modifySdk(sdk, modificator);
+        modificator.commitChanges();
       }
-
-      final SdkModificator modificator = sdk.getSdkModificator();
-      modificator.setName(sdkName);
-      modificator.setVersionString(FlexSdkUtils.readFlexSdkVersion(sdk.getHomeDirectory()));
-      modifySdk(sdk, modificator);
-      modificator.commitChanges();
-
-      final Sdk finalSdk = sdk;
-      JSTestUtils.modifyBuildConfiguration(module, new Consumer<ModifiableFlexIdeBuildConfiguration>() {
-        public void consume(final ModifiableFlexIdeBuildConfiguration bc) {
-          bc.setNature(new BuildConfigurationNature(targetPlatform, false, getOutputType()));
-          bc.getDependencies().setSdkEntry(Factory.createSdkEntry(finalSdk.getName()));
-        }
-      });
+      finally {
+        token.finish();
+      }
     }
-    finally {
-      token.finish();
+    else {
+      finalSdk = sdk;
     }
+
+    JSTestUtils.modifyBuildConfiguration(module, new Consumer<ModifiableFlexIdeBuildConfiguration>() {
+      public void consume(final ModifiableFlexIdeBuildConfiguration bc) {
+        bc.setNature(new BuildConfigurationNature(targetPlatform, false, getOutputType()));
+        bc.getDependencies().setSdkEntry(Factory.createSdkEntry(finalSdk.getName()));
+      }
+    });
   }
 
   protected OutputType getOutputType() {
