@@ -23,14 +23,14 @@ class SetPropertyOrStyle extends OverrideBase {
       referencePosition = writer.referableHeader();
 
       writer.getOut().write(AmfExtendedTypes.OBJECT);
-      writer.addMarker(dataRange);
+      writer.getBlockOut().append(dataRange);
       reference = -1;
 
       if (targetRange == null) {
         writer.property(stateWriter.TARGET).objectReference(targetId);
       }
       else {
-        writer.addMarker(targetRange);
+        writer.getBlockOut().append(targetRange);
       }
 
       writer.endObject();

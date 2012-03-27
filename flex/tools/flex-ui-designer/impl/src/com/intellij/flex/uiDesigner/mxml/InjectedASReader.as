@@ -11,12 +11,11 @@ public class InjectedASReader {
   private var deferredReferenceClass:Class;
   
   public function read(input:IDataInput, reader:MxmlReader):void {
-    readDeclarations(input, reader);
+    //readDeclarations(input, reader);
     readBinding(input, reader);
   }
 
-  //noinspection JSMethodCanBeStatic
-  private function readDeclarations(input:IDataInput, reader:MxmlReader):void {
+  internal static function readDeclarations(input:IDataInput, reader:MxmlReader):void {
     const length:int = input.readUnsignedShort();
     if (length == 0) {
       return;

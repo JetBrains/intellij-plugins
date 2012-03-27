@@ -1,8 +1,8 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
+import com.intellij.flex.uiDesigner.io.BlockDataOutputStream;
 import com.intellij.flex.uiDesigner.io.ByteRange;
-import com.intellij.flex.uiDesigner.io.ByteRangeMarker;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind;
 import com.intellij.javascript.flex.FlexReferenceContributor.StateReference;
@@ -425,9 +425,9 @@ class StateWriter {
         instance.markAsWritten();
       }
 
-      out.writeUInt29(writer.getBlockOut().getDataRangeOwnLength(instance.getDataRange()) + 2);
+      out.writeUInt29(BlockDataOutputStream.getDataRangeOwnLength(instance.getDataRange()) + 2);
       out.writeShort(instance.getReferredObjectsCount());
-      writer.getBlockOut().addMarker(new ByteRangeMarker(out.size(), instance.getDataRange()));
+      writer.getBlockOut().append(instance.getDataRange());
 
       if (instance.id != -1) {
         out.writeUInt29(instance.id);

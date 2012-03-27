@@ -46,19 +46,6 @@ public class AmfOutputStream extends PrimitiveAmfOutputStream {
     }
   }
 
-  public void write(TIntArrayList array) {
-    write(Amf3Types.VECTOR_INT);
-    writeUInt29((array.size() << 1) | 1);
-    write(true);
-    array.forEach(new TIntProcedure() {
-      @Override
-      public boolean execute(int value) {
-        writeInt(value);
-        return true;
-      }
-    });
-  }
-
   /**
    * Write array as fixed flash Vector.<String>
    */

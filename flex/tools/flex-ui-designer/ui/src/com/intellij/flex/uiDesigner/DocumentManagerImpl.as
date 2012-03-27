@@ -89,18 +89,18 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       var fillCallback:ActionCallback = module.flexLibrarySet.createFillCallback();
       if (fillCallback != null) {
         fillCallback.doWhenDone(render2, documentFactory, result);
-        //trace("as fillCallback");
+        trace("as fillCallback");
         return;
       }
     }
 
     if (documentFactory.document == null) {
       if (module.librarySet.isLoaded) {
-        //trace("as librariesResolved");
+        trace("as librariesResolved");
         createAndRender(documentFactory, result);
       }
       else {
-        //trace("as resolve");
+        trace("as resolve");
         libraryManager.resolve(documentFactory.module.librarySet, doOpenAfterResolveLibraries, documentFactory, result);
       }
     }

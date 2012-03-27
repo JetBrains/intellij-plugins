@@ -65,7 +65,7 @@ class InjectedASWriter implements ValueReferenceResolver {
   }
 
   public ValueWriter processProperty(XmlElementValueProvider valueProvider, String name, @Nullable String type, boolean isStyle,
-                                       @NotNull MxmlObjectReferenceProvider mxmlObjectReferenceProvider) throws InvalidPropertyException {
+                                     @NotNull MxmlObjectReferenceProvider mxmlObjectReferenceProvider) throws InvalidPropertyException {
     final XmlElement host = valueProvider.getInjectedHost();
     return host == null ? null : processProperty(host, name, type, isStyle, mxmlObjectReferenceProvider);
   }
@@ -115,13 +115,17 @@ class InjectedASWriter implements ValueReferenceResolver {
   }
 
   private void writeDeclarations() {
-    if (declarationsRange == null) {
+    ByteRange range = declarationsRange;
+    if (range == null) {
+      range = writer.getBlockOut().startRange();
       writer.getOut().writeShort(0);
+      writer.getBlockOut().endRange(range);
     }
     else {
-      writer.addMarker(declarationsRange);
       declarationsRange = null;
     }
+
+    writer.prepend(range);
   }
 
   private void writeBinding(PrimitiveAmfOutputStream out) {

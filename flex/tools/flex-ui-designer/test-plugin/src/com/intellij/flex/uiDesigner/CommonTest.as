@@ -45,6 +45,11 @@ public class CommonTest extends BaseTestCase {
     assertThat(app.getElementAt(0).dataGroup, [{label: "blue", labelDisplay: notNullValue()}]);
   }
 
+  public function FxComponentReferencedByClassName():void {
+    var m:Object = {text: "Wow!"};
+    assertThat(app.getElementAt(0).dataGroup, [m, m]);
+  }
+
   // AS-110
   public function FxDate():void {
     assertThat(app, [{data: allOf(instanceOf(Date), {month: 8, date: 10, fullYear: 2011})}]);

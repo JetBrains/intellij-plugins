@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner.mxml;
 import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ByteRange;
+import com.intellij.flex.uiDesigner.io.Marker;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexStateElementNames;
@@ -119,7 +120,7 @@ public class MxmlWriter {
       }
 
       injectedASWriter.write();
-      writer.endMessage(projectComponentReferenceCounter);
+      writer.writeMessageHeader(projectComponentReferenceCounter);
       return new Pair<ProjectComponentReferenceCounter, List<RangeMarker>>(projectComponentReferenceCounter, rangeMarkers);
     }
     finally {
@@ -140,7 +141,7 @@ public class MxmlWriter {
     ByteRange dataRange = null;
     // if state specific property before includeIn, state override data range wil be added before object data range, so,
     // we keep current index and insert at the specified position
-    final int dataRangeIndex = writer.getBlockOut().getNextMarkerIndex();
+    final Marker dataRangeAfterAnchor = writer.getBlockOut().getLastMarker();
 
     if (writeLocation) {
       out.writeUInt29(writer.P_FUD_RANGE_ID);
@@ -171,7 +172,7 @@ public class MxmlWriter {
               }
 
               // must be before stateWriter.includeIn — start object data range before state data range
-              dataRange = writer.getBlockOut().startRange(dataPosition, dataRangeIndex);
+              dataRange = writer.getBlockOut().startRange(dataPosition, dataRangeAfterAnchor);
               ((DynamicObjectContext)context).setDataRange(dataRange);
 
               stateWriter.includeInOrExcludeFrom(attribute.getValueElement(), parentContext, (DynamicObjectContext)context, excludeFrom);

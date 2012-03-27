@@ -18,6 +18,7 @@ final class BaseWriter {
   final int P_FUD_RANGE_ID;
 
   private final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
+  private boolean stringWriterFinished;
 
   private final int startPosition;
 
@@ -39,7 +40,7 @@ final class BaseWriter {
     ARRAY = getNameReference("array");
     P_FUD_RANGE_ID = getNameReference("$fud_r");
 
-    assert blockOut.getNextMarkerIndex() == 0;
+    assert blockOut.getLastMarker() == null;
     startPosition = out.size();
 
     nullContext = new NullContext(rootScope);
@@ -61,11 +62,6 @@ final class BaseWriter {
     return nullContext.id;
   }
 
-  // 4
-  public int preallocateIdIfNeed() {
-    return nullContext.getOrAllocateId();
-  }
-
   public boolean isIdPreallocated() {
     return nullContext.getId() != -1;
   }
@@ -80,11 +76,9 @@ final class BaseWriter {
   }
 
   public void resetAfterMessage() {
-    stringWriter.finishChange();
-  }
-
-  public void addMarker(ByteRange dataRange) {
-    blockOut.addMarker(new ByteRangeMarker(blockOut.size(), dataRange));
+    if (!stringWriterFinished) {
+      stringWriter.finishChange();
+    }
   }
 
   public void endObject() {
@@ -95,33 +89,27 @@ final class BaseWriter {
     return rootScope.referenceCounter++;
   }
 
-  public void endMessage(ProjectComponentReferenceCounter projectComponentReferenceCounter) throws IOException {
-    final int documentReferenceSize;
-    if (projectComponentReferenceCounter.total.isEmpty()) {
-      documentReferenceSize = 1;
-    }
-    else {
-      documentReferenceSize = 1 + 1 +
-                              IOUtil.uint29SizeOf((projectComponentReferenceCounter.total.size() << 1) | 1) +
-                              1 +
-                              projectComponentReferenceCounter.total.size() * 4;
-    }
-    
-    blockOut.beginWritePrepended(documentReferenceSize + stringWriter.size() + 2, startPosition);
+  public void writeMessageHeader(ProjectComponentReferenceCounter projectComponentReferenceCounter) throws IOException {
+    final ByteRange range = blockOut.startRange();
 
     if (projectComponentReferenceCounter.total.isEmpty()) {
-      blockOut.writePrepended(false);
+      out.write(Amf3Types.NULL);
     }
     else {
-      blockOut.writePrepended(true);
-      ByteArrayOutputStreamEx bo = new ByteArrayOutputStreamEx(documentReferenceSize - 1);
-      new AmfOutputStream(bo).write(projectComponentReferenceCounter.total);
-      blockOut.writePrepended(bo);
+      out.write(projectComponentReferenceCounter.total);
     }
 
-    blockOut.writePrepended(stringWriter.getCounter(), stringWriter.getByteArrayOut());
-    blockOut.writeShortPrepended(rootScope.referenceCounter);
-    blockOut.endWritePrepended(startPosition);
+    stringWriter.writeTo(out);
+    stringWriterFinished = true;
+
+    out.writeShort(rootScope.referenceCounter);
+
+    blockOut.endRange(range);
+    blockOut.insert(startPosition, range);
+  }
+
+  public void prepend(ByteRange range) {
+    blockOut.insert(startPosition, range);
   }
 
   public int getNameReference(String classOrPropertyName) {

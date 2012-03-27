@@ -169,9 +169,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     var documentFactory:DocumentFactory = new DocumentFactory(input.readUnsignedShort(), bytes, VirtualFileImpl.create(input),
                                                               AmfUtil.readString(input), input.readUnsignedByte(), module);
 
-    if (input.readBoolean()) {
-      documentFactory.documentReferences = input.readObject();
-    }
+    documentFactory.documentReferences = input.readObject();
     getDocumentFactoryManager().register(documentFactory);
 
     stringRegistry.readStringTable(input);
@@ -184,9 +182,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     AmfUtil.readString(input);
     input.readUnsignedByte(); // todo isApp update document styleManager
 
-    if (input.readBoolean()) {
-      documentFactory.documentReferences = input.readObject();
-    }
+    documentFactory.documentReferences = input.readObject();
     
     stringRegistry.readStringTable(input);
 

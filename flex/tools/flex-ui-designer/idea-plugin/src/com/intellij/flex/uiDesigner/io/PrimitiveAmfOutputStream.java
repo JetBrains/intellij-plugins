@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.io;
 
+import gnu.trove.TIntArrayList;
+import gnu.trove.TIntProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -220,11 +222,11 @@ public class PrimitiveAmfOutputStream extends OutputStream {
     out.write(b);
   }
 
-  public final void write(byte b[]) {
+  public final void write(byte[] b) {
     out.write(b, 0, b.length);
   }
 
-  public final void write(byte b[], int off, int len) {
+  public final void write(byte[] b, int off, int len) {
     out.write(b, off, len);
   }
 
@@ -273,6 +275,19 @@ public class PrimitiveAmfOutputStream extends OutputStream {
 
   public final void writeDouble(double v) {
     writeLong(Double.doubleToLongBits(v));
+  }
+
+  public void write(TIntArrayList array) {
+    write(Amf3Types.VECTOR_INT);
+    writeUInt29((array.size() << 1) | 1);
+    write(true);
+    array.forEach(new TIntProcedure() {
+      @Override
+      public boolean execute(int value) {
+        writeInt(value);
+        return true;
+      }
+    });
   }
 
   public final int size() {

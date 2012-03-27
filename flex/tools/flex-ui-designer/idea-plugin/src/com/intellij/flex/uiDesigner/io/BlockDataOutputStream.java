@@ -1,19 +1,20 @@
 package com.intellij.flex.uiDesigner.io;
 
 import com.intellij.openapi.application.ApplicationManager;
+import gnu.trove.TLinkable;
+import gnu.trove.TLinkedList;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.channels.WritableByteChannel;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BlockDataOutputStream extends AbstractByteArrayOutputStream implements WritableByteChannel {
   private static final int SERVICE_DATA_SIZE = 8;
 
   private int lastBlockBegin;
   private OutputStream out;
-  private final List<Marker> markers = new ArrayList<Marker>();
+  private final TLinkedList<Marker> markers = new TLinkedList<Marker>();
 
   private int messageCounter;
 
@@ -26,6 +27,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
     count = SERVICE_DATA_SIZE;
   }
 
+  @SuppressWarnings("ConstantConditions")
   public void setOut(@NotNull OutputStream out) {
     String debugFilename = System.getProperty("fud.socket.dump");
     DebugOutput debugOut;
@@ -39,7 +41,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
 
       this.out = debugOut;
     }
-    else if (ApplicationManager.getApplication().isUnitTestMode()) {
+    else if (true || ApplicationManager.getApplication().isUnitTestMode()) {
       this.out = new AuditorOutput(out);
     }
     else {
@@ -60,7 +62,13 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
   }
 
   private void flushBuffer() throws IOException {
-    out.write(buffer, 0, count);
+    if (markers.isEmpty()) {
+      out.write(buffer, 0, count);
+    }
+    else {
+      writeMarkered();
+    }
+
     lastBlockBegin = 0;
     count = SERVICE_DATA_SIZE;
   }
@@ -82,7 +90,7 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
     }
 
     writeHeader();
-    if (count >= 8192 && out != null) {
+    if (!markers.isEmpty() || (count >= 8192 && out != null)) {
       flushBuffer();
     }
     else {
@@ -91,145 +99,93 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
     }
   }
 
-  public void beginWritePrepended(int additionalSize, int insertPosition) throws IOException {
-    count += additionalSize;
-    writeHeader();
-    count -= additionalSize;
-    out.write(buffer, 0, insertPosition);
-  }
-
-  public void writePrepended(ByteArrayOutputStreamEx byteArrayOutput) throws IOException {
-    byteArrayOutput.writeTo(out);
-  }
-
-  public void writePrepended(boolean value) throws IOException {
-    out.write(value ? 1 : 0);
-  }
-
-  public void writePrepended(int counter, ByteArrayOutputStreamEx byteArrayOutput) throws IOException {
-    writePrepended(counter);
-    if (counter > 0) {
-      byteArrayOutput.writeTo(out);
+  private void writeMarkered() throws IOException {
+    int lastEnd = 0;
+    AuditorOutput auditorOutput = null;
+    if (out instanceof AuditorOutput) {
+      auditorOutput = (AuditorOutput)out;
+      auditorOutput.written = 0;
     }
-  }
 
-  public void writeShortPrepended(int counter) throws IOException {
-    out.write(counter >>> 8 & 0xFF);
-    out.write(counter & 0xFF);
-  }
-
-  public void writePrepended(int counter) throws IOException {
-    if (counter < 0x80) {
-      out.write(counter);
-    }
-    else if (counter < 0x4000) {
-      out.write(((counter >> 7) & 0x7F) | 0x80);
-      out.write(counter & 0x7F);
-    }
-    else {
-      throw new IllegalArgumentException("Integer out of range: " + counter);
-    }
-  }
-
-  public void endWritePrepended(int insertPosition) throws IOException {
-    int lastEnd = insertPosition;
-    if (markers.isEmpty()) {
-      out.write(buffer, insertPosition, count - insertPosition);
-    }
-    else {
-      AuditorOutput auditorOutput = null;
-      if (out instanceof AuditorOutput) {
-        auditorOutput = (AuditorOutput)out;
-        auditorOutput.written = 0;
-      }
-
-      for (Marker marker : markers) {
-        if (marker.getEnd() < lastEnd) {
-          // nested
-          continue;
-        }
-
-        int length = marker.getStart() - lastEnd;
+    Marker marker = markers.getFirst();
+    do {
+      int length = marker.getStart() - lastEnd;
+      // may be < 0 if nested
+      if (length >= 0) {
         if (length > 0) {
           out.write(buffer, lastEnd, length);
         }
-
-        if (marker instanceof ByteRangeMarker) {
-          writeDataRange(((ByteRangeMarker)marker).getDataRange());
-        }
-
         lastEnd = marker.getEnd();
       }
 
-      markers.clear();
-      int tailLength = count - lastEnd;
-      if (tailLength > 0) {
-        out.write(buffer, lastEnd, tailLength);
-      }
-
-      if (auditorOutput != null) {
-        assert auditorOutput.written == (count - insertPosition);
-        auditorOutput.written = -1;
+      if (marker instanceof ByteRangePointer) {
+        writeDataRange(((ByteRangePointer)marker).getDataRange());
       }
     }
+    while ((marker = (Marker)marker.getNext()) != null);
 
-    lastBlockBegin = 0;
-    count = SERVICE_DATA_SIZE;
+    int tailLength = count - lastEnd;
+    if (tailLength > 0) {
+      out.write(buffer, lastEnd, tailLength);
+    }
+
+    if (auditorOutput != null) {
+      //assert auditorOutput.written == (count - (lastBlockBegin + SERVICE_DATA_SIZE));
+      auditorOutput.written = -1;
+    }
+
+    markers.clear();
   }
 
   private void writeDataRange(ByteRange dataRange) throws IOException {
-    int childIndex = dataRange.getIndex() + 1;
+    ByteRange possibleChild = dataRange;
     int start = dataRange.getStart();
     final int ownEnd = dataRange.getEnd();
     while (true) {
-      Marker possibleChild = markers.get(childIndex++);
-      int childEnd = possibleChild.getEnd();
-      if (childEnd < ownEnd) {
+      TLinkable next = possibleChild.getNext();
+      while (next != null && !(next instanceof ByteRange)) {
+        next = next.getNext();
+      }
+
+      possibleChild = (ByteRange)next;
+      if (possibleChild == null || possibleChild.getEnd() > ownEnd) {
+        out.write(buffer, start, ownEnd - start);
+        break;
+      }
+      else {
         int length = possibleChild.getStart() - start;
         if (length > -1) {
           if (length != 0) {
             out.write(buffer, start, length);
           }
-          start = childEnd;
+          start = possibleChild.getEnd();
         }
-      }
-      else {
-        out.write(buffer, start, ownEnd - start);
-        break;
       }
     }
   }
 
-  public int getDataRangeOwnLength(ByteRange dataRange) {
+  public static int getDataRangeOwnLength(ByteRange dataRange) {
     if (dataRange.getOwnLength() != -1) {
       return dataRange.getOwnLength();
     }
 
-    int childIndex = dataRange.getIndex() + 1;
+    Marker possibleChild = dataRange;
     int start = dataRange.getStart();
     final int ownEnd = dataRange.getEnd();
     int ownLength = 0;
 
     while (true) {
-      // this check is not needed for writeDataRange, because writeDataRange call only after build message – opposite to 
-      // getDataRangeOwnLength
-      if (childIndex == markers.size()) {
+      possibleChild = (Marker)possibleChild.getNext();
+      if (possibleChild == null || possibleChild.getEnd() > ownEnd) {
         ownLength += ownEnd - start;
         break;
       }
-
-      Marker possibleChild = markers.get(childIndex++);
-      int childEnd = possibleChild.getEnd();
-      if (childEnd < ownEnd) {
+      else {
         int length = possibleChild.getStart() - start;
         if (length > -1) {
           ownLength += length;
-          start = childEnd;
+          start = possibleChild.getEnd();
         }
-      }
-      else {
-        ownLength += ownEnd - start;
-        break;
       }
     }
 
@@ -264,8 +220,9 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
     }
   }
 
-  public int getNextMarkerIndex() {
-    return markers.size();
+  @Nullable
+  public Marker getLastMarker() {
+    return markers.getLast();
   }
 
   public ByteRange startRange() {
@@ -273,26 +230,37 @@ public class BlockDataOutputStream extends AbstractByteArrayOutputStream impleme
   }
 
   public ByteRange startRange(int start) {
-    return startRange(start, markers.size());
-  }
-
-  public ByteRange startRange(int start, int index) {
-    ByteRange byteRange = new ByteRange(start, index);
-    markers.add(index, byteRange);
+    ByteRange byteRange = new ByteRange(start);
+    markers.addLast(byteRange);
     return byteRange;
   }
 
-  public void removeLastMarkerAndAssert(ByteRange dataRange) {
-    Marker removed = markers.remove(markers.size() - 1);
-    assert removed == dataRange;
+  public ByteRange startRange(int start, @Nullable Marker after) {
+    ByteRange byteRange = new ByteRange(start);
+    if (after == null) {
+      markers.addFirst(byteRange);
+    }
+    else {
+      markers.addBefore((Marker)after.getNext(), byteRange);
+    }
+    return byteRange;
   }
 
   public void endRange(ByteRange range) {
     range.setEnd(count);
   }
 
-  public void addMarker(Marker marker) {
-    markers.add(marker);
+  public void removeLastMarkerAndAssert(ByteRange dataRange) {
+    Marker removed = markers.removeLast();
+    assert removed == dataRange;
+  }
+
+  public void insert(final int position, final ByteRange dataRange) {
+    markers.addFirst(new ByteRangePointer(position, dataRange));
+  }
+
+  public void append(ByteRange dataRange) {
+    markers.addLast(new ByteRangePointer(count, dataRange));
   }
 
   private static class DebugOutput extends AuditorOutput {

@@ -20,7 +20,7 @@ class AddItems extends OverrideBase {
   @Override
   void write(BaseWriter writer, StateWriter stateWriter) {
     writer.objectHeader(stateWriter.ADD_ITEMS);
-    writer.addMarker(dataRange);
+    writer.getBlockOut().append(dataRange);
 
     if (autoDestruction) {
       writer.classOrPropertyName("destructionPolicy");

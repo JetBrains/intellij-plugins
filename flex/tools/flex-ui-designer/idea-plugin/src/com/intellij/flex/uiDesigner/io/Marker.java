@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner.io;
 
-public interface Marker {
+import gnu.trove.TLinkable;
+
+public interface Marker extends TLinkable {
   int getStart();
 
   int getEnd();

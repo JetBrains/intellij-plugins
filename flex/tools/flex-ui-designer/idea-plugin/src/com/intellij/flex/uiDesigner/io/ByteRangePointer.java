@@ -1,9 +1,9 @@
 package com.intellij.flex.uiDesigner.io;
 
-public class ByteRangeMarker extends AbstractMarker {
+class ByteRangePointer extends AbstractMarker {
   private final ByteRange dataRange;
 
-  public ByteRangeMarker(int position, ByteRange dataRange) {
+  public ByteRangePointer(int position, ByteRange dataRange) {
     super(position);
     this.dataRange = dataRange;
 

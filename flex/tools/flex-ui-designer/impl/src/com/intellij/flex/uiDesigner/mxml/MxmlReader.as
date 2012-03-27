@@ -98,7 +98,15 @@ public class MxmlReader implements DocumentReader {
   private function doRead(context:DocumentReaderContext, isDocumentLevel:Boolean):Object {
     this.context = context;
     module = Module(context.moduleContext);
-    readObjectTableSize();
+
+    const objectTableSize:int = input.readUnsignedShort();
+    if (objectTableSize != 0) {
+      objectTable = new Vector.<Object>(objectTableSize, true);
+    }
+
+    if (isDocumentLevel) {
+      InjectedASReader.readDeclarations(input, this);
+    }
 
     var object:Object;
     switch (input.readByte()) {
@@ -131,15 +139,6 @@ public class MxmlReader implements DocumentReader {
   // </VGroup>
   public function getObjectTableForDeferredInstanceFromBytes():Vector.<Object> {
     return objectTable;
-  }
-
-  private function readObjectTableSize():int {
-    const objectTableSize:int = input.readUnsignedShort();
-    if (objectTableSize != 0) {
-      objectTable = new Vector.<Object>(objectTableSize, true);
-    }
-    
-    return objectTableSize;
   }
   
   internal function readObjectReference():Object {

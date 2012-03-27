@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner.io;
 
-public abstract class AbstractMarker implements Marker {
+import gnu.trove.TLinkableAdaptor;
+
+abstract class AbstractMarker extends TLinkableAdaptor implements Marker {
   private final int position;
 
   public AbstractMarker(int position) {

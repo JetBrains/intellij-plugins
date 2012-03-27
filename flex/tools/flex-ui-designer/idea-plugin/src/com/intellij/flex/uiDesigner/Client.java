@@ -505,6 +505,7 @@ public class Client implements Disposable {
     if (result == null) {
       return false;
     }
+    blockOut.end();
 
     documentInfo.setRangeMarkers(result.second);
     return result.first.unregistered.isEmpty() || registerDocumentReferences(result.first.unregistered, module, problemsHolder);

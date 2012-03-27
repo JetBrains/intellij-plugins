@@ -1,17 +1,17 @@
 package com.intellij.flex.uiDesigner.io;
 
-public class ByteRange implements Marker {
+import gnu.trove.TLinkableAdaptor;
+
+public class ByteRange extends TLinkableAdaptor implements Marker {
   private boolean used;
 
   private final int start;
   private int end;
 
-  private final int index;
   private int ownLength = -1;
 
-  public ByteRange(int start, int index) {
+  public ByteRange(int start) {
     this.start = start;
-    this.index = index;
   }
 
   @Override
@@ -26,10 +26,6 @@ public class ByteRange implements Marker {
 
   public void setEnd(int end) {
     this.end = end;
-  }
-
-  public int getIndex() {
-    return index;
   }
 
   public int getOwnLength() {
