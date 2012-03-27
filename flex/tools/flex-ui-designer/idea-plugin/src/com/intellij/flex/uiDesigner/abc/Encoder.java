@@ -518,7 +518,7 @@ public class Encoder {
 
     TIntArrayList newMetadata = trimMetadata(metadata);
     if (((traitKind >> 4) & TRAIT_FLAG_metadata) != 0 && newMetadata == null) {
-      traitKind = traitKind & ~(TRAIT_FLAG_metadata << 4);
+      traitKind &= ~(TRAIT_FLAG_metadata << 4);
     }
     currentBuffer.writeU8(traitKind);
 
@@ -723,7 +723,7 @@ public class Encoder {
 
     TIntArrayList newMetadata = trimMetadata(metadata);
     if (((traitKind >> 4) & TRAIT_FLAG_metadata) != 0 && newMetadata == null) {
-      traitKind = traitKind & ~(TRAIT_FLAG_metadata << 4);
+      traitKind &= ~(TRAIT_FLAG_metadata << 4);
     }
     currentBuffer.writeU8(traitKind);
 
@@ -737,7 +737,7 @@ public class Encoder {
     currentBuffer.writeU32(history.getIndex(IndexHistory.MULTINAME, name));
     TIntArrayList newMetadata = trimMetadata(metadata);
     if (((kind >> 4) & TRAIT_FLAG_metadata) != 0 && newMetadata == null) {
-      kind = kind & ~(TRAIT_FLAG_metadata << 4);
+      kind &= ~(TRAIT_FLAG_metadata << 4);
     }
     currentBuffer.writeU8(kind);
 
@@ -751,7 +751,7 @@ public class Encoder {
     currentBuffer.writeU32(history.getIndex(IndexHistory.MULTINAME, name));
     TIntArrayList newMetadata = trimMetadata(metadata);
     if (((kind >> 4) & TRAIT_FLAG_metadata) != 0 && newMetadata == null) {
-      kind = kind & ~(TRAIT_FLAG_metadata << 4);
+      kind &= ~(TRAIT_FLAG_metadata << 4);
     }
     currentBuffer.writeU8(kind);
 

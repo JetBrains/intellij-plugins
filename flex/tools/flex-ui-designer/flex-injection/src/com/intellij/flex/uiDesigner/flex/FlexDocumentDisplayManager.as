@@ -945,4 +945,3 @@ final class ActiveWindowManagerForAdobeDummies extends ActiveWindowManager {
   }
 }
 
-

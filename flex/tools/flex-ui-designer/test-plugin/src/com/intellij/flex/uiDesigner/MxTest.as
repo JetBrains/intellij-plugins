@@ -17,6 +17,9 @@ public class MxTest extends BaseTestCase {
     assertThat(app, {document: app});
   }
 
+  public function AssetLoader():void {
+  }
+
   public function InlineArrayAsAttributeValue():void {
     assertThat(app, [
       {dataProvider: {source: ['Appetizers', 'Entrees', 'Desserts']}},

@@ -28,7 +28,8 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     "mx.styles:StyleProtoChain",
     "spark.components.supportClasses:SkinnableComponent",
     "mx.effects:Effect",
-    "spark.modules:ModuleLoader"
+    "spark.modules:ModuleLoader",
+    "mx.controls:SWFLoader"
   };
 
   static final char OVERLOADED_AND_BACKED_CLASS_MARK = 'F';
@@ -45,7 +46,6 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
       if (StringUtil.equals(name, overloadedClassName)) {
         changeAbcName(overloadedClassName, buffer);
         flipDefinition(definition, definitionMap, overloadedClassName);
-        return;
       }
     }
 
@@ -59,7 +59,10 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
         skippedMethods = null;
       }
 
-      definition.doAbcData.abcModifier = new MethodAccessModifier("setControlBar", skippedMethods, null, false);
+      definition.doAbcData.abcModifier = new MethodAccessModifier("setControlBar", skippedMethods);
+    }
+    else if (StringUtil.equals(name, "mx.controls:SWFLoader")) {
+      definition.doAbcData.abcModifier = new MethodAccessModifier("loadContent", null);
     }
     else {
       final boolean mxCore = StringUtil.startsWith(name, MX_CORE);
@@ -216,6 +219,10 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     private boolean modifyConstructor;
 
     private int traitDelta;
+
+    private MethodAccessModifier(String changeAccessModifier, List<SkipMethodKey> skippedMethods) {
+      this(changeAccessModifier, skippedMethods, null, false);
+    }
 
     private MethodAccessModifier(@Nullable String changeAccessModifier,
                                  @Nullable List<SkipMethodKey> skippedMethods,

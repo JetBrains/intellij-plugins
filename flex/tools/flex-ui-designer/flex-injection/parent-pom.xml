@@ -82,6 +82,7 @@
             <include>mx.styles.StyleProtoChain</include>
             <include>mx.styles.StyleManager</include>
             <include>mx.effects.Effect</include>
+            <include>mx.controls.SWFLoader</include>
             <include>spark.modules.ModuleLoader</include>
 
             <include>mx.managers.LayoutManager</include>

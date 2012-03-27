@@ -69,6 +69,7 @@
 		<class>mx.styles.StyleProtoChain</class>
 		<class>mx.styles.StyleManager</class>
 		<class>mx.effects.Effect</class>
+		<class>mx.controls.SWFLoader</class>
 		<class>spark.modules.ModuleLoader</class>
 		<class>mx.managers.LayoutManager</class>
 		<class>mx.managers.CursorManager</class>
