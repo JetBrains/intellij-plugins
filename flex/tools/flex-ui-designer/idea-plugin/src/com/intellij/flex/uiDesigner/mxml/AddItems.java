@@ -13,8 +13,7 @@ class AddItems extends OverrideBase {
     super(dataRange);
     this.autoDestruction = autoDestruction;
     itemDeferredInstances = new ArrayList<DynamicObjectContext>();
-    itemDeferredInstances.add(itemDeferredInstance);
-    itemDeferredInstance.overrideUserCount++;
+    addItemDeferredInstance(itemDeferredInstance);
   }
 
   @Override
@@ -38,6 +37,11 @@ class AddItems extends OverrideBase {
     }
 
     writer.endObject();
+  }
+
+  public void addItemDeferredInstance(DynamicObjectContext itemDeferredInstance) {
+    itemDeferredInstance.overrideUserCount++;
+    itemDeferredInstances.add(itemDeferredInstance);
   }
 
   public List<DynamicObjectContext> getItemDeferredInstances() {

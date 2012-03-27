@@ -303,6 +303,10 @@ public class StatesTest extends BaseTestCase {
     assertThat(app, [{width: 40}]);
   }
 
+  public function IDEA_72004_test2():void {
+    validateUI();
+  }
+
   public function ExcludeFrom():void {
     validateUI();
     assertThat(app, [{text: "U"}]);

@@ -161,7 +161,7 @@ class StateWriter {
       // lazy reset state.activeAddItems
       AddItems override = state.getValidActiveAddItems(parentContext, autoItemDestruction);
       if (override != null) {
-        override.getItemDeferredInstances().add(context);
+        override.addItemDeferredInstance(context);
       }
       else {
         state.addAddItems(createAddItems(context, parentContext, autoItemDestruction), parentContext, pendingFirstSetProperty);

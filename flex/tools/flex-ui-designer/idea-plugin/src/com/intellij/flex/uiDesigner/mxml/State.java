@@ -67,7 +67,7 @@ class State {
         // test case: ItemDestructionPolicyMergeItems2, override == text="3", override.next == text="2"
         AddItems next = (AddItems)overrides.getNext(override);
         if (next != null && next.isAutoDestruction()) {
-          next.getItemDeferredInstances().add(override.getItemDeferredInstances().get(0));
+          next.addItemDeferredInstance(override.getItemDeferredInstances().get(0));
           writer.getBlockOut().removeLastMarkerAndAssert(override.dataRange);
           overrides.remove(override);
           setActiveAddItems(next, parentContext);
