@@ -58,6 +58,7 @@ public class RootNode extends SimpleNode {
     /**
      * {@inheritDoc}
      */
+    @NotNull
     public Object[] getEqualityObjects() {
         return new Object[]{_myElement};
     }

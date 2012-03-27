@@ -54,6 +54,7 @@ public class TapestryProjectTreeStructure extends SimpleTreeStructure {
                     return new SimpleNode[0];
                 }
 
+                @NotNull
                 public Object[] getEqualityObjects() {
                     return new Object[]{EMPTY_DESCRIPTOR};
                 }
