@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.ui.UIBundle;
 import com.intellij.util.ResourceUtil;
 import com.intellij.util.SystemProperties;
 import gnu.trove.THashSet;
@@ -295,7 +296,16 @@ public class FlexUnitPrecompileTask implements CompileTask {
 
     logTargetText = logTargetText.replace("/*className*/", FileUtil.getNameWithoutExtension(logTargetFileName));
 
-    final VirtualFile tempDir = LocalFileSystem.getInstance().findFileByIoFile(new File(FlexUtils.getPathToFlexUnitTempDirectory()));
+    final File tmpDir = new File(FlexUtils.getPathToFlexUnitTempDirectory());
+    boolean ok = true;
+    if (tmpDir.isFile()) ok &= FileUtil.delete(tmpDir);
+    if (!tmpDir.isDirectory()) ok &= tmpDir.mkdirs();
+    if (!ok) {
+      final String message =
+        UIBundle.message("create.new.folder.could.not.create.folder.error.message", FileUtil.toSystemDependentName(tmpDir.getPath()));
+      context.addMessage(CompilerMessageCategory.ERROR, message, null, -1, -1);
+      return false;
+    }
 
     final Ref<VirtualFile> launcherFile = new Ref<VirtualFile>();
     final Ref<IOException> createLauncherError = new Ref<IOException>();
@@ -307,6 +317,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
           public void run() {
             try {
+              final VirtualFile tempDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(tmpDir);
               VirtualFile launcherBaseFile = FlexUtils.addFileWithContent(launcherBaseFileName, launcherBaseText, tempDir);
               VirtualFile logTargetFile = FlexUtils.addFileWithContent(logTargetFileName, logTargetText1, tempDir);
               launcherFile.set(FlexUtils.addFileWithContent(launcherFileName, launcherText1, tempDir));

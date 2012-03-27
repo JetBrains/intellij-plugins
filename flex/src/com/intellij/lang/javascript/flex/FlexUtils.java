@@ -407,7 +407,7 @@ public class FlexUtils {
   }
 
   public static String getPathToFlexUnitTempDirectory() {
-    return FileUtil.getTempDirectory();
+    return FileUtil.getTempDirectory() + "/idea-flexunit";
   }
 
   @Nullable
