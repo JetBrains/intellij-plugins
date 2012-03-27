@@ -9,7 +9,7 @@ public class FtyleProtoChain {
     return null;
   }
 
-  public static function initProtoChain(object:IStyleClient):void {
+  public static function initProtoChain(object:IStyleClient, inheritPopUpStylesFromOwner:Boolean = true):void {
 
   }
 

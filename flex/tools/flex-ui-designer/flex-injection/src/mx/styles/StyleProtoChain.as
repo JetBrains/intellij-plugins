@@ -113,7 +113,7 @@ public class StyleProtoChain {
   }
 
   //noinspection JSUnusedGlobalSymbols
-  public static function initProtoChain(object:IStyleClient):void {
+  public static function initProtoChain(object:IStyleClient, inheritPopUpStylesFromOwner:Boolean = true):void {
     if (object.styleDeclaration != null && !(object.styleDeclaration is AbstractCssStyleDeclaration)) {
       object.styleDeclaration = new InlineCssStyleDeclaration(InlineCssRuleset.createExternalInlineWithFactory(object.styleDeclaration.defaultFactory, false), StyleManagerEx(getStyleManager(object)).styleValueResolver);
     }
