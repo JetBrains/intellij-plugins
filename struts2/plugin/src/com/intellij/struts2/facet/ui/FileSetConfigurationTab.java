@@ -358,6 +358,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       return true;
     }
 
+    @NotNull
     public Object[] getEqualityObjects() {
       return new Object[]{mySet, mySet.getName(), mySet.getFiles()};
     }
