@@ -20,6 +20,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.*;
+import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
@@ -344,9 +345,18 @@ public class FlexSdkUtils {
   private static Sdk doCreateSdk(final SdkType sdkType, final @NotNull String sdkHomePath) {
     return ApplicationManager.getApplication().runWriteAction(new Computable<Sdk>() {
       public Sdk compute() {
-        final Sdk sdk = PeerFactory.getInstance().createProjectJdk(sdkType.suggestSdkName(null, sdkHomePath), "", sdkHomePath, sdkType);
-        sdkType.setupSdkPaths(sdk);
         final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
+        final String sdkName;
+        if (sdkType instanceof FlexmojosSdkType) {
+          // IDEA-73222
+          sdkName = SdkConfigurationUtil.createUniqueSdkName(sdkType, sdkHomePath, projectJdkTable.getSdksOfType(sdkType));
+        }
+        else {
+          sdkName = sdkType.suggestSdkName(null, sdkHomePath);
+        }
+
+        final Sdk sdk = PeerFactory.getInstance().createProjectJdk(sdkName, "", sdkHomePath, sdkType);
+        sdkType.setupSdkPaths(sdk);
         projectJdkTable.addJdk(sdk);
         return sdk;
       }
