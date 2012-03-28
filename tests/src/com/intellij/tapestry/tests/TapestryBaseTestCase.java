@@ -57,7 +57,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder = JavaTestFixtureFactory.createFixtureBuilder();
+    final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder = JavaTestFixtureFactory.createFixtureBuilder(getName());
     JavaModuleFixtureBuilder moduleBuilder = projectBuilder.addModule(getModuleFixtureBuilderClass());
     myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(projectBuilder.getFixture());
     myFixture.setTestDataPath(getTestDataPath());
