@@ -249,5 +249,9 @@ public class CommonTest extends BaseTestCase {
   public function ProjectActionScriptComponentAsParent():void {
     assertThat(app, []);
   }
+
+  public function InlineRenderer():void {
+    assertThat(app, [[[l("no id, no classname")]], [[l("id")]], [[l("id")]], [[l("className")]], [[l("className")]], [[l("className")]]]);
+  }
 }
 }

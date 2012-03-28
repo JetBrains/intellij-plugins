@@ -1,0 +1,47 @@
+<VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark">
+  <fx:Declarations>
+    <ArrayList id="data">
+      <fx:Object firstName="Bill" lastName="Smith" companyID="11233"/>
+    </ArrayList>
+  </fx:Declarations>
+
+  <DataGroup dataProvider="{data}">
+    <itemRenderer>
+      <fx:Component>
+        <ItemRenderer>
+          <Label text="no id, no classname"/>
+        </ItemRenderer>
+      </fx:Component>
+    </itemRenderer>
+  </DataGroup>
+
+  <DataGroup dataProvider="{data}">
+    <itemRenderer>{referableById}</itemRenderer>
+  </DataGroup>
+
+  <DataGroup dataProvider="{data}">
+    <itemRenderer>
+      <fx:Component id="referableById">
+        <ItemRenderer>
+          <Label text="id"/>
+        </ItemRenderer>
+      </fx:Component>
+    </itemRenderer>
+  </DataGroup>
+
+  <DataGroup dataProvider="{data}">
+    <itemRenderer>referableByClassName</itemRenderer>
+  </DataGroup>
+
+  <DataGroup dataProvider="{data}" itemRenderer="referableByClassName"/>
+
+  <DataGroup dataProvider="{data}">
+    <itemRenderer>
+      <fx:Component className="referableByClassName">
+        <ItemRenderer>
+          <Label text="className"/>
+        </ItemRenderer>
+      </fx:Component>
+    </itemRenderer>
+  </DataGroup>
+</VGroup>

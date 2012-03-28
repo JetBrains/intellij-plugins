@@ -281,7 +281,7 @@ final class BaseWriter {
 
   public int componentFactory(int reference) {
     out.write(AmfExtendedTypes.COMPONENT_FACTORY);
-    out.writeUInt29(reference);
+    out.writeUInt29(reference + 1);
     int sizePosition = out.allocateShort();
     out.allocateShort(); // object table size
     return sizePosition;

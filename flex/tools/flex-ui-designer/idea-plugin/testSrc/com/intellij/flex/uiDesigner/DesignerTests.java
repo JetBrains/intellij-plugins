@@ -59,14 +59,14 @@ public final class DesignerTests {
           }
         }
       };
-      //FileBasedIndex.getInstance().registerIndexableSet(indexableFileSet, module.getProject());
+      FileBasedIndex.getInstance().registerIndexableSet(indexableFileSet, module.getProject());
 
       Disposer.register(module, new Disposable() {
         @Override
         public void dispose() {
           final AccessToken token = WriteAction.start();
           try {
-            sourceDir.delete(DesignerTests.class);
+            sourceDir.delete(null);
           }
           catch (IOException e) {
             throw new AssertionError(e);
@@ -74,7 +74,7 @@ public final class DesignerTests {
           finally {
             token.finish();
 
-            //FileBasedIndex.getInstance().removeIndexableSet(indexableFileSet);
+            FileBasedIndex.getInstance().removeIndexableSet(indexableFileSet);
           }
         }
       });

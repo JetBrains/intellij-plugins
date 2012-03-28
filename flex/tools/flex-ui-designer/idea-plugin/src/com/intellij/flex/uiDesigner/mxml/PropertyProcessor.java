@@ -206,7 +206,7 @@ class PropertyProcessor implements ValueWriter {
   }
 
   boolean processFxModel(XmlTag tag) {
-    final MxmlObjectReference objectReference = processFxDeclarationId(tag, null);
+    final MxmlObjectReference objectReference = processFxDeclarationId(tag, null, false);
     if (objectReference == null) {
       return false;
     }
@@ -232,12 +232,13 @@ class PropertyProcessor implements ValueWriter {
     return true;
   }
 
-  private MxmlObjectReference processFxDeclarationId(XmlTag tag, @Nullable String classNameTrick) {
-    final XmlAttribute idAttribute = tag.getAttribute("id");
-    String id = null;
-    if (idAttribute == null || StringUtil.isEmpty((id = idAttribute.getDisplayValue()))) {
-      LOG.warn("Skip fx:model/fx:component, id is not specified or empty: " + tag.getText());
+  private MxmlObjectReference processFxDeclarationId(XmlTag tag, @Nullable String classNameTrick, boolean allowNullableIdOrClassName) {
+    String id = getAttributeValue(tag, "id");
+    if (id == null) {
       if (classNameTrick == null) {
+        if (!allowNullableIdOrClassName) {
+          LOG.warn("Skip fx:model/fx:component, id is not specified or empty: " + tag.getText());
+        }
         return null;
       }
     }
@@ -254,26 +255,32 @@ class PropertyProcessor implements ValueWriter {
     return objectReference;
   }
 
-  int processFxComponent(XmlTag tag) {
-    String className = null;
-    final XmlAttribute classNameAttribute = tag.getAttribute("className");
-    if (classNameAttribute != null) {
-      className = classNameAttribute.getDisplayValue();
-      if (className.isEmpty()) {
-        className = null;
-      }
-    }
-    
-    final MxmlObjectReference objectReference = processFxDeclarationId(tag, className);
-    if (objectReference == null) {
-      return -2;
+  static String getAttributeValue(XmlTag tag, String attributeName) {
+    final XmlAttribute attribute = tag.getAttribute(attributeName);
+    return attribute == null ? null : StringUtil.nullize(attribute.getDisplayValue());
+  }
+
+  boolean processFxComponent(XmlTag tag, boolean allowNullableIdOrClassName) {
+    String className = getAttributeValue(tag, "className");
+    if (className != null && writeFxComponentReferenceIfProcessed(className)) {
+      return true;
     }
 
-    final int sizePosition = writer.componentFactory(objectReference.id);
+    final MxmlObjectReference objectReference = processFxDeclarationId(tag, className, allowNullableIdOrClassName);
+    if (objectReference == null && !allowNullableIdOrClassName) {
+      return false;
+    }
+
+    final int sizePosition = writer.componentFactory(objectReference == null ? -1 : objectReference.id);
     final XmlTag[] subTags = tag.getSubTags();
+    final int objectTableSize;
+    final PrimitiveAmfOutputStream out = writer.getOut();
     if (subTags.length == 1) {
-      writer.getOut().write(Amf3Types.OBJECT);
-      return sizePosition;
+      out.write(Amf3Types.OBJECT);
+
+      StaticObjectContext context = writer.createStaticContext(null, -1);
+      mxmlWriter.processPropertyTagValue(null, tag, context, null);
+      objectTableSize = context.getScope().referenceCounter;
     }
     else {
       // as object without any properties
@@ -281,11 +288,16 @@ class PropertyProcessor implements ValueWriter {
       writer.endObject();
 
       if (subTags.length > 1) {
-        LOG.warn("Skip model, only one root tag is allowed: " + tag.getText());
+        LOG.warn("Skip fx:component, only one root tag is allowed: " + tag.getText());
       }
 
-      return -1;
+      objectTableSize = 0;
     }
+
+    out.putShort(out.size() - (sizePosition + 2 /* short size */), sizePosition);
+    out.putShort(objectTableSize, sizePosition + 2);
+
+    return true;
   }
 
   private static class ModelObjectReferenceProvider implements MxmlObjectReferenceProvider {
@@ -827,19 +839,13 @@ class PropertyProcessor implements ValueWriter {
       XmlTag tag = ((XmlTagValueProvider)valueProvider).getTag();
       XmlTag[] subTags = tag.getSubTags();
       if (subTags.length > 0) {
-        throw new InvalidPropertyException(tag, "inline.component.are.not.supported");
+        processFxComponent(subTags[0], true);
+        return;
       }
     }
 
     String className = valueProvider.getTrimmed();
-
-    MxmlObjectReference fxComponentFactoryReference = injectedASWriter.getNullableValueReference('$' + className);
-    if (fxComponentFactoryReference != null) {
-      writer.objectReference(fxComponentFactoryReference.id);
-      return;
-    }
-    
-    if (writeReferenceIfReferenced(className)) {
+    if (writeFxComponentReferenceIfProcessed(className) || writeReferenceIfReferenced(className)) {
       return;
     }
 
@@ -849,11 +855,16 @@ class PropertyProcessor implements ValueWriter {
     }
 
     final Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> effectiveClassInfo;
-
     final PsiElement parent = jsClass.getNavigationElement().getParent();
     if (parent instanceof XmlTag && MxmlUtil.isComponentLanguageTag((XmlTag)parent)) {
-      LOG.warn("AS-125 " + valueProvider.getElement().getText());
-      effectiveClassInfo = new Trinity<Integer, String, Condition<AnnotationBackedDescriptor>>(-1, "mx.core.UIComponent", null);
+      // if referenced by inner class name, but inner fx component is not yet processed
+      if (parent.getContainingFile().equals(valueProvider.getElement().getContainingFile())) {
+        processFxComponent((XmlTag)parent, false);
+        return;
+      }
+      else {
+        effectiveClassInfo = new Trinity<Integer, String, Condition<AnnotationBackedDescriptor>>(-1, "mx.core.UIComponent", null);
+      }
     }
     else {
       effectiveClassInfo =
@@ -883,6 +894,16 @@ class PropertyProcessor implements ValueWriter {
     else {
       writer.documentFactoryReference(effectiveClassInfo.first);
     }
+  }
+
+  private boolean writeFxComponentReferenceIfProcessed(String className) {
+    MxmlObjectReference reference = injectedASWriter.getNullableValueReference('$' + className);
+    if (reference != null) {
+      writer.objectReference(reference.id);
+      return true;
+    }
+
+    return false;
   }
 
   private void writeNonProjectUnreferencedClassFactory(String className) {

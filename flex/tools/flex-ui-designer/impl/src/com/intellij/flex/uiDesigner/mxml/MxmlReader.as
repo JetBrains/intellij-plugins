@@ -435,7 +435,7 @@ public class MxmlReader implements DocumentReader {
     var data:ByteArray = new ByteArray();
     input.readBytes(data, 0, input.readUnsignedShort());
     var factory:Object = new (module.getClass("com.intellij.flex.uiDesigner.flex.FlexComponentFactory"))(data, getOrCreateFactoryContext());
-    saveReferredObject(id, factory);
+    processReference(id, factory);
     return factory;
   }
 

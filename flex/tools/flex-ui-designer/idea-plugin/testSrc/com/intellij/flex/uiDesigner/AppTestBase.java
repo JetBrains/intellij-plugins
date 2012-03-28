@@ -26,10 +26,8 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.peer.PeerFactory;
-import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
-import com.intellij.util.indexing.FileBasedIndex;
 import junit.framework.AssertionFailedError;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,21 +77,20 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
   private void doSetupFlexSdk(final Module module, final String flexSdkRootPath, final TargetPlatform targetPlatform, final String sdkVersion) {
     final String sdkName = generateSdkName(sdkVersion);
     Sdk sdk = ProjectJdkTable.getInstance().findJdk(sdkName);
-    final Sdk finalSdk;
     if (sdk == null) {
       final AccessToken token = WriteAction.start();
       try {
         FlexSdkType2 sdkType = FlexSdkType2.getInstance();
-        sdk = PeerFactory.getInstance().createProjectJdk(sdkType.suggestSdkName(null, flexSdkRootPath), "", flexSdkRootPath, sdkType);
+        sdk = PeerFactory.getInstance().createProjectJdk(sdkName, "", flexSdkRootPath, sdkType);
         ProjectJdkTable.getInstance().addJdk(sdk);
 
-        finalSdk = sdk;
         Disposer.register(getSdkParentDisposable(), new Disposable() {
           @Override
           public void dispose() {
             final AccessToken t = WriteAction.start();
             try {
-              ProjectJdkTable.getInstance().removeJdk(finalSdk);
+              ProjectJdkTable sdkTable = ProjectJdkTable.getInstance();
+              sdkTable.removeJdk(sdkTable.findJdk(sdkName));
             }
             finally {
               t.finish();
@@ -102,7 +99,6 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
         });
 
         final SdkModificator modificator = sdk.getSdkModificator();
-        modificator.setName(sdkName);
         modificator.setVersionString(FlexSdkUtils.readFlexSdkVersion(sdk.getHomeDirectory()));
         modifySdk(sdk, modificator);
         modificator.commitChanges();
@@ -111,14 +107,11 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
         token.finish();
       }
     }
-    else {
-      finalSdk = sdk;
-    }
 
     JSTestUtils.modifyBuildConfiguration(module, new Consumer<ModifiableFlexIdeBuildConfiguration>() {
       public void consume(final ModifiableFlexIdeBuildConfiguration bc) {
         bc.setNature(new BuildConfigurationNature(targetPlatform, false, getOutputType()));
-        bc.getDependencies().setSdkEntry(Factory.createSdkEntry(finalSdk.getName()));
+        bc.getDependencies().setSdkEntry(Factory.createSdkEntry(sdkName));
       }
     });
   }
@@ -196,8 +189,6 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
                                            VirtualFile[] files,
                                            @Nullable VirtualFile[] auxiliaryFiles) throws Exception {
     final VirtualFile[] sourceFiles = super.configureByFiles(rawProjectRoot, files, auxiliaryFiles);
-    // Why? I don't know. But testResolveResourceIfNameIsAmbiguous will be failed after testMobile without this call
-    FileBasedIndex.getInstance().ensureUpToDate(FileTypeIndex.NAME, myProject, null);
     launchAndInitializeApplication();
     return sourceFiles;
   }
@@ -248,13 +239,13 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    if (client != null) {
-      try {
+    try {
+      if (client != null) {
         client.closeProject(myProject);
       }
-      finally {
-        super.tearDown();
-      }
+    }
+    finally {
+      super.tearDown();
     }
   }
 }
