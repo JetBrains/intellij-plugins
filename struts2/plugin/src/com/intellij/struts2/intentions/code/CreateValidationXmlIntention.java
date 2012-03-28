@@ -111,7 +111,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
   }
 
   @Override
-  public void invoke(final Project project, final Editor editor, final PsiElement element) throws
+  public void invoke(@NotNull final Project project, final Editor editor, @NotNull final PsiElement element) throws
       IncorrectOperationException {
     final PsiClass actionClass = findActionClass(element);
     assert actionClass != null : element;
