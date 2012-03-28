@@ -31,17 +31,19 @@ public class JstdConfigFileLoader extends FileTypeFactory {
     JstdConfigFileType jstdConfigFileType = JstdConfigFileType.INSTANCE;
     FileNameMatcher[] matchers = {
       new ExtensionFileNameMatcher(JstdConfigFileType.INSTANCE.getDefaultExtension()),
-      new CustomFileNameMatcher()
+      new JstdPredefinedFileNameMatcher()
     };
     consumer.consume(jstdConfigFileType, matchers);
   }
 
   /**
-   * Matches some predefined fileNames.
-   * The motivation is that configuration file is often named 'jsTestDriver.conf'.
-   * Examples of matched fileNames: 'jsTestDriver.conf', 'jsTestDriver.yaml', 'jstd.yml', 'jsTestDriver-coverage.conf', etc
+   * Matches some predefined fileNames of form:
+   * (prefix_1 | prefix_2 | ... | prefix_N)*(suffix_1 | suffix_2 | ... | suffix_N).
+   *
+   * The motivation is that configuration file extension is often not equals to 'jstd' and its name could be:
+   * 'jsTestDriver.conf', 'jsTestDriver.yaml', 'jstd.yml', 'jsTestDriver-coverage.conf', etc.
    */
-  private static class CustomFileNameMatcher implements FileNameMatcher {
+  private static class JstdPredefinedFileNameMatcher implements FileNameMatcher {
 
     private static final String[] PREFIXES = {"jsTestDriver", "js-test-driver", "js_test_driver", "jstd"};
     private static final String[] DOT_SUFFIXES = {".conf", ".yml", ".yaml"};
