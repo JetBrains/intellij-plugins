@@ -126,7 +126,7 @@ public abstract class BasicHighlightingTestCase<T extends JavaModuleFixtureBuild
     // little hack..
     testDataRootPath = new File(getTestDataBasePath()).getAbsolutePath();
 
-    final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder = JavaTestFixtureFactory.createFixtureBuilder();
+    final TestFixtureBuilder<IdeaProjectTestFixture> projectBuilder = JavaTestFixtureFactory.createFixtureBuilder(getName());
     final T moduleBuilder = projectBuilder.addModule(getModuleFixtureBuilderClass());
     myFixture = JavaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(projectBuilder.getFixture());
 
