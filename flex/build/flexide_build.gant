@@ -1,6 +1,7 @@
 import org.jetbrains.jps.Jps
 import org.jetbrains.jps.LayoutInfo
 import org.jetbrains.jps.Module
+
 import static org.jetbrains.jps.idea.IdeaProjectLoader.guessHome
 
 includeTargets << new File("${guessHome(this as Script)}/community/build/scripts/utils.gant")
@@ -70,7 +71,7 @@ private List platformImplementationModules() {
           "duplicates",
           //"coverage-impl",
           "dom-impl",
-          "notNull",
+          "instrumentation-util",
           "java-impl",
           "compiler-impl",
           "debugger-impl",
