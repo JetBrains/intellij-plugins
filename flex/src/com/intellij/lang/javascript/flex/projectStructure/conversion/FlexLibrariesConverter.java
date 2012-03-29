@@ -28,7 +28,12 @@ class FlexLibrariesConverter extends ConversionProcessor<ProjectLibrariesSetting
   public void preProcess(final ProjectLibrariesSettings projectLibrariesSettings) throws CannotConvertException {
     Set<String> librariesNames = new HashSet<String>();
     for (Element element : projectLibrariesSettings.getProjectLibraries()) {
-      if (!FlexModuleConverter.isApplicableLibrary(element)) {
+      if (!FlexModuleConverter.isApplicableLibrary(element, new Function<String, String>() {
+        @Override
+        public String fun(final String s) {
+          return myParams.expandPath(s);
+        }
+      })) {
         // ignore non-flex project library
         continue;
       }

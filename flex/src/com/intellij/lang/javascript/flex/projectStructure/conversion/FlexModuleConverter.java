@@ -17,16 +17,21 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.DependencyScope;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.*;
+import com.intellij.openapi.roots.impl.libraries.JarDirectories;
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
@@ -38,12 +43,16 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.util.*;
 
 /**
  * User: ksafonov
  */
 class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
+
+  private static final Logger LOG = Logger.getInstance(FlexModuleConverter.class.getName());
 
   private final ConversionParams myParams;
 
@@ -179,7 +188,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
 
   private void processConfiguration(@Nullable FlexBuildConfiguration oldConfiguration,
                                     ModifiableFlexIdeBuildConfiguration newBuildConfiguration,
-                                    ModuleSettings module,
+                                    final ModuleSettings module,
                                     boolean facet,
                                     @Nullable String facetSdkName,
                                     Set<String> usedSdksNames,
@@ -222,7 +231,12 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
       String orderEntryType = orderEntry.getAttributeValue(OrderEntryFactory.ORDER_ENTRY_TYPE_ATTR);
       if (ModuleLibraryOrderEntryImpl.ENTRY_TYPE.equals(orderEntryType)) {
         Element library = orderEntry.getChild(LibraryImpl.ELEMENT);
-        if (!isApplicableLibrary(library)) {
+        if (!isApplicableLibrary(library, new Function<String, String>() {
+          @Override
+          public String fun(final String s) {
+            return module.expandPath(s);
+          }
+        })) {
           // ignore non-flex module library
           orderEntriesToRemove.add(orderEntry);
           continue;
@@ -362,9 +376,103 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
     return options;
   }
 
-  static boolean isApplicableLibrary(final Element library) {
+  static boolean isApplicableLibrary(final Element library, Function<String, String> pathExpander) {
     String libraryType = library.getAttributeValue(LibraryImpl.LIBRARY_TYPE_ATTR);
-    return libraryType == null || FlexLibraryType.FLEX_LIBRARY.getKindId().equals(libraryType);
+    if (FlexLibraryType.FLEX_LIBRARY.getKindId().equals(libraryType)) {
+      return true;
+    }
+
+    if (libraryType != null) {
+      return false; // ignore explicit non-Flex libraries
+    }
+
+    final Element rootChild = library.getChild(OrderRootType.CLASSES.name());
+    if (rootChild == null) {
+      return false; // corrupted element
+    }
+
+    JarDirectories jarDirectories = new JarDirectories();
+    try {
+      jarDirectories.readExternal(library);
+    }
+    catch (InvalidDataException ignored) {
+      jarDirectories.clear();
+    }
+
+    List<Element> classesRoots = rootChild.getChildren(LibraryImpl.ROOT_PATH_ELEMENT);
+    if (classesRoots.isEmpty()) {
+      // no classes root
+      return false;
+    }
+
+    for (Element root : classesRoots) {
+      final String url = root.getAttributeValue("url");
+      if (url == null) {
+        continue; // corrupted element
+      }
+
+      final String path = getPathFromUrl(url);
+      if (path == null) {
+        continue;
+      }
+
+      if (path.toLowerCase().endsWith(".swc")) {
+        return true;
+      }
+      else {
+        if (jarDirectories.contains(OrderRootType.CLASSES, url)) {
+          String expanded = pathExpander.fun(path);
+          File file = new File(expanded);
+          if (!file.isDirectory()) {
+            return true;
+          }
+
+          String[] allChildren = file.list();
+          if (allChildren == null || allChildren.length == 0) {
+            return true;
+          }
+
+          File[] swcs = file.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(final File pathname) {
+              return pathname.isFile() && pathname.getName().toLowerCase().endsWith(".swc");
+            }
+          });
+          if (swcs != null && swcs.length > 0) {
+            return true;
+          }
+
+          File[] jars = file.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(final File pathname) {
+              return pathname.isFile() && pathname.getName().toLowerCase().endsWith(".jar");
+            }
+          });
+          if (jars != null && jars.length > 0) {
+            continue;
+          }
+          return true;
+        }
+        else if (!path.toLowerCase().endsWith(".jar")) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  @Nullable
+  private static String getPathFromUrl(String url) {
+    if (url.startsWith(JarFileSystem.PROTOCOL_PREFIX) && url.endsWith(JarFileSystem.JAR_SEPARATOR)) {
+      return url.substring(JarFileSystem.PROTOCOL_PREFIX.length(), url.length() - JarFileSystem.JAR_SEPARATOR.length());
+    }
+    else if (url.startsWith(LocalFileSystem.PROTOCOL_PREFIX)) {
+      return url.substring(LocalFileSystem.PROTOCOL_PREFIX.length());
+    }
+    else {
+      LOG.warn("Unknown url type: " + url);
+      return null;
+    }
   }
 
   private static void convertDependencyType(Element orderEntry, ModifiableDependencyType dependencyType) {

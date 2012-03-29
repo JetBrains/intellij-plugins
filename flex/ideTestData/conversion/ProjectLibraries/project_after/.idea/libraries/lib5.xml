@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="lib5" type="flex">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/lib5/annotations.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/lib5/TestScope.swc!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
+

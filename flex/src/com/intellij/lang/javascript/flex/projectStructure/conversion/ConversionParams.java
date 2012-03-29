@@ -94,6 +94,10 @@ public class ConversionParams {
     }
   }
 
+  public String expandPath(final String path) {
+    return myContext.expandPath(path);
+  }
+
   // keep old Flex SDKs for now, after IDEA 11.1 release we may decide to delete them
   public static void convertFlexSdks() {
     final ProjectJdkTable sdkTable = ProjectJdkTable.getInstance();

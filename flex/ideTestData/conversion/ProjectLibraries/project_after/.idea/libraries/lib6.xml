@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="lib6" type="flex">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/libs/lib6" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/libs/lib6" recursive="false" />
+  </library>
+</component>
+
