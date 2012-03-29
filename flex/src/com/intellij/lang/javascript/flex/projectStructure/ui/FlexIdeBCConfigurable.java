@@ -33,14 +33,13 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStr
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Conditions;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
+import com.intellij.ui.navigation.History;
+import com.intellij.ui.navigation.Place;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
@@ -54,14 +53,32 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.HyperlinkEvent;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
+import java.util.List;
 
 public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<ModifiableFlexIdeBuildConfiguration>
-  implements CompositeConfigurable.Item {
+  implements CompositeConfigurable.Item, Place.Navigator {
 
   public static final String TAB_NAME = FlexBundle.message("bc.tab.general.display.name");
+  public static final String LOCATION_ON_TAB = "FlashBuildConfiguration.locationOnTab";
+
+  public static enum Location {
+    MainClass("main-class"),
+    OutputFileName("output-file-name"),
+    OutputFolder("output-folder"),
+    HtmlTemplatePath("html-template-path"),
+    RuntimeStyleSheets("runtime-style-sheets");
+
+    public final String errorId;
+
+    private Location(final String errorId) {
+      this.errorId = errorId;
+    }
+  }
+
   private JPanel myMainPanel;
 
   private JLabel myNatureLabel;
@@ -648,5 +665,35 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   @Override
   public ProjectStructureElement getProjectStructureElement() {
     return myStructureElement;
+  }
+
+  @Override
+  public void setHistory(final History history) {
+  }
+
+  @Override
+  public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
+    if (place != null) {
+      final Object location = place.getPath(LOCATION_ON_TAB);
+      if (location instanceof Location) {
+        switch ((Location)location) {
+          case MainClass:
+            return IdeFocusManager.findInstance().requestFocus(myMainClassComponent.getChildComponent(), true);
+          case OutputFileName:
+            return IdeFocusManager.findInstance().requestFocus(myOutputFileNameTextField, true);
+          case OutputFolder:
+            return IdeFocusManager.findInstance().requestFocus(myOutputFolderField.getChildComponent(), true);
+          case HtmlTemplatePath:
+            return IdeFocusManager.findInstance().requestFocus(myWrapperTemplateTextWithBrowse.getChildComponent(), true);
+          case RuntimeStyleSheets:
+            return IdeFocusManager.findInstance().requestFocus(myCssFilesTextWithBrowse.getChildComponent(), true);
+        }
+      }
+    }
+    return new ActionCallback.Done();
+  }
+
+  @Override
+  public void queryPlace(@NotNull final Place place) {
   }
 }

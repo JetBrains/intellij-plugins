@@ -23,12 +23,16 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
+import com.intellij.ui.navigation.History;
+import com.intellij.ui.navigation.Place;
 import com.intellij.ui.treeStructure.treetable.ListTreeTableModel;
 import com.intellij.ui.treeStructure.treetable.TreeTable;
 import com.intellij.ui.treeStructure.treetable.TreeTableModel;
@@ -66,8 +70,19 @@ import java.util.List;
 
 import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions.ResourceFilesMode;
 
-public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> {
+public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> implements Place.Navigator {
   public static final String TAB_NAME = FlexBundle.message("bc.tab.compiler.options.display.name");
+
+  public static enum Location {
+    AdditonalConfigFile("additional-config-file"),
+    FilesToIncludeInSwc("files-to-include-in-swc");
+
+    public final String errorId;
+
+    private Location(final String errorId) {
+      this.errorId = errorId;
+    }
+  }
 
   private JPanel myMainPanel;
 
@@ -938,6 +953,27 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
              ? Pair.create(node, (CompilerOptionInfo)userObject)
              : Pair.<DefaultMutableTreeNode, CompilerOptionInfo>empty();
     }
+  }
+
+  public void setHistory(final History history) {
+  }
+
+  public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
+    if (place != null) {
+      final Object location = place.getPath(FlexIdeBCConfigurable.LOCATION_ON_TAB);
+      if (location instanceof Location) {
+        switch ((Location)location) {
+          case AdditonalConfigFile:
+            return IdeFocusManager.findInstance().requestFocus(myConfigFileTextWithBrowse.getChildComponent(), true);
+          case FilesToIncludeInSwc:
+            return IdeFocusManager.findInstance().requestFocus(myIncludeInSWCField.getChildComponent(), true);
+        }
+      }
+    }
+    return new ActionCallback.Done();
+  }
+
+  public void queryPlace(@NotNull final Place place) {
   }
 }
 

@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOpti
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAirPackagingOptions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 
@@ -71,5 +72,12 @@ public class AirDescriptorForm {
     myCustomDescriptorRadioButton.setSelected(true);
     myCustomDescriptorTextWithBrowse.setText(FileUtil.toSystemDependentName(descriptorPath));
     updateControls();
+  }
+
+  public ActionCallback navigateTo(final AirPackagingConfigurableBase.Location location) {
+    if (location == AirPackagingConfigurableBase.Location.CustomDescriptor) {
+      return IdeFocusManager.findInstance().requestFocus(myCustomDescriptorTextWithBrowse.getChildComponent(), true);
+    }
+    return new ActionCallback.Done();
   }
 }

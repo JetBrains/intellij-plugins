@@ -10,19 +10,40 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
+import com.intellij.ui.navigation.History;
+import com.intellij.ui.navigation.Place;
 import com.intellij.util.Consumer;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackagingOptions> extends NamedConfigurable<T> {
+public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackagingOptions> extends NamedConfigurable<T>
+  implements Place.Navigator {
+
+  public static enum Location {
+    CustomDescriptor("custom-descriptor-path"),
+    FilesToPackage("files-to-package"),
+    PackageFileName("package-file-name"),
+    ProvisioningProfile("provisioning-profile"),
+    Keystore("keystore");
+
+    public final String errorId;
+
+    private Location(final String errorId) {
+      this.errorId = errorId;
+    }
+  }
 
   private JPanel myMainPanel;
 
@@ -222,5 +243,31 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
 
   public boolean isPackagingEnabled() {
     return !myEnabledCheckBox.isVisible() || myEnabledCheckBox.isSelected();
+  }
+
+  public void setHistory(final History history) {
+  }
+
+  public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
+    if (place != null) {
+      final Object location = place.getPath(FlexIdeBCConfigurable.LOCATION_ON_TAB);
+      if (location instanceof Location) {
+        switch ((Location)location) {
+          case CustomDescriptor:
+            return myAirDescriptorForm.navigateTo((Location)location);
+          case PackageFileName:
+            return IdeFocusManager.findInstance().requestFocus(myPackageFileNameTextField, true);
+          case FilesToPackage:
+            return myFilesToPackageForm.navigateTo((Location)location);
+          case ProvisioningProfile:
+          case Keystore:
+            return mySigningOptionsForm.navigateTo((Location)location);
+        }
+      }
+    }
+    return new ActionCallback.Done();
+  }
+
+  public void queryPlace(@NotNull final Place place) {
   }
 }

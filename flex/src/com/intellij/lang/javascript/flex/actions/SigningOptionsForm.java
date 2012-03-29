@@ -1,10 +1,13 @@
 package com.intellij.lang.javascript.flex.actions;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.projectStructure.ui.AirPackagingConfigurableBase;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.util.ui.UIUtil;
 
@@ -150,5 +153,16 @@ public class SigningOptionsForm {
     signingOptions.setKeyAlias(myKeyAliasTextField.getText());
     signingOptions.setProvider(myProviderClassNameTextField.getText());
     signingOptions.setTsa(myTsaUrlTextField.getText());
+  }
+
+  public ActionCallback navigateTo(final AirPackagingConfigurableBase.Location location) {
+    switch (location) {
+      case ProvisioningProfile:
+        return IdeFocusManager.findInstance().requestFocus(myProvisioningProfileTextWithBrowse.getChildComponent(), true);
+      case Keystore:
+        return IdeFocusManager.findInstance().requestFocus(myKeystoreFileTextWithBrowse.getChildComponent(), true);
+      default:
+        return new ActionCallback.Done();
+    }
   }
 }

@@ -1,12 +1,14 @@
 package com.intellij.lang.javascript.flex.actions;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.projectStructure.ui.AirPackagingConfigurableBase;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -203,5 +205,12 @@ public class FilesToPackageForm {
 
   public boolean isModified(final List<FilePathAndPathInPackage> filesToPackage) {
     return !FlexUtils.equalLists(filesToPackage, myFilesToPackage);
+  }
+
+  public ActionCallback navigateTo(final AirPackagingConfigurableBase.Location location) {
+    if (location == AirPackagingConfigurableBase.Location.FilesToPackage) {
+      return IdeFocusManager.findInstance().requestFocus(myFilesToPackageTable, true);
+    }
+    return new ActionCallback.Done();
   }
 }

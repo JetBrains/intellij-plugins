@@ -83,18 +83,24 @@ import java.util.List;
 
 public class DependenciesConfigurable extends NamedConfigurable<Dependencies> implements Place.Navigator {
   public static final String TAB_NAME = FlexBundle.message("bc.tab.dependencies.display.name");
-  public static final String LOCATION = DependenciesConfigurable.class.getName() + ".location";
 
   private static final Icon MISSING_BC_ICON = null;
 
   public static abstract class Location {
-    public static final Location SDK = new Location() {
+    public final String errorId;
+
+    protected Location(final String id) {
+      errorId = id;
+    }
+
+    public static final Location SDK = new Location("sdk") {
     };
 
     public static class TableEntry extends Location {
       private final String locationString;
 
       private TableEntry(final String locationString) {
+        super(locationString);
         this.locationString = locationString;
       }
 
@@ -122,7 +128,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         return new TableEntry("bc\t" + moduleName + "\t" + bcName);
       }
 
-      public static final TableEntry SDK_ENTRY = new TableEntry("sdk");
+      public static final TableEntry SDK_ENTRY = new TableEntry("sdk_entry");
 
       @Override
       public boolean equals(final Object o) {
@@ -1687,7 +1693,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   @Override
   public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
     if (place != null) {
-      final Object location = place.getPath(LOCATION);
+      final Object location = place.getPath(FlexIdeBCConfigurable.LOCATION_ON_TAB);
       if (location == Location.SDK) {
         if (requestFocus) {
           return IdeFocusManager.findInstance().requestFocus(mySdkCombo, true);
@@ -1714,15 +1720,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   @Override
   public void queryPlace(@NotNull final Place place) {
-    if (mySdkCombo.hasFocus()) {
-      place.putPath(LOCATION, Location.SDK);
-    }
-    else if (myTable.hasFocus()) {
-      int selectedRow = myTable.getSelectedRow();
-      if (selectedRow != -1) {
-        place.putPath(LOCATION, myTable.getItemAt(selectedRow).getLocation());
-      }
-    }
   }
 
   public void libraryReplaced(@NotNull final Library library, @Nullable final Library replacement) {

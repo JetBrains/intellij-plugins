@@ -62,7 +62,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
     final SdkEntry sdkEntry = myBc.getDependencies().getSdkEntry();
     if (sdkEntry == null) {
       Pair<String, Object> location =
-        Pair.<String, Object>create(DependenciesConfigurable.LOCATION, DependenciesConfigurable.Location.SDK);
+        Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB, DependenciesConfigurable.Location.SDK);
 
       PlaceInProjectStructure place = new PlaceInBuildConfiguration(this, DependenciesConfigurable.TAB_NAME, location);
       problemsHolder.registerProblem(FlexBundle.message("bc.problem.no.sdk"), null, ProjectStructureProblemType.error("sdk"),
@@ -71,7 +71,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
     else {
       if (FlexSdkUtils.findFlexOrFlexmojosSdk(sdkEntry.getName()) == null) {
         Pair<String, Object> location =
-          Pair.<String, Object>create(DependenciesConfigurable.LOCATION, DependenciesConfigurable.Location.SDK);
+          Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB, DependenciesConfigurable.Location.SDK);
 
         PlaceInProjectStructure place = new PlaceInBuildConfiguration(this, DependenciesConfigurable.TAB_NAME, location);
         problemsHolder.registerProblem(FlexBundle.message("bc.problem.sdk.not.found", sdkEntry.getName()), null,
@@ -101,7 +101,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
         if (errorMessage != null) {
           Pair<String, Object> location =
 
-            Pair.<String, Object>create(DependenciesConfigurable.LOCATION,
+            Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB,
                                         DependenciesConfigurable.Location.TableEntry.forBc(moduleName, bcName));
           PlaceInProjectStructure place = new PlaceInBuildConfiguration(this, DependenciesConfigurable.TAB_NAME, location);
           problemsHolder.registerProblem(errorMessage, null, ProjectStructureProblemType.error("flex-bc-dependency-bc"), place, null);

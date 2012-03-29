@@ -170,7 +170,7 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable i
   public void queryPlace(@NotNull final Place place) {
     final NamedConfigurable child = myChildren.get(myTabs.getSelectedIndex());
     place.putPath(TAB_NAME, child.getDisplayName());
-    Place.queryFurther(child, place);
+    //Place.queryFurther(child, place); we don't want to localize place to text field level (and actually it is impossible because the field hasn't got focus yet when this method is called)
   }
 
   @Override

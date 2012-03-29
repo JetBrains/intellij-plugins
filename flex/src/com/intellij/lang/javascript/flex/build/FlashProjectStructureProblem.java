@@ -24,24 +24,26 @@ public class FlashProjectStructureProblem {
 
   public static FlashProjectStructureProblem createGeneralOptionProblem(final String bcName,
                                                                         final String errorMessage,
-                                                                        final String errorId) {
-    return new FlashProjectStructureProblem(errorMessage, errorId, bcName, null);
+                                                                        final FlexIdeBCConfigurable.Location location) {
+    final Pair<String, Object> locationPair = Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB, location);
+    return new FlashProjectStructureProblem(errorMessage, location.errorId, bcName, locationPair);
   }
 
   public static FlashProjectStructureProblem createDependenciesProblem(final String errorMessage,
-                                                                       final String errorId,
                                                                        final DependenciesConfigurable.Location location) {
-    final Pair<String, Object> locationPair = Pair.<String, Object>create(DependenciesConfigurable.LOCATION, location);
-    return new FlashProjectStructureProblem(errorMessage, errorId, DependenciesConfigurable.TAB_NAME, locationPair);
+    final Pair<String, Object> locationPair = Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB, location);
+    return new FlashProjectStructureProblem(errorMessage, location.errorId, DependenciesConfigurable.TAB_NAME, locationPair);
   }
 
-  public static FlashProjectStructureProblem createCompilerOptionsProblem(final String errorMessage, final String errorId) {
-    return new FlashProjectStructureProblem(errorMessage, errorId, CompilerOptionsConfigurable.TAB_NAME, null);
+  public static FlashProjectStructureProblem createCompilerOptionsProblem(final String errorMessage,
+                                                                          final CompilerOptionsConfigurable.Location location) {
+    final Pair<String, Object> locationPair = Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB, location);
+    return new FlashProjectStructureProblem(errorMessage, location.errorId, CompilerOptionsConfigurable.TAB_NAME, locationPair);
   }
 
   public static FlashProjectStructureProblem createPackagingOptionsProblem(final AirPackagingOptions packagingOptions,
                                                                            final String errorMessage,
-                                                                           final String errorId) {
+                                                                           final AirPackagingConfigurableBase.Location location) {
     final String tabName = packagingOptions instanceof AirDesktopPackagingOptions
                            ? AirDesktopPackagingConfigurable.TAB_NAME
                            : packagingOptions instanceof AndroidPackagingOptions
@@ -50,6 +52,7 @@ public class FlashProjectStructureProblem {
                                ? IOSPackagingConfigurable.TAB_NAME :
                                null;
     assert tabName != null : packagingOptions;
-    return new FlashProjectStructureProblem(errorMessage, errorId, tabName, null);
+    final Pair<String, Object> locationPair = Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB, location);
+    return new FlashProjectStructureProblem(errorMessage, location.errorId, tabName, locationPair);
   }
 }
