@@ -31,14 +31,11 @@
 
   <depends optional="true" config-file="yaml-support.xml">org.jetbrains.plugins.yaml</depends>
   <depends optional="true" config-file="yaml-support.xml">com.intellij.modules.python</depends>
+  <depends optional="true" config-file="yaml-support.xml">com.intellij.modules.ruby</depends>
 
   <depends optional="true" config-file="javascript-support.xml">JavaScript</depends>
 
-  <project-components>
-    <component>
-      <implementation-class>com.google.jstestdriver.idea.coverage.CoverageRegister</implementation-class>
-    </component>
-  </project-components>
+  <depends optional="true" config-file="jstd-coverage.xml">Coverage</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>

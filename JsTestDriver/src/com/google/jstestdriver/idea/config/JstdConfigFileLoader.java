@@ -28,20 +28,22 @@ public class JstdConfigFileLoader extends FileTypeFactory {
 
   @Override
   public void createFileTypes(@NotNull FileTypeConsumer consumer) {
-    JstdConfigFileType jstdConfigFileType = JstdConfigFileType.INSTANCE;
-    FileNameMatcher[] matchers = {
+    consumer.consume(
+      JstdConfigFileType.INSTANCE,
       new ExtensionFileNameMatcher(JstdConfigFileType.INSTANCE.getDefaultExtension()),
       new JstdPredefinedFileNameMatcher()
-    };
-    consumer.consume(jstdConfigFileType, matchers);
+    );
   }
 
   /**
-   * Matches some predefined fileNames of form:
+   * Accepts some predefined file names that match a following pattern:
    * (prefix_1 | prefix_2 | ... | prefix_N)*(suffix_1 | suffix_2 | ... | suffix_N).
    *
-   * The motivation is that configuration file extension is often not equals to 'jstd' and its name could be:
-   * 'jsTestDriver.conf', 'jsTestDriver.yaml', 'jstd.yml', 'jsTestDriver-coverage.conf', etc.
+   * The motivation is that configuration file name may have some common extension ('*.conf' for instance).
+   * But in that case configuration file name should start with one of predefined prefixes.
+   *
+   * For instance following file names will be accepted:
+   *    'jsTestDriver.conf', 'jsTestDriver.yaml', * 'jstd.yml', 'jsTestDriver-coverage.conf'.
    */
   private static class JstdPredefinedFileNameMatcher implements FileNameMatcher {
 
@@ -51,8 +53,8 @@ public class JstdConfigFileLoader extends FileTypeFactory {
     private static final int COMMON_PREFIX_LENGTH;
     static {
       String common = PREFIXES[0];
-      for (int i = 1; i < PREFIXES.length; i++) {
-        common = StringUtil.commonPrefix(common, PREFIXES[i]);
+      for (String prefix : PREFIXES) {
+        common = StringUtil.commonPrefix(common, prefix);
       }
       COMMON_PREFIX = common;
       COMMON_PREFIX_LENGTH = COMMON_PREFIX.length();
@@ -61,6 +63,7 @@ public class JstdConfigFileLoader extends FileTypeFactory {
     @Override
     public boolean accept(@NonNls @NotNull String fileName) {
       if (COMMON_PREFIX_LENGTH > 0) {
+        // performance optimization
         if (!fileName.startsWith(COMMON_PREFIX)) {
           return false;
         }
