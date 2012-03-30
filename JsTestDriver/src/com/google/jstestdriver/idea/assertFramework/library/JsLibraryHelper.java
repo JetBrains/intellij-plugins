@@ -1,4 +1,4 @@
-package com.google.jstestdriver.idea.assertFramework.support;
+package com.google.jstestdriver.idea.assertFramework.library;
 
 import com.intellij.ide.scriptingContext.ScriptingLibraryMappings;
 import com.intellij.lang.javascript.library.JSLibraryManager;
@@ -12,14 +12,12 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,9 +38,6 @@ public class JsLibraryHelper {
   @Nullable
   public ScriptingLibraryModel lookupLibraryByContent(@NotNull Collection<VirtualFile> expectedSourceFiles) {
     ScriptingLibraryModel[] libraryModels = myScriptingLibraryManager.getLibraries();
-    if (libraryModels == null) {
-      return null;
-    }
     for (ScriptingLibraryModel libraryModel : libraryModels) {
       if (scriptingLibraryModelConsistsOf(libraryModel, expectedSourceFiles)) {
         return libraryModel;
@@ -56,7 +51,7 @@ public class JsLibraryHelper {
     if (!isEmpty(libraryModel.getDocUrls()) || !isEmpty(libraryModel.getCompactFiles())) {
       return false;
     }
-    Collection<VirtualFile> sourceFiles = ObjectUtils.notNull(libraryModel.getSourceFiles(), Collections.<VirtualFile>emptySet());
+    Collection<VirtualFile> sourceFiles = libraryModel.getSourceFiles();
     if (sourceFiles.size() != expectedSourceFiles.size()) {
       return false;
     }
@@ -132,16 +127,11 @@ public class JsLibraryHelper {
             VirtualFile.EMPTY_ARRAY,
             ArrayUtil.EMPTY_STRING_ARRAY
           );
-          if (libraryModel == null) {
-            LOG.warn("Library '" + libraryName + "' hasn't been created due to unknown reasons.");
-            myScriptingLibraryManager.reset();
-            return null;
-          }
           myScriptingLibraryManager.commitChanges();
           LOG.info("Library '" + libraryModel.getName() + "' has been successfully created.");
           return libraryModel;
         } catch (Exception ex) {
-          LOG.error(ex);
+          LOG.error("Can not create JavaScript Library '" + libraryName + "'", ex);
           return null;
         }
       }
