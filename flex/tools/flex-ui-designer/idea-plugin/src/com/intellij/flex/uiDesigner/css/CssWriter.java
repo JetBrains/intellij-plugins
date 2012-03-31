@@ -23,7 +23,6 @@ import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.util.CssUtil;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlToken;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.Nullable;
@@ -104,7 +103,9 @@ public class CssWriter {
           textOffset = declaration.getTextOffset();
           propertyOut.writeUInt29(documentWindow == null ? textOffset : documentWindow.injectedToHost(textOffset));
 
-          writePropertyValue(value, propertyDescriptor == null || !(propertyDescriptor instanceof FlexCssPropertyDescriptor) ? null : ((FlexCssPropertyDescriptor)propertyDescriptor).getStyleInfo());
+          writePropertyValue(value, propertyDescriptor == null || !(propertyDescriptor instanceof FlexCssPropertyDescriptor)
+            ? null
+            : ((FlexCssPropertyDescriptor)propertyDescriptor).getStyleInfo());
           continue;
         }
         catch (RuntimeException e) {
@@ -386,24 +387,27 @@ public class CssWriter {
   }
 
   private void writeFunctionValue(CssFunction cssFunction, @Nullable FlexStyleIndexInfo info) throws InvalidPropertyException {
-    String functionName = cssFunction.getFunctionName();
+    final String functionName = cssFunction.getFunctionName();
+    @SuppressWarnings("ConstantConditions")
+    final ASTNode valueNode = cssFunction.getNode().findChildByType(CssElementTypes.CSS_TERM_LIST).getFirstChildNode().getFirstChildNode();
     switch (functionName.charAt(0)) {
       case 'C':
-        writeClassReference((ASTNode)cssFunction, info);
+        writeClassReference(info, valueNode);
         break;
 
       case 'E':
-        writeEmbed(cssFunction);
+        writeEmbed(cssFunction, valueNode);
         break;
+
+      case 'P':
+        writePropertyReference(valueNode);
 
       default:
         throw new IllegalArgumentException("unknown function: " + functionName);
     }
   }
 
-  private void writeClassReference(ASTNode node, FlexStyleIndexInfo info) throws InvalidPropertyException {
-    @SuppressWarnings("ConstantConditions")
-    ASTNode valueNode = node.findChildByType(CssElementTypes.CSS_TERM_LIST).getFirstChildNode().getFirstChildNode();
+  private void writeClassReference(FlexStyleIndexInfo info, ASTNode valueNode) throws InvalidPropertyException {
     // ClassReference(null);
     if (valueNode instanceof XmlToken) {
       assert StringUtil.equals(valueNode.getChars(), "null");
@@ -421,17 +425,28 @@ public class CssWriter {
     }
   }
 
+  private void writePropertyReference(ASTNode valueNode) {
+    @SuppressWarnings("ConstantConditions")
+    String reference = ((CssString)valueNode.getFirstChildNode().getFirstChildNode().getPsi()).getValue();
+
+    // it seems FQN access like "al: PropertyReference("spark.layouts.VerticalAlign.TOP")" is not working, only document reference is allowed
+    // todo
+    //if () {
+    //
+    //}
+  }
+
   protected void writeClassReference(JSClass jsClass, FlexStyleIndexInfo info, CssString cssString) throws InvalidPropertyException {
     propertyOut.write(AmfExtendedTypes.CLASS_REFERENCE);
     stringWriter.write(jsClass.getQualifiedName(), propertyOut);
   }
 
-  private void writeEmbed(CssFunction cssFunction) throws InvalidPropertyException {
+  private void writeEmbed(CssFunction cssFunction, ASTNode valueNode) throws InvalidPropertyException {
     VirtualFile source = null;
     String symbol = null;
     String mimeType = null;
 
-    CssTermList termList = PsiTreeUtil.getRequiredChildOfType(cssFunction, CssTermList.class);
+    CssTermList termList = (CssTermList)valueNode.getPsi();
     for (PsiElement child = termList.getFirstChild(); child != null; child = child.getNextSibling()) {
       if (child instanceof CssTerm) {
         PsiElement firstChild = child.getFirstChild();
