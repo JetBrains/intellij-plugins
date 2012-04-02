@@ -41,11 +41,13 @@ import java.io.File;
 /**
  * One configured instance of the Run Configuration. The user can create several different configs
  * and save them all.
+ *
  * @author alexeagle@google.com (Alex Eagle)
  */
 public class JstdRunConfiguration extends RunConfigurationBase implements LocatableConfiguration, RefactoringListenerProvider {
 
-  private JstdRunSettings myRunSettings = new JstdRunSettings.Builder().build();
+  private @NotNull JstdRunSettings myRunSettings = new JstdRunSettings.Builder().build();
+  private volatile String myGeneratedName;
 
   public JstdRunConfiguration(Project project,
                               ConfigurationFactory jsTestDriverConfigurationFactory,
@@ -72,7 +74,7 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
 
   @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env)
-      throws ExecutionException {
+    throws ExecutionException {
     if (DefaultDebugExecutor.EXECUTOR_ID.equals(executor.getId())) {
       throw new ExecutionException("Debugging is not implemented");
     }
@@ -80,10 +82,11 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
   }
 
   public RunProfileState getCoverageState(@NotNull ExecutionEnvironment env, @Nullable String coverageFilePath)
-      throws ExecutionException {
+    throws ExecutionException {
     try {
       checkConfiguration();
-    } catch (RuntimeConfigurationException e) {
+    }
+    catch (RuntimeConfigurationException e) {
       throw new ExecutionException(e.getMessage());
     }
     return new TestRunnerState(this, getProject(), env, coverageFilePath);
@@ -118,32 +121,61 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
 
   @Override
   public boolean isGeneratedName() {
-    return suggestedName().equals(getName());
+    String name = getName();
+    if (name == null) {
+      return false;
+    }
+    if ("Unnamed".equals(name)) {
+      return true;
+    }
+    String prefix = "Unnamed (";
+    String suffix = ")";
+    if (name.startsWith(prefix) && name.endsWith(suffix)) {
+      String id = name.substring(prefix.length(), name.length() - suffix.length());
+      try {
+        Integer.parseInt(id);
+      } catch (Exception ignored) {}
+      return true;
+    }
+    String suggestedName = suggestedName();
+    return name.equals(suggestedName);
   }
 
   @Override
   @NotNull
   public String suggestedName() {
-    if (myRunSettings != null) {
-      TestType testType = myRunSettings.getTestType();
-      if (testType == TestType.ALL_CONFIGS_IN_DIRECTORY) {
-        String directoryPath = myRunSettings.getDirectory();
-        String rootRelativePath = ProjectRootUtils.getRootRelativePath(getProject(), directoryPath);
-        if (rootRelativePath == null) {
-          rootRelativePath = directoryPath;
-        }
-        return "All in " + rootRelativePath;
-      } else if (testType == TestType.CONFIG_FILE) {
-        File file = new File(myRunSettings.getConfigFile());
-        return file.getName();
-      } else if (testType == TestType.JS_FILE) {
-        File file = new File(myRunSettings.getJsFilePath());
-        return file.getName();
-      } else if (testType == TestType.TEST_CASE) {
-        return myRunSettings.getTestCaseName();
-      } else if (testType == TestType.TEST_METHOD) {
-        return myRunSettings.getTestCaseName() + "." + myRunSettings.getTestMethodName();
+    String generatedName = myGeneratedName;
+    if (myGeneratedName == null) {
+      generatedName = generateName();
+      myGeneratedName = generatedName;
+    }
+    return generatedName;
+  }
+
+  @NotNull
+  private String generateName() {
+    TestType testType = myRunSettings.getTestType();
+    if (testType == TestType.ALL_CONFIGS_IN_DIRECTORY) {
+      String directoryPath = myRunSettings.getDirectory();
+      String rootRelativePath = ProjectRootUtils.getRootRelativePath(getProject(), directoryPath);
+      if (rootRelativePath == null) {
+        rootRelativePath = directoryPath;
       }
+      return "All in " + rootRelativePath;
+    }
+    else if (testType == TestType.CONFIG_FILE) {
+      File file = new File(myRunSettings.getConfigFile());
+      return file.getName();
+    }
+    else if (testType == TestType.JS_FILE) {
+      File file = new File(myRunSettings.getJsFilePath());
+      return file.getName();
+    }
+    else if (testType == TestType.TEST_CASE) {
+      return myRunSettings.getTestCaseName();
+    }
+    else if (testType == TestType.TEST_METHOD) {
+      return myRunSettings.getTestCaseName() + "." + myRunSettings.getTestMethodName();
     }
     return "Unnamed";
   }
@@ -154,5 +186,4 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
     JstdRunConfigurationRefactoringHandler refactoringHandler = new JstdRunConfigurationRefactoringHandler(this);
     return refactoringHandler.getRefactoringElementListener(element);
   }
-
 }
