@@ -155,7 +155,6 @@ public class InjectedASReader {
                                                                 watchMxmlObjectChain(changeWatcherClass, stringRegistry, input));
   }
 
-  //noinspection JSMethodCanBeStatic
   internal function readVariableReference(input:IDataInput, reader:MxmlReader):Object {
     var o:Object;
     var id:int = AmfUtil.readUInt29(input);

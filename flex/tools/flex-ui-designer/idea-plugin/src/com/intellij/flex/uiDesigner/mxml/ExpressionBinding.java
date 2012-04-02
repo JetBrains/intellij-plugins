@@ -218,10 +218,10 @@ class ExpressionBinding extends Binding {
         out.write(ExpressionMessageTypes.VARIABLE_REFERENCE);
         // may be already referenced, i.e. VariableReference created for this variable
         valueReference.write(out, writer, valueReferenceResolver);
-        return;
       }
-
-      writeJSVariable(((JSVariable)element), out, writer, valueReferenceResolver);
+      else {
+        writeJSVariable(((JSVariable)element), out, writer, valueReferenceResolver);
+      }
     }
     else {
       final String hostObjectId;
@@ -269,7 +269,7 @@ class ExpressionBinding extends Binding {
     else {
       final PsiElement firstChild = expression.getFirstChild();
       if (firstChild == null) {
-        writer.string(XmlTextValueProvider.EMPTY);
+        writer.string(XmlElementValueProvider.EMPTY);
         return;
       }
 
