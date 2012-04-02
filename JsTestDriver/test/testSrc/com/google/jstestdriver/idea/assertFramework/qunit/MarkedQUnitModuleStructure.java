@@ -79,7 +79,7 @@ class MarkedQUnitModuleStructure {
   }
 
   public static MarkedQUnitModuleStructure newDefaultModule() {
-    return new MarkedQUnitModuleStructure(true, 0, "Default", null);
+    return new MarkedQUnitModuleStructure(true, 0, "Default Module", null);
   }
 
   public static MarkedQUnitModuleStructure newRegularModule(@NotNull Annotation startAnnotation) {
