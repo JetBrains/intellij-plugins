@@ -8,7 +8,6 @@ import org.sonatype.flexmojos.compiler.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -163,30 +162,28 @@ public class IdeaConfigurator implements FlexConfigGenerator {
           type = returnType;
         }
 
-        Field orderField = type.getField("ORDER");
-        orderField.setAccessible(true);
         String[] order = (String[])type.getField("ORDER").get(returnType);
-
         for (IFlexArgument iFlexArgument : values) {
           out.append(indent).append('<').append(name).append('>');
-
           for (String argMethodName : order) {
             Object argValue = type.getDeclaredMethod(argMethodName).invoke(iFlexArgument);
-            if (argValue == null) {
-              throw new UnsupportedOperationException();
-            }
-            else if (argValue instanceof Collection<?> || argValue.getClass().isArray()) {
-              throw new UnsupportedOperationException();
+            if (argValue instanceof Collection<?> || argValue.getClass().isArray()) {
+              Object[] subValues = argValue.getClass().isArray() ? (Object[])argValue : ((Collection<?>)argValue).toArray();
+              for (Object subArgValue : subValues) {
+                writeTag(indent, argMethodName, subArgValue.toString(), name);
+              }
             }
             else if (argValue instanceof Map<?, ?>) {
-              throw new UnsupportedOperationException();
-//              Map<?, ?> map = ((Map<?, ?>) argValue);
-//              for (Object argValue1 : map.entrySet()) {
-//                @SuppressWarnings({"unchecked"}) Map.Entry<String, ?> entry = (Map.Entry<String, ?>) argValue1;
-//                out.append(indent).append("\t<").append(entry.getKey()).append('>').append(entry.getValue().toString()).append("</").append(entry.getKey()).append('>');
-//              }
+              Map<?, ?> map = ((Map<?, ?>) argValue);
+              for (Object argValue1 : map.entrySet()) {
+                @SuppressWarnings("unchecked")
+                Map.Entry<String, ?> entry = (Map.Entry<String, ?>) argValue1;
+                if (entry.getValue() != null) {
+                  writeTag(indent, entry.getKey(), entry.getValue().toString(), name);
+                }
+              }
             }
-            else {
+            else if (argValue != null) {
               writeTag(indent, argMethodName.equals("serialNumber") ? "serial-number" : argMethodName, (String)argValue, name);
             }
           }
@@ -201,14 +198,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
         }
       }
       else if (returnType.isArray() || value instanceof Collection<?>) {
-        Object[] values;
-        if (returnType.isArray()) {
-          values = (Object[])value;
-        }
-        else {
-          values = ((Collection<?>)value).toArray();
-        }
-
+        Object[] values = returnType.isArray() ? (Object[])value : ((Collection<?>)value).toArray();
         // ability to compile pure AS3 project without themes — node must be present, but empty (relevant only for "theme")
         if (values.length == 0) {
           if (name.equals("theme") || name.equals("locale")) {
@@ -276,7 +266,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
     out.append(value);
   }
 
-  protected void writeTag(String indent, String name, String value, @SuppressWarnings("UnusedParameters") String parentName) throws IOException {
+  protected void writeTag(String indent, String name, String value, String parentName) throws IOException {
     out.append(indent).append("\t<").append(name).append(">").append(value).append("</").append(name).append('>');
   }
 
