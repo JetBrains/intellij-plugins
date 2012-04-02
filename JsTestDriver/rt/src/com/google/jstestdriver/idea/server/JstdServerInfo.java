@@ -1,10 +1,9 @@
 package com.google.jstestdriver.idea.server;
 
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 
-import com.google.common.collect.ImmutableList;
+import java.util.List;
 
 public class JstdServerInfo {
 

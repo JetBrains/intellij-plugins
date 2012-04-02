@@ -2,8 +2,6 @@ package com.google.jstestdriver.idea.server;
 
 import com.google.common.collect.Lists;
 import com.google.gson.*;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.util.Consumer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,25 +13,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
-public class JstdServerUtils {
-
-  private JstdServerUtils() {}
-
-  public static void asyncFetchServerInfo(final String serverUrl, final Consumer<JstdServerFetchResult> consumer) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        JstdServerFetchResult serverFetchResult;
-        try {
-          serverFetchResult = syncFetchServerInfo(serverUrl);
-        } catch (Exception e) {
-          serverFetchResult = new JstdServerFetchResult(null, "Internal error occurred");
-        }
-        consumer.consume(serverFetchResult);
-      }
-    });
-  }
-
+public class JstdServerUtilsRt {
   public static JstdServerFetchResult syncFetchServerInfo(final String serverUrl) {
     try {
       new URL(serverUrl);
@@ -65,22 +45,6 @@ public class JstdServerUtils {
     } catch (Exception e) {
       return JstdServerFetchResult.fromErrorMessage(badResponse);
     }
-  }
-
-  private static List<JstdBrowserInfo> parseBrowsers(JsonArray jsonArray) {
-    List<JstdBrowserInfo> browserInfos = Lists.newArrayList();
-    for (JsonElement child : jsonArray) {
-      JsonObject browserJsonObject = child.getAsJsonObject();
-      JsonPrimitive namePrimitive = browserJsonObject.getAsJsonPrimitive("name");
-      JsonPrimitive versionPrimitive = browserJsonObject.getAsJsonPrimitive("version");
-      JsonPrimitive osPrimitive = browserJsonObject.getAsJsonPrimitive("os");
-      if (namePrimitive.isString() && versionPrimitive.isString() && osPrimitive.isString()) {
-        browserInfos.add(new JstdBrowserInfo(namePrimitive.getAsString(), versionPrimitive.getAsString(), osPrimitive.getAsString()));
-      } else {
-        throw new RuntimeException();
-      }
-    }
-    return browserInfos;
   }
 
   private static Response fetchResponse(String url) {
@@ -127,6 +91,22 @@ public class JstdServerUtils {
         reader.close();
       } catch (IOException ignored) {}
     }
+  }
+
+  private static List<JstdBrowserInfo> parseBrowsers(JsonArray jsonArray) {
+    List<JstdBrowserInfo> browserInfos = Lists.newArrayList();
+    for (JsonElement child : jsonArray) {
+      JsonObject browserJsonObject = child.getAsJsonObject();
+      JsonPrimitive namePrimitive = browserJsonObject.getAsJsonPrimitive("name");
+      JsonPrimitive versionPrimitive = browserJsonObject.getAsJsonPrimitive("version");
+      JsonPrimitive osPrimitive = browserJsonObject.getAsJsonPrimitive("os");
+      if (namePrimitive.isString() && versionPrimitive.isString() && osPrimitive.isString()) {
+        browserInfos.add(new JstdBrowserInfo(namePrimitive.getAsString(), versionPrimitive.getAsString(), osPrimitive.getAsString()));
+      } else {
+        throw new RuntimeException();
+      }
+    }
+    return browserInfos;
   }
 
   private static class Response {
