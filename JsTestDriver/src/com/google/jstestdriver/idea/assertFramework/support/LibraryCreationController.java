@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
+import com.google.jstestdriver.idea.assertFramework.library.JsLibraryHelper;
 import com.google.jstestdriver.idea.util.ProjectRootUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
