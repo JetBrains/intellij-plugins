@@ -346,15 +346,7 @@ public class FlexSdkUtils {
     return ApplicationManager.getApplication().runWriteAction(new Computable<Sdk>() {
       public Sdk compute() {
         final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
-        final String sdkName;
-        if (sdkType instanceof FlexmojosSdkType) {
-          // IDEA-73222
-          sdkName = SdkConfigurationUtil.createUniqueSdkName(sdkType, sdkHomePath, projectJdkTable.getSdksOfType(sdkType));
-        }
-        else {
-          sdkName = sdkType.suggestSdkName(null, sdkHomePath);
-        }
-
+        final String sdkName = SdkConfigurationUtil.createUniqueSdkName(sdkType, sdkHomePath, projectJdkTable.getSdksOfType(sdkType));
         final Sdk sdk = PeerFactory.getInstance().createProjectJdk(sdkName, "", sdkHomePath, sdkType);
         sdkType.setupSdkPaths(sdk);
         projectJdkTable.addJdk(sdk);
