@@ -386,21 +386,22 @@ public class CssWriter {
     }
   }
 
+  @SuppressWarnings("ConstantConditions")
   private void writeFunctionValue(CssFunction cssFunction, @Nullable FlexStyleIndexInfo info) throws InvalidPropertyException {
     final String functionName = cssFunction.getFunctionName();
-    @SuppressWarnings("ConstantConditions")
-    final ASTNode valueNode = cssFunction.getNode().findChildByType(CssElementTypes.CSS_TERM_LIST).getFirstChildNode().getFirstChildNode();
+    ASTNode termListNode = cssFunction.getNode().findChildByType(CssElementTypes.CSS_TERM_LIST);
     switch (functionName.charAt(0)) {
       case 'C':
-        writeClassReference(info, valueNode);
+        writeClassReference(info, termListNode.getFirstChildNode().getFirstChildNode());
         break;
 
       case 'E':
-        writeEmbed(cssFunction, valueNode);
+        writeEmbed(cssFunction, (CssTermList)termListNode.getPsi());
         break;
 
       case 'P':
-        writePropertyReference(valueNode);
+        writePropertyReference(termListNode.getFirstChildNode().getFirstChildNode());
+        break;
 
       default:
         throw new IllegalArgumentException("unknown function: " + functionName);
@@ -425,9 +426,9 @@ public class CssWriter {
     }
   }
 
-  private void writePropertyReference(ASTNode valueNode) {
-    @SuppressWarnings("ConstantConditions")
-    String reference = ((CssString)valueNode.getFirstChildNode().getFirstChildNode().getPsi()).getValue();
+  private static void writePropertyReference(ASTNode valueNode) throws InvalidPropertyException {
+    String reference = ((CssString)valueNode).getValue();
+    throw new InvalidPropertyException(valueNode.getPsi(), "property.reference.is.not.yet.supported", reference);
 
     // it seems FQN access like "al: PropertyReference("spark.layouts.VerticalAlign.TOP")" is not working, only document reference is allowed
     // todo
@@ -441,12 +442,10 @@ public class CssWriter {
     stringWriter.write(jsClass.getQualifiedName(), propertyOut);
   }
 
-  private void writeEmbed(CssFunction cssFunction, ASTNode valueNode) throws InvalidPropertyException {
+  private void writeEmbed(CssFunction cssFunction, CssTermList termList) throws InvalidPropertyException {
     VirtualFile source = null;
     String symbol = null;
     String mimeType = null;
-
-    CssTermList termList = (CssTermList)valueNode.getPsi();
     for (PsiElement child = termList.getFirstChild(); child != null; child = child.getNextSibling()) {
       if (child instanceof CssTerm) {
         PsiElement firstChild = child.getFirstChild();
