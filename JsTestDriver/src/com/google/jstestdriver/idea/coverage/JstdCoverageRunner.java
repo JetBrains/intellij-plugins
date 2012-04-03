@@ -1,7 +1,5 @@
 package com.google.jstestdriver.idea.coverage;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.intellij.coverage.CoverageEngine;
 import com.intellij.coverage.CoverageRunner;
 import com.intellij.coverage.CoverageSuite;
@@ -13,8 +11,10 @@ import com.intellij.rt.coverage.data.ProjectData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Sergey Simonchik
@@ -36,62 +36,26 @@ public class JstdCoverageRunner extends CoverageRunner {
 
   @NotNull
   private static ProjectData readProjectData(@NotNull File dataFile) throws IOException {
-    final String SOURCE_FILE_PREFIX = "SF:";
-    final String LINE_HIT_PREFIX = "DA:";
-    final String END_OF_RECORD = "end_of_record";
-    BufferedReader reader = new BufferedReader(new FileReader(dataFile));
-    try {
-      ProjectData projectData = new ProjectData();
-      String currentFileName = null;
-      String line;
-      List<LineData> lineDataList = null;
-      while ((line = reader.readLine()) != null) {
-        if (line.startsWith(SOURCE_FILE_PREFIX)) {
-          currentFileName = line.substring(SOURCE_FILE_PREFIX.length());
-          lineDataList = Lists.newArrayList();
-        }
-        else if (line.startsWith(LINE_HIT_PREFIX)) {
-          if (lineDataList == null) {
-            throw new RuntimeException("lineDataList is null!");
-          }
-          String[] values = line.substring(LINE_HIT_PREFIX.length()).split(",");
-          Preconditions.checkState(values.length == 2);
-          int lineNum = Integer.parseInt(values[0]);
-          int hitCount = Integer.parseInt(values[1]);
-          LineData lineData = new LineData(lineNum, null);
-          lineData.setHits(hitCount);
-          lineDataList.add(lineData);
-        }
-        else if (END_OF_RECORD.equals(line)) {
-          if (lineDataList == null) {
-            throw new RuntimeException("lineDataList is null!");
-          }
-          Preconditions.checkNotNull(currentFileName);
-          addRecords(projectData, currentFileName, lineDataList);
-          currentFileName = null;
-          lineDataList = null;
-        }
+    CoverageReport report = CoverageSerializationUtils.readLCOV(dataFile);
+    ProjectData projectData = new ProjectData();
+    for (Map.Entry<String, List<CoverageReport.LineHits>> entry : report.getInfo().entrySet()) {
+      String filePath = SimpleCoverageAnnotator.getFilePath(entry.getKey());
+      ClassData classData = projectData.getOrCreateClassData(filePath);
+      int max = 0;
+      List<CoverageReport.LineHits> lineHitsList = entry.getValue();
+      if (lineHitsList.size() > 0) {
+        CoverageReport.LineHits lastLineHits = lineHitsList.get(lineHitsList.size() - 1);
+        max = lastLineHits.getLineNumber();
       }
-      Preconditions.checkState(lineDataList == null && currentFileName == null);
-      return projectData;
-    } finally {
-      reader.close();
+      LineData[] lines = new LineData[max + 1];
+      for (CoverageReport.LineHits lineHits : lineHitsList) {
+        LineData lineData = new LineData(lineHits.getLineNumber(), null);
+        lineData.setHits(lineHits.getHits());
+        lines[lineHits.getLineNumber()] = lineData;
+      }
+      classData.setLines(lines);
     }
-  }
-
-  private static void addRecords(@NotNull ProjectData projectData,
-                                 @NotNull String fileName,
-                                 @NotNull List<LineData> lineDataList) {
-    ClassData classData = projectData.getOrCreateClassData(SimpleCoverageAnnotator.getFilePath(fileName));
-    int max = 0;
-    for (LineData ld : lineDataList) {
-      max = Math.max(max, ld.getLineNumber());
-    }
-    final LineData[] lines = new LineData[max + 1];
-    for (LineData lineData : lineDataList) {
-      lines[lineData.getLineNumber()] = lineData;
-    }
-    classData.setLines(lines);
+    return projectData;
   }
 
   @Override

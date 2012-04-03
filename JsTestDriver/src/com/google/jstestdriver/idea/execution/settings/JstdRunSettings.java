@@ -1,7 +1,10 @@
 package com.google.jstestdriver.idea.execution.settings;
 
+import com.google.common.collect.ImmutableList;
 import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 @Immutable
 public class JstdRunSettings {
@@ -15,6 +18,7 @@ public class JstdRunSettings {
   private final String myServerAddress;
   private final String myTestCaseName;
   private final String myTestMethodName;
+  private final ImmutableList<String> myFilesExcludedFromCoverage;
 
   public JstdRunSettings(
       @NotNull TestType testType,
@@ -25,7 +29,8 @@ public class JstdRunSettings {
       @NotNull String serverAddress,
       @NotNull ServerType serverType,
       @NotNull String testCaseName,
-      @NotNull String testMethodName
+      @NotNull String testMethodName,
+      @NotNull ImmutableList<String> filesExcludedFromCoverage
   ) {
     myTestType = testType;
     myJstdConfigType = jstdConfigType;
@@ -36,6 +41,7 @@ public class JstdRunSettings {
     myServerType = serverType;
     myTestCaseName = testCaseName;
     myTestMethodName = testMethodName;
+    myFilesExcludedFromCoverage = filesExcludedFromCoverage;
   }
 
   @NotNull
@@ -88,6 +94,11 @@ public class JstdRunSettings {
     return myTestMethodName;
   }
 
+  @NotNull
+  public ImmutableList<String> getFilesExcludedFromCoverage() {
+    return myFilesExcludedFromCoverage;
+  }
+
   public static class Builder {
 
     private TestType myTestType = TestType.CONFIG_FILE;
@@ -99,6 +110,7 @@ public class JstdRunSettings {
     private ServerType myServerType = ServerType.INTERNAL;
     private String myTestCaseName = "";
     private String myTestMethodName = "";
+    private ImmutableList<String> myFilesExcludedFromCoverage = ImmutableList.of();
 
     public Builder() {
     }
@@ -159,9 +171,25 @@ public class JstdRunSettings {
       return this;
     }
 
+    public Builder setFilesExcludedFromCoverage(@NotNull List<String> filesExcludedFromCoverage) {
+      myFilesExcludedFromCoverage = ImmutableList.copyOf(filesExcludedFromCoverage);
+      return this;
+    }
+
     @NotNull
     public JstdRunSettings build() {
-      return new JstdRunSettings(myTestType, myConfigType, myConfigFile, myDirectory, myJSFilePath, myServerAddress, myServerType, myTestCaseName, myTestMethodName);
+      return new JstdRunSettings(
+        myTestType,
+        myConfigType,
+        myConfigFile,
+        myDirectory,
+        myJSFilePath,
+        myServerAddress,
+        myServerType,
+        myTestCaseName,
+        myTestMethodName,
+        myFilesExcludedFromCoverage
+      );
     }
   }
 }

@@ -1,11 +1,17 @@
 package com.google.jstestdriver.idea.execution.settings;
 
+import com.google.common.collect.Lists;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
+import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import com.google.jstestdriver.idea.util.EnumUtils;
 import com.intellij.openapi.util.JDOMExternalizer;
+
+import java.util.List;
 
 public class JstdRunSettingsSerializationUtils {
 
@@ -18,7 +24,10 @@ public class JstdRunSettingsSerializationUtils {
     TEST_CASE("testCase"),
     TEST_METHOD("testMethod"),
     SERVER_ADDRESS("serverAddress"),
-    SERVER_TYPE("serverType");
+    SERVER_TYPE("serverType"),
+    COVERAGE("coverage"),
+    COVERAGE_EXCLUDED("excluded"),
+    COVERAGE_EXCLUDED_PATH("path");
 
     private final String key;
 
@@ -57,7 +66,45 @@ public class JstdRunSettingsSerializationUtils {
       String serverAddress = readString(element, Key.SERVER_ADDRESS, "");
       builder.setServerAddress(serverAddress);
     }
+    List<String> filesExcludedFromCoverage = readFilesExcludedFromCoverage(element);
+    builder.setFilesExcludedFromCoverage(filesExcludedFromCoverage);
     return builder.build();
+  }
+
+  @SuppressWarnings("unchecked")
+  private static List<String> readFilesExcludedFromCoverage(@NotNull Element root) {
+    List<String> excludedPaths = Lists.newArrayList();
+    Element coverageElement = root.getChild(Key.COVERAGE.getKey());
+    if (coverageElement != null) {
+      List<Element> excludedElements = coverageElement.getChildren(Key.COVERAGE_EXCLUDED.getKey());
+      for (Element excludedElement : excludedElements) {
+        Attribute pathAttr = excludedElement.getAttribute(Key.COVERAGE_EXCLUDED_PATH.getKey());
+        if (pathAttr != null) {
+          String path = pathAttr.getValue();
+          if (StringUtil.isNotEmpty(path)) {
+            excludedPaths.add(FileUtil.toSystemDependentName(path));
+          }
+        }
+      }
+    }
+    return excludedPaths;
+  }
+
+  private static void writeFilesExcludedFromCoverage(@NotNull Element root,
+                                                     @NotNull List<String> excludedPaths) {
+    if (excludedPaths.isEmpty()) {
+      return;
+    }
+    Element coverageElement = new Element(Key.COVERAGE.getKey());
+    root.addContent(coverageElement);
+    for (String path : excludedPaths) {
+      Element excludedElement = new Element(Key.COVERAGE_EXCLUDED.getKey());
+      excludedElement.setAttribute(
+        Key.COVERAGE_EXCLUDED_PATH.getKey(),
+        FileUtil.toSystemIndependentName(path)
+      );
+      coverageElement.addContent(excludedElement);
+    }
   }
 
   private static void readTestMethod(JstdRunSettings.Builder builder, Element element) {
@@ -101,6 +148,7 @@ public class JstdRunSettingsSerializationUtils {
     if (runSettings.getServerType() == ServerType.EXTERNAL) {
       writeString(element, Key.SERVER_ADDRESS, runSettings.getServerAddress());
     }
+    writeFilesExcludedFromCoverage(element, runSettings.getFilesExcludedFromCoverage());
   }
 
   private static void writeTestMethod(JstdRunSettings runSettings, Element element) {

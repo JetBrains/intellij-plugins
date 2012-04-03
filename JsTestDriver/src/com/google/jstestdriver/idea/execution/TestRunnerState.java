@@ -91,7 +91,7 @@ class TestRunnerState extends CommandLineState {
     super(env);
     myRunConfiguration = runConfiguration;
     myProject = project;
-    myConfigVirtualFiles = JstdClientCommandLineBuilder.INSTANCE.collectVirtualFiles(runConfiguration.getRunSettings(), project);
+    myConfigVirtualFiles = JstdClientCommandLineBuilder.collectVirtualFiles(runConfiguration.getRunSettings(), project);
     myCoverageFilePath = coverageFilePath;
   }
 
@@ -143,13 +143,13 @@ class TestRunnerState extends CommandLineState {
   @NotNull
   @Override
   protected ProcessHandler startProcess() throws ExecutionException {
-    GeneralCommandLine commandLine = JstdClientCommandLineBuilder.INSTANCE.buildCommandLine(
+    GeneralCommandLine commandLine = JstdClientCommandLineBuilder.buildCommandLine(
         myRunConfiguration.getRunSettings(),
         testResultPort,
         myConfigVirtualFiles,
         myCoverageFilePath
     );
-    logger.info("Running JSTestDriver: " + commandLine.getCommandLineString());
+    logger.info("Running JsTestDriver: " + commandLine.getCommandLineString());
     return new OSProcessHandler(commandLine.createProcess(), "");
   }
 
