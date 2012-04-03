@@ -52,8 +52,6 @@ public class CssRulesetPrinter {
     _namespaceUnificator = value;
   }
 
-  public var availableWidth:Number;
-
   public function createTextBlock(ruleset:CssRuleset, index:int):TextBlock {
     if (index == 0 && ruleset.file != null) {
       return printFileSource(ruleset);

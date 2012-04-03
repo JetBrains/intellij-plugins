@@ -64,7 +64,6 @@ public class StyleInspector extends AbstractInspector implements StylePaneContex
   }
 
   override public function set component(value:Object):void {
-    //_rulesetPrinter.availableWidth = Object(skin).contentWidth;
     _rulesetPrinter.namespaceUnificator = namespaceUnificator;
 
     super.component = value;

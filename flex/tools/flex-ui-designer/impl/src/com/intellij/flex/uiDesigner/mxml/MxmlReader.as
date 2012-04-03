@@ -151,8 +151,7 @@ public class MxmlReader implements DocumentReader {
   }
 
   internal function readMxmlObjectFromClass(className:String, parent:Object = null):Object {
-    var clazz:Class = module.getClass(className);
-    return readObjectProperties(new clazz(), parent);
+    return readObjectProperties(new (module.getClass(className))(), parent);
   }
 
   private function readObjectProperties(object:Object, parent:Object = null):Object {
@@ -174,15 +173,14 @@ public class MxmlReader implements DocumentReader {
 
   private function initObject(object:Object, reference:int, propertyName:String, objectDeclarationTextOffset:int, parent:Object):Object {
     processReference(reference, object);
-    const hasDeferredSetStyles:Boolean = !(object is Proxy) && "deferredSetStyles" in object;
     var deferredSetStyleProxy:DeferredSetStyleProxy;
     var explicitInlineCssRulesetCreated:Boolean;
-    if (hasDeferredSetStyles) {
+    if (!(object is Proxy) && "deferredSetStyles" in object) {
       deferredSetStyleProxy = createDeferredSetStyleProxy();
       deferredSetStyleProxy.objectDeclarationTextOffset = objectDeclarationTextOffset;
       object.deferredSetStyles = deferredSetStyleProxy;
     }
-    
+
     var propertyHolder:Object = object;
     var cssDeclaration:CssDeclarationImpl;
     var marker:int;
@@ -192,10 +190,6 @@ public class MxmlReader implements DocumentReader {
           break;
 
         case PropertyClassifier.STYLE:
-          if (deferredSetStyleProxy == null) {
-            deferredSetStyleProxy = createDeferredSetStyleProxy();
-          }
-            
           if (deferredSetStyleProxy.inlineCssRuleset == null) {
             explicitInlineCssRulesetCreated = true;
             deferredSetStyleProxy.inlineCssRuleset = InlineCssRuleset.createInline(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input),
@@ -262,43 +256,11 @@ public class MxmlReader implements DocumentReader {
           }
           break;
 
-        case Amf3Types.DOUBLE:
-          propertyHolder[propertyName] = input.readDouble();
-          if (cssDeclaration != null) {
-            cssDeclaration.type = CssPropertyType.NUMBER;
-          }
-          break;
-
-        case Amf3Types.INTEGER:
-          propertyHolder[propertyName] = (AmfUtil.readUInt29(input) << 3) >> 3;
-          if (cssDeclaration != null) {
-            cssDeclaration.type = CssPropertyType.NUMBER;
-          }
-          break;
-
-        case Amf3Types.TRUE:
-          propertyHolder[propertyName] = true;
-          if (cssDeclaration != null) {
-            cssDeclaration.type = CssPropertyType.BOOL;
-          }
-          break;
-
-        case Amf3Types.FALSE:
-          propertyHolder[propertyName] = false;
-          if (cssDeclaration != null) {
-            cssDeclaration.type = CssPropertyType.BOOL;
-          }
-          break;
-
         case Amf3Types.OBJECT:
           propertyHolder[propertyName] = readMxmlObjectFromClass(stringRegistry.readNotNull(input));
           if (cssDeclaration != null) {
             cssDeclaration.type = CssPropertyType.EFFECT;
           }
-          break;
-
-        case Amf3Types.ARRAY:
-          propertyHolder[propertyName] = readArray(object);
           break;
 
         case AmfExtendedTypes.ARRAY_IF_LENGTH_GREATER_THAN_1:
@@ -310,14 +272,6 @@ public class MxmlReader implements DocumentReader {
 
         case Amf3Types.VECTOR_OBJECT:
           propertyHolder[propertyName] = readVector();
-          break;
-
-        case AmfExtendedTypes.MXML_ARRAY:
-          propertyHolder[propertyName] = readMxmlArray();
-          break;
-
-        case AmfExtendedTypes.MXML_VECTOR:
-          propertyHolder[propertyName] = readMxmlVector();
           break;
 
         case AmfExtendedTypes.COLOR_STYLE:
@@ -332,10 +286,6 @@ public class MxmlReader implements DocumentReader {
             }
             cssDeclaration.value = input.readObject();
           }
-          break;
-
-        case AmfExtendedTypes.OBJECT_REFERENCE:
-          propertyHolder[propertyName] = readObjectReference();
           break;
         
         case AmfExtendedTypes.DOCUMENT_FACTORY_REFERENCE:
@@ -355,8 +305,24 @@ public class MxmlReader implements DocumentReader {
           }
           break;
 
-        default:
+        case Amf3Types.DOUBLE:
+        case Amf3Types.INTEGER:
+          if (cssDeclaration != null) {
+            cssDeclaration.type = CssPropertyType.NUMBER;
+          }
           propertyHolder[propertyName] = readExpression(marker);
+          break;
+
+        case Amf3Types.TRUE:
+        case Amf3Types.FALSE:
+          if (cssDeclaration != null) {
+            cssDeclaration.type = CssPropertyType.BOOL;
+          }
+          propertyHolder[propertyName] = readExpression(marker);
+          break;
+
+        default:
+          propertyHolder[propertyName] = readExpression(marker, object);
       }
 
       if (cssDeclaration != null) {
@@ -367,19 +333,13 @@ public class MxmlReader implements DocumentReader {
 
     if (deferredSetStyleProxy != null) {
       if (deferredSetStyleProxy.inlineCssRuleset != null) {
-        object.styleDeclaration = new module.inlineCssStyleDeclarationClass(deferredSetStyleProxy.inlineCssRuleset,
-            module.styleManager.styleValueResolver);
+        object.styleDeclaration = new module.inlineCssStyleDeclarationClass(deferredSetStyleProxy.inlineCssRuleset, module.styleManager.styleValueResolver);
+        deferredSetStyleProxy.inlineCssRuleset = null;
       }
-
-      deferredSetStyleProxy.inlineCssRuleset = null;
-      deferredSetStyleProxy.file = null;
-      deferredSetStyleProxyPool.push(deferredSetStyleProxy);
-    }
-
-    if (hasDeferredSetStyles) {
+      deferredSetStyleProxyPool[deferredSetStyleProxyPool.length] = deferredSetStyleProxy;
       object.deferredSetStyles = null;
     }
-    
+
     return object;
   }
 
@@ -517,10 +477,10 @@ public class MxmlReader implements DocumentReader {
     return stringRegistry.read(input);
   }
 
-  internal function readExpression(amfType:int):* {
+  internal function readExpression(amfType:int, parent:Object = null):* {
     switch (amfType) {
       case Amf3Types.OBJECT:
-        return readMxmlObjectFromClass(stringRegistry.readNotNull(input));
+        return readMxmlObjectFromClass(stringRegistry.readNotNull(input), parent);
 
       case ExpressionMessageTypes.SIMPLE_OBJECT:
         return readSimpleObject(new Object());
@@ -547,7 +507,7 @@ public class MxmlReader implements DocumentReader {
         return null;
 
       case Amf3Types.ARRAY:
-        return readArray();
+        return readArray(parent);
 
       case ExpressionMessageTypes.CALL:
         return callFunction();
@@ -568,7 +528,7 @@ public class MxmlReader implements DocumentReader {
         return readObjectReference();
 
       case AmfExtendedTypes.DOCUMENT_REFERENCE:
-        return readObjectProperties(readDocumentFactory().newInstance());
+        return readObjectProperties(readDocumentFactory().newInstance(), parent);
 
       case AmfExtendedTypes.COMPONENT_FACTORY:
         return readComponentFactory();
