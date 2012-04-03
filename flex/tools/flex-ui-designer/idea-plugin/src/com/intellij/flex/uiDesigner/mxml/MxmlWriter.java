@@ -622,7 +622,7 @@ public class MxmlWriter {
         }
 
         writer.classOrPropertyName("0");
-        out.write(PropertyClassifier.MX_CONTAINER_CHILDREN);
+        out.write(AmfExtendedTypes.MX_CONTAINER_CHILDREN);
         return PropertyKind.ARRAY;
       }
       else {
@@ -656,7 +656,6 @@ public class MxmlWriter {
       }
 
       writer.classOrPropertyName(defaultDescriptor.getName());
-      out.write(PropertyClassifier.PROPERTY);
       if (defaultDescriptor.isDeferredInstance()) {
         writer.newInstance("com.intellij.flex.uiDesigner.flex.DeferredInstanceFromArray", 1, false).typeMarker(Amf3Types.ARRAY);
         return PropertyKind.ARRAY;
@@ -749,14 +748,11 @@ public class MxmlWriter {
   private void writePropertyHeader(String name, XmlElement element, @NotNull Context context, boolean isStyle) {
     writer.classOrPropertyName(name);
     if (isStyle) {
-      out.write(PropertyClassifier.STYLE);
+      out.write(AmfExtendedTypes.STYLE);
       if (!context.isCssRulesetDefined()) {
         defineInlineCssRuleset(element);
         context.markCssRulesetDefined();
       }
-    }
-    else {
-      out.write(PropertyClassifier.PROPERTY);
     }
   }
 

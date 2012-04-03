@@ -185,53 +185,50 @@ public class MxmlReader implements DocumentReader {
     var cssDeclaration:CssDeclarationImpl;
     var marker:int;
     for (; propertyName != null; propertyName = stringRegistry.read(input)) {
-      switch ((marker = input.readByte())) {
-        case PropertyClassifier.PROPERTY:
-          break;
+      marker = input.readByte();
+      if (marker == AmfExtendedTypes.STYLE) {
+        if (deferredSetStyleProxy.inlineCssRuleset == null) {
+          explicitInlineCssRulesetCreated = true;
+          deferredSetStyleProxy.inlineCssRuleset = InlineCssRuleset.createInline(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input),
+                                                                                 context.file);
+        }
+        else if (!explicitInlineCssRulesetCreated) {
+          explicitInlineCssRulesetCreated = true;
+          // skip line and text offset
+          AmfUtil.readUInt29(input);
+          AmfUtil.readUInt29(input);
+        }
 
-        case PropertyClassifier.STYLE:
-          if (deferredSetStyleProxy.inlineCssRuleset == null) {
-            explicitInlineCssRulesetCreated = true;
-            deferredSetStyleProxy.inlineCssRuleset = InlineCssRuleset.createInline(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input),
-                                                                                   context.file);
-          }
-          else if (!explicitInlineCssRulesetCreated) {
-            explicitInlineCssRulesetCreated = true;
-            // skip line and text offset
-            AmfUtil.readUInt29(input);
-            AmfUtil.readUInt29(input);
-          }
-
-          //noinspection JSMismatchedCollectionQueryUpdate
-          var cssDeclarations:Vector.<CssDeclaration> = deferredSetStyleProxy.inlineCssRuleset.declarations;
-          const flags:int = input.readUnsignedByte();
-          if ((flags & StyleFlags.SKIN_IN_PROJECT) != 0) {
-            cssDeclarations.push(new CssSkinClassDeclaration(readDocumentFactory(), CssRuleset.GUESS_TEXT_OFFSET_BY_PARENT));
-            continue;
-          }
-
-          if ((flags & StyleFlags.EMBED_IMAGE) != 0) {
-            cssDeclarations.push(CssEmbedImageDeclaration.create(propertyName, CssRuleset.GUESS_TEXT_OFFSET_BY_PARENT,
-                                                                 AmfUtil.readUInt29(input)));
-            continue;
-          }
-          else if ((flags & StyleFlags.EMBED_SWF) != 0) {
-            cssDeclarations.push(CssEmbedSwfDeclaration.create2(propertyName, CssRuleset.GUESS_TEXT_OFFSET_BY_PARENT, input));
-            continue;
-          }
-          else {
-            cssDeclaration = CssDeclarationImpl.create(propertyName, CssRuleset.GUESS_TEXT_OFFSET_BY_PARENT);
-          }
-
-          cssDeclarations.push(cssDeclaration);
+        //noinspection JSMismatchedCollectionQueryUpdate
+        var cssDeclarations:Vector.<CssDeclaration> = deferredSetStyleProxy.inlineCssRuleset.declarations;
+        const flags:int = input.readUnsignedByte();
+        if ((flags & StyleFlags.SKIN_IN_PROJECT) != 0) {
+          cssDeclarations[cssDeclarations.length] = new CssSkinClassDeclaration(readDocumentFactory(), CssRuleset.GUESS_TEXT_OFFSET_BY_PARENT);
+          continue;
+        }
+        else if ((flags & StyleFlags.EMBED_IMAGE) != 0) {
+          cssDeclarations[cssDeclarations.length] = CssEmbedImageDeclaration.create(propertyName, CssRuleset.GUESS_TEXT_OFFSET_BY_PARENT, AmfUtil.readUInt29(input));
+          continue;
+        }
+        else if ((flags & StyleFlags.EMBED_SWF) != 0) {
+          cssDeclarations[cssDeclarations.length] = CssEmbedSwfDeclaration.create2(propertyName, CssRuleset.GUESS_TEXT_OFFSET_BY_PARENT, input);
+          continue;
+        }
+        else {
+          cssDeclaration = CssDeclarationImpl.create(propertyName, CssRuleset.GUESS_TEXT_OFFSET_BY_PARENT);
+          cssDeclarations[cssDeclarations.length] = cssDeclaration;
           propertyHolder = cssDeclaration;
           if ((flags & StyleFlags.EFFECT) != 0) {
             registerEffect(propertyName, object);
           }
           propertyName = "value";
-          break;
 
-        case PropertyClassifier.ID:
+          marker = input.readByte();
+        }
+      }
+
+      switch (marker) {
+        case AmfExtendedTypes.ID:
           propertyHolder.id = AmfUtil.readString(input);
           context.registerObjectWithId(propertyHolder.id, propertyHolder);
           // AS-272
@@ -239,16 +236,11 @@ public class MxmlReader implements DocumentReader {
             parent[propertyHolder.id] = propertyHolder;
           }
           continue;
-        
-        case PropertyClassifier.MX_CONTAINER_CHILDREN:
+
+        case AmfExtendedTypes.MX_CONTAINER_CHILDREN:
           readChildrenMxContainer(DisplayObjectContainer(propertyHolder));
           continue;
 
-        default:
-          throw new ArgumentError("unknown property \"" + propertyName + "\" classifier " + marker);
-      }
-
-      switch ((marker = input.readByte())) {
         case Amf3Types.STRING:
           propertyHolder[propertyName] = AmfUtil.readString(input);
           if (cssDeclaration != null) {
@@ -705,15 +697,6 @@ import com.intellij.flex.uiDesigner.css.InlineCssRuleset;
 
 import flash.utils.Proxy;
 import flash.utils.flash_proxy;
-
-final class PropertyClassifier {
-  public static const PROPERTY:int = 0;
-  public static const STYLE:int = 1;
-
-  public static const ID:int = 2;
-
-  public static const MX_CONTAINER_CHILDREN:int = 4;
-}
 
 use namespace flash_proxy;
 

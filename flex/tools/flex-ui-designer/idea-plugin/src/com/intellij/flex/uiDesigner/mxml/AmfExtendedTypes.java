@@ -26,6 +26,9 @@ public final class AmfExtendedTypes {
   public static final int XML = 58;
 
   public static final int OBJECT = 55;
+  public static final int ID = 61;
+  public static final int MX_CONTAINER_CHILDREN = 62;
+  public static final int STYLE = 63;
 
   public static int TRANSIENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES = 56;
   public static int PERMANENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES = 57;

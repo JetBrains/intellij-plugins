@@ -27,6 +27,9 @@ public final class AmfExtendedTypes {
   public static const XML:int = 58;
 
   public static const OBJECT:int = 55;
+  public static const ID:int = 61;
+  public static const MX_CONTAINER_CHILDREN:int = 62;
+  public static const STYLE:int = 63;
 
   public static const TRANSIENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:int = 56;
   public static const PERMANENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:int = 57;

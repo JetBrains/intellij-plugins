@@ -127,7 +127,7 @@ final class BaseWriter {
 
   public void idMxmlProperty(String value) {
     classOrPropertyName(FlexMxmlLanguageAttributeNames.ID);
-    out.write(PropertyClassifier.ID);
+    out.write(AmfExtendedTypes.ID);
     out.writeAmfUtf(value, false);
   }
 
