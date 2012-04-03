@@ -75,7 +75,7 @@ public class OutputLogger extends LoggerAdapter implements Logger {
   //Pattern ERROR_PATTERN = Pattern.compile("(.*?)(?:\\((-?\\d+)\\))?: ?(?:col: (-?\\d+))? (Warning|Error): (.*)");
   public void log(final String level, final String path, final int line, final int column, final String message) {
     final StringBuilder builder = new StringBuilder();
-    if (isNotEmpty(path)) builder.append(path);
+    if (!isEmpty(path)) builder.append(path);
     if (line >= 0) builder.append('(').append(line).append(')');
     if (builder.length() > 0) builder.append(": ");
     if (column >= 0) builder.append("col: ").append(column).append(" ");
@@ -87,12 +87,12 @@ public class OutputLogger extends LoggerAdapter implements Logger {
       builder.append(ERROR_LEVEL).append(": ");
     }
 
-    if (isNotEmpty(message)) builder.append(message);
+    builder.append(isEmpty(message) ? "unknown error" : message);
     log(builder.toString());
   }
 
-  private static boolean isNotEmpty(final String s) {
-    return s != null && s.trim().length() >= 0;
+  private static boolean isEmpty(final String s) {
+    return s == null || s.trim().length() == 0;
   }
 
   public boolean wereErrorsReported() {
