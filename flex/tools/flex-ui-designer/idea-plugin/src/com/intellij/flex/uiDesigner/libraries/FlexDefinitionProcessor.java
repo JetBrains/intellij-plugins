@@ -29,7 +29,8 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     "spark.components.supportClasses:SkinnableComponent",
     "mx.effects:Effect",
     "spark.modules:ModuleLoader",
-    "mx.controls:SWFLoader"
+    "mx.controls:SWFLoader",
+    //"mx.core:UIComponent"
   };
 
   static final char OVERLOADED_AND_BACKED_CLASS_MARK = 'F';

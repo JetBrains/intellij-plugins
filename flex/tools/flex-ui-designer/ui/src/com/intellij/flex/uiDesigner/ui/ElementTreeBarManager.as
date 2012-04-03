@@ -42,7 +42,7 @@ public class ElementTreeBarManager extends AbstractCollectionViewDataSource impl
     _presentation.dataSource = this;
   }
 
-  public function update(object:Object):void {
+  private function update(object:Object):void {
     _itemCount = 0;
 
     if (object == null) {

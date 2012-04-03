@@ -1447,7 +1447,7 @@ public class Encoder {
     if (opcodePass == 1) {
       if (opat(1) == OP_findpropstrict && readIntAt(1) == history.getIndex(IndexHistory.MULTINAME, index)) {
         rewind(1);
-        OP_getlex(index);
+        op32(index, OP_getlex);
         return;
       }
 
@@ -1483,67 +1483,6 @@ public class Encoder {
       beginop(opcode);
       opcodes.writeU32(history.getIndex(IndexHistory.MULTINAME, index));
     }
-  }
-
-  public void OP_getlex(int index) {
-    if (opcodePass == 1) {
-      //DataBuffer in = history.constantPool.in;
-      //final int originalPosition = in.position();
-      //in.seek(history.getRawPartPoolPositions(IndexHistory.MULTINAME)[index]);
-      //int constKind = in.readU8();
-      //if (constKind == CONSTANT_Qname) {
-      //  int ns = in.readU32();
-      //  int localName = in.readU32();
-      //  in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
-      //  int stringLength = in.readU32();
-      //
-      //  String s = in.readString(stringLength);
-      //
-      //  if (s.equals("UIComponent")) {
-      //    in.seek(history.getRawPartPoolPositions(IndexHistory.NS)[ns] + 1);
-      //    in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[in.readU32()]);
-      //    stringLength = in.readU32();
-      //    String ss = in.readString(stringLength);
-      //    if (ss.equals("mx.core")) {
-      //      int ffd = 0;
-      //      ffd++;
-      //    }
-      //  }
-      //}
-      //
-      //in.seek(originalPosition);
-
-      beginop(OP_getlex);
-      opcodes.writeU32(history.getIndex(IndexHistory.MULTINAME, index));
-    }
-
-    //public int skipMethod(final List<SkipMethodKey> keys, int nameIndex, DataBuffer in) {
-    //   final int originalPosition = in.position();
-    //   in.seek(history.getRawPartPoolPositions(IndexHistory.MULTINAME)[nameIndex]);
-    //
-    //   int constKind = in.readU8();
-    //   assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
-    //   int ns = in.readU32();
-    //   int localName = in.readU32();
-    //
-    //   in.seek(history.getRawPartPoolPositions(IndexHistory.NS)[ns]);
-    //   final int nsKind = in.readU8();
-    //   if (nsKind == CONSTANT_PackageNamespace || nsKind == CONSTANT_ProtectedNamespace) {
-    //     in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
-    //     int stringLength = in.readU32();
-    //     for (int i = 0, size = keys.size(); i < size; i++) {
-    //       SkipMethodKey key = keys.get(i);
-    //       if (key.packageNamespace == nsKind && compare(in, stringLength, key.name)) {
-    //         in.seek(originalPosition);
-    //         return i;
-    //       }
-    //     }
-    //   }
-    //
-    //   in.seek(originalPosition);
-    //   return -1;
-    // }
-
   }
 
   public void OP_hasnext2(int objectRegister, int indexRegister) {

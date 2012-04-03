@@ -164,11 +164,21 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     _focusManager = new DocumentFocusManager(this);
   }
 
+  public function get isProxy():Boolean {
+    // must be false, otherwise UIComponet will ignore our specified actual size
+    // see validateDisplayList
+
+    // but must be true if we want to keep existing systemManager (see get systemManager)
+
+    // Adobe, burn in hell
+    return !mx.managers.LayoutManager(UIComponentGlobals.layoutManager).adobePleaseUseSpecifiedActualSize;
+  }
+
   public function setDocumentBounds(w:int, h:int):void {
     ILayoutElement(_document).setLayoutBoundsSize(w, h);
-    if (_document is IInvalidating) {
-      IInvalidating(_document).validateNow();
-    }
+    //if (_document is IInvalidating) {
+    //  IInvalidating(_document).validateNow();
+    //}
   }
 
   public function getImplementation(interfaceName:String):Object {

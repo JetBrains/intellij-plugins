@@ -15,6 +15,8 @@ import mx.managers.layoutClasses.PriorityQueue;
 use namespace mx_internal;
 
 public class LayoutManager extends EventDispatcher implements ILayoutManager {
+  public var adobePleaseUseSpecifiedActualSize:Boolean;
+
   // IDEA-72373
   public var phasedInstantiationDone:Function;
 
@@ -186,15 +188,18 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
       if (obj.nestLevel) {
         currentObject = obj;
         try {
-        obj.validateDisplayList();
-
-        if (!obj.updateCompletePendingFlag) {
-          updateCompleteQueue.addObject(obj, obj.nestLevel);
-          obj.updateCompletePendingFlag = true;
+          adobePleaseUseSpecifiedActualSize = true;
+          obj.validateDisplayList();
+          if (!obj.updateCompletePendingFlag) {
+            updateCompleteQueue.addObject(obj, obj.nestLevel);
+            obj.updateCompletePendingFlag = true;
+          }
         }
-      }
         catch (e:Error) {
           uiErrorHandler.handleUiError(e, currentObject, "Can't validate display list " + obj);
+        }
+        finally {
+          adobePleaseUseSpecifiedActualSize = false;
         }
       }
 
@@ -295,7 +300,9 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
         while (obj) {
           if (obj.nestLevel) {
             currentObject = obj;
+            adobePleaseUseSpecifiedActualSize = true;
             obj.validateDisplayList();
+            adobePleaseUseSpecifiedActualSize = false;
             if (!obj.updateCompletePendingFlag) {
               updateCompleteQueue.addObject(obj, obj.nestLevel);
               obj.updateCompletePendingFlag = true;
@@ -354,6 +361,9 @@ public class LayoutManager extends EventDispatcher implements ILayoutManager {
     }
     catch (e:Error) {
       uiErrorHandler.handleUiError(e, obj, "Can't validate " + obj);
+    }
+    finally {
+      adobePleaseUseSpecifiedActualSize = false;
     }
 
     currentObject = lastCurrentObject;

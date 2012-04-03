@@ -154,6 +154,11 @@ internal final class FlexComponentInfoProvider implements ComponentInfoProvider 
 
       var qualifiedClassName:String = getQualifiedClassName(element);
       source[count++] = qualifiedClassName.substr(qualifiedClassName.lastIndexOf("::") + 2);
+
+      if (element == null) {
+        var bp:String = "ff";
+        bp += "dd";
+      }
     }
     while (!((element = element.parent) is DocumentDisplayManager));
 

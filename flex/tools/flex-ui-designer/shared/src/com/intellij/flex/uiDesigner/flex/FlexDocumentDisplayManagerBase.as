@@ -58,12 +58,6 @@ internal class FlexDocumentDisplayManagerBase extends AbstractDocumentDisplayMan
   public function allowInsecureDomain(...rest):void {
   }
 
-  public function get isProxy():Boolean {
-    // must be false, otherwise UIComponet will ignore our specified actual size
-    // see validateDisplayList
-    return false;
-  }
-
   public function isTopLevel():Boolean {
     return true;
   }

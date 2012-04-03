@@ -763,11 +763,7 @@ public final class Decoder {
             continue;
           }
 
-          case OP_getlex: {
-            v.OP_getlex(in.readU32());
-            continue;
-          }
-
+          case OP_getlex:
           case OP_getdescendants:
           case OP_finddef:
           case OP_findproperty:
