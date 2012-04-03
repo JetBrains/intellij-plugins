@@ -14,7 +14,6 @@ import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.*;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -99,10 +98,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
         }
 
         if (errorMessage != null) {
-          Pair<String, Object> location =
-
-            Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB,
-                                        DependenciesConfigurable.Location.TableEntry.forBc(moduleName, bcName));
+          Object location = DependenciesConfigurable.Location.TableEntry.forBc(moduleName, bcName);
           PlaceInProjectStructure place = new PlaceInBuildConfiguration(this, DependenciesConfigurable.TAB_NAME, location);
           problemsHolder.registerProblem(errorMessage, null, ProjectStructureProblemType.error("flex-bc-dependency-bc"), place, null);
         }
@@ -112,7 +108,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
     FlexCompiler.checkConfiguration(myModule, myBc, true, new Consumer<FlashProjectStructureProblem>() {
       public void consume(final FlashProjectStructureProblem problem) {
         PlaceInProjectStructure place =
-          new PlaceInBuildConfiguration(BuildConfigurationProjectStructureElement.this, problem.tabName, problem.location);
+          new PlaceInBuildConfiguration(BuildConfigurationProjectStructureElement.this, problem.tabName, problem.locationOnTab);
         problemsHolder.registerProblem(problem.errorMessage, null, ProjectStructureProblemType.error(problem.errorId), place, null);
       }
     });

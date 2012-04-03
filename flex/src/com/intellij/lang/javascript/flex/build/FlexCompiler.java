@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.build;
 
-import com.intellij.CommonBundle;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -225,20 +224,18 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   public boolean validateConfiguration(final CompileScope scope) {
-    final StringBuilder errors = new StringBuilder();
+    final Module[] modules = scope.getAffectedModules();
+    final Project project = modules.length > 0 ? modules[0].getProject() : null;
+    if (project == null) return true;
+
+    final FlashProjectStructureErrorsDialog dialog = new FlashProjectStructureErrorsDialog(project);
 
     try {
       final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile = getModulesAndBCsToCompile(scope);
       for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
-        final StringBuilder s = new StringBuilder();
-
         final Consumer<FlashProjectStructureProblem> errorConsumer = new Consumer<FlashProjectStructureProblem>() {
-          @Override
           public void consume(final FlashProjectStructureProblem problem) {
-            if (s.length() > 0) {
-              s.append("\n");
-            }
-            s.append("- ").append(problem.errorMessage);
+            dialog.addProblem(moduleAndBC.first, moduleAndBC.second, problem);
           }
         };
 
@@ -255,79 +252,56 @@ public class FlexCompiler implements SourceProcessingCompiler {
             }
           }
         }
-
-        if (s.length() > 0) {
-          if (errors.length() > 0) errors.append("\n\n");
-
-          errors.append(FlexBundle.message("bc.0.of.module.1", moduleAndBC.second.getName(), moduleAndBC.first.getName()))
-            .append(":\n").append(s);
-        }
       }
-      checkSimilarOutputFiles(modulesAndBCsToCompile);
+      checkSimilarOutputFiles(modulesAndBCsToCompile,
+                              new Consumer<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>>() {
+                                public void consume(final Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem> trinity) {
+                                  dialog.addProblem(trinity.first, trinity.second, trinity.third);
+                                }
+                              });
     }
     catch (ConfigurationException e) {
-      if (errors.length() > 0) errors.append("\n\n");
-      errors.append("- ").append(e.getMessage());
+      // can't happen because already checked at RunConfiguration.getState()
+      Messages.showErrorDialog(project, e.getMessage(), FlexBundle.message("project.setup.problem.title"));
+      return false;
     }
 
-    if (errors.length() > 0) {
-      final int choice =
-        Messages.showDialog(errors.toString(), FlexBundle.message("project.setup.problem.title"),
-                            new String[]{FlexBundle.message("open.project.structure"), CommonBundle.message("button.cancel")},
-                            0, Messages.getErrorIcon());
-      if (choice == 0) {
-        final Module[] modules = scope.getAffectedModules();
-        if (modules.length > 0) {
-          ShowSettingsUtil.getInstance().editConfigurable(modules[0].getProject(),
-                                                          ProjectStructureConfigurable.getInstance(modules[0].getProject()));
-        }
+    if (dialog.containsProblems()) {
+      dialog.show();
+      if (dialog.isOK()) {
+        ShowSettingsUtil.getInstance().editConfigurable(project, ProjectStructureConfigurable.getInstance(project));
       }
-
       return false;
     }
 
     return true;
   }
 
-  private static boolean checkSimilarOutputFiles(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile)
-    throws ConfigurationException {
+  private static boolean checkSimilarOutputFiles(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile,
+                                                 final Consumer<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> errorConsumer) {
 
     final Map<String, Pair<Module, FlexIdeBuildConfiguration>> outputPathToModuleAndBC =
       new THashMap<String, Pair<Module, FlexIdeBuildConfiguration>>();
     for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
       final FlexIdeBuildConfiguration bc = moduleAndBC.second;
       final String outputFilePath = bc.getActualOutputFilePath();
-      checkOutputPathUnique(outputFilePath, moduleAndBC, outputPathToModuleAndBC);
-
-      /*
-      final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
-      if (bc.getTargetPlatform() == TargetPlatform.Mobile && bc.getOutputType() == OutputType.Application) {
-        if (bc.getAndroidPackagingOptions().isEnabled()) {
-          final String outputPath = outputFolderPath + "/" + bc.getAndroidPackagingOptions().getPackageFileName() + ".apk";
-          checkOutputPathUnique(outputPath, moduleAndBC, outputPathToModuleAndBC);
-        }
-        if (bc.getIosPackagingOptions().isEnabled()) {
-          final String outputPath = outputFolderPath + "/" + bc.getIosPackagingOptions().getPackageFileName() + ".ipa";
-          checkOutputPathUnique(outputPath, moduleAndBC, outputPathToModuleAndBC);
-        }
-      }
-      */
+      checkOutputPathUnique(outputFilePath, moduleAndBC, outputPathToModuleAndBC, errorConsumer);
     }
     return true;
   }
 
   private static void checkOutputPathUnique(final String outputPath,
                                             final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC,
-                                            final Map<String, Pair<Module, FlexIdeBuildConfiguration>> outputPathToModuleAndBC)
-    throws ConfigurationException {
+                                            final Map<String, Pair<Module, FlexIdeBuildConfiguration>> outputPathToModuleAndBC,
+                                            final Consumer<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> errorConsumer) {
     final String caseAwarePath = SystemInfo.isFileSystemCaseSensitive ? outputPath : outputPath.toLowerCase();
 
     final Pair<Module, FlexIdeBuildConfiguration> existing = outputPathToModuleAndBC.put(caseAwarePath, moduleAndBC);
     if (existing != null) {
-      throw new ConfigurationException(FlexBundle
-                                         .message("same.output.files", moduleAndBC.second.getName(), moduleAndBC.first.getName(),
-                                                  existing.second.getName(), existing.first.getName(),
-                                                  FileUtil.toSystemDependentName(outputPath)));
+      final String message = FlexBundle.message("same.output.files", existing.second.getName(), existing.first.getName(),
+                                                FileUtil.toSystemDependentName(outputPath));
+      errorConsumer.consume(Trinity.create(moduleAndBC.first, moduleAndBC.second, FlashProjectStructureProblem
+        .createGeneralOptionProblem(moduleAndBC.second.getName(), message, FlexIdeBCConfigurable.Location.OutputFileName)));
     }
   }
 

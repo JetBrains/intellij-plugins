@@ -62,6 +62,13 @@ public class RemoteFlashRunConfiguration extends RunConfigurationBase implements
   }
 
   public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
+    try {
+      myRunnerParameters.checkAndGetModuleAndBC(getProject());
+    }
+    catch (RuntimeConfigurationError e) {
+      throw new ExecutionException(e.getMessage());
+    }
+
     return FlexBaseRunner.EMPTY_RUN_STATE;
   }
 

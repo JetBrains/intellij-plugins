@@ -16,14 +16,14 @@ public class PlaceInBuildConfiguration extends PlaceInProjectStructure {
 
   private final BuildConfigurationProjectStructureElement myStructureElement;
   private final String myTabName;
-  @Nullable private final Pair<String, ?> myLocation;
+  @Nullable private final Object myLocationOnTab;
 
   public PlaceInBuildConfiguration(BuildConfigurationProjectStructureElement structureElement,
                                    @NotNull String tabName,
-                                   @Nullable Pair<String, ?> location) {
+                                   @Nullable Object locationOnTab) {
     myStructureElement = structureElement;
     myTabName = tabName;
-    myLocation = location;
+    myLocationOnTab = locationOnTab;
   }
 
   @NotNull
@@ -41,8 +41,8 @@ public class PlaceInBuildConfiguration extends PlaceInProjectStructure {
   @Override
   public ActionCallback navigate() {
     Place place = FlexProjectStructureUtil.createPlace(myStructureElement.getModule(), myStructureElement.getBc(), myTabName);
-    if (myLocation != null) {
-      place.putPath(myLocation.first, myLocation.second);
+    if (myLocationOnTab != null) {
+      place.putPath(FlexIdeBCConfigurable.LOCATION_ON_TAB, myLocationOnTab);
     }
     return ProjectStructureConfigurable.getInstance(myStructureElement.getModule().getProject()).navigateTo(place, true);
   }

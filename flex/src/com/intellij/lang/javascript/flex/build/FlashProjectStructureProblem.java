@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOpti
 import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.IosPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.ui.*;
-import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.Nullable;
 
 public class FlashProjectStructureProblem {
@@ -13,32 +12,29 @@ public class FlashProjectStructureProblem {
   public final String errorMessage;
   public final String errorId;
   public final String tabName;
-  public final @Nullable Pair<String, ?> location;
+  public final @Nullable Object locationOnTab;
 
-  private FlashProjectStructureProblem(String errorMessage, String errorId, String tabName, @Nullable Pair<String, ?> location) {
+  private FlashProjectStructureProblem(String errorMessage, String errorId, String tabName, @Nullable Object locationOnTab) {
     this.errorMessage = errorMessage;
     this.errorId = errorId;
     this.tabName = tabName;
-    this.location = location;
+    this.locationOnTab = locationOnTab;
   }
 
   public static FlashProjectStructureProblem createGeneralOptionProblem(final String bcName,
                                                                         final String errorMessage,
                                                                         final FlexIdeBCConfigurable.Location location) {
-    final Pair<String, Object> locationPair = Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB, location);
-    return new FlashProjectStructureProblem(errorMessage, location.errorId, bcName, locationPair);
+    return new FlashProjectStructureProblem(errorMessage, location.errorId, bcName, location);
   }
 
   public static FlashProjectStructureProblem createDependenciesProblem(final String errorMessage,
                                                                        final DependenciesConfigurable.Location location) {
-    final Pair<String, Object> locationPair = Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB, location);
-    return new FlashProjectStructureProblem(errorMessage, location.errorId, DependenciesConfigurable.TAB_NAME, locationPair);
+    return new FlashProjectStructureProblem(errorMessage, location.errorId, DependenciesConfigurable.TAB_NAME, location);
   }
 
   public static FlashProjectStructureProblem createCompilerOptionsProblem(final String errorMessage,
                                                                           final CompilerOptionsConfigurable.Location location) {
-    final Pair<String, Object> locationPair = Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB, location);
-    return new FlashProjectStructureProblem(errorMessage, location.errorId, CompilerOptionsConfigurable.TAB_NAME, locationPair);
+    return new FlashProjectStructureProblem(errorMessage, location.errorId, CompilerOptionsConfigurable.TAB_NAME, location);
   }
 
   public static FlashProjectStructureProblem createPackagingOptionsProblem(final AirPackagingOptions packagingOptions,
@@ -52,7 +48,6 @@ public class FlashProjectStructureProblem {
                                ? IOSPackagingConfigurable.TAB_NAME :
                                null;
     assert tabName != null : packagingOptions;
-    final Pair<String, Object> locationPair = Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB, location);
-    return new FlashProjectStructureProblem(errorMessage, location.errorId, tabName, locationPair);
+    return new FlashProjectStructureProblem(errorMessage, location.errorId, tabName, location);
   }
 }

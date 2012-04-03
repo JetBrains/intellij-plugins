@@ -47,20 +47,17 @@ public abstract class UsageInBcDependencies extends ProjectStructureElementUsage
       else {
         tableEntry = DependenciesConfigurable.Location.TableEntry.forSharedLibrary(library);
       }
-      return new PlaceInBuildConfiguration(myContainingElement, DependenciesConfigurable.TAB_NAME,
-                                           Pair.create(FlexIdeBCConfigurable.LOCATION_ON_TAB, tableEntry));
+      return new PlaceInBuildConfiguration(myContainingElement, DependenciesConfigurable.TAB_NAME, tableEntry);
     }
     else if (mySourceElement instanceof BuildConfigurationProjectStructureElement) {
       BuildConfigurationProjectStructureElement bcElement = (BuildConfigurationProjectStructureElement)mySourceElement;
       String moduleName = bcElement.getModule().getName();
       String bcName = bcElement.getBc().getName();
       DependenciesConfigurable.Location.TableEntry tableEntry = DependenciesConfigurable.Location.TableEntry.forBc(moduleName, bcName);
-      return new PlaceInBuildConfiguration(myContainingElement, DependenciesConfigurable.TAB_NAME,
-                                           Pair.create(FlexIdeBCConfigurable.LOCATION_ON_TAB, tableEntry));
+      return new PlaceInBuildConfiguration(myContainingElement, DependenciesConfigurable.TAB_NAME, tableEntry);
     }
     else if (mySourceElement instanceof SdkProjectStructureElement) {
-      return new PlaceInBuildConfiguration(myContainingElement, DependenciesConfigurable.TAB_NAME,
-                                           Pair.create(FlexIdeBCConfigurable.LOCATION_ON_TAB, DependenciesConfigurable.Location.SDK));
+      return new PlaceInBuildConfiguration(myContainingElement, DependenciesConfigurable.TAB_NAME, DependenciesConfigurable.Location.SDK);
     }
 
     assert false : mySourceElement;
