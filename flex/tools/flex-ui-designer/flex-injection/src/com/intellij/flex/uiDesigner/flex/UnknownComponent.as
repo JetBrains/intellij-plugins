@@ -1,5 +1,8 @@
 package com.intellij.flex.uiDesigner.flex {
 import mx.core.UIComponent;
+import mx.core.mx_internal;
+
+use namespace mx_internal;
 
 public class UnknownComponent extends UIComponent {
   private const unknownComponentHelper:UnknownComponentHelper = new UnknownComponentHelper();
@@ -16,6 +19,14 @@ public class UnknownComponent extends UIComponent {
 
   protected function createStatusText():String {
     return statusText;
+  }
+
+  override public function set scaleX(value:Number):void {
+    $scaleX = value;
+  }
+
+  override public function set scaleY(value:Number):void {
+    $scaleY = value;
   }
 }
 }
