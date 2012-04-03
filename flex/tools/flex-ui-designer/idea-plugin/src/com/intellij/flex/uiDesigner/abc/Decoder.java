@@ -762,38 +762,27 @@ public final class Decoder {
             v.OP_initproperty(in.readU32());
             continue;
           }
-          case OP_getdescendants: {
-            v.OP_getdescendants(in.readU32());
-            continue;
-          }
-          // search the scope chain for a given property and return the object
-          // that contains it.  the next instruction will usually be getpropname
-          // or setpropname.
-          case OP_findpropstrict: {
-            v.OP_findpropstrict(in.readU32());
-            continue;
-          }
+
           case OP_getlex: {
             v.OP_getlex(in.readU32());
             continue;
           }
-          case OP_findproperty: {
-            v.OP_findproperty(in.readU32());
+
+          case OP_getdescendants:
+          case OP_finddef:
+          case OP_findproperty:
+          case OP_findpropstrict:
+          case OP_deleteproperty:
+          case OP_getsuper:
+          case OP_setsuper:
+            v.op32(in.readU32(), opcode);
             continue;
-          }
-          case OP_finddef: {
-            v.OP_finddef(in.readU32());
-            continue;
-          }
+
           case OP_hasnext2: {
             v.OP_hasnext2(in.readU32(), in.readU32());
             continue;
           }
-          // delete property using multiname
-          case OP_deleteproperty: {
-            v.OP_deleteproperty(in.readU32());
-            continue;
-          }
+
           case OP_setslot: {
             v.OP_setslot(in.readU32());
             continue;
@@ -854,14 +843,7 @@ public final class Decoder {
             v.OP_callsuper(in.readU32(), in.readU32());
             continue;
           }
-          case OP_getsuper: {
-            v.OP_getsuper(in.readU32());
-            continue;
-          }
-          case OP_setsuper: {
-            v.OP_setsuper(in.readU32());
-            continue;
-          }
+
           case OP_constructsuper:
             v.OP_constructsuper(in.readU32());
             if (stopAfterConstructSuper) {

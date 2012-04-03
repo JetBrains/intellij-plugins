@@ -162,17 +162,16 @@ final class IndexHistory {
     return index + oldIndex - 1;
   }
 
-  private int decodeOnDemand(final int kind, final int j, final int actualStart, final int actuaNsRaw) {
+  private int decodeOnDemand(final int kind, final int index, final int actualStart, final int actuaNsRaw) {
     final PoolPart poolPart = poolParts[kind];
     final int[] positions = constantPool.positions[kind];
     final int endPos = constantPool.ends[kind];
     DataBuffer dataIn = constantPool.in;
-    int start = actualStart == -1 ? positions[j] : actualStart;
-    int end = (j != positions.length - 1) ? positions[j + 1] : endPos;
+    int start = actualStart == -1 ? positions[index] : actualStart;
+    int end = (index != positions.length - 1) ? positions[index + 1] : endPos;
     if (kind == NS) {
-      final int pos = positions[j];
       final int originalPos = dataIn.position();
-      dataIn.seek(pos);
+      dataIn.seek(positions[index]);
       start = in_ns.getSize();
       switch (in_ns.copyU8(dataIn)) {
         case CONSTANT_PrivateNamespace:
@@ -197,9 +196,8 @@ final class IndexHistory {
       dataIn = in_ns;
     }
     else if (kind == NS_SET) {
-      int pos = positions[j];
       int originalPos = dataIn.position();
-      dataIn.seek(pos);
+      dataIn.seek(positions[index]);
       start = in_ns_set.getSize();
 
       int count = dataIn.readU32();
@@ -213,9 +211,8 @@ final class IndexHistory {
       dataIn = in_ns_set;
     }
     else if (kind == MULTINAME) {
-      int pos = positions[j];
-      int originalPos = dataIn.position();
-      dataIn.seek(pos);
+      final int originalPos = dataIn.position();
+      dataIn.seek(positions[index]);
       start = in_multiname.getSize();
       int constKind = dataIn.readU8();
       if (!(constKind == CONSTANT_TypeName)) {
@@ -274,7 +271,7 @@ final class IndexHistory {
         }
 
         default:
-          assert false; // can't possibly happen...
+          assert false;
       }
 
       dataIn.seek(originalPos);
