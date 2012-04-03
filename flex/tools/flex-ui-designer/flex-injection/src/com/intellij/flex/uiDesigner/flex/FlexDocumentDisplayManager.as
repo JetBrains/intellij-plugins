@@ -8,15 +8,11 @@ import com.intellij.flex.uiDesigner.designSurface.LayoutManager;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
-import flash.display.Shape;
-import flash.display.Sprite;
 import flash.display.Stage;
 import flash.events.Event;
 import flash.events.EventPhase;
 import flash.events.MouseEvent;
-import flash.geom.Point;
 import flash.geom.Rectangle;
-import flash.geom.Transform;
 import flash.system.ApplicationDomain;
 import flash.text.TextFormat;
 import flash.utils.Dictionary;
@@ -64,9 +60,6 @@ use namespace mx_internal;
 
 // must be IFocusManagerContainer, it is only way how UIComponent can find focusManager (see UIComponent.focusManager)
 public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManagerBase implements ISystemManager, DocumentDisplayManager, IFocusManagerContainer {
-  // offset due: 0 child of system manager is application
-  internal static const OFFSET:int = 1;
-
   internal static const SYSTEM_MANAGER_CHILD_MANAGER:String = "mx.managers::ISystemManagerChildManager";
 
   private var flexModuleFactory:FlexModuleFactory;
@@ -173,6 +166,9 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
 
   public function setDocumentBounds(w:int, h:int):void {
     ILayoutElement(_document).setLayoutBoundsSize(w, h);
+    if (_document is IInvalidating) {
+      IInvalidating(_document).validateNow();
+    }
   }
 
   public function getImplementation(interfaceName:String):Object {
@@ -217,10 +213,6 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     });
   }
 
-  public function set document(value:Object):void {
-    throw new Error("forbidden");
-  }
-
   private var _toolTipChildren:SystemChildList;
   public function get toolTipChildren():IChildList {
     if (_toolTipChildren == null) {
@@ -248,41 +240,6 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     return _cursorChildren;
   }
 
-  // The index of the highest child that is a cursor
-  private var _cursorIndex:int = 0;
-  internal function get cursorIndex():int {
-    return _cursorIndex;
-  }
-
-  internal function set cursorIndex(value:int):void {
-    _cursorIndex = value;
-  }
-
-  override public function setChildIndex(child:DisplayObject, index:int):void {
-    super.setChildIndex(child, OFFSET + index);
-  }
-  
-  public function $setChildIndex(child:DisplayObject, index:int):void {
-    super.setChildIndex(child, index);
-  }
-
-  override public function getChildIndex(child:DisplayObject):int {
-    return super.getChildIndex(child) - OFFSET;
-  }
-
-  internal function $getChildIndex(child:DisplayObject):int {
-    return super.getChildIndex(child);
-  }
-
-  override public function addChild(child:DisplayObject):DisplayObject {
-    var addIndex:int = numChildren;
-    if (child.parent == this) {
-      addIndex--;
-    }
-
-    return addChildAt(child, addIndex);
-  }
-
   override public function addChildAt(child:DisplayObject, index:int):DisplayObject {
     noTopMostIndex++;
 
@@ -292,27 +249,6 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     }
 
     return addRawChildAt(child, index + OFFSET);
-  }
-
-  override public function getObjectsUnderPoint(point:Point):Array {
-    var children:Array = [];
-    // Get all the children that aren't tooltips and cursors.
-    var n:int = _topMostIndex;
-    for (var i:int = 0; i < n; i++) {
-      var child:DisplayObject = super.getChildAt(i);
-      if (child is DisplayObjectContainer) {
-        var temp:Array = DisplayObjectContainer(child).getObjectsUnderPoint(point);
-        if (temp != null) {
-          children = children.concat(temp);
-        }
-      }
-    }
-
-    return children;
-  }
-
-  internal function $getObjectsUnderPoint(point:Point):Array {
-    return super.getObjectsUnderPoint(point);
   }
 
   override public function contains(child:DisplayObject):Boolean {
@@ -340,52 +276,6 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     return false;
   }
 
-  internal function $contains(child:DisplayObject):Boolean {
-    return super.contains(child);
-  }
-
-  private var _toolTipIndex:int = 1; // see comment for _noTopMostIndex init value
-  internal function get toolTipIndex():int {
-    return _toolTipIndex;
-  }
-
-  internal function set toolTipIndex(value:int):void {
-    var delta:int = value - _toolTipIndex;
-    _toolTipIndex = value;
-    cursorIndex += delta;
-  }
-
-  private var _topMostIndex:int;
-  internal function get topMostIndex():int {
-    return _topMostIndex;
-  }
-
-  internal function set topMostIndex(value:int):void {
-    var delta:int = value - _topMostIndex;
-    _topMostIndex = value;
-    toolTipIndex += delta;
-  }
-
-  private var _noTopMostIndex:int = 1; // flex sdk preloader set it as 1 for mouse catcher (missed in our case) and 2 as app (we add app directly)
-  internal function get noTopMostIndex():int {
-    return _noTopMostIndex;
-  }
-
-  //noinspection JSUnusedGlobalSymbols
-  internal function set noTopMostIndex(value:int):void {
-    var delta:int = value - _noTopMostIndex;
-    _noTopMostIndex = value;
-    topMostIndex += delta;
-  }
-
-  override public function get numChildren():int {
-    return noTopMostIndex - OFFSET;
-  }
-
-  internal function get $numChildren():int {
-    return super.numChildren;
-  }
-
   internal function addRawChildAt(child:DisplayObject, index:int):DisplayObject {
     addingChild(child);
     super.addChildAt(child, index);
@@ -410,17 +300,7 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     return child;
   }
 
-  override public function removeChild(child:DisplayObject):DisplayObject {
-    _noTopMostIndex--;
-    return removeRawChild(child);
-  }
-
-  override public function removeChildAt(index:int):DisplayObject {
-    _noTopMostIndex--;
-    return $removeChildAt(index + OFFSET);
-  }
-
-  internal function removeRawChild(child:DisplayObject):DisplayObject {
+  override internal function removeRawChild(child:DisplayObject):DisplayObject {
     if (child.hasEventListener(FlexEvent.REMOVE)) {
       child.dispatchEvent(new FlexEvent(FlexEvent.REMOVE));
     }
@@ -432,14 +312,6 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     }
 
     return child;
-  }
-
-  internal function $removeChildAt(index:int):DisplayObject {
-    return removeRawChild(super.getChildAt(index));
-  }
-
-  internal function $getChildAt(index:int):DisplayObject {
-    return super.getChildAt(index);
   }
 
   public function setStyleManagerForTalentAdobeEngineers(value:Boolean):void {
@@ -611,16 +483,6 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     }
 	}
 
-  public function get preloadedRSLs():Dictionary {
-    return null;
-  }
-
-  public function allowDomain(... rest):void {
-  }
-
-  public function allowInsecureDomain(... rest):void {
-  }
-
   public function callInContext(fn:Function, thisArg:Object, argArray:Array, returns:Boolean = true):* {
     if (returns) {
       return fn.apply(thisArg, argArray);
@@ -634,21 +496,10 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     return flexModuleFactory.create(params);
   }
 
-  private static const EMPTY_INFO:Object = {};
+  private const EMPTY_INFO:Object = {};
   public function info():Object {
     // we must return not-null, see spark.components.Application applicationDPI getter
     return EMPTY_INFO;
-  }
-
-  public function get embeddedFontList():Object {
-    return null;
-  }
-
-  public function get focusPane():Sprite {
-    return null;
-  }
-
-  public function set focusPane(value:Sprite):void {
   }
 
   private var _rawChildren:SystemRawChildrenList;
@@ -664,24 +515,8 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     return this;
   }
 
-  public function isTopLevel():Boolean {
-    return true;
-  }
-
   public function isFontFaceEmbedded(tf:TextFormat):Boolean {
     return false;
-  }
-
-  public function isTopLevelRoot():Boolean {
-    return true;
-  }
-
-  public function getTopLevelRoot():DisplayObject {
-    return this;
-  }
-
-  public function getSandboxRoot():DisplayObject {
-    return this;
   }
 
   flex::gt_4_1
@@ -693,32 +528,13 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
   public function getVisibleApplicationRect(bounds:Rectangle = null):Rectangle {
     return commonGetVisibleApplicationRect(bounds);
   }
-  
+
   private function commonGetVisibleApplicationRect(bounds:Rectangle):Rectangle {
     if (bounds == null) {
       bounds = getBounds(realStage);
     }
 
     return bounds;
-  }
-
-  public function deployMouseShields(deploy:Boolean):void {
-  }
-
-  public function invalidateParentSizeAndDisplayList():void {
-  }
-
-  override public function get parent():DisplayObjectContainer {
-    return null;
-  }
-
-  private static var fakeTransform:Transform;
-
-  override public function get transform():Transform {
-    if (fakeTransform == null) {
-      fakeTransform = new Transform(new Shape());
-    }
-    return fakeTransform;
   }
 
   // mx.managers::ISystemManagerChildManager, ChildManager, "cm.notifyStyleChangeInChildren(styleProp, true);" in CSSStyleDeclaration
