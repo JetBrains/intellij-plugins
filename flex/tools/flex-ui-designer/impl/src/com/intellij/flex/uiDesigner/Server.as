@@ -401,8 +401,9 @@ public class Server implements ResourceBundleProvider {
     const h:int = displayObject.height;
     var argb:ByteArray;
     if (w != 0 && h != 0) {
-      var bitmapData:BitmapData = new BitmapData(w, h, false);
-      bitmapData.draw(displayObject);
+      var rect:Rectangle = displayObject.getRect(null);
+      var bitmapData:BitmapData = new BitmapData(rect.width, rect.height, false);
+      bitmapData.draw(displayObject, null, null, null, bitmapData.rect);
       argb = bitmapData.getPixels(bitmapData.rect);
     }
 
