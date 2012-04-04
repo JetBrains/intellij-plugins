@@ -385,7 +385,7 @@ public class CompilerConfigGenerator {
     final Set<String> sourcePathsWithLocaleToken = new THashSet<String>(); // Set - to avoid duplication of paths like "locale/{locale}"
     final List<String> sourcePathsWithoutLocaleToken = new LinkedList<String>();
 
-    for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(myModule).getSourceRoots(myFlexUnit)) {
+    for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(myModule).getSourceRoots(includeTestRoots())) {
       if (locales.contains(sourceRoot.getName())) {
         sourcePathsWithLocaleToken.add(sourceRoot.getParent().getPath() + "/" + FlexCompilerHandler.LOCALE_TOKEN);
       }
@@ -418,6 +418,16 @@ public class CompilerConfigGenerator {
     }
 
     addOption(rootElement, CompilerOptionInfo.SOURCE_PATH_INFO, sourcePathBuilder.toString());
+  }
+
+  private boolean includeTestRoots() {
+    if (myFlexUnit) return true;
+    if (myCSS) return false;
+    if (myBC.getOutputType() != OutputType.Application) return false;
+
+    final String path = FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
+    final VirtualFile file = path.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(path);
+    return file != null && ModuleRootManager.getInstance(myModule).getFileIndex().isInTestSourceContent(file);
   }
 
   private void addOtherOptions(final Element rootElement) {

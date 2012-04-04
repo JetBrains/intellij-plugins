@@ -304,17 +304,17 @@ public class BCUtils {
   public static boolean isApplicable(final BuildConfigurationNature dependantNature,
                                      final BuildConfigurationNature dependencyNature,
                                      final LinkageType linkageType) {
-      switch (dependencyNature.outputType) {
-        case Application:
-          return false;
-        case Library:
-          return ArrayUtil.contains(linkageType, LinkageType.getSwcLinkageValues());
-        case RuntimeLoadedModule:
-          return linkageType == LinkageType.LoadInRuntime && !dependantNature.isLib();
-        default:
-          assert false;
-          return true;
-      }
+    switch (dependencyNature.outputType) {
+      case Application:
+        return false;
+      case Library:
+        return ArrayUtil.contains(linkageType, LinkageType.getSwcLinkageValues());
+      case RuntimeLoadedModule:
+        return linkageType == LinkageType.LoadInRuntime && !dependantNature.isLib();
+      default:
+        assert false;
+        return true;
+    }
   }
 
   public static boolean isApplicableForDependency(BuildConfigurationNature dependantNature, OutputType dependencyOutputType) {
@@ -366,25 +366,22 @@ public class BCUtils {
 
   public static JSClassChooserDialog.PublicInheritor getMainClassFilter(@NotNull Module module,
                                                                         @Nullable FlexIdeBuildConfiguration bc,
+                                                                        final boolean rlm,
+                                                                        final boolean includeTests,
                                                                         boolean caching) {
-    FlexIdeBuildConfiguration currentBc = bc != null ? bc : FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
-    final String baseClass = currentBc.getOutputType() == OutputType.RuntimeLoadedModule
-                             ? FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME
-                             : FlashRunConfigurationForm.SPRITE_CLASS_NAME;
-    GlobalSearchScope filterScope;
-    if (bc != null) {
-      filterScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(module, bc, false);
-    }
-    else {
-      filterScope = module.getModuleWithDependenciesAndLibrariesScope(false);
-    }
+    final String baseClass = rlm ? FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME
+                                 : FlashRunConfigurationForm.SPRITE_CLASS_NAME;
+    final GlobalSearchScope filterScope = bc == null
+                                          ? module.getModuleWithDependenciesAndLibrariesScope(includeTests)
+                                          : FlexUtils.getModuleWithDependenciesAndLibrariesScope(module, bc, includeTests);
     return new JSClassChooserDialog.PublicInheritor(module.getProject(), baseClass, filterScope, true, caching);
   }
 
   public static boolean isValidMainClass(final Module module,
                                          @Nullable final FlexIdeBuildConfiguration buildConfiguration,
-                                         final JSClass clazz) {
-    return getMainClassFilter(module, buildConfiguration, false).value(clazz);
+                                         final JSClass clazz,
+                                         final boolean includeTests) {
+    return getMainClassFilter(module, buildConfiguration, false, includeTests, false).value(clazz);
   }
 
   public static SimpleColoredText renderBuildConfiguration(@NotNull FlexIdeBuildConfiguration bc,

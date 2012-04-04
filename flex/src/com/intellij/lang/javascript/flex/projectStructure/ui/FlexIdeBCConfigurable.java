@@ -530,7 +530,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   private void rebuildMainClassFilter() {
-    myMainClassFilter = BCUtils.getMainClassFilter(myModule, myConfiguration, true);
+    final boolean rlm = myConfiguration.getOutputType() == OutputType.RuntimeLoadedModule;
+    myMainClassFilter = BCUtils.getMainClassFilter(myModule, myConfiguration, rlm, false, true);
   }
 
   private void applyOwnTo(ModifiableFlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {

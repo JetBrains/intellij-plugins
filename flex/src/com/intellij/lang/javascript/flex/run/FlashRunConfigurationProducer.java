@@ -174,6 +174,6 @@ public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer 
   }
 
   public static boolean isAcceptedMainClass(@Nullable final JSClass jsClass, @Nullable final Module module) {
-    return jsClass != null && module != null && BCUtils.isValidMainClass(module, null, jsClass);
+    return jsClass != null && module != null && BCUtils.isValidMainClass(module, null, jsClass, true);
   }
 }

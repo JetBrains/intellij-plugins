@@ -331,7 +331,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       }
 
       PsiElement clazz =
-        JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(myOverriddenMainClass, moduleAndBC.first.getModuleScope(false)));
+        JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(myOverriddenMainClass, moduleAndBC.first.getModuleScope(true)));
       if (!(clazz instanceof JSClass)) {
         throw new RuntimeConfigurationError(FlexBundle.message("main.class.not.found", myOverriddenMainClass, bc.getName()));
       }

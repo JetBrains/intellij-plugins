@@ -116,8 +116,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private void updateMainClassField() {
     final Module module = myBCCombo.getModule();
     if (module != null) {
-      myMainClassComponent.setScope(module.getModuleScope(false));
-      myMainClassFilter = BCUtils.getMainClassFilter(module, myBCCombo.getBC(), true);
+      myMainClassComponent.setScope(module.getModuleScope(true));
+      myMainClassFilter = BCUtils.getMainClassFilter(module, myBCCombo.getBC(), false, true, true);
       myMainClassComponent.setChooserBlockingMessage(null);
     }
     else {
