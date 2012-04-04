@@ -510,7 +510,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
           final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
           ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
             public void run() {
-              Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(module, bc);
+              Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(module, bc.getName());
               projectStructureConfigurable.navigateTo(p, true);
             }
           });

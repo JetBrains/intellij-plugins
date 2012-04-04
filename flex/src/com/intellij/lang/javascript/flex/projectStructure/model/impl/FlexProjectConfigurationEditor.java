@@ -788,11 +788,11 @@ public class FlexProjectConfigurationEditor implements Disposable {
   }
 
   @Nullable
-  public FlexIdeBuildConfiguration findCurrentConfiguration(Module module, final FlexIdeBuildConfiguration origin) {
+  public FlexIdeBuildConfiguration findCurrentConfiguration(final Module module, final String originalBCName) {
     return ContainerUtil.find(myModule2Editors.get(module), new Condition<Editor>() {
       @Override
       public boolean value(Editor editor) {
-        return editor.myOrigin == origin;
+        return editor.myOrigin.getName().equals(originalBCName);
       }
     });
   }

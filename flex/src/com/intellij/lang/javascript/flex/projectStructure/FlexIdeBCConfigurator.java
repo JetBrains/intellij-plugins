@@ -414,10 +414,10 @@ public class FlexIdeBCConfigurator {
                              });
   }
 
-  public Place getPlaceFor(Module module, FlexIdeBuildConfiguration origin) {
+  public Place getPlaceFor(final Module module, final String bcName) {
     Place p = new Place();
     p = p.putPath(ProjectStructureConfigurable.CATEGORY, ModuleStructureConfigurable.getInstance(myConfigEditor.getProject()));
-    p = p.putPath(MasterDetailsComponent.TREE_OBJECT, myConfigEditor.findCurrentConfiguration(module, origin));
+    p = p.putPath(MasterDetailsComponent.TREE_OBJECT, myConfigEditor.findCurrentConfiguration(module, bcName));
     return p;
   }
 

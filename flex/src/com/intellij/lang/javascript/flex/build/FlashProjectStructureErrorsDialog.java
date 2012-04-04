@@ -40,7 +40,6 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
   private Tree myTree;
 
   private final Project myProject;
-  private boolean myContainsProblems;
 
   public FlashProjectStructureErrorsDialog(final Project project,
                                            final Collection<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> problems) {
@@ -106,8 +105,6 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
   }
 
   private void addProblem(final Module module, final FlexIdeBuildConfiguration bc, final FlashProjectStructureProblem problem) {
-    myContainsProblems = true;
-
     final DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode)myTree.getModel().getRoot();
     final DefaultMutableTreeNode moduleNode = getOrCreateChildNode(rootNode, module);
     final DefaultMutableTreeNode bcNode = getOrCreateChildNode(moduleNode, bc);
@@ -171,7 +168,7 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
             .putPath(MasterDetailsComponent.TREE_OBJECT, moduleRef.get());
         }
         else {
-          place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(moduleRef.get(), bcRef.get());
+          place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(moduleRef.get(), bcRef.get().getName());
           if (!problemRef.isNull()) {
             place.putPath(CompositeConfigurable.TAB_NAME, problemRef.get().tabName);
             place.putPath(FlexIdeBCConfigurable.LOCATION_ON_TAB, problemRef.get().locationOnTab);

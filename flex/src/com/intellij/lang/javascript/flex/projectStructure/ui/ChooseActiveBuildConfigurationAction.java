@@ -193,7 +193,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
       ShowSettingsUtil.getInstance().editConfigurable(myModule.getProject(), c, new Runnable() {
         @Override
         public void run() {
-          Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, activeConfiguration);
+          Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, activeConfiguration.getName());
           c.navigateTo(p, true);
         }
       });
