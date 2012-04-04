@@ -15,6 +15,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.Trinity;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.navigation.Place;
 import com.intellij.ui.treeStructure.Tree;
@@ -29,6 +30,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collection;
 import java.util.Enumeration;
 
 public class FlashProjectStructureErrorsDialog extends DialogWrapper {
@@ -40,12 +42,17 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
   private final Project myProject;
   private boolean myContainsProblems;
 
-  public FlashProjectStructureErrorsDialog(final Project project) {
+  public FlashProjectStructureErrorsDialog(final Project project,
+                                           final Collection<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> problems) {
     super(project);
     myProject = project;
 
     myTree.setRootVisible(false);
     myTree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode()));
+
+    for (Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem> problem : problems) {
+      addProblem(problem.first, problem.second, problem.third);
+    }
 
     myTree.setCellRenderer(new ColoredTreeCellRenderer() {
       public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row,
@@ -98,17 +105,13 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
     return myTree;
   }
 
-  public void addProblem(final Module module, final FlexIdeBuildConfiguration bc, final FlashProjectStructureProblem problem) {
+  private void addProblem(final Module module, final FlexIdeBuildConfiguration bc, final FlashProjectStructureProblem problem) {
     myContainsProblems = true;
 
     final DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode)myTree.getModel().getRoot();
     final DefaultMutableTreeNode moduleNode = getOrCreateChildNode(rootNode, module);
     final DefaultMutableTreeNode bcNode = getOrCreateChildNode(moduleNode, bc);
     bcNode.add(new DefaultMutableTreeNode(problem));
-  }
-
-  public boolean containsProblems() {
-    return myContainsProblems;
   }
 
   @NotNull

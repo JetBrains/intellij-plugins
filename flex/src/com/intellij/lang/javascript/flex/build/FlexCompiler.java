@@ -228,14 +228,15 @@ public class FlexCompiler implements SourceProcessingCompiler {
     final Project project = modules.length > 0 ? modules[0].getProject() : null;
     if (project == null) return true;
 
-    final FlashProjectStructureErrorsDialog dialog = new FlashProjectStructureErrorsDialog(project);
+    final Collection<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> problems =
+      new ArrayList<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>>();
 
     try {
       final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile = getModulesAndBCsToCompile(scope);
       for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
         final Consumer<FlashProjectStructureProblem> errorConsumer = new Consumer<FlashProjectStructureProblem>() {
           public void consume(final FlashProjectStructureProblem problem) {
-            dialog.addProblem(moduleAndBC.first, moduleAndBC.second, problem);
+            problems.add(Trinity.create(moduleAndBC.first, moduleAndBC.second, problem));
           }
         };
 
@@ -256,7 +257,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
       checkSimilarOutputFiles(modulesAndBCsToCompile,
                               new Consumer<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>>() {
                                 public void consume(final Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem> trinity) {
-                                  dialog.addProblem(trinity.first, trinity.second, trinity.third);
+                                  problems.add(trinity);
                                 }
                               });
     }
@@ -266,7 +267,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
       return false;
     }
 
-    if (dialog.containsProblems()) {
+    if (!problems.isEmpty()) {
+      final FlashProjectStructureErrorsDialog dialog = new FlashProjectStructureErrorsDialog(project, problems);
       dialog.show();
       if (dialog.isOK()) {
         ShowSettingsUtil.getInstance().editConfigurable(project, ProjectStructureConfigurable.getInstance(project));
