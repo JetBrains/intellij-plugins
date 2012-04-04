@@ -9,9 +9,11 @@ import com.intellij.flex.uiDesigner.mxml.PrimitiveWriter;
 import com.intellij.flex.uiDesigner.mxml.XmlAttributeValueProvider;
 import com.intellij.flex.uiDesigner.mxml.XmlElementValueProvider;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
+import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -30,7 +32,10 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowManagerAdapter;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.psi.*;
-import com.intellij.psi.xml.*;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlElement;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.Alarm;
@@ -353,7 +358,8 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       this.event = event;
     }
 
-    private XmlElement canIncrement() {
+    @Nullable
+    private XmlElement findSupportedTarget() {
       if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
         return null;
       }
@@ -391,10 +397,16 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         return;
       }
 
+      if (!incrementalSync()) {
+        render();
+      }
+    }
+
+    private boolean incrementalSync() {
       DocumentFactoryManager.DocumentInfo info = null;
       int componentId = 0;
       XmlElementValueProvider valueProvider = null;
-      final XmlElement element = canIncrement();
+      final XmlElement element = findSupportedTarget();
       if (element != null) {
         XmlAttribute attribute = (XmlAttribute)element;
         info = DocumentFactoryManager.getInstance().getInfo(attribute);
@@ -408,14 +420,22 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       }
 
       if (valueProvider == null) {
-        render();
-        return;
+        return false;
+      }
+
+      final AnnotationBackedDescriptor descriptor = (AnnotationBackedDescriptor)valueProvider.getPsiMetaData();
+      assert descriptor != null;
+      final String typeName = descriptor.getTypeName();
+      final String type = descriptor.getType();
+      if (type == null) {
+        return !typeName.equals(FlexAnnotationNames.EFFECT);
+      }
+      else if (type.equals(JSCommonTypeNames.FUNCTION_CLASS_NAME) || typeName.equals(FlexAnnotationNames.EVENT)) {
+        return true;
       }
 
       final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
       final PrimitiveAmfOutputStream dataOut = new PrimitiveAmfOutputStream(new ByteArrayOutputStreamEx(16));
-      final AnnotationBackedDescriptor descriptor = (AnnotationBackedDescriptor)valueProvider.getPsiMetaData();
-      assert descriptor != null;
       PrimitiveWriter writer = new PrimitiveWriter(dataOut, stringWriter);
       boolean needRollbackStringWriter = true;
       try {
@@ -423,7 +443,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
           String value = valueProvider.getTrimmed();
           final boolean hasPercent;
           if (value.isEmpty() || ((hasPercent = value.endsWith("%")) && value.length() == 1)) {
-            return;
+            return true;
           }
 
           final String name;
@@ -441,18 +461,19 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         else {
           stringWriter.write(descriptor.getName(), dataOut);
           if (!writer.writeIfApplicable(valueProvider, dataOut, descriptor)) {
-            render();
-            return;
+            needRollbackStringWriter = false;
+            stringWriter.rollback();
+            return false;
           }
         }
 
         needRollbackStringWriter = false;
       }
       catch (InvalidPropertyException e) {
-        return;
+        return true;
       }
       catch (NumberFormatException e) {
-        return;
+        return true;
       }
       finally {
         if (needRollbackStringWriter) {
@@ -483,6 +504,8 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
           }
         }
       });
+
+      return true;
     }
   }
 }
