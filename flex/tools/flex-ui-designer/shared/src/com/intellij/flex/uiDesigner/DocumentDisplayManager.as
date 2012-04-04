@@ -55,5 +55,7 @@ public interface DocumentDisplayManager {
   function get layoutManager():LayoutManager;
 
   function get realStage():Stage;
+
+  function prepareSnapshot(setActualSize:Boolean):void;
 }
 }

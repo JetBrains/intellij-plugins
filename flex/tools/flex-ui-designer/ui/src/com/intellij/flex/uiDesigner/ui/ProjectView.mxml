@@ -42,6 +42,10 @@
       //  return;
       //}
 
+      if (document.container == null) {
+        document.container = new DocumentContainer(document.displayManager);
+      }
+
       var paneItem:DocumentPaneItem = new DocumentPaneItem(document);
       paneItem.localizedTitle = document.file.name.substring(0, document.file.name.lastIndexOf("."));
 

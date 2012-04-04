@@ -112,7 +112,10 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
         }
       }
 
-      DocumentContainer(documentFactory.document.container).documentUpdated();
+      var documentContainer:DocumentContainer = DocumentContainer(documentFactory.document.container);
+      if (documentContainer != null) {
+        documentContainer.documentUpdated();
+      }
     }
   }
 
@@ -263,7 +266,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     }
     systemManager.init(module.project.window.stage, isPureFlash ? null : new flexModuleFactoryClass(document.styleManager, module.applicationDomain), UncaughtErrorManager.instance,
                        MainFocusManagerSB(module.project.window.focusManager), document.documentFactory);
-    document.container = new DocumentContainer(systemManager);
+    //document.container = new DocumentContainer(systemManager);
   }
 }
 }

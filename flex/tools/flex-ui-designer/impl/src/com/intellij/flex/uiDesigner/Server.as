@@ -394,6 +394,8 @@ public class Server implements ResourceBundleProvider {
   }
 
   public function writeDocumentImage(document:Document):void {
+    document.displayManager.prepareSnapshot(document.container == null);
+
     var displayObject:DisplayObject = DisplayObject(document.uiComponent);
     const w:int = displayObject.width;
     const h:int = displayObject.height;

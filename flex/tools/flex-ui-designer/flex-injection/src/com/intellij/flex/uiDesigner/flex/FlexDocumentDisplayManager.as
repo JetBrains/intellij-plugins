@@ -176,9 +176,6 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
 
   public function setDocumentBounds(w:int, h:int):void {
     ILayoutElement(_document).setLayoutBoundsSize(w, h);
-    //if (_document is IInvalidating) {
-    //  IInvalidating(_document).validateNow();
-    //}
   }
 
   public function getImplementation(interfaceName:String):Object {
@@ -315,7 +312,7 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
       child.dispatchEvent(new FlexEvent(FlexEvent.REMOVE));
     }
 
-    super.removeChild(child);
+    $removeChild(child);
 
     if (child is IUIComponent) {
       IUIComponent(child).parentChanged(null);
@@ -742,6 +739,24 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     //LayoutUtil.designTimeEmptySize = 15;
     //
     //return new MigLayoutManager(migLayout);
+  }
+
+  public function prepareSnapshot(setActualSize:Boolean):void {
+    if (setActualSize) {
+      var w:int = explicitDocumentWidth;
+      var h:int = explicitDocumentHeight;
+      if (w == -1) {
+        w = Math.max(500, minDocumentWidth);
+      }
+      if (h == -1) {
+        h = Math.max(400, minDocumentHeight);
+      }
+
+      ILayoutElement(document).setLayoutBoundsSize(w, h);
+      if (document is IInvalidating) {
+        IInvalidating(document).validateNow();
+      }
+    }
   }
 }
 }

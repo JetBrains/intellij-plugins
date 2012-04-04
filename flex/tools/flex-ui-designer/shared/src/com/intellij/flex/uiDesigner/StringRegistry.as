@@ -15,7 +15,7 @@ public final class StringRegistry {
     _instance = this;
   }
   
-  public function initStringTable(input:IDataInput):void {
+  public function initTable(input:IDataInput):void {
     if (table != null) {
       var m:String = "Table already created: ";
       for each (var s:String in table) {
@@ -27,7 +27,7 @@ public final class StringRegistry {
     table = input.readObject();
   }
   
-  public function readStringTable(input:IDataInput):void {
+  public function readTable(input:IDataInput):void {
     var size:int = AmfUtil.readUInt29(input);
     if (size == 0) {
       return;

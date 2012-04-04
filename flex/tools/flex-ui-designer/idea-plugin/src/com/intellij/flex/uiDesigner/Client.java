@@ -21,6 +21,7 @@ import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.Consumer;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,6 +90,10 @@ public class Client implements Disposable {
 
   private void beginMessage(ClientMethod method) {
     beginMessage(method, null, null, null);
+  }
+
+  private void beginMessage(ClientMethod method, ActionCallback callback) {
+    beginMessage(method, callback, null, null);
   }
 
   private void beginMessage(ClientMethod method,
@@ -379,9 +384,13 @@ public class Client implements Disposable {
 
   private void finalizeMessageAndFlush(boolean hasError, @Nullable ActionCallback callback) {
     if (hasError) {
-      blockOut.rollback();
-      if (callback != null) {
-        callback.setRejected();
+      try {
+        blockOut.rollback();
+      }
+      finally {
+        if (callback != null) {
+          callback.setRejected();
+        }
       }
     }
     else {
@@ -548,6 +557,23 @@ public class Client implements Disposable {
     }
   }
 
+  public ActionCallback updateAttribute(int documentId, int componentId, Consumer<AmfOutputStream> streamConsumer) {
+    final ActionCallback callback = new ActionCallback("updateAttribute");
+    boolean hasError = true;
+    try {
+      beginMessage(ClientMethod.updateAttribute, callback);
+      out.writeUInt29(documentId);
+      out.writeUInt29(componentId);
+      streamConsumer.consume(out);
+      hasError = false;
+    }
+    finally {
+      finalizeMessageAndFlush(hasError, callback);
+    }
+
+    return callback;
+  }
+
   //public AsyncResult<BufferedImage> getDocumentImage(DocumentFactoryManager.DocumentInfo documentInfo) {
   //  final AsyncResult<BufferedImage> result = new AsyncResult<BufferedImage>();
   //  getDocumentImage(documentInfo, result);
@@ -612,7 +638,7 @@ public class Client implements Disposable {
   private static enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, unregisterModule, registerDocumentFactory, updateDocumentFactory, renderDocument, renderDocumentsAndDependents,
     initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool, fillViewClassPool,
-    selectComponent, getDocumentImage;
+    selectComponent, getDocumentImage, updateAttribute;
     
     public static final int METHOD_CLASS = 0;
   }

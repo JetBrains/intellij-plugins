@@ -73,7 +73,6 @@ public class ToolManager implements Injectable {
       elementToolContainer.elementLayoutChangeListeners = new <ElementLayoutChangeListener>[selectionTool];
     }
 
-
     var dataContext:DataContext = DataManager.instance.getDataContext(DisplayObject(PlatformDataKeys.DOCUMENT.getData(DataManager.instance.getDataContext(_displayObjectContainer)).container));
 
     selectionTool.activate(elementToolContainer, _areaLocations, dataContext);

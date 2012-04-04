@@ -1,9 +1,20 @@
 package com.intellij.flex.uiDesigner.preview;
 
 import com.intellij.flex.uiDesigner.*;
+import com.intellij.flex.uiDesigner.io.AmfOutputStream;
+import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
+import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
+import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.mxml.PrimitiveWriter;
+import com.intellij.flex.uiDesigner.mxml.XmlAttributeValueProvider;
+import com.intellij.flex.uiDesigner.mxml.XmlElementValueProvider;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.editor.Document;
@@ -18,15 +29,19 @@ import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowManagerAdapter;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
-import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.*;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
+import com.intellij.util.Alarm;
+import com.intellij.util.Consumer;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.util.ui.update.MergingUpdateQueue;
-import com.intellij.util.ui.update.Update;
+import com.intellij.xml.XmlAttributeDescriptor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +55,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   private final Project project;
   private final FileEditorManager fileEditorManager;
 
-  private final MergingUpdateQueue toolWindowUpdateQueue;
+  private final Alarm toolWindowUpdateAlarm;
 
   private ToolWindow toolWindow;
   private MxmlPreviewToolWindowForm toolWindowForm;
@@ -53,12 +68,116 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     this.project = project;
     this.fileEditorManager = fileEditorManager;
 
-    toolWindowUpdateQueue = new MergingUpdateQueue("mxml.preview", 300, true, null, project);
+    toolWindowUpdateAlarm = new Alarm();
   }
 
   @Override
   public void projectOpened() {
     project.getMessageBus().connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new MyFileEditorManagerListener());
+
+    final Alarm syncAlarm = new Alarm();
+    PsiManager.getInstance(project).addPsiTreeChangeListener(new PsiTreeChangeAdapter() {
+      public void childrenChanged(@NotNull PsiTreeChangeEvent event) {
+        //update(event);
+      }
+
+      public void childRemoved(@NotNull PsiTreeChangeEvent event) {
+        update(event);
+      }
+
+      public void childAdded(@NotNull PsiTreeChangeEvent event) {
+        update(event);
+      }
+
+      public void childReplaced(@NotNull PsiTreeChangeEvent event) {
+        update(event);
+      }
+
+      @Override
+      public void propertyChanged(@NotNull PsiTreeChangeEvent event) {
+        //super.propertyChanged(event);
+      }
+
+      private void update(final PsiTreeChangeEvent event) {
+        if (!toolWindowVisible || event.getFile() == null || toolWindowForm.getFile() != event.getFile()) {
+          return;
+        }
+
+        syncAlarm.cancelAllRequests();
+        syncAlarm.addRequest(new Runnable() {
+          @Override
+          public void run() {
+            if (DesignerApplicationManager.getInstance().isInitialRendering()) {
+              return;
+            }
+
+            DocumentFactoryManager.DocumentInfo info = null;
+            int componentId = 0;
+            XmlElementValueProvider valueProvider = null;
+            if (event.getParent() instanceof XmlAttributeValue) {
+              XmlAttribute attribute = (XmlAttribute)event.getParent().getParent();
+              if (!JavaScriptSupportLoader.MXML_URI3.equals(attribute.getNamespace())) {
+                XmlAttributeDescriptor descriptor = attribute.getDescriptor();
+                if (descriptor instanceof AnnotationBackedDescriptor) {
+                  AnnotationBackedDescriptor annotationBackedDescriptor = (AnnotationBackedDescriptor)descriptor;
+                  if (!annotationBackedDescriptor.isPredefined()) {
+                    info = DocumentFactoryManager.getInstance().getInfo(attribute);
+                    XmlTag tag = attribute.getParent();
+                    if (tag.getDescriptor() instanceof ClassBackedElementDescriptor) {
+                      componentId = info.rangeMarkerIndexOf(tag);
+                      if (componentId != -1) {
+                        valueProvider = new XmlAttributeValueProvider(attribute);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            if (valueProvider == null) {
+              render();
+            }
+            else {
+              final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
+              final PrimitiveAmfOutputStream dataOut = new PrimitiveAmfOutputStream(new ByteArrayOutputStreamEx(16));
+              PrimitiveWriter writer = new PrimitiveWriter(dataOut, stringWriter);
+              AnnotationBackedDescriptor descriptor = (AnnotationBackedDescriptor)valueProvider.getPsiMetaData();
+              assert descriptor != null;
+              try {
+                stringWriter.write(descriptor.getName(), dataOut);
+                writer.writeIfApplicable(valueProvider, dataOut, descriptor);
+              }
+              catch (InvalidPropertyException e) {
+                return;
+              }
+
+              final DocumentFactoryManager.DocumentInfo finalInfo = info;
+              Client.getInstance().updateAttribute(info.getId(), componentId, new Consumer<AmfOutputStream>() {
+                @Override
+                public void consume(AmfOutputStream stream) {
+                  stringWriter.writeTo(stream);
+                  dataOut.writeTo(stream);
+                }
+              }).doWhenDone(new Runnable() {
+                @Override
+                public void run() {
+                  Document document = FileDocumentManager.getInstance().getCachedDocument(finalInfo.getElement());
+                  if (document != null) {
+                    finalInfo.documentModificationStamp = document.getModificationStamp();
+                    UIUtil.invokeLaterIfNeeded(new Runnable() {
+                      @Override
+                      public void run() {
+                        render();
+                      }
+                    });
+                  }
+                }
+              });
+            }
+          }
+        }, 100, ModalityState.NON_MODAL);
+      }
+    }, project);
   }
 
   public void projectClosed() {
@@ -243,8 +362,9 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   }
 
   private void processFileEditorChange(@Nullable final Editor newEditor) {
-    toolWindowUpdateQueue.cancelAllUpdates();
-    toolWindowUpdateQueue.queue(new Update("update mxml preview") {
+    toolWindowUpdateAlarm.cancelAllRequests();
+    toolWindowUpdateAlarm.addRequest(new Runnable() {
+      @Override
       public void run() {
         if (!project.isOpen() || project.isDisposed()) {
           return;
@@ -283,6 +403,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
           toolWindow.show(null);
         }
       }
-    });
+    }, 300);
   }
 }

@@ -7,7 +7,7 @@ import com.intellij.psi.xml.XmlElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-interface XmlElementValueProvider {
+public interface XmlElementValueProvider {
   String EMPTY = "";
 
   String getTrimmed();

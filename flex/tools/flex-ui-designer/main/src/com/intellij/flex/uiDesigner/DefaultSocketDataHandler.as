@@ -9,6 +9,7 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
+import com.intellij.flex.uiDesigner.mxml.MxmlReader;
 import com.intellij.flex.uiDesigner.ui.ProjectEventMap;
 import com.intellij.flex.uiDesigner.ui.ProjectView;
 import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.PropertyInspector;
@@ -92,11 +93,11 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
         break;
       
       case ClientMethod.initStringRegistry:
-        stringRegistry.initStringTable(input);
+        stringRegistry.initTable(input);
         break;
 
       case ClientMethod.updateStringRegistry:
-        stringRegistry.readStringTable(input);
+        stringRegistry.readTable(input);
         break;
 
       case ClientMethod.fillImageClassPool:
@@ -117,6 +118,10 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
       case ClientMethod.getDocumentImage:
         getDocumentImage(input, callbackId);
+        break;
+
+      case ClientMethod.updateAttribute:
+        updateAttribute(input, callbackId);
         break;
     }
   }
@@ -150,7 +155,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   private function registerModule(input:IDataInput):void {
-    stringRegistry.readStringTable(input);
+    stringRegistry.readTable(input);
     moduleManager.register(new Module(input.readUnsignedShort(), projectManager.getById(input.readUnsignedShort()),
                                       libraryManager.getById(input.readUnsignedShort()), input.readBoolean(), input.readObject()));
   }
@@ -172,7 +177,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     documentFactory.documentReferences = input.readObject();
     getDocumentFactoryManager().register(documentFactory);
 
-    stringRegistry.readStringTable(input);
+    stringRegistry.readTable(input);
     input.readBytes(bytes, 0, messageSize - (prevBytesAvailable - input.bytesAvailable));
   }
   
@@ -184,7 +189,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
     documentFactory.documentReferences = input.readObject();
     
-    stringRegistry.readStringTable(input);
+    stringRegistry.readTable(input);
 
     const length:int = messageSize - (prevBytesAvailable - input.bytesAvailable);
     var bytes:ByteArray = documentFactory.data;
@@ -208,7 +213,6 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   private static function getDocumentImage(input:IDataInput, callbackId:int):void {
-    assert(callbackId > 0);
     var documentFactoryManager:DocumentFactoryManager = getDocumentFactoryManager();
     var documentFactory:DocumentFactory = documentFactoryManager.getById(input.readUnsignedShort());
     var documentManager:DocumentManager = DocumentManager(documentFactory.module.project.getComponent(DocumentManager));
@@ -226,6 +230,24 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     var server:Server = Server.instance;
     server.callback(callbackId, true, false);
     server.writeDocumentImage(documentFactory.document);
+  }
+
+  private function updateAttribute(input:IDataInput, callbackId:int):void {
+    const documentId:int = AmfUtil.readUInt29(input);
+    const componentId:int = AmfUtil.readUInt29(input);
+    stringRegistry.readTable(input);
+    const propertyName:String = stringRegistry.readNotNull(input);
+    const propertyValue:Object = MxmlReader.readPrimitive(input.readByte(), input, stringRegistry);
+
+    var documentFactory:DocumentFactory = getDocumentFactoryManager().getById(documentId);
+    var component:Object = documentFactory.getComponent(componentId);
+    if (component == null) {
+      UncaughtErrorManager.instance.logWarning("Can't find target component " + documentFactory.id + ":" + componentId);
+      return;
+    }
+
+    component[propertyName] = propertyValue;
+    Server.instance.callback(callbackId);
   }
 
   private static function renderDocumentsAndDependents(input:IDataInput, callbackId:int):void {
@@ -306,7 +328,6 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
     var w:DocumentWindow = project.window;
     var projectView:ProjectView = ProjectView(w.contentView);
-
     projectView.selectEditorTab(documentFactory.document);
     DocumentManager(project.getComponent(DocumentManager)).document = documentFactory.document;
     ComponentManager(project.getComponent(ComponentManager)).component = component;
@@ -361,4 +382,5 @@ final class ClientMethod {
 
   public static const selectComponent:int = 14;
   public static const getDocumentImage:int = 15;
+  public static const updateAttribute:int = 16;
 }

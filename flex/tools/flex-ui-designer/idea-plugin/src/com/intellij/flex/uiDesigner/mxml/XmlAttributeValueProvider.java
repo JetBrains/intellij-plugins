@@ -8,8 +8,15 @@ import com.intellij.psi.xml.XmlElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class XmlAttributeValueProvider implements XmlElementValueProvider {
+public class XmlAttributeValueProvider implements XmlElementValueProvider {
   private XmlAttribute attribute;
+
+  public XmlAttributeValueProvider() {
+  }
+
+  public XmlAttributeValueProvider(XmlAttribute attribute) {
+    this.attribute = attribute;
+  }
 
   public void setAttribute(@Nullable XmlAttribute attribute) {
     this.attribute = attribute;

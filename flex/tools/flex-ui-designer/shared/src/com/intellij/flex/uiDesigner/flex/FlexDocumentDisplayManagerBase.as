@@ -216,6 +216,10 @@ internal class FlexDocumentDisplayManagerBase extends AbstractDocumentDisplayMan
     return removeRawChild(super.getChildAt(index));
   }
 
+  protected final function $removeChild(child:DisplayObject):void {
+    super.removeChild(child);
+  }
+
   internal function $getChildAt(index:int):DisplayObject {
     return super.getChildAt(index);
   }

@@ -469,14 +469,8 @@ public class MxmlReader implements DocumentReader {
     return stringRegistry.read(input);
   }
 
-  internal function readExpression(amfType:int, parent:Object = null):* {
+  public static function readPrimitive(amfType:int, input:IDataInput, stringRegistry:StringRegistry):Object {
     switch (amfType) {
-      case Amf3Types.OBJECT:
-        return readMxmlObjectFromClass(stringRegistry.readNotNull(input), parent);
-
-      case ExpressionMessageTypes.SIMPLE_OBJECT:
-        return readSimpleObject(new Object());
-
       case Amf3Types.STRING:
         return AmfUtil.readString(input);
 
@@ -497,6 +491,26 @@ public class MxmlReader implements DocumentReader {
 
       case Amf3Types.NULL:
         return null;
+
+      case AmfExtendedTypes.COLOR_STYLE:
+        return input.readObject();
+    }
+
+    return null;
+  }
+
+  internal function readExpression(amfType:int, parent:Object = null):* {
+    var v:Object;
+    if ((v = readPrimitive(amfType, input, stringRegistry)) != null) {
+      return v;
+    }
+
+    switch (amfType) {
+      case Amf3Types.OBJECT:
+        return readMxmlObjectFromClass(stringRegistry.readNotNull(input), parent);
+
+      case ExpressionMessageTypes.SIMPLE_OBJECT:
+        return readSimpleObject(new Object());
 
       case Amf3Types.ARRAY:
         return readArray(parent);
@@ -548,9 +562,6 @@ public class MxmlReader implements DocumentReader {
 
       case AmfExtendedTypes.PERMANENT_ARRAY_OF_DEFERRED_INSTANCE_FROM_BYTES:
         return new (module.getClass("com.intellij.flex.uiDesigner.flex.states.PermanentArrayOfDeferredInstanceFromBytes"))(stateReader.readArrayOfDeferredInstanceFromBytes(this, input), getOrCreateFactoryContext());
-
-      case AmfExtendedTypes.COLOR_STYLE:
-        return input.readObject();
 
       case AmfExtendedTypes.PROJECT_CLASS_REFERENCE:
         return readProjectClassReference();

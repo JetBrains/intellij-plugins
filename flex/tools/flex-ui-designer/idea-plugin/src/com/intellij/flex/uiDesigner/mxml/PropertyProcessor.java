@@ -7,7 +7,6 @@ import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ObjectIntHashMap;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.javascript.flex.FlexAnnotationNames;
-import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
@@ -454,44 +453,15 @@ class PropertyProcessor implements ValueWriter {
 
   boolean writeIfPrimitive(XmlElementValueProvider valueProvider, String type, PrimitiveAmfOutputStream out, @Nullable AnnotationBackedDescriptor descriptor,
                            boolean isStyle, boolean emptyNumericAs0) throws InvalidPropertyException {
-    if (type.equals(JSCommonTypeNames.STRING_CLASS_NAME)) {
-      writeString(valueProvider, descriptor);
-    }
-    else if (type.equals(JSCommonTypeNames.NUMBER_CLASS_NAME) ||
-             type.equals(JSCommonTypeNames.INT_TYPE_NAME) ||
-             type.equals(JSCommonTypeNames.UINT_TYPE_NAME)) {
-      final String trimmed = valueProvider.getTrimmed();
-      if (trimmed.isEmpty()) {
-        if (emptyNumericAs0) {
-          out.writeAmfInt(0);
-          return true;
-        }
-        else {
-          throw new InvalidPropertyException(valueProvider.getElement(), "invalid.numeric.value");
-        }
-      }
-
-      if (type.equals(JSCommonTypeNames.NUMBER_CLASS_NAME)) {
-        out.writeAmfDouble(trimmed);
-      }
-      else if (descriptor != null && FlexCssPropertyDescriptor.COLOR_FORMAT.equals(descriptor.getFormat())) {
-        writer.color(valueProvider.getElement(), trimmed, isStyle);
-      }
-      else {
-        out.writeAmfInt(trimmed);
-      }
-    }
-    else if (type.equals(JSCommonTypeNames.BOOLEAN_CLASS_NAME)) {
-      out.writeAmfBoolean(valueProvider.getTrimmed());
+    if (writer.writeIfApplicable(valueProvider, type, out, descriptor, isStyle, emptyNumericAs0)) {
+      return true;
     }
     else if (type.equals(AsCommonTypeNames.CLASS)) {
       processClass(valueProvider);
-    }
-    else {
-      return false;
+      return true;
     }
 
-    return true;
+    return false;
   }
 
   // see ClassProperty test
@@ -643,30 +613,6 @@ class PropertyProcessor implements ValueWriter {
     return text.length() >= 2 && text.charAt(0) == '[' && text.charAt(text.length() - 1) == ']';
   }
 
-  private void writeString(XmlElementValueProvider valueProvider, @Nullable AnnotationBackedDescriptor descriptor) {
-    if (descriptor != null && descriptor.isEnumerated()) {
-      writer.stringReference(valueProvider.getTrimmed());
-    }
-    else {
-      CharSequence v = writeIfEmpty(valueProvider);
-      if (v != null) {
-        writer.string(v);
-      }
-    }
-  }
-
-  @Nullable
-  private CharSequence writeIfEmpty(XmlElementValueProvider valueProvider) {
-    CharSequence v = valueProvider.getSubstituted();
-    if (v == XmlElementValueProvider.EMPTY) {
-      writer.stringReference(XmlElementValueProvider.EMPTY);
-      return null;
-    }
-    else {
-      return v;
-    }
-  }
-
   private void writeInlineArray(XmlElementValueProvider valueProvider) {
     final PrimitiveAmfOutputStream out = writer.getOut();
     out.write(Amf3Types.ARRAY);
@@ -743,7 +689,7 @@ class PropertyProcessor implements ValueWriter {
                                                  AnnotationBackedDescriptor descriptor, boolean isStyle, @Nullable Context parentContext)
     throws InvalidPropertyException {
     if (descriptor.isRichTextContent()) {
-      writeString(valueProvider, descriptor);
+      writer.writeString(valueProvider, descriptor);
       return null;
     }
 
@@ -799,7 +745,7 @@ class PropertyProcessor implements ValueWriter {
       }
     }
     else {
-      charSequence = writeIfEmpty(valueProvider);
+      charSequence = writer.writeIfEmpty(valueProvider);
     }
 
     if (charSequence != null) {

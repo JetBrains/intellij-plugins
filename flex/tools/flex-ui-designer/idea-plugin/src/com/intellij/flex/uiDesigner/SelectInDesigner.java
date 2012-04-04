@@ -49,16 +49,11 @@ public class SelectInDesigner implements SelectInTarget {
         int componentId = 0;
         if (!(element instanceof XmlFile)) {
           PsiElement effectiveElement = element;
-          boolean found = false;
-          f: do {
+          do {
             if (effectiveElement instanceof XmlTag && ((XmlTag)effectiveElement).getDescriptor() instanceof ClassBackedElementDescriptor) {
-              for (int i = 0; i < rangeMarkers.size(); i++) {
-                RangeMarker rangeMarker = rangeMarkers.get(i);
-                if (rangeMarker.getStartOffset() == effectiveElement.getTextOffset()) {
-                  componentId = i;
-                  found = true;
-                  break f;
-                }
+              componentId = info.rangeMarkerIndexOf(effectiveElement);
+              if (componentId != -1) {
+                break;
               }
             }
 
@@ -66,7 +61,8 @@ public class SelectInDesigner implements SelectInTarget {
           }
           while (effectiveElement != null);
 
-          if (!found) {
+          if (componentId == -1) {
+            componentId = 0; // select root
             LogMessageUtil.LOG.warn("Can't find target component");
           }
         }

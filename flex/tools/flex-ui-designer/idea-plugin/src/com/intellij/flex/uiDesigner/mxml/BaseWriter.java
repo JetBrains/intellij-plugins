@@ -1,29 +1,23 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.AssetCounter;
-import com.intellij.flex.uiDesigner.InvalidPropertyException;
-import com.intellij.flex.uiDesigner.css.CssPropertyType;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
-import com.intellij.psi.xml.XmlElement;
-import com.intellij.xml.util.ColorSampleLookupValue;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 
-final class BaseWriter {
+final class BaseWriter extends PrimitiveWriter {
   private static final int EMPTY_CLASS_OR_PROPERTY_NAME = 0;
   
   final int ARRAY;
   final int P_FUD_RANGE_ID;
 
-  private final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
   private boolean stringWriterFinished;
 
   private final int startPosition;
 
   private final BlockDataOutputStream blockOut;
-  private final PrimitiveAmfOutputStream out;
 
   private final Scope rootScope = new Scope();
   final NullContext nullContext;
@@ -31,11 +25,10 @@ final class BaseWriter {
   private final AssetCounter assetCounter;
 
   public BaseWriter(PrimitiveAmfOutputStream out, AssetCounter assetCounter) {
-    this.out = out;
+    super(out, new StringRegistry.StringWriter());
+
     blockOut = out.getBlockOut();
     this.assetCounter = assetCounter;
-
-    stringWriter.startChange();
 
     ARRAY = getNameReference("array");
     P_FUD_RANGE_ID = getNameReference("$fud_r");
@@ -131,21 +124,6 @@ final class BaseWriter {
     out.writeAmfUtf(value, false);
   }
 
-  public void stringReference(int reference) {
-    out.write(AmfExtendedTypes.STRING_REFERENCE);
-    out.writeUInt29(reference);
-  }
-
-  public void stringReference(String reference) {
-    out.write(AmfExtendedTypes.STRING_REFERENCE);
-    stringWriter.write(reference, out);
-  }
-
-  public void string(CharSequence value) {
-    out.write(Amf3Types.STRING);
-    out.writeAmfUtf(value, false);
-  }
-
   public void objectReference(int reference) {
     out.write(AmfExtendedTypes.OBJECT_REFERENCE);
     out.writeUInt29(reference);
@@ -190,70 +168,6 @@ final class BaseWriter {
   public void classReference(String className) {
     out.write(AmfExtendedTypes.CLASS_REFERENCE);
     classOrPropertyName(className);
-  }
-
-  public void color(XmlElement element, String value, boolean isPrimitiveStyle) throws InvalidPropertyException {
-    out.write(AmfExtendedTypes.COLOR_STYLE);
-    if (value.charAt(0) == '#') {
-      if (isPrimitiveStyle) {
-        out.write(CssPropertyType.COLOR_INT);
-      }
-      value = value.substring(1);
-    }
-    else if (value.charAt(0) == '0' && value.length() > 2 && value.charAt(1) == 'x') {
-      if (isPrimitiveStyle) {
-        out.write(CssPropertyType.COLOR_INT);
-      }
-      value = value.substring(2);
-    }
-    else {
-      final String colorName = value.toLowerCase();
-      String hexCodeForColorName = ColorSampleLookupValue.getHexCodeForColorName(colorName);
-      if (hexCodeForColorName == null) {
-        try {
-          long v = Long.parseLong(colorName);
-          if (isPrimitiveStyle) {
-            out.write(CssPropertyType.COLOR_INT);
-          }
-          out.writeAmfUInt(v);
-          return;
-        }
-        catch (NumberFormatException e) {
-          // Why themeColor for theme halo valid for any other theme? But it is compiler behavior, see
-          // example http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/spark/components/Form.html
-          // or our test EmbedSwfAndImageFromCss
-          if (colorName.equalsIgnoreCase("halogreen")) {
-            hexCodeForColorName = "#80FF4D";
-          }
-          else if (colorName.equalsIgnoreCase("haloblue")) {
-            hexCodeForColorName = "#009DFF";
-          }
-          else if (colorName.equalsIgnoreCase("haloorange")) {
-            hexCodeForColorName = "#FFB600";
-          }
-          else if (colorName.equalsIgnoreCase("halosilver")) {
-            hexCodeForColorName = "#AECAD9";
-          }
-          else {
-            throw new InvalidPropertyException(element, "invalid.color.name", colorName);
-          }
-        }
-      }
-      
-      if (isPrimitiveStyle) {
-        out.write(CssPropertyType.COLOR_STRING);
-        stringWriter.writeNullable(colorName, out);
-      }
-       
-      value = hexCodeForColorName.substring(1);
-    }
-    
-    if (value.length() > 6) {
-      out.writeAmfUInt(Long.parseLong(value, 16));
-    }
-    else {
-      out.writeAmfUInt(Integer.parseInt(value, 16));
-    }
   }
 
   public void arrayHeader(int length) {

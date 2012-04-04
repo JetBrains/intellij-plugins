@@ -12,6 +12,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManagerAdapter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import gnu.trove.TObjectObjectProcedure;
@@ -106,12 +107,19 @@ public class DocumentFactoryManager {
     return info;
   }
 
-  public @NotNull VirtualFile getFile(int id) {
+  @NotNull
+  public VirtualFile getFile(int id) {
     return files.getElement(id);
   }
 
-  public @NotNull DocumentInfo getInfo(int id) {
+  @NotNull
+  public DocumentInfo getInfo(int id) {
     return files.getInfo(id);
+  }
+
+  @NotNull
+  public DocumentInfo getInfo(PsiElement element) {
+    return files.getInfo(element.getContainingFile().getVirtualFile());
   }
 
   public static final class DocumentInfo extends Info<VirtualFile> {
@@ -125,6 +133,17 @@ public class DocumentFactoryManager {
     
     public DocumentInfo(@NotNull VirtualFile element) {
       super(element);
+    }
+
+    public int rangeMarkerIndexOf(PsiElement element) {
+      for (int i = 0; i < rangeMarkers.size(); i++) {
+        RangeMarker rangeMarker = rangeMarkers.get(i);
+        if (rangeMarker.getStartOffset() == element.getTextOffset()) {
+          return i;
+        }
+      }
+
+      return -1;
     }
 
     public List<RangeMarker> getRangeMarkers() {

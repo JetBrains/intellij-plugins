@@ -98,6 +98,9 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
   public function get realStage():Stage {
     return stage;
   }
+
+  public function prepareSnapshot(setActualSize:Boolean):void {
+  }
 }
 }
 
