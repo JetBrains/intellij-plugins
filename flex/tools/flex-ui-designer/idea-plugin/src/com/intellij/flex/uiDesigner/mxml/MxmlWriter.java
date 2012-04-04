@@ -197,7 +197,7 @@ public class MxmlWriter {
         else if (propertyFilter != null && !propertyFilter.value(descriptor)) {
           // skip
         }
-        else if (descriptor.hasIdType() && MxmlUtil.isIdLanguageIdAttribute(attribute)) {
+        else if (MxmlUtil.isIdLanguageAttribute(attribute, descriptor)) {
           String explicitId = attribute.getValue();
           writer.idMxmlProperty(explicitId);
           processObjectWithExplicitId(explicitId, context);

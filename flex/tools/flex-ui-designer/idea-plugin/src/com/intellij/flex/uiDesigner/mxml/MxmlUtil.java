@@ -29,7 +29,11 @@ public final class MxmlUtil {
   static final String UNKNOWN_ITEM_RENDERER_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownItemRenderer";
 
   // about id http://opensource.adobe.com/wiki/display/flexsdk/id+property+in+MXML+2009
-  static boolean isIdLanguageIdAttribute(XmlAttribute attribute) {
+  public static boolean isIdLanguageAttribute(XmlAttribute attribute, AnnotationBackedDescriptor descriptor) {
+    if (!descriptor.hasIdType()) {
+      return false;
+    }
+
     final String ns = attribute.getNamespace();
     return ns.isEmpty() || ns.equals(JavaScriptSupportLoader.MXML_URI3);
   }

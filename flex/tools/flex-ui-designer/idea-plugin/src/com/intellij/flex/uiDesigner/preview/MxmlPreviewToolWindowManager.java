@@ -5,11 +5,10 @@ import com.intellij.flex.uiDesigner.io.AmfOutputStream;
 import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
-import com.intellij.flex.uiDesigner.mxml.PrimitiveWriter;
-import com.intellij.flex.uiDesigner.mxml.XmlAttributeValueProvider;
-import com.intellij.flex.uiDesigner.mxml.XmlElementValueProvider;
+import com.intellij.flex.uiDesigner.mxml.*;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.javascript.flex.FlexAnnotationNames;
+import com.intellij.javascript.flex.FlexReferenceContributor;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
@@ -384,8 +383,27 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       }
 
       AnnotationBackedDescriptor descriptor = (AnnotationBackedDescriptor)xmlDescriptor;
-      if (descriptor.isPredefined()) {
+      if (descriptor.isPredefined() || MxmlUtil.isIdLanguageAttribute(attribute, descriptor)) {
         return null;
+      }
+
+      // todo incremental sync for state-specific attributes
+      PsiReference[] references = attribute.getReferences();
+      if (references.length > 1) {
+        for (int i = references.length - 1; i > -1; i--) {
+          PsiReference psiReference = references[i];
+          if (psiReference instanceof FlexReferenceContributor.StateReference) {
+            return null;
+          }
+        }
+      }
+      else {
+        String prefix = attribute.getName() + '.';
+        for (XmlAttribute anotherAttribute : attribute.getParent().getAttributes()) {
+          if (anotherAttribute != attribute && anotherAttribute.getName().startsWith(prefix)) {
+            return null;
+          }
+        }
       }
 
       return attribute;
@@ -393,11 +411,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
     @Override
     public void run() {
-      if (DesignerApplicationManager.getInstance().isInitialRendering()) {
-        return;
-      }
-
-      if (!incrementalSync()) {
+      if (!DesignerApplicationManager.getInstance().isInitialRendering() && !incrementalSync()) {
         render();
       }
     }
