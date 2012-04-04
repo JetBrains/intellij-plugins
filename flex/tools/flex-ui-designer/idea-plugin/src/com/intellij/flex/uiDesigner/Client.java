@@ -562,11 +562,11 @@ public class Client implements Disposable {
     }
   }
 
-  public ActionCallback updateAttribute(int documentId, int componentId, Consumer<AmfOutputStream> streamConsumer) {
-    final ActionCallback callback = new ActionCallback("updateAttribute");
+  public ActionCallback updatePropertyOrStyle(int documentId, int componentId, Consumer<AmfOutputStream> streamConsumer) {
+    final ActionCallback callback = new ActionCallback("updatePropertyOrStyle");
     boolean hasError = true;
     try {
-      beginMessage(ClientMethod.updateAttribute, callback);
+      beginMessage(ClientMethod.updatePropertyOrStyle, callback);
       out.writeUInt29(documentId);
       out.writeUInt29(componentId);
       streamConsumer.consume(out);
@@ -643,7 +643,7 @@ public class Client implements Disposable {
   private static enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, unregisterModule, registerDocumentFactory, updateDocumentFactory, renderDocument, renderDocumentsAndDependents,
     initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool, fillViewClassPool,
-    selectComponent, getDocumentImage, updateAttribute;
+    selectComponent, getDocumentImage, updatePropertyOrStyle;
     
     public static final int METHOD_CLASS = 0;
   }

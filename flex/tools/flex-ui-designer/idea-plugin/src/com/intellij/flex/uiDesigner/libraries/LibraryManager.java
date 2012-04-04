@@ -112,11 +112,11 @@ public class LibraryManager implements Disposable {
         client.updateStringRegistry(stringWriter);
       }
       else {
-        stringWriter.finishChange();
+        stringWriter.commit();
       }
     }
     catch (Throwable e) {
-      stringWriter.rollbackChange();
+      stringWriter.rollback();
       throw new InitException(e, "error.collect.libraries");
     }
 
@@ -154,7 +154,7 @@ public class LibraryManager implements Disposable {
                                                 projectComponentReferenceCounter, assetCounter);
       }
       catch (Throwable e) {
-        stringWriter.rollbackChange();
+        stringWriter.rollback();
         throw new InitException(e, "error.collect.local.style.holders");
       }
     }

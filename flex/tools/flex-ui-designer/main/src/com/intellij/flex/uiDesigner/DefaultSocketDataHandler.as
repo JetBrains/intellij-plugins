@@ -121,8 +121,8 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
         getDocumentImage(input, callbackId);
         break;
 
-      case ClientMethod.updateAttribute:
-        updateAttribute(input, callbackId);
+      case ClientMethod.updatePropertyOrStyle:
+        updatePropertyOrStyle(input, callbackId);
         break;
     }
   }
@@ -235,10 +235,11 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     server.writeDocumentImage(bitmapData);
   }
 
-  private function updateAttribute(input:IDataInput, callbackId:int):void {
+  private function updatePropertyOrStyle(input:IDataInput, callbackId:int):void {
     const documentId:int = AmfUtil.readUInt29(input);
     const componentId:int = AmfUtil.readUInt29(input);
     stringRegistry.readTable(input);
+    const isStyle:Boolean = input.readBoolean();
     const propertyName:String = stringRegistry.readNotNull(input);
     const propertyValue:Object = MxmlReader.readPrimitive(input.readByte(), input, stringRegistry);
 
@@ -246,10 +247,14 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     var component:Object = documentFactory.getComponent(componentId);
     if (component == null) {
       UncaughtErrorManager.instance.logWarning("Can't find target component " + documentFactory.id + ":" + componentId);
-      return;
+    }
+    else if (isStyle) {
+      component.setStyle(propertyName, propertyValue);
+    }
+    else {
+      component[propertyName] = propertyValue;
     }
 
-    component[propertyName] = propertyValue;
     Server.instance.callback(callbackId);
   }
 
@@ -385,5 +390,5 @@ final class ClientMethod {
 
   public static const selectComponent:int = 14;
   public static const getDocumentImage:int = 15;
-  public static const updateAttribute:int = 16;
+  public static const updatePropertyOrStyle:int = 16;
 }

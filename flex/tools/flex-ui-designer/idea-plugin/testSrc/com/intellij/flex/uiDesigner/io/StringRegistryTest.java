@@ -18,7 +18,7 @@ public class StringRegistryTest {
     stringWriter.getReference("test2");
     stringWriter.getReference("test3");
 
-    stringWriter.finishChange();
+    stringWriter.commit();
     
     final IsArray<String> array = array(equalTo("test"), equalTo("test2"), equalTo("test3"));
     assertThat(stringRegistry.toArray(), array);
@@ -30,7 +30,7 @@ public class StringRegistryTest {
     stringWriter.getReference("test2");
     stringWriter.getReference("newTest2");
     
-    stringWriter.rollbackChange();
+    stringWriter.rollback();
     
     assertThat(stringRegistry.toArray(), array);
     assertThat(stringWriter.size(), equalTo(1));
@@ -46,7 +46,7 @@ public class StringRegistryTest {
     stringWriter.getReference("test2");
     stringWriter.getReference("test3");
 
-    stringWriter.rollbackChange();
+    stringWriter.rollback();
     
     assertThat(stringRegistry.toArray(), emptyArray());
     assertThat(stringWriter.size(), equalTo(1));

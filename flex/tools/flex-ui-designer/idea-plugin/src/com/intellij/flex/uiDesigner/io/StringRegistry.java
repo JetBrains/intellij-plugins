@@ -95,12 +95,12 @@ public class StringRegistry {
       stringRegistry.startChange(this);
     }
     
-    public void rollbackChange() {
+    public void rollback() {
       reset();
       stringRegistry.rollbackChange();
     }
 
-    public void finishChange() {
+    public void commit() {
       reset();
       stringRegistry.commitChange();
     }
@@ -127,18 +127,10 @@ public class StringRegistry {
       }
     }
 
-    public int getCounter() {
-      return counter;
-    }
-
     public int size() {
       return IOUtil.uint29SizeOf(counter) + out.size();
     }
 
-    public ByteArrayOutputStreamEx getByteArrayOut() {
-      return out.getByteArrayOut();
-    }
-    
     public void writeToIfStarted(PrimitiveAmfOutputStream to) {
       if (stringRegistry.activeWriter == null) {
         assert counter == 0;
@@ -153,7 +145,7 @@ public class StringRegistry {
       to.writeUInt29(counter);
       out.writeTo(to);
 
-      finishChange();
+      commit();
     }
 
     public boolean hasChanges() {

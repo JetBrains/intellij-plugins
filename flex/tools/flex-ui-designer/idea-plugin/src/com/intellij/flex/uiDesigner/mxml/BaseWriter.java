@@ -70,7 +70,7 @@ final class BaseWriter extends PrimitiveWriter {
 
   public void resetAfterMessage() {
     if (!stringWriterFinished) {
-      stringWriter.finishChange();
+      stringWriter.commit();
     }
   }
 

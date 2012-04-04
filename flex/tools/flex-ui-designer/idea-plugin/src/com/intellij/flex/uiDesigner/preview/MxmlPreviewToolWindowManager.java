@@ -30,10 +30,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowManagerAdapter;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.psi.*;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.*;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.Alarm;
@@ -104,78 +101,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
 
         syncAlarm.cancelAllRequests();
-        syncAlarm.addRequest(new Runnable() {
-          @Override
-          public void run() {
-            if (DesignerApplicationManager.getInstance().isInitialRendering()) {
-              return;
-            }
-
-            DocumentFactoryManager.DocumentInfo info = null;
-            int componentId = 0;
-            XmlElementValueProvider valueProvider = null;
-            if (!DesignerApplicationManager.getInstance().isApplicationClosed() && event.getParent() instanceof XmlAttributeValue) {
-              XmlAttribute attribute = (XmlAttribute)event.getParent().getParent();
-              if (!JavaScriptSupportLoader.MXML_URI3.equals(attribute.getNamespace())) {
-                XmlAttributeDescriptor descriptor = attribute.getDescriptor();
-                if (descriptor instanceof AnnotationBackedDescriptor) {
-                  AnnotationBackedDescriptor annotationBackedDescriptor = (AnnotationBackedDescriptor)descriptor;
-                  if (!annotationBackedDescriptor.isPredefined()) {
-                    info = DocumentFactoryManager.getInstance().getInfo(attribute);
-                    XmlTag tag = attribute.getParent();
-                    if (tag.getDescriptor() instanceof ClassBackedElementDescriptor) {
-                      componentId = info.rangeMarkerIndexOf(tag);
-                      if (componentId != -1) {
-                        valueProvider = new XmlAttributeValueProvider(attribute);
-                      }
-                    }
-                  }
-                }
-              }
-            }
-
-            if (valueProvider == null) {
-              render();
-            }
-            else {
-              final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
-              final PrimitiveAmfOutputStream dataOut = new PrimitiveAmfOutputStream(new ByteArrayOutputStreamEx(16));
-              PrimitiveWriter writer = new PrimitiveWriter(dataOut, stringWriter);
-              AnnotationBackedDescriptor descriptor = (AnnotationBackedDescriptor)valueProvider.getPsiMetaData();
-              assert descriptor != null;
-              try {
-                stringWriter.write(descriptor.getName(), dataOut);
-                writer.writeIfApplicable(valueProvider, dataOut, descriptor);
-              }
-              catch (InvalidPropertyException e) {
-                return;
-              }
-
-              final DocumentFactoryManager.DocumentInfo finalInfo = info;
-              Client.getInstance().updateAttribute(info.getId(), componentId, new Consumer<AmfOutputStream>() {
-                @Override
-                public void consume(AmfOutputStream stream) {
-                  stringWriter.writeTo(stream);
-                  dataOut.writeTo(stream);
-                }
-              }).doWhenDone(new Runnable() {
-                @Override
-                public void run() {
-                  Document document = FileDocumentManager.getInstance().getCachedDocument(finalInfo.getElement());
-                  if (document != null) {
-                    finalInfo.documentModificationStamp = document.getModificationStamp();
-                    UIUtil.invokeLaterIfNeeded(new Runnable() {
-                      @Override
-                      public void run() {
-                        render(false);
-                      }
-                    });
-                  }
-                }
-              });
-            }
-          }
-        }, 100, ModalityState.NON_MODAL);
+        syncAlarm.addRequest(new Synchronizer(event), 100, ModalityState.NON_MODAL);
       }
     }, project);
   }
@@ -418,5 +344,124 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
       }
     }, 300);
+  }
+
+  private final class Synchronizer implements Runnable {
+    private final PsiTreeChangeEvent event;
+
+    public Synchronizer(PsiTreeChangeEvent event) {
+      this.event = event;
+    }
+
+    private XmlElement canIncrement() {
+      if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
+        return null;
+      }
+
+      PsiElement element = event.getParent();
+      // if we change attribute value via line marker, so, event.getParent() will be XmlAttribute instead of XmlAttributeValue
+      while (!(element instanceof XmlAttribute)) {
+        element = element.getParent();
+        if (element instanceof XmlTag || element instanceof PsiFile || element == null) {
+          return null;
+        }
+      }
+
+      XmlAttribute attribute = (XmlAttribute)element;
+      if (JavaScriptSupportLoader.MXML_URI3.equals(attribute.getNamespace())) {
+        return null;
+      }
+
+      XmlAttributeDescriptor xmlDescriptor = attribute.getDescriptor();
+      if (!(xmlDescriptor instanceof AnnotationBackedDescriptor)) {
+        return null;
+      }
+
+      AnnotationBackedDescriptor descriptor = (AnnotationBackedDescriptor)xmlDescriptor;
+      if (descriptor.isPredefined()) {
+        return null;
+      }
+
+      return attribute;
+    }
+
+    @Override
+    public void run() {
+      if (DesignerApplicationManager.getInstance().isInitialRendering()) {
+        return;
+      }
+
+      DocumentFactoryManager.DocumentInfo info = null;
+      int componentId = 0;
+      XmlElementValueProvider valueProvider = null;
+      final XmlElement element = canIncrement();
+      if (element != null) {
+        XmlAttribute attribute = (XmlAttribute)element;
+        info = DocumentFactoryManager.getInstance().getInfo(attribute);
+        XmlTag tag = attribute.getParent();
+        if (tag.getDescriptor() instanceof ClassBackedElementDescriptor) {
+          componentId = info.rangeMarkerIndexOf(tag);
+          if (componentId != -1) {
+            valueProvider = new XmlAttributeValueProvider(attribute);
+          }
+        }
+      }
+
+      if (valueProvider == null) {
+        render();
+        return;
+      }
+
+      final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
+      final PrimitiveAmfOutputStream dataOut = new PrimitiveAmfOutputStream(new ByteArrayOutputStreamEx(16));
+      final AnnotationBackedDescriptor descriptor = (AnnotationBackedDescriptor)valueProvider.getPsiMetaData();
+      assert descriptor != null;
+      PrimitiveWriter writer = new PrimitiveWriter(dataOut, stringWriter);
+      boolean needRollbackStringWriter = true;
+      try {
+        stringWriter.write(descriptor.getName(), dataOut);
+        if (!writer.writeIfApplicable(valueProvider, dataOut, descriptor)) {
+          render();
+          return;
+        }
+
+        needRollbackStringWriter = false;
+      }
+      catch (InvalidPropertyException e) {
+        return;
+      }
+      catch (NumberFormatException e) {
+        return;
+      }
+      finally {
+        if (needRollbackStringWriter) {
+          stringWriter.rollback();
+        }
+      }
+
+      final DocumentFactoryManager.DocumentInfo finalInfo = info;
+      Client.getInstance().updatePropertyOrStyle(info.getId(), componentId, new Consumer<AmfOutputStream>() {
+        @Override
+        public void consume(AmfOutputStream stream) {
+          stringWriter.writeTo(stream);
+          stream.write(descriptor.isStyle());
+          dataOut.writeTo(stream);
+        }
+      }).doWhenDone(new Runnable() {
+        @Override
+        public void run() {
+          Document document = FileDocumentManager.getInstance().getCachedDocument(finalInfo.getElement());
+          if (document != null) {
+            finalInfo.documentModificationStamp = document.getModificationStamp();
+            UIUtil.invokeLaterIfNeeded(new Runnable() {
+              @Override
+              public void run() {
+                render(false);
+              }
+            });
+          }
+        }
+      });
+    }
   }
 }
