@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="Flex" version="4">
-  <component name="FlexBuildConfigurationManager" active="4.6">
+  <component name="FlexBuildConfigurationManager" active="4.5">
     <configurations>
-      <configuration name="4.6">
-        <dependencies target-player="11.1">
-          <sdk name="flex4.6.0" />
-        </dependencies>
-        <compiler-options />
-        <packaging-air-desktop />
-        <packaging-android />
-        <packaging-ios />
-      </configuration>
       <configuration name="4.5" output-file="mx.swf" output-folder="$MODULE_DIR$/../../../out/production/mx">
         <dependencies target-player="11.1">
           <sdk name="flex4.6.0" />
@@ -20,14 +11,14 @@
         <packaging-android />
         <packaging-ios />
       </configuration>
-      <configuration name="d4.6" target-platform="Desktop">
-        <dependencies target-player="11.1">
+      <configuration name="m" target-platform="Mobile" output-file="ewrgerg.swf" output-folder="$MODULE_DIR$/../../../out/production/mx">
+        <dependencies>
           <sdk name="flex4.6.0" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
-        <packaging-android />
-        <packaging-ios />
+        <packaging-android package-file-name="ewrgerg" />
+        <packaging-ios package-file-name="ewrgerg" />
       </configuration>
     </configurations>
     <compiler-options />

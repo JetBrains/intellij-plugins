@@ -148,8 +148,8 @@ public class CommonTest extends BaseTestCase {
     ]);
   }
 
-  public function InvalidColorName():void {
-    assertThat(app, [{color: 0}, {color: 0}, {depth: 0}]);
+  public function InvalidColorNameOrNumericValue():void {
+    assertThat(app, [{color: 0}, {color: 0}, {depth: 0}, {width: not(0)}, {width: not(0)}]);
   }
 
   public function RuntimeError():void {

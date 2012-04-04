@@ -73,9 +73,15 @@ class PropertyProcessor implements ValueWriter {
     return isEffect;
   }
 
-  private ValueWriter processPercentable(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor) {
+  private ValueWriter processPercentable(XmlElementValueProvider valueProvider, AnnotationBackedDescriptor descriptor)
+    throws InvalidPropertyException {
     String value = valueProvider.getTrimmed();
-    if (value.endsWith("%")) {
+    final boolean hasPercent;
+    if (value.isEmpty() || ((hasPercent = value.endsWith("%")) && value.length() == 1)) {
+      throw new InvalidPropertyException(valueProvider.getElement(), "invalid.numeric.value");
+    }
+
+    if (hasPercent) {
       name = descriptor.getPercentProxy();
       value = value.substring(0, value.length() - 1);
     }

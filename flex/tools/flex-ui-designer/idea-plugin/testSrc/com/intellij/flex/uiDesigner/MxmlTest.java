@@ -59,12 +59,14 @@ public class MxmlTest extends MxmlTestBase {
 
         expectedProblems.add(new ProblemDescriptor("Unsupported embed asset type \"@Embed(source='/jazz.mp3')\"", sourceDir.findFileByRelativePath("Embed.mxml"), 3));
 
-        file = sourceDir.findFileByRelativePath("InvalidColorName.mxml");
+        file = sourceDir.findFileByRelativePath("InvalidColorNameOrNumericValue.mxml");
         expectedProblems.add(new ProblemDescriptor("Invalid color name invalidcolorname", file, 2));
         expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 3));
         expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 4));
+        expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 5));
+        expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 6));
 
-        expectedProblems.add(new ProblemDescriptor("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a>", sourceDir.findFileByRelativePath("ItemRendererAndMixDefaultExplicitContent.mxml"), 9));
+        //expectedProblems.add(new ProblemDescriptor("<a href=\"http://youtrack.jetbrains.net/issue/IDEA-72175\">Inline components are not supported</a>", sourceDir.findFileByRelativePath("ItemRendererAndMixDefaultExplicitContent.mxml"), 9));
         expectedProblems.add(new ProblemDescriptor("Unresolved variable or type unresolvedData", sourceDir.findFileByRelativePath("ArrayOfPrimitives.mxml"), 10));
 
         file = sourceDir.findFileByRelativePath("ChildrenTypeCheck.mxml");

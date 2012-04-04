@@ -13,7 +13,16 @@ class TestDocumentProblemManager extends DocumentProblemManager {
   private static Set<ProblemDescriptor> expectedProblems = EMPTY_EXPECTED_PROBLEMS;
 
   public static void setExpectedProblems(@Nullable Set<ProblemDescriptor> value) {
-    expectedProblems = value == null ? EMPTY_EXPECTED_PROBLEMS : value;
+    if (value == null) {
+      if (expectedProblems != EMPTY_EXPECTED_PROBLEMS && !expectedProblems.isEmpty()) {
+        throw new AssertionError("expectedProblems must be empty");
+      }
+
+      expectedProblems = EMPTY_EXPECTED_PROBLEMS;
+    }
+    else {
+      expectedProblems = value;
+    }
   }
 
   @Override

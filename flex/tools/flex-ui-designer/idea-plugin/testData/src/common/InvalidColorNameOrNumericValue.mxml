@@ -2,4 +2,6 @@
   <Label text="uuuuu" width="50%" color="invalidColorName"/>
   <Label text="2" color=""/>
   <Label text="2" depth=""/>
+  <Label text="w" width=""/>
+  <Label text="w" width="%"/>
 </VGroup>
