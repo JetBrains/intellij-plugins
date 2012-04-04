@@ -393,24 +393,12 @@ public class Server implements ResourceBundleProvider {
     socket.flush();
   }
 
-  public function writeDocumentImage(document:Document):void {
-    document.displayManager.prepareSnapshot(document.container == null);
-
-    var displayObject:DisplayObject = DisplayObject(document.uiComponent);
-    const w:int = displayObject.width;
-    const h:int = displayObject.height;
-    var argb:ByteArray;
-    if (w != 0 && h != 0) {
-      var rect:Rectangle = displayObject.getRect(null);
-      var bitmapData:BitmapData = new BitmapData(rect.width, rect.height, false);
-      bitmapData.draw(displayObject, null, null, null, bitmapData.rect);
-      argb = bitmapData.getPixels(bitmapData.rect);
-    }
-
-    if (argb == null) {
+  public function writeDocumentImage(bitmapData:BitmapData):void {
+    if (bitmapData == null) {
       socket.writeShort(0);
     }
     else {
+      var argb:ByteArray = bitmapData.getPixels(bitmapData.rect);
       socket.writeShort(bitmapData.width);
       socket.writeShort(bitmapData.height);
       socket.writeBytes(argb);

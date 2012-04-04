@@ -16,6 +16,8 @@ import com.intellij.flex.uiDesigner.ui.inspectors.propertyInspector.PropertyInsp
 import com.intellij.flex.uiDesigner.ui.inspectors.styleInspector.StyleInspector;
 
 import flash.desktop.NativeApplication;
+import flash.display.BitmapData;
+import flash.display.DisplayObject;
 import flash.geom.Rectangle;
 import flash.net.Socket;
 import flash.net.registerClassAlias;
@@ -227,9 +229,30 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   private static function getDocumentImageDoneHandler(documentFactory:DocumentFactory, callbackId:int):void {
+    var bitmapData:BitmapData = getDocumentImageSnapshot(documentFactory.document);
     var server:Server = Server.instance;
     server.callback(callbackId, true, false);
-    server.writeDocumentImage(documentFactory.document);
+    server.writeDocumentImage(bitmapData);
+  }
+
+  private static function getDocumentImageSnapshot(document:Document):BitmapData {
+    document.displayManager.prepareSnapshot(document.container == null);
+
+    var displayObject:DisplayObject = DisplayObject(document.uiComponent);
+    var w:int = displayObject.width;
+    var h:int = displayObject.height;
+    if (w == 0 || h == 0) {
+      return null;
+    }
+
+    var rect:Rectangle = displayObject.getRect(null);
+    if (rect.width != 0 && rect.height != 0) {
+      var bitmapData:BitmapData = new BitmapData(rect.width, rect.height, false);
+      bitmapData.draw(displayObject, null, null, null, bitmapData.rect);
+      return bitmapData;
+    }
+
+    return null;
   }
 
   private function updateAttribute(input:IDataInput, callbackId:int):void {
