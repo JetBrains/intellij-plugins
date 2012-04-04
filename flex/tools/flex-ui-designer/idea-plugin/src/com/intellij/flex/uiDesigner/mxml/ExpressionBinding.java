@@ -86,10 +86,19 @@ class ExpressionBinding extends Binding {
       return;
     }
 
-    final JSFunction function = (JSFunction)psiElement;
+    writeFunction((JSFunction)psiElement, expression, out, writer, valueReferenceResolver, methodExpression);
+  }
+
+  private static void writeFunction(JSFunction function, @Nullable JSCallExpression expression,
+                                    PrimitiveAmfOutputStream out,
+                                    BaseWriter writer,
+                                    @Nullable ValueReferenceResolver valueReferenceResolver,
+                                    @Nullable JSReferenceExpression methodExpression) throws InvalidPropertyException {
+    JSExpression[] arguments;
     final int rollbackPosition;
     final int start;
     if (function.isConstructor()) {
+      assert expression != null;
       arguments = expression.getArguments();
       final JSClass jsClass = (JSClass)function.getParent();
       // text="{new String('newString')}"
@@ -102,10 +111,12 @@ class ExpressionBinding extends Binding {
       rollbackPosition = out.allocateShort();
       start = out.size();
       // text="{resourceManager.getString('core', 'viewSource')}"
-      JSReferenceExpression qualifier = (JSReferenceExpression)methodExpression.getQualifier();
-      while (qualifier != null) {
-        writer.classOrPropertyName(qualifier.getReferencedName());
-        qualifier = (JSReferenceExpression)qualifier.getQualifier();
+      if (methodExpression != null) {
+        JSReferenceExpression qualifier = (JSReferenceExpression)methodExpression.getQualifier();
+        while (qualifier != null) {
+          writer.classOrPropertyName(qualifier.getReferencedName());
+          qualifier = (JSReferenceExpression)qualifier.getQualifier();
+        }
       }
 
       out.write(0);
@@ -117,6 +128,7 @@ class ExpressionBinding extends Binding {
         return;
       }
       else {
+        assert expression != null;
         arguments = expression.getArguments();
         out.write(arguments.length);
       }
@@ -161,7 +173,8 @@ class ExpressionBinding extends Binding {
   }
 
   private static void checkQualifier(JSReferenceExpression expression) {
-    if (expression.getQualifier() != null) {
+    JSExpression qualifier = expression.getQualifier();
+    if (qualifier != null && !(qualifier instanceof JSThisExpression)) {
       throw new UnsupportedOperationException(expression.getText());
     }
   }
@@ -171,7 +184,19 @@ class ExpressionBinding extends Binding {
     throws InvalidPropertyException {
     final PsiElement element;
     List<String> qualifiers = null;
-    JSReferenceExpression qualifier = (JSReferenceExpression)expression.getQualifier();
+    JSExpression expressionQualifier = expression.getQualifier();
+    JSReferenceExpression qualifier;
+    if (expressionQualifier instanceof JSReferenceExpression) {
+      qualifier = (JSReferenceExpression)expressionQualifier;
+    }
+    else if (expressionQualifier != null && !(expressionQualifier instanceof JSThisExpression)) {
+      // we can skip "this."
+      throw new IllegalArgumentException("unknown qualifier " + expressionQualifier.toString() + " " + expression.getText());
+    }
+    else {
+      qualifier = null;
+    }
+
     if (qualificatorSupportedForMxmlBinding && qualifier != null) {
       JSReferenceExpression topElement;
       qualifiers = new ArrayList<String>();
@@ -222,6 +247,9 @@ class ExpressionBinding extends Binding {
       else {
         writeJSVariable(((JSVariable)element), out, writer, valueReferenceResolver);
       }
+    }
+    else if (element instanceof JSFunction) {
+      writeFunction((JSFunction)element, null, out, writer, valueReferenceResolver, null);
     }
     else {
       final String hostObjectId;
