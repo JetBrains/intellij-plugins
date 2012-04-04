@@ -425,6 +425,11 @@ public class Client implements Disposable {
 
   public AsyncResult<List<DocumentInfo>> renderDocumentAndDependents(final List<DocumentInfo> infos) {
     final AsyncResult<List<DocumentInfo>> result = new AsyncResult<List<DocumentInfo>>();
+    if (infos.isEmpty()) {
+      result.setDone(infos);
+      return result;
+    }
+
     final ActionCallback callback = new ActionCallback("renderDocumentAndDependents");
     boolean hasError = true;
     try {
