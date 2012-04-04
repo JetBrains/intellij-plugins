@@ -114,7 +114,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
             DocumentFactoryManager.DocumentInfo info = null;
             int componentId = 0;
             XmlElementValueProvider valueProvider = null;
-            if (event.getParent() instanceof XmlAttributeValue) {
+            if (!DesignerApplicationManager.getInstance().isApplicationClosed() && event.getParent() instanceof XmlAttributeValue) {
               XmlAttribute attribute = (XmlAttribute)event.getParent().getParent();
               if (!JavaScriptSupportLoader.MXML_URI3.equals(attribute.getNamespace())) {
                 XmlAttributeDescriptor descriptor = attribute.getDescriptor();
@@ -395,7 +395,11 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
           toolWindowForm.setFile(psiFile);
         }
 
-        toolWindow.setAvailable(true, null);
+        if (!toolWindow.isAvailable()) {
+          toolWindowVisible = toolWindow.isVisible();
+          toolWindow.setAvailable(true, null);
+        }
+
         if (toolWindowVisible) {
           render();
         }
