@@ -33,10 +33,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConf
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationGroup;
-import com.intellij.notification.NotificationListener;
-import com.intellij.notification.NotificationType;
+import com.intellij.notification.*;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -58,7 +55,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.XDebugProcess;
@@ -69,7 +65,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -495,7 +490,14 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener() {
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          RunDialog.editConfiguration(project, configuration, FlexBundle.message("edit.configuration.title"));
+          notification.expire();
+
+          if ("RunConfiguration".equals(event.getDescription())) {
+            RunDialog.editConfiguration(project, configuration, FlexBundle.message("edit.configuration.title"));
+          }
+          else if ("DisableWarning".equals(event.getDescription())) {
+            disableWarning(project);
+          }
         }
       }
     }).notify(project);
@@ -507,15 +509,28 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           notification.expire();
-          final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
-          ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
-            public void run() {
-              Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(module, bc.getName());
-              projectStructureConfigurable.navigateTo(p, true);
-            }
-          });
+
+          if ("BuildConfiguration".equals(event.getDescription())) {
+            final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
+            ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
+              public void run() {
+                Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(module, bc.getName());
+                projectStructureConfigurable.navigateTo(p, true);
+              }
+            });
+          }
+          else if ("DisableWarning".equals(event.getDescription())) {
+            disableWarning(module.getProject());
+          }
         }
       }
     }).notify(module.getProject());
+  }
+
+  private static void disableWarning(final Project project) {
+    NotificationsConfiguration.getNotificationsConfiguration()
+      .changeSettings(COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.getDisplayId(), NotificationDisplayType.NONE, false);
+    ToolWindowManager.getInstance(project)
+      .notifyByBalloon(EventLog.LOG_TOOL_WINDOW_ID, MessageType.INFO, FlexBundle.message("make.before.launch.warning.disabled"));
   }
 }
