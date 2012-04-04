@@ -23,10 +23,8 @@ import com.google.inject.Module;
 import com.google.inject.multibindings.Multibinder;
 import com.google.jstestdriver.*;
 import com.google.jstestdriver.config.Configuration;
-import com.google.jstestdriver.config.UserConfigurationSource;
-import com.google.jstestdriver.config.YamlParser;
+import com.google.jstestdriver.config.ParsedConfiguration;
 import com.google.jstestdriver.embedded.JsTestDriverBuilder;
-import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.hooks.PluginInitializer;
 import com.google.jstestdriver.hooks.TestListener;
 import com.google.jstestdriver.idea.coverage.CoverageReport;
@@ -36,10 +34,9 @@ import com.google.jstestdriver.idea.execution.tree.JstdTestRunnerFailure;
 import com.google.jstestdriver.idea.server.JstdServerFetchResult;
 import com.google.jstestdriver.idea.server.JstdServerUtilsRt;
 import com.google.jstestdriver.idea.util.EnumUtils;
-import com.google.jstestdriver.model.BasePaths;
+import com.google.jstestdriver.idea.util.JstdConfigParsingUtils;
 import com.google.jstestdriver.output.TestResultHolder;
 import com.google.jstestdriver.runner.RunnerMode;
-import com.google.jstestdriver.util.DisplayPathSanitizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -131,7 +128,8 @@ public class TestRunner {
   private void runTests(@NotNull final File configFile, @NotNull String[] extraArgs, boolean runTests) {
     JsTestDriverBuilder builder = new JsTestDriverBuilder();
 
-    builder.setConfigurationSource(new UserConfigurationSource(configFile));
+    final ParsedConfiguration parsedConfiguration = JstdConfigParsingUtils.parseConfiguration(configFile);
+    builder.setDefaultConfiguration(parsedConfiguration);
     builder.setPort(mySettings.getPort());
     builder.withPluginInitializer(new PluginInitializer() {
       @Override
@@ -141,7 +139,11 @@ public class TestRunner {
           public void configure() {
             Multibinder<TestListener> listeners = Multibinder.newSetBinder(binder(), TestListener.class);
             listeners.addBinding().to(TestResultHolder.class);
-            TestListener reporter = new IDETestListener(myTestResultProtocolMessageOutput, configFile);
+            TestListener reporter = new IdeaTestListener(
+              myTestResultProtocolMessageOutput,
+              configFile,
+              parsedConfiguration.getBasePaths()
+            );
             listeners.addBinding().toInstance(reporter);
           }
         };
@@ -153,16 +155,15 @@ public class TestRunner {
 
     List<String> flagArgs = Lists.newArrayList("--captureConsole", "--server", mySettings.getServerUrl());
     flagArgs.addAll(Arrays.asList(extraArgs));
-    File ideCoverageFilePath = mySettings.getIdeCoverageFile();
     List<String> coverageExcludedFiles = null;
     File emptyOutputDir = null;
     boolean runCoverage = false;
-    if (runTests && ideCoverageFilePath != null) {
+    if (runTests && myCoverageSession != null) {
       emptyOutputDir = createTempDir();
       if (emptyOutputDir != null) {
         flagArgs.add("--testOutput");
         flagArgs.add(emptyOutputDir.getAbsolutePath());
-        List<String> testPaths = getTestPaths(configFile);
+        List<String> testPaths = getTestFilePaths(parsedConfiguration);
         coverageExcludedFiles = Lists.newArrayList(testPaths);
         coverageExcludedFiles.addAll(mySettings.getFilesExcludedFromCoverage());
         PluginInitializer coverageInitializer = getCoverageInitializer(coverageExcludedFiles);
@@ -199,20 +200,14 @@ public class TestRunner {
   }
 
   @NotNull
-  private static List<String> getTestPaths(@NotNull File configFile) {
-    BasePaths basePaths = new BasePaths();
-    Configuration configuration = new UserConfigurationSource(configFile).parse(basePaths, new YamlParser());
-    PathResolver pathResolver = new PathResolver(
-      basePaths,
-      Collections.<FileParsePostProcessor>emptySet(),
-      new DisplayPathSanitizer()
-    );
-    Configuration resolvedConfiguration = configuration.resolvePaths(pathResolver, new FlagsImpl());
-    List<String> testFiles = Lists.newArrayList();
-    for (FileInfo info : resolvedConfiguration.getTests()) {
-      testFiles.add(info.getFilePath());
+  private static List<String> getTestFilePaths(@NotNull ParsedConfiguration parsedConfiguration) {
+    Configuration resolvedConfiguration = JstdConfigParsingUtils.resolveConfiguration(parsedConfiguration);
+    List<FileInfo> testFileInfos = resolvedConfiguration.getTests();
+    List<String> paths = Lists.newArrayListWithExpectedSize(testFileInfos.size());
+    for (FileInfo fileInfo : testFileInfos) {
+      paths.add(fileInfo.getFilePath());
     }
-    return testFiles;
+    return paths;
   }
 
   @Nullable
