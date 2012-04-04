@@ -167,7 +167,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
                     UIUtil.invokeLaterIfNeeded(new Runnable() {
                       @Override
                       public void run() {
-                        render();
+                        render(false);
                       }
                     });
                   }
@@ -259,6 +259,10 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   }
 
   private void render() {
+    render(true);
+  }
+
+  private void render(boolean isSlow) {
     if (!toolWindowVisible) {
       return;
     }
@@ -268,8 +272,11 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       return;
     }
 
-    toolWindowForm.getPreviewPanel().getLoadingDecorator().startLoading(false);
-    loadingDecoratorStarted++;
+    if (isSlow) {
+      toolWindowForm.getPreviewPanel().getLoadingDecorator().startLoading(false);
+      loadingDecoratorStarted++;
+    }
+
     AsyncResult<BufferedImage> result = DesignerApplicationManager.getInstance().getDocumentImage(psiFile);
     result.doWhenDone(new QueuedAsyncResultHandler<BufferedImage>() {
       @Override
@@ -288,15 +295,18 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         });
       }
     });
-    result.doWhenProcessed(new Runnable() {
-      @Override
-      public void run() {
-        //noinspection ConstantConditions
-        if (--loadingDecoratorStarted == 0 && toolWindowForm != null) {
-          toolWindowForm.getPreviewPanel().getLoadingDecorator().stopLoading();
+
+    if (isSlow) {
+      result.doWhenProcessed(new Runnable() {
+        @Override
+        public void run() {
+          //noinspection ConstantConditions
+          if (--loadingDecoratorStarted == 0 && toolWindowForm != null) {
+            toolWindowForm.getPreviewPanel().getLoadingDecorator().stopLoading();
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   private boolean isApplicableEditor(Editor editor) {
