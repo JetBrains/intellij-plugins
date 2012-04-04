@@ -419,10 +419,31 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       PrimitiveWriter writer = new PrimitiveWriter(dataOut, stringWriter);
       boolean needRollbackStringWriter = true;
       try {
-        stringWriter.write(descriptor.getName(), dataOut);
-        if (!writer.writeIfApplicable(valueProvider, dataOut, descriptor)) {
-          render();
-          return;
+        if (descriptor.isAllowsPercentage()) {
+          String value = valueProvider.getTrimmed();
+          final boolean hasPercent;
+          if (value.isEmpty() || ((hasPercent = value.endsWith("%")) && value.length() == 1)) {
+            return;
+          }
+
+          final String name;
+          if (hasPercent) {
+            name = descriptor.getPercentProxy();
+            value = value.substring(0, value.length() - 1);
+          }
+          else {
+            name = descriptor.getName();
+          }
+
+          stringWriter.write(name, dataOut);
+          dataOut.writeAmfDouble(value);
+        }
+        else {
+          stringWriter.write(descriptor.getName(), dataOut);
+          if (!writer.writeIfApplicable(valueProvider, dataOut, descriptor)) {
+            render();
+            return;
+          }
         }
 
         needRollbackStringWriter = false;

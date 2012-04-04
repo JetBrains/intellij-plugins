@@ -543,7 +543,6 @@ class PropertyProcessor implements ValueWriter {
     }
 
     if (writeIfPrimitive(valueProvider, type, out, descriptor, isStyle, false)) {
-
     }
     else if (type.equals(JSCommonTypeNames.ARRAY_CLASS_NAME)) {
       if (!descriptor.isRichTextContent() && valueProvider instanceof XmlAttributeValueProvider &&
