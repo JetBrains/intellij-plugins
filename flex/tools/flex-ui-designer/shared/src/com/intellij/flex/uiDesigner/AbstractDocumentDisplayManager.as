@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.flex.MainFocusManagerSB;
 
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
 import flash.display.Stage;
@@ -44,6 +45,16 @@ public class AbstractDocumentDisplayManager extends Sprite {
 
   public function removeRealEventListener(type:String, listener:Function):void {
     super.removeEventListener(type, listener);
+  }
+
+  protected final function snapshot(w:int, h:int):BitmapData {
+    if (w == 0 || h == 0) {
+      return null;
+    }
+
+    var bitmapData:BitmapData = new BitmapData(w, h, false);
+    bitmapData.draw(_document, null, null, null, bitmapData.rect);
+    return bitmapData;
   }
 }
 }

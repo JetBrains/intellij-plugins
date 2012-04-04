@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner {
 import com.intellij.flex.uiDesigner.designSurface.LayoutManager;
 
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.system.ApplicationDomain;
@@ -99,7 +100,8 @@ public class FlashDocumentDisplayManager extends AbstractDocumentDisplayManager 
     return stage;
   }
 
-  public function prepareSnapshot(setActualSize:Boolean):void {
+  public function getSnapshot(setActualSize:Boolean):BitmapData {
+    return snapshot(_document.width, _document.height);
   }
 }
 }

@@ -6,12 +6,15 @@ import com.intellij.flex.uiDesigner.ResourceBundleProvider;
 import com.intellij.flex.uiDesigner.UiErrorHandler;
 import com.intellij.flex.uiDesigner.designSurface.LayoutManager;
 
+import flash.display.BitmapData;
+
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Stage;
 import flash.events.Event;
 import flash.events.EventPhase;
 import flash.events.MouseEvent;
+import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.system.ApplicationDomain;
 import flash.text.TextFormat;
@@ -741,7 +744,8 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
     //return new MigLayoutManager(migLayout);
   }
 
-  public function prepareSnapshot(setActualSize:Boolean):void {
+  public function getSnapshot(setActualSize:Boolean):BitmapData {
+    const element:ILayoutElement = ILayoutElement(document);
     if (setActualSize) {
       var w:int = explicitDocumentWidth;
       var h:int = explicitDocumentHeight;
@@ -752,11 +756,32 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
         h = Math.max(400, minDocumentHeight);
       }
 
-      ILayoutElement(document).setLayoutBoundsSize(w, h);
+      element.setLayoutBoundsSize(w, h);
       if (document is IInvalidating) {
         IInvalidating(document).validateNow();
       }
     }
+
+    var w:int = element.getLayoutBoundsWidth();
+    var h:int = element.getLayoutBoundsWidth();
+    if (w == 0 || h == 0) {
+      return null;
+    }
+
+    var rect:Rectangle = _document.getRect(null);
+    if (element is IUIComponent) {
+      var explicitWidth:Number = IUIComponent(element).explicitWidth;
+      if (isNaN(explicitWidth) || explicitWidth == 0) {
+        w = rect.width;
+      }
+
+      var explicitHeight:Number = IUIComponent(element).explicitHeight;
+      if (isNaN(explicitHeight) || explicitHeight == 0) {
+        h = rect.height;
+      }
+    }
+
+    return snapshot(w, h);
   }
 }
 }
