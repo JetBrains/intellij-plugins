@@ -8,6 +8,7 @@ import org.hamcrest.collection.emptyArray;
 import org.hamcrest.core.allOf;
 import org.hamcrest.core.isA;
 import org.hamcrest.core.not;
+import org.hamcrest.number.isNotANumber;
 import org.hamcrest.object.equalTo;
 import org.hamcrest.object.instanceOf;
 import org.hamcrest.object.notNullValue;
@@ -149,7 +150,8 @@ public class CommonTest extends BaseTestCase {
   }
 
   public function InvalidColorNameOrNumericValue():void {
-    assertThat(app, [{color: 0}, {color: 0}, {depth: 0}, {width: not(0)}, {width: not(0)}]);
+    var m:Object = {explicitWidth: isNotANumber()};
+    assertThat(app, [{color: 0}, {color: 0}, {depth: 0}, m, m]);
   }
 
   public function RuntimeError():void {

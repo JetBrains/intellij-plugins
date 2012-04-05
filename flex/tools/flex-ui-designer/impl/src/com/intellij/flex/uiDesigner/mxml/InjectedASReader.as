@@ -8,14 +8,15 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 import flash.utils.IDataInput;
 
 public class InjectedASReader {
-  private var deferredReferenceClass:Class;
-  
-  public function read(input:IDataInput, reader:MxmlReader):void {
-    //readDeclarations(input, reader);
-    readBinding(input, reader);
-  }
+  private var reader:MxmlReader;
 
-  internal static function readDeclarations(input:IDataInput, reader:MxmlReader):void {
+  public function InjectedASReader(reader:MxmlReader) {
+    this.reader = reader;
+
+  }
+  private var deferredReferenceClass:Class;
+
+  internal function readDeclarations(input:IDataInput):void {
     const length:int = input.readUnsignedShort();
     if (length == 0) {
       return;
@@ -25,7 +26,7 @@ public class InjectedASReader {
     reader.readArrayOrVector(vector, length); // result vector is ignored
   }
   
-  private function readBinding(input:IDataInput, reader:MxmlReader):void {
+  public function readBinding(input:IDataInput):void {
     const size:int = input.readUnsignedShort();
     if (size == 0) {
       return;
@@ -72,13 +73,13 @@ public class InjectedASReader {
         case BindingType.EXPRESSION:
           var amfType:int = input.readByte();
           if (amfType == ExpressionMessageTypes.MXML_OBJECT_CHAIN) {
-            readMxmlObjectChain(reader, input, target, propertyName, targetBinding, isStyle);
+            readMxmlObjectChain(input, target, propertyName, targetBinding, isStyle);
             if (targetBinding == null) {
               continue;
             }
           }
           else {
-            o = reader.readExpression(amfType);
+            o = reader.readExpression(amfType, target, isStyle);
             if (targetBinding != null && o == null) {
               targetBinding.staticValue = o;
             }
@@ -110,20 +111,19 @@ public class InjectedASReader {
   
   private static function createChangeWatcherHandler(target:Object, propertyName:String, changeWatcher:Object, isStyle:Boolean):Function {
     return function(event:*):void {
-      if (!isStyle) {
-        target[propertyName] = changeWatcher.getValue();
+      if (isStyle) {
+        target.setStyle(propertyName, changeWatcher.getValue());
       }
       else {
-        target.setStyle(propertyName, changeWatcher.getValue());
+        target[propertyName] = changeWatcher.getValue();
       }
     };
   }
 
-  private function readMxmlObjectChain(reader:MxmlReader, input:IDataInput, target:Object,
+  private function readMxmlObjectChain(input:IDataInput, target:Object,
                                        propertyName:String, targetBinding:PropertyBindingTarget,
                                        isStyle:Boolean):void {
-    var changeWatcher:Object = watchMxmlObjectChain(reader.context.moduleContext.getClass("mx.binding.utils.ChangeWatcher"),
-                                                    reader.stringRegistry, input);
+    var changeWatcher:Object = watchMxmlObjectChain(getChangeWatcherClass(), reader.stringRegistry, input);
     var host:Object = readMxmlObjectReference(input, reader);
     if (targetBinding == null) {
       if (host is InstanceProvider) {
@@ -133,10 +133,7 @@ public class InjectedASReader {
         propertyBindingTarget.initChangeWatcher(changeWatcher, host is DeferredInstanceFromBytesBase ? null : host);
       }
       else {
-        changeWatcher.reset(host);
-        var handler:Function = createChangeWatcherHandler(target, propertyName, changeWatcher, isStyle);
-        changeWatcher.setHandler(handler);
-        handler(null);
+        initChangeWatcher(target, propertyName, isStyle, changeWatcher, host)(null);
       }
     }
     else {
@@ -148,11 +145,27 @@ public class InjectedASReader {
     }
   }
 
+  private function getChangeWatcherClass():Class {
+    return reader.context.moduleContext.getClass("mx.binding.utils.ChangeWatcher");
+  }
+
   private static function watchMxmlObjectChain(changeWatcherClass:Class, stringRegistry:StringRegistry,
                                                input:IDataInput):Object {
     var propertyName:String = stringRegistry.read(input);
     return propertyName == null ? null : new changeWatcherClass(propertyName, null, false,
                                                                 watchMxmlObjectChain(changeWatcherClass, stringRegistry, input));
+  }
+
+  public function initChangeWatcher(target:Object, propertyName:String, isStyle:Boolean, changeWatcher:Object, host:Object):Function {
+    if (changeWatcher == null) {
+      //noinspection AssignmentToFunctionParameterJS
+      changeWatcher = new (getChangeWatcherClass())(propertyName, null);
+    }
+
+    changeWatcher.reset(host);
+    var handler:Function = createChangeWatcherHandler(target, propertyName, changeWatcher, isStyle);
+    changeWatcher.setHandler(handler);
+    return handler;
   }
 
   internal function readVariableReference(input:IDataInput, reader:MxmlReader):Object {

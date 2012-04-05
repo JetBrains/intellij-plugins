@@ -171,15 +171,11 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   private function registerDocumentFactory(input:IDataInput, messageSize:int):void {
     const prevBytesAvailable:int = input.bytesAvailable;
     var module:Module = moduleManager.getById(input.readUnsignedShort());
-    var bytes:ByteArray = new ByteArray();
-    var documentFactory:DocumentFactory = new DocumentFactory(input.readUnsignedShort(), bytes, VirtualFileImpl.create(input),
+    var documentFactory:DocumentFactory = new DocumentFactory(input.readUnsignedShort(), VirtualFileImpl.create(input),
                                                               AmfUtil.readString(input), input.readUnsignedByte(), module);
 
-    documentFactory.documentReferences = input.readObject();
     getDocumentFactoryManager().register(documentFactory);
-
-    stringRegistry.readTable(input);
-    input.readBytes(bytes, 0, messageSize - (prevBytesAvailable - input.bytesAvailable));
+    updateDocumentFactoryData(input, documentFactory, messageSize, prevBytesAvailable);
   }
   
   private function updateDocumentFactory(input:IDataInput, messageSize:int):void {
@@ -188,15 +184,14 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     AmfUtil.readString(input);
     input.readUnsignedByte(); // todo isApp update document styleManager
 
-    documentFactory.documentReferences = input.readObject();
-    
-    stringRegistry.readTable(input);
+    updateDocumentFactoryData(input, documentFactory, messageSize, prevBytesAvailable);
+  }
 
-    const length:int = messageSize - (prevBytesAvailable - input.bytesAvailable);
-    var bytes:ByteArray = documentFactory.data;
-    bytes.position = 0;
-    bytes.length = length;
-    input.readBytes(bytes, 0, length);
+  private function updateDocumentFactoryData(input:IDataInput, documentFactory:DocumentFactory, messageSize:int,
+                                             prevBytesAvailable:int):void {
+    documentFactory.documentReferences = input.readObject();
+    stringRegistry.readTable(input);
+    documentFactory.setData(input, messageSize - (prevBytesAvailable - input.bytesAvailable));
   }
 
   private static function getDocumentFactoryManager():DocumentFactoryManager {
@@ -317,26 +312,24 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   private static function selectComponent(input:IDataInput):void {
-    const documentId:int = input.readUnsignedShort();
-    const componentId:int = input.readUnsignedShort();
+    const documentId:int = AmfUtil.readUInt29(input);
+    const componentId:int = AmfUtil.readUInt29(input);
     var documentFactory:DocumentFactory = DocumentFactoryManager.getInstance().getById(documentId);
 
     var documentManager:DocumentManager = DocumentManager(documentFactory.module.project.getComponent(DocumentManager));
     if (documentFactory.document == null) {
-      documentManager.render(documentFactory).doWhenDone(selectDocumentTab, documentFactory, componentId);
+      documentManager.render(documentFactory).doWhenDone(doSelectComponent, documentFactory, componentId);
     }
     else {
-      selectDocumentTab(documentFactory, componentId);
+      doSelectComponent(documentFactory, componentId);
     }
   }
 
-  private static function selectDocumentTab(documentFactory:DocumentFactory, componentId:int):void {
+  private static function doSelectComponent(documentFactory:DocumentFactory, componentId:int):void {
     var component:Object = documentFactory.getComponent(componentId);
     var project:Project = documentFactory.module.project;
 
-    var w:DocumentWindow = project.window;
-    var projectView:ProjectView = ProjectView(w.contentView);
-    projectView.selectEditorTab(documentFactory.document);
+    ProjectView(project.window.contentView).selectEditorTab(documentFactory.document);
     DocumentManager(project.getComponent(DocumentManager)).document = documentFactory.document;
     ComponentManager(project.getComponent(ComponentManager)).component = component;
 

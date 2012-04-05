@@ -1,25 +1,32 @@
 package com.intellij.flex.uiDesigner {
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
+import flash.utils.IDataInput;
 
 import org.jetbrains.Identifiable;
 
 public final class DocumentFactory implements SerializedDocumentDataProvider, DocumentReaderContext, Identifiable {
   public var module:Module;
-  
+
   // not subdocument, only Document as tab in our UI
   public var document:Document;
 
-  private const componentToRangeMarkerId:Dictionary = new Dictionary(true);
+  private var componentToRangeMarkerId:Dictionary;
 
-  public function DocumentFactory(id:int, data:ByteArray, file:VirtualFile, className:String, flags:int, module:Module) {
+  public function DocumentFactory(id:int, file:VirtualFile, className:String, flags:int, module:Module) {
     _id = id;
-    _data = data;
     _file = file;
     _className = className;
     _isApp = flags == 1;
     _isPureFlash = flags == 2;
     this.module = module;
+  }
+
+  public function setData(input:IDataInput, size:int):void {
+    componentToRangeMarkerId = new Dictionary(true);
+    _data.position = 0;
+    _data.length = size;
+    input.readBytes(_data, 0, size);
   }
 
   private var _documentReferences:Vector.<int>;
@@ -55,7 +62,7 @@ public final class DocumentFactory implements SerializedDocumentDataProvider, Do
     return _className;
   }
 
-  private var _data:ByteArray;
+  private var _data:ByteArray = new ByteArray();
   public function get data():ByteArray {
     return _data;
   }

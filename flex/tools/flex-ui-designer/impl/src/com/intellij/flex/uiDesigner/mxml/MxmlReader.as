@@ -37,7 +37,7 @@ public class MxmlReader implements DocumentReader {
 
   private const stateReader:StateReader = new StateReader();
   //noinspection JSFieldCanBeLocal
-  private const injectedASReader:InjectedASReader = new InjectedASReader();
+  private const injectedASReader:InjectedASReader = new InjectedASReader(this as MxmlReader);
 
   protected var module:Module;
   internal var context:DocumentReaderContext;
@@ -49,11 +49,11 @@ public class MxmlReader implements DocumentReader {
 
   protected var rootObject:Object;
 
+  private const deferredSetStyleProxyPool:Vector.<DeferredSetStyleProxy> = new Vector.<DeferredSetStyleProxy>();
+
   public function MxmlReader() {
     stringRegistry = StringRegistry.instance;
   }
-
-  private const deferredSetStyleProxyPool:Vector.<DeferredSetStyleProxy> = new Vector.<DeferredSetStyleProxy>();
 
   private function createDeferredSetStyleProxy():DeferredSetStyleProxy {
     var deferredSetStyleProxy:DeferredSetStyleProxy;
@@ -73,7 +73,7 @@ public class MxmlReader implements DocumentReader {
     this.input = input;
     var component:Object = doRead(context, true);
     stateReader.read(this, input, component);
-    injectedASReader.read(input, this);
+    injectedASReader.readBinding(input);
     stateReader.reset(factoryContext);
 
     if (input is ByteArray) {
@@ -105,7 +105,7 @@ public class MxmlReader implements DocumentReader {
     }
 
     if (isDocumentLevel) {
-      InjectedASReader.readDeclarations(input, this);
+      injectedASReader.readDeclarations(input);
     }
 
     var object:Object;
@@ -184,9 +184,11 @@ public class MxmlReader implements DocumentReader {
     var propertyHolder:Object = object;
     var cssDeclaration:CssDeclarationImpl;
     var marker:int;
+    //noinspection AssignmentToFunctionParameterJS
     for (; propertyName != null; propertyName = stringRegistry.read(input)) {
       marker = input.readByte();
-      if (marker == AmfExtendedTypes.STYLE) {
+      const isStyle:Boolean = marker == AmfExtendedTypes.STYLE;
+      if (isStyle) {
         if (deferredSetStyleProxy.inlineCssRuleset == null) {
           explicitInlineCssRulesetCreated = true;
           deferredSetStyleProxy.inlineCssRuleset = InlineCssRuleset.createInline(AmfUtil.readUInt29(input), AmfUtil.readUInt29(input),
@@ -221,6 +223,7 @@ public class MxmlReader implements DocumentReader {
           if ((flags & StyleFlags.EFFECT) != 0) {
             registerEffect(propertyName, object);
           }
+          //noinspection AssignmentToFunctionParameterJS
           propertyName = "value";
 
           marker = input.readByte();
@@ -314,7 +317,7 @@ public class MxmlReader implements DocumentReader {
           break;
 
         default:
-          propertyHolder[propertyName] = readExpression(marker, object);
+          propertyHolder[propertyName] = readExpression(marker, object, isStyle);
       }
 
       if (cssDeclaration != null) {
@@ -496,27 +499,27 @@ public class MxmlReader implements DocumentReader {
         return input.readObject();
     }
 
-    return null;
+    return input;
   }
 
-  internal function readExpression(amfType:int, parent:Object = null):* {
+  internal function readExpression(amfType:int, target:Object = null, isStyle:Boolean = false):* {
     var v:Object;
-    if ((v = readPrimitive(amfType, input, stringRegistry)) != null) {
+    if ((v = readPrimitive(amfType, input, stringRegistry)) != input) {
       return v;
     }
 
     switch (amfType) {
       case Amf3Types.OBJECT:
-        return readMxmlObjectFromClass(stringRegistry.readNotNull(input), parent);
+        return readMxmlObjectFromClass(stringRegistry.readNotNull(input), target);
 
       case ExpressionMessageTypes.SIMPLE_OBJECT:
         return readSimpleObject(new Object());
 
       case Amf3Types.ARRAY:
-        return readArray(parent);
+        return readArray(target);
 
       case ExpressionMessageTypes.CALL:
-        return callFunction();
+        return callFunction(target, isStyle);
 
       case ExpressionMessageTypes.NEW:
         return constructObject();
@@ -534,7 +537,7 @@ public class MxmlReader implements DocumentReader {
         return readObjectReference();
 
       case AmfExtendedTypes.DOCUMENT_REFERENCE:
-        return readObjectProperties(readDocumentFactory().newInstance(), parent);
+        return readObjectProperties(readDocumentFactory().newInstance(), target);
 
       case AmfExtendedTypes.COMPONENT_FACTORY:
         return readComponentFactory();
@@ -571,34 +574,32 @@ public class MxmlReader implements DocumentReader {
     }    
   }
 
-  private function callFunction():* {
+  private function callFunction(target:Object, isStyle:Boolean):* {
+    assert(target != null);
+
     const dataLength:int = input.readUnsignedShort();
     const start:int = input.bytesAvailable;
     try {
       var qualifier:Object = rootObject;
       var qualifierName:String;
-      try {
-        while ((qualifierName = stringRegistry.read(input)) != null) {
-          qualifier = qualifier[qualifierName];
-        }
-      }
-      catch (e:Error) {
-        // skip end
-        input.readByte();
-
-        if (e.errorID == 1069 && qualifierName == "resourceManager") {
+      while ((qualifierName = stringRegistry.read(input)) != null) {
+        // resourceManager is protected
+        if (qualifierName == "resourceManager" && !(qualifierName in qualifier)) {
           qualifier = module.getClass("mx.resources.ResourceManager")["getInstance"]();
         }
         else {
-          //noinspection ExceptionCaughtLocallyJS
-          throw e;
+          qualifier = qualifier[qualifierName];
         }
       }
 
       const functionName:String = stringRegistry.readNotNull(input);
       const argumentsLength:int = input.readByte();
       // isGetter
-      if (argumentsLength == -1) {
+      if (argumentsLength < 0) {
+        if (argumentsLength == -2) {
+          injectedASReader.initChangeWatcher(target, functionName, isStyle, null, qualifier);
+        }
+
         return qualifier[functionName];
       }
       else if (argumentsLength == 0) {

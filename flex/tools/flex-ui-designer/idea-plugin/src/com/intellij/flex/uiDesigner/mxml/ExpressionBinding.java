@@ -86,14 +86,23 @@ class ExpressionBinding extends Binding {
       return;
     }
 
-    writeFunction((JSFunction)psiElement, expression, out, writer, valueReferenceResolver, methodExpression);
+    writeFunction((JSFunction)psiElement, writer, valueReferenceResolver, false, expression, methodExpression);
   }
 
-  private static void writeFunction(JSFunction function, @Nullable JSCallExpression expression,
-                                    PrimitiveAmfOutputStream out,
+  private static void writeFunction(JSFunction function,
                                     BaseWriter writer,
                                     @Nullable ValueReferenceResolver valueReferenceResolver,
+                                    boolean isBinding) throws InvalidPropertyException {
+    writeFunction(function, writer, valueReferenceResolver, isBinding, null, null);
+  }
+
+  private static void writeFunction(JSFunction function,
+                                    BaseWriter writer,
+                                    @Nullable ValueReferenceResolver valueReferenceResolver,
+                                    boolean isBinding,
+                                    @Nullable JSCallExpression expression,
                                     @Nullable JSReferenceExpression methodExpression) throws InvalidPropertyException {
+    final PrimitiveAmfOutputStream out = writer.getOut();
     JSExpression[] arguments;
     final int rollbackPosition;
     final int start;
@@ -124,7 +133,7 @@ class ExpressionBinding extends Binding {
       writer.classOrPropertyName(function.getName());
 
       if (function.isGetProperty()) {
-        out.write(-1);
+        out.write(isBinding ? -2 : -1);
         return;
       }
       else {
@@ -249,7 +258,7 @@ class ExpressionBinding extends Binding {
       }
     }
     else if (element instanceof JSFunction) {
-      writeFunction((JSFunction)element, null, out, writer, valueReferenceResolver, null);
+      writeFunction((JSFunction)element, writer, valueReferenceResolver, true);
     }
     else {
       final String hostObjectId;

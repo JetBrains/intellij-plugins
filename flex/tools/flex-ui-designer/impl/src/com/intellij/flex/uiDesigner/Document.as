@@ -9,7 +9,7 @@ public class Document {
   public var container:View;
   
   public function Document(documentFactory:DocumentFactory) {
-    this._documentFactory = documentFactory;
+    _documentFactory = documentFactory;
   }
   
   public function get file():VirtualFile {

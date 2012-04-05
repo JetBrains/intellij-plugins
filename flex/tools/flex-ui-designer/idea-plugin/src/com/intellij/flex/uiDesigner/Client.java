@@ -553,8 +553,8 @@ public class Client implements Disposable {
     boolean hasError = true;
     try {
       beginMessage(ClientMethod.selectComponent);
-      out.writeShort(documentId);
-      out.writeShort(componentId);
+      out.writeUInt29(documentId);
+      out.writeUInt29(componentId);
       hasError = false;
     }
     finally {
