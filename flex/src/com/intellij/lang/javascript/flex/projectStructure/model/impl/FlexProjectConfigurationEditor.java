@@ -397,7 +397,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
       Collection<String> usedModulesLibrariesIds = new ArrayList<String>();
 
       // ---------------- SDK and shared libraries entries ----------------------
-      Map<Library, Boolean> librariesToAdd = new HashMap<Library, Boolean>(); // Library -> add_library_entry_flag
+      Map<Library, Boolean> librariesToAdd = new LinkedHashMap<Library, Boolean>(); // Library -> add_library_entry_flag
 
       final Collection<String> sdkNames = new HashSet<String>();
       for (Editor editor : myModule2Editors.get(module)) {
