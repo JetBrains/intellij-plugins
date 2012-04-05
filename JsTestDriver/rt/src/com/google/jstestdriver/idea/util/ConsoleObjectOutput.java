@@ -19,6 +19,7 @@ public class ConsoleObjectOutput implements ObjectOutput {
         {"log", message.log},
         {"testCase", message.testCase},
         {"testName", message.testName},
+        {"fileName", message.jsTestFilePath},
     };
     String s = "";
     for (Object[] a : args) {
