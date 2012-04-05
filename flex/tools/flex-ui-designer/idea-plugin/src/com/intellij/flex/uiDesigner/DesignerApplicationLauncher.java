@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor;
 import com.intellij.openapi.util.Disposer;
@@ -349,6 +350,12 @@ public class DesignerApplicationLauncher extends DocumentTask {
             Client.getInstance().initStringRegistry();
           }
           indicator.setText(FlashUIDesignerBundle.message("collect.libraries"));
+
+          DumbService dumbService = DumbService.getInstance(myProject);
+          if (dumbService.isDumb()) {
+            dumbService.waitForSmartMode();
+          }
+
           return LibraryManager.getInstance().registerModule(module, problemsHolder);
         }
         catch (Throwable e) {
