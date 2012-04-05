@@ -145,6 +145,7 @@
   widthPercent CDATA #IMPLIED
   heightPercent CDATA #IMPLIED
   scriptRecursionLimit CDATA #IMPLIED
+  scaleMode CDATA #IMPLIED
   scriptTimeLimit CDATA #IMPLIED
   pageTitle CDATA #IMPLIED
 >
