@@ -19,6 +19,14 @@ public class InjectedASTest extends BaseTestCase {
   private static function mouseDown(target:Object):void {
     IEventDispatcher(target).dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN));
   }
+
+  public function GetterAndThisQualifier():void {
+    const oldName:String = "ddeadwfd";
+    assertThat(app, [{text: oldName, explicitWidth: app.width}]);
+    app.width = 300;
+    app.name = "isNotBindable";
+    assertThat(app, [{text: oldName, explicitWidth: app.width}]);
+  }
   
   public function Transitions():void {
     assertThat(app.explicitWidth, 400);
@@ -56,7 +64,6 @@ public class InjectedASTest extends BaseTestCase {
   public function StateSpecificBinding():void {
     // todo
   }
-  
 
   public function ExplicitRadioButtonGroup():void {
     var group:Object = app.getElementAt(0).getElementAt(0).group;
