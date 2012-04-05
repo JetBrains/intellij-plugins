@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlElement;
@@ -33,8 +34,8 @@ public class XmlAttributeValueProvider implements XmlElementValueProvider {
   }
 
   @Override
-  public XmlElement getInjectedHost() {
-    return attribute.getValueElement();
+  public PsiLanguageInjectionHost getInjectedHost() {
+    return (PsiLanguageInjectionHost)attribute.getValueElement();
   }
 
   @Override

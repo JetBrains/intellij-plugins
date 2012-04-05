@@ -122,6 +122,9 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
       else if (element instanceof JSVariable) {
         binding = new VariableBinding(((JSVariable)element));
       }
+      else if (element instanceof JSFunction) {
+        binding = new ExpressionBinding(((JSFunction)element));
+      }
       else {
         binding = new MxmlObjectBinding(referenceExpression.getReferencedName(), JSCommonTypeNames.ARRAY_CLASS_NAME.equals(expectedType));
       }

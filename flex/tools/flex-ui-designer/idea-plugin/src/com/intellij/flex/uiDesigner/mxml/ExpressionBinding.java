@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ExpressionBinding extends Binding {
-  private final JSExpression expression;
+  private final JSElement expression;
 
-  public ExpressionBinding(JSExpression expression) {
+  public ExpressionBinding(JSElement expression) {
     this.expression = expression;
   }
 
@@ -38,8 +38,11 @@ class ExpressionBinding extends Binding {
     if (expression instanceof JSReferenceExpression) {
       writeReferenceExpression((JSReferenceExpression)expression, out, writer, valueReferenceResolver, true);
     }
+    else if (expression instanceof JSFunction) {
+      writeFunction((JSFunction)expression, writer, valueReferenceResolver, true);
+    }
     else {
-      writeExpression(expression, out, writer, valueReferenceResolver);
+      writeExpression((JSExpression)expression, out, writer, valueReferenceResolver);
     }
   }
 

@@ -2,7 +2,10 @@ package com.intellij.flex.uiDesigner.preview;
 
 import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.*;
-import com.intellij.flex.uiDesigner.mxml.*;
+import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
+import com.intellij.flex.uiDesigner.mxml.PrimitiveWriter;
+import com.intellij.flex.uiDesigner.mxml.XmlAttributeValueProvider;
+import com.intellij.flex.uiDesigner.mxml.XmlElementValueProvider;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.FlexReferenceContributor;
@@ -29,8 +32,8 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowManagerAdapter;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.content.Content;
@@ -432,7 +435,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     }
 
     @Nullable
-    private XmlElement findSupportedTarget() {
+    private XmlElementValueProvider findSupportedTarget() {
       if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
         return null;
       }
@@ -480,7 +483,14 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
       }
 
-      return attribute;
+      XmlAttributeValueProvider valueProvider = new XmlAttributeValueProvider(attribute);
+      // skip binding
+      PsiLanguageInjectionHost injectedHost = valueProvider.getInjectedHost();
+      if (injectedHost != null && InjectedLanguageUtil.hasInjections(injectedHost)) {
+        return null;
+      }
+
+      return valueProvider;
     }
 
     @Override
@@ -491,23 +501,19 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     }
 
     private boolean incrementalSync() {
-      DocumentFactoryManager.DocumentInfo info = null;
-      int componentId = 0;
-      XmlElementValueProvider valueProvider = null;
-      final XmlElement element = findSupportedTarget();
-      if (element != null) {
-        XmlAttribute attribute = (XmlAttribute)element;
-        info = DocumentFactoryManager.getInstance().getInfo(attribute);
-        XmlTag tag = attribute.getParent();
-        if (tag.getDescriptor() instanceof ClassBackedElementDescriptor) {
-          componentId = info.rangeMarkerIndexOf(tag);
-          if (componentId != -1) {
-            valueProvider = new XmlAttributeValueProvider(attribute);
-          }
-        }
+      final XmlElementValueProvider valueProvider = findSupportedTarget();
+      if (valueProvider == null) {
+        return false;
       }
 
-      if (valueProvider == null) {
+      DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance().getInfo(valueProvider.getElement());
+      XmlTag tag = (XmlTag)valueProvider.getElement().getParent();
+      if (!(tag.getDescriptor() instanceof ClassBackedElementDescriptor)) {
+        return false;
+      }
+
+      int componentId = info.rangeMarkerIndexOf(tag);
+      if (componentId == -1) {
         return false;
       }
 

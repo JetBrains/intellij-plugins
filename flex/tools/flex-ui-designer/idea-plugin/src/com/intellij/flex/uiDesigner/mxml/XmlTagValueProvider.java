@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
@@ -49,7 +50,7 @@ class XmlTagValueProvider implements XmlElementValueProvider {
   }
 
   @Override
-  public XmlElement getInjectedHost() {
+  public PsiLanguageInjectionHost getInjectedHost() {
     return MxmlUtil.getInjectedHost(tag);
   }
 

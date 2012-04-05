@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlText;
@@ -29,8 +29,8 @@ class XmlTextValueProvider implements XmlElementValueProvider {
   }
 
   @Override
-  public XmlElement getInjectedHost() {
-    return xmlText;
+  public PsiLanguageInjectionHost getInjectedHost() {
+    return (PsiLanguageInjectionHost)xmlText;
   }
 
   @Override

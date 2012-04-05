@@ -2,6 +2,7 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.xml.XmlElement;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ public interface XmlElementValueProvider {
   CharSequence getSubstituted();
 
   @Nullable
-  XmlElement getInjectedHost();
+  PsiLanguageInjectionHost getInjectedHost();
 
   @Nullable
   JSClass getJsClass();
