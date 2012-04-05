@@ -15,6 +15,8 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.uiDesigner.debug.FlexRunner;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.run.RemoteFlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.RemoteFlashRunConfigurationType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -74,8 +76,8 @@ final class AdlUtil {
     final RunnerAndConfigurationSettings settings =
       runManager.createConfiguration("FlashUIDesigner", RemoteFlashRunConfigurationType.getFactory());
 
-    final CompileStepBeforeRun.MakeBeforeRunTask runTask =
-      runManager.getBeforeRunTask(settings.getConfiguration(), CompileStepBeforeRun.ID);
+    final RemoteFlashRunConfiguration configuration = (RemoteFlashRunConfiguration)settings.getConfiguration();
+    final CompileStepBeforeRun.MakeBeforeRunTask runTask = runManager.getBeforeRunTask(configuration, CompileStepBeforeRun.ID);
     if (runTask != null) {
       runTask.setEnabled(false);
     }
@@ -110,7 +112,11 @@ final class AdlUtil {
       }
     };
 
-    final FlexRunner runner = new FlexRunner(callback, FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration());
+    FlexIdeBuildConfiguration buildConfiguration = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+    configuration.getRunnerParameters().setModuleName(module.getName());
+    configuration.getRunnerParameters().setBCName(buildConfiguration.getName());
+
+    final FlexRunner runner = new FlexRunner(callback, buildConfiguration);
     runner.execute(executor, new ExecutionEnvironment(runner, settings, module.getProject()));
   }
 

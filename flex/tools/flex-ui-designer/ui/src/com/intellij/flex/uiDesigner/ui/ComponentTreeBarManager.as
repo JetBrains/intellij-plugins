@@ -9,12 +9,12 @@ import flash.errors.IllegalOperationError;
 
 import org.flyti.plexus.Injectable;
 
-public class ElementTreeBarManager extends AbstractCollectionViewDataSource implements Injectable, ListViewDataSource {
+public class ComponentTreeBarManager extends AbstractCollectionViewDataSource implements Injectable, ListViewDataSource {
   private const source:Vector.<String> = new Vector.<String>(8);
-  private var elementManager:ComponentManager;
+  private var componentManager:ComponentManager;
 
-  public function ElementTreeBarManager(elementManager:ComponentManager) {
-    this.elementManager = elementManager;
+  public function ComponentTreeBarManager(elementManager:ComponentManager) {
+    this.componentManager = elementManager;
   }
 
   public function set component(value:Object):void {
@@ -42,17 +42,17 @@ public class ElementTreeBarManager extends AbstractCollectionViewDataSource impl
     _presentation.dataSource = this;
   }
 
-  private function update(object:Object):void {
+  private function update(component:Object):void {
     _itemCount = 0;
 
-    if (object == null) {
+    if (component == null) {
       if (_reset != null) {
         _reset.dispatch();
       }
       return;
     }
 
-    _itemCount = elementManager.fillBreadcrumbs(object, source);
+    _itemCount = componentManager.fillBreadcrumbs(component, source);
     source.length = _itemCount;
     if (_reset != null) {
       _reset.dispatch();

@@ -1,6 +1,5 @@
 <LocalEventMap xmlns="plexus" xmlns:fx="http://ns.adobe.com/mxml/2009">
   <fx:Script><![CDATA[
-    import cocoa.CheckBox;
     import cocoa.SegmentedControl;
     import cocoa.toolWindow.ToolWindowManager;
 
@@ -20,7 +19,7 @@
   <components>
     <Component role="{ComponentManager}"/>
     <Component role="{ToolWindowManager}"/>
-    <Component role="{ElementTreeBarManager}">
+    <Component role="{ComponentTreeBarManager}">
       <Requirement role="{ComponentManager}"/>
     </Component>
     <Component role="{DocumentManager}" implementation="{DocumentManagerImpl}">
@@ -65,12 +64,12 @@
       <PropertySetter role="{StatesBarManager}" targetKey="presentation"/>
     </Injectors>
     <Injectors target="{SegmentedControl}" targetId="elementTreeBar">
-      <PropertySetter role="{ElementTreeBarManager}" targetKey="presentation"/>
+      <PropertySetter role="{ComponentTreeBarManager}" targetKey="presentation"/>
     </Injectors>
     <Injectors target="{StatesBarManager}">
       <PropertyInjector source="{DocumentManager}" sourceKey="document"/>
     </Injectors>
-    <Injectors target="{ElementTreeBarManager}">
+    <Injectors target="{ComponentTreeBarManager}">
       <PropertyInjector source="{ComponentManager}" sourceKey="component"/>
     </Injectors>
   </injectors>

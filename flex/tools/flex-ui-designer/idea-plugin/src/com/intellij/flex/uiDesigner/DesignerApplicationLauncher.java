@@ -38,6 +38,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.intellij.flex.uiDesigner.AdlUtil.*;
 
@@ -109,8 +110,8 @@ public class DesignerApplicationLauncher extends DocumentTask {
     DesignerApplicationManager.getInstance().setApplication(new DesignerApplication());
 
     runInitializeLibrariesAndModuleThread();
-    if (debug) {
-      runAndWaitDebugger();
+    if (debug && !runAndWaitDebugger()) {
+      return false;
     }
 
     indicator.checkCanceled();
@@ -214,7 +215,8 @@ public class DesignerApplicationLauncher extends DocumentTask {
     return true;
   }
 
-  private void runAndWaitDebugger() {
+  private boolean runAndWaitDebugger() {
+    final AtomicBoolean result = new AtomicBoolean();
     final Semaphore debuggerRunSemaphor = new Semaphore();
     debuggerRunSemaphor.down();
     ApplicationManager.getApplication().invokeLater(new Runnable() {
@@ -224,17 +226,20 @@ public class DesignerApplicationLauncher extends DocumentTask {
           runDebugger(module, new Runnable() {
             @Override
             public void run() {
+              result.set(true);
               debuggerRunSemaphor.up();
             }
           });
         }
         catch (ExecutionException e) {
           LOG.error(e);
+          debuggerRunSemaphor.up();
         }
       }
     });
 
     debuggerRunSemaphor.waitFor();
+    return result.get();
   }
 
   private void notifyNoSuitableSdkToLaunch() {

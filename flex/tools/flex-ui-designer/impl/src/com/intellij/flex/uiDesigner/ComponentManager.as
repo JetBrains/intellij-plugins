@@ -77,8 +77,8 @@ public class ComponentManager extends EventDispatcher implements Injectable {
     return _document.displayManager.componentInfoProvider.getComponentUnderPoint(_document.displayManager.realStage, event.stageX, event.stageY);
   }
 
-  public function fillBreadcrumbs(element:Object, source:Vector.<String>):int {
-    return _document.displayManager.componentInfoProvider.fillBreadcrumbs(element, source);
+  public function fillBreadcrumbs(component:Object, source:Vector.<String>):int {
+    return _document.displayManager.componentInfoProvider.fillBreadcrumbs(component, source);
   }
 
   private function removedFromStageHandler(event:Event):void {
