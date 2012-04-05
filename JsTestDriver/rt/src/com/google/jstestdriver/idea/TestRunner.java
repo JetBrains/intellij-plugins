@@ -15,26 +15,31 @@
  */
 package com.google.jstestdriver.idea;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.multibindings.Multibinder;
-import com.google.jstestdriver.Flags;
-import com.google.jstestdriver.JsTestDriver;
-import com.google.jstestdriver.Plugin;
-import com.google.jstestdriver.PluginLoader;
+import com.google.jstestdriver.*;
 import com.google.jstestdriver.config.Configuration;
 import com.google.jstestdriver.config.UserConfigurationSource;
+import com.google.jstestdriver.config.YamlParser;
 import com.google.jstestdriver.embedded.JsTestDriverBuilder;
+import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.hooks.PluginInitializer;
 import com.google.jstestdriver.hooks.TestListener;
+import com.google.jstestdriver.idea.coverage.CoverageReport;
+import com.google.jstestdriver.idea.coverage.CoverageSerializationUtils;
+import com.google.jstestdriver.idea.coverage.CoverageSession;
 import com.google.jstestdriver.idea.execution.tree.JstdTestRunnerFailure;
 import com.google.jstestdriver.idea.server.JstdServerFetchResult;
 import com.google.jstestdriver.idea.server.JstdServerUtilsRt;
 import com.google.jstestdriver.idea.util.EnumUtils;
+import com.google.jstestdriver.model.BasePaths;
 import com.google.jstestdriver.output.TestResultHolder;
 import com.google.jstestdriver.runner.RunnerMode;
+import com.google.jstestdriver.util.DisplayPathSanitizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +49,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.LogManager;
 import java.util.regex.Pattern;
 
 /**
@@ -61,20 +65,31 @@ public class TestRunner {
     CONFIG_FILE,
     TEST_CASE,
     TEST_METHOD,
-    OUTPUT_COVERAGE_FILE
+    COVERAGE_OUTPUT_FILE,
+    COVERAGE_EXCLUDED_PATHS
   }
 
   private final Settings mySettings;
   private final ObjectOutput myTestResultProtocolMessageOutput;
+  private final CoverageSession myCoverageSession;
 
   public TestRunner(Settings settings, ObjectOutput testResultProtocolMessageOutput) {
     mySettings = settings;
     myTestResultProtocolMessageOutput = testResultProtocolMessageOutput;
+    File ideCoverageFile = mySettings.getIdeCoverageFile();
+    if (ideCoverageFile != null) {
+      myCoverageSession = new CoverageSession(ideCoverageFile);
+    } else {
+      myCoverageSession = null;
+    }
   }
 
   public void executeAll() throws InterruptedException {
     for (File config : mySettings.getConfigFiles()) {
       executeConfig(config);
+    }
+    if (myCoverageSession != null) {
+      myCoverageSession.finish();
     }
   }
 
@@ -112,18 +127,8 @@ public class TestRunner {
     runTests(config, new String[]{"--tests", testCaseName}, true);
   }
 
-  private void runTests(@NotNull File config, @NotNull String[] extraArgs, boolean runTests) {
-    PrintStream old = System.out;
-    System.setOut(new PrintStream(new NullOutputStream()));
-    try {
-      doRunTests(config, extraArgs, runTests);
-    } finally {
-      System.setOut(old);
-    }
-  }
-
   @SuppressWarnings("deprecation")
-  private void doRunTests(@NotNull final File configFile, @NotNull String[] extraArgs, boolean runTests) {
+  private void runTests(@NotNull final File configFile, @NotNull String[] extraArgs, boolean runTests) {
     JsTestDriverBuilder builder = new JsTestDriverBuilder();
 
     builder.setConfigurationSource(new UserConfigurationSource(configFile));
@@ -149,14 +154,18 @@ public class TestRunner {
     List<String> flagArgs = Lists.newArrayList("--captureConsole", "--server", mySettings.getServerUrl());
     flagArgs.addAll(Arrays.asList(extraArgs));
     File ideCoverageFilePath = mySettings.getIdeCoverageFile();
-    File dir = null;
+    List<String> coverageExcludedFiles = null;
+    File emptyOutputDir = null;
     boolean runCoverage = false;
     if (runTests && ideCoverageFilePath != null) {
-      dir = createTempDir();
-      if (dir != null) {
+      emptyOutputDir = createTempDir();
+      if (emptyOutputDir != null) {
         flagArgs.add("--testOutput");
-        flagArgs.add(dir.getAbsolutePath());
-        PluginInitializer coverageInitializer = getCoverageInitializer();
+        flagArgs.add(emptyOutputDir.getAbsolutePath());
+        List<String> testPaths = getTestPaths(configFile);
+        coverageExcludedFiles = Lists.newArrayList(testPaths);
+        coverageExcludedFiles.addAll(mySettings.getFilesExcludedFromCoverage());
+        PluginInitializer coverageInitializer = getCoverageInitializer(coverageExcludedFiles);
         if (coverageInitializer != null) {
           builder.withPluginInitializer(coverageInitializer);
           runCoverage = true;
@@ -164,66 +173,62 @@ public class TestRunner {
       }
     }
 
-    String[] args = flagArgs.toArray(new String[flagArgs.size()]);
-    builder.setFlags(args);
+    builder.setFlags(toStringArray(flagArgs));
     JsTestDriver jstd = builder.build();
     jstd.runConfiguration();
     if (runCoverage) {
-      File[] coverageFiles = dir.listFiles(new FilenameFilter() {
+      File[] coverageFiles = emptyOutputDir.listFiles(new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
           return name.endsWith("-coverage.dat");
         }
       });
       if (coverageFiles != null && coverageFiles.length == 1) {
-        copyFile(ideCoverageFilePath, coverageFiles[0]);
+        try {
+          CoverageReport coverageReport = CoverageSerializationUtils.readLCOV(coverageFiles[0]);
+          for (String excludedPath : coverageExcludedFiles) {
+            coverageReport.clearReportByFilePath(excludedPath);
+          }
+          myCoverageSession.mergeReport(coverageReport);
+        }
+        catch (Exception e) {
+          e.printStackTrace();
+        }
       }
     }
   }
 
-  private static void copyFile(@NotNull File from, @NotNull File to) {
-    BufferedWriter out = null;
-    BufferedReader in = null;
-    try {
-      out = new BufferedWriter(new FileWriter(from));
-      in = new BufferedReader(new FileReader(to));
-      int ch;
-      while ((ch = in.read()) != -1) {
-        out.write(ch);
-      }
+  @NotNull
+  private static List<String> getTestPaths(@NotNull File configFile) {
+    BasePaths basePaths = new BasePaths();
+    Configuration configuration = new UserConfigurationSource(configFile).parse(basePaths, new YamlParser());
+    PathResolver pathResolver = new PathResolver(
+      basePaths,
+      Collections.<FileParsePostProcessor>emptySet(),
+      new DisplayPathSanitizer()
+    );
+    Configuration resolvedConfiguration = configuration.resolvePaths(pathResolver, new FlagsImpl());
+    List<String> testFiles = Lists.newArrayList();
+    for (FileInfo info : resolvedConfiguration.getTests()) {
+      testFiles.add(info.getFilePath());
     }
-    catch (IOException e) {
-    }
-    finally {
-      if (out != null) {
-        try {
-          out.close();
-        }
-        catch (IOException e) {}
-      }
-      if (in != null) {
-        try {
-          in.close();
-        }
-        catch (IOException e) {}
-      }
-    }
+    return testFiles;
   }
 
   @Nullable
-  private static PluginInitializer getCoverageInitializer() {
-    File[] coverageFiles = new File(".").listFiles(new FilenameFilter() {
+  private static PluginInitializer getCoverageInitializer(List<String> filesExcludedFromCoverage) {
+    File[] coverageJarFiles = new File(".").listFiles(new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {
         return name.startsWith("coverage") && name.endsWith(".jar");
       }
     });
-    if (coverageFiles != null && coverageFiles.length == 1) {
+    if (coverageJarFiles != null && coverageJarFiles.length == 1) {
       Plugin plugin = new Plugin(
         "coverage",
-        coverageFiles[0].getAbsolutePath(),
+        coverageJarFiles[0].getAbsolutePath(),
         "com.google.jstestdriver.coverage.CoverageModule",
-        Collections.<String>emptyList()
+        filesExcludedFromCoverage
       );
       PluginLoader pluginLoader = new PluginLoader();
       final List<Module> modules = pluginLoader.load(Collections.singletonList(plugin));
@@ -239,6 +244,7 @@ public class TestRunner {
     return null;
   }
 
+  @SuppressWarnings("SSBasedInspection")
   @Nullable
   private static File createTempDir() {
     try {
@@ -272,11 +278,10 @@ public class TestRunner {
   }
 
   public static void main(String[] args) throws Exception {
-    LogManager.getLogManager().readConfiguration(RunnerMode.QUIET.getLogConfig());
-
     Map<ParameterKey, String> paramMap = parseParams(args);
     Settings settings = Settings.build(paramMap);
-    ObjectOutput testResultProtocolMessageOutput = fetchSocketObjectOutput(settings.getPort());//new ConsoleObjectOutput();//
+    //ObjectOutput testResultProtocolMessageOutput = new ConsoleObjectOutput();
+    ObjectOutput testResultProtocolMessageOutput = fetchSocketObjectOutput(settings.getPort());
     if (!validateServer(testResultProtocolMessageOutput, settings)) {
       return;
     }
@@ -385,13 +390,15 @@ public class TestRunner {
     private final String myTestCaseName;
     private final String myTestMethodName;
     private final File myIdeCoverageFile;
+    private final ImmutableList<String> myFilesExcludedFromCoverage;
 
     private Settings(int port,
                      @NotNull String serverUrl,
                      @NotNull List<File> configFiles,
                      @NotNull String testCaseName,
                      @NotNull String testMethodName,
-                     @Nullable File ideCoverageFile)
+                     @Nullable File ideCoverageFile,
+                     @NotNull List<String> filesExcludedFromCoverage)
     {
       myPort = port;
       myServerUrl = serverUrl;
@@ -399,6 +406,7 @@ public class TestRunner {
       myTestCaseName = testCaseName;
       myTestMethodName = testMethodName;
       myIdeCoverageFile = ideCoverageFile;
+      myFilesExcludedFromCoverage = ImmutableList.copyOf(filesExcludedFromCoverage);
     }
 
     public int getPort() {
@@ -431,6 +439,11 @@ public class TestRunner {
     }
 
     @NotNull
+    public ImmutableList<String> getFilesExcludedFromCoverage() {
+      return myFilesExcludedFromCoverage;
+    }
+
+    @NotNull
     private static Settings build(@NotNull Map<ParameterKey, String> parameters) {
       int port = Integer.parseInt(parameters.get(ParameterKey.PORT));
       String serverUrl = parameters.get(ParameterKey.SERVER_URL);
@@ -454,12 +467,18 @@ public class TestRunner {
       }
       String testCaseName = notNullize(parameters.get(ParameterKey.TEST_CASE));
       String testMethodName = notNullize(parameters.get(ParameterKey.TEST_METHOD));
-      String coverageFilePath = notNullize(parameters.get(ParameterKey.OUTPUT_COVERAGE_FILE));
+      String coverageFilePath = notNullize(parameters.get(ParameterKey.COVERAGE_OUTPUT_FILE));
       File ideCoverageFile = null;
+      List<String> excludedPathList = Collections.emptyList();
       if (!coverageFilePath.isEmpty()) {
         ideCoverageFile = new File(coverageFilePath);
+        String joinedPaths = notNullize(parameters.get(ParameterKey.COVERAGE_EXCLUDED_PATHS));
+        String[] excludedPaths = joinedPaths.split(",");
+        if (excludedPaths != null) {
+          excludedPathList = Arrays.asList(excludedPaths);
+        }
       }
-      return new Settings(port, serverUrl, configFiles, testCaseName, testMethodName, ideCoverageFile);
+      return new Settings(port, serverUrl, configFiles, testCaseName, testMethodName, ideCoverageFile, excludedPathList);
     }
   }
 
@@ -467,11 +486,9 @@ public class TestRunner {
     return str == null ? "" : str;
   }
 
-  private final class NullOutputStream extends OutputStream {
-    @Override public void write(int b) {
-    }
-
-    @Override public void write(byte[] b, int off, int len) {
-    }
+  @SuppressWarnings("SSBasedInspection")
+  @NotNull
+  private static String[] toStringArray(@NotNull List<String> list) {
+    return list.toArray(new String[list.size()]);
   }
 }

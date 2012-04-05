@@ -132,7 +132,11 @@ public class JstdConfigStructure {
           Collections.<FileParsePostProcessor>emptySet(),
           new DisplayPathSanitizer()
       );
-      return parsedConf.resolvePaths(pathResolver, flags);
+      try {
+        return parsedConf.resolvePaths(pathResolver, flags);
+      } catch (Exception e) {
+        return parsedConf;
+      }
     } catch (IOException e) {
       throw new RuntimeException("Failed to read settings file " + jstdConfigFile, e);
     }

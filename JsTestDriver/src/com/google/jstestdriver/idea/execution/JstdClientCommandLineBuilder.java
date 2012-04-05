@@ -45,8 +45,6 @@ public class JstdClientCommandLineBuilder {
 
   private static final Logger log = Logger.getInstance(TestRunnerState.class.getCanonicalName());
 
-  public static final JstdClientCommandLineBuilder INSTANCE = new JstdClientCommandLineBuilder();
-
   private static final Function<File, String> GET_ABSOLUTE_PATH = new Function<File, String>() {
     @Override
     public String apply(File file) {
@@ -77,7 +75,11 @@ public class JstdClientCommandLineBuilder {
       parameters.put(TestRunner.ParameterKey.TEST_METHOD, runSettings.getTestMethodName());
     }
     if (coverageFilePath != null) {
-      parameters.put(TestRunner.ParameterKey.OUTPUT_COVERAGE_FILE, coverageFilePath);
+      parameters.put(TestRunner.ParameterKey.COVERAGE_OUTPUT_FILE, coverageFilePath);
+      if (!runSettings.getFilesExcludedFromCoverage().isEmpty()) {
+        String excludedPaths = StringUtil.join(runSettings.getFilesExcludedFromCoverage(), ",");
+        parameters.put(TestRunner.ParameterKey.COVERAGE_EXCLUDED_PATHS, excludedPaths);
+      }
     }
     return buildCommandLine(parameters);
   }

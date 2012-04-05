@@ -8,6 +8,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.JBLabel;
+import com.intellij.ui.components.JBTabbedPane;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,24 +24,36 @@ import java.util.Map;
 
 public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfiguration> {
 
-  private RootSection myRootSection;
-  private JComponent myRootComponent;
+  private final RootSection myConfigurationSection;
+  private final CoverageSection myCoverageSection;
+  private final JComponent myRootComponent;
 
-  public JstdRunConfigurationEditor(Project project) {
-    myRootSection = new RootSection();
-    myRootComponent = myRootSection.getComponent(new CreationContext(project));
+  public JstdRunConfigurationEditor(@NotNull Project project) {
+    myConfigurationSection = new RootSection();
+    JBTabbedPane tabbedPane = new JBTabbedPane();
+    CreationContext content = new CreationContext(project);
+    JComponent configurationComponent = myConfigurationSection.getComponent(content);
+    tabbedPane.addTab("Configuration", configurationComponent);
+
+    myCoverageSection = new CoverageSection(project);
+    JComponent coverageComponent = myCoverageSection.getComponent(content);
+    tabbedPane.addTab("Coverage", coverageComponent);
+
+    myRootComponent = tabbedPane;
   }
 
   @Override
   protected void resetEditorFrom(JstdRunConfiguration runConfiguration) {
     JstdRunSettings runSettings = runConfiguration.getRunSettings();
-    myRootSection.resetFrom(runSettings);
+    myConfigurationSection.resetFrom(runSettings);
+    myCoverageSection.resetFrom(runSettings);
   }
 
   @Override
   protected void applyEditorTo(JstdRunConfiguration runConfiguration) throws ConfigurationException {
     JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
-    myRootSection.applyTo(builder);
+    myConfigurationSection.applyTo(builder);
+    myCoverageSection.applyTo(builder);
     runConfiguration.setRunSettings(builder.build());
   }
 
@@ -58,7 +71,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
 
     private JComboBox myTestTypeComboBox;
     private OneOfRunSettingsSection<TestTypeListItem> myTestTypeContentRunSettingsSection;
-    private ServerConfigurationForm myServerConfigurationForm = new ServerConfigurationForm();
+    private final ServerConfigurationForm myServerConfigurationForm = new ServerConfigurationForm();
     private Map<TestType, TestTypeListItem> myListItemByTestTypeMap;
     private final JBLabel myLabel = new JBLabel("Test:");
 
