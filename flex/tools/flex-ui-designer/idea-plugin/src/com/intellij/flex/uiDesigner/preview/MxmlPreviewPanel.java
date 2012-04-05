@@ -75,6 +75,10 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
     return loadingDecorator;
   }
 
+  public BufferedImage getImage() {
+    return image;
+  }
+
   public void setImage(@Nullable final BufferedImage image) {
     this.image = image;
     doRevalidate();

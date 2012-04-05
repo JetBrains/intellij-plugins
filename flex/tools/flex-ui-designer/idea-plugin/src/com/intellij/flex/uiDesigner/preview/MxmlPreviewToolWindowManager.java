@@ -1,10 +1,7 @@
 package com.intellij.flex.uiDesigner.preview;
 
 import com.intellij.flex.uiDesigner.*;
-import com.intellij.flex.uiDesigner.io.AmfOutputStream;
-import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
-import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
-import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.mxml.*;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.javascript.flex.FlexAnnotationNames;
@@ -25,6 +22,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -40,6 +38,7 @@ import com.intellij.ui.content.ContentManager;
 import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.Processor;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -49,9 +48,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
 
 public class MxmlPreviewToolWindowManager implements ProjectComponent {
   private static final String SETTINGS_TOOL_WINDOW_VISIBLE = "mxml.preview.tool.window.visible";
+  private static final String LAST_PREVIEW_IMAGE_FILE_NAME = "lastPreview";
 
   private final Project project;
   private final FileEditorManager fileEditorManager;
@@ -64,6 +68,8 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   private boolean toolWindowVisible;
 
   private int loadingDecoratorStarted;
+
+  private boolean lastPreviewChecked;
 
   public MxmlPreviewToolWindowManager(final Project project, final FileEditorManager fileEditorManager) {
     this.project = project;
@@ -112,6 +118,33 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
   public void projectClosed() {
     if (toolWindowForm != null) {
+
+      XmlFile file = toolWindowForm.getFile();
+      if (file != null) {
+        final VirtualFile virtualFile = file.getViewProvider().getVirtualFile();
+        BufferedImage image = toolWindowForm.getPreviewPanel().getImage();
+        if (image != null) {
+          try {
+            IOUtil.saveImage(toolWindowForm.getPreviewPanel().getImage(),
+                             new File(DesignerApplicationManager.APP_DIR, LAST_PREVIEW_IMAGE_FILE_NAME), new Consumer<DataOutputStream>() {
+              @Override
+              public void consume(DataOutputStream out) {
+                try {
+                  out.writeLong(virtualFile.getTimeStamp());
+                  out.writeUTF(virtualFile.getUrl());
+                }
+                catch (IOException e) {
+                  throw new RuntimeException(e);
+                }
+              }
+            });
+          }
+          catch (Throwable e) {
+            LogMessageUtil.LOG.warn("Can't save image for last document", e);
+          }
+        }
+      }
+
       Disposer.dispose(toolWindowForm.getPreviewPanel());
       toolWindowForm = null;
       toolWindow = null;
@@ -154,6 +187,14 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
         if (currentVisible) {
           propertiesComponent.setValue(SETTINGS_TOOL_WINDOW_VISIBLE, "true");
+
+          if (!lastPreviewChecked) {
+            lastPreviewChecked = true;
+            if (checkLastImage()) {
+              return;
+            }
+          }
+
           render();
         }
         else {
@@ -186,6 +227,39 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       public void errorOccured() {
       }
     });
+  }
+
+  private boolean checkLastImage() {
+    File file = new File(DesignerApplicationManager.APP_DIR, LAST_PREVIEW_IMAGE_FILE_NAME);
+    if (!file.exists()) {
+      return false;
+    }
+
+    try {
+      final VirtualFile virtualFile = toolWindowForm.getFile().getViewProvider().getVirtualFile();
+      BufferedImage image = IOUtil.readImage(file,
+                                             new Processor<DataInputStream>() {
+                                               @Override
+                                               public boolean process(DataInputStream in) {
+                                                 try {
+                                                   return in.readLong() == virtualFile.getTimeStamp() &&
+                                                          in.readUTF().equals(virtualFile.getUrl());
+                                                 }
+                                                 catch (IOException e) {
+                                                   throw new RuntimeException(e);
+                                                 }
+                                               }
+                                             });
+      if (image != null) {
+        toolWindowForm.getPreviewPanel().setImage(image);
+        return true;
+      }
+    }
+    catch (IOException e) {
+      LogMessageUtil.LOG.warn("Can't read image for last document", e);
+    }
+
+    return false;
   }
 
   private void render() {

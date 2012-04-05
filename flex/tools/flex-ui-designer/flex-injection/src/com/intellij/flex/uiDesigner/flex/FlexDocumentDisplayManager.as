@@ -7,14 +7,12 @@ import com.intellij.flex.uiDesigner.UiErrorHandler;
 import com.intellij.flex.uiDesigner.designSurface.LayoutManager;
 
 import flash.display.BitmapData;
-
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Stage;
 import flash.events.Event;
 import flash.events.EventPhase;
 import flash.events.MouseEvent;
-import flash.geom.Point;
 import flash.geom.Rectangle;
 import flash.system.ApplicationDomain;
 import flash.text.TextFormat;
@@ -540,11 +538,7 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
   }
 
   private function commonGetVisibleApplicationRect(bounds:Rectangle):Rectangle {
-    if (bounds == null) {
-      bounds = getBounds(realStage);
-    }
-
-    return bounds;
+    return bounds == null ? getBounds(realStage) : bounds;
   }
 
   // mx.managers::ISystemManagerChildManager, ChildManager, "cm.notifyStyleChangeInChildren(styleProp, true);" in CSSStyleDeclaration
@@ -746,9 +740,11 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
 
   public function getSnapshot(setActualSize:Boolean):BitmapData {
     const element:ILayoutElement = ILayoutElement(document);
+    var w:int;
+    var h:int;
     if (setActualSize) {
-      var w:int = explicitDocumentWidth;
-      var h:int = explicitDocumentHeight;
+      w = explicitDocumentWidth;
+      h = explicitDocumentHeight;
       if (w == -1) {
         w = Math.max(500, minDocumentWidth);
       }
@@ -762,8 +758,8 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
       }
     }
 
-    var w:int = element.getLayoutBoundsWidth();
-    var h:int = element.getLayoutBoundsWidth();
+    w = element.getLayoutBoundsWidth();
+    h = element.getLayoutBoundsWidth();
     if (w == 0 || h == 0) {
       return null;
     }

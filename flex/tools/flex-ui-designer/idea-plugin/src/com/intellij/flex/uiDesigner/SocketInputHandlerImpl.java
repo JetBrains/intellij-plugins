@@ -23,7 +23,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -44,8 +43,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.color.ColorSpace;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -632,8 +630,6 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   public static class Reader extends DataInputStream {
-    private static final ComponentColorModel COLOR_MODER = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB),
-                                                                                   new int[]{8, 8, 8}, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
 
     Reader(InputStream in) {
       super(in);
@@ -689,23 +685,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     }
 
     public BufferedImage readImage() throws IOException {
-      final int w = readUnsignedShort();
-      if (w == 0) {
-        return null;
-      }
-
-      final int h = readUnsignedShort();
-      int l = w * h * 4;
-      final byte[] data = FileUtil.loadBytes(this, l);
-      for (int i = 0, j = 0; i < l; i += 4) {
-        data[j++] = data[i + 3];
-        byte r = data[i + 1];
-        data[j++] = data[i + 2];
-        data[j++] = r;
-      }
-
-      return new BufferedImage(COLOR_MODER, Raster.createInterleavedRaster(new DataBufferByte(data, w * h * 3), w, h, w * 3, 3,
-                                                                           new int[]{2, 1, 0}, null), false, null);
+      return IOUtil.readARGBImage(this);
     }
 
     public int[] readIntArray() throws IOException {

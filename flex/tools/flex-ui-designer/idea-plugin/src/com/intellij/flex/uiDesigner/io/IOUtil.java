@@ -6,11 +6,16 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.Consumer;
+import com.intellij.util.Processor;
 import com.intellij.util.text.CharArrayCharSequence;
 import com.intellij.util.text.CharSequenceReader;
 import com.intellij.util.xml.NanoXmlUtil;
 import net.n3.nanoxml.IXMLBuilder;
 
+import java.awt.*;
+import java.awt.color.ColorSpace;
+import java.awt.image.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.URL;
@@ -20,7 +25,66 @@ import java.nio.charset.Charset;
 public final class IOUtil {
   private static final Logger LOG = Logger.getInstance(IOUtil.class.getName());
 
+  private static final ComponentColorModel COLOR_MODER =
+    new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), new int[]{8, 8, 8}, false, false, Transparency.OPAQUE,
+                            DataBuffer.TYPE_BYTE);
+
   private IOUtil() {
+  }
+
+  public static BufferedImage readImage(File file, Processor<DataInputStream> inProcessor) throws IOException {
+    DataInputStream in = new DataInputStream(new FileInputStream(file));
+    try {
+      if (inProcessor.process(in)) {
+        int w = in.readUnsignedShort();
+        int h = in.readUnsignedShort();
+        return createImage(w, h, FileUtil.loadBytes(in, w * h * 3));
+      }
+      else {
+        return null;
+      }
+    }
+    finally {
+      in.close();
+    }
+  }
+
+  public static BufferedImage readARGBImage(DataInputStream in) throws IOException {
+    final int w = in.readUnsignedShort();
+    if (w == 0) {
+      return null;
+    }
+
+    final int h = in.readUnsignedShort();
+    int l = w * h * 4;
+    final byte[] data = FileUtil.loadBytes(in, l);
+    for (int i = 0, j = 0; i < l; i += 4) {
+      data[j++] = data[i + 3];
+      byte r = data[i + 1];
+      data[j++] = data[i + 2];
+      data[j++] = r;
+    }
+
+    return createImage(w, h, data);
+  }
+
+  private static BufferedImage createImage(int w, int h, byte[] bgr) {
+    return new BufferedImage(COLOR_MODER,
+                             Raster.createInterleavedRaster(new DataBufferByte(bgr, w * h * 3), w, h, w * 3, 3, new int[]{2, 1, 0}, null),
+                             false, null);
+  }
+
+  public static void saveImage(BufferedImage image, File file, Consumer<DataOutputStream> outConsumer) throws IOException {
+    DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
+    try {
+      outConsumer.consume(out);
+      out.writeShort(image.getWidth());
+      out.writeShort(image.getHeight());
+      out.write(((DataBufferByte)image.getRaster().getDataBuffer()).getData());
+    }
+    finally {
+      out.close();
+    }
   }
 
   public static byte[] getResourceBytes(String name) throws IOException {
