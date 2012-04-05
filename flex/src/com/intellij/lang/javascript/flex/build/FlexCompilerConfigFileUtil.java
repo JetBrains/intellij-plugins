@@ -19,18 +19,17 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.*;
 
-import static com.intellij.lang.javascript.flex.sdk.FlexSdkUtils.FILE_SPEC_ELEMENT;
-import static com.intellij.lang.javascript.flex.sdk.FlexSdkUtils.OUTPUT_ELEMENT;
-import static com.intellij.lang.javascript.flex.sdk.FlexSdkUtils.TARGET_PLAYER_ELEMENT;
-
 public class FlexCompilerConfigFileUtil {
 
   private static final Key<Pair<Long, Collection<NamespacesInfo>>> MOD_STAMP_TO_NAMESPACES_INFOS =
     Key.create("MOD_STAMP_TO_NAMESPACES_INFOS");
 
+  private static final String TARGET_PLAYER_ELEMENT = "<flex-config><target-player>";
+  private static final String FILE_SPEC_ELEMENT = "<flex-config><file-specs><path-element>";
+  private static final String OUTPUT_ELEMENT = "<flex-config><output>";
+
   public static final String FLEX_CONFIG = "flex-config";
   public static final String COMPILER = "compiler";
-  public static final String SOURCE_PATH = "source-path";
 
   public static final String EXTERNAL_LIBRARY_PATH = "external-library-path";
   public static final String INCLUDE_LIBRARIES = "include-libraries";

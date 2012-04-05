@@ -141,110 +141,6 @@ public class FlexUtils {
            : null;
   }
 
-  public static boolean isXmlExtension(String extension) {
-    return "xml".equalsIgnoreCase(extension);
-  }
-
-  public static boolean isSwfExtension(String extension) {
-    return "swf".equalsIgnoreCase(extension);
-  }
-
-  public static boolean isHtmlExtension(String extension) {
-    return "htm".equalsIgnoreCase(extension) || "html".equalsIgnoreCase(extension) || "xhtml".equalsIgnoreCase(extension);
-  }
-
-  public static boolean htmlFileLooksLikeSwfWrapper(final VirtualFile virtualFile) {
-    try {
-      if (VfsUtil.loadText(virtualFile).indexOf("application/x-shockwave-flash") != -1) {
-        return true;
-      }
-    }
-    catch (IOException e) {
-      // ignore
-    }
-    return false;
-  }
-
-  public static String[] collectAirDescriptorsForProject(final Project project) {
-    final List<String> result = new ArrayList<String>();
-    final ContentIterator contentIterator = new ContentIterator() {
-      public boolean processFile(final VirtualFile file) {
-        if (isAirDescriptorFile(file)) {
-          result.add(FileUtil.toSystemDependentName(file.getPath()));
-        }
-        return true;
-      }
-    };
-    final ProjectRootManager projectRootManager = ProjectRootManager.getInstance(project);
-    projectRootManager.getFileIndex().iterateContent(contentIterator);
-
-    final VirtualFile projectBaseDir = project.getBaseDir();
-    if (projectBaseDir != null && !ArrayUtil.contains(projectBaseDir, projectRootManager.getContentRoots())) {
-      for (final VirtualFile file : projectBaseDir.getChildren()) {
-        if (isAirDescriptorFile(file)) {
-          result.add(FileUtil.toSystemDependentName(file.getPath()));
-        }
-      }
-    }
-    return ArrayUtil.toStringArray(result);
-  }
-
-  public static boolean isAirDescriptorFile(final VirtualFile file) {
-    if (file != null && file.isValid() && !file.isDirectory() && isXmlExtension(file.getExtension())) {
-      try {
-        final XmlFileHeader header = NanoXmlUtil.parseHeaderWithException(file);
-        final String namespace = header.getRootTagNamespace();
-        return (namespace != null &&
-                namespace.startsWith("http://ns.adobe.com/air/application/") &&
-                "application".equals(header.getRootTagLocalName()));
-      }
-      catch (IOException e) {/*ignore*/}
-    }
-    return false;
-  }
-
-  public static boolean isAirDesktopDescriptorFile(final VirtualFile file) {
-    try {
-      final Map<String, List<String>> elements =
-        findXMLElements(file.getInputStream(), Arrays.asList("<application><android>", "<application><iPhone>"));
-      return elements.get("<application><android>").isEmpty() && elements.get("<application><iPhone>").isEmpty();
-    }
-    catch (IOException e) {
-      return false;
-    }
-  }
-
-  public static boolean isAirMobileDescriptorFile(final VirtualFile file) {
-    try {
-      final Map<String, List<String>> elements =
-        findXMLElements(file.getInputStream(), Arrays.asList("<application><android>", "<application><iPhone>"));
-      return !elements.get("<application><android>").isEmpty() || !elements.get("<application><iPhone>").isEmpty();
-    }
-    catch (IOException e) {
-      return false;
-    }
-  }
-
-  /*
-  public static boolean isAirAndroidDescriptorFile(final VirtualFile file) {
-    try {
-      return findXMLElement(file.getInputStream(), "<application><android>") != null;
-    }
-    catch (IOException e) {
-      return false;
-    }
-  }
-
-  public static boolean isAirIPhoneDescriptorFile(final VirtualFile file) {
-    try {
-      return findXMLElement(file.getInputStream(), "<application><iPhone>") != null;
-    }
-    catch (IOException e) {
-      return false;
-    }
-  }
-  */
-
   /**
    * Looks through input stream containing XML document and finds all entries of XML elements listed in <code>xmlElements</code>.
    * Content of these elements is put to result map. XML namespaces are not taken into consideration.
@@ -408,13 +304,6 @@ public class FlexUtils {
 
   public static String getPathToFlexUnitTempDirectory() {
     return FileUtil.getTempDirectory() + "/idea-flexunit";
-  }
-
-  @Nullable
-  public static ModuleEditor getModuleEditor(final Module module, final ModuleStructureConfigurable configurable) {
-    final StructureConfigurableContext context = configurable == null ? null : configurable.getContext();
-    final ModulesConfigurator configurator = context == null ? null : context.getModulesConfigurator();
-    return configurator == null ? null : configurator.getModuleEditor(module);
   }
 
   public static void removeFileLater(final @NotNull VirtualFile file) {

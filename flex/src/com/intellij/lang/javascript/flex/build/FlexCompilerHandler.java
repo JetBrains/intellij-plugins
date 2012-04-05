@@ -1,21 +1,17 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.ProjectTopics;
-import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.facet.FacetManager;
-import com.intellij.lang.javascript.ActionScriptFileType;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.*;
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationChangeListener;
 import com.intellij.lang.javascript.flex.projectStructure.ui.ActiveBuildConfigurationWidget;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
-import com.intellij.lang.javascript.flex.sdk.AirMobileSdkType;
-import com.intellij.lang.javascript.flex.sdk.AirSdkType;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
@@ -25,16 +21,17 @@ import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.StdModuleTypes;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.ModuleNameTracker;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.ModuleRootListener;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
@@ -46,7 +43,6 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.StringTokenizer;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectIntHashMap;
-import gnu.trove.TObjectIntProcedure;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -250,14 +246,14 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
         }
         return;
       }
-      compileModuleOrFacet(module, null, context, overriddenConfig, false);
+      compileModuleOrFacet(module, context, overriddenConfig, false);
     }
     else {
       final boolean nothingChangedSincePreviousCompilation = false; //myCompilerDependenciesCache.isNothingChangedSincePreviousCompilation(module);
 
       if (ModuleType.get(module) instanceof FlexModuleType) {
         final Pair<Boolean, List<VirtualFile>> compilationResult =
-          compileModuleOrFacet(module, null, context, null /*FlexBuildConfiguration.getInstance(module)*/, nothingChangedSincePreviousCompilation);
+          compileModuleOrFacet(module, context, null /*FlexBuildConfiguration.getInstance(module)*/, nothingChangedSincePreviousCompilation);
         if (compilationResult.first && !compilationResult.second.isEmpty()) {
           //myCompilerDependenciesCache.cacheBC(context, module, compilationResult.second);
         }
@@ -266,16 +262,16 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
         boolean wasFailure = false;
         Collection<List<VirtualFile>> allConfigFiles = new ArrayList<List<VirtualFile>>();
 
-        for (final FlexFacet facet : FacetManager.getInstance(module).getFacetsByType(FlexFacet.ID)) {
-          final Pair<Boolean, List<VirtualFile>> compilationResult =
-            compileModuleOrFacet(module, facet, context, null /*FlexBuildConfiguration.getInstance(facet)*/, nothingChangedSincePreviousCompilation);
-          if (!compilationResult.first) {
-            wasFailure = true;
-          }
-          if (!compilationResult.second.isEmpty()) {
-            allConfigFiles.add(compilationResult.second);
-          }
-        }
+        //for (final FlexFacet facet : FacetManager.getInstance(module).getFacetsByType(FlexFacet.ID)) {
+        //  final Pair<Boolean, List<VirtualFile>> compilationResult =
+        //    compileModuleOrFacet(module, facet, context, null /*FlexBuildConfiguration.getInstance(facet)*/, nothingChangedSincePreviousCompilation);
+        //  if (!compilationResult.first) {
+        //    wasFailure = true;
+        //  }
+        //  if (!compilationResult.second.isEmpty()) {
+        //    allConfigFiles.add(compilationResult.second);
+        //  }
+        //}
 
         if (!wasFailure && !allConfigFiles.isEmpty()) {
           //myCompilerDependenciesCache.cacheBC(context, module, allConfigFiles);
@@ -347,7 +343,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
    * second is a list of config files, may be empty if compilation skipped
    */
   private Pair<Boolean, List<VirtualFile>> compileModuleOrFacet(final Module module,
-                                    @Nullable final FlexFacet flexFacet,
+                                    //@Nullable final FlexFacet flexFacet,
                                     final CompileContext context,
                                     @NotNull final FlexBuildConfiguration config,
                                     final boolean nothingChangedSincePreviousCompilation) throws IOException {
@@ -367,7 +363,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
     context.getProgressIndicator().setText(FlexBundle.message("compiling.module", module.getName()));
 
-    final Object moduleOrFacet = flexFacet == null ? module : flexFacet;
+    final Object moduleOrFacet = module;
     final ModuleOrFacetCompileCache compileCache = getCache(config.getType());
 
     if (!context.isMake()) {
@@ -377,7 +373,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     final Sdk flexSdk = FlexUtils.getSdkForActiveBC(module);
     assert flexSdk != null; // checked in FlexCompiler.validateConfiguration()
 
-    final List<VirtualFile> configFiles = getConfigFiles(config, module, flexFacet);     // todo use FlexCompilationUtils.getConfigFiles()
+    final List<VirtualFile> configFiles = Collections.emptyList();  //getConfigFiles(config, module, flexFacet);
 
     if (updateTimestamps(configFiles, compileCache, moduleOrFacet)) {
       // force non-incremental compilation because fcsh sometimes doesn't detect some changes in custom compiler config file
@@ -442,40 +438,6 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     }
 
     return Pair.create(compilationSuccessful, configFiles);
-  }
-
-  private static List<VirtualFile> getConfigFiles(final FlexBuildConfiguration config,
-                                                  final @NotNull Module module,
-                                                  final @Nullable FlexFacet flexFacet,
-                                                  final @Nullable String cssFilePath) throws IOException {
-
-    final List<VirtualFile> result = new ArrayList<VirtualFile>();
-
-    if (config.USE_CUSTOM_CONFIG_FILE && !needToMergeAutogeneratedAndCustomConfigFile(config, cssFilePath != null)) {
-      final String customConfigFilePath =
-        config.getType() == FlexBuildConfiguration.Type.FlexUnit && config.USE_CUSTOM_CONFIG_FILE_FOR_TESTS
-        ? config.CUSTOM_CONFIG_FILE_FOR_TESTS
-        : config.CUSTOM_CONFIG_FILE;
-      final VirtualFile customConfigFile =
-        VfsUtil.findRelativeFile(customConfigFilePath, FlexUtils.getFlexCompilerWorkDir(module.getProject(), null));
-      if (customConfigFile != null) {
-        result.add(customConfigFile);
-      }
-    }
-
-    if (!config.USE_CUSTOM_CONFIG_FILE ||
-        config.getType() == FlexBuildConfiguration.Type.FlexUnit ||
-        config.getType() == FlexBuildConfiguration.Type.OverriddenMainClass ||
-        cssFilePath != null) {
-      final String cssFileName = cssFilePath == null ? null : cssFilePath.substring(cssFilePath.lastIndexOf('/') + 1);
-      final String postfix = cssFileName == null ? null : FileUtil.getNameWithoutExtension(cssFileName);
-
-      final String facetName = flexFacet == null ? null : flexFacet.getName();
-      final String name = CompilerConfigGenerator.getConfigFileName(module, facetName, config.getType().getConfigFilePrefix(), postfix);
-      final String configText = generateConfigFileText(module, config, cssFilePath);
-      //result.add(CompilerConfigGenerator.getOrCreateConfigFile(module.getProject(), name, configText));
-    }
-    return result;
   }
 
   private void dropIncrementalCompilation(final Object moduleOrFacet,
@@ -635,12 +597,14 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
     @NonNls String s = config.OUTPUT_TYPE.equals(FlexBuildConfiguration.APPLICATION) ? "mxmlc" : "compc";
 
+    /*
     if (flexSdk.getSdkType() instanceof AirSdkType) {
       s += " +configname=air";
     }
     else if (flexSdk.getSdkType() instanceof AirMobileSdkType) {
       s += " +configname=airmobile";
     }
+    */
 
     s += configsParam;
 
@@ -649,480 +613,6 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     }
 
     return s;
-  }
-
-  private static void addLocales(final StringBuilder builder, final List<String> locales) {
-    if (!locales.isEmpty()) {
-      builder.append("\n    <locale>");
-      for (final String locale : locales) {
-        addTag(builder, "locale-element", locale, "\n      ");
-      }
-      builder.append("\n    </locale>");
-    }
-  }
-
-  private static void addSourcePath(final Module module, final StringBuilder builder, final boolean isTest) {
-    addSourcePath(module, builder, Collections.<String>emptyList(), isTest);
-  }
-
-  private static void addSourcePath(final Module module,
-                                    final StringBuilder builder,
-                                    final List<String> localesToSubstitute,
-                                    final boolean isTest) {
-    final Set<String> sourcePathsWithLocaleToken = new HashSet<String>(); // Set - to avoid duplication of paths like "locale/{locale}"
-    final List<String> sourcePathsWithoutLocaleToken = new ArrayList<String>();
-
-    for (VirtualFile sourceDir : ModuleRootManager.getInstance(module).getSourceRoots(isTest)) {
-      if (localesToSubstitute.contains(sourceDir.getName())) {
-        sourcePathsWithLocaleToken.add(sourceDir.getParent().getPath() + "/" + LOCALE_TOKEN);
-      }
-      else {
-        sourcePathsWithoutLocaleToken.add(sourceDir.getPath());
-      }
-    }
-
-    if (!sourcePathsWithLocaleToken.isEmpty() || !sourcePathsWithoutLocaleToken.isEmpty()) {
-      builder.append("\n    <source-path append=\"true\">");
-      // source paths with {locale} token should go first
-      for (final String sourcePath : sourcePathsWithLocaleToken) {
-        addTag(builder, "path-element", sourcePath, "\n      ");
-      }
-      for (final String sourcePath : sourcePathsWithoutLocaleToken) {
-        addTag(builder, "path-element", sourcePath, "\n      ");
-      }
-      builder.append("\n    </source-path>");
-    }
-  }
-
-  @NotNull
-  private List<VirtualFile> getConfigFiles(FlexBuildConfiguration config, @NotNull final Module module, @Nullable final FlexFacet flexFacet)
-    throws IOException {
-    final Object moduleOrFacet = flexFacet == null ? module : flexFacet;
-
-    List<VirtualFile> result = new ArrayList<VirtualFile>();
-    if (config.USE_CUSTOM_CONFIG_FILE && !needToMergeAutogeneratedAndCustomConfigFile(config, false)) {
-      final String customConfigFilePath =
-        config.getType() == FlexBuildConfiguration.Type.FlexUnit && config.USE_CUSTOM_CONFIG_FILE_FOR_TESTS
-        ? config.CUSTOM_CONFIG_FILE_FOR_TESTS
-        : config.CUSTOM_CONFIG_FILE;
-      final VirtualFile customConfigFile =
-        VfsUtil.findRelativeFile(customConfigFilePath, FlexUtils.getFlexCompilerWorkDir(myProject, null));
-      if (customConfigFile != null) {
-        result.add(customConfigFile);
-      }
-    }
-
-    if (!config.USE_CUSTOM_CONFIG_FILE ||
-        config.getType() == FlexBuildConfiguration.Type.FlexUnit ||
-        config.getType() == FlexBuildConfiguration.Type.OverriddenMainClass) {
-      final ModuleOrFacetCompileCache compileCache = getCache(config.getType());
-      VirtualFile generatedConfigFile = compileCache.moduleOrFacetToAutoGeneratedConfig.get(moduleOrFacet);
-      final boolean regenerateTempConfig =
-        generatedConfigFile != null && needToRegenerateMainClassBasedConfigFile(generatedConfigFile, config);
-      if (regenerateTempConfig) {
-        removeIncrementalCommandFor(generatedConfigFile);
-      }
-      if (generatedConfigFile == null || !generatedConfigFile.isValid() || regenerateTempConfig) {
-        final String facetName = flexFacet == null ? null : flexFacet.getName();
-        @NonNls final String name = CompilerConfigGenerator
-          .getConfigFileName(module, facetName, config.getType().getConfigFilePrefix(), null);
-
-        final Ref<VirtualFile> fileRef = new Ref<VirtualFile>();
-        final Ref<IOException> error = new Ref<IOException>();
-        final String configText = generateConfigFileText(module, config, null);
-        final Runnable runnable = new Runnable() {
-          public void run() {
-            fileRef.set(ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
-              public VirtualFile compute() {
-                try {
-                  final String baseDirPath = FlexUtils.getTempFlexConfigsDirPath();
-                  final VirtualFile baseDir = VfsUtil.createDirectories(baseDirPath);
-
-                  VirtualFile configFile = baseDir.findChild(name);
-                  if (configFile == null) {
-                    configFile = baseDir.createChildData(this, name);
-                  }
-                  mySavingConfigOurselves = true;
-                  VfsUtil.saveText(configFile, configText);
-                  return configFile;
-                }
-                catch (IOException ex) {
-                  error.set(ex);
-                }
-                finally {
-                  mySavingConfigOurselves = false;
-                }
-                return null;
-              }
-            }));
-          }
-        };
-
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-          runnable.run();
-        }
-        else {
-          ApplicationManager.getApplication()
-            .invokeAndWait(runnable, ProgressManager.getInstance().getProgressIndicator().getModalityState());
-        }
-        if (!error.isNull()) {
-          throw error.get();
-        }
-        generatedConfigFile = fileRef.get();
-        compileCache.moduleOrFacetToAutoGeneratedConfig.put(moduleOrFacet, generatedConfigFile);
-        // no need to quit compiler shell if generated config file was rebuilt (it happens if user manually changes it or for class-based run configuration)
-        compileCache.configFileToTimestamp.put(generatedConfigFile, generatedConfigFile.getModificationCount());
-      }
-      result.add(generatedConfigFile);
-    }
-    return result;
-  }
-
-  private void removeIncrementalCommandFor(final VirtualFile configFile) throws IOException {
-    final Collection<String> commandsToRemove = new ArrayList<String>();
-    commandToIdMap.forEachEntry(new TObjectIntProcedure<String>() {
-      public boolean execute(final String command, int id) {
-        if (command.contains(configFile.getName())) {
-          commandsToRemove.add(command);
-        }
-        return true;
-      }
-    });
-    for (final String command : commandsToRemove) {
-      sendCommand("clear " + commandToIdMap.get(command), new CompilerMessagesBuffer(null, false));
-      commandToIdMap.remove(command);
-    }
-  }
-
-  private static boolean needToRegenerateMainClassBasedConfigFile(final VirtualFile configFile, final FlexBuildConfiguration config) {
-    if (config.getType() != FlexBuildConfiguration.Type.OverriddenMainClass) return false;
-
-    try {
-      final String pathElement = FlexUtils.findXMLElement(configFile.getInputStream(), FlexSdkUtils.FILE_SPEC_ELEMENT);
-      return (pathElement == null || !pathElement.equals(getPathToMainClassFile(config)));
-    }
-    catch (IOException e) {
-      return true;
-    }
-  }
-
-  static String generateConfigFileText(final Module module, final FlexBuildConfiguration config, final @Nullable String cssFilePath) {
-    final boolean customConfigFileUsed = config.USE_CUSTOM_CONFIG_FILE;
-    @NonNls final StringBuilder configTextBuilder = new StringBuilder();
-    final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();
-    final Sdk sdk = FlexUtils.getSdkForActiveBC(module);
-
-    configTextBuilder.append("<flex-config xmlns=\"http://www.adobe.com/2006/flex-config\">");
-
-    if (cssFilePath != null) {
-      final int lastSlashIndex = cssFilePath.lastIndexOf('/');
-      final String cssDirPath = lastSlashIndex > 0 ? cssFilePath.substring(0, lastSlashIndex) : null;
-      if (cssDirPath != null) {
-        // folder that contains css file must be source folder and must be first in source-path list, otherwise stupid compiler says that css file must have package corresponding its path
-        configTextBuilder.append("\n  <compiler>").append("\n    <source-path append=\"true\">");
-        addTag(configTextBuilder, "path-element", cssDirPath, "\n      ");
-        configTextBuilder.append("\n    </source-path>").append("\n  </compiler>");
-      }
-    }
-
-    if (!customConfigFileUsed &&
-        !StringUtil.isEmpty(config.TARGET_PLAYER_VERSION) &&
-        sdk != null &&
-        TargetPlayerUtils.isTargetPlayerApplicable(sdk)) {
-      addTag(configTextBuilder, "target-player", config.TARGET_PLAYER_VERSION);
-    }
-
-    final boolean debug = true;/*FlexBuildConfiguration.APPLICATION.equals(config.OUTPUT_TYPE)
-                          ? FlexCompilerProjectConfiguration.getInstance(module.getProject()).SWF_DEBUG_ENABLED
-                          : FlexCompilerProjectConfiguration.getInstance(module.getProject()).SWC_DEBUG_ENABLED;*/
-
-    configTextBuilder.append("\n  <compiler>");
-    addTag(configTextBuilder, "debug", String.valueOf(debug), "\n    ");
-
-    final List<String> locales = new LinkedList<String>();
-
-    if (!customConfigFileUsed && config.USE_LOCALE_SETTINGS) {
-      for (final String locale : config.LOCALE.split(",")) {
-        locales.add(locale.trim());
-      }
-
-      // in generated config file we put only locales set in respective field of Advanced tab and do not parse Additional compiler options here
-      addLocales(configTextBuilder, locales);
-    }
-
-    // when adding source paths we respect locales set both in UI and in Additional compiler options
-    locales.addAll(FlexUtils.getOptionValues(config.ADDITIONAL_COMPILER_OPTIONS, "locale", "compiler.locale"));
-    addSourcePath(module, configTextBuilder, locales, config.getType() == FlexBuildConfiguration.Type.FlexUnit);
-
-    handleModuleDependencies(module, configTextBuilder, config.getType() == FlexBuildConfiguration.Type.FlexUnit, cssFilePath != null);
-
-    if (!customConfigFileUsed) {
-      handleNamespacesAndManifestFiles(configTextBuilder, config.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST);
-      handleConditionalCompilationDefinitions(configTextBuilder, config.CONDITIONAL_COMPILATION_DEFINITION_LIST);
-    }
-
-    if (!customConfigFileUsed && !StringUtil.isEmpty(config.PATH_TO_SERVICES_CONFIG_XML)) {
-      addTag(configTextBuilder, "services", config.PATH_TO_SERVICES_CONFIG_XML, "\n    ");
-      addTag(configTextBuilder, "context-root", config.CONTEXT_ROOT, "\n    ");
-    }
-
-    configTextBuilder.append("\n  </compiler>");
-
-    if (!customConfigFileUsed && !config.STATIC_LINK_RUNTIME_SHARED_LIBRARIES) {
-      addTag(configTextBuilder, "static-link-runtime-shared-libraries", "false");
-    }
-
-    if (FlexBuildConfiguration.APPLICATION.equals(config.OUTPUT_TYPE)) {
-      configTextBuilder.append("\n  <file-specs>");
-      final String fileSpec = cssFilePath == null ? getPathToMainClassFile(config) : cssFilePath;
-      addTag(configTextBuilder, "path-element", fileSpec, "\n    ");
-      configTextBuilder.append("\n  </file-specs>");
-    } else {
-      if (!customConfigFileUsed) {
-        handleIncludeNamespaces(configTextBuilder, config.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST);
-      }
-
-      final ModuleFileIndex moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex();
-      final CompilerConfiguration compilerConfig = CompilerConfiguration.getInstance(module.getProject());
-      final List<String> classesToInclude = new ArrayList<String>();
-      final List<Pair<String, String>> filesToInclude = new ArrayList<Pair<String, String>>();  // <name/> and <path/> for config file
-      final boolean includeFilesInSwc =
-        !customConfigFileUsed && FlexBuildConfiguration.LIBRARY.equals(config.OUTPUT_TYPE) && config.INCLUDE_RESOURCE_FILES_IN_SWC;
-      final boolean isTest = config.getType() == FlexBuildConfiguration.Type.FlexUnit;
-
-      ContentIterator ci = new ContentIterator() {
-        public boolean processFile(final VirtualFile fileOrDir) {
-          if (includeInCompilation(module.getProject(), fileOrDir)) {
-            if (!isTest && projectFileIndex.isInTestSourceContent(fileOrDir)) {
-              return true;
-            }
-
-            final VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(fileOrDir);
-            if (rootForFile != null) {
-              final String packageText = VfsUtilCore.getRelativePath(fileOrDir.getParent(), rootForFile, '.');
-              assert packageText != null;
-              final String qName = (packageText.length() > 0 ? packageText + "." : "") + fileOrDir.getNameWithoutExtension();
-
-              if (CompilerConfigGenerator.isSourceFileWithPublicDeclaration(module, fileOrDir, qName)) {
-                classesToInclude.add(qName);
-              }
-            }
-          } else if (includeFilesInSwc && isResourceFile(fileOrDir, compilerConfig)) {
-            final VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(fileOrDir);
-            if (rootForFile != null) {
-              final String packageText = VfsUtilCore.getRelativePath(fileOrDir.getParent(), rootForFile, '/');
-              final String pathInSwc = (packageText.length() > 0 ? packageText + "/" : "") + fileOrDir.getName();
-              filesToInclude.add(new Pair<String, String>(pathInSwc, fileOrDir.getPath()));
-            }
-          }
-          return true;
-        }
-      };
-
-      moduleFileIndex.iterateContent(ci);
-
-      configTextBuilder.append("\n  <include-classes>");
-      for (final String className : classesToInclude) {
-        addTag(configTextBuilder, "class", className, "\n    ");
-      }
-      configTextBuilder.append("\n  </include-classes>");
-
-      for (final Pair<String, String> fileInfo : filesToInclude) {
-        configTextBuilder.append("\n  <include-file>");
-        addTag(configTextBuilder, "name", fileInfo.first, "\n    ");
-        addTag(configTextBuilder, "path", fileInfo.second, "\n    ");
-        configTextBuilder.append("\n  </include-file>");
-      }
-    }
-
-    final String outputFilePath = cssFilePath != null ? "config.getOutputFileFullPath()"
-                                                      : config.getType() == FlexBuildConfiguration.Type.FlexUnit
-                                                        ? "config.getCompileOutputPathForTests()" + "/" + config.OUTPUT_FILE_NAME
-                                                        : "config.getOutputFileFullPath()";
-    addTag(configTextBuilder, "output", outputFilePath);
-
-    configTextBuilder.append("\n</flex-config>");
-
-    final String configText = configTextBuilder.toString();
-    return needToMergeAutogeneratedAndCustomConfigFile(config, cssFilePath != null)
-           ? FlexCompilerConfigFileUtil.mergeWithCustomConfigFile(configText, config.CUSTOM_CONFIG_FILE, cssFilePath == null, cssFilePath != null)
-           : configText;
-  }
-
-  public static boolean needToMergeAutogeneratedAndCustomConfigFile(final FlexBuildConfiguration config, final boolean isCssCompilation) {
-    return config.USE_CUSTOM_CONFIG_FILE
-           && (isCssCompilation
-               || (config.getType() == FlexBuildConfiguration.Type.FlexUnit && !config.USE_CUSTOM_CONFIG_FILE_FOR_TESTS)
-               || (config.getType() == FlexBuildConfiguration.Type.OverriddenMainClass));
-  }
-
-  static boolean includeInCompilation(final Project project, final VirtualFile file) {
-    if (CompilerManager.getInstance(project).isExcludedFromCompilation(file)){
-      return false;
-    }
-
-    return file.getFileType() == ActionScriptFileType.INSTANCE ||
-           JavaScriptSupportLoader.isMxmlOrFxgFile(file);
-  }
-
-  private static boolean isResourceFile(final VirtualFile file, final CompilerConfiguration compilerConfig) {
-    return file != null &&
-           !file.isDirectory() &&
-           !StdFileTypes.JAVA.equals(file.getFileType()) &&
-           compilerConfig.isResourceFile(file) &&
-           !compilerConfig.isExcludedFromCompilation(file);
-  }
-
-  private static void handleModuleDependencies(final Module module,
-                                               final StringBuilder configTextBuilder,
-                                               final boolean isTest,
-                                               final boolean neverIncludeLibs) {
-    final List<String> libraryPaths = new ArrayList<String>();
-    final List<String> externalLibraryPaths = new ArrayList<String>();
-    final List<String> includedLibraryPaths = new ArrayList<String>();
-    final List<String> rawLibSourcePaths = new ArrayList<String>();
-
-    for (final OrderEntry o : ModuleRootManager.getInstance(module).getOrderEntries()) {
-
-      final DependencyScope scope = o instanceof ExportableOrderEntry ? ((ExportableOrderEntry)o).getScope() : DependencyScope.COMPILE;
-      final boolean export = neverIncludeLibs ? false
-                                              : (o instanceof ExportableOrderEntry ? ((ExportableOrderEntry)o).isExported() : false);
-
-      if (scope == DependencyScope.RUNTIME || (scope == DependencyScope.TEST && !isTest)) {
-        continue;
-      }
-
-      if (o instanceof LibraryOrderEntry) {
-        final LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry)o;
-        //if (AutogeneratedLibraryUtils.isAutogeneratedLibrary(libraryOrderEntry)) {
-        //  continue;
-        //}
-
-        for (VirtualFile libFile : libraryOrderEntry.getRootFiles(OrderRootType.CLASSES)) {
-          libFile = getRealFile(libFile);
-
-          if (libFile != null && libFile.isDirectory()) {
-            rawLibSourcePaths.add(libFile.getPath());
-          }
-          else if (libFile != null && !libFile.isDirectory() && "swc".equalsIgnoreCase(libFile.getExtension())) {
-            // "airglobal.swc" and "playerglobal.swc" file names are hardcoded in Flex compiler
-            // including libraries like "playerglobal-3.5.0.12683-9.swc" may lead to error at runtime like "VerifyError Error #1079: Native methods are not allowed in loaded code."
-            // so here we just skip including such libraries in config file.
-            // Compilation should be ok because base flexmojos config file contains correct reference to its copy in target/classes/libraries/playerglobal.swc
-            final String libFileName = libFile.getName();
-            if (libFileName.startsWith("airglobal")) {
-              if (libFileName.equals("airglobal.swc")) {
-                externalLibraryPaths.add(libFile.getPath());
-              }
-            }
-            else if (libFileName.startsWith("playerglobal")) {
-              if (libFileName.equals("playerglobal.swc")) {
-                externalLibraryPaths.add(libFile.getPath());
-              }
-            }
-            else {
-              if (scope == DependencyScope.PROVIDED) {
-                externalLibraryPaths.add(libFile.getPath());
-              }
-              else if (export) {
-                includedLibraryPaths.add(libFile.getPath());
-              }
-              else {
-                libraryPaths.add(libFile.getPath());
-              }
-            }
-          }
-        }
-      }
-      else if (o instanceof ModuleOrderEntry) {
-        final Module moduleDependency = ((ModuleOrderEntry)o).getModule();
-
-        if (moduleDependency != null) {
-          final Collection<FlexBuildConfiguration> configs = Collections.emptyList(); //FlexBuildConfiguration.getConfigForFlexModuleOrItsFlexFacets(moduleDependency);
-          for (final FlexBuildConfiguration configOfDependency : configs) {
-            // TODO: module dependency logic should also somehow depend on DO_BUILD, USE_CUSTOM_CONFIG_FILE
-            if (FlexBuildConfiguration.LIBRARY.equals(configOfDependency.OUTPUT_TYPE)) {
-              if (scope == DependencyScope.PROVIDED) {
-                externalLibraryPaths.add("configOfDependency.getOutputFileFullPath()");
-              }
-              else if (export) {
-                includedLibraryPaths.add("configOfDependency.getOutputFileFullPath()");
-              }
-              else {
-                libraryPaths.add("configOfDependency.getOutputFileFullPath()");
-              }
-            }
-            else {
-              // TODO is it a good (historical) solution to add source folders of other module to compilation?
-              addSourcePath(moduleDependency, configTextBuilder, isTest);
-            }
-          }
-        }
-      }
-    }
-
-    addPathElements(configTextBuilder, "source-path", "path-element", rawLibSourcePaths);
-    addPathElements(configTextBuilder, "external-library-path", "path-element", externalLibraryPaths);
-    addPathElements(configTextBuilder, "library-path", "path-element", libraryPaths);
-    addPathElements(configTextBuilder, "include-libraries", "library", includedLibraryPaths);
-  }
-
-  private static void addPathElements(final StringBuilder configTextBuilder, final String enclosingElementName, final String pathElementName, final List<String> paths) {
-    if (!paths.isEmpty()) {
-      configTextBuilder.append("\n    <").append(enclosingElementName).append(" append=\"true\">");
-      for (final String path : paths) {
-        addTag(configTextBuilder, pathElementName, path, "\n      ");
-      }
-      configTextBuilder.append("\n    </").append(enclosingElementName).append(">");
-    }
-  }
-
-  private static void handleNamespacesAndManifestFiles(final StringBuilder configTextBuilder,
-                                final List<FlexBuildConfiguration.NamespaceAndManifestFileInfo> namespaceAndManifestFileInfoList) {
-    if (!namespaceAndManifestFileInfoList.isEmpty()) {
-      configTextBuilder.append("\n    <namespaces>");
-      for (final FlexBuildConfiguration.NamespaceAndManifestFileInfo info : namespaceAndManifestFileInfoList) {
-        configTextBuilder.append("\n      <namespace append=\"true\">");
-        addTag(configTextBuilder, "uri", info.NAMESPACE, "\n        ");
-        addTag(configTextBuilder, "manifest", info.MANIFEST_FILE_PATH, "\n        ");
-        configTextBuilder.append("\n      </namespace>");
-      }
-      configTextBuilder.append("\n    </namespaces>");
-    }
-  }
-
-  private static void handleConditionalCompilationDefinitions(final StringBuilder configTextBuilder,
-                                final List<FlexBuildConfiguration.ConditionalCompilationDefinition> conditionalCompilationDefinitionList) {
-      for (final FlexBuildConfiguration.ConditionalCompilationDefinition definition : conditionalCompilationDefinitionList) {
-        configTextBuilder.append("\n    <define append=\"true\">");
-        addTag(configTextBuilder, "name", definition.NAME, "\n      ");
-        addTag(configTextBuilder, "value", definition.VALUE, "\n      ");
-        configTextBuilder.append("\n    </define>");
-    }
-  }
-
-  private static void handleIncludeNamespaces(final StringBuilder configTextBuilder,
-                                       final List<FlexBuildConfiguration.NamespaceAndManifestFileInfo> namespaceAndManifestFileInfoList) {
-    if (!namespaceAndManifestFileInfoList.isEmpty()) {
-      configTextBuilder.append("\n  <include-namespaces>");
-      for (final FlexBuildConfiguration.NamespaceAndManifestFileInfo info : namespaceAndManifestFileInfoList) {
-        if (info.INCLUDE_IN_SWC) {
-          addTag(configTextBuilder, "uri", info.NAMESPACE, "\n    ");
-        }
-      }
-      configTextBuilder.append("\n  </include-namespaces>");
-    }
-  }
-
-  private static void addTag(final StringBuilder configTextBuilder, @NonNls final String tagName, @NonNls final String tagValue) {
-    addTag(configTextBuilder, tagName, tagValue, "\n  ");
-  }
-
-  private static void addTag(final StringBuilder configTextBuilder, @NonNls final String tagName, @NonNls final String tagValue, @NonNls String delimiter) {
-    configTextBuilder.append(delimiter)
-      .append("<").append(tagName).append(">")
-      .append(StringUtil.escapeXml(tagValue))
-      .append("</").append(tagName).append(">");
   }
 
   @Nullable

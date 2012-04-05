@@ -11,7 +11,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.project.Project;
@@ -42,6 +41,7 @@ public class FlashBuilderModuleImporter {
   private static final String CORE_RESOURCES_PREFS_REL_PATH =
     "/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.core.resources.prefs";
   private static final String PATHVARIABLE_DOT = "pathvariable.";
+  private static final String LOCALE_TOKEN = "{locale}";
 
   private final Project myIdeaProject;
   private FlexProjectConfigurationEditor myFlexConfigEditor;
@@ -335,10 +335,10 @@ public class FlashBuilderModuleImporter {
       final List<String> locales = FlexUtils.getOptionValues(fbProject.getAdditionalCompilerOptions(), "locale", "compiler.locale");
 
       for (final String rawSourcePath : sourcePaths) {
-        if (rawSourcePath.contains(FlexSdkUtils.LOCALE_TOKEN)) {
+        if (rawSourcePath.contains(LOCALE_TOKEN)) {
           for (String locale : locales) {
             handleRawSourcePath(rootModel, fbProject, mainContentEntryUrl, mainContentEntry, otherContentEntries,
-                                rawSourcePath.replace(FlexSdkUtils.LOCALE_TOKEN, locale));
+                                rawSourcePath.replace(LOCALE_TOKEN, locale));
           }
         }
         else {

@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.CompilerSettingsFactory;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexFacetType;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -87,7 +87,7 @@ public class FlexCompilerProjectSettingsFactory implements CompilerSettingsFacto
     }
 
     public Icon getIcon() {
-      return FlexFacetType.ourFlexIcon;
+      return FlexSdkType2.ICON;
     }
 
     public String getHelpTopic() {

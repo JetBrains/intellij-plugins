@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.library;
 
-import com.intellij.lang.javascript.flex.FlexFacet;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -51,7 +50,7 @@ public class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
 
   @Override
   public boolean isSuitableModule(@NotNull Module module, @NotNull FacetsProvider facetsProvider) {
-    return ModuleType.get(module).equals(FlexModuleType.getInstance()) || !facetsProvider.getFacetsByType(module, FlexFacet.ID).isEmpty();
+    return ModuleType.get(module).equals(FlexModuleType.getInstance());
   }
 
   public LibraryPropertiesEditor createPropertiesEditor(@NotNull final LibraryEditorComponent<FlexLibraryProperties> properties) {

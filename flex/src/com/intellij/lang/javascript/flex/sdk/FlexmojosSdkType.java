@@ -2,7 +2,6 @@ package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.IFlexSdkType;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.OrderRootType;
@@ -14,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.io.IOException;
 
-public class FlexmojosSdkType extends SdkType implements IFlexSdkType {
+public class FlexmojosSdkType extends SdkType {
 
   public static final Icon mavenFlexIcon = IconLoader.getIcon("mavenFlex.png", FlexmojosSdkType.class);
 
@@ -26,10 +25,6 @@ public class FlexmojosSdkType extends SdkType implements IFlexSdkType {
 
   public static FlexmojosSdkType getInstance() {
     return SdkType.findInstance(FlexmojosSdkType.class);
-  }
-
-  public Subtype getSubtype() {
-    return Subtype.Flexmojos;
   }
 
   public String suggestHomePath() {

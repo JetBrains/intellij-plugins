@@ -5,7 +5,9 @@ import com.intellij.conversion.ConversionProcessor;
 import com.intellij.conversion.ModuleSettings;
 import com.intellij.facet.FacetManagerImpl;
 import com.intellij.ide.impl.convert.JDomConvertingUtil;
-import com.intellij.lang.javascript.flex.*;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
@@ -27,6 +29,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.*;
 import com.intellij.openapi.roots.impl.libraries.JarDirectories;
 import com.intellij.openapi.roots.impl.libraries.LibraryImpl;
+import com.intellij.openapi.util.DefaultJDOMExternalizer;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
@@ -41,6 +44,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import gnu.trove.THashMap;
 import org.jdom.Attribute;
 import org.jdom.Element;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -53,6 +57,14 @@ import java.util.*;
 class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
 
   private static final Logger LOG = Logger.getInstance(FlexModuleConverter.class.getName());
+
+  private static final String FLEX_FACET_TYPE_ID = "flex";
+  private static final @NonNls String FLEX_SDK_ATTR_NAME = "flex_sdk";
+
+  private static final String NAMESPACE_AND_MANIFEST_FILE_INFO_LIST_ELEMENT_NAME = "NAMESPACE_AND_MANIFEST_FILE_INFO_LIST";
+  private static final String CONDITIONAL_COMPILER_DEFINITION_LIST_ELEMENT_NAME = "CONDITIONAL_COMPILATION_DEFINITION_LIST";
+  private static final String CSS_FILES_LIST_ELEMENT_NAME = "CSS_FILES_LIST";
+  private static final String FILE_PATH_ELEMENT_NAME = "FILE_PATH";
 
   private final ConversionParams myParams;
 
@@ -85,7 +97,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
 
   public static List<Element> getFlexFacets(ModuleSettings module) {
     if (!isJavaModule(module)) return Collections.emptyList();
-    return new ArrayList<Element>(module.getFacetElements(FlexFacet.ID.toString()));
+    return new ArrayList<Element>(module.getFacetElements(FLEX_FACET_TYPE_ID));
   }
 
   @Override
@@ -126,13 +138,13 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
           FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
 
           try {
-            FlexFacetConfigurationImpl.readNamespaceAndManifestInfoList(oldConfigurationElement, oldConfiguration);
-            FlexFacetConfigurationImpl.readConditionalCompilerDefinitionList(oldConfigurationElement, oldConfiguration);
-            FlexFacetConfigurationImpl.readCssFilesList(oldConfigurationElement, oldConfiguration);
+            readNamespaceAndManifestInfoList(oldConfigurationElement, oldConfiguration);
+            readConditionalCompilerDefinitionList(oldConfigurationElement, oldConfiguration);
+            readCssFilesList(oldConfigurationElement, oldConfiguration);
           }
           catch (InvalidDataException ignore) {/* unlucky */}
 
-          final String facetSdkName = oldConfigurationElement.getAttributeValue(FlexFacetConfigurationImpl.FLEX_SDK_ATTR_NAME);
+          final String facetSdkName = oldConfigurationElement.getAttributeValue(FLEX_SDK_ATTR_NAME);
           processConfiguration(oldConfiguration, newConfiguration, moduleSettings, true, facetSdkName, usedSdksNames, orderEntriesToAdd,
                                usedModuleLibrariesEntries);
         }
@@ -178,7 +190,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
     final Element facetManager = module.getComponentElement(FacetManagerImpl.COMPONENT_NAME);
     for (Element facet : JDOMUtil.getChildren(facetManager, FacetManagerImpl.FACET_ELEMENT)) {
       String type = facet.getAttributeValue(FacetManagerImpl.TYPE_ATTRIBUTE);
-      if (allowFlexFacets && FlexFacet.ID.toString().equals(type)) {
+      if (allowFlexFacets && FLEX_FACET_TYPE_ID.equals(type)) {
         continue;
       }
       String name = facet.getAttributeValue(FacetManagerImpl.NAME_ATTRIBUTE);
@@ -580,5 +592,55 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
       }
     }));
     return names.get(facets.indexOf(facet));
+  }
+
+  private static void readNamespaceAndManifestInfoList(final Element element,
+                                                       final FlexBuildConfiguration oldConfig) throws InvalidDataException {
+    final List<FlexBuildConfiguration.NamespaceAndManifestFileInfo> namespaceAndManifestFileInfoList =
+      new ArrayList<FlexBuildConfiguration.NamespaceAndManifestFileInfo>();
+
+    final Element namespaceAndManifestFileInfoListElement = element.getChild(NAMESPACE_AND_MANIFEST_FILE_INFO_LIST_ELEMENT_NAME);
+    if (namespaceAndManifestFileInfoListElement != null) {
+      for (final Object namespaceAndManifestFileInfoElement : namespaceAndManifestFileInfoListElement
+        .getChildren(FlexBuildConfiguration.NamespaceAndManifestFileInfo.class.getSimpleName())) {
+        final FlexBuildConfiguration.NamespaceAndManifestFileInfo
+          namespaceAndManifestFileInfo = new FlexBuildConfiguration.NamespaceAndManifestFileInfo();
+        DefaultJDOMExternalizer.readExternal(namespaceAndManifestFileInfo, (Element)namespaceAndManifestFileInfoElement);
+        namespaceAndManifestFileInfoList.add(namespaceAndManifestFileInfo);
+      }
+    }
+    oldConfig.NAMESPACE_AND_MANIFEST_FILE_INFO_LIST = namespaceAndManifestFileInfoList;
+  }
+
+  private static void readConditionalCompilerDefinitionList(final Element element,
+                                                            final FlexBuildConfiguration oldConfig) throws InvalidDataException {
+    final List<FlexBuildConfiguration.ConditionalCompilationDefinition> conditionalCompilationDefinitionList =
+      new ArrayList<FlexBuildConfiguration.ConditionalCompilationDefinition>();
+
+    final Element conditionalCompilerDefinitionListElement = element.getChild(CONDITIONAL_COMPILER_DEFINITION_LIST_ELEMENT_NAME);
+    if (conditionalCompilerDefinitionListElement != null) {
+      for (final Object conditionalCompilerDefinitionElement : conditionalCompilerDefinitionListElement
+        .getChildren(FlexBuildConfiguration.ConditionalCompilationDefinition.class.getSimpleName())) {
+        final FlexBuildConfiguration.ConditionalCompilationDefinition
+          conditionalCompilationDefinition = new FlexBuildConfiguration.ConditionalCompilationDefinition();
+        DefaultJDOMExternalizer.readExternal(conditionalCompilationDefinition, (Element)conditionalCompilerDefinitionElement);
+        conditionalCompilationDefinitionList.add(conditionalCompilationDefinition);
+      }
+    }
+    oldConfig.CONDITIONAL_COMPILATION_DEFINITION_LIST = conditionalCompilationDefinitionList;
+  }
+
+  private static void readCssFilesList(final Element element,
+                                       final FlexBuildConfiguration oldConfig) throws InvalidDataException {
+    final List<String> cssFilesList = new ArrayList<String>();
+
+    final Element cssFilesListElement = element.getChild(CSS_FILES_LIST_ELEMENT_NAME);
+    if (cssFilesListElement != null) {
+      //noinspection unchecked
+      for (Element conditionalCompilerDefinitionElement : (Iterable<Element>)cssFilesListElement.getChildren(FILE_PATH_ELEMENT_NAME)) {
+        cssFilesList.add(conditionalCompilerDefinitionElement.getValue());
+      }
+    }
+    oldConfig.CSS_FILES_LIST = cssFilesList;
   }
 }

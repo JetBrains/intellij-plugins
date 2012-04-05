@@ -130,7 +130,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     final VirtualFile frameworksDir = sdkHome.findChild("frameworks");
     assert frameworksDir != null;
     sdkModificator.addRoot(DesignerTests.getFile("lib", "playerglobal"), OrderRootType.CLASSES);
-    FlexSdkUtils.addFlexSdkSwcRoots(sdkModificator, frameworksDir);
+    FlexSdkType2.addFlexSdkSwcRoots(sdkModificator, frameworksDir);
   }
 
   @SuppressWarnings("ConstantConditions")

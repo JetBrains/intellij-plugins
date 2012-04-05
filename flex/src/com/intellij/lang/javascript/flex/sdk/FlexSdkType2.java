@@ -2,22 +2,31 @@ package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexFacetType;
 import com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderSdkFinder;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.util.NullableComputable;
+import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
+import com.intellij.util.Processor;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class FlexSdkType2 extends SdkType {
 
+  public static final Icon ICON = IconLoader.getIcon("flex_sdk.png");
   public static final String NAME = "Flex SDK Type (new)";
   public static final String LAST_SELECTED_FLEX_SDK_HOME_KEY = "last.selected.flex.sdk.home";
 
@@ -74,12 +83,12 @@ public class FlexSdkType2 extends SdkType {
 
   public void setupSdkPaths(final Sdk sdk) {
     SdkModificator modificator = sdk.getSdkModificator();
-    FlexSdkUtils.setupSdkPaths(sdk.getHomeDirectory(), null, modificator);
+    setupSdkPaths(sdk.getHomeDirectory(), modificator);
     modificator.commitChanges();
   }
 
   public Icon getIcon() {
-    return FlexFacetType.ourFlexIcon;
+    return ICON;
   }
 
   @NotNull
@@ -94,5 +103,96 @@ public class FlexSdkType2 extends SdkType {
 
   public String getDefaultDocumentationUrl(final @NotNull Sdk sdk) {
     return "http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/";
+  }
+
+  private static void setupSdkPaths(final VirtualFile sdkRoot, final SdkModificator sdkModificator) {
+    if (sdkRoot == null || !sdkRoot.isValid()) {
+      return;
+    }
+    PropertiesComponent.getInstance().setValue(LAST_SELECTED_FLEX_SDK_HOME_KEY, sdkRoot.getPath());
+    sdkRoot.refresh(false, true);
+
+    sdkModificator.setVersionString(FlexSdkUtils.readFlexSdkVersion(sdkRoot));
+
+    final VirtualFile playerDir = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
+      public VirtualFile compute() {
+        final VirtualFile libsDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(sdkRoot.getPath() + "/frameworks/libs");
+        if (libsDir != null && libsDir.isDirectory()) {
+          libsDir.refresh(false, true);
+          return libsDir.findChild("player");
+        }
+        return null;
+      }
+    });
+
+    if (playerDir != null) {
+      FlexSdkUtils.processPlayerglobalSwcFiles(playerDir, new Processor<VirtualFile>() {
+        public boolean process(final VirtualFile playerglobalSwcFile) {
+          addSwcRoot(sdkModificator, playerglobalSwcFile);
+          return true;
+        }
+      });
+    }
+
+    final VirtualFile baseDir = sdkRoot.findChild("frameworks"); // I'm not sure if we need to refresh here
+    if (baseDir != null && baseDir.isDirectory()) {
+      // let global lib be in the beginning of the list
+      addSwcRoots(sdkModificator, baseDir, Collections.singletonList("libs/air/airglobal.swc"), false);
+      addFlexSdkSwcRoots(sdkModificator, baseDir);
+    }
+
+    final VirtualFile projectsDir = VfsUtil.findRelativeFile("frameworks/projects", sdkRoot);
+    if (projectsDir != null && projectsDir.isDirectory()) {
+      findSourceRoots(projectsDir, sdkModificator);
+    }
+  }
+
+  public static void addFlexSdkSwcRoots(SdkModificator sdkModificator, VirtualFile frameworksDir) {
+    addSwcRoots(sdkModificator, frameworksDir, Arrays.asList("libs", "libs/mx", "libs/air", "libs/mobile", "themes/Mobile"), true);
+  }
+
+  private static void findSourceRoots(final VirtualFile dir, final SdkModificator sdkModificator) {
+    for (final VirtualFile child : dir.getChildren()) {
+      if (child.isDirectory()) {
+        if (child.getName().equals("src")) {
+          sdkModificator.addRoot(child, OrderRootType.SOURCES);
+        }
+        else {
+          findSourceRoots(child, sdkModificator);
+        }
+      }
+    }
+  }
+
+  private static void addSwcRoots(final SdkModificator sdkModificator,
+                                  final VirtualFile baseDir,
+                                  final List<String> libRelativePaths,
+                                  final boolean skipAirglobalSwc) {
+    for (String libRelativePath : libRelativePaths) {
+      final VirtualFile libFileOrDir = baseDir.findFileByRelativePath(libRelativePath);
+      if (libFileOrDir != null) {
+        if (libFileOrDir.isDirectory()) {
+          for (final VirtualFile libCandidate : libFileOrDir.getChildren()) {
+            if (!libCandidate.isDirectory() && "swc".equalsIgnoreCase(libCandidate.getExtension())) {
+              if (!skipAirglobalSwc || !libCandidate.getPath().endsWith("frameworks/libs/air/airglobal.swc")) {
+                addSwcRoot(sdkModificator, libCandidate);
+              }
+            }
+          }
+        }
+        else if ("swc".equalsIgnoreCase(libFileOrDir.getExtension())) {
+          if (!skipAirglobalSwc || !libFileOrDir.getPath().endsWith("frameworks/libs/air/airglobal.swc")) {
+            addSwcRoot(sdkModificator, libFileOrDir);
+          }
+        }
+      }
+    }
+  }
+
+  private static void addSwcRoot(final @NotNull SdkModificator sdkModificator, final @NotNull VirtualFile swcFile) {
+    final VirtualFile jarRoot = JarFileSystem.getInstance().getJarRootForLocalFile(swcFile);
+    if (jarRoot != null) {
+      sdkModificator.addRoot(jarRoot, OrderRootType.CLASSES);
+    }
   }
 }

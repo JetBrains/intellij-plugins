@@ -6,8 +6,8 @@ import com.intellij.execution.configurations.JavaCommandLineStateUtil;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
-import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.lang.javascript.flex.*;
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
@@ -19,20 +19,17 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.*;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkAdditionalData;
+import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
-import com.intellij.openapi.roots.LibraryOrderEntry;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ui.configuration.ClasspathEditor;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.peer.PeerFactory;
 import com.intellij.util.ArrayUtil;
@@ -53,18 +50,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FlexSdkUtils {
-
-  static final String EXTERNAL_LIBRARY_PATH_ELEMENT = "<flex-config><compiler><external-library-path><path-element>";
-  static final String LIBRARY_PATH_ELEMENT = "<flex-config><compiler><library-path><path-element>";
-  static final String THEME_FILE_NAME = "<flex-config><compiler><theme><filename>";
-  static final String LOCALE_ELEMENT = "<flex-config><compiler><locale><locale-element>";
-  public static final String TARGET_PLAYER_ELEMENT = "<flex-config><target-player>";
-  public static final String FILE_SPEC_ELEMENT = "<flex-config><file-specs><path-element>";
-  public static final String OUTPUT_ELEMENT = "<flex-config><output>";
-
-  static final String TARGET_PLAYER_MAJOR_VERSION_TOKEN = "{targetPlayerMajorVersion}";
-  static final String TARGET_PLAYER_MINOR_VERSION_TOKEN = "{targetPlayerMinorVersion}";
-  public static final String LOCALE_TOKEN = "{locale}";
   public static final String ADL_RELATIVE_PATH =
     File.separatorChar + "bin" + File.separatorChar + "adl" + (SystemInfo.isWindows ? ".exe" : "");
   static final String AIR_RUNTIME_RELATIVE_PATH =
@@ -75,79 +60,6 @@ public class FlexSdkUtils {
   private static final Pattern PLAYER_FOLDER_PATTERN = Pattern.compile("\\d{1,2}(\\.\\d{1,2})?");
 
   private FlexSdkUtils() {
-  }
-
-  static void setupSdkPaths(final Sdk sdk) {
-    SdkModificator modificator = sdk.getSdkModificator();
-    setupSdkPaths(sdk.getHomeDirectory(), sdk.getSdkType(), modificator);
-    modificator.commitChanges();
-  }
-
-  /**
-   * @param sdkType if <code>null</code> then all SWCs from folders 'libs', 'libs/air', 'libs/mx' and 'libs/mobile' are added
-   *                and also all available versions of playerglobal.swc files
-   */
-  public static void setupSdkPaths(final VirtualFile sdkRoot, @Nullable final SdkType sdkType, final SdkModificator sdkModificator) {
-    if (sdkRoot == null || !sdkRoot.isValid()) {
-      return;
-    }
-    PropertiesComponent.getInstance().setValue(FlexSdkType2.LAST_SELECTED_FLEX_SDK_HOME_KEY, sdkRoot.getPath());
-    sdkRoot.refresh(false, true);
-
-
-    sdkModificator.setVersionString(readFlexSdkVersion(sdkRoot));
-
-    if (sdkType == null) {
-      final VirtualFile playerDir = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
-        public VirtualFile compute() {
-          final VirtualFile libsDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(sdkRoot.getPath() + "/frameworks/libs");
-          if (libsDir != null && libsDir.isDirectory()) {
-            libsDir.refresh(false, true);
-            return libsDir.findChild("player");
-          }
-          return null;
-        }
-      });
-
-      if (playerDir != null) {
-        processPlayerglobalSwcFiles(playerDir, new Processor<VirtualFile>() {
-          public boolean process(final VirtualFile playerglobalSwcFile) {
-            addSwcRoot(sdkModificator, playerglobalSwcFile);
-            return true;
-          }
-        });
-      }
-
-      final VirtualFile baseDir = sdkRoot.findChild("frameworks"); // I'm not sure if we need to refresh here
-      if (baseDir != null && baseDir.isDirectory()) {
-        // let global lib be in the beginning of the list
-        addSwcRoots(sdkModificator, baseDir, Collections.singletonList("libs/air/airglobal.swc"), false);
-        addFlexSdkSwcRoots(sdkModificator, baseDir);
-      }
-    }
-    else {
-      final String configFileRelativePath = getBaseConfigFileRelPath((IFlexSdkType)sdkType);
-
-      final VirtualFile configFile = sdkRoot.findFileByRelativePath(configFileRelativePath);
-      if (configFile == null) {
-        return;
-      }
-      try {
-        setupSdkLibraries(sdkModificator, configFile);
-      }
-      catch (IOException e) {
-        // ignore
-      }
-    }
-
-    final VirtualFile projectsDir = VfsUtil.findRelativeFile("frameworks/projects", sdkRoot);
-    if (projectsDir != null && projectsDir.isDirectory()) {
-      findSourceRoots(projectsDir, sdkModificator);
-    }
-  }
-
-  public static void addFlexSdkSwcRoots(SdkModificator sdkModificator, VirtualFile frameworksDir) {
-    addSwcRoots(sdkModificator, frameworksDir, Arrays.asList("libs", "libs/mx", "libs/air", "libs/mobile", "themes/Mobile"), true);
   }
 
   public static void processPlayerglobalSwcFiles(final VirtualFile playerDir, final Processor<VirtualFile> processor) {
@@ -171,117 +83,11 @@ public class FlexSdkUtils {
     }
   }
 
-  private static void findSourceRoots(final VirtualFile dir, final SdkModificator sdkModificator) {
-    for (final VirtualFile child : dir.getChildren()) {
-      if (child.isDirectory()) {
-        if (child.getName().equals("src")) {
-          sdkModificator.addRoot(child, OrderRootType.SOURCES);
-        }
-        else {
-          findSourceRoots(child, sdkModificator);
-        }
-      }
-    }
-  }
-
-  /**
-   * @param configXmlFile <code>&lt;Flex SDK root&gt;/frameworks/flex-config.xml</code> or <code>&lt;Flex SDK root&gt;/frameworks/air-config.xml</code>
-   */
-  private static void setupSdkLibraries(final @NotNull SdkModificator sdkModificator, final @NotNull VirtualFile configXmlFile)
-    throws IOException {
-    final VirtualFile baseDir = configXmlFile.getParent();
-    assert baseDir != null;
-    final List<String> xmlElements =
-      Arrays.asList(EXTERNAL_LIBRARY_PATH_ELEMENT, LIBRARY_PATH_ELEMENT, THEME_FILE_NAME, LOCALE_ELEMENT, TARGET_PLAYER_ELEMENT);
-    final Map<String, List<String>> infoFromConfigXml = FlexUtils.findXMLElements(configXmlFile.getInputStream(), xmlElements);
-
-    final List<String> libRelativePaths = getLibsRelativePaths(infoFromConfigXml);
-
-    addSwcRoots(sdkModificator, baseDir, libRelativePaths, false);
-  }
-
-  private static void addSwcRoots(final SdkModificator sdkModificator,
-                                  final VirtualFile baseDir,
-                                  final List<String> libRelativePaths,
-                                  final boolean skipAirglobalSwc) {
-    for (String libRelativePath : libRelativePaths) {
-      final VirtualFile libFileOrDir = baseDir.findFileByRelativePath(libRelativePath);
-      if (libFileOrDir != null) {
-        if (libFileOrDir.isDirectory()) {
-          for (final VirtualFile libCandidate : libFileOrDir.getChildren()) {
-            if (!libCandidate.isDirectory() && "swc".equalsIgnoreCase(libCandidate.getExtension())) {
-              if (!skipAirglobalSwc || !libCandidate.getPath().endsWith("frameworks/libs/air/airglobal.swc")) {
-                addSwcRoot(sdkModificator, libCandidate);
-              }
-            }
-          }
-        }
-        else if ("swc".equalsIgnoreCase(libFileOrDir.getExtension())) {
-          if (!skipAirglobalSwc || !libFileOrDir.getPath().endsWith("frameworks/libs/air/airglobal.swc")) {
-            addSwcRoot(sdkModificator, libFileOrDir);
-          }
-        }
-      }
-    }
-  }
-
-  /**
-   * Looks for {locale}, {targetPlayerMajorVersion} and {targetPlayerMinorVersion} information in <code>infoFromConfigXml</code>,
-   * substitutes these tokens in &lt;external-library-path&gt; and &lt;library-path&gt; entries
-   *
-   * @return list of relative paths to Flex SDK libraries (may contain directories and particular swc files)
-   */
-  private static List<String> getLibsRelativePaths(final Map<String, List<String>> infoFromConfigXml) {
-    final List<String> result = new ArrayList<String>();
-    final List<String> locales = infoFromConfigXml.get(LOCALE_ELEMENT);
-    final List<String> targetPlayers = infoFromConfigXml.get(TARGET_PLAYER_ELEMENT); // contains one element
-
-    String targetPlayerMajorVersion = TARGET_PLAYER_MAJOR_VERSION_TOKEN;
-    String targetPlayerMinorVersion = TARGET_PLAYER_MINOR_VERSION_TOKEN;
-    if (!targetPlayers.isEmpty()) {
-      final String targetPlayer = targetPlayers.iterator().next();
-      final Pair<String, String> majorMinor = TargetPlayerUtils.getPlayerMajorMinorVersion(targetPlayer);
-      targetPlayerMajorVersion = majorMinor.first;
-      targetPlayerMinorVersion = majorMinor.second;
-    }
-
-    for (final Map.Entry<String, List<String>> entry : infoFromConfigXml.entrySet()) {
-      final String key = entry.getKey();
-      if (key.equals(EXTERNAL_LIBRARY_PATH_ELEMENT) || key.equals(LIBRARY_PATH_ELEMENT) || key.equals(THEME_FILE_NAME)) {
-        for (String libPath : entry.getValue()) {
-          libPath = libPath.replace(TARGET_PLAYER_MAJOR_VERSION_TOKEN, targetPlayerMajorVersion);
-          libPath = libPath.replace(TARGET_PLAYER_MINOR_VERSION_TOKEN, targetPlayerMinorVersion);
-          if (libPath.contains(LOCALE_TOKEN)) {
-            for (final String locale : locales) {
-              result.add(libPath.replace(LOCALE_TOKEN, locale));
-            }
-          }
-          else {
-            result.add(libPath);
-          }
-        }
-      }
-    }
-
-    return result;
-  }
-
-  private static void addSwcRoot(final @NotNull SdkModificator sdkModificator, final @NotNull VirtualFile swcFile) {
-    final VirtualFile jarRoot = JarFileSystem.getInstance().getJarRootForLocalFile(swcFile);
-    if (jarRoot != null) {
-      sdkModificator.addRoot(jarRoot, OrderRootType.CLASSES);
-    }
-  }
-
-  public static boolean isValidSdkRoot(final IFlexSdkType sdkType, final VirtualFile sdkRoot) {
-    return sdkRoot != null && VfsUtil.findRelativeFile(getBaseConfigFileRelPath(sdkType), sdkRoot) != null;
-  }
-
   @NotNull
   public static String readFlexSdkVersion(final VirtualFile flexSdkRoot) {
     return StringUtil.notNullize(doReadFlexSdkVersion(flexSdkRoot), FlexBundle.message("flex.sdk.version.unknown"));
   }
-  
+
   @Nullable
   public static String doReadFlexSdkVersion(final VirtualFile flexSdkRoot) {
     if (flexSdkRoot == null) {
@@ -353,46 +159,6 @@ public class FlexSdkUtils {
         return sdk;
       }
     });
-  }
-
-  public static boolean hasDependencyOnAir(final @NotNull Module module) {
-    return hasDependencyOn(module, AirSdkType.getInstance(), "Maven: com.adobe.flex.framework:airframework:swc:");
-  }
-
-  public static boolean hasDependencyOnAirMobile(final @NotNull Module module) {
-    return hasDependencyOn(module, AirMobileSdkType.getInstance(), "Maven: com.adobe.flex.framework:mobilecomponents:swc:");
-  }
-
-  private static boolean hasDependencyOn(final @NotNull Module module,
-                                         final @NotNull SdkType sdkType,
-                                         final @NotNull String mavenLibraryNameStart) {
-    final Sdk sdk = FlexUtils.getSdkForActiveBC(module);
-    if (sdk != null) {
-      if (sdk.getSdkType() instanceof FlexmojosSdkType) {
-        final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
-        for (OrderEntry orderEntry : rootManager.getOrderEntries()) {
-          if (orderEntry instanceof LibraryOrderEntry) {
-            final String libName = ((LibraryOrderEntry)orderEntry).getLibraryName();
-            if (libName != null && (libName.startsWith(mavenLibraryNameStart))) {
-              return true;
-            }
-          }
-        }
-      }
-      else {
-        return sdk.getSdkType() == sdkType;
-      }
-    }
-    return false;
-  }
-
-  public static String getAirVersion(final Sdk sdk) {
-    final String version = sdk == null ? null : sdk.getVersionString();
-    if (version != null) {
-      return getAirVersion(version);
-    }
-
-    return "1.5";
   }
 
   public static String getAirVersion(final String flexVersion) {
@@ -593,8 +359,8 @@ public class FlexSdkUtils {
     int heapSizeMbFromJvmConfig = 0;
     String classpath = additionalClasspath;
 
-    final boolean isFlexmojos =  sdk.getSdkType() == FlexmojosSdkType.getInstance();
-    final FlexmojosSdkAdditionalData flexmojosSdkData = isFlexmojos? (FlexmojosSdkAdditionalData)sdk.getSdkAdditionalData() : null;
+    final boolean isFlexmojos = sdk.getSdkType() == FlexmojosSdkType.getInstance();
+    final FlexmojosSdkAdditionalData flexmojosSdkData = isFlexmojos ? (FlexmojosSdkAdditionalData)sdk.getSdkAdditionalData() : null;
 
     if (isFlexmojos) {
       classpath =
@@ -714,25 +480,6 @@ public class FlexSdkUtils {
     return false;
   }
 
-  public static String getBaseConfigFileRelPath(final IFlexSdkType sdkType) {
-    return "frameworks/" + getBaseConfigFileName(sdkType);
-  }
-
-  public static String getBaseConfigFileName(final IFlexSdkType sdkType) {
-    switch (sdkType.getSubtype()) {
-      case Flex:
-        return "flex-config.xml";
-      case AIR:
-        return "air-config.xml";
-      case AIRMobile:
-        return "airmobile-config.xml";
-      case Flexmojos:
-      default:
-        assert false : sdkType.getSubtype();
-        return null;
-    }
-  }
-
   public static void openModuleConfigurable(final Module module) {
     final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
     ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
@@ -743,7 +490,7 @@ public class FlexSdkUtils {
   }
 
   /**
-   * @param processor  (namespace, relative path with no leading slash)
+   * @param processor (namespace, relative path with no leading slash)
    */
   public static void processStandardNamespaces(FlexIdeBuildConfiguration bc, PairConsumer<String, String> processor) {
     final Sdk sdk = bc.getSdk();

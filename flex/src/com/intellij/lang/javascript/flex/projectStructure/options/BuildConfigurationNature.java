@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexFacetType;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.openapi.util.IconLoader;
@@ -88,7 +87,7 @@ public class BuildConfigurationNature {
         return pureAS ? ICON_MOBILE_AS : ICON_MOBILE_FLEX;
       default:
         assert false : targetPlatform;
-        return FlexFacetType.ourFlexIcon;
+        return ICON_WEB_FLEX;
     }
   }
 
