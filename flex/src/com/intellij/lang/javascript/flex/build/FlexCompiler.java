@@ -27,6 +27,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.Messages;
@@ -34,6 +35,7 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
@@ -505,13 +507,14 @@ public class FlexCompiler implements SourceProcessingCompiler {
         final VirtualFile templateDir = LocalFileSystem.getInstance().findFileByPath(bc.getWrapperTemplatePath());
         if (templateDir == null || !templateDir.isDirectory()) {
           errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
-            .message("html.template.folder.not.found", bc.getWrapperTemplatePath()), FlexIdeBCConfigurable.Location.HtmlTemplatePath));
+            .message("html.template.folder.not.found", FileUtil.toSystemDependentName(bc.getWrapperTemplatePath())),
+                                                                                        FlexIdeBCConfigurable.Location.HtmlTemplatePath));
         }
         else {
           final VirtualFile templateFile = templateDir.findChild(CreateHtmlWrapperTemplateDialog.HTML_WRAPPER_TEMPLATE_FILE_NAME);
           if (templateFile == null) {
             errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
-              .message("no.index.template.html.file", bc.getWrapperTemplatePath()), FlexIdeBCConfigurable.Location.HtmlTemplatePath));
+              .message("no.index.template.html.file", templateDir.getPresentableUrl()), FlexIdeBCConfigurable.Location.HtmlTemplatePath));
           }
           else {
             // Probably heavy calculation. Will be checked only when real html template handling is performed
@@ -528,6 +531,26 @@ public class FlexCompiler implements SourceProcessingCompiler {
                 "html.template"));
             }
             */
+
+            final String templateFolderPath = templateDir.getPath();
+            boolean ok = true;
+
+            for (String url : ModuleRootManager.getInstance(module).getContentRootUrls()) {
+              if (ok) {
+                ok = checkWrapperFolderClash(bc, templateFolderPath, VfsUtil.urlToPath(url), "module content root", errorConsumer);
+              }
+            }
+
+            for (String url : ModuleRootManager.getInstance(module).getSourceRootUrls()) {
+              if (ok) {
+                ok = checkWrapperFolderClash(bc, templateFolderPath, VfsUtil.urlToPath(url), "source folder", errorConsumer);
+              }
+            }
+
+            final String outputFolderPath = StringUtil.notNullize(info.getOutputFolderPath(), bc.getOutputFolder());
+            if (ok && !outputFolderPath.isEmpty()) {
+              ok = checkWrapperFolderClash(bc, templateFolderPath, outputFolderPath, "output folder", errorConsumer);
+            }
           }
         }
       }
@@ -565,6 +588,20 @@ public class FlexCompiler implements SourceProcessingCompiler {
     // This verification is disabled because Vladimir Krivosheev has app on app dependency because he needs predictable compilation order.
     // So we do not check dependencies and ignore incompatible ones when doing highlighting and compilation.
     //checkDependencies(moduleName, bc);
+  }
+
+  private static boolean checkWrapperFolderClash(final FlexIdeBuildConfiguration bc,
+                                                 final String templateFolderPath,
+                                                 final String otherFolderPath,
+                                                 final String otherFolderDescription,
+                                                 final Consumer<FlashProjectStructureProblem> errorConsumer) {
+    if (FileUtil.isAncestor(templateFolderPath, otherFolderPath, false)) {
+      errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message(
+        "html.wrapper.folder.clash", otherFolderDescription, FileUtil.toSystemDependentName(templateFolderPath)),
+                                                                                    FlexIdeBCConfigurable.Location.HtmlTemplatePath));
+      return false;
+    }
+    return true;
   }
 
   private static void checkDependencies(final String moduleName, final FlexIdeBuildConfiguration bc) throws ConfigurationException {
