@@ -2,9 +2,9 @@ package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
-import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -239,8 +239,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
       throw new RuntimeConfigurationError(FlexBundle.message("flexunit.not.found.for.bc", bc.getName()));
     }
 
-    // todo fix scope
-    final GlobalSearchScope searchScope = GlobalSearchScope.moduleScope(moduleAndBC.first);
+    final GlobalSearchScope searchScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(moduleAndBC.first, bc, true);
     switch (getScope()) {
       case Class:
         getClassToTest(getClassName(), searchScope, support, true);

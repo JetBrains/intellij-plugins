@@ -111,7 +111,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
     myLauncherParameters = params.getLauncherParameters().clone(); // must be before myBCsCombo.setModel()
 
     myBCCombo.resetFrom(params);
-    myWhatToTestForm.resetFrom(params);
+    myWhatToTestForm.resetFrom(myBCCombo.getModule(), myBCCombo.getBC(), params);
 
     myShowLogCheckBox.setSelected(params.getOutputLogLevel() != null);
     myLogLevelCombo.setEnabled(params.getOutputLogLevel() != null);

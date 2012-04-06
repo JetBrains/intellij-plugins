@@ -108,7 +108,6 @@ public class WhatToTestForm {
     label.setDisplayedMnemonic(mnemonic);
   }
 
-  // todo remove module param and fix scope
   public void updateOnBCChange(final @Nullable FlexIdeBuildConfiguration bc, final Module module) {
     if (bc == null) {
       updateOnError(FlexBundle.message("bc.not.specified"));
@@ -139,7 +138,9 @@ public class WhatToTestForm {
     myPackageField.setChooserBlockingMessage(message);
   }
 
-  public void resetFrom(final FlexUnitRunnerParameters params) {
+  public void resetFrom(final @Nullable Module module,
+                        final @Nullable FlexIdeBuildConfiguration bc,
+                        final FlexUnitRunnerParameters params) {
     switch (params.getScope()) {
       case Class:
         myClassRadioButton.setSelected(true);
@@ -161,14 +162,7 @@ public class WhatToTestForm {
         assert false : "Unknown scope: " + params.getScope();
     }
 
-    try {
-      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((FlexUnitRunnerParameters)params).checkAndGetModuleAndBC(myProject);
-      updateOnBCChange(moduleAndBC.second, moduleAndBC.first);
-    }
-    catch (RuntimeConfigurationError e) {
-      updateOnError(e.getMessage());
-    }
-
+    updateOnBCChange(bc, module);
     updateOnScopeChange();
   }
 

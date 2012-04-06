@@ -69,12 +69,11 @@ public class FlexUnitSupport {
     return support != null ? Pair.create(module, support) : null;
   }
 
-  // todo remove module param and fix scope
   @Nullable
   public static FlexUnitSupport getSupport(@Nullable FlexIdeBuildConfiguration bc, final Module module) {
     if (bc == null) return null;
 
-    return getSupport(GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module));
+    return getSupport(FlexUtils.getModuleWithDependenciesAndLibrariesScope(module, bc, true));
   }
 
   @Nullable
