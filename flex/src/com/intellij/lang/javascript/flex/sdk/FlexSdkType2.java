@@ -9,6 +9,7 @@ import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.NullableComputable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -105,14 +106,19 @@ public class FlexSdkType2 extends SdkType {
     return "http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/";
   }
 
-  private static void setupSdkPaths(final VirtualFile sdkRoot, final SdkModificator sdkModificator) {
+  public String getVersionString(final String sdkHome) {
+    return StringUtil.notNullize(FlexSdkUtils.doReadFlexSdkVersion(LocalFileSystem.getInstance().findFileByPath(sdkHome)),
+                                 FlexBundle.message("flex.sdk.version.unknown"));
+  }
+
+  private void setupSdkPaths(final VirtualFile sdkRoot, final SdkModificator sdkModificator) {
     if (sdkRoot == null || !sdkRoot.isValid()) {
       return;
     }
     PropertiesComponent.getInstance().setValue(LAST_SELECTED_FLEX_SDK_HOME_KEY, sdkRoot.getPath());
     sdkRoot.refresh(false, true);
 
-    sdkModificator.setVersionString(FlexSdkUtils.readFlexSdkVersion(sdkRoot));
+    sdkModificator.setVersionString(getVersionString(sdkRoot.getPath()));
 
     final VirtualFile playerDir = ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
       public VirtualFile compute() {

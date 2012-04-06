@@ -326,7 +326,7 @@ public class FlexCompilationUtils {
           return;
         }
 
-        final String airVersion = FlexSdkUtils.getAirVersion(sdk.getVersionString());
+        final String airVersion = FlexSdkUtils.getAirVersion(StringUtil.notNullize(sdk.getVersionString()));
         final String appId = fixApplicationId(bc.getMainClass());
         final String appName = StringUtil.getShortName(bc.getMainClass());
 

@@ -519,7 +519,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     @Override
     public SimpleColoredText getPresentableText() {
       SimpleColoredText text = new SimpleColoredText();
-      text.append(mySdk.getSdkType().getPresentableName() + " " + mySdk.getVersionString(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      final String sdkVersion = StringUtil.notNullize(mySdk.getVersionString(), FlexBundle.message("flex.sdk.version.unknown"));
+      text.append(mySdk.getSdkType().getPresentableName() + " " + sdkVersion, SimpleTextAttributes.REGULAR_ATTRIBUTES);
       return text;
     }
 

@@ -864,20 +864,18 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   boolean isDebuggerFromSdk4() {
-    return myDebuggerVersion.startsWith("4.");
+    return myDebuggerVersion != null && myDebuggerVersion.startsWith("4.");
   }
 
   boolean isDebuggerFromSdk3() {
-    return myDebuggerVersion.startsWith("3.");
+    return myDebuggerVersion != null && myDebuggerVersion.startsWith("3.");
   }
 
   void doSendCommandText(final DebuggerCommand command) throws IOException {
     final String text = command.getText();
 
     setSuspended(
-      command.getOutputProcessingMode() != CommandOutputProcessingType.NO_PROCESSING
-      ? false
-      : command.getEndVMState() == VMState.SUSPENDED);
+      command.getOutputProcessingMode() == CommandOutputProcessingType.NO_PROCESSING && command.getEndVMState() == VMState.SUSPENDED);
     log("Sent:" + text);
     fdbProcess.getOutputStream().write((text + "\n").getBytes());
     try {

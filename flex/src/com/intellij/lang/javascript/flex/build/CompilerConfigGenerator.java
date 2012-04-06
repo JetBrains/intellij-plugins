@@ -169,7 +169,7 @@ public class CompilerConfigGenerator {
   private static String getSwfVersionForSdk(final String sdkVersion) {
     if (StringUtil.compareVersionNumbers(sdkVersion, "4.6") >= 0) return "14";
     if (StringUtil.compareVersionNumbers(sdkVersion, "4.5") >= 0) return "11";
-    assert false;
+    assert false : sdkVersion;
     return null;
   }
 

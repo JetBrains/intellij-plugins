@@ -206,7 +206,7 @@ public class CompilerOptionInfo {
     return TYPE == OptionType.Group;
   }
 
-  public boolean isApplicable(final @NotNull String sdkVersion, final BuildConfigurationNature nature) {
+  public boolean isApplicable(final String sdkVersion, final BuildConfigurationNature nature) {
     if (mySinceVersion != null && StringUtil.compareVersionNumbers(sdkVersion, mySinceVersion) < 0) return false;
     if (!myOkForPureAS && nature.pureAS) return false;
     if (!myOkForSwf && !nature.isLib()) return false;

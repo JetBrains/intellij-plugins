@@ -99,7 +99,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
         });
 
         final SdkModificator modificator = sdk.getSdkModificator();
-        modificator.setVersionString(FlexSdkUtils.readFlexSdkVersion(sdk.getHomeDirectory()));
+        modificator.setVersionString(FlexSdkType2.getInstance().getVersionString(sdk.getHomePath()));
         modifySdk(sdk, modificator);
         modificator.commitChanges();
       }

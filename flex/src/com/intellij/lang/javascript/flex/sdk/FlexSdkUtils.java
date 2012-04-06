@@ -6,7 +6,6 @@ import com.intellij.execution.configurations.JavaCommandLineStateUtil;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
@@ -83,11 +82,6 @@ public class FlexSdkUtils {
     }
   }
 
-  @NotNull
-  public static String readFlexSdkVersion(final VirtualFile flexSdkRoot) {
-    return StringUtil.notNullize(doReadFlexSdkVersion(flexSdkRoot), FlexBundle.message("flex.sdk.version.unknown"));
-  }
-
   @Nullable
   public static String doReadFlexSdkVersion(final VirtualFile flexSdkRoot) {
     if (flexSdkRoot == null) {
@@ -102,10 +96,10 @@ public class FlexSdkUtils {
       final String buildElement = "<flex-sdk-description><build>";
       final Map<String, List<String>> versionInfo =
         FlexUtils.findXMLElements(flexSdkDescriptionFile.getInputStream(), Arrays.asList(versionElement, buildElement));
-      return (versionInfo.get(versionElement).isEmpty()
-              ? null
-              : versionInfo.get(versionElement).get(0)) +
-             (versionInfo.get(buildElement).isEmpty() ? "" : ("." + versionInfo.get(buildElement).get(0)));
+      final List<String> majorMinor = versionInfo.get(versionElement);
+      final List<String> revision = versionInfo.get(buildElement);
+      return majorMinor.isEmpty() ? null
+                                  : majorMinor.get(0) + (revision.isEmpty() ? "" : ("." + revision.get(0)));
     }
     catch (IOException e) {
       return null;

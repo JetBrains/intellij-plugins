@@ -25,6 +25,7 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
@@ -122,7 +123,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
 
     if (sourceRoot != null && myCreateSampleApp && myFlexSdk != null) {
       try {
-        final boolean flex4 = myFlexSdk.getVersionString().startsWith("4");
+        final boolean flex4 = StringUtil.compareVersionNumbers(myFlexSdk.getVersionString(), "4") >= 0;
         FlexUtils.createSampleApp(module.getProject(), sourceRoot, mySampleAppName, myTargetPlatform, flex4);
       }
       catch (IOException ex) {

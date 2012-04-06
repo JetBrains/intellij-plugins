@@ -426,6 +426,13 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                                                                    DependenciesConfigurable.Location.SDK));
     }
 
+    if (sdk != null &&
+        (StringUtil.compareVersionNumbers(sdk.getVersionString(), "0") < 0 ||
+         StringUtil.compareVersionNumbers(sdk.getVersionString(), "100") > 0)) {
+      errorConsumer.consume(FlashProjectStructureProblem.createDependenciesProblem(FlexBundle.message("sdk.version.unknown", sdk.getName()),
+                                                                                   DependenciesConfigurable.Location.SDK));
+    }
+
     InfoFromConfigFile info = InfoFromConfigFile.DEFAULT;
 
     final String additionalConfigFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
@@ -443,10 +450,19 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
     final BuildConfigurationNature nature = bc.getNature();
 
-    if (!nature.isLib() && info.getMainClass(module) == null && bc.getMainClass().isEmpty()) {
-      errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message("main.class.not.set"),
-                                                                                    FlexIdeBCConfigurable.Location.MainClass));
-      // real main class validation is done later in CompilerConfigGenerator
+    if (!nature.isLib() && info.getMainClass(module) == null && !bc.isTempBCForCompilation()) {
+      if (bc.getMainClass().isEmpty()) {
+        errorConsumer
+          .consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message("main.class.not.set"),
+                                                                           FlexIdeBCConfigurable.Location.MainClass));
+      }
+      else {
+        if (FlexUtils.getPathToMainClassFile(bc.getMainClass(), module).isEmpty()) {
+          errorConsumer.consume(FlashProjectStructureProblem
+                                  .createGeneralOptionProblem(bc.getName(), FlexBundle.message("main.class.not.found", bc.getMainClass()),
+                                                              FlexIdeBCConfigurable.Location.MainClass));
+        }
+      }
     }
 
     if (info.getOutputFileName() == null && info.getOutputFolderPath() == null) {

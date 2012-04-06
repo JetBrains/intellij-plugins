@@ -161,7 +161,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
                                          final boolean checkPlayerVersion,
                                          final boolean expressInstall) {
     final String wrapperName;
-    if (sdk.getVersionString().startsWith("3.")) {
+    if (StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") < 0) {
       final String prefix = checkPlayerVersion
                             ? expressInstall ? "express-installation"
                                              : "client-side-detection"

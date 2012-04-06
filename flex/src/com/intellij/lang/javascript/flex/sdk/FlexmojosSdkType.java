@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.OrderRootType;
@@ -11,7 +10,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.io.IOException;
 
 public class FlexmojosSdkType extends SdkType {
 
@@ -46,11 +44,7 @@ public class FlexmojosSdkType extends SdkType {
   }
 
   public String suggestSdkName(final String currentSdkName, final String sdkHome) {
-    // C:/Users/xxx/.m2/repository/com/adobe/flex/compiler/4.0.0.14159/compiler-4.0.0.14159.pom
-    final int lastDash = sdkHome.lastIndexOf("-");
-    final int lastDot = sdkHome.lastIndexOf(".");
-    final String version = lastDot > lastDash ? sdkHome.substring(lastDash + 1, lastDot) : "";
-    return "Flexmojos SDK " + version;
+    return "Flexmojos SDK " + getVersionString(sdkHome);
   }
 
   public AdditionalDataConfigurable createAdditionalDataConfigurable(final SdkModel sdkModel, final SdkModificator sdkModificator) {
@@ -100,7 +94,7 @@ public class FlexmojosSdkType extends SdkType {
     }
 
     final SdkModificator modificator = sdk.getSdkModificator();
-    modificator.setVersionString(readVersion(sdkRoot));
+    modificator.setVersionString(getVersionString(sdkRoot.getPath()));
 
     FlexmojosSdkAdditionalData data = (FlexmojosSdkAdditionalData)sdk.getSdkAdditionalData();
     if (data == null) {
@@ -112,14 +106,10 @@ public class FlexmojosSdkType extends SdkType {
     modificator.commitChanges();
   }
 
-  private static String readVersion(final VirtualFile sdkRoot) {
-    try {
-      final String version = FlexUtils.findXMLElement(sdkRoot.getInputStream(), "<project><version>");
-      return version != null ? version : FlexBundle.message("flex.sdk.version.unknown");
-    }
-    catch (IOException e) {
-      return FlexBundle.message("flex.sdk.version.unknown");
-    }
+  public String getVersionString(final String sdkHome) {
+    // C:/Users/xxx/.m2/repository/com/adobe/flex/compiler/4.0.0.14159/compiler-4.0.0.14159.pom
+    final int lastDash = sdkHome.lastIndexOf("-");
+    final int lastDot = sdkHome.lastIndexOf(".");
+    return lastDot > lastDash ? sdkHome.substring(lastDash + 1, lastDot) : FlexBundle.message("flex.sdk.version.unknown");
   }
-
 }

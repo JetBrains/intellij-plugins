@@ -316,7 +316,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     final Computable<String> airVersionComputable = new Computable<String>() {
       public String compute() {
         final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
-        return sdk == null ? "" : FlexSdkUtils.getAirVersion(sdk.getVersionString());
+        return sdk == null || sdk.getVersionString() == null ? "" : FlexSdkUtils.getAirVersion(sdk.getVersionString());
       }
     };
     final Computable<Boolean> androidEnabledComputable = new Computable<Boolean>() {
