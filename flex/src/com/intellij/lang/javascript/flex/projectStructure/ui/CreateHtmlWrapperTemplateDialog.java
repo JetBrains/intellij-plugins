@@ -8,10 +8,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.ui.LabeledComponent;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.ui.*;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -44,14 +41,19 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
   private JCheckBox myCheckPlayerVersionCheckBox;
   private JCheckBox myExpressInstallCheckBox;
 
-  private final Project myProject;
+  private final Module myModule;
   private final @NotNull Sdk mySdk;
+  private final String myOutputPath;
 
-  public CreateHtmlWrapperTemplateDialog(final Module module, final @NotNull Sdk sdk, final @Nullable String initialPath) {
+  public CreateHtmlWrapperTemplateDialog(final Module module,
+                                         final @NotNull Sdk sdk,
+                                         final String outputPath,
+                                         final @Nullable String initialPath) {
     super(module.getProject());
 
-    myProject = module.getProject();
+    myModule = module;
     mySdk = sdk;
+    myOutputPath = outputPath;
 
     setInitialPath(module, initialPath);
 
@@ -94,8 +96,38 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
     return FileUtil.toSystemIndependentName(myWrapperFolderComponent.getComponent().getText().trim());
   }
 
+  protected ValidationInfo doValidate() {
+    final String wrapperFolderPath = getWrapperFolderPath();
+
+    for (String url : ModuleRootManager.getInstance(myModule).getContentRootUrls()) {
+      final String path = VfsUtil.urlToPath(url);
+      if (FileUtil.isAncestor(wrapperFolderPath, path, false)) {
+        return new ValidationInfo(
+          FlexBundle.message("html.wrapper.folder.clash.for.dialog", "module content root", FileUtil.toSystemDependentName(path)),
+          myWrapperFolderComponent.getComponent());
+      }
+    }
+
+    for (String url : ModuleRootManager.getInstance(myModule).getSourceRootUrls()) {
+      final String path = VfsUtil.urlToPath(url);
+      if (FileUtil.isAncestor(wrapperFolderPath, path, false)) {
+        return new ValidationInfo(
+          FlexBundle.message("html.wrapper.folder.clash.for.dialog", "source folder", FileUtil.toSystemDependentName(path)),
+          myWrapperFolderComponent.getComponent());
+      }
+    }
+
+    if (!myOutputPath.isEmpty() && FileUtil.isAncestor(wrapperFolderPath, myOutputPath, false)) {
+      return new ValidationInfo(
+        FlexBundle.message("html.wrapper.folder.clash.for.dialog", "output folder", FileUtil.toSystemDependentName(myOutputPath)),
+        myWrapperFolderComponent.getComponent());
+    }
+
+    return null;
+  }
+
   protected void doOKAction() {
-    if (createHtmlWrapperTemplate(myProject, mySdk, getWrapperFolderPath(),
+    if (createHtmlWrapperTemplate(myModule.getProject(), mySdk, getWrapperFolderPath(),
                                   myEnableHistoryCheckBox.isSelected(), myCheckPlayerVersionCheckBox.isSelected(),
                                   myExpressInstallCheckBox.isEnabled() && myExpressInstallCheckBox.isSelected())) {
       super.doOKAction();
