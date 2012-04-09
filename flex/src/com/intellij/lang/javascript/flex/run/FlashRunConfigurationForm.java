@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.openapi.editor.event.DocumentAdapter;
 import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -55,8 +56,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private JPanel myLaunchPanel;
   private JRadioButton myBCOutputRadioButton;
   private JLabel myBCOutputLabel;
-  private JRadioButton myURLRadioButton;
-  private JTextField myURLTextField;
+  private JRadioButton myUrlOrFileRadioButton;
+  private TextFieldWithBrowseButton myUrlOrFileTextWithBrowse;
 
   private JPanel myWebOptionsPanel;
   private TextFieldWithBrowseButton myLauncherParametersTextWithBrowse;
@@ -192,15 +193,18 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       }
     });
 
-    myURLRadioButton.addActionListener(new ActionListener() {
+    myUrlOrFileRadioButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
 
-        if (myURLTextField.isEnabled()) {
-          IdeFocusManager.getInstance(myProject).requestFocus(myURLTextField, true);
+        if (myUrlOrFileTextWithBrowse.isEnabled()) {
+          IdeFocusManager.getInstance(myProject).requestFocus(myUrlOrFileTextWithBrowse.getTextField(), true);
         }
       }
     });
+
+    myUrlOrFileTextWithBrowse
+      .addBrowseFolderListener(null, null, myProject, FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
   }
 
   private void initLaunchWithTextWithBrowse() {
@@ -319,10 +323,10 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     if (web) {
       updateBCOutputLabel(bc);
 
-      myURLTextField.setEnabled(myURLRadioButton.isSelected());
+      myUrlOrFileTextWithBrowse.setEnabled(myUrlOrFileRadioButton.isSelected());
 
       myLauncherParametersTextWithBrowse.getTextField().setText(myLauncherParameters.getPresentableText());
-      myRunTrustedCheckBox.setEnabled(!myURLRadioButton.isSelected());
+      myRunTrustedCheckBox.setEnabled(!myUrlOrFileRadioButton.isSelected());
     }
 
     if (mobile) {
@@ -414,8 +418,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     }
 
     myBCOutputRadioButton.setSelected(!params.isLaunchUrl());
-    myURLRadioButton.setSelected(params.isLaunchUrl());
-    myURLTextField.setText(params.getUrl());
+    myUrlOrFileRadioButton.setSelected(params.isLaunchUrl());
+    myUrlOrFileTextWithBrowse.setText(params.getUrl());
 
     myRunTrustedCheckBox.setSelected(params.isRunTrusted());
 
@@ -455,8 +459,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     params.setOverriddenMainClass(overrideMainClass ? myMainClassComponent.getText().trim() : "");
     params.setOverriddenOutputFileName(overrideMainClass ? myOutputFileNameTextField.getText().trim() : "");
 
-    params.setLaunchUrl(myURLRadioButton.isSelected());
-    params.setUrl(myURLTextField.getText().trim());
+    params.setLaunchUrl(myUrlOrFileRadioButton.isSelected());
+    params.setUrl(myUrlOrFileTextWithBrowse.getText().trim());
 
     params.setLauncherParameters(myLauncherParameters);
     params.setRunTrusted(myRunTrustedCheckBox.isSelected());

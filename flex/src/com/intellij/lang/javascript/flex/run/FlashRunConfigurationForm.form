@@ -45,15 +45,15 @@
               <text value="SomeFile.swf via HTML wrapper"/>
             </properties>
           </component>
-          <component id="eeb38" class="javax.swing.JRadioButton" binding="myURLRadioButton" default-binding="true">
+          <component id="eeb38" class="javax.swing.JRadioButton" binding="myUrlOrFileRadioButton">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="U&amp;RL:"/>
+              <text value="U&amp;RL or local file:"/>
             </properties>
           </component>
-          <component id="56491" class="javax.swing.JTextField" binding="myURLTextField">
+          <component id="7f937" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myUrlOrFileTextWithBrowse">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
