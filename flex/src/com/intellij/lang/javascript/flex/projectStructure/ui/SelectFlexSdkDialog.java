@@ -1,6 +1,5 @@
-package com.intellij.lang.javascript.flex.flashbuilder;
+package com.intellij.lang.javascript.flex.projectStructure.ui;
 
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -9,18 +8,16 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class FlashBuilderSdkDialog extends DialogWrapper {
+public class SelectFlexSdkDialog extends DialogWrapper {
 
   private JPanel myMainPanel;
   private JLabel myLabel;
   private FlexSdkComboBoxWithBrowseButton myFlexSdkComboWithBrowse;
 
-  public FlashBuilderSdkDialog(final Project project,
-                               final int projectsCount) {
+  public SelectFlexSdkDialog(final Project project, final String title, final String label) {
     super(project);
-
-    myLabel.setText(FlexBundle.message("sdk.for.imported.projects", projectsCount));
-    setTitle(FlexBundle.message("flash.builder.project.import.title"));
+    setTitle(title);
+    myLabel.setText(label);
     init();
   }
 

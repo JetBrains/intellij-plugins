@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript.flex.flashbuilder;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.projectStructure.ui.SelectFlexSdkDialog;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
@@ -103,7 +105,9 @@ public class FlashBuilderSdkFinder {
 
     if (myDialogWasShown) return mySdk;
 
-    final FlashBuilderSdkDialog dialog = new FlashBuilderSdkDialog(myProject, myAllProjects.size());
+    final SelectFlexSdkDialog dialog = new SelectFlexSdkDialog(myProject,
+                                                               FlexBundle.message("flash.builder.project.import.title"),
+                                                               FlexBundle.message("sdk.for.imported.projects", myAllProjects.size()));
     if (!ApplicationManager.getApplication().isUnitTestMode()) {
       dialog.show();
     }

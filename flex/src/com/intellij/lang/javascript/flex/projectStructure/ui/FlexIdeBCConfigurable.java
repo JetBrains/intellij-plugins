@@ -14,6 +14,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProject
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
@@ -30,7 +31,6 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectStructureElementConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureElement;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.*;
@@ -53,11 +53,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.HyperlinkEvent;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
-import java.util.List;
 
 public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<ModifiableFlexIdeBuildConfiguration>
   implements CompositeConfigurable.Item, Place.Navigator {
@@ -208,21 +206,19 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     myCreateHtmlWrapperTemplateButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
-        if (sdk == null) {
-          Messages.showInfoMessage(myModule.getProject(), FlexBundle.message("sdk.needed.to.create.wrapper"),
-                                   CreateHtmlWrapperTemplateDialog.TITLE);
-        }
-        else {
-          String path = myWrapperTemplateTextWithBrowse.getText().trim();
-          if (path.isEmpty()) {
-            path = FlexUtils.getContentOrModuleFolderPath(module) + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME;
-          }
-          final CreateHtmlWrapperTemplateDialog dialog =
-            new CreateHtmlWrapperTemplateDialog(module, sdk, myOutputFolderField.getText().trim(), path);
+        if (sdk == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) {
+          final SelectFlexSdkDialog dialog = new SelectFlexSdkDialog(module.getProject(), CreateHtmlWrapperTemplateDialog.TITLE,
+                                                                     FlexBundle.message("take.wrapper.template.from.sdk"));
           dialog.show();
           if (dialog.isOK()) {
-            myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(dialog.getWrapperFolderPath()));
+            final Sdk dialogSdk = dialog.getSdk();
+            if (dialogSdk != null) {
+              showHtmlWrapperCreationDialog(dialogSdk);
+            }
           }
+        }
+        else {
+          showHtmlWrapperCreationDialog(sdk);
         }
       }
     });
@@ -266,6 +262,19 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     myOutputFolderWarning.setIcon(IconLoader.getIcon("smallWarning.png"));
 
     myWarning.setIcon(UIUtil.getBalloonWarningIcon());
+  }
+
+  private void showHtmlWrapperCreationDialog(final @NotNull Sdk sdk) {
+    String path = myWrapperTemplateTextWithBrowse.getText().trim();
+    if (path.isEmpty()) {
+      path = FlexUtils.getContentOrModuleFolderPath(myModule) + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME;
+    }
+    final CreateHtmlWrapperTemplateDialog dialog =
+      new CreateHtmlWrapperTemplateDialog(myModule, sdk, myOutputFolderField.getText().trim(), path);
+    dialog.show();
+    if (dialog.isOK()) {
+      myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(dialog.getWrapperFolderPath()));
+    }
   }
 
   public void createChildConfigurables() {

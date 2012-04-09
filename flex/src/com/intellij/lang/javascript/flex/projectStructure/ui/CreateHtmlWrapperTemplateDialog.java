@@ -14,6 +14,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
@@ -264,7 +265,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
                                                   final boolean enableHistory,
                                                   final boolean checkPlayerVersion,
                                                   final boolean expressInstall) throws IOException {
-    final String text = VfsUtil.loadText(file);
+    final String text = VfsUtilCore.loadText(file);
     final String useBrowserHistory = enableHistory ? "--" : USE_BROWSER_HISTORY_MACRO;
     final String major = checkPlayerVersion ? VERSION_MAJOR_MACRO : "0";
     final String minor = checkPlayerVersion ? VERSION_MINOR_MACRO : "0";
