@@ -66,9 +66,10 @@ public class PsiClassTypeMock extends PsiClassType {
         return null;
     }
 
+    @NotNull
     @Override
-    public PsiClassType setLanguageLevel(final LanguageLevel languageLevel) {
-        return null;
+    public PsiClassType setLanguageLevel(@NotNull final LanguageLevel languageLevel) {
+        return this;
     }
 
     @Override
