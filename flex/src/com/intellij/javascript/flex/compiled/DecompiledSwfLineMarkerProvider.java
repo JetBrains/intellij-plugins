@@ -5,6 +5,7 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.lang.javascript.highlighting.JavaScriptLineMarkerProvider;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,7 +20,7 @@ public class DecompiledSwfLineMarkerProvider extends JavaScriptLineMarkerProvide
   }
 
   @Override
-  public LineMarkerInfo getLineMarkerInfo(PsiElement element) {
+  public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
     return null;
   }
 }

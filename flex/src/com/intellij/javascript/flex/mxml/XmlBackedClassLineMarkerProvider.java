@@ -13,16 +13,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Query;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
 public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
 
-  public LineMarkerInfo getLineMarkerInfo(PsiElement element) {
+  public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
     return null;
   }
 
-  public void collectSlowLineMarkers(java.util.List<PsiElement> elements, Collection<LineMarkerInfo> result) {
+  public void collectSlowLineMarkers(@NotNull java.util.List<PsiElement> elements, @NotNull Collection<LineMarkerInfo> result) {
     for (PsiElement element : elements) {
       ProgressManager.checkCanceled();
 
