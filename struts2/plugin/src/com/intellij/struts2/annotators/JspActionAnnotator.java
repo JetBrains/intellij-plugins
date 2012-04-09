@@ -62,13 +62,13 @@ public class JspActionAnnotator implements LineMarkerProvider {
   };
 
   @Override
-  public LineMarkerInfo getLineMarkerInfo(final PsiElement psiElement) {
+  public LineMarkerInfo getLineMarkerInfo(@NotNull final PsiElement psiElement) {
     return null;
   }
 
   @Override
-  public void collectSlowLineMarkers(final List<PsiElement> psiElements,
-                                     final Collection<LineMarkerInfo> lineMarkerInfos) {
+  public void collectSlowLineMarkers(@NotNull final List<PsiElement> psiElements,
+                                     @NotNull final Collection<LineMarkerInfo> lineMarkerInfos) {
     if (psiElements.isEmpty()) {
       return;
     }
