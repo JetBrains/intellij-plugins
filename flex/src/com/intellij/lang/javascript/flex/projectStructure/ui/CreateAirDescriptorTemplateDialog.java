@@ -152,6 +152,10 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     myAppNameTextField.setText(appName);
     myAppVersionTextField.setText("0.0.0");
     myAndroidCheckBox.setSelected(androidEnabled);
+    UIUtil.applyStyle(UIUtil.ComponentStyle.MINI, myAndroidInternetCheckBox);
+    UIUtil.applyStyle(UIUtil.ComponentStyle.MINI, myAndroidWriteExternalStorageCheckBox);
+    UIUtil.applyStyle(UIUtil.ComponentStyle.MINI, myAndroidAccessFineLocationCheckBox);
+    UIUtil.applyStyle(UIUtil.ComponentStyle.MINI, myAndroidCameraCheckBox);
     myAndroidInternetCheckBox.setSelected(true);
     myAndroidWriteExternalStorageCheckBox.setSelected(false);
     myAndroidAccessFineLocationCheckBox.setSelected(false);
