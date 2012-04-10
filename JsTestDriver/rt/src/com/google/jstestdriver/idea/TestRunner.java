@@ -26,6 +26,7 @@ import com.google.jstestdriver.config.Configuration;
 import com.google.jstestdriver.config.ParsedConfiguration;
 import com.google.jstestdriver.embedded.JsTestDriverBuilder;
 import com.google.jstestdriver.hooks.PluginInitializer;
+import com.google.jstestdriver.hooks.ResourcePreProcessor;
 import com.google.jstestdriver.hooks.TestListener;
 import com.google.jstestdriver.idea.coverage.CoverageReport;
 import com.google.jstestdriver.idea.coverage.CoverageSerializationUtils;
@@ -39,6 +40,7 @@ import com.google.jstestdriver.output.TestResultHolder;
 import com.google.jstestdriver.runner.RunnerMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joda.time.DateTime;
 
 import java.io.*;
 import java.net.*;
@@ -117,15 +119,25 @@ public class TestRunner {
     } else {
       testCaseName = "all";
     }
+    executeTestCase(config, testCaseName);
+  }
 
-    if (mySettings.getIdeCoverageFile() == null) {
-      runTests(config, new String[]{"--reset", "--dryRunFor", testCaseName}, false);
+  @SuppressWarnings("UseOfSystemOutOrSystemErr")
+  private void executeTestCase(@NotNull File config, @NotNull String testCaseName) {
+    PrintStream oldSystemOut = System.out;
+    PrintStream nullSystemOut = new PrintStream(new NullOutputStream());
+    try {
+      System.setOut(nullSystemOut);
+      runTests(config, new String[]{"--reset", "--dryRunFor", testCaseName}, true);
+      runTests(config, new String[]{"--tests", testCaseName}, false);
+    } finally {
+      nullSystemOut.close();
+      System.setOut(oldSystemOut);
     }
-    runTests(config, new String[]{"--tests", testCaseName}, true);
   }
 
   @SuppressWarnings("deprecation")
-  private void runTests(@NotNull final File configFile, @NotNull String[] extraArgs, boolean runTests) {
+  private void runTests(@NotNull final File configFile, @NotNull String[] extraArgs, boolean dryRun) {
     JsTestDriverBuilder builder = new JsTestDriverBuilder();
 
     final ParsedConfiguration parsedConfiguration = JstdConfigParsingUtils.parseConfiguration(configFile);
@@ -137,14 +149,13 @@ public class TestRunner {
         return new AbstractModule() {
           @Override
           public void configure() {
-            Multibinder<TestListener> listeners = Multibinder.newSetBinder(binder(), TestListener.class);
-            listeners.addBinding().to(TestResultHolder.class);
-            TestListener reporter = new IdeaTestListener(
+            Multibinder<TestListener> testListeners = Multibinder.newSetBinder(binder(), TestListener.class);
+            testListeners.addBinding().to(TestResultHolder.class);
+            testListeners.addBinding().toInstance(new IdeaTestListener(
               myTestResultProtocolMessageOutput,
               configFile,
               parsedConfiguration.getBasePaths()
-            );
-            listeners.addBinding().toInstance(reporter);
+            ));
           }
         };
       }
@@ -158,8 +169,11 @@ public class TestRunner {
     List<String> coverageExcludedFiles = null;
     File emptyOutputDir = null;
     boolean runCoverage = false;
-    if (runTests && myCoverageSession != null) {
+    if (myCoverageSession != null && !dryRun) {
       emptyOutputDir = createTempDir();
+      for (FileInfo info : parsedConfiguration.getFilesList()) {
+        info.setTimestamp(info.getTimestamp() + 1);
+      }
       if (emptyOutputDir != null) {
         flagArgs.add("--testOutput");
         flagArgs.add(emptyOutputDir.getAbsolutePath());
@@ -169,6 +183,7 @@ public class TestRunner {
         PluginInitializer coverageInitializer = getCoverageInitializer(coverageExcludedFiles);
         if (coverageInitializer != null) {
           builder.withPluginInitializer(coverageInitializer);
+          builder.withPluginInitializer(new DependenciesTouchFix());
           runCoverage = true;
         }
       }
@@ -486,4 +501,53 @@ public class TestRunner {
   private static String[] toStringArray(@NotNull List<String> list) {
     return list.toArray(new String[list.size()]);
   }
+
+  private static class DependenciesTouchFix implements PluginInitializer {
+    @Override
+    public Module initializeModule(Flags flags, Configuration config) {
+      return new AbstractModule() {
+        @Override
+        protected void configure() {
+          Multibinder.newSetBinder(binder(), ResourcePreProcessor.class)
+            .addBinding().toInstance(new ResourcePreProcessor() {
+            @Override
+            public List<FileInfo> processDependencies(List<FileInfo> files) {
+              List<FileInfo> out = Lists.newArrayList();
+              for (FileInfo file : files) {
+                FileInfo touchedFileInfo = file.fromResolvedPath(
+                  file.getFilePath(),
+                  file.getDisplayPath(),
+                  new DateTime().toInstant().getMillis()
+                );
+                out.add(touchedFileInfo);
+              }
+              return out;
+            }
+
+            @Override
+            public List<FileInfo> processTests(List<FileInfo> files) {
+              return files;
+            }
+
+            @Override
+            public List<FileInfo> processPlugins(List<FileInfo> files) {
+              return files;
+            }
+          });
+        }
+      };
+    }
+  }
+
+  public final class NullOutputStream extends OutputStream {
+
+    /** Discards the specified byte. */
+    @Override public void write(int b) {
+    }
+
+    /** Discards the specified byte array. */
+    @Override public void write(byte[] b, int off, int len) {
+    }
+  }
+
 }
