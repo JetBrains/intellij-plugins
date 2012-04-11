@@ -69,7 +69,7 @@ private List platformImplementationModules() {
           "spellchecker",
           "graph",
           "duplicates",
-          //"coverage-impl",
+          //"coverage-common",
           "dom-impl",
           "instrumentation-util",
           "java-impl",
