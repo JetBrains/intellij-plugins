@@ -26,7 +26,6 @@
 package org.osmorc.settings;
 
 import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.ActionToolbarPosition;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -36,6 +35,7 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.ui.UIUtil;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.beans.BeanAdapter;
@@ -43,6 +43,7 @@ import com.jgoodies.binding.list.SelectionInList;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -116,6 +117,7 @@ public class LibraryBundlingEditorComponent {
   private void createUIComponents() {
     selectedRule = new SelectionInList<LibraryBundlificationRule>();
     libraries = BasicComponentFactory.createList(selectedRule);
+    libraries.setBorder(new LineBorder(UIUtil.getBorderColor()));
 
     myLibrariesPanel = ToolbarDecorator.createDecorator(libraries)
       .setAddAction(new AnActionButtonRunnable() {
@@ -189,7 +191,7 @@ public class LibraryBundlingEditorComponent {
             notifyChanged();
           }
         }
-      }).setToolbarPosition(ActionToolbarPosition.TOP).createPanel();
+      }).setAsTopToolbar().createPanel();
 
     // adapter always holds currently selected bean
     beanAdapter = new BeanAdapter<LibraryBundlificationRule>(new LibraryBundlificationRule());
