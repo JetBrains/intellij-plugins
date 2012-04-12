@@ -13,6 +13,8 @@ import java.util.Collection;
  */
 public interface FlexIdeBuildConfiguration {
 
+  String UNNAMED = "Unnamed";
+
   @NotNull
   String getName();
 

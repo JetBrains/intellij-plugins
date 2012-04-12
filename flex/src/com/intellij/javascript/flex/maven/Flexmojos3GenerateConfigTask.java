@@ -88,7 +88,6 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
 
           MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
             public void run() {
-              // todo set main class
               // need to refresh externally created file
               final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(myConfigFilePath);
               if (file != null) {

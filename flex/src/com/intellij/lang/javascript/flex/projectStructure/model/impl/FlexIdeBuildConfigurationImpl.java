@@ -26,7 +26,7 @@ import java.util.StringTokenizer;
 class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfiguration {
 
   @NotNull
-  private String myName = "Unnamed";
+  private String myName = UNNAMED;
 
   @NotNull
   private TargetPlatform myTargetPlatform = BuildConfigurationNature.DEFAULT.targetPlatform;

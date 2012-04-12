@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.util.xmlb.annotations.Attribute;
@@ -12,7 +13,7 @@ import com.intellij.util.xmlb.annotations.Tag;
 @Tag("configuration")
 public class FlexBuildConfigurationState {
   @Attribute(value = "name")
-  public String NAME = "Unnamed";
+  public String NAME = FlexIdeBuildConfiguration.UNNAMED;
 
   @Attribute(value = "target-platform")
   public TargetPlatform TARGET_PLATFORM = TargetPlatform.Web;

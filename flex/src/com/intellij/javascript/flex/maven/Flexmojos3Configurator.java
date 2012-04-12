@@ -19,11 +19,13 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.roots.libraries.LibraryType;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.hash.HashSet;
+import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.THashMap;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -92,21 +94,30 @@ public class Flexmojos3Configurator {
 
   public void configureAndAppendTasks(final List<MavenProjectsProcessorTask> postTasks) {
     final ModifiableFlexIdeBuildConfiguration[] oldBCs = myFlexEditor.getConfigurations(myModule);
-    for (ModifiableFlexIdeBuildConfiguration oldBC : oldBCs) {
-      myFlexEditor.configurationRemoved(oldBC);
+    if (oldBCs.length == 1 && oldBCs[0].getName().equals(FlexIdeBuildConfiguration.UNNAMED)) {
+      myFlexEditor.configurationRemoved(oldBCs[0]);
     }
 
-    final ModifiableFlexIdeBuildConfiguration mainBC = setupMainBuildConfiguration();
+    final String mainBCName = myModule.getName();
+    final ModifiableFlexIdeBuildConfiguration existingBC = ContainerUtil.find(oldBCs, new Condition<ModifiableFlexIdeBuildConfiguration>() {
+      public boolean value(final ModifiableFlexIdeBuildConfiguration bc) {
+        return mainBCName.equals(bc.getName());
+      }
+    });
 
-    final Collection<String> usedNames = new HashSet<String>();
-    usedNames.add(mainBC.getName());
+    final ModifiableFlexIdeBuildConfiguration mainBC = setupMainBuildConfiguration(existingBC);
 
     final Collection<RLMInfo> rlmInfos = FlexmojosImporter.isFlexApp(myMavenProject) ? getRLMInfos() : Collections.<RLMInfo>emptyList();
-    for (RLMInfo info : rlmInfos) {
-      configureRuntimeLoadedModule(mainBC, info, usedNames);
-    }
+    for (final RLMInfo info : rlmInfos) {
+      final ModifiableFlexIdeBuildConfiguration existingRlmBC =
+        ContainerUtil.find(oldBCs, new Condition<ModifiableFlexIdeBuildConfiguration>() {
+          public boolean value(final ModifiableFlexIdeBuildConfiguration bc) {
+            return bc.getName().equals(info.myRLMName);
+          }
+        });
 
-    respectPreviousBCState(myFlexEditor.getConfigurations(myModule), oldBCs);
+      configureRuntimeLoadedModule(mainBC, info, existingRlmBC);
+    }
 
     if (FlexCompilerProjectConfiguration.getInstance(myModule.getProject()).GENERATE_FLEXMOJOS_CONFIGS) {
       if (StringUtil.compareVersionNumbers(myFlexmojosPlugin.getVersion(), "3.4") >= 0) {
@@ -122,14 +133,23 @@ public class Flexmojos3Configurator {
     }
   }
 
-  private ModifiableFlexIdeBuildConfiguration setupMainBuildConfiguration() {
-    final ModifiableFlexIdeBuildConfiguration mainBC = myFlexEditor.createConfiguration(myModule);
+  private ModifiableFlexIdeBuildConfiguration setupMainBuildConfiguration(final @Nullable ModifiableFlexIdeBuildConfiguration existingBC) {
+    final boolean isNewBC = existingBC == null;
+    final ModifiableFlexIdeBuildConfiguration mainBC = isNewBC ? myFlexEditor.createConfiguration(myModule) : existingBC;
+
     mainBC.setName(myModule.getName());
 
     final TargetPlatform targetPlatform = handleDependencies(mainBC);
-    mainBC.setTargetPlatform(targetPlatform);
-    mainBC.setPureAs(false);
-    mainBC.setOutputType(FlexmojosImporter.isFlexApp(myMavenProject) ? OutputType.Application : OutputType.Library);
+    if (isNewBC) {
+      mainBC.setTargetPlatform(targetPlatform);
+      mainBC.setPureAs(false);
+    }
+    final OutputType outputType = FlexmojosImporter.isFlexApp(myMavenProject) ? OutputType.Application : OutputType.Library;
+
+    if (outputType != mainBC.getOutputType()) {
+      mainBC.setOutputType(outputType);
+      FlexProjectConfigurationEditor.resetNonApplicableValuesToDefaults(mainBC);
+    }
 
     final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
     if (FlexmojosImporter.isFlexApp(myMavenProject) && configurationElement != null) {
@@ -145,7 +165,7 @@ public class Flexmojos3Configurator {
     mainBC.setOutputFolder(PathUtil.getParentPath(outputFilePath));
 
     final BuildConfigurationNature nature = mainBC.getNature();
-    if (nature.isApp()) {
+    if (nature.isApp() && isNewBC) {
       if (nature.isDesktopPlatform()) {
         mainBC.getAirDesktopPackagingOptions().setPackageFileName(fileName);
       }
@@ -158,10 +178,11 @@ public class Flexmojos3Configurator {
     setupSdk(mainBC);
 
     final String locales = StringUtil.join(myCompiledLocales, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
-    mainBC.getCompilerOptions().setAllOptions(Collections.singletonMap("compiler.locale", locales));
+    final Map<String, String> options = new THashMap<String, String>(mainBC.getCompilerOptions().getAllOptions());
+    options.put("compiler.locale", locales);
+    mainBC.getCompilerOptions().setAllOptions(options);
 
-    if (BCUtils.canHaveResourceFiles(nature)) {
-      // Don't copy whatever by default. If user had other setting before reimport - it will be set in #respectPreviousBCState()
+    if (BCUtils.canHaveResourceFiles(nature) && isNewBC) {
       mainBC.getCompilerOptions().setResourceFilesMode(CompilerOptions.ResourceFilesMode.None);
     }
 
@@ -170,6 +191,8 @@ public class Flexmojos3Configurator {
   }
 
   private TargetPlatform handleDependencies(final ModifiableFlexIdeBuildConfiguration bc) {
+    bc.getDependencies().getModifiableEntries().clear();
+
     boolean playerglobal = false;
     boolean airglobal = false;
     boolean mobilecomponents = false;
@@ -383,28 +406,17 @@ public class Flexmojos3Configurator {
 
   private void configureRuntimeLoadedModule(final ModifiableFlexIdeBuildConfiguration mainBC,
                                             final RLMInfo info,
-                                            final Collection<String> usedNames) {
-    final String bcName = getUniqueName(info.myRLMName, usedNames);
-    usedNames.add(bcName);
-
+                                            final @Nullable ModifiableFlexIdeBuildConfiguration existingRlmBC) {
     final BuildConfigurationNature nature = new BuildConfigurationNature(mainBC.getTargetPlatform(), mainBC.isPureAs(),
                                                                          OutputType.RuntimeLoadedModule);
-    final ModifiableFlexIdeBuildConfiguration rlmBC = myFlexEditor.copyConfiguration(mainBC, nature);
+    final boolean isNewBC = existingRlmBC == null;
+    final ModifiableFlexIdeBuildConfiguration rlmBC = isNewBC ? myFlexEditor.copyConfiguration(mainBC, nature) : existingRlmBC;
 
-    rlmBC.setName(bcName);
+    rlmBC.setName(info.myRLMName);
     rlmBC.setMainClass(info.myMainClass);
     rlmBC.setOutputFileName(info.myOutputFileName);
     rlmBC.setOutputFolder(info.myOutputFolderPath);
     rlmBC.getCompilerOptions().setAdditionalConfigFilePath(getCompilerConfigFilePath(info.myRLMName));
-  }
-
-  private static String getUniqueName(final String name, final Collection<String> usedNames) {
-    String uniqueName = name;
-    int index = 2;
-    while (usedNames.contains(uniqueName)) {
-      uniqueName = name + " " + index++;
-    }
-    return uniqueName;
   }
 
   protected Collection<RLMInfo> getRLMInfos() {
@@ -431,52 +443,6 @@ public class Flexmojos3Configurator {
       }
     }
     return result;
-  }
-
-  private static void respectPreviousBCState(final ModifiableFlexIdeBuildConfiguration[] newBCsc,
-                                             final FlexIdeBuildConfiguration[] oldBCs) {
-    for (ModifiableFlexIdeBuildConfiguration newBC : newBCsc) {
-      for (FlexIdeBuildConfiguration oldBC : oldBCs) {
-        if (oldBC.getName().equals(newBC.getName()) && oldBC.getNature().equals(newBC.getNature())) {
-          respectPreviousBCState(newBC, oldBC);
-          break;
-        }
-      }
-    }
-  }
-
-  private static void respectPreviousBCState(final ModifiableFlexIdeBuildConfiguration newBC, final FlexIdeBuildConfiguration oldBC) {
-    newBC.setSkipCompile(oldBC.isSkipCompile());
-
-    final BuildConfigurationNature nature = newBC.getNature();
-    final BuildConfigurationNature oldNature = oldBC.getNature();
-
-    if (nature.isApp() && nature.isWebPlatform() && oldNature.isApp() && oldNature.isWebPlatform()) {
-      newBC.setUseHtmlWrapper(oldBC.isUseHtmlWrapper());
-      newBC.setWrapperTemplatePath(oldBC.getWrapperTemplatePath());
-    }
-
-    if (BCUtils.canHaveRuntimeStylesheets(newBC) && BCUtils.canHaveRuntimeStylesheets(oldBC)) {
-      newBC.setCssFilesToCompile(oldBC.getCssFilesToCompile());
-    }
-
-    if (BCUtils.canHaveResourceFiles(nature) && BCUtils.canHaveResourceFiles(oldNature)) {
-      newBC.getCompilerOptions().setResourceFilesMode(oldBC.getCompilerOptions().getResourceFilesMode());
-    }
-
-    if (nature.isLib() && oldNature.isLib()) {
-      newBC.getCompilerOptions().setFilesToIncludeInSWC(oldBC.getCompilerOptions().getFilesToIncludeInSWC());
-    }
-
-    if (nature.isApp()) {
-      if (nature.isDesktopPlatform()) {
-        newBC.getAirDesktopPackagingOptions().setPackageFileName(oldBC.getAirDesktopPackagingOptions().getPackageFileName());
-      }
-      else if (nature.isMobilePlatform()) {
-        newBC.getAndroidPackagingOptions().setPackageFileName(oldBC.getAndroidPackagingOptions().getPackageFileName());
-        newBC.getIosPackagingOptions().setPackageFileName(oldBC.getIosPackagingOptions().getPackageFileName());
-      }
-    }
   }
 
   /*

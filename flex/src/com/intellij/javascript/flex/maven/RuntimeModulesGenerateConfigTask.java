@@ -16,11 +16,15 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.project.*;
 import org.jetbrains.idea.maven.utils.MavenProcessCanceledException;
 import org.jetbrains.idea.maven.utils.MavenProgressIndicator;
+import org.jetbrains.idea.maven.utils.MavenUtil;
 
 import java.io.IOException;
 import java.util.Collection;
 
-import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.*;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.FILE_SPECS;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.FLEX_CONFIG;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.OUTPUT;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.PATH_ELEMENT;
 
 public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasicTask {
 
@@ -85,6 +89,18 @@ public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasi
       }
       catch (IOException e) {/**/}
     }
+
+    MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
+      public void run() {
+        // need to refresh externally created file
+        for (RLMInfo info : myRlmInfos) {
+          final VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(info.myConfigFilePath);
+          if (file != null) {
+            file.refresh(false, false);
+          }
+        }
+      }
+    });
   }
 
   @Nullable
