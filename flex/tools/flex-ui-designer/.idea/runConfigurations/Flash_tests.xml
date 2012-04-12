@@ -17,6 +17,7 @@
       <value defaultName="moduleWithDependencies" />
     </option>
     <envs />
+    <fork_mode value="method" />
     <patterns>
       <pattern testClass="com.intellij.flex.uiDesigner.MxmlTest" />
       <pattern testClass="com.intellij.flex.uiDesigner.AppTest" />

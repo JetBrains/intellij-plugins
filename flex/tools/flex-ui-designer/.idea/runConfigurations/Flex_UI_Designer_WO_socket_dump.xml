@@ -3,7 +3,7 @@
     <module name="idea-plugin" />
     <option name="VM_PARAMETERS" value="-Xmx512m -XX:MaxPermSize=256m -XX:+UseCompressedOops -Dapple.awt.graphics.UseQuartz=true -ea -Dfud.home=/Users/develar/Documents/idea/flex/tools/flex-ui-designer" />
     <option name="PROGRAM_PARAMETERS" value="" />
-    <log_file path="$USER_HOME$/Library/Caches/IntelliJIdea11/plugins-sandbox/system/log/idea.log" checked="false" skipped="true" show_all="false" alias="IDEA LOG" />
+    <log_file path="/Volumes/ramdisk/plugins-sandbox/system/log/idea.log" checked="false" skipped="true" show_all="false" alias="IDEA LOG" />
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="51648" />
       <option name="TRANSPORT" value="0" />

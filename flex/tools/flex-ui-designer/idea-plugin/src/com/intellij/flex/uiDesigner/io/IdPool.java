@@ -7,7 +7,12 @@ public class IdPool {
   private int counter;
 
   public void dispose(int id) {
-    freeIndices.add(id);
+    if (id == (counter -  1)) {
+      counter--;
+    }
+    else {
+      freeIndices.add(id);
+    }
   }
 
   public void dispose(int[] ids) {

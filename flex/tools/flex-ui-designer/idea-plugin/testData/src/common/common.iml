@@ -3,7 +3,7 @@
   <component name="FlexBuildConfigurationManager" active="4.6">
     <configurations>
       <configuration name="4.6" output-file="common.swf" output-folder="$MODULE_DIR$/../../../out/production/common" skip-build="true">
-        <dependencies target-player="11.1" component-set="SparkOnly">
+        <dependencies target-player="11.1">
           <entries>
             <entry library-id="88ddb869-3b69-43b3-9ca2-3bebaa1857b4">
               <dependency linkage="Merged" />
