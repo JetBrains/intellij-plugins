@@ -15,6 +15,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CodingErrorAction;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,6 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     "mx.effects:Effect",
     "spark.modules:ModuleLoader",
     "mx.controls:SWFLoader",
-    //"mx.core:UIComponent"
   };
 
   static final char OVERLOADED_AND_BACKED_CLASS_MARK = 'F';
@@ -64,6 +64,12 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     }
     else if (StringUtil.equals(name, "mx.controls:SWFLoader")) {
       definition.doAbcData.abcModifier = new MethodAccessModifier("loadContent", null);
+    }
+    else if (StringUtil.equals(name, "mx.styles:StyleProtoChain")) {
+      List<String> list = new ArrayList<String>(2);
+      list.add("matchStyleDeclarations");
+      list.add("sortOnSpecificity");
+      definition.doAbcData.abcModifier = new MethodAccessModifier(list);
     }
     else {
       final boolean mxCore = StringUtil.startsWith(name, MX_CORE);
@@ -123,7 +129,7 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
       }
 
       if (skippedMethods != null || modifyConstructor) {
-        definition.doAbcData.abcModifier = new MethodAccessModifier(null, skippedMethods, skipColorCorrection ? "colorCorrection" : null, modifyConstructor);
+        definition.doAbcData.abcModifier = new MethodAccessModifier(skippedMethods, skipColorCorrection ? "colorCorrection" : null, modifyConstructor);
       }
     }
   }
@@ -214,22 +220,27 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
   }
 
   private static class MethodAccessModifier extends AbcModifierBase {
-    private String changeAccessModifier;
+    private List<String> changeAccessModifier;
     private List<SkipMethodKey> skippedMethods;
     private String skipSetter;
     private boolean modifyConstructor;
 
     private int traitDelta;
 
-    private MethodAccessModifier(String changeAccessModifier, List<SkipMethodKey> skippedMethods) {
-      this(changeAccessModifier, skippedMethods, null, false);
+    private MethodAccessModifier(List<String> changeAccessModifier) {
+      this(null, null, false);
+      this.changeAccessModifier = changeAccessModifier;
     }
 
-    private MethodAccessModifier(@Nullable String changeAccessModifier,
-                                 @Nullable List<SkipMethodKey> skippedMethods,
+    private MethodAccessModifier(String changeAccessModifier, List<SkipMethodKey> skippedMethods) {
+      this(skippedMethods, null, false);
+      this.changeAccessModifier = Collections.singletonList(changeAccessModifier);
+    }
+
+    private MethodAccessModifier(@Nullable List<SkipMethodKey> skippedMethods,
                                  @Nullable String skipSetter,
                                  boolean modifyConstructor) {
-      this.changeAccessModifier = changeAccessModifier;
+      this.changeAccessModifier = null;
       this.skippedMethods = skippedMethods;
       this.skipSetter = skipSetter;
       this.modifyConstructor = modifyConstructor;
@@ -245,9 +256,20 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
 
     @Override
     public boolean methodTraitName(int name, int traitKind, DataBuffer in, Encoder encoder) {
-      if (changeAccessModifier != null && isNotOverridenMethod(traitKind) && encoder.changeAccessModifier(changeAccessModifier, name, in)) {
-        changeAccessModifier = null;
-        return true;
+      if (changeAccessModifier != null && !changeAccessModifier.isEmpty() && isNotOverridenMethod(traitKind)) {
+        for (int i = 0, size = changeAccessModifier.size(); i < size; i++) {
+          String mname = changeAccessModifier.get(i);
+          if (encoder.changeAccessModifier(mname, name, in)) {
+            if (changeAccessModifier.size() == 1) {
+              changeAccessModifier = null;
+            }
+            else {
+              changeAccessModifier.remove(i);
+            }
+
+            return true;
+          }
+        }
       }
 
       return false;

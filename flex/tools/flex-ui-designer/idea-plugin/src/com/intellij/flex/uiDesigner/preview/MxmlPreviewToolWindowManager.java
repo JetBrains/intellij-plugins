@@ -398,12 +398,13 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
 
         final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
-        final boolean hideForNonMxmlFiles = propertiesComponent.getBoolean("mxml.preview.tool.window.hideForNonMxmlFiles", true);
+        //final boolean hideForNonMxmlFiles = propertiesComponent.getBoolean("mxml.preview.tool.window.hideForNonMxmlFiles", true);
+        final boolean hideForNonMxmlFiles = false;
 
         XmlFile psiFile = newEditor == null ? null : (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(newEditor.getDocument());
         if (psiFile == null) {
           toolWindowForm.setFile(null);
-          toolWindow.setAvailable(!hideForNonMxmlFiles, null);
+          //toolWindow.setAvailable(!hideForNonMxmlFiles, null);
           return;
         }
 
@@ -412,10 +413,10 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
           toolWindowForm.setFile(psiFile);
         }
 
-        if (!toolWindow.isAvailable()) {
-          toolWindowVisible = toolWindow.isVisible();
-          toolWindow.setAvailable(true, null);
-        }
+        //if (!toolWindow.isAvailable()) {
+        //  toolWindowVisible = toolWindow.isVisible();
+        //  toolWindow.setAvailable(true, null);
+        //}
 
         if (toolWindowVisible) {
           render();

@@ -35,7 +35,12 @@ public class StyleTest extends MxmlTestBase {
   public void testStyleTag() throws Exception {
     testFile("StyleTag.mxml", "testPackage/CustomSkinInPackage.mxml");
   }
-  
+
+  @Flex(version="4.6", requireLocalStyleHolder=true, rawProjectRoot=true)
+  public void testStyleTag_46() throws Exception {
+    testFile("StyleTag.mxml", "testPackage/CustomSkinInPackage.mxml");
+  }
+
   @Flex(version="4.1", requireLocalStyleHolder=true)
   // see mx.controls.ButtonBar line 528 in flex sdk 4.1
   public void testMxButtonBar41WithLocalStyleHolder() throws Exception {

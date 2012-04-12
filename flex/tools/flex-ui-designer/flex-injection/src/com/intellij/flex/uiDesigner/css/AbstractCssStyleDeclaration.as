@@ -3,6 +3,7 @@ import flash.display.DisplayObject;
 
 import mx.core.mx_internal;
 import mx.styles.CSSStyleDeclaration;
+import mx.styles.IAdvancedStyleClient;
 
 use namespace mx_internal;
 
@@ -43,6 +44,14 @@ public class AbstractCssStyleDeclaration extends CSSStyleDeclaration implements 
     else {
       return new NonSharedStyleDeclarationProxy(target, source, this);
     }
+  }
+
+  override public function matchesStyleClient(object:IAdvancedStyleClient):Boolean {
+    return false;
+  }
+
+  public function get _selector():CssSelector {
+    return null;
   }
 }
 }

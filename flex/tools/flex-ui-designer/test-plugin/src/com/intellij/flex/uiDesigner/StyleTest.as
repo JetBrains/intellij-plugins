@@ -77,6 +77,10 @@ public class StyleTest extends BaseTestCase {
     assertThat(rulesets[0].declarations[72], {name: "kerning", type: CssPropertyType.STRING, value: "default"});
   }
 
+  public function StyleTag_46():void {
+    StyleTag();
+  }
+
   public function StyleTag():void {
     const normalFontSize:int = appContent.getStyle("fontSize");
     //noinspection JSUnusedGlobalSymbols

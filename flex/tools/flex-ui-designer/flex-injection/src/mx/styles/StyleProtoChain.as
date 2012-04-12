@@ -11,7 +11,6 @@ import com.intellij.flex.uiDesigner.css.StyleManagerEx;
 import com.intellij.flex.uiDesigner.util.ImmutableFakeObjectProxy;
 
 import flash.errors.IllegalOperationError;
-
 import flash.utils.getQualifiedClassName;
 
 import mx.core.IFlexModule;
@@ -32,7 +31,7 @@ public class StyleProtoChain {
   public static function getClassStyleDeclarations(object:IStyleClient):Array {
     var styleManager:IStyleManager2 = getStyleManager(object);
     const qualified:Boolean = styleManager.qualifiedTypeSelectors;
-    const className:String = qualified ? getQualifiedClassName(object) : object.className;
+    const className:String = qualified ? getClassName(object) : object.className;
     var classDecls:Array;
 
     const hasAdvancedSelectors:Boolean = styleManager.hasAdvancedSelectors();
@@ -50,9 +49,9 @@ public class StyleProtoChain {
     for (var i:int = typeCount - 1; i >= 0; i--) {
       var type:String = types[i];
       if (hasAdvancedSelectors && advancedObject != null) {
-        var decls:Array = styleManager.getStyleDeclarations(type) as Array;
+        var decls:Object = styleManager.getStyleDeclarations(type);
         if (decls != null) {
-          classDecls = classDecls.concat(matchStyleDeclarations(decls, advancedObject));
+          classDecls = classDecls.concat(FtyleProtoChain.matchStyleDeclarations(decls, advancedObject));
         }
       }
       else {
@@ -66,50 +65,13 @@ public class StyleProtoChain {
     if (hasAdvancedSelectors && advancedObject != null) {
       // Advanced selectors may result in more than one match per type so
       // we sort based on specificity, but we preserve the declaration order for equal selectors.
-      return sortOnSpecificity(classDecls);
+      return FtyleProtoChain.sortOnSpecificity(classDecls);
     }
     else {
       // Cache the simple type declarations for this class
       styleManager.typeSelectorCache[className] = classDecls;
       return classDecls;
     }
-  }
-
-  private static function matchStyleDeclarations(declarations:Array, object:IAdvancedStyleClient):Array {
-    var matchingDecls:Array = [];
-
-    // Find the subset of declarations that match this component
-    for each (var decl:CSSStyleDeclaration in declarations) {
-      if (decl.matchesStyleClient(object)) {
-        matchingDecls.push(decl);
-      }
-    }
-
-    return matchingDecls;
-  }
-
-  private static function sortOnSpecificity(decls:Array):Array {
-    var len:Number = decls.length;
-    var tmp:CSSStyleDeclaration;
-
-    if (len <= 1) {
-      return decls;
-    }
-
-    for (var i:int = 1; i < len; i++) {
-      for (var j:int = i; j > 0; j--) {
-        if (decls[j].specificity < decls[j - 1].specificity) {
-          tmp = decls[j];
-          decls[j] = decls[j - 1];
-          decls[j - 1] = tmp;
-        }
-        else {
-          break;
-        }
-      }
-    }
-
-    return decls;
   }
 
   //noinspection JSUnusedGlobalSymbols
@@ -200,14 +162,13 @@ public class StyleProtoChain {
 
   // our impl doesn't require ApplicationDomain
   private static function getTypeHierarchy(object:IStyleClient, styleManager:IStyleManager2, qualified:Boolean = true):TypeHierarchyCacheItem {
-    var className:String = getQualifiedClassName(object);
+    var className:String = getClassName(object);
     var hierarchy:TypeHierarchyCacheItem = TypeHierarchyCacheItem(styleManager.typeHierarchyCache[className]);
     if (hierarchy != null) {
       return hierarchy;
     }
 
     hierarchy = new TypeHierarchyCacheItem();
-
 
     if (isStopClass(className)) {
       hierarchy.chain = new Vector.<String>(0, true);
@@ -226,11 +187,16 @@ public class StyleProtoChain {
         var n:int = bases.length - 1;
         var chain:Vector.<String> = new Vector.<String>(n + 1);
         chain[0] = className;
-        for (var i:int = 0; i < n;) {
+        var s:int = 1;
+        for (var i:int = 0; i < n; i++) {
           className = bases[i];
+          //if (className == "spark.components.supportClasses::FkinnableComponent" || className == "mx.controls::FWFLoader") {
+          //  continue;
+          //}
+
           if (!isStopClass(className)) {
             className = normalizeClassName(className, qualified);
-            chain[++i] = className;
+            chain[s++] = className;
             hierarchy[className] = true;
           }
           else {
@@ -238,13 +204,26 @@ public class StyleProtoChain {
           }
         }
 
-        chain.length = i + 1;
+        chain.length = s;
         chain.fixed = true;
         hierarchy.chain = chain;
       }
     }
 
     return hierarchy;
+  }
+
+  private static function getClassName(object:IStyleClient):String {
+    var className:String = getQualifiedClassName(object);
+    //if (className == "spark.components.supportClasses::FkinnableComponent") {
+    //  return "spark.components.supportClasses::SkinnableComponent";
+    //}
+    //else if (className == "mx.controls::FWFLoader") {
+    //  return "mx.controls::SWFLoader";
+    //}
+    //else {
+      return className;
+    //}
   }
 
   private static function normalizeClassName(className:String, qualified:Boolean):String {

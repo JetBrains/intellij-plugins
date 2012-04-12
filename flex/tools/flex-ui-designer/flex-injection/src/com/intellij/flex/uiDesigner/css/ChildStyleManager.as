@@ -7,7 +7,7 @@ public class ChildStyleManager extends AbstractStyleManager implements IStyleMan
     _parent = parent;
   }
   
-  private var _parent:RootStyleManager;
+  internal var _parent:RootStyleManager;
   override public function get parent():IStyleManager2 {
     return _parent;
   }

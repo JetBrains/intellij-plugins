@@ -20,6 +20,10 @@ public final class MergedCssStyleDeclaration extends AbstractCssStyleDeclaration
 
     mySelector = selector;
   }
+
+  override public function get _selector():CssSelector {
+    return mySelector;
+  }
   
   public static function mergeDeclarations(selector:String, style:MergedCssStyleDeclaration, parentStyle:MergedCssStyleDeclaration, styleValueResolver:StyleValueResolver):MergedCssStyleDeclaration {
     var merged:MergedCssStyleDeclaration = new MergedCssStyleDeclaration(new CssSelector(selector, null, null, null, null), null, styleValueResolver);

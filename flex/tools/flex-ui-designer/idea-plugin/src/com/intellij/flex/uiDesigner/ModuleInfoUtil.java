@@ -110,32 +110,36 @@ public final class ModuleInfoUtil {
       @Override
       public boolean process(JSClass jsClass) {
         PsiFile containingFile = jsClass.getNavigationElement().getContainingFile();
-        if (containingFile instanceof XmlFile) {
-          XmlTag rootTag = ((XmlFile)containingFile).getRootTag();
-          if (rootTag != null) {
-            final VirtualFile virtualFile = containingFile.getVirtualFile();
-            problemsHolder.setCurrentFile(virtualFile);
-            try {
-              // IDEA-73558
-              for (final XmlTag subTag : rootTag.getSubTags()) {
-                if (subTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
-                    subTag.getLocalName().equals(FlexPredefinedTagNames.STYLE)) {
-                  try {
-                    LocalStyleHolder localStyleHolder = styleTagWriter.write(subTag, moduleInfo.getModule(), virtualFile);
-                    if (localStyleHolder != null) {
-                      moduleInfo.addLocalStyleHolder(localStyleHolder);
-                    }
-                  }
-                  catch (InvalidPropertyException e) {
-                    problemsHolder.add(e);
-                  }
+        if (!(containingFile instanceof XmlFile)) {
+          return true;
+        }
+
+        XmlTag rootTag = ((XmlFile)containingFile).getRootTag();
+        if (rootTag == null) {
+          return true;
+        }
+
+        final VirtualFile virtualFile = containingFile.getVirtualFile();
+        problemsHolder.setCurrentFile(virtualFile);
+        try {
+          // IDEA-73558
+          for (final XmlTag subTag : rootTag.getSubTags()) {
+            if (subTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
+                subTag.getLocalName().equals(FlexPredefinedTagNames.STYLE)) {
+              try {
+                LocalStyleHolder localStyleHolder = styleTagWriter.write(subTag, moduleInfo.getModule(), virtualFile);
+                if (localStyleHolder != null) {
+                  moduleInfo.addLocalStyleHolder(localStyleHolder);
                 }
               }
-            }
-            finally {
-              problemsHolder.setCurrentFile(null);
+              catch (InvalidPropertyException e) {
+                problemsHolder.add(e);
+              }
             }
           }
+        }
+        finally {
+          problemsHolder.setCurrentFile(null);
         }
         return true;
       }

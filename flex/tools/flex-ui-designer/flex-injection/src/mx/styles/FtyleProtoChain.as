@@ -10,11 +10,9 @@ public class FtyleProtoChain {
   }
 
   public static function initProtoChain(object:IStyleClient, inheritPopUpStylesFromOwner:Boolean = true):void {
-
   }
 
   public static function initProtoChainForUIComponentStyleName(obj:IStyleClient):void {
-
   }
 
   public static function initTextField(obj:IUITextField):void {
@@ -28,6 +26,14 @@ public class FtyleProtoChain {
   }
 
   public static function getMatchingStyleDeclarations(object:IAdvancedStyleClient, styleDeclarations:Array):Array {
+    return null;
+  }
+
+  public static function matchStyleDeclarations(declarations:Object, object:IAdvancedStyleClient):Array {
+    return null;
+  }
+
+  public static function sortOnSpecificity(decls:Array):Array {
     return null;
   }
 }

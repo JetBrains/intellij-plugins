@@ -66,7 +66,56 @@ internal class AbstractStyleManager {
 
   flex::v4_6
   public function getStyleDeclarations(subject:String):Object {
-    return _getStyleDeclarations(subject);
+    var declarations:Array = _getStyleDeclarations(subject);
+    var burnInHellAdobe:BurnInHellAdobe = new BurnInHellAdobe();
+    for each (var declaration:CssStyleDeclaration in declarations) {
+      var selector:CssSelector = declaration._selector;
+      var firstCondition:CssCondition = selector == null || selector.conditions == null || selector.conditions.length == 0 ?
+                                        null
+              : selector.conditions[0];
+      if (firstCondition == null) {
+        var unconditional:Array = burnInHellAdobe.unconditional;
+        if (unconditional == null) {
+          unconditional = [declaration];
+          burnInHellAdobe.unconditional = unconditional;
+        }
+        else {
+          unconditional[unconditional.length] = declaration;
+        }
+      }
+      else if (firstCondition is CssClassCondition) {
+        var clazz:Array = burnInHellAdobe["class"];
+        if (clazz == null) {
+          clazz = [declaration];
+          burnInHellAdobe["class"] = clazz;
+        }
+        else {
+          clazz[clazz.length] = declaration;
+        }
+      }
+      else if (firstCondition is CssPseudoCondition) {
+        var pseudo:Array = burnInHellAdobe.pseudo;
+        if (pseudo == null) {
+          pseudo = [declaration];
+          burnInHellAdobe.pseudo = pseudo;
+        }
+        else {
+          pseudo[pseudo.length] = declaration;
+        }
+      }
+      else if (firstCondition is CssIdCondition) {
+        var id:Array = burnInHellAdobe.id;
+        if (id == null) {
+          id = [declaration];
+          burnInHellAdobe.id = id;
+        }
+        else {
+          id[id.length] = declaration;
+        }
+      }
+    }
+
+    return burnInHellAdobe;
   }
 
   flex::lt_4_6
@@ -76,8 +125,9 @@ internal class AbstractStyleManager {
 
   private function _getStyleDeclarations(subject:String):Array {
     var subjects:Array;
-    if (parent != null) {
-      subjects = parent.getStyleDeclarations(subject) as Array;
+    var p:AbstractStyleManager = parent as RootStyleManager;
+    if (p != null) {
+      subjects = p._getStyleDeclarations(subject) as Array;
     }
 
     if (subjects == null) {
@@ -357,4 +407,10 @@ internal class AbstractStyleManager {
     return false;
   }
 }
+}
+
+dynamic class BurnInHellAdobe {
+  public var pseudo:Array;
+  public var id:Array;
+  public var unconditional:Array;
 }
