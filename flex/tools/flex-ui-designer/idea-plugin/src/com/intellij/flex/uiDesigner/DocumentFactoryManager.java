@@ -59,9 +59,19 @@ public class DocumentFactoryManager {
         return;
       }
 
-      Document[] unsavedDocuments = FileDocumentManager.getInstance().getUnsavedDocuments();
+      final Document[] unsavedDocuments = FileDocumentManager.getInstance().getUnsavedDocuments();
       if (unsavedDocuments.length > 0) {
-        DesignerApplicationManager.getInstance().renderUnsavedDocuments(unsavedDocuments);
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+              @Override
+              public void run() {
+                DesignerApplicationManager.getInstance().renderUnsavedDocuments(unsavedDocuments);
+              }
+            });
+          }
+        });
       }
     }
   }
