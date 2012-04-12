@@ -491,7 +491,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                 .createGeneralOptionProblem(bc.getName(), FlexBundle.message("output.folder.not.set"),
                                                             FlexIdeBCConfigurable.Location.OutputFolder));
       }
-      else if (!FileUtil.isAbsoluteFilePath(bc.getOutputFolder())) {
+      else if (!FileUtil.isAbsolute(bc.getOutputFolder())) {
         errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
           .message("output.folder.not.absolute", bc.getOutputFolder()), FlexIdeBCConfigurable.Location.OutputFolder));
       }
