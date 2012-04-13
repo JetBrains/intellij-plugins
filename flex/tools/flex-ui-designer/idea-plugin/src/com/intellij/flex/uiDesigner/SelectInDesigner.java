@@ -4,14 +4,11 @@ import com.intellij.ide.SelectInContext;
 import com.intellij.ide.SelectInTarget;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
-import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 
@@ -45,7 +42,6 @@ public class SelectInDesigner implements SelectInTarget {
     DesignerApplicationManager.getInstance().runWhenRendered((XmlFile)element.getContainingFile(), new AsyncResult.Handler<DocumentInfo>() {
       @Override
       public void run(DocumentInfo info) {
-        final List<RangeMarker> rangeMarkers = info.getRangeMarkers();
         int componentId = 0;
         if (!(element instanceof XmlFile)) {
           PsiElement effectiveElement = element;
@@ -69,7 +65,7 @@ public class SelectInDesigner implements SelectInTarget {
 
         Client.getInstance().selectComponent(info.getId(), componentId);
       }
-    }, null, false);
+    });
   }
 
   @Override

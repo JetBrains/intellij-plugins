@@ -128,6 +128,7 @@ public class LibraryManager implements Disposable {
       info = new ProjectInfo(project);
       registeredProjects.add(info);
       client.openProject(project);
+      DesignerApplicationManager.projectRegistered(project);
     }
 
     LibrarySet librarySet;

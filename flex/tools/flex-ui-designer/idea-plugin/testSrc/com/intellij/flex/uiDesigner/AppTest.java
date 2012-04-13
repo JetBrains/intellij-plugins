@@ -44,10 +44,14 @@ public class AppTest extends AppTestBase {
     ((MySocketInputHandler)SocketInputHandler.getInstance()).semaphore = semaphore;
 
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(myModule);
-    connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
+    connection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationManager.DocumentRenderedListener() {
       @Override
       public void documentRenderedOnAutoSave(DocumentInfo info) {
         semaphore.up();
+      }
+
+      @Override
+      public void documentIncrementallyUpdated(DocumentInfo info) {
       }
 
       @Override
@@ -72,7 +76,7 @@ public class AppTest extends AppTestBase {
     fail.set(false);
   }
 
-  private void callClientAssert(VirtualFile file, String methodName) throws IOException, InterruptedException {
+  private void callClientAssert(VirtualFile file) throws IOException, InterruptedException {
     semaphore.down();
     ActionCallback callback = client.test(null, DocumentFactoryManager.getInstance().getId(file), getTestName(false), APP_TEST_CLASS_ID);
     callback.doWhenProcessed(new Runnable() {
@@ -112,12 +116,12 @@ public class AppTest extends AppTestBase {
     renderAndWait(files[0]);
 
     insertString(files[0], 166, "A");
-    callClientAssert(files[0], getTestName(false));
+    callClientAssert(files[0]);
 
     renderAndWait(files[1]);
 
     insertString(files[1], 191, "A");
-    callClientAssert(files[0], "UpdateDocumentOnIdeaAutoSave2");
+    callClientAssert(files[0]);
   }
 
   private void insertString(VirtualFile file, int offset, @NotNull CharSequence s) throws InterruptedException {

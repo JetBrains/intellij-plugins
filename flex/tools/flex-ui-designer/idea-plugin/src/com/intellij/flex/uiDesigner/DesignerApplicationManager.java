@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.ProjectTopics;
-import com.intellij.flex.uiDesigner.css.LocalCssWriter;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
@@ -35,15 +34,16 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
+import com.intellij.psi.css.CssFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
 import com.intellij.util.concurrency.QueueProcessor;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
-import gnu.trove.TIntArrayList;
+import com.intellij.util.messages.Topic;
 import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,7 +63,11 @@ import static com.intellij.flex.uiDesigner.RenderActionQueue.RenderAction;
 public class DesignerApplicationManager extends ServiceManagerImpl {
   private static final ExtensionPointName<ServiceDescriptor> SERVICES =
     new ExtensionPointName<ServiceDescriptor>("com.intellij.flex.uiDesigner.service");
+
   public static final File APP_DIR = new File(PathManager.getSystemPath(), "flashUIDesigner");
+
+  public static final Topic<DocumentRenderedListener> MESSAGE_TOPIC =
+    new Topic<DocumentRenderedListener>("Flash UI Designer document rendered event", DocumentRenderedListener.class);
 
   private DesignerApplication application;
 
@@ -267,6 +271,10 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return client.renderDocumentAndDependents(documentInfos, outdatedLocalStyleHolders);
   }
 
+  public void runWhenRendered(@NotNull XmlFile psiFile, @NotNull AsyncResult.Handler<DocumentInfo> handler) {
+    runWhenRendered(psiFile, handler, null, false);
+  }
+
   public void runWhenRendered(@NotNull XmlFile psiFile,
                               @NotNull AsyncResult.Handler<DocumentInfo> handler,
                               @Nullable ActionCallback renderRejectedCallback,
@@ -412,7 +420,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
           public void run(List<DocumentInfo> infos) {
             MessageBus messageBus = ApplicationManager.getApplication().getMessageBus();
             for (DocumentInfo info : infos) {
-              messageBus.syncPublisher(SocketInputHandler.MESSAGE_TOPIC).documentRenderedOnAutoSave(info);
+              messageBus.syncPublisher(MESSAGE_TOPIC).documentRenderedOnAutoSave(info);
             }
           }
         });
@@ -467,6 +475,41 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     }
     final XmlTag rootTag = ((XmlFile)psiFile).getRootTag();
     return rootTag != null && rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) != null;
+  }
+
+  public static void projectRegistered(Project project) {
+    final Alarm syncAlarm = new Alarm();
+    PsiManager.getInstance(project).addPsiTreeChangeListener(new PsiTreeChangeAdapter() {
+      public void childrenChanged(@NotNull PsiTreeChangeEvent event) {
+        //update(event);
+      }
+
+      public void childRemoved(@NotNull PsiTreeChangeEvent event) {
+        update(event);
+      }
+
+      public void childAdded(@NotNull PsiTreeChangeEvent event) {
+        update(event);
+      }
+
+      public void childReplaced(@NotNull PsiTreeChangeEvent event) {
+        update(event);
+      }
+
+      @Override
+      public void propertyChanged(@NotNull PsiTreeChangeEvent event) {
+        //super.propertyChanged(event);
+      }
+
+      private void update(final PsiTreeChangeEvent event) {
+        if (!(event.getFile() instanceof XmlFile || event.getFile() instanceof CssFile)) {
+          return;
+        }
+
+        syncAlarm.cancelAllRequests();
+        syncAlarm.addRequest(new IncrementalDocumentSynchronizer(event), 100, ModalityState.NON_MODAL);
+      }
+    }, project);
   }
 
   void attachProjectAndModuleListeners(DesignerApplication designerApplication) {
@@ -604,5 +647,11 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
       return true;
     }
+  }
+
+  public interface DocumentRenderedListener {
+    void documentRenderedOnAutoSave(DocumentInfo info);
+    void documentIncrementallyUpdated(DocumentInfo info);
+    void errorOccured();
   }
 }

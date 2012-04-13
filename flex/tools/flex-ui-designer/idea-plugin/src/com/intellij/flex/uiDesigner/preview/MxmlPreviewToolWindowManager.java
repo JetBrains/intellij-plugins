@@ -1,21 +1,10 @@
 package com.intellij.flex.uiDesigner.preview;
 
 import com.intellij.flex.uiDesigner.*;
-import com.intellij.flex.uiDesigner.io.*;
-import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
-import com.intellij.flex.uiDesigner.mxml.PrimitiveWriter;
-import com.intellij.flex.uiDesigner.mxml.XmlAttributeValueProvider;
-import com.intellij.flex.uiDesigner.mxml.XmlElementValueProvider;
+import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.javascript.flex.FlexAnnotationNames;
-import com.intellij.javascript.flex.FlexReferenceContributor;
-import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
-import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.editor.Document;
@@ -31,11 +20,8 @@ import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowManagerAdapter;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
-import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.Alarm;
@@ -44,7 +30,6 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.Processor;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.xml.XmlAttributeDescriptor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,39 +69,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   @Override
   public void projectOpened() {
     project.getMessageBus().connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new MyFileEditorManagerListener());
-
-    final Alarm syncAlarm = new Alarm();
-    PsiManager.getInstance(project).addPsiTreeChangeListener(new PsiTreeChangeAdapter() {
-      public void childrenChanged(@NotNull PsiTreeChangeEvent event) {
-        //update(event);
-      }
-
-      public void childRemoved(@NotNull PsiTreeChangeEvent event) {
-        update(event);
-      }
-
-      public void childAdded(@NotNull PsiTreeChangeEvent event) {
-        update(event);
-      }
-
-      public void childReplaced(@NotNull PsiTreeChangeEvent event) {
-        update(event);
-      }
-
-      @Override
-      public void propertyChanged(@NotNull PsiTreeChangeEvent event) {
-        //super.propertyChanged(event);
-      }
-
-      private void update(final PsiTreeChangeEvent event) {
-        if (!toolWindowVisible || event.getFile() == null || toolWindowForm.getFile() != event.getFile()) {
-          return;
-        }
-
-        syncAlarm.cancelAllRequests();
-        syncAlarm.addRequest(new Synchronizer(event), 100, ModalityState.NON_MODAL);
-      }
-    }, project);
   }
 
   public void projectClosed() {
@@ -215,13 +167,29 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     contentManager.setSelectedContent(content, true);
 
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(project);
-    connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
+    connection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationManager.DocumentRenderedListener() {
       @Override
       public void documentRenderedOnAutoSave(DocumentFactoryManager.DocumentInfo info) {
-        if (toolWindowVisible &&
-            toolWindowForm.getFile() != null &&
-            info.equals(DocumentFactoryManager.getInstance().getNullableInfo(toolWindowForm.getFile()))) {
+        if (isApplicable(info)) {
           render();
+        }
+      }
+
+      private boolean isApplicable(DocumentFactoryManager.DocumentInfo info) {
+        return toolWindowVisible &&
+               toolWindowForm.getFile() != null &&
+               info.equals(DocumentFactoryManager.getInstance().getNullableInfo(toolWindowForm.getFile()));
+      }
+
+      @Override
+      public void documentIncrementallyUpdated(DocumentFactoryManager.DocumentInfo info) {
+        if (isApplicable(info)) {
+          UIUtil.invokeLaterIfNeeded(new Runnable() {
+            @Override
+            public void run() {
+              render();
+            }
+          });
         }
       }
 
@@ -397,13 +365,9 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
 
         final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
-        //final boolean hideForNonMxmlFiles = propertiesComponent.getBoolean("mxml.preview.tool.window.hideForNonMxmlFiles", true);
-        final boolean hideForNonMxmlFiles = false;
-
         XmlFile psiFile = newEditor == null ? null : (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(newEditor.getDocument());
         if (psiFile == null) {
           toolWindowForm.setFile(null);
-          //toolWindow.setAvailable(!hideForNonMxmlFiles, null);
           return;
         }
 
@@ -411,11 +375,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         if (doRender) {
           toolWindowForm.setFile(psiFile);
         }
-
-        //if (!toolWindow.isAvailable()) {
-        //  toolWindowVisible = toolWindow.isVisible();
-        //  toolWindow.setAvailable(true, null);
-        //}
 
         if (toolWindowVisible) {
           render();
@@ -425,181 +384,5 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
       }
     }, 300);
-  }
-
-  private final class Synchronizer implements Runnable {
-    private final PsiTreeChangeEvent event;
-
-    public Synchronizer(PsiTreeChangeEvent event) {
-      this.event = event;
-    }
-
-    @Nullable
-    private XmlElementValueProvider findSupportedTarget() {
-      if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
-        return null;
-      }
-
-      PsiElement element = event.getParent();
-      // if we change attribute value via line marker, so, event.getParent() will be XmlAttribute instead of XmlAttributeValue
-      while (!(element instanceof XmlAttribute)) {
-        element = element.getParent();
-        if (element instanceof XmlTag || element instanceof PsiFile || element == null) {
-          return null;
-        }
-      }
-
-      XmlAttribute attribute = (XmlAttribute)element;
-      if (JavaScriptSupportLoader.MXML_URI3.equals(attribute.getNamespace())) {
-        return null;
-      }
-
-      XmlAttributeDescriptor xmlDescriptor = attribute.getDescriptor();
-      if (!(xmlDescriptor instanceof AnnotationBackedDescriptor)) {
-        return null;
-      }
-
-      AnnotationBackedDescriptor descriptor = (AnnotationBackedDescriptor)xmlDescriptor;
-      if (descriptor.isPredefined() || MxmlUtil.isIdLanguageAttribute(attribute, descriptor)) {
-        return null;
-      }
-
-      // todo incremental sync for state-specific attributes
-      PsiReference[] references = attribute.getReferences();
-      if (references.length > 1) {
-        for (int i = references.length - 1; i > -1; i--) {
-          PsiReference psiReference = references[i];
-          if (psiReference instanceof FlexReferenceContributor.StateReference) {
-            return null;
-          }
-        }
-      }
-      else {
-        String prefix = attribute.getName() + '.';
-        for (XmlAttribute anotherAttribute : attribute.getParent().getAttributes()) {
-          if (anotherAttribute != attribute && anotherAttribute.getName().startsWith(prefix)) {
-            return null;
-          }
-        }
-      }
-
-      XmlAttributeValueProvider valueProvider = new XmlAttributeValueProvider(attribute);
-      // skip binding
-      PsiLanguageInjectionHost injectedHost = valueProvider.getInjectedHost();
-      if (injectedHost != null && InjectedLanguageUtil.hasInjections(injectedHost)) {
-        return null;
-      }
-
-      return valueProvider;
-    }
-
-    @Override
-    public void run() {
-      if (!DesignerApplicationManager.getInstance().isInitialRendering() && !incrementalSync()) {
-        render();
-      }
-    }
-
-    private boolean incrementalSync() {
-      final XmlElementValueProvider valueProvider = findSupportedTarget();
-      if (valueProvider == null) {
-        return false;
-      }
-
-      DocumentFactoryManager.DocumentInfo info = DocumentFactoryManager.getInstance().getInfo(valueProvider.getElement());
-      XmlTag tag = (XmlTag)valueProvider.getElement().getParent();
-      if (!(tag.getDescriptor() instanceof ClassBackedElementDescriptor)) {
-        return false;
-      }
-
-      int componentId = info.rangeMarkerIndexOf(tag);
-      if (componentId == -1) {
-        return false;
-      }
-
-      final AnnotationBackedDescriptor descriptor = (AnnotationBackedDescriptor)valueProvider.getPsiMetaData();
-      assert descriptor != null;
-      final String typeName = descriptor.getTypeName();
-      final String type = descriptor.getType();
-      if (type == null) {
-        return !typeName.equals(FlexAnnotationNames.EFFECT);
-      }
-      else if (type.equals(JSCommonTypeNames.FUNCTION_CLASS_NAME) || typeName.equals(FlexAnnotationNames.EVENT)) {
-        return true;
-      }
-
-      final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
-      final PrimitiveAmfOutputStream dataOut = new PrimitiveAmfOutputStream(new ByteArrayOutputStreamEx(16));
-      PrimitiveWriter writer = new PrimitiveWriter(dataOut, stringWriter);
-      boolean needRollbackStringWriter = true;
-      try {
-        if (descriptor.isAllowsPercentage()) {
-          String value = valueProvider.getTrimmed();
-          final boolean hasPercent;
-          if (value.isEmpty() || ((hasPercent = value.endsWith("%")) && value.length() == 1)) {
-            return true;
-          }
-
-          final String name;
-          if (hasPercent) {
-            name = descriptor.getPercentProxy();
-            value = value.substring(0, value.length() - 1);
-          }
-          else {
-            name = descriptor.getName();
-          }
-
-          stringWriter.write(name, dataOut);
-          dataOut.writeAmfDouble(value);
-        }
-        else {
-          stringWriter.write(descriptor.getName(), dataOut);
-          if (!writer.writeIfApplicable(valueProvider, dataOut, descriptor)) {
-            needRollbackStringWriter = false;
-            stringWriter.rollback();
-            return false;
-          }
-        }
-
-        needRollbackStringWriter = false;
-      }
-      catch (InvalidPropertyException e) {
-        return true;
-      }
-      catch (NumberFormatException e) {
-        return true;
-      }
-      finally {
-        if (needRollbackStringWriter) {
-          stringWriter.rollback();
-        }
-      }
-
-      final DocumentFactoryManager.DocumentInfo finalInfo = info;
-      Client.getInstance().updatePropertyOrStyle(info.getId(), componentId, new Consumer<AmfOutputStream>() {
-        @Override
-        public void consume(AmfOutputStream stream) {
-          stringWriter.writeTo(stream);
-          stream.write(descriptor.isStyle());
-          dataOut.writeTo(stream);
-        }
-      }).doWhenDone(new Runnable() {
-        @Override
-        public void run() {
-          Document document = FileDocumentManager.getInstance().getCachedDocument(finalInfo.getElement());
-          if (document != null) {
-            finalInfo.documentModificationStamp = document.getModificationStamp();
-            UIUtil.invokeLaterIfNeeded(new Runnable() {
-              @Override
-              public void run() {
-                render(false);
-              }
-            });
-          }
-        }
-      });
-
-      return true;
-    }
   }
 }

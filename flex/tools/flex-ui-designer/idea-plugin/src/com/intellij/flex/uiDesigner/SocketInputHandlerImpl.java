@@ -38,7 +38,6 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.ui.AppIcon;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -61,14 +60,8 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   private File resultFile;
   private File appDir;
 
-  private final MessageBus messageBus;
-
   private final List<ActionCallback> callbacks = new ArrayList<ActionCallback>();
   private final IdPool callbackIdPool = new IdPool();
-
-  public SocketInputHandlerImpl() {
-    messageBus = ApplicationManager.getApplication().getMessageBus();
-  }
 
   @Override
   public int addCallback(final @NotNull ActionCallback actionCallback) {
@@ -538,6 +531,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       new EntireMovieTranscoder().transcode(assetInfo.file, resultFile);
     }
     else {
+      //noinspection ConstantConditions
       new MovieSymbolTranscoder().transcode(assetInfo.file, resultFile, assetInfo.symbolName);
     }
   }
@@ -584,7 +578,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   private void showError() throws IOException {
-    messageBus.syncPublisher(MESSAGE_TOPIC).errorOccured();
+    ApplicationManager.getApplication().getMessageBus().syncPublisher(DesignerApplicationManager.MESSAGE_TOPIC).errorOccured();
     
     String userMessage = reader.readUTF();
     final String technicalMessage = reader.readUTF();
