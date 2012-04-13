@@ -60,11 +60,19 @@ public class ModuleInfo extends Info<Module> implements Disposable {
 }
 
 class LocalStyleHolder implements AmfOutputable {
-  private final VirtualFile file;
-  private final byte[] data;
+  final VirtualFile file;
+  private byte[] data;
 
   LocalStyleHolder(VirtualFile file, byte[] data) {
     this.file = file;
+    this.data = data;
+  }
+
+  public byte[] getData() {
+    return data;
+  }
+
+  public void setData(byte[] data) {
     this.data = data;
   }
 

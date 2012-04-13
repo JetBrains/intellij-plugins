@@ -63,6 +63,10 @@ public class InfoMap<E,I extends Info<E>> implements Disposable {
     return elements.isEmpty();
   }
 
+  public void forEach(TObjectProcedure<I> procedure) {
+    elements.forEachValue(procedure);
+  }
+
   public void remove(int[] ids) {
     elements.retainEntries(new RetainCondition<E, I>(ids));
   }

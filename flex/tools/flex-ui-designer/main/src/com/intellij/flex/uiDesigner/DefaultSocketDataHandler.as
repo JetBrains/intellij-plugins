@@ -124,6 +124,10 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
       case ClientMethod.updatePropertyOrStyle:
         updatePropertyOrStyle(input, callbackId);
         break;
+
+      case ClientMethod.updateLocalStyleHolders:
+        updateLocalStyleHolders(input);
+        break;
     }
   }
 
@@ -153,6 +157,19 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     toolWindowManager.registerToolWindow(PaneItem.create("Properties", new ClassFactory(PropertyInspector)), MigConstants.RIGHT, true);
 
     documentWindow.init(project.map, projectWindowBounds);
+  }
+
+  private function updateLocalStyleHolders(input:IDataInput):void {
+    stringRegistry.readTable(input);
+
+    var n:int = AmfUtil.readUInt29(input);
+    while (n-- > 0) {
+      var holders:Vector.<LocalStyleHolder> = moduleManager.getById(AmfUtil.readUInt29(input)).localStyleHolders;
+      var j:int = AmfUtil.readUInt29(input);
+      while (j-- > 0) {
+        holders[AmfUtil.readUInt29(input)].data = AmfUtil.readByteArray(input);
+      }
+    }
   }
 
   private function registerModule(input:IDataInput):void {
@@ -253,14 +270,26 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     Server.instance.callback(callbackId);
   }
 
-  private static function renderDocumentsAndDependents(input:IDataInput, callbackId:int):void {
+  private function renderDocumentsAndDependents(input:IDataInput, callbackId:int):void {
     var documentFactoryManager:DocumentFactoryManager = getDocumentFactoryManager();
     var n:int = AmfUtil.readUInt29(input);
     var processed:Dictionary = new Dictionary();
     var callbacks:Vector.<ActionCallback> = new Vector.<ActionCallback>();
     while (n-- > 0) {
+      var module:Module = moduleManager.getById(AmfUtil.readUInt29(input));
+      module.styleManager = null;
+      documentFactoryManager.forEachBelongToModule(module, function (documentFactory:DocumentFactory):void {
+        doRenderDocumentAndDependents(documentFactory, getDocumentManager(documentFactory.module), documentFactoryManager, processed,
+                                      callbacks);
+      });
+    }
+
+    //noinspection ReuseOfLocalVariableJS
+    n = AmfUtil.readUInt29(input);
+    while (n-- > 0) {
       var documentFactory:DocumentFactory = documentFactoryManager.getById(AmfUtil.readUInt29(input));
-      doRenderDocumentAndDependents(documentFactory, getDocumentManager(documentFactory.module), documentFactoryManager, processed, callbacks);
+      doRenderDocumentAndDependents(documentFactory, getDocumentManager(documentFactory.module), documentFactoryManager, processed,
+                                    callbacks);
     }
 
     if (callbacks.length == 0) {
@@ -384,4 +413,5 @@ final class ClientMethod {
   public static const selectComponent:int = 14;
   public static const getDocumentImage:int = 15;
   public static const updatePropertyOrStyle:int = 16;
+  public static const updateLocalStyleHolders:int = 17;
 }

@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
+import com.intellij.util.PairConsumer;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -270,6 +271,9 @@ public class Client implements Disposable {
     }
     finally {
       finalizeMessage(hasError);
+      if (hasError) {
+        stringWriter.rollback();
+      }
     }
   }
 
@@ -403,6 +407,36 @@ public class Client implements Disposable {
     }
   }
 
+  public void updateLocalStyleHolders(List<Pair<ModuleInfo, List<LocalStyleHolder>>> holders, StringRegistry.StringWriter stringWriter) {
+    boolean hasError = false;
+    try {
+      beginMessage(ClientMethod.updateLocalStyleHolders);
+      stringWriter.writeTo(out);
+      out.write(holders, new PairConsumer<Pair<ModuleInfo, List<LocalStyleHolder>>, AmfOutputStream>() {
+        @Override
+        public void consume(Pair<ModuleInfo, List<LocalStyleHolder>> pair, AmfOutputStream out) {
+          out.writeUInt29(pair.first.getId());
+          List<LocalStyleHolder> allStyleHolders = pair.first.getLocalStyleHolders();
+          assert allStyleHolders != null;
+          out.writeUInt29(pair.second.size());
+          for (LocalStyleHolder holder : pair.second) {
+            out.writeUInt29(allStyleHolders.indexOf(holder));
+            out.writeUInt29(holder.getData().length);
+            out.write(holder.getData());
+          }
+        }
+      });
+    }
+    catch (Throwable e) {
+      hasError = true;
+      stringWriter.rollback();
+      LogMessageUtil.processInternalError(e);
+    }
+    finally {
+      finalizeMessage(hasError);
+    }
+  }
+
   public boolean updateDocumentFactory(int factoryId, Module module, XmlFile psiFile) {
     try {
       beginMessage(ClientMethod.updateDocumentFactory);
@@ -423,9 +457,10 @@ public class Client implements Disposable {
     return false;
   }
 
-  public AsyncResult<List<DocumentInfo>> renderDocumentAndDependents(final List<DocumentInfo> infos) {
+  public AsyncResult<List<DocumentInfo>> renderDocumentAndDependents(final List<DocumentInfo> infos,
+                                                                     List<Pair<ModuleInfo, List<LocalStyleHolder>>> outdatedLocalStyleHolders) {
     final AsyncResult<List<DocumentInfo>> result = new AsyncResult<List<DocumentInfo>>();
-    if (infos.isEmpty()) {
+    if (infos.isEmpty() && outdatedLocalStyleHolders.isEmpty()) {
       result.setDone(infos);
       return result;
     }
@@ -439,12 +474,13 @@ public class Client implements Disposable {
           result.setDone(infos);
         }
       });
-
-      out.writeUInt29(infos.size());
-      for (DocumentInfo info : infos) {
-        out.writeUInt29(info.getId());
-      }
-
+      out.write(outdatedLocalStyleHolders, new PairConsumer<Pair<ModuleInfo, List<LocalStyleHolder>>, AmfOutputStream>() {
+        @Override
+        public void consume(Pair<ModuleInfo, List<LocalStyleHolder>> pair, AmfOutputStream out) {
+          out.writeUInt29(pair.first.getId());
+        }
+      });
+      out.write(infos);
       hasError = false;
     }
     finally {
@@ -525,13 +561,14 @@ public class Client implements Disposable {
     return result.first.unregistered.isEmpty() || registerDocumentReferences(result.first.unregistered, module, problemsHolder);
   }
 
-  public boolean registerDocumentReferences(List<XmlFile> files, Module module, ProblemsHolder problemsHolder) {
+  public boolean registerDocumentReferences(List<XmlFile> files, @Nullable Module module, ProblemsHolder problemsHolder) {
     for (XmlFile file : files) {
       VirtualFile virtualFile = file.getViewProvider().getVirtualFile();
       Module documentModule = ModuleUtil.findModuleForFile(virtualFile, file.getProject());
-      if (module != documentModule && !isModuleRegistered(module)) {
+      assert documentModule != null;
+      if (module != documentModule && !isModuleRegistered(documentModule)) {
         try {
-          LibraryManager.getInstance().registerModule(module, problemsHolder);
+          LibraryManager.getInstance().registerModule(documentModule, problemsHolder);
         }
         catch (InitException e) {
           LogMessageUtil.LOG.error(e.getCause());
@@ -541,7 +578,7 @@ public class Client implements Disposable {
       }
 
       // force register, it is registered (id allocated) only on server side
-      if (registerDocumentFactoryIfNeed(module, file, virtualFile, true, problemsHolder) == -1) {
+      if (registerDocumentFactoryIfNeed(documentModule, file, virtualFile, true, problemsHolder) == -1) {
         return false;
       }
     }
@@ -643,7 +680,7 @@ public class Client implements Disposable {
   private static enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, unregisterModule, registerDocumentFactory, updateDocumentFactory, renderDocument, renderDocumentsAndDependents,
     initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool, fillViewClassPool,
-    selectComponent, getDocumentImage, updatePropertyOrStyle;
+    selectComponent, getDocumentImage, updatePropertyOrStyle, updateLocalStyleHolders;
     
     public static final int METHOD_CLASS = 0;
   }

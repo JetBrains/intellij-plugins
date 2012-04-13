@@ -50,6 +50,7 @@ import mx.modules.ModuleManagerGlobals;
 import mx.resources.ResourceManager;
 import mx.styles.ISimpleStyleClient;
 import mx.styles.IStyleClient;
+import mx.styles.IStyleManager2;
 import mx.styles.StyleManager;
 
 import spark.components.Application;
@@ -141,6 +142,10 @@ public final class FlexDocumentDisplayManager extends FlexDocumentDisplayManager
 
   public function getDefinitionByName(name:String):Object {
     return ApplicationDomain.currentDomain.getDefinition(name);
+  }
+
+  override public function updateStyleManager(value:Object):void {
+    flexModuleFactory._styleManager = IStyleManager2(value);
   }
 
   override public function init(stage:Stage, moduleFactory:Object, uiErrorHandler:UiErrorHandler, mainFocusManager:MainFocusManagerSB,

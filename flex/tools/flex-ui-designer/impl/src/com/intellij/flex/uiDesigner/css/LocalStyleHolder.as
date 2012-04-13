@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.css {
 import com.intellij.flex.uiDesigner.DocumentFactory;
-import com.intellij.flex.uiDesigner.Project;
 import com.intellij.flex.uiDesigner.VirtualFile;
 import com.intellij.flex.uiDesigner.VirtualFileImpl;
 import com.intellij.flex.uiDesigner.io.AmfUtil;
@@ -11,7 +10,11 @@ import flash.utils.IDataOutput;
 import flash.utils.IExternalizable;
 
 public class LocalStyleHolder implements IExternalizable {
-  private var data:ByteArray;
+  private var _data:ByteArray;
+  public function set data(value:ByteArray):void {
+    _data = value;
+    _stylesheet = null;
+  }
 
   private var _file:VirtualFileImpl;
   public function get file():VirtualFile {
@@ -24,12 +27,12 @@ public class LocalStyleHolder implements IExternalizable {
   }
 
   private var _stylesheet:Stylesheet;
-  public function getStylesheet(project:Project):Stylesheet {
+  public function get stylesheet():Stylesheet {
     if (_stylesheet == null) {
       _stylesheet = new Stylesheet();
-      _stylesheet.read(data);
+      _stylesheet.read(_data);
       _file.stylesheet = _stylesheet;
-      data = null;
+      _data = null;
     }
     return _stylesheet;
   }
@@ -43,7 +46,7 @@ public class LocalStyleHolder implements IExternalizable {
 
   public function readExternal(input:IDataInput):void {
     _file = VirtualFileImpl(VirtualFileImpl.create(input));
-    data = AmfUtil.readByteArray(input);
+    _data = AmfUtil.readByteArray(input);
     const usersLength:int = input.readUnsignedByte();
     if (usersLength > 0) {
       _users = new Vector.<VirtualFile>(usersLength, true);

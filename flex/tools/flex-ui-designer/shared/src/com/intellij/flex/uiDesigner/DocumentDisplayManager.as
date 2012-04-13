@@ -9,6 +9,8 @@ import flash.display.Stage;
 public interface DocumentDisplayManager {
   function setDocument(object:DisplayObject):void;
 
+  function updateStyleManager(value:Object):void;
+
   function get explicitDocumentWidth():int;
   function get explicitDocumentHeight():int;
 

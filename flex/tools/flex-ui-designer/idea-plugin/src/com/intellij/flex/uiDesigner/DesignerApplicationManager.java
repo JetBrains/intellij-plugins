@@ -1,6 +1,8 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.ProjectTopics;
+import com.intellij.flex.uiDesigner.css.LocalCssWriter;
+import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -30,10 +32,7 @@ import com.intellij.openapi.project.*;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.ActionCallback;
-import com.intellij.openapi.util.AsyncResult;
-import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
@@ -44,6 +43,8 @@ import com.intellij.util.Consumer;
 import com.intellij.util.concurrency.QueueProcessor;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
+import gnu.trove.TIntArrayList;
+import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -179,7 +180,9 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
     DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
     Client client = Client.getInstance();
-    List<DocumentInfo> documentInfos = new ArrayList<DocumentInfo>(unsavedDocuments.length);
+    final List<DocumentInfo> documentInfos = new ArrayList<DocumentInfo>(unsavedDocuments.length);
+    final List<Pair<ModuleInfo, List<LocalStyleHolder>>> outdatedLocalStyleHolders =
+      new ArrayList<Pair<ModuleInfo, List<LocalStyleHolder>>>();
     for (Document document : unsavedDocuments) {
       final VirtualFile file = fileDocumentManager.getFile(document);
       if (file == null) {
@@ -188,6 +191,29 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
       final DocumentInfo info = documentFactoryManager.getNullableInfo(file);
       if (info == null) {
+        if ("css".equalsIgnoreCase(file.getExtension())) {
+          client.getRegisteredModules().forEach(new TObjectProcedure<ModuleInfo>() {
+            @Override
+            public boolean execute(ModuleInfo moduleInfo) {
+              List<LocalStyleHolder> styleHolders = moduleInfo.getLocalStyleHolders();
+              if (styleHolders != null) {
+                List<LocalStyleHolder> list = null;
+                for (LocalStyleHolder styleHolder : styleHolders) {
+                  if (styleHolder.file.equals(file)) {
+                    if (list == null) {
+                      list = new ArrayList<LocalStyleHolder>();
+                      outdatedLocalStyleHolders.add(new Pair<ModuleInfo, List<LocalStyleHolder>>(moduleInfo, list));
+                    }
+
+                    list.add(styleHolder);
+                  }
+                }
+              }
+              return true;
+            }
+          });
+        }
+
         continue;
       }
 
@@ -223,7 +249,22 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
     }
 
-    return client.renderDocumentAndDependents(documentInfos);
+    if (!outdatedLocalStyleHolders.isEmpty()) {
+      final ProblemsHolder problemsHolder = new ProblemsHolder();
+      final ProjectComponentReferenceCounter projectComponentReferenceCounter = new ProjectComponentReferenceCounter();
+      final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
+      if (ModuleInfoUtil.updateLocalStyle(outdatedLocalStyleHolders, projectComponentReferenceCounter, problemsHolder, stringWriter)) {
+        client.updateLocalStyleHolders(outdatedLocalStyleHolders, stringWriter);
+        if (projectComponentReferenceCounter.hasUnregistered()) {
+          client.registerDocumentReferences(projectComponentReferenceCounter.unregistered, null, problemsHolder);
+        }
+      }
+      if (!problemsHolder.isEmpty()) {
+        DocumentProblemManager.getInstance().report(null, problemsHolder);
+      }
+    }
+
+    return client.renderDocumentAndDependents(documentInfos, outdatedLocalStyleHolders);
   }
 
   public void runWhenRendered(@NotNull XmlFile psiFile,

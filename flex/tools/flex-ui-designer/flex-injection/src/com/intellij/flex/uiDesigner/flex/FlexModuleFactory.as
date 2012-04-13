@@ -8,7 +8,7 @@ import mx.core.IFlexModuleFactory;
 import mx.styles.IStyleManager2;
 
 public class FlexModuleFactory extends BaseFlexModuleFactoryImpl implements IFlexModuleFactory {
-  private var _styleManager:IStyleManager2;
+  internal var _styleManager:IStyleManager2;
 
   public function FlexModuleFactory(styleManager:IStyleManager2, applicationDomain:ApplicationDomain) {
     this._styleManager = styleManager;

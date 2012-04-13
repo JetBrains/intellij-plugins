@@ -24,6 +24,9 @@ public class AbstractDocumentDisplayManager extends Sprite {
     _documentFactory = documentFactory;
   }
 
+  public function updateStyleManager(value:Object):void {
+  }
+
   protected var _explicitDocumentWidth:int = -1;
   protected var _explicitDocumentHeight:int = -1;
 

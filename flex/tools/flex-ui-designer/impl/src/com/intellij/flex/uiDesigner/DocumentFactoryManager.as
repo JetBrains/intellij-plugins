@@ -158,10 +158,19 @@ public class DocumentFactoryManager {
 
   public function unregisterBelongToModule(module:Module):Vector.<int> {
     var unregistered:Vector.<int> = new Vector.<int>();
+    forEachBelongToModule(module, function (documentFactory:DocumentFactory):void {
+      unregister3(documentFactory, true, unregistered);
+    });
+
+    return unregistered;
+  }
+
+  public function forEachBelongToModule(module:Module, consumer:Function):Vector.<int> {
+    var unregistered:Vector.<int> = new Vector.<int>();
     for (var i:int = 0, n:int = factories.length; i < n; i++) {
       var documentFactory:DocumentFactory = factories[i];
       if (documentFactory != null && documentFactory.module == module) {
-        unregister3(documentFactory, true, unregistered);
+        consumer(documentFactory);
       }
     }
 

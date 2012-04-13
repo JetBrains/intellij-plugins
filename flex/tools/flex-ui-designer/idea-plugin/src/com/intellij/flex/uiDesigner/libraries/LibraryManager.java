@@ -150,8 +150,8 @@ public class LibraryManager implements Disposable {
       // client.registerModule finalize it
       stringWriter.startChange();
       try {
-        ModuleInfoUtil.collectLocalStyleHolders(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter, problemsHolder,
-                                                projectComponentReferenceCounter, assetCounter);
+        ModuleInfoUtil.collectLocalStyle(moduleInfo, libraryCollector.getFlexSdkVersion(), stringWriter, problemsHolder,
+                                         projectComponentReferenceCounter, assetCounter);
       }
       catch (Throwable e) {
         stringWriter.rollback();

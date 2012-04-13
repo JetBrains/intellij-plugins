@@ -1,10 +1,12 @@
 package com.intellij.flex.uiDesigner.io;
 
+import com.intellij.util.PairConsumer;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntProcedure;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 public class AmfOutputStream extends PrimitiveAmfOutputStream {
   private static final byte[] STRING_ALIAS = {3, 115};
@@ -69,6 +71,34 @@ public class AmfOutputStream extends PrimitiveAmfOutputStream {
     for (String s : collection) {
       write(Amf3Types.STRING);
       writeAmfUtf(s, true);
+    }
+  }
+
+  public <T> void write(Collection<T> collection, PairConsumer<T, AmfOutputStream> outConsumer) {
+    writeUInt29(collection.size());
+    for (T e : collection) {
+      outConsumer.consume(e, this);
+    }
+  }
+
+  public <T extends Identifiable> void write(List<T> collection) {
+    writeUInt29(collection.size());
+    for (Identifiable e : collection) {
+      writeUInt29(e.getId());
+    }
+  }
+
+  public void write(Collection<TIntArrayList> collection) {
+    writeUInt29(collection.size());
+    for (TIntArrayList list : collection) {
+      writeUInt29(list.size());
+      list.forEach(new TIntProcedure() {
+        @Override
+        public boolean execute(int value) {
+          writeUInt29(value);
+          return true;
+        }
+      });
     }
   }
 

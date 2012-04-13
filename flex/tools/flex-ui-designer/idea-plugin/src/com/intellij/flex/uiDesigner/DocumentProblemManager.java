@@ -25,7 +25,7 @@ public class DocumentProblemManager {
     return builder.append("<b>").append(FlashUIDesignerBundle.message("plugin.name")).append("</b>");
   }
 
-  public void report(Project project, ProblemsHolder problems) {
+  public void report(@Nullable Project project, ProblemsHolder problems) {
     report(project, toString(problems.getProblems()), MessageType.ERROR);
   }
 

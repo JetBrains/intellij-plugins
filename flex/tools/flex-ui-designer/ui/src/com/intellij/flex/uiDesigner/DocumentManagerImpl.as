@@ -147,9 +147,23 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   }
 
   private function doRender(documentFactory:DocumentFactory, document:Document, result:ActionCallback):Boolean {
-    var documentReader:DocumentReader = documentFactory.isPureFlash ? new MxmlReader() : new FlexMxmlReader(document.displayManager);
+    var documentReader:DocumentReader;
+    var module:Module = documentFactory.module;
+    if (documentFactory.isPureFlash) {
+      documentReader = new MxmlReader();
+    }
+    else {
+      documentReader = new FlexMxmlReader(document.displayManager);
+      // local style holders have been updated, we must recreate style manager
+      if (module.localStyleHolders != null && !module.hasOwnStyleManager) {
+        createStyleManager(document, module);
+      }
+
+      document.displayManager.updateStyleManager(document.styleManager);
+    }
+
     try {
-      server.moduleForGetResourceBundle = documentFactory.module;
+      server.moduleForGetResourceBundle = module;
       // IDEA-72499
       document.displayManager.setStyleManagerForTalentAdobeEngineers(true);
       var object:DisplayObject = DisplayObject(documentReader.read(documentFactory.data, documentFactory, document.styleManager));
@@ -176,15 +190,13 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       createStyleManagerForLibrarySet(module);
     }
 
-    if (module.localStyleHolders == null) {
-      return;
-    }
-
-    if (module.isApp && document.documentFactory.isApp) {
-      createStyleManagerForAppDocument(document, module);
-    }
-    else if (!module.hasOwnStyleManager) {
-      createStyleManagerForModule(module);
+    if (module.localStyleHolders != null) {
+      if (module.isApp && document.documentFactory.isApp) {
+        createStyleManagerForAppDocument(document, module);
+      }
+      else if (!module.hasOwnStyleManager) {
+        createStyleManagerForModule(module);
+      }
     }
   }
 
@@ -234,7 +246,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var cssReader:CssReader = createCssReader(module, styleManager);
 
     var localStyleHolder:LocalStyleHolder = module.localStyleHolders[0];
-    cssReader.read(localStyleHolder.getStylesheet(module.project).rulesets, localStyleHolder.file);
+    cssReader.read(localStyleHolder.stylesheet.rulesets, localStyleHolder.file);
     cssReader.finalizeRead();
   }
 
@@ -246,7 +258,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
     var localStyleHolder:LocalStyleHolder;
     for each (localStyleHolder in module.localStyleHolders) {
       if (localStyleHolder.isApplicable(document.documentFactory)) {
-        cssReader.read(localStyleHolder.getStylesheet(module.project).rulesets, localStyleHolder.file);
+        cssReader.read(localStyleHolder.stylesheet.rulesets, localStyleHolder.file);
       }
     }
 
