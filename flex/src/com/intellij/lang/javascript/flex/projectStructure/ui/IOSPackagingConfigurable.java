@@ -24,4 +24,8 @@ public class IOSPackagingConfigurable extends AirPackagingConfigurableBase<Modif
   public String getDisplayName() {
     return TAB_NAME;
   }
+
+  public String getHelpTopic() {
+    return "BuildConfigurationPage.iOS";
+  }
 }

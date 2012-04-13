@@ -25,4 +25,8 @@ public class AirDesktopPackagingConfigurable extends AirPackagingConfigurableBas
   public String getDisplayName() {
     return TAB_NAME;
   }
+
+  public String getHelpTopic() {
+    return "BuildConfigurationPage.AIRPackage";
+  }
 }

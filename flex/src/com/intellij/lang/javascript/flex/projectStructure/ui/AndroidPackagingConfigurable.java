@@ -25,4 +25,8 @@ public class AndroidPackagingConfigurable extends AirPackagingConfigurableBase<M
   public String getDisplayName() {
     return TAB_NAME;
   }
+
+  public String getHelpTopic() {
+    return "BuildConfigurationPage.Android";
+  }
 }

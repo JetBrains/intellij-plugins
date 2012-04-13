@@ -141,10 +141,6 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     return null;
   }
 
-  public String getHelpTopic() {
-    return null;
-  }
-
   public JComponent createOptionsPanel() {
     return myMainPanel;
   }

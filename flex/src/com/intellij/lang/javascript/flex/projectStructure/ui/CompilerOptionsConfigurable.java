@@ -368,7 +368,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   public String getHelpTopic() {
-    return null;
+    return "BuildConfigurationPage.CompilerOptions";
   }
 
   public JComponent createOptionsPanel() {

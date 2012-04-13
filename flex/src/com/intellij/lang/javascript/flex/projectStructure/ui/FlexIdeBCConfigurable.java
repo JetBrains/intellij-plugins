@@ -458,7 +458,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   public String getHelpTopic() {
-    return "Build_Configuration_page";
+    return "BuildConfigurationPage.General";
   }
 
   public JComponent createOptionsPanel() {

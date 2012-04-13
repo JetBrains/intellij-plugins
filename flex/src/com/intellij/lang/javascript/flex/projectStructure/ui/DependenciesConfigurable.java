@@ -1213,7 +1213,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   public String getHelpTopic() {
-    return null;
+    return "BuildConfigurationPage.Dependencies";
   }
 
   public JComponent createOptionsPanel() {
