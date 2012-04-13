@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -18,6 +19,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleOrderEntry;
@@ -426,7 +428,17 @@ public class FlexProjectConfigurationEditor implements Disposable {
         }
       }
 
-      modifiableModel.setSdk(sdkNames.isEmpty() ? null : new FlexCompositeSdk(ArrayUtil.toStringArray(sdkNames)));
+      final Sdk sdk;
+      if (sdkNames.isEmpty()) {
+        sdk = null;
+      }
+      else if (sdkNames.size() == 1) {
+        sdk = FlexSdkUtils.findFlexOrFlexmojosSdk(sdkNames.iterator().next());
+      }
+      else {
+        sdk = new FlexCompositeSdk(ArrayUtil.toStringArray(sdkNames));
+      }
+      modifiableModel.setSdk(sdk);
 
       Collection<OrderEntry> entriesToRemove = new ArrayList<OrderEntry>();
       for (OrderEntry orderEntry : modifiableModel.getOrderEntries()) {
