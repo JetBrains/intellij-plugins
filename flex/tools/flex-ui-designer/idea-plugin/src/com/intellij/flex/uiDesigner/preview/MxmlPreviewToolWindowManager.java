@@ -213,7 +213,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     content.setPreferredFocusableComponent(contentPanel);
     contentManager.addContent(content);
     contentManager.setSelectedContent(content, true);
-    toolWindow.setAvailable(false, null);
 
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(project);
     connection.subscribe(SocketInputHandler.MESSAGE_TOPIC, new SocketInputHandler.DocumentRenderedListener() {
