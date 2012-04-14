@@ -197,12 +197,12 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
 
       boolean isMxml = JavaScriptSupportLoader.isFlexMxmFile(file);
+      if (isMxml || file.getFileType() == CssFileType.INSTANCE) {
+        collectChangedLocalStyleSources(changedLocalStyleHolders, file);
+      }
+
       final DocumentInfo info = isMxml ? documentFactoryManager.getNullableInfo(file) : null;
       if (info == null) {
-        if (isMxml || file.getFileType() == CssFileType.INSTANCE) {
-          collectChangedLocalStyleSources(changedLocalStyleHolders, file);
-        }
-
         continue;
       }
 
@@ -248,6 +248,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       final ProblemsHolder problemsHolder = new ProblemsHolder();
       final ProjectComponentReferenceCounter projectComponentReferenceCounter = new ProjectComponentReferenceCounter();
       final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
+      stringWriter.startChange();
       try {
         for (Pair<ModuleInfo, List<LocalStyleHolder>> pair : changedLocalStyleHolders) {
           ModuleInfo moduleInfo = pair.first;
@@ -685,11 +686,15 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     }
 
     private void update(final PsiTreeChangeEvent event) {
+      PsiFile psiFile = event.getFile();
       if (isApplicationClosed()) {
+        if (psiFile == previewToolWindowManager.getServedFile()) {
+          IncrementalDocumentSynchronizer.initialRenderAndNotify(DesignerApplicationManager.this, (XmlFile)psiFile);
+        }
         return;
       }
 
-      PsiFile psiFile = event.getFile();
+
       if (psiFile instanceof XmlFile) {
         DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(psiFile);
         if (info == null && psiFile != previewToolWindowManager.getServedFile()) {

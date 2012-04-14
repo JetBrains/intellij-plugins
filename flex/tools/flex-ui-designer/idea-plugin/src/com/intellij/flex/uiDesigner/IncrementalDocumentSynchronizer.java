@@ -157,13 +157,17 @@ final class IncrementalDocumentSynchronizer extends Update {
 
     DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(xmlFile);
     if (info != null && !incrementalSync(info)) {
-      designerManager.runWhenRendered(xmlFile, new AsyncResult.Handler<DocumentInfo>() {
-        @Override
-        public void run(DocumentInfo documentInfo) {
-          notifyUpdated(documentInfo);
-        }
-      });
+      initialRenderAndNotify(designerManager, xmlFile);
     }
+  }
+
+  public static void initialRenderAndNotify(DesignerApplicationManager designerManager, XmlFile xmlFile) {
+    designerManager.runWhenRendered(xmlFile, new AsyncResult.Handler<DocumentInfo>() {
+      @Override
+      public void run(DocumentInfo documentInfo) {
+        notifyUpdated(documentInfo);
+      }
+    });
   }
 
   private boolean incrementalSync(final DocumentInfo info) {
