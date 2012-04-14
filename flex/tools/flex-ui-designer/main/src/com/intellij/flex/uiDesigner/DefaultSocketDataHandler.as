@@ -164,11 +164,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
 
     var n:int = AmfUtil.readUInt29(input);
     while (n-- > 0) {
-      var holders:Vector.<LocalStyleHolder> = moduleManager.getById(AmfUtil.readUInt29(input)).localStyleHolders;
-      var j:int = AmfUtil.readUInt29(input);
-      while (j-- > 0) {
-        holders[AmfUtil.readUInt29(input)].data = AmfUtil.readByteArray(input);
-      }
+      moduleManager.getById(AmfUtil.readUInt29(input)).localStyleHolders = input.readObject();
     }
   }
 
@@ -294,15 +290,13 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     }
 
     if (callbacks.length == 0) {
-      Server.instance.callback(callbackId, true);
+      renderDocumentsAndDependentsCallback(callbackId, renderedDocumentIds);
       return;
     }
 
     const totalCallback:ActionCallback = new ActionCallback(callbacks.length);
     totalCallback.doWhenRejected(Server.instance.callback, callbackId, false);
     totalCallback.doWhenDone(renderDocumentsAndDependentsCallback, callbackId, renderedDocumentIds);
-
-    Server.instance.asyncCallback(totalCallback, callbackId);
     for each (var callback:ActionCallback in callbacks) {
       callback.notify(totalCallback);
     }

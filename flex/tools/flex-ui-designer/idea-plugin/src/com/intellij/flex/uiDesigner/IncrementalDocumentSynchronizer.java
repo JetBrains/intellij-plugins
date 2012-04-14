@@ -149,9 +149,7 @@ final class IncrementalDocumentSynchronizer extends Update {
         return;
       }
       else {
-        // todo incremental update
-        DesignerApplicationManager.renderDocumentAndDependents(null, styleSources)
-          .doWhenDone(DesignerApplicationManager.createTotalRenderDoneHandler());
+        DesignerApplicationManager.renderUnsavedDocuments(new Document[]{FileDocumentManager.getInstance().getDocument(file)});
       }
 
       return;

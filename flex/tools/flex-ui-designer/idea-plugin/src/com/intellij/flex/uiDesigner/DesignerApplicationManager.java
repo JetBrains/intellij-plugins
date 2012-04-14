@@ -3,7 +3,6 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.ProjectTopics;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
-import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.flex.uiDesigner.preview.MxmlPreviewToolWindowManager;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
@@ -278,7 +277,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return client.renderDocumentAndDependents(documentInfos, changedLocalStyleHolders);
   }
 
-  private static void collectChangedLocalStyleSources(final List<Pair<ModuleInfo, List<LocalStyleHolder>>> holders,
+  public static void collectChangedLocalStyleSources(final List<Pair<ModuleInfo, List<LocalStyleHolder>>> holders,
                                                       final VirtualFile file) {
     Client.getInstance().getRegisteredModules().forEach(new TObjectProcedure<ModuleInfo>() {
       @Override
@@ -323,14 +322,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       Document[] unsavedDocuments = FileDocumentManager.getInstance().getUnsavedDocuments();
       DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
       if (unsavedDocuments.length > 0) {
-        try {
-          documentFactoryManager.setIgnoreBeforeAllDocumentsSaving(true);
-          doRenderUnsavedDocuments(unsavedDocuments);
-          FileDocumentManager.getInstance().saveAllDocuments();
-        }
-        finally {
-          documentFactoryManager.setIgnoreBeforeAllDocumentsSaving(false);
-        }
+        explicitSaveAllDocuments(unsavedDocuments, documentFactoryManager);
       }
 
       VirtualFile virtualFile = psiFile.getVirtualFile();
@@ -365,6 +357,17 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
 
       renderResult.doWhenDone(handler);
+    }
+  }
+
+  public static void explicitSaveAllDocuments(Document[] unsavedDocuments, DocumentFactoryManager documentFactoryManager) {
+    try {
+      documentFactoryManager.setIgnoreBeforeAllDocumentsSaving(true);
+      renderUnsavedDocuments(unsavedDocuments);
+      FileDocumentManager.getInstance().saveAllDocuments();
+    }
+    finally {
+      documentFactoryManager.setIgnoreBeforeAllDocumentsSaving(false);
     }
   }
 
@@ -445,12 +448,8 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   }
 
   @SuppressWarnings("MethodMayBeStatic")
-  public void renderUnsavedDocuments(final Document[] unsavedDocuments) {
-    doRenderUnsavedDocuments(unsavedDocuments).doWhenDone(createTotalRenderDoneHandler());
-  }
-
-  static AsyncResult.Handler<List<DocumentInfo>> createTotalRenderDoneHandler() {
-    return new AsyncResult.Handler<List<DocumentInfo>>() {
+  public static void renderUnsavedDocuments(final Document[] unsavedDocuments) {
+    doRenderUnsavedDocuments(unsavedDocuments).doWhenDone(new AsyncResult.Handler<List<DocumentInfo>>() {
       @Override
       public void run(List<DocumentInfo> infos) {
         MessageBus messageBus = ApplicationManager.getApplication().getMessageBus();
@@ -458,7 +457,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
           messageBus.syncPublisher(MESSAGE_TOPIC).documentRendered(info);
         }
       }
-    };
+    });
   }
 
   public static String getOpenActionTitle(boolean debug) {

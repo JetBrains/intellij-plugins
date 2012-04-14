@@ -54,6 +54,10 @@ public final class Module implements Identifiable, ModuleContext {
     return _localStyleHolders;
   }
 
+  public function set localStyleHolders(value:Vector.<LocalStyleHolder>):void {
+    _localStyleHolders = value;
+  }
+
   public function get flexLibrarySet():FlexLibrarySet {
     return _librarySet is FlexLibrarySet ? FlexLibrarySet(_librarySet) : _librarySet.parent as FlexLibrarySet;
   }

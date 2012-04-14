@@ -412,20 +412,11 @@ public class Client implements Disposable {
     try {
       beginMessage(ClientMethod.updateLocalStyleHolders);
       stringWriter.writeTo(out);
-      out.write(holders, new PairConsumer<Pair<ModuleInfo, List<LocalStyleHolder>>, AmfOutputStream>() {
-        @Override
-        public void consume(Pair<ModuleInfo, List<LocalStyleHolder>> pair, AmfOutputStream out) {
-          out.writeUInt29(pair.first.getId());
-          List<LocalStyleHolder> allStyleHolders = pair.first.getLocalStyleHolders();
-          assert allStyleHolders != null;
-          out.writeUInt29(pair.second.size());
-          for (LocalStyleHolder holder : pair.second) {
-            out.writeUInt29(allStyleHolders.indexOf(holder));
-            out.writeUInt29(holder.getData().length);
-            out.write(holder.getData());
-          }
-        }
-      });
+      out.writeUInt29(holders.size());
+      for (Pair<ModuleInfo, List<LocalStyleHolder>> pair : holders) {
+        out.writeUInt29(pair.first.getId());
+        out.write(pair.first.getLocalStyleHolders(), "lsh", true);
+      }
     }
     catch (Throwable e) {
       hasError = true;

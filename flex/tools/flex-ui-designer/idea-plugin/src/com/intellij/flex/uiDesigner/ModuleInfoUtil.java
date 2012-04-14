@@ -5,7 +5,6 @@ import com.intellij.flex.uiDesigner.io.StringRegistry.StringWriter;
 import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
-import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -16,11 +15,12 @@ import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.css.CssFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -35,8 +35,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
 
 public final class ModuleInfoUtil {
   public static boolean isApp(Module module) {
@@ -59,56 +57,6 @@ public final class ModuleInfoUtil {
     finally {
       token.finish();
     }
-  }
-
-  public static boolean updateLocalStyle(List<Pair<ModuleInfo, List<LocalStyleHolder>>> holders,
-                                         ProjectComponentReferenceCounter projectComponentReferenceCounter,
-                                         ProblemsHolder problemsHolder,
-                                         StringWriter stringWriter) {
-    final AssetCounter assetCounter = new AssetCounter();
-    stringWriter.startChange();
-    final AccessToken token = ReadAction.start();
-    try {
-      LocalCssWriter cssWriter = new LocalCssWriter(stringWriter, problemsHolder, projectComponentReferenceCounter, assetCounter);
-      for (Pair<ModuleInfo, List<LocalStyleHolder>> pair : holders) {
-        Project project = pair.first.getModule().getProject();
-        PsiManager psiManager = PsiManager.getInstance(project);
-        PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
-        for (LocalStyleHolder holder : pair.second) {
-          PsiFile file = psiManager.findFile(holder.file);
-          assert file != null;
-          CssFile cssFile = null;
-          if (file instanceof CssFile) {
-            cssFile = (CssFile)file;
-          }
-          else {
-            // todo more stable algo to find css file
-            for (DocumentWindow documentWindow : InjectedLanguageUtil.getCachedInjectedDocuments(file)) {
-              PsiFile psiFile = psiDocumentManager.getPsiFile(documentWindow);
-              if (psiFile instanceof CssFile) {
-                cssFile = (CssFile)psiFile;
-              }
-            }
-          }
-
-          if (cssFile == null) {
-            LOG.warn("cannot find style source");
-            continue;
-          }
-
-          holder.setData(cssWriter.write(cssFile, pair.first.getModule()));
-        }
-      }
-    }
-    catch (Throwable e) {
-      stringWriter.rollback();
-      LOG.error(e);
-      return false;
-    }
-    finally {
-      token.finish();
-    }
-    return true;
   }
 
   private static void collectLibraryLocalStyle(ModuleInfo moduleInfo,
