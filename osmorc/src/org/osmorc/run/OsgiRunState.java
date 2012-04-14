@@ -160,6 +160,9 @@ public class OsgiRunState extends JavaCommandLineState {
     final ParametersList vmParameters = params.getVMParametersList();
     runner.fillVmParameters(vmParameters, bundles);
 
+    //hide vm options from command line in order to make length predictable
+    params.setUseDynamicVMOptions(bundles.length > 0);
+
     return params;
   }
 
