@@ -14,10 +14,21 @@ public class FlexLibrarySet extends LibrarySet {
   public final AssetCounterInfo assetCounterInfo;
   final ContainsCondition contains;
 
-  FlexLibrarySet(LibrarySorter.SortResult sortResult, @Nullable LibrarySet parent, ContainsCondition contains, AssetCounter demanded) {
+  private final String version;
+
+  FlexLibrarySet(LibrarySorter.SortResult sortResult,
+                 @Nullable LibrarySet parent,
+                 ContainsCondition contains,
+                 AssetCounter demanded,
+                 String version) {
     super(sortResult.id, parent, sortResult.libraries);
     this.contains = contains;
+    this.version = version;
     assetCounterInfo = new AssetCounterInfo(demanded);
+  }
+
+  public String getVersion() {
+    return version;
   }
 
   static class ContainsCondition implements Condition<String> {

@@ -109,8 +109,8 @@ public class Server implements ResourceBundleProvider {
     else {
        callback(callbackId, true, false);
     }
-    socket.writeObject(unregistered);
-    socket.flush();
+
+    writeIds(unregistered);
   }
 
   public function closeProject(project:Project):void {
@@ -390,6 +390,11 @@ public class Server implements ResourceBundleProvider {
     socket.writeShort(bounds.y);
     socket.writeShort(bounds.width);
     socket.writeShort(bounds.height);
+    socket.flush();
+  }
+
+  public function writeIds(ids:Vector.<int>):void {
+    socket.writeObject(ids);
     socket.flush();
   }
 

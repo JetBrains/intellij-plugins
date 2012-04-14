@@ -54,9 +54,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   private MxmlPreviewToolWindowForm toolWindowForm;
 
   private boolean toolWindowVisible;
-
   private int loadingDecoratorStarted;
-
   private boolean lastPreviewChecked;
 
   public MxmlPreviewToolWindowManager(final Project project, final FileEditorManager fileEditorManager) {
@@ -66,44 +64,56 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     toolWindowUpdateAlarm = new Alarm();
   }
 
+  public XmlFile getServedFile() {
+    return toolWindowVisible && toolWindowForm != null ? toolWindowForm.getFile() : null;
+  }
+
   @Override
   public void projectOpened() {
     project.getMessageBus().connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new MyFileEditorManagerListener());
   }
 
   public void projectClosed() {
-    if (toolWindowForm != null) {
+    if (toolWindowForm == null) {
+      return;
+    }
 
+    try {
       XmlFile file = toolWindowForm.getFile();
       if (file != null) {
-        final VirtualFile virtualFile = file.getViewProvider().getVirtualFile();
-        BufferedImage image = toolWindowForm.getPreviewPanel().getImage();
-        if (image != null) {
-          try {
-            IOUtil.saveImage(toolWindowForm.getPreviewPanel().getImage(),
-                             new File(DesignerApplicationManager.APP_DIR, LAST_PREVIEW_IMAGE_FILE_NAME), new Consumer<DataOutputStream>() {
-              @Override
-              public void consume(DataOutputStream out) {
-                try {
-                  out.writeLong(virtualFile.getTimeStamp());
-                  out.writeUTF(virtualFile.getUrl());
-                }
-                catch (IOException e) {
-                  throw new RuntimeException(e);
-                }
-              }
-            });
-          }
-          catch (Throwable e) {
-            LogMessageUtil.LOG.warn("Can't save image for last document", e);
-          }
-        }
+        saveLastImage(file);
       }
-
+    }
+    finally {
       Disposer.dispose(toolWindowForm.getPreviewPanel());
       toolWindowForm = null;
       toolWindow = null;
       toolWindowVisible = false;
+    }
+  }
+
+  private void saveLastImage(XmlFile file) {
+    final VirtualFile virtualFile = file.getViewProvider().getVirtualFile();
+    BufferedImage image = toolWindowForm.getPreviewPanel().getImage();
+    if (image != null) {
+      try {
+        IOUtil.saveImage(toolWindowForm.getPreviewPanel().getImage(),
+                         new File(DesignerApplicationManager.APP_DIR, LAST_PREVIEW_IMAGE_FILE_NAME), new Consumer<DataOutputStream>() {
+          @Override
+          public void consume(DataOutputStream out) {
+            try {
+              out.writeLong(virtualFile.getTimeStamp());
+              out.writeUTF(virtualFile.getUrl());
+            }
+            catch (IOException e) {
+              throw new RuntimeException(e);
+            }
+          }
+        });
+      }
+      catch (Throwable e) {
+        LogMessageUtil.LOG.warn("Can't save image for last document", e);
+      }
     }
   }
 
@@ -125,9 +135,19 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     toolWindow = ToolWindowManager.getInstance(project).registerToolWindow(toolWindowId, false, ToolWindowAnchor.RIGHT, project, false);
     toolWindow.setIcon(PlatformIcons.UI_FORM_ICON);
 
+    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
+    toolWindowVisible = propertiesComponent.getBoolean(SETTINGS_TOOL_WINDOW_VISIBLE, false);
+    if (toolWindowVisible) {
+      toolWindow.show(null);
+    }
+    else {
+      toolWindow.hide(null);
+    }
+
     ((ToolWindowManagerEx)ToolWindowManager.getInstance(project)).addToolWindowManagerListener(new ToolWindowManagerAdapter() {
       @Override
       public void stateChanged() {
+        //noinspection ConstantConditions
         if (project.isDisposed() || toolWindow == null || !toolWindow.isAvailable()) {
           return;
         }
@@ -168,13 +188,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(project);
     connection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationManager.DocumentRenderedListener() {
-      @Override
-      public void documentRenderedOnAutoSave(DocumentFactoryManager.DocumentInfo info) {
-        if (isApplicable(info)) {
-          render();
-        }
-      }
-
       private boolean isApplicable(DocumentFactoryManager.DocumentInfo info) {
         return toolWindowVisible &&
                toolWindowForm.getFile() != null &&
@@ -182,7 +195,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       }
 
       @Override
-      public void documentIncrementallyUpdated(DocumentFactoryManager.DocumentInfo info) {
+      public void documentRendered(DocumentFactoryManager.DocumentInfo info) {
         if (isApplicable(info)) {
           UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override
@@ -364,7 +377,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
           assert toolWindow != null;
         }
 
-        final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
         XmlFile psiFile = newEditor == null ? null : (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(newEditor.getDocument());
         if (psiFile == null) {
           toolWindowForm.setFile(null);
@@ -378,9 +390,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
         if (toolWindowVisible) {
           render();
-        }
-        else if (propertiesComponent.getBoolean(SETTINGS_TOOL_WINDOW_VISIBLE, false)) {
-          toolWindow.show(null);
         }
       }
     }, 300);

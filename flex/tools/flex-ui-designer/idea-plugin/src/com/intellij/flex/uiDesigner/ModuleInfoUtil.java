@@ -1,11 +1,11 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.css.LocalCssWriter;
-import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.io.StringRegistry.StringWriter;
 import com.intellij.flex.uiDesigner.libraries.Library;
 import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
+import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -16,13 +16,11 @@ import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.*;
 import com.intellij.psi.css.CssFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -48,7 +46,6 @@ public final class ModuleInfoUtil {
   public static void collectLocalStyle(final ModuleInfo moduleInfo, final String flexSdkVersion,
                                        final StringWriter stringWriter, final ProblemsHolder problemsHolder,
                                        ProjectComponentReferenceCounter projectComponentReferenceCounter, AssetCounter assetCounter) {
-    final Module module = moduleInfo.getModule();
     final AccessToken token = ReadAction.start();
     try {
       if (moduleInfo.isApp()) {
@@ -56,7 +53,7 @@ public final class ModuleInfoUtil {
                                      assetCounter);
       }
       else {
-        collectLibraryLocalStyle(module, moduleInfo, stringWriter, problemsHolder, projectComponentReferenceCounter, assetCounter);
+        collectLibraryLocalStyle(moduleInfo, stringWriter, problemsHolder, projectComponentReferenceCounter, assetCounter);
       }
     }
     finally {
@@ -74,8 +71,32 @@ public final class ModuleInfoUtil {
     try {
       LocalCssWriter cssWriter = new LocalCssWriter(stringWriter, problemsHolder, projectComponentReferenceCounter, assetCounter);
       for (Pair<ModuleInfo, List<LocalStyleHolder>> pair : holders) {
+        Project project = pair.first.getModule().getProject();
+        PsiManager psiManager = PsiManager.getInstance(project);
+        PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
         for (LocalStyleHolder holder : pair.second) {
-          holder.setData(cssWriter.write(holder.file, pair.first.getModule()));
+          PsiFile file = psiManager.findFile(holder.file);
+          assert file != null;
+          CssFile cssFile = null;
+          if (file instanceof CssFile) {
+            cssFile = (CssFile)file;
+          }
+          else {
+            // todo more stable algo to find css file
+            for (DocumentWindow documentWindow : InjectedLanguageUtil.getCachedInjectedDocuments(file)) {
+              PsiFile psiFile = psiDocumentManager.getPsiFile(documentWindow);
+              if (psiFile instanceof CssFile) {
+                cssFile = (CssFile)psiFile;
+              }
+            }
+          }
+
+          if (cssFile == null) {
+            LOG.warn("cannot find style source");
+            continue;
+          }
+
+          holder.setData(cssWriter.write(cssFile, pair.first.getModule()));
         }
       }
     }
@@ -90,8 +111,7 @@ public final class ModuleInfoUtil {
     return true;
   }
 
-  private static void collectLibraryLocalStyle(Module module,
-                                               ModuleInfo moduleInfo,
+  private static void collectLibraryLocalStyle(ModuleInfo moduleInfo,
                                                StringWriter stringWriter,
                                                ProblemsHolder problemsHolder,
                                                ProjectComponentReferenceCounter unregisteredComponentReferences,
@@ -105,7 +125,7 @@ public final class ModuleInfoUtil {
 
     if (defaultsCss != null) {
       final LocalCssWriter cssWriter = new LocalCssWriter(stringWriter, problemsHolder, unregisteredComponentReferences, assetCounter);
-      moduleInfo.addLocalStyleHolder(new LocalStyleHolder(defaultsCss, cssWriter.write(defaultsCss, module)));
+      moduleInfo.addLocalStyleHolder(new LocalStyleHolder(defaultsCss, cssWriter.write(defaultsCss, moduleInfo.getModule())));
     }
   }
 

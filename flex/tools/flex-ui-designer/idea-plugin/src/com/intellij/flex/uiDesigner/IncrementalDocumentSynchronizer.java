@@ -8,6 +8,7 @@ import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
 import com.intellij.flex.uiDesigner.mxml.PrimitiveWriter;
 import com.intellij.flex.uiDesigner.mxml.XmlAttributeValueProvider;
 import com.intellij.flex.uiDesigner.mxml.XmlElementValueProvider;
+import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.FlexReferenceContributor;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
@@ -18,22 +19,50 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.AsyncResult;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.css.CssFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
+import com.intellij.util.ui.update.Update;
 import com.intellij.xml.XmlAttributeDescriptor;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 
-final class IncrementalDocumentSynchronizer implements Runnable {
+final class IncrementalDocumentSynchronizer extends Update {
   private final PsiTreeChangeEvent event;
 
   public IncrementalDocumentSynchronizer(PsiTreeChangeEvent event) {
+    super("FlashUIDesigner.incrementalUpdate");
     this.event = event;
+  }
+
+  @Override
+  public boolean canEat(Update update) {
+    if (!(update instanceof IncrementalDocumentSynchronizer)) {
+      return false;
+    }
+
+    PsiTreeChangeEvent otherEvent = ((IncrementalDocumentSynchronizer)update).event;
+    if (event.getFile() != otherEvent.getFile()) {
+      return false;
+    }
+
+    // we don't support incremental update for CSS
+    if (event.getFile() instanceof CssFile) {
+      return true;
+    }
+
+    return event.getParent() == otherEvent.getParent() &&
+           event.getElement() == event.getElement();
   }
 
   @Nullable
@@ -102,11 +131,35 @@ final class IncrementalDocumentSynchronizer implements Runnable {
       return;
     }
 
-    XmlFile psiFile = (XmlFile)event.getFile();
-    assert psiFile != null;
-    DocumentInfo info = DocumentFactoryManager.getInstance().getInfo(psiFile);
-    if (!incrementalSync(info)) {
-      designerManager.runWhenRendered(psiFile, new AsyncResult.Handler<DocumentInfo>() {
+    final XmlFile xmlFile;
+    if (event.getFile() instanceof XmlFile) {
+      xmlFile = (XmlFile)event.getFile();
+      assert xmlFile != null;
+    }
+    else {
+      CssFile cssFile = (CssFile)event.getFile();
+      assert cssFile != null;
+      VirtualFile file = cssFile.getViewProvider().getVirtualFile();
+      if (file instanceof VirtualFileWindow) {
+        file = ((VirtualFileWindow)file).getDelegate();
+      }
+      List<Pair<ModuleInfo, List<LocalStyleHolder>>> styleSources = new ArrayList<Pair<ModuleInfo, List<LocalStyleHolder>>>(1);
+      DesignerApplicationManager.collectChangedLocalStyleSources(styleSources, file);
+      if (styleSources.isEmpty()) {
+        return;
+      }
+      else {
+        // todo incremental update
+        DesignerApplicationManager.renderDocumentAndDependents(null, styleSources)
+          .doWhenDone(DesignerApplicationManager.createTotalRenderDoneHandler());
+      }
+
+      return;
+    }
+
+    DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(xmlFile);
+    if (info != null && !incrementalSync(info)) {
+      designerManager.runWhenRendered(xmlFile, new AsyncResult.Handler<DocumentInfo>() {
         @Override
         public void run(DocumentInfo documentInfo) {
           notifyUpdated(documentInfo);
@@ -196,7 +249,13 @@ final class IncrementalDocumentSynchronizer implements Runnable {
         stream.write(descriptor.isStyle());
         dataOut.writeTo(stream);
       }
-    }).doWhenDone(new Runnable() {
+    }).doWhenDone(crerateDoneHandler(info));
+
+    return true;
+  }
+
+  private static Runnable crerateDoneHandler(final DocumentInfo info) {
+    return new Runnable() {
       @Override
       public void run() {
         Document document = FileDocumentManager.getInstance().getCachedDocument(info.getElement());
@@ -205,13 +264,10 @@ final class IncrementalDocumentSynchronizer implements Runnable {
           notifyUpdated(info);
         }
       }
-    });
-
-    return true;
+    };
   }
 
   private static void notifyUpdated(DocumentInfo finalInfo) {
-    ApplicationManager.getApplication().getMessageBus().syncPublisher(DesignerApplicationManager.MESSAGE_TOPIC)
-      .documentIncrementallyUpdated(finalInfo);
+    ApplicationManager.getApplication().getMessageBus().syncPublisher(DesignerApplicationManager.MESSAGE_TOPIC).documentRendered(finalInfo);
   }
 }

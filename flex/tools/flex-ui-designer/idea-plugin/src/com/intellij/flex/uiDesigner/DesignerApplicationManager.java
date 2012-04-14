@@ -2,7 +2,10 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.ProjectTopics;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
+import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
+import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
+import com.intellij.flex.uiDesigner.preview.MxmlPreviewToolWindowManager;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -36,14 +39,15 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssFile;
+import com.intellij.psi.css.CssFileType;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.Alarm;
 import com.intellij.util.Consumer;
 import com.intellij.util.concurrency.QueueProcessor;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
+import com.intellij.util.ui.update.MergingUpdateQueue;
 import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -185,7 +189,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
     Client client = Client.getInstance();
     final List<DocumentInfo> documentInfos = new ArrayList<DocumentInfo>(unsavedDocuments.length);
-    final List<Pair<ModuleInfo, List<LocalStyleHolder>>> outdatedLocalStyleHolders =
+    final List<Pair<ModuleInfo, List<LocalStyleHolder>>> changedLocalStyleHolders =
       new ArrayList<Pair<ModuleInfo, List<LocalStyleHolder>>>();
     for (Document document : unsavedDocuments) {
       final VirtualFile file = fileDocumentManager.getFile(document);
@@ -193,29 +197,11 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         continue;
       }
 
-      final DocumentInfo info = documentFactoryManager.getNullableInfo(file);
+      boolean isMxml = JavaScriptSupportLoader.isFlexMxmFile(file);
+      final DocumentInfo info = isMxml ? documentFactoryManager.getNullableInfo(file) : null;
       if (info == null) {
-        if ("css".equalsIgnoreCase(file.getExtension())) {
-          client.getRegisteredModules().forEach(new TObjectProcedure<ModuleInfo>() {
-            @Override
-            public boolean execute(ModuleInfo moduleInfo) {
-              List<LocalStyleHolder> styleHolders = moduleInfo.getLocalStyleHolders();
-              if (styleHolders != null) {
-                List<LocalStyleHolder> list = null;
-                for (LocalStyleHolder styleHolder : styleHolders) {
-                  if (styleHolder.file.equals(file)) {
-                    if (list == null) {
-                      list = new ArrayList<LocalStyleHolder>();
-                      outdatedLocalStyleHolders.add(new Pair<ModuleInfo, List<LocalStyleHolder>>(moduleInfo, list));
-                    }
-
-                    list.add(styleHolder);
-                  }
-                }
-              }
-              return true;
-            }
-          });
+        if (isMxml || file.getFileType() == CssFileType.INSTANCE) {
+          collectChangedLocalStyleSources(changedLocalStyleHolders, file);
         }
 
         continue;
@@ -253,22 +239,74 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
     }
 
-    if (!outdatedLocalStyleHolders.isEmpty()) {
+    return renderDocumentAndDependents(documentInfos, changedLocalStyleHolders);
+  }
+
+  private static AsyncResult<List<DocumentInfo>> renderDocumentAndDependents(@Nullable List<DocumentInfo> documentInfos,
+                                                                            List<Pair<ModuleInfo, List<LocalStyleHolder>>> changedLocalStyleHolders) {
+    Client client = Client.getInstance();
+    if (!changedLocalStyleHolders.isEmpty()) {
       final ProblemsHolder problemsHolder = new ProblemsHolder();
       final ProjectComponentReferenceCounter projectComponentReferenceCounter = new ProjectComponentReferenceCounter();
       final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
-      if (ModuleInfoUtil.updateLocalStyle(outdatedLocalStyleHolders, projectComponentReferenceCounter, problemsHolder, stringWriter)) {
-        client.updateLocalStyleHolders(outdatedLocalStyleHolders, stringWriter);
-        if (projectComponentReferenceCounter.hasUnregistered()) {
-          client.registerDocumentReferences(projectComponentReferenceCounter.unregistered, null, problemsHolder);
+      try {
+        for (Pair<ModuleInfo, List<LocalStyleHolder>> pair : changedLocalStyleHolders) {
+          ModuleInfo moduleInfo = pair.first;
+          //noinspection ConstantConditions
+          moduleInfo.getLocalStyleHolders().clear();
+
+          FlexLibrarySet flexLibrarySet = moduleInfo.getFlexLibrarySet();
+          ModuleInfoUtil.collectLocalStyle(moduleInfo, flexLibrarySet.getVersion(), stringWriter, problemsHolder,
+                                           projectComponentReferenceCounter, flexLibrarySet.assetCounterInfo.demanded);
+          client.fillAssetClassPoolIfNeed(flexLibrarySet);
+          client.updateLocalStyleHolders(changedLocalStyleHolders, stringWriter);
+          if (projectComponentReferenceCounter.hasUnregistered()) {
+            client.registerDocumentReferences(projectComponentReferenceCounter.unregistered, null, problemsHolder);
+          }
         }
       }
+      catch (Throwable e) {
+        stringWriter.rollback();
+        LOG.error(e);
+      }
+
       if (!problemsHolder.isEmpty()) {
         DocumentProblemManager.getInstance().report(null, problemsHolder);
       }
     }
 
-    return client.renderDocumentAndDependents(documentInfos, outdatedLocalStyleHolders);
+    return client.renderDocumentAndDependents(documentInfos, changedLocalStyleHolders);
+  }
+
+  private static void collectChangedLocalStyleSources(final List<Pair<ModuleInfo, List<LocalStyleHolder>>> holders,
+                                                      final VirtualFile file) {
+    Client.getInstance().getRegisteredModules().forEach(new TObjectProcedure<ModuleInfo>() {
+      @Override
+      public boolean execute(ModuleInfo moduleInfo) {
+        List<LocalStyleHolder> styleHolders = moduleInfo.getLocalStyleHolders();
+        if (styleHolders != null) {
+          List<LocalStyleHolder> list = null;
+          for (LocalStyleHolder styleHolder : styleHolders) {
+            if (styleHolder.file.equals(file)) {
+              if (list == null) {
+                list = new ArrayList<LocalStyleHolder>();
+                holders.add(new Pair<ModuleInfo, List<LocalStyleHolder>>(moduleInfo, list));
+              }
+
+              list.add(styleHolder);
+            }
+          }
+
+          if (list != null) {
+            // well, local style applicable only for one module, so,
+            // if we found for this module, there is no reason to continue search
+            return false;
+          }
+        }
+
+        return true;
+      }
+    });
   }
 
   public void runWhenRendered(@NotNull XmlFile psiFile, @NotNull AsyncResult.Handler<DocumentInfo> handler) {
@@ -408,24 +446,19 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
   @SuppressWarnings("MethodMayBeStatic")
   public void renderUnsavedDocuments(final Document[] unsavedDocuments) {
-    //LOG.assertTrue(!documentOpening);
-    //documentOpening = true;
+    doRenderUnsavedDocuments(unsavedDocuments).doWhenDone(createTotalRenderDoneHandler());
+  }
 
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+  static AsyncResult.Handler<List<DocumentInfo>> createTotalRenderDoneHandler() {
+    return new AsyncResult.Handler<List<DocumentInfo>>() {
       @Override
-      public void run() {
-        AsyncResult<List<DocumentInfo>> result = doRenderUnsavedDocuments(unsavedDocuments);
-        result.doWhenDone(new AsyncResult.Handler<List<DocumentInfo>>() {
-          @Override
-          public void run(List<DocumentInfo> infos) {
-            MessageBus messageBus = ApplicationManager.getApplication().getMessageBus();
-            for (DocumentInfo info : infos) {
-              messageBus.syncPublisher(MESSAGE_TOPIC).documentRenderedOnAutoSave(info);
-            }
-          }
-        });
+      public void run(List<DocumentInfo> infos) {
+        MessageBus messageBus = ApplicationManager.getApplication().getMessageBus();
+        for (DocumentInfo info : infos) {
+          messageBus.syncPublisher(MESSAGE_TOPIC).documentRendered(info);
+        }
       }
-    });
+    };
   }
 
   public static String getOpenActionTitle(boolean debug) {
@@ -477,39 +510,8 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return rootTag != null && rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) != null;
   }
 
-  public static void projectRegistered(Project project) {
-    final Alarm syncAlarm = new Alarm();
-    PsiManager.getInstance(project).addPsiTreeChangeListener(new PsiTreeChangeAdapter() {
-      public void childrenChanged(@NotNull PsiTreeChangeEvent event) {
-        //update(event);
-      }
-
-      public void childRemoved(@NotNull PsiTreeChangeEvent event) {
-        update(event);
-      }
-
-      public void childAdded(@NotNull PsiTreeChangeEvent event) {
-        update(event);
-      }
-
-      public void childReplaced(@NotNull PsiTreeChangeEvent event) {
-        update(event);
-      }
-
-      @Override
-      public void propertyChanged(@NotNull PsiTreeChangeEvent event) {
-        //super.propertyChanged(event);
-      }
-
-      private void update(final PsiTreeChangeEvent event) {
-        if (!(event.getFile() instanceof XmlFile || event.getFile() instanceof CssFile)) {
-          return;
-        }
-
-        syncAlarm.cancelAllRequests();
-        syncAlarm.addRequest(new IncrementalDocumentSynchronizer(event), 100, ModalityState.NON_MODAL);
-      }
-    }, project);
+  public void projectRegistered(final Project project) {
+    PsiManager.getInstance(project).addPsiTreeChangeListener(new MyPsiTreeChangeAdapter(project), project);
   }
 
   void attachProjectAndModuleListeners(DesignerApplication designerApplication) {
@@ -577,7 +579,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     private final XmlFile psiFile;
     private final AsyncResult<DocumentInfo> asyncResult;
 
-    public RenderDocumentTask(@NotNull final XmlFile psiFile, @Nullable AsyncResult<DocumentInfo> asyncResult) {
+    public RenderDocumentTask(@NotNull XmlFile psiFile, @Nullable AsyncResult<DocumentInfo> asyncResult) {
       this.psiFile = psiFile;
       this.asyncResult = asyncResult;
     }
@@ -650,8 +652,56 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   }
 
   public interface DocumentRenderedListener {
-    void documentRenderedOnAutoSave(DocumentInfo info);
-    void documentIncrementallyUpdated(DocumentInfo info);
+    void documentRendered(DocumentInfo info);
     void errorOccured();
+  }
+
+  private class MyPsiTreeChangeAdapter extends PsiTreeChangeAdapter {
+    private final MxmlPreviewToolWindowManager previewToolWindowManager;
+    private final MergingUpdateQueue updateQueue;
+
+    public MyPsiTreeChangeAdapter(Project project) {
+      previewToolWindowManager = project.getComponent(MxmlPreviewToolWindowManager.class);
+      updateQueue = new MergingUpdateQueue("FlashUIDesigner.update", 100, true, null);
+    }
+
+    public void childrenChanged(@NotNull PsiTreeChangeEvent event) {
+      //update(event);
+    }
+
+    public void childRemoved(@NotNull PsiTreeChangeEvent event) {
+      update(event);
+    }
+
+    public void childAdded(@NotNull PsiTreeChangeEvent event) {
+      update(event);
+    }
+
+    public void childReplaced(@NotNull PsiTreeChangeEvent event) {
+      update(event);
+    }
+
+    @Override
+    public void propertyChanged(@NotNull PsiTreeChangeEvent event) {
+    }
+
+    private void update(final PsiTreeChangeEvent event) {
+      if (isApplicationClosed()) {
+        return;
+      }
+
+      PsiFile psiFile = event.getFile();
+      if (psiFile instanceof XmlFile) {
+        DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(psiFile);
+        if (info == null && psiFile != previewToolWindowManager.getServedFile()) {
+          return;
+        }
+      }
+      else if (!(psiFile instanceof CssFile)) {
+        return;
+      }
+
+      updateQueue.queue(new IncrementalDocumentSynchronizer(event));
+    }
   }
 }

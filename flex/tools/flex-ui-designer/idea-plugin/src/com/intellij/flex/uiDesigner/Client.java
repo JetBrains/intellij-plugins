@@ -457,10 +457,10 @@ public class Client implements Disposable {
     return false;
   }
 
-  public AsyncResult<List<DocumentInfo>> renderDocumentAndDependents(final List<DocumentInfo> infos,
+  public AsyncResult<List<DocumentInfo>> renderDocumentAndDependents(@Nullable List<DocumentInfo> infos,
                                                                      List<Pair<ModuleInfo, List<LocalStyleHolder>>> outdatedLocalStyleHolders) {
     final AsyncResult<List<DocumentInfo>> result = new AsyncResult<List<DocumentInfo>>();
-    if (infos.isEmpty() && outdatedLocalStyleHolders.isEmpty()) {
+    if ((infos == null || infos.isEmpty()) && outdatedLocalStyleHolders.isEmpty()) {
       result.setDone(infos);
       return result;
     }
@@ -471,7 +471,21 @@ public class Client implements Disposable {
       beginMessage(ClientMethod.renderDocumentsAndDependents, callback, result, new Runnable() {
         @Override
         public void run() {
-          result.setDone(infos);
+          final int[] ids;
+          try {
+            ids = SocketInputHandler.getInstance().getReader().readIntArray();
+          }
+          catch (IOException e) {
+            LogMessageUtil.processInternalError(e);
+            return;
+          }
+
+          DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
+          List<DocumentInfo> rendered = new ArrayList<DocumentInfo>(ids.length);
+          for (int id : ids) {
+            rendered.add(documentFactoryManager.getInfo(id));
+          }
+          result.setDone(rendered);
         }
       });
       out.write(outdatedLocalStyleHolders, new PairConsumer<Pair<ModuleInfo, List<LocalStyleHolder>>, AmfOutputStream>() {

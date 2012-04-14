@@ -271,16 +271,17 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
   }
 
   private function renderDocumentsAndDependents(input:IDataInput, callbackId:int):void {
-    var documentFactoryManager:DocumentFactoryManager = getDocumentFactoryManager();
+    const documentFactoryManager:DocumentFactoryManager = getDocumentFactoryManager();
     var n:int = AmfUtil.readUInt29(input);
-    var processed:Dictionary = new Dictionary();
-    var callbacks:Vector.<ActionCallback> = new Vector.<ActionCallback>();
+    const processed:Dictionary = new Dictionary();
+    const callbacks:Vector.<ActionCallback> = new Vector.<ActionCallback>();
+    var renderedDocumentIds:Vector.<int> = new Vector.<int>();
     while (n-- > 0) {
       var module:Module = moduleManager.getById(AmfUtil.readUInt29(input));
       module.styleManager = null;
       documentFactoryManager.forEachBelongToModule(module, function (documentFactory:DocumentFactory):void {
         doRenderDocumentAndDependents(documentFactory, getDocumentManager(documentFactory.module), documentFactoryManager, processed,
-                                      callbacks);
+                                      callbacks, renderedDocumentIds);
       });
     }
 
@@ -289,7 +290,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     while (n-- > 0) {
       var documentFactory:DocumentFactory = documentFactoryManager.getById(AmfUtil.readUInt29(input));
       doRenderDocumentAndDependents(documentFactory, getDocumentManager(documentFactory.module), documentFactoryManager, processed,
-                                    callbacks);
+                                    callbacks, renderedDocumentIds);
     }
 
     if (callbacks.length == 0) {
@@ -297,18 +298,29 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
       return;
     }
 
-    var totalCallback:ActionCallback = new ActionCallback(callbacks.length);
+    const totalCallback:ActionCallback = new ActionCallback(callbacks.length);
+    totalCallback.doWhenRejected(Server.instance.callback, callbackId, false);
+    totalCallback.doWhenDone(renderDocumentsAndDependentsCallback, callbackId, renderedDocumentIds);
+
     Server.instance.asyncCallback(totalCallback, callbackId);
     for each (var callback:ActionCallback in callbacks) {
       callback.notify(totalCallback);
     }
   }
 
-  private static function doRenderDocumentAndDependents(documentFactory:DocumentFactory,
-                                                        documentManager:DocumentManager,
-                                                        documentFactoryManager:DocumentFactoryManager,
-                                                        processed:Dictionary,
-                                                        callbacks:Vector.<ActionCallback>):void {
+  private static function renderDocumentsAndDependentsCallback(callbackId:int, renderedDocumentIds:Vector.<int>):void {
+    var server:Server = Server.instance;
+    server.callback(callbackId, true, false);
+    server.writeIds(renderedDocumentIds);
+  }
+
+  private static function addRenderedDocumentId(id:int, renderedDocumentIds:Vector.<int>):void {
+    renderedDocumentIds[renderedDocumentIds.length] = id;
+  }
+
+  private static function doRenderDocumentAndDependents(documentFactory:DocumentFactory, documentManager:DocumentManager,
+                                                        documentFactoryManager:DocumentFactoryManager, processed:Dictionary,
+                                                        callbacks:Vector.<ActionCallback>, renderedDocumentIds:Vector.<int>):void {
     if (processed[documentFactory]) {
       return;
     }
@@ -319,13 +331,17 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
       var callback:ActionCallback = documentManager.render(documentFactory);
       if (!callback.isProcessed) {
         callbacks[callbacks.length] = callback;
+        callback.doWhenDone(addRenderedDocumentId, documentFactory.id, renderedDocumentIds);
+      }
+      else if (callback.isDone) {
+        renderedDocumentIds[renderedDocumentIds.length] = documentFactory.id;
       }
     }
 
     var dependents:Vector.<DocumentFactory> = documentFactoryManager.getDependents(documentFactory);
     if (dependents != null) {
       for each (var dependent:DocumentFactory in dependents) {
-        doRenderDocumentAndDependents(dependent, documentManager, documentFactoryManager, processed, callbacks);
+        doRenderDocumentAndDependents(dependent, documentManager, documentFactoryManager, processed, callbacks, renderedDocumentIds);
       }
     }
   }

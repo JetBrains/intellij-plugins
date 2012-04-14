@@ -128,7 +128,7 @@ public class LibraryManager implements Disposable {
       info = new ProjectInfo(project);
       registeredProjects.add(info);
       client.openProject(project);
-      DesignerApplicationManager.projectRegistered(project);
+      DesignerApplicationManager.getInstance().projectRegistered(project);
     }
 
     LibrarySet librarySet;
@@ -195,7 +195,7 @@ public class LibraryManager implements Disposable {
                                                                                                    globalContains)), libraryCollector,
                                                   globalContains, key, true);
       flexLibrarySet =
-        new FlexLibrarySet(sortResult, null, new ContainsCondition(globalDefinitions, sortResult.definitionMap), assetCounter);
+        new FlexLibrarySet(sortResult, null, new ContainsCondition(globalDefinitions, sortResult.definitionMap), assetCounter, libraryCollector.getFlexSdkVersion());
       registerLibrarySet(key, flexLibrarySet);
     }
 

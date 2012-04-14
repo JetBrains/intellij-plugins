@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner.io;
 import com.intellij.util.PairConsumer;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntProcedure;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -81,8 +82,12 @@ public class AmfOutputStream extends PrimitiveAmfOutputStream {
     }
   }
 
-  public <T extends Identifiable> void write(List<T> collection) {
-    writeUInt29(collection.size());
+  public <T extends Identifiable> void write(@Nullable List<T> collection) {
+    writeUInt29(collection == null ? 0 : collection.size());
+    if (collection == null) {
+      return;
+    }
+
     for (Identifiable e : collection) {
       writeUInt29(e.getId());
     }
