@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.impl.JSIconProvider;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
@@ -31,7 +32,7 @@ public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
 
   public NewActionScriptClassUmlAction() {
     super(JSBundle.message("new.actionscript.class.uml.action.text"), JSBundle.message("new.actionscript.class.action.description"),
-          JSClassImpl.CLASS_ICON);
+          JSIconProvider.DEFAULT_INSTANCE.getClassIcon());
   }
 
   @Override
