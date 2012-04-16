@@ -1,6 +1,9 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-import com.intellij.flex.uiDesigner.*;
+import com.intellij.flex.uiDesigner.AssetCounter;
+import com.intellij.flex.uiDesigner.FlashUIDesignerBundle;
+import com.intellij.flex.uiDesigner.InvalidPropertyException;
+import com.intellij.flex.uiDesigner.ProblemsHolder;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.ByteRange;
 import com.intellij.flex.uiDesigner.io.Marker;
@@ -21,7 +24,6 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Trinity;
@@ -76,13 +78,12 @@ public class MxmlWriter {
 
   @Nullable
   public Pair<ProjectComponentReferenceCounter, List<RangeMarker>> write(XmlFile psiFile) throws IOException {
+    document = MxmlUtil.getDocumentAndWaitIfNotComitted(psiFile);
     final AccessToken token = ReadAction.start();
     try {
       final VirtualFile virtualFile = psiFile.getVirtualFile();
       assert virtualFile != null;
       problemsHolder.setCurrentFile(virtualFile);
-
-      document = FileDocumentManager.getInstance().getDocument(virtualFile);
 
       XmlTag tag = psiFile.getRootTag();
       assert tag != null;

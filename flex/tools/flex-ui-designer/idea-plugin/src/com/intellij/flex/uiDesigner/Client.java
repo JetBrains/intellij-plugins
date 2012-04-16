@@ -449,8 +449,8 @@ public class Client implements Disposable {
   }
 
   public AsyncResult<List<DocumentInfo>> renderDocumentAndDependents(@Nullable List<DocumentInfo> infos,
-                                                                     List<Pair<ModuleInfo, List<LocalStyleHolder>>> outdatedLocalStyleHolders) {
-    final AsyncResult<List<DocumentInfo>> result = new AsyncResult<List<DocumentInfo>>();
+                                                                     List<Pair<ModuleInfo, List<LocalStyleHolder>>> outdatedLocalStyleHolders,
+                                                                     final AsyncResult<List<DocumentInfo>> result) {
     if ((infos == null || infos.isEmpty()) && outdatedLocalStyleHolders.isEmpty()) {
       result.setDone(infos);
       return result;

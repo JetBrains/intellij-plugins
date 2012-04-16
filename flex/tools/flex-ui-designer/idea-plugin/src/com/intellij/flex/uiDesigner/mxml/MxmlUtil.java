@@ -7,16 +7,15 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.xml.*;
+import com.intellij.util.concurrency.Semaphore;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +28,24 @@ public final class MxmlUtil {
 
   static final String UNKNOWN_COMPONENT_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownComponent";
   static final String UNKNOWN_ITEM_RENDERER_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownItemRenderer";
+
+  public static Document getDocumentAndWaitIfNotComitted(PsiFile psiFile) {
+    PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(psiFile.getProject());
+    Document document = psiDocumentManager.getDocument(psiFile);
+    if (!psiDocumentManager.isCommitted(document)) {
+      final Semaphore semaphore = new Semaphore();
+      semaphore.down();
+      psiDocumentManager.performForCommittedDocument(document, new Runnable() {
+        @Override
+        public void run() {
+          semaphore.up();
+        }
+      });
+      semaphore.waitFor();
+    }
+
+    return document;
+  }
 
   // about id http://opensource.adobe.com/wiki/display/flexsdk/id+property+in+MXML+2009
   public static boolean isIdLanguageAttribute(XmlAttribute attribute, AnnotationBackedDescriptor descriptor) {

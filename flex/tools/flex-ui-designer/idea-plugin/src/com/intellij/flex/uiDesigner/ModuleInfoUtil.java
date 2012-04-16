@@ -107,17 +107,20 @@ public final class ModuleInfoUtil {
     final Processor<JSClass> processor = new Processor<JSClass>() {
       @Override
       public boolean process(JSClass jsClass) {
-        PsiFile containingFile = jsClass.getNavigationElement().getContainingFile();
-        if (!(containingFile instanceof XmlFile)) {
+        PsiFile psiFile = jsClass.getNavigationElement().getContainingFile();
+        if (!(psiFile instanceof XmlFile)) {
           return true;
         }
 
-        XmlTag rootTag = ((XmlFile)containingFile).getRootTag();
+        XmlTag rootTag = ((XmlFile)psiFile).getRootTag();
         if (rootTag == null) {
           return true;
         }
 
-        final VirtualFile virtualFile = containingFile.getVirtualFile();
+        // injection works only for commited documents
+        MxmlUtil.getDocumentAndWaitIfNotComitted(psiFile);
+
+        final VirtualFile virtualFile = psiFile.getVirtualFile();
         problemsHolder.setCurrentFile(virtualFile);
         try {
           // IDEA-73558

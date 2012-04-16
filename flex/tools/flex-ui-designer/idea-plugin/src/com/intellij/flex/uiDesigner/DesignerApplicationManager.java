@@ -41,7 +41,9 @@ import com.intellij.psi.css.CssFile;
 import com.intellij.psi.css.CssFileType;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.Processor;
 import com.intellij.util.concurrency.QueueProcessor;
 import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
@@ -58,7 +60,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
@@ -76,7 +77,6 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   private DesignerApplication application;
 
   private final RenderActionQueue initialRenderQueue = new RenderActionQueue();
-  private final ReentrantLock compositeRenderLock = new ReentrantLock();
 
   public DesignerApplicationManager() {
     super(true);
@@ -117,12 +117,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       runnable.run();
     }
     else {
-      ideaApp.invokeLater(runnable, new Condition() {
-        @Override
-        public boolean value(Object o) {
-          return ideaApp.isDisposed();
-        }
-      });
+      ideaApp.invokeLater(runnable, ideaApp.getDisposed());
     }
   }
 
@@ -185,7 +180,9 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return true;
   }
 
-  private static AsyncResult<List<DocumentInfo>> doRenderDocumentsAndCheckLocalStyleModification(Document[] documents, boolean onlyStyle) {
+  private static void doRenderDocumentsAndCheckLocalStyleModification(Document[] documents,
+                                                                      boolean onlyStyle,
+                                                                      AsyncResult<List<DocumentInfo>> result) {
     FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
     DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
     Client client = Client.getInstance();
@@ -272,7 +269,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
     }
 
-    return client.renderDocumentAndDependents(documentInfos, changedLocalStyleHolders);
+    client.renderDocumentAndDependents(documentInfos, changedLocalStyleHolders, result);
   }
 
   private static void collectChangedLocalStyleSources(final List<Pair<ModuleInfo, List<LocalStyleHolder>>> holders,
@@ -311,7 +308,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   }
 
   public void runWhenRendered(@NotNull XmlFile psiFile,
-                              @NotNull AsyncResult.Handler<DocumentInfo> handler,
+                              @NotNull final AsyncResult.Handler<DocumentInfo> handler,
                               @Nullable ActionCallback renderRejectedCallback,
                               final boolean debug) {
     boolean needInitialRender = isApplicationClosed();
@@ -339,16 +336,30 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
           renderResult.notifyWhenRejected(renderRejectedCallback);
         }
 
-        RenderAction renderAction = new RenderAction(psiFile, renderResult) {
+        initialRenderQueue.add(new RenderAction<AsyncResult<DocumentInfo>>(psiFile.getProject(), psiFile.getViewProvider().getVirtualFile(), renderResult) {
           @Override
-          public void run() {
-            Module module = ModuleUtil.findModuleForPsiElement(file);
-            LOG.assertTrue(module != null);
-            renderDocument(module, file, debug, result);
+          protected boolean isNeedEdt() {
+            // ProgressManager requires dispatch thread
+            return true;
           }
-        };
 
-        initialRenderQueue.add(renderAction);
+          @Override
+          protected void doRun() {
+            if (project.isDisposed()) {
+              return;
+            }
+
+            PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+            if (!(psiFile instanceof XmlFile)) {
+              return;
+            }
+
+            Module module = ModuleUtil.findModuleForFile(file, project);
+            if (module != null) {
+              renderDocument(module, (XmlFile)psiFile, debug, result);
+            }
+          }
+        });
       }
 
       renderResult.doWhenDone(handler);
@@ -435,29 +446,63 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     renderDocumentsAndCheckLocalStyleModification(documents, false);
   }
 
-  public synchronized void renderDocumentsAndCheckLocalStyleModification(Document[] documents, boolean onlyStyle) {
-    //compositeRenderLock.lock();
-    AsyncResult<List<DocumentInfo>> result = doRenderDocumentsAndCheckLocalStyleModification(documents, onlyStyle);
-    result.doWhenProcessed(new Runnable() {
-      @Override
-      public void run() {
-        //compositeRenderLock.unlock();
-      }
-    });
-    result.doWhenDone(new AsyncResult.Handler<List<DocumentInfo>>() {
-      @Override
-      public void run(List<DocumentInfo> infos) {
-        Application application = ApplicationManager.getApplication();
-        if (application.isDisposed()) {
-          return;
+  public void renderDocumentsAndCheckLocalStyleModification(final Document[] documents, final boolean onlyStyle) {
+    synchronized (initialRenderQueue) {
+      final AtomicBoolean result = new AtomicBoolean();
+      initialRenderQueue.processActions(new Processor<RenderAction>() {
+        @Override
+        public boolean process(RenderAction renderAction) {
+          if (renderAction.file == null) {
+            ComplexRenderAction action = (ComplexRenderAction)renderAction;
+            if (onlyStyle == action.onlyStyle) {
+              action.documents = ArrayUtil.mergeArrays(action.documents, documents);
+              result.set(true);
+              return false;
+            }
+          }
+          return true;
         }
+      });
 
-        MessageBus messageBus = application.getMessageBus();
-        for (DocumentInfo info : infos) {
-          messageBus.syncPublisher(MESSAGE_TOPIC).documentRendered(info);
-        }
+      if (!result.get()) {
+        initialRenderQueue.add(new ComplexRenderAction(documents, onlyStyle));
       }
-    });
+    }
+  }
+
+  private static class ComplexRenderAction extends RenderAction<AsyncResult<List<DocumentInfo>>> {
+    private Document[] documents;
+    private final boolean onlyStyle;
+
+    protected ComplexRenderAction(Document[] documents, boolean onlyStyle) {
+      super(null, null, new AsyncResult<List<DocumentInfo>>());
+      this.documents = documents;
+      this.onlyStyle = onlyStyle;
+    }
+
+    @Override
+    protected boolean isNeedEdt() {
+      return false;
+    }
+
+    @Override
+    protected void doRun() {
+      doRenderDocumentsAndCheckLocalStyleModification(documents, onlyStyle, result);
+      result.doWhenDone(new AsyncResult.Handler<List<DocumentInfo>>() {
+        @Override
+        public void run(List<DocumentInfo> infos) {
+          Application application = ApplicationManager.getApplication();
+          if (application.isDisposed()) {
+            return;
+          }
+
+          MessageBus messageBus = application.getMessageBus();
+          for (DocumentInfo info : infos) {
+            messageBus.syncPublisher(MESSAGE_TOPIC).documentRendered(info);
+          }
+        }
+      });
+    }
   }
 
   public static String getOpenActionTitle(boolean debug) {
