@@ -25,7 +25,6 @@
 
 package org.osmorc.impl;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
@@ -39,13 +38,12 @@ import org.osmorc.facet.OsmorcFacetUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class AdditionalJARContentsWatcherManagerImpl implements AdditionalJARContentsWatcherManager {
-  private final Logger logger = Logger.getInstance("#org.osmorc.impl.AdditionalJARContentsWatcherManagerImpl");
-
   public AdditionalJARContentsWatcherManagerImpl(Module module, OsmorcFacetUtil osmorcFacetUtil, LocalFileSystem fileSystem) {
     _module = module;
     _osmorcFacetUtil = osmorcFacetUtil;
@@ -70,49 +68,43 @@ public class AdditionalJARContentsWatcherManagerImpl implements AdditionalJARCon
         }
       }
 
-      for (Iterator<VirtualFile> jarContentsIterator = _additionalBundleJARContents.iterator();
-           jarContentsIterator.hasNext(); ) {
+      List<LocalFileSystem.WatchRequest> toRemove = new ArrayList<LocalFileSystem.WatchRequest>();
+      for (Iterator<VirtualFile> jarContentsIterator = _additionalBundleJARContents.iterator(); jarContentsIterator.hasNext(); ) {
         VirtualFile file = jarContentsIterator.next();
         if (!newAdditionalJARContents.contains(file)) {
           jarContentsIterator.remove();
           for (Iterator<LocalFileSystem.WatchRequest> watchIterator = _watchRequests.iterator(); watchIterator.hasNext(); ) {
             LocalFileSystem.WatchRequest watchRequest = watchIterator.next();
             if (Comparing.strEqual(file.getPath(), watchRequest.getRootPath())) {
-              _fileSystem.removeWatchedRoot(watchRequest);
+              toRemove.add(watchRequest);
               watchIterator.remove();
             }
           }
         }
       }
+
+      List<String> toAdd = new ArrayList<String>();
       for (VirtualFile newAdditionalJARContent : newAdditionalJARContents) {
         if (!_additionalBundleJARContents.contains(newAdditionalJARContent)) {
-          final LocalFileSystem.WatchRequest watchRequest = _fileSystem.addRootToWatch(newAdditionalJARContent.getPath(), true);
-          // This Check should fix EA-18652, so no NULL-values are entered into the _watchRequests list.
-          if (watchRequest != null) {
-            _watchRequests.add(watchRequest);
-          }
-          else {
-            logger.warn("It seems like " +
-                        newAdditionalJARContent.getPath() +
-                        " doesn't belong to the file system or the file watcher is not operational.");
-          }
+          toAdd.add(newAdditionalJARContent.getPath());
           _additionalBundleJARContents.add(newAdditionalJARContent);
         }
       }
+
+      final Set<LocalFileSystem.WatchRequest> requests = _fileSystem.replaceWatchedRoots(toRemove, toAdd, true);
+      _watchRequests.addAll(requests);
     }
     else {
-      _additionalBundleJARContents.clear();
-      for (LocalFileSystem.WatchRequest watchRequest : _watchRequests) {
-        _fileSystem.removeWatchedRoot(watchRequest);
-      }
-      _watchRequests.clear();
+      cleanup();
     }
   }
 
   public void dispose() {
-    for (LocalFileSystem.WatchRequest watchRequest : _watchRequests) {
-      _fileSystem.removeWatchedRoot(watchRequest);
-    }
+    cleanup();
+  }
+
+  private void cleanup() {
+    _fileSystem.removeWatchedRoots(_watchRequests);
     _watchRequests.clear();
     _additionalBundleJARContents.clear();
   }
