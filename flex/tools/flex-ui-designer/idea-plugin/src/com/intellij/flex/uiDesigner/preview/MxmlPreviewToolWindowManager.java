@@ -200,7 +200,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
           UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override
             public void run() {
-              render();
+              render(false);
             }
           });
         }

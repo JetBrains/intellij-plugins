@@ -697,7 +697,6 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         return;
       }
 
-
       if (psiFile instanceof XmlFile) {
         DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(psiFile);
         if (info == null && psiFile != previewToolWindowManager.getServedFile()) {

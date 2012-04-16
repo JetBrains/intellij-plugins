@@ -8,8 +8,8 @@ import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
 import com.intellij.flex.uiDesigner.mxml.PrimitiveWriter;
 import com.intellij.flex.uiDesigner.mxml.XmlAttributeValueProvider;
 import com.intellij.flex.uiDesigner.mxml.XmlElementValueProvider;
-import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.javascript.flex.FlexAnnotationNames;
+import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexReferenceContributor;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -19,7 +19,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.AsyncResult;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
@@ -29,12 +28,15 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.update.Update;
 import com.intellij.xml.XmlAttributeDescriptor;
+import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 
 final class IncrementalDocumentSynchronizer extends Update {
   private final PsiTreeChangeEvent event;
+  private boolean isSkippedXml;
+  private boolean isStyleDataChanged;
 
   public IncrementalDocumentSynchronizer(PsiTreeChangeEvent event) {
     super("FlashUIDesigner.incrementalUpdate");
@@ -64,44 +66,61 @@ final class IncrementalDocumentSynchronizer extends Update {
   @Override
   public void run() {
     DesignerApplicationManager designerManager = DesignerApplicationManager.getInstance();
-    if (designerManager.isInitialRendering()) {
+    if (designerManager.isInitialRendering() || designerManager.isApplicationClosed()) {
       return;
     }
+
+    // PsiTreeChangeEvent dispatched only for root psi file, i.e not for injected
+    // (so, if CSS is injected, we get psi event about mxml file, but not about injected css file)
 
     final XmlFile xmlFile;
     if (event.getFile() instanceof XmlFile) {
       xmlFile = (XmlFile)event.getFile();
-      assert xmlFile != null;
     }
     else {
-      CssFile cssFile = (CssFile)event.getFile();
-      assert cssFile != null;
-      VirtualFile file = cssFile.getViewProvider().getVirtualFile();
-      if (file instanceof VirtualFileWindow) {
-        file = ((VirtualFileWindow)file).getDelegate();
-      }
-      DesignerApplicationManager.getInstance()
-        .renderDocumentsAndCheckLocalStyleModification(new Document[]{FileDocumentManager.getInstance().getDocument(file)}, true);
+      assert event.getFile() instanceof CssFile;
+      styleChanged();
       return;
     }
 
     DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(xmlFile);
     if (info != null && !incrementalSync(info)) {
-      initialRenderAndNotify(designerManager, xmlFile);
+      if (isStyleDataChanged) {
+        styleChanged();
+      }
+      else if (!isSkippedXml) {
+        initialRenderAndNotify(designerManager, xmlFile);
+      }
     }
+  }
+
+  private void styleChanged() {
+    //noinspection ConstantConditions
+    DesignerApplicationManager.getInstance().renderDocumentsAndCheckLocalStyleModification(
+      new Document[]{FileDocumentManager.getInstance().getCachedDocument(event.getFile().getViewProvider().getVirtualFile())}, true);
   }
 
   @Nullable
   private XmlElementValueProvider findSupportedTarget() {
-    if (DesignerApplicationManager.getInstance().isApplicationClosed()) {
-      return null;
-    }
-
     PsiElement element = event.getParent();
     // if we change attribute value via line marker, so, event.getParent() will be XmlAttribute instead of XmlAttributeValue
     while (!(element instanceof XmlAttribute)) {
       element = element.getParent();
-      if (element instanceof XmlTag || element instanceof PsiFile || element == null) {
+      if (element instanceof XmlTag) {
+        XmlTag tag = (XmlTag)element;
+        XmlElementDescriptor descriptor = tag.getDescriptor();
+        if (descriptor instanceof ClassBackedElementDescriptor) {
+          ClassBackedElementDescriptor classBackedElementDescriptor = (ClassBackedElementDescriptor)descriptor;
+          if (classBackedElementDescriptor.isPredefined()) {
+            isStyleDataChanged = descriptor.getQualifiedName().equals(FlexPredefinedTagNames.STYLE);
+            isSkippedXml = isStyleDataChanged ||
+                           (!MxmlUtil.isObjectLanguageTag(tag) &&
+                            !descriptor.getQualifiedName().equals(FlexPredefinedTagNames.DECLARATIONS));
+          }
+        }
+        return null;
+      }
+      else if (element instanceof PsiFile || element == null) {
         return null;
       }
     }

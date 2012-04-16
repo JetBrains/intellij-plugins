@@ -5,6 +5,7 @@ import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
+import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -115,6 +116,11 @@ public final class MxmlUtil {
 
     // well, it must be at least mx.core.UIComponent or spark.primitives.supportClasses.GraphicElement
     throw new InvalidPropertyException(element, "unresolved.class", aClass.getQualifiedName());
+  }
+
+  public static boolean isObjectLanguageTag(XmlTag tag) {
+    return tag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
+        tag.getLocalName().equals(JSCommonTypeNames.OBJECT_CLASS_NAME);
   }
 
   private static class CustomComponentPropertyFilter implements Condition<AnnotationBackedDescriptor> {

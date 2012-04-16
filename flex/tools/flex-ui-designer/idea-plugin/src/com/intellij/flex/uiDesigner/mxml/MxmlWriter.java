@@ -299,8 +299,7 @@ public class MxmlWriter {
         if (descriptor instanceof ClassBackedElementDescriptor) {
           final ClassBackedElementDescriptor classBackedDescriptor = (ClassBackedElementDescriptor)descriptor;
           if (classBackedDescriptor.isPredefined()) {
-            if (tag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
-                tag.getLocalName().equals(JSCommonTypeNames.OBJECT_CLASS_NAME)) {
+            if (MxmlUtil.isObjectLanguageTag(tag)) {
               // IDEA-73482
               processPropertyTag(childTag, new AnyXmlAttributeDescriptorWrapper(descriptor), context);
             }
