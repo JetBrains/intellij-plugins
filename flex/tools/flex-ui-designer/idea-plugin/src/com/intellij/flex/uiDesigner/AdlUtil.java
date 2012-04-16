@@ -77,9 +77,10 @@ final class AdlUtil {
       runManager.createConfiguration("FlashUIDesigner", RemoteFlashRunConfigurationType.getFactory());
 
     final RemoteFlashRunConfiguration configuration = (RemoteFlashRunConfiguration)settings.getConfiguration();
-    final CompileStepBeforeRun.MakeBeforeRunTask runTask = runManager.getBeforeRunTask(configuration, CompileStepBeforeRun.ID);
-    if (runTask != null) {
-      runTask.setEnabled(false);
+    final List<CompileStepBeforeRun.MakeBeforeRunTask> runTask =
+      runManager.getBeforeRunTasks(settings.getConfiguration(), CompileStepBeforeRun.ID);
+    for (CompileStepBeforeRun.MakeBeforeRunTask task : runTask) {
+      task.setEnabled(false);
     }
 
     final DefaultDebugExecutor executor = new DefaultDebugExecutor();
