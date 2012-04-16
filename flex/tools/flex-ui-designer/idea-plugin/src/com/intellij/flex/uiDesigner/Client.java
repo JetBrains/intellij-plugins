@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 
@@ -41,6 +42,8 @@ public class Client implements Disposable {
 
   private final InfoMap<Module, ModuleInfo> registeredModules = new InfoMap<Module, ModuleInfo>(true);
   private final InfoMap<Project, ProjectInfo> registeredProjects = new InfoMap<Project, ProjectInfo>();
+
+  private final ReentrantLock outLock = new ReentrantLock();
 
   public static Client getInstance() {
     return DesignerApplicationManager.getService(Client.class);
@@ -101,6 +104,7 @@ public class Client implements Disposable {
                             @Nullable ActionCallback callback,
                             @Nullable ActionCallback rejectedCallback,
                             @Nullable Runnable doneRunnable) {
+    outLock.lock();
     if (callback != null) {
       if (rejectedCallback != null) {
         callback.notifyWhenRejected(rejectedCallback);
@@ -183,8 +187,12 @@ public class Client implements Disposable {
       writeId(module);
     }
     finally {
-      registeredModules.remove(module);
-      finalizeMessageAndFlush(hasError, callback);
+      try {
+        registeredModules.remove(module);
+      }
+      finally {
+        finalizeMessageAndFlush(hasError, callback);
+      }
     }
 
     return callback;
@@ -304,14 +312,21 @@ public class Client implements Disposable {
     }
 
     final ActionCallback callback = new ActionCallback("renderDocument");
-    beginMessage(ClientMethod.renderDocument, callback, result, new Runnable() {
-      @Override
-      public void run() {
-        result.setDone(DocumentFactoryManager.getInstance().getInfo(factoryId));
-      }
-    });
+    boolean hasError = true;
+    try {
+      beginMessage(ClientMethod.renderDocument, callback, result, new Runnable() {
+        @Override
+        public void run() {
+          result.setDone(DocumentFactoryManager.getInstance().getInfo(factoryId));
+        }
+      });
 
-    out.writeShort(factoryId);
+      out.writeShort(factoryId);
+      hasError = false;
+    }
+    finally {
+      finalizeMessageAndFlush(hasError);
+    }
 
     return result;
   }
@@ -367,19 +382,24 @@ public class Client implements Disposable {
   }
 
   private void finalizeMessage(boolean hasError) {
-    if (hasError) {
-      blockOut.rollback();
-    }
-    else {
-      try {
-        blockOut.end();
+    try {
+      if (hasError) {
+        blockOut.rollback();
       }
-      catch (IOException e) {
-        LogMessageUtil.processInternalError(e);
+      else {
+        try {
+          blockOut.end();
+        }
+        catch (IOException e) {
+          LogMessageUtil.processInternalError(e);
+        }
       }
-    }
 
-    out.resetAfterMessage();
+      out.resetAfterMessage();
+    }
+    finally {
+      outLock.unlock();
+    }
   }
 
   private void finalizeMessageAndFlush(boolean hasError) {
@@ -392,6 +412,7 @@ public class Client implements Disposable {
         blockOut.rollback();
       }
       finally {
+        outLock.unlock();
         if (callback != null) {
           callback.setRejected();
         }
@@ -402,7 +423,13 @@ public class Client implements Disposable {
         out.flush();
       }
       catch (IOException e) {
+        if (callback != null) {
+          callback.setRejected();
+        }
         LogMessageUtil.processInternalError(e);
+      }
+      finally {
+        outLock.unlock();
       }
     }
   }
@@ -442,6 +469,9 @@ public class Client implements Disposable {
     }
     catch (Throwable e) {
       LogMessageUtil.processInternalError(e, psiFile.getVirtualFile());
+    }
+    finally {
+      outLock.unlock();
     }
 
     blockOut.rollback();
@@ -489,10 +519,7 @@ public class Client implements Disposable {
       hasError = false;
     }
     finally {
-      finalizeMessageAndFlush(hasError);
-      if (hasError) {
-        callback.setRejected();
-      }
+      finalizeMessageAndFlush(hasError, callback);
     }
 
     return result;
@@ -516,10 +543,15 @@ public class Client implements Disposable {
         LogMessageUtil.processInternalError(e, virtualFile);
       }
       finally {
-        if (hasError) {
-          blockOut.rollback();
-          //noinspection ReturnInsideFinallyBlock
-          return -1;
+        try {
+          if (hasError) {
+            blockOut.rollback();
+            //noinspection ReturnInsideFinallyBlock
+            return -1;
+          }
+        }
+        finally {
+          outLock.unlock();
         }
       }
     }
@@ -660,10 +692,15 @@ public class Client implements Disposable {
 
   public void initStringRegistry() throws IOException {
     StringRegistry stringRegistry = StringRegistry.getInstance();
-    beginMessage(ClientMethod.initStringRegistry);
-    out.write(stringRegistry.toArray());
-
-    blockOut.end();
+    boolean hasError = true;
+    try {
+      beginMessage(ClientMethod.initStringRegistry);
+      out.write(stringRegistry.toArray());
+      hasError = false;
+    }
+    finally {
+      finalizeMessage(hasError);
+    }
   }
 
   public void writeId(Module module, PrimitiveAmfOutputStream out) {

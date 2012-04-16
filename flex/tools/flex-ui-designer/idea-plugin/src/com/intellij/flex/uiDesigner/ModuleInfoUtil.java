@@ -13,14 +13,13 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.application.AccessToken;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileSystemItem;
-import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.*;
 import com.intellij.psi.css.CssFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -29,6 +28,7 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Processor;
+import com.intellij.util.concurrency.Semaphore;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +44,29 @@ public final class ModuleInfoUtil {
   public static void collectLocalStyle(final ModuleInfo moduleInfo, final String flexSdkVersion,
                                        final StringWriter stringWriter, final ProblemsHolder problemsHolder,
                                        ProjectComponentReferenceCounter projectComponentReferenceCounter, AssetCounter assetCounter) {
+    final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(moduleInfo.getModule().getProject());
+    if (psiDocumentManager.hasUncommitedDocuments()) {
+      final Semaphore semaphore = new Semaphore();
+      semaphore.down();
+      Application application = ApplicationManager.getApplication();
+      if (application.isDispatchThread()) {
+        LogMessageUtil.LOG.error("must be not called in EDT");
+      }
+
+      application.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          psiDocumentManager.performWhenAllCommitted(new Runnable() {
+            @Override
+            public void run() {
+              semaphore.up();
+            }
+          });
+        }
+      });
+      semaphore.waitFor();
+    }
+
     final AccessToken token = ReadAction.start();
     try {
       if (moduleInfo.isApp()) {
@@ -116,9 +139,6 @@ public final class ModuleInfoUtil {
         if (rootTag == null) {
           return true;
         }
-
-        // injection works only for commited documents
-        MxmlUtil.getDocumentAndWaitIfNotComitted(psiFile);
 
         final VirtualFile virtualFile = psiFile.getVirtualFile();
         problemsHolder.setCurrentFile(virtualFile);

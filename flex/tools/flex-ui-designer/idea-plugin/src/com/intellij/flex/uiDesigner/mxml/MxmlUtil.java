@@ -2,11 +2,13 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
+import com.intellij.flex.uiDesigner.LogMessageUtil;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -30,6 +32,10 @@ public final class MxmlUtil {
   static final String UNKNOWN_ITEM_RENDERER_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownItemRenderer";
 
   public static Document getDocumentAndWaitIfNotComitted(PsiFile psiFile) {
+    if (ApplicationManager.getApplication().isReadAccessAllowed()) {
+      LogMessageUtil.LOG.error("must be not called on read");
+    }
+
     PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(psiFile.getProject());
     Document document = psiDocumentManager.getDocument(psiFile);
     if (!psiDocumentManager.isCommitted(document)) {

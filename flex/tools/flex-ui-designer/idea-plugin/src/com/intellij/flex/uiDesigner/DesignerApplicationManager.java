@@ -654,7 +654,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
 
       final AsyncResult<DocumentInfo> renderResult = client.renderDocument(module, psiFile, problemsHolder);
-      if (renderResult.isRejected() || !client.flush()) {
+      if (renderResult.isRejected()) {
         return false;
       }
 

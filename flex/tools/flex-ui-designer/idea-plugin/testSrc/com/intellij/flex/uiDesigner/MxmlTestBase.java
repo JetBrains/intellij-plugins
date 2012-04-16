@@ -116,7 +116,6 @@ abstract class MxmlTestBase extends AppTestBase {
       System.out.print(documentName + '\n');
       socketInputHandler.setExpectedErrorMessage(expectedErrorForDocument(documentName));
       AsyncResult<DocumentFactoryManager.DocumentInfo> renderResult = client.renderDocument(myModule, xmlFile, new ProblemsHolder());
-      client.flush();
       socketInputHandler.processUntil(renderResult);
       if (renderResult.isDone()) {
         ActionCallback testCallback = client.test(DocumentFactoryManager.getInstance().getId(file), documentName, originalFile.getParent().getName());
