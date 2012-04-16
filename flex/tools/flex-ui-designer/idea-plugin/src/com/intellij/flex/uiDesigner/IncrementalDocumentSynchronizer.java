@@ -19,7 +19,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.AsyncResult;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssFile;
@@ -31,9 +30,6 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ui.update.Update;
 import com.intellij.xml.XmlAttributeDescriptor;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 
@@ -56,13 +52,43 @@ final class IncrementalDocumentSynchronizer extends Update {
       return false;
     }
 
-    // we don't support incremental update for CSS
+    // todo we don't support incremental update for CSS
     if (event.getFile() instanceof CssFile) {
       return true;
     }
 
     return event.getParent() == otherEvent.getParent() &&
            event.getElement() == event.getElement();
+  }
+
+  @Override
+  public void run() {
+    DesignerApplicationManager designerManager = DesignerApplicationManager.getInstance();
+    if (designerManager.isInitialRendering()) {
+      return;
+    }
+
+    final XmlFile xmlFile;
+    if (event.getFile() instanceof XmlFile) {
+      xmlFile = (XmlFile)event.getFile();
+      assert xmlFile != null;
+    }
+    else {
+      CssFile cssFile = (CssFile)event.getFile();
+      assert cssFile != null;
+      VirtualFile file = cssFile.getViewProvider().getVirtualFile();
+      if (file instanceof VirtualFileWindow) {
+        file = ((VirtualFileWindow)file).getDelegate();
+      }
+      DesignerApplicationManager.getInstance()
+        .renderDocumentsAndCheckLocalStyleModification(new Document[]{FileDocumentManager.getInstance().getDocument(file)}, true);
+      return;
+    }
+
+    DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(xmlFile);
+    if (info != null && !incrementalSync(info)) {
+      initialRenderAndNotify(designerManager, xmlFile);
+    }
   }
 
   @Nullable
@@ -122,43 +148,6 @@ final class IncrementalDocumentSynchronizer extends Update {
     }
 
     return valueProvider;
-  }
-
-  @Override
-  public void run() {
-    DesignerApplicationManager designerManager = DesignerApplicationManager.getInstance();
-    if (designerManager.isInitialRendering()) {
-      return;
-    }
-
-    final XmlFile xmlFile;
-    if (event.getFile() instanceof XmlFile) {
-      xmlFile = (XmlFile)event.getFile();
-      assert xmlFile != null;
-    }
-    else {
-      CssFile cssFile = (CssFile)event.getFile();
-      assert cssFile != null;
-      VirtualFile file = cssFile.getViewProvider().getVirtualFile();
-      if (file instanceof VirtualFileWindow) {
-        file = ((VirtualFileWindow)file).getDelegate();
-      }
-      List<Pair<ModuleInfo, List<LocalStyleHolder>>> styleSources = new ArrayList<Pair<ModuleInfo, List<LocalStyleHolder>>>(1);
-      DesignerApplicationManager.collectChangedLocalStyleSources(styleSources, file);
-      if (styleSources.isEmpty()) {
-        return;
-      }
-      else {
-        DesignerApplicationManager.renderUnsavedDocuments(new Document[]{FileDocumentManager.getInstance().getDocument(file)});
-      }
-
-      return;
-    }
-
-    DocumentInfo info = DocumentFactoryManager.getInstance().getNullableInfo(xmlFile);
-    if (info != null && !incrementalSync(info)) {
-      initialRenderAndNotify(designerManager, xmlFile);
-    }
   }
 
   public static void initialRenderAndNotify(DesignerApplicationManager designerManager, XmlFile xmlFile) {

@@ -24,8 +24,6 @@ import java.util.List;
 public class DocumentFactoryManager {
   private final InfoMap<VirtualFile, DocumentInfo> files = new InfoMap<VirtualFile, DocumentInfo>();
 
-  private boolean ignoreBeforeAllDocumentsSaving;
-
   public DocumentFactoryManager() {
     ApplicationManager.getApplication().getMessageBus().connect(DesignerApplicationManager.getApplication())
       .subscribe(AppTopics.FILE_DOCUMENT_SYNC, new MyFileDocumentManagerListener());
@@ -33,10 +31,6 @@ public class DocumentFactoryManager {
 
   public static DocumentFactoryManager getInstance() {
     return DesignerApplicationManager.getService(DocumentFactoryManager.class);
-  }
-
-  void setIgnoreBeforeAllDocumentsSaving(boolean value) {
-    ignoreBeforeAllDocumentsSaving = value;
   }
 
   public void unregister(final int[] ids) {
@@ -55,10 +49,6 @@ public class DocumentFactoryManager {
   private class MyFileDocumentManagerListener extends FileDocumentManagerAdapter {
     @Override
     public void beforeAllDocumentsSaving() {
-      if (ignoreBeforeAllDocumentsSaving) {
-        return;
-      }
-
       final Document[] unsavedDocuments = FileDocumentManager.getInstance().getUnsavedDocuments();
       if (unsavedDocuments.length > 0) {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
@@ -67,7 +57,7 @@ public class DocumentFactoryManager {
             ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
               @Override
               public void run() {
-                DesignerApplicationManager.getInstance().renderUnsavedDocuments(unsavedDocuments);
+                DesignerApplicationManager.getInstance().renderDocumentsAndCheckLocalStyleModification(unsavedDocuments);
               }
             });
           }

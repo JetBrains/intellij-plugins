@@ -58,6 +58,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
@@ -75,14 +76,15 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   private DesignerApplication application;
 
   private final RenderActionQueue initialRenderQueue = new RenderActionQueue();
+  private final ReentrantLock compositeRenderLock = new ReentrantLock();
+
+  public DesignerApplicationManager() {
+    super(true);
+  }
 
   public static <T> T getService(@NotNull Class<T> serviceClass) {
     //noinspection unchecked
     return (T)getInstance().application.getPicoContainer().getComponentInstance(serviceClass.getName());
-  }
-
-  public DesignerApplicationManager() {
-    super(true);
   }
 
   public static DesignerApplicationManager getInstance() {
@@ -183,14 +185,14 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return true;
   }
 
-  private static AsyncResult<List<DocumentInfo>> doRenderUnsavedDocuments(Document[] unsavedDocuments) {
+  private static AsyncResult<List<DocumentInfo>> doRenderDocumentsAndCheckLocalStyleModification(Document[] documents, boolean onlyStyle) {
     FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
     DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
     Client client = Client.getInstance();
-    final List<DocumentInfo> documentInfos = new ArrayList<DocumentInfo>(unsavedDocuments.length);
+    final List<DocumentInfo> documentInfos = new ArrayList<DocumentInfo>(documents.length);
     final List<Pair<ModuleInfo, List<LocalStyleHolder>>> changedLocalStyleHolders =
       new ArrayList<Pair<ModuleInfo, List<LocalStyleHolder>>>();
-    for (Document document : unsavedDocuments) {
+    for (Document document : documents) {
       final VirtualFile file = fileDocumentManager.getFile(document);
       if (file == null) {
         continue;
@@ -201,7 +203,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         collectChangedLocalStyleSources(changedLocalStyleHolders, file);
       }
 
-      final DocumentInfo info = isMxml ? documentFactoryManager.getNullableInfo(file) : null;
+      final DocumentInfo info = isMxml && !onlyStyle ? documentFactoryManager.getNullableInfo(file) : null;
       if (info == null) {
         continue;
       }
@@ -234,16 +236,11 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
 
       if (client.updateDocumentFactory(info.getId(), module, psiFile)) {
+        info.documentModificationStamp = document.getModificationStamp();
         documentInfos.add(info);
       }
     }
 
-    return renderDocumentAndDependents(documentInfos, changedLocalStyleHolders);
-  }
-
-  private static AsyncResult<List<DocumentInfo>> renderDocumentAndDependents(@Nullable List<DocumentInfo> documentInfos,
-                                                                            List<Pair<ModuleInfo, List<LocalStyleHolder>>> changedLocalStyleHolders) {
-    Client client = Client.getInstance();
     if (!changedLocalStyleHolders.isEmpty()) {
       final ProblemsHolder problemsHolder = new ProblemsHolder();
       final ProjectComponentReferenceCounter projectComponentReferenceCounter = new ProjectComponentReferenceCounter();
@@ -278,7 +275,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return client.renderDocumentAndDependents(documentInfos, changedLocalStyleHolders);
   }
 
-  public static void collectChangedLocalStyleSources(final List<Pair<ModuleInfo, List<LocalStyleHolder>>> holders,
+  private static void collectChangedLocalStyleSources(final List<Pair<ModuleInfo, List<LocalStyleHolder>>> holders,
                                                       final VirtualFile file) {
     Client.getInstance().getRegisteredModules().forEach(new TObjectProcedure<ModuleInfo>() {
       @Override
@@ -321,14 +318,11 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     DocumentInfo documentInfo = null;
     if (!needInitialRender) {
       Document[] unsavedDocuments = FileDocumentManager.getInstance().getUnsavedDocuments();
-      DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
       if (unsavedDocuments.length > 0) {
-        explicitSaveAllDocuments(unsavedDocuments, documentFactoryManager);
+        renderDocumentsAndCheckLocalStyleModification(unsavedDocuments);
       }
 
-      VirtualFile virtualFile = psiFile.getVirtualFile();
-      assert virtualFile != null;
-      documentInfo = documentFactoryManager.getNullableInfo(psiFile);
+      documentInfo = DocumentFactoryManager.getInstance().getNullableInfo(psiFile);
       needInitialRender = documentInfo == null;
     }
 
@@ -358,17 +352,6 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
 
       renderResult.doWhenDone(handler);
-    }
-  }
-
-  public static void explicitSaveAllDocuments(Document[] unsavedDocuments, DocumentFactoryManager documentFactoryManager) {
-    try {
-      documentFactoryManager.setIgnoreBeforeAllDocumentsSaving(true);
-      renderUnsavedDocuments(unsavedDocuments);
-      FileDocumentManager.getInstance().saveAllDocuments();
-    }
-    finally {
-      documentFactoryManager.setIgnoreBeforeAllDocumentsSaving(false);
     }
   }
 
@@ -448,12 +431,28 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     });
   }
 
-  @SuppressWarnings("MethodMayBeStatic")
-  public static void renderUnsavedDocuments(final Document[] unsavedDocuments) {
-    doRenderUnsavedDocuments(unsavedDocuments).doWhenDone(new AsyncResult.Handler<List<DocumentInfo>>() {
+  public void renderDocumentsAndCheckLocalStyleModification(Document[] documents) {
+    renderDocumentsAndCheckLocalStyleModification(documents, false);
+  }
+
+  public synchronized void renderDocumentsAndCheckLocalStyleModification(Document[] documents, boolean onlyStyle) {
+    //compositeRenderLock.lock();
+    AsyncResult<List<DocumentInfo>> result = doRenderDocumentsAndCheckLocalStyleModification(documents, onlyStyle);
+    result.doWhenProcessed(new Runnable() {
+      @Override
+      public void run() {
+        //compositeRenderLock.unlock();
+      }
+    });
+    result.doWhenDone(new AsyncResult.Handler<List<DocumentInfo>>() {
       @Override
       public void run(List<DocumentInfo> infos) {
-        MessageBus messageBus = ApplicationManager.getApplication().getMessageBus();
+        Application application = ApplicationManager.getApplication();
+        if (application.isDisposed()) {
+          return;
+        }
+
+        MessageBus messageBus = application.getMessageBus();
         for (DocumentInfo info : infos) {
           messageBus.syncPublisher(MESSAGE_TOPIC).documentRendered(info);
         }
@@ -687,6 +686,10 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
     private void update(final PsiTreeChangeEvent event) {
       PsiFile psiFile = event.getFile();
+      if (psiFile == null) {
+        return;
+      }
+
       if (isApplicationClosed()) {
         if (psiFile == previewToolWindowManager.getServedFile()) {
           IncrementalDocumentSynchronizer.initialRenderAndNotify(DesignerApplicationManager.this, (XmlFile)psiFile);
