@@ -6,7 +6,9 @@ package com.intellij.tapestry.tests;
 
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.javaee.ExternalResourceManagerEx;
 import com.intellij.testFramework.UsefulTestCase;
+import com.intellij.xml.util.XmlUtil;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
 
@@ -26,42 +28,93 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     initByComponent();
     addComponentToProject("subpackage.Count");
     doTestBasicCompletionVariants(
-      mergeArrays(CORE_5_1_0_5_TAG_NAMES, "base", "isindex", "link", "meta", "object", "script", "style", "title", "t:subpackage.count",
+      mergeArrays(CORE_5_1_0_5_TAG_NAMES, "base", "command", "link", "meta", "noscript", "script", "style", "title", "t:subpackage.count",
                   getElementTagName()));
 
   }
 
   public void testAttrNameInHtmlParent() throws Throwable {
+    final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
+    final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
+    manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
+    try {
+      initByComponent();
+      doTestBasicCompletionVariants("accesskey", "charset", "class", "coords", "dir", "href", "hreflang", "id", "lang", "name", "onblur",
+                                    "onclick", "ondblclick", "onfocus", "onkeydown", "onkeypress", "onkeyup", "onmousedown", "onmousemove",
+                                    "onmouseout", "onmouseover", "onmouseup", "rel", "rev", "shape", "style", "tabindex", "target", "title",
+                                    "type", "t:type", "t:id");
+    }
+    finally {
+      manager.setDefaultHtmlDoctype(doctype, myFixture.getProject());
+    }
+  }
+
+  public void testAttrNameInHtmlParent1() throws Throwable {
     initByComponent();
-    doTestBasicCompletionVariants("accesskey", "charset", "class", "coords", "dir", "href", "hreflang", "id", "lang", "name", "onblur",
-                                  "onclick", "ondblclick", "onfocus", "onkeydown", "onkeypress", "onkeyup", "onmousedown", "onmousemove",
-                                  "onmouseout", "onmouseover", "onmouseup", "rel", "rev", "shape", "style", "tabindex", "target", "title",
-                                  "type", "t:type", "t:id");
+    doTestBasicCompletionVariants("t:id", "t:type", "tabindex", "target", "title", "type");
 
   }
 
   public void testAttrNameInTmlParent() throws Throwable {
+    final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
+    final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
+    manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
+    try {
+      initByComponent();
+      addComponentToProject("Count");
+      doTestBasicCompletionVariants("class", "dir", "end", "id", "lang", "onclick", "ondblclick", "onkeydown", "onkeypress", "onkeyup",
+                                    "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "start", "style", "title",
+                                    "value", "t:id");
+    }
+    finally {
+      manager.setDefaultHtmlDoctype(doctype, myFixture.getProject());
+    }
+  }
+
+  public void testAttrNameInTmlParent1() throws Throwable {
     initByComponent();
     addComponentToProject("Count");
-    doTestBasicCompletionVariants("class", "dir", "end", "id", "lang", "onclick", "ondblclick", "onkeydown", "onkeypress", "onkeyup",
-                                  "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "start", "style", "title",
-                                  "value", "t:id");
+    doTestBasicCompletionVariants("class", "contenteditable", "contextmenu");
 
   }
 
   public void testRootTagName() throws Throwable {
-    initByComponent();
-    doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_TAG_NAMES, getElementTagName()));
+    final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
+    final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
+    manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
+    try {
+      initByComponent();
+      doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_TAG_NAMES, getElementTagName()));
+    }
+    finally {
+      manager.setDefaultHtmlDoctype(doctype, myFixture.getProject());
+    }
   }
 
   public void testTagNameWithinTmlRootTag() throws Throwable {
-    initByComponent();
-    doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_TAG_NAMES, getElementTagName()));
+    final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
+    final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
+    manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
+    try {
+      initByComponent();
+      doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_TAG_NAMES, getElementTagName()));
+    }
+    finally {
+      manager.setDefaultHtmlDoctype(doctype, myFixture.getProject());
+    }
   }
 
   public void testTagNameWithoutHtmlContext() throws Throwable {
-    initByComponent();
-    doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_TAG_NAMES, getElementTagName()));
+    final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
+    final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
+    manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
+    try {
+      initByComponent();
+      doTestBasicCompletionVariants(mergeArrays(HTML_AND_CORE_5_1_0_5_TAG_NAMES, getElementTagName()));
+    }
+    finally {
+      manager.setDefaultHtmlDoctype(doctype, myFixture.getProject());
+    }
   }
 
   public void testInvalidTagName() throws Throwable {

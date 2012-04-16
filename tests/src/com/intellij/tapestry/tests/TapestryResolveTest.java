@@ -1,10 +1,14 @@
 package com.intellij.tapestry.tests;
 
+import com.intellij.javaee.ExternalResourceManagerEx;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.psi.TapestryAccessorMethod;
 import com.intellij.tapestry.psi.TmlFile;
+import com.intellij.xml.Html5SchemaProvider;
+import com.intellij.xml.util.XmlUtil;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,11 +23,42 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     return "resolve/";
   }
 
+  private String myOldDoctype;
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
+    myOldDoctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
+    manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
+  }
+
+  @Override
+  public void tearDown() throws Exception {
+    ExternalResourceManagerEx.getInstanceEx().setDefaultHtmlDoctype(myOldDoctype, myFixture.getProject());
+    super.tearDown();
+  }
+
   public void testHtmlTagName() throws Throwable {
     addComponentToProject("Count");
     initByComponent();
     XmlTag ref = resolveReferenceAtCaretPosition(XmlTag.class);
     Assert.assertEquals("xs:element", ref.getName());
+  }
+
+  public void testHtml5TagName() throws Throwable {
+    final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
+    final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
+    manager.setDefaultHtmlDoctype(Html5SchemaProvider.HTML5_SCHEMA_LOCATION, myFixture.getProject());
+    try {
+      addComponentToProject("Count");
+      initByComponent();
+      LeafElement ref = resolveReferenceAtCaretPosition(LeafElement.class);
+      Assert.assertEquals("body.inner", ref.getText());
+    }
+    finally {
+      manager.setDefaultHtmlDoctype(doctype, myFixture.getProject());
+    }
   }
 
   public void testHtmlAttrName() throws Throwable {

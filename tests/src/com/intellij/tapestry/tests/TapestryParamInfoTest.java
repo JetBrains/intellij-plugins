@@ -1,6 +1,7 @@
 package com.intellij.tapestry.tests;
 
 import com.intellij.codeInsight.hint.api.impls.XmlParameterInfoHandler;
+import com.intellij.javaee.ExternalResourceManagerEx;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlTag;
@@ -9,6 +10,7 @@ import com.intellij.testFramework.utils.parameterInfo.MockParameterInfoUIContext
 import com.intellij.util.Function;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
+import com.intellij.xml.util.XmlUtil;
 
 /**
  * @author Alexey.Chmutov
@@ -20,8 +22,17 @@ public class TapestryParamInfoTest extends TapestryBaseTestCase {
   }
 
   public void testHtmlTagAttrs() throws Exception {
-    addComponentToProject("Count");
-    doTest("class dir end id lang onclick ondblclick onkeydown onkeypress onkeyup onmousedown onmousemove onmouseout onmouseover onmouseup start style title value");
+    final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
+    final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
+    manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
+    try {
+      addComponentToProject("Count");
+      doTest(
+        "class dir end id lang onclick ondblclick onkeydown onkeypress onkeyup onmousedown onmousemove onmouseout onmouseover onmouseup start style title value");
+    }
+    finally {
+      manager.setDefaultHtmlDoctype(doctype, myFixture.getProject());
+    }
   }
 
   private void doTest(String attrs) throws Exception {
