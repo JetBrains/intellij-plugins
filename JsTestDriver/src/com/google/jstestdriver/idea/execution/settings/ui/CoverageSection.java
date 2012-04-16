@@ -80,7 +80,7 @@ public class CoverageSection extends AbstractRunSettingsSection {
       selectedIndex = tableModel.getRowCount();
     }
     int savedSelected = selectedIndex;
-    VirtualFile[] chosen = FileChooser.chooseFiles(project, FileChooserDescriptorFactory.createMultipleFilesNoJarsDescriptor());
+    VirtualFile[] chosen = FileChooser.chooseFiles(FileChooserDescriptorFactory.createMultipleFilesNoJarsDescriptor(), project, null);
     for (final VirtualFile chosenFile : chosen) {
       if (tableModel.isFileExcluded(chosenFile.getPath())) {
         continue;

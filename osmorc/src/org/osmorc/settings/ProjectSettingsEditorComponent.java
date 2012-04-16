@@ -120,7 +120,7 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
       preselect = myProject.getBaseDir();
     }
     VirtualFile virtualFile =
-      FileChooser.chooseFile(myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor(), preselect);
+      FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFolderDescriptor(), myProject, preselect);
     if (virtualFile != null) {
       myBundleOutputPath.setText(virtualFile.getPath());
     }

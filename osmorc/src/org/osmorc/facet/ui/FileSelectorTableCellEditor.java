@@ -25,10 +25,7 @@
 
 package org.osmorc.facet.ui;
 
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.fileChooser.FileChooserDialog;
-import com.intellij.openapi.fileChooser.FileChooserFactory;
+import com.intellij.openapi.fileChooser.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -55,8 +52,6 @@ public class FileSelectorTableCellEditor extends AbstractTableCellEditor {
       public void actionPerformed(ActionEvent e) {
         FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createAllButJarContentsDescriptor();
         descriptor.setTitle("Choose source file or folder");
-        FileChooserDialog fileChooserDialog =
-          FileChooserFactory.getInstance().createFileChooser(descriptor, project);
         VirtualFile rootFolder = null;
         VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
         if (contentRoots.length > 0) {
@@ -65,7 +60,7 @@ public class FileSelectorTableCellEditor extends AbstractTableCellEditor {
         else if (project.getBaseDir() != null) {
           rootFolder = project.getBaseDir();
         }
-        VirtualFile[] files = fileChooserDialog.choose(rootFolder, project);
+        VirtualFile[] files = FileChooser.chooseFiles(descriptor, project, rootFolder);
         if (files.length > 0) {
           editor.setText(files[0].getPath());
         }

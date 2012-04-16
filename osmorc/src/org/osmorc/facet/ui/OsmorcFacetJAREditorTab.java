@@ -196,7 +196,6 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
       Project project = myEditorContext.getProject();
       FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleLocalFileDescriptor();
       descriptor.setTitle("Choose source file or folder");
-      FileChooserDialog fileChooserDialog = FileChooserFactory.getInstance().createFileChooser(descriptor, project);
       VirtualFile preselectedPath = LocalFileSystem.getInstance().findFileByPath(additionalJARContent.getFirst());
       if (preselectedPath == null) {
         Module module = myEditorContext.getModule();
@@ -217,7 +216,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
           preselectedPath = project.getBaseDir();
         }
       }
-      VirtualFile[] files = fileChooserDialog.choose(preselectedPath, project);
+      VirtualFile[] files = FileChooser.chooseFiles(descriptor, project, preselectedPath);
       if (files.length > 0) {
         String sourcePath = files[0].getPath();
         String destPath = determineMostLikelyLocationInJAR(files[0]);
@@ -236,7 +235,6 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     Project project = myEditorContext.getProject();
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createAllButJarContentsDescriptor();
     descriptor.setTitle("Choose source file or folder");
-    FileChooserDialog fileChooserDialog = FileChooserFactory.getInstance().createFileChooser(descriptor, project);
     VirtualFile rootFolder = null;
     Module module = myEditorContext.getModule();
     VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
@@ -246,7 +244,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     else if (project.getBaseDir() != null) {
       rootFolder = project.getBaseDir();
     }
-    VirtualFile[] files = fileChooserDialog.choose(rootFolder, project);
+    VirtualFile[] files = FileChooser.chooseFiles(descriptor, project, rootFolder);
     for (VirtualFile file : files) {
       String destFile = determineMostLikelyLocationInJAR(file);
       int row = myAdditionalJARContentsTableModel.addAdditionalJARContent(file.getPath(), destFile);
@@ -329,7 +327,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
 
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
     descriptor.setTitle("Select bundle output directory");
-    VirtualFile file = FileChooser.chooseFile(myEditorContext.getProject(), descriptor, preselectedFile);
+    VirtualFile file = FileChooser.chooseFile(descriptor, myEditorContext.getProject(), preselectedFile);
     if (file != null) {
       if (VfsUtil.isAncestor(moduleCompilerOutputPath, file, false)) {
         Messages.showErrorDialog(myEditorContext.getProject(),

@@ -179,9 +179,8 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab implements Panel
     VirtualFile[] roots = getContentRoots(myModule);
     VirtualFile currentFile = findFileInContentRoots(myManifestFileChooser.getText(), myModule);
 
-    VirtualFile manifestFileLocation = FileChooser.chooseFile(myEditorContext.getProject(),
-                                                              FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor(),
-                                                              currentFile);
+    VirtualFile manifestFileLocation =
+      FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileOrFolderDescriptor(), myEditorContext.getProject(), currentFile);
 
     if (manifestFileLocation != null) {
       for (VirtualFile root : roots) {
@@ -235,8 +234,8 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab implements Panel
     VirtualFile[] roots = getContentRoots(myModule);
     VirtualFile currentFile = findFileInContentRoots(field.getText(), myModule);
 
-    VirtualFile fileLocation = FileChooser.chooseFile(myEditorContext.getProject(),
-                                                      FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), currentFile);
+    VirtualFile fileLocation =
+      FileChooser.chooseFile(FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor(), myEditorContext.getProject(), currentFile);
 
 
     if (fileLocation != null) {
