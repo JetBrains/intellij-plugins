@@ -133,7 +133,7 @@ public class FilesToPackageForm {
             FileChooserDescriptor d = new FileChooserDescriptor(true, true, false, true, false, false);
 
             VirtualFile initialFile = LocalFileSystem.getInstance().findFileByPath((String)getCellEditorValue());
-            VirtualFile file = FileChooser.chooseFile(myProject, d, initialFile);
+            VirtualFile file = FileChooser.chooseFile(d, myProject, initialFile);
             if (file != null) {
               myComponent.getChildComponent().setText(file.getPresentableUrl());
             }
@@ -155,7 +155,8 @@ public class FilesToPackageForm {
     ToolbarDecorator d = ToolbarDecorator.createDecorator(myFilesToPackageTable);
     d.setAddAction(new AnActionButtonRunnable() {
       public void run(AnActionButton button) {
-        VirtualFile[] files = FileChooser.chooseFiles(myProject, new FileChooserDescriptor(true, true, false, true, false, true));
+        final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, false, true, false, true);
+        final VirtualFile[] files = FileChooser.chooseFiles(descriptor, myProject, null);
         final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myProject).getFileIndex();
 
         for (final VirtualFile file : files) {

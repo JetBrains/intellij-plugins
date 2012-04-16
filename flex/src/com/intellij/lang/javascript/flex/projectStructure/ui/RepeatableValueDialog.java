@@ -108,7 +108,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
       final FileChooserDescriptor descriptor = firstElement.LIST_ELEMENT_TYPE == ListElementType.File
                                                ? FlexUtils.createFileChooserDescriptor(firstElement.FILE_EXTENSION)
                                                : FileChooserDescriptorFactory.createSingleLocalFileDescriptor();
-      final VirtualFile file = FileChooser.chooseFile(myProject, descriptor);
+      final VirtualFile file = FileChooser.chooseFile(descriptor, myProject, null);
       if (file != null) {
         getCurrentList().add(new StringBuilder(file.getPath()));
       }
