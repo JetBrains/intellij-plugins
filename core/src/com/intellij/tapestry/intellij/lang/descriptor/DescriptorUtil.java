@@ -134,7 +134,7 @@ class DescriptorUtil {
   public static XmlNSDescriptor getHtmlNSDescriptor(TmlFile tmlFile) {
     XmlDocument doc = tmlFile.getDocument();
     if (doc == null) return null;
-    return doc.getDefaultNSDescriptor(XmlUtil.getDefaultXhtmlNamespace(tmlFile.getProject()), false);
+    return doc.getDefaultNSDescriptor(XmlUtil.XHTML_URI, false);
   }
 
   @Nullable
