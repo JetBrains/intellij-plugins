@@ -32,10 +32,7 @@ public final class MxmlUtil {
   static final String UNKNOWN_ITEM_RENDERER_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownItemRenderer";
 
   public static Document getDocumentAndWaitIfNotComitted(PsiFile psiFile) {
-    if (ApplicationManager.getApplication().isReadAccessAllowed()) {
-      LogMessageUtil.LOG.error("must be not called on read");
-    }
-
+    LogMessageUtil.LOG.assertTrue(!ApplicationManager.getApplication().isReadAccessAllowed());
     PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(psiFile.getProject());
     Document document = psiDocumentManager.getDocument(psiFile);
     if (!psiDocumentManager.isCommitted(document)) {

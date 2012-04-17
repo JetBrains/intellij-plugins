@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ModuleInfo extends Info<Module> implements Disposable {
@@ -45,12 +46,8 @@ public class ModuleInfo extends Info<Module> implements Disposable {
     return localStyleHolders;
   }
 
-  public void addLocalStyleHolder(LocalStyleHolder localStyleHolder) {
-    if (localStyleHolders == null) {
-      localStyleHolders = new ArrayList<LocalStyleHolder>(5);
-    }
-
-    localStyleHolders.add(localStyleHolder);
+  public void setLocalStyleHolders(@Nullable List<LocalStyleHolder> localStyleHolders) {
+    this.localStyleHolders = localStyleHolders;
   }
 
   @Override
@@ -85,6 +82,20 @@ class LocalStyleHolder implements AmfOutputable {
 
   protected void writeUsers(AmfOutputStream out) {
     out.write(0);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) {
+      return true;
+    }
+
+    if (!(obj instanceof LocalStyleHolder)) {
+      return false;
+    }
+
+    LocalStyleHolder other = (LocalStyleHolder)obj;
+    return file.equals(other.file) && Arrays.equals(data, other.data);
   }
 }
 

@@ -322,6 +322,7 @@ internal class DefaultSocketDataHandler implements SocketDataHandler {
     processed[documentFactory] = true;
 
     if (documentFactory.document != null) {
+      documentFactory.clearComponentToRangeMarkerMap();
       var callback:ActionCallback = documentManager.render(documentFactory);
       if (!callback.isProcessed) {
         callbacks[callbacks.length] = callback;

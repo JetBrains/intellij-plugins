@@ -46,7 +46,7 @@ public class DocumentFactoryManager {
     });
   }
 
-  private class MyFileDocumentManagerListener extends FileDocumentManagerAdapter {
+  private static class MyFileDocumentManagerListener extends FileDocumentManagerAdapter {
     @Override
     public void beforeAllDocumentsSaving() {
       final Document[] unsavedDocuments = FileDocumentManager.getInstance().getUnsavedDocuments();
@@ -57,7 +57,7 @@ public class DocumentFactoryManager {
             ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
               @Override
               public void run() {
-                DesignerApplicationManager.getInstance().renderDocumentsAndCheckLocalStyleModification(unsavedDocuments);
+                //DesignerApplicationManager.getInstance().renderDocumentsAndCheckLocalStyleModification(unsavedDocuments);
               }
             });
           }

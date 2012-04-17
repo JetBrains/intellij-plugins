@@ -17,6 +17,8 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -34,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public final class ModuleInfoUtil {
@@ -41,17 +44,22 @@ public final class ModuleInfoUtil {
     return FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().getNature().isApp();
   }
 
-  public static void collectLocalStyle(final ModuleInfo moduleInfo, final String flexSdkVersion,
-                                       final StringWriter stringWriter, final ProblemsHolder problemsHolder,
-                                       ProjectComponentReferenceCounter projectComponentReferenceCounter, AssetCounter assetCounter) {
-    final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(moduleInfo.getModule().getProject());
+  public static List<LocalStyleHolder> collectLocalStyle(final ModuleInfo moduleInfo, final String flexSdkVersion,
+                                                         final StringWriter stringWriter, final ProblemsHolder problemsHolder,
+                                                         ProjectComponentReferenceCounter projectComponentReferenceCounter,
+                                                         AssetCounter assetCounter) {
+    Project project = moduleInfo.getModule().getProject();
+    DumbService dumbService = DumbService.getInstance(project);
+    if (dumbService.isDumb()) {
+      dumbService.waitForSmartMode();
+    }
+
+    final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(project);
     if (psiDocumentManager.hasUncommitedDocuments()) {
       final Semaphore semaphore = new Semaphore();
       semaphore.down();
       Application application = ApplicationManager.getApplication();
-      if (application.isDispatchThread()) {
-        LogMessageUtil.LOG.error("must be not called in EDT");
-      }
+      LogMessageUtil.LOG.assertTrue(!application.isReadAccessAllowed());
 
       application.invokeLater(new Runnable() {
         @Override
@@ -70,11 +78,11 @@ public final class ModuleInfoUtil {
     final AccessToken token = ReadAction.start();
     try {
       if (moduleInfo.isApp()) {
-        collectApplicationLocalStyle(moduleInfo, flexSdkVersion, problemsHolder, stringWriter, projectComponentReferenceCounter,
+        return collectApplicationLocalStyle(moduleInfo.getModule(), flexSdkVersion, problemsHolder, stringWriter, projectComponentReferenceCounter,
                                      assetCounter);
       }
       else {
-        collectLibraryLocalStyle(moduleInfo, stringWriter, problemsHolder, projectComponentReferenceCounter, assetCounter);
+        return collectLibraryLocalStyle(moduleInfo.getModule(), stringWriter, problemsHolder, projectComponentReferenceCounter, assetCounter);
       }
     }
     finally {
@@ -82,13 +90,13 @@ public final class ModuleInfoUtil {
     }
   }
 
-  private static void collectLibraryLocalStyle(ModuleInfo moduleInfo,
-                                               StringWriter stringWriter,
-                                               ProblemsHolder problemsHolder,
-                                               ProjectComponentReferenceCounter unregisteredComponentReferences,
-                                               AssetCounter assetCounter) {
+  private static List<LocalStyleHolder> collectLibraryLocalStyle(Module module,
+                                                                 StringWriter stringWriter,
+                                                                 ProblemsHolder problemsHolder,
+                                                                 ProjectComponentReferenceCounter unregisteredComponentReferences,
+                                                                 AssetCounter assetCounter) {
     VirtualFile defaultsCss = null;
-    for (VirtualFile sourceRoot : ModuleRootManager.getInstance(moduleInfo.getModule()).getSourceRoots(false)) {
+    for (VirtualFile sourceRoot : ModuleRootManager.getInstance(module).getSourceRoots(false)) {
       if ((defaultsCss = sourceRoot.findChild(Library.DEFAULTS_CSS)) != null) {
         break;
       }
@@ -96,16 +104,19 @@ public final class ModuleInfoUtil {
 
     if (defaultsCss != null) {
       final LocalCssWriter cssWriter = new LocalCssWriter(stringWriter, problemsHolder, unregisteredComponentReferences, assetCounter);
-      moduleInfo.addLocalStyleHolder(new LocalStyleHolder(defaultsCss, cssWriter.write(defaultsCss, moduleInfo.getModule())));
+      return Collections.singletonList(new LocalStyleHolder(defaultsCss, cssWriter.write(defaultsCss, module)));
     }
+    return null;
   }
 
-  private static void collectApplicationLocalStyle(final ModuleInfo moduleInfo, String flexSdkVersion, final ProblemsHolder problemsHolder,
-                                                   StringWriter stringWriter, ProjectComponentReferenceCounter projectComponentReferenceCounter,
-                                                   final AssetCounter assetCounter) {
-    final GlobalSearchScope moduleWithDependenciesAndLibrariesScope =
-        moduleInfo.getModule().getModuleWithDependenciesAndLibrariesScope(false);
-
+  @Nullable
+  private static List<LocalStyleHolder> collectApplicationLocalStyle(final Module module,
+                                                                     String flexSdkVersion,
+                                                                     final ProblemsHolder problemsHolder,
+                                                                     StringWriter stringWriter,
+                                                                     ProjectComponentReferenceCounter projectComponentReferenceCounter,
+                                                                     final AssetCounter assetCounter) {
+    GlobalSearchScope moduleWithDependenciesAndLibrariesScope = module.getModuleWithDependenciesAndLibrariesScope(false);
     final List<JSClass> holders = new ArrayList<JSClass>(2);
     if (flexSdkVersion.charAt(0) > '3') {
       JSClass clazz = ((JSClass)JSResolveUtil.findClassByQName(FlexCommonTypeNames.SPARK_APPLICATION, moduleWithDependenciesAndLibrariesScope));
@@ -122,11 +133,12 @@ public final class ModuleInfoUtil {
     }
 
     if (holders.isEmpty()) {
-      return;
+      return null;
     }
 
-    final StyleTagWriter styleTagWriter = new StyleTagWriter(new LocalCssWriter(stringWriter, problemsHolder,
-                                                                                projectComponentReferenceCounter, assetCounter));
+    final StyleTagWriter styleTagWriter =
+      new StyleTagWriter(new LocalCssWriter(stringWriter, problemsHolder, projectComponentReferenceCounter, assetCounter));
+    final List<LocalStyleHolder> result = new ArrayList<LocalStyleHolder>();
     final Processor<JSClass> processor = new Processor<JSClass>() {
       @Override
       public boolean process(JSClass jsClass) {
@@ -148,9 +160,9 @@ public final class ModuleInfoUtil {
             if (subTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI3) &&
                 subTag.getLocalName().equals(FlexPredefinedTagNames.STYLE)) {
               try {
-                LocalStyleHolder localStyleHolder = styleTagWriter.write(subTag, moduleInfo.getModule(), virtualFile);
+                LocalStyleHolder localStyleHolder = styleTagWriter.write(subTag, module, virtualFile);
                 if (localStyleHolder != null) {
-                  moduleInfo.addLocalStyleHolder(localStyleHolder);
+                  result.add(localStyleHolder);
                 }
               }
               catch (InvalidPropertyException e) {
@@ -166,10 +178,11 @@ public final class ModuleInfoUtil {
       }
     };
 
-    final GlobalSearchScope moduleScope = moduleInfo.getModule().getModuleScope(false);
+    final GlobalSearchScope moduleScope = module.getModuleScope(false);
     for (JSClass holder : holders) {
       JSClassSearch.searchClassInheritors(new JSClassSearch.SearchParameters(holder, true, moduleScope)).forEach(processor);
     }
+    return result;
   }
 
   private static class StyleTagWriter {

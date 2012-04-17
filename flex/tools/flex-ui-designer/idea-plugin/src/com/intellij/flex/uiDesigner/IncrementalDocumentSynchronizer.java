@@ -8,6 +8,7 @@ import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
 import com.intellij.flex.uiDesigner.mxml.PrimitiveWriter;
 import com.intellij.flex.uiDesigner.mxml.XmlAttributeValueProvider;
 import com.intellij.flex.uiDesigner.mxml.XmlElementValueProvider;
+import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexReferenceContributor;
@@ -19,6 +20,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.AsyncResult;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssFile;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
@@ -72,7 +74,7 @@ final class IncrementalDocumentSynchronizer extends Update {
 
     // PsiTreeChangeEvent dispatched only for root psi file, i.e not for injected
     // (so, if CSS is injected, we get psi event about mxml file, but not about injected css file)
-
+    // WELL, IT IS NOT TRUE!!! YESTERDAY IT ALWAYS WAS XmlFile, but TODAY IT IS CssFile :)
     final XmlFile xmlFile;
     if (event.getFile() instanceof XmlFile) {
       xmlFile = (XmlFile)event.getFile();
@@ -95,9 +97,15 @@ final class IncrementalDocumentSynchronizer extends Update {
   }
 
   private void styleChanged() {
+    // BE AWARE!!! INJECTION BEHAVIOR IS NOT PREDICTABLE, file may be injected.
     //noinspection ConstantConditions
+    VirtualFile file = event.getFile().getViewProvider().getVirtualFile();
+    if (file instanceof VirtualFileWindow) {
+      file = ((VirtualFileWindow)file).getDelegate();
+    }
+
     DesignerApplicationManager.getInstance().renderDocumentsAndCheckLocalStyleModification(
-      new Document[]{FileDocumentManager.getInstance().getCachedDocument(event.getFile().getViewProvider().getVirtualFile())}, true);
+      new Document[]{FileDocumentManager.getInstance().getCachedDocument(file)}, true);
   }
 
   @Nullable

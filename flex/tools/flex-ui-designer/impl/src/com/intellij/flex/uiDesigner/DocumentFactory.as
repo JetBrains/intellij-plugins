@@ -22,8 +22,25 @@ public final class DocumentFactory implements SerializedDocumentDataProvider, Do
     this.module = module;
   }
 
-  public function setData(input:IDataInput, size:int):void {
+  public function clearComponentToRangeMarkerMap():void {
+    if (componentToRangeMarkerId != null) {
+      var found:Boolean = false;
+      //noinspection LoopStatementThatDoesntLoopJS
+      for (var o:Object in componentToRangeMarkerId) {
+        found = true;
+        break;
+      }
+
+      if (!found) {
+        return;
+      }
+    }
+
     componentToRangeMarkerId = new Dictionary(true);
+  }
+
+  public function setData(input:IDataInput, size:int):void {
+    clearComponentToRangeMarkerMap();
     _data.position = 0;
     _data.length = size;
     input.readBytes(_data, 0, size);

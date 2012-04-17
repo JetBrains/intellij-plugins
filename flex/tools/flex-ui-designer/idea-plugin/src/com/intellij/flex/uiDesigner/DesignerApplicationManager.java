@@ -58,6 +58,7 @@ import javax.swing.event.HyperlinkEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -200,8 +201,12 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         collectChangedLocalStyleSources(changedLocalStyleHolders, file);
       }
 
-      final DocumentInfo info = isMxml && !onlyStyle ? documentFactoryManager.getNullableInfo(file) : null;
+      final DocumentInfo info = isMxml ? documentFactoryManager.getNullableInfo(file) : null;
       if (info == null) {
+        continue;
+      }
+      else if (onlyStyle) {
+        info.documentModificationStamp = document.getModificationStamp();
         continue;
       }
 
@@ -244,18 +249,43 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
       stringWriter.startChange();
       try {
-        for (Pair<ModuleInfo, List<LocalStyleHolder>> pair : changedLocalStyleHolders) {
+        for (int i = changedLocalStyleHolders.size() - 1; i > -1; i--) {
+          Pair<ModuleInfo, List<LocalStyleHolder>> pair = changedLocalStyleHolders.get(i);
           ModuleInfo moduleInfo = pair.first;
           //noinspection ConstantConditions
-          moduleInfo.getLocalStyleHolders().clear();
+          List<LocalStyleHolder> oldList = moduleInfo.getLocalStyleHolders();
 
           FlexLibrarySet flexLibrarySet = moduleInfo.getFlexLibrarySet();
-          ModuleInfoUtil.collectLocalStyle(moduleInfo, flexLibrarySet.getVersion(), stringWriter, problemsHolder,
-                                           projectComponentReferenceCounter, flexLibrarySet.assetCounterInfo.demanded);
-          client.fillAssetClassPoolIfNeed(flexLibrarySet);
-          client.updateLocalStyleHolders(changedLocalStyleHolders, stringWriter);
-          if (projectComponentReferenceCounter.hasUnregistered()) {
-            client.registerDocumentReferences(projectComponentReferenceCounter.unregistered, null, problemsHolder);
+          List<LocalStyleHolder> list = ModuleInfoUtil.collectLocalStyle(moduleInfo, flexLibrarySet.getVersion(), stringWriter,
+                                                                         problemsHolder, projectComponentReferenceCounter,
+                                                                         flexLibrarySet.assetCounterInfo.demanded);
+          assert oldList != null;
+          // todo we should't create list, we should check while collecting
+          boolean hasChanges = true;
+          if (list.size() == oldList.size()) {
+            int diff = list.size();
+            for (LocalStyleHolder holder : list) {
+              if (oldList.contains(holder)) {
+                diff--;
+              }
+            }
+
+            hasChanges = diff != 0;
+            if (hasChanges) {
+              moduleInfo.setLocalStyleHolders(list);
+            }
+          }
+
+          if (hasChanges) {
+            client.fillAssetClassPoolIfNeed(flexLibrarySet);
+            client.updateLocalStyleHolders(changedLocalStyleHolders, stringWriter);
+            if (projectComponentReferenceCounter.hasUnregistered()) {
+              client.registerDocumentReferences(projectComponentReferenceCounter.unregistered, null, problemsHolder);
+            }
+          }
+          else {
+            stringWriter.rollback();
+            changedLocalStyleHolders.remove(i);
           }
         }
       }
@@ -449,20 +479,22 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   public void renderDocumentsAndCheckLocalStyleModification(final Document[] documents, final boolean onlyStyle) {
     synchronized (initialRenderQueue) {
       final AtomicBoolean result = new AtomicBoolean();
-      initialRenderQueue.processActions(new Processor<RenderAction>() {
-        @Override
-        public boolean process(RenderAction renderAction) {
-          if (renderAction.file == null) {
-            ComplexRenderAction action = (ComplexRenderAction)renderAction;
-            if (onlyStyle == action.onlyStyle) {
-              action.documents = ArrayUtil.mergeArrays(action.documents, documents);
-              result.set(true);
-              return false;
+      if (!initialRenderQueue.isEmpty()) {
+        initialRenderQueue.processActions(new Processor<RenderAction>() {
+          @Override
+          public boolean process(RenderAction renderAction) {
+            if (renderAction.file == null) {
+              ComplexRenderAction action = (ComplexRenderAction)renderAction;
+              if (onlyStyle == action.onlyStyle) {
+                action.documents = ArrayUtil.mergeArrays(action.documents, documents);
+                result.set(true);
+                return false;
+              }
             }
+            return true;
           }
-          return true;
-        }
-      });
+        });
+      }
 
       if (!result.get()) {
         initialRenderQueue.add(new ComplexRenderAction(documents, onlyStyle));
