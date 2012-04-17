@@ -1,14 +1,13 @@
 package com.intellij.flex.uiDesigner.preview;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.psi.xml.XmlFile;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 class MxmlPreviewToolWindowForm {
-  private XmlFile file;
+  private VirtualFile file;
   private JPanel contentPanel;
   private MxmlPreviewPanel previewPanel;
 
@@ -19,12 +18,11 @@ class MxmlPreviewToolWindowForm {
     return contentPanel;
   }
 
-  public XmlFile getFile() {
+  public VirtualFile getFile() {
     return file;
   }
 
-  public void setFile(@Nullable XmlFile value) {
-    final boolean fileChanged = !Comparing.equal(file, value);
+  public void setFile(@Nullable VirtualFile value) {
     file = value;
   }
 

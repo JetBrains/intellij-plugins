@@ -33,7 +33,10 @@ import com.intellij.openapi.project.*;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.ActionCallback;
+import com.intellij.openapi.util.AsyncResult;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -58,7 +61,6 @@ import javax.swing.event.HyperlinkEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -768,7 +770,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
 
       if (isApplicationClosed()) {
-        if (psiFile == previewToolWindowManager.getServedFile()) {
+        if (psiFile.getViewProvider().getVirtualFile() == previewToolWindowManager.getServedFile()) {
           IncrementalDocumentSynchronizer.initialRenderAndNotify(DesignerApplicationManager.this, (XmlFile)psiFile);
         }
         return;

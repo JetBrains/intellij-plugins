@@ -117,11 +117,6 @@ public class DocumentFactoryManager {
     return files.getInfo(id);
   }
 
-  @NotNull
-  public DocumentInfo getInfo(PsiElement element) {
-    return files.getInfo(element.getContainingFile().getVirtualFile());
-  }
-
   public static final class DocumentInfo extends Info<VirtualFile> {
     public long documentModificationStamp;
 
@@ -144,10 +139,6 @@ public class DocumentFactoryManager {
       }
 
       return -1;
-    }
-
-    public List<RangeMarker> getRangeMarkers() {
-      return rangeMarkers;
     }
 
     public void setRangeMarkers(List<RangeMarker> rangeMarkers) {

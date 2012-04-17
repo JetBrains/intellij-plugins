@@ -21,6 +21,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowManagerAdapter;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
@@ -64,7 +65,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     toolWindowUpdateAlarm = new Alarm();
   }
 
-  public XmlFile getServedFile() {
+  public VirtualFile getServedFile() {
     return toolWindowVisible && toolWindowForm != null ? toolWindowForm.getFile() : null;
   }
 
@@ -79,7 +80,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     }
 
     try {
-      XmlFile file = toolWindowForm.getFile();
+      VirtualFile file = toolWindowForm.getFile();
       if (file != null) {
         saveLastImage(file);
       }
@@ -92,8 +93,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     }
   }
 
-  private void saveLastImage(XmlFile file) {
-    final VirtualFile virtualFile = file.getViewProvider().getVirtualFile();
+  private void saveLastImage(final VirtualFile file) {
     BufferedImage image = toolWindowForm.getPreviewPanel().getImage();
     if (image != null) {
       try {
@@ -102,8 +102,8 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
           @Override
           public void consume(DataOutputStream out) {
             try {
-              out.writeLong(virtualFile.getTimeStamp());
-              out.writeUTF(virtualFile.getUrl());
+              out.writeLong(file.getTimeStamp());
+              out.writeUTF(file.getUrl());
             }
             catch (IOException e) {
               throw new RuntimeException(e);
@@ -219,7 +219,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     }
 
     try {
-      final VirtualFile virtualFile = toolWindowForm.getFile().getViewProvider().getVirtualFile();
+      final VirtualFile virtualFile = toolWindowForm.getFile();
       BufferedImage image = IOUtil.readImage(file,
                                              new Processor<DataInputStream>() {
                                                @Override
@@ -254,8 +254,8 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       return;
     }
 
-    final XmlFile psiFile = toolWindowForm.getFile();
-    if (psiFile == null) {
+    final VirtualFile file = toolWindowForm.getFile();
+    if (file == null) {
       return;
     }
 
@@ -264,12 +264,13 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       loadingDecoratorStarted++;
     }
 
-    AsyncResult<BufferedImage> result = DesignerApplicationManager.getInstance().getDocumentImage(psiFile);
+    @SuppressWarnings("ConstantConditions")
+    AsyncResult<BufferedImage> result = DesignerApplicationManager.getInstance().getDocumentImage((XmlFile)PsiManager.getInstance(project).findFile(file));
     result.doWhenDone(new QueuedAsyncResultHandler<BufferedImage>() {
       @Override
       protected boolean isExpired() {
         //noinspection ConstantConditions
-        return toolWindowForm == null || toolWindowForm.getFile() != psiFile;
+        return toolWindowForm == null || toolWindowForm.getFile() != file;
       }
 
       @Override
@@ -377,9 +378,8 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
           assert toolWindow != null;
         }
 
-        XmlFile psiFile = newEditor == null ? null : (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(newEditor.getDocument());
+        VirtualFile psiFile = newEditor == null ? null : FileDocumentManager.getInstance().getFile(newEditor.getDocument());
         if (psiFile == null) {
-          toolWindowForm.setFile(null);
           return;
         }
 
