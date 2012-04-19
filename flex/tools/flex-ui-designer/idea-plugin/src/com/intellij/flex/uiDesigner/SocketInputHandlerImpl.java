@@ -39,6 +39,7 @@ import com.intellij.ui.AppIcon;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.io.IdPool;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.intellij.flex.uiDesigner.io.Identifiable;
+import org.jetbrains.io.Identifiable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

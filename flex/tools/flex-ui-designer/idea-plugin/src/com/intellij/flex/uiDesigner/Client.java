@@ -26,6 +26,7 @@ import com.intellij.util.PairConsumer;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.io.InfoMap;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

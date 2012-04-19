@@ -1,8 +1,8 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.AppTopics;
-import com.intellij.flex.uiDesigner.io.Info;
-import com.intellij.flex.uiDesigner.io.InfoMap;
+import org.jetbrains.io.Info;
+import org.jetbrains.io.InfoMap;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;

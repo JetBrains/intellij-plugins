@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.AssetCounter;
-import com.intellij.flex.uiDesigner.io.Info;
+import org.jetbrains.io.Info;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;

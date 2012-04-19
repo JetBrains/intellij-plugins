@@ -2,7 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.io.AmfOutputStream;
 import com.intellij.flex.uiDesigner.io.AmfOutputable;
-import com.intellij.flex.uiDesigner.io.Info;
+import org.jetbrains.io.Info;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 import com.intellij.openapi.Disposable;

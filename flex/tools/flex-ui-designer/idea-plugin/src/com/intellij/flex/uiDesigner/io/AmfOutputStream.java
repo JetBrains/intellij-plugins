@@ -4,6 +4,7 @@ import com.intellij.util.PairConsumer;
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntProcedure;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.io.Identifiable;
 
 import java.io.IOException;
 import java.util.Collection;
