@@ -80,10 +80,6 @@ public class ClassUnavailableInspection extends LocalInspectionTool {
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
     return new JavaElementVisitor() {
       @Override
-      public void visitReferenceExpression(PsiReferenceExpression expression) {
-      }
-
-      @Override
       public void visitNewExpression(PsiNewExpression expression) {
         // only check this if the manifest is manually edited
         OsmorcFacet instance = OsmorcFacet.getInstance(expression);

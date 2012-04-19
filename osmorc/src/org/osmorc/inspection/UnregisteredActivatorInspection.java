@@ -85,9 +85,6 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
   @NotNull
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
     return new JavaElementVisitor() {
-      public void visitReferenceExpression(PsiReferenceExpression expression) {
-      }
-
       @Override
       public void visitClass(PsiClass psiClass) {
         if (OsmorcFacet.hasOsmorcFacet(psiClass)) {
