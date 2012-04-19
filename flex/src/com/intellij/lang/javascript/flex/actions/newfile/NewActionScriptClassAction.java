@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.actions.newfile;
 
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSIconProvider;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
 import com.intellij.psi.PsiDirectory;
@@ -10,7 +9,7 @@ public class NewActionScriptClassAction extends NewJSClassActionBase {
 
   public NewActionScriptClassAction() {
     super(JSBundle.message("new.actionscript.class.action.title"), JSBundle.message("new.actionscript.class.action.description"),
-          JSIconProvider.DEFAULT_INSTANCE.getClassIcon(), CreateClassOrInterfaceAction.ACTIONSCRIPT_TEMPLATES_EXTENSIONS);
+          JSIconProvider.AS_INSTANCE.getClassIcon(), CreateClassOrInterfaceAction.ACTIONSCRIPT_TEMPLATES_EXTENSIONS);
   }
 
   @Override
