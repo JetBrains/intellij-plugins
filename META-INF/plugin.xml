@@ -1,0 +1,40 @@
+<idea-plugin version="2">
+    <name>AngularJS</name>
+    <description>Support for AngularJS</description>
+    <version>0.1</version>
+    <vendor url="http://johnlindquist.com" email="johnlindquist@gmail.com">johnlindquist</vendor>
+    <change-notes><![CDATA[
+        <html>
+        <dl>
+            <dt>0.1</dt>
+            <dd>Basic ng attribute autocompletion based on an included DTD.aaaa</dd>
+        </dl>
+        </html>
+        ]]>
+    </change-notes>
+
+
+    <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
+    <idea-version since-build="107.105"/>
+
+    <depends>JavaScript</depends>
+    <depends>com.intellij.modules.platform</depends>
+
+    <application-components>
+        <!-- Add your application components here -->
+    </application-components>
+
+    <project-components>
+        <!-- Add your project components here -->
+    </project-components>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+        <standardResourceProvider implementation="org.angularjs.AngularJSResourceProvider"/>
+
+    </extensions>
+</idea-plugin>
