@@ -68,13 +68,19 @@ public abstract class Flex45Handler extends SdkSpecificHandler {
       defaultsCssFiles.insert(0, file.getName());
     }
 
-    final String[] extras = {
-      "-defaults-css-files=" + defaultsCssFiles.toString(),
-      "-omit-trace-statements=" + configuration.getCompilerConfiguration().omitTraceStatements(),
-      "-swf-version=" + configuration.getSwfVersion(),
-      "-load-config=" // "-load-config=" MUST BE THE LAST option passed via oemConfig.setConfiguration()
-    };
-    oemConfig.setConfiguration(extras);
+    final List<String> extras = new ArrayList<String>();
+
+    extras.add("-defaults-css-files=" + defaultsCssFiles.toString());
+    extras.add("-omit-trace-statements=" + configuration.getCompilerConfiguration().omitTraceStatements());
+    extras.add("-swf-version=" + configuration.getSwfVersion());
+    final String preloader = configuration.getCompilerConfiguration().getPreloader();
+    if (preloader != null) {
+      extras.add("-preloader=" + preloader);
+    }
+
+    extras.add("-load-config="); // "-load-config=" MUST BE THE LAST option passed via oemConfig.setConfiguration()
+
+    oemConfig.setConfiguration(extras.toArray(new String[extras.size()]));
     builder.setConfiguration(oemConfig);
   }
 
