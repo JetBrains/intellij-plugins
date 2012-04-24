@@ -16,6 +16,7 @@
 package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.util.ui.tree.MacTreeUI;
 import jetbrains.communicator.commands.SendMessageCommand;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.commands.UserCommand;
@@ -217,7 +218,7 @@ public class UserTree extends KirTree {
     }
   }
 
-  public static class MyMacTreeUIImpl extends com.intellij.util.ui.UIUtil.MacTreeUI implements MyTreeUI {
+  public static class MyMacTreeUIImpl extends MacTreeUI implements MyTreeUI {
     public void invalidatePath(TreePath path) {
       treeState.invalidatePathBounds(path);
     }
