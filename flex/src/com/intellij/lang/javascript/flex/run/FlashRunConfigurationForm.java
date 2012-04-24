@@ -30,12 +30,16 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.*;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDescriptorForEmulator;
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.Emulator;
 
 public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfiguration> {
 
@@ -291,6 +295,12 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myOnEmulatorRadioButton.addActionListener(targetDeviceListener);
     myOnAndroidDeviceRadioButton.addActionListener(targetDeviceListener);
     myOnIOSDeviceRadioButton.addActionListener(targetDeviceListener);
+
+    final int preferredWidth = new JLabel("99999").getPreferredSize().width;
+    myScreenWidth.setPreferredSize(new Dimension(preferredWidth, myScreenWidth.getPreferredSize().height));
+    myScreenHeight.setPreferredSize(new Dimension(preferredWidth, myScreenHeight.getPreferredSize().height));
+    myFullScreenWidth.setPreferredSize(new Dimension(preferredWidth, myFullScreenWidth.getPreferredSize().height));
+    myFullScreenHeight.setPreferredSize(new Dimension(preferredWidth, myFullScreenHeight.getPreferredSize().height));
   }
 
   private void updateControls() {
