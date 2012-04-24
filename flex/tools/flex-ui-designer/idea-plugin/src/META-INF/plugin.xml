@@ -10,6 +10,7 @@
 
   <depends optional="false">com.intellij.flex</depends>
   <depends optional="false">com.intellij.properties</depends>
+  <depends optional="false">com.intellij.properties</depends>
 
   <project-components>
     <component>
