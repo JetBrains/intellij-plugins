@@ -58,6 +58,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.PATH_ELEMENT;
 import static com.intellij.patterns.XmlPatterns.*;
 
 /**
@@ -632,7 +633,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
                                                          }
                                                        });
 
-    XmlUtil.registerXmlTagReferenceProvider(registrar, new String[]{"path-element", CLASS_TAG_NAME}, new ElementFilter() {
+    XmlUtil.registerXmlTagReferenceProvider(registrar, new String[]{PATH_ELEMENT, CLASS_TAG_NAME, "classname", "symbol"}, new ElementFilter() {
       public boolean isAcceptable(final Object element, final PsiElement context) {
         return FlexApplicationComponent.HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG.equals(((XmlTag)element).getNamespace());
       }
@@ -650,11 +651,12 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
         final String trimmed = tag.getValue().getTrimmedText();
         if (trimmed.indexOf('{') != -1) return PsiReference.EMPTY_ARRAY;
 
-        if (CLASS_TAG_NAME.equals(tag.getLocalName())) {
-          return new JSReferenceSet(element, trimmed, myRange.getStartOffset(), false, false, true).getReferences();
+        if (PATH_ELEMENT.equals(tag.getLocalName())) {
+          return ReferenceSupport
+            .getFileRefs(element, myRange.getStartOffset(), trimmed, ReferenceSupport.LookupOptions.FLEX_COMPILER_CONFIG_PATH_ELEMENT);
         }
-        return ReferenceSupport
-          .getFileRefs(element, myRange.getStartOffset(), trimmed, ReferenceSupport.LookupOptions.FLEX_COMPILER_CONFIG_PATH_ELEMENT);
+
+        return new JSReferenceSet(element, trimmed, myRange.getStartOffset(), false, false, true).getReferences();
       }
     });
 
