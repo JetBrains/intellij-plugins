@@ -10,9 +10,12 @@ import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
+import com.intellij.psi.search.FileTypeIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.lang.TmlFileType;
@@ -23,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Set;
 
 public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetConfiguration> {
 
@@ -82,32 +84,21 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
     @Override
     public void setupFacet(@NotNull TapestryFacet facet, ModifiableRootModel model) {
       final TapestryFacetConfiguration configuration = facet.getConfiguration();
-      for (VirtualFile root : model.getSourceRoots()) {
-        VirtualFile dir = findDirectoryByName(root, new HashSet<String>(Arrays.asList(TapestryConstants.ELEMENT_PACKAGES)), 2);
-        if (dir != null) {
-          String relativePath = VfsUtilCore.getRelativePath(dir.getParent(), root, '.');
+      final HashSet<String> componentDirectories = new HashSet<String>(Arrays.asList(TapestryConstants.ELEMENT_PACKAGES));
+
+      for(VirtualFile file:FileTypeIndex.getFiles(TmlFileType.INSTANCE, GlobalSearchScope.moduleScope(facet.getModule()))) {
+        final VirtualFile parent = file.getParent();
+        if (componentDirectories.contains(parent.getName())) {
+          final VirtualFile sourceRootForFile = ProjectRootManager.getInstance(model.getProject()).getFileIndex().getSourceRootForFile(parent);
+          if (sourceRootForFile == null) continue;
+          String relativePath = VfsUtilCore.getRelativePath(parent.getParent(), sourceRootForFile, '.');
           configuration.setApplicationPackage(relativePath);
           break;
         }
       }
+
       TapestryFrameworkSupportProvider.setupConfiguration(configuration, facet.getModule(),
                                                           TapestryVersion.TAPESTRY_5_1_0_5);
-    }
-
-    @Nullable
-    private static VirtualFile findDirectoryByName(VirtualFile file, Set<String> names, int level) {
-      for (VirtualFile child : file.getChildren()) {
-        if (child.isDirectory()) {
-          if (names.contains(child.getName())) {
-            return child;
-          }
-          else if (level > 0) {
-            final VirtualFile result = findDirectoryByName(child, names, level - 1);
-            if (result != null) return result;
-          }
-        }
-      }
-      return null;
     }
   }
 }
