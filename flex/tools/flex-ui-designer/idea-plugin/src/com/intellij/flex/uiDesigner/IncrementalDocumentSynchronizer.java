@@ -134,7 +134,7 @@ final class IncrementalDocumentSynchronizer extends Update {
     }
 
     XmlAttribute attribute = (XmlAttribute)element;
-    if (JavaScriptSupportLoader.MXML_URI3.equals(attribute.getNamespace())) {
+    if (JavaScriptSupportLoader.MXML_URI3.equals(attribute.getNamespace()) || attribute.getValueElement() == null) {
       return null;
     }
 

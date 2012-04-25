@@ -154,6 +154,11 @@ public class MxmlWriter {
     Context context = tagAttributeProcessContext;
 
     for (final XmlAttribute attribute : tag.getAttributes()) {
+      if (attribute.getValueElement() == null) {
+        // skip invalid — "<Button label/>"
+        continue;
+      }
+
       final XmlAttributeDescriptor attributeDescriptor = attribute.getDescriptor();
       final AnnotationBackedDescriptor descriptor;
       if (attributeDescriptor instanceof AnnotationBackedDescriptor) {

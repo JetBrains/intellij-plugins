@@ -57,7 +57,7 @@ public class DocumentFactoryManager {
             ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
               @Override
               public void run() {
-                //DesignerApplicationManager.getInstance().renderDocumentsAndCheckLocalStyleModification(unsavedDocuments);
+                DesignerApplicationManager.getInstance().renderDocumentsAndCheckLocalStyleModification(unsavedDocuments);
               }
             });
           }
