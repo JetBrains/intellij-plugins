@@ -4,6 +4,7 @@ import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.htmlInspections.RequiredAttributesInspection;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.tapestry.intellij.inspections.TelReferencesInspection;
+import com.intellij.util.xml.DeprecatedClassUsageInspection;
 
 /**
  * @author Alexey Chmutov
@@ -27,7 +28,7 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
   }
 
   public void testTmlAttrNameInHtmlTag() throws Throwable {
-    doTest(true);
+    doTest(true, new DeprecatedClassUsageInspection());
   }
 
   public void testUnknownTypeOfTag() throws Throwable {
@@ -69,10 +70,5 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
     myFixture.testHighlighting(true, checkInfos, true, templateFile);
   }
 
-  protected void doWarningsOnlyTest(LocalInspectionTool... tools) throws Throwable {
-    VirtualFile templateFile = initByComponent(true);
-    myFixture.enableInspections(tools);
-    myFixture.testHighlighting(true, false, false, templateFile);
-  }
 
 }

@@ -1,6 +1,7 @@
 package com.intellij.tapestry.intellij.lang.descriptor;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaField;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +19,9 @@ public class TapestryAttributeDescriptor extends BasicTapestryAttributeDescripto
   }
 
   public PsiElement getDeclaration() {
-    return ((IntellijJavaField)myParam.getParameterField()).getPsiField();
+    final IJavaField field = myParam.getParameterField();
+    if (field instanceof IntellijJavaField) return ((IntellijJavaField)field).getPsiField();
+    return null; // built in attribute
   }
 
   public String getName() {
