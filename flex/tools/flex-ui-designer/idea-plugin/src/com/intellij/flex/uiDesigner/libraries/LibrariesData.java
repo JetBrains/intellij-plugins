@@ -44,12 +44,7 @@ class LibrariesData {
   }
 
   private static void clearCache(File cacheDir) {
-    final String[] files = cacheDir.list();
-    if (files == null) {
-      return;
-    }
-
-    for (String path : files) {
+    for (String path : cacheDir.list()) {
       if (path.charAt(0) == NAME_PREFIX) {
         //noinspection ResultOfMethodCallIgnored
         new File(cacheDir, path).delete();
@@ -64,7 +59,7 @@ class LibrariesData {
     }
     catch (IOException e) {
       LogMessageUtil.LOG.info(e);
-      clearCache(file);
+      clearCache(cacheDir);
       return new PersistentHashMap<String, SortResult>(file, new EnumeratorStringDescriptor(), new LibrarySetDataExternalizer());
     }
   }
