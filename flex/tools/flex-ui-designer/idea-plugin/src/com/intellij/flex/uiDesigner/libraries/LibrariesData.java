@@ -44,7 +44,12 @@ class LibrariesData {
   }
 
   private static void clearCache(File cacheDir) {
-    for (String path : cacheDir.list()) {
+    final String[] files = cacheDir.list();
+    if (files == null) {
+      return;
+    }
+
+    for (String path : files) {
       if (path.charAt(0) == NAME_PREFIX) {
         //noinspection ResultOfMethodCallIgnored
         new File(cacheDir, path).delete();
