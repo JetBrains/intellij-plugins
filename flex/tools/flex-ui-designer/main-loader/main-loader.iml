@@ -138,11 +138,11 @@
     <orderEntry type="library" name="Maven: org.tinytlf:core:swc:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.tinytlf:fte-utils:swc:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.flyti.cocoa:cocoa:rb.swc:en_US:2.0-SNAPSHOT" level="project" />
-    <orderEntry type="module" module-name="shared" />
+    <orderEntry type="module" module-name="main" />
     <orderEntry type="module" module-name="ui" />
     <orderEntry type="module" module-name="base" />
+    <orderEntry type="module" module-name="shared" />
     <orderEntry type="module" module-name="impl" />
-    <orderEntry type="module" module-name="main" />
     <orderEntry type="module" module-name="aqua" />
   </component>
 </module>
