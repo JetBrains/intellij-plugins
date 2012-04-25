@@ -36,7 +36,6 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -44,7 +43,6 @@ import com.intellij.psi.css.CssFile;
 import com.intellij.psi.css.CssFileType;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.Processor;
 import com.intellij.util.concurrency.QueueProcessor;
@@ -52,6 +50,9 @@ import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.ui.update.MergingUpdateQueue;
+import gnu.trove.THashMap;
+import gnu.trove.THashSet;
+import gnu.trove.TObjectObjectProcedure;
 import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,6 +62,7 @@ import javax.swing.event.HyperlinkEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -188,10 +190,9 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
                                                                       AsyncResult<List<DocumentInfo>> result) {
     FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
     DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
-    Client client = Client.getInstance();
+    final Client client = Client.getInstance();
     final List<DocumentInfo> documentInfos = new ArrayList<DocumentInfo>(documents.length);
-    final List<Pair<ModuleInfo, List<LocalStyleHolder>>> changedLocalStyleHolders =
-      new ArrayList<Pair<ModuleInfo, List<LocalStyleHolder>>>();
+    final THashMap<ModuleInfo, List<LocalStyleHolder>> changedLocalStyleHolders = new THashMap<ModuleInfo, List<LocalStyleHolder>>();
     for (Document document : documents) {
       final VirtualFile file = fileDocumentManager.getFile(document);
       if (file == null) {
@@ -248,51 +249,57 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     if (!changedLocalStyleHolders.isEmpty()) {
       final ProblemsHolder problemsHolder = new ProblemsHolder();
       final ProjectComponentReferenceCounter projectComponentReferenceCounter = new ProjectComponentReferenceCounter();
-      final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
-      stringWriter.startChange();
       try {
-        for (int i = changedLocalStyleHolders.size() - 1; i > -1; i--) {
-          Pair<ModuleInfo, List<LocalStyleHolder>> pair = changedLocalStyleHolders.get(i);
-          ModuleInfo moduleInfo = pair.first;
-          //noinspection ConstantConditions
-          List<LocalStyleHolder> oldList = moduleInfo.getLocalStyleHolders();
+        changedLocalStyleHolders.forEachEntry(new TObjectObjectProcedure<ModuleInfo, List<LocalStyleHolder>>() {
+          @Override
+          public boolean execute(ModuleInfo moduleInfo, List<LocalStyleHolder> b) {
+            //noinspection ConstantConditions
+            List<LocalStyleHolder> oldList = moduleInfo.getLocalStyleHolders();
+            FlexLibrarySet flexLibrarySet = moduleInfo.getFlexLibrarySet();
+            final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
+            stringWriter.startChange();
+            try {
+              List<LocalStyleHolder> list = ModuleInfoUtil.collectLocalStyle(moduleInfo, flexLibrarySet.getVersion(), stringWriter,
+                problemsHolder, projectComponentReferenceCounter,
+                flexLibrarySet.assetCounterInfo.demanded);
+              assert oldList != null;
+              // todo we should't create list, we should check while collecting
+              boolean hasChanges = true;
+              if (list.size() == oldList.size()) {
+                int diff = list.size();
+                for (LocalStyleHolder holder : list) {
+                  if (oldList.contains(holder)) {
+                    diff--;
+                  }
+                }
 
-          FlexLibrarySet flexLibrarySet = moduleInfo.getFlexLibrarySet();
-          List<LocalStyleHolder> list = ModuleInfoUtil.collectLocalStyle(moduleInfo, flexLibrarySet.getVersion(), stringWriter,
-                                                                         problemsHolder, projectComponentReferenceCounter,
-                                                                         flexLibrarySet.assetCounterInfo.demanded);
-          assert oldList != null;
-          // todo we should't create list, we should check while collecting
-          boolean hasChanges = true;
-          if (list.size() == oldList.size()) {
-            int diff = list.size();
-            for (LocalStyleHolder holder : list) {
-              if (oldList.contains(holder)) {
-                diff--;
+                hasChanges = diff != 0;
+                if (hasChanges) {
+                  moduleInfo.setLocalStyleHolders(list);
+                }
+              }
+
+              if (hasChanges) {
+                client.fillAssetClassPoolIfNeed(flexLibrarySet);
+                client.updateLocalStyleHolders(changedLocalStyleHolders, stringWriter);
+                if (projectComponentReferenceCounter.hasUnregistered()) {
+                  client.registerDocumentReferences(projectComponentReferenceCounter.unregistered, null, problemsHolder);
+                }
+              }
+              else {
+                stringWriter.rollback();
+                changedLocalStyleHolders.remove(moduleInfo);
               }
             }
-
-            hasChanges = diff != 0;
-            if (hasChanges) {
-              moduleInfo.setLocalStyleHolders(list);
+            catch (Throwable e) {
+              stringWriter.rollback();
+              LOG.error(e);
             }
+            return true;
           }
-
-          if (hasChanges) {
-            client.fillAssetClassPoolIfNeed(flexLibrarySet);
-            client.updateLocalStyleHolders(changedLocalStyleHolders, stringWriter);
-            if (projectComponentReferenceCounter.hasUnregistered()) {
-              client.registerDocumentReferences(projectComponentReferenceCounter.unregistered, null, problemsHolder);
-            }
-          }
-          else {
-            stringWriter.rollback();
-            changedLocalStyleHolders.remove(i);
-          }
-        }
+        });
       }
       catch (Throwable e) {
-        stringWriter.rollback();
         LOG.error(e);
       }
 
@@ -304,11 +311,15 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     client.renderDocumentAndDependents(documentInfos, changedLocalStyleHolders, result);
   }
 
-  private static void collectChangedLocalStyleSources(final List<Pair<ModuleInfo, List<LocalStyleHolder>>> holders,
+  private static void collectChangedLocalStyleSources(final THashMap<ModuleInfo, List<LocalStyleHolder>> holders,
                                                       final VirtualFile file) {
     Client.getInstance().getRegisteredModules().forEach(new TObjectProcedure<ModuleInfo>() {
       @Override
       public boolean execute(ModuleInfo moduleInfo) {
+        if (holders.containsKey(moduleInfo)) {
+          return false;
+        }
+
         List<LocalStyleHolder> styleHolders = moduleInfo.getLocalStyleHolders();
         if (styleHolders != null) {
           List<LocalStyleHolder> list = null;
@@ -316,7 +327,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
             if (styleHolder.file.equals(file)) {
               if (list == null) {
                 list = new ArrayList<LocalStyleHolder>();
-                holders.add(new Pair<ModuleInfo, List<LocalStyleHolder>>(moduleInfo, list));
+                holders.put(moduleInfo, list);
               }
 
               list.add(styleHolder);
@@ -356,7 +367,19 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     }
 
     if (!needInitialRender) {
-      handler.run(documentInfo);
+      Application app = ApplicationManager.getApplication();
+      if (app.isDispatchThread()) {
+        final DocumentInfo finalDocumentInfo = documentInfo;
+        app.executeOnPooledThread(new Runnable() {
+          @Override
+          public void run() {
+            handler.run(finalDocumentInfo);
+          }
+        });
+      }
+      else {
+        handler.run(documentInfo);
+      }
       return;
     }
 
@@ -488,7 +511,9 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
             if (renderAction.file == null) {
               ComplexRenderAction action = (ComplexRenderAction)renderAction;
               if (onlyStyle == action.onlyStyle) {
-                action.documents = ArrayUtil.mergeArrays(action.documents, documents);
+                THashSet<Document> merged = new THashSet<Document>(action.documents.length + documents.length);
+                Collections.addAll(merged, documents);
+                action.documents = merged.toArray(new Document[merged.size()]);
                 result.set(true);
                 return false;
               }

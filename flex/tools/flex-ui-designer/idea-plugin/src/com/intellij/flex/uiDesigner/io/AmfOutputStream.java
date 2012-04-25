@@ -113,7 +113,11 @@ public class AmfOutputStream extends PrimitiveAmfOutputStream {
   }
 
   public void write(Collection collection, String elementTypeName, boolean homogeneous) {
-    if (collection == null) {
+    write(collection, elementTypeName, homogeneous, false);
+  }
+
+  public void write(Collection collection, String elementTypeName, boolean homogeneous, boolean emptyAsNull) {
+    if (collection == null || (emptyAsNull && collection.isEmpty())) {
       write(Amf3Types.NULL);
     }
     else {

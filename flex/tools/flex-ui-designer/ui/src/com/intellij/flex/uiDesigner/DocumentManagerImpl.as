@@ -190,7 +190,7 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
       createStyleManagerForLibrarySet(module);
     }
 
-    if (module.localStyleHolders != null) {
+    if (module.localStyleHolders != null && module.localStyleHolders.length > 0) {
       if (module.isApp && document.documentFactory.isApp) {
         createStyleManagerForAppDocument(document, module);
       }

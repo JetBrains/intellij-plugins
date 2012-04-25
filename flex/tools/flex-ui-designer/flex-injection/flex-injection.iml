@@ -5,6 +5,9 @@
       <configuration name="flex-injection" target-platform="Mobile" output-type="Library" output-file="flex-injection.swc" output-folder="$MODULE_DIR$/target" skip-build="true">
         <dependencies>
           <entries>
+            <entry module-name="shared" build-configuration-name="shared">
+              <dependency linkage="Merged" />
+            </entry>
             <entry library-name="Maven: com.adobe.flex.framework:framework:swc:4.5.2.21576" library-level="project">
               <dependency linkage="Merged" />
             </entry>
@@ -62,6 +65,7 @@
     <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-flex:swc:4.3.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:mobilecomponents:swc:4.6.0.23201" level="project" />
+    <orderEntry type="module" module-name="shared" />
   </component>
 </module>
 

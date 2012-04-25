@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.io;
 
+import com.intellij.flex.uiDesigner.LogMessageUtil;
 import com.intellij.openapi.components.ServiceManager;
 import gnu.trove.TObjectIntProcedure;
 import org.jetbrains.annotations.Nullable;
@@ -18,17 +19,18 @@ public class StringRegistry {
     this.activeWriter = activeWriter;
   }
   
-  private void rollbackChange() {
+  private void rollbackChange(StringWriter requestor) {
     table.rollbackTransaction();
-
-    resetAfterChange();
+    LogMessageUtil.LOG.assertTrue(activeWriter == null || activeWriter == requestor);
+    resetAfterChange(requestor);
   }
 
-  private void commitChange() {
-    resetAfterChange();
+  private void commitChange(StringWriter requestor) {
+    resetAfterChange(requestor);
   }
 
-  private void resetAfterChange() {
+  private void resetAfterChange(StringWriter requestor) {
+    LogMessageUtil.LOG.assertTrue(activeWriter == null || activeWriter == requestor);
     activeWriter = null;
   }
 
@@ -92,17 +94,20 @@ public class StringRegistry {
     }
 
     public void startChange() {
+      //LogMessageUtil.LOG.info("startChange", new Exception());
       stringRegistry.startChange(this);
     }
     
     public void rollback() {
+      //LogMessageUtil.LOG.info("rollback", new Exception());
       reset();
-      stringRegistry.rollbackChange();
+      stringRegistry.rollbackChange(this);
     }
 
     public void commit() {
+      //LogMessageUtil.LOG.info("commit", new Exception());
       reset();
-      stringRegistry.commitChange();
+      stringRegistry.commitChange(this);
     }
     
     private void reset() {

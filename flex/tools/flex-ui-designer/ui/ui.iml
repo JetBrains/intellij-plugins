@@ -5,6 +5,12 @@
       <configuration name="ui" target-platform="Desktop" output-type="Library" output-file="ui-1.0-SNAPSHOT.swc" output-folder="$MODULE_DIR$/target">
         <dependencies>
           <entries>
+            <entry module-name="shared" build-configuration-name="shared">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry module-name="impl" build-configuration-name="impl">
+              <dependency linkage="Merged" />
+            </entry>
             <entry library-name="Maven: org.flyti.cocoa:acocoa:swc:2.0-SNAPSHOT" library-level="project">
               <dependency linkage="Merged" />
             </entry>
@@ -111,6 +117,8 @@
     <orderEntry type="library" name="Maven: org.tinytlf:layouts:swc:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.tinytlf:core:swc:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.tinytlf:fte-utils:swc:1.1.1" level="project" />
+    <orderEntry type="module" module-name="shared" />
+    <orderEntry type="module" module-name="impl" />
   </component>
 </module>
 

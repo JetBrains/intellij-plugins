@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -32,7 +33,8 @@ public final class MxmlUtil {
   static final String UNKNOWN_ITEM_RENDERER_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownItemRenderer";
 
   public static Document getDocumentAndWaitIfNotComitted(PsiFile psiFile) {
-    LogMessageUtil.LOG.assertTrue(!ApplicationManager.getApplication().isReadAccessAllowed());
+    Application application = ApplicationManager.getApplication();
+    LogMessageUtil.LOG.assertTrue(application.isUnitTestMode() || !application.isReadAccessAllowed());
     PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(psiFile.getProject());
     Document document = psiDocumentManager.getDocument(psiFile);
     if (!psiDocumentManager.isCommitted(document)) {

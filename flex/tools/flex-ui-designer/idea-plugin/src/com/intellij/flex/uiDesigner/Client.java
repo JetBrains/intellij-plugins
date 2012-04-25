@@ -1,7 +1,10 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.abc.ClassPoolGenerator;
-import com.intellij.flex.uiDesigner.io.*;
+import com.intellij.flex.uiDesigner.io.AmfOutputStream;
+import com.intellij.flex.uiDesigner.io.BlockDataOutputStream;
+import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
+import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
@@ -22,8 +25,9 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
-import com.intellij.util.PairConsumer;
+import gnu.trove.THashMap;
 import gnu.trove.TObjectObjectProcedure;
+import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.io.InfoMap;
@@ -275,7 +279,7 @@ public class Client implements Disposable {
       writeId(project);
       out.writeShort(moduleInfo.getLibrarySet().getId());
       out.write(moduleInfo.isApp());
-      out.write(moduleInfo.getLocalStyleHolders(), "lsh", true);
+      out.write(moduleInfo.getLocalStyleHolders(), "lsh", true, true);
       hasError = false;
     }
     finally {
@@ -435,16 +439,20 @@ public class Client implements Disposable {
     }
   }
 
-  public void updateLocalStyleHolders(List<Pair<ModuleInfo, List<LocalStyleHolder>>> holders, StringRegistry.StringWriter stringWriter) {
+  public void updateLocalStyleHolders(THashMap<ModuleInfo, List<LocalStyleHolder>> holders, StringRegistry.StringWriter stringWriter) {
     boolean hasError = false;
     try {
       beginMessage(ClientMethod.updateLocalStyleHolders);
       stringWriter.writeTo(out);
       out.writeUInt29(holders.size());
-      for (Pair<ModuleInfo, List<LocalStyleHolder>> pair : holders) {
-        out.writeUInt29(pair.first.getId());
-        out.write(pair.first.getLocalStyleHolders(), "lsh", true);
-      }
+      holders.forEachKey(new TObjectProcedure<ModuleInfo>() {
+        @Override
+        public boolean execute(ModuleInfo moduleInfo) {
+          out.writeUInt29(moduleInfo.getId());
+          out.write(moduleInfo.getLocalStyleHolders(), "lsh", true, true);
+          return true;
+        }
+      });
     }
     catch (Throwable e) {
       hasError = true;
@@ -480,7 +488,7 @@ public class Client implements Disposable {
   }
 
   public AsyncResult<List<DocumentInfo>> renderDocumentAndDependents(@Nullable List<DocumentInfo> infos,
-                                                                     List<Pair<ModuleInfo, List<LocalStyleHolder>>> outdatedLocalStyleHolders,
+                                                                     THashMap<ModuleInfo, List<LocalStyleHolder>> outdatedLocalStyleHolders,
                                                                      final AsyncResult<List<DocumentInfo>> result) {
     if ((infos == null || infos.isEmpty()) && outdatedLocalStyleHolders.isEmpty()) {
       result.setDone(infos);
@@ -510,12 +518,16 @@ public class Client implements Disposable {
           result.setDone(rendered);
         }
       });
-      out.write(outdatedLocalStyleHolders, new PairConsumer<Pair<ModuleInfo, List<LocalStyleHolder>>, AmfOutputStream>() {
+
+      out.writeUInt29(outdatedLocalStyleHolders.size());
+      outdatedLocalStyleHolders.forEachKey(new TObjectProcedure<ModuleInfo>() {
         @Override
-        public void consume(Pair<ModuleInfo, List<LocalStyleHolder>> pair, AmfOutputStream out) {
-          out.writeUInt29(pair.first.getId());
+        public boolean execute(ModuleInfo moduleInfo) {
+          out.writeUInt29(moduleInfo.getId());
+          return true;
         }
       });
+
       out.write(infos);
       hasError = false;
     }
