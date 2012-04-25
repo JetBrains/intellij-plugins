@@ -390,7 +390,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
     DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("root");
     DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
 
-    myTree = new ProjectViewTree(treeModel) {
+    myTree = new ProjectViewTree(myProject, treeModel) {
       public String toString() {
         return getTitle() + " " + super.toString();
       }
