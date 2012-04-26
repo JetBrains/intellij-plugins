@@ -13,8 +13,8 @@
           url="http://repo1.maven.org/maven2/org/apache/struts/xwork/xwork-core/2.3.1.2/xwork-core-2.3.1.2.jar">
       <required-class fqn="com.opensymphony.xwork2.XWorkException"/>
     </item>
-    <item name="ognl.jar" version="3.0.3"
-          url="http://repo1.maven.org/maven2/ognl/ognl/3.0.3/ognl-3.0.3.jar">
+    <item name="ognl.jar" version="3.0.4"
+          url="http://repo1.maven.org/maven2/ognl/ognl/3.0.4/ognl-3.0.4.jar">
       <required-class fqn="ognl.Ognl"/>
     </item>
     <item name="commons-fileupload.jar" version="1.2.2"
