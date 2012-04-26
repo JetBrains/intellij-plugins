@@ -3,6 +3,7 @@ package com.intellij.tapestry.psi;
 import com.intellij.codeInsight.completion.util.SimpleMethodCallLookupElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.beanProperties.BeanProperty;
@@ -138,7 +139,8 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
   @Nullable
   private IntellijJavaClassType getPsiClassTypeForContainingTmlFile() {
     PsiFile file = myElement.getContainingFile();
-    if (file.getLanguage() == TelLanguage.INSTANCE) file = file.getContext().getContainingFile();
+    if (file.getLanguage() == TelLanguage.INSTANCE) file =
+      InjectedLanguageManager.getInstance(file.getProject()).getInjectionHost(file).getContainingFile();
     assert file instanceof TmlFile;
     final TapestryProject project = TapestryUtils.getTapestryProject(file);
     if (project == null) return null;
