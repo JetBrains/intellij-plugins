@@ -71,7 +71,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
   public static XmlAttribute getXmlAttribute(final PsiFile psiFile, final Editor editor) {
     PsiElement context = null;
     if (psiFile instanceof JSFile) {
-      context = psiFile.getContext();
+      context = InjectedLanguageManager.getInstance(psiFile.getProject()).getInjectionHost(psiFile);
     }
     else if (psiFile instanceof XmlFile) {
       context = psiFile.findElementAt(editor.getCaretModel().getOffset());

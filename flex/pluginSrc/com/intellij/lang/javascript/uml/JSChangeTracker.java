@@ -1,13 +1,13 @@
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.ChangeTracker;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSLanguageInjector;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -200,7 +200,7 @@ public class JSChangeTracker extends ChangeTracker<JSClass, JSNamedElement, JSRe
         if (sourceClass == null) {
           continue;
         }
-        if (sourceClass.getContainingFile().getContext() != null) {
+        if (InjectedLanguageManager.getInstance(sourceClass.getProject()).getInjectionHost(sourceClass) != null) {
           sourceClass = JSResolveUtil.getXmlBackedClass((JSFile)sourceClass.getContainingFile());
         }
 

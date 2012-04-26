@@ -8,6 +8,7 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.lang.LanguageCodeInsightActionHandler;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -217,7 +218,7 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
       final PsiElement element = JSResolveUtil.getClassReferenceForXmlFromContext(containingFile);
       if (element instanceof JSClass) clazz = (JSClass)element;
     } else if (JSResolveUtil.isArtificialClassUsedForReferenceList(clazz)) {
-      final PsiElement context = clazz.getContainingFile().getContext();
+      final PsiElement context = InjectedLanguageManager.getInstance(file.getProject()).getInjectionHost(clazz);
       if (context != null && context.getContainingFile() instanceof XmlFile) {
         clazz = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)context.getContainingFile());
       }

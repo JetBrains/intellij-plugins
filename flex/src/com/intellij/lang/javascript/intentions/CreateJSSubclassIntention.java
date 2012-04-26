@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.intentions;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -48,7 +49,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
   public boolean isAvailable(final @NotNull Project project, final Editor editor, final @NotNull PsiElement element) {
     final PsiFile psiFile = element.getContainingFile();
     if (!(psiFile instanceof JSFile) ||
-        psiFile.getContext() != null ||
+        InjectedLanguageManager.getInstance(project).getInjectionHost(psiFile) != null ||
         !psiFile.getLanguage().isKindOf(JavaScriptSupportLoader.ECMA_SCRIPT_L4)) {
       return false;
     }

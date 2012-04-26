@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter;
 import com.intellij.injected.editor.EditorWindow;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -25,7 +26,7 @@ public class MxmlEnterHandler extends EnterHandlerDelegateAdapter {
     int offset = caretOffset.get().intValue();
     
     if (file instanceof JSFile) {
-      PsiElement context = file.getContext();
+      PsiElement context = InjectedLanguageManager.getInstance(file.getProject()).getInjectionHost(file);
       if (context instanceof XmlComment) {
         file = context.getContainingFile();
         editor = ((EditorWindow)editor).getDelegate();

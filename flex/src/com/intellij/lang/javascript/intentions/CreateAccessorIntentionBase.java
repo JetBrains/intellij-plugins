@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.intentions;
 
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.generation.BaseJSGenerateHandler;
@@ -49,7 +50,8 @@ public abstract class CreateAccessorIntentionBase extends PsiElementBaseIntentio
 
     final PsiElement parent = variable == null ? null : variable.getParent();
     final PsiElement parentParent = parent instanceof JSVarStatement ? parent.getParent() : null;
-    final PsiElement context = parentParent == null ? null : parentParent.getContext();
+    final PsiElement context =
+      parentParent == null ? null : InjectedLanguageManager.getInstance(parentParent.getProject()).getInjectionHost(parentParent);
     final JSClass jsClass = parentParent instanceof JSClass
                             ? ((JSClass)parentParent)
                             : (parentParent instanceof JSFile && context instanceof XmlText)

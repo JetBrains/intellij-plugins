@@ -12,6 +12,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.psi.stubs.StubIndex;
@@ -42,10 +43,7 @@ public class FlexUnitTestFinder implements TestFinder {
 
     PsiFile psiFile = PsiTreeUtil.getParentOfType(element, PsiFile.class, false);
     if (psiFile instanceof JSFile) {
-      final PsiElement context = psiFile.getContext();
-      if (context != null) {
-        psiFile = context.getContainingFile();
-      }
+      psiFile = InjectedLanguageUtil.getTopLevelFile(psiFile);
     }
 
     if (psiFile instanceof JSFile) {
