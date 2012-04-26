@@ -152,51 +152,51 @@
 
     <statistics.usagesCollector implementation="com.intellij.lang.javascript.flex.projectStructure.FlashBuildConfigurationsUsagesCollector"/>
 
-    <localInspection language="ECMA Script Level 4" shortName="FlexUnitClassInProductSourceInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+    <localInspection shortName="FlexUnitClassInProductSourceInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testclassinproductsource.displayname" groupKey="flexunit.inspections.group"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitClassInProductSourceInspection"/>
-    <localInspection language="ECMA Script Level 4" shortName="FlexUnitClassVisibilityInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+    <localInspection shortName="FlexUnitClassVisibilityInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testclassvisibility.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
                      level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitClassVisibilityInspection"/>
-    <localInspection language="ECMA Script Level 4" shortName="FlexUnitMethodVisibilityInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+    <localInspection shortName="FlexUnitMethodVisibilityInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testmethodvisibility.displayname" groupKey="flexunit.inspections.group"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodVisibilityInspection"/>
-    <localInspection language="ECMA Script Level 4" shortName="FlexUnitMethodIsStaticInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+    <localInspection shortName="FlexUnitMethodIsStaticInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testmethodisstatic.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
                      level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodIsStaticInspection"/>
-    <localInspection language="ECMA Script Level 4" shortName="FlexUnitMethodIsPropertyInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+    <localInspection shortName="FlexUnitMethodIsPropertyInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testmethodisproperty.displayname" groupKey="flexunit.inspections.group"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodIsPropertyInspection"/>
-    <localInspection language="ECMA Script Level 4" shortName="FlexUnitMethodHasParametersInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+    <localInspection shortName="FlexUnitMethodHasParametersInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testmethodhasparameters.displayname" groupKey="flexunit.inspections.group"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodHasParametersInspection"/>
-    <localInspection language="ECMA Script Level 4" shortName="FlexUnitMethodReturnTypeInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+    <localInspection shortName="FlexUnitMethodReturnTypeInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testmethodreturntype.displayname" groupKey="flexunit.inspections.group"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodReturnTypeInspection"/>
-    <localInspection language="ECMA Script Level 4" shortName="FlexUnitMixedAPIInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+    <localInspection shortName="FlexUnitMixedAPIInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.mixedapi.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
                      level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMixedAPIInspection"/>
-    <localInspection language="ECMA Script Level 4" shortName="FlexUnitClassWithNoTestsInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+    <localInspection shortName="FlexUnitClassWithNoTestsInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testclasswithnotests.displayname" groupKey="flexunit.inspections.group"
                      enabledByDefault="true" level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitClassWithNoTestsInspection"/>
-    <localInspection language="ECMA Script Level 4" shortName="FlexUnitMethodInSuiteInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+    <localInspection shortName="FlexUnitMethodInSuiteInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.testmethodinsuite.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
                      level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitMethodInSuiteInspection"/>
-    <localInspection language="ECMA Script Level 4" shortName="FlexUnitEmptySuiteInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+    <localInspection shortName="FlexUnitEmptySuiteInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.emptysuite.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
                      level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitEmptySuiteInspection"/>
-    <localInspection language="ECMA Script Level 4" shortName="FlexUnitSuiteWithNoRunnerInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
+    <localInspection shortName="FlexUnitSuiteWithNoRunnerInspection" bundle="com.intellij.lang.javascript.flex.FlexBundle"
                      key="flexunit.inspection.suitewithnorunner.displayname" groupKey="flexunit.inspections.group" enabledByDefault="true"
                      level="WARNING"
                      implementationClass="com.intellij.lang.javascript.flex.flexunit.inspections.FlexUnitSuiteWithNoRunnerInspection"/>
