@@ -4,6 +4,7 @@ import com.intellij.execution.ExecutionBundle;
 import com.intellij.ide.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
@@ -33,14 +34,16 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigur
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureElement;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.ActionCallback;
+import com.intellij.openapi.util.Conditions;
+import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
 import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
-import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
@@ -56,6 +59,8 @@ import javax.swing.event.HyperlinkEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
+
+import static com.intellij.lang.javascript.flex.projectStructure.ui.AirPackagingConfigurableBase.AirDescriptorInfoProvider;
 
 public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<ModifiableFlexIdeBuildConfiguration>
   implements CompositeConfigurable.Item, Place.Navigator {
@@ -318,30 +323,29 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       }
     });
 
-    final Computable<String> mainClassComputable = new Computable<String>() {
-      public String compute() {
+    final AirDescriptorInfoProvider airDescriptorInfoProvider = new AirDescriptorInfoProvider() {
+      public String getMainClass() {
         return myMainClassComponent.getText().trim();
       }
-    };
-    final Computable<String> airVersionComputable = new Computable<String>() {
-      public String compute() {
+
+      public String getAirVersion() {
         final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
         return sdk == null || sdk.getVersionString() == null ? "" : FlexSdkUtils.getAirVersion(sdk.getVersionString());
       }
-    };
-    final Computable<Boolean> androidEnabledComputable = new Computable<Boolean>() {
-      public Boolean compute() {
+
+      public String[] getExtensionIDs() {
+        return FlexCompilationUtils.getAirExtensionIDs(myModule, myDependenciesConfigurable.getEditableObject());
+      }
+
+      public boolean isAndroidPackagingEnabled() {
         return myAndroidPackagingConfigurable != null && myAndroidPackagingConfigurable.isPackagingEnabled();
       }
-    };
-    final Computable<Boolean> iosEnabledComputable = new Computable<Boolean>() {
-      public Boolean compute() {
+
+      public boolean isIOSPackagingEnabled() {
         return myIOSPackagingConfigurable != null && myIOSPackagingConfigurable.isPackagingEnabled();
       }
-    };
-    final Consumer<String> createdDescriptorConsumer = new Consumer<String>() {
-      // called only for mobile projects if generated descriptor contains both Android and iOS
-      public void consume(final String descriptorPath) {
+
+      public void setCustomDescriptorForAndroidAndIOS(final String descriptorPath) {
         assert myAndroidPackagingConfigurable != null && myIOSPackagingConfigurable != null;
         myAndroidPackagingConfigurable.setUseCustomDescriptor(descriptorPath);
         myIOSPackagingConfigurable.setUseCustomDescriptor(descriptorPath);
@@ -350,9 +354,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
 
     myAirDesktopPackagingConfigurable = nature.isDesktopPlatform() && nature.isApp()
                                         ? new AirDesktopPackagingConfigurable(myModule, myConfiguration.getAirDesktopPackagingOptions(),
-                                                                              mainClassComputable, airVersionComputable,
-                                                                              androidEnabledComputable, iosEnabledComputable,
-                                                                              createdDescriptorConsumer)
+                                                                              airDescriptorInfoProvider)
                                         : null;
     if (myAirDesktopPackagingConfigurable != null) {
       myAirDesktopPackagingConfigurable.addUserActivityListener(myUserActivityListener, myDisposable);
@@ -360,17 +362,15 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
 
     myAndroidPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
                                      ? new AndroidPackagingConfigurable(myModule, myConfiguration.getAndroidPackagingOptions(),
-                                                                        mainClassComputable, airVersionComputable, androidEnabledComputable,
-                                                                        iosEnabledComputable, createdDescriptorConsumer)
+                                                                        airDescriptorInfoProvider)
                                      : null;
     if (myAndroidPackagingConfigurable != null) {
       myAndroidPackagingConfigurable.addUserActivityListener(myUserActivityListener, myDisposable);
     }
 
     myIOSPackagingConfigurable = nature.isMobilePlatform() && nature.isApp()
-                                 ? new IOSPackagingConfigurable(myModule, myConfiguration.getIosPackagingOptions(), mainClassComputable,
-                                                                airVersionComputable, androidEnabledComputable, iosEnabledComputable,
-                                                                createdDescriptorConsumer)
+                                 ? new IOSPackagingConfigurable(myModule, myConfiguration.getIosPackagingOptions(),
+                                                                airDescriptorInfoProvider)
                                  : null;
     if (myIOSPackagingConfigurable != null) {
       myIOSPackagingConfigurable.addUserActivityListener(myUserActivityListener, myDisposable);
