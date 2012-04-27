@@ -217,7 +217,7 @@ public class FlashRunConfiguration extends RunConfigurationBase
 
       final String airRuntimePath = airRuntimeDirForFlexmojosSdk == null ? null : airRuntimeDirForFlexmojosSdk.getPath();
       final OSProcessHandler processHandler =
-        JavaCommandLineStateUtil.startProcess(FlexBaseRunner.createAdlCommandLine(myRunnerParameters, bc, airRuntimePath));
+        JavaCommandLineStateUtil.startProcess(FlexBaseRunner.createAdlCommandLine(myProject, myRunnerParameters, bc, airRuntimePath));
 
       if (needToRemoveAirRuntimeDir && airRuntimeDirForFlexmojosSdk != null) {
         processHandler.addProcessListener(new ProcessAdapter() {

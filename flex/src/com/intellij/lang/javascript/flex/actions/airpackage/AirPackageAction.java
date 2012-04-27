@@ -119,7 +119,7 @@ public class AirPackageAction extends DumbAwareAction {
         }
 
         final DesktopPackageType packageType = params.desktopPackageType;
-        final ExternalTask task = AirPackageUtil.createAirDesktopTask(project, bc, packageType, passwords);
+        final ExternalTask task = AirPackageUtil.createAirDesktopTask(moduleAndBC.first, bc, packageType, passwords);
         final String packagePath = outputFolder + "/" +
                                    bc.getAirDesktopPackagingOptions().getPackageFileName() + packageType.getFileExtension();
         tasksAndPackagePaths.add(Pair.create(task, packagePath));
@@ -133,7 +133,7 @@ public class AirPackageAction extends DumbAwareAction {
           }
 
           final AndroidPackageType packageType = params.androidPackageType;
-          final ExternalTask task = AirPackageUtil.createAndroidPackageTask(project, bc, packageType, params.apkCaptiveRuntime,
+          final ExternalTask task = AirPackageUtil.createAndroidPackageTask(moduleAndBC.first, bc, packageType, params.apkCaptiveRuntime,
                                                                             params.apkDebugListenPort, passwords);
           final String packagePath = outputFolder + "/" + packagingOptions.getPackageFileName() + ".apk";
           tasksAndPackagePaths.add(Pair.create(task, packagePath));
@@ -142,7 +142,7 @@ public class AirPackageAction extends DumbAwareAction {
         if (bc.getIosPackagingOptions().isEnabled()) {
           final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
           final IOSPackageType packageType = params.iosPackageType;
-          final ExternalTask task = AirPackageUtil.createIOSPackageTask(project, bc, packageType, params.iosFastPackaging, passwords);
+          final ExternalTask task = AirPackageUtil.createIOSPackageTask(moduleAndBC.first, bc, packageType, params.iosFastPackaging, passwords);
           final String packagePath = outputFolder + "/" + packagingOptions.getPackageFileName() + ".ipa";
           tasksAndPackagePaths.add(Pair.create(task, packagePath));
         }

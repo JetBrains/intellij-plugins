@@ -22,7 +22,7 @@ class FlexSwcLibrariesRootDetector extends RootFilter {
     if (!rootCandidate.isDirectory()){
       return false;
     }
-    if (!"swc".equalsIgnoreCase(rootCandidate.getExtension())) {
+    if (!"swc".equalsIgnoreCase(rootCandidate.getExtension()) && !"ane".equalsIgnoreCase(rootCandidate.getExtension())) {
       return false;
     }
     if (!(rootCandidate.getFileSystem() instanceof JarFileSystem) || rootCandidate.getParent() != null) {

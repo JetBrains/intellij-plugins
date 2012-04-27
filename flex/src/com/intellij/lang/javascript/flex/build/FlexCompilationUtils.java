@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateAirDescriptorTemplateDialog;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -15,6 +16,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
@@ -23,15 +28,18 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SystemProperties;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.StringTokenizer;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -191,7 +199,8 @@ public class FlexCompilationUtils {
     }
   }
 
-  public static void performPostCompileActions(final @NotNull FlexIdeBuildConfiguration bc) throws FlexCompilerException {
+  public static void performPostCompileActions(final Module module,
+                                               final @NotNull FlexIdeBuildConfiguration bc) throws FlexCompilerException {
     if (BCUtils.isRuntimeStyleSheetBC(bc)) return;
 
     switch (bc.getTargetPlatform()) {
@@ -201,14 +210,14 @@ public class FlexCompilationUtils {
         }
         break;
       case Desktop:
-        handleAirDescriptor(bc, bc.getAirDesktopPackagingOptions());
+        handleAirDescriptor(module, bc, bc.getAirDesktopPackagingOptions());
         break;
       case Mobile:
         if (bc.getAndroidPackagingOptions().isEnabled()) {
-          handleAirDescriptor(bc, bc.getAndroidPackagingOptions());
+          handleAirDescriptor(module, bc, bc.getAndroidPackagingOptions());
         }
         if (bc.getIosPackagingOptions().isEnabled()) {
-          handleAirDescriptor(bc, bc.getIosPackagingOptions());
+          handleAirDescriptor(module, bc, bc.getIosPackagingOptions());
         }
         break;
     }
@@ -296,19 +305,19 @@ public class FlexCompilationUtils {
     return StringUtil.replace(wrapperText, MACROS_TO_REPLACE, replacement);
   }
 
-  private static void handleAirDescriptor(final FlexIdeBuildConfiguration bc,
+  private static void handleAirDescriptor(final Module module, final FlexIdeBuildConfiguration bc,
                                           final AirPackagingOptions packagingOptions) throws FlexCompilerException {
     if (packagingOptions.isUseGeneratedDescriptor()) {
       final boolean android = packagingOptions instanceof AndroidPackagingOptions;
       final boolean ios = packagingOptions instanceof IosPackagingOptions;
-      generateAirDescriptor(bc, BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions), android, ios);
+      generateAirDescriptor(module, bc, BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions), android, ios);
     }
     else {
       copyAndFixCustomAirDescriptor(bc, packagingOptions.getCustomDescriptorPath());
     }
   }
 
-  public static void generateAirDescriptor(final FlexIdeBuildConfiguration bc, final String descriptorFileName,
+  public static void generateAirDescriptor(final Module module, final FlexIdeBuildConfiguration bc, final String descriptorFileName,
                                            final boolean android, final boolean ios) throws FlexCompilerException {
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
@@ -329,12 +338,21 @@ public class FlexCompilationUtils {
         final String airVersion = FlexSdkUtils.getAirVersion(StringUtil.notNullize(sdk.getVersionString()));
         final String appId = fixApplicationId(bc.getMainClass());
         final String appName = StringUtil.getShortName(bc.getMainClass());
+        final String swfName = PathUtil.getFileName(outputFilePath);
+
+        final Collection<VirtualFile> aneFiles = getAneFiles(module, bc);
+        final Collection<String> extensionIDs = new ArrayList<String>();
+        for (VirtualFile aneFile : aneFiles) {
+          final String extensionId = getExtensionId(aneFile);
+          ContainerUtil.addIfNotNull(extensionIDs, extensionId);
+        }
+        final String[] extensions = extensionIDs.toArray(new String[extensionIDs.size()]);
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
           public void run() {
             try {
               final AirDescriptorOptions descriptorOptions =
-                new AirDescriptorOptions(airVersion, appId, appName, PathUtil.getFileName(outputFilePath), android, ios);
+                new AirDescriptorOptions(airVersion, appId, appName, swfName, extensions, android, ios);
               final String descriptorText = CreateAirDescriptorTemplateDialog.getAirDescriptorText(descriptorOptions);
 
               FlexUtils.addFileWithContent(descriptorFileName, descriptorText, outputFolder);
@@ -356,6 +374,52 @@ public class FlexCompilationUtils {
 
     if (!exceptionRef.isNull()) {
       throw exceptionRef.get();
+    }
+  }
+
+  public static Collection<VirtualFile> getAneFiles(final Module module, final FlexIdeBuildConfiguration bc) {
+    final Collection<VirtualFile> result = new ArrayList<VirtualFile>();
+
+    for (DependencyEntry entry : bc.getDependencies().getEntries()) {
+      if (entry instanceof ModuleLibraryEntry) {
+        final LibraryOrderEntry orderEntry =
+          FlexProjectRootsUtil.findOrderEntry((ModuleLibraryEntry)entry, ModuleRootManager.getInstance(module));
+        if (orderEntry != null) {
+          for (VirtualFile libFile : orderEntry.getRootFiles(OrderRootType.CLASSES)) {
+            addIfAne(result, libFile);
+          }
+        }
+      }
+      else if (entry instanceof SharedLibraryEntry) {
+        final Library library = FlexProjectRootsUtil.findOrderEntry(module.getProject(), (SharedLibraryEntry)entry);
+        if (library != null) {
+          for (VirtualFile libFile : library.getFiles((OrderRootType.CLASSES))) {
+            addIfAne(result, libFile);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+  private static void addIfAne(final Collection<VirtualFile> result, final VirtualFile libFile) {
+    final VirtualFile realFile = FlexCompilerHandler.getRealFile(libFile);
+    if (realFile != null && !realFile.isDirectory() && "ane".equalsIgnoreCase(realFile.getExtension())) {
+      result.add(realFile);
+    }
+  }
+
+  @Nullable
+  private static String getExtensionId(final VirtualFile aneFile) {
+    final VirtualFile jarRoot = JarFileSystem.getInstance().getJarRootForLocalFile(aneFile);
+    if (jarRoot == null) return null;
+    final VirtualFile xmlFile = VfsUtil.findRelativeFile("META-INF/ANE/extension.xml", jarRoot);
+    if (xmlFile == null) return null;
+    try {
+      return FlexUtils.findXMLElement(xmlFile.getInputStream(), "<extension><id>");
+    }
+    catch (IOException e) {
+      return null;
     }
   }
 

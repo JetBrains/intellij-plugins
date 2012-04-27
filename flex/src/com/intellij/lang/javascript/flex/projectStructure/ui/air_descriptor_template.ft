@@ -40,6 +40,11 @@
     <!-- Publisher ID. Used if you're updating an application created prior to 1.5.3 -->
     <!--<publisherID></publisherID>-->
 
+    <!-- Identifies the ActionScript extensions used by an application. -->
+    ${extensions_comment_start}<extensions>
+        ${extensions_list}
+    </extensions>${extensions_comment_end}
+
     <!-- Settings for the application's initial window. Required. -->
     <initialWindow>
         <!-- The main SWF or HTML file of the application. Required. -->

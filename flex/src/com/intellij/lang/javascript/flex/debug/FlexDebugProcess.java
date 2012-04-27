@@ -375,8 +375,9 @@ public class FlexDebugProcess extends XDebugProcess {
       }
 
       final String airRuntimePath = airRuntimeDirForFlexmojosSdk == null ? null : airRuntimeDirForFlexmojosSdk.getPath();
-      sendCommand(new StartAirAppDebuggingCommand(FlexBaseRunner.createAdlCommandLine(params, bc, airRuntimePath),
-                                                  needToRemoveAirRuntimeDir ? airRuntimeDirForFlexmojosSdk : null));
+      sendCommand(
+        new StartAirAppDebuggingCommand(FlexBaseRunner.createAdlCommandLine(getSession().getProject(), params, bc, airRuntimePath),
+                                        needToRemoveAirRuntimeDir ? airRuntimeDirForFlexmojosSdk : null));
     }
     catch (CantRunException e) {
       throw new IOException(e.getMessage());

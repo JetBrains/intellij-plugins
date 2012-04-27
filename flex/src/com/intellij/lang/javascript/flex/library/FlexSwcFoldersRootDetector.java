@@ -36,7 +36,7 @@ class FlexSwcFoldersRootDetector extends RootDetector {
     progressIndicator.setText2(file.getPresentableUrl());
 
     for (VirtualFile child : file.getChildren()) {
-      if (!child.isDirectory() && "swc".equalsIgnoreCase(child.getExtension())) {
+      if (!child.isDirectory() && ("swc".equalsIgnoreCase(child.getExtension()) || "ane".equalsIgnoreCase(child.getExtension()))) {
         result.add(file);
         return;
       }

@@ -107,7 +107,10 @@ public class FlexResolveHelper implements JSResolveHelper {
       if (!globalSearchScope.contains(vfile)) continue;
       if (vfile.getFileSystem() instanceof JarFileSystem) {
         VirtualFile fileForJar = JarFileSystem.getInstance().getVirtualFileForJar(vfile);
-        if (fileForJar != null && !"swc".equalsIgnoreCase(fileForJar.getExtension())) continue;
+        if (fileForJar != null &&
+            !("swc".equalsIgnoreCase(fileForJar.getExtension()) || "ane".equalsIgnoreCase(fileForJar.getExtension()))) {
+          continue;
+        }
       }
 
       if (resolvedName != null) {

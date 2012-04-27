@@ -39,6 +39,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -334,7 +335,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
            && AirPackageUtil.checkAirRuntimeOnDevice(project, sdk, adtVersion)
            && (!bc.getAndroidPackagingOptions().getSigningOptions().isUseTempCertificate() ||
                AirPackageUtil.ensureCertificateExists(project, sdk))
-           && AirPackageUtil.packageApk(project, bc, runnerParameters, isDebug)
+           && AirPackageUtil.packageApk(module, bc, runnerParameters, isDebug)
            && AirPackageUtil.installApk(project, sdk, apkPath, applicationId);
   }
 
@@ -357,7 +358,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     }
   }
 
-  public static GeneralCommandLine createAdlCommandLine(final BCBasedRunnerParameters params,
+  public static GeneralCommandLine createAdlCommandLine(final Project project,
+                                                        final BCBasedRunnerParameters params,
                                                         final FlexIdeBuildConfiguration bc,
                                                         final @Nullable String airRuntimePath) throws CantRunException {
     final Sdk sdk = bc.getSdk();
@@ -415,7 +417,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         commandLine.addParameters(StringUtil.split(adlOptions, " "));
       }
 
-      final String airDescriptorPath = getDescriptorForEmulatorPath(bc, flashParams.getAppDescriptorForEmulator());
+      final Module module = ModuleManager.getInstance(project).findModuleByName(flashParams.getModuleName());
+      final String airDescriptorPath = getDescriptorForEmulatorPath(module, bc, flashParams.getAppDescriptorForEmulator());
       commandLine.addParameter(FileUtil.toSystemDependentName(airDescriptorPath));
       commandLine.addParameter(FileUtil.toSystemDependentName(PathUtil.getParentPath(bc.getActualOutputFilePath())));
     }
@@ -423,7 +426,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return commandLine;
   }
 
-  private static String getDescriptorForEmulatorPath(final FlexIdeBuildConfiguration bc,
+  private static String getDescriptorForEmulatorPath(final Module module, final FlexIdeBuildConfiguration bc,
                                                      final AppDescriptorForEmulator appDescriptorForEmulator) throws CantRunException {
     final String airDescriptorPath;
     switch (appDescriptorForEmulator) {
@@ -439,7 +442,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
             final String outputFilePath = bc.getActualOutputFilePath();
             final String descriptorFileName =
               FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + "-emulator-descriptor.xml";
-            FlexCompilationUtils.generateAirDescriptor(bc, descriptorFileName, true, true);
+            FlexCompilationUtils.generateAirDescriptor(module, bc, descriptorFileName, true, true);
             airDescriptorPath = PathUtil.getParentPath(outputFilePath) + "/" + descriptorFileName;
           }
           catch (FlexCompilerException e) {

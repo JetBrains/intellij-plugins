@@ -275,15 +275,16 @@ public class AirPackageUtil {
     }, FlexBundle.message("installing.air.runtime", version), FlexBundle.message("install.air.runtime.title"));
   }
 
-  public static boolean packageApk(final Project project,
+  public static boolean packageApk(final Module module,
                                    final FlexIdeBuildConfiguration bc,
                                    final FlashRunnerParameters runnerParameters,
                                    final boolean isDebug) {
     final AndroidPackagingOptions packagingOptions = bc.getAndroidPackagingOptions();
     final boolean tempCertificate = packagingOptions.getSigningOptions().isUseTempCertificate();
 
-    final PasswordStore passwords = tempCertificate ? null
-                                                    : AirPackageAction.getPasswords(project, Collections.singletonList(packagingOptions));
+    final PasswordStore passwords = tempCertificate
+                                    ? null
+                                    : AirPackageAction.getPasswords(module.getProject(), Collections.singletonList(packagingOptions));
     if (!tempCertificate && passwords == null) return false; // user canceled
 
     FileDocumentManager.getInstance().saveAllDocuments();
@@ -293,12 +294,12 @@ public class AirPackageUtil {
                                              ? AndroidPackageType.DebugOverNetwork
                                              : AndroidPackageType.DebugOverUSB
                                            : AndroidPackageType.Release;
-    final ExternalTask task = createAndroidPackageTask(project, bc, packageType, false, runnerParameters.getUsbDebugPort(), passwords);
+    final ExternalTask task = createAndroidPackageTask(module, bc, packageType, false, runnerParameters.getUsbDebugPort(), passwords);
     return ExternalTask.runWithProgress(task, FlexBundle.message("creating.android.package"),
                                         FlexBundle.message("create.android.package.title"));
   }
 
-  public static ExternalTask createAirDesktopTask(final Project project,
+  public static ExternalTask createAirDesktopTask(final Module module,
                                                   final FlexIdeBuildConfiguration bc,
                                                   final DesktopPackageType packageType,
                                                   final PasswordStore passwords) {
@@ -312,7 +313,7 @@ public class AirPackageUtil {
                                ? ""
                                : passwords.getKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias());
 
-    return new AdtTask(project, bc.getSdk()) {
+    return new AdtTask(module.getProject(), bc.getSdk()) {
       protected void appendAdtOptions(List<String> command) {
         switch (packageType) {
           case AirInstaller:
@@ -324,12 +325,12 @@ public class AirPackageUtil {
             break;
         }
 
-        appendPaths(command, bc, packagingOptions, packageType.getFileExtension());
+        appendPaths(command, module, bc, packagingOptions, packageType.getFileExtension());
       }
     };
   }
 
-  public static ExternalTask createAndroidPackageTask(final Project project,
+  public static ExternalTask createAndroidPackageTask(final Module module,
                                                       final FlexIdeBuildConfiguration bc,
                                                       final AndroidPackageType packageType,
                                                       final boolean captiveRuntime,
@@ -345,7 +346,7 @@ public class AirPackageUtil {
                                ? ""
                                : passwords.getKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias());
 
-    return new AdtTask(project, bc.getSdk()) {
+    return new AdtTask(module.getProject(), bc.getSdk()) {
       protected void appendAdtOptions(List<String> command) {
         command.add("-package");
         command.add("-target");
@@ -373,12 +374,12 @@ public class AirPackageUtil {
         */
 
         appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
-        appendPaths(command, bc, packagingOptions, ".apk");
+        appendPaths(command, module, bc, packagingOptions, ".apk");
       }
     };
   }
 
-  public static ExternalTask createIOSPackageTask(final Project project,
+  public static ExternalTask createIOSPackageTask(final Module module,
                                                   final FlexIdeBuildConfiguration bc,
                                                   final IOSPackageType packageType,
                                                   final boolean fastPackaging,
@@ -390,7 +391,7 @@ public class AirPackageUtil {
     final String keystorePassword = passwords.getKeystorePassword(signingOptions.getKeystorePath());
     final String keyPassword = passwords.getKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias());
 
-    return new AdtTask(project, bc.getSdk()) {
+    return new AdtTask(module.getProject(), bc.getSdk()) {
       protected void appendAdtOptions(List<String> command) {
         command.add("-package");
         command.add("-target");
@@ -416,7 +417,7 @@ public class AirPackageUtil {
         command.add("-provisioning-profile");
         command.add(signingOptions.getProvisioningProfilePath());
 
-        appendPaths(command, bc, packagingOptions, ".ipa");
+        appendPaths(command, module, bc, packagingOptions, ".ipa");
       }
     };
   }

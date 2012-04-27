@@ -2,17 +2,22 @@ package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
+import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.IosPackagingOptions;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
+import gnu.trove.THashSet;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions.FilePathAndPathInPackage;
 
@@ -71,6 +76,7 @@ public abstract class AdtTask extends ExternalTask {
   }
 
   public static void appendPaths(final List<String> command,
+                                 final Module module,
                                  final FlexIdeBuildConfiguration bc,
                                  final AirPackagingOptions packagingOptions,
                                  final String packageFileExtension) {
@@ -79,6 +85,8 @@ public abstract class AdtTask extends ExternalTask {
 
     command.add(FileUtil.toSystemDependentName(outputFolder + "/" + packagingOptions.getPackageFileName() + packageFileExtension));
     command.add(FileUtil.toSystemDependentName(FlexBaseRunner.getAirDescriptorPath(bc, packagingOptions)));
+
+    appendANEPaths(command, module, bc);
 
     command.add("-C");
     command.add(FileUtil.toSystemDependentName(PathUtil.getParentPath(outputFilePath)));
@@ -101,6 +109,16 @@ public abstract class AdtTask extends ExternalTask {
         command.add("-e");
         command.add(FileUtil.toSystemDependentName(fullPath));
         command.add(relPathInPackage);
+      }
+    }
+  }
+
+  private static void appendANEPaths(final List<String> command, final Module module, final FlexIdeBuildConfiguration bc) {
+    final Set<VirtualFile> extDirPaths = new THashSet<VirtualFile>();
+    for (VirtualFile aneFile : FlexCompilationUtils.getAneFiles(module, bc)) {
+      if (extDirPaths.add(aneFile.getParent())) {
+        command.add("-extdir");
+        command.add(FileUtil.toSystemDependentName(aneFile.getParent().getPath()));
       }
     }
   }

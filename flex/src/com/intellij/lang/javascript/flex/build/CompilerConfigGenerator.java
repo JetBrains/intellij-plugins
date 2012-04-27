@@ -20,6 +20,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
@@ -215,6 +216,11 @@ public class CompilerConfigGenerator {
 
     for (final String swcUrl : mySdk.getRootProvider().getUrls(OrderRootType.CLASSES)) {
       final String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(swcUrl, JarFileSystem.JAR_SEPARATOR));
+      if (!swcPath.toLowerCase().endsWith(".swc")) {
+        Logger.getInstance(CompilerConfigGenerator.class.getName()).warn("Unexpected URL in Flex SDK classes: " + swcUrl);
+        continue;
+      }
+
       LinkageType linkageType = BCUtils.getSdkEntryLinkageType(swcPath, myBC);
 
       // check applicability
@@ -236,7 +242,6 @@ public class CompilerConfigGenerator {
 
       if (linkageType == LinkageType.RSL) {
         final String swcName = PathUtil.getFileName(swcPath);
-        assert swcName.endsWith(".swc") : swcUrl;
         final String libName = swcName.substring(0, swcName.length() - ".swc".length());
 
         final String swzVersion = libName.equals("textLayout")
@@ -337,22 +342,28 @@ public class CompilerConfigGenerator {
   private void addLibraryRoots(final Element rootElement, final VirtualFile[] libClassRoots, final LinkageType linkageType) {
     for (VirtualFile libFile : libClassRoots) {
       libFile = FlexCompilerHandler.getRealFile(libFile);
+      if (libFile == null) continue;
 
-      if (libFile != null && libFile.isDirectory()) {
+      if (libFile.isDirectory()) {
         addOption(rootElement, CompilerOptionInfo.SOURCE_PATH_INFO, libFile.getPath());
       }
-      else if (libFile != null && !libFile.isDirectory() && "swc".equalsIgnoreCase(libFile.getExtension())) {
-        // "airglobal.swc" and "playerglobal.swc" file names are hardcoded in Flex compiler
-        // including libraries like "playerglobal-3.5.0.12683-9.swc" may lead to error at runtime like "VerifyError Error #1079: Native methods are not allowed in loaded code."
-        // so here we just skip including such libraries in config file.
-        // Compilation should be ok because base flexmojos config file contains correct reference to its copy in target/classes/libraries/playerglobal.swc
-        final String libFileName = libFile.getName().toLowerCase();
-        if (libFileName.startsWith("airglobal") && !libFileName.equals("airglobal.swc") ||
-            libFileName.startsWith("playerglobal") && !libFileName.equals("playerglobal.swc")) {
-          continue;
+      else {
+        if ("ane".equalsIgnoreCase(libFile.getExtension())) {
+          addLib(rootElement, libFile.getPath(), LinkageType.External);
         }
+        else if ("swc".equalsIgnoreCase(libFile.getExtension())) {
+          // "airglobal.swc" and "playerglobal.swc" file names are hardcoded in Flex compiler
+          // including libraries like "playerglobal-3.5.0.12683-9.swc" may lead to error at runtime like "VerifyError Error #1079: Native methods are not allowed in loaded code."
+          // so here we just skip including such libraries in config file.
+          // Compilation should be ok because base flexmojos config file contains correct reference to its copy in target/classes/libraries/playerglobal.swc
+          final String libFileName = libFile.getName().toLowerCase();
+          if (libFileName.startsWith("airglobal") && !libFileName.equals("airglobal.swc") ||
+              libFileName.startsWith("playerglobal") && !libFileName.equals("playerglobal.swc")) {
+            continue;
+          }
 
-        addLib(rootElement, libFile.getPath(), linkageType);
+          addLib(rootElement, libFile.getPath(), linkageType);
+        }
       }
     }
   }

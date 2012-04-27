@@ -17,6 +17,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBTabbedPane;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +47,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     private final String APP_NAME;
     private final String APP_VERSION;
     private final String SWF_NAME;
+    private final String[] EXTENSIONS;
     private final boolean MOBILE;
     private final boolean AUTO_ORIENTS;
     private final boolean FULL_SCREEN;
@@ -60,9 +62,10 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
                                 final String appId,
                                 final String appName,
                                 final String swfName,
+                                final String[] extensions,
                                 final boolean android,
                                 final boolean ios) {
-      this(airVersion, appId, appName, "0.0.0", swfName, android || ios, android || ios, android || ios,
+      this(airVersion, appId, appName, "0.0.0", swfName, extensions, android || ios, android || ios, android || ios,
            android, ANDROID_PERMISSION_INTERNET, ios, ios, ios, ios);
     }
 
@@ -71,6 +74,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
                                 final String appName,
                                 final String appVersion,
                                 final String swfName,
+                                final String[] extensions,
                                 final boolean mobile,
                                 final boolean autoOrients,
                                 final boolean fullScreen,
@@ -85,6 +89,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
       APP_NAME = appName;
       APP_VERSION = appVersion;
       SWF_NAME = swfName;
+      EXTENSIONS = extensions;
       MOBILE = mobile;
       AUTO_ORIENTS = autoOrients;
       FULL_SCREEN = fullScreen;
@@ -267,8 +272,10 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     final boolean iosHighResolution = mobile && ios && myIOSHighResolutionCheckBox.isSelected();
 
     final AirDescriptorOptions options =
-      new AirDescriptorOptions(airVersion, appId, appName, appVersion, swfName, mobile, autoOrients, fullScreen, android,
-                               androidPermissions, ios, iPhone, iPad, iosHighResolution);
+      new AirDescriptorOptions(airVersion, appId, appName, appVersion, swfName, ArrayUtil.EMPTY_STRING_ARRAY, //todo get real extensions list
+                               mobile, autoOrients, fullScreen,
+                               android, androidPermissions,
+                               ios, iPhone, iPad, iosHighResolution);
 
     if (createAirDescriptorTemplate(myProject, true, getDescriptorPath(), options) != null) {
       super.doOKAction();
@@ -353,6 +360,23 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     addToLists(macros, values, "${version_comment_end}", air25OrLater ? "-->" : "");
 
     addToLists(macros, values, "${swf_name}", options.SWF_NAME);
+
+    if (options.EXTENSIONS.length == 0) {
+      addToLists(macros, values, "${extensions_comment_start}", "<!--");
+      addToLists(macros, values, "${extensions_comment_end}", "-->");
+      addToLists(macros, values, "${extensions_list}", "<extensionID></extensionID>");
+    }
+    else {
+      final StringBuilder buf = new StringBuilder();
+      for (String extensionId : options.EXTENSIONS) {
+        if (buf.length() > 0) buf.append("\n        ");
+        buf.append("<extensionID>").append(extensionId).append("</extensionID>");
+      }
+
+      addToLists(macros, values, "${extensions_comment_start}", "");
+      addToLists(macros, values, "${extensions_comment_end}", "");
+      addToLists(macros, values, "${extensions_list}", buf.toString());
+    }
 
     addToLists(macros, values, "${auto_orients}", options.MOBILE ? String.valueOf(options.AUTO_ORIENTS) : "");
     addToLists(macros, values, "${auto_orients_comment_start}", options.MOBILE ? "" : "<!--");

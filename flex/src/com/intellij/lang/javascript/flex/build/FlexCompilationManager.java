@@ -140,7 +140,7 @@ public class FlexCompilationManager {
           addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.successful"), null, -1, -1);
 
           try {
-            FlexCompilationUtils.performPostCompileActions(task.getBC());
+            FlexCompilationUtils.performPostCompileActions(task.getModule(), task.getBC());
           }
           catch (FlexCompilerException e) {
             addMessage(task, CompilerMessageCategory.ERROR, e.getMessage(), e.getUrl(), e.getLine(), e.getColumn());
@@ -220,7 +220,7 @@ public class FlexCompilationManager {
           myFinishedTasks.add(taskToStart);
 
           try {
-            FlexCompilationUtils.performPostCompileActions(taskToStart.getBC());
+            FlexCompilationUtils.performPostCompileActions(taskToStart.getModule(), taskToStart.getBC());
           }
           catch (FlexCompilerException e) {
             addMessage(taskToStart, CompilerMessageCategory.ERROR, e.getMessage(), e.getUrl(), e.getLine(), e.getColumn());
