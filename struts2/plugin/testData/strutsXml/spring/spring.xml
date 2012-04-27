@@ -8,6 +8,8 @@
 
   <bean name="bean2" class="MyClass"/>
 
+  <bean name="abstractBean" class="MyClass" abstract="true"/>
+
   <!-- interceptor -->
   <bean name="springInterceptor" class="com.opensymphony.xwork2.spring.interceptor.ActionAutowiringInterceptor"/>
 

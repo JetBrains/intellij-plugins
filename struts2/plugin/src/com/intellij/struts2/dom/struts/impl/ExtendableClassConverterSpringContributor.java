@@ -45,7 +45,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 public class ExtendableClassConverterSpringContributor
-    extends ExtendableClassConverter.ExtendableClassConverterContributor {
+  extends ExtendableClassConverter.ExtendableClassConverterContributor {
 
   @NotNull
   public String getTypeName() {
@@ -76,7 +76,7 @@ public class ExtendableClassConverterSpringContributor
   public PsiReference[] getReferences(@NotNull final ConvertContext convertContext,
                                       @NotNull final PsiElement psiElement,
                                       @NotNull final ExtendClass extendClass) {
-    return new PsiReference[]{new SpringBeanReference((XmlAttributeValue) psiElement,
+    return new PsiReference[]{new SpringBeanReference((XmlAttributeValue)psiElement,
                                                       convertContext.getModule(),
                                                       extendClass)};
   }
@@ -117,6 +117,10 @@ public class ExtendableClassConverterSpringContributor
         return null;
       }
 
+      if (springBean.isAbstract()) {
+        return null;
+      }
+
       return springBean.getBeanClass();
     }
 
@@ -132,20 +136,25 @@ public class ExtendableClassConverterSpringContributor
       final Collection<? extends SpringBeanPointer> list;
       if (subClass != null) {
         list = springModel.findBeansByPsiClassWithInheritance(subClass.getQualifiedName());
-      } else {
+      }
+      else {
         list = springModel.getAllCommonBeans();
       }
 
       final List variants = new ArrayList(list.size());
       for (final SpringBeanPointer bean : list) {
+        if (bean.isAbstract()) {
+          continue;
+        }
+
         final String beanName = bean.getName();
         final PsiFile psiFile = bean.getContainingFile();
 
         if (psiFile != null && StringUtil.isNotEmpty(beanName)) {
           //noinspection ConstantConditions
           variants.add(LookupElementBuilder.create(beanName)
-                                           .setIcon(bean.getBeanIcon())
-                                           .setTailText(" (" + psiFile.getName() + ")", true));
+                         .setIcon(bean.getBeanIcon())
+                         .setTailText(" (" + psiFile.getName() + ")", true));
         }
       }
 
@@ -168,5 +177,4 @@ public class ExtendableClassConverterSpringContributor
       return JavaPsiFacade.getInstance(module.getProject()).findClass(subClassName, searchScope);
     }
   }
-
 }

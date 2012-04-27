@@ -81,10 +81,12 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
 
     // TODO <alias> does not appear here, see com.intellij.spring.impl.SpringModelImpl#myOwnBeans
     final List<String> variants = myFixture.getCompletionVariants(strutsXml);
+    assert variants != null;
 
     Assert.assertTrue(CollectionUtils.isSubCollection(Arrays.asList("MyClass", "bean1", "bean2", "springInterceptor",
                                                                     "springResultType"),
                                                       variants));
+    Assert.assertFalse(ContainerUtil.intersects(variants, Arrays.asList("abstractBean")));
   }
 
   @HasJavaSources

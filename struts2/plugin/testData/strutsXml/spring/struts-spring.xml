@@ -22,6 +22,7 @@
 
     <action name="notExistingSpringBeanOrClass" class="<error>bean999</error>"/>
 
+    <action name="abstractBeanNotAllowed" class="<error>abstractBean</error>"/>
   </package>
 
 
