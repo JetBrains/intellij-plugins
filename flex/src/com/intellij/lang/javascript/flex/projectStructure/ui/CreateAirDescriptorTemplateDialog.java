@@ -17,7 +17,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBTabbedPane;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
@@ -135,15 +134,18 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
 
   static final String TITLE = FlexBundle.message("create.air.descriptor.template.title");
   private final Project myProject;
+  private final String[] myExtensions;
 
   public CreateAirDescriptorTemplateDialog(final Project project,
                                            final String folderPath,
                                            final String mainClass,
                                            final String airVersion,
+                                           final String[] extensions,
                                            final boolean androidEnabled,
                                            final boolean iosEnabled) {
     super(project);
     myProject = project;
+    myExtensions = extensions;
     setTitle(TITLE);
     setOKButtonText("Create");
     initControls();
@@ -272,7 +274,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     final boolean iosHighResolution = mobile && ios && myIOSHighResolutionCheckBox.isSelected();
 
     final AirDescriptorOptions options =
-      new AirDescriptorOptions(airVersion, appId, appName, appVersion, swfName, ArrayUtil.EMPTY_STRING_ARRAY, //todo get real extensions list
+      new AirDescriptorOptions(airVersion, appId, appName, appVersion, swfName, myExtensions,
                                mobile, autoOrients, fullScreen,
                                android, androidPermissions,
                                ios, iPhone, iPad, iosHighResolution);

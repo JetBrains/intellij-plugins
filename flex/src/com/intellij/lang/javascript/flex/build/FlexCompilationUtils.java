@@ -339,14 +339,7 @@ public class FlexCompilationUtils {
         final String appId = fixApplicationId(bc.getMainClass());
         final String appName = StringUtil.getShortName(bc.getMainClass());
         final String swfName = PathUtil.getFileName(outputFilePath);
-
-        final Collection<VirtualFile> aneFiles = getAneFiles(module, bc);
-        final Collection<String> extensionIDs = new ArrayList<String>();
-        for (VirtualFile aneFile : aneFiles) {
-          final String extensionId = getExtensionId(aneFile);
-          ContainerUtil.addIfNotNull(extensionIDs, extensionId);
-        }
-        final String[] extensions = extensionIDs.toArray(new String[extensionIDs.size()]);
+        final String[] extensions = getAirExtensionIDs(module, bc.getDependencies());
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
           public void run() {
@@ -377,10 +370,10 @@ public class FlexCompilationUtils {
     }
   }
 
-  public static Collection<VirtualFile> getAneFiles(final Module module, final FlexIdeBuildConfiguration bc) {
+  public static Collection<VirtualFile> getAneFiles(final Module module, final Dependencies dependencies) {
     final Collection<VirtualFile> result = new ArrayList<VirtualFile>();
 
-    for (DependencyEntry entry : bc.getDependencies().getEntries()) {
+    for (DependencyEntry entry : dependencies.getEntries()) {
       if (entry instanceof ModuleLibraryEntry) {
         final LibraryOrderEntry orderEntry =
           FlexProjectRootsUtil.findOrderEntry((ModuleLibraryEntry)entry, ModuleRootManager.getInstance(module));
@@ -407,6 +400,16 @@ public class FlexCompilationUtils {
     if (realFile != null && !realFile.isDirectory() && "ane".equalsIgnoreCase(realFile.getExtension())) {
       result.add(realFile);
     }
+  }
+
+  public static String[] getAirExtensionIDs(final Module module, final Dependencies dependencies) {
+    final Collection<VirtualFile> aneFiles = getAneFiles(module, dependencies);
+    final Collection<String> extensionIDs = new ArrayList<String>();
+    for (VirtualFile aneFile : aneFiles) {
+      final String extensionId = getExtensionId(aneFile);
+      ContainerUtil.addIfNotNull(extensionIDs, extensionId);
+    }
+    return extensionIDs.toArray(new String[extensionIDs.size()]);
   }
 
   @Nullable

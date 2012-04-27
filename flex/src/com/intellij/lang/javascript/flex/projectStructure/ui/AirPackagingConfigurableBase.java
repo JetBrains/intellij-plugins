@@ -11,14 +11,12 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
 import com.intellij.openapi.util.ActionCallback;
-import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
 import com.intellij.ui.navigation.History;
 import com.intellij.ui.navigation.Place;
-import com.intellij.util.Consumer;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +43,20 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     }
   }
 
+  public interface AirDescriptorInfoProvider {
+    String getMainClass();
+
+    String getAirVersion();
+
+    String[] getExtensionIDs();
+
+    boolean isAndroidPackagingEnabled();
+
+    boolean isIOSPackagingEnabled();
+
+    void setCustomDescriptorForAndroidAndIOS(String descriptorPath);
+  }
+
   private JPanel myMainPanel;
 
   private AirDescriptorForm myAirDescriptorForm;
@@ -59,30 +71,16 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   private final boolean isAndroid;
   private final boolean isIOS;
 
-  private final Computable<String> myMainClassComputable;
-  private final Computable<String> myAirVersionComputable;
-  private final Computable<Boolean> myAndroidEnabledComputable;
-  private final Computable<Boolean> myIOSEnabledComputable;
-  private final Consumer<String> myCreatedDescriptorConsumer;
+  private final AirDescriptorInfoProvider myAirDescriptorInfoProvider;
 
   private final Disposable myDisposable;
   private final EventDispatcher<UserActivityListener> myUserActivityDispatcher;
   private boolean myFreeze;
 
-  public AirPackagingConfigurableBase(final Module module,
-                                      final T model,
-                                      final Computable<String> mainClassComputable,
-                                      final Computable<String> airVersionComputable,
-                                      final Computable<Boolean> androidEnabledComputable,
-                                      final Computable<Boolean> iosEnabledComputable,
-                                      final Consumer<String> createdDescriptorConsumer) {
+  public AirPackagingConfigurableBase(final Module module, final T model, final AirDescriptorInfoProvider airDescriptorInfoProvider) {
     myModule = module;
     myModel = model;
-    myMainClassComputable = mainClassComputable;
-    myAirVersionComputable = airVersionComputable;
-    myAndroidEnabledComputable = androidEnabledComputable;
-    myIOSEnabledComputable = iosEnabledComputable;
-    myCreatedDescriptorConsumer = createdDescriptorConsumer;
+    myAirDescriptorInfoProvider = airDescriptorInfoProvider;
 
     isAndroid = model instanceof ModifiableAndroidPackagingOptions;
     isIOS = model instanceof ModifiableIosPackagingOptions;
@@ -199,13 +197,15 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     final Runnable descriptorCreator = new Runnable() {
       public void run() {
         final String folderPath = FlexUtils.getContentOrModuleFolderPath(myModule);
-        final String mainClass = myMainClassComputable.compute();
-        final String airVersion = myAirVersionComputable.compute();
-        final boolean androidEnabled = myAndroidEnabledComputable.compute();
-        final boolean iosEnabled = myIOSEnabledComputable.compute();
+        final String mainClass = myAirDescriptorInfoProvider.getMainClass();
+        final String airVersion = myAirDescriptorInfoProvider.getAirVersion();
+        final String[] extensions = myAirDescriptorInfoProvider.getExtensionIDs();
+        final boolean androidEnabled = myAirDescriptorInfoProvider.isAndroidPackagingEnabled();
+        final boolean iosEnabled = myAirDescriptorInfoProvider.isIOSPackagingEnabled();
 
         final CreateAirDescriptorTemplateDialog dialog =
-          new CreateAirDescriptorTemplateDialog(myModule.getProject(), folderPath, mainClass, airVersion, androidEnabled, iosEnabled);
+          new CreateAirDescriptorTemplateDialog(myModule.getProject(), folderPath, mainClass, airVersion, extensions,
+                                                androidEnabled, iosEnabled);
 
         dialog.show();
 
@@ -218,7 +218,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
               Messages.showYesNoDialog(myModule.getProject(), FlexBundle.message("use.same.descriptor.for.android.and.ios"),
                                        CreateAirDescriptorTemplateDialog.TITLE, Messages.getQuestionIcon());
             if (choice == Messages.YES) {
-              myCreatedDescriptorConsumer.consume(descriptorPath);
+              myAirDescriptorInfoProvider.setCustomDescriptorForAndroidAndIOS(descriptorPath);
             }
           }
         }
