@@ -399,8 +399,10 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       assert bc.getNature().isMobilePlatform() : bc.getTargetPlatform();
       assert flashParams.getMobileRunTarget() == FlashRunnerParameters.AirMobileRunTarget.Emulator : flashParams.getMobileRunTarget();
 
-      commandLine.addParameter("-profile");
-      commandLine.addParameter("mobileDevice");
+      if (FlexUtils.getOptionValues(flashParams.getEmulatorAdlOptions(), "profile").isEmpty()) {
+        commandLine.addParameter("-profile");
+        commandLine.addParameter("extendedMobileDevice");
+      }
 
       commandLine.addParameter("-screensize");
       final String adlAlias = flashParams.getEmulator().adlAlias;
