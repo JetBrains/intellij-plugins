@@ -1,11 +1,13 @@
 <idea-plugin version="2">
     <name>AngularJS</name>
     <description>Support for AngularJS</description>
-    <version>0.1</version>
+    <version>0.1.1</version>
     <vendor url="http://johnlindquist.com" email="johnlindquist@gmail.com">johnlindquist</vendor>
     <change-notes><![CDATA[
         <html>
         <dl>
+            <dt>0.1.1</dt>
+            <dd>Changed Autocomplete approach to "provide" custom autocompletes through a provider extension point. I'll revisit a custom DTD after more discussion/thought with other developers.</dd>
             <dt>0.1</dt>
             <dd>Basic ng attribute autocompletion based on an included DTD.</dd>
         </dl>
@@ -25,7 +27,6 @@
     </application-components>
 
     <project-components>
-        <!-- Add your project components here -->
     </project-components>
 
     <actions>
@@ -33,8 +34,7 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
-        <standardResourceProvider implementation="org.angularjs.AngularJSResourceProvider"/>
+        <xml.attributeDescriptorsProvider implementation="org.angularjs.AngularJSCustomAttributeDescriptorsProvider"/>
 
     </extensions>
 </idea-plugin>

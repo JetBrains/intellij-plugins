@@ -1,0 +1,1 @@
+ng-app,ng-bind,ng-bind-html-unsafe,ng-bind-template,ng-class,ng-class-even,ng-class-odd,ng-cloak,ng-controller,ng-form,ng-hide,ng-include,ng-init,ng-non-bindable,ng-pluralize,ng-repeat,ng-show,ng-submit,ng-style,ng-switch,ng-switch-when,ng-switch-default,ng-options,ng-view,ng-transclude,ng-model,ng-list,ng-change,ng-value,ng-required,required
