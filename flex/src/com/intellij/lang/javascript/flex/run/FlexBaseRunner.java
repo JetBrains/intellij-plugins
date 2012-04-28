@@ -41,6 +41,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.ShowSettingsUtil;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
@@ -70,6 +72,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.StringTokenizer;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDescriptorForEmulator;
 
@@ -362,7 +366,12 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                         final BCBasedRunnerParameters params,
                                                         final FlexIdeBuildConfiguration bc,
                                                         final @Nullable String airRuntimePath) throws CantRunException {
+    final Module module = ModuleManager.getInstance(project).findModuleByName(params.getModuleName());
     final Sdk sdk = bc.getSdk();
+
+    if (module == null) {
+      throw new CantRunException(FlexBundle.message("module.not.found", params.getModuleName()));
+    }
     if (sdk == null) {
       throw new CantRunException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), params.getModuleName()));
     }
@@ -376,11 +385,35 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       commandLine.addParameter(airRuntimePath);
     }
 
+    final Collection<VirtualFile> aneFiles = FlexCompilationUtils.getANEFiles(module, bc.getDependencies());
+    if (!aneFiles.isEmpty()) {
+      ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
+        public void run() {
+          final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
+          if (indicator != null) indicator.setIndeterminate(true);
+          FlexCompilationUtils.unzipANEFiles(aneFiles, indicator);
+        }
+      }, "Unzipping ANE files", true, project);
+    }
+
     if (bc.getNature().isDesktopPlatform()) {
       final String adlOptions =
         params instanceof FlashRunnerParameters ? ((FlashRunnerParameters)params).getAdlOptions() : "";
+
+      if (FlexUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
+        commandLine.addParameter("-profile");
+        commandLine.addParameter("extendedDesktop");
+      }
+
       if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
-        commandLine.addParameters(StringUtil.split(adlOptions, " "));
+        for (StringTokenizer tokenizer = new CommandLineTokenizer(adlOptions); tokenizer.hasMoreTokens(); ) {
+          commandLine.addParameter(tokenizer.nextToken());
+        }
+      }
+
+      if (!aneFiles.isEmpty()) {
+        commandLine.addParameter("-extdir");
+        commandLine.addParameter(FlexCompilationUtils.getPathToUnzipANE());
       }
 
       final AirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
@@ -416,10 +449,16 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       final String adlOptions = flashParams.getEmulatorAdlOptions();
       if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
-        commandLine.addParameters(StringUtil.split(adlOptions, " "));
+        for (StringTokenizer tokenizer = new CommandLineTokenizer(adlOptions); tokenizer.hasMoreTokens(); ) {
+          commandLine.addParameter(tokenizer.nextToken());
+        }
       }
 
-      final Module module = ModuleManager.getInstance(project).findModuleByName(flashParams.getModuleName());
+      if (!aneFiles.isEmpty()) {
+        commandLine.addParameter("-extdir");
+        commandLine.addParameter(FlexCompilationUtils.getPathToUnzipANE());
+      }
+
       final String airDescriptorPath = getDescriptorForEmulatorPath(module, bc, flashParams.getAppDescriptorForEmulator());
       commandLine.addParameter(FileUtil.toSystemDependentName(airDescriptorPath));
       commandLine.addParameter(FileUtil.toSystemDependentName(PathUtil.getParentPath(bc.getActualOutputFilePath())));

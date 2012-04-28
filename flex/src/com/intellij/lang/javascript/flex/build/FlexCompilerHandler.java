@@ -195,6 +195,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     quitCompilerShell();
     myCompilerDependenciesCache.clear();
     deleteTempFlexConfigFiles(myProject.getName());
+    FlexCompilationUtils.deleteUnzippedANEFiles();
     myWidget.destroy();
   }
 

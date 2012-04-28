@@ -13,6 +13,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -29,6 +30,7 @@ import com.intellij.openapi.vfs.*;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.io.ZipUtil;
 import com.intellij.util.text.StringTokenizer;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -41,6 +43,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateAirDescriptorTemplateDialog.AirDescriptorOptions;
@@ -370,7 +373,7 @@ public class FlexCompilationUtils {
     }
   }
 
-  public static Collection<VirtualFile> getAneFiles(final Module module, final Dependencies dependencies) {
+  public static Collection<VirtualFile> getANEFiles(final Module module, final Dependencies dependencies) {
     final Collection<VirtualFile> result = new ArrayList<VirtualFile>();
 
     for (DependencyEntry entry : dependencies.getEntries()) {
@@ -379,7 +382,7 @@ public class FlexCompilationUtils {
           FlexProjectRootsUtil.findOrderEntry((ModuleLibraryEntry)entry, ModuleRootManager.getInstance(module));
         if (orderEntry != null) {
           for (VirtualFile libFile : orderEntry.getRootFiles(OrderRootType.CLASSES)) {
-            addIfAne(result, libFile);
+            addIfANE(result, libFile);
           }
         }
       }
@@ -387,7 +390,7 @@ public class FlexCompilationUtils {
         final Library library = FlexProjectRootsUtil.findOrderEntry(module.getProject(), (SharedLibraryEntry)entry);
         if (library != null) {
           for (VirtualFile libFile : library.getFiles((OrderRootType.CLASSES))) {
-            addIfAne(result, libFile);
+            addIfANE(result, libFile);
           }
         }
       }
@@ -395,7 +398,7 @@ public class FlexCompilationUtils {
     return result;
   }
 
-  private static void addIfAne(final Collection<VirtualFile> result, final VirtualFile libFile) {
+  private static void addIfANE(final Collection<VirtualFile> result, final VirtualFile libFile) {
     final VirtualFile realFile = FlexCompilerHandler.getRealFile(libFile);
     if (realFile != null && !realFile.isDirectory() && "ane".equalsIgnoreCase(realFile.getExtension())) {
       result.add(realFile);
@@ -403,7 +406,7 @@ public class FlexCompilationUtils {
   }
 
   public static String[] getAirExtensionIDs(final Module module, final Dependencies dependencies) {
-    final Collection<VirtualFile> aneFiles = getAneFiles(module, dependencies);
+    final Collection<VirtualFile> aneFiles = getANEFiles(module, dependencies);
     final Collection<String> extensionIDs = new ArrayList<String>();
     for (VirtualFile aneFile : aneFiles) {
       final String extensionId = getExtensionId(aneFile);
@@ -424,6 +427,43 @@ public class FlexCompilationUtils {
     catch (IOException e) {
       return null;
     }
+  }
+
+  public static void unzipANEFiles(final Collection<VirtualFile> aneFiles, final ProgressIndicator indicator) {
+    final File baseDir = new File(getPathToUnzipANE());
+    if (!baseDir.exists()) {
+      if (!baseDir.mkdir()) {
+        Logger.getLogger(FlexCompilationUtils.class.getName()).warning("Failed to create " + baseDir.getPath());
+        return;
+      }
+    }
+
+    for (VirtualFile file : aneFiles) {
+      if (indicator != null && indicator.isCanceled()) return;
+
+      final File subDir = new File(baseDir, file.getName());
+      if (!subDir.exists()) {
+        if (!subDir.mkdir()) {
+          Logger.getLogger(FlexCompilationUtils.class.getName()).warning("Failed to create " + baseDir.getPath());
+          continue;
+        }
+      }
+
+      try {
+        ZipUtil.extract(new File(file.getPath()), subDir, null, true);
+      }
+      catch (IOException e) {
+        Logger.getLogger(FlexCompilationUtils.class.getName()).warning("Failed to unzip " + file.getPath() + " to " + baseDir.getPath());
+      }
+    }
+  }
+
+  public static void deleteUnzippedANEFiles() {
+    FileUtil.delete(new File(getPathToUnzipANE()));
+  }
+
+  public static String getPathToUnzipANE() {
+    return FileUtil.getTempDirectory() + File.separator + "IntelliJ_ANE_unzipped";
   }
 
   public static String fixApplicationId(final String appId) {
