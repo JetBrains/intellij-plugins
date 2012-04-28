@@ -35,8 +35,12 @@ public class MxmlTodoIndexer extends XmlTodoIndexer {
                                                                     final DataIndexer<TodoIndexEntry, Integer, FileContent> indexer =
                                                                       IdTableBuilding.getTodoIndexer(file.getFileType(), injectedFile);
                                                                     if (indexer != null) {
-                                                                      map.putAll(indexer.map(
-                                                                        new FileContentImpl(injectedFile, file.getText(), null)));
+                                                                      Map<TodoIndexEntry, Integer> injectedMap = indexer.map(
+                                                                        new FileContentImpl(injectedFile, file.getText(), null));
+                                                                      for(Map.Entry<TodoIndexEntry, Integer> e:injectedMap.entrySet()) {
+                                                                        Integer integer = map.get(e.getKey());
+                                                                        map.put(e.getKey(), integer == null ? e.getValue():e.getValue() + integer);
+                                                                      }
                                                                     }
                                                                   }
                                                                 }, false);
