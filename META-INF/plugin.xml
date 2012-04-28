@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin version="2" url="http://github.com/johnlindquist/angularjs-plugin">
     <name>AngularJS</name>
     <description>Support for AngularJS</description>
     <version>0.1.1</version>
@@ -6,6 +6,8 @@
     <change-notes><![CDATA[
         <html>
         <dl>
+            <dt>0.1.2</dt>
+            <dd>Works with any doctype (not just !doctype html).</dd>
             <dt>0.1.1</dt>
             <dd>Changed Autocomplete approach to "provide" custom autocompletes through a provider extension point. I'll revisit a custom DTD after more discussion/thought with other developers.</dd>
             <dt>0.1</dt>

@@ -30,7 +30,7 @@ import java.util.List;
 public class AngularJSCustomAttributeDescriptorsProvider implements XmlAttributeDescriptorsProvider {
     @Override
     public XmlAttributeDescriptor[] getAttributeDescriptors(XmlTag tag) {
-        if (tag == null || !HtmlUtil.isHtml5Context(tag)) {
+        if (tag == null) {
             return XmlAttributeDescriptor.EMPTY;
         }
         final List<XmlAttributeDescriptor> result = new ArrayList<XmlAttributeDescriptor>();
@@ -72,7 +72,7 @@ public class AngularJSCustomAttributeDescriptorsProvider implements XmlAttribute
 
     @Override
     public XmlAttributeDescriptor getAttributeDescriptor(String attributeName, XmlTag context) {
-        if (context != null && HtmlUtil.isHtml5Context(context) && HtmlUtil.isCustomHtml5Attribute(attributeName)) {
+        if (context != null) {
             return new AnyXmlAttributeDescriptor(attributeName);
         }
         return null;
