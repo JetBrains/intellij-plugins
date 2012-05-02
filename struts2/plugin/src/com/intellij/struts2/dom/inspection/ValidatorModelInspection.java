@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,19 +33,9 @@ public class ValidatorModelInspection extends BasicDomElementsInspection<Validat
   }
 
   @NotNull
-  public String getGroupDisplayName() {
-    return StrutsBundle.message("inspections.group.display.name");
-  }
-
-  @NotNull
   @Override
   public String[] getGroupPath() {
     return new String[]{StrutsBundle.message("inspections.group.path.name"), getGroupDisplayName()};
-  }
-
-  @NotNull
-  public String getDisplayName() {
-    return StrutsBundle.message("inspections.validator.model.display.name");
   }
 
   @NotNull
@@ -53,5 +43,4 @@ public class ValidatorModelInspection extends BasicDomElementsInspection<Validat
   public String getShortName() {
     return "ValidatorModelInspection";
   }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -112,12 +112,12 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
       }
 
       // nested <param>-tags are present
-      if (!((ParamsElement) value).getParams().isEmpty()) {
+      if (!((ParamsElement)value).getParams().isEmpty()) {
         return false;
       }
 
       // unsupported result-type
-      final ResultType resultType = ((HasResultType) value).getEffectiveResultType();
+      final ResultType resultType = ((HasResultType)value).getEffectiveResultType();
       if (resultType == null) {
         return false;
       }
@@ -159,19 +159,9 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
   }
 
   @NotNull
-  public String getGroupDisplayName() {
-    return StrutsBundle.message("inspections.group.display.name");
-  }
-
-  @NotNull
   @Override
   public String[] getGroupPath() {
     return new String[]{StrutsBundle.message("inspections.group.path.name"), getGroupDisplayName()};
-  }
-
-  @NotNull
-  public String getDisplayName() {
-    return StrutsBundle.message("inspections.struts2.model.display.name");
   }
 
   @NotNull
@@ -179,5 +169,4 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
   public String getShortName() {
     return "Struts2ModelInspection";
   }
-
 }
