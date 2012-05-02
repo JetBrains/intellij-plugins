@@ -199,10 +199,11 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
         }
       }).disableUpDownActions().createPanel());
 
-    AnActionButton addButton = ToolbarDecorator.findAddButton(myTreePanel);
     myEditButton = ToolbarDecorator.findEditButton(myTreePanel);
     myRemoveButton = ToolbarDecorator.findRemoveButton(myTreePanel);
 
+    AnActionButton addButton = ToolbarDecorator.findAddButton(myTreePanel);
+    assert addButton != null;
     dumbService.makeDumbAware(addButton.getContextComponent(), this);
     dumbService.makeDumbAware(myEditButton.getContextComponent(), this);
   }
