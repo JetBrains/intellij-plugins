@@ -16,6 +16,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
+@Deprecated
 class JstdConfigFileNode extends Node {
 
   private final BrowserNode myBrowserNode;

@@ -5,6 +5,7 @@ import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.Nullable;
 
+@Deprecated
 class SMTestProxyWithLocation extends SMTestProxy {
 
   private final Location location;

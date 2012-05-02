@@ -11,6 +11,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 
+@Deprecated
 class TestNode extends Node {
 
   private final TestCaseNode myTestCaseNode;

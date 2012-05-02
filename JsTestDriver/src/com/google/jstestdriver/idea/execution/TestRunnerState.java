@@ -54,6 +54,7 @@ import static java.util.concurrent.Executors.newSingleThreadExecutor;
  *
  * @author alexeagle@google.com (Alex Eagle)
  */
+@Deprecated
 class TestRunnerState extends CommandLineState {
 
   private static final ExecutorService testResultReceiverExecutor =
@@ -145,7 +146,6 @@ class TestRunnerState extends CommandLineState {
   protected ProcessHandler startProcess() throws ExecutionException {
     GeneralCommandLine commandLine = JstdClientCommandLineBuilder.buildCommandLine(
         myRunConfiguration.getRunSettings(),
-        testResultPort,
         myConfigVirtualFiles,
         myCoverageFilePath
     );

@@ -10,6 +10,7 @@ import java.util.Map;
  * children nodes.
  * @author alexeagle@google.com (Alex Eagle)
  */
+@Deprecated
 public class BrowserNode extends Node {
 
   private final Map<String, JstdConfigFileNode> myJstdConfigFileMap = Maps.newHashMap();

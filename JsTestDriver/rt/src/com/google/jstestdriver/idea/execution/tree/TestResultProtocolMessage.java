@@ -36,7 +36,7 @@ public class TestResultProtocolMessage implements Serializable {
   public String testName;
   public String browser;
   public String jsTestFilePath;
-  public String testCase = "<unnamed>";
+  public String testCaseName;
   public String stack;
   public String log;
   public String message;
@@ -47,7 +47,7 @@ public class TestResultProtocolMessage implements Serializable {
     TestResultProtocolMessage message = new TestResultProtocolMessage();
     message.jstdConfigFilePath = jstdConfigFile.getAbsolutePath();
     message.phase = "testRun";
-    message.testCase = testResult.getTestCaseName();
+    message.testCaseName = testResult.getTestCaseName();
     message.testName = testResult.getTestName();
     message.browser = testResult.getBrowserInfo().toString();
     message.jsTestFilePath = null;
@@ -73,7 +73,7 @@ public class TestResultProtocolMessage implements Serializable {
     if (jsTestFile != null) {
       message.jsTestFilePath = jsTestFile.getAbsolutePath();
     }
-    message.testCase = testCaseName;
+    message.testCaseName = testCaseName;
     message.testName = testName;
     return message;
   }
@@ -84,10 +84,10 @@ public class TestResultProtocolMessage implements Serializable {
 
   @Nullable
   public String getFullTestName() {
-    if (testCase == null || testName == null) {
+    if (testCaseName == null || testName == null) {
       return null;
     }
-    return testCase + "." + testName;
+    return testCaseName + "." + testName;
   }
 
 }

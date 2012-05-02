@@ -38,6 +38,7 @@ import static com.google.jstestdriver.TestResult.Result;
  *
  * @author alexeagle@google.com (Alex Eagle)
  */
+@Deprecated
 public class RemoteTestListener {
 
   private final TestListenerContext myContext;
@@ -98,10 +99,10 @@ public class RemoteTestListener {
 
     myLastTestCaseParentNode = testCaseParentNode;
 
-    TestCaseNode testCaseNode = jstdConfigFileNode.getTestCaseNode(message.testCase);
+    TestCaseNode testCaseNode = jstdConfigFileNode.getTestCaseNode(message.testCaseName);
     myLastConfigFile = jstdConfigFileNode.getConfigFile();
     if (testCaseNode == null) {
-      testCaseNode = new TestCaseNode(jstdConfigFileNode, message.jsTestFilePath, message.testCase);
+      testCaseNode = new TestCaseNode(jstdConfigFileNode, message.jsTestFilePath, message.testCaseName);
       onSuiteStarted(testCaseParentNode.getTestProxy(), testCaseNode.getTestProxy());
     }
 
@@ -123,7 +124,7 @@ public class RemoteTestListener {
     if (jstdConfigFileNode == null) {
       return null;
     }
-    TestCaseNode testCaseNode = jstdConfigFileNode.getTestCaseNode(message.testCase);
+    TestCaseNode testCaseNode = jstdConfigFileNode.getTestCaseNode(message.testCaseName);
     if (testCaseNode == null) {
       return null;
     }
@@ -143,7 +144,7 @@ public class RemoteTestListener {
         // fixes problem when testCase or test name contains '.'
         startedTestNode.getTestProxy().setFixedName(message.testName);
         TestCaseNode startedTestCaseNode = startedTestNode.getTestCaseNode();
-        startedTestCaseNode.getTestProxy().setFixedName(message.testCase);
+        startedTestCaseNode.getTestProxy().setFixedName(message.testCaseName);
         testNode = startedTestNode;
       } else {
         // jasmine adapter hack

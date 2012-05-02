@@ -5,7 +5,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.inject.internal.ImmutableSet;
 import com.google.jstestdriver.JsTestDriverServer;
 import com.google.jstestdriver.idea.TestRunner;
 import com.google.jstestdriver.idea.config.JstdConfigFileType;
@@ -15,6 +15,7 @@ import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.google.jstestdriver.idea.server.ui.ToolPanel;
+import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -38,13 +39,10 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
 
-import static com.google.common.collect.Lists.transform;
-import static java.io.File.pathSeparator;
-
+@Deprecated
 public class JstdClientCommandLineBuilder {
 
-  private static final Logger log = Logger.getInstance(TestRunnerState.class.getCanonicalName());
-
+  private static final Logger LOG = Logger.getInstance(TestRunnerState.class.getCanonicalName());
   private static final Function<File, String> GET_ABSOLUTE_PATH = new Function<File, String>() {
     @Override
     public String apply(File file) {
@@ -56,7 +54,6 @@ public class JstdClientCommandLineBuilder {
   }
 
   public static GeneralCommandLine buildCommandLine(JstdRunSettings runSettings,
-                                                    int testResultPort,
                                                     List<VirtualFile> configVirtualFiles,
                                                     @Nullable String coverageFilePath) {
     final Map<TestRunner.ParameterKey, String> parameters = Maps.newHashMap();
@@ -64,7 +61,7 @@ public class JstdClientCommandLineBuilder {
         "http://localhost:" + ToolPanel.serverPort :
         runSettings.getServerAddress();
     parameters.put(TestRunner.ParameterKey.SERVER_URL, serverURL);
-    parameters.put(TestRunner.ParameterKey.PORT, String.valueOf(testResultPort));
+    //parameters.put(TestRunner.ParameterKey.PORT, String.valueOf(testResultPort));
     String joinedConfigPaths = joinConfigs(configVirtualFiles);
     parameters.put(TestRunner.ParameterKey.CONFIG_FILE, joinedConfigPaths);
     if (runSettings.getTestType() == TestType.TEST_CASE) {
@@ -77,7 +74,7 @@ public class JstdClientCommandLineBuilder {
     if (coverageFilePath != null) {
       parameters.put(TestRunner.ParameterKey.COVERAGE_OUTPUT_FILE, coverageFilePath);
       if (!runSettings.getFilesExcludedFromCoverage().isEmpty()) {
-        String excludedPaths = StringUtil.join(runSettings.getFilesExcludedFromCoverage(), ",");
+        String excludedPaths = EscapeUtils.join(runSettings.getFilesExcludedFromCoverage(), ',');
         parameters.put(TestRunner.ParameterKey.COVERAGE_EXCLUDED_PATHS, excludedPaths);
       }
     }
@@ -98,6 +95,7 @@ public class JstdClientCommandLineBuilder {
     commandLine.addParameter(buildClasspath());
 
     commandLine.addParameter(TestRunner.class.getName());
+
     for (Map.Entry<TestRunner.ParameterKey, String> param : parameters.entrySet()) {
       commandLine.addParameter("--" + param.getKey().name().toLowerCase() + "=" + param.getValue());
     }
@@ -190,13 +188,11 @@ public class JstdClientCommandLineBuilder {
     return jstdConfigFound.get();
   }
 
+  @NotNull
   private static String buildClasspath() {
-    Set<String> classpath = Sets.newHashSet();
-
-    List<File> files = getClasspath(TestRunner.class, JsTestDriverServer.class);
-    classpath.addAll(transform(files, GET_ABSOLUTE_PATH));
-
-    return Joiner.on(pathSeparator).join(classpath);
+    List<File> classpathRoots = getClasspath(TestRunner.class, JsTestDriverServer.class);
+    Set<String> classpath = ImmutableSet.copyOf(Lists.transform(classpathRoots, GET_ABSOLUTE_PATH));
+    return Joiner.on(File.pathSeparator).join(classpath);
   }
 
   private static List<File> getClasspath(Class<?>... classList) {
@@ -204,11 +200,7 @@ public class JstdClientCommandLineBuilder {
     for (Class<?> clazz : classList) {
       String path = PathUtil.getJarPathForClass(clazz);
       File file = new File(path);
-      if (!file.exists()) {
-        log.warn("Can't find path for " + clazz.getName());
-      } else {
-        classpath.add(file.getAbsoluteFile());
-      }
+      classpath.add(file.getAbsoluteFile());
     }
     return classpath;
   }

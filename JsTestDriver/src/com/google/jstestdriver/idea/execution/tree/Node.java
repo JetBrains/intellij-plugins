@@ -6,6 +6,7 @@ import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 
 import java.util.Collection;
 
+@Deprecated
 abstract class Node {
 
   private SMTestProxyWithPrinterAndLocation myTestProxy;

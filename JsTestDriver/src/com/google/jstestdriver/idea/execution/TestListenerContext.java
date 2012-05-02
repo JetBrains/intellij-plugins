@@ -12,6 +12,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 /**
  * @author Dariusz Kordonski (dariusz.kordonski@googlemail.com)
  */
+@Deprecated
 public final class TestListenerContext {
 
   private final Future<TestRunnerState.ProcessData> processData;

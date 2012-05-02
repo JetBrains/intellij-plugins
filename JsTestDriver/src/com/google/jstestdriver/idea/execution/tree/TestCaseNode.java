@@ -16,6 +16,7 @@ import java.util.Map;
  * In the test results tree UI, this is an element representing a test case result.
  * @author alexeagle@google.com (Alex Eagle)
  */
+@Deprecated
 class TestCaseNode extends Node {
 
   private final JstdConfigFileNode myJstdConfigFileNode;

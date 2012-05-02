@@ -31,24 +31,20 @@ import com.google.jstestdriver.hooks.TestListener;
 import com.google.jstestdriver.idea.coverage.CoverageReport;
 import com.google.jstestdriver.idea.coverage.CoverageSerializationUtils;
 import com.google.jstestdriver.idea.coverage.CoverageSession;
-import com.google.jstestdriver.idea.execution.tree.JstdTestRunnerFailure;
+import com.google.jstestdriver.idea.execution.tree.OutputManager;
 import com.google.jstestdriver.idea.server.JstdServerFetchResult;
 import com.google.jstestdriver.idea.server.JstdServerUtilsRt;
-import com.google.jstestdriver.idea.util.EnumUtils;
+import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.google.jstestdriver.idea.util.JstdConfigParsingUtils;
 import com.google.jstestdriver.output.TestResultHolder;
 import com.google.jstestdriver.runner.RunnerMode;
+import com.google.jstestdriver.util.ManifestLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
 import java.io.*;
-import java.net.*;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
+import java.util.*;
 
 /**
  * Run JSTD in its own process, and stream messages via a socket to a server that lives in the IDEA process,
@@ -58,8 +54,9 @@ import java.util.regex.Pattern;
  */
 public class TestRunner {
 
+  private static final String COVERAGE_MODULE_NAME = "com.google.jstestdriver.coverage.CoverageModule";
+
   public enum ParameterKey {
-    PORT,
     SERVER_URL,
     CONFIG_FILE,
     TEST_CASE,
@@ -69,12 +66,12 @@ public class TestRunner {
   }
 
   private final Settings mySettings;
-  private final ObjectOutput myTestResultProtocolMessageOutput;
+  private final OutputManager myOutputManager;
   private final CoverageSession myCoverageSession;
 
-  public TestRunner(Settings settings, ObjectOutput testResultProtocolMessageOutput) {
+  public TestRunner(@NotNull Settings settings, @NotNull OutputManager outputManager) {
     mySettings = settings;
-    myTestResultProtocolMessageOutput = testResultProtocolMessageOutput;
+    myOutputManager = outputManager;
     File ideCoverageFile = mySettings.getIdeCoverageFile();
     if (ideCoverageFile != null) {
       myCoverageSession = new CoverageSession(ideCoverageFile);
@@ -96,15 +93,7 @@ public class TestRunner {
     try {
       unsafeExecuteConfig(config);
     } catch (Exception e) {
-      String message = formatMessage(null, e);
-      JstdTestRunnerFailure failure = new JstdTestRunnerFailure(
-          JstdTestRunnerFailure.FailureType.SINGLE_JSTD_CONFIG, message, config
-      );
-      try {
-        myTestResultProtocolMessageOutput.writeObject(failure);
-      } catch (IOException ioe) {
-        ioe.printStackTrace();
-      }
+      myOutputManager.printThrowable(e);
     }
   }
 
@@ -122,9 +111,7 @@ public class TestRunner {
     executeTestCase(config, testCaseName);
   }
 
-  @SuppressWarnings("UseOfSystemOutOrSystemErr")
   private void executeTestCase(@NotNull File config, @NotNull String testCaseName) {
-    PrintStream oldSystemOut = System.out;
     PrintStream nullSystemOut = new PrintStream(new NullOutputStream());
     try {
       System.setOut(nullSystemOut);
@@ -132,7 +119,7 @@ public class TestRunner {
       runTests(config, new String[]{"--tests", testCaseName}, false);
     } finally {
       nullSystemOut.close();
-      System.setOut(oldSystemOut);
+      System.setOut(myOutputManager.getSystemOutStream());
     }
   }
 
@@ -142,7 +129,6 @@ public class TestRunner {
 
     final ParsedConfiguration parsedConfiguration = JstdConfigParsingUtils.parseConfiguration(configFile);
     builder.setDefaultConfiguration(parsedConfiguration);
-    builder.setPort(mySettings.getPort());
     builder.withPluginInitializer(new PluginInitializer() {
       @Override
       public Module initializeModule(Flags flags, Configuration config) {
@@ -152,7 +138,7 @@ public class TestRunner {
             Multibinder<TestListener> testListeners = Multibinder.newSetBinder(binder(), TestListener.class);
             testListeners.addBinding().to(TestResultHolder.class);
             testListeners.addBinding().toInstance(new IdeaTestListener(
-              myTestResultProtocolMessageOutput,
+              myOutputManager,
               configFile,
               parsedConfiguration.getBasePaths()
             ));
@@ -171,9 +157,6 @@ public class TestRunner {
     boolean runCoverage = false;
     if (myCoverageSession != null && !dryRun) {
       emptyOutputDir = createTempDir();
-      for (FileInfo info : parsedConfiguration.getFilesList()) {
-        info.setTimestamp(info.getTimestamp() + 1);
-      }
       if (emptyOutputDir != null) {
         flagArgs.add("--testOutput");
         flagArgs.add(emptyOutputDir.getAbsolutePath());
@@ -182,6 +165,7 @@ public class TestRunner {
         coverageExcludedFiles.addAll(mySettings.getFilesExcludedFromCoverage());
         PluginInitializer coverageInitializer = getCoverageInitializer(coverageExcludedFiles);
         if (coverageInitializer != null) {
+          wipeCoveragePlugin(parsedConfiguration);
           builder.withPluginInitializer(coverageInitializer);
           builder.withPluginInitializer(new DependenciesTouchFix());
           runCoverage = true;
@@ -193,25 +177,47 @@ public class TestRunner {
     JsTestDriver jstd = builder.build();
     jstd.runConfiguration();
     if (runCoverage) {
-      File[] coverageFiles = emptyOutputDir.listFiles(new FilenameFilter() {
+      File[] coverageReportFiles = emptyOutputDir.listFiles(new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
           return name.endsWith("-coverage.dat");
         }
       });
-      if (coverageFiles != null && coverageFiles.length == 1) {
+      if (coverageReportFiles != null && coverageReportFiles.length == 1) {
         try {
-          CoverageReport coverageReport = CoverageSerializationUtils.readLCOV(coverageFiles[0]);
+          CoverageReport coverageReport = CoverageSerializationUtils.readLCOV(coverageReportFiles[0]);
           for (String excludedPath : coverageExcludedFiles) {
             coverageReport.clearReportByFilePath(excludedPath);
           }
           myCoverageSession.mergeReport(coverageReport);
         }
         catch (Exception e) {
-          e.printStackTrace();
+          myOutputManager.printThrowable(e);
         }
       }
     }
+  }
+
+  private static void wipeCoveragePlugin(@NotNull ParsedConfiguration configuration) {
+    ManifestLoader manifestLoader = new ManifestLoader();
+    Iterator<Plugin> iterator = configuration.getPlugins().iterator();
+    while (iterator.hasNext()) {
+      Plugin plugin = iterator.next();
+      if (isCoveragePlugin(plugin, manifestLoader)) {
+        iterator.remove();
+      }
+    }
+  }
+
+  private static boolean isCoveragePlugin(Plugin plugin, ManifestLoader loader) {
+    try {
+      String moduleName = plugin.getModuleName(loader);
+      if (COVERAGE_MODULE_NAME.equals(moduleName)) {
+        return true;
+      }
+    } catch (Exception ignored) {
+    }
+    return false;
   }
 
   @NotNull
@@ -272,45 +278,21 @@ public class TestRunner {
     }
   }
 
-  private static String formatMessage(@Nullable String message, @NotNull Throwable t) {
-    StringWriter sw = new StringWriter();
-    PrintWriter pw = new PrintWriter(sw);
-    try {
-      t.printStackTrace(pw);
-    } finally {
-      pw.close();
-    }
-    if (message == null) {
-      return sw.toString();
-    } else {
-      return message + "\n\n" + sw.toString();
-    }
-  }
-
   public static void main(String[] args) throws Exception {
     Map<ParameterKey, String> paramMap = parseParams(args);
     Settings settings = Settings.build(paramMap);
-    //ObjectOutput testResultProtocolMessageOutput = new ConsoleObjectOutput();
-    ObjectOutput testResultProtocolMessageOutput = fetchSocketObjectOutput(settings.getPort());
-    if (!validateServer(testResultProtocolMessageOutput, settings)) {
+    OutputManager outputManager = new OutputManager();
+    if (!validateServer(settings, outputManager)) {
       return;
     }
     try {
-      new TestRunner(settings, testResultProtocolMessageOutput).executeAll();
+      new TestRunner(settings, outputManager).executeAll();
     } catch (Exception ex) {
-      String message = formatMessage("JsTestDriver crashed!", ex);
-      testResultProtocolMessageOutput.writeObject(new JstdTestRunnerFailure(JstdTestRunnerFailure.FailureType.WHOLE_TEST_RUNNER, message, null));
-    } finally {
-      try {
-        testResultProtocolMessageOutput.close();
-      } catch (Exception e) {
-        System.err.println("Exception occurred while closing testResultProtocolMessageOutput");
-        e.printStackTrace();
-      }
+      outputManager.printThrowable("JsTestDriver crashed!", ex);
     }
   }
 
-  static boolean validateServer(ObjectOutput testResultProtocolMessageOutput, Settings settings) throws IOException {
+  private static boolean validateServer(@NotNull Settings settings, @NotNull OutputManager outputManager) throws IOException {
     String serverUrl = settings.getServerUrl();
     JstdServerFetchResult fetchResult = JstdServerUtilsRt.syncFetchServerInfo(serverUrl);
     String message = null;
@@ -321,80 +303,28 @@ public class TestRunner {
       message = "No captured browsers found.\n" +
                 "To capture browser open '" + serverUrl + "' in browser.";
     }
-    if (message == null) {
-      return true;
+    if (message != null) {
+      outputManager.printErrorMessage(message);
+      return false;
     }
-    testResultProtocolMessageOutput.writeObject(new JstdTestRunnerFailure(JstdTestRunnerFailure.FailureType.WHOLE_TEST_RUNNER, message, null));
-    return false;
+    return true;
   }
 
   private static Map<ParameterKey, String> parseParams(String[] args) {
     Map<ParameterKey, String> params = Maps.newHashMap();
     for (String arg : args) {
-      int delimiterIndex = arg.indexOf('=');
-      if (delimiterIndex != -1) {
-        String key = arg.substring(0, delimiterIndex);
-        String value = arg.substring(delimiterIndex + 1, arg.length());
-        if (key.startsWith("--")) {
-          key = key.substring(2);
-          ParameterKey parameterKey = EnumUtils.findEnum(ParameterKey.class, key, false);
-          if (parameterKey != null) {
-            params.put(parameterKey, value);
-          }
-        }
+      List<String> elements = EscapeUtils.split(arg, '=');
+      if (arg.startsWith("--") && elements.size() == 2) {
+        String key = elements.get(0).substring(2);
+        String value = elements.get(1);
+        ParameterKey parameterKey = ParameterKey.valueOf(key.toUpperCase());
+        params.put(parameterKey, value);
       }
     }
     return params;
   }
 
-  @NotNull
-  private static ObjectOutput fetchSocketObjectOutput(int port) {
-    try {
-      SocketAddress endpoint = new InetSocketAddress(InetAddress.getByName(null), port);
-      final Socket socket = connectToServer(endpoint, 2 * 1000, 5);
-      try {
-        return new ObjectOutputStream(socket.getOutputStream()) {
-          @Override
-          public void close() throws IOException {
-            socket.close(); // socket's input and output streams are closed too
-          }
-        };
-      } catch (IOException inner) {
-        closeSocketSilently(socket);
-        throw inner;
-      }
-    } catch (IOException e) {
-      throw new RuntimeException("Could not connect to IDE, address: " +
-          "'localhost:" + port + "'", e);
-    }
-  }
-
-  private static Socket connectToServer(SocketAddress endpoint, int connectTimeoutMillis,
-                                        int retries) throws IOException {
-    IOException saved = null;
-    for (int i = 0; i < retries; i++) {
-      Socket socket = new Socket();
-      try {
-        socket.connect(endpoint, connectTimeoutMillis);
-        return socket;
-      } catch (IOException e) {
-        closeSocketSilently(socket);
-        saved = e;
-      }
-    }
-    throw saved;
-  }
-
-  private static void closeSocketSilently(Socket socket) {
-    try {
-      socket.close();
-    } catch (Exception e) {
-      // swallow exception
-    }
-  }
-
   private static class Settings {
-    private final int myPort;
     private final String myServerUrl;
     private final List<File> myConfigFiles;
     private final String myTestCaseName;
@@ -402,25 +332,20 @@ public class TestRunner {
     private final File myIdeCoverageFile;
     private final ImmutableList<String> myFilesExcludedFromCoverage;
 
-    private Settings(int port,
-                     @NotNull String serverUrl,
-                     @NotNull List<File> configFiles,
-                     @NotNull String testCaseName,
-                     @NotNull String testMethodName,
-                     @Nullable File ideCoverageFile,
-                     @NotNull List<String> filesExcludedFromCoverage)
+    private Settings(
+      @NotNull String serverUrl,
+      @NotNull List<File> configFiles,
+      @NotNull String testCaseName,
+      @NotNull String testMethodName,
+      @Nullable File ideCoverageFile,
+      @NotNull List<String> filesExcludedFromCoverage)
     {
-      myPort = port;
       myServerUrl = serverUrl;
       myConfigFiles = configFiles;
       myTestCaseName = testCaseName;
       myTestMethodName = testMethodName;
       myIdeCoverageFile = ideCoverageFile;
       myFilesExcludedFromCoverage = ImmutableList.copyOf(filesExcludedFromCoverage);
-    }
-
-    public int getPort() {
-      return myPort;
     }
 
     @NotNull
@@ -455,22 +380,18 @@ public class TestRunner {
 
     @NotNull
     private static Settings build(@NotNull Map<ParameterKey, String> parameters) {
-      int port = Integer.parseInt(parameters.get(ParameterKey.PORT));
       String serverUrl = parameters.get(ParameterKey.SERVER_URL);
       if (serverUrl == null) {
         throw new RuntimeException("server_url parameter must be specified");
       }
       String configFilesStr = notNullize(parameters.get(ParameterKey.CONFIG_FILE));
-      String[] paths = configFilesStr.split(Pattern.quote(","));
+      List<String> paths = EscapeUtils.split(configFilesStr, ',');
       List<File> configFiles = Lists.newArrayList();
-      for (String urlEncodedPath : paths) {
-        try {
-          String path = URLDecoder.decode(urlEncodedPath, "UTF-8");
-          File file = new File(path);
-          if (file.isFile()) {
-            configFiles.add(file);
-          }
-        } catch (UnsupportedEncodingException ignored) {}
+      for (String path : paths) {
+        File file = new File(path);
+        if (file.isFile()) {
+          configFiles.add(file);
+        }
       }
       if (configFiles.isEmpty()) {
         throw new RuntimeException("No valid config files found");
@@ -479,16 +400,13 @@ public class TestRunner {
       String testMethodName = notNullize(parameters.get(ParameterKey.TEST_METHOD));
       String coverageFilePath = notNullize(parameters.get(ParameterKey.COVERAGE_OUTPUT_FILE));
       File ideCoverageFile = null;
-      List<String> excludedPathList = Collections.emptyList();
+      List<String> excludedPaths = Collections.emptyList();
       if (!coverageFilePath.isEmpty()) {
         ideCoverageFile = new File(coverageFilePath);
         String joinedPaths = notNullize(parameters.get(ParameterKey.COVERAGE_EXCLUDED_PATHS));
-        String[] excludedPaths = joinedPaths.split(",");
-        if (excludedPaths != null) {
-          excludedPathList = Arrays.asList(excludedPaths);
-        }
+        excludedPaths = EscapeUtils.split(joinedPaths, ',');
       }
-      return new Settings(port, serverUrl, configFiles, testCaseName, testMethodName, ideCoverageFile, excludedPathList);
+      return new Settings(serverUrl, configFiles, testCaseName, testMethodName, ideCoverageFile, excludedPaths);
     }
   }
 
@@ -539,7 +457,7 @@ public class TestRunner {
     }
   }
 
-  public final class NullOutputStream extends OutputStream {
+  private static final class NullOutputStream extends OutputStream {
 
     /** Discards the specified byte. */
     @Override public void write(int b) {

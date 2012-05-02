@@ -30,6 +30,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import org.jdom.Element;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * One configured instance of the Run Configuration. The user can create several different configs
@@ -89,7 +91,8 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
     catch (RuntimeConfigurationException e) {
       throw new ExecutionException(e.getMessage());
     }
-    return new TestRunnerState(this, getProject(), env, coverageFilePath);
+    List<VirtualFile> configs = JstdSettingsUtil.collectJstdConfigs(getProject(), myRunSettings);
+    return new JstdTestRunnerCommandLineState(getProject(), env, myRunSettings, configs, coverageFilePath);
   }
 
   public void setRunSettings(@NotNull JstdRunSettings runSettings) {
