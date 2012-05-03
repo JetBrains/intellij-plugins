@@ -1631,7 +1631,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private class AddSharedLibraryAction extends AddItemPopupAction {
 
     public AddSharedLibraryAction(int index) {
-      super(index, "Shared Library...", null);
+      super(index, FlexBundle.message("add.shared.library.dependency.action.text"), null);
     }
 
     public void run() {

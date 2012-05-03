@@ -1,14 +1,13 @@
 package com.intellij.lang.javascript.flex.library;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.openapi.application.ApplicationNamesInfo;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.ui.Util;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.libraries.ui.AttachRootButtonDescriptor;
-import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
-import com.intellij.openapi.roots.libraries.ui.OrderRootTypePresentation;
-import com.intellij.openapi.roots.libraries.ui.RootDetector;
+import com.intellij.openapi.roots.libraries.ui.*;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.DefaultLibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.util.IconLoader;
@@ -33,12 +32,22 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
 
   @NotNull
   @Override
+  public LibraryRootsDetector getRootsDetector() {
+    return new FlexLibraryRootsDetector();
+  }
+
+  @NotNull
+  @Override
   public List<? extends RootDetector> getRootDetectors() {
-    return Arrays.asList(new FlexSwcLibrariesRootDetector(),
-                         new FlexDocsRootDetector(),
-                         new FlexRawAsLibrariesRootDetector(),
-                         new FlexSourcesRootDetector(),
-                         new FlexSwcFoldersRootDetector());
+    throw new UnsupportedOperationException("should not be called");
+  }
+
+  @NotNull
+  @Override
+  public FileChooserDescriptor createAttachFilesChooserDescriptor() {
+    FileChooserDescriptor d = super.createAttachFilesChooserDescriptor();
+    d.setDescription(FlexBundle.message("choose.library.files.description", ApplicationNamesInfo.getInstance().getFullProductName()));
+    return d;
   }
 
   @NotNull
