@@ -49,6 +49,7 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.*;
@@ -182,24 +183,39 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   private abstract static class MyTableItem {
     @Nullable
-    public abstract Icon getIcon();
+    public Icon getIcon() {
+      return PlatformIcons.LIBRARY_ICON;
+    }
 
-    public abstract boolean showLinkage();
+    public boolean showLinkage() {
+      return true;
+    }
 
     public abstract boolean isLinkageEditable();
+
+    public boolean isANE() {
+      return false;
+    }
 
     public abstract LinkageType getLinkageType();
 
     public abstract void setLinkageType(LinkageType linkageType);
 
-    public abstract void onDoubleClick();
+    public void onDoubleClick() {
+    }
 
     @Nullable
-    public abstract ModifiableDependencyEntry apply(ModifiableDependencies dependencies);
+    public ModifiableDependencyEntry apply(ModifiableDependencies dependencies) {
+      return null;
+    }
 
-    public abstract boolean isModified(DependencyEntry entry);
+    public boolean isModified(DependencyEntry entry) {
+      return false;
+    }
 
-    public abstract boolean canEdit();
+    public boolean canEdit() {
+      return false;
+    }
 
     public abstract Location.TableEntry getLocation();
 
@@ -339,18 +355,17 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    public Icon getIcon() {
-      return PlatformIcons.LIBRARY_ICON;
-    }
-
-    @Override
-    public boolean showLinkage() {
-      return true;
-    }
-
-    @Override
     public boolean isLinkageEditable() {
-      return true;
+      return !isANE();
+    }
+
+    public boolean isANE() {
+      final Library library = orderEntry == null ? null : orderEntry.getLibrary();
+      final VirtualFile[] files = library == null ? VirtualFile.EMPTY_ARRAY : library.getFiles(OrderRootType.CLASSES);
+      for (VirtualFile file : files) {
+        if ("ane".equalsIgnoreCase(file.getExtension())) return true;
+      }
+      return false;
     }
 
     @Override
@@ -436,18 +451,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    public Icon getIcon() {
-      return PlatformIcons.LIBRARY_ICON;
-    }
-
-    @Override
-    public boolean showLinkage() {
-      return true;
-    }
-
-    @Override
     public boolean isLinkageEditable() {
-      return true;
+      return !isANE();
+    }
+
+    public boolean isANE() {
+      final VirtualFile[] files = liveLibrary == null ? VirtualFile.EMPTY_ARRAY : liveLibrary.getFiles(OrderRootType.CLASSES);
+      for (VirtualFile file : files) {
+        if ("ane".equalsIgnoreCase(file.getExtension())) return true;
+      }
+      return false;
     }
 
     @Override
@@ -549,23 +562,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       throw new UnsupportedOperationException();
     }
 
-    public void onDoubleClick() {
-      // ignore
-    }
-
-    public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
-      // ignore
-      return null;
-    }
-
-    public boolean isModified(final DependencyEntry entry) {
-      return false;
-    }
-
-    public boolean canEdit() {
-      return false;
-    }
-
     @Override
     public Location.TableEntry getLocation() {
       return Location.TableEntry.SDK_ENTRY;
@@ -587,16 +583,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    public Icon getIcon() {
-      return PlatformIcons.LIBRARY_ICON;
-    }
-
-    @Override
-    public boolean showLinkage() {
-      return true;
-    }
-
-    @Override
     public boolean isLinkageEditable() {
       return false;
     }
@@ -611,22 +597,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       throw new UnsupportedOperationException();
     }
 
-    public void onDoubleClick() {
-      // ignore
-    }
-
-    public ModifiableDependencyEntry apply(final ModifiableDependencies dependencies) {
-      return null; // ignore
-    }
-
-    public boolean isModified(final DependencyEntry entry) {
-      return false;
-    }
-
-    public boolean canEdit() {
-      return false;
-    }
-
     @Override
     public Location.TableEntry getLocation() {
       return Location.TableEntry.forSdkRoot(url);
@@ -635,29 +605,29 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   private static final DefaultTableCellRenderer LINKAGE_TYPE_RENDERER = new DefaultTableCellRenderer() {
     @Override
-    public Component getTableCellRendererComponent(JTable table,
-                                                   Object value,
-                                                   boolean isSelected,
-                                                   boolean hasFocus,
-                                                   int row,
-                                                   int column) {
-      Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-      ((JLabel)component).setText(((LinkageType)value).getShortText());
-      ((JLabel)component).setHorizontalAlignment(SwingConstants.CENTER);
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      final JLabel component = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      component.setText(((LinkageType)value).getShortText());
+      component.setHorizontalAlignment(SwingConstants.CENTER);
+      return component;
+    }
+  };
+
+  private static final DefaultTableCellRenderer ANE_RENDERER = new DefaultTableCellRenderer() {
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      final JLabel component = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      component.setText("ANE");
+      component.setHorizontalAlignment(SwingConstants.CENTER);
       return component;
     }
   };
 
   private static final DefaultTableCellRenderer EMPTY_RENDERER = new DefaultTableCellRenderer() {
     @Override
-    public Component getTableCellRendererComponent(JTable table,
-                                                   Object value,
-                                                   boolean isSelected,
-                                                   boolean hasFocus,
-                                                   int row,
-                                                   int column) {
-      Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-      ((JLabel)component).setText("");
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      final JLabel component = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      component.setText("");
       return component;
     }
   };
@@ -697,7 +667,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @Override
     public TableCellRenderer getRenderer(MyTableItem item) {
-      return item.showLinkage() ? LINKAGE_TYPE_RENDERER : EMPTY_RENDERER;
+      return item.showLinkage() ? item.isANE() ? ANE_RENDERER
+                                               : LINKAGE_TYPE_RENDERER
+                                : EMPTY_RENDERER;
     }
 
     @Override
