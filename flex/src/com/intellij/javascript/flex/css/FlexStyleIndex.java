@@ -45,7 +45,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
 
   public static final ID<String, Set<FlexStyleIndexInfo>> INDEX_ID = ID.create("js.style.index");
 
-  private static final int VERSION = 15;
+  private static final int VERSION = 16;
 
   private final KeyDescriptor<String> myKeyDescriptor = new EnumeratorStringDescriptor();
 

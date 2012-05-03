@@ -4,6 +4,7 @@ import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.indexing.FileBasedIndex;
 
@@ -25,7 +26,11 @@ class FlexInputFilter implements FileBasedIndex.InputFilter {
 
   public boolean acceptInput(final VirtualFile file) {
     FileType type = file.getFileType();
-    if (type == ActionScriptFileType.INSTANCE || type == FlexApplicationComponent.SWF_FILE_TYPE) return true;
+    if (type == ActionScriptFileType.INSTANCE ||
+        (type == FlexApplicationComponent.SWF_FILE_TYPE && file.getPath().endsWith(JarFileSystem.JAR_SEPARATOR + file.getName()))) {
+      return true;
+    }
+
     return JavaScriptSupportLoader.isFlexMxmFile(file);
   }
 }

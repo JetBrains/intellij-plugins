@@ -20,11 +20,11 @@ import java.io.ByteArrayInputStream;
  *         Time: 3:49:24 PM
  */
 public class SwfFileStubBuilder implements BinaryFileStubBuilder {
-  private static final int VERSION = 1;
+  private static final int VERSION = 2;
 
   public boolean acceptsFile(final VirtualFile file) {
     return file.getFileType() == FlexApplicationComponent.SWF_FILE_TYPE &&
-           file.getPath().indexOf(JarFileSystem.JAR_SEPARATOR) != -1;
+           file.getPath().endsWith(JarFileSystem.JAR_SEPARATOR + file.getName());
   }
 
   public StubElement buildStubTree(final VirtualFile file, final byte[] content, final Project project) {
