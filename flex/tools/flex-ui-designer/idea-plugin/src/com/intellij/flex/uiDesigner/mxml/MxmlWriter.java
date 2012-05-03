@@ -86,9 +86,14 @@ public class MxmlWriter {
       problemsHolder.setCurrentFile(virtualFile);
 
       XmlTag tag = psiFile.getRootTag();
-      assert tag != null;
-      ClassBackedElementDescriptor descriptor = (ClassBackedElementDescriptor)tag.getDescriptor();
-      assert descriptor != null;
+      XmlElementDescriptor untypedDescriptor = tag == null ? null : tag.getDescriptor();
+      final ClassBackedElementDescriptor descriptor;
+      if (untypedDescriptor instanceof ClassBackedElementDescriptor) {
+        descriptor = (ClassBackedElementDescriptor)untypedDescriptor;
+      }
+      else {
+        return null;
+      }
 
       final Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> effectiveClassInfo;
       try {

@@ -31,7 +31,35 @@
       </library>
     </orderEntry>
     <orderEntry type="library" scope="TEST" name="junit 4 without hamcrest and hamcrest 3" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="idea libs" level="project" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library name="idea libs">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../../../../out/classes/production/flex" />
+          <root url="file://$MODULE_DIR$/../../../../out/classes/production/flex-plugin" />
+          <root url="file://$MODULE_DIR$/../../../../out/classes/production/ultimate-verifier" />
+          <root url="file://$MODULE_DIR$/../../../../out/classes/production/JavaScriptLanguage" />
+          <root url="file://$MODULE_DIR$/../../../../out/classes/production/properties" />
+          <root url="file://$MODULE_DIR$/../../../../out/classes/production/CSS" />
+          <root url="file://$MODULE_DIR$/../../../../out/classes/production/css-api" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../../community/platform/platform-api/src" />
+          <root url="file://$MODULE_DIR$/../../../../community/platform/platform-impl/src" />
+          <root url="file://$MODULE_DIR$/../../../../community/platform/platform-main/src" />
+          <root url="file://$MODULE_DIR$/../../../../community/platform/core-api/src" />
+          <root url="file://$MODULE_DIR$/../../../../community/platform/core-impl/src" />
+          <root url="file://$MODULE_DIR$/../../../pluginSrc" />
+          <root url="file://$MODULE_DIR$/../../../src" />
+          <root url="file://$MODULE_DIR$/../../../../plugins/JavaScriptLanguage/src" />
+          <root url="file://$MODULE_DIR$/../../../../CSS/src" />
+          <root url="file://$MODULE_DIR$/../../../../CSS/css-api" />
+          <root url="file://$MODULE_DIR$/../../../../community/plugins/properties/src" />
+          <root url="jar://$MODULE_DIR$/../../../../community/lib/src/trove4j_src.jar!/src" />
+          <root url="jar://$MODULE_DIR$/../../../../community/lib/src/trove4j_src.jar!/util/src" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>
 
