@@ -25,10 +25,7 @@
 
 package org.osmorc.settings;
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.*;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
@@ -50,7 +47,7 @@ import java.util.List;
 @State(
   name = "Osmorc",
   storages = {@Storage(
-    file = "$APP_CONFIG$/osmorc.xml")})
+    file = StoragePathMacros.APP_CONFIG + "/osmorc.xml")})
 public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
   private List<FrameworkInstanceDefinition> _frameworkInstanceDefinitions = new ArrayList<FrameworkInstanceDefinition>();
   private List<LibraryBundlificationRule> _libraryBundlificationRules = new ArrayList<LibraryBundlificationRule>();
