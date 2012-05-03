@@ -82,7 +82,7 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
 
   @NotNull
   public ProcessingItem[] getProcessingItems(final CompileContext context) {
-    return ApplicationManager.getApplication().runReadAction(new Computable<ProcessingItem[]>() {
+    ProcessingItem[] items = ApplicationManager.getApplication().runReadAction(new Computable<ProcessingItem[]>() {
       public ProcessingItem[] compute() {
         try {
           final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs =
@@ -106,6 +106,11 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
         }
       }
     });
+
+    if (items.length == 0 && CompilerPathsEx.CLEAR_ALL_OUTPUTS_KEY.get(context.getCompileScope()) == Boolean.TRUE) {
+      return new ProcessingItem[]{new FakeProcessingItem(context.getProject().getBaseDir())};
+    }
+    return items;
   }
 
   private static void appendItemsForModule(final Collection<FlexResourceProcessingItem> processingItems, final Module module) {
@@ -183,6 +188,10 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
     final Collection<File> filesToRefresh = new THashSet<File>();
 
     for (ProcessingItem item : items) {
+      if (item instanceof FakeProcessingItem) {
+        continue;
+      }
+
       final VirtualFile sourceVFile = item.getFile();
       final File sourceFile = new File(sourceVFile.getPath());
 
@@ -274,6 +283,27 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
         out.writeUTF(pathAndTimestamp.first);
         out.writeLong(pathAndTimestamp.second);
       }
+    }
+  }
+
+
+  private static class FakeProcessingItem implements ProcessingItem {
+
+    private final VirtualFile myFile;
+
+    private FakeProcessingItem(final VirtualFile file) {
+      myFile = file;
+    }
+
+    @NotNull
+    @Override
+    public VirtualFile getFile() {
+      return myFile;
+    }
+
+    @Override
+    public ValidityState getValidityState() {
+      return new EmptyValidityState();
     }
   }
 }
