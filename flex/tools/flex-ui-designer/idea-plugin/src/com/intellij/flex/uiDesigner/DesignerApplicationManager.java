@@ -44,6 +44,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiTreeChangeAdapter;
 import com.intellij.psi.PsiTreeChangeEvent;
 import com.intellij.psi.css.CssFile;
+import com.intellij.psi.xml.XmlComment;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
@@ -587,7 +588,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
     private void update(final PsiTreeChangeEvent event) {
       PsiFile psiFile = event.getFile();
-      if (psiFile == null) {
+      if (psiFile == null || event.getParent() instanceof XmlComment) {
         return;
       }
 

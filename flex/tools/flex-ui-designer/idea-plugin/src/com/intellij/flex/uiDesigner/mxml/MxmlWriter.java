@@ -97,7 +97,12 @@ public class MxmlWriter {
 
       final Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> effectiveClassInfo;
       try {
-        effectiveClassInfo = MxmlUtil.computeEffectiveClass(tag, descriptor.getDeclaration(), projectComponentReferenceCounter, true);
+        final PsiElement declaration = descriptor.getDeclaration();
+        if (declaration == null) {
+          return null;
+        }
+
+        effectiveClassInfo = MxmlUtil.computeEffectiveClass(tag, declaration, projectComponentReferenceCounter, true);
       }
       catch (InvalidPropertyException e) {
         problemsHolder.add(e);
