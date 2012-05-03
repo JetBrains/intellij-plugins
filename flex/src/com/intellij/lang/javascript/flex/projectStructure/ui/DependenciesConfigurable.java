@@ -837,7 +837,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           public void run(AnActionButton button) {
             addItem(button);
           }
-        }).setRemoveAction(new AnActionButtonRunnable() {
+        }).setAddActionName(FlexBundle.message("add.dependency.action.name"))
+        .setRemoveAction(new AnActionButtonRunnable() {
         @Override
         public void run(AnActionButton anActionButton) {
           removeSelection();
@@ -1094,7 +1095,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   private void addItem(AnActionButton button) {
     initPopupActions();
     final JBPopup popup = JBPopupFactory.getInstance().createListPopup(
-      new BaseListPopupStep<AddItemPopupAction>(null, myPopupActions) {
+      new BaseListPopupStep<AddItemPopupAction>(FlexBundle.message("add.dependency.popup.title"), myPopupActions) {
         @Override
         public Icon getIconFor(AddItemPopupAction aValue) {
           return aValue.getIcon();
