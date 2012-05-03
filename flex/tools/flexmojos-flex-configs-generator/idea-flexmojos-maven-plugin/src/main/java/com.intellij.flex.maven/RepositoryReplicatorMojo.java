@@ -5,6 +5,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MavenPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -63,12 +64,13 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
 
   @Requirement
   private RepositorySystem repositorySystem;
+  private int localRepositoryBasedirLength;
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     final String localRepositoryBasedir = session.getLocalRepository().getBasedir();
-    final File localRepositoryFile = new File(localRepositoryBasedir);
-    final int localRepositoryBasedirLength = localRepositoryBasedir.length();
+    File localRepositoryFile = new File(localRepositoryBasedir);
+    localRepositoryBasedirLength = localRepositoryBasedir.length();
 
     try {
       final PluginDescriptor pluginDescriptor = pluginManager.getPluginDescriptor(session.getTopLevelProject().getPlugin("org.sonatype.flexmojos:flexmojos-maven-plugin"), session.getCurrentProject().getRemotePluginRepositories(), session.getRepositorySession());
@@ -105,12 +107,30 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
     for (MavenProject project : session.getProjects()) {
       // skip projects artifacts
       copiedArtifacts.add(project.getArtifact());
-      copyProjectArtifacts(localRepositoryFile, localRepositoryBasedirLength, project);
+      try {
+        copyProjectArtifacts(localRepositoryFile, project);
+      }
+      catch (IOException e) {
+        throw new MojoExecutionException("", e);
+      }
+
+      for (Plugin plugin : project.getBuildPlugins()) {
+        if (plugin.getGroupId().startsWith("org.apache.maven")) {
+          continue;
+        }
+
+        try {
+          resolveAndCopyArtifact(repositorySystem.createPluginArtifact(plugin));
+        }
+        catch (IOException e) {
+          throw new MojoExecutionException("", e);
+        }
+      }
     }
 
     for (MavenProject project : session.getProjects()) {
       try {
-        copyParentPom(project.getParent(), localRepositoryBasedirLength);
+        copyParentPom(project.getParent());
       }
       catch (IOException e) {
         throw new MojoExecutionException("", e);
@@ -118,14 +138,9 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
     }
   }
 
-  private void copyParentPom(MavenProject project, int localRepositoryBasedirLength) throws IOException, MojoExecutionException {
-    if (project == null) {
-      return;
-    }
-
-    Artifact artifact = project.getArtifact();
+  private boolean resolveAndCopyArtifact(Artifact artifact) throws MojoExecutionException, IOException {
     if (copiedArtifacts.contains(artifact)) {
-      return;
+      return true;
     }
 
     copiedArtifacts.add(artifact);
@@ -148,9 +163,22 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
       }
     }
 
-    copyArtifact(artifactFile, artifactFile.getPath().substring(localRepositoryBasedirLength));
+    return copyArtifact(artifactFile, artifactFile.getPath().substring(localRepositoryBasedirLength));
+  }
 
-    copyParentPom(project.getParent(), localRepositoryBasedirLength);
+  //private void copyFile(String groupId, String artifactId, String version) throws IOException {
+  //  String localPath = groupId.replace('.', File.separatorChar) + artifactId + File.separatorChar + version + File.separatorChar + artifactId + '-' + version + ".jar";
+  //  copyIfLastModifiedNotEquals(new File(localRepositoryFile, localPath), new File(outputDirectory, localPath));
+  //}
+
+  private void copyParentPom(MavenProject project) throws IOException, MojoExecutionException {
+    if (project == null) {
+      return;
+    }
+
+    Artifact artifact = project.getArtifact();
+    resolveAndCopyArtifact(artifact);
+    copyParentPom(project.getParent());
   }
 
   private static void copyIfLastModifiedNotEquals(File from, File to) throws IOException {
@@ -160,27 +188,22 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
   }
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
-  private void copyProjectArtifacts(File localRepositoryFile, int localRepositoryBasedirLength, MavenProject project) throws MojoExecutionException {
+  private void copyProjectArtifacts(File localRepositoryFile, MavenProject project)
+    throws MojoExecutionException, IOException {
     for (Artifact artifact : project.getArtifacts()) {
-      if (copiedArtifacts.contains(artifact)) {
+      if (resolveAndCopyArtifact(artifact)) {
         continue;
       }
-
-      copiedArtifacts.add(artifact);
 
       final File artifactFile = artifact.getFile();
       final String localPath = artifactFile.getPath().substring(localRepositoryBasedirLength);
       try {
-        if (copyArtifact(artifactFile, localPath)) {
-          continue;
-        }
-
         if (("configs".equals(artifact.getClassifier()) || (artifact.getClassifier() == null && "framework".equals(artifact.getArtifactId()) && artifact.getType().equals("swc"))) && !extractedConfigs.contains(artifact.getVersion())) {
           extractedConfigs.add(artifact.getVersion());
           final File sourceDirectory = new File(artifactFile.getParentFile(), "configs_zip");
           final File destinationDirectory = new File(outputDirectory, artifactFile.getParent().substring(localRepositoryBasedirLength) + "/configs_zip");
           destinationDirectory.mkdirs();
-          destinationDirectory.setLastModified(sourceDirectory.lastModified());
+          destinationDirectory.setLastModified(artifactFile.lastModified());
 
           for (String from : sourceDirectory.list()) {
             // build.xml — published flex sdk contains unneeded ant file
@@ -234,6 +257,7 @@ public class RepositoryReplicatorMojo extends AbstractMojo {
   }
 
   private static void copyDirectory(File sourceDirectory, File destinationDirectory) throws IOException {
+    //noinspection ResultOfMethodCallIgnored
     destinationDirectory.setLastModified(sourceDirectory.lastModified());
 
     for (String from : sourceDirectory.list()) {
