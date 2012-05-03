@@ -267,6 +267,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     assert rootTag != null;
     final int offset = info.getRangeMarker(reader.readInt()).getStartOffset() - rootTag.getStartOffsetInParent();
     final Document document = FileDocumentManager.getInstance().getDocument(info.getElement());
+    assert document != null;
     final String name = reader.readUTF();
     final String value;
     switch (reader.read()) {
@@ -302,12 +303,12 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
         final AccessToken token = WriteAction.start();
         try {
           tag.setAttribute(name, value);
-          assert document != null;
-          info.documentModificationStamp = document.getModificationStamp();
         }
         finally {
           token.finish();
         }
+
+        info.documentModificationStamp = document.getModificationStamp();
       }
     });
   }

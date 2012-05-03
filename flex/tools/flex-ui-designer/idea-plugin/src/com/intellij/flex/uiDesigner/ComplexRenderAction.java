@@ -182,7 +182,6 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
       }
 
       if (info.documentModificationStamp == document.getModificationStamp()) {
-        info.documentModificationStamp = -1;
         continue;
       }
 
