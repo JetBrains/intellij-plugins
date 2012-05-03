@@ -1,10 +1,7 @@
 package com.intellij.javascript.flex.css;
 
 import com.intellij.lang.LanguagePerFileMappings;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.components.StorageScheme;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 
 import java.util.Arrays;
@@ -16,8 +13,8 @@ import java.util.List;
 @State(
     name = "CssDialectMappings",
     storages = {
-        @Storage( file = "$PROJECT_FILE$"),
-        @Storage( file = "$PROJECT_CONFIG_DIR$/cssdialects.xml", scheme = StorageScheme.DIRECTORY_BASED)
+        @Storage( file = StoragePathMacros.PROJECT_FILE),
+        @Storage( file = StoragePathMacros.PROJECT_CONFIG_DIR + "/cssdialects.xml", scheme = StorageScheme.DIRECTORY_BASED)
 })
 public class CssDialectMappings extends LanguagePerFileMappings<CssDialect> {
   public static CssDialectMappings getInstance(final Project project) {

@@ -1,9 +1,6 @@
 package com.jetbrains.actionscript.profiler.model;
 
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.SystemProperties;
 import org.jdom.Element;
@@ -18,7 +15,7 @@ import java.io.File;
   name = "ActionScriptProfileSettings",
   storages = {
     @Storage(
-      file = "$APP_CONFIG$/actionscript_profile_settings.xml"
+      file = StoragePathMacros.APP_CONFIG + "/actionscript_profile_settings.xml"
     )}
 )
 public class ActionScriptProfileSettings implements PersistentStateComponent<Element> {

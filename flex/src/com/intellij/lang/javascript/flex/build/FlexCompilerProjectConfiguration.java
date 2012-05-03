@@ -6,8 +6,8 @@ import com.intellij.openapi.project.Project;
 @State(
   name = "FlexCompilerConfiguration", // do not rename it for compatibility
   storages = {
-    @Storage( file = "$WORKSPACE_FILE$"),
-    @Storage( file = "$PROJECT_CONFIG_DIR$/flexCompiler.xml", scheme = StorageScheme.DIRECTORY_BASED)
+    @Storage( file = StoragePathMacros.WORKSPACE_FILE),
+    @Storage( file = StoragePathMacros.PROJECT_CONFIG_DIR + "/flexCompiler.xml", scheme = StorageScheme.DIRECTORY_BASED)
   }
 )
 public class FlexCompilerProjectConfiguration implements PersistentStateComponent<FlexCompilerProjectConfiguration> {
