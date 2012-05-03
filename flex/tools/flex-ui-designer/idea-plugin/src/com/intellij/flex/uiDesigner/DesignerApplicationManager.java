@@ -1,8 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.ProjectTopics;
-import com.intellij.flex.uiDesigner.io.StringRegistry;
-import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.flex.uiDesigner.preview.MxmlPreviewToolWindowManager;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
@@ -29,7 +27,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.*;
+import com.intellij.openapi.project.ModuleAdapter;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.project.ProjectManagerAdapter;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -38,22 +39,19 @@ import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.PsiTreeChangeAdapter;
+import com.intellij.psi.PsiTreeChangeEvent;
 import com.intellij.psi.css.CssFile;
-import com.intellij.psi.css.CssFileType;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
 import com.intellij.util.Processor;
 import com.intellij.util.concurrency.QueueProcessor;
-import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.messages.Topic;
 import com.intellij.util.ui.update.MergingUpdateQueue;
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
-import gnu.trove.TObjectObjectProcedure;
-import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -61,9 +59,6 @@ import org.jetbrains.annotations.TestOnly;
 import javax.swing.event.HyperlinkEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
@@ -183,167 +178,6 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     }
 
     return true;
-  }
-
-  private static void doRenderDocumentsAndCheckLocalStyleModification(Document[] documents,
-                                                                      boolean onlyStyle,
-                                                                      AsyncResult<List<DocumentInfo>> result) {
-    FileDocumentManager fileDocumentManager = FileDocumentManager.getInstance();
-    DocumentFactoryManager documentFactoryManager = DocumentFactoryManager.getInstance();
-    final Client client = Client.getInstance();
-    final List<DocumentInfo> documentInfos = new ArrayList<DocumentInfo>(documents.length);
-    final THashMap<ModuleInfo, List<LocalStyleHolder>> changedLocalStyleHolders = new THashMap<ModuleInfo, List<LocalStyleHolder>>();
-    for (Document document : documents) {
-      final VirtualFile file = fileDocumentManager.getFile(document);
-      if (file == null) {
-        continue;
-      }
-
-      boolean isMxml = JavaScriptSupportLoader.isFlexMxmFile(file);
-      if (isMxml || file.getFileType() == CssFileType.INSTANCE) {
-        collectChangedLocalStyleSources(changedLocalStyleHolders, file);
-      }
-
-      final DocumentInfo info = isMxml ? documentFactoryManager.getNullableInfo(file) : null;
-      if (info == null) {
-        continue;
-      }
-      else if (onlyStyle) {
-        info.documentModificationStamp = document.getModificationStamp();
-        continue;
-      }
-
-      if (info.documentModificationStamp == document.getModificationStamp()) {
-        info.documentModificationStamp = -1;
-        continue;
-      }
-
-      final Project project = ProjectUtil.guessProjectForFile(file);
-      if (project == null) {
-        continue;
-      }
-
-      final Module module = ModuleUtil.findModuleForFile(file, project);
-      if (module == null) {
-        continue;
-      }
-
-      final XmlFile psiFile;
-      final AccessToken token = ReadAction.start();
-      try {
-        psiFile = (XmlFile)PsiDocumentManager.getInstance(project).getPsiFile(document);
-        if (psiFile == null) {
-          continue;
-        }
-      }
-      finally {
-        token.finish();
-      }
-
-      if (client.updateDocumentFactory(info.getId(), module, psiFile)) {
-        info.documentModificationStamp = document.getModificationStamp();
-        documentInfos.add(info);
-      }
-    }
-
-    if (!changedLocalStyleHolders.isEmpty()) {
-      final ProblemsHolder problemsHolder = new ProblemsHolder();
-      final ProjectComponentReferenceCounter projectComponentReferenceCounter = new ProjectComponentReferenceCounter();
-      try {
-        changedLocalStyleHolders.forEachEntry(new TObjectObjectProcedure<ModuleInfo, List<LocalStyleHolder>>() {
-          @Override
-          public boolean execute(ModuleInfo moduleInfo, List<LocalStyleHolder> b) {
-            //noinspection ConstantConditions
-            List<LocalStyleHolder> oldList = moduleInfo.getLocalStyleHolders();
-            FlexLibrarySet flexLibrarySet = moduleInfo.getFlexLibrarySet();
-            final StringRegistry.StringWriter stringWriter = new StringRegistry.StringWriter();
-            stringWriter.startChange();
-            try {
-              List<LocalStyleHolder> list = ModuleInfoUtil.collectLocalStyle(moduleInfo, flexLibrarySet.getVersion(), stringWriter,
-                problemsHolder, projectComponentReferenceCounter,
-                flexLibrarySet.assetCounterInfo.demanded);
-              assert oldList != null;
-              // todo we should't create list, we should check while collecting
-              boolean hasChanges = true;
-              if (list.size() == oldList.size()) {
-                int diff = list.size();
-                for (LocalStyleHolder holder : list) {
-                  if (oldList.contains(holder)) {
-                    diff--;
-                  }
-                }
-
-                hasChanges = diff != 0;
-                if (hasChanges) {
-                  moduleInfo.setLocalStyleHolders(list);
-                }
-              }
-
-              if (hasChanges) {
-                client.fillAssetClassPoolIfNeed(flexLibrarySet);
-                client.updateLocalStyleHolders(changedLocalStyleHolders, stringWriter);
-                if (projectComponentReferenceCounter.hasUnregistered()) {
-                  client.registerDocumentReferences(projectComponentReferenceCounter.unregistered, null, problemsHolder);
-                }
-              }
-              else {
-                stringWriter.rollback();
-                changedLocalStyleHolders.remove(moduleInfo);
-              }
-            }
-            catch (Throwable e) {
-              stringWriter.rollback();
-              LOG.error(e);
-            }
-            return true;
-          }
-        });
-      }
-      catch (Throwable e) {
-        LOG.error(e);
-      }
-
-      if (!problemsHolder.isEmpty()) {
-        DocumentProblemManager.getInstance().report(null, problemsHolder);
-      }
-    }
-
-    client.renderDocumentAndDependents(documentInfos, changedLocalStyleHolders, result);
-  }
-
-  private static void collectChangedLocalStyleSources(final THashMap<ModuleInfo, List<LocalStyleHolder>> holders,
-                                                      final VirtualFile file) {
-    Client.getInstance().getRegisteredModules().forEach(new TObjectProcedure<ModuleInfo>() {
-      @Override
-      public boolean execute(ModuleInfo moduleInfo) {
-        if (holders.containsKey(moduleInfo)) {
-          return false;
-        }
-
-        List<LocalStyleHolder> styleHolders = moduleInfo.getLocalStyleHolders();
-        if (styleHolders != null) {
-          List<LocalStyleHolder> list = null;
-          for (LocalStyleHolder styleHolder : styleHolders) {
-            if (styleHolder.file.equals(file)) {
-              if (list == null) {
-                list = new ArrayList<LocalStyleHolder>();
-                holders.put(moduleInfo, list);
-              }
-
-              list.add(styleHolder);
-            }
-          }
-
-          if (list != null) {
-            // well, local style applicable only for one module, so,
-            // if we found for this module, there is no reason to continue search
-            return false;
-          }
-        }
-
-        return true;
-      }
-    });
   }
 
   public void runWhenRendered(@NotNull XmlFile psiFile, @NotNull AsyncResult.Handler<DocumentInfo> handler) {
@@ -511,9 +345,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
             if (renderAction.file == null) {
               ComplexRenderAction action = (ComplexRenderAction)renderAction;
               if (onlyStyle == action.onlyStyle) {
-                THashSet<Document> merged = new THashSet<Document>(action.documents.length + documents.length);
-                Collections.addAll(merged, documents);
-                action.documents = merged.toArray(new Document[merged.size()]);
+                action.merge(documents);
                 result.set(true);
                 return false;
               }
@@ -526,41 +358,6 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       if (!result.get()) {
         initialRenderQueue.add(new ComplexRenderAction(documents, onlyStyle));
       }
-    }
-  }
-
-  private static class ComplexRenderAction extends RenderAction<AsyncResult<List<DocumentInfo>>> {
-    private Document[] documents;
-    private final boolean onlyStyle;
-
-    protected ComplexRenderAction(Document[] documents, boolean onlyStyle) {
-      super(null, null, new AsyncResult<List<DocumentInfo>>());
-      this.documents = documents;
-      this.onlyStyle = onlyStyle;
-    }
-
-    @Override
-    protected boolean isNeedEdt() {
-      return false;
-    }
-
-    @Override
-    protected void doRun() {
-      doRenderDocumentsAndCheckLocalStyleModification(documents, onlyStyle, result);
-      result.doWhenDone(new AsyncResult.Handler<List<DocumentInfo>>() {
-        @Override
-        public void run(List<DocumentInfo> infos) {
-          Application application = ApplicationManager.getApplication();
-          if (application.isDisposed()) {
-            return;
-          }
-
-          MessageBus messageBus = application.getMessageBus();
-          for (DocumentInfo info : infos) {
-            messageBus.syncPublisher(MESSAGE_TOPIC).documentRendered(info);
-          }
-        }
-      });
     }
   }
 
