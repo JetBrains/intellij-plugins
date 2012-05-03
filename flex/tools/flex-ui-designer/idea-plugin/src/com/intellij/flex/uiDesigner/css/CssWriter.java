@@ -17,12 +17,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.css.*;
 import com.intellij.psi.css.impl.CssElementTypes;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.util.CssUtil;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlToken;
 import com.intellij.xml.XmlElementDescriptor;
 import org.jetbrains.annotations.Nullable;
@@ -77,6 +79,11 @@ public class CssWriter {
 
     final DocumentWindow documentWindow = document instanceof DocumentWindow ? (DocumentWindow)document : null;
     for (CssRuleset ruleset : rulesets) {
+      final CssBlock block = ruleset.getBlock();
+      if (block == null) {
+        continue;
+      }
+
       PrimitiveAmfOutputStream rulesetOut = rulesetVectorWriter.getOutputForIteration();
 
       int textOffset = ruleset.getTextOffset();
@@ -92,9 +99,11 @@ public class CssWriter {
       writeSelectors(ruleset, rulesetOut, module);
 
       declarationVectorWriter.prepareIteration();
-      for (CssDeclaration declaration : ruleset.getBlock().getDeclarations()) {
-        CssPropertyDescriptor propertyDescriptor = declaration.getDescriptor();
+      for (CssDeclaration declaration : block.getDeclarations()) {
         CssTermList value = declaration.getValue();
+        if (value == null || PsiTreeUtil.getChildOfType(value, PsiErrorElement.class) != null) {
+          continue;
+        }
 
         propertyOut = declarationVectorWriter.getOutputForIteration();
         try {
@@ -103,9 +112,10 @@ public class CssWriter {
           textOffset = declaration.getTextOffset();
           propertyOut.writeUInt29(documentWindow == null ? textOffset : documentWindow.injectedToHost(textOffset));
 
-          writePropertyValue(value, propertyDescriptor == null || !(propertyDescriptor instanceof FlexCssPropertyDescriptor)
-            ? null
-            : ((FlexCssPropertyDescriptor)propertyDescriptor).getStyleInfo());
+          CssPropertyDescriptor propertyDescriptor = declaration.getDescriptor();
+          writePropertyValue(value, propertyDescriptor != null && propertyDescriptor instanceof FlexCssPropertyDescriptor
+                                    ? ((FlexCssPropertyDescriptor)propertyDescriptor).getStyleInfo()
+                                    : null);
           continue;
         }
         catch (RuntimeException e) {
