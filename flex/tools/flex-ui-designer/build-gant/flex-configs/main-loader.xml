@@ -6,17 +6,17 @@
 			<name>config::useRoboflest</name>
 			<value>false</value>
 		</define>
-		<external-library-path append="true">
+		<external-library-path>
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/3.1.0.4880/airglobal.swc</path-element>
 		</external-library-path>
 		<fixed-literal-vector>true</fixed-literal-vector>
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
-		<include-libraries append="true">
+		<include-libraries>
 			<library>@@target@@/shared-1.0-SNAPSHOT.swc</library>
 		</include-libraries>
-		<library-path append="true">
+		<library-path>
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576.swc</path-element>
 		</library-path>
 		<locale>
@@ -40,7 +40,7 @@
 				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/configs_zip/mxml-manifest.xml</manifest>
 			</namespace>
 		</namespaces>
-		<source-path append="true">
+		<source-path>
 			<path-element>@@baseDir@@/src</path-element>
 			<path-element>@@baseDir@@/resources</path-element>
 			<path-element>@@target@@</path-element>

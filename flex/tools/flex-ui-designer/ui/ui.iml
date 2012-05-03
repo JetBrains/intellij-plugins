@@ -11,7 +11,7 @@
             <entry module-name="impl" build-configuration-name="impl">
               <dependency linkage="Merged" />
             </entry>
-            <entry library-name="Maven: org.flyti.cocoa:acocoa:swc:2.0-SNAPSHOT" library-level="project">
+            <entry library-name="Maven: org.flyti.cocoa:acocoa:swc:2.0" library-level="project">
               <dependency linkage="Merged" />
             </entry>
             <entry library-name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" library-level="project">
@@ -41,7 +41,7 @@
             <entry library-name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.2.21576" library-level="project">
               <dependency linkage="Merged" />
             </entry>
-            <entry library-name="Maven: org.flyti.cocoa:cocoa:swc:2.0-SNAPSHOT" library-level="project">
+            <entry library-name="Maven: org.flyti.cocoa:cocoa:swc:2.0" library-level="project">
               <dependency linkage="Merged" />
             </entry>
             <entry library-name="Maven: flashx:textLayout:swc:2.0.192-de1" library-level="project">
@@ -72,7 +72,7 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="compiler-4.5.2.21576.pom" />
+          <sdk name="Flexmojos SDK 4.5.2.21576" />
         </dependencies>
         <compiler-options>
           <map>
@@ -95,9 +95,9 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="compiler-4.5.2.21576.pom" jdkType="Flexmojos SDK Type" />
+    <orderEntry type="jdk" jdkName="Flexmojos SDK 4.5.2.21576" jdkType="Flexmojos SDK Type" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.flyti.cocoa:acocoa:swc:2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.flyti.cocoa:acocoa:swc:2.0" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airglobal:swc:3.1.0.4880" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.2.21576" level="project" />
@@ -107,7 +107,7 @@
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:rb.swc:4.5.2.21576" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:rb.swc:4.5.2.21576" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:rb.swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" name="Maven: org.flyti.cocoa:cocoa:swc:2.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.flyti.cocoa:cocoa:swc:2.0" level="project" />
     <orderEntry type="library" name="Maven: flashx:textLayout:swc:2.0.192-de1" level="project" />
     <orderEntry type="library" name="Maven: org.osflash:as3-signals:swc:0.9-beta" level="project" />
     <orderEntry type="library" name="Maven: org.flyti:plexus:swc:1.4.1" level="project" />

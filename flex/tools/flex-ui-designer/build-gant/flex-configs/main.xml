@@ -6,7 +6,7 @@
 			<name>config::fdbWorkaround</name>
 			<value>false</value>
 		</define>
-		<external-library-path append="true">
+		<external-library-path>
 			<path-element>@@target@@/shared-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/3.1.0.4880/airglobal.swc</path-element>
 		</external-library-path>
@@ -14,14 +14,14 @@
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
-		<library-path append="true">
+		<library-path>
 			<path-element>@@target@@/aqua-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@target@@/base-1.0-SNAPSHOT.swc</path-element>
-			<path-element>@@repo@@/org/flyti/cocoa/aquaLaF/2.0-SNAPSHOT/aquaLaF-2.0-SNAPSHOT.swc</path-element>
-			<path-element>@@repo@@/org/flyti/cocoa/cocoa/2.0-SNAPSHOT/cocoa-2.0-SNAPSHOT.swc</path-element>
+			<path-element>@@repo@@/org/flyti/cocoa/aquaLaF/2.0/aquaLaF-2.0.swc</path-element>
+			<path-element>@@repo@@/org/flyti/cocoa/cocoa/2.0/cocoa-2.0.swc</path-element>
 			<path-element>@@target@@/ui-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@target@@/impl-1.0-SNAPSHOT.swc</path-element>
-			<path-element>@@repo@@/org/flyti/cocoa/acocoa/2.0-SNAPSHOT/acocoa-2.0-SNAPSHOT.swc</path-element>
+			<path-element>@@repo@@/org/flyti/cocoa/acocoa/2.0/acocoa-2.0.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/org/tinytlf/layouts/1.1.1/layouts-1.1.1.swc</path-element>
@@ -37,7 +37,7 @@
 			<path-element>@@repo@@/org/jetbrains/miglayout/miglayout-core/4.3.1-SNAPSHOT/miglayout-core-4.3.1-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576-en_US.rb.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576-en_US.rb.swc</path-element>
-			<path-element>@@repo@@/org/flyti/cocoa/cocoa/2.0-SNAPSHOT/cocoa-2.0-SNAPSHOT-en_US.rb.swc</path-element>
+			<path-element>@@repo@@/org/flyti/cocoa/cocoa/2.0/cocoa-2.0-en_US.rb.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576-en_US.rb.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576-en_US.rb.swc</path-element>
 		</library-path>
@@ -62,7 +62,7 @@
 				<manifest>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/configs_zip/mxml-manifest.xml</manifest>
 			</namespace>
 		</namespaces>
-		<source-path append="true">
+		<source-path>
 			<path-element>@@baseDir@@/src</path-element>
 			<path-element>@@baseDir@@/resources</path-element>
 		</source-path>

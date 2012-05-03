@@ -2,7 +2,7 @@
 	<compiler>
 		<accessible>false</accessible>
 		<debug>true</debug>
-		<external-library-path append="true">
+		<external-library-path>
 			<path-element>@@repo@@/com/adobe/flex/framework/framework/4.5.2.21576/framework-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/mx/4.5.2.21576/mx-4.5.2.21576.swc</path-element>
@@ -35,16 +35,16 @@
 				<manifest>@@configs@@/test-manifest.xml</manifest>
 			</namespace>
 		</namespaces>
-		<source-path append="true">
+		<source-path>
 			<path-element>@@baseDir@@/src</path-element>
 		</source-path>
 		<theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
-	<include-namespaces append="true">
+	<include-namespaces>
 		<uri>test</uri>
 	</include-namespaces>
-	<include-sources append="true">
+	<include-sources>
 		<path-element>@@baseDir@@/src</path-element>
 	</include-sources>
 	<metadata>

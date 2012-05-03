@@ -2,7 +2,7 @@
 	<compiler>
 		<accessible>false</accessible>
 		<debug>true</debug>
-		<external-library-path append="true">
+		<external-library-path>
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/3.1.0.4880/airglobal.swc</path-element>
 		</external-library-path>
 		<fixed-literal-vector>true</fixed-literal-vector>
@@ -10,13 +10,13 @@
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>
 		<locale/>
-		<source-path append="true">
+		<source-path>
 			<path-element>@@baseDir@@/src</path-element>
 		</source-path>
 		<theme/>
 		<warn-no-constructor>false</warn-no-constructor>
 	</compiler>
-	<include-sources append="true">
+	<include-sources>
 		<path-element>@@baseDir@@/src</path-element>
 	</include-sources>
 	<metadata>
