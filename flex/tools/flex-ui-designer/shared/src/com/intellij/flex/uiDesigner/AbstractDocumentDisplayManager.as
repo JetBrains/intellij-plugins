@@ -56,7 +56,9 @@ public class AbstractDocumentDisplayManager extends Sprite {
     }
 
     var bitmapData:BitmapData = new BitmapData(w, h, false);
-    bitmapData.draw(_document, null, null, null, bitmapData.rect);
+    if (_document.visible) {
+      bitmapData.draw(_document, null, null, null, bitmapData.rect);
+    }
     return bitmapData;
   }
 }
