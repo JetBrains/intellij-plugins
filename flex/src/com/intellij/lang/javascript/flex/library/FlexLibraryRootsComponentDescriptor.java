@@ -44,8 +44,8 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
 
   @NotNull
   @Override
-  public FileChooserDescriptor createAttachFilesChooserDescriptor() {
-    FileChooserDescriptor d = super.createAttachFilesChooserDescriptor();
+  public FileChooserDescriptor createAttachFilesChooserDescriptor(String libraryName) {
+    FileChooserDescriptor d = super.createAttachFilesChooserDescriptor(libraryName);
     d.setDescription(FlexBundle.message("choose.library.files.description", ApplicationNamesInfo.getInstance().getFullProductName()));
     return d;
   }
