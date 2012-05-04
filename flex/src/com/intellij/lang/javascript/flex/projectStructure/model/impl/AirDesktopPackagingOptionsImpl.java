@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
-import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableAirDesktopPackagingOptions;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Attribute;

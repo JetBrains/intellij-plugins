@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

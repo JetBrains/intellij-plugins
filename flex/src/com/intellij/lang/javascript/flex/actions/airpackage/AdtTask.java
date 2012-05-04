@@ -1,9 +1,9 @@
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
-import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.IosPackagingOptions;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;

@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
-import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOptions;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.xmlb.annotations.Transient;
 import gnu.trove.THashMap;

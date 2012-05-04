@@ -2,8 +2,6 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.actions.FilesToPackageForm;
-import com.intellij.lang.javascript.flex.actions.SigningOptionsForm;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;

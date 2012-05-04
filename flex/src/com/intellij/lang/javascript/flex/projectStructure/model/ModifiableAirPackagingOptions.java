@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
-import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

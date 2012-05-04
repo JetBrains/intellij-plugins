@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.actions.airpackage;
 import com.intellij.ide.actions.ShowFilePathAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.build.FlexCompiler;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
@@ -142,7 +141,8 @@ public class AirPackageAction extends DumbAwareAction {
         if (bc.getIosPackagingOptions().isEnabled()) {
           final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
           final IOSPackageType packageType = params.iosPackageType;
-          final ExternalTask task = AirPackageUtil.createIOSPackageTask(moduleAndBC.first, bc, packageType, params.iosFastPackaging, passwords);
+          final ExternalTask task =
+            AirPackageUtil.createIOSPackageTask(moduleAndBC.first, bc, packageType, params.iosFastPackaging, passwords);
           final String packagePath = outputFolder + "/" + packagingOptions.getPackageFileName() + ".ipa";
           tasksAndPackagePaths.add(Pair.create(task, packagePath));
         }

@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.actions.AirSigningOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOptions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;

@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.flex.actions;
+package com.intellij.lang.javascript.flex.projectStructure.model;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.xmlb.annotations.Attribute;

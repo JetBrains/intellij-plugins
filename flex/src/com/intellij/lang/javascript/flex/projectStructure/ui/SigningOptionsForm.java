@@ -1,7 +1,7 @@
-package com.intellij.lang.javascript.flex.actions;
+package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.ui.AirPackagingConfigurableBase;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOptions;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
