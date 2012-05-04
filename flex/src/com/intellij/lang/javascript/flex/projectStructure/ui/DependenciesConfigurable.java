@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
@@ -83,6 +84,9 @@ import java.util.*;
 import java.util.List;
 
 public class DependenciesConfigurable extends NamedConfigurable<Dependencies> implements Place.Navigator {
+
+  private static final Logger LOG = Logger.getInstance(DependenciesConfigurable.class.getName());
+
   public static final String TAB_NAME = FlexBundle.message("bc.tab.dependencies.display.name");
 
   private static final Icon MISSING_BC_ICON = null;
@@ -346,6 +350,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       if (orderEntry != null) {
         Library library = orderEntry.getLibrary();
         if (library != null) {
+          if (((LibraryEx)library).isDisposed()) {
+            Pair<String, String> moduleAndBcName = getModuleAndBcName();
+            LOG.error("Module library '" +
+                      library.getName() +
+                      "' is disposed, used in BC: " +
+                      moduleAndBcName.second +
+                      " of module " +
+                      moduleAndBcName.first);
+            return new SimpleColoredText("<unknown>", SimpleTextAttributes.ERROR_ATTRIBUTES);
+          }
           boolean hasInvalidRoots = !((LibraryEx)library).getInvalidRootUrls(OrderRootType.CLASSES).isEmpty();
           String text = OrderEntryAppearanceService.getInstance().forLibrary(project, library, hasInvalidRoots).getText();
           return new SimpleColoredText(text, SimpleTextAttributes.REGULAR_ATTRIBUTES);
@@ -773,6 +787,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     ItemListener updateSdkItemsListener = new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
+        if (myFreeze) {
+          return;
+        }
         DefaultMutableTreeNode sdkNode = findSdkNode();
         Sdk currentSdk = mySdkCombo.getSelectedJdk();
         if (sdkNode != null && currentSdk != null) {
@@ -1814,4 +1831,18 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       return filtered.toArray(new Library[filtered.size()]);
     }
   }
+
+  private Pair<String, String> getModuleAndBcName() {
+    FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
+    for (Module module : ProjectStructureConfigurable.getInstance(myProject).getModulesConfig().getModules()) {
+      for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
+        FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrap(configurable);
+        if (flexIdeBCConfigurable.isParentFor(this)) {
+          return Pair.create(module.getName(), flexIdeBCConfigurable.getDisplayName());
+        }
+      }
+    }
+    return Pair.create("?", "?");
+  }
+
 }
