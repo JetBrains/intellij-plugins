@@ -92,7 +92,7 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     });
 
     myDisposable = Disposer.newDisposable();
-    UserActivityWatcher watcher = new UserActivityWatcher();
+    UserActivityWatcher watcher = new TableAwareUserActivityWatcher();
     watcher.register(myMainPanel);
     myUserActivityDispatcher = EventDispatcher.create(UserActivityListener.class);
     watcher.addUserActivityListener(new UserActivityListener() {
