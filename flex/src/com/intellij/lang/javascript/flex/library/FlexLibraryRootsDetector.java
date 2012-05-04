@@ -75,7 +75,6 @@ public class FlexLibraryRootsDetector extends LibraryRootsDetectorImpl {
     else if (rootType.getType() instanceof JavadocOrderRootType) {
       return FlexBundle.message("docs.root.detector.name");
     }
-    assert false : "Unknown root type:" + rootType;
     return null;
   }
 }
