@@ -44,7 +44,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
       }
 
       public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        myFileChooserDescriptor.setAllowedExtension(myInfo.LIST_ELEMENTS[column].FILE_EXTENSION);
+        myFileChooserDescriptor.setAllowedExtensions(myInfo.LIST_ELEMENTS[column].FILE_EXTENSIONS);
         myTextWithBrowse.setText(FileUtil.toSystemDependentName(String.valueOf(value)));
         return myTextWithBrowse;
       }
@@ -106,7 +106,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
         (firstElement.LIST_ELEMENT_TYPE == ListElementType.File ||
          firstElement.LIST_ELEMENT_TYPE == ListElementType.FileOrFolder)) {
       final FileChooserDescriptor descriptor = firstElement.LIST_ELEMENT_TYPE == ListElementType.File
-                                               ? FlexUtils.createFileChooserDescriptor(firstElement.FILE_EXTENSION)
+                                               ? FlexUtils.createFileChooserDescriptor(firstElement.FILE_EXTENSIONS)
                                                : FileChooserDescriptorFactory.createSingleLocalFileDescriptor();
       final VirtualFile file = FileChooser.chooseFile(descriptor, myProject, null);
       if (file != null) {

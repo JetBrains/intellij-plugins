@@ -11,7 +11,7 @@
 <!--  <option id="runtime-locale" displayName="Create runtime resource bundle for locales" type="RuntimeLocaleList" advanced="true"/> -->
   <option id="compiler.namespaces.namespace" displayName="Namespaces and manifests" type="List" okForPureAS="false">
     <listElement name="uri" displayName="Namespace" type="String" default="http://"/>
-    <listElement name="manifest" displayName="Path To Manifest File" type="File" fileExtension="xml"/>
+    <listElement name="manifest" displayName="Path To Manifest File" type="File" fileExtensions="xml"/>
   </option>
   <!--<group displayName="Include">-->
     <!--<option id="include-classes" displayName="Include classes" type="IncludeClasses" fileExtension="xml" okForSWF="false" default="All"/>-->
@@ -23,7 +23,7 @@
     </option>-->
   <!--<option id="include-stylesheet" displayName="Include style sheet" type="List" okForSWF="false" advanced="true">
     <listElement name="name" displayName="Relative path in SWC" type="String"/>
-    <listElement name="path" displayName="Path To CSS File" type="File" fileExtension="css"/>
+    <listElement name="path" displayName="Path To CSS File" type="File" fileExtensions="css"/>
   </option>-->
     <!--<option id="includes" displayName="Include symbols" type="List" okForSWF="false" advanced="true">
       <listElement name="symbol" displayName="Symbol" type="String"/>
@@ -37,10 +37,10 @@
   <group displayName="Styles and Themes">
     <option id="compiler.defaults-css-url" displayName="Default CSS URL" type="File" fileExtension="css" advanced="true"/>
     <option id="compiler.defaults-css-files" displayName="Default CSS files" type="List" advanced="true">
-      <listElement name="filename" displayName="Path To CSS File" type="File" fileExtension="css"/>
+      <listElement name="filename" displayName="Path To CSS File" type="File" fileExtensions="css"/>
     </option>
     <option id="compiler.theme" displayName="Theme" type="List" advanced="true" default="SPECIAL">
-      <listElement name="filename" displayName="CSS Or SWC Theme File" type="File"/>
+      <listElement name="filename" displayName="CSS Or SWC Theme File" type="File" fileExtensions="css,swc"/>
     </option>
   </group>
   <!--<option id="compiler.enable-runtime-design-layers" displayName="Enable runtime design layers" type="Boolean" advanced="true" since="4.0" default="true"/>-->

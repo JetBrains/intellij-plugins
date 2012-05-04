@@ -628,7 +628,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
             myCurrentEditor = myTextField;
             break;
           case File:
-            myFileChooserDescriptor.setAllowedExtension(info.FILE_EXTENSION);
+            myFileChooserDescriptor.setAllowedExtensions(info.FILE_EXTENSION);
             myTextWithBrowse.setText(FileUtil.toSystemDependentName(optionValue));
             myCurrentEditor = myTextWithBrowse;
             break;
@@ -906,19 +906,29 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   static class ExtensionAwareFileChooserDescriptor extends FileChooserDescriptor {
-    private String myAllowedExtension;
+    private @Nullable String[] myAllowedExtensions;
 
     public ExtensionAwareFileChooserDescriptor() {
-      super(true, false, false, true, false, false);
+      super(true, false, true, true, false, false);
     }
 
     public boolean isFileVisible(final VirtualFile file, final boolean showHiddenFiles) {
       return super.isFileVisible(file, showHiddenFiles) &&
-             (file.isDirectory() || myAllowedExtension == null || myAllowedExtension.equals(file.getExtension()));
+             (file.isDirectory() || isAllowedExtension(file.getExtension()));
     }
 
-    public void setAllowedExtension(final String allowedExtension) {
-      myAllowedExtension = allowedExtension;
+    private boolean isAllowedExtension(final String extension) {
+      if (myAllowedExtensions == null) return true;
+
+      for (String allowedExtension : myAllowedExtensions) {
+        if (allowedExtension.equalsIgnoreCase(extension)) return true;
+      }
+
+      return false;
+    }
+
+    public void setAllowedExtensions(final @Nullable String... allowedExtensions) {
+      myAllowedExtensions = allowedExtensions;
     }
   }
 

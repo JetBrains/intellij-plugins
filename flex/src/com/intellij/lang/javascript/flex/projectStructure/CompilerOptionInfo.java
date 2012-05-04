@@ -29,7 +29,7 @@ public class CompilerOptionInfo {
     public final String NAME;
     public final String DISPLAY_NAME;
     public final ListElementType LIST_ELEMENT_TYPE;
-    public @Nullable final String FILE_EXTENSION;
+    public @Nullable final String[] FILE_EXTENSIONS;
     public final String DEFAULT_VALUE;
 
     private ListElement(final String name) {
@@ -37,11 +37,11 @@ public class CompilerOptionInfo {
     }
 
     private ListElement(final String name, final String displayName, final ListElementType listElementType,
-                        final @Nullable String fileExtension, final String defaultValue) {
+                        final @Nullable String[] fileExtensions, final String defaultValue) {
       NAME = name;
       DISPLAY_NAME = displayName;
       LIST_ELEMENT_TYPE = listElementType;
-      FILE_EXTENSION = fileExtension;
+      FILE_EXTENSIONS = fileExtensions;
       DEFAULT_VALUE = defaultValue;
     }
   }
@@ -121,7 +121,7 @@ public class CompilerOptionInfo {
                            false, null, true, true, true, true, "");
   public static final CompilerOptionInfo CSS_FILES_INFO_FOR_UI =
     new CompilerOptionInfo("css.files.list.fake", "fake", OptionType.List, null,
-                           new ListElement[]{new ListElement("fake", "CSS Files", ListElementType.File, "css", "")},
+                           new ListElement[]{new ListElement("fake", "CSS Files", ListElementType.File, new String[]{"css"}, "")},
                            false, null, true, true, true, true, "");
   public static final CompilerOptionInfo INCLUDE_FILE_INFO_FOR_UI =
     new CompilerOptionInfo("files.to.include.in.swc.fake", "fake", OptionType.List, null,
@@ -156,7 +156,7 @@ public class CompilerOptionInfo {
                              final boolean okForAir,
                              final boolean okForPureAS,
                              final boolean okForSwf,
-                             final boolean okForSwc, 
+                             final boolean okForSwc,
                              final String defaultValue) {
     assert optionType != OptionType.Group;
 
@@ -444,9 +444,10 @@ public class CompilerOptionInfo {
       final String displayName = childElement.getAttributeValue("displayName");
       assert name != null : element.getName();
       final ListElementType listElementType = ListElementType.valueOf(childElement.getAttributeValue("type"));
-      final String fileExtension = childElement.getAttributeValue("fileExtension");
+      final String fileExtensionRaw = childElement.getAttributeValue("fileExtensions");
+      final String[] fileExtensions = fileExtensionRaw == null ? null : fileExtensionRaw.split(",");
       final String defaultValue = StringUtil.notNullize(childElement.getAttributeValue("default"));
-      result.add(new ListElement(name, displayName, listElementType, fileExtension, defaultValue));
+      result.add(new ListElement(name, displayName, listElementType, fileExtensions, defaultValue));
     }
 
     assert !result.isEmpty() : element.getName();
