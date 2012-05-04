@@ -12,6 +12,7 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.DefaultLibraryR
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.UIBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,8 +47,14 @@ public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDe
   @Override
   public FileChooserDescriptor createAttachFilesChooserDescriptor(String libraryName) {
     FileChooserDescriptor d = super.createAttachFilesChooserDescriptor(libraryName);
+    d.setTitle(UIBundle.message("file.chooser.default.title"));
     d.setDescription(FlexBundle.message("choose.library.files.description", ApplicationNamesInfo.getInstance().getFullProductName()));
     return d;
+  }
+
+  @Override
+  public String getAttachFilesActionName() {
+    return FlexBundle.message("add.library.components.action.name");
   }
 
   @NotNull
