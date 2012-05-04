@@ -423,7 +423,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         params instanceof FlashRunnerParameters ? ((FlashRunnerParameters)params).getAirProgramParameters() : "";
       if (!StringUtil.isEmptyOrSpaces(programParameters)) {
         commandLine.addParameter("--");
-        commandLine.addParameters(StringUtil.split(programParameters, " "));
+        for (StringTokenizer tokenizer = new CommandLineTokenizer(programParameters); tokenizer.hasMoreTokens(); ) {
+          commandLine.addParameter(tokenizer.nextToken());
+        }
       }
     }
     else {
