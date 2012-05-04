@@ -192,10 +192,6 @@ public class FilesToPackageForm {
     ((AbstractTableModel)myFilesToPackageTable.getModel()).fireTableDataChanged();
   }
 
-  public JBTable getTable() {
-    return myFilesToPackageTable;
-  }
-
   public List<FilePathAndPathInPackage> getFilesToPackage() {
     TableUtil.stopEditing(myFilesToPackageTable);
     return myFilesToPackage;
