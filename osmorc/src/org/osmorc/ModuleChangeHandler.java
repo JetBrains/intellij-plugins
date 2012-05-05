@@ -30,7 +30,7 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.ModuleListener;
+import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
@@ -70,14 +70,11 @@ public class ModuleChangeHandler implements ProjectComponent {
 
   public void initComponent() {
     MessageBusConnection connection = project.getMessageBus().connect(project);
-    connection.subscribe(ProjectTopics.MODULES, new ModuleListener() {
+    connection.subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
       public void moduleAdded(Project project, Module module) {
         if (ModuleChangeHandler.this.project == project) {
           moduleNames.put(module, module.getName());
         }
-      }
-
-      public void beforeModuleRemoved(Project project, Module module) {
       }
 
       public void moduleRemoved(Project project, Module module) {
