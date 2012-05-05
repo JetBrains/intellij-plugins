@@ -519,13 +519,11 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
     final java.util.List<CompileStepBeforeRun.MakeBeforeRunTask> makeBeforeRunTasks =
       runManager.getBeforeRunTasks((RunConfiguration)runProfile, CompileStepBeforeRun.ID);
-    for (CompileStepBeforeRun.MakeBeforeRunTask makeBeforeRunTask : makeBeforeRunTasks) {
-      if (!makeBeforeRunTask.isEnabled()) {
-        for (RunnerAndConfigurationSettings settings : runManager.getConfigurationSettings(((RunConfiguration)runProfile).getType())) {
-          if (settings.getConfiguration() == runProfile) {
-            showMakeBeforeRunTurnedOffWarning(project, settings, debug);
-            break;
-          }
+    if (makeBeforeRunTasks.isEmpty()) {
+      for (RunnerAndConfigurationSettings settings : runManager.getConfigurationSettings(((RunConfiguration)runProfile).getType())) {
+        if (settings.getConfiguration() == runProfile) {
+          showMakeBeforeRunTurnedOffWarning(project, settings, debug);
+          break;
         }
       }
     }
