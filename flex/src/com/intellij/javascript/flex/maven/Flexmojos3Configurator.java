@@ -58,10 +58,10 @@ public class Flexmojos3Configurator {
     {Pattern.compile("afe"), Pattern.compile("aglj[0-9]+"), Pattern.compile("flex-fontkit"), Pattern.compile("license"),
       Pattern.compile("rideau")};
 
-  protected Module myModule;
+  protected final Module myModule;
   private final MavenModifiableModelsProvider myModelsProvider;
   private final FlexProjectConfigurationEditor myFlexEditor;
-  protected MavenProjectsTree myMavenTree;
+  protected final MavenProjectsTree myMavenTree;
   protected final MavenProject myMavenProject;
   protected final MavenPlugin myFlexmojosPlugin;
   private final Map<MavenProject, String> myMavenProjectToModuleName;
