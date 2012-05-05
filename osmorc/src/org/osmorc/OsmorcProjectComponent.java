@@ -32,8 +32,8 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceLibraryManager;
@@ -146,12 +146,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
   }
 
 
-  private class MyModuleRootListener implements ModuleRootListener {
-    @Override
-    public void beforeRootsChange(ModuleRootEvent event) {
-
-    }
-
+  private class MyModuleRootListener extends ModuleRootAdapter {
     @Override
     public void rootsChanged(ModuleRootEvent event) {
       if (!event.isCausedByFileTypesChange()) {

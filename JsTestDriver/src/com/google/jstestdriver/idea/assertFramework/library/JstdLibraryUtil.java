@@ -13,8 +13,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.project.ProjectManagerAdapter;
 import com.intellij.openapi.project.ProjectManagerListener;
+import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryManager;
@@ -189,10 +189,7 @@ public class JstdLibraryUtil {
       }
       MessageBusConnection conn = project.getMessageBus().connect();
       myConnections.put(project, conn);
-      conn.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
-        @Override
-        public void beforeRootsChange(final ModuleRootEvent event) {}
-
+      conn.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
         @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
         @Override
         public void rootsChanged(final ModuleRootEvent event) {
