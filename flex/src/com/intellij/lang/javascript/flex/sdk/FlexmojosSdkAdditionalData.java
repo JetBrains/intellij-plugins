@@ -44,9 +44,6 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
     return copy;
   }
 
-  public void checkValid(final SdkModel sdkModel) throws ConfigurationException {
-  }
-
   public Collection<String> getFlexCompilerClasspath() {
     return Collections.unmodifiableCollection(myFlexCompilerClasspath);
   }
