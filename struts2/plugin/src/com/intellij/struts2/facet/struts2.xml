@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact name="Struts 2" version="2.3.1.2">
-    <item name="struts2-core.jar" version="2.3.1.2"
-          url="http://repo1.maven.org/maven2/org/apache/struts/struts2-core/2.3.1.2/struts2-core-2.3.1.2.jar">
+  <artifact name="Struts 2" version="2.3.3">
+    <item name="struts2-core.jar" version="2.3.3"
+          url="http://repo1.maven.org/maven2/org/apache/struts/struts2-core/2.3.3/struts2-core-2.3.3.jar">
       <required-class fqn="org.apache.struts2.StrutsConstants"/>
     </item>
-    <item name="freemarker.jar" version="2.3.18"
-          url="http://repo1.maven.org/maven2/org/freemarker/freemarker/2.3.18/freemarker-2.3.18.jar">
+    <item name="freemarker.jar" version="2.3.19"
+          url="http://repo1.maven.org/maven2/org/freemarker/freemarker/2.3.19/freemarker-2.3.19.jar">
       <required-class fqn="freemarker.core.TemplateElement"/>
     </item>
-    <item name="xwork-core.jar" version="2.3.1.2"
-          url="http://repo1.maven.org/maven2/org/apache/struts/xwork/xwork-core/2.3.1.2/xwork-core-2.3.1.2.jar">
+    <item name="xwork-core.jar" version="2.3.3"
+          url="http://repo1.maven.org/maven2/org/apache/struts/xwork/xwork-core/2.3.3/xwork-core-2.3.3.jar">
       <required-class fqn="com.opensymphony.xwork2.XWorkException"/>
     </item>
-    <item name="ognl.jar" version="3.0.4"
-          url="http://repo1.maven.org/maven2/ognl/ognl/3.0.4/ognl-3.0.4.jar">
+    <item name="ognl.jar" version="3.0.5"
+          url="http://repo1.maven.org/maven2/ognl/ognl/3.0.5/ognl-3.0.5.jar">
       <required-class fqn="ognl.Ognl"/>
     </item>
     <item name="commons-fileupload.jar" version="1.2.2"
           url="http://repo1.maven.org/maven2/commons-fileupload/commons-fileupload/1.2.2/commons-fileupload-1.2.2.jar">
       <required-class fqn="org.apache.commons.fileupload.FileUpload"/>
     </item>
-    <item name="commons-lang.jar" version="2.5"
-          url="http://repo1.maven.org/maven2/commons-lang/commons-lang/2.5/commons-lang-2.5.jar">
-      <required-class fqn="org.apache.commons.lang.ArrayUtils"/>
+    <item name="commons-lang.jar" version="3.1"
+          url="http://repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.1/commons-lang3-3.1.jar">
+      <required-class fqn="org.apache.commons.lang3.ArrayUtils"/>
     </item>
     <item name="commons-io.jar" version="2.0.1"
           url="http://repo1.maven.org/maven2/commons-io/commons-io/2.0.1/commons-io-2.0.1.jar">
