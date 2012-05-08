@@ -15,7 +15,6 @@
 
 package com.intellij.lang.ognl.parsing;
 
-import com.intellij.lang.ognl.psi.OgnlTokenTypes;
 import com.intellij.lang.pratt.*;
 import com.intellij.patterns.IElementTypePattern;
 import com.intellij.psi.tree.IElementType;
@@ -24,13 +23,21 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.lang.ognl.psi.OgnlTokenTypes.*;
 import static com.intellij.lang.pratt.PathPattern.path;
-import static com.intellij.lang.pratt.PrattRegistry.registerParser;
 import static com.intellij.patterns.PlatformPatterns.elementType;
 
 /**
  * @author Yann C&eacute;bron
  */
 public class OgnlParser extends PrattParser {
+  private static final PrattRegistry REGISTRY = new PrattRegistry();
+
+  private static void registerParser(@NotNull final IElementType type, final int priority, final TokenParser parser) {
+    REGISTRY.registerParser(type, priority, parser);
+  }
+
+  private static void registerParser(@NotNull final IElementType type, final int priority, final PathPattern pattern, final TokenParser parser) {
+    REGISTRY.registerParser(type, priority, pattern, parser);
+  }
 
   private static final int INITIAL_LEVEL = 0;
   private static final int EXPR_LEVEL = INITIAL_LEVEL + 10;
@@ -207,7 +214,7 @@ public class OgnlParser extends PrattParser {
 
 
     // literals TODO detect missing closing quote/tick
-    registerParser(OgnlTokenTypes.CHARACTER_LITERAL,
+    registerParser(CHARACTER_LITERAL,
                    ATOM_LEVEL + 1,
                    path().up(),
                    TokenParser.postfix(OgnlElementTypes.STRING_LITERAL));
@@ -435,4 +442,8 @@ public class OgnlParser extends PrattParser {
     return TokenParser.infix(priority, type, "Expression expected");
   }
 
+  @Override
+  protected PrattRegistry getRegistry() {
+    return REGISTRY;
+  }
 }
