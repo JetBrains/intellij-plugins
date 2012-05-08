@@ -26,7 +26,7 @@ import java.util.Map;
 public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<String> {
   private static final int INDEX_VERSION = 4;
   private final EnumeratorStringDescriptor myKeyDescriptor = new EnumeratorStringDescriptor();
-  private final FileBasedIndex.InputFilter myInputFilter = new FileBasedIndex.InputFilter() {
+  private final InputFilter myInputFilter = new InputFilter() {
     @Override
     public boolean acceptInput(VirtualFile file) {
       return JavaScriptSupportLoader.isMxmlOrFxgFile(file);
@@ -70,7 +70,7 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
   }
 
   @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
+  public InputFilter getInputFilter() {
     return myInputFilter;
   }
 

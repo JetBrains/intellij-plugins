@@ -6,12 +6,12 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.indexing.InputFilter;
 
 /**
 * @author Eugene.Kudelevsky
 */
-class FlexInputFilter implements FileBasedIndex.InputFilter {
+class FlexInputFilter implements InputFilter {
 
   private FlexInputFilter() {
   }

@@ -45,7 +45,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
 
   public static final ID<String, Void> NAME = ID.create("FlexXmlBackedMembersIndex");
   private final EnumeratorStringDescriptor myKeyDescriptor = new EnumeratorStringDescriptor();
-  private final FileBasedIndex.InputFilter myInputFilter = new FileBasedIndex.InputFilter() {
+  private final InputFilter myInputFilter = new InputFilter() {
     @Override
     public boolean acceptInput(VirtualFile file) {
       return JavaScriptSupportLoader.isMxmlOrFxgFile(file);
@@ -136,7 +136,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
   }
 
   @Override
-  public FileBasedIndex.InputFilter getInputFilter() {
+  public InputFilter getInputFilter() {
     return myInputFilter;
   }
 
