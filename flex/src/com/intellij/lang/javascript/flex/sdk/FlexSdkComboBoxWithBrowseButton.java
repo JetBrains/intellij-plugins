@@ -92,7 +92,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
           }
           else {
             setText("Module SDK [" + sdk.getName() + "]");
-            setIcon(((ModuleSdk)value).mySdk.getSdkType().getIcon());
+            setIcon(((SdkType) ((ModuleSdk)value).mySdk.getSdkType()).getIcon());
           }
         }
         else if (value instanceof String) {
@@ -106,8 +106,9 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
           }
         }
         else if (value instanceof Sdk) {
-          setText(((Sdk)value).getName());
-          setIcon(((Sdk)value).getSdkType().getIcon());
+          final Sdk sdk = (Sdk)value;
+          setText(sdk.getName());
+          setIcon(((SdkType) sdk.getSdkType()).getIcon());
         }
         else {
           if (sdkCombo.isEnabled()) {

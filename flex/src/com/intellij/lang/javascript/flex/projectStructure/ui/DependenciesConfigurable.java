@@ -26,6 +26,7 @@ import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModel;
 import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
@@ -538,22 +539,24 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   private static class SdkItem extends MyTableItem {
     private final Sdk mySdk;
+    private final SdkType mySdkType;
 
     public SdkItem(Sdk sdk) {
       mySdk = sdk;
+      mySdkType = (SdkType) sdk.getSdkType();
     }
 
     @Override
     public SimpleColoredText getPresentableText() {
       SimpleColoredText text = new SimpleColoredText();
       final String sdkVersion = StringUtil.notNullize(mySdk.getVersionString(), FlexBundle.message("flex.sdk.version.unknown"));
-      text.append(mySdk.getSdkType().getPresentableName() + " " + sdkVersion, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      text.append(mySdkType.getPresentableName() + " " + sdkVersion, SimpleTextAttributes.REGULAR_ATTRIBUTES);
       return text;
     }
 
     @Override
     public Icon getIcon() {
-      return mySdk.getSdkType().getIcon();
+      return mySdkType.getIcon();
     }
 
     @Override
@@ -1488,7 +1491,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     mySdkCombo = new JdkComboBox(mySkdsModel, new Condition<Sdk>() {
       @Override
       public boolean value(final Sdk sdk) {
-        final SdkType sdkType = sdk.getSdkType();
+        final SdkTypeId sdkType = sdk.getSdkType();
         return sdkType == FlexSdkType2.getInstance() || sdkType == FlexmojosSdkType.getInstance();
       }
     }, new Condition<SdkType>() {
