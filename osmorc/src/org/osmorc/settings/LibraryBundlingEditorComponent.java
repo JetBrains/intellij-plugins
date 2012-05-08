@@ -191,7 +191,7 @@ public class LibraryBundlingEditorComponent {
             notifyChanged();
           }
         }
-      }).setAsTopToolbar().createPanel();
+      }).createPanel();
 
     // adapter always holds currently selected bean
     beanAdapter = new BeanAdapter<LibraryBundlificationRule>(new LibraryBundlificationRule());
