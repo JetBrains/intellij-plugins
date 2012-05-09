@@ -15,7 +15,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.impl.ModuleRootManagerImpl;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
@@ -221,7 +221,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
         public void run() {
           final ModifiableRootModel[] rootModels =
             moduleToModifiableModelMap.values().toArray(new ModifiableRootModel[moduleToModifiableModelMap.size()]);
-          ProjectRootManager.getInstance(project).multiCommit(moduleModel, rootModels);
+          ModuleRootManagerImpl.multiCommit(rootModels, moduleModel);
         }
       });
     }
