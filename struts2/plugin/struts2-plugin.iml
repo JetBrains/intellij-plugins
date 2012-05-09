@@ -18,8 +18,6 @@
     <orderEntry type="module" module-name="CSS" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="dom-impl" />
-    <orderEntry type="module" module-name="jpa-openapi" />
-    <orderEntry type="module" module-name="jpa-impl" />
     <orderEntry type="module" module-name="jam-support-impl" />
     <orderEntry type="module" module-name="web-openapi" />
     <orderEntry type="module" module-name="web-impl" />
@@ -41,7 +39,6 @@
     <orderEntry type="module" module-name="htmltools" scope="TEST" />
     <orderEntry type="module" module-name="velocity" />
     <orderEntry type="module" module-name="spellchecker" />
-    <orderEntry type="module" module-name="uml" scope="TEST" />
     <orderEntry type="module" module-name="IntelliLang-js" scope="TEST" />
     <orderEntry type="module" module-name="java-impl" />
     <orderEntry type="module" module-name="jsp-openapi" />

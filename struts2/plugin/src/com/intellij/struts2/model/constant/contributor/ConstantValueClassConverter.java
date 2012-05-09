@@ -15,35 +15,53 @@
 
 package com.intellij.struts2.model.constant.contributor;
 
-import com.intellij.jpa.model.xml.impl.converters.ClassConverterBase;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiModifier;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.struts2.model.constant.ConstantValueConverterClassContributor;
-import com.intellij.util.xml.ConvertContext;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.xml.*;
+import com.intellij.util.xml.impl.GenericDomValueReference;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * Resolves to Shortcut-name, JAVA-Class or result from {@link com.intellij.struts2.model.constant.ConstantValueConverterClassContributor}.
  */
-class ConstantValueClassConverter extends ClassConverterBase {
+class ConstantValueClassConverter extends ResolvingConverter<PsiClass> implements CustomReferenceConverter {
 
-  private final String baseClass;
+  private final JavaClassReferenceProvider javaClassReferenceProvider = new JavaClassReferenceProvider();
+
   private final Map<String, String> shortCutToPsiClassMap;
   private final boolean hasShortCuts;
 
   ConstantValueClassConverter(@NonNls final String baseClass,
                               final Map<String, String> shortCutToPsiClassMap) {
-
-    this.baseClass = baseClass;
     this.shortCutToPsiClassMap = shortCutToPsiClassMap;
     this.hasShortCuts = !shortCutToPsiClassMap.isEmpty();
+
+    javaClassReferenceProvider.setSoft(true);
+    javaClassReferenceProvider.setAllowEmpty(false);
+    javaClassReferenceProvider.setOption(JavaClassReferenceProvider.CONCRETE, Boolean.TRUE);
+    javaClassReferenceProvider.setOption(JavaClassReferenceProvider.NOT_INTERFACE, Boolean.TRUE);
+    javaClassReferenceProvider.setOption(JavaClassReferenceProvider.EXTEND_CLASS_NAMES, new String[]{baseClass});
+  }
+
+  @NotNull
+  @Override
+  public Collection<? extends PsiClass> getVariants(ConvertContext context) {
+    return Collections.emptyList();
   }
 
   public PsiClass fromString(@Nullable @NonNls final String s, final ConvertContext convertContext) {
@@ -56,13 +74,13 @@ class ConstantValueClassConverter extends ClassConverterBase {
       final String shortCutClassName = shortCutToPsiClassMap.get(s);
 
       if (StringUtil.isNotEmpty(shortCutClassName)) {
-        return super.fromString(shortCutClassName, convertContext);
+        return DomJavaUtil.findClass(shortCutClassName, convertContext.getInvocationElement());
       }
     }
 
     // 2. first non-null result from extension point contributor (currently only Spring)
     for (final ConstantValueConverterClassContributor converterClassContributor :
-        Extensions.getExtensions(ConstantValueConverterClassContributor.EP_NAME)) {
+      Extensions.getExtensions(ConstantValueConverterClassContributor.EP_NAME)) {
       final PsiClass contributorClass = converterClassContributor.fromString(s, convertContext);
       if (contributorClass != null) {
         return contributorClass;
@@ -70,7 +88,16 @@ class ConstantValueClassConverter extends ClassConverterBase {
     }
 
     // 3. via JAVA-class
-    return super.fromString(s, convertContext);
+    final PsiClass psiClass = DomJavaUtil.findClass(s, convertContext.getInvocationElement());
+    if (psiClass == null) {
+      return null;
+    }
+    return !psiClass.isInterface() && !psiClass.hasModifierProperty(PsiModifier.ABSTRACT) ? psiClass : null;
+  }
+
+  @Override
+  public String toString(@Nullable PsiClass aClass, ConvertContext context) {
+    return aClass == null ? null : aClass.getName();
   }
 
   @NotNull
@@ -78,11 +105,14 @@ class ConstantValueClassConverter extends ClassConverterBase {
     return shortCutToPsiClassMap.keySet();
   }
 
-  protected void setJavaClassReferenceProviderOptions(final JavaClassReferenceProvider javaClassReferenceProvider,
-                                                      final ConvertContext convertContext) {
-    super.setJavaClassReferenceProviderOptions(javaClassReferenceProvider, convertContext);
-    javaClassReferenceProvider.setOption(JavaClassReferenceProvider.CONCRETE, Boolean.TRUE);
-    javaClassReferenceProvider.setOption(JavaClassReferenceProvider.NOT_INTERFACE, Boolean.TRUE);
-    javaClassReferenceProvider.setOption(JavaClassReferenceProvider.EXTEND_CLASS_NAMES, new String[]{baseClass});
+  @NotNull
+  @Override
+  public PsiReference[] createReferences(GenericDomValue value, PsiElement element, ConvertContext context) {
+    final PsiReference[] references = javaClassReferenceProvider.getReferencesByElement(element);
+    return ArrayUtil.append(references, new GenericDomValueReference(value), PsiReference.ARRAY_FACTORY);
+  }
+
+  public String getErrorMessage(@Nullable final String s, final ConvertContext context) {
+    return CodeInsightBundle.message("error.cannot.resolve.class", s);
   }
 }
