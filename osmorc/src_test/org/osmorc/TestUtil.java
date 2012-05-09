@@ -38,11 +38,11 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.ModuleRootManagerImpl;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
@@ -50,7 +50,6 @@ import com.intellij.util.io.ZipUtil;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetType;
 
 import java.io.File;
@@ -60,7 +59,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.*;
+import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.Manually;
+import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -102,8 +102,8 @@ public class TestUtil {
                         }
                     }
 
-                    ProjectRootManager.getInstance(project).multiCommit(moduleModel,
-                            rootModels.toArray(new ModifiableRootModel[rootModels.size()]));
+                  ModifiableRootModel[] rootModels1 = rootModels.toArray(new ModifiableRootModel[rootModels.size()]);
+                  ModuleRootManagerImpl.multiCommit(rootModels1, moduleModel);
                 }
                 catch (InvalidDataException e) {
                     throw new RuntimeException(e);
