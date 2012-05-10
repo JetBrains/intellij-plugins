@@ -1598,14 +1598,13 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       LibraryTable.ModifiableModel librariesModelWrapper = new LibraryTableModifiableModelWrapper(modifiableModel, filter);
 
       Module module = myConfigEditor.getModule(myDependencies);
-      List<? extends FlexLibraryType> libraryTypes = Collections.singletonList(new FlexLibraryType() {
-        @NotNull
+      List<? extends FlexLibraryType> libraryTypes = Collections.singletonList(FlexLibraryType.getInstance());
+      CreateModuleLibraryChooser c = new CreateModuleLibraryChooser(libraryTypes, myMainPanel, module, librariesModelWrapper, new Function<LibraryType, LibraryProperties>() {
         @Override
-        public FlexLibraryProperties createDefaultProperties() {
+        public LibraryProperties fun(LibraryType type) {
           return new FlexLibraryProperties(FlexLibraryIdGenerator.generateId());
         }
       });
-      CreateModuleLibraryChooser c = new CreateModuleLibraryChooser(libraryTypes, myMainPanel, module, librariesModelWrapper);
       final List<Library> libraries = c.chooseElements();
       if (libraries.isEmpty()) {
         return;
@@ -1843,8 +1842,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     @Override
-    public Library createLibrary(String name, @Nullable LibraryType type) {
-      return myDelegate.createLibrary(name, type);
+    public Library createLibrary(String name, @Nullable PersistentLibraryKind kind) {
+      return myDelegate.createLibrary(name, kind);
     }
   }
 

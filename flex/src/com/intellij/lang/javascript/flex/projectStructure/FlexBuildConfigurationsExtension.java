@@ -168,7 +168,7 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
 
     if (entry instanceof LibraryOrderEntry) {
       final Library library = ((LibraryOrderEntry)entry).getLibrary();
-      if (library != null && library.getTable() == null && ((LibraryEx)library).getType() instanceof FlexLibraryType) {
+      if (library != null && library.getTable() == null && ((LibraryEx)library).getKind() == FlexLibraryType.FLEX_LIBRARY) {
         final String libraryId = FlexProjectRootsUtil.getLibraryId(library);
 
         final List<CompositeConfigurable> configurables = myConfigurator.getBCConfigurables(module);

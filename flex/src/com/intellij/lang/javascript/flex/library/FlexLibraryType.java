@@ -4,10 +4,7 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.LibraryKind;
-import com.intellij.openapi.roots.libraries.LibraryType;
-import com.intellij.openapi.roots.libraries.LibraryTypeService;
-import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
+import com.intellij.openapi.roots.libraries.*;
 import com.intellij.openapi.roots.libraries.ui.LibraryEditorComponent;
 import com.intellij.openapi.roots.libraries.ui.LibraryPropertiesEditor;
 import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
@@ -23,7 +20,13 @@ import javax.swing.*;
  * @author nik
  */
 public class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
-  public static final LibraryKind<FlexLibraryProperties> FLEX_LIBRARY = LibraryKind.create("flex");
+  public static final PersistentLibraryKind<FlexLibraryProperties> FLEX_LIBRARY = new PersistentLibraryKind<FlexLibraryProperties>("flex", false) {
+    @NotNull
+    @Override
+    public FlexLibraryProperties createDefaultProperties() {
+      return new FlexLibraryProperties();
+    }
+  };
 
   public FlexLibraryType() {
     super(FLEX_LIBRARY);
@@ -40,12 +43,6 @@ public class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
                                                   @Nullable VirtualFile contextDirectory, @NotNull final Project project) {
     return LibraryTypeService.getInstance().createLibraryFromFiles(createLibraryRootsComponentDescriptor(), parentComponent, contextDirectory, this,
                                                                    project);
-  }
-
-  @NotNull
-  @Override
-  public FlexLibraryProperties createDefaultProperties() {
-    return new FlexLibraryProperties();
   }
 
   @Override

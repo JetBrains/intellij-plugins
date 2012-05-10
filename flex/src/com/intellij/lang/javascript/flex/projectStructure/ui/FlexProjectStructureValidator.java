@@ -54,7 +54,7 @@ public class FlexProjectStructureValidator extends ProjectStructureValidator {
 
   @Override
   protected boolean addLibraryToDependencies(final Library library, final Project project, final boolean allowEmptySelection) {
-    if (!(((LibraryEx)library).getType() instanceof FlexLibraryType)) {
+    if (!(((LibraryEx)library).getKind() == FlexLibraryType.FLEX_LIBRARY)) {
       return false;
     }
 

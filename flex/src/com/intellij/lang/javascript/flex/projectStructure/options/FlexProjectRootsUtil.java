@@ -89,7 +89,7 @@ public class FlexProjectRootsUtil {
           continue;
         }
         LibraryEx library = (LibraryEx)((LibraryOrderEntry)orderEntry).getLibrary();
-        if (library == null || !(library.getType() instanceof FlexLibraryType)) {
+        if (library == null || !(library.getKind() == FlexLibraryType.FLEX_LIBRARY)) {
           continue;
         }
         if (entry.getLibraryId().equals(getLibraryId(library))) {
@@ -109,7 +109,7 @@ public class FlexProjectRootsUtil {
   }
 
   public static boolean isFlexLibrary(final Library library) {
-    return ((LibraryEx)library).getType() instanceof FlexLibraryType;
+    return ((LibraryEx)library).getKind() == FlexLibraryType.FLEX_LIBRARY;
   }
 
 }

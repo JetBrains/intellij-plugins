@@ -17,8 +17,8 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.roots.libraries.LibraryType;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -254,14 +254,13 @@ public class Flexmojos3Configurator {
         airglobal |= libraryName.contains("airglobal");
         mobilecomponents |= libraryName.contains("mobilecomponents");
 
-        final LibraryType<?> type = ((LibraryEx)library).getType();
-        final FlexLibraryType flexLibraryType = FlexLibraryType.getInstance();
+        final LibraryKind kind = ((LibraryEx)library).getKind();
 
-        if (type != flexLibraryType) {
-          if (type == null) {
+        if (kind != FlexLibraryType.FLEX_LIBRARY) {
+          if (kind == null) {
             final LibraryEx.ModifiableModelEx libraryModel = (LibraryEx.ModifiableModelEx)myModelsProvider.getLibraryModel(library);
-            libraryModel.setType(flexLibraryType);
-            libraryModel.setProperties(flexLibraryType.createDefaultProperties());
+            libraryModel.setKind(FlexLibraryType.FLEX_LIBRARY);
+            libraryModel.setProperties(FlexLibraryType.FLEX_LIBRARY.createDefaultProperties());
           }
         }
 

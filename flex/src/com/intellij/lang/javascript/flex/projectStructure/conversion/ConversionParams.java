@@ -151,15 +151,15 @@ public class ConversionParams {
   }
 
   private static boolean isApplicableLibrary(final LibraryEx library) {
-    return library.getType() == null || library.getType() == FlexLibraryType.getInstance();
+    return library.getKind() == null || library.getKind() == FlexLibraryType.FLEX_LIBRARY;
   }
 
   public void changeLibraryTypeToFlex(final String libraryName, final String libraryLevel) throws CannotConvertException {
     if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(libraryLevel)) {
       final Library library = ApplicationLibraryTable.getApplicationTable().getLibraryByName(libraryName);
       final LibraryEx.ModifiableModelEx model = (LibraryEx.ModifiableModelEx)library.getModifiableModel();
-      model.setType(FlexLibraryType.getInstance());
-      model.setProperties(FlexLibraryType.getInstance().createDefaultProperties());
+      model.setKind(FlexLibraryType.FLEX_LIBRARY);
+      model.setProperties(FlexLibraryType.FLEX_LIBRARY.createDefaultProperties());
       ApplicationManager.getApplication().runWriteAction(new Runnable() {
         public void run() {
           model.commit();

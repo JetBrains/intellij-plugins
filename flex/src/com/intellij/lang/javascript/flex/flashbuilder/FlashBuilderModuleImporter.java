@@ -387,7 +387,7 @@ public class FlashBuilderModuleImporter {
 
       final LibraryTableBase.ModifiableModelEx libraryModel = myFlexConfigEditor.getLibraryModel(bc.getDependencies());
 
-      final Library library = libraryModel.createLibrary(null, FlexLibraryType.getInstance());
+      final Library library = libraryModel.createLibrary(null, FlexLibraryType.FLEX_LIBRARY);
 
       final LibraryEx.ModifiableModelEx libraryModifiableModel = ((LibraryEx.ModifiableModelEx)library.getModifiableModel());
       final String libraryId = UUID.randomUUID().toString();

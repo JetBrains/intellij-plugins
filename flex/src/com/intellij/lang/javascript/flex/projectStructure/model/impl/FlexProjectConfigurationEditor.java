@@ -301,7 +301,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
   private static LibraryEx copyModuleLibrary(final ModifiableRootModel modifiableModel, final LibraryEx library) {
     LibraryTableBase.ModifiableModelEx librariesModifiableModel = getTableModifiableModel(modifiableModel);
-    LibraryEx libraryCopy = (LibraryEx)librariesModifiableModel.createLibrary(library.getName(), library.getType());
+    LibraryEx libraryCopy = (LibraryEx)librariesModifiableModel.createLibrary(library.getName(), library.getKind());
     LibraryEx.ModifiableModelEx libraryCopyModel = (LibraryEx.ModifiableModelEx)libraryCopy.getModifiableModel();
     LibraryEditingUtil.copyLibrary(library, Collections.<String, String>emptyMap(), libraryCopyModel); // will overwrite library id
     libraryCopyModel.setProperties(new FlexLibraryProperties(FlexLibraryIdGenerator.generateId())); // do assign unique library id
@@ -635,7 +635,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
   @Nullable
   private static LibraryEx findLibrary(ModifiableRootModel modifiableModel, String libraryId) {
     for (Library library : modifiableModel.getModuleLibraryTable().getLibraries()) {
-      if (((LibraryEx)library).getType() instanceof FlexLibraryType) { // allow subclasses
+      if (((LibraryEx)library).getKind() == FlexLibraryType.FLEX_LIBRARY) { // allow subclasses
         if (libraryId.equals(FlexProjectRootsUtil.getLibraryId(library))) {
           return (LibraryEx)library;
         }

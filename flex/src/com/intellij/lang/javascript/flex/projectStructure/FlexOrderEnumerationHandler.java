@@ -180,7 +180,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
         return AddDependencyType.DEFAULT;
       }
 
-      if (library.getType() instanceof FlexLibraryType) {
+      if (library.getKind() == FlexLibraryType.FLEX_LIBRARY) {
         return FlexProjectRootsUtil.dependOnLibrary(accessibleConfigurations, library, module != myRootModule, settings.isProductionOnly())
                ? AddDependencyType.DEFAULT
                : AddDependencyType.DO_NOT_ADD;

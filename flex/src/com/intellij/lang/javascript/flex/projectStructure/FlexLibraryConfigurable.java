@@ -5,16 +5,12 @@ import com.intellij.openapi.roots.RootProvider;
 import com.intellij.openapi.roots.impl.RootModelImpl;
 import com.intellij.openapi.roots.impl.libraries.JarDirectories;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryProperties;
-import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.openapi.roots.libraries.LibraryType;
+import com.intellij.openapi.roots.libraries.*;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibraryConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -85,8 +81,9 @@ public class FlexLibraryConfigurable extends LibraryConfigurable {
       return false;
     }
 
-    public LibraryType<?> getType() {
-      return ((LibraryEx)getEditableObject()).getType();
+    @Override
+    public PersistentLibraryKind<?> getKind() {
+      return ((LibraryEx)getEditableObject()).getKind();
     }
 
     public LibraryProperties getProperties() {
