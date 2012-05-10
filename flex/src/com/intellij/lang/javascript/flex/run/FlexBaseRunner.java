@@ -400,7 +400,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       final String adlOptions =
         params instanceof FlashRunnerParameters ? ((FlashRunnerParameters)params).getAdlOptions() : "";
 
-      if (FlexUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
+      if (StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") >= 0 &&
+          FlexUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
         commandLine.addParameter("-profile");
         commandLine.addParameter("extendedDesktop");
       }
