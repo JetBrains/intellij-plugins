@@ -16,6 +16,20 @@
         <packaging-android />
         <packaging-ios />
       </configuration>
+      <configuration name="app" target-platform="Desktop" output-file="app.swf" output-folder="$MODULE_DIR$/../../../out/production/common" skip-build="true">
+        <dependencies>
+          <entries>
+            <entry library-id="e4d0939a-840c-46e7-8649-c9d534e347a5">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
+          <sdk name="flex4.6.0" />
+        </dependencies>
+        <compiler-options />
+        <packaging-air-desktop package-file-name="app" />
+        <packaging-android />
+        <packaging-ios />
+      </configuration>
     </configurations>
     <compiler-options />
   </component>
@@ -33,11 +47,21 @@
     <content url="file://$MODULE_DIR$/../css">
       <sourceFolder url="file://$MODULE_DIR$/../css" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="flex4.6.0" jdkType="__CompositeFlexSdk__" />
+    <orderEntry type="jdk" jdkName="flex4.6.0" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library type="flex">
         <properties id="88ddb869-3b69-43b3-9ca2-3bebaa1857b4" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../test-data-helper/target/test-data-helper.swc!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library type="flex">
+        <properties id="e4d0939a-840c-46e7-8649-c9d534e347a5" />
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../../../test-data-helper/target/test-data-helper.swc!/" />
         </CLASSES>

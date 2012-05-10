@@ -39,7 +39,7 @@
     <content url="file://$MODULE_DIR$/../../../ui">
       <sourceFolder url="file://$MODULE_DIR$/../../../ui/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="flex4.6.0" jdkType="__CompositeFlexSdk__" />
+    <orderEntry type="jdk" jdkName="flex4.6.0" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library type="flex">

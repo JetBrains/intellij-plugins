@@ -43,6 +43,7 @@
           <root url="file://$MODULE_DIR$/../../../../out/classes/production/css-api" />
           <root url="file://$MODULE_DIR$/../../../../out/classes/production/util" />
           <root url="file://$MODULE_DIR$/../../../../out/classes/production/util-rt" />
+          <root url="file://$MODULE_DIR$/../../../../out/classes/production/lang-api" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>

@@ -65,7 +65,6 @@ abstract class Context implements MxmlObjectReferenceProvider {
   }
 
   public void setChildrenType(String value) {
-    assert childrenType == null;
     childrenType = value;
   }
 

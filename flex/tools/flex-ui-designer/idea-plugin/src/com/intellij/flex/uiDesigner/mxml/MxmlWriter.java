@@ -395,7 +395,11 @@ public class MxmlWriter {
           explicitContentOccured = 0;
           final XmlElementValueProvider valueProvider = valueProviderFactory.create((XmlText)child);
           final PropertyKind defaultPropertyKind = processDefaultProperty(tag, valueProvider, null, children.length, context);
-          if (defaultPropertyKind == null) {
+          if (defaultPropertyKind == PropertyKind.IGNORE) {
+            explicitContentOccured = -1;
+            continue;
+          }
+          else if (defaultPropertyKind == null) {
             continue;
           }
           else if (defaultPropertyKind.isList()) {
@@ -665,7 +669,7 @@ public class MxmlWriter {
         else {
           if (isXmlText) {
             addProblem(parentTag, "initializer.cannot.be.represented.in.text", parentTag.getLocalName());
-            return null;
+            return PropertyKind.IGNORE;
           }
         }
       }
