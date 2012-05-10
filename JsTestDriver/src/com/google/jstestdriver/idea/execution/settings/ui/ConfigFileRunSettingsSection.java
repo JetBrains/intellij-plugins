@@ -1,8 +1,10 @@
 package com.google.jstestdriver.idea.execution.settings.ui;
 
+import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.UIUtil;
@@ -62,9 +64,18 @@ class ConfigFileRunSettingsSection extends AbstractRunSettingsSection {
       myConfigFileTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
       myConfigFileTextFieldWithBrowseButton.addBrowseFolderListener(
           "Select JsTestDriver configuration file",
-          "",
+          null,
           creationContext.getProject(),
-          FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
+          new FileChooserDescriptor(true, false, false, false, false, false) {
+            @Override
+            public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
+              boolean visible = super.isFileVisible(file, showHiddenFiles);
+              if (visible && !file.isDirectory() && !showHiddenFiles) {
+                visible = JstdConfigFileUtils.isJstdConfigFile(file);
+              }
+              return visible;
+            }
+          }
       );
       panel.add(myConfigFileTextFieldWithBrowseButton, c);
     }
