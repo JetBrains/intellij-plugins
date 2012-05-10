@@ -8,7 +8,6 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.psi.*;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
