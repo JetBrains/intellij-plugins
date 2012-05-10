@@ -185,7 +185,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
         });
       }
 
-      final Module module = moduleModel.newModule(moduleFilePath, FlexModuleType.getInstance());
+      final Module module = moduleModel.newModule(moduleFilePath, FlexModuleType.getInstance().getId());
       final ModifiableRootModel rootModel = currentFlexEditor != null
                                             ? currentFlexEditor.getModifiableRootModel(module)
                                             : ModuleRootManager.getInstance(module).getModifiableModel();
