@@ -36,9 +36,9 @@ import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
+import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.ModuleRootManagerImpl;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -103,7 +103,7 @@ public class TestUtil {
                     }
 
                   ModifiableRootModel[] rootModels1 = rootModels.toArray(new ModifiableRootModel[rootModels.size()]);
-                  ModuleRootManagerImpl.multiCommit(rootModels1, moduleModel);
+                  ModifiableModelCommitter.multiCommit(rootModels1, moduleModel);
                 }
                 catch (InvalidDataException e) {
                     throw new RuntimeException(e);
