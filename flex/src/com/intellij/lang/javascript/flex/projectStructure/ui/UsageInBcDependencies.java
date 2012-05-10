@@ -4,7 +4,6 @@ import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRoo
 import com.intellij.openapi.roots.impl.libraries.LibraryTableImplUtil;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.*;
-import com.intellij.openapi.util.Pair;
 
 import javax.swing.*;
 
