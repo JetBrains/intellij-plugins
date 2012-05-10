@@ -12,7 +12,6 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.CheckboxTree;
 import com.intellij.ui.CheckedTreeNode;
-import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.util.CollectConsumer;
 import com.intellij.util.Consumer;
