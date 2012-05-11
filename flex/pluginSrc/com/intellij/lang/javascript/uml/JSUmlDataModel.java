@@ -34,6 +34,10 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.ModificationTracker;
@@ -137,7 +141,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
   @NotNull
   public Collection<DiagramNode<Object>> getNodes() {
-    return myNodes;
+    return new ArrayList<DiagramNode<Object>>(myNodes);
   }
 
   @NotNull
@@ -373,10 +377,51 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
       }
     }
 
+    if (isShowDependencies()) {
+      final Task.Backgroundable task =
+        new Task.Backgroundable(getProject(), FlexBundle.message("uml.calculating.dependencies.message"), true) {
+          @Override
+          public void run(@NotNull ProgressIndicator indicator) {
+          ApplicationManager.getApplication().runReadAction(new Runnable() {
+            @Override
+            public void run() {
+              for (JSClass psiClass : classes) {
+                showDependenciesFor(psiClass);
+              }
+              getBuilder().update();
+            }
+          });
+        }
+      };
+      ProgressManager.getInstance().run(task);
+    }
     //merge!
     mergeWithBackup(myNodes, myNodesOld);
     mergeWithBackup(myEdges, myEdgesOld);
     mergeWithBackup(myDependencyEdges, myDependencyEdgesOld);
+  }
+
+  private void showDependenciesFor(final JSClass clazz) {
+    DiagramNode<Object> mainNode = findNode(clazz);
+    if (mainNode == null) return;
+
+    JSUmlDependencyProvider provider = new JSUmlDependencyProvider(clazz);
+
+    Collection<Pair<JSClass, DiagramRelationshipInfo>> list = provider.computeUsedClasses();
+    for (Pair<JSClass, DiagramRelationshipInfo> pair : list) {
+      DiagramNode<Object> node = findNode(pair.first);
+      if (node != null) {
+        addDependencyEdge(mainNode, node, pair.second);
+      }
+    }
+
+    list = provider.computeUsingClasses();
+    for (Pair<JSClass, DiagramRelationshipInfo> pair : list) {
+      DiagramNode<Object> node = findNode(pair.first);
+      if (node != null) {
+        addDependencyEdge(node, mainNode, pair.second);
+      }
+    }
   }
 
   @Nullable
@@ -490,7 +535,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
   @Nullable
   public DiagramNode<Object> findNode(Object object) {
-    for (DiagramNode<Object> node : myNodes) {
+    for (DiagramNode<Object> node : getNodes()) {
       final String fqn = getFqn(getIdentifyingElement(node));
       if (fqn != null && fqn.equals(getFqn(object))) {
         if (object instanceof JSClass && !(node instanceof JSClassNode)) continue;
@@ -527,13 +572,23 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
       return;
     }
 
-    Collection<DiagramEdge> edges = new ArrayList<DiagramEdge>();
+    Collection<DiagramEdge> edgesToRemove = new ArrayList<DiagramEdge>();
     for (DiagramEdge edge : myEdges) {
       if (node.equals(edge.getTarget()) || node.equals(edge.getSource())) {
-        edges.add(edge);
+        edgesToRemove.add(edge);
       }
     }
-    myEdges.removeAll(edges);
+    myEdges.removeAll(edgesToRemove);
+
+    Collection<DiagramEdge> dependencyEdgesToRemove = new ArrayList<DiagramEdge>();
+    for (DiagramEdge edge : myDependencyEdges) {
+      if (node.equals(edge.getTarget()) || node.equals(edge.getSource())) {
+        dependencyEdgesToRemove.add(edge);
+      }
+    }
+    myDependencyEdges.removeAll(dependencyEdgesToRemove);
+
+
     myNodes.remove(node);
     if (element instanceof JSClass) {
       final JSClass psiClass = (JSClass)element;
@@ -598,7 +653,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
   List<String> getAllClassesFQN() {
     List<String> fqns = new ArrayList<String>();
-    for (DiagramNode node : myNodes) {
+    for (DiagramNode node : getNodes()) {
       final Object identifyingElement = getIdentifyingElement(node);
       if (identifyingElement instanceof JSClass) {
         fqns.add(((JSClass)identifyingElement).getQualifiedName());
@@ -609,7 +664,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
   List<String> getAllPackagesFQN() {
     List<String> fqns = new ArrayList<String>();
-    for (DiagramNode node : myNodes) {
+    for (DiagramNode node : getNodes()) {
       final Object identifyingElement = getIdentifyingElement(node);
       if (identifyingElement instanceof JSPackage) {
         fqns.add(((JSPackage)identifyingElement).getQualifiedName());
@@ -630,7 +685,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
   }
 
   public boolean hasNotValid() {
-    for (DiagramNode<Object> node : myNodes) {
+    for (DiagramNode<Object> node : getNodes()) {
       if (!isValid(getIdentifyingElement(node))) {
         return true;
       }
@@ -803,5 +858,10 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
       builder.update(true, false);
     }
     return result;
+  }
+
+  @Override
+  public boolean isDependencyDiagramSupported() {
+    return true;
   }
 }
