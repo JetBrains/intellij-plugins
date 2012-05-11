@@ -6,10 +6,14 @@
     <change-notes><![CDATA[
         <html>
         <dl>
+            <dt>0.1.3</dt>
+            <dd>Adding the mouse events and a couple other missing directives</dd>
             <dt>0.1.2</dt>
             <dd>Works with any doctype (not just !doctype html).</dd>
             <dt>0.1.1</dt>
-            <dd>Changed Autocomplete approach to "provide" custom autocompletes through a provider extension point. I'll revisit a custom DTD after more discussion/thought with other developers.</dd>
+            <dd>Changed Autocomplete approach to "provide" custom autocompletes through a provider extension point. I'll
+                revisit a custom DTD after more discussion/thought with other developers.
+            </dd>
             <dt>0.1</dt>
             <dd>Basic ng attribute autocompletion based on an included DTD.</dd>
         </dl>
@@ -37,6 +41,5 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <xml.attributeDescriptorsProvider implementation="org.angularjs.AngularJSCustomAttributeDescriptorsProvider"/>
-
     </extensions>
 </idea-plugin>

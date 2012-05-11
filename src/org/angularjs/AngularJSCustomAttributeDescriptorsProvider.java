@@ -36,37 +36,60 @@ public class AngularJSCustomAttributeDescriptorsProvider implements XmlAttribute
         final List<XmlAttributeDescriptor> result = new ArrayList<XmlAttributeDescriptor>();
         //todo: refactor to loading a file
         //todo: explore making the loaded file a DTD/schema that would also make these "valid" attributes for inspections
-        result.add(new AnyXmlAttributeDescriptor("ng-app"));
-        result.add(new AnyXmlAttributeDescriptor("ng-bind"));
-        result.add(new AnyXmlAttributeDescriptor("ng-bind-html-unsafe"));
-        result.add(new AnyXmlAttributeDescriptor("ng-bind-template"));
-        result.add(new AnyXmlAttributeDescriptor("ng-class"));
-        result.add(new AnyXmlAttributeDescriptor("ng-class-even"));
-        result.add(new AnyXmlAttributeDescriptor("ng-class-odd"));
-        result.add(new AnyXmlAttributeDescriptor("ng-cloak"));
-        result.add(new AnyXmlAttributeDescriptor("ng-controller"));
-        result.add(new AnyXmlAttributeDescriptor("ng-form"));
-        result.add(new AnyXmlAttributeDescriptor("ng-hide"));
-        result.add(new AnyXmlAttributeDescriptor("ng-include"));
-        result.add(new AnyXmlAttributeDescriptor("ng-init"));
-        result.add(new AnyXmlAttributeDescriptor("ng-non-bindable"));
-        result.add(new AnyXmlAttributeDescriptor("ng-pluralize"));
-        result.add(new AnyXmlAttributeDescriptor("ng-repeat"));
-        result.add(new AnyXmlAttributeDescriptor("ng-show"));
-        result.add(new AnyXmlAttributeDescriptor("ng-submit"));
-        result.add(new AnyXmlAttributeDescriptor("ng-style"));
-        result.add(new AnyXmlAttributeDescriptor("ng-switch"));
-        result.add(new AnyXmlAttributeDescriptor("ng-switch-when"));
-        result.add(new AnyXmlAttributeDescriptor("ng-switch-default"));
-        result.add(new AnyXmlAttributeDescriptor("ng-options"));
-        result.add(new AnyXmlAttributeDescriptor("ng-view"));
-        result.add(new AnyXmlAttributeDescriptor("ng-transclude"));
-        result.add(new AnyXmlAttributeDescriptor("ng-model"));
-        result.add(new AnyXmlAttributeDescriptor("ng-list"));
-        result.add(new AnyXmlAttributeDescriptor("ng-change"));
-        result.add(new AnyXmlAttributeDescriptor("ng-value"));
-        result.add(new AnyXmlAttributeDescriptor("ng-required"));
+        String[] directiveNames = {
+                "click",
+                "dblclick",
+                "mousedown",
+                "mouseup",
+                "mouseover",
+                "mouseout",
+                "mousemove",
+                "mouseenter",
+                "mouseleave",
+                "app",
+                "bind",
+                "bind-html-unsafe",
+                "bind-template",
+                "class",
+                "class-even",
+                "class-odd",
+                "cloak",
+                "controller",
+                "form",
+                "hide",
+                "include",
+                "init",
+                "non-bindable",
+                "pluralize",
+                "repeat",
+                "show",
+                "submit",
+                "style",
+                "switch",
+                "switch-when",
+                "switch-default",
+                "options",
+                "view",
+                "transclude",
+                "model",
+                "list",
+                "change",
+                "value",
+                "required",
+
+                "checked",
+                "csp",
+                "multiple",
+                "readonly",
+                "src"
+        };
+
+        for (String directiveName : directiveNames) {
+            directiveName = "ng-" + directiveName;
+            result.add(new AnyXmlAttributeDescriptor(directiveName));
+        }
         result.add(new AnyXmlAttributeDescriptor("required"));
+
         return result.toArray(new XmlAttributeDescriptor[result.size()]);
     }
 
