@@ -19,6 +19,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ModuleRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.JDOMUtil;
@@ -342,7 +343,7 @@ public class FlexCompilationUtils {
         final String appId = fixApplicationId(bc.getMainClass());
         final String appName = StringUtil.getShortName(bc.getMainClass());
         final String swfName = PathUtil.getFileName(outputFilePath);
-        final String[] extensions = getAirExtensionIDs(module, bc.getDependencies());
+        final String[] extensions = getAirExtensionIDs(ModuleRootManager.getInstance(module), bc.getDependencies());
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
           public void run() {
@@ -373,13 +374,13 @@ public class FlexCompilationUtils {
     }
   }
 
-  public static Collection<VirtualFile> getANEFiles(final Module module, final Dependencies dependencies) {
+  public static Collection<VirtualFile> getANEFiles(final ModuleRootModel moduleRootModel, final Dependencies dependencies) {
     final Collection<VirtualFile> result = new ArrayList<VirtualFile>();
 
     for (DependencyEntry entry : dependencies.getEntries()) {
       if (entry instanceof ModuleLibraryEntry) {
         final LibraryOrderEntry orderEntry =
-          FlexProjectRootsUtil.findOrderEntry((ModuleLibraryEntry)entry, ModuleRootManager.getInstance(module));
+          FlexProjectRootsUtil.findOrderEntry((ModuleLibraryEntry)entry, moduleRootModel);
         if (orderEntry != null) {
           for (VirtualFile libFile : orderEntry.getRootFiles(OrderRootType.CLASSES)) {
             addIfANE(result, libFile);
@@ -387,7 +388,7 @@ public class FlexCompilationUtils {
         }
       }
       else if (entry instanceof SharedLibraryEntry) {
-        final Library library = FlexProjectRootsUtil.findOrderEntry(module.getProject(), (SharedLibraryEntry)entry);
+        final Library library = FlexProjectRootsUtil.findOrderEntry(moduleRootModel.getModule().getProject(), (SharedLibraryEntry)entry);
         if (library != null) {
           for (VirtualFile libFile : library.getFiles((OrderRootType.CLASSES))) {
             addIfANE(result, libFile);
@@ -405,8 +406,8 @@ public class FlexCompilationUtils {
     }
   }
 
-  public static String[] getAirExtensionIDs(final Module module, final Dependencies dependencies) {
-    final Collection<VirtualFile> aneFiles = getANEFiles(module, dependencies);
+  public static String[] getAirExtensionIDs(final ModuleRootModel moduleRootModel, final Dependencies dependencies) {
+    final Collection<VirtualFile> aneFiles = getANEFiles(moduleRootModel, dependencies);
     final Collection<String> extensionIDs = new ArrayList<String>();
     for (VirtualFile aneFile : aneFiles) {
       final String extensionId = getExtensionId(aneFile);

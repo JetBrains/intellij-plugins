@@ -45,6 +45,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
@@ -385,7 +386,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       commandLine.addParameter(airRuntimePath);
     }
 
-    final Collection<VirtualFile> aneFiles = FlexCompilationUtils.getANEFiles(module, bc.getDependencies());
+    final Collection<VirtualFile> aneFiles = FlexCompilationUtils.getANEFiles(ModuleRootManager.getInstance(module), bc.getDependencies());
     if (!aneFiles.isEmpty()) {
       ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
         public void run() {

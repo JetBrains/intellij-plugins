@@ -334,7 +334,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       }
 
       public String[] getExtensionIDs() {
-        return FlexCompilationUtils.getAirExtensionIDs(myModule, myDependenciesConfigurable.getEditableObject());
+        return FlexCompilationUtils.getAirExtensionIDs(myConfigEditor.getModifiableRootModel(myModule),
+                                                       myDependenciesConfigurable.getEditableObject());
       }
 
       public boolean isAndroidPackagingEnabled() {

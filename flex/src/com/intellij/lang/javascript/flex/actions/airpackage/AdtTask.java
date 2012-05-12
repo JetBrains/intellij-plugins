@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
@@ -115,7 +116,7 @@ public abstract class AdtTask extends ExternalTask {
 
   private static void appendANEPaths(final List<String> command, final Module module, final FlexIdeBuildConfiguration bc) {
     final Set<VirtualFile> extDirPaths = new THashSet<VirtualFile>();
-    for (VirtualFile aneFile : FlexCompilationUtils.getANEFiles(module, bc.getDependencies())) {
+    for (VirtualFile aneFile : FlexCompilationUtils.getANEFiles(ModuleRootManager.getInstance(module), bc.getDependencies())) {
       if (extDirPaths.add(aneFile.getParent())) {
         command.add("-extdir");
         command.add(FileUtil.toSystemDependentName(aneFile.getParent().getPath()));
