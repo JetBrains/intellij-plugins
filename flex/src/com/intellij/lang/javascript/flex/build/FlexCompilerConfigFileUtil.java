@@ -16,13 +16,17 @@ import gnu.trove.THashSet;
 import org.jdom.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 public class FlexCompilerConfigFileUtil {
 
   private static final Key<Pair<Long, Collection<NamespacesInfo>>> MOD_STAMP_TO_NAMESPACES_INFOS =
     Key.create("MOD_STAMP_TO_NAMESPACES_INFOS");
+  private static final Key<Pair<Long, InfoFromConfigFile>> MOD_STAMP_AND_INFO_FROM_CONFIG_FILE =
+    Key.create("MOD_STAMP_AND_INFO_FROM_CONFIG_FILE");
 
   private static final String TARGET_PLAYER_ELEMENT = "<flex-config><target-player>";
   private static final String FILE_SPEC_ELEMENT = "<flex-config><file-specs><path-element>";
@@ -67,8 +71,8 @@ public class FlexCompilerConfigFileUtil {
   private static final String[] OPTIONS_CONTAINING_PATHS =
     {"path-element", "manifest", "defaults-css-url", "filename", "link-report", "load-externs", "services", "resource-bundle-list"};
   private static final String[] NON_REPEATABLE_OPTIONS_THAT_CAN_BE_IN_GENERATED_FILE =
-    {"mobile", "preloader", "warn-no-constructor", "accessible", "keep-generated-actionscript", "services", "context-root", "defaults-css-url",
-      "debug", "target-player", "swf-version", "static-link-runtime-shared-libraries",
+    {"mobile", "preloader", "warn-no-constructor", "accessible", "keep-generated-actionscript", "services", "context-root",
+      "defaults-css-url", "debug", "target-player", "swf-version", "static-link-runtime-shared-libraries",
       "date", "title", "language", "contributor", "creator", "publisher", "description"};
 
   public static class NamespacesInfo {
@@ -312,23 +316,32 @@ public class FlexCompilerConfigFileUtil {
 
   @NotNull
   public static InfoFromConfigFile getInfoFromConfigFile(final String configFilePath) {
-    String mainClassPath = null;
-    String outputPath = null;
-    String targetPlayer = null;
-
     final VirtualFile configFile = configFilePath.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(configFilePath);
-    if (configFile != null) {
-      final FileDocumentManager manager = FileDocumentManager.getInstance();
-      if (manager.isFileModified(configFile)) {
-        final com.intellij.openapi.editor.Document document = manager.getCachedDocument(configFile);
-        if (document != null) {
-          manager.saveDocument(document);
-        }
-      }
+    if (configFile == null) {
+      return InfoFromConfigFile.DEFAULT;
+    }
+
+    Pair<Long, InfoFromConfigFile> data = configFile.getUserData(MOD_STAMP_AND_INFO_FROM_CONFIG_FILE);
+
+    final FileDocumentManager documentManager = FileDocumentManager.getInstance();
+    final com.intellij.openapi.editor.Document cachedDocument = documentManager.getCachedDocument(configFile);
+    final Long currentTimestamp = cachedDocument != null ? cachedDocument.getModificationStamp() : configFile.getModificationCount();
+    final Long cachedTimestamp = data == null ? null : data.first;
+
+    if (cachedTimestamp == null || !cachedTimestamp.equals(currentTimestamp)) {
+      data = null;
+      configFile.putUserData(MOD_STAMP_AND_INFO_FROM_CONFIG_FILE, data);
 
       final List<String> xmlElements = Arrays.asList(FILE_SPEC_ELEMENT, OUTPUT_ELEMENT, TARGET_PLAYER_ELEMENT);
+
+      String mainClassPath = null;
+      String outputPath = null;
+      String targetPlayer = null;
+
       try {
-        final Map<String, List<String>> map = FlexUtils.findXMLElements(configFile.getInputStream(), xmlElements);
+        final InputStream inputStream =
+          cachedDocument == null ? configFile.getInputStream() : new ByteArrayInputStream(cachedDocument.getText().getBytes());
+        final Map<String, List<String>> map = FlexUtils.findXMLElements(inputStream, xmlElements);
 
         final List<String> fileSpecList = map.get(FILE_SPEC_ELEMENT);
         if (!fileSpecList.isEmpty()) {
@@ -349,10 +362,14 @@ public class FlexCompilerConfigFileUtil {
         }
       }
       catch (IOException ignore) {/*ignore*/ }
+
+      final String outputFileName = outputPath == null ? null : PathUtil.getFileName(outputPath);
+      final String outputFolderPath = outputPath == null ? null : PathUtil.getParentPath(outputPath);
+      data =
+        Pair.create(currentTimestamp, new InfoFromConfigFile(configFile, mainClassPath, outputFileName, outputFolderPath, targetPlayer));
+      configFile.putUserData(MOD_STAMP_AND_INFO_FROM_CONFIG_FILE, data);
     }
 
-    final String outputFileName = outputPath == null ? null : PathUtil.getFileName(outputPath);
-    final String outputFolderPath = outputPath == null ? null : PathUtil.getParentPath(outputPath);
-    return new InfoFromConfigFile(configFile, mainClassPath, outputFileName, outputFolderPath, targetPlayer);
+    return data.second;
   }
 }

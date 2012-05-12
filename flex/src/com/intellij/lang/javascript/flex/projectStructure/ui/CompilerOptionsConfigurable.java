@@ -337,7 +337,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
   private void fireConfigFileChanged() {
     for (OptionsListener listener : myListeners) {
-      listener.configFileChanged(myConfigFileTextWithBrowse.getText().trim());
+      listener.configFileChanged(FileUtil.toSystemIndependentName(myConfigFileTextWithBrowse.getText().trim()));
     }
   }
 
