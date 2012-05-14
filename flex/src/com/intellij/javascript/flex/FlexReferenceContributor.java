@@ -8,6 +8,7 @@ import com.intellij.javascript.flex.css.CssClassValueReference;
 import com.intellij.javascript.flex.css.CssPropertyValueReference;
 import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.javascript.flex.css.FlexCssUtil;
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -698,7 +699,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
         if (!(descriptor instanceof AnnotationBackedDescriptor)) return PsiReference.EMPTY_ARRAY;
 
         final String type = ((AnnotationBackedDescriptor)descriptor).getType();
-        if (!"Class".equals(type) && !"mx.core.IFactory".equals(type)) return PsiReference.EMPTY_ARRAY;
+        if (!isObjectType(type)) return PsiReference.EMPTY_ARRAY;
 
         final Pair<String, TextRange> trimmedValueAndRange = getTrimmedValueAndRange((XmlElement)element);
         if (trimmedValueAndRange.second.getStartOffset() == 0) return PsiReference.EMPTY_ARRAY;
@@ -713,6 +714,10 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
         return jsReferenceSet.getReferences();
       }
     };
+  }
+
+  public static boolean isObjectType(final String type) {
+    return "Class".equals(type) || FlexCommonTypeNames.IFACTORY.equals(type);
   }
 
   private static Pair<String, TextRange> getTrimmedValueAndRange(final @NotNull XmlElement xmlElement) {

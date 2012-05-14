@@ -2,7 +2,9 @@ package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.DiagramRelationshipInfo;
 import com.intellij.diagram.DiagramRelationships;
+import com.intellij.javascript.flex.FlexReferenceContributor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -10,16 +12,16 @@ import com.intellij.lang.javascript.psi.ecmal4.JSGenericSignature;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.ResolveState;
-import com.intellij.psi.XmlElementVisitor;
+import com.intellij.psi.*;
 import com.intellij.psi.scope.BaseScopeProcessor;
+import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 
 import java.util.ArrayList;
@@ -124,7 +126,10 @@ public class JSUmlDependencyProvider {
           return true;
         }
       });
+
       myClazz.getParent().acceptChildren(new XmlElementVisitor() { // don't visit parent tag
+        private boolean myInClassAttribute; // used to prevent extra references resolve
+
         @Override
         public void visitXmlTag(final XmlTag tag) {
           XmlElementDescriptor descriptor = tag.getDescriptor();
@@ -141,15 +146,42 @@ public class JSUmlDependencyProvider {
         }
 
         @Override
+        public void visitXmlAttribute(final XmlAttribute attribute) {
+          XmlAttributeDescriptor descriptor = attribute.getDescriptor();
+          if (descriptor instanceof AnnotationBackedDescriptor) {
+            if (FlexReferenceContributor.isObjectType(((AnnotationBackedDescriptor)descriptor).getType())) {
+              myInClassAttribute = true;
+              try {
+                super.visitXmlAttribute(attribute);
+              }
+              finally {
+                myInClassAttribute = false;
+              }
+            }
+          }
+        }
+
+        @Override
+        public void visitXmlAttributeValue(final XmlAttributeValue value) {
+          if (myInClassAttribute) {
+            PsiReference[] references = value.getReferences();
+            if (references.length > 0) {
+              PsiElement element = references[references.length - 1].resolve();
+              if (element instanceof JSClass && !JSPsiImplUtils.isTheSameClass(element, myClazz)) {
+                add(result, (JSClass)element, DiagramRelationships.TO_ONE);
+              }
+            }
+          }
+        }
+
+        @Override
         public void visitElement(final PsiElement element) {
           super.visitElement(element);
           element.acceptChildren(this);
         }
       });
     }
-    else {
-      //myClazz.accept(visitor);
-    }
+
     myClazz.processDeclarations(new BaseScopeProcessor() {
       @Override
       public boolean execute(final PsiElement element, final ResolveState state) {
