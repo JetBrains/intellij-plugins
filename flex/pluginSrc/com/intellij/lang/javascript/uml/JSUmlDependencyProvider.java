@@ -39,6 +39,7 @@ public class JSUmlDependencyProvider {
     final JSElementVisitor visitor = new JSElementVisitor() {
       boolean myInVariable;
       boolean myInNewExpression;
+      boolean myInField;
 
       @Override
       public void visitJSReferenceExpression(final JSReferenceExpression node) {
@@ -62,11 +63,14 @@ public class JSUmlDependencyProvider {
           if (myInNewExpression) {
             relType = DiagramRelationships.CREATE;
           }
-          else if (node.getParent() instanceof JSGenericSignature) {
+          else if (myInField && node.getParent() instanceof JSGenericSignature) {
             relType = DiagramRelationships.TO_MANY;
           }
-          else {
+          else if (myInField) {
             relType = DiagramRelationships.TO_ONE;
+          }
+          else {
+            relType = DiagramRelationships.DEPENDENCY;
           }
           add(result, ((JSClass)resolved), relType);
         }
@@ -80,11 +84,13 @@ public class JSUmlDependencyProvider {
           return;
         }
         myInVariable = true;
+        myInField = JSResolveUtil.findParent(node) instanceof JSClass;
         try {
           super.visitJSVariable(node);
         }
         finally {
           myInVariable = false;
+          myInField = false;
         }
       }
 
