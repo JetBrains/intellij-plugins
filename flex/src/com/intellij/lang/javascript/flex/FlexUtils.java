@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -19,14 +20,8 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.ui.configuration.ModuleEditor;
-import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.StructureConfigurableContext;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
@@ -42,12 +37,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.xml.NanoXmlUtil;
-import com.intellij.util.xml.XmlFileHeader;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -288,7 +281,8 @@ public class FlexUtils {
   }
 
   public static String getTempFlexConfigsDirPath() {
-    return FileUtil.toSystemIndependentName(FileUtil.getTempDirectory());
+    return FileUtil.toSystemIndependentName(FileUtil.getTempDirectory()) + "/" +
+           ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_');
   }
 
   public static String getPathToMainClassFile(final String mainClassFqn, final Module module) {
@@ -310,7 +304,7 @@ public class FlexUtils {
   }
 
   public static String getPathToFlexUnitTempDirectory() {
-    return FileUtil.getTempDirectory() + "/idea-flexunit";
+    return getTempFlexConfigsDirPath();
   }
 
   public static void removeFileLater(final @NotNull VirtualFile file) {
@@ -478,7 +472,7 @@ public class FlexUtils {
       if (remove) {
         String nextToken = null;
 
-        while(tokenizer.hasMoreElements()) {
+        while (tokenizer.hasMoreElements()) {
           nextToken = tokenizer.nextToken();
           if (StringUtil.isEmptyOrSpaces(nextToken) || canBeCompilerOptionValue(nextToken)) {
             continue;
