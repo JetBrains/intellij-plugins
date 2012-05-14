@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.cache.impl.id.IdTableBuilding;
+import com.intellij.psi.impl.cache.impl.id.PlatformIdTableBuilding;
 import com.intellij.psi.impl.cache.impl.idCache.XmlTodoIndexer;
 import com.intellij.psi.impl.cache.impl.todo.TodoIndexEntry;
 import com.intellij.psi.xml.XmlFile;
@@ -33,7 +34,7 @@ public class MxmlTodoIndexer extends XmlTodoIndexer {
                                                                   protected void process(JSFile file) {
                                                                     VirtualFile injectedFile = file.getViewProvider().getVirtualFile();
                                                                     final DataIndexer<TodoIndexEntry, Integer, FileContent> indexer =
-                                                                      IdTableBuilding.getTodoIndexer(file.getFileType(), injectedFile);
+                                                                      PlatformIdTableBuilding.getTodoIndexer(file.getFileType(), injectedFile);
                                                                     if (indexer != null) {
                                                                       Map<TodoIndexEntry, Integer> injectedMap = indexer.map(
                                                                         new FileContentImpl(injectedFile, file.getText(), null));
