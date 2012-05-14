@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.DiagramRelationshipInfo;
 import com.intellij.diagram.DiagramRelationships;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -10,9 +11,11 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.XmlElementVisitor;
 import com.intellij.psi.scope.BaseScopeProcessor;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
@@ -127,6 +130,9 @@ public class JSUmlDependencyProvider {
           XmlElementDescriptor descriptor = tag.getDescriptor();
           if (descriptor != null) {
             PsiElement declaration = descriptor.getDeclaration();
+            if (declaration instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)declaration)) {
+              declaration = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)declaration);
+            }
             if (declaration instanceof JSClass && !JSPsiImplUtils.isTheSameClass(declaration, myClazz)) {
               add(result, (JSClass)declaration, DiagramRelationships.TO_ONE);
             }
