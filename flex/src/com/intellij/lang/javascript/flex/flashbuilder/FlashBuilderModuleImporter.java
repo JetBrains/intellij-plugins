@@ -395,7 +395,7 @@ public class FlashBuilderModuleImporter {
 
       final String libraryPath = getAbsolutePathWithLinksHandled(fbProject, libraryPathOrig);
 
-      if (libraryPath.toLowerCase().endsWith(".swc")) {
+      if (libraryPath.toLowerCase().endsWith(".swc") || libraryPath.toLowerCase().endsWith(".ane")) {
         libraryModifiableModel.addRoot(VirtualFileManager.constructUrl(JarFileSystem.PROTOCOL, libraryPath) + JarFileSystem.JAR_SEPARATOR,
                                        OrderRootType.CLASSES);
       }

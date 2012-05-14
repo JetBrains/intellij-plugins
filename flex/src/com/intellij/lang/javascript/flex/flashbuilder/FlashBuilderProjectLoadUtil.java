@@ -47,6 +47,7 @@ public class FlashBuilderProjectLoadUtil {
   private static final String SWC_FOLDER_KIND = "1";
   private static final String SWC_FILE_KIND = "3";
   private static final String USE_SDK_KIND = "4";
+  private static final String ANE_KIND = "5";
   private static final String FLEX_SDK_ATTR = "flexSDK";
   private static final String USE_APOLLO_CONFIG_ATTR = "useApolloConfig";
   private static final String PROJECT_DESCRIPTION_TAG = "projectDescription";
@@ -453,7 +454,7 @@ public class FlashBuilderProjectLoadUtil {
         else {
           final String libraryPath = libraryPathEntryElement.getAttributeValue(PATH_ATTR);
           if (!StringUtil.isEmptyOrSpaces(libraryPath)) {
-            if (SWC_FILE_KIND.equals(libraryKind) || SWC_FOLDER_KIND.equals(libraryKind)) {
+            if (SWC_FILE_KIND.equals(libraryKind) || SWC_FOLDER_KIND.equals(libraryKind) || ANE_KIND.equals(libraryKind)) {
               // TODO: parse sources
               final Collection<String> librarySourcePaths = new ArrayList<String>();
 

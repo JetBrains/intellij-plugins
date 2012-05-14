@@ -148,7 +148,7 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
 
   public void updateStep() {
     if (getWizardContext().isProjectFileDirectorySet() && myInitialPathComponent.getComponent().getText().isEmpty()) {
-      myInitialPathComponent.getComponent().setText(getWizardContext().getProjectFileDirectory());
+      myInitialPathComponent.getComponent().setText(FileUtil.toSystemDependentName(getWizardContext().getProjectFileDirectory()));
     }
   }
 
