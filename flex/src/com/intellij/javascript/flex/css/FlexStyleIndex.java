@@ -250,7 +250,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
   }
 
   @Override
-  public InputFilter getInputFilter() {
+  public FileBasedIndex.InputFilter getInputFilter() {
     return FlexInputFilter.getInstance();
   }
 
