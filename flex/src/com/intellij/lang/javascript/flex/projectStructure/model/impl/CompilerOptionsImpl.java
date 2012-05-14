@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.lang.javascript.flex.build.FlexCompilerHandler;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptionsListener;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
@@ -65,6 +66,8 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     myOptions.putAll(newOptions);
 
     if (myResetHighlightingOnCommit) {
+      FlexCompilerHandler.getInstance(myProject).getCompilerDependenciesCache().clear();
+
       ApplicationManager.getApplication().runWriteAction(new Runnable() {
         public void run() {
           FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
@@ -113,6 +116,8 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     myAdditionalOptions = options;
 
     if (myResetHighlightingOnCommit) {
+      FlexCompilerHandler.getInstance(myProject).getCompilerDependenciesCache().clear();
+
       ApplicationManager.getApplication().runWriteAction(new Runnable() {
         public void run() {
           FlexBuildConfigurationManagerImpl.resetHighlighting(myProject);
