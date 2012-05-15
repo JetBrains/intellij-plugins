@@ -828,11 +828,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           }
         }).setAddActionName(FlexBundle.message("add.dependency.action.name"))
         .setRemoveAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton anActionButton) {
-          removeSelection();
-        }
-      }).setEditAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton anActionButton) {
+            removeSelection();
+          }
+        }).setEditAction(new AnActionButtonRunnable() {
         @Override
         public void run(AnActionButton button) {
           MyTableItem item = myTable.getItemAt(myTable.getSelectedRow());
@@ -1658,6 +1658,56 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     updateTableOnItemsAdded(libraries.size());
   }
 
+  public void addBCDependency(final FlexIdeBCConfigurable dependencyConfigurable) {
+    final DefaultMutableTreeNode rootNode = myTable.getRoot();
+
+    final Enumeration children = rootNode.children();
+    while (children.hasMoreElements()) {
+      final DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)children.nextElement();
+      final Object userObject = childNode.getUserObject();
+      if (userObject instanceof BCItem && ((BCItem)userObject).configurable == dependencyConfigurable) {
+        return;
+      }
+    }
+
+    final BCItem item = new BCItem(dependencyConfigurable);
+    // todo let BC-on-BC dependency be before BC-on-lib dependencies. Need also to fix FlexProjectConfigurationEditor.setEntries()
+    rootNode.add(new DefaultMutableTreeNode(item, false));
+    updateTableOnItemsAdded(1);
+  }
+
+  public void removeDependency(final String moduleLibraryId) {
+    final DefaultMutableTreeNode rootNode = myTable.getRoot();
+
+    final Enumeration children = rootNode.children();
+    while (children.hasMoreElements()) {
+      final DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)children.nextElement();
+      final Object userObject = childNode.getUserObject();
+      if (userObject instanceof ModuleLibraryItem && moduleLibraryId.equals(((ModuleLibraryItem)userObject).libraryId)) {
+        childNode.removeFromParent();
+        myTable.refresh();
+        return;
+      }
+    }
+  }
+
+  public void removeDependency(final String sharedLibraryLevel, final String sharedLibraryName) {
+    final DefaultMutableTreeNode rootNode = myTable.getRoot();
+
+    final Enumeration children = rootNode.children();
+    while (children.hasMoreElements()) {
+      final DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)children.nextElement();
+      final Object userObject = childNode.getUserObject();
+      if (userObject instanceof SharedLibraryItem &&
+          sharedLibraryLevel.equals(((SharedLibraryItem)userObject).libraryLevel) &&
+          sharedLibraryName.equals(((SharedLibraryItem)userObject).libraryName)) {
+        childNode.removeFromParent();
+        myTable.refresh();
+        return;
+      }
+    }
+  }
+
   private void updateTableOnItemsAdded(int count) {
     myTable.refresh();
     myTable.getSelectionModel().clearSelection();
@@ -1844,5 +1894,4 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
     return Pair.create("?", "?");
   }
-
 }

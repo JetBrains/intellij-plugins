@@ -8,6 +8,8 @@ import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
+import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -171,7 +173,18 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
         }
         catch (ConfigurationException ignored) {
         }
+
         myContext.getDaemonAnalyzer().queueUpdate(myStructureElement);
+        myContext.getDaemonAnalyzer().queueUpdateForAllElementsWithErrors();
+
+        final FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
+        final List<ModifiableFlexIdeBuildConfiguration> bcs = configurator.getBCsByOutputPath(myConfiguration.getActualOutputFilePath());
+        if (bcs != null) {
+          for (ModifiableFlexIdeBuildConfiguration bc : bcs) {
+            if (bc == myConfiguration) continue;
+            myContext.getDaemonAnalyzer().queueUpdate(configurator.getBCConfigurable(bc).myStructureElement);
+          }
+        }
       }
     };
 
