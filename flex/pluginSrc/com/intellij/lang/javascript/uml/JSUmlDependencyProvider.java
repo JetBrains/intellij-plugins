@@ -3,21 +3,23 @@ package com.intellij.lang.javascript.uml;
 import com.intellij.diagram.DiagramRelationshipInfo;
 import com.intellij.diagram.DiagramRelationships;
 import com.intellij.javascript.flex.FlexReferenceContributor;
+import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSGenericSignature;
-import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
+import com.intellij.psi.css.CssElementVisitor;
+import com.intellij.psi.css.CssFunction;
+import com.intellij.psi.css.CssString;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.scope.BaseScopeProcessor;
-import com.intellij.psi.xml.XmlAttribute;
-import com.intellij.psi.xml.XmlAttributeValue;
-import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
+import com.intellij.psi.xml.*;
 import com.intellij.util.Function;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
@@ -30,6 +32,8 @@ import java.util.*;
  * User: ksafonov
  */
 public class JSUmlDependencyProvider {
+  private static final Language CSS = Language.findLanguageByID("CSS");
+
   private final JSClass myClazz;
 
   public JSUmlDependencyProvider(final JSClass clazz) {
@@ -161,14 +165,49 @@ public class JSUmlDependencyProvider {
         @Override
         public void visitXmlAttributeValue(final XmlAttributeValue value) {
           if (myInClassAttribute) {
-            PsiReference[] references = value.getReferences();
-            if (references.length > 0) {
-              PsiElement element = references[references.length - 1].resolve();
-              if (element instanceof JSClass) {
-                add(result, (JSClass)element, DiagramRelationships.TO_ONE);
+            processReferenceSet(value.getReferences(), result, DiagramRelationships.TO_ONE);
+          }
+        }
+
+        @Override
+        public void visitXmlText(final XmlText text) {
+          List<Pair<PsiElement, TextRange>> injectedFiles = InjectedLanguageUtil.getInjectedPsiFiles(text);
+          if (injectedFiles != null) {
+            for (Pair<PsiElement, TextRange> pair : injectedFiles) {
+              if (CSS.is(pair.first.getLanguage())) {
+                pair.first.accept(new CssElementVisitor() {
+                  private boolean myInClassReference; // used to prevent extra references resolve
+
+                  @Override
+                  public void visitElement(final PsiElement element) {
+                    super.visitElement(element);
+                    element.acceptChildren(this);
+                  }
+
+                  @Override
+                  public void visitCssFunction(final CssFunction _function) {
+                    if (FlexReferenceContributor.CLASS_REFERENCE.equals(_function.getFunctionName())) {
+                      myInClassReference = true;
+                      try {
+                        super.visitCssFunction(_function);
+                      }
+                      finally {
+                        myInClassReference = false;
+                      }
+                    }
+                  }
+
+                  @Override
+                  public void visitCssString(final CssString _string) {
+                    if (myInClassReference) {
+                      processReferenceSet(_string.getReferences(), result, DiagramRelationships.DEPENDENCY);
+                    }
+                  }
+                });
               }
             }
           }
+          super.visitXmlText(text);
         }
 
         @Override
@@ -198,6 +237,16 @@ public class JSUmlDependencyProvider {
   public Collection<Pair<JSClass, DiagramRelationshipInfo>> computeUsingClasses() {
     final Collection<Pair<JSClass, DiagramRelationshipInfo>> result = new ArrayList<Pair<JSClass, DiagramRelationshipInfo>>();
     return result;
+  }
+
+  private static void processReferenceSet(final PsiReference[] references,
+                                          final Map<JSClass, DiagramRelationshipInfo> result, final DiagramRelationshipInfo relType) {
+    if (references.length > 0) {
+      PsiElement element = references[references.length - 1].resolve();
+      if (element instanceof JSClass) {
+        add(result, (JSClass)element, relType);
+      }
+    }
   }
 
   private static void add(final Map<JSClass, DiagramRelationshipInfo> result, final JSClass jsClass, final DiagramRelationshipInfo type) {
