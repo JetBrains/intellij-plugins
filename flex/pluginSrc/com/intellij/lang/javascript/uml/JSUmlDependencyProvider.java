@@ -20,13 +20,13 @@ import com.intellij.psi.css.CssString;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.scope.BaseScopeProcessor;
 import com.intellij.psi.xml.*;
-import com.intellij.util.Function;
 import com.intellij.util.Processor;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * User: ksafonov
@@ -41,7 +41,7 @@ public class JSUmlDependencyProvider {
   }
 
   public Collection<Pair<JSClass, DiagramRelationshipInfo>> computeUsedClasses() {
-    final Map<JSClass, DiagramRelationshipInfo> result = new HashMap<JSClass, DiagramRelationshipInfo>();
+    final Collection<Pair<JSClass, DiagramRelationshipInfo>> result = new ArrayList<Pair<JSClass, DiagramRelationshipInfo>>();
     final JSElementVisitor visitor = new JSElementVisitor() {
       boolean myInVariable;
       boolean myInNewExpression;
@@ -78,7 +78,7 @@ public class JSUmlDependencyProvider {
           else {
             relType = DiagramRelationships.DEPENDENCY;
           }
-          add(result, ((JSClass)resolved), relType);
+          result.add(Pair.create((JSClass)resolved, relType));
         }
 
         super.visitJSReferenceExpression(node);
@@ -140,7 +140,7 @@ public class JSUmlDependencyProvider {
               declaration = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)declaration);
             }
             if (declaration instanceof JSClass) {
-              add(result, (JSClass)declaration, DiagramRelationships.TO_ONE);
+              result.add(Pair.create((JSClass)declaration, DiagramRelationships.TO_ONE));
             }
           }
           super.visitXmlTag(tag);
@@ -225,13 +225,7 @@ public class JSUmlDependencyProvider {
         return true;
       }
     }, ResolveState.initial(), myClazz, myClazz);
-    return ContainerUtil
-      .map(result.entrySet(), new Function<Map.Entry<JSClass, DiagramRelationshipInfo>, Pair<JSClass, DiagramRelationshipInfo>>() {
-        @Override
-        public Pair<JSClass, DiagramRelationshipInfo> fun(final Map.Entry<JSClass, DiagramRelationshipInfo> e) {
-          return Pair.create(e.getKey(), e.getValue());
-        }
-      });
+    return result;
   }
 
   public Collection<Pair<JSClass, DiagramRelationshipInfo>> computeUsingClasses() {
@@ -240,28 +234,13 @@ public class JSUmlDependencyProvider {
   }
 
   private static void processReferenceSet(final PsiReference[] references,
-                                          final Map<JSClass, DiagramRelationshipInfo> result, final DiagramRelationshipInfo relType) {
+                                          final Collection<Pair<JSClass, DiagramRelationshipInfo>> result,
+                                          final DiagramRelationshipInfo relType) {
     if (references.length > 0) {
       PsiElement element = references[references.length - 1].resolve();
       if (element instanceof JSClass) {
-        add(result, (JSClass)element, relType);
+        result.add(Pair.create((JSClass)element, relType));
       }
     }
-  }
-
-  private static void add(final Map<JSClass, DiagramRelationshipInfo> result, final JSClass jsClass, final DiagramRelationshipInfo type) {
-    DiagramRelationshipInfo existingRelType = result.get(jsClass);
-    if (existingRelType == null || getWeight(existingRelType) < getWeight(type)) {
-      result.put(jsClass, type);
-    }
-  }
-
-  private static int getWeight(DiagramRelationshipInfo relType) {
-    if (relType == DiagramRelationships.DEPENDENCY) return 0;
-    if (relType == DiagramRelationships.TO_ONE) return 1;
-    if (relType == DiagramRelationships.TO_MANY) return 2;
-    if (relType == DiagramRelationships.CREATE) return 3;
-    assert false : relType;
-    return 0;
   }
 }
