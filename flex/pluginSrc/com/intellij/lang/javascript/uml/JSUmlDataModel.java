@@ -44,7 +44,10 @@ import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.SmartPointerManager;
+import com.intellij.psi.SmartPsiElementPointer;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
@@ -378,6 +381,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     }
 
     if (isShowDependencies()) {
+      final EnumSet<JSDependenciesSettingsOption> options = JSDependenciesSettingsOption.getEnabled();
       final Task.Backgroundable task =
         new Task.Backgroundable(getProject(), FlexBundle.message("uml.calculating.dependencies.message"), true) {
           @Override
@@ -386,7 +390,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
             @Override
             public void run() {
               for (JSClass psiClass : classes) {
-                showDependenciesFor(psiClass);
+                showDependenciesFor(psiClass, options);
               }
               getBuilder().update();
             }
@@ -401,7 +405,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     mergeWithBackup(myDependencyEdges, myDependencyEdgesOld);
   }
 
-  private void showDependenciesFor(final JSClass clazz) {
+  private void showDependenciesFor(final JSClass clazz, final EnumSet<JSDependenciesSettingsOption> options) {
     DiagramNode<Object> mainNode = findNode(clazz);
     if (mainNode == null) return;
 
@@ -409,9 +413,11 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
     Collection<Pair<JSClass, DiagramRelationshipInfo>> list = provider.computeUsedClasses();
     for (Pair<JSClass, DiagramRelationshipInfo> pair : list) {
-      DiagramNode<Object> node = findNode(pair.first);
-      if (node != null) {
-        addDependencyEdge(mainNode, node, pair.second);
+      if (shouldShow(options, clazz, pair.first, pair.second)) {
+        DiagramNode<Object> node = findNode(pair.first);
+        if (node != null) {
+          addDependencyEdge(mainNode, node, pair.second);
+        }
       }
     }
 
@@ -422,6 +428,28 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
         addDependencyEdge(node, mainNode, pair.second);
       }
     }
+  }
+
+  private static boolean shouldShow(EnumSet<JSDependenciesSettingsOption> options,
+                                    final JSClass from,
+                                    final JSClass to,
+                                    final DiagramRelationshipInfo type) {
+    if (!options.contains(JSDependenciesSettingsOption.SELF) && JSPsiImplUtils.isTheSameClass(from, to)) {
+      return false;
+    }
+    if (!options.contains(JSDependenciesSettingsOption.ONE_TO_ONE) && type == DiagramRelationships.TO_ONE) {
+      return false;
+    }
+    if (!options.contains(JSDependenciesSettingsOption.ONE_TO_MANY) && type == DiagramRelationships.TO_MANY) {
+      return false;
+    }
+    if (!options.contains(JSDependenciesSettingsOption.USAGES) && type == DiagramRelationships.DEPENDENCY) {
+      return false;
+    }
+    if (!options.contains(JSDependenciesSettingsOption.CREATE) && type == DiagramRelationships.CREATE) {
+      return false;
+    }
+    return true;
   }
 
   @Nullable

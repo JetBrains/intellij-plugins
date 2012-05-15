@@ -24,10 +24,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * User: ksafonov
@@ -63,7 +60,7 @@ public class JSUmlDependencyProvider {
           }
         }
 
-        if (resolved instanceof JSClass && !JSPsiImplUtils.isTheSameClass(resolved, myClazz)) {
+        if (resolved instanceof JSClass) {
           DiagramRelationshipInfo relType;
           if (myInNewExpression) {
             relType = DiagramRelationships.CREATE;
@@ -138,7 +135,7 @@ public class JSUmlDependencyProvider {
             if (declaration instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)declaration)) {
               declaration = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)declaration);
             }
-            if (declaration instanceof JSClass && !JSPsiImplUtils.isTheSameClass(declaration, myClazz)) {
+            if (declaration instanceof JSClass) {
               add(result, (JSClass)declaration, DiagramRelationships.TO_ONE);
             }
           }
@@ -167,7 +164,7 @@ public class JSUmlDependencyProvider {
             PsiReference[] references = value.getReferences();
             if (references.length > 0) {
               PsiElement element = references[references.length - 1].resolve();
-              if (element instanceof JSClass && !JSPsiImplUtils.isTheSameClass(element, myClazz)) {
+              if (element instanceof JSClass) {
                 add(result, (JSClass)element, DiagramRelationships.TO_ONE);
               }
             }
@@ -198,25 +195,24 @@ public class JSUmlDependencyProvider {
       });
   }
 
-  private static void add(final Map<JSClass, DiagramRelationshipInfo> result,
-                          final JSClass jsClass,
-                          final DiagramRelationshipInfo newRelType) {
-
-    // CREATE wins over TO_MANY which wins over TO_ONE
-    DiagramRelationshipInfo existingRelType = result.get(jsClass);
-    if (existingRelType == DiagramRelationships.CREATE) {
-      return;
-    }
-
-    if (existingRelType == DiagramRelationships.TO_MANY && newRelType != DiagramRelationships.CREATE) {
-      return;
-    }
-
-    result.put(jsClass, newRelType);
-  }
-
   public Collection<Pair<JSClass, DiagramRelationshipInfo>> computeUsingClasses() {
     final Collection<Pair<JSClass, DiagramRelationshipInfo>> result = new ArrayList<Pair<JSClass, DiagramRelationshipInfo>>();
     return result;
+  }
+
+  private static void add(final Map<JSClass, DiagramRelationshipInfo> result, final JSClass jsClass, final DiagramRelationshipInfo type) {
+    DiagramRelationshipInfo existingRelType = result.get(jsClass);
+    if (existingRelType == null || getWeight(existingRelType) < getWeight(type)) {
+      result.put(jsClass, type);
+    }
+  }
+
+  private static int getWeight(DiagramRelationshipInfo relType) {
+    if (relType == DiagramRelationships.DEPENDENCY) return 0;
+    if (relType == DiagramRelationships.TO_ONE) return 1;
+    if (relType == DiagramRelationships.TO_MANY) return 2;
+    if (relType == DiagramRelationships.CREATE) return 3;
+    assert false : relType;
+    return 0;
   }
 }
