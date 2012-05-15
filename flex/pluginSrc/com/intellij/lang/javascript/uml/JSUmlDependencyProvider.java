@@ -20,6 +20,7 @@ import com.intellij.psi.css.CssFunction;
 import com.intellij.psi.css.CssString;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.scope.BaseScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
 import com.intellij.util.Processor;
 import com.intellij.xml.XmlAttributeDescriptor;
@@ -47,14 +48,11 @@ public class JSUmlDependencyProvider {
       boolean myInVariable;
       boolean myInNewExpression;
       boolean myInField;
+      boolean myInParameter;
 
       @Override
       public void visitJSReferenceExpression(final JSReferenceExpression node) {
-        if (!myInVariable && !myInNewExpression) {
-          return;
-        }
-
-        if (myInNewExpression && node.getParent() instanceof JSGenericSignature) {
+        if (!myInVariable && !myInNewExpression && !myInParameter && isReturnTypeReference(node)) {
           return;
         }
 
@@ -68,7 +66,12 @@ public class JSUmlDependencyProvider {
         if (resolved instanceof JSClass) {
           DiagramRelationshipInfo relType;
           if (myInNewExpression) {
-            relType = DiagramRelationships.CREATE;
+            if (node.getParent() instanceof JSGenericSignature) {
+              relType = DiagramRelationships.DEPENDENCY;
+            }
+            else {
+              relType = DiagramRelationships.CREATE;
+            }
           }
           else if (myInField && node.getParent() instanceof JSGenericSignature) {
             relType = DiagramRelationships.TO_MANY;
@@ -88,9 +91,11 @@ public class JSUmlDependencyProvider {
       @Override
       public void visitJSVariable(final JSVariable node) {
         if (node instanceof JSParameter) {
-          return;
+          myInParameter = true;
         }
-        myInVariable = true;
+        else {
+          myInVariable = true;
+        }
         myInField = JSResolveUtil.findParent(node) instanceof JSClass;
         try {
           super.visitJSVariable(node);
@@ -98,6 +103,7 @@ public class JSUmlDependencyProvider {
         finally {
           myInVariable = false;
           myInField = false;
+          myInParameter = false;
         }
       }
 
@@ -229,6 +235,11 @@ public class JSUmlDependencyProvider {
       }
     }, ResolveState.initial(), myClazz, myClazz);
     return result;
+  }
+
+  private static boolean isReturnTypeReference(final JSReferenceExpression node) {
+    PsiElement parent = JSResolveUtil.getTopReferenceParent(node);
+    return parent instanceof JSFunction && PsiTreeUtil.isAncestor(((JSFunction)parent).getReturnTypeElement(), node, true);
   }
 
   public Collection<Pair<JSClass, DiagramRelationshipInfo>> computeUsingClasses() {

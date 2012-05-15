@@ -434,6 +434,9 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
                                     final JSClass from,
                                     final JSClass to,
                                     final DiagramRelationshipInfo type) {
+    if (JSResolveUtil.isObjectClass(from) && JSResolveUtil.isObjectClass(to)) {
+      return false;
+    }
     if (!options.contains(JSDependenciesSettingsOption.SELF) && JSPsiImplUtils.isTheSameClass(from, to)) {
       return false;
     }
