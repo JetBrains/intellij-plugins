@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSGenericSignature;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssElementVisitor;
 import com.intellij.psi.css.CssFunction;
@@ -140,7 +141,9 @@ public class JSUmlDependencyProvider {
               declaration = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)declaration);
             }
             if (declaration instanceof JSClass) {
-              result.add(Pair.create((JSClass)declaration, DiagramRelationships.TO_ONE));
+              DiagramRelationshipInfo type =
+                StringUtil.isNotEmpty(tag.getAttributeValue("id")) ? DiagramRelationships.TO_ONE : DiagramRelationships.DEPENDENCY;
+              result.add(Pair.create((JSClass)declaration, type));
             }
           }
           super.visitXmlTag(tag);
@@ -150,7 +153,7 @@ public class JSUmlDependencyProvider {
         public void visitXmlAttribute(final XmlAttribute attribute) {
           XmlAttributeDescriptor descriptor = attribute.getDescriptor();
           if (descriptor instanceof AnnotationBackedDescriptor) {
-            if (FlexReferenceContributor.isObjectType(((AnnotationBackedDescriptor)descriptor).getType())) {
+            if (FlexReferenceContributor.isClassReferenceType(((AnnotationBackedDescriptor)descriptor).getType())) {
               myInClassAttribute = true;
               try {
                 super.visitXmlAttribute(attribute);
@@ -165,7 +168,7 @@ public class JSUmlDependencyProvider {
         @Override
         public void visitXmlAttributeValue(final XmlAttributeValue value) {
           if (myInClassAttribute) {
-            processReferenceSet(value.getReferences(), result, DiagramRelationships.TO_ONE);
+            processReferenceSet(value.getReferences(), result, DiagramRelationships.DEPENDENCY);
           }
         }
 

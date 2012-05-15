@@ -700,7 +700,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
         if (!(descriptor instanceof AnnotationBackedDescriptor)) return PsiReference.EMPTY_ARRAY;
 
         final String type = ((AnnotationBackedDescriptor)descriptor).getType();
-        if (!isObjectType(type)) return PsiReference.EMPTY_ARRAY;
+        if (!isClassReferenceType(type)) return PsiReference.EMPTY_ARRAY;
 
         final Pair<String, TextRange> trimmedValueAndRange = getTrimmedValueAndRange((XmlElement)element);
         if (trimmedValueAndRange.second.getStartOffset() == 0) return PsiReference.EMPTY_ARRAY;
@@ -717,7 +717,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
     };
   }
 
-  public static boolean isObjectType(final String type) {
+  public static boolean isClassReferenceType(final String type) {
     return "Class".equals(type) || FlexCommonTypeNames.IFACTORY.equals(type);
   }
 
