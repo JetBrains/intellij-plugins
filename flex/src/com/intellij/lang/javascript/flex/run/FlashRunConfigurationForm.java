@@ -296,7 +296,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myOnAndroidDeviceRadioButton.addActionListener(targetDeviceListener);
     myOnIOSDeviceRadioButton.addActionListener(targetDeviceListener);
 
-    final int preferredWidth = new JLabel("99999").getPreferredSize().width;
+    final int preferredWidth = new JLabel("999999").getPreferredSize().width;
     myScreenWidth.setPreferredSize(new Dimension(preferredWidth, myScreenWidth.getPreferredSize().height));
     myScreenHeight.setPreferredSize(new Dimension(preferredWidth, myScreenHeight.getPreferredSize().height));
     myFullScreenWidth.setPreferredSize(new Dimension(preferredWidth, myFullScreenWidth.getPreferredSize().height));
