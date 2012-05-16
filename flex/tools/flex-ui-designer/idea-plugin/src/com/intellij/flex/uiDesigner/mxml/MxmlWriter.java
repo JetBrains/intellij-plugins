@@ -295,12 +295,16 @@ public class MxmlWriter {
     }
   }
 
-  void processTagChildren(final XmlTag tag, @NotNull final Context context, @Nullable final Context parentContext,
-                          boolean propertiesExpected, @Nullable PropertyKind listKind) {
-    int lengthPosition = listKind == null ? 0 : out.allocateShort();
+  boolean processTagChildren(final XmlTag tag, @NotNull final Context context, @Nullable final Context parentContext,
+                          final boolean propertiesExpected, @Nullable PropertyKind propertyKind) {
+    int lengthPosition = propertyKind != null && propertyKind.isList() ? out.allocateShort() : 0;
     int explicitContentOccured = -1;
     int validAndStaticChildrenCount = 0;
     final XmlTagChild[] children = tag.getValue().getChildren();
+
+    // if we process property tag value — if we cannot set value due to invalid content, so, we don't write property,
+    // otherwise if there is no content, we write explicit null
+    boolean invalidValue = false;
 
     for (XmlTagChild child : children) {
       if (child instanceof XmlTag) {
@@ -308,6 +312,7 @@ public class MxmlWriter {
         XmlElementDescriptor descriptor = childTag.getDescriptor();
         if (descriptor == null) {
           LOG.warn("Descriptor is null, skip " + child);
+          invalidValue = true;
           continue;
         }
 
@@ -344,7 +349,7 @@ public class MxmlWriter {
             }
             else if (defaultPropertyKind.isList()) {
               lengthPosition = out.allocateShort();
-              listKind = defaultPropertyKind;
+              propertyKind = defaultPropertyKind;
             }
             else if (defaultPropertyKind == PropertyKind.PRIMITIVE) {
               validAndStaticChildrenCount++;
@@ -352,7 +357,7 @@ public class MxmlWriter {
             }
           }
 
-          if (processClassBackedSubTag(childTag, classBackedDescriptor, context, listKind != null)) {
+          if (processClassBackedSubTag(childTag, classBackedDescriptor, context, propertyKind != null && propertyKind.isList())) {
             validAndStaticChildrenCount++;
           }
         }
@@ -362,7 +367,9 @@ public class MxmlWriter {
           // skip invalid, contiguous child elements already processed and explicit content (i.e. AnnotationBackedDescriptor, property childTag) was occured
           if (explicitContentOccured == 0) {
             explicitContentOccured = 1;
-            endList(listKind, validAndStaticChildrenCount, lengthPosition);
+            if (propertyKind != null && propertyKind.isList()) {
+              endList(validAndStaticChildrenCount, lengthPosition);
+            }
           }
 
           if (childTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI4) && childTag.getLocalName().equals(FlexStateElementNames.STATES)) {
@@ -404,7 +411,7 @@ public class MxmlWriter {
           }
           else if (defaultPropertyKind.isList()) {
             lengthPosition = out.allocateShort();
-            listKind = defaultPropertyKind;
+            propertyKind = defaultPropertyKind;
           }
           else if (defaultPropertyKind == PropertyKind.PRIMITIVE) {
             validAndStaticChildrenCount++;
@@ -429,24 +436,36 @@ public class MxmlWriter {
             }
           }
         }
-        else if (listKind == PropertyKind.VECTOR) {
+        else if (propertyKind == PropertyKind.VECTOR) {
           LOG.warn("skip " + child + " due to IDEA-73478");
           // IDEA-73478, XmlText allowed only for fx:Array, but not for fx:Vector (even with type String)
           break;
         }
 
-        writer.string(((XmlText)child).getValue());
-        validAndStaticChildrenCount++;
+        if (propertyKind != null && propertyKind == PropertyKind.COMPLEX) {
+          invalidValue = true;
+          LOG.warn("Text is not expected" + child);
+        }
+        else {
+          writer.string(((XmlText)child).getValue());
+          validAndStaticChildrenCount++;
+        }
       }
     }
 
-    if (listKind != null) {
-      endList(listKind, validAndStaticChildrenCount, lengthPosition);
+    if (propertyKind != null && propertyKind.isList()) {
+      endList(validAndStaticChildrenCount, lengthPosition);
     }
     else if (!propertiesExpected && validAndStaticChildrenCount == 0) {
+      if (invalidValue) {
+        return false;
+      }
+
       // PropertyAsTagWithCommentedValueAsTag, replace Amf3Types.OBJECT to Amf3Types.NULL
       out.putByte(Amf3Types.NULL, out.size() - 1);
     }
+
+    return true;
   }
 
   private void processPropertyTag(XmlTag tag, AnnotationBackedDescriptor annotationBackedDescriptor, @NotNull Context parentContext) {
@@ -455,27 +474,29 @@ public class MxmlWriter {
                                                     parentContext)) {
       return;
     }
+    final int beforePosition = writer.getBlockOut().size();
     final PropertyKind propertyKind = writeProperty(tag, valueProviderFactory.create(tag), annotationBackedDescriptor, parentContext, parentContext);
     if (propertyKind.isComplex()) {
-      processPropertyTagValue(annotationBackedDescriptor, tag, parentContext, propertyKind);
+      if (!processPropertyTagValue(annotationBackedDescriptor, tag, parentContext, propertyKind)) {
+        writer.getBlockOut().setPosition(beforePosition);
+      }
     }
   }
 
-  private void endList(@Nullable PropertyKind listKind, int validChildrenCount, int lengthPosition) {
-    if (listKind != null) {
-      assert validChildrenCount < 65535;
-      out.putShort(validChildrenCount, lengthPosition);
-    }
+  private void endList(int validChildrenCount, int lengthPosition) {
+    assert validChildrenCount < 65535;
+    out.putShort(validChildrenCount, lengthPosition);
   }
 
   // process tag value, opposite to processTagChildren expects only ClassBackedSubTag or XmlText (attributes already processed or isn't expected)
-  void processPropertyTagValue(@Nullable AnnotationBackedDescriptor descriptor, @NotNull XmlTag tag, @NotNull Context parentContext, @Nullable PropertyKind propertyKind) {
+  boolean processPropertyTagValue(@Nullable AnnotationBackedDescriptor descriptor, @NotNull XmlTag tag, @NotNull Context parentContext, @Nullable PropertyKind propertyKind) {
     PropertyKind listKind = propertyKind != null && propertyKind.isList() ? propertyKind : null;
     if (listKind != null && descriptor != null) {
       parentContext.processingPropertyName = descriptor.getName();
     }
-    processTagChildren(tag, parentContext, null, false, listKind);
+    boolean result = processTagChildren(tag, parentContext, null, false, propertyKind);
     parentContext.processingPropertyName = null;
+    return result;
   }
 
   private boolean processClassBackedSubTag(final XmlTag tag, final ClassBackedElementDescriptor descriptor, @Nullable final Context parentContext,

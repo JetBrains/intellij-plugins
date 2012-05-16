@@ -58,8 +58,6 @@
           <root url="file://$MODULE_DIR$/../../../../CSS/src" />
           <root url="file://$MODULE_DIR$/../../../../CSS/css-api" />
           <root url="file://$MODULE_DIR$/../../../../community/plugins/properties/src" />
-          <root url="jar://$MODULE_DIR$/../../../../community/lib/src/trove4j_src.jar!/src" />
-          <root url="jar://$MODULE_DIR$/../../../../community/lib/src/trove4j_src.jar!/util/src" />
           <root url="file://$MODULE_DIR$/../../../../community/platform/annotations/src" />
           <root url="file://$MODULE_DIR$/../../../../community/platform/boot/src" />
           <root url="file://$MODULE_DIR$/../../../../community/platform/bootstrap/src" />
