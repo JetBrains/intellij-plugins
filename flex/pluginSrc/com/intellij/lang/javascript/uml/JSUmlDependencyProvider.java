@@ -65,7 +65,10 @@ public class JSUmlDependencyProvider {
 
         if (resolved instanceof JSClass) {
           FlashDiagramRelationship relType;
-          if (myInNewExpression) {
+          if (node.getParent() instanceof JSReferenceExpression) {
+            relType = Factory.dependency(myVariableName);
+          }
+          else if (myInNewExpression) {
             if (node.getParent() instanceof JSGenericSignature) {
               relType = Factory.dependency(myVariableName);
             }
