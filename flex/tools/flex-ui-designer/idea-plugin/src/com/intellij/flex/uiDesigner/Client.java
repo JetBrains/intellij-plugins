@@ -470,11 +470,13 @@ public class Client implements Disposable {
       out.writeShort(factoryId);
 
       final ProblemsHolder problemsHolder = new ProblemsHolder();
-      writeDocumentFactory(DocumentFactoryManager.getInstance().getInfo(factoryId), module, psiFile, problemsHolder);
+      boolean result = writeDocumentFactory(DocumentFactoryManager.getInstance().getInfo(factoryId), module, psiFile, problemsHolder);
       if (!problemsHolder.isEmpty()) {
         DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
       }
-      return true;
+      if (result) {
+        return true;
+      }
     }
     catch (Throwable e) {
       LogMessageUtil.processInternalError(e, psiFile.getVirtualFile());
@@ -572,6 +574,9 @@ public class Client implements Disposable {
     return documentInfo.getId();
   }
 
+  /**
+   * You must rollback block out if this method returns false
+   */
   private boolean writeDocumentFactory(DocumentInfo documentInfo,
                                        Module module,
                                        XmlFile psiFile,
@@ -605,6 +610,7 @@ public class Client implements Disposable {
     if (result == null) {
       return false;
     }
+
     blockOut.end();
 
     documentInfo.setRangeMarkers(result.second);

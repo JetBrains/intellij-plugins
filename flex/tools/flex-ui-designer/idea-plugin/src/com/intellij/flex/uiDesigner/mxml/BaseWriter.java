@@ -68,9 +68,9 @@ final class BaseWriter extends PrimitiveWriter {
     }
   }
 
-  public void resetAfterMessage() {
+  void resetAfterMessage() {
     if (!stringWriterFinished) {
-      stringWriter.commit();
+      stringWriter.rollback();
     }
   }
 
