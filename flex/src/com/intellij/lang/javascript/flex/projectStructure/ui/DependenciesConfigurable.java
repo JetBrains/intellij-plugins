@@ -953,7 +953,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     }, myDisposable);
 
-    UserActivityWatcher watcher = new UserActivityWatcher();
+    UserActivityWatcher watcher = new TableAwareUserActivityWatcher();
     watcher.register(myMainPanel);
     myUserActivityDispatcher = EventDispatcher.create(UserActivityListener.class);
     watcher.addUserActivityListener(new UserActivityListener() {
@@ -1658,7 +1658,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     updateTableOnItemsAdded(libraries.size());
   }
 
-  public void addBCDependency(final FlexIdeBCConfigurable dependencyConfigurable) {
+  public void addBCDependency(final FlexIdeBCConfigurable dependencyConfigurable, final LinkageType linkageType) {
     final DefaultMutableTreeNode rootNode = myTable.getRoot();
 
     final Enumeration children = rootNode.children();
@@ -1671,6 +1671,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
 
     final BCItem item = new BCItem(dependencyConfigurable);
+    item.setLinkageType(linkageType);
     // todo let BC-on-BC dependency be before BC-on-lib dependencies. Need also to fix FlexProjectConfigurationEditor.setEntries()
     rootNode.add(new DefaultMutableTreeNode(item, false));
     updateTableOnItemsAdded(1);

@@ -207,7 +207,8 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
               final DependenciesConfigurable dependenciesConfigurable = configurable.getDependenciesConfigurable();
               final FlexIdeBCConfigurable otherLibConfigurable = configurator.getBCConfigurable(otherLibBC);
 
-              dependenciesConfigurable.addBCDependency(otherLibConfigurable);
+              final LinkageType linkageType = entry.getDependencyType().getLinkageType();
+              dependenciesConfigurable.addBCDependency(otherLibConfigurable, linkageType);
 
               if (entry instanceof ModuleLibraryEntry) {
                 dependenciesConfigurable.removeDependency(((ModuleLibraryEntry)entry).getLibraryId());
