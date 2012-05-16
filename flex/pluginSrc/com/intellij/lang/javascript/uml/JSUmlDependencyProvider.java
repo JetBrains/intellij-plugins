@@ -1,7 +1,5 @@
 package com.intellij.lang.javascript.uml;
 
-import com.intellij.diagram.DiagramRelationshipInfo;
-import com.intellij.diagram.DiagramRelationships;
 import com.intellij.javascript.flex.FlexReferenceContributor;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -11,10 +9,12 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSGenericSignature;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.uml.FlashDiagramRelationship.Factory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.css.CssDeclaration;
 import com.intellij.psi.css.CssElementVisitor;
 import com.intellij.psi.css.CssFunction;
 import com.intellij.psi.css.CssString;
@@ -42,17 +42,17 @@ public class JSUmlDependencyProvider {
     myClazz = clazz;
   }
 
-  public Collection<Pair<JSClass, DiagramRelationshipInfo>> computeUsedClasses() {
-    final Collection<Pair<JSClass, DiagramRelationshipInfo>> result = new ArrayList<Pair<JSClass, DiagramRelationshipInfo>>();
+  public Collection<Pair<JSClass, FlashDiagramRelationship>> computeUsedClasses() {
+    final Collection<Pair<JSClass, FlashDiagramRelationship>> result = new ArrayList<Pair<JSClass, FlashDiagramRelationship>>();
     final JSElementVisitor visitor = new JSElementVisitor() {
-      boolean myInVariable;
+      String myVariableName;
       boolean myInNewExpression;
       boolean myInField;
       boolean myInParameter;
 
       @Override
       public void visitJSReferenceExpression(final JSReferenceExpression node) {
-        if (!myInVariable && !myInNewExpression && !myInParameter && isReturnTypeReference(node)) {
+        if (myVariableName == null && !myInNewExpression && !myInParameter && isReturnTypeReference(node)) {
           return;
         }
 
@@ -64,23 +64,23 @@ public class JSUmlDependencyProvider {
         }
 
         if (resolved instanceof JSClass) {
-          DiagramRelationshipInfo relType;
+          FlashDiagramRelationship relType;
           if (myInNewExpression) {
             if (node.getParent() instanceof JSGenericSignature) {
-              relType = DiagramRelationships.DEPENDENCY;
+              relType = Factory.dependency(myVariableName);
             }
             else {
-              relType = DiagramRelationships.CREATE;
+              relType = Factory.create();
             }
           }
           else if (myInField && node.getParent() instanceof JSGenericSignature) {
-            relType = DiagramRelationships.TO_MANY;
+            relType = Factory.oneToMany(myVariableName);
           }
           else if (myInField) {
-            relType = DiagramRelationships.TO_ONE;
+            relType = Factory.oneToOne(myVariableName);
           }
           else {
-            relType = DiagramRelationships.DEPENDENCY;
+            relType = Factory.dependency(myVariableName);
           }
           result.add(Pair.create((JSClass)resolved, relType));
         }
@@ -94,14 +94,14 @@ public class JSUmlDependencyProvider {
           myInParameter = true;
         }
         else {
-          myInVariable = true;
+          myVariableName = node.getName();
         }
         myInField = JSResolveUtil.findParent(node) instanceof JSClass;
         try {
           super.visitJSVariable(node);
         }
         finally {
-          myInVariable = false;
+          myVariableName = null;
           myInField = false;
           myInParameter = false;
         }
@@ -136,7 +136,7 @@ public class JSUmlDependencyProvider {
       });
 
       myClazz.getParent().acceptChildren(new XmlElementVisitor() { // don't visit parent tag
-        private boolean myInClassAttribute; // used to prevent extra references resolve
+        private String myInClassAttributeName; // also to prevent extra references resolve
 
         @Override
         public void visitXmlTag(final XmlTag tag) {
@@ -147,8 +147,8 @@ public class JSUmlDependencyProvider {
               declaration = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)declaration);
             }
             if (declaration instanceof JSClass) {
-              DiagramRelationshipInfo type =
-                StringUtil.isNotEmpty(tag.getAttributeValue("id")) ? DiagramRelationships.TO_ONE : DiagramRelationships.DEPENDENCY;
+              String id = tag.getAttributeValue("id");
+              FlashDiagramRelationship type = StringUtil.isNotEmpty(id) ? Factory.oneToOne(id) : Factory.dependency("");
               result.add(Pair.create((JSClass)declaration, type));
             }
           }
@@ -160,12 +160,12 @@ public class JSUmlDependencyProvider {
           XmlAttributeDescriptor descriptor = attribute.getDescriptor();
           if (descriptor instanceof AnnotationBackedDescriptor) {
             if (FlexReferenceContributor.isClassReferenceType(((AnnotationBackedDescriptor)descriptor).getType())) {
-              myInClassAttribute = true;
+              myInClassAttributeName = StringUtil.notNullize(attribute.getName());
               try {
                 super.visitXmlAttribute(attribute);
               }
               finally {
-                myInClassAttribute = false;
+                myInClassAttributeName = null;
               }
             }
           }
@@ -173,8 +173,8 @@ public class JSUmlDependencyProvider {
 
         @Override
         public void visitXmlAttributeValue(final XmlAttributeValue value) {
-          if (myInClassAttribute) {
-            processReferenceSet(value.getReferences(), result, DiagramRelationships.DEPENDENCY);
+          if (myInClassAttributeName != null) {
+            processReferenceSet(value.getReferences(), result, Factory.dependency(myInClassAttributeName));
           }
         }
 
@@ -185,7 +185,7 @@ public class JSUmlDependencyProvider {
             for (Pair<PsiElement, TextRange> pair : injectedFiles) {
               if (CSS.is(pair.first.getLanguage())) {
                 pair.first.accept(new CssElementVisitor() {
-                  private boolean myInClassReference; // used to prevent extra references resolve
+                  private boolean myInClassReference; // to prevent extra references resolve
 
                   @Override
                   public void visitElement(final PsiElement element) {
@@ -209,7 +209,10 @@ public class JSUmlDependencyProvider {
                   @Override
                   public void visitCssString(final CssString _string) {
                     if (myInClassReference) {
-                      processReferenceSet(_string.getReferences(), result, DiagramRelationships.DEPENDENCY);
+                      CssDeclaration declaration = PsiTreeUtil.getParentOfType(_string, CssDeclaration.class);
+                      if (declaration != null) {
+                        processReferenceSet(_string.getReferences(), result, Factory.dependency(declaration.getPropertyName()));
+                      }
                     }
                   }
                 });
@@ -242,14 +245,14 @@ public class JSUmlDependencyProvider {
     return parent instanceof JSFunction && PsiTreeUtil.isAncestor(((JSFunction)parent).getReturnTypeElement(), node, true);
   }
 
-  public Collection<Pair<JSClass, DiagramRelationshipInfo>> computeUsingClasses() {
-    final Collection<Pair<JSClass, DiagramRelationshipInfo>> result = new ArrayList<Pair<JSClass, DiagramRelationshipInfo>>();
+  public Collection<Pair<JSClass, FlashDiagramRelationship>> computeUsingClasses() {
+    final Collection<Pair<JSClass, FlashDiagramRelationship>> result = new ArrayList<Pair<JSClass, FlashDiagramRelationship>>();
     return result;
   }
 
   private static void processReferenceSet(final PsiReference[] references,
-                                          final Collection<Pair<JSClass, DiagramRelationshipInfo>> result,
-                                          final DiagramRelationshipInfo relType) {
+                                          final Collection<Pair<JSClass, FlashDiagramRelationship>> result,
+                                          final FlashDiagramRelationship relType) {
     if (references.length > 0) {
       PsiElement element = references[references.length - 1].resolve();
       if (element instanceof JSClass) {
