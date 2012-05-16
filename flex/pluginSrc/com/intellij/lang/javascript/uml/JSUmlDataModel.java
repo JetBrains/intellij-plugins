@@ -529,19 +529,11 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
                                    DiagramRelationshipInfo relationship,
                                    Collection<DiagramEdge<Object>> storage) {
     for (DiagramEdge edge : storage) {
-      if (edge.getSource() == from && edge.getTarget() == to && relationShipsEqual(relationship, edge.getRelationship())) return null;
+      if (edge.getSource() == from && edge.getTarget() == to && relationship.equals(edge.getRelationship())) return null;
     }
     JSUmlEdge result = new JSUmlEdge(from, to, relationship);
     storage.add(result);
     return result;
-  }
-
-  private static boolean relationShipsEqual(final DiagramRelationshipInfo r1, final DiagramRelationshipInfo r2) {
-    if (r1 instanceof FlashDiagramRelationship) {
-      return r2 instanceof FlashDiagramRelationship &&
-             ((FlashDiagramRelationship)r1).getType().equals(((FlashDiagramRelationship)r2).getType());
-    }
-    return r1 == r2;
   }
 
   private Set<JSClass> getAllClasses() {

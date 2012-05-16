@@ -45,19 +45,19 @@ public class JSUmlDependencyProvider {
   public Collection<Pair<JSClass, FlashDiagramRelationship>> computeUsedClasses() {
     final Collection<Pair<JSClass, FlashDiagramRelationship>> result = new ArrayList<Pair<JSClass, FlashDiagramRelationship>>();
     final JSElementVisitor visitor = new JSElementVisitor() {
-      String myVariableName;
-      boolean myInNewExpression;
+      JSVariable myVariable;
+      JSNewExpression myNewExpression;
       boolean myInField;
       boolean myInParameter;
 
       @Override
       public void visitJSReferenceExpression(final JSReferenceExpression node) {
-        if (myVariableName == null && !myInNewExpression && !myInParameter && isReturnTypeReference(node)) {
+        if (myVariable == null && myNewExpression == null && !myInParameter && isReturnTypeReference(node)) {
           return;
         }
 
         PsiElement resolved = node.resolve();
-        if (myInNewExpression && resolved instanceof JSFunction) {
+        if (myNewExpression != null && resolved instanceof JSFunction) {
           if (((JSFunction)resolved).isConstructor()) {
             resolved = JSResolveUtil.findParent(resolved);
           }
@@ -66,24 +66,26 @@ public class JSUmlDependencyProvider {
         if (resolved instanceof JSClass) {
           FlashDiagramRelationship relType;
           if (node.getParent() instanceof JSReferenceExpression) {
-            relType = Factory.dependency(myVariableName);
+            relType = Factory.dependency(myVariable != null ? myVariable.getName() : null, myVariable != null ? myVariable : node);
           }
-          else if (myInNewExpression) {
+          else if (myNewExpression != null) {
             if (node.getParent() instanceof JSGenericSignature) {
-              relType = Factory.dependency(myVariableName);
+              relType = Factory.dependency(myVariable != null ? myVariable.getName() : null, myVariable != null ? myVariable : node);
             }
             else {
-              relType = Factory.create();
+              relType = Factory.create(myNewExpression);
             }
           }
           else if (myInField && node.getParent() instanceof JSGenericSignature) {
-            relType = Factory.oneToMany(myVariableName);
+            assert myVariable != null;
+            relType = Factory.oneToMany(myVariable.getName(), myVariable);
           }
           else if (myInField) {
-            relType = Factory.oneToOne(myVariableName);
+            assert myVariable != null;
+            relType = Factory.oneToOne(myVariable.getName(), myVariable);
           }
           else {
-            relType = Factory.dependency(myVariableName);
+            relType = Factory.dependency(myVariable != null ? myVariable.getName() : null, myVariable != null ? myVariable : node);
           }
           result.add(Pair.create((JSClass)resolved, relType));
         }
@@ -97,14 +99,14 @@ public class JSUmlDependencyProvider {
           myInParameter = true;
         }
         else {
-          myVariableName = node.getName();
+          myVariable = node;
         }
         myInField = JSResolveUtil.findParent(node) instanceof JSClass;
         try {
           super.visitJSVariable(node);
         }
         finally {
-          myVariableName = null;
+          myVariable = null;
           myInField = false;
           myInParameter = false;
         }
@@ -112,12 +114,12 @@ public class JSUmlDependencyProvider {
 
       @Override
       public void visitJSNewExpression(final JSNewExpression node) {
-        myInNewExpression = true;
+        myNewExpression = node;
         try {
           super.visitJSNewExpression(node);
         }
         finally {
-          myInNewExpression = false;
+          myNewExpression = null;
         }
       }
 
@@ -150,8 +152,9 @@ public class JSUmlDependencyProvider {
               declaration = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)declaration);
             }
             if (declaration instanceof JSClass) {
-              String id = tag.getAttributeValue("id");
-              FlashDiagramRelationship type = StringUtil.isNotEmpty(id) ? Factory.oneToOne(id) : Factory.dependency("");
+              XmlAttribute id = tag.getAttribute("id");
+              FlashDiagramRelationship type = id != null && StringUtil.isNotEmpty(id.getValue()) ?
+                                              Factory.oneToOne(id.getValue(), id) : Factory.dependency("", tag);
               result.add(Pair.create((JSClass)declaration, type));
             }
           }
@@ -177,7 +180,7 @@ public class JSUmlDependencyProvider {
         @Override
         public void visitXmlAttributeValue(final XmlAttributeValue value) {
           if (myInClassAttributeName != null) {
-            processReferenceSet(value.getReferences(), result, Factory.dependency(myInClassAttributeName));
+            processReferenceSet(value.getReferences(), result, Factory.dependency(myInClassAttributeName, value.getParent()));
           }
         }
 
@@ -214,7 +217,8 @@ public class JSUmlDependencyProvider {
                     if (myInClassReference) {
                       CssDeclaration declaration = PsiTreeUtil.getParentOfType(_string, CssDeclaration.class);
                       if (declaration != null) {
-                        processReferenceSet(_string.getReferences(), result, Factory.dependency(declaration.getPropertyName()));
+                        processReferenceSet(_string.getReferences(), result,
+                                            Factory.dependency(declaration.getPropertyName(), declaration));
                       }
                     }
                   }

@@ -16,9 +16,9 @@
 
 package com.intellij.lang.javascript.uml;
 
-import com.intellij.diagram.DiagramRelationshipInfo;
 import com.intellij.diagram.DiagramEdgeBase;
 import com.intellij.diagram.DiagramNode;
+import com.intellij.diagram.DiagramRelationshipInfo;
 import org.jetbrains.annotations.NotNull;
 
 /**
