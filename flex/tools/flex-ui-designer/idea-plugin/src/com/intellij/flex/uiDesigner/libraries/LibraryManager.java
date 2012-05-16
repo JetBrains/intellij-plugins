@@ -3,7 +3,6 @@ package com.intellij.flex.uiDesigner.libraries;
 import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.errordialog.Attachment;
 import com.intellij.flex.uiDesigner.*;
-import com.intellij.openapi.roots.ModuleRootAdapter;
 import org.jetbrains.io.InfoMap;
 import org.jetbrains.io.RetainCondition;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
@@ -164,7 +163,11 @@ public class LibraryManager implements Disposable {
     client.registerModule(project, moduleInfo, stringWriter);
     client.fillAssetClassPoolIfNeed(flexLibrarySet);
 
-    module.getMessageBus().connect(moduleInfo).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
+    module.getMessageBus().connect(moduleInfo).subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
+      @Override
+      public void beforeRootsChange(ModuleRootEvent event) {
+      }
+
       @Override
       public void rootsChanged(ModuleRootEvent event) {
         new Notification(FlashUIDesignerBundle.message("plugin.name"), FlashUIDesignerBundle.message("plugin.name"),
