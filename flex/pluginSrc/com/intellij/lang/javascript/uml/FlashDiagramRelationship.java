@@ -39,7 +39,7 @@ public interface FlashDiagramRelationship extends DiagramRelationshipInfo {
 
   class Factory {
 
-    public static FlashDiagramRelationship dependency(@Nullable String label, @NotNull PsiElement element, boolean allowMultipleLinks) {
+    public static FlashDiagramRelationship dependency(@Nullable String label, @NotNull PsiElement element) {
       return new Impl(TYPE_DEPENDENCY, DiagramLineType.DASHED, StringUtil.notNullize(label), null, null, 1,
                       DiagramRelationships.getAngleArrow(), null, element, label != null);
     }
