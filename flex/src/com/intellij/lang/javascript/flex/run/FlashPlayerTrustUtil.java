@@ -54,7 +54,7 @@ public class FlashPlayerTrustUtil {
                                                     final @NotNull String[] trustedPaths,
                                                     final boolean runTrusted) throws IOException {
     final StringBuilder buf = new StringBuilder();
-    final List<String> lines = StringUtil.split(FileUtil.loadFile(ideaCfgFile), "\n");
+    final List<String> lines = StringUtil.split(FileUtil.loadFile(ideaCfgFile, "UTF-8"), "\n");
 
     for (String line : lines) {
       boolean appendLine = true;
@@ -74,7 +74,7 @@ public class FlashPlayerTrustUtil {
       }
     }
 
-    FileUtil.writeToFile(ideaCfgFile, buf.toString());
+    FileUtil.writeToFile(ideaCfgFile, buf.toString().getBytes("UTF-8"));
   }
 
   @Nullable
