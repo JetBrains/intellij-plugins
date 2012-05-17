@@ -66,11 +66,11 @@ public class JSUmlDependencyProvider {
         if (resolved instanceof JSClass) {
           FlashDiagramRelationship relType;
           if (node.getParent() instanceof JSReferenceExpression) {
-            relType = Factory.dependency(myVariable != null ? myVariable.getName() : null, myVariable != null ? myVariable : node);
+            relType = Factory.dependency(myInField ? myVariable.getName() : null, myVariable != null ? myVariable : node);
           }
           else if (myNewExpression != null) {
             if (node.getParent() instanceof JSGenericSignature) {
-              relType = Factory.dependency(myVariable != null ? myVariable.getName() : null, myVariable != null ? myVariable : node);
+              relType = Factory.dependency(myInField ? myVariable.getName() : null, myVariable != null ? myVariable : node);
             }
             else {
               relType = Factory.create(myNewExpression);
@@ -85,7 +85,7 @@ public class JSUmlDependencyProvider {
             relType = Factory.oneToOne(myVariable.getName(), myVariable);
           }
           else {
-            relType = Factory.dependency(myVariable != null ? myVariable.getName() : null, myVariable != null ? myVariable : node);
+            relType = Factory.dependency(null, myVariable != null ? myVariable : node);
           }
           result.add(Pair.create((JSClass)resolved, relType));
         }
@@ -154,7 +154,7 @@ public class JSUmlDependencyProvider {
             if (declaration instanceof JSClass) {
               XmlAttribute id = tag.getAttribute("id");
               FlashDiagramRelationship type = id != null && StringUtil.isNotEmpty(id.getValue()) ?
-                                              Factory.oneToOne(id.getValue(), id) : Factory.dependency("", tag);
+                                              Factory.oneToOne(id.getValue(), id) : Factory.dependency(null, tag);
               result.add(Pair.create((JSClass)declaration, type));
             }
           }

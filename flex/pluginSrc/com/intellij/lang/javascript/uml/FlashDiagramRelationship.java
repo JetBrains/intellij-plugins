@@ -41,20 +41,22 @@ public interface FlashDiagramRelationship extends DiagramRelationshipInfo {
 
     public static FlashDiagramRelationship dependency(@Nullable String label, @NotNull PsiElement element) {
       return new Impl(TYPE_DEPENDENCY, DiagramLineType.DASHED, StringUtil.notNullize(label), null, null, 1,
-                      DiagramRelationships.getAngleArrow(), null, element);
+                      DiagramRelationships.getAngleArrow(), null, element, label != null);
     }
 
     public static FlashDiagramRelationship create(@NotNull PsiElement element) {
       return new Impl(TYPE_CREATE, DiagramLineType.DASHED, DiagramRelationships.CREATE.getLabel(), null, null, 1,
-                      DiagramRelationships.getAngleArrow(), null, element);
+                      DiagramRelationships.getAngleArrow(), null, element, false);
     }
 
     public static FlashDiagramRelationship oneToOne(String label, @NotNull PsiElement element) {
-      return new Impl(TYPE_ONE_TO_ONE, DiagramLineType.SOLID, label, "1", "1", 1, DiagramRelationships.getAngleArrow(), DIAMOND, element);
+      return new Impl(TYPE_ONE_TO_ONE, DiagramLineType.SOLID, label, "1", "1", 1, DiagramRelationships.getAngleArrow(), DIAMOND, element,
+                      true);
     }
 
     public static FlashDiagramRelationship oneToMany(String label, @NotNull PsiElement element) {
-      return new Impl(TYPE_ONE_TO_MANY, DiagramLineType.SOLID, label, "1", "*", 1, DiagramRelationships.getAngleArrow(), DIAMOND, element);
+      return new Impl(TYPE_ONE_TO_MANY, DiagramLineType.SOLID, label, "1", "*", 1, DiagramRelationships.getAngleArrow(), DIAMOND, element,
+                      true);
     }
 
     private static class Impl extends DiagramRelationshipInfoAdapter implements FlashDiagramRelationship {
@@ -62,6 +64,8 @@ public interface FlashDiagramRelationship extends DiagramRelationshipInfo {
       private final String myType;
       private final Shape myStartArrow;
       private final Shape myEndArrow;
+      private final boolean myAllowMultipleLinks;
+
       @Nullable
       private SmartPsiElementPointer<PsiElement> myElementPointer;
 
@@ -73,12 +77,15 @@ public interface FlashDiagramRelationship extends DiagramRelationshipInfo {
                   final int width,
                   final Shape startArrow,
                   final Shape endArrow,
-                  @Nullable PsiElement element) {
+                  @Nullable PsiElement element,
+                  boolean allowMultipleLinks) {
         super(type, lineType, label, fromLabel, toLabel, width);
         myType = type;
         myStartArrow = startArrow;
         myEndArrow = endArrow;
-        myElementPointer = element != null ? SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element) : null;
+        myAllowMultipleLinks = allowMultipleLinks;
+        myElementPointer =
+          element != null ? SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element) : null;
       }
 
       @Nullable
@@ -109,9 +116,13 @@ public interface FlashDiagramRelationship extends DiagramRelationshipInfo {
 
         final Impl impl = (Impl)o;
 
-        PsiElement element = getElement();
-        if (element != null ? !element.equals(impl.getElement()) : impl.getElement() != null) return false;
         if (myType != null ? !myType.equals(impl.myType) : impl.myType != null) return false;
+        if (myAllowMultipleLinks != impl.myAllowMultipleLinks) return false;
+
+        if (myAllowMultipleLinks) {
+          PsiElement element = getElement();
+          if (element != null ? !element.equals(impl.getElement()) : impl.getElement() != null) return false;
+        }
 
         return true;
       }
@@ -119,8 +130,11 @@ public interface FlashDiagramRelationship extends DiagramRelationshipInfo {
       @Override
       public int hashCode() {
         int result = myType != null ? myType.hashCode() : 0;
-        PsiElement element = getElement();
-        result = 31 * result + (element != null ? element.hashCode() : 0);
+        result = 31 * result + (myAllowMultipleLinks ? 1 : 0);
+        if (myAllowMultipleLinks) {
+          PsiElement element = getElement();
+          result = 31 * result + (element != null ? element.hashCode() : 0);
+        }
         return result;
       }
     }
