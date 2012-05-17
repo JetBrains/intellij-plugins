@@ -1,7 +1,6 @@
 package org.osmorc.impl;
 
 
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
@@ -91,7 +90,6 @@ public class BundleManagerTest extends LightIdeaTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    super.tearDown();
     // make sure we don't have duplicate project level libraries.
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
@@ -101,6 +99,7 @@ public class BundleManagerTest extends LightIdeaTestCase {
         projectLibraryModel.commit();
       }
     });
+    super.tearDown();
   }
 
   /**
