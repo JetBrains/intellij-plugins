@@ -382,22 +382,9 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
     if (isShowDependencies()) {
       final EnumSet<JSDependenciesSettingsOption> options = JSDependenciesSettingsOption.getEnabled();
-      final Task.Backgroundable task =
-        new Task.Backgroundable(getProject(), FlexBundle.message("uml.calculating.dependencies.message"), true) {
-          @Override
-          public void run(@NotNull ProgressIndicator indicator) {
-            ApplicationManager.getApplication().runReadAction(new Runnable() {
-              @Override
-              public void run() {
-                for (JSClass psiClass : classes) {
-                  showDependenciesFor(psiClass, options);
-                }
-                getBuilder().update();
-              }
-            });
-          }
-        };
-      ProgressManager.getInstance().run(task);
+      for (JSClass psiClass : classes) {
+        showDependenciesFor(psiClass, options);
+      }
     }
     //merge!
     mergeWithBackup(myNodes, myNodesOld);
