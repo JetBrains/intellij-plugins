@@ -8,7 +8,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.RootProvider;
-import com.intellij.openapi.roots.impl.ModuleJdkOrderEntryImpl;
+import com.intellij.openapi.roots.impl.SdkFinder;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
@@ -33,7 +33,7 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
 
   private static final String NAME_DELIM = "\t";
 
-  public static class SdkFinderImpl extends ModuleJdkOrderEntryImpl.SdkFinder {
+  public static class SdkFinderImpl extends SdkFinder {
     public Sdk findSdk(final String name, final String sdkType) {
       if (TYPE.getName().equals(sdkType)) {
         final List<String> sdksNames = StringUtil.split(name, NAME_DELIM);
