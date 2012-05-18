@@ -72,4 +72,9 @@ public class JSUmlExtras extends DiagramExtras<Object> {
     }
     return null;
   }
+
+  @Override
+  public boolean isExpandCollapseActionsImplemented() {
+    return true;
+  }
 }

@@ -668,6 +668,15 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     return null;
   }
 
+
+  @Override
+  public void expandNode(final DiagramNode<Object> node) {
+    final Object element = node.getIdentifyingElement();
+    if (element instanceof String) {
+      expandPackage((String)element);
+    }
+  }
+
   public void expandPackage(final String psiPackage) {
     packages.remove(psiPackage);
     packagesRemovedByUser.add(psiPackage);
@@ -678,6 +687,41 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     for (String aPackage : getSubPackages(psiPackage, searchScope)) {
       addElement(aPackage);
     }
+  }
+
+  @Override
+  public void collapseNode(final DiagramNode<Object> node) {
+    Object element = node.getIdentifyingElement();
+    String fqn = getFqn(element);
+    if (fqn == null) {
+      return;
+    }
+
+    String parentPackage = StringUtil.getPackageName(fqn);
+    if (parentPackage.isEmpty()) {
+      return;
+    }
+
+    final String fqnStart = parentPackage + ".";
+    final ArrayList<String> toRemove = new ArrayList<String>();
+    for (String p : packages) {
+      if (p.startsWith(fqnStart)) {
+        toRemove.add(p);
+      }
+    }
+    packages.removeAll(toRemove);
+    toRemove.clear();
+
+    for (String s : classesAddedByUser.keySet()) {
+      if (s.startsWith(fqnStart)) {
+        toRemove.add(s);
+      }
+    }
+    for (String s : toRemove) {
+      classesAddedByUser.remove(s);
+    }
+    packages.add(parentPackage);
+    packagesRemovedByUser.remove(parentPackage);
   }
 
   List<String> getAllClassesFQN() {
