@@ -255,7 +255,8 @@ public class JSElementManager extends AbstractDiagramElementManager<Object> {
     if (!clazz.isPhysical()) style |= SimpleTextAttributes.STYLE_ITALIC;
 
     final SimpleColoredText text = new SimpleColoredText();
-    text.append(StringUtil.notNullize(clazz.getName()), new SimpleTextAttributes(style, getFGColor()));
+    String name = StringUtil.notNullize(clazz.getName());
+    text.append(JSVfsResolver.fixVectorTypeName(name), new SimpleTextAttributes(style, getFGColor()));
     return text;
   }
 

@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.uml;
 import com.intellij.diagram.DiagramVfsResolver;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
@@ -44,7 +45,9 @@ public class JSVfsResolver implements DiagramVfsResolver<Object> {
       }
       if (element instanceof JSQualifiedNamedElement) {
         JSQualifiedNamedElement qualifiedNamedElement = (JSQualifiedNamedElement)element;
-        return combineWithModuleName(qualifiedNamedElement, qualifiedNamedElement.getQualifiedName());
+        String qName = qualifiedNamedElement.getQualifiedName();
+        if (qName == null) return null;
+        return combineWithModuleName(qualifiedNamedElement, fixVectorTypeName(qName));
       }
       else if (element instanceof JSFile) {
         return getQualifiedNameStatic(JSPsiImplUtils.findQualifiedElement((JSFile)element));
@@ -101,5 +104,16 @@ public class JSVfsResolver implements DiagramVfsResolver<Object> {
     if (clazz instanceof JSClass) return clazz;
     if (JSUtils.packageExists(fqn, searchScope)) return fqn;
     return null;
+  }
+
+  static String fixVectorTypeName(String name) {
+    if (isVectorType(name)) {
+      return JSCommonTypeNames.VECTOR_CLASS_NAME;
+    }
+    return name;
+  }
+
+  static boolean isVectorType(final String name) {
+    return name.startsWith("Vector$");
   }
 }

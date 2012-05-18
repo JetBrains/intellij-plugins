@@ -420,14 +420,6 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
         }
       }
     }
-
-    list = provider.computeUsingClasses();
-    for (Pair<JSClass, FlashDiagramRelationship> pair : list) {
-      DiagramNode<Object> node = findNode(pair.first);
-      if (node != null) {
-        addDependencyEdge(node, mainNode, pair.second);
-      }
-    }
   }
 
   private static boolean shouldShow(EnumSet<JSDependenciesSettingsOption> options,
@@ -581,7 +573,8 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
   @Nullable
   private static String getFqn(Object element) {
     if (element instanceof JSQualifiedNamedElement) {
-      return ((JSQualifiedNamedElement)element).getQualifiedName();
+      String qName = ((JSQualifiedNamedElement)element).getQualifiedName();
+      return qName != null ? JSVfsResolver.fixVectorTypeName(qName) : null;
     }
     if (element instanceof String) {
       return (String)element;
