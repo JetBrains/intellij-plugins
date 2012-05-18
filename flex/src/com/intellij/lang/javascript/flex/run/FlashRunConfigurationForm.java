@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConf
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.openapi.editor.event.DocumentAdapter;
@@ -93,6 +94,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private RawCommandLineEditor myEmulatorAdlOptionsEditor;
   private JLabel myAppDescriptorForEmulatorLabel;
   private JComboBox myAppDescriptorForEmulatorCombo;
+  private FlexSdkComboBoxWithBrowseButton mySdkForDebuggingCombo;
 
   private final Project myProject;
 
@@ -113,6 +115,10 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       public void actionPerformed(final ActionEvent e) {
         updateMainClassField();
         updateAppDescriptorsForEmulator();
+
+        final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+        mySdkForDebuggingCombo.setBCSdk(bc == null ? null : bc.getSdk());
+
         updateControls();
       }
     });
@@ -408,6 +414,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myMainClassComponent = JSReferenceEditor.forClassName("", myProject, null, GlobalSearchScope.EMPTY_SCOPE, null,
                                                           Conditions.<JSClass>alwaysTrue(), // no filtering until IDEA-83046
                                                           ExecutionBundle.message("choose.main.class.dialog.title"));
+    mySdkForDebuggingCombo = new FlexSdkComboBoxWithBrowseButton(FlexSdkComboBoxWithBrowseButton.FLEX_OR_FLEXMOJOS_SDK);
+    mySdkForDebuggingCombo.showBCSdk(true);
   }
 
   @NotNull
@@ -455,6 +463,10 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myEmulatorAdlOptionsEditor.setText(params.getEmulatorAdlOptions());
 
     myAppDescriptorForEmulatorCombo.setSelectedItem(params.getAppDescriptorForEmulator());
+
+    final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+    mySdkForDebuggingCombo.setBCSdk(bc == null ? null : bc.getSdk());
+    mySdkForDebuggingCombo.setSelectedSdkRaw(params.getDebuggerSdkRaw());
 
     updateControls();
   }
@@ -511,6 +523,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     params.setEmulatorAdlOptions(myEmulatorAdlOptionsEditor.getText().trim());
     params.setAppDescriptorForEmulator((AppDescriptorForEmulator)myAppDescriptorForEmulatorCombo.getSelectedItem());
+
+    params.setDebuggerSdkRaw(mySdkForDebuggingCombo.getSelectedSdkRaw());
   }
 
   protected void disposeEditor() {

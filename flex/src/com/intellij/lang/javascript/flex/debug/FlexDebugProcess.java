@@ -20,6 +20,7 @@ import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
 import com.intellij.lang.javascript.flex.run.LauncherParameters;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -174,12 +175,16 @@ public class FlexDebugProcess extends XDebugProcess {
     final Sdk sdk = bc.getSdk();
     assert sdk != null;
     myAppSdkHome = FileUtil.toSystemIndependentName(sdk.getHomePath());
-    myDebuggerSdkHome = myAppSdkHome;
-    myDebuggerVersion = sdk.getVersionString();
+
+    final Sdk sdkForDebugger = params instanceof FlashRunnerParameters && bc.getTargetPlatform() == TargetPlatform.Web
+                               ? getDebuggerSdk(((FlashRunnerParameters)params).getDebuggerSdkRaw(), sdk)
+                               : sdk;
+    myDebuggerSdkHome = FileUtil.toSystemIndependentName(sdkForDebugger.getHomePath());
+    myDebuggerVersion = sdkForDebugger.getVersionString();
     myBreakpointsHandler = new FlexBreakpointsHandler(this);
 
     final List<String> fdbLaunchCommand = FlexSdkUtils
-      .getCommandLineForSdkTool(session.getProject(), sdk, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
+      .getCommandLineForSdkTool(session.getProject(), sdkForDebugger, getFdbClasspath(), "flex.tools.debugger.cli.DebugCLI", null);
 
     if (params instanceof FlashRunnerParameters &&
         bc.getTargetPlatform() == TargetPlatform.Mobile &&
@@ -241,6 +246,17 @@ public class FlexDebugProcess extends XDebugProcess {
     reader = new MyFdbOutputReader(fdbProcess.getInputStream());
 
     startCommandProcessingThread();
+  }
+
+  public static Sdk getDebuggerSdk(final String sdkRaw, final Sdk bcSdk) {
+    if (sdkRaw.equals(FlexSdkComboBoxWithBrowseButton.BC_SDK_KEY)) {
+      return bcSdk;
+    }
+    else {
+      final Sdk sdk = FlexSdkUtils.findFlexOrFlexmojosSdk(sdkRaw);
+      assert sdk != null;
+      return sdk;
+    }
   }
 
   private String getFdbClasspath() {

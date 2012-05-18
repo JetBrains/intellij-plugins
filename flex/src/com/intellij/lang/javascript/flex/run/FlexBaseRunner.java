@@ -59,6 +59,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.XDebugProcess;
@@ -69,11 +70,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDescriptorForEmulator;
@@ -114,7 +117,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     final boolean isDebug = this instanceof FlexDebugRunner;
     try {
-      checkMakeBeforeRunEnabled(project, runProfile, isDebug);
+      if (runProfile instanceof RunProfileWithCompileBeforeLaunchOption) {
+        checkMakeBeforeRunEnabled(project, runProfile, isDebug);
+      }
 
       if (runProfile instanceof RemoteFlashRunConfiguration) {
         final BCBasedRunnerParameters params = ((RemoteFlashRunConfiguration)runProfile).getRunnerParameters();
@@ -150,6 +155,10 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         final FlexIdeBuildConfiguration bc = moduleAndConfig.second;
         if (bc.isSkipCompile()) {
           showBCCompilationSkippedWarning(module, bc, isDebug);
+        }
+
+        if (isDebug && SystemInfo.isMac && bc.getTargetPlatform() == TargetPlatform.Web) {
+          checkDebuggerFromSdk4(project, runProfile, params, bc);
         }
 
         if (bc.getTargetPlatform() == TargetPlatform.Web && !params.isLaunchUrl()) {
@@ -519,7 +528,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   private static void checkMakeBeforeRunEnabled(final Project project, final RunProfile runProfile, final boolean debug) {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
-    final java.util.List<CompileStepBeforeRun.MakeBeforeRunTask> makeBeforeRunTasks =
+    final List<CompileStepBeforeRun.MakeBeforeRunTask> makeBeforeRunTasks =
       runManager.getBeforeRunTasks((RunConfiguration)runProfile, CompileStepBeforeRun.ID);
     if (makeBeforeRunTasks.isEmpty()) {
       for (RunnerAndConfigurationSettings settings : runManager.getConfigurationSettings(((RunConfiguration)runProfile).getType())) {
@@ -544,7 +553,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
             RunDialog.editConfiguration(project, configuration, FlexBundle.message("edit.configuration.title"));
           }
           else if ("DisableWarning".equals(event.getDescription())) {
-            disableWarning(project);
+            disableCompilationSkippedWarning(project);
           }
         }
       }
@@ -568,17 +577,45 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
             });
           }
           else if ("DisableWarning".equals(event.getDescription())) {
-            disableWarning(module.getProject());
+            disableCompilationSkippedWarning(module.getProject());
           }
         }
       }
     }).notify(module.getProject());
   }
 
-  private static void disableWarning(final Project project) {
+  private static void disableCompilationSkippedWarning(final Project project) {
     NotificationsConfiguration.getNotificationsConfiguration()
       .changeSettings(COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.getDisplayId(), NotificationDisplayType.NONE, false);
     ToolWindowManager.getInstance(project)
       .notifyByBalloon(EventLog.LOG_TOOL_WINDOW_ID, MessageType.INFO, FlexBundle.message("make.before.launch.warning.disabled"));
+  }
+
+  private static void checkDebuggerFromSdk4(final Project project,
+                                            final RunProfile runProfile,
+                                            final FlashRunnerParameters params,
+                                            final FlexIdeBuildConfiguration bc) {
+    final Sdk sdk = bc.getSdk();
+    assert sdk != null;
+
+    final Sdk sdkForDebugger = FlexDebugProcess.getDebuggerSdk(params.getDebuggerSdkRaw(), sdk);
+    if (StringUtil.compareVersionNumbers(sdkForDebugger.getVersionString(), "4") < 0) {
+      final HyperlinkListener listener = new HyperlinkAdapter() {
+        protected void hyperlinkActivated(final HyperlinkEvent e) {
+          if ("RunConfiguration".equals(e.getDescription())) {
+            final RunnerAndConfigurationSettings[] allConfigurations =
+              RunManagerEx.getInstanceEx(project).getConfigurationSettings(((RunConfiguration)runProfile).getType());
+            for (RunnerAndConfigurationSettings configuration : allConfigurations) {
+              if (configuration.getConfiguration() == runProfile) {
+                RunDialog.editConfiguration(project, configuration, FlexBundle.message("edit.configuration.title"));
+                break;
+              }
+            }
+          }
+        }
+      };
+      final String message = FlexBundle.message("flex.sdk.3.mac.debug.problem", sdkForDebugger.getVersionString());
+      ToolWindowManager.getInstance(project).notifyByBalloon(ToolWindowId.DEBUG, MessageType.WARNING, message, null, listener);
+    }
   }
 }

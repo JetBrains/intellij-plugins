@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -104,6 +105,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   private int myUsbDebugPort = AirPackageUtil.DEBUG_PORT_DEFAULT;
   private @NotNull String myEmulatorAdlOptions = "";
   private @NotNull AppDescriptorForEmulator myAppDescriptorForEmulator = AppDescriptorForEmulator.Generated;
+
+  private @NotNull String myDebuggerSdkRaw = FlexSdkComboBoxWithBrowseButton.BC_SDK_KEY;
 
   public boolean isOverrideMainClass() {
     return myOverrideMainClass;
@@ -268,6 +271,15 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     myAppDescriptorForEmulator = appDescriptorForEmulator;
   }
 
+  @NotNull
+  public String getDebuggerSdkRaw() {
+    return myDebuggerSdkRaw;
+  }
+
+  public void setDebuggerSdkRaw(final @NotNull String debuggerSdkRaw) {
+    myDebuggerSdkRaw = debuggerSdkRaw;
+  }
+
   public void check(final Project project) throws RuntimeConfigurationError {
     doCheck(super.checkAndGetModuleAndBC(project));
   }
@@ -375,6 +387,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         //    && bc.getTargetPlatform() == TargetPlatform.Web && bc.isUseHtmlWrapper()) {
         //  throw new RuntimeConfigurationError(FlexBundle.message("html.wrapper.can.not.be.run.with.flash.player"));
         //}
+
+        checkDebuggerSdk();
         break;
 
       case Desktop:
@@ -403,6 +417,15 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
           }
         }
         break;
+    }
+  }
+
+  protected void checkDebuggerSdk() throws RuntimeConfigurationError {
+    if (!myDebuggerSdkRaw.equals(FlexSdkComboBoxWithBrowseButton.BC_SDK_KEY)) {
+      final Sdk sdk = FlexSdkUtils.findFlexOrFlexmojosSdk(myDebuggerSdkRaw);
+      if (sdk == null) {
+        throw new RuntimeConfigurationError(FlexBundle.message("debugger.sdk.not.found", myDebuggerSdkRaw));
+      }
     }
   }
 
