@@ -1,7 +1,6 @@
 package org.osmorc.impl;
 
 
-import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
