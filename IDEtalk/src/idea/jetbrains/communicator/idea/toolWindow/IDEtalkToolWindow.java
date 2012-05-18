@@ -20,7 +20,6 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
@@ -29,6 +28,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.SeparatorComponent;
 import com.intellij.ui.SeparatorOrientation;
+import com.intellij.util.IconUtil;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.ide.StatusToolbar;
@@ -172,7 +172,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
 
   private ActionGroup buildToolbarActions(JPanel toolbarPanel, ActionGroup toolbarActions) {
     FindUsersAction findUsersAction = new FindUsersAction();
-    toolbarPanel.add(DropDownButton.wrap(new DropDownButton(findUsersAction, IconLoader.getIcon("/general/add.png"))));
+    toolbarPanel.add(DropDownButton.wrap(new DropDownButton(findUsersAction, IconUtil.getAddIcon())));
     return toolbarActions;
   }
 

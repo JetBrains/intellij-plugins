@@ -155,7 +155,7 @@ public class LibraryBundlingEditorComponent {
           }
           notifyChanged();
         }
-      }).setUpAction(new AnActionButtonRunnable() {
+      }).setMoveUpAction(new AnActionButtonRunnable() {
         @Override
         public void run(AnActionButton button) {
           int selectionIndex = selectedRule.getSelectionIndex();
@@ -168,7 +168,7 @@ public class LibraryBundlingEditorComponent {
             notifyChanged();
           }
         }
-      }).setDownAction(new AnActionButtonRunnable() {
+      }).setMoveDownAction(new AnActionButtonRunnable() {
         @Override
         public void run(AnActionButton button) {
           int selectionIndex = selectedRule.getSelectionIndex();
