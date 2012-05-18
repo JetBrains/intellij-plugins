@@ -31,6 +31,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
@@ -94,6 +95,7 @@ public class LibraryBundlingEditorComponent {
   }
 
   public void dispose() {
+    Disposer.dispose(manifestEntries);
     manifestEntries = null;
     _manifestEntriesHolder.removeAll();
     beanAdapter.removeBeanPropertyChangeListener(beanPropertyChangeListener);

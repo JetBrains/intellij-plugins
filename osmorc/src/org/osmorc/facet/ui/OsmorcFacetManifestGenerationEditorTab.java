@@ -30,6 +30,7 @@ import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.ide.util.TreeJavaClassChooserDialog;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -158,6 +159,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
   }
 
   public void disposeUIResources() {
+    Disposer.dispose(_additionalProperties);
   }
 
   @Override
