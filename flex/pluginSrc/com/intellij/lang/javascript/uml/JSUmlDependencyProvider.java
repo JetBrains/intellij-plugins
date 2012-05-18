@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSGenericSignature;
+import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.uml.FlashDiagramRelationship.Factory;
 import com.intellij.openapi.util.Pair;
@@ -52,6 +53,10 @@ public class JSUmlDependencyProvider {
 
       @Override
       public void visitJSReferenceExpression(final JSReferenceExpression node) {
+        if (PsiTreeUtil.getParentOfType(node, JSImportStatement.class) != null) {
+          return;
+        }
+
         if (myVariable == null && myNewExpression == null && !myInParameter && isReturnTypeReference(node)) {
           return;
         }
