@@ -58,8 +58,7 @@ public class JSVfsResolver implements DiagramVfsResolver<Object> {
       }
       else if (element instanceof PsiDirectory) {
         PsiDirectory directory = (PsiDirectory)element;
-        return combineWithModuleName(directory,
-                                     JSResolveUtil.getExpectedPackageNameFromFile(directory.getVirtualFile(), directory.getProject()));
+        return JSResolveUtil.getExpectedPackageNameFromFile(directory.getVirtualFile(), directory.getProject());
       }
     }
     else if (element instanceof String) {
