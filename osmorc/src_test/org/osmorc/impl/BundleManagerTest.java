@@ -90,7 +90,6 @@ public class BundleManagerTest extends LightIdeaTestCase {
 
   @Override
   protected void tearDown() throws Exception {
-    super.tearDown();
     // make sure we don't have duplicate project level libraries.
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
@@ -100,6 +99,7 @@ public class BundleManagerTest extends LightIdeaTestCase {
         projectLibraryModel.commit();
       }
     });
+    super.tearDown();
   }
 
   /**
