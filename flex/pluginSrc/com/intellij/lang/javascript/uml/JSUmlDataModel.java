@@ -558,9 +558,10 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
   @Nullable
   public DiagramNode<Object> findNode(Object object) {
+    String objectFqn = getFqn(object);
     for (DiagramNode<Object> node : getNodes()) {
       final String fqn = getFqn(getIdentifyingElement(node));
-      if (fqn != null && fqn.equals(getFqn(object))) {
+      if (fqn != null && fqn.equals(objectFqn)) {
         if (object instanceof JSClass && !(node instanceof JSClassNode)) continue;
         if (object instanceof String && !(node instanceof JSPackageNode)) continue;
         return node;
@@ -643,6 +644,10 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     if (findNode(element) != null) return null;
 
     if (element instanceof JSClass) {
+      if (!isAllowedToShow((JSClass)element)) {
+        return null;
+      }
+
       JSClass psiClass = (JSClass)element;
       if (psiClass.getQualifiedName() == null) return null;
       final SmartPsiElementPointer<JSClass> pointer = spManager.createSmartPsiElementPointer(psiClass);
