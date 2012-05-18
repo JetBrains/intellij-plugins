@@ -382,22 +382,9 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
     if (isShowDependencies()) {
       final EnumSet<JSDependenciesSettingsOption> options = JSDependenciesSettingsOption.getEnabled();
-      final Task.Backgroundable task =
-        new Task.Backgroundable(getProject(), FlexBundle.message("uml.calculating.dependencies.message"), true) {
-          @Override
-          public void run(@NotNull ProgressIndicator indicator) {
-            ApplicationManager.getApplication().runReadAction(new Runnable() {
-              @Override
-              public void run() {
-                for (JSClass psiClass : classes) {
-                  showDependenciesFor(psiClass, options);
-                }
-                getBuilder().update();
-              }
-            });
-          }
-        };
-      ProgressManager.getInstance().run(task);
+      for (JSClass psiClass : classes) {
+        showDependenciesFor(psiClass, options);
+      }
     }
     //merge!
     mergeWithBackup(myNodes, myNodesOld);
@@ -418,14 +405,6 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
         if (node != null) {
           addDependencyEdge(mainNode, node, pair.second);
         }
-      }
-    }
-
-    list = provider.computeUsingClasses();
-    for (Pair<JSClass, FlashDiagramRelationship> pair : list) {
-      DiagramNode<Object> node = findNode(pair.first);
-      if (node != null) {
-        addDependencyEdge(node, mainNode, pair.second);
       }
     }
   }
@@ -566,9 +545,10 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
   @Nullable
   public DiagramNode<Object> findNode(Object object) {
+    String objectFqn = getFqn(object);
     for (DiagramNode<Object> node : getNodes()) {
       final String fqn = getFqn(getIdentifyingElement(node));
-      if (fqn != null && fqn.equals(getFqn(object))) {
+      if (fqn != null && fqn.equals(objectFqn)) {
         if (object instanceof JSClass && !(node instanceof JSClassNode)) continue;
         if (object instanceof String && !(node instanceof JSPackageNode)) continue;
         return node;
@@ -581,7 +561,8 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
   @Nullable
   private static String getFqn(Object element) {
     if (element instanceof JSQualifiedNamedElement) {
-      return ((JSQualifiedNamedElement)element).getQualifiedName();
+      String qName = ((JSQualifiedNamedElement)element).getQualifiedName();
+      return qName != null ? JSVfsResolver.fixVectorTypeName(qName) : null;
     }
     if (element instanceof String) {
       return (String)element;
@@ -650,6 +631,10 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     if (findNode(element) != null) return null;
 
     if (element instanceof JSClass) {
+      if (!isAllowedToShow((JSClass)element)) {
+        return null;
+      }
+
       JSClass psiClass = (JSClass)element;
       if (psiClass.getQualifiedName() == null) return null;
       final SmartPsiElementPointer<JSClass> pointer = spManager.createSmartPsiElementPointer(psiClass);
@@ -670,6 +655,15 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     return null;
   }
 
+
+  @Override
+  public void expandNode(final DiagramNode<Object> node) {
+    final Object element = node.getIdentifyingElement();
+    if (element instanceof String) {
+      expandPackage((String)element);
+    }
+  }
+
   public void expandPackage(final String psiPackage) {
     packages.remove(psiPackage);
     packagesRemovedByUser.add(psiPackage);
@@ -680,6 +674,41 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     for (String aPackage : getSubPackages(psiPackage, searchScope)) {
       addElement(aPackage);
     }
+  }
+
+  @Override
+  public void collapseNode(final DiagramNode<Object> node) {
+    Object element = node.getIdentifyingElement();
+    String fqn = getFqn(element);
+    if (fqn == null) {
+      return;
+    }
+
+    String parentPackage = StringUtil.getPackageName(fqn);
+    if (parentPackage.isEmpty()) {
+      return;
+    }
+
+    final String fqnStart = parentPackage + ".";
+    final ArrayList<String> toRemove = new ArrayList<String>();
+    for (String p : packages) {
+      if (p.startsWith(fqnStart)) {
+        toRemove.add(p);
+      }
+    }
+    packages.removeAll(toRemove);
+    toRemove.clear();
+
+    for (String s : classesAddedByUser.keySet()) {
+      if (s.startsWith(fqnStart)) {
+        toRemove.add(s);
+      }
+    }
+    for (String s : toRemove) {
+      classesAddedByUser.remove(s);
+    }
+    packages.add(parentPackage);
+    packagesRemovedByUser.remove(parentPackage);
   }
 
   List<String> getAllClassesFQN() {

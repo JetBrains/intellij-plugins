@@ -21,11 +21,9 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -42,8 +40,8 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     void stateChanged();
   }
 
-  // special combobox item that stands for sdk specified by module
-  private static class ModuleSdk {
+  // special combobox item that stands for sdk specified by the build configuration
+  private static class BCSdk {
     private Sdk mySdk;
   }
 
@@ -59,12 +57,12 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     }
   };
 
-  public static final String MODULE_SDK_KEY = "Module SDK";
+  public static final String BC_SDK_KEY = "BC SDK";
 
   private final Condition<Sdk> mySdkEvaluator;
 
-  private ModuleSdk myModuleSdk = new ModuleSdk();
-  private boolean myShowModuleSdk = false;
+  private BCSdk myBCSdk = new BCSdk();
+  private boolean myShowBCSdk = false;
 
   public FlexSdkComboBoxWithBrowseButton() {
     this(FLEX_SDK);
@@ -78,37 +76,36 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     sdkCombo.setRenderer(new ListCellRendererWrapper(sdkCombo.getRenderer()) {
       @Override
       public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        if (value instanceof ModuleSdk) {
-          final Sdk sdk = ((ModuleSdk)value).mySdk;
+        if (value instanceof BCSdk) {
+          final Sdk sdk = ((BCSdk)value).mySdk;
           if (sdk == null) {
             if (sdkCombo.isEnabled()) {
-              setText("<html><font color='red'>Module SDK [not set]</font></html>");
-              setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
+              setText("<html>SDK set for the build configuration <font color='red'>[not set]</font></html>");
+              setIcon(null);
             }
             else {
-              setText("Module SDK [not set]");
-              setIcon(IconLoader.getDisabledIcon(PlatformIcons.ERROR_INTRODUCTION_ICON));
+              setText("SDK set for the build configuration [not set]");
+              setIcon(null);
             }
           }
           else {
-            setText("Module SDK [" + sdk.getName() + "]");
-            setIcon(((SdkType) ((ModuleSdk)value).mySdk.getSdkType()).getIcon());
+            setText("SDK set for the build configuration [" + sdk.getName() + "]");
+            setIcon(((SdkType)((BCSdk)value).mySdk.getSdkType()).getIcon());
           }
         }
         else if (value instanceof String) {
           if (sdkCombo.isEnabled()) {
             setText("<html><font color='red'>" + value + " [Invalid]</font></html>");
-            setIcon(PlatformIcons.ERROR_INTRODUCTION_ICON);
+            setIcon(null);
           }
           else {
             setText(value + " [Invalid]");
-            setIcon(IconLoader.getDisabledIcon(PlatformIcons.ERROR_INTRODUCTION_ICON));
+            setIcon(null);
           }
         }
         else if (value instanceof Sdk) {
-          final Sdk sdk = (Sdk)value;
-          setText(sdk.getName());
-          setIcon(((SdkType) sdk.getSdkType()).getIcon());
+          setText(((Sdk)value).getName());
+          setIcon(((SdkType)((Sdk)value).getSdkType()).getIcon());
         }
         else {
           if (sdkCombo.isEnabled()) {
@@ -162,8 +159,8 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     final String previousSelectedSdkName = getSelectedSdkRaw();
     final List<Object> sdkList = new ArrayList<Object>();
 
-    if (myShowModuleSdk) {
-      sdkList.add(myModuleSdk);
+    if (myShowBCSdk) {
+      sdkList.add(myBCSdk);
     }
 
     final Sdk[] sdks = FlexSdkUtils.getAllSdks();
@@ -205,8 +202,8 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
   public Sdk getSelectedSdk() {
     final Object selectedItem = getComboBox().getSelectedItem();
 
-    if (selectedItem instanceof ModuleSdk) {
-      return ((ModuleSdk)selectedItem).mySdk;
+    if (selectedItem instanceof BCSdk) {
+      return ((BCSdk)selectedItem).mySdk;
     }
     else if (selectedItem instanceof Sdk) {
       return (Sdk)selectedItem;
@@ -219,8 +216,8 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
   public String getSelectedSdkRaw() {
     final Object selectedItem = getComboBox().getSelectedItem();
 
-    if (selectedItem instanceof ModuleSdk) {
-      return MODULE_SDK_KEY;
+    if (selectedItem instanceof BCSdk) {
+      return BC_SDK_KEY;
     }
     else if (selectedItem instanceof Sdk) {
       return ((Sdk)selectedItem).getName();
@@ -240,8 +237,8 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
   private void setSelectedSdkRaw(final String sdkName, final boolean addErrorItemIfSdkNotFound) {
     final JComboBox combo = getComboBox();
 
-    if (MODULE_SDK_KEY.equals(sdkName)) {
-      combo.setSelectedItem(myModuleSdk);
+    if (BC_SDK_KEY.equals(sdkName)) {
+      combo.setSelectedItem(myBCSdk);
       return;
     }
     else {
@@ -268,9 +265,9 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     }
   }
 
-  public void showModuleSdk(final boolean showModuleSdk) {
-    if (myShowModuleSdk != showModuleSdk) {
-      myShowModuleSdk = showModuleSdk;
+  public void showBCSdk(final boolean showBCSdk) {
+    if (myShowBCSdk != showBCSdk) {
+      myShowBCSdk = showBCSdk;
       final Object selectedItem = getComboBox().getSelectedItem();
       rebuildSdkListAndSelectSdk(null);
       if (selectedItem instanceof String) {
@@ -279,9 +276,9 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     }
   }
 
-  public void setModuleSdk(final Sdk sdk) {
-    if (sdk != myModuleSdk.mySdk) {
-      myModuleSdk.mySdk = sdk;
+  public void setBCSdk(final Sdk sdk) {
+    if (sdk != myBCSdk.mySdk) {
+      myBCSdk.mySdk = sdk;
     }
   }
 

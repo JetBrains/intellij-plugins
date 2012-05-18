@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSGenericSignature;
+import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.uml.FlashDiagramRelationship.Factory;
 import com.intellij.openapi.util.Pair;
@@ -52,6 +53,10 @@ public class JSUmlDependencyProvider {
 
       @Override
       public void visitJSReferenceExpression(final JSReferenceExpression node) {
+        if (PsiTreeUtil.getParentOfType(node, JSImportStatement.class) != null) {
+          return;
+        }
+
         if (myVariable == null && myNewExpression == null && !myInParameter && isReturnTypeReference(node)) {
           return;
         }
@@ -82,7 +87,13 @@ public class JSUmlDependencyProvider {
           }
           else if (myInField) {
             assert myVariable != null;
-            relType = Factory.oneToOne(myVariable.getName(), myVariable);
+            String qName = ((JSClass)resolved).getQualifiedName();
+            if (JSVfsResolver.isVectorType(qName)) {
+              relType = Factory.dependency(myVariable.getName(), myVariable);
+            }
+            else {
+              relType = Factory.oneToOne(myVariable.getName(), myVariable);
+            }
           }
           else {
             relType = Factory.dependency(null, myVariable != null ? myVariable : node);
@@ -250,11 +261,6 @@ public class JSUmlDependencyProvider {
   private static boolean isReturnTypeReference(final JSReferenceExpression node) {
     PsiElement parent = JSResolveUtil.getTopReferenceParent(node);
     return parent instanceof JSFunction && PsiTreeUtil.isAncestor(((JSFunction)parent).getReturnTypeElement(), node, true);
-  }
-
-  public Collection<Pair<JSClass, FlashDiagramRelationship>> computeUsingClasses() {
-    final Collection<Pair<JSClass, FlashDiagramRelationship>> result = new ArrayList<Pair<JSClass, FlashDiagramRelationship>>();
-    return result;
   }
 
   private static void processReferenceSet(final PsiReference[] references,
