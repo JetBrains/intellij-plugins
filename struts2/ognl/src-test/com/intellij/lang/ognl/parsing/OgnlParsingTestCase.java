@@ -35,7 +35,7 @@ public abstract class OgnlParsingTestCase extends ParsingTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath().replace(File.separatorChar, '/') + "/contrib/struts2/plugin/testData/ognl/psi";
+    return PathManager.getHomePath().replace(File.separatorChar, '/') + "/contrib/struts2/ognl/testData/psi";
   }
 
 }

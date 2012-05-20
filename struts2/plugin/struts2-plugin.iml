@@ -14,7 +14,6 @@
     <orderEntry type="module" module-name="xml-openapi" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="dom-openapi" />
-    <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="CSS" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="dom-impl" />
@@ -43,6 +42,7 @@
     <orderEntry type="module" module-name="java-impl" />
     <orderEntry type="module" module-name="jsp-openapi" />
     <orderEntry type="module" module-name="jsp-spi" />
+    <orderEntry type="module" module-name="ognl" />
   </component>
   <component name="copyright">
     <Base>
