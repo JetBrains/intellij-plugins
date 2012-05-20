@@ -45,10 +45,22 @@ public class ReferenceExpressionPsiTest extends PsiTestCase {
     assertEquals(expression.getNavigationElement(), reference.resolve());
   }
 
+  public void testStaticFieldReference() {
+    final OgnlReferenceExpression expression = parse("@some@thing");
+    final PsiReference reference = expression.getReference();
+    assertNotNull(reference);
+    assertEquals("@some@thing", reference.getCanonicalText());
+  }
+  public void testQualifiedClassNameStaticFieldReference() {
+    final OgnlReferenceExpression expression = parse("@a.b.some@thing");
+    final PsiReference reference = expression.getReference();
+    assertNotNull(reference);
+    assertEquals("@a.b.some@thing", reference.getCanonicalText());
+  }
+
   private OgnlReferenceExpression parse(@Language(value = OgnlLanguage.ID,
                                                   prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                   suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
-    return (OgnlReferenceExpression) parseSingleExpression(expression);
+    return (OgnlReferenceExpression)parseSingleExpression(expression);
   }
-
 }

@@ -35,7 +35,10 @@ public class OgnlParser extends PrattParser {
     REGISTRY.registerParser(type, priority, parser);
   }
 
-  private static void registerParser(@NotNull final IElementType type, final int priority, final PathPattern pattern, final TokenParser parser) {
+  private static void registerParser(@NotNull final IElementType type,
+                                     final int priority,
+                                     final PathPattern pattern,
+                                     final TokenParser parser) {
     REGISTRY.registerParser(type, priority, pattern, parser);
   }
 
@@ -275,8 +278,8 @@ public class OgnlParser extends PrattParser {
 
           do {
             parseExpression(builder);
-          } while (builder.checkToken(COMMA));
-
+          }
+          while (builder.checkToken(COMMA));
         }
         assertClosingCurlyBracket(builder);
         return OgnlElementTypes.SEQUENCE_EXPRESSION;
@@ -381,8 +384,21 @@ public class OgnlParser extends PrattParser {
                    });
 
     // TODO static method calls @class@method
-
     // TODO static field ref @class@field
+    registerParser(AT, EXPR_LEVEL + 1, path().up(), new ReducingParser() {
+      @Override
+      public IElementType parseFurther(PrattBuilder builder) {
+        builder.assertToken(IDENTIFIER, "Class identifier expected");
+
+        while (builder.checkToken(DOT)) {
+          parseExpression(builder);
+        }
+
+        builder.assertToken(AT, "@ expected");
+        builder.assertToken(IDENTIFIER, "Field or method identifier expected");
+        return OgnlElementTypes.REFERENCE_EXPRESSION;
+      }
+    });
 
     // TODO projection/selection: e1.{e2} / e1.{?e2}
 
@@ -418,7 +434,6 @@ public class OgnlParser extends PrattParser {
         return OgnlElementTypes.REFERENCE_EXPRESSION;
       }
     });
-
   }
 
   @Nullable

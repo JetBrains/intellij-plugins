@@ -52,7 +52,7 @@ public class MethodCallExpressionPsiTest extends PsiTestCase {
     assertEquals(2, methodCallExpression.getParameterCount());
     final OgnlExpression parameter0 = methodCallExpression.getParameter(0);
     assertElementType(OgnlElementTypes.METHOD_CALL_EXPRESSION, parameter0);
-    assertEquals(2, ((OgnlMethodCallExpression) parameter0).getParameterCount());
+    assertEquals(2, ((OgnlMethodCallExpression)parameter0).getParameterCount());
     final OgnlExpression parameter1 = methodCallExpression.getParameter(1);
     assertElementType(OgnlElementTypes.REFERENCE_EXPRESSION, parameter1);
   }
@@ -60,10 +60,19 @@ public class MethodCallExpressionPsiTest extends PsiTestCase {
   // TODO method((ensureLoaded(1,2), name))
   //             ^
 
+  public void testStaticMethodReference() {
+    final OgnlMethodCallExpression expression = parse("@some@thing(1)");
+    assertEquals("@some@thing", expression.getMethod().getText());
+  }
+
+  public void testQualifiedClassNameStaticMethodReference() {
+    final OgnlMethodCallExpression expression = parse("@a.b.some@thing(1)");
+    assertEquals("@a.b.some@thing", expression.getMethod().getText());
+  }
+
   private OgnlMethodCallExpression parse(@Language(value = OgnlLanguage.ID,
                                                    prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                    suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
-    return (OgnlMethodCallExpression) parseSingleExpression(expression);
+    return (OgnlMethodCallExpression)parseSingleExpression(expression);
   }
-
 }
