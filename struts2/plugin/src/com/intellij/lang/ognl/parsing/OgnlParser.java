@@ -376,6 +376,20 @@ public class OgnlParser extends PrattParser {
     // TODO static method calls @class@method
 
     // TODO static field ref @class@field
+    registerParser(AT, EXPR_LEVEL + 1, path().up(), new ReducingParser() {
+      @Override
+      public IElementType parseFurther(PrattBuilder builder) {
+        builder.assertToken(IDENTIFIER, "Class identifier expected");
+
+        while (builder.checkToken(DOT)) {
+          parseExpression(builder);
+        }
+
+        builder.assertToken(AT, "@ expected");
+        builder.assertToken(IDENTIFIER, "Field or method identifier expected");
+        return OgnlElementTypes.REFERENCE_EXPRESSION;
+      }
+    });
 
     // TODO projection/selection: e1.{e2} / e1.{?e2}
 
