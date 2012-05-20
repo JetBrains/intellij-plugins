@@ -38,7 +38,7 @@ public class OgnlFileType extends LanguageFileType {
     protected LayeredIcon compute() {
       final LayeredIcon icon = new LayeredIcon(2);
       icon.setIcon(FileTypes.PLAIN_TEXT.getIcon(), 0);
-      icon.setIcon(IconLoader.getIcon("resources/icons/action_small.png"), 1, 0, 6);
+      icon.setIcon(IconLoader.getIcon("/resources/icons/action_small.png"), 1, 0, 6);
       return icon;
     }
   };
