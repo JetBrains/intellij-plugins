@@ -266,8 +266,8 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     if (scopeManager != null && !scopeManager.contains(psiClass)) return false;
 
     final PsiElement initialElement = getInitialElement();
-    if (initialElement instanceof JSClass && equals(psiClass, (JSClass)initialElement)) return true;
     if (isInsidePackages(psiClass)) return false;
+    if (initialElement instanceof JSClass && equals(psiClass, (JSClass)initialElement)) return true;
     return true;
   }
 
