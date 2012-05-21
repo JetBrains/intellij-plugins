@@ -2,7 +2,7 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 
-class MxmlObjectReference implements ValueReference {
+final class MxmlObjectReference implements ValueReference {
   final int id;
   StaticInstanceReferenceInDeferredParentInstance staticReferenceInDeferredParentInstance;
 

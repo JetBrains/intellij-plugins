@@ -349,8 +349,7 @@ class StateWriter {
       // 3
       StaticInstanceReferenceInDeferredParentInstance staticInstanceReferenceInDeferredParentInstance =
         new StaticInstanceReferenceInDeferredParentInstance(objectInstance, deferredParentInstance);
-      mxmlWriter.setDeferredReferenceForObjectWithExplicitIdOrBinding(staticInstanceReferenceInDeferredParentInstance,
-                                                                            referenceInstance);
+      mxmlWriter.setDeferredReferenceForObjectWithExplicitIdOrBinding(staticInstanceReferenceInDeferredParentInstance, referenceInstance);
 
       context.setStaticInstanceReferenceInDeferredParentInstance(staticInstanceReferenceInDeferredParentInstance);
     }

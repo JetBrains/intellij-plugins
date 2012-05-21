@@ -1,12 +1,22 @@
 package com.intellij.flex.uiDesigner.mxml;
 
-class NullContext extends Context {
+import org.jetbrains.annotations.NotNull;
+
+final class NullContext extends Context {
+  private Scope tempParentScope;
+
   NullContext(Scope rootScope) {
-    parentScope = rootScope;
+    super(rootScope);
   }
 
+  void setTempParentScope(Scope value) {
+    tempParentScope = value;
+  }
+
+  @NotNull
   @Override
-  void referenceInitialized() {
+  Scope getParentScope() {
+    return tempParentScope == null ? parentScope : tempParentScope;
   }
 
   @Override
@@ -18,5 +28,6 @@ class NullContext extends Context {
     cssRulesetDefined = false;
     id = -1;
     mxmlObjectReference = null;
+    tempParentScope = null;
   }
 }

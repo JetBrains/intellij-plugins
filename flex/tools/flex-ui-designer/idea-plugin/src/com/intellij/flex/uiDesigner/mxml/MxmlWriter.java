@@ -162,6 +162,9 @@ public class MxmlWriter {
 
     assert !tagAttributeProcessContext.isCssRulesetDefined();
     Context context = tagAttributeProcessContext;
+    if (parentContext != null && parentContext.getScope().staticObjectPointToRootScope) {
+      tagAttributeProcessContext.setTempParentScope(parentContext.getScope());
+    }
 
     for (final XmlAttribute attribute : tag.getAttributes()) {
       if (attribute.getValueElement() == null) {
@@ -489,8 +492,8 @@ public class MxmlWriter {
   }
 
   // process tag value, opposite to processTagChildren expects only ClassBackedSubTag or XmlText (attributes already processed or isn't expected)
-  boolean processPropertyTagValue(@Nullable AnnotationBackedDescriptor descriptor, @NotNull XmlTag tag, @NotNull Context parentContext, @Nullable PropertyKind propertyKind) {
-    PropertyKind listKind = propertyKind != null && propertyKind.isList() ? propertyKind : null;
+  boolean processPropertyTagValue(@Nullable AnnotationBackedDescriptor descriptor, @NotNull XmlTag tag, @NotNull Context parentContext, @NotNull PropertyKind propertyKind) {
+    PropertyKind listKind = propertyKind.isList() ? propertyKind : null;
     if (listKind != null && descriptor != null) {
       parentContext.processingPropertyName = descriptor.getName();
     }

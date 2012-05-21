@@ -15,13 +15,13 @@ class StaticObjectContext extends Context {
   }
 
   public StaticObjectContext(int referencePosition, PrimitiveAmfOutputStream out, Scope parentScope) {
+    super(parentScope);
     this.referencePosition = referencePosition;
     this.out = out;
-    this.parentScope = parentScope;
   }
 
   @Override
-  void referenceInitialized() {
+  protected void referenceInitialized() {
     assert referencePosition != -1;
     initializeReference(id, out, referencePosition);
   }

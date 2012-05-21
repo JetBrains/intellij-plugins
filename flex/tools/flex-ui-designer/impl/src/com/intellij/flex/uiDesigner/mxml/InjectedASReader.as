@@ -14,7 +14,7 @@ public class InjectedASReader {
     this.reader = reader;
 
   }
-  private var deferredReferenceClass:Class;
+  private var staticInstanceReferenceClass:Class;
 
   internal function readDeclarations(input:IDataInput):void {
     const length:int = input.readUnsignedShort();
@@ -43,8 +43,8 @@ public class InjectedASReader {
       var targetBinding:PropertyBindingTarget = null;
       var deferredParentInstance:DeferredInstanceFromBytesBase = null;
       if (target is StaticInstanceReferenceInDeferredParentInstanceBase) {
-        targetBinding = new PropertyBindingTarget(target, propertyName, isStyle);
         deferredParentInstance = StaticInstanceReferenceInDeferredParentInstanceBase(target).deferredParentInstance;
+        targetBinding = new PropertyBindingTarget(target, propertyName, isStyle);
       }
       else if (target is DeferredInstanceFromBytesBase) {
         deferredParentInstance = DeferredInstanceFromBytesBase(target);
@@ -78,6 +78,9 @@ public class InjectedASReader {
               continue;
             }
           }
+          else if (amfType == ExpressionMessageTypes.CALL && targetBinding != null) {
+            readMxmlObjectChain(input, target, propertyName, targetBinding, isStyle);
+          }
           else {
             o = reader.readExpression(amfType, target, isStyle);
             if (targetBinding != null && o == null) {
@@ -106,7 +109,7 @@ public class InjectedASReader {
       }
     }
     
-    deferredReferenceClass = null;
+    staticInstanceReferenceClass = null;
   }
   
   private static function createChangeWatcherHandler(target:Object, propertyName:String, changeWatcher:Object, isStyle:Boolean):Function {
@@ -196,10 +199,10 @@ public class InjectedASReader {
       return reader.objectTable[id >> 1];
     }
     else {
-      if (deferredReferenceClass == null) {
-        deferredReferenceClass = reader.context.moduleContext.getClass("com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstance");
+      if (staticInstanceReferenceClass == null) {
+        staticInstanceReferenceClass = reader.context.moduleContext.getClass("com.intellij.flex.uiDesigner.flex.states.StaticInstanceReferenceInDeferredParentInstance");
       }
-      var o:StaticInstanceReferenceInDeferredParentInstanceBase = new deferredReferenceClass();
+      var o:StaticInstanceReferenceInDeferredParentInstanceBase = new staticInstanceReferenceClass();
       o.reference = id >> 1;
       o.deferredParentInstance = DeferredInstanceFromBytesBase(reader.readObjectReference());
       reader.saveReferredObject(AmfUtil.readUInt29(input), o);

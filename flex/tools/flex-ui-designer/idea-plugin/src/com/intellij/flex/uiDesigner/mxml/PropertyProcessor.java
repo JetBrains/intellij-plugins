@@ -237,6 +237,7 @@ class PropertyProcessor implements ValueWriter {
     return true;
   }
 
+  @Nullable
   private MxmlObjectReference processFxDeclarationId(XmlTag tag, @Nullable String classNameTrick, boolean allowNullableIdOrClassName) {
     String id = getAttributeValue(tag, "id");
     if (id == null) {
@@ -276,15 +277,16 @@ class PropertyProcessor implements ValueWriter {
       return false;
     }
 
-    final int sizePosition = writer.componentFactory(objectReference == null ? -1 : objectReference.id);
+    final int objectReferenceId = objectReference == null ? writer.allocateAbsoluteStaticObjectId() : objectReference.id;
+    final int sizePosition = writer.componentFactory(objectReferenceId);
     final XmlTag[] subTags = tag.getSubTags();
     final int objectTableSize;
     final PrimitiveAmfOutputStream out = writer.getOut();
     if (subTags.length == 1) {
       out.write(Amf3Types.OBJECT);
 
-      StaticObjectContext context = writer.createStaticContext(null, -1);
-      mxmlWriter.processPropertyTagValue(null, tag, context, null);
+      Context context = writer.createInnerComponentContext(objectReference, objectReferenceId);
+      mxmlWriter.processPropertyTagValue(null, tag, context, COMPLEX);
       objectTableSize = context.getScope().referenceCounter;
     }
     else {

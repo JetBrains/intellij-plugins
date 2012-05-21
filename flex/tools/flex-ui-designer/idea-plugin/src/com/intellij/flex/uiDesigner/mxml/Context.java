@@ -1,10 +1,12 @@
 package com.intellij.flex.uiDesigner.mxml;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 abstract class Context implements MxmlObjectReferenceProvider {
   protected StaticObjectContext backSibling;
-  protected Scope parentScope;
+
+  protected final Scope parentScope;
   protected boolean cssRulesetDefined;
 
   protected MxmlObjectReference mxmlObjectReference;
@@ -21,11 +23,17 @@ abstract class Context implements MxmlObjectReferenceProvider {
   @Nullable
   String processingPropertyName;
 
+  protected Context(@NotNull Scope parentScope) {
+    this.parentScope = parentScope;
+  }
+
+  @NotNull
   Scope getParentScope() {
     return parentScope;
   }
 
-  abstract void referenceInitialized();
+  protected void referenceInitialized() {
+  }
 
   abstract Scope getScope();
 
@@ -45,8 +53,7 @@ abstract class Context implements MxmlObjectReferenceProvider {
     return staticInstanceReferenceInDeferredParentInstance;
   }
 
-  public void setStaticInstanceReferenceInDeferredParentInstance(
-      @Nullable StaticInstanceReferenceInDeferredParentInstance value) {
+  public void setStaticInstanceReferenceInDeferredParentInstance(@Nullable StaticInstanceReferenceInDeferredParentInstance value) {
     assert staticInstanceReferenceInDeferredParentInstance == null || value == null;
     staticInstanceReferenceInDeferredParentInstance = value;
   }

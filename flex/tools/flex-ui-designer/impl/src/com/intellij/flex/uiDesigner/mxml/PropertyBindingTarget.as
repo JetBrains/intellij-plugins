@@ -55,7 +55,7 @@ internal class PropertyBindingTarget implements BindingTarget {
 
   private function changeWatcherHandler(event:Object):void {
     applyValue(target is StaticInstanceReferenceInDeferredParentInstanceBase
-                 ? StaticInstanceReferenceInDeferredParentInstanceBase(target).getInstance() : target, changeWatcher.getValue());
+                       ? StaticInstanceReferenceInDeferredParentInstanceBase(target).getInstance() : target, changeWatcher.getValue());
   }
 
   protected final function watchHost(value:Object, handler:Function):void {

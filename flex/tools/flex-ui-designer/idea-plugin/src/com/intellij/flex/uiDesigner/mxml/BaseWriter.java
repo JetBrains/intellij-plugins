@@ -61,11 +61,17 @@ final class BaseWriter extends PrimitiveWriter {
 
   public StaticObjectContext createStaticContext(@Nullable Context parentContext, int referencePosition) {
     if (parentContext == null || parentContext.getBackSibling() == null) {
-      return new StaticObjectContext(referencePosition, out, nullContext.getId(), rootScope);
+      // StaticInstanceReferenceInDeferredParentInstance points to DeferredParentInstance by id in root scope
+      return new StaticObjectContext(referencePosition, out, nullContext.getId(),
+                                     parentContext instanceof InnerComponentContext ? parentContext.getScope() : rootScope);
     }
     else {
       return parentContext.getBackSibling().reinitialize(referencePosition, nullContext.getId());
     }
+  }
+
+  public InnerComponentContext createInnerComponentContext(@Nullable MxmlObjectReference objectReference, int id) {
+    return new InnerComponentContext(rootScope, objectReference, id);
   }
 
   void resetAfterMessage() {
