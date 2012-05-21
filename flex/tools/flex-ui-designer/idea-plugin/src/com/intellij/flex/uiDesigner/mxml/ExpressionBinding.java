@@ -3,14 +3,20 @@ package com.intellij.flex.uiDesigner.mxml;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
 import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
+import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.events.VFileContentChangeEvent;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,6 +102,17 @@ class ExpressionBinding extends Binding {
                                     BaseWriter writer,
                                     @Nullable ValueReferenceResolver valueReferenceResolver,
                                     boolean isBinding) throws InvalidPropertyException {
+    final PsiFile psiFile = function.getContainingFile();
+    if (psiFile instanceof JSFile) {
+      VirtualFile file = psiFile.getViewProvider().getVirtualFile();
+      if (file instanceof VirtualFileWindow) {
+        if (ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex()
+          .isInSourceContent(((VirtualFileWindow)file).getDelegate())) {
+          throw new UnsupportedOperationException(function.getText());
+        }
+      }
+    }
+
     writeFunction(function, writer, valueReferenceResolver, isBinding, null, null);
   }
 

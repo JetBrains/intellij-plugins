@@ -20,6 +20,9 @@ public class InjectedASTest extends BaseTestCase {
     IEventDispatcher(target).dispatchEvent(new MouseEvent(MouseEvent.MOUSE_DOWN));
   }
 
+  public function DontBindToSelfJsBackedMembers():void {
+  }
+
   public function GetterAndThisQualifier():void {
     const oldName:String = "ddeadwfd";
     assertThat(app, [{text: oldName, explicitWidth: app.width}]);

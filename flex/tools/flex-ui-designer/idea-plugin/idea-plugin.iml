@@ -21,7 +21,7 @@
           <root url="file://$MODULE_DIR$/../../../../out/classes/production/jsp-openapi" />
           <root url="jar://$MODULE_DIR$/../../../../community/lib/junit.jar!/" />
           <root url="jar://$MODULE_DIR$/../../../../community/lib/asm4-all.jar!/" />
-          <root url="jar://$MODULE_DIR$/../../../../community/lib/netty-3.4.0.Final.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../community/lib/netty-3.4.5.Final.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
