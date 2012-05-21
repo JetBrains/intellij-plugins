@@ -1,5 +1,7 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.javascript.flex.FlexPredefinedTagNames;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
@@ -9,6 +11,12 @@ import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRoo
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateAirDescriptorTemplateDialog;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -28,6 +36,10 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
@@ -210,7 +222,7 @@ public class FlexCompilationUtils {
     switch (bc.getTargetPlatform()) {
       case Web:
         if (bc.isUseHtmlWrapper()) {
-          handleHtmlWrapper(bc);
+          handleHtmlWrapper(module, bc);
         }
         break;
       case Desktop:
@@ -227,7 +239,7 @@ public class FlexCompilationUtils {
     }
   }
 
-  private static void handleHtmlWrapper(final FlexIdeBuildConfiguration bc) throws FlexCompilerException {
+  private static void handleHtmlWrapper(final Module module, final FlexIdeBuildConfiguration bc) throws FlexCompilerException {
     final VirtualFile templateDir = LocalFileSystem.getInstance().findFileByPath(bc.getWrapperTemplatePath());
     if (templateDir == null || !templateDir.isDirectory()) {
       throw new FlexCompilerException(FlexBundle.message("html.wrapper.dir.not.found", bc.getWrapperTemplatePath()));
@@ -269,7 +281,13 @@ public class FlexCompilationUtils {
                   return new FlexCompilerException(FlexBundle.message("no.swf.macro", FileUtil.toSystemDependentName(file.getPath())));
                 }
 
-                final String fixedText = replaceMacros(wrapperText, FileUtil.getNameWithoutExtension(outputFileName), targetPlayer);
+                final InfoFromConfigFile info =
+                  FlexCompilerConfigFileUtil.getInfoFromConfigFile(bc.getCompilerOptions().getAdditionalConfigFilePath());
+                final String mainClass = StringUtil.notNullize(info.getMainClass(module), bc.getMainClass());
+                final PsiElement jsClass = JSResolveUtil.findClassByQName(mainClass, module.getModuleScope());
+
+                final String fixedText = replaceMacros(wrapperText, FileUtil.getNameWithoutExtension(outputFileName), targetPlayer,
+                                                       jsClass instanceof JSClass ? (JSClass)jsClass : null);
                 final String wrapperFileName = BCUtils.getWrapperFileName(bc);
                 try {
                   FlexUtils.addFileWithContent(wrapperFileName, fixedText, outputDir);
@@ -300,12 +318,60 @@ public class FlexCompilationUtils {
     }
   }
 
-  private static String replaceMacros(final String wrapperText, final String outputFileName, final String targetPlayer) {
+  private static String replaceMacros(final String wrapperText, final String outputFileName, final String targetPlayer,
+                                      final @Nullable JSClass mainClass) {
     final List<String> versionParts = StringUtil.split(targetPlayer, ".");
     final String major = versionParts.size() >= 1 ? versionParts.get(0) : "0";
     final String minor = versionParts.size() >= 2 ? versionParts.get(1) : "0";
     final String revision = versionParts.size() >= 3 ? versionParts.get(2) : "0";
-    final String[] replacement = {outputFileName, outputFileName, outputFileName, "#ffffff", "100%", "100%", major, minor, revision};
+
+    final Ref<JSAttribute> swfMetadataRef = new Ref<JSAttribute>();
+
+    final PsiFile psiFile = mainClass == null ? null : mainClass.getContainingFile();
+
+    if (psiFile instanceof XmlFile) {
+      final XmlTag rootTag = ((XmlFile)psiFile).getRootTag();
+      if (rootTag != null) {
+        final String ns = rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) == null
+                          ? JavaScriptSupportLoader.MXML_URI
+                          : JavaScriptSupportLoader.MXML_URI3;
+        for (XmlTag tag : rootTag.findSubTags(FlexPredefinedTagNames.METADATA, ns)) {
+          JSResolveUtil.processInjectedFileForTag(tag, new JSResolveUtil.JSInjectedFilesVisitor() {
+            protected void process(final JSFile file) {
+              for (PsiElement elt : file.getChildren()) {
+                if (elt instanceof JSAttributeList) {
+                  final JSAttribute swfMetadata = ((JSAttributeList)elt).findAttributeByName("SWF");
+                  if (swfMetadataRef.isNull() && swfMetadata != null) {
+                    swfMetadataRef.set(swfMetadata);
+                    return;
+                  }
+                }
+              }
+            }
+          });
+        }
+      }
+    }
+    else {
+      final JSAttributeList attributeList = mainClass == null ? null : mainClass.getAttributeList();
+      swfMetadataRef.set(attributeList == null ? null : attributeList.findAttributeByName("SWF"));
+    }
+
+    final JSAttribute swfMetadata = swfMetadataRef.isNull() ? null : swfMetadataRef.get();
+
+    final JSAttributeNameValuePair titleAttr = swfMetadata == null ? null : swfMetadata.getValueByName("pageTitle");
+    final String title = titleAttr != null ? titleAttr.getSimpleValue() : outputFileName;
+
+    final JSAttributeNameValuePair bgColorAttr = swfMetadata == null ? null : swfMetadata.getValueByName("backgroundColor");
+    final String bgColor = bgColorAttr != null ? bgColorAttr.getSimpleValue() : "#ffffff";
+
+    final JSAttributeNameValuePair widthAttr = swfMetadata == null ? null : swfMetadata.getValueByName("width");
+    final String width = widthAttr != null ? widthAttr.getSimpleValue() : "100%";
+
+    final JSAttributeNameValuePair heightAttr = swfMetadata == null ? null : swfMetadata.getValueByName("height");
+    final String height = heightAttr != null ? heightAttr.getSimpleValue() : "100%";
+
+    final String[] replacement = {outputFileName, title, outputFileName, bgColor, width, height, major, minor, revision};
     return StringUtil.replace(wrapperText, MACROS_TO_REPLACE, replacement);
   }
 
