@@ -83,7 +83,13 @@ public class JSUmlDependencyProvider {
           }
           else if (myInField && node.getParent() instanceof JSGenericSignature) {
             assert myVariable != null;
-            relType = Factory.oneToMany(myVariable.getName(), myVariable);
+            String qName = ((JSClass)resolved).getQualifiedName();
+            if (JSVfsResolver.isVectorType(qName)) {
+              relType = Factory.dependency(myVariable.getName(), myVariable);
+            }
+            else {
+              relType = Factory.oneToMany(myVariable.getName(), myVariable);
+            }
           }
           else if (myInField) {
             assert myVariable != null;
