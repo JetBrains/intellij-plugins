@@ -43,6 +43,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
+import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
@@ -173,10 +174,7 @@ public class TestUtil {
             public void run() {
                 final Module fromModule = ModuleManager.getInstance(project).findModuleByName(fromModuleName);
                 final Module toModule = ModuleManager.getInstance(project).findModuleByName(toModuleName);
-
-                ModifiableRootModel rootModel = ModuleRootManager.getInstance(fromModule).getModifiableModel();
-                rootModel.addModuleOrderEntry(toModule);
-                rootModel.commit();
+                PsiTestUtil.addDependency(fromModule, toModule);
             }
         });
     }
