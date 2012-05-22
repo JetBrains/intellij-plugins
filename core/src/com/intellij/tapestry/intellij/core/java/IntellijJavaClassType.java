@@ -1,5 +1,6 @@
 package com.intellij.tapestry.intellij.core.java;
 
+import com.intellij.codeInsight.AnnotationUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -18,10 +19,7 @@ import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class IntellijJavaClassType extends IntellijJavaType implements IJavaClassType {
 
@@ -30,6 +28,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   private final String _classFilePath;
   private PsiClassType _psiClassType;
   private Module _module;
+  private Boolean _supportInformalParameters;
 
   public IntellijJavaClassType(Module module, PsiFile psiFile) {
     _module = module;
@@ -227,6 +226,21 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
     else {
       return null;
     }
+  }
+
+  private static Collection<String> annotations = Arrays.asList("org.apache.tapestry5.annotations.SupportsInformalParameters");
+
+  @Override
+  public boolean supportsInformalParameters() {
+    if (_supportInformalParameters == null) {
+      boolean result = false;
+      PsiClass psiClass = getPsiClass();
+      if (psiClass != null && AnnotationUtil.isAnnotated(psiClass, annotations, true)) {
+        result = true;
+      }
+      _supportInformalParameters = result;
+    }
+    return _supportInformalParameters;
   }
 
   /**

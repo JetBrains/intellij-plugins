@@ -82,4 +82,6 @@ public interface IJavaClassType extends IJavaType {
      * @return the file that contains this class.
      */
     IResource getFile();
+
+    boolean supportsInformalParameters();
 }

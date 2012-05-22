@@ -1,5 +1,6 @@
 package com.intellij.tapestry.intellij.lang.descriptor;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlDocument;
@@ -7,6 +8,7 @@ import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
+import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.model.presentation.TapestryParameter;
@@ -16,6 +18,7 @@ import com.intellij.tapestry.psi.TmlFile;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlNSDescriptor;
+import com.intellij.xml.XmlNSDescriptorEx;
 import com.intellij.xml.impl.schema.XmlNSDescriptorImpl;
 import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
@@ -51,16 +54,43 @@ class DescriptorUtil {
     return prefix.length() > 0 ? prefix + ":" + attrName : attrName;
   }
 
+  private static @Nullable XmlElementDescriptor getImplicitHtmlContainer(@NotNull Component component, @NotNull XmlTag context) {
+    IJavaClassType aClass = component.getElementClass();
+
+    if (aClass != null && aClass.supportsInformalParameters()) {
+      XmlNSDescriptor descriptor = context.getNSDescriptor(XmlUtil.XHTML_URI, false);
+      if(descriptor instanceof XmlNSDescriptorEx) {
+        return ((XmlNSDescriptorEx)descriptor).getElementDescriptor("div", XmlUtil.XHTML_URI);
+      }
+    }
+    return null;
+  }
+
   public static XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable Component component,
                                                                  @Nullable TapestryIdOrTypeAttributeDescriptor idAttrDescriptor) {
     if (component == null) return XmlAttributeDescriptor.EMPTY;
+
+    XmlAttributeDescriptor[] additionalParameters = XmlAttributeDescriptor.EMPTY;
+    if (idAttrDescriptor != null) {
+      PsiElement declaration = idAttrDescriptor.getDeclaration();
+      if (declaration instanceof XmlTag) {
+        XmlElementDescriptor div = getImplicitHtmlContainer(component, (XmlTag)declaration);
+        if (div != null) {
+          additionalParameters = div.getAttributesDescriptors((XmlTag)declaration);
+        }
+      }
+    }
+
     Collection<TapestryParameter> params = component.getParameters().values();
-    XmlAttributeDescriptor[] descriptors = new XmlAttributeDescriptor[params.size() + (idAttrDescriptor != null ? 1 : 0)];
+    XmlAttributeDescriptor[] descriptors = new XmlAttributeDescriptor[params.size() + (idAttrDescriptor != null ? 1 : 0) + additionalParameters.length];
     int i = 0;
     for (TapestryParameter param : params) {
       descriptors[i++] = new TapestryAttributeDescriptor(param);
     }
-    if (idAttrDescriptor != null) descriptors[i] = idAttrDescriptor;
+    if (idAttrDescriptor != null) descriptors[i++] = idAttrDescriptor;
+    for(XmlAttributeDescriptor attr:additionalParameters) {
+      descriptors[i++] = attr;
+    }
     return descriptors;
   }
 
@@ -70,7 +100,16 @@ class DescriptorUtil {
     if (attr != null && attr.getName().equals(attributeName)) return new TapestryIdOrTypeAttributeDescriptor(attributeName, context);
     String id = getTAttributeName(context, "id");
     if (attributeName.equals(id)) return new TapestryIdOrTypeAttributeDescriptor(id, context);
-    return getAttributeDescriptor(attributeName, TapestryUtils.getTypeOfTag(context));
+    Component tag = TapestryUtils.getTypeOfTag(context);
+    XmlAttributeDescriptor descriptor = getAttributeDescriptor(attributeName, tag);
+    if (descriptor != null) return descriptor;
+    if (tag != null) {
+      XmlElementDescriptor container = getImplicitHtmlContainer(tag, context);
+      if (container != null) {
+        descriptor = container.getAttributeDescriptor(attributeName, context);
+      }
+    }
+    return descriptor;
   }
 
   @Nullable

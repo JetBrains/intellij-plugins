@@ -158,6 +158,11 @@ public class JavaClassTypeMock implements IJavaClassType {
     return _file;
   }
 
+  @Override
+  public boolean supportsInformalParameters() {
+    return false;
+  }
+
   public JavaClassTypeMock setFile(IResource file) {
     _file = file;
 
