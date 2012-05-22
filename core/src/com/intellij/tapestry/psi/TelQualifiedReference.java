@@ -168,14 +168,14 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
         final String name = element.getName();
         assert name != null;
         LookupElementBuilder lookupElement = LookupElementBuilder.create(element, name);
-        lookupElement = lookupElement.addLookupString(name);
+        lookupElement = lookupElement.withLookupString(name);
         if (element instanceof PsiField) {
-          return lookupElement.setTypeText(((PsiField)element).getType().getPresentableText());
+          return lookupElement.withTypeText(((PsiField)element).getType().getPresentableText());
         }
         if (element instanceof BeanPropertyElement) {
           final PsiType type = ((BeanPropertyElement)element).getPropertyType();
           if (type != null) {
-            return lookupElement.setTypeText(type.getPresentableText());
+            return lookupElement.withTypeText(type.getPresentableText());
           }
         }
         return lookupElement;
