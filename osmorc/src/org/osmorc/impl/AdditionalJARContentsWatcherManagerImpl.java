@@ -35,10 +35,7 @@ import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetUtil;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -91,7 +88,7 @@ public class AdditionalJARContentsWatcherManagerImpl implements AdditionalJARCon
         }
       }
 
-      final Set<LocalFileSystem.WatchRequest> requests = _fileSystem.replaceWatchedRoots(toRemove, toAdd, true);
+      final Set<LocalFileSystem.WatchRequest> requests = _fileSystem.replaceWatchedRoots(toRemove, toAdd, null);
       _watchRequests.addAll(requests);
     }
     else {
