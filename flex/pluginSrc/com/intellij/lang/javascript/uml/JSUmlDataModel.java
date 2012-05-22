@@ -254,9 +254,6 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
   private boolean isAllowedToShow(JSClass psiClass) {
     if (psiClass == null || !psiClass.isValid()) return false;
-    for (SmartPsiElementPointer<JSClass> pointer : classesRemovedByUser.values()) {
-      if (psiClass.equals(pointer.getElement())) return false;
-    }
 
     final DiagramScopeManager<Object> scopeManager = getScopeManager();
     if (scopeManager != null && !scopeManager.contains(psiClass)) return false;
