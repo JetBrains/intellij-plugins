@@ -161,8 +161,8 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {
           variants.add(LookupElementBuilder.create(actionPath)
-                         .setIcon(StrutsIcons.ACTION)
-                         .setTypeText(action.getNamespace()));
+                         .withIcon(StrutsIcons.ACTION)
+                         .withTypeText(action.getNamespace()));
         }
       }
       return ArrayUtil.toObjectArray(variants);

@@ -172,9 +172,9 @@ public class ActionPathResultContributor extends StrutsResultContributor {
           }
 
           final LookupElementBuilder builder = LookupElementBuilder.create(action.getXmlTag(), fullPath)
-                                                                   .setBold(isInCurrentPackage)
-                                                                   .setIcon(StrutsIcons.ACTION)
-                                                                   .setTypeText(action.getNamespace());
+                                                                   .withBoldness(isInCurrentPackage)
+                                                                   .withIcon(StrutsIcons.ACTION)
+                                                                   .withTypeText(action.getNamespace());
           variants.add(builder);
         }
       }

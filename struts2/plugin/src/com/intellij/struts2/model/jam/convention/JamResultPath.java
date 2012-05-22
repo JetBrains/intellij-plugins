@@ -99,8 +99,8 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
     @Override
     protected LookupElement createLookupElementFor(@NotNull final IProperty target) {
       return LookupElementBuilder.create((PsiNamedElement) target.getPsiElement())
-                                 .setIcon(ElementPresentationManager.getIcon(target))
-                                 .setTailText("=" + target.getValue(), true);
+                                 .withIcon(ElementPresentationManager.getIcon(target))
+                                 .withTailText("=" + target.getValue(), true);
     }
   };
 

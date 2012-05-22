@@ -37,9 +37,9 @@ public class ThemeReferenceProvider extends PsiReferenceProvider {
 
   @NonNls
   private static final Object[] DEFAULT_THEMES = new Object[]{
-    LookupElementBuilder.create("simple").setIcon(StrutsIcons.THEME),
-    LookupElementBuilder.create("xhtml").setIcon(StrutsIcons.THEME),
-    LookupElementBuilder.create("ajax").setIcon(StrutsIcons.THEME)
+    LookupElementBuilder.create("simple").withIcon(StrutsIcons.THEME),
+    LookupElementBuilder.create("xhtml").withIcon(StrutsIcons.THEME),
+    LookupElementBuilder.create("ajax").withIcon(StrutsIcons.THEME)
   };
 
   @NotNull

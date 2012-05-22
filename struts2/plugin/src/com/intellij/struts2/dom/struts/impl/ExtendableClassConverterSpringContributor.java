@@ -153,8 +153,8 @@ public class ExtendableClassConverterSpringContributor
         if (psiFile != null && StringUtil.isNotEmpty(beanName)) {
           //noinspection ConstantConditions
           variants.add(LookupElementBuilder.create(beanName)
-                         .setIcon(bean.getBeanIcon())
-                         .setTailText(" (" + psiFile.getName() + ")", true));
+                         .withIcon(bean.getBeanIcon())
+                         .withTailText(" (" + psiFile.getName() + ")", true));
         }
       }
 

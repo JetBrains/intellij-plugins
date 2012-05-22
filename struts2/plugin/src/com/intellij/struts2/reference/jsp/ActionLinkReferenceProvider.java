@@ -167,8 +167,8 @@ TODO not needed so far ?!
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {
           variants.add(LookupElementBuilder.create(actionPath + firstExtension)
-            .setIcon(StrutsIcons.ACTION)
-            .setTypeText(action.getNamespace()));
+            .withIcon(StrutsIcons.ACTION)
+            .withTypeText(action.getNamespace()));
         }
       }
       return ArrayUtil.toObjectArray(variants);
@@ -256,8 +256,8 @@ TODO not needed so far ?!
         public Object fun(final StrutsPackage strutsPackage) {
           final String packageNamespace = strutsPackage.searchNamespace();
           return LookupElementBuilder.create(packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace)
-            .setIcon(StrutsIcons.PACKAGE)
-            .setTypeText(strutsPackage.getName().getStringValue());
+            .withIcon(StrutsIcons.PACKAGE)
+            .withTypeText(strutsPackage.getName().getStringValue());
         }
       });
     }

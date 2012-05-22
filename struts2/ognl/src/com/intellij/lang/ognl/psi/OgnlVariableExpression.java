@@ -65,14 +65,14 @@ public class OgnlVariableExpression extends OgnlExpressionBase {
       public Object[] getVariants() {
         return new LookupElement[]{
             LookupElementBuilder.create("context")
-                                .setIcon(PlatformIcons.VARIABLE_ICON)
-                                .setTypeText("Map<String,Object>"),
+                                .withIcon(PlatformIcons.VARIABLE_ICON)
+                                .withTypeText("Map<String,Object>"),
             LookupElementBuilder.create("root")
-                                .setIcon(PlatformIcons.VARIABLE_ICON)
-                                .setTypeText("Root Object"),
+                                .withIcon(PlatformIcons.VARIABLE_ICON)
+                                .withTypeText("Root Object"),
             LookupElementBuilder.create("this")
-                                .setIcon(PlatformIcons.VARIABLE_ICON)
-                                .setTypeText("<Current Object>")
+                                .withIcon(PlatformIcons.VARIABLE_ICON)
+                                .withTypeText("<Current Object>")
         };
       }
 

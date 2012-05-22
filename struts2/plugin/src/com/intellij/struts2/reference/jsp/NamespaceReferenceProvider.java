@@ -65,7 +65,7 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
           public LookupElement fun(final StrutsPackage strutsPackage) {
             return LookupElementBuilder.create(strutsPackage.getXmlTag(),
                                                strutsPackage.searchNamespace())
-                                       .setTypeText(strutsPackage.getName().getStringValue());
+                                       .withTypeText(strutsPackage.getName().getStringValue());
           }
         };
 

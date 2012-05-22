@@ -96,9 +96,9 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
       @Override
       protected LookupElement createLookupElementFor(@NotNull final StrutsPackage target) {
         return LookupElementBuilder.create(StringUtil.notNullize(target.getName().getStringValue()))
-          .setIcon(StrutsIcons.PACKAGE)
-          .setTailText(" (" + target.searchNamespace() + ")", true)
-          .setTypeText(DomUtil.getFile(target).getName());
+          .withIcon(StrutsIcons.PACKAGE)
+          .withTailText(" (" + target.searchNamespace() + ")", true)
+          .withTypeText(DomUtil.getFile(target).getName());
       }
     };
 

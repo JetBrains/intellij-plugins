@@ -74,8 +74,8 @@ class InterceptorJamReferenceConverter extends JamSimpleReferenceConverter<Inter
   @Override
   protected LookupElement createLookupElementFor(@NotNull final InterceptorOrStackBase target) {
     return LookupElementBuilder.create(StringUtil.notNullize(target.getName().getStringValue()))
-                               .setIcon(ElementPresentationManager.getIcon(target))
-                               .setTypeText(DomUtil.getFile(target).getName());
+                               .withIcon(ElementPresentationManager.getIcon(target))
+                               .withTypeText(DomUtil.getFile(target).getName());
   }
 
 }

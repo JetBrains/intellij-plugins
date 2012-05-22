@@ -133,8 +133,8 @@ public class TilesResultContributor extends StrutsResultContributor {
           //noinspection ConstantConditions
           final LookupElementBuilder builder =
             LookupElementBuilder.create(definition, definitionName)
-              .setIcon(StrutsIcons.TILE_ICON)
-              .setTypeText(psiFile.getName());
+              .withIcon(StrutsIcons.TILE_ICON)
+              .withTypeText(psiFile.getName());
           variants.add(builder);
         }
       }

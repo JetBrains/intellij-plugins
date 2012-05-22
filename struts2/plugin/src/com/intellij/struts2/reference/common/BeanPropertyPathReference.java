@@ -87,8 +87,8 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
 
       final LookupElementBuilder variant =
           LookupElementBuilder.create(propertyName)
-                              .setIcon(member.getIcon(Iconable.ICON_FLAG_OPEN))
-                              .setTypeText(propertyType.getPresentableText());
+                              .withIcon(member.getIcon(Iconable.ICON_FLAG_OPEN))
+                              .withTypeText(propertyType.getPresentableText());
       variants[i++] = variant;
     }
 

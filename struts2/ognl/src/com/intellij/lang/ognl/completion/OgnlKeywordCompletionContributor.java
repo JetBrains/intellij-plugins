@@ -108,7 +108,7 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
                                            final ProcessingContext processingContext,
                                            @NotNull final CompletionResultSet completionResultSet) {
                for (final String keyword : keywords) {
-                 final LookupElementBuilder builder = LookupElementBuilder.create(keyword).setBold();
+                 final LookupElementBuilder builder = LookupElementBuilder.create(keyword).bold();
                  completionResultSet.addElement(TailTypeDecorator.withTail(builder, TailType.SPACE));
                }
              }

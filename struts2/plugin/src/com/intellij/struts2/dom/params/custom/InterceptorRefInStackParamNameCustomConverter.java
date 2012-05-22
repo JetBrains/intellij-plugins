@@ -143,7 +143,7 @@ public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConv
 
         final String interceptorName = StringUtil.notNullize(resolvedInterceptor.getName().getStringValue());
         names.add(LookupElementBuilder.create(resolvedInterceptor, interceptorName)
-                                      .setIcon(ElementPresentationManager.getIcon(resolvedInterceptor)));
+                                      .withIcon(ElementPresentationManager.getIcon(resolvedInterceptor)));
       }
       return ArrayUtil.toObjectArray(names, LookupElement.class);
     }
