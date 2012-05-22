@@ -101,7 +101,7 @@ public class JSVfsResolver implements DiagramVfsResolver<Object> {
     }
     final PsiElement clazz = JSResolveUtil.findClassByQName(fqn, searchScope);
     if (clazz instanceof JSClass) return clazz;
-    if (JSUtils.packageExists(fqn, searchScope)) return fqn;
+    if (JSElementManager.packageExists(project, fqn, searchScope)) return fqn;
     return null;
   }
 

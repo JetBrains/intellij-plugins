@@ -188,4 +188,17 @@ public class FlexResolveHelper implements JSResolveHelper {
     void addDependency(PsiDirectory directory);
     boolean processFile(VirtualFile file, final VirtualFile root);
   }
+
+  public static boolean mxmlPackageExists(String packageName, Project project, GlobalSearchScope scope) {
+    return !processMxmlAndFxgFilesInPackage(scope, project, packageName, new MxmlAndFxgFilesProcessor() {
+      @Override
+      public void addDependency(final PsiDirectory directory) {
+      }
+
+      @Override
+      public boolean processFile(final VirtualFile file, final VirtualFile root) {
+        return false;
+      }
+    });
+  }
 }

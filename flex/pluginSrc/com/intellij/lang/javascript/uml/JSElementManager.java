@@ -18,6 +18,7 @@ package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.AbstractDiagramElementManager;
 import com.intellij.diagram.presentation.DiagramState;
+import com.intellij.javascript.flex.FlexResolveHelper;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -87,9 +88,13 @@ public class JSElementManager extends AbstractDiagramElementManager<Object> {
     else if (element instanceof PsiDirectory) {
       PsiDirectory directory = (PsiDirectory)element;
       String packageName = JSResolveUtil.getExpectedPackageNameFromFile(directory.getVirtualFile(), directory.getProject());
-      return packageName != null && JSUtils.packageExists(packageName, GlobalSearchScope.allScope(directory.getProject()));
+      return packageName != null && packageExists(directory.getProject(), packageName, GlobalSearchScope.allScope(directory.getProject()));
     }
     return false;
+  }
+
+  public static boolean packageExists(final Project project, final String packageName, final GlobalSearchScope scope) {
+    return JSUtils.packageExists(packageName, scope) || FlexResolveHelper.mxmlPackageExists(packageName, project, scope);
   }
 
   public PsiElement findInDataContext(DataContext context) {

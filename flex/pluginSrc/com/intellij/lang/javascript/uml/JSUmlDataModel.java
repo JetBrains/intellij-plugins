@@ -34,10 +34,6 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.ModificationTracker;
@@ -287,7 +283,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
     for (String psiPackage : packages) {
 
-      if (JSUtils.packageExists(psiPackage, GlobalSearchScope.allScope(getProject()))) {
+      if (JSElementManager.packageExists(getProject(), psiPackage, GlobalSearchScope.allScope(getProject()))) {
         myNodes.add(new JSPackageNode(psiPackage, getProvider()));
       }
     }
@@ -463,7 +459,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
   private void syncPackages() {
     final GlobalSearchScope searchScope = GlobalSearchScope.allScope(getProject());
-    if (initialPackage == null || JSUtils.packageExists(initialPackage, searchScope)) return;
+    if (initialPackage == null || JSElementManager.packageExists(getProject(), initialPackage, searchScope)) return;
 
     final Set<String> psiPackages = new HashSet<String>();
     for (String sub : getSubPackages(initialPackage, searchScope)) {
@@ -521,11 +517,11 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
       classes.add(pointer.getElement());
     }
     final GlobalSearchScope searchScope = GlobalSearchScope.allScope(getProject());
-    if (initialPackage != null && JSUtils.packageExists(initialPackage, searchScope)) {
+    if (initialPackage != null && JSElementManager.packageExists(getProject(), initialPackage, searchScope)) {
       classes.addAll(getClasses(initialPackage, searchScope));
     }
     for (String psiPackage : packages) {
-      if (JSUtils.packageExists(psiPackage, searchScope)) {
+      if (JSElementManager.packageExists(getProject(), psiPackage, searchScope)) {
         classes.addAll(getClasses(psiPackage, searchScope));
       }
     }
