@@ -93,8 +93,13 @@ class InjectedASWriter implements ValueReferenceResolver {
           }
         }
 
-        binding.setTarget(mxmlObjectReferenceProvider.getMxmlObjectReference(), writer.getNameReference(name), isStyle);
-        bindingItems.add(binding);
+        if (mxmlObjectReferenceProvider instanceof Context && ((Context)mxmlObjectReferenceProvider).getParentScope().staticObjectPointToScope || mxmlObjectReferenceProvider instanceof InnerComponentContext) {
+          MxmlWriter.LOG.warn("IDEA-86372 " + host.getText());
+        }
+        else {
+          binding.setTarget(mxmlObjectReferenceProvider.getMxmlObjectReference(), writer.getNameReference(name), isStyle);
+          bindingItems.add(binding);
+        }
         return IGNORE;
       }
       else {

@@ -67,7 +67,7 @@ public class InjectedASReader {
           break;
 
         case BindingType.VARIABLE:
-          o = readVariableReference(input, reader);
+          o = readVariableReference(input);
           break;
 
         case BindingType.EXPRESSION:
@@ -78,9 +78,9 @@ public class InjectedASReader {
               continue;
             }
           }
-          else if (amfType == ExpressionMessageTypes.CALL && targetBinding != null) {
-            readMxmlObjectChain(input, target, propertyName, targetBinding, isStyle);
-          }
+          //else if (amfType == ExpressionMessageTypes.CALL && targetBinding != null) {
+          //  readMxmlObjectChain(input, target, propertyName, targetBinding, isStyle);
+          //}
           else {
             o = reader.readExpression(amfType, target, isStyle);
             if (targetBinding != null && o == null) {
@@ -171,7 +171,7 @@ public class InjectedASReader {
     return handler;
   }
 
-  internal function readVariableReference(input:IDataInput, reader:MxmlReader):Object {
+  internal function readVariableReference(input:IDataInput):Object {
     var o:Object;
     var id:int = AmfUtil.readUInt29(input);
     if ((id & 1) == 0) {

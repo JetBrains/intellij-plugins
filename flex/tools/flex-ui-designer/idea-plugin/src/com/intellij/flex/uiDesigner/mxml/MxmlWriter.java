@@ -162,7 +162,7 @@ public class MxmlWriter {
 
     assert !tagAttributeProcessContext.isCssRulesetDefined();
     Context context = tagAttributeProcessContext;
-    if (parentContext != null && parentContext.getScope().staticObjectPointToRootScope) {
+    if (parentContext != null && parentContext.getScope().staticObjectPointToScope) {
       tagAttributeProcessContext.setTempParentScope(parentContext.getScope());
     }
 

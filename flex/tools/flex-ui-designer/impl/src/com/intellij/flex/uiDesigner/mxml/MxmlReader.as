@@ -543,7 +543,7 @@ public class MxmlReader implements DocumentReader {
         return readComponentFactory();
 
       case ExpressionMessageTypes.VARIABLE_REFERENCE:
-        return injectedASReader.readVariableReference(input, this);
+        return injectedASReader.readVariableReference(input);
 
       case AmfExtendedTypes.REFERABLE:
         return readReferable();

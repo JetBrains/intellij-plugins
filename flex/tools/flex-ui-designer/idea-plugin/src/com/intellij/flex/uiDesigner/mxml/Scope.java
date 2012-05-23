@@ -4,18 +4,18 @@ import org.jetbrains.annotations.Nullable;
 
 class Scope {
   private final DynamicObjectContext owner;
-  final boolean staticObjectPointToRootScope;
+  final boolean staticObjectPointToScope;
 
   public int referenceCounter;
 
-  public Scope(boolean staticObjectPointToRootScope) {
+  public Scope(boolean staticObjectPointToScope) {
     this.owner = null;
-    this.staticObjectPointToRootScope = staticObjectPointToRootScope;
+    this.staticObjectPointToScope = staticObjectPointToScope;
   }
 
   public Scope(@Nullable DynamicObjectContext owner) {
     this.owner = owner;
-    staticObjectPointToRootScope = false;
+    staticObjectPointToScope = false;
   }
 
   public Scope() {

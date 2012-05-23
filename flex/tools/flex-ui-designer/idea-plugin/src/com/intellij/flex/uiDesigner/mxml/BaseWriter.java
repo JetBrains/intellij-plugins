@@ -63,7 +63,10 @@ final class BaseWriter extends PrimitiveWriter {
     if (parentContext == null || parentContext.getBackSibling() == null) {
       // StaticInstanceReferenceInDeferredParentInstance points to DeferredParentInstance by id in root scope
       return new StaticObjectContext(referencePosition, out, nullContext.getId(),
-                                     parentContext instanceof InnerComponentContext ? parentContext.getScope() : rootScope);
+                                     parentContext instanceof InnerComponentContext ||
+                                     (parentContext instanceof StaticObjectContext && parentContext.getScope().staticObjectPointToScope)
+                                     ? parentContext.getScope()
+                                     : rootScope);
     }
     else {
       return parentContext.getBackSibling().reinitialize(referencePosition, nullContext.getId());
