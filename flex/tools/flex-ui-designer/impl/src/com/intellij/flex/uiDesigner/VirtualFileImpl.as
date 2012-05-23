@@ -28,7 +28,10 @@ public final class VirtualFileImpl implements VirtualFile {
   private var _name:String;
   public function get name():String {
     if (_name == null) {
-      const index:int = _presentableUrl.lastIndexOf("/");
+      var index:int = _presentableUrl.lastIndexOf("/");
+      if (index < 0) {
+        index = _presentableUrl.lastIndexOf("\\");
+      }
       _name = index < 0 ? _presentableUrl : _presentableUrl.substring(index + 1);
     }
 
