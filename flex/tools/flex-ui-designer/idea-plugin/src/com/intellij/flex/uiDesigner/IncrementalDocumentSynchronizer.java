@@ -16,10 +16,8 @@ import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssFile;
@@ -91,7 +89,7 @@ final class IncrementalDocumentSynchronizer extends Update {
         styleChanged();
       }
       else if (!isSkippedXml) {
-        initialRenderAndNotify(designerManager, xmlFile);
+        initialRender(designerManager, xmlFile);
       }
     }
   }
@@ -177,13 +175,8 @@ final class IncrementalDocumentSynchronizer extends Update {
     return valueProvider;
   }
 
-  public static void initialRenderAndNotify(DesignerApplicationManager designerManager, XmlFile xmlFile) {
-    designerManager.runWhenRendered(xmlFile, new AsyncResult.Handler<DocumentInfo>() {
-      @Override
-      public void run(DocumentInfo documentInfo) {
-        notifyUpdated(documentInfo);
-      }
-    });
+  public static void initialRender(DesignerApplicationManager designerManager, XmlFile xmlFile) {
+    designerManager.renderIfNeed(xmlFile, null);
   }
 
   private boolean incrementalSync(final DocumentInfo info) {
@@ -267,25 +260,14 @@ final class IncrementalDocumentSynchronizer extends Update {
         stream.write(descriptor.isStyle());
         dataOut.writeTo(stream);
       }
-    }).doWhenDone(crerateDoneHandler(info));
+    }).doWhenDone(new Runnable() {
+      @Override
+      public void run() {
+        DesignerApplicationManager.createDocumentRenderedNotificationDoneHandler(true).run(info);
+      }
+    });
 
     return true;
   }
 
-  private static Runnable crerateDoneHandler(final DocumentInfo info) {
-    return new Runnable() {
-      @Override
-      public void run() {
-        Document document = FileDocumentManager.getInstance().getCachedDocument(info.getElement());
-        if (document != null) {
-          info.documentModificationStamp = document.getModificationStamp();
-          notifyUpdated(info);
-        }
-      }
-    };
-  }
-
-  private static void notifyUpdated(DocumentInfo finalInfo) {
-    ApplicationManager.getApplication().getMessageBus().syncPublisher(DesignerApplicationManager.MESSAGE_TOPIC).documentRendered(finalInfo);
-  }
 }

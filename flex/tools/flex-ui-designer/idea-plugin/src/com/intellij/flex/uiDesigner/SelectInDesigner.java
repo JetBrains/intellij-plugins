@@ -39,7 +39,7 @@ public class SelectInDesigner implements SelectInTarget {
       return;
     }
 
-    DesignerApplicationManager.getInstance().runWhenRendered((XmlFile)element.getContainingFile(), new AsyncResult.Handler<DocumentInfo>() {
+    DesignerApplicationManager.getInstance().renderIfNeed((XmlFile)element.getContainingFile(), new AsyncResult.Handler<DocumentInfo>() {
       @Override
       public void run(DocumentInfo info) {
         int componentId = 0;

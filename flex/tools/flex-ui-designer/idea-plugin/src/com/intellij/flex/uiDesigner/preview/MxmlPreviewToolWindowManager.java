@@ -131,7 +131,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
   private void initToolWindow() {
     toolWindowForm = new MxmlPreviewToolWindowForm(project, this);
-    final String toolWindowId = FlashUIDesignerBundle.message("mxml.preview.tool.window.title");
+    String toolWindowId = FlashUIDesignerBundle.message("mxml.preview.tool.window.title");
     toolWindow = ToolWindowManager.getInstance(project).registerToolWindow(toolWindowId, false, ToolWindowAnchor.RIGHT, project, false);
     toolWindow.setIcon(PlatformIcons.UI_FORM_ICON);
 
@@ -178,9 +178,9 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       }
     });
 
-    final JPanel contentPanel = toolWindowForm.getContentPanel();
-    final ContentManager contentManager = toolWindow.getContentManager();
-    final Content content = contentManager.getFactory().createContent(contentPanel, null, false);
+    JPanel contentPanel = toolWindowForm.getContentPanel();
+    ContentManager contentManager = toolWindow.getContentManager();
+    Content content = contentManager.getFactory().createContent(contentPanel, null, false);
     content.setCloseable(false);
     content.setPreferredFocusableComponent(contentPanel);
     contentManager.addContent(content);
@@ -196,7 +196,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
       @Override
       public void documentRendered(DocumentFactoryManager.DocumentInfo info) {
-        if (isApplicable(info)) {
+        if (isApplicable(info) && !toolWindowForm.waitingForGetDocument.get()) {
           UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override
             public void run() {
@@ -249,7 +249,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     render(true);
   }
 
-  private void render(boolean isSlow) {
+  private void render(final boolean isSlow) {
     if (!toolWindowVisible) {
       return;
     }
@@ -264,6 +264,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       loadingDecoratorStarted++;
     }
 
+    toolWindowForm.waitingForGetDocument.set(true);
     @SuppressWarnings("ConstantConditions")
     AsyncResult<BufferedImage> result = DesignerApplicationManager.getInstance().getDocumentImage((XmlFile)PsiManager.getInstance(project).findFile(file));
     result.doWhenDone(new QueuedAsyncResultHandler<BufferedImage>() {
@@ -284,17 +285,15 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       }
     });
 
-    if (isSlow) {
-      result.doWhenProcessed(new Runnable() {
-        @Override
-        public void run() {
-          //noinspection ConstantConditions
-          if (--loadingDecoratorStarted == 0 && toolWindowForm != null) {
-            toolWindowForm.getPreviewPanel().getLoadingDecorator().stopLoading();
-          }
+    result.doWhenProcessed(new Runnable() {
+      @Override
+      public void run() {
+        toolWindowForm.waitingForGetDocument.set(false);
+        if (isSlow && --loadingDecoratorStarted == 0 && toolWindowForm != null) {
+          toolWindowForm.getPreviewPanel().getLoadingDecorator().stopLoading();
         }
-      });
-    }
+      }
+    });
   }
 
   private boolean isApplicableEditor(Editor editor) {

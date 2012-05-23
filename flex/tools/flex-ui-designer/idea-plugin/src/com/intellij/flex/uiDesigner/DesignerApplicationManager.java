@@ -181,14 +181,14 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return true;
   }
 
-  public void runWhenRendered(@NotNull XmlFile psiFile, @NotNull AsyncResult.Handler<DocumentInfo> handler) {
-    runWhenRendered(psiFile, handler, null, false);
+  public void renderIfNeed(@NotNull XmlFile psiFile, @Nullable AsyncResult.Handler<DocumentInfo> handler) {
+    renderIfNeed(psiFile, handler, null, false);
   }
 
-  public void runWhenRendered(@NotNull XmlFile psiFile,
-                              @NotNull final AsyncResult.Handler<DocumentInfo> handler,
-                              @Nullable ActionCallback renderRejectedCallback,
-                              final boolean debug) {
+  public void renderIfNeed(@NotNull XmlFile psiFile,
+                           @Nullable final AsyncResult.Handler<DocumentInfo> handler,
+                           @Nullable ActionCallback renderRejectedCallback,
+                           final boolean debug) {
     boolean needInitialRender = isApplicationClosed();
     DocumentInfo documentInfo = null;
     if (!needInitialRender) {
@@ -202,6 +202,10 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     }
 
     if (!needInitialRender) {
+      if (handler == null) {
+        return;
+      }
+
       Application app = ApplicationManager.getApplication();
       if (app.isDispatchThread()) {
         final DocumentInfo finalDocumentInfo = documentInfo;
@@ -252,14 +256,32 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         });
       }
 
-      renderResult.doWhenDone(handler);
+      if (handler != null) {
+        renderResult.doWhenDone(handler);
+      }
+      renderResult.doWhenDone(createDocumentRenderedNotificationDoneHandler(false));
     }
+  }
+
+  public static AsyncResult.Handler<DocumentInfo> createDocumentRenderedNotificationDoneHandler(final boolean syncTimestamp) {
+    return new AsyncResult.Handler<DocumentInfo>() {
+      @Override
+      public void run(DocumentInfo info) {
+        Document document = FileDocumentManager.getInstance().getCachedDocument(info.getElement());
+        if (document != null) {
+          if (syncTimestamp) {
+            info.documentModificationStamp = document.getModificationStamp();
+          }
+          ApplicationManager.getApplication().getMessageBus().syncPublisher(DesignerApplicationManager.MESSAGE_TOPIC).documentRendered(info);
+        }
+      }
+    };
   }
 
   @NotNull
   public AsyncResult<BufferedImage> getDocumentImage(@NotNull XmlFile psiFile) {
     final AsyncResult<BufferedImage> result = new AsyncResult<BufferedImage>();
-    runWhenRendered(psiFile, new AsyncResult.Handler<DocumentInfo>() {
+    renderIfNeed(psiFile, new AsyncResult.Handler<DocumentInfo>() {
       @Override
       public void run(DocumentInfo documentInfo) {
         Client.getInstance().getDocumentImage(documentInfo, result);
@@ -269,7 +291,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   }
 
   public void openDocument(@NotNull final XmlFile psiFile, final boolean debug) {
-    runWhenRendered(psiFile, new AsyncResult.Handler<DocumentInfo>() {
+    renderIfNeed(psiFile, new AsyncResult.Handler<DocumentInfo>() {
       @Override
       public void run(DocumentInfo documentInfo) {
         Client.getInstance().selectComponent(documentInfo.getId(), 0);
@@ -277,6 +299,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     }, null, debug);
   }
 
+  @TestOnly
   public AsyncResult<DocumentInfo> renderDocument(@NotNull final Module module, @NotNull final XmlFile psiFile) {
     final AsyncResult<DocumentInfo> result = new AsyncResult<DocumentInfo>();
     renderDocument(module, psiFile, false, result);
@@ -594,7 +617,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
       if (isApplicationClosed()) {
         if (psiFile.getViewProvider().getVirtualFile() == previewToolWindowManager.getServedFile()) {
-          IncrementalDocumentSynchronizer.initialRenderAndNotify(DesignerApplicationManager.this, (XmlFile)psiFile);
+          IncrementalDocumentSynchronizer.initialRender(DesignerApplicationManager.this, (XmlFile)psiFile);
         }
         return;
       }
