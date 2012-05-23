@@ -1,9 +1,9 @@
 package com.intellij.flexIde;
 
 import com.intellij.ide.FileIconProvider;
-import com.intellij.ide.highlighter.InternalFileType;
 import com.intellij.openapi.application.ex.ApplicationInfoEx;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.InternalFileType;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
