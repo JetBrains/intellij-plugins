@@ -89,7 +89,8 @@ public class CompilerConfigGenerator {
 
     if (bc.isTempBCForCompilation()) {
       final FlexIdeBuildConfiguration originalBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(bc.getName());
-      final boolean makeExternalLibsMerged = originalBC != null && originalBC.getOutputType() == OutputType.Library;
+      final boolean makeExternalLibsMerged =
+        BCUtils.isFlexUnitBC(bc) || (originalBC != null && originalBC.getOutputType() == OutputType.Library);
       final boolean makeIncludedLibsMerged = BCUtils.isRuntimeStyleSheetBC(bc);
       text = FlexCompilerConfigFileUtil.mergeWithCustomConfigFile(text, bc.getCompilerOptions().getAdditionalConfigFilePath(),
                                                                   makeExternalLibsMerged, makeIncludedLibsMerged);
