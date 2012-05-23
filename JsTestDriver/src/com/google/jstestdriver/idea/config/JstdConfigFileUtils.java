@@ -31,6 +31,7 @@ import com.intellij.patterns.VirtualFilePattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.YAMLTokenTypes;
@@ -48,7 +49,7 @@ public class JstdConfigFileUtils {
   public static final char WINDOWS_PATH_SEPARATOR = '\\';
 
   private static final Set<String> KEYS_WITH_INNER_SEQUENCE = new HashSet<String>(Arrays.asList("load", "test", "exclude", "serve"));
-  public static final Set<String> VALID_TOP_LEVEL_KEYS = new HashSet<String>(Arrays.asList("server", "plugin", "timeout", "proxy"));
+  public static final Set<String> VALID_TOP_LEVEL_KEYS = ContainerUtil.set("server", "plugin", "timeout", "proxy", "gateway");
 
   public static final PsiElementPattern.Capture<PsiElement> CONFIG_FILE_ELEMENT_PATTERN = PlatformPatterns.psiElement().inVirtualFile(
       new VirtualFilePattern().ofType(JstdConfigFileType.INSTANCE)
