@@ -128,12 +128,8 @@ public class CssWriter {
         declarationVectorWriter.rollbackLastIteration();
       }
 
-      if (!declarationVectorWriter.isEmpty()) {
-        declarationVectorWriter.writeTo(rulesetOut);
-      }
-      else {
-        rulesetVectorWriter.rollbackLastIteration();
-      }
+      // must be written in any case, IDEA-86219, ruleset without rules
+      declarationVectorWriter.writeTo(rulesetOut);
     }
 
     PrimitiveAmfOutputStream outputForCustomData = rulesetVectorWriter.getOutputForCustomData();
