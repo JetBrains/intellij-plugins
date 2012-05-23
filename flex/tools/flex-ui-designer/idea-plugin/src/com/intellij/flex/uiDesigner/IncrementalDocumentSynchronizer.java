@@ -105,7 +105,7 @@ final class IncrementalDocumentSynchronizer extends Update {
     }
 
     DesignerApplicationManager.getInstance().renderDocumentsAndCheckLocalStyleModification(
-      new Document[]{FileDocumentManager.getInstance().getCachedDocument(file)}, true);
+      new Document[]{FileDocumentManager.getInstance().getCachedDocument(file)}, true, false);
   }
 
   @Nullable

@@ -35,11 +35,13 @@ import static com.intellij.flex.uiDesigner.LogMessageUtil.LOG;
 class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<List<DocumentFactoryManager.DocumentInfo>>> {
   private Document[] documents;
   final boolean onlyStyle;
+  private final boolean reportProblems;
 
-  ComplexRenderAction(Document[] documents, boolean onlyStyle) {
+  ComplexRenderAction(Document[] documents, boolean onlyStyle, boolean reportProblems) {
     super(null, null, new AsyncResult<List<DocumentFactoryManager.DocumentInfo>>());
     this.documents = documents;
     this.onlyStyle = onlyStyle;
+    this.reportProblems = reportProblems;
   }
 
   @Override
@@ -85,7 +87,7 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
     client.renderDocumentAndDependents(documentInfos, localStyleSources, result);
   }
 
-  private static void updateLocalStyleSources(final Client client, final THashMap<ModuleInfo, List<LocalStyleHolder>> localStyleSources) {
+  private void updateLocalStyleSources(final Client client, final THashMap<ModuleInfo, List<LocalStyleHolder>> localStyleSources) {
     final ProblemsHolder problemsHolder = new ProblemsHolder();
     final ProjectComponentReferenceCounter projectComponentReferenceCounter = new ProjectComponentReferenceCounter();
     localStyleSources.forEachEntry(new TObjectObjectProcedure<ModuleInfo, List<LocalStyleHolder>>() {
@@ -143,7 +145,7 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
       }
     });
 
-    if (!problemsHolder.isEmpty()) {
+    if (!problemsHolder.isEmpty() && reportProblems) {
       DocumentProblemManager.getInstance().report(null, problemsHolder);
     }
   }
@@ -207,7 +209,7 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
         token.finish();
       }
 
-      if (client.updateDocumentFactory(info.getId(), module, psiFile)) {
+      if (client.updateDocumentFactory(info.getId(), module, psiFile, reportProblems)) {
         info.documentModificationStamp = document.getModificationStamp();
         documentInfos.add(info);
       }

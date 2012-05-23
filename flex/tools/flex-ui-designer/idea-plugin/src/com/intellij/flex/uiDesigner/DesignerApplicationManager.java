@@ -333,10 +333,10 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   }
 
   public void renderDocumentsAndCheckLocalStyleModification(Document[] documents) {
-    renderDocumentsAndCheckLocalStyleModification(documents, false);
+    renderDocumentsAndCheckLocalStyleModification(documents, false, false);
   }
 
-  public void renderDocumentsAndCheckLocalStyleModification(final Document[] documents, final boolean onlyStyle) {
+  public void renderDocumentsAndCheckLocalStyleModification(final Document[] documents, final boolean onlyStyle, boolean reportProblems) {
     synchronized (initialRenderQueue) {
       final AtomicBoolean result = new AtomicBoolean();
       if (!initialRenderQueue.isEmpty()) {
@@ -357,7 +357,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
 
       if (!result.get()) {
-        initialRenderQueue.add(new ComplexRenderAction(documents, onlyStyle));
+        initialRenderQueue.add(new ComplexRenderAction(documents, onlyStyle, reportProblems));
       }
     }
   }

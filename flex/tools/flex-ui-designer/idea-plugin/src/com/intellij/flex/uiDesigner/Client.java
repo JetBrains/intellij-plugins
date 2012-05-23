@@ -464,14 +464,14 @@ public class Client implements Disposable {
     }
   }
 
-  public boolean updateDocumentFactory(int factoryId, Module module, XmlFile psiFile) {
+  public boolean updateDocumentFactory(int factoryId, Module module, XmlFile psiFile, boolean reportProblems) {
     try {
       beginMessage(ClientMethod.updateDocumentFactory);
       out.writeShort(factoryId);
 
       final ProblemsHolder problemsHolder = new ProblemsHolder();
       boolean result = writeDocumentFactory(DocumentFactoryManager.getInstance().getInfo(factoryId), module, psiFile, problemsHolder);
-      if (!problemsHolder.isEmpty()) {
+      if (!problemsHolder.isEmpty() && reportProblems) {
         DocumentProblemManager.getInstance().report(module.getProject(), problemsHolder);
       }
       if (result) {
