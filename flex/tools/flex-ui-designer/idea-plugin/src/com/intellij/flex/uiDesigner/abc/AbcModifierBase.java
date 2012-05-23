@@ -43,4 +43,9 @@ public abstract class AbcModifierBase implements AbcModifier {
   public boolean isModifyConstructor() {
     return false;
   }
+
+  @Override
+  public String getClassLocalName() {
+    return null;
+  }
 }

@@ -75,7 +75,9 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
       final boolean mxCore = StringUtil.startsWith(name, MX_CORE);
       if (mxCore) {
         if (equals(name, MX_CORE.length(), "UIComponent")) {
-          definition.doAbcData.abcModifier = new VarAccessModifier("deferredSetStyles");
+          List<SkipMethodKey> list = new ArrayList<SkipMethodKey>(1);
+          list.add(new SkipMethodKey("removedFromStageHandler", false, true));
+          definition.doAbcData.abcModifier = new MethodAccessModifier("UIComponent", list, new VarAccessModifier("deferredSetStyles"));
         }
         else if (vGreaterOrEquals4_5 && equals(name, MX_CORE.length(), "FTETextField")) {
           definition.doAbcData.abcModifier = new VarAccessModifier("staticHandlersAdded");
@@ -129,7 +131,7 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
       }
 
       if (skippedMethods != null || modifyConstructor) {
-        definition.doAbcData.abcModifier = new MethodAccessModifier(skippedMethods, skipColorCorrection ? "colorCorrection" : null, modifyConstructor);
+        definition.doAbcData.abcModifier = new MethodAccessModifier(skippedMethods, skipColorCorrection ? "colorCorrection" : null, modifyConstructor, null, null);
       }
     }
   }
@@ -225,33 +227,65 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     private String skipSetter;
     private boolean modifyConstructor;
 
-    private int traitDelta;
+    private final int traitDelta;
+    private final VarAccessModifier varAccessModifier;
+
+    private final String classLocalName;
 
     private MethodAccessModifier(List<String> changeAccessModifier) {
-      this(null, null, false);
+      this(null, null, false, null, null);
       this.changeAccessModifier = changeAccessModifier;
     }
 
+    private MethodAccessModifier(String classLocalName, List<SkipMethodKey> skippedMethods, VarAccessModifier varAccessModifier) {
+      this(skippedMethods, null, false, varAccessModifier, classLocalName);
+    }
+
     private MethodAccessModifier(String changeAccessModifier, List<SkipMethodKey> skippedMethods) {
-      this(skippedMethods, null, false);
+      this(skippedMethods, null, false, null, null);
       this.changeAccessModifier = Collections.singletonList(changeAccessModifier);
     }
 
     private MethodAccessModifier(@Nullable List<SkipMethodKey> skippedMethods,
                                  @Nullable String skipSetter,
-                                 boolean modifyConstructor) {
+                                 boolean modifyConstructor,
+                                 @Nullable VarAccessModifier varAccessModifier,
+                                 @Nullable String classLocalName) {
       this.changeAccessModifier = null;
       this.skippedMethods = skippedMethods;
       this.skipSetter = skipSetter;
       this.modifyConstructor = modifyConstructor;
+      traitDelta = computeTraitDelta();
+      this.varAccessModifier = varAccessModifier;
+      this.classLocalName = classLocalName;
+    }
 
-      traitDelta = skippedMethods == null ? 0 : -skippedMethods.size();
+    private int computeTraitDelta() {
+      int traitDelta = 0;
+      if (skippedMethods != null) {
+        for (SkipMethodKey key : skippedMethods) {
+          if (!key.clear) {
+            traitDelta--;
+          }
+        }
+      }
+      return traitDelta;
+    }
+
+    @Override
+    public String getClassLocalName() {
+      return classLocalName;
     }
 
     @Override
     public int instanceMethodTraitDelta() {
-      assert skippedMethods == null || traitDelta == -skippedMethods.size();
+      assert skippedMethods == null || traitDelta == computeTraitDelta();
       return traitDelta;
+    }
+
+    @Override
+    public boolean slotTraitName(int name, int traitKind, DataBuffer in, Encoder encoder) {
+      return varAccessModifier != null && varAccessModifier.slotTraitName(name, traitKind, in, encoder);
     }
 
     @Override
@@ -277,16 +311,16 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
 
     @Override
     public boolean methodTrait(int traitKind, int name, DataBuffer in, int methodInfo, Encoder encoder) {
-      if (skippedMethods != null && !skippedMethods.isEmpty() && isOverridenMethod(traitKind)) {
+      if (skippedMethods != null && !skippedMethods.isEmpty()) {
         int index;
-        if ((index = encoder.skipMethod(skippedMethods, name, in)) != -1) {
+        if ((index = encoder.skipMethod(skippedMethods, name, in, methodInfo)) != -1) {
           if (skippedMethods.size() == 1) {
             skippedMethods = null;
           }
           else {
             skippedMethods.remove(index);
           }
-          return true;
+          return index != -2;
         }
       }
       else if (skipSetter != null && isSetter(traitKind) && encoder.clearMethodBody(skipSetter, name, in, methodInfo)) {
@@ -310,23 +344,26 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
 
     @Override
     public void assertOnInstanceEnd() {
-      assert skippedMethods == null || skippedMethods.isEmpty();
+      assert skippedMethods == null;
     }
   }
 
   private static class VarAccessModifier extends AbcModifierBase {
-    private String fieldName;
+    private String[] fieldNames;
 
-    private VarAccessModifier(String fieldName) {
-      this.fieldName = fieldName;
+    private VarAccessModifier(String ...fieldNames) {
+      this.fieldNames = fieldNames;
     }
 
     @Override
     public boolean slotTraitName(int name, int traitKind, DataBuffer in, Encoder encoder) {
-      if (fieldName != null && isVar(traitKind)) {
-        if (encoder.changeAccessModifier(fieldName, name, in)) {
-          fieldName = null;
-          return true;
+      for (int i = 0, length = fieldNames.length; i < length; i++) {
+        String fieldName = fieldNames[i];
+        if (fieldName != null && isVar(traitKind)) {
+          if (encoder.changeAccessModifier(fieldName, name, in)) {
+            fieldNames[i] = null;
+            return true;
+          }
         }
       }
       

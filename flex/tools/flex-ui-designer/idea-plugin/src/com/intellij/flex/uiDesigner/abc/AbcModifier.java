@@ -1,5 +1,7 @@
 package com.intellij.flex.uiDesigner.abc;
 
+import org.jetbrains.annotations.Nullable;
+
 public interface AbcModifier {
   boolean methodTraitName(int traitKind, int kind, DataBuffer in, Encoder encoder);
 
@@ -12,4 +14,7 @@ public interface AbcModifier {
   boolean isModifyConstructor();
 
   void assertOnInstanceEnd();
+
+  @Nullable
+  String getClassLocalName();
 }

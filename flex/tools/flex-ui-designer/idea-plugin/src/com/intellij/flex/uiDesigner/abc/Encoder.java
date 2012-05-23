@@ -44,6 +44,7 @@ public class Encoder {
   protected WritableDataBuffer currentBuffer;
 
   private AbcModifier abcModifier;
+  private boolean abcModifierApplicable;
 
   public Encoder() {
     this(46, 16);
@@ -149,6 +150,7 @@ public class Encoder {
     decoderIndex = index;
     history.constantPool = decoder.constantPool;
     abcModifier = decoder.abcModifier;
+    abcModifierApplicable = abcModifier != null;
   }
 
   public void endDecoder(Decoder decoder) {
@@ -348,8 +350,11 @@ public class Encoder {
   }
 
   public void startInstance(DataBuffer in) {
+    final int nameIndex = in.readU32();
+    instanceInfo.writeU32(history.getIndex(IndexHistory.MULTINAME, nameIndex));
     instanceInfo.writeU32(history.getIndex(IndexHistory.MULTINAME, in.readU32()));
-    instanceInfo.writeU32(history.getIndex(IndexHistory.MULTINAME, in.readU32()));
+
+    abcModifierApplicable = abcModifier != null && compareLocalName(in, nameIndex, abcModifier.getClassLocalName());
 
     int flags = in.readU8();
     instanceInfo.writeU8(flags);
@@ -368,7 +373,7 @@ public class Encoder {
     final int oldIInit = in.readU32();
     instanceInfo.writeU32(methodInfo.getIndex(oldIInit));
 
-    if (abcModifier != null && abcModifier.isModifyConstructor()) {
+    if (abcModifierApplicable && abcModifier.isModifyConstructor()) {
       history.getModifiedMethodBodies().put(oldIInit, MODIFY_INIT_METHOD_BODY_MARKER);
     }
 
@@ -377,7 +382,7 @@ public class Encoder {
 
   public void endInstance() {
     currentBuffer = null;
-    if (abcModifier != null) {
+    if (abcModifierApplicable) {
       abcModifier.assertOnInstanceEnd();
     }
   }
@@ -478,7 +483,7 @@ public class Encoder {
   }
 
   public void traitCount(int traitCount) {
-    if (abcModifier != null && currentBuffer == instanceInfo) {
+    if (abcModifierApplicable && currentBuffer == instanceInfo) {
       traitCount += abcModifier.instanceMethodTraitDelta();
       assert traitCount >= 0;
     }
@@ -512,7 +517,7 @@ public class Encoder {
   }
 
   public void slotTrait(int traitKind, int name, int slotId, int type, int value, int valueKind, int[] metadata, DataBuffer in) throws DecoderException {
-    if (abcModifier == null || !abcModifier.slotTraitName(name, traitKind, in, this)) {
+    if (!abcModifierApplicable || !abcModifier.slotTraitName(name, traitKind, in, this)) {
       currentBuffer.writeU32(history.getIndex(IndexHistory.MULTINAME, name));
     }
 
@@ -612,13 +617,20 @@ public class Encoder {
     // CONSTANT_PackageNamespace or CONSTANT_ProtectedNamespace
     public final byte packageNamespace;
 
+    public final boolean clear;
+
     public SkipMethodKey(String name, boolean isPublic) {
+      this(name, isPublic, false);
+    }
+
+    public SkipMethodKey(String name, boolean isPublic, boolean clear) {
       this.name = name;
-      packageNamespace = isPublic ? CONSTANT_PackageNamespace : CONSTANT_ProtectedNamespace;
+      this.clear = clear;
+      packageNamespace = clear ? CONSTANT_PrivateNamespace : isPublic ? CONSTANT_PackageNamespace : CONSTANT_ProtectedNamespace;
     }
   }
 
-  public int skipMethod(final List<SkipMethodKey> keys, int nameIndex, DataBuffer in) {
+  public int skipMethod(final List<SkipMethodKey> keys, int nameIndex, DataBuffer in, int methodInfo) {
     final int originalPosition = in.position();
     in.seek(history.getRawPartPoolPositions(IndexHistory.MULTINAME)[nameIndex]);
 
@@ -629,12 +641,17 @@ public class Encoder {
 
     in.seek(history.getRawPartPoolPositions(IndexHistory.NS)[ns]);
     final int nsKind = in.readU8();
-    if (nsKind == CONSTANT_PackageNamespace || nsKind == CONSTANT_ProtectedNamespace) {
+    if (nsKind == CONSTANT_PackageNamespace || nsKind == CONSTANT_ProtectedNamespace || nsKind == CONSTANT_PrivateNamespace) {
       in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
       int stringLength = in.readU32();
       for (int i = 0, size = keys.size(); i < size; i++) {
         SkipMethodKey key = keys.get(i);
         if (key.packageNamespace == nsKind && compare(in, stringLength, key.name)) {
+          if (key.clear) {
+            history.getModifiedMethodBodies().put(methodInfo, EMPTY_METHOD_BODY);
+            in.seek(originalPosition);
+            return -2;
+          }
           in.seek(originalPosition);
           return i;
         }
@@ -643,6 +660,33 @@ public class Encoder {
 
     in.seek(originalPosition);
     return -1;
+  }
+
+  private boolean compareLocalName(DataBuffer in, int nameIndex, @Nullable String s) {
+    if (s == null) {
+      return true;
+    }
+
+    final int originalPosition = in.position();
+    in.seek(history.getRawPartPoolPositions(IndexHistory.MULTINAME)[nameIndex]);
+    int constKind = in.readU8();
+    assert constKind == CONSTANT_Qname || constKind == CONSTANT_QnameA;
+    int ns = in.readU32();
+    int localName = in.readU32();
+
+    boolean result = false;
+    in.seek(history.getRawPartPoolPositions(IndexHistory.NS)[ns]);
+    int nsKind = in.readU8();
+    if (nsKind == CONSTANT_PackageNamespace) {
+      in.seek(history.getRawPartPoolPositions(IndexHistory.STRING)[localName]);
+      if (compare(in, s)) {
+        result = true;
+      }
+    }
+
+    //final String s = in.readString(in.readU32());
+    in.seek(originalPosition);
+    return result;
   }
 
   public boolean clearMethodBody(String name, int nameIndex, DataBuffer in, int methodInfo) {
@@ -713,11 +757,11 @@ public class Encoder {
   }
 
   public void methodTrait(int traitKind, int name, int dispId, int methodInfoIndex, int[] metadata, DataBuffer in) {
-    if (abcModifier != null && abcModifier.methodTrait(traitKind, name, in, methodInfoIndex, this)) {
+    if (abcModifierApplicable && abcModifier.methodTrait(traitKind, name, in, methodInfoIndex, this)) {
       return;
     }
 
-    if (abcModifier == null || !abcModifier.methodTraitName(name, traitKind, in, this)) {
+    if (!abcModifierApplicable || !abcModifier.methodTraitName(name, traitKind, in, this)) {
       currentBuffer.writeU32(history.getIndex(IndexHistory.MULTINAME, name));
     }
 
