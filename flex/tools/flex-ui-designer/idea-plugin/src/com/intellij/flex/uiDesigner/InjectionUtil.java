@@ -110,7 +110,7 @@ public final class InjectionUtil {
     int i = references.length - 1;
     // injection in mxml has com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeNameValuePairImpl$NameReference as last reference
     while (true) {
-      final PsiReference reference = references[i];
+      final PsiReference reference = i < 0 ? null : references[i];
       if (reference instanceof JSFileReference || reference instanceof ResourceBundleReference) {
         fileReference = (PsiPolyVariantReference)reference;
         break;

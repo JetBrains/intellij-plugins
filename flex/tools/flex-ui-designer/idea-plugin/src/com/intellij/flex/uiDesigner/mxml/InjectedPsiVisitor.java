@@ -14,7 +14,10 @@ import com.intellij.lang.properties.IProperty;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.PsiLanguageInjectionHost.Shred;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +77,14 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
     }
 
     assert statements.length == 1;
-    JSCallExpression expression = (JSCallExpression)((JSExpressionStatement)statements[0]).getExpression();
+    final JSExpression expr = ((JSExpressionStatement)statements[0]).getExpression();
+    // <s:Image source="@Embed(source='/Users/develar/Pictures/iChat Ico
+    if (!(expr instanceof JSCallExpression)) {
+      valueWriter = InjectedASWriter.IGNORE;
+      return;
+    }
+
+    JSCallExpression expression = (JSCallExpression)expr;
     JSExpression[] arguments = expression.getArguments();
     if (arguments.length != 1) {
       logUnsupported();
