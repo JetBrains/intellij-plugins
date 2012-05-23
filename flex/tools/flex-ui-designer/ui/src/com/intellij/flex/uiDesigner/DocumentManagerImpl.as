@@ -208,7 +208,10 @@ public class DocumentManagerImpl extends EventDispatcher implements DocumentMana
   }
 
   private static function createChildStyleManager(context:Module):StyleManagerEx {
-    return new (context.getClass("com.intellij.flex.uiDesigner.css.ChildStyleManager"))(context.styleManager);
+    var styleManager:StyleManagerEx = context.styleManager;
+    var styleManagerParent:StyleManagerEx = styleManager["parent"];
+    // IDEA-86218 todo create only if app document is not owner of current childStyleManager
+    return new (context.getClass("com.intellij.flex.uiDesigner.css.ChildStyleManager"))(styleManagerParent || styleManager);
   }
   
   private static function createStyleManagerForLibrarySet(module:Module):void {
