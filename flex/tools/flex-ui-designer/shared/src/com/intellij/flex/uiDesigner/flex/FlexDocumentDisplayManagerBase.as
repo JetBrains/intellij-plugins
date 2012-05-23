@@ -122,8 +122,11 @@ internal class FlexDocumentDisplayManagerBase extends AbstractDocumentDisplayMan
       _screen = new Rectangle();
     }
 
-    _screen.width = super.parent.width;
-    _screen.height = super.parent.height;
+    // IDEA-86224
+    // todo test it
+    var p:DisplayObjectContainer = super.parent;
+    _screen.width = p == null ? 500 : p.width;
+    _screen.height = p == null ? 400 : p.height;
     return _screen;
   }
 
