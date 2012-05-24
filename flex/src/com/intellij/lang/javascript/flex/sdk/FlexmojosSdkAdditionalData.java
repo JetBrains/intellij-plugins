@@ -8,7 +8,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.Processor;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -16,7 +15,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -136,49 +138,42 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
 
   @Nullable
   private static Sdk findSimilarSdk(final String version) {
-    final int index = version.lastIndexOf('.');
-    if (index <= 0) return null;
+    final int firstDotIndex = version.indexOf('.');
+    final int secondDotIndex = version.indexOf('.', firstDotIndex + 1);
+    final int thirdDotIndex = version.indexOf('.', secondDotIndex + 1);
+    if (firstDotIndex <= 0) return null;
+    final String major = version.substring(0, firstDotIndex);
+    final String minor = secondDotIndex > firstDotIndex ? version.substring(firstDotIndex + 1, secondDotIndex) : "";
+    final String revision = thirdDotIndex > secondDotIndex ? version.substring(secondDotIndex + 1, thirdDotIndex) : "";
+    final String build = thirdDotIndex > 0 ? version.substring(thirdDotIndex + 1) : "";
 
-    final List<Sdk> sdks = FlexSdkUtils.getFlexSdks();
+    Sdk matchingMajorMinorRevisionBuild = null;
+    Sdk matchingMajorMinorRevision = null;
+    Sdk matchingMajorMinor = null;
+    Sdk latestSdk = null;
 
-    // try to find the same version
-    final String baseVersion = version.substring(0, index);
-    final String revision = version.substring(index + 1, version.length());
-    Sdk sdk = selectSdk(sdks, new Processor<String>() {
-      public boolean process(final String sdkVersion) {
-        return sdkVersion.startsWith(baseVersion) && sdkVersion.endsWith(revision);
+    for (Sdk sdk : FlexSdkUtils.getFlexSdks()) {
+      final String candidateVersion = sdk.getVersionString();
+      if (candidateVersion == null) continue;
+
+      if (candidateVersion.startsWith(major + "." + minor + "." + revision) && candidateVersion.endsWith(build)) {
+        matchingMajorMinorRevisionBuild = sdk;
+        break;
       }
-    });
 
-    if (sdk == null) {
-      // the same version not found. Try to find the same major version
-      final String majorVersion = version.substring(0, version.indexOf('.') + 1);
-      sdk = selectSdk(sdks, new Processor<String>() {
-        public boolean process(final String sdkVersion) {
-          return sdkVersion.startsWith(majorVersion);
-        }
-      });
-    }
+      if (candidateVersion.startsWith(major + "." + minor + "." + revision)) matchingMajorMinorRevision = sdk;
+      if (candidateVersion.startsWith(major + "." + minor)) matchingMajorMinor = sdk;
 
-    if (sdk == null) {
-      // the same major version not found. Take any.
-      if (!sdks.isEmpty()) {
-        sdk = sdks.get(0);
-      }
-    }
-
-    return sdk;
-  }
-
-  @Nullable
-  private static Sdk selectSdk(final List<Sdk> sdks, final Processor<String> sdkVersionEvaluator) {
-    for (final Sdk sdk : sdks) {
-      final String sdkVersion = sdk.getVersionString();
-      if (sdkVersion != null && sdkVersionEvaluator.process(sdkVersion)) {
-        return sdk;
+      if (latestSdk == null || StringUtil.compareVersionNumbers(candidateVersion, latestSdk.getVersionString()) > 0) {
+        latestSdk = sdk;
       }
     }
-    return null;
+
+    if (matchingMajorMinorRevisionBuild != null) return matchingMajorMinorRevisionBuild;
+    if (matchingMajorMinorRevision != null) return matchingMajorMinorRevision;
+    if (matchingMajorMinor != null) return matchingMajorMinor;
+
+    return latestSdk;
   }
 
   private void addClasspathEntry(final String repositoryRootPath, final String groupId, final String artifactId, final String version) {
