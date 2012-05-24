@@ -6,9 +6,6 @@
       <xy x="20" y="20" width="621" height="389"/>
     </constraints>
     <properties/>
-    <clientProperties>
-      <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainLargeWithoutIndent"/>
-    </clientProperties>
     <border type="none"/>
     <children>
       <vspacer id="af268">
