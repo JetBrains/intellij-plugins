@@ -38,7 +38,7 @@ import javax.swing.event.HyperlinkEvent;
 import java.util.*;
 
 public class FlexmojosImporter extends MavenImporter implements FlexConfigInformer {
-  static final String[] SUPPORTED_PACKAGINGS = {"swf", "swc"};
+  static final String[] SUPPORTED_PACKAGINGS = {"swf", "swc", "air"};
   static final String FLEXMOJOS_GROUP_ID = "org.sonatype.flexmojos";
   static final String FLEXMOJOS_ARTIFACT_ID = "flexmojos-maven-plugin";
   private static final List<String> DEPENDENCY_TYPES_FOR_IMPORT = Arrays.asList("swf", "swc", "resource-bundle", "rb.swc");
@@ -100,7 +100,7 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   }
 
   static boolean isFlexApp(MavenProject project) {
-    return "swf".equalsIgnoreCase(project.getPackaging());
+    return "swf".equals(project.getPackaging()) || "air".equals(project.getPackaging());
   }
 
   public void preProcess(Module module, MavenProject mavenProject, MavenProjectChanges changes,
@@ -259,7 +259,8 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
     final String classifier =
       configurationElement == null ? null : configurationElement.getChildTextNormalize("classifier", configurationElement.getNamespace());
     final String suffix = classifier == null ? "" : "-" + classifier;
+    final String fileExtension = "swc".equals(mavenProject.getPackaging()) ? "swc" : "swf";
     return FileUtil.toSystemIndependentName(mavenProject.getBuildDirectory())
-           + "/" + mavenProject.getFinalName() + suffix + "." + mavenProject.getPackaging();
+           + "/" + mavenProject.getFinalName() + suffix + "." + fileExtension;
   }
 }

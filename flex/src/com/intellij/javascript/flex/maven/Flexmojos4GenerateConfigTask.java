@@ -21,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathsList;
 import com.intellij.util.StringBuilderSpinAllocator;
 import com.intellij.util.SystemProperties;
@@ -351,8 +352,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   private void writeWorkspaceMap(final Collection<MavenProject> mavenProjects) throws IOException {
     int actualLength = 0;
     for (MavenProject mavenProject : mavenProjects) {
-      final String packaging = mavenProject.getPackaging();
-      if ("swf".equalsIgnoreCase(packaging) || "swc".equalsIgnoreCase(packaging)) {
+      if (ArrayUtil.contains(mavenProject.getPackaging(), FlexmojosImporter.SUPPORTED_PACKAGINGS)) {
         actualLength++;
       }
     }
@@ -361,8 +361,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
     ObjectOutputStream objectOutputStream = new ObjectOutputStream(out);
     for (MavenProject mavenProject : mavenProjects) {
-      final String packaging = mavenProject.getPackaging();
-      if (!("swf".equalsIgnoreCase(packaging) || "swc".equalsIgnoreCase(packaging))) {
+      if (!ArrayUtil.contains(mavenProject.getPackaging(), FlexmojosImporter.SUPPORTED_PACKAGINGS)) {
         continue;
       }
 

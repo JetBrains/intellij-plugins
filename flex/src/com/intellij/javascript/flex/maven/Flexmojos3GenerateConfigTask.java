@@ -25,6 +25,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.idea.maven.model.MavenWorkspaceMap;
 import org.jetbrains.idea.maven.project.*;
@@ -134,8 +135,7 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
       public void run() {
         try {
           for (MavenProject mavenProject : mavenProjects) {
-            final String packaging = mavenProject.getPackaging();
-            if ("swf".equalsIgnoreCase(packaging) || "swc".equalsIgnoreCase(packaging)) {
+            if (ArrayUtil.contains(mavenProject.getPackaging(), FlexmojosImporter.SUPPORTED_PACKAGINGS)) {
               final String outputFilePath = FlexmojosImporter.getOutputFilePath(mavenProject);
               final int lastSlashIndex = outputFilePath.lastIndexOf("/");
               final String outputFileName = outputFilePath.substring(lastSlashIndex + 1);

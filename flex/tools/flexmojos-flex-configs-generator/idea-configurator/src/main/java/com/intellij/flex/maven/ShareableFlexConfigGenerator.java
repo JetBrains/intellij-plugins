@@ -41,7 +41,8 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
       boolean isFirst = true;
       final int absPathPrefixLength = session.getTopLevelProject().getBasedir().getPath().length();
       for (MavenProject p : session.getProjects()) {
-        if (p.getPackaging().equals("swf") || p.getPackaging().equals("swc")) {
+        final String packaging = p.getPackaging();
+        if (packaging.equals("swf") || packaging.equals("air") || packaging.equals("swc")) {
           if (!isFirst) {
             s.append(", ");
           }
@@ -57,7 +58,7 @@ public class ShareableFlexConfigGenerator extends IdeaConfigurator {
           else {
             s.append(pBaseDir);
           }
-          s.append("\", ").append(p.getPackaging().equals("swc") ? "true" : "false").append(')');
+          s.append("\", ").append(packaging.equals("swc") ? "true" : "false").append(')');
         }
       }
 

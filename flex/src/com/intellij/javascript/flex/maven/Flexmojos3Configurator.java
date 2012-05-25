@@ -22,6 +22,8 @@ import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -139,8 +141,10 @@ public class Flexmojos3Configurator {
 
     mainBC.setName(myModule.getName());
 
-    final TargetPlatform targetPlatform = handleDependencies(mainBC);
+    final TargetPlatform guessedTargetPlatform = handleDependencies(mainBC);
+    final boolean producesAirPackage = "air".equals(myMavenProject.getPackaging()) || containsSignAirGoal(myFlexmojosPlugin);
     if (isNewBC) {
+      final TargetPlatform targetPlatform = producesAirPackage ? TargetPlatform.Desktop : guessedTargetPlatform;
       mainBC.setTargetPlatform(targetPlatform);
       mainBC.setPureAs(false);
     }
@@ -152,10 +156,14 @@ public class Flexmojos3Configurator {
     }
 
     final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
-    if (FlexmojosImporter.isFlexApp(myMavenProject) && configurationElement != null) {
-      final String sourceFile = configurationElement.getChildTextNormalize("sourceFile");
+    if (FlexmojosImporter.isFlexApp(myMavenProject)) {
+      final String sourceFile = configurationElement == null ? null : configurationElement.getChildTextNormalize("sourceFile");
       if (sourceFile != null && (sourceFile.endsWith(".as") || sourceFile.endsWith(".mxml"))) {
         mainBC.setMainClass(sourceFile.substring(0, sourceFile.lastIndexOf(".")).replace("/", ".").replace("\\", "."));
+      }
+
+      if (producesAirPackage) {
+        setupPackagingOptions(mainBC.getAirDesktopPackagingOptions(), configurationElement);
       }
     }
 
@@ -166,12 +174,13 @@ public class Flexmojos3Configurator {
 
     final BuildConfigurationNature nature = mainBC.getNature();
     if (nature.isApp() && isNewBC) {
+      final String packageFileName = FileUtil.getNameWithoutExtension(fileName);
       if (nature.isDesktopPlatform()) {
-        mainBC.getAirDesktopPackagingOptions().setPackageFileName(fileName);
+        mainBC.getAirDesktopPackagingOptions().setPackageFileName(packageFileName);
       }
       else if (nature.isMobilePlatform()) {
-        mainBC.getAndroidPackagingOptions().setPackageFileName(fileName);
-        mainBC.getIosPackagingOptions().setPackageFileName(fileName);
+        mainBC.getAndroidPackagingOptions().setPackageFileName(packageFileName);
+        mainBC.getIosPackagingOptions().setPackageFileName(packageFileName);
       }
     }
 
@@ -188,6 +197,52 @@ public class Flexmojos3Configurator {
 
     mainBC.getCompilerOptions().setAdditionalConfigFilePath(getCompilerConfigFilePath());
     return mainBC;
+  }
+
+  private static boolean containsSignAirGoal(final MavenPlugin flexmojosPlugin) {
+    for (MavenPlugin.Execution execution : flexmojosPlugin.getExecutions()) {
+      for (String goal : execution.getGoals()) {
+        if ("sign-air".equals(goal)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private void setupPackagingOptions(final ModifiableAirDesktopPackagingOptions packagingOptions,
+                                     final @Nullable Element configurationElement) {
+    final String descriptorPath = StringUtil.notNullize(getPathOption(myMavenProject, configurationElement, "descriptorTemplate"),
+                                                        myMavenProject.getDirectory() + "/src/main/resources/descriptor.xml");
+    packagingOptions.setUseGeneratedDescriptor(false);
+    packagingOptions.setCustomDescriptorPath(descriptorPath);
+
+    final String keystorePath = StringUtil.notNullize(getPathOption(myMavenProject, configurationElement, "keystore"),
+                                                      myMavenProject.getDirectory() + "/src/main/resources/sign.p12");
+    packagingOptions.getSigningOptions().setUseTempCertificate(false);
+    packagingOptions.getSigningOptions().setKeystorePath(keystorePath);
+
+    final String keystoreType =
+      configurationElement == null ? null : configurationElement.getChildTextNormalize("storetype", configurationElement.getNamespace());
+    if (keystoreType != null) {
+      packagingOptions.getSigningOptions().setKeystoreType(keystoreType);
+    }
+  }
+
+  @Nullable
+  private static String getPathOption(final MavenProject mavenProject,
+                                      final @Nullable Element configurationElement,
+                                      final String optionName) {
+    final String path =
+      configurationElement == null ? null : configurationElement.getChildTextNormalize(optionName, configurationElement.getNamespace());
+    if (path != null) {
+      VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(path);
+      if (descriptorFile == null) {
+        descriptorFile = LocalFileSystem.getInstance().findFileByPath(mavenProject.getDirectory() + "/" + path);
+      }
+      if (descriptorFile != null) return descriptorFile.getPath();
+    }
+    return path;
   }
 
   private TargetPlatform handleDependencies(final ModifiableFlexIdeBuildConfiguration bc) {
@@ -451,7 +506,7 @@ public class Flexmojos3Configurator {
    FacetModel model = modelsProvider.getFacetModel(module);
 
    String packaging = project.getPackaging();
-   String extension = "swc".equalsIgnoreCase(packaging) ? "rb.swc" : packaging;
+   String extension = "swc".equals(packaging) ? "rb.swc" : packaging;
 
    String runtimeLocaleOutputPathPattern =
      findConfigValue(project, "runtimeLocaleOutputPath", "/{contextRoot}/locales/{artifactId}-{version}-{locale}.{extension}");

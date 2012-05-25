@@ -60,9 +60,11 @@ class WorkspaceReaderImpl implements WorkspaceReader {
     // IDEA-78485
     if (!"sources".equals(artifact.getClassifier()) &&
         (ext.equals("swc") ||
+         ext.equals("swf") ||
+         ext.equals("air") ||
          (isResourceBundle = ext.equals("rb.swc")) ||
-         (isLinkReport = ext.equals("xml") && "link-report".equals(artifact.getClassifier())) ||
-         ext.equals("swf"))) {
+         (isLinkReport = ext.equals("xml") && "link-report".equals(artifact.getClassifier()))
+        )) {
       if (data.outputFile == null) {
         try {
           generatorServer.resolveOutputs(data);

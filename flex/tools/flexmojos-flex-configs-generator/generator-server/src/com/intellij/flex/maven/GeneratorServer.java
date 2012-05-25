@@ -132,7 +132,7 @@ public class GeneratorServer {
       for (Plugin plugin : project.getBuildPlugins()) {
         if (plugin.getGroupId().equals("org.sonatype.flexmojos")) {
           if (flexmojosMojoExecution == null && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
-            flexmojosMojoExecution = maven.createMojoExecution(plugin, "compile-" + project.getPackaging(), project);
+            flexmojosMojoExecution = maven.createMojoExecution(plugin, getCompileGoalName(project), project);
             for (Dependency dependency : plugin.getDependencies()) {
               if (dependency.getArtifactId().equals("flexmojos-threadlocaltoolkit-wrapper")) {
                 AdditionalSourceRootUtil.addResourcesAsCompileSourceRoots(project);
@@ -186,6 +186,10 @@ public class GeneratorServer {
     }
   }
 
+  private String getCompileGoalName(final MavenProject project) {
+    return "swc".equals(project.getPackaging()) ? "compile-swc" : "compile-swf";
+  }
+
   public void resolveOutputs(WorkspaceReaderImpl.ArtifactData data) throws Exception {
     final MavenProject project = maven.readProject(data.file);
     final MavenProject oldProject = session.getCurrentProject();
@@ -194,7 +198,7 @@ public class GeneratorServer {
       session.setCurrentProject(project);
       for (Plugin plugin : project.getBuildPlugins()) {
         if (plugin.getGroupId().equals("org.sonatype.flexmojos") && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
-          flexmojosMojoExecution = maven.createMojoExecution(plugin, "compile-" + project.getPackaging(), project);
+          flexmojosMojoExecution = maven.createMojoExecution(plugin, getCompileGoalName(project), project);
           break;
         }
       }

@@ -80,7 +80,8 @@ public class IdeaConfigurationMojo extends AbstractMojo {
     final HashMap<Artifact, MavenProject> ourProjects = new HashMap<Artifact, MavenProject>(session.getProjects().size());
     final String rootProjectDirPath = session.getTopLevelProject().getBasedir().getPath();
     for (MavenProject project : session.getProjects()) {
-      if (!(project.getPackaging().equals("swc") || project.getPackaging().equals("swf"))) {
+      final String packaging = project.getPackaging();
+      if (!(packaging.equals("swc") || packaging.equals("swf") || packaging.equals("air"))) {
         continue;
       }
 
@@ -122,7 +123,7 @@ public class IdeaConfigurationMojo extends AbstractMojo {
     for (Plugin plugin : project.getBuildPlugins()) {
       if (plugin.getGroupId().equals("org.sonatype.flexmojos")) {
         if (flexmojosMojoExecution == null && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
-          flexmojosMojoExecution = createMojoExecution(plugin, "compile-" + project.getPackaging(), project);
+          flexmojosMojoExecution = createMojoExecution(plugin, getCompileGoalName(project), project);
         }
         else if (flexmojosGeneratorMojoExecution == null && plugin.getArtifactId().equals("flexmojos-generator-mojo")) {
           flexmojosGeneratorMojoExecution = createMojoExecution(plugin, "generate", project);
@@ -165,6 +166,10 @@ public class IdeaConfigurationMojo extends AbstractMojo {
     finally {
       mavenPluginManager.releaseMojo(mojo, mojoExecution);
     }
+  }
+
+  private String getCompileGoalName(final MavenProject project) {
+    return "swc".equals(project.getPackaging()) ? "compile-swc" : "compile-swf";
   }
 
   private MojoExecution createMojoExecution(Plugin plugin, String goal, MavenProject project) throws Exception {
