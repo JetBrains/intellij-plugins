@@ -5,7 +5,6 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/testSrc" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="IDEA Plugin SDK" jdkType="IDEA JDK" />
@@ -31,63 +30,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" scope="TEST" name="junit 4 without hamcrest and hamcrest 3" level="project" />
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library name="idea libs">
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../../out/classes/production/flex" />
-          <root url="file://$MODULE_DIR$/../../../../out/classes/production/flex-plugin" />
-          <root url="file://$MODULE_DIR$/../../../../out/classes/production/ultimate-verifier" />
-          <root url="file://$MODULE_DIR$/../../../../out/classes/production/JavaScriptLanguage" />
-          <root url="file://$MODULE_DIR$/../../../../out/classes/production/properties" />
-          <root url="file://$MODULE_DIR$/../../../../out/classes/production/CSS" />
-          <root url="file://$MODULE_DIR$/../../../../out/classes/production/css-api" />
-          <root url="file://$MODULE_DIR$/../../../../out/classes/production/util" />
-          <root url="file://$MODULE_DIR$/../../../../out/classes/production/util-rt" />
-          <root url="file://$MODULE_DIR$/../../../../out/classes/production/lang-api" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../../community/platform/platform-api/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/platform-impl/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/platform-main/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/core-api/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/core-impl/src" />
-          <root url="file://$MODULE_DIR$/../../../pluginSrc" />
-          <root url="file://$MODULE_DIR$/../../../src" />
-          <root url="file://$MODULE_DIR$/../../../../plugins/JavaScriptLanguage/src" />
-          <root url="file://$MODULE_DIR$/../../../../CSS/src" />
-          <root url="file://$MODULE_DIR$/../../../../CSS/css-api" />
-          <root url="file://$MODULE_DIR$/../../../../community/plugins/properties/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/annotations/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/boot/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/bootstrap/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/extensions/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/extensions/testSrc" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/forms_rt/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/funcTests/project1/module1/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/lang-api/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/lang-impl/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/lvcs-api/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/lvcs-impl/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/platform-tests/testSrc" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/smRunner/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/smRunner/testSrc" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/testFramework/bootstrap/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/testFramework/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/testFramework/testSrc" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/testRunner/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/usageView/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/util/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/util/testSrc" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/vcs-api/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/vcs-impl/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/xdebugger-api/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/xdebugger-impl/src" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/xdebugger-impl/testSrc" />
-          <root url="file://$MODULE_DIR$/../../../../community/platform/util-rt/src" />
-        </SOURCES>
-      </library>
-    </orderEntry>
   </component>
 </module>
 
