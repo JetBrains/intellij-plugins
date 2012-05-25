@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact name="Struts 2" version="2.3.3">
-    <item name="struts2-core.jar" version="2.3.3"
-          url="http://repo1.maven.org/maven2/org/apache/struts/struts2-core/2.3.3/struts2-core-2.3.3.jar">
+  <artifact name="Struts 2" version="2.3.4">
+    <item name="struts2-core.jar" version="2.3.4"
+          url="http://repo1.maven.org/maven2/org/apache/struts/struts2-core/2.3.4/struts2-core-2.3.4.jar">
       <required-class fqn="org.apache.struts2.StrutsConstants"/>
     </item>
     <item name="freemarker.jar" version="2.3.19"
           url="http://repo1.maven.org/maven2/org/freemarker/freemarker/2.3.19/freemarker-2.3.19.jar">
       <required-class fqn="freemarker.core.TemplateElement"/>
     </item>
-    <item name="xwork-core.jar" version="2.3.3"
-          url="http://repo1.maven.org/maven2/org/apache/struts/xwork/xwork-core/2.3.3/xwork-core-2.3.3.jar">
+    <item name="xwork-core.jar" version="2.3.4"
+          url="http://repo1.maven.org/maven2/org/apache/struts/xwork/xwork-core/2.3.4/xwork-core-2.3.4.jar">
       <required-class fqn="com.opensymphony.xwork2.XWorkException"/>
     </item>
     <item name="ognl.jar" version="3.0.5"
