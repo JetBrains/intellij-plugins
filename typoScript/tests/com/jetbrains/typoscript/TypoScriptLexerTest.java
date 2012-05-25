@@ -119,6 +119,6 @@ public class TypoScriptLexerTest extends UsefulTestCase {
 
   @NonNls
   private static String getDataSubPath() {
-    return "/plugins/typoScript/testData/typoscript/lexer";
+    return "/contrib/typoScript/testData/typoscript/lexer";
   }
 }
