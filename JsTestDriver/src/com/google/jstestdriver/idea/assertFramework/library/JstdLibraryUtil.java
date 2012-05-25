@@ -54,7 +54,7 @@ public class JstdLibraryUtil {
       @Override
       public void run() {
         JSLibraryManager libraryManager = ServiceManager.getService(project, JSLibraryManager.class);
-        LibraryTable libraryTable = libraryManager.getLibraryTable();
+        LibraryTable libraryTable = libraryManager.getLibraryTable(ScriptingLibraryModel.LibraryLevel.GLOBAL);
         libraryTable.addListener(new MyLibraryChangeWatcher());
 
         ProjectManagerListener rootListener = new ProjectRootsWatcher(project);
