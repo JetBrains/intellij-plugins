@@ -86,16 +86,15 @@ public class JspActionAnnotator implements LineMarkerProvider {
 
     final XmlTag xmlTag = (XmlTag) element;
 
-    if (!Comparing.equal(xmlTag.getNamespace(), StrutsConstants.TAGLIB_STRUTS_UI_URI)) {
-      return;
-    }
-
     // any of our tags?
     final String tagName = xmlTag.getLocalName();
     if (Arrays.binarySearch(TAGS_WITH_ACTION_ATTRIBUTE, tagName) < 0) {
       return;
     }
 
+    if (!Comparing.equal(xmlTag.getNamespace(), StrutsConstants.TAGLIB_STRUTS_UI_URI)) {
+      return;
+    }
 
     // short exit when Struts 2 facet not present
     final Module module = ModuleUtil.findModuleForPsiElement(element);
