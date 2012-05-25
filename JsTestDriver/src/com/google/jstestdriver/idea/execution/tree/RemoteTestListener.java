@@ -19,6 +19,7 @@ import com.google.common.collect.Maps;
 import com.google.jstestdriver.idea.config.JstdConfigStructure;
 import com.google.jstestdriver.idea.execution.TestListenerContext;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
+import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -92,8 +93,11 @@ public class RemoteTestListener {
     Node testCaseParentNode = fakeJstdConfigFileNode ? browserNode : jstdConfigFileNode;
     if (!jstdConfigFileNodeAlreadyExists) {
       JstdConfigStructure configStructure = JstdConfigStructure.parseConfigStructure(jstdConfigFileNode.getConfigFile());
-      StacktracePrinter stacktracePrinter = new StacktracePrinter(myContext.consoleView(), configStructure, message.browser);
-      testCaseParentNode.wirePrinter(stacktracePrinter);
+      SMTRunnerConsoleView consoleView = myContext.consoleView();
+      if (consoleView.getProperties() != null) {
+        StacktracePrinter stacktracePrinter = new StacktracePrinter(consoleView, configStructure, message.browser);
+        testCaseParentNode.wirePrinter(stacktracePrinter);
+      }
     }
 
     myLastTestCaseParentNode = testCaseParentNode;
