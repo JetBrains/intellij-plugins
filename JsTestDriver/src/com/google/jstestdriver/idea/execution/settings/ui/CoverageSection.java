@@ -5,6 +5,7 @@ import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
@@ -85,7 +86,7 @@ public class CoverageSection extends AbstractRunSettingsSection {
       if (tableModel.isFileExcluded(chosenFile.getPath())) {
         continue;
       }
-      tableModel.addPath(chosenFile.getPath(), selectedIndex);
+      tableModel.addPath(FileUtil.toSystemDependentName(chosenFile.getPath()), selectedIndex);
       selectedIndex++;
     }
     if (selectedIndex > savedSelected) {
