@@ -40,6 +40,7 @@ import com.intellij.openapi.roots.ui.configuration.UIRootConfigurationAccessor;
 import com.intellij.openapi.roots.ui.configuration.classpath.CreateModuleLibraryChooser;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.EditExistingLibraryDialog;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.*;
+import com.intellij.openapi.ui.ComboBoxTableRenderer;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.NamedConfigurable;
@@ -620,15 +621,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
-  private static final DefaultTableCellRenderer LINKAGE_TYPE_RENDERER = new DefaultTableCellRenderer() {
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      final JLabel component = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-      component.setText(((LinkageType)value).getShortText());
-      component.setHorizontalAlignment(SwingConstants.CENTER);
-      return component;
-    }
-  };
+  private static final TableCellRenderer LINKAGE_TYPE_RENDERER = new ComboBoxTableRenderer<LinkageType>(null);
 
   private static final DefaultTableCellRenderer ANE_RENDERER = new DefaultTableCellRenderer() {
     @Override
