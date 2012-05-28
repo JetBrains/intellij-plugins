@@ -1,0 +1,19 @@
+<project name="Source generation for Flexmojos 5 support" default="generate" basedir="src/main/java/com/intellij/flex/maven">
+
+  <property name="flexmojos4.support.main.class" value="IdeaConfigurator"/>
+  <property name="flexmojos5.support.main.class" value="IdeaConfiguratorFlexmojos5"/>
+  <property name="flexmojos4.import.statement" value="import org.sonatype.flexmojos.compiler.*;"/>
+  <property name="flexmojos5.import.statement" value="import net.flexmojos.oss.compiler.*;"/>
+
+  <target name="clean" description="Delete IdeaConfiguratorFlexmojos5.java">
+    <delete file="${flexmojos5.support.main.class}.java"/>
+  </target>
+
+  <target name="generate" description="Generate IdeaConfiguratorFlexmojos5.java" depends="clean">
+    <copy file="${flexmojos4.support.main.class}.java" tofile="${flexmojos5.support.main.class}.java"/>
+    <replace file="${flexmojos5.support.main.class}.java"
+             token="${flexmojos4.support.main.class}" value="${flexmojos5.support.main.class}"/>
+    <replace file="${flexmojos5.support.main.class}.java"
+             token="${flexmojos4.import.statement}" value="${flexmojos5.import.statement}"/>
+  </target>
+</project>

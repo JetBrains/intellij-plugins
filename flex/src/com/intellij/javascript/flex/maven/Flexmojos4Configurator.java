@@ -30,7 +30,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
                                 final List<String> compiledLocales,
                                 final List<String> runtimeLocales,
                                 final FlexConfigInformer informer) {
-    super(module, modifiableModelsProvider, flexEditor, mavenTree, mavenProjectToModuleName,mavenProject, flexmojosPlugin, compiledLocales,
+    super(module, modifiableModelsProvider, flexEditor, mavenTree, mavenProjectToModuleName, mavenProject, flexmojosPlugin, compiledLocales,
           runtimeLocales, informer);
   }
 
@@ -105,7 +105,7 @@ public class Flexmojos4Configurator extends Flexmojos3Configurator {
 
     Flexmojos4GenerateConfigTask existingTask = null;
     for (MavenProjectsProcessorTask postTask : postTasks) {
-      if (postTask instanceof Flexmojos4GenerateConfigTask) {
+      if (postTask.getClass() == Flexmojos4GenerateConfigTask.class) {
         existingTask = (Flexmojos4GenerateConfigTask)postTask;
         break;
       }

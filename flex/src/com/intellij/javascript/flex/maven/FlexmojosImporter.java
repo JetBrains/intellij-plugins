@@ -46,8 +46,13 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
 
   private Notification myFlexConfigNotification;
 
+  // instantiated as an extension
   public FlexmojosImporter() {
     super(FLEXMOJOS_GROUP_ID, FLEXMOJOS_ARTIFACT_ID);
+  }
+
+  protected FlexmojosImporter(final String pluginGroupID, final String pluginArtifactID) {
+    super(pluginGroupID, pluginArtifactID);
   }
 
   public boolean isApplicable(MavenProject mavenProject) {
@@ -139,11 +144,14 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
     final MavenPlugin flexmojosPlugin = getFlexmojosPlugin(mavenProject);
 
     final Flexmojos3Configurator configurator =
-      StringUtil.compareVersionNumbers(flexmojosPlugin.getVersion(), "4") >= 0
-      ? new Flexmojos4Configurator(module, modelsProvider, flexEditor, mavenTree, mavenProjectToModuleName, mavenProject, flexmojosPlugin,
+      StringUtil.compareVersionNumbers(flexmojosPlugin.getVersion(), "5") >= 0
+      ? new Flexmojos5Configurator(module, modelsProvider, flexEditor, mavenTree, mavenProjectToModuleName, mavenProject, flexmojosPlugin,
                                    getCompiledLocales(mavenProject), getRuntimeLocales(mavenProject), this)
-      : new Flexmojos3Configurator(module, modelsProvider, flexEditor, mavenTree, mavenProjectToModuleName, mavenProject, flexmojosPlugin,
-                                   getCompiledLocales(mavenProject), getRuntimeLocales(mavenProject), this);
+      : StringUtil.compareVersionNumbers(flexmojosPlugin.getVersion(), "4") >= 0
+        ? new Flexmojos4Configurator(module, modelsProvider, flexEditor, mavenTree, mavenProjectToModuleName, mavenProject, flexmojosPlugin,
+                                     getCompiledLocales(mavenProject), getRuntimeLocales(mavenProject), this)
+        : new Flexmojos3Configurator(module, modelsProvider, flexEditor, mavenTree, mavenProjectToModuleName, mavenProject, flexmojosPlugin,
+                                     getCompiledLocales(mavenProject), getRuntimeLocales(mavenProject), this);
     configurator.configureAndAppendTasks(postTasks);
 
     if (needToCommit) {
@@ -242,7 +250,9 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   }
 
   public static String getOutputFilePath(final MavenProject mavenProject) {
-    final MavenPlugin flexmojosPlugin = mavenProject.findPlugin(FLEXMOJOS_GROUP_ID, FLEXMOJOS_ARTIFACT_ID);
+    MavenPlugin flexmojosPlugin = mavenProject.findPlugin(FLEXMOJOS_GROUP_ID, FLEXMOJOS_ARTIFACT_ID);
+    if (flexmojosPlugin == null) flexmojosPlugin = mavenProject.findPlugin(Flexmojos5Importer.FLEXMOJOS_5_GROUP_ID, FLEXMOJOS_ARTIFACT_ID);
+
     final Element configurationElement = flexmojosPlugin == null ? null : flexmojosPlugin.getConfigurationElement();
 
     final String overriddenTargetFilePath =

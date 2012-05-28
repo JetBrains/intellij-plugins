@@ -198,7 +198,11 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     writeWorkspaceMap(myTree.getProjects());
 
     out.writeUTF(FlexUtils.getPathToBundledJar("flexmojos-idea-configurator.jar"));
-    out.writeUTF("com.intellij.flex.maven.IdeaConfigurator");
+    out.writeUTF(getIdeaConfiguratorClassName());
+  }
+
+  protected String getIdeaConfiguratorClassName() {
+    return "com.intellij.flex.maven.IdeaConfigurator";
   }
 
   private final class OutputReader implements Runnable {

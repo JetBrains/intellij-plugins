@@ -130,7 +130,8 @@ public class GeneratorServer {
       boolean flexmojosGeneratorFound = false;
       boolean buildHelperFound = false;
       for (Plugin plugin : project.getBuildPlugins()) {
-        if (plugin.getGroupId().equals("org.sonatype.flexmojos")) {
+        final String pluginGroupId = plugin.getGroupId();
+        if (pluginGroupId.equals("org.sonatype.flexmojos") || pluginGroupId.equals("net.flexmojos.oss")) {
           if (flexmojosMojoExecution == null && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
             flexmojosMojoExecution = maven.createMojoExecution(plugin, getCompileGoalName(project), project);
             for (Dependency dependency : plugin.getDependencies()) {
@@ -145,7 +146,7 @@ public class GeneratorServer {
             flexmojosGeneratorFound = true;
           }
         }
-        else if (!buildHelperFound && plugin.getArtifactId().equals("build-helper-maven-plugin") && plugin.getGroupId().equals("org.codehaus.mojo")) {
+        else if (!buildHelperFound && plugin.getArtifactId().equals("build-helper-maven-plugin") && pluginGroupId.equals("org.codehaus.mojo")) {
           AdditionalSourceRootUtil.addByBuildHelper(maven.createMojoExecution(plugin, "add-source", project), session, project, getLogger());
           buildHelperFound = true;
         }
@@ -197,7 +198,9 @@ public class GeneratorServer {
     try {
       session.setCurrentProject(project);
       for (Plugin plugin : project.getBuildPlugins()) {
-        if (plugin.getGroupId().equals("org.sonatype.flexmojos") && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
+        final String pluginGroupId = plugin.getGroupId();
+        if ((pluginGroupId.equals("org.sonatype.flexmojos") || pluginGroupId.equals("net.flexmojos.oss"))
+            && plugin.getArtifactId().equals("flexmojos-maven-plugin")) {
           flexmojosMojoExecution = maven.createMojoExecution(plugin, getCompileGoalName(project), project);
           break;
         }

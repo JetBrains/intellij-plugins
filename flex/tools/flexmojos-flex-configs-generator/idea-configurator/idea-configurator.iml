@@ -99,6 +99,10 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xmlParserAPIs:4.5.1.21328" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-library:1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-flex-compiler:5.0-beta" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-threadlocaltoolkit-wrapper:5.0-beta" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-generator-internal-compiler-iface:5.0-beta" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-generator-api:5.0-beta" level="project" />
     <orderEntry type="module" module-name="shared" scope="PROVIDED" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-core:3.0.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-model:3.0.4" level="project" />
