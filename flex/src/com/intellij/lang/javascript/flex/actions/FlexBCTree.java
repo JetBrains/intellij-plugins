@@ -60,20 +60,47 @@ public class FlexBCTree extends CheckboxTree {
     myDispatcher.getMulticaster().stateChanged(new ChangeEvent(node));
   }
 
-  public boolean areAllSelected() {
-    return ((CheckedTreeNode)getModel().getRoot()).isChecked();
+  public Collection<Pair<Module, FlexIdeBuildConfiguration>> getSelectedBCs() {
+    return getBCs(true);
   }
 
-  public Collection<Pair<Module, FlexIdeBuildConfiguration>> getSelectedBCs() {
+  public Collection<Pair<Module, FlexIdeBuildConfiguration>> getDeselectedBCs() {
+    return getBCs(false);
+  }
+
+  private Collection<Pair<Module, FlexIdeBuildConfiguration>> getBCs(final boolean checked) {
     final CollectConsumer<Pair<Module, FlexIdeBuildConfiguration>> consumer =
       new CollectConsumer<Pair<Module, FlexIdeBuildConfiguration>>();
-    iterateRecursively((CheckedTreeNode)getModel().getRoot(), consumer);
+    iterateRecursively((CheckedTreeNode)getModel().getRoot(), checked, consumer);
     return consumer.getResult();
   }
 
-  private static void iterateRecursively(final CheckedTreeNode node, final Consumer<Pair<Module, FlexIdeBuildConfiguration>> consumer) {
+  public void setChecked(final String moduleName, final String bcName, final boolean checked) {
+    final Enumeration moduleNodes = ((CheckedTreeNode)getModel().getRoot()).children();
+    while (moduleNodes.hasMoreElements()) {
+      final CheckedTreeNode moduleNode = (CheckedTreeNode)moduleNodes.nextElement();
+      final Object userObject = moduleNode.getUserObject();
+
+      if (userObject instanceof Module && ((Module)userObject).getName().equals(moduleName)) {
+        final Enumeration bcNodes = moduleNode.children();
+        while (bcNodes.hasMoreElements()) {
+          final CheckedTreeNode bcNode = (CheckedTreeNode)bcNodes.nextElement();
+          final Object bcUserObject = bcNode.getUserObject();
+          if (bcUserObject instanceof FlexIdeBuildConfiguration && ((FlexIdeBuildConfiguration)bcUserObject).getName().equals(bcName)) {
+            bcNode.setChecked(checked);
+            break;
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  private static void iterateRecursively(final CheckedTreeNode node,
+                                         final boolean iterateChecked,
+                                         final Consumer<Pair<Module, FlexIdeBuildConfiguration>> consumer) {
     if (node.isLeaf()) {
-      if (node.isChecked() && node.getParent() instanceof CheckedTreeNode) {
+      if (node.isChecked() == iterateChecked && node.getParent() instanceof CheckedTreeNode) {
         final Object userObject = node.getUserObject();
         final Object parentUserObject = ((CheckedTreeNode)node.getParent()).getUserObject();
         if (userObject instanceof FlexIdeBuildConfiguration && parentUserObject instanceof Module) {
@@ -82,9 +109,10 @@ public class FlexBCTree extends CheckboxTree {
       }
     }
     else {
+      // do not try to optimize asking non-leaf node about its checked status - it may give unexpected result!
       final Enumeration children = node.children();
       while (children.hasMoreElements()) {
-        iterateRecursively((CheckedTreeNode)children.nextElement(), consumer);
+        iterateRecursively((CheckedTreeNode)children.nextElement(), iterateChecked, consumer);
       }
     }
   }

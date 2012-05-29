@@ -283,6 +283,13 @@ public class AirPackageDialog extends DialogWrapper {
 
     myIOSTypeCombo.setSelectedItem(params.iosPackageType);
     myIosFastPackagingCheckBox.setSelected(params.iosFastPackaging);
+
+    for (String entry : StringUtil.split(params.deselectedBCs, "\n")) {
+      final int tabIndex = entry.indexOf("\t");
+      if (tabIndex > 0) {
+        myTree.setChecked(entry.substring(0, tabIndex), entry.substring(tabIndex + 1), false);
+      }
+    }
   }
 
   private void saveParameters() {
@@ -307,6 +314,14 @@ public class AirPackageDialog extends DialogWrapper {
 
     params.iosPackageType = (IOSPackageType)myIOSTypeCombo.getSelectedItem();
     params.iosFastPackaging = myIosFastPackagingCheckBox.isSelected();
+
+    final Collection<Pair<Module, FlexIdeBuildConfiguration>> deselectedBCs = myTree.getDeselectedBCs();
+    final StringBuilder buf = new StringBuilder();
+    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : deselectedBCs) {
+      if (buf.length() > 0) buf.append('\n');
+      buf.append(moduleAndBC.first.getName()).append('\t').append(moduleAndBC.second.getName());
+    }
+    params.deselectedBCs = buf.toString();
   }
 
   public Collection<Pair<Module, FlexIdeBuildConfiguration>> getSelectedBCs() {
