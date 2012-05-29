@@ -316,6 +316,18 @@ public class AirPackageUtil {
             command.add("-package");
             appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
             break;
+          case NativeInstaller:
+            command.add("-package");
+            appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
+            command.add("-target");
+            command.add("native");
+            break;
+          case CaptiveRuntimeBundle:
+            command.add("-package");
+            appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
+            command.add("-target");
+            command.add("bundle");
+            break;
           case Airi:
             command.add("-prepare");
             break;
