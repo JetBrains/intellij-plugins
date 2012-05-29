@@ -37,7 +37,7 @@ public class JsLibraryHelper {
 
   @Nullable
   public ScriptingLibraryModel lookupLibraryByContent(@NotNull Collection<VirtualFile> expectedSourceFiles) {
-    ScriptingLibraryModel[] libraryModels = myScriptingLibraryManager.getLibraries();
+    ScriptingLibraryModel[] libraryModels = myScriptingLibraryManager.getAllLibraries();
     for (ScriptingLibraryModel libraryModel : libraryModels) {
       if (scriptingLibraryModelConsistsOf(libraryModel, expectedSourceFiles)) {
         return libraryModel;
