@@ -1,5 +1,6 @@
 package com.intellij.tapestry.tests.core.java;
 
+import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiImportList;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
@@ -103,7 +104,7 @@ public class IntellijJavaTypeCreatorTest extends BaseTestCase {
         IntellijJavaTypeCreator intellijJavaTypeCreator = new IntellijJavaTypeCreatorDummy(fixture.getModule(), controlMock);
 
         assert intellijJavaTypeCreator.ensureClassImport(testedClass,
-                new IntellijJavaClassType(fixture.getModule(), getJavaFacade(fixture).findClass("java.util.Map", getAllScope(fixture)).getContainingFile()));
+                new IntellijJavaClassType(fixture.getModule(), getJavaFacade(fixture).findClass(CommonClassNames.JAVA_UTIL_MAP, getAllScope(fixture)).getContainingFile()));
 
         verify(controlMock);
     }
