@@ -1,5 +1,6 @@
 package com.intellij.tapestry.core.model.presentation.valueresolvers.property.specialcases;
 
+import com.intellij.psi.CommonClassNames;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.mocks.JavaClassTypeMock;
 import com.intellij.tapestry.core.model.presentation.valueresolvers.ValueResolverContext;
@@ -19,22 +20,22 @@ public class SpecialCaseNullResolverTest extends AbstractSpecialCaseTest {
     @Test
     public void can_resolve() throws Exception {
         _valueResolverContext = new ValueResolverContext(_tapestryProjectMock, null, "prop:null", null);
-        expectToFindJavaType("java.lang.Object", new JavaClassTypeMock("java.lang.Object"));
+        expectToFindJavaType(CommonClassNames.JAVA_LANG_OBJECT, new JavaClassTypeMock(CommonClassNames.JAVA_LANG_OBJECT));
 
         replay();
 
         assert _specialCaseNullResolver.execute(_valueResolverContext);
-        assert ((IJavaClassType) _valueResolverContext.getResultType()).getFullyQualifiedName().equals("java.lang.Object");
+        assert ((IJavaClassType) _valueResolverContext.getResultType()).getFullyQualifiedName().equals(CommonClassNames.JAVA_LANG_OBJECT);
 
         reset();
 
         _valueResolverContext = new ValueResolverContext(_tapestryProjectMock, null, " NULL ", null);
-        expectToFindJavaType("java.lang.Object", new JavaClassTypeMock("java.lang.Object"));
+        expectToFindJavaType(CommonClassNames.JAVA_LANG_OBJECT, new JavaClassTypeMock(CommonClassNames.JAVA_LANG_OBJECT));
 
         replay();
 
         assert _specialCaseNullResolver.execute(_valueResolverContext);
-        assert ((IJavaClassType) _valueResolverContext.getResultType()).getFullyQualifiedName().equals("java.lang.Object");
+        assert ((IJavaClassType) _valueResolverContext.getResultType()).getFullyQualifiedName().equals(CommonClassNames.JAVA_LANG_OBJECT);
     }
 
     @Test

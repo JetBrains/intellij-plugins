@@ -1,5 +1,6 @@
 package com.intellij.tapestry.core.java.coercion;
 
+import com.intellij.psi.CommonClassNames;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import org.apache.commons.chain.Command;
 import org.apache.commons.chain.Context;
@@ -19,7 +20,7 @@ public class JavaClassTypeCoercionValidator implements Command {
 
     static {
         CLASS_COERCION_MAP.put("java.lang.String", Arrays.asList(
-                "java.lang.Object"));
+          CommonClassNames.JAVA_LANG_OBJECT));
 
         CLASS_COERCION_MAP.put("java.lang.Double", Arrays.asList(
                 "java.lang.String",
@@ -58,11 +59,11 @@ public class JavaClassTypeCoercionValidator implements Command {
         ));
 
         CLASS_COERCION_MAP.put("java.lang.Boolean", Arrays.asList(
-                "java.lang.Object"
+          CommonClassNames.JAVA_LANG_OBJECT
         ));
 
         CLASS_COERCION_MAP.put("java.util.List", Arrays.asList(
-                "java.lang.Object"
+          CommonClassNames.JAVA_LANG_OBJECT
         ));
 
         CLASS_COERCION_MAP.put("org.apache.tapestry5.grid.GridDataSource", Arrays.asList(

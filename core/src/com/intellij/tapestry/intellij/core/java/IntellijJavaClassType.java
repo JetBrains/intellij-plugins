@@ -103,7 +103,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
   }
 
   private boolean isNotMethodOfJavaLangObject(PsiMethod method) {
-    return !method.getContainingClass().getQualifiedName().equals("java.lang.Object");
+    return !method.getContainingClass().getQualifiedName().equals(CommonClassNames.JAVA_LANG_OBJECT);
   }
 
   private PsiMethod[] getMethods(boolean fromSuper) {
