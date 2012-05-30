@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.flex;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.highlighter.XmlLikeFileType;
 import com.intellij.lang.xml.XMLLanguage;
-import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -42,5 +42,5 @@ public class MxmlFileType extends XmlLikeFileType {
     return ICON;
   }
 
-  private static final Icon ICON = IconLoader.getIcon("/fileTypes/xml.png"); // TODO icon
+  private static final Icon ICON = AllIcons.FileTypes.Xml; // TODO icon
 }

@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.*;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -17,7 +18,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.wm.ToolWindow;
@@ -153,7 +153,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<JDOMExternalizab
         final DefaultActionGroup actionGroup = profileControlPanel.createProfilerActionGroup();
         actionGroup.addSeparator();
         final AnAction closeTabAction = new TabbedContentAction.CloseAction(content);
-        closeTabAction.getTemplatePresentation().setIcon(IconLoader.getIcon("/actions/cancel.png"));
+        closeTabAction.getTemplatePresentation().setIcon(AllIcons.Actions.Cancel);
         actionGroup.add(closeTabAction);
 
         ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actionGroup, false);

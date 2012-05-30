@@ -6,12 +6,12 @@ import com.intellij.execution.configurations.*;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class AnyApplication implements ConfigurationType {
-  private static final Icon ICON = IconLoader.getIcon("/runConfigurations/application.png");
+  private static final Icon ICON = AllIcons.RunConfigurations.Application;
   private final ConfigurationFactory factory;
 
   AnyApplication() {

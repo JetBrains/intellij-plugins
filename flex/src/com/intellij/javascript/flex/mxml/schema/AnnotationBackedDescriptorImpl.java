@@ -2,6 +2,7 @@ package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.completion.CompletionInitializationContext;
 import com.intellij.codeInsight.daemon.Validator;
+import com.intellij.icons.AllIcons;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
@@ -22,7 +23,6 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -80,7 +80,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   private static final @NonNls String ENUMERATION_ATTR_NAME = "enumeration";
   private static final @NonNls String FORMAT_ATTR_NAME = "format";
   private static final @NonNls String TYPE_ATTR_NAME = "type";
-  private static final Icon EFFECT_ICON = IconLoader.getIcon("/actions/lightning.png");
+  private static final Icon EFFECT_ICON = AllIcons.Actions.Lightning;
 
   private String percentProxy;
   private boolean myScriptable;

@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.ProjectTopics;
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
@@ -17,7 +18,6 @@ import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.CustomStatusBarWidget;
@@ -101,7 +101,7 @@ public class ActiveBuildConfigurationWidget {
 
   private static class MyWidget extends EditorBasedWidget implements CustomStatusBarWidget, StatusBarWidget.Multiframe {
 
-    private static final Icon ARROWS_ICON = IconLoader.getIcon("/ide/statusbar_arrows.png");
+    private static final Icon ARROWS_ICON = AllIcons.Ide.Statusbar_arrows;
     private final JLabel myEnabledLabel = new JLabel();
     private final JLabel myDisabledLabel = new JLabel(FlexBundle.message("active.bc.widget.empty.text"));
     private final JPanel myPanel;

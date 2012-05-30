@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.javaee.ResourceRegistrar;
 import com.intellij.javaee.StandardResourceProvider;
 import com.intellij.javascript.flex.mxml.schema.FlexMxmlNSDescriptor;
@@ -12,7 +13,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.filters.position.NamespaceFilter;
 import com.intellij.psi.filters.position.RootTagFilter;
@@ -26,7 +26,7 @@ import javax.swing.*;
  * @author yole
  */
 public class FlexApplicationComponent extends FileTypeFactory implements ApplicationComponent {
-  private static final Icon ICON = IconLoader.getIcon("/fileTypes/javaClass.png");
+  private static final Icon ICON = AllIcons.FileTypes.JavaClass;
 
   public static final FileType SWF_FILE_TYPE = new FileType() {
     @NotNull

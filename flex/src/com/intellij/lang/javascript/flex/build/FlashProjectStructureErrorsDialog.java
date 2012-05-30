@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
@@ -13,7 +14,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.MasterDetailsComponent;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.ui.ColoredTreeCellRenderer;
@@ -34,7 +34,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 
 public class FlashProjectStructureErrorsDialog extends DialogWrapper {
-  private static final Icon ERROR_ICON = IconLoader.getIcon("/ide/errorSign.png");
+  private static final Icon ERROR_ICON = AllIcons.Ide.ErrorSign;
 
   private JPanel myMainPanel;
   private Tree myTree;
