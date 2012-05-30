@@ -333,7 +333,7 @@ public class AirPackageUtil {
             break;
         }
 
-        appendPaths(command, module, bc, packagingOptions, packageType.getFileExtension());
+        appendPaths(command, module, bc, packagingOptions, null, packageType.getFileExtension());
       }
     };
   }
@@ -382,7 +382,7 @@ public class AirPackageUtil {
         */
 
         appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
-        appendPaths(command, module, bc, packagingOptions, ".apk");
+        appendPaths(command, module, bc, packagingOptions, null, ".apk");
       }
     };
   }
@@ -391,6 +391,7 @@ public class AirPackageUtil {
                                                   final FlexIdeBuildConfiguration bc,
                                                   final IOSPackageType packageType,
                                                   final boolean fastPackaging,
+                                                  final String iosSDKPath,
                                                   final PasswordStore passwords) {
     final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
     final AirSigningOptions signingOptions = packagingOptions.getSigningOptions();
@@ -425,7 +426,7 @@ public class AirPackageUtil {
         command.add("-provisioning-profile");
         command.add(signingOptions.getProvisioningProfilePath());
 
-        appendPaths(command, module, bc, packagingOptions, ".ipa");
+        appendPaths(command, module, bc, packagingOptions, iosSDKPath, ".ipa");
       }
     };
   }

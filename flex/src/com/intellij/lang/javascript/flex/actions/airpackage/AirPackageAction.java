@@ -34,9 +34,7 @@ import javax.swing.event.HyperlinkEvent;
 import java.io.File;
 import java.util.*;
 
-import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.AndroidPackageType;
 import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.DesktopPackageType;
-import static com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters.IOSPackageType;
 
 public class AirPackageAction extends DumbAwareAction {
   public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.balloonGroup("AIR Packaging");
@@ -131,18 +129,16 @@ public class AirPackageAction extends DumbAwareAction {
             return;
           }
 
-          final AndroidPackageType packageType = params.androidPackageType;
-          final ExternalTask task = AirPackageUtil.createAndroidPackageTask(moduleAndBC.first, bc, packageType, params.apkCaptiveRuntime,
-                                                                            params.apkDebugListenPort, passwords);
+          final ExternalTask task = AirPackageUtil.createAndroidPackageTask(moduleAndBC.first, bc, params.androidPackageType,
+                                                                            params.apkCaptiveRuntime, params.apkDebugListenPort, passwords);
           final String packagePath = outputFolder + "/" + packagingOptions.getPackageFileName() + ".apk";
           tasksAndPackagePaths.add(Pair.create(task, packagePath));
         }
 
         if (bc.getIosPackagingOptions().isEnabled()) {
           final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
-          final IOSPackageType packageType = params.iosPackageType;
-          final ExternalTask task =
-            AirPackageUtil.createIOSPackageTask(moduleAndBC.first, bc, packageType, params.iosFastPackaging, passwords);
+          final ExternalTask task = AirPackageUtil.createIOSPackageTask(moduleAndBC.first, bc, params.iosPackageType,
+                                                                        params.iosFastPackaging, params.iosSDKPath, passwords);
           final String packagePath = outputFolder + "/" + packagingOptions.getPackageFileName() + ".ipa";
           tasksAndPackagePaths.add(Pair.create(task, packagePath));
         }

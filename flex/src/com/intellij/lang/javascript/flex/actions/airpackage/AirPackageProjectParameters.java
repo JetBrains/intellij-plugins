@@ -83,6 +83,7 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
 
   public IOSPackageType iosPackageType = IOSPackageType.values()[0];
   public boolean iosFastPackaging = true;
+  public String iosSDKPath = "";
 
   // String value consists of one or more "[module name] \t [bc name]" entries separated with new line ("\n").
   public String deselectedBCs = "";

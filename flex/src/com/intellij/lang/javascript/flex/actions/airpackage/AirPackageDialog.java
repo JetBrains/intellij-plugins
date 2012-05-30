@@ -8,14 +8,17 @@ import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOpti
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.util.Consumer;
@@ -26,6 +29,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -52,6 +56,8 @@ public class AirPackageDialog extends DialogWrapper {
   private JLabel myDesktopTypeLabel;
   private JLabel myAndroidTypeLabel;
   private JLabel myIosTypeLabel;
+  private JLabel myIosSdkLabel;
+  private TextFieldWithBrowseButton myIosSdkTextWithBrowse;
 
   private final Project myProject;
   //private final String myOwnIpAddress;
@@ -65,6 +71,7 @@ public class AirPackageDialog extends DialogWrapper {
     setTitle(FlexBundle.message("package.air.application.title"));
     setOKButtonText("Package");
     setupComboBoxes();
+    myIosSdkTextWithBrowse.addBrowseFolderListener(null, null, project, FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     init();
     loadParameters();
@@ -125,6 +132,8 @@ public class AirPackageDialog extends DialogWrapper {
     myIosTypeLabel.setEnabled(iosPresent);
     myIOSTypeCombo.setEnabled(iosPresent);
     myIosFastPackagingCheckBox.setEnabled(iosPresent);
+    myIosSdkLabel.setEnabled(iosPresent);
+    myIosSdkTextWithBrowse.setEnabled(iosPresent);
   }
 
   protected JComponent createCenterPanel() {
@@ -167,6 +176,13 @@ public class AirPackageDialog extends DialogWrapper {
       }
       catch (NumberFormatException e) {
         return new ValidationInfo("Incorrect port", myApkDebugPortTextField);
+      }
+    }
+
+    if (myIosSdkTextWithBrowse.isVisible() && myIosSdkTextWithBrowse.isEnabled()) {
+      final String path = myIosSdkTextWithBrowse.getText().trim();
+      if (path.length() > 0 && !new File(path).isDirectory()) {
+        return new ValidationInfo("Incorrect path to iOS SDK", myIosSdkTextWithBrowse);
       }
     }
 
@@ -283,6 +299,7 @@ public class AirPackageDialog extends DialogWrapper {
 
     myIOSTypeCombo.setSelectedItem(params.iosPackageType);
     myIosFastPackagingCheckBox.setSelected(params.iosFastPackaging);
+    myIosSdkTextWithBrowse.setText(FileUtil.toSystemDependentName(params.iosSDKPath));
 
     for (String entry : StringUtil.split(params.deselectedBCs, "\n")) {
       final int tabIndex = entry.indexOf("\t");
@@ -314,6 +331,7 @@ public class AirPackageDialog extends DialogWrapper {
 
     params.iosPackageType = (IOSPackageType)myIOSTypeCombo.getSelectedItem();
     params.iosFastPackaging = myIosFastPackagingCheckBox.isSelected();
+    params.iosSDKPath = FileUtil.toSystemIndependentName(myIosSdkTextWithBrowse.getText().trim());
 
     final Collection<Pair<Module, FlexIdeBuildConfiguration>> deselectedBCs = myTree.getDeselectedBCs();
     final StringBuilder buf = new StringBuilder();

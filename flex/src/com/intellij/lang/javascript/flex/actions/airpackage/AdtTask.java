@@ -16,6 +16,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Set;
@@ -80,6 +81,7 @@ public abstract class AdtTask extends ExternalTask {
                                  final Module module,
                                  final FlexIdeBuildConfiguration bc,
                                  final AirPackagingOptions packagingOptions,
+                                 final @Nullable String platformSdkPath,
                                  final String packageFileExtension) {
     final String outputFilePath = bc.getActualOutputFilePath();
     final String outputFolder = PathUtil.getParentPath(outputFilePath);
@@ -87,10 +89,15 @@ public abstract class AdtTask extends ExternalTask {
     command.add(FileUtil.toSystemDependentName(outputFolder + "/" + packagingOptions.getPackageFileName() + packageFileExtension));
     command.add(FileUtil.toSystemDependentName(FlexBaseRunner.getAirDescriptorPath(bc, packagingOptions)));
 
+    if (platformSdkPath != null && !platformSdkPath.isEmpty()) {
+      command.add("-platformsdk");
+      command.add(FileUtil.toSystemDependentName(platformSdkPath));
+    }
+
     appendANEPaths(command, module, bc);
 
     command.add("-C");
-    command.add(FileUtil.toSystemDependentName(PathUtil.getParentPath(outputFilePath)));
+    command.add(FileUtil.toSystemDependentName(outputFolder));
     command.add(FileUtil.toSystemDependentName(PathUtil.getFileName(outputFilePath)));
 
     for (FilePathAndPathInPackage entry : packagingOptions.getFilesToPackage()) {
