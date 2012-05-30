@@ -1,5 +1,6 @@
 package com.intellij.tapestry.core.util;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.PlatformIcons;
 
@@ -20,12 +21,12 @@ public interface TapestryIcons extends PlatformIcons {
   Icon GROUP_ELEMENT_FILES = IconLoader.getIcon("/com/intellij/tapestry/core/icons/groupElementFiles.png");
   Icon COMPACT_BASE_PACKAGE = IconLoader.getIcon("/com/intellij/tapestry/core/icons/compactBasePackage.png");
   Icon REFRESH = SYNCHRONIZE_ICON;
-  Icon FILTER = IconLoader.getIcon("/ant/filter.png");
-  Icon DELETE = IconLoader.getIcon("/actions/cancel.png");
-  Icon LIBRARY = IconLoader.getIcon("/modules/library.png");
-  Icon NAVIGATE = IconLoader.getIcon("/actions/browser-externalJavaDoc.png");
-  Icon REFERENCE = IconLoader.getIcon("/nodes/ejbReference.png");
-  Icon SHOW_LIBRARIES = IconLoader.getIcon("/nodes/ppLibClosed.png");
+  Icon FILTER = AllIcons.Ant.Filter;
+  Icon DELETE = AllIcons.Actions.Cancel;
+  Icon LIBRARY = AllIcons.Modules.Library;
+  Icon NAVIGATE = AllIcons.Actions.Browser_externalJavaDoc;
+  Icon REFERENCE = AllIcons.Nodes.EjbReference;
+  Icon SHOW_LIBRARIES = AllIcons.Nodes.PpLibClosed;
   Icon LOOMY_LOGO = IconLoader.getIcon("/com/intellij/tapestry/core/icons/g5004.png");
 }
 
