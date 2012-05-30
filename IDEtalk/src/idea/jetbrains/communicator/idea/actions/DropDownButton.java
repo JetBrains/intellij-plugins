@@ -15,10 +15,10 @@
  */
 package jetbrains.communicator.idea.actions;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import jetbrains.communicator.util.icons.CompositeIcon;
 
 import javax.swing.*;
@@ -47,7 +47,7 @@ public class DropDownButton extends JButton {
     icon.addIcon(buttonIcon);
     if (hasSeveralActions()) {
 
-      icon.addIcon(IconLoader.getIcon("/general/comboArrow.png"));
+      icon.addIcon(AllIcons.General.ComboArrow);
       setModel(new MyButtonModel());
     }
 

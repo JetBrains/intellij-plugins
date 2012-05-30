@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.idea.viewFiles;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
@@ -51,7 +52,7 @@ import java.util.List;
 class ViewFilesPanel extends JPanel implements DataProvider {
   static final String NON_PROJECT_NODE = StringUtil.getMsg("non.project.files");
   private static final Icon UNKNOWN_ICON = IconLoader.getIcon("/nodes/unknown.png");
-  private static final Icon PROJECT_ICON = IconLoader.getIcon("/nodes/ideaProject.png");
+  private static final Icon PROJECT_ICON = AllIcons.Nodes.IdeaProject;
 
   private final FileTypeManager myFileTypeManager;
   private final IDEFacade myIdeFacade;
@@ -280,7 +281,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
       else {
         LayeredIcon layeredIcon = new LayeredIcon(2);
         layeredIcon.setIcon(getIconByExtension(), 0);
-        layeredIcon.setIcon(IconLoader.getIcon("/nodes/locked.png"), 1);
+        layeredIcon.setIcon(AllIcons.Nodes.Locked, 1);
         label.setIcon(layeredIcon);
       }
       return label;

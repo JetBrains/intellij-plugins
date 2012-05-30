@@ -15,8 +15,8 @@
  */
 package jetbrains.communicator.idea.viewFiles;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.util.IconLoader;
 import jetbrains.communicator.commands.ShowDiffCommand;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.idea.actions.BaseAction;
@@ -39,7 +39,7 @@ abstract class DiffAction extends BaseAction<ShowDiffCommand> {
   public void update(AnActionEvent e) {
     e.getPresentation().setText(StringUtil.getMsg("diff.action.text"));
     e.getPresentation().setDescription(StringUtil.getMsg("diff.action.description"));
-    e.getPresentation().setIcon(IconLoader.getIcon("/actions/diff.png"));
+    e.getPresentation().setIcon(AllIcons.Actions.Diff);
 
     ShowDiffCommand showDiffCommand = getCommand(e);
     if (showDiffCommand != null) {

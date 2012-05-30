@@ -15,9 +15,9 @@
  */
 package jetbrains.communicator.idea.actions;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.util.IconLoader;
 import jetbrains.communicator.idea.toolWindow.UserListComponentImpl;
 import jetbrains.communicator.util.TreeUtils;
 
@@ -34,12 +34,12 @@ public class ExpandAllAction extends AnAction {
 
   public ExpandAllAction(JTree userTree) {
     myTree = userTree;
-    getTemplatePresentation().setIcon(IconLoader.getIcon("/actions/expandall.png"));
+    getTemplatePresentation().setIcon(AllIcons.Actions.Expandall);
   }
 
   public void update(AnActionEvent anActionEvent) {
     super.update(anActionEvent);
-    anActionEvent.getPresentation().setIcon(IconLoader.getIcon("/actions/expandall.png"));
+    anActionEvent.getPresentation().setIcon(AllIcons.Actions.Expandall);
   }
 
   public void actionPerformed(AnActionEvent e) {

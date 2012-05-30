@@ -15,6 +15,7 @@
 
 package com.intellij.struts2;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.LayeredIcon;
@@ -89,7 +90,7 @@ public final class StrutsIcons {
   /**
    * Overlay icon for "global" elements.
    */
-  private static final Icon OVERLAY_GLOBAL = IconLoader.getIcon("/general/web.png");
+  private static final Icon OVERLAY_GLOBAL = AllIcons.General.Web;
 
   /**
    * Overlay icon for "default" elements.
