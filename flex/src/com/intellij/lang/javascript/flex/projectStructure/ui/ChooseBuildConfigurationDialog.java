@@ -10,7 +10,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
-import com.intellij.ui.*;
+import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.SpeedSearchComparator;
+import com.intellij.ui.TreeSpeedSearch;
+import com.intellij.ui.TreeUIHelper;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -31,7 +34,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
-import java.util.List;
 
 /**
  * @author ksafonov
@@ -172,7 +174,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
         }
         else {
           FlexIdeBCConfigurable configurable = (FlexIdeBCConfigurable)object;
-          setIcon((configurable).getIcon());
+          setIcon(configurable.getIcon());
           BCUtils.renderBuildConfiguration(configurable.getEditableObject(), null).appendToComponent(this);
         }
       }

@@ -99,11 +99,6 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable i
   }
 
   @Override
-  public Icon getIcon() {
-    return getMainChild().getIcon();
-  }
-
-  @Override
   public String getHelpTopic() {
     final String helpTopic = myChildren.get(myTabs.getSelectedIndex()).getHelpTopic();
     return helpTopic != null ? helpTopic : getMainChild().getHelpTopic();

@@ -133,10 +133,6 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     return getDisplayName();
   }
 
-  public Icon getIcon() {
-    return null;
-  }
-
   public JComponent createOptionsPanel() {
     return myMainPanel;
   }

@@ -36,11 +36,6 @@ public class CssDialectsConfigurable extends LanguagePerFileConfigurable<CssDial
     return FlexBundle.message("css.dialects.title");
   }
 
-  @Nullable
-  public Icon getIcon() {
-    return CssFileType.INSTANCE.getIcon();
-  }
-
   @Override
   public JComponent createComponent() {
     final JComponent jComponent = super.createComponent();

@@ -1190,10 +1190,6 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     return getDisplayName();
   }
 
-  public Icon getIcon() {
-    return null;
-  }
-
   public Dependencies getEditableObject() {
     return myDependencies;
   }

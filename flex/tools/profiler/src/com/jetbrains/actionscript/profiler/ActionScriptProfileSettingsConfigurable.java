@@ -24,10 +24,6 @@ public class ActionScriptProfileSettingsConfigurable implements SearchableConfig
     return "asprofile.settings";
   }
 
-  public Icon getIcon() {
-    return ProfilerIcons.LIVE_OBJECTS;
-  }
-
   public String getHelpTopic() {
     return null;
   }

@@ -42,11 +42,6 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
   }
 
   @Override
-  public Icon getIcon() {
-    return null;
-  }
-
-  @Override
   public String getHelpTopic() {
     return "projectStructure.modules.flex";
   }

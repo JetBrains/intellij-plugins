@@ -359,10 +359,6 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     return getDisplayName();
   }
 
-  public Icon getIcon() {
-    return null;
-  }
-
   public CompilerOptions getEditableObject() {
     return myModel;
   }
