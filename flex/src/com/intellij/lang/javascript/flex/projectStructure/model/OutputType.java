@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
-import com.intellij.ide.ui.ListCellRendererWrapper;
+import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
 
 import javax.swing.*;
