@@ -279,11 +279,6 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
 
   }
 
-  @Nullable
-  public Icon getIcon() {
-    return StrutsIcons.STRUTS_CONFIG_FILE;
-  }
-
   @Nls
   public String getDisplayName() {
     return StrutsBundle.message("facet.fileset.title");

@@ -27,7 +27,6 @@ import com.intellij.struts2.facet.Struts2LibraryType;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
 import com.intellij.struts2.facet.StrutsFacetLibrariesValidatorDescription;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.PlatformIcons;
 import com.intellij.util.download.DownloadableFileSetDescription;
 import com.intellij.util.download.DownloadableFileSetVersions;
 import org.jetbrains.annotations.Nls;
@@ -129,11 +128,6 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
 
   public void onFacetInitialized(@NotNull final Facet facet) {
     validator.onFacetInitialized(facet);
-  }
-
-  @Nullable
-  public Icon getIcon() {
-    return PlatformIcons.TASK_ICON;
   }
 
   @Nls

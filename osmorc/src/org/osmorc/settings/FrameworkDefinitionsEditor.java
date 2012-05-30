@@ -22,10 +22,6 @@ public class FrameworkDefinitionsEditor implements SearchableConfigurable {
     return "Framework Definitions";
   }
 
-  public Icon getIcon() {
-    return null;
-  }
-
   public String getHelpTopic() {
     return "reference.settings.project.osgi.framework.definitions";
   }

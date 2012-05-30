@@ -51,10 +51,6 @@ public class ApplicationSettingsEditor implements SearchableConfigurable, Config
     return "OSGi";
   }
 
-  public Icon getIcon() {
-    return null;
-  }
-
   public String getHelpTopic() {
     return null;
   }

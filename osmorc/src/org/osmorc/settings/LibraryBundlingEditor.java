@@ -23,10 +23,6 @@ public class LibraryBundlingEditor implements SearchableConfigurable, Configurab
     return "Library Bundling";
   }
 
-  public Icon getIcon() {
-    return null;
-  }
-
   public String getHelpTopic() {
     return "reference.settings.project.osgi.library.bundling";
   }

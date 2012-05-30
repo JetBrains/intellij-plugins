@@ -19,7 +19,6 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.HashSet;
 import jetbrains.communicator.OptionFlag;
@@ -144,10 +143,6 @@ public class IDEtalkConfiguration implements Configurable {
     return "IDEtalk Options";
   }
 
-
-  public Icon getIcon() {
-    return IconLoader.getIcon("/ideTalk/user32x32.png");
-  }
 
   @Nullable
   @NonNls

@@ -26,10 +26,6 @@ public class ProjectSettingsEditor implements SearchableConfigurable {
     return "OSGi";
   }
 
-  public Icon getIcon() {
-    return null;
-  }
-
   public String getHelpTopic() {
     return "reference.settings.project.osgi.project.settings";
   }
