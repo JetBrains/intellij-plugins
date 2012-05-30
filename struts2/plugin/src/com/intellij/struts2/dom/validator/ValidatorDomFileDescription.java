@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.validator;
 
+import com.intellij.openapi.util.Iconable;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.StrutsDomConstants;
@@ -38,7 +39,7 @@ public class ValidatorDomFileDescription extends DomFileDescription<Validators> 
   }
 
   @Override
-  public Icon getFileIcon(final int flags) {
+  public Icon getFileIcon(@Iconable.IconFlags int flags) {
     return StrutsIcons.VALIDATION_CONFIG_FILE;
   }
 

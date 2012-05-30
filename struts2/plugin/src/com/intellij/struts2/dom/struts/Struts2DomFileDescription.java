@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.struts;
 
+import com.intellij.openapi.util.Iconable;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.StrutsDomConstants;
@@ -39,7 +40,7 @@ public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
   }
 
   @Override
-  public Icon getFileIcon(final int flags) {
+  public Icon getFileIcon(@Iconable.IconFlags int flags) {
     return StrutsIcons.STRUTS_CONFIG_FILE;
   }
 
