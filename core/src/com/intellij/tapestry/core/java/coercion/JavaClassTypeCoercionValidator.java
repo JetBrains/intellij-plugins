@@ -62,12 +62,12 @@ public class JavaClassTypeCoercionValidator implements Command {
           CommonClassNames.JAVA_LANG_OBJECT
         ));
 
-        CLASS_COERCION_MAP.put("java.util.List", Arrays.asList(
+        CLASS_COERCION_MAP.put(CommonClassNames.JAVA_UTIL_LIST, Arrays.asList(
           CommonClassNames.JAVA_LANG_OBJECT
         ));
 
         CLASS_COERCION_MAP.put("org.apache.tapestry5.grid.GridDataSource", Arrays.asList(
-                "java.util.List"
+          CommonClassNames.JAVA_UTIL_LIST
         ));
 
         CLASS_COERCION_MAP.put("org.apache.tapestry5.ioc.util.TimeInterval", Arrays.asList(

@@ -1,5 +1,6 @@
 package com.intellij.tapestry.core.java.coercion;
 
+import com.intellij.psi.CommonClassNames;
 import com.intellij.tapestry.core.java.IJavaArrayType;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import org.apache.commons.chain.Command;
@@ -14,7 +15,8 @@ public class JavaArrayTypeCoercionValidator implements Command {
             return false;
 
         // if the target type is a subtype os java.util.List then coerce
-        if (((CoercionContext) context).getTargetType().isAssignableFrom(((CoercionContext) context).getProject().getJavaTypeFinder().findType("java.util.List", true))) {
+        if (((CoercionContext) context).getTargetType().isAssignableFrom(((CoercionContext) context).getProject().getJavaTypeFinder().findType(
+          CommonClassNames.JAVA_UTIL_LIST, true))) {
             ((CoercionContext) context).setResult(true);
 
             return true;
