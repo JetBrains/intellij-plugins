@@ -125,7 +125,8 @@ public class JsLibraryHelper {
             libraryName,
             VfsUtil.toVirtualFileArray(sourceFiles),
             VirtualFile.EMPTY_ARRAY,
-            ArrayUtil.EMPTY_STRING_ARRAY
+            ArrayUtil.EMPTY_STRING_ARRAY,
+            ScriptingLibraryModel.LibraryLevel.GLOBAL
           );
           myScriptingLibraryManager.commitChanges();
           LOG.info("Library '" + libraryModel.getName() + "' has been successfully created.");
