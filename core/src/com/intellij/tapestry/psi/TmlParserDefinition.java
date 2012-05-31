@@ -2,6 +2,7 @@ package com.intellij.tapestry.psi;
 
 import com.intellij.lang.*;
 import com.intellij.lang.xml.XMLLanguage;
+import com.intellij.lang.xml.XMLParserDefinition;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IFileElementType;
@@ -9,7 +10,6 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
-import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -53,7 +53,7 @@ public class TmlParserDefinition implements ParserDefinition {
 
   public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
     final Lexer lexer = createLexer(left.getPsi().getProject());
-    return XmlUtil.canStickTokensTogetherByLexerInXml(left, right, lexer, 0);
+    return XMLParserDefinition.canStickTokensTogetherByLexerInXml(left, right, lexer, 0);
   }
 
   @NotNull
