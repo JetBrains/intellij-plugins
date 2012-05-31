@@ -21,6 +21,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
@@ -151,11 +152,12 @@ public class AirPackageAction extends DumbAwareAction {
   private static void createPackages(final Project project, final Collection<Pair<ExternalTask, String>> tasksAndPackagePaths) {
     final Iterator<Pair<ExternalTask, String>> iterator = tasksAndPackagePaths.iterator();
     final Pair<ExternalTask, String> taskAndPackagePath = iterator.next();
+    final ExternalTask task = taskAndPackagePath.first;
     final String packagePath = taskAndPackagePath.second;
     final Runnable onSuccessRunnable = createOnSuccessRunnable(project, iterator, packagePath, new ArrayList<String>());
     ExternalTask
-      .runInBackground(taskAndPackagePath.first, FlexBundle.message("packaging.air.application", PathUtil.getFileName(packagePath)),
-                       onSuccessRunnable, createFailureConsumer(project, packagePath));
+      .runInBackground(task, FlexBundle.message("packaging.air.application", PathUtil.getFileName(packagePath)),
+                       onSuccessRunnable, createFailureConsumer(project, packagePath, task));
   }
 
   private static Runnable createOnSuccessRunnable(final Project project,
@@ -168,11 +170,12 @@ public class AirPackageAction extends DumbAwareAction {
 
         if (iterator.hasNext()) {
           final Pair<ExternalTask, String> taskAndPackagePath = iterator.next();
+          final ExternalTask task = taskAndPackagePath.first;
           final String packagePath = taskAndPackagePath.second;
           final Runnable onSuccessRunnable = createOnSuccessRunnable(project, iterator, packagePath, allCreatedPackages);
           ExternalTask
-            .runInBackground(taskAndPackagePath.first, FlexBundle.message("packaging.air.application", PathUtil.getFileName(packagePath)),
-                             onSuccessRunnable, createFailureConsumer(project, packagePath));
+            .runInBackground(task, FlexBundle.message("packaging.air.application", PathUtil.getFileName(packagePath)),
+                             onSuccessRunnable, createFailureConsumer(project, packagePath, task));
         }
         else {
           final String hrefs = StringUtil.join(allCreatedPackages, new Function<String, String>() {
@@ -198,14 +201,21 @@ public class AirPackageAction extends DumbAwareAction {
     };
   }
 
-  private static Consumer<List<String>> createFailureConsumer(final Project project, final String packagePath) {
+  private static Consumer<List<String>> createFailureConsumer(final Project project, final String packagePath, final ExternalTask task) {
     return new Consumer<List<String>>() {
       public void consume(final List<String> messages) {
         final String reason = StringUtil.join(messages, "<br>");
 
         NOTIFICATION_GROUP
           .createNotification("", FlexBundle.message("failed.to.create.air.package", PathUtil.getFileName(packagePath), reason),
-                              NotificationType.ERROR, null)
+                              NotificationType.ERROR, new NotificationListener() {
+            public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
+              if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                notification.expire();
+                Messages.showMessageDialog(project, task.getCommandLine(), "ADT Command Line", null);
+              }
+            }
+          })
           .notify(project);
       }
     };

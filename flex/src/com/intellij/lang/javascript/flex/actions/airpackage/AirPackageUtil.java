@@ -424,7 +424,7 @@ public class AirPackageUtil {
         appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
 
         command.add("-provisioning-profile");
-        command.add(signingOptions.getProvisioningProfilePath());
+        command.add(FileUtil.toSystemDependentName(signingOptions.getProvisioningProfilePath()));
 
         appendPaths(command, module, bc, packagingOptions, iosSDKPath, ".ipa");
       }
