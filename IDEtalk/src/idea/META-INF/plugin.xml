@@ -69,11 +69,11 @@
 
   <group id="IDEtalk_Tree">
       <action id="IDEtalk.ExpandAll" class="jetbrains.communicator.idea.actions.ExpandAllAction"
-        text="_Expand Tree" description="Expand whole tree"  icon="/actions/expandall.png">
+        text="_Expand Tree" description="Expand whole tree"  icon="AllIcons.Actions.Expandall">
         <keyboard-shortcut first-keystroke="control PLUS" keymap="$default"/>
       </action>
       <action id="IDEtalk.CollapseAll" class="jetbrains.communicator.idea.actions.CollapseAllAction"
-        text="_Collapse Tree" description="Collapse whole tree" icon="/actions/collapseall.png">
+        text="_Collapse Tree" description="Collapse whole tree" icon="AllIcons.Actions.Collapseall">
       <keyboard-shortcut first-keystroke="control MINUS" keymap="$default"/>
     </action>
   </group>
@@ -96,7 +96,7 @@
       <separator/>
       <action id="IDEtalk.SearchUserHistory"
               class="jetbrains.communicator.idea.actions.SearchHistoryAction"
-              icon="/general/toolWindowFind.png"
+              icon="AllIcons.General.ToolWindowFind"
               text="Message _history"
               description="View and search messages history for the user">
         <keyboard-shortcut first-keystroke="alt F7" keymap="$default"/>
@@ -134,7 +134,7 @@
       <action class="jetbrains.communicator.idea.messagesWindow.CloseAction"
               text="_Hide Messages Window" id="IDEtalk.HideMessages"
               description="Hide tool window with IDEtalk messages"
-              icon="/actions/cancel.png"
+              icon="AllIcons.Actions.Cancel"
       />
       <reference id="IDEtalk.SearchUserHistory"/>
     </group>
