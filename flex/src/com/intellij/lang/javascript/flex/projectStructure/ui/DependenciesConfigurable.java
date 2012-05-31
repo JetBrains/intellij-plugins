@@ -544,7 +544,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     public SdkItem(Sdk sdk) {
       mySdk = sdk;
-      mySdkType = (SdkType) sdk.getSdkType();
+      mySdkType = (SdkType)sdk.getSdkType();
     }
 
     @Override
@@ -621,14 +621,26 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   }
 
-  private static final TableCellRenderer LINKAGE_TYPE_RENDERER = new ComboBoxTableRenderer<LinkageType>(null);
+  private static final TableCellRenderer LINKAGE_TYPE_RENDERER = new DefaultTableCellRenderer() {
+    private ComboBoxTableRenderer<LinkageType> myComboBoxTableRenderer = new ComboBoxTableRenderer<LinkageType>(null);
+
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      final Object tableItem = ((EditableTreeTable)table).getItemAt(row);
+      if (tableItem instanceof MyTableItem && ((MyTableItem)tableItem).isLinkageEditable()) {
+        myComboBoxTableRenderer.setFont(table.getFont());
+        return myComboBoxTableRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      }
+      else {
+        return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      }
+    }
+  };
 
   private static final DefaultTableCellRenderer ANE_RENDERER = new DefaultTableCellRenderer() {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       final JLabel component = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       component.setText("ANE");
-      component.setHorizontalAlignment(SwingConstants.CENTER);
       return component;
     }
   };
@@ -1588,12 +1600,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
       Module module = myConfigEditor.getModule(myDependencies);
       List<? extends FlexLibraryType> libraryTypes = Collections.singletonList(FlexLibraryType.getInstance());
-      CreateModuleLibraryChooser c = new CreateModuleLibraryChooser(libraryTypes, myMainPanel, module, librariesModelWrapper, new Function<LibraryType, LibraryProperties>() {
-        @Override
-        public LibraryProperties fun(LibraryType type) {
-          return new FlexLibraryProperties(FlexLibraryIdGenerator.generateId());
-        }
-      });
+      CreateModuleLibraryChooser c = new CreateModuleLibraryChooser(libraryTypes, myMainPanel, module, librariesModelWrapper,
+                                                                    new Function<LibraryType, LibraryProperties>() {
+                                                                      @Override
+                                                                      public LibraryProperties fun(LibraryType type) {
+                                                                        return new FlexLibraryProperties(
+                                                                          FlexLibraryIdGenerator.generateId());
+                                                                      }
+                                                                    });
       final List<Library> libraries = c.chooseElements();
       if (libraries.isEmpty()) {
         return;
