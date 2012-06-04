@@ -122,7 +122,6 @@ public class ActiveBuildConfigurationWidget {
       myDisabledLabel.setHorizontalAlignment(SwingConstants.CENTER);
       myDisabledLabel.setToolTipText(FlexBundle.message("active.bc.widget.empty.tooltip"));
       myDisabledLabel.setForeground(UIUtil.getInactiveTextColor());
-      myDisabledLabel.setFont(myEnabledLabel.getFont());
       myDisabledLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
       myPanel = new JPanel(new GridBagLayout()) {
