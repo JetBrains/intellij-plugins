@@ -52,7 +52,7 @@ import java.util.*;
 public class CompilerConfigGenerator {
 
   private static final String[] LIB_ORDER =
-    {"framework", "textLayout", "osmf", "spark", "sparkskins", "rpc", "charts", "spark_dmv", "osmf", "mx", "advancedgrids"};
+    {"framework", "textLayout", "osmf", "spark", "sparkskins", "rpc", "charts", "spark_dmv", "mx", "advancedgrids"};
 
   private final Module myModule;
   private final FlexIdeBuildConfiguration myBC;
