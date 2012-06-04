@@ -30,7 +30,6 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import org.jdom.Element;
@@ -38,7 +37,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * One configured instance of the Run Configuration. The user can create several different configs
@@ -91,8 +89,7 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
     catch (RuntimeConfigurationException e) {
       throw new ExecutionException(e.getMessage());
     }
-    List<VirtualFile> configs = JstdSettingsUtil.collectJstdConfigs(getProject(), myRunSettings);
-    return new JstdTestRunnerCommandLineState(getProject(), env, myRunSettings, configs, coverageFilePath);
+    return new JstdTestRunnerCommandLineState(getProject(), env, myRunSettings, coverageFilePath);
   }
 
   public void setRunSettings(@NotNull JstdRunSettings runSettings) {
@@ -112,14 +109,14 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
   @Override
   public void readExternal(Element element) throws InvalidDataException {
     super.readExternal(element);
-    JstdRunSettings runSettings = JstdRunSettingsSerializationUtils.readFromJDomElement(element);
+    JstdRunSettings runSettings = JstdRunSettingsSerializationUtils.readFromXml(element);
     setRunSettings(runSettings);
   }
 
   @Override
   public void writeExternal(Element element) throws WriteExternalException {
     super.writeExternal(element);
-    JstdRunSettingsSerializationUtils.writeFromJDomElement(element, myRunSettings);
+    JstdRunSettingsSerializationUtils.writeToXml(element, myRunSettings);
   }
 
   @Override

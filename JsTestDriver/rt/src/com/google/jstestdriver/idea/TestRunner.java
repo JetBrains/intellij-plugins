@@ -31,7 +31,7 @@ import com.google.jstestdriver.hooks.TestListener;
 import com.google.jstestdriver.idea.coverage.CoverageReport;
 import com.google.jstestdriver.idea.coverage.CoverageSerializationUtils;
 import com.google.jstestdriver.idea.coverage.CoverageSession;
-import com.google.jstestdriver.idea.execution.tree.OutputManager;
+import com.google.jstestdriver.idea.execution.tree.TreeManager;
 import com.google.jstestdriver.idea.server.JstdServerFetchResult;
 import com.google.jstestdriver.idea.server.JstdServerUtilsRt;
 import com.google.jstestdriver.idea.util.EscapeUtils;
@@ -58,7 +58,8 @@ public class TestRunner {
 
   public enum ParameterKey {
     SERVER_URL,
-    CONFIG_FILE,
+    CONFIG_FILES,
+    ALL_CONFIGS_IN_DIRECTORY,
     TEST_CASE,
     TEST_METHOD,
     COVERAGE_OUTPUT_FILE,
@@ -66,12 +67,12 @@ public class TestRunner {
   }
 
   private final Settings mySettings;
-  private final OutputManager myOutputManager;
+  private final TreeManager myTreeManager;
   private final CoverageSession myCoverageSession;
 
-  public TestRunner(@NotNull Settings settings, @NotNull OutputManager outputManager) {
+  public TestRunner(@NotNull Settings settings, @NotNull TreeManager treeManager) {
     mySettings = settings;
-    myOutputManager = outputManager;
+    myTreeManager = treeManager;
     File ideCoverageFile = mySettings.getIdeCoverageFile();
     if (ideCoverageFile != null) {
       myCoverageSession = new CoverageSession(ideCoverageFile);
@@ -93,7 +94,7 @@ public class TestRunner {
     try {
       unsafeExecuteConfig(config);
     } catch (Exception e) {
-      myOutputManager.printThrowable(e);
+      myTreeManager.printThrowable(e);
     }
   }
 
@@ -115,11 +116,13 @@ public class TestRunner {
     PrintStream nullSystemOut = new PrintStream(new NullOutputStream());
     try {
       System.setOut(nullSystemOut);
+      myTreeManager.onJstdConfigRunningStarted(config);
       runTests(config, new String[]{"--reset", "--dryRunFor", testCaseName}, true);
       runTests(config, new String[]{"--tests", testCaseName}, false);
     } finally {
+      myTreeManager.onJstdConfigRunningFinished();
       nullSystemOut.close();
-      System.setOut(myOutputManager.getSystemOutStream());
+      System.setOut(myTreeManager.getSystemOutStream());
     }
   }
 
@@ -128,6 +131,7 @@ public class TestRunner {
     JsTestDriverBuilder builder = new JsTestDriverBuilder();
 
     final ParsedConfiguration parsedConfiguration = JstdConfigParsingUtils.parseConfiguration(configFile);
+    wipeCoveragePlugin(parsedConfiguration);
     builder.setDefaultConfiguration(parsedConfiguration);
     builder.withPluginInitializer(new PluginInitializer() {
       @Override
@@ -138,7 +142,7 @@ public class TestRunner {
             Multibinder<TestListener> testListeners = Multibinder.newSetBinder(binder(), TestListener.class);
             testListeners.addBinding().to(TestResultHolder.class);
             testListeners.addBinding().toInstance(new IdeaTestListener(
-              myOutputManager,
+              myTreeManager,
               configFile,
               parsedConfiguration.getBasePaths()
             ));
@@ -165,7 +169,6 @@ public class TestRunner {
         coverageExcludedFiles.addAll(mySettings.getFilesExcludedFromCoverage());
         PluginInitializer coverageInitializer = getCoverageInitializer(coverageExcludedFiles);
         if (coverageInitializer != null) {
-          wipeCoveragePlugin(parsedConfiguration);
           builder.withPluginInitializer(coverageInitializer);
           builder.withPluginInitializer(new DependenciesTouchFix());
           runCoverage = true;
@@ -192,12 +195,20 @@ public class TestRunner {
           myCoverageSession.mergeReport(coverageReport);
         }
         catch (Exception e) {
-          myOutputManager.printThrowable(e);
+          myTreeManager.printThrowable(e);
         }
       }
     }
   }
 
+  /**
+   * Wiping coverage section in a configuration file makes sense because:
+   * <ul>
+   *   <li>running tests without coverage (via Shift+F10) doesn't handle coverage output</li>
+   *   <li>running tests with coverage has its own special configuration</li>
+   * </ul>
+   * @param configuration
+   */
   private static void wipeCoveragePlugin(@NotNull ParsedConfiguration configuration) {
     ManifestLoader manifestLoader = new ManifestLoader();
     Iterator<Plugin> iterator = configuration.getPlugins().iterator();
@@ -209,7 +220,7 @@ public class TestRunner {
     }
   }
 
-  private static boolean isCoveragePlugin(Plugin plugin, ManifestLoader loader) {
+  private static boolean isCoveragePlugin(@NotNull Plugin plugin, @NotNull ManifestLoader loader) {
     try {
       String moduleName = plugin.getModuleName(loader);
       if (COVERAGE_MODULE_NAME.equals(moduleName)) {
@@ -281,18 +292,20 @@ public class TestRunner {
   public static void main(String[] args) throws Exception {
     Map<ParameterKey, String> paramMap = parseParams(args);
     Settings settings = Settings.build(paramMap);
-    OutputManager outputManager = new OutputManager();
-    if (!validateServer(settings, outputManager)) {
+    TreeManager treeManager = new TreeManager(settings.getRunAllConfigsInDirectory());
+    if (!validateServer(settings, treeManager)) {
       return;
     }
     try {
-      new TestRunner(settings, outputManager).executeAll();
+      new TestRunner(settings, treeManager).executeAll();
     } catch (Exception ex) {
-      outputManager.printThrowable("JsTestDriver crashed!", ex);
+      treeManager.printThrowable("JsTestDriver crashed!", ex);
+    } finally {
+      treeManager.onTestingFinished();
     }
   }
 
-  private static boolean validateServer(@NotNull Settings settings, @NotNull OutputManager outputManager) throws IOException {
+  private static boolean validateServer(@NotNull Settings settings, @NotNull TreeManager treeManager) throws IOException {
     String serverUrl = settings.getServerUrl();
     JstdServerFetchResult fetchResult = JstdServerUtilsRt.syncFetchServerInfo(serverUrl);
     String message = null;
@@ -304,7 +317,7 @@ public class TestRunner {
                 "To capture browser open '" + serverUrl + "' in browser.";
     }
     if (message != null) {
-      outputManager.printErrorMessage(message);
+      treeManager.printErrorMessage(message);
       return false;
     }
     return true;
@@ -327,6 +340,7 @@ public class TestRunner {
   private static class Settings {
     private final String myServerUrl;
     private final List<File> myConfigFiles;
+    private final File myRunAllConfigsInDirectory;
     private final String myTestCaseName;
     private final String myTestMethodName;
     private final File myIdeCoverageFile;
@@ -335,6 +349,7 @@ public class TestRunner {
     private Settings(
       @NotNull String serverUrl,
       @NotNull List<File> configFiles,
+      @Nullable File runAllConfigsInDirectory,
       @NotNull String testCaseName,
       @NotNull String testMethodName,
       @Nullable File ideCoverageFile,
@@ -342,6 +357,7 @@ public class TestRunner {
     {
       myServerUrl = serverUrl;
       myConfigFiles = configFiles;
+      myRunAllConfigsInDirectory = runAllConfigsInDirectory;
       myTestCaseName = testCaseName;
       myTestMethodName = testMethodName;
       myIdeCoverageFile = ideCoverageFile;
@@ -356,6 +372,11 @@ public class TestRunner {
     @NotNull
     public List<File> getConfigFiles() {
       return myConfigFiles;
+    }
+
+    @Nullable
+    public File getRunAllConfigsInDirectory() {
+      return myRunAllConfigsInDirectory;
     }
 
     @NotNull
@@ -384,7 +405,7 @@ public class TestRunner {
       if (serverUrl == null) {
         throw new RuntimeException("server_url parameter must be specified");
       }
-      String configFilesStr = notNullize(parameters.get(ParameterKey.CONFIG_FILE));
+      String configFilesStr = notNullize(parameters.get(ParameterKey.CONFIG_FILES));
       List<String> paths = EscapeUtils.split(configFilesStr, ',');
       List<File> configFiles = Lists.newArrayList();
       for (String path : paths) {
@@ -396,6 +417,14 @@ public class TestRunner {
       if (configFiles.isEmpty()) {
         throw new RuntimeException("No valid config files found");
       }
+      String runAllConfigsInDirectoryPath = parameters.get(ParameterKey.ALL_CONFIGS_IN_DIRECTORY);
+      File runAllConfigsInDirectory = null;
+      if (runAllConfigsInDirectoryPath != null && !runAllConfigsInDirectoryPath.isEmpty()) {
+        runAllConfigsInDirectory = new File(runAllConfigsInDirectoryPath);
+        if (!runAllConfigsInDirectory.isDirectory()) {
+          runAllConfigsInDirectory = null;
+        }
+      }
       String testCaseName = notNullize(parameters.get(ParameterKey.TEST_CASE));
       String testMethodName = notNullize(parameters.get(ParameterKey.TEST_METHOD));
       String coverageFilePath = notNullize(parameters.get(ParameterKey.COVERAGE_OUTPUT_FILE));
@@ -406,7 +435,15 @@ public class TestRunner {
         String joinedPaths = notNullize(parameters.get(ParameterKey.COVERAGE_EXCLUDED_PATHS));
         excludedPaths = EscapeUtils.split(joinedPaths, ',');
       }
-      return new Settings(serverUrl, configFiles, testCaseName, testMethodName, ideCoverageFile, excludedPaths);
+      return new Settings(
+        serverUrl,
+        configFiles,
+        runAllConfigsInDirectory,
+        testCaseName,
+        testMethodName,
+        ideCoverageFile,
+        excludedPaths
+      );
     }
   }
 

@@ -5,8 +5,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Sergey Simonchik
  */
-public class TestCaseNode extends AbstractSuiteNode<TestNode> {
-  public TestCaseNode(@NotNull String name, @NotNull BrowserNode parent) {
+public class ConfigNode extends AbstractSuiteNode<BrowserNode> {
+  public ConfigNode(@NotNull String name, @NotNull RootNode parent) {
     super(name, parent);
   }
 }

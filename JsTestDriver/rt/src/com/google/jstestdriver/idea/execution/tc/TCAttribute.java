@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public enum TCAttribute {
 
   NAME("name"),
+  NODE_ID("nodeId"),
   TEST_DURATION("duration"),
   LOCATION_URL("locationHint"),
   ACTUAL("actual"),
@@ -17,7 +18,7 @@ public enum TCAttribute {
   EXCEPTION_MESSAGE("message"),
   EXCEPTION_STACKTRACE("details"),
   IS_TEST_ERROR("error"),
-  ;
+  PARENT_NODE_ID("parentNodeId");
 
   private final String myName;
 

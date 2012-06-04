@@ -24,9 +24,8 @@ public class TCMessage {
     return myText.toString();
   }
 
-  public void print(@NotNull PrintStream stream) {
-    String text = getText();
-    stream.println(text);
+  public TCMessage addIntAttribute(@NotNull TCAttribute attribute, int value) {
+    return addAttribute(attribute, String.valueOf(value));
   }
 
   public TCMessage addAttribute(@NotNull TCAttribute attribute, @NotNull String value) {

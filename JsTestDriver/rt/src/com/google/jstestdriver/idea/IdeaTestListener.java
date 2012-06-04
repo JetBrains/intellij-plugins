@@ -5,7 +5,7 @@ import com.google.jstestdriver.FileResult;
 import com.google.jstestdriver.TestCase;
 import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.hooks.TestListener;
-import com.google.jstestdriver.idea.execution.tree.OutputManager;
+import com.google.jstestdriver.idea.execution.tree.TreeManager;
 import com.google.jstestdriver.idea.execution.tree.TestResultProtocolMessage;
 import com.google.jstestdriver.idea.util.JstdConfigParsingUtils;
 import com.google.jstestdriver.model.BasePaths;
@@ -21,17 +21,17 @@ public class IdeaTestListener implements TestListener {
 
   private static final String PREFIX = "/test/";
 
-  private final OutputManager myOutputManager;
+  private final TreeManager myTreeManager;
   private final File myJstdConfigFile;
   private final File myBasePath;
   private final Object MONITOR = new Object();
 
   public IdeaTestListener(
-    @NotNull OutputManager outputManager,
+    @NotNull TreeManager treeManager,
     @NotNull File jstdConfigFile,
     @NotNull BasePaths basePaths
   ) {
-    myOutputManager = outputManager;
+    myTreeManager = treeManager;
     myJstdConfigFile = jstdConfigFile;
     myBasePath = JstdConfigParsingUtils.getSingleBasePath(basePaths, jstdConfigFile);
   }
@@ -48,7 +48,7 @@ public class IdeaTestListener implements TestListener {
         TestResultProtocolMessage message = TestResultProtocolMessage.fromDryRun(
           myJstdConfigFile, browser, jsTestFile, testCase.getName(), testName
         );
-        myOutputManager.onTestRegistered(message);
+        myTreeManager.onTestRegistered(message);
       }
     }
   }
@@ -57,15 +57,12 @@ public class IdeaTestListener implements TestListener {
   public void onTestComplete(TestResult testResult) {
     synchronized (MONITOR) {
       TestResultProtocolMessage message = TestResultProtocolMessage.fromTestResult(myJstdConfigFile, testResult);
-      myOutputManager.onTestCompleted(message);
+      myTreeManager.onTestCompleted(message);
     }
   }
 
   @Override
   public void finish() {
-    synchronized (MONITOR) {
-      myOutputManager.finish();
-    }
   }
 
   @Nullable

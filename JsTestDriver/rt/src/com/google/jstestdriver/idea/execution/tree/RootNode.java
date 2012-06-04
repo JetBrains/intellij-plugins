@@ -7,10 +7,10 @@ import java.io.PrintStream;
 /**
  * @author Sergey Simonchik
  */
-public class RootNode extends AbstractJstdNode<BrowserNode> {
+public class RootNode extends AbstractJstdNode<ConfigNode> {
 
-  public RootNode(@NotNull String name, @NotNull PrintStream outStream, @NotNull PrintStream errStream) {
-    super(name, outStream, errStream);
+  public RootNode(@NotNull TreeManager treeManager) {
+    super("<internal root node>", treeManager);
   }
 
 }

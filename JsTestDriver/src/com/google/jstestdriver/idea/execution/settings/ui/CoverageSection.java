@@ -5,6 +5,7 @@ import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
@@ -82,10 +83,11 @@ public class CoverageSection extends AbstractRunSettingsSection {
     int savedSelected = selectedIndex;
     VirtualFile[] chosen = FileChooser.chooseFiles(FileChooserDescriptorFactory.createMultipleFilesNoJarsDescriptor(), project, null);
     for (final VirtualFile chosenFile : chosen) {
-      if (tableModel.isFileExcluded(chosenFile.getPath())) {
+      String path = FileUtil.toSystemDependentName(chosenFile.getPath());
+      if (tableModel.isFileExcluded(path)) {
         continue;
       }
-      tableModel.addPath(chosenFile.getPath(), selectedIndex);
+      tableModel.addPath(path, selectedIndex);
       selectedIndex++;
     }
     if (selectedIndex > savedSelected) {

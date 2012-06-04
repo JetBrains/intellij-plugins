@@ -6,7 +6,6 @@ import com.google.jstestdriver.idea.execution.tc.TCMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -16,19 +15,24 @@ import java.util.Map;
  */
 public abstract class AbstractJstdNode<T extends AbstractJstdNode> {
 
+  private final int myId;
   private final String myName;
-  private final PrintStream myOutStream;
-  private final PrintStream myErrStream;
+  private final TreeManager myTreeManager;
   private Map<String, T> myChildByName = null;
 
-  public AbstractJstdNode(@NotNull String name, @NotNull AbstractJstdNode parent) {
-    this(name, parent.getOutStream(), parent.getErrStream());
+  public AbstractJstdNode(@NotNull String name,
+                          @NotNull TreeManager treeManager) {
+    if (this instanceof RootNode) {
+      myId = 0;
+    } else {
+      myId = treeManager.getNextNodeId();
+    }
+    myName = name;
+    myTreeManager = treeManager;
   }
 
-  public AbstractJstdNode(@NotNull String name, @NotNull PrintStream outStream, @NotNull PrintStream errStream) {
-    myName = name;
-    myOutStream = outStream;
-    myErrStream = errStream;
+  public int getId() {
+    return myId;
   }
 
   @NotNull
@@ -36,52 +40,41 @@ public abstract class AbstractJstdNode<T extends AbstractJstdNode> {
     return myName;
   }
 
-  public void addChild(@NotNull T child) {
-    Map<String, T> map = getChildByNameMap();
-    map.put(child.getName(), child);
-    if (child instanceof TestNode) {
-      TCMessage message = TC.testStarted(child.getName());
-      message.print(myOutStream);
-    } else {
-      TCMessage message = TC.testSuiteStarted(child.getName());
-      message.print(myOutStream);
-    }
+  @NotNull
+  public TreeManager getTreeManager() {
+    return myTreeManager;
   }
 
-  @NotNull
-  public Map<String, T> getChildByNameMap() {
-    if (myChildByName == null) {
-      myChildByName = Maps.newHashMap();
+  public void addChild(@NotNull T child) {
+    Map<String, T> map = myChildByName;
+    if (map == null) {
+      map = Maps.newHashMap();
+      myChildByName = map;
     }
-    return myChildByName;
+    map.put(child.myName, child);
+    if (child instanceof TestNode) {
+      TCMessage message = TC.testStarted((TestNode) child);
+      myTreeManager.printTCMessage(message);
+    } else {
+      TCMessage message = TC.testSuiteStarted((AbstractSuiteNode) child);
+      myTreeManager.printTCMessage(message);
+    }
   }
 
   @Nullable
   public T findChildByName(@NotNull String childName) {
-    return getReadOnlyChildren().get(childName);
-  }
-
-  @NotNull
-  public PrintStream getOutStream() {
-    return myOutStream;
-  }
-
-  @NotNull
-  public PrintStream getErrStream() {
-    return myErrStream;
-  }
-
-  @NotNull
-  private Map<String, T> getReadOnlyChildren() {
     if (myChildByName == null) {
-      return Collections.emptyMap();
+      return null;
     }
-    return myChildByName;
+    return myChildByName.get(childName);
   }
 
   @NotNull
   public Collection<T> getChildren() {
-    return getReadOnlyChildren().values();
+    if (myChildByName == null) {
+      return Collections.emptyList();
+    }
+    return myChildByName.values();
   }
 
 }

@@ -7,6 +7,7 @@ import com.google.jstestdriver.idea.execution.tc.TCMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -14,17 +15,45 @@ import java.io.StringWriter;
 /**
  * @author Sergey Simonchik
  */
-public class OutputManager {
+public class TreeManager {
 
+  private final File myRunAllConfigsInDirectory;
   private final PrintStream myOutStream;
   private final PrintStream myErrStream;
   private final RootNode myRootNode;
+  private ConfigNode myCurrentJstdConfigNode;
+  private int myNextNodeId = 1;
 
   @SuppressWarnings("UseOfSystemOutOrSystemErr")
-  public OutputManager() {
+  public TreeManager(@Nullable File runAllConfigsInDirectory) {
+    myRunAllConfigsInDirectory = runAllConfigsInDirectory;
     myOutStream = System.out;
     myErrStream = System.err;
-    myRootNode = new RootNode("<internal root node>", myOutStream, myErrStream);
+    myRootNode = new RootNode(this);
+  }
+
+  public void onJstdConfigRunningStarted(@NotNull File jstdConfigFile) {
+    String jstdConfigNodeDisplayName = buildJstdConfigDisplayName(jstdConfigFile);
+    myCurrentJstdConfigNode = new ConfigNode(jstdConfigNodeDisplayName, myRootNode);
+    myRootNode.addChild(myCurrentJstdConfigNode);
+  }
+
+  private String buildJstdConfigDisplayName(@NotNull File jstdConfigFile) {
+    String displayName = null;
+    if (myRunAllConfigsInDirectory != null) {
+      String directoryPath = myRunAllConfigsInDirectory.getAbsolutePath();
+      String jstdConfigFilePath = jstdConfigFile.getAbsolutePath();
+      if (jstdConfigFilePath.startsWith(directoryPath)) {
+        displayName = jstdConfigFilePath.substring(directoryPath.length());
+        if (displayName.startsWith("/") || displayName.startsWith("\\")) {
+          displayName = displayName.substring(1);
+        }
+      }
+    }
+    if (displayName == null) {
+      displayName = jstdConfigFile.getName();
+    }
+    return displayName;
   }
 
   public void onTestRegistered(@NotNull TestResultProtocolMessage message) {
@@ -34,16 +63,16 @@ public class OutputManager {
   public void onTestCompleted(@NotNull TestResultProtocolMessage message) {
     TestNode testNode = getOrCreateTestNode(message);
     if (message.log != null && !message.log.isEmpty()) {
-      TCMessage stdOutMessage = TC.testStdOut(testNode.getName());
+      TCMessage stdOutMessage = TC.testStdOut(testNode);
       stdOutMessage.addAttribute(TCAttribute.STDOUT, message.log + "\n");
-      stdOutMessage.print(myOutStream);
+      printTCMessage(stdOutMessage);
     }
 
     TestResult.Result result = TestResult.Result.valueOf(message.result);
     if (result == TestResult.Result.passed) {
-      TCMessage testFinishedMessage = TC.testFinished(testNode.getName());
-      testFinishedMessage.addAttribute(TCAttribute.TEST_DURATION, Integer.toString((int) message.duration));
-      testFinishedMessage.print(myOutStream);
+      TCMessage testFinishedMessage = TC.testFinished(testNode);
+      testFinishedMessage.addIntAttribute(TCAttribute.TEST_DURATION, (int)message.duration);
+      printTCMessage(testFinishedMessage);
     } else {
       final String stackStr;
       if (message.stack.startsWith(message.message)) {
@@ -52,23 +81,24 @@ public class OutputManager {
       } else {
         stackStr = message.stack;
       }
-      TCMessage testFailedMessage = TC.testFailed(testNode.getName());
+      TCMessage testFailedMessage = TC.testFailed(testNode);
       testFailedMessage.addAttribute(TCAttribute.EXCEPTION_MESSAGE, message.message);
       testFailedMessage.addAttribute(TCAttribute.EXCEPTION_STACKTRACE, stackStr);
       if (result == TestResult.Result.error) {
         testFailedMessage.addAttribute(TCAttribute.IS_TEST_ERROR, "yes");
       }
-      testFailedMessage.addAttribute(TCAttribute.TEST_DURATION, Integer.toString((int) message.duration));
-      testFailedMessage.print(myOutStream);
+      testFailedMessage.addIntAttribute(TCAttribute.TEST_DURATION, (int)message.duration);
+      printTCMessage(testFailedMessage);
     }
   }
 
   @NotNull
   private TestNode getOrCreateTestNode(@NotNull TestResultProtocolMessage message) {
-    BrowserNode browserNode = myRootNode.findChildByName(message.browser);
+    ConfigNode configNode = getCurrentConfigNode();
+    BrowserNode browserNode = configNode.findChildByName(message.browser);
     if (browserNode == null) {
-      browserNode = new BrowserNode(message.browser, myRootNode);
-      myRootNode.addChild(browserNode);
+      browserNode = new BrowserNode(message.browser, configNode);
+      configNode.addChild(browserNode);
     }
 
     TestCaseNode testCaseNode = browserNode.findChildByName(message.testCaseName);
@@ -86,24 +116,13 @@ public class OutputManager {
     return testNode;
   }
 
-  @Nullable
-  private TestNode getTestNode(@NotNull TestResultProtocolMessage message) {
-    BrowserNode browserNode = myRootNode.findChildByName(message.browser);
-    if (browserNode == null) {
-      return null;
+  @NotNull
+  private ConfigNode getCurrentConfigNode() {
+    ConfigNode configNode = myCurrentJstdConfigNode;
+    if (configNode == null) {
+      throw new RuntimeException("JstdConfigNode is null!");
     }
-
-    TestCaseNode testCaseNode = browserNode.findChildByName(message.testCaseName);
-    if (testCaseNode == null) {
-      return null;
-    }
-
-    TestNode testNode = testCaseNode.findChildByName(message.testName);
-    if (testNode == null) {
-      return null;
-    }
-
-    return testNode;
+    return configNode;
   }
 
   public void printErrorMessage(@NotNull String message) {
@@ -125,15 +144,29 @@ public class OutputManager {
     return myOutStream;
   }
 
-  public void finish() {
-    for (BrowserNode browserNode : myRootNode.getChildren()) {
+  public void onJstdConfigRunningFinished() {
+    ConfigNode configNode = getCurrentConfigNode();
+    for (BrowserNode browserNode : configNode.getChildren()) {
       for (TestCaseNode testCaseNode : browserNode.getChildren()) {
-        TCMessage testCaseFinishedMessage = TC.testSuiteFinished(testCaseNode.getName());
-        testCaseFinishedMessage.print(myOutStream);
+        TCMessage testCaseFinishedMessage = TC.testSuiteFinished(testCaseNode);
+        printTCMessage(testCaseFinishedMessage);
       }
-      TCMessage browserFinishedMessage = TC.testSuiteFinished(browserNode.getName());
-      browserFinishedMessage.print(myOutStream);
+      TCMessage browserFinishedMessage = TC.testSuiteFinished(browserNode);
+      printTCMessage(browserFinishedMessage);
     }
+    TCMessage configFinishedMessage = TC.testSuiteFinished(configNode);
+    printTCMessage(configFinishedMessage);
+  }
+
+  public void onTestingFinished() {
+  }
+
+  public int getNextNodeId() {
+    return myNextNodeId++;
+  }
+
+  public void printTCMessage(@NotNull TCMessage message) {
+    myOutStream.println(message.getText());
   }
 
   private static String formatMessage(@Nullable String message, @NotNull Throwable t) {

@@ -2,7 +2,6 @@ package com.google.jstestdriver.idea.execution;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.internal.ImmutableSet;
@@ -55,21 +54,18 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
   private final Project myProject;
   private final ExecutionEnvironment myExecutionEnvironment;
   private final JstdRunSettings myRunSettings;
-  private final ImmutableList<VirtualFile> myConfigVirtualFiles;
   private final String myCoverageFilePath;
 
   public JstdTestRunnerCommandLineState(
     @NotNull Project project,
     @NotNull ExecutionEnvironment executionEnvironment,
     @NotNull JstdRunSettings runSettings,
-    @NotNull List<VirtualFile> configVirtualFiles,
     @Nullable String coverageFilePath)
   {
     super(executionEnvironment);
     myProject = project;
     myExecutionEnvironment = executionEnvironment;
     myRunSettings = runSettings;
-    myConfigVirtualFiles = ImmutableList.copyOf(configVirtualFiles);
     myCoverageFilePath = coverageFilePath;
   }
 
@@ -83,18 +79,19 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
         return Collections.emptyList();
       }
     };
-    ConsoleView consoleView = createConsole(myProject, processHandler, myExecutionEnvironment,
+    ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment,
                                             executor, locationProvider);
+    consoleView.attachToProcess(processHandler);
+
     //consoleView.addMessageFilter(new NodeJSStacktraceFilter(myProject));
 
     return new DefaultExecutionResult(consoleView, processHandler);
   }
 
-  public static ConsoleView createConsole(@NotNull Project project,
-                                          @NotNull ProcessHandler processHandler,
-                                          @NotNull ExecutionEnvironment env,
-                                          Executor executor,
-                                          @NotNull TestLocationProvider locationProvider)
+  private static ConsoleView createConsole(@NotNull Project project,
+                                           @NotNull ExecutionEnvironment env,
+                                           Executor executor,
+                                            @NotNull TestLocationProvider locationProvider)
     throws ExecutionException {
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) env.getRunProfile();
     TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(
@@ -107,10 +104,10 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
       JSTD_FRAMEWORK_NAME,
       testConsoleProperties,
       env.getRunnerSettings(),
-      env.getConfigurationSettings(), locationProvider
+      env.getConfigurationSettings(),
+      locationProvider,
+      true
     );
-
-    testsOutputConsoleView.attachToProcess(processHandler);
 
     Disposer.register(project, testsOutputConsoleView);
     return testsOutputConsoleView;
@@ -172,7 +169,11 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
                        "http://localhost:" + ToolPanel.serverPort :
                        myRunSettings.getServerAddress();
     parameters.put(TestRunner.ParameterKey.SERVER_URL, serverUrl);
-    parameters.put(TestRunner.ParameterKey.CONFIG_FILE, joinJstdConfigs(myConfigVirtualFiles));
+    if (myRunSettings.getTestType() == TestType.ALL_CONFIGS_IN_DIRECTORY) {
+      parameters.put(TestRunner.ParameterKey.ALL_CONFIGS_IN_DIRECTORY, myRunSettings.getDirectory());
+    }
+    List<VirtualFile> jstdConfigs = JstdSettingsUtil.collectJstdConfigs(myProject, myRunSettings);
+    parameters.put(TestRunner.ParameterKey.CONFIG_FILES, joinJstdConfigs(jstdConfigs));
     if (myRunSettings.getTestType() == TestType.TEST_CASE) {
       parameters.put(TestRunner.ParameterKey.TEST_CASE, myRunSettings.getTestCaseName());
     }

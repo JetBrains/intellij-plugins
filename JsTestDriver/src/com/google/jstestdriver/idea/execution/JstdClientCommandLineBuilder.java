@@ -63,7 +63,7 @@ public class JstdClientCommandLineBuilder {
     parameters.put(TestRunner.ParameterKey.SERVER_URL, serverURL);
     //parameters.put(TestRunner.ParameterKey.PORT, String.valueOf(testResultPort));
     String joinedConfigPaths = joinConfigs(configVirtualFiles);
-    parameters.put(TestRunner.ParameterKey.CONFIG_FILE, joinedConfigPaths);
+    parameters.put(TestRunner.ParameterKey.CONFIG_FILES, joinedConfigPaths);
     if (runSettings.getTestType() == TestType.TEST_CASE) {
       parameters.put(TestRunner.ParameterKey.TEST_CASE, runSettings.getTestCaseName());
     }
