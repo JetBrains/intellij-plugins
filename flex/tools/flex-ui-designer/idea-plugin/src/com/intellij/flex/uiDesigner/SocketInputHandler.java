@@ -17,7 +17,7 @@ public abstract class SocketInputHandler implements Disposable {
     return DesignerApplicationManager.getService(SocketInputHandler.class);
   }
 
-  abstract SocketInputHandlerImpl.Reader getReader();
+  abstract Reader getReader();
 
   public abstract void unregisterDocumentFactories() throws IOException;
 }

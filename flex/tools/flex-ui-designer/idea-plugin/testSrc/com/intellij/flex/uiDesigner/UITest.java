@@ -24,7 +24,7 @@ public class UITest extends MxmlTestBase {
 
   private static Roboflest roboflest;
 
-  private static SocketInputHandlerImpl.Reader reader;
+  private static Reader reader;
   
   @Override
   protected String getSourceBasePath() {

@@ -685,7 +685,7 @@ public class Client implements Disposable {
       beginMessage(ClientMethod.getDocumentImage, callback, result, new Runnable() {
         @Override
         public void run() {
-          SocketInputHandlerImpl.Reader reader = SocketInputHandler.getInstance().getReader();
+          Reader reader = SocketInputHandler.getInstance().getReader();
           try {
             result.setDone(reader.readImage());
           }
