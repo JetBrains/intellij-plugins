@@ -92,7 +92,13 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   @Override
   public void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
     init(inputStream, appDir);
-    process();
+    if (processOnRead()) {
+      process();
+    }
+  }
+
+  protected boolean processOnRead() {
+    return true;
   }
 
   public void process() throws IOException {
