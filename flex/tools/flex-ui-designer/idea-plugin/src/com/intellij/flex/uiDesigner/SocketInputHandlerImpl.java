@@ -22,7 +22,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -42,7 +41,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.io.IdPool;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -96,13 +94,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   @Override
   public void read(@NotNull InputStream inputStream, @NotNull File appDir) throws IOException {
     init(inputStream, appDir);
-    if (processOnRead()) {
-      process();
-    }
-  }
-
-  protected boolean processOnRead() {
-    return true;
+    process();
   }
 
   public void process() throws IOException {
@@ -381,21 +373,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     projectFrame.requestFocus();
 
     if (activateApp) {
-      // is not working for windows
-      if (SystemInfo.isWindows) {
-        int state = projectFrame.getExtendedState();
-        if ((state & Frame.ICONIFIED) == 0) {
-          // http://stackoverflow.com/questions/309023/howto-bring-a-java-window-to-the-front
-          projectFrame.setExtendedState(JFrame.ICONIFIED);
-          projectFrame.setExtendedState(state);
-        }
-        else {
-          projectFrame.setExtendedState(state &= ~JFrame.ICONIFIED);
-        }
-      }
-      else {
-        AppIcon.getInstance().requestFocus((IdeFrame)WindowManager.getInstance().getFrame(p));
-      }
+      AppIcon.getInstance().requestFocus((IdeFrame)WindowManager.getInstance().getFrame(p));
     }
   }
 
