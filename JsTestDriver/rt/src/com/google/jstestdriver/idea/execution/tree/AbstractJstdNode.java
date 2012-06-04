@@ -51,7 +51,7 @@ public abstract class AbstractJstdNode<T extends AbstractJstdNode> {
       map = Maps.newHashMap();
       myChildByName = map;
     }
-    map.put(child.myName, child);
+    map.put(child.getName(), child);
     if (child instanceof TestNode) {
       TCMessage message = TC.testStarted((TestNode) child);
       myTreeManager.printTCMessage(message);
