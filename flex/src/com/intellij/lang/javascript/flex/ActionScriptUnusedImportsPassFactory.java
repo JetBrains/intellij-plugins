@@ -120,7 +120,7 @@ public class ActionScriptUnusedImportsPassFactory extends AbstractProjectCompone
       myFile = file;
     }
 
-    public void doCollectInformation(final ProgressIndicator progress) {
+    public void doCollectInformation(@NotNull final ProgressIndicator progress) {
       if (myFile instanceof JSExpressionCodeFragment) {
         importStatements = Collections.emptyList();
         fqnsToReplaceWithShortName = Collections.emptyList();
