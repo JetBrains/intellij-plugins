@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
@@ -24,6 +25,7 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -123,7 +125,16 @@ class LibraryCollector {
     final FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
     final Sdk sdk = bc.getSdk();
     assert sdk != null;
-    final boolean isFlexmojosSdk = sdk.getSdkType() == FlexmojosSdkType.getInstance();
+
+    final SdkType sdkType;
+    try {
+      sdkType = (SdkType)sdk.getClass().getMethod("getSdkType").invoke(sdk);
+    }
+    catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+
+    final boolean isFlexmojosSdk = sdkType instanceof FlexmojosSdkType;
     if (!isFlexmojosSdk) {
       collectSdkLibraries(bc, sdk);
     }

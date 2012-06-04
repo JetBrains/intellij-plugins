@@ -57,6 +57,7 @@ public class ProblemsHolder {
 
   public void add(final PsiElement element, final RuntimeException e, final String propertyName) {
     String error;
+    boolean dontLog = logDisabled;
     if (e instanceof NumberFormatException) {
       error = e.getMessage();
       final String prefix = "For input string: \"";
@@ -65,6 +66,7 @@ public class ProblemsHolder {
                                               error.substring(prefix.length(), error.charAt(error.length() - 1) == '"'
                                                                                ? error.length() - 1
                                                                                : error.length()), propertyName);
+        dontLog = true;
       }
     }
     else {
@@ -72,7 +74,7 @@ public class ProblemsHolder {
     }
 
     final ProblemDescriptor problemDescriptor = new ProblemDescriptor(error, currentFile, getLineNumber(element));
-    if (!logDisabled) {
+    if (!dontLog) {
       LOG.error(LogMessageUtil.createEvent(error, e, problemDescriptor));
     }
     problems.add(problemDescriptor);
