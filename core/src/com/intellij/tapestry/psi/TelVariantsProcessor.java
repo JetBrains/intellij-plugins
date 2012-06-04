@@ -2,21 +2,23 @@ package com.intellij.tapestry.psi;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
-import static com.intellij.psi.PsiModifier.*;
 import com.intellij.psi.impl.beanProperties.BeanProperty;
 import com.intellij.psi.resolve.JavaMethodCandidateInfo;
 import com.intellij.psi.resolve.JavaMethodResolveHelper;
 import com.intellij.psi.scope.BaseScopeProcessor;
 import com.intellij.psi.util.PropertyUtil;
 import com.intellij.tapestry.core.TapestryConstants;
-import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import static com.intellij.psi.PsiModifier.*;
+import static com.intellij.util.containers.ContainerUtil.addIfNotNull;
 
 /**
  * @author peter
@@ -112,6 +114,7 @@ abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
   @Nullable
   protected abstract T createResult(final PsiNamedElement element, final boolean validResult);
 
+  @NotNull
   public T[] getVariants(T[] array) {
     if (myPropertyAccessors != null) {
       for (final JavaMethodCandidateInfo methodCandidateInfo : myPropertyAccessors.getMethods()) {

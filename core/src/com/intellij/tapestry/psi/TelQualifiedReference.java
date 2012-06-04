@@ -33,7 +33,8 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
 
   private static final ResolveCache.PolyVariantResolver<TelQualifiedReference> MY_RESOLVER =
     new ResolveCache.PolyVariantResolver<TelQualifiedReference>() {
-      public ResolveResult[] resolve(final TelQualifiedReference expression, final boolean incompleteCode) {
+      @NotNull
+      public ResolveResult[] resolve(@NotNull final TelQualifiedReference expression, final boolean incompleteCode) {
         return expression.resolveInner();
       }
     };
@@ -93,6 +94,7 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     return results.length == 1 ? results[0].getElement() : null;
   }
 
+  @NotNull
   private ResolveResult[] resolveInner() {
     final String referenceName = getReferenceName();
     if (referenceName == null) return ResolveResult.EMPTY_ARRAY;
