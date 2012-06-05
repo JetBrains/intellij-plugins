@@ -113,7 +113,7 @@ public class JavaScriptGenerateDelegatesHandler extends BaseJSGenerateHandler {
       }
 
       @Override
-      public boolean execute(PsiElement element, ResolveState state) {
+      public boolean execute(@NotNull PsiElement element, ResolveState state) {
         JSClass clazz = JSUtils.getMemberContainingClass(element);
         if (clazz == null || JSResolveUtil.isObjectClass(clazz) || clazz == jsClass) {
           return true;

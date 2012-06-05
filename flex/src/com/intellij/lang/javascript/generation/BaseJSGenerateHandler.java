@@ -261,7 +261,7 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
         setLocalResolve(true);
       }
 
-      public boolean execute(final PsiElement element, final ResolveState state) {
+      public boolean execute(@NotNull final PsiElement element, final ResolveState state) {
         final JSNamedElement namedElement = (JSNamedElement)element;
         if (skipStatics && element instanceof JSAttributeListOwner) {
           JSAttributeList attributeList = ((JSAttributeListOwner)element).getAttributeList();

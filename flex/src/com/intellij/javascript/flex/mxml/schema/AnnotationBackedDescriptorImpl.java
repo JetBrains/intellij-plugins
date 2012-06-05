@@ -954,7 +954,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     final Set<String> names = new HashSet<String>();
 
     ResolveProcessor processor = new ResolveProcessor(null) {
-      public boolean execute(final PsiElement element, final ResolveState state) {
+      public boolean execute(@NotNull final PsiElement element, final ResolveState state) {
         if (element instanceof JSNamedElement) {
           names.add(((JSNamedElement)element).getName());
         }

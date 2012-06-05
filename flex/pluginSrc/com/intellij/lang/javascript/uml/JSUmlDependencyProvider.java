@@ -26,6 +26,7 @@ import com.intellij.psi.xml.*;
 import com.intellij.util.Processor;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -256,7 +257,7 @@ public class JSUmlDependencyProvider {
 
     myClazz.processDeclarations(new BaseScopeProcessor() {
       @Override
-      public boolean execute(final PsiElement element, final ResolveState state) {
+      public boolean execute(@NotNull final PsiElement element, final ResolveState state) {
         element.accept(visitor);
         return true;
       }

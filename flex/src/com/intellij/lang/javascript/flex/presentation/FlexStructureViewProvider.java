@@ -61,7 +61,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
       final List<StructureViewTreeElement> result = new ArrayList<StructureViewTreeElement>();
       final ResolveProcessor processor = new ResolveProcessor(null) {
         @Override
-        public boolean execute(final PsiElement element, final ResolveState state) {
+        public boolean execute(@NotNull final PsiElement element, final ResolveState state) {
           result.add(new JSStructureViewElement(element));
           return true;
         }

@@ -94,7 +94,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
           }
 
           @Override
-          public boolean execute(PsiElement element, ResolveState state) {
+          public boolean execute(@NotNull PsiElement element, ResolveState state) {
             if (element instanceof JSFunction) {
               consumer.consume(element);
             }
@@ -105,7 +105,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
           }
 
           @Override
-          public <T> T getHint(Key<T> hintKey) {
+          public <T> T getHint(@NotNull Key<T> hintKey) {
             return null;
           }
 
