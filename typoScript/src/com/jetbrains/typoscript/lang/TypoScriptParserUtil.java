@@ -3,10 +3,7 @@ package com.jetbrains.typoscript.lang;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 
-/**
- * @author lene
- *         Date: 11.04.12
- */
+
 public class TypoScriptParserUtil extends GeneratedParserUtilBase {
 
   static boolean isAfterNewLine(PsiBuilder builder, int level) {

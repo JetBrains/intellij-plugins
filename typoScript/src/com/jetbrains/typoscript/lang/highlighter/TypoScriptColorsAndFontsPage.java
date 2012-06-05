@@ -16,10 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.Map;
 
-/**
- * @author lene
- *         Date: 12.04.12
- */
+
 public class TypoScriptColorsAndFontsPage implements ColorSettingsPage, DisplayPrioritySortable {
 
   @NonNls private static final String DEMO_TEXT = "/*\n" +

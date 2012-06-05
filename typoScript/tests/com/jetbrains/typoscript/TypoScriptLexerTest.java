@@ -11,10 +11,7 @@ import org.jetbrains.annotations.NonNls;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * @author lene
- *         Date: 04.04.12
- */
+
 public class TypoScriptLexerTest extends UsefulTestCase {
   @NonNls
   private static final String INPUT_DATA_FILE_EXT = "test.ts";

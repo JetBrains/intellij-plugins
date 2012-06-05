@@ -5,10 +5,7 @@ import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 
-/**
- * @author lene
- *         Date: 11.04.12
- */
+
 public class TypoScriptHighlightingData {
   public static final TextAttributesKey ONE_LINE_COMMENT =
     TextAttributesKey.createTextAttributesKey("TS_ONE_LINE_COMMENT", SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes());

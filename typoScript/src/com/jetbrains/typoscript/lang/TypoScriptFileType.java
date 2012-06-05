@@ -6,10 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-/**
- * @author lene
- *         Date: 03.04.12
- */
+
 public class TypoScriptFileType extends LanguageFileType {
   private static final Icon ICON = IconLoader.getIcon("/icons/typo3.png");
 

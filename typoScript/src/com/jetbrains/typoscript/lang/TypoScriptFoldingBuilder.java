@@ -19,10 +19,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author lene
- *         Date: 18.04.12
- */
+
 public class TypoScriptFoldingBuilder implements FoldingBuilder, DumbAware {
   @NotNull
   @Override

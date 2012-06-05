@@ -3,6 +3,7 @@ package com.jetbrains.typoscript.lang.highlighter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.hash.HashMap;
 import com.jetbrains.typoscript.lang.TypoScriptLexer;
@@ -11,10 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-/**
- * @author lene
- *         Date: 11.04.12
- */
+
 public class TypoScriptSyntaxHighlighter extends SyntaxHighlighterBase {
   private static final Map<IElementType, TextAttributesKey> ourMap;
 
@@ -35,7 +33,7 @@ public class TypoScriptSyntaxHighlighter extends SyntaxHighlighterBase {
     ourMap.put(TypoScriptTokenTypes.CONDITION, TypoScriptHighlightingData.CONDITION);
     ourMap.put(TypoScriptTokenTypes.INCLUDE_STATEMENT, TypoScriptHighlightingData.INCLUDE_STATEMENT);
 
-    ourMap.put(TypoScriptTokenTypes.BAD_CHARACTER, TypoScriptHighlightingData.BAD_CHARACTER);
+    ourMap.put(TokenType.BAD_CHARACTER, TypoScriptHighlightingData.BAD_CHARACTER);
 
     /*
  IElementType MODIFICATION_OPERATOR_FUNCTION = new TypoScriptTokenType("MODIFICATION_FUNCTION");

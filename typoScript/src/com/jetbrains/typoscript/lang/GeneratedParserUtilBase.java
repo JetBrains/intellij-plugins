@@ -25,9 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
-/**
-* @author gregsh
-*/
+
 @SuppressWarnings("StringEquality")
 public class GeneratedParserUtilBase {
 

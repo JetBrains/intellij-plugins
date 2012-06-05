@@ -7,10 +7,7 @@ import com.jetbrains.typoscript.lang.TypoScriptFileType;
 import com.jetbrains.typoscript.lang.TypoScriptLanguage;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author lene
- *         Date: 11.04.12
- */
+
 public class TypoScriptFile  extends PsiFileBase {
 
   public TypoScriptFile(@NotNull FileViewProvider viewProvider) {

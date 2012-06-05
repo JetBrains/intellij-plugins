@@ -7,10 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author lene
- *         Date: 11.04.12
- */
+
 public class TypoScriptFileTypeFactory extends FileTypeFactory {
 
   public static final List<? extends FileNameMatcher> FILE_NAME_MATCHERS =

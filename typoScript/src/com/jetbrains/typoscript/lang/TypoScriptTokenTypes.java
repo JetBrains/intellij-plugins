@@ -4,10 +4,7 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 
-/**
- * @author lene
- *         Date: 03.04.12
- */
+
 public interface TypoScriptTokenTypes extends TokenType {
   IElementType C_STYLE_COMMENT = new TypoScriptTokenType("C_STYLE_COMMENT");
   IElementType ONE_LINE_COMMENT = new TypoScriptTokenType("ONE_LINE_COMMENT");

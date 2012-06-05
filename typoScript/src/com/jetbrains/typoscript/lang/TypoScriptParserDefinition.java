@@ -14,10 +14,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.jetbrains.typoscript.lang.psi.TypoScriptFile;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author lene
- *         Date: 11.04.12
- */
+
 public class TypoScriptParserDefinition implements ParserDefinition {
   @NotNull
   @Override

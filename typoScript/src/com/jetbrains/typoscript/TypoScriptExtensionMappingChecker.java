@@ -19,10 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-/**
- * @author lene
- *         Date: 24.04.12
- */
+
 public class TypoScriptExtensionMappingChecker implements ApplicationComponent {
   private static final Logger LOG = Logger.getInstance(TypoScriptExtensionMappingChecker.class);
   private final FileTypeManager myFileTypeManager;

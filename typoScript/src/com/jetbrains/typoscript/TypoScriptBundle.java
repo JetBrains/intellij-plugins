@@ -8,10 +8,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.util.ResourceBundle;
 
-/**
- * @author lene
- *         Date: 12.04.12
- */
+
 public class TypoScriptBundle {
   @NonNls public static String NOTIFICATION_ID = "TypoScript";
   private static Reference<ResourceBundle> ourBundle;

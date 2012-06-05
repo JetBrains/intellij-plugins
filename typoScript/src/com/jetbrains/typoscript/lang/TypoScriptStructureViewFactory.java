@@ -16,10 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.util.ArrayList;
 
-/**
- * @author lene
- *         Date: 20.04.12
- */
+
 public class TypoScriptStructureViewFactory implements PsiStructureViewFactory {
   private static final Class[] SUITABLE_CLASSES =
     new Class[]{Assignment.class, CodeBlock.class, ConditionElement.class, Copying.class, IncludeStatementElement.class,
