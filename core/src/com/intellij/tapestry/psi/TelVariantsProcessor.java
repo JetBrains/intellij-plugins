@@ -53,7 +53,7 @@ abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
     }
   }
 
-  public boolean execute(final PsiElement element, final ResolveState state) {
+  public boolean execute(@NotNull final PsiElement element, final ResolveState state) {
     if (!(element instanceof PsiNamedElement)) return true;
 
     final PsiNamedElement namedElement = (PsiNamedElement)element;
