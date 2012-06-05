@@ -99,6 +99,11 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable i
   }
 
   @Override
+  public Icon getIcon(boolean expanded) {
+    return FlexIdeBCConfigurable.unwrap(this).getIcon();
+  }
+
+  @Override
   public String getHelpTopic() {
     final String helpTopic = myChildren.get(myTabs.getSelectedIndex()).getHelpTopic();
     return helpTopic != null ? helpTopic : getMainChild().getHelpTopic();
