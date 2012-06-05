@@ -955,6 +955,8 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   private void scheduleOutputReading() {
+    if (myOutputAlarm.isDisposed()) return;
+
     Runnable action = new Runnable() {
       public void run() {
         try {
@@ -970,7 +972,7 @@ public class FlexDebugProcess extends XDebugProcess {
         }
       }
     };
-    myOutputAlarm.addRequest(action, 500);
+    myOutputAlarm.addRequest(action, 0);
   }
 
   void addPendingCommand(final DebuggerCommand command, int delay) {
