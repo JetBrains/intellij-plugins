@@ -89,6 +89,11 @@ public class FlexMoveFileRefactoringHandler extends MoveHandlerDelegate {
   @Nullable
   public static JSQualifiedNamedElement adjustForMove(PsiElement element) {
     element = JSResolveUtil.unwrapProxy(element);
+    PsiFile file = element.getContainingFile();
+    if (file == null || !file.getLanguage().is(JavaScriptSupportLoader.ECMA_SCRIPT_L4) && !JavaScriptSupportLoader.isFlexMxmFile(file)) {
+      return null;
+    }
+
     if (element instanceof JSPackageStatement) {
       return null;
     }
