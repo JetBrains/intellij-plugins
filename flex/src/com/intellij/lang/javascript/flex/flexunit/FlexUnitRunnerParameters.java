@@ -282,8 +282,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     }
 
     if (!flexUnitSupport.isTestClass((JSClass)classToTest, allowSuite)) {
-      throw new RuntimeConfigurationError(
-        FlexBundle.message(allowSuite ? "class.not.test.class.or.suite" : "class.not.test.class", className));
+      throw new RuntimeConfigurationError(FlexBundle.message("class.contains.no.tests", className));
     }
     return (JSClass)classToTest;
   }
