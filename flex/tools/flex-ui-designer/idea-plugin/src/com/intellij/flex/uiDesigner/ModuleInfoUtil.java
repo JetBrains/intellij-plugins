@@ -180,7 +180,7 @@ public final class ModuleInfoUtil {
 
     final GlobalSearchScope moduleScope = module.getModuleScope(false);
     for (JSClass holder : holders) {
-      JSClassSearch.searchClassInheritors(new JSClassSearch.SearchParameters(holder, true, moduleScope)).forEach(processor);
+      JSClassSearch.searchClassInheritors(holder, true, moduleScope).forEach(processor);
     }
     return result;
   }
