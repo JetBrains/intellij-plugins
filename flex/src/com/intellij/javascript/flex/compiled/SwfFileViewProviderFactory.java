@@ -53,7 +53,7 @@ public class SwfFileViewProviderFactory implements FileViewProviderFactory {
 
     @Override
     public boolean isWritable() {
-      return false;
+      return true;
     }
 
     @Override
