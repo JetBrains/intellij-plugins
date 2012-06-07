@@ -105,23 +105,24 @@ public class FlexApplicationComponent extends FileTypeFactory implements Applica
   public static class ResourceProvider implements StandardResourceProvider {
 
     public void registerResources(ResourceRegistrar registrar) {
-      final String path = "/" + getClass().getPackage().getName().replace('.', '/');
-      registrar.addStdResource(HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG, path + "/FlexCompilerSchema.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_1_0, path + "/AIR_Descriptor.1.0.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_1_1, path + "/AIR_Descriptor.1.1.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_1_5, path + "/AIR_Descriptor.1.5.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_1_5_1, path + "/AIR_Descriptor.1.5.1.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_1_5_2, path + "/AIR_Descriptor.1.5.2.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_1_5_3, path + "/AIR_Descriptor.1.5.3.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_0, path + "/AIR_Descriptor.2.0.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_5, path + "/AIR_Descriptor.2.5.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_6, path + "/AIR_Descriptor.2.6.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_7, path + "/AIR_Descriptor.2.7.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_3_0, path + "/AIR_Descriptor.3.0.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_3_1, path + "/AIR_Descriptor.3.1.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_3_2, path + "/AIR_Descriptor.3.2.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_3_3, path + "/AIR_Descriptor.3.3.xsd", FlexApplicationComponent.class);
-      registrar.addStdResource(JSAttributeImpl.URN_FLEX_META, path + "/KnownMetaData.dtd", getClass());
+      registrar.addStdResource(HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG, "/schemas/FlexCompilerSchema.xsd", FlexApplicationComponent.class);
+
+      registrar.addStdResource(JSAttributeImpl.URN_FLEX_META, "/schemas/KnownMetaData.dtd", FlexApplicationComponent.class);
+
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_1_0, "/schemas/AIR_Descriptor.1.0.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_1_1, "/schemas/AIR_Descriptor.1.1.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_1_5, "/schemas/AIR_Descriptor.1.5.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_1_5_1, "/schemas/AIR_Descriptor.1.5.1.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_1_5_2, "/schemas/AIR_Descriptor.1.5.2.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_1_5_3, "/schemas/AIR_Descriptor.1.5.3.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_0, "/schemas/AIR_Descriptor.2.0.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_5, "/schemas/AIR_Descriptor.2.5.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_6, "/schemas/AIR_Descriptor.2.6.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_2_7, "/schemas/AIR_Descriptor.2.7.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_3_0, "/schemas/AIR_Descriptor.3.0.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_3_1, "/schemas/AIR_Descriptor.3.1.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_3_2, "/schemas/AIR_Descriptor.3.2.xsd", FlexApplicationComponent.class);
+      registrar.addStdResource(HTTP_NS_ADOBE_COM_AIR_APPLICATION_3_3, "/schemas/AIR_Descriptor.3.3.xsd", FlexApplicationComponent.class);
     }
   }
 }
