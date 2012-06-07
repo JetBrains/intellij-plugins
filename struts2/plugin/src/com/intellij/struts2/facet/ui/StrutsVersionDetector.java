@@ -16,6 +16,7 @@
 package com.intellij.struts2.facet.ui;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.vfs.JarFile;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
@@ -30,7 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
  * Detects the Struts2 version from attached struts-2core.jar.
@@ -45,17 +45,17 @@ public class StrutsVersionDetector {
   @Nullable
   public static String detectStrutsVersion(@NotNull final Module module) {
     try {
-      final ZipFile zipFile = getStrutsJar(module);
-      if (zipFile == null) {
+      final JarFile strutsJar = getStrutsJar(module);
+      if (strutsJar == null) {
         return null;
       }
 
-      final ZipEntry zipEntry = zipFile.getEntry("META-INF/maven/org.apache.struts/struts2-core/pom.properties");
+      final ZipEntry zipEntry = strutsJar.getEntry("META-INF/maven/org.apache.struts/struts2-core/pom.properties");
       if (zipEntry == null) {
         return null;
       }
 
-      final InputStream inputStream = zipFile.getInputStream(zipEntry);
+      final InputStream inputStream = strutsJar.getInputStream(zipEntry);
       final Properties properties = new Properties();
       properties.load(inputStream);
       return properties.getProperty("version");
@@ -65,7 +65,7 @@ public class StrutsVersionDetector {
   }
 
   @Nullable
-  private static ZipFile getStrutsJar(final Module module) throws IOException {
+  private static JarFile getStrutsJar(final Module module) throws IOException {
     final GlobalSearchScope scope = GlobalSearchScope.moduleRuntimeScope(module, false);
     final JavaPsiFacade psiManager = JavaPsiFacade.getInstance(module.getProject());
 
@@ -74,7 +74,7 @@ public class StrutsVersionDetector {
       return null;
     }
 
-    return JarFileSystem.getInstance().getJarFile(virtualFile).getZipFile();
+    return JarFileSystem.getInstance().getJarFile(virtualFile);
   }
 
   @Nullable
