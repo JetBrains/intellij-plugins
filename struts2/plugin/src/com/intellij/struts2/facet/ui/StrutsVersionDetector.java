@@ -74,7 +74,7 @@ public class StrutsVersionDetector {
       return null;
     }
 
-    return JarFileSystem.getInstance().getJarFile(virtualFile);
+    return JarFileSystem.getInstance().getJarFile(virtualFile).getZipFile();
   }
 
   @Nullable
