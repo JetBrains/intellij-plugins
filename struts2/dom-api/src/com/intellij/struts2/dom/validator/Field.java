@@ -32,7 +32,7 @@ import java.util.List;
 @SuppressWarnings("UnusedDeclaration")
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
 @Presentation(typeName = "Field",
-              icon = "/nodes/field.png",
+              icon = "AllIcons.Nodes.Field",
               provider = Struts2ValidationPresentationProvider.class)
 public interface Field extends DomElement {
 

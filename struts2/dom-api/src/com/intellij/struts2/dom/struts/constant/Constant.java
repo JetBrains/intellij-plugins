@@ -23,7 +23,7 @@ import com.intellij.util.xml.*;
 
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Constant", icon = "/nodes/parameter.png")
+@Presentation(typeName = "Constant", icon = "AllIcons.Nodes.Parameter")
 public interface Constant extends DomElement {
 
   @NameValue
