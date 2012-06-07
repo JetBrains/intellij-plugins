@@ -20,10 +20,7 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.LibraryOrderEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleOrderEntry;
-import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
@@ -37,6 +34,7 @@ import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -473,16 +471,13 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
 
       // ---------------- modules entries ----------------------
-      final Map<Module, Boolean> modulesToAdd = new HashMap<Module, Boolean>(); // module -> transitive or not
+      final Set<Module> modulesToAdd = new THashSet<Module>();
       for (Editor editor : myModule2Editors.get(module)) {
         for (DependencyEntry dependencyEntry : editor.getDependencies().getEntries()) {
           if (dependencyEntry instanceof BuildConfigurationEntry) {
             final Module dependencyModule = findModuleWithBC((BuildConfigurationEntry)dependencyEntry);
             if (dependencyModule != null && dependencyModule != module) {
-              final Boolean transitiveFlag = modulesToAdd.get(dependencyModule);
-              modulesToAdd.put(dependencyModule,
-                               Boolean.TRUE == transitiveFlag ||
-                               BCUtils.isTransitiveDependency(dependencyEntry.getDependencyType().getLinkageType()));
+              modulesToAdd.add(dependencyModule);
             }
           }
         }
@@ -491,27 +486,22 @@ public class FlexProjectConfigurationEditor implements Disposable {
       List<OrderEntry> moduleOrderEntriesToRemove = ContainerUtil.filter(modifiableModel.getOrderEntries(), new Condition<OrderEntry>() {
         @Override
         public boolean value(OrderEntry orderEntry) {
-          if (orderEntry instanceof ModuleOrderEntry) {
-            Module m = ((ModuleOrderEntry)orderEntry).getModule();
-            final Boolean transitive = modulesToAdd.get(m);
-            if (transitive != null) {
-              ((ModuleOrderEntry)orderEntry).setExported(transitive);
-              modulesToAdd.remove(m);
-              return false;
-            }
-            else {
-              return true;
-            }
-          }
-          return false;
+          return orderEntry instanceof ModuleOrderEntry && !modulesToAdd.remove(((ModuleOrderEntry)orderEntry).getModule());
         }
       });
 
       for (OrderEntry orderEntry : moduleOrderEntriesToRemove) {
         modifiableModel.removeOrderEntry(orderEntry);
       }
-      for (Map.Entry<Module, Boolean> e : modulesToAdd.entrySet()) {
-        modifiableModel.addModuleOrderEntry(e.getKey()).setExported(e.getValue());
+      for (Module moduleToAdd : modulesToAdd) {
+        modifiableModel.addModuleOrderEntry(moduleToAdd);
+      }
+
+      for (OrderEntry entry : modifiableModel.getOrderEntries()) {
+        if (entry instanceof ExportableOrderEntry) {
+          // transitiveness will be filtered out in FlexOrderEnumeratorHandler if needed
+          ((ExportableOrderEntry)entry).setExported(true);
+        }
       }
     }
 
