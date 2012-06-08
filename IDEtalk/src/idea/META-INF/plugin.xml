@@ -96,7 +96,7 @@
       <separator/>
       <action id="IDEtalk.SearchUserHistory"
               class="jetbrains.communicator.idea.actions.SearchHistoryAction"
-              icon="AllIcons.General.ToolWindowFind"
+              icon="AllIcons.Toolwindows.ToolWindowFind"
               text="Message _history"
               description="View and search messages history for the user">
         <keyboard-shortcut first-keystroke="alt F7" keymap="$default"/>
