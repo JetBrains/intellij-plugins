@@ -242,11 +242,6 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     }
 
     @NotNull
-    public PsiAnnotation[] getAnnotations() {
-      return PsiAnnotation.EMPTY_ARRAY;
-    }
-
-    @NotNull
     public String getName() {
       return StringUtil.notNullize(myName);
     }
@@ -289,5 +284,4 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
       return "Light Parameter List";
     }
   }
-
 }
