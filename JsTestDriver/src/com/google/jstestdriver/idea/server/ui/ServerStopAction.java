@@ -17,7 +17,7 @@ public class ServerStopAction extends AnAction {
 
   private final JstdServerState myServerState;
 
-  ServerStopAction(JstdServerState serverState) {
+  ServerStopAction(@NotNull JstdServerState serverState) {
     super("Stop the local server", null, JstdIcons.getIcon("stopLocalServer.png"));
     myServerState = serverState;
   }
@@ -29,10 +29,10 @@ public class ServerStopAction extends AnAction {
 
   @Override
   public void actionPerformed(AnActionEvent e) {
-    ServerStartupAction serverStartupAction = ToolPanel.myServerStartupAction;
+    ServerStartupAction serverStartupAction = JstdToolWindowPanel.myServerStartupAction;
     if (serverStartupAction != null) {
       runStopAction(serverStartupAction);
-      ToolPanel.myServerStartupAction = null;
+      JstdToolWindowPanel.myServerStartupAction = null;
     }
   }
 

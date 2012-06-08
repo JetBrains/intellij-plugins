@@ -17,35 +17,43 @@ package com.google.jstestdriver.idea.server.ui;
 
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.hooks.ServerListener;
+import com.google.jstestdriver.idea.MessageBundle;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.util.containers.ConcurrentHashSet;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class StatusBar extends JPanel implements ServerListener {
+public class StatusBar implements ServerListener {
 
-  private static final long serialVersionUID = 8729866568493622493L;
-
+  private final JComponent myComponent;
   private final JLabel myLabel;
-  private final ResourceBundle myMessageBundle;
+  private final Set<BrowserInfo> myCapturedBrowsers = new ConcurrentHashSet<BrowserInfo>();
 
-  public StatusBar(ResourceBundle messageBundle) {
+  public StatusBar() {
+    myComponent = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+    myComponent.setBorder(BorderFactory.createLineBorder(Color.GRAY));
     myLabel = new JLabel();
-    add(myLabel);
-    myMessageBundle = messageBundle;
+    myComponent.add(myLabel);
     setStatusDeferred(Status.NOT_RUNNING);
+  }
+
+  @NotNull
+  public JComponent getComponent() {
+    return myComponent;
   }
 
   private void setStatusDeferred(final Status status) {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
-        StatusBar.this.setBackground(status.getColor());
-        myLabel.setText(myMessageBundle.getString(status.name()));
+        myComponent.setBackground(status.getColor());
+        myLabel.setText(MessageBundle.message(status.name()));
       }
     });
   }
@@ -53,23 +61,30 @@ public class StatusBar extends JPanel implements ServerListener {
   @Override
   public void serverStarted() {
     setStatusDeferred(Status.NO_BROWSERS);
+    myCapturedBrowsers.clear();
   }
 
   @Override
   public void serverStopped() {
     setStatusDeferred(Status.NOT_RUNNING);
+    myCapturedBrowsers.clear();
   }
 
   @Override
   public void browserCaptured(BrowserInfo info) {
     setStatusDeferred(Status.READY);
+    myCapturedBrowsers.add(info);
   }
 
   @Override
   public void browserPanicked(BrowserInfo info) {
+    myCapturedBrowsers.remove(info);
+    if (myCapturedBrowsers.isEmpty()) {
+      setStatusDeferred(Status.NO_BROWSERS);
+    }
   }
 
-  public enum Status {
+  private enum Status {
     NOT_RUNNING("#FF6666"),
     NO_BROWSERS("#FFFF66"),
     READY("#66CC66");

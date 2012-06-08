@@ -39,18 +39,27 @@ public class MessageBundle {
 
   public static String message(@NonNls @PropertyKey(resourceBundle = BUNDLE) String key,
                                Object... params) {
-    return CommonBundle.message(MessageBundle.getBundle(), key, params);
+    return CommonBundle.message(getBundle(), key, params);
   }
 
-  public static ResourceBundle getBundle() {
+  private static ResourceBundle getBundle() {
     ResourceBundle bundle = null;
     if (MessageBundle.bundle != null) {
       bundle = MessageBundle.bundle.get();
     }
     if (bundle == null) {
-      bundle = ResourceBundle.getBundle(MessageBundle.BUNDLE);
+      bundle = ResourceBundle.getBundle(BUNDLE);
       MessageBundle.bundle = new SoftReference<ResourceBundle>(bundle);
     }
     return bundle;
   }
+
+  public static String getPluginName() {
+    return message("plugin.name");
+  }
+
+  public static String getCaptureUrlMessage() {
+    return message("captureLabel");
+  }
+
 }

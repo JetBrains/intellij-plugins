@@ -9,11 +9,13 @@ import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
+import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +39,7 @@ public class JstdSettingsUtil {
     if (testType == TestType.ALL_CONFIGS_IN_DIRECTORY) {
       VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(new File(runSettings.getDirectory()));
       if (virtualFile != null) {
-        res = findJstdConfigFiles(project, virtualFile);
+        res = collectJstdConfigFilesInDirectory(project, virtualFile);
       }
     } else {
       File configFile = extractConfigFile(project, runSettings);
@@ -65,13 +67,30 @@ public class JstdSettingsUtil {
   }
 
   @NotNull
-  public static List<VirtualFile> findJstdConfigFiles(@NotNull Project project, @NotNull VirtualFile directory) {
+  public static List<VirtualFile> collectJstdConfigFilesInDirectory(@NotNull Project project, @NotNull VirtualFile directory) {
     GlobalSearchScope directorySearchScope = buildDirectorySearchScope(project, directory);
     if (directorySearchScope == null) {
       return Collections.emptyList();
     }
     Collection<VirtualFile> configs = FileTypeIndex.getFiles(JstdConfigFileType.INSTANCE, directorySearchScope);
     return Lists.newArrayList(configs);
+  }
+
+  public static boolean areJstdConfigFilesInDirectory(@NotNull Project project, @NotNull VirtualFile directory) {
+    GlobalSearchScope directorySearchScope = buildDirectorySearchScope(project, directory);
+    if (directorySearchScope == null) {
+      return false;
+    }
+    FileBasedIndex index = FileBasedIndex.getInstance();
+    final Ref<Boolean> jstdConfigFound = Ref.create(false);
+    index.processValues(FileTypeIndex.NAME, JstdConfigFileType.INSTANCE, null, new FileBasedIndex.ValueProcessor<Void>() {
+      @Override
+      public boolean process(final VirtualFile file, final Void value) {
+        jstdConfigFound.set(true);
+        return false;
+      }
+    }, directorySearchScope);
+    return jstdConfigFound.get();
   }
 
   @Nullable

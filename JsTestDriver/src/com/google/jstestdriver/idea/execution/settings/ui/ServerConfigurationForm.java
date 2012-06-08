@@ -5,7 +5,7 @@ import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.server.JstdServerFetchResult;
 import com.google.jstestdriver.idea.server.JstdServerInfo;
 import com.google.jstestdriver.idea.server.JstdServerUtils;
-import com.google.jstestdriver.idea.server.ui.ToolPanel;
+import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
 import com.google.jstestdriver.idea.util.SwingUtils;
 import com.google.jstestdriver.idea.util.TextChangeListener;
 import com.intellij.openapi.application.ApplicationManager;
@@ -35,7 +35,7 @@ class ServerConfigurationForm extends AbstractRunSettingsSection {
     myTestConnectionButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        String serverUrl = myAtAddressRadioButton.isSelected() ? myServerAddress.getText() : "http://localhost:" + ToolPanel.serverPort;
+        String serverUrl = myAtAddressRadioButton.isSelected() ? myServerAddress.getText() : "http://localhost:" + JstdToolWindowPanel.serverPort;
         myTestConnectionButton.setEnabled(false);
         myTestConnectionResult.setText("Connecting to " + serverUrl + " ...");
         final ModalityState currentModalityState = ModalityState.current();

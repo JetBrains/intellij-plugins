@@ -10,7 +10,7 @@ import com.google.jstestdriver.idea.TestRunner;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
-import com.google.jstestdriver.idea.server.ui.ToolPanel;
+import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
 import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.intellij.execution.*;
 import com.intellij.execution.configurations.CommandLineState;
@@ -166,7 +166,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
   public Map<TestRunner.ParameterKey, String> createParameterMap() {
     Map<TestRunner.ParameterKey, String> parameters = Maps.newLinkedHashMap();
     String serverUrl = myRunSettings.getServerType() == ServerType.INTERNAL ?
-                       "http://localhost:" + ToolPanel.serverPort :
+                       "http://localhost:" + JstdToolWindowPanel.serverPort :
                        myRunSettings.getServerAddress();
     parameters.put(TestRunner.ParameterKey.SERVER_URL, serverUrl);
     if (myRunSettings.getTestType() == TestType.ALL_CONFIGS_IN_DIRECTORY) {

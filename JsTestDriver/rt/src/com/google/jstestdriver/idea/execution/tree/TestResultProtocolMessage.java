@@ -30,7 +30,7 @@ import java.io.Serializable;
  *
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class TestResultProtocolMessage implements Serializable {
+public class TestResultProtocolMessage {
   public String jstdConfigFilePath;
   public String phase;
   public String testName;

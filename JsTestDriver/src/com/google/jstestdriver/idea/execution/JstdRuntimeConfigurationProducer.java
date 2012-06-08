@@ -51,12 +51,15 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
   }
 
   private static void logTakenTime(String actionName, long startTimeNano, String... args) {
-    long endTimeNano = System.nanoTime();
-    String message = String.format("[JsTD] Time taken by '" + actionName + "': %.2f ms, extra args: %s\n",
-      (endTimeNano - startTimeNano) / 1000000.0,
-      Arrays.toString(args)
-    );
-    LOG.info(message);
+    final long NANO_IN_MS = 1000000;
+    long durationNano = System.nanoTime() - startTimeNano;
+    if (durationNano > 100 * NANO_IN_MS) {
+      String message = String.format("[JsTD] Time taken by '" + actionName + "': %.2f ms, extra args: %s\n",
+                                     durationNano / (1.0 * NANO_IN_MS),
+                                     Arrays.toString(args)
+      );
+      LOG.info(message);
+    }
   }
 
   private static void logDoneCreateConfigurationByElement(long startTimeNano, String... args) {
@@ -271,7 +274,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       }
       PsiDirectory psiDirectory = (PsiDirectory) psiElement;
       VirtualFile directory = psiDirectory.getVirtualFile();
-      boolean jstdConfigs = JstdClientCommandLineBuilder.areJstdConfigFilesInDirectory(psiDirectory.getProject(), directory);
+      boolean jstdConfigs = JstdSettingsUtil.areJstdConfigFilesInDirectory(psiDirectory.getProject(), directory);
       if (!jstdConfigs) {
         return null;
       }

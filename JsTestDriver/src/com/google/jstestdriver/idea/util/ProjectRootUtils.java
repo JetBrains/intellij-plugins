@@ -30,7 +30,6 @@ public class ProjectRootUtils {
       return fileIndex.getContentRootForFile(virtualFile);
     }
     return null;
-
   }
 
   @Nullable

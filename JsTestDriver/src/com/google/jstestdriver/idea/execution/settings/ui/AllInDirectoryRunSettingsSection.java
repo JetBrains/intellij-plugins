@@ -1,22 +1,22 @@
 package com.google.jstestdriver.idea.execution.settings.ui;
 
-import com.google.jstestdriver.idea.execution.JstdClientCommandLineBuilder;
+import com.google.jstestdriver.idea.execution.JstdSettingsUtil;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.util.ProjectRootUtils;
 import com.google.jstestdriver.idea.util.SwingUtils;
 import com.google.jstestdriver.idea.util.TextChangeListener;
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.IdeBorderFactory;
+import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.Function;
+import com.intellij.util.NullableFunction;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
@@ -32,7 +32,7 @@ import java.util.List;
 class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection {
 
   private TextFieldWithBrowseButton myDirectoryTextFieldWithBrowseButton;
-  private JBLabel myLabel;
+  private final JBLabel myLabel;
 
   AllInDirectoryRunSettingsSection() {
     myLabel = new JBLabel("Directory: ");
@@ -90,16 +90,17 @@ class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection {
       1.0, 1.0,
       GridBagConstraints.WEST,
       GridBagConstraints.BOTH,
-      new Insets(0, 0, 0, 0),
+      new Insets(5, 0, 0, 0),
       0, 0
     ));
 
     return panel;
   }
 
-  private static JComponent createInfoComponent(@NotNull final Project project, JTextField directoryTextField) {
+  private static JComponent createInfoComponent(@NotNull final Project project,
+                                                @NotNull JTextField directoryTextField) {
     JPanel panel = new JPanel(new BorderLayout());
-    panel.setBorder(IdeBorderFactory.createTitledBorder("Matched configuration files (*.jstd and jsTestDriver.conf)", false));
+    panel.add(new JLabel("Matched configuration files (*.jstd and jsTestDriver.conf):"), BorderLayout.NORTH);
 
     final JBList fileList = new JBList(ArrayUtil.EMPTY_STRING_ARRAY);
     fileList.setBorder(BorderFactory.createLineBorder(Color.gray));
@@ -128,13 +129,14 @@ class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection {
     if (!StringUtil.isEmpty(dirPath) && dir.isDirectory() && dir.isAbsolute()) {
       VirtualFile directoryVFile = LocalFileSystem.getInstance().findFileByIoFile(dir);
       if (directoryVFile != null) {
-        List<VirtualFile> configs = JstdClientCommandLineBuilder.collectJstdConfigFilesInDirectory(project, directoryVFile);
-        result = ContainerUtil.map(configs, new Function<VirtualFile, String>() {
+        List<VirtualFile> configs = JstdSettingsUtil.collectJstdConfigFilesInDirectory(project, directoryVFile);
+        result = ContainerUtil.filter(ContainerUtil.map(configs, new NullableFunction<VirtualFile, String>() {
           @Override
           public String fun(VirtualFile virtualFile) {
             return ProjectRootUtils.getRootRelativePath(project, virtualFile.getPath());
           }
-        });
+        }), Condition.NOT_NULL);
+        Collections.sort(result);
       }
     }
     return result;

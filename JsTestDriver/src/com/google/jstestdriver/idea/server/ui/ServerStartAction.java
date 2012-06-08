@@ -19,6 +19,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.Messages;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.*;
@@ -34,7 +35,7 @@ public class ServerStartAction extends AnAction {
 
   private final JstdServerState myServerState;
 
-  public ServerStartAction(JstdServerState serverState) {
+  public ServerStartAction(@NotNull JstdServerState serverState) {
     super("Start a local server", null, JstdIcons.getIcon("startLocalServer.png"));
     myServerState = serverState;
   }
@@ -46,7 +47,7 @@ public class ServerStartAction extends AnAction {
 
   @Override
   public void actionPerformed(AnActionEvent e) {
-    int serverPort = ToolPanel.serverPort;
+    int serverPort = JstdToolWindowPanel.serverPort;
     FileLoader fileLoader = new ProcessingFileLoader(
         new SimpleFileReader(),
         Collections.<FileLoadPostProcessor>singleton(new InlineHtmlProcessor(new HtmlDocParser(), new HtmlDocLexer())),
@@ -57,7 +58,7 @@ public class ServerStartAction extends AnAction {
         browsers,
         SlaveBrowser.TIMEOUT,
         new NullPathPrefix(),
-        Sets.<ServerListener>newHashSet(ToolPanel.SHARED_STATE)
+        Sets.<ServerListener>newHashSet(JstdToolWindowPanel.SHARED_STATE)
     );
     ServerStartupAction serverStartupAction = new ServerStartupAction(
         serverPort,
@@ -69,7 +70,7 @@ public class ServerStartAction extends AnAction {
     );
     try {
       serverStartupAction.run(null);
-      ToolPanel.myServerStartupAction = serverStartupAction;
+      JstdToolWindowPanel.myServerStartupAction = serverStartupAction;
     } catch (Exception ex) {
       ServerStopAction.runStopAction(serverStartupAction);
 
