@@ -50,7 +50,7 @@ import java.util.LinkedHashMap;
 /**
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class CapturedBrowsersUI implements ServerListener {
+public class CapturedBrowsersController implements ServerListener {
 
   private static final Logger LOG = Logger.getInstance(CapturedBrowsers.class);
 
@@ -58,7 +58,7 @@ public class CapturedBrowsersUI implements ServerListener {
   private final LinkedHashMap<Browser, BrowserButton> myBrowserButtonByNameMap;
   private final JComponent myComponent;
 
-  public CapturedBrowsersUI(@NotNull JTextField captureUrlTextField) {
+  public CapturedBrowsersController(@NotNull JTextField captureUrlTextField) {
     myBrowserButtonByNameMap = createBrowserLabelByNameMap(captureUrlTextField);
     myComponent = createComponent(myBrowserButtonByNameMap);
   }
@@ -170,7 +170,7 @@ public class CapturedBrowsersUI implements ServerListener {
     private BrowserButton(@NotNull BrowserAction action) {
       super(action,
             action.getTemplatePresentation(),
-            ToolPanel.PLACE,
+            JstdToolWindowPanel.PLACE,
             calcDimension(action.getTemplatePresentation().getIcon())
       );
     }
