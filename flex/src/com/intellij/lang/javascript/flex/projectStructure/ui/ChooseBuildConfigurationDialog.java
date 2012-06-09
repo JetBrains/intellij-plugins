@@ -10,10 +10,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
-import com.intellij.ui.ColoredTreeCellRenderer;
-import com.intellij.ui.SpeedSearchComparator;
-import com.intellij.ui.TreeSpeedSearch;
-import com.intellij.ui.TreeUIHelper;
+import com.intellij.ui.*;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -31,7 +28,6 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.*;
 
@@ -181,14 +177,17 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
     });
 
     TreeUtil.expandAll(myTree);
-    myTree.addMouseListener(new MouseAdapter() {
+    new DoubleClickListener() {
       @Override
-      public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2 && mySelection != null) {
+      protected boolean onDoubleClick(MouseEvent e) {
+        if (mySelection != null) {
           doOKAction();
+          return true;
         }
+        return false;
       }
-    });
+    }.installOn(myTree);
+
     myTree.addKeyListener(new KeyAdapter() {
       @Override
       public void keyTyped(KeyEvent e) {

@@ -25,6 +25,7 @@ import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget;
+import com.intellij.ui.ClickListener;
 import com.intellij.ui.HintHint;
 import com.intellij.ui.LightweightHint;
 import com.intellij.ui.awt.RelativePoint;
@@ -34,7 +35,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
@@ -145,9 +145,9 @@ public class ActiveBuildConfigurationWidget {
       c.weightx = 0;
       myPanel.add(myUpDownLabel, c);
 
-      MouseAdapter listener = new MouseAdapter() {
+      ClickListener listener = new ClickListener() {
         @Override
-        public void mouseClicked(final MouseEvent e) {
+        public boolean onClick(MouseEvent e, int clickCount) {
           Module module = findCurrentFlexModule();
           if (module != null) {
             ListPopup popup = ChooseActiveBuildConfigurationAction.createPopup(module);
@@ -159,12 +159,15 @@ public class ActiveBuildConfigurationWidget {
             HintHint hintHint = new HintHint(e).setShowImmediately(true).setAwtTooltip(true);
             new LightweightHint(new JLabel(myDisabledLabel.getToolTipText())).show(myPanel, e.getX(), e.getY(), myPanel, hintHint);
           }
+          return true;
         }
       };
-      myEnabledLabel.addMouseListener(listener);
-      myDisabledLabel.addMouseListener(listener);
-      myPanel.addMouseListener(listener);
-      myUpDownLabel.addMouseListener(listener);
+
+      listener.installOn(myEnabledLabel);
+      listener.installOn(myDisabledLabel);
+      listener.installOn(myPanel);
+      listener.installOn(myUpDownLabel);
+
       update();
     }
 
