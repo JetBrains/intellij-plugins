@@ -10,8 +10,10 @@ import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceActio
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -23,7 +25,10 @@ import static com.intellij.lang.javascript.psi.JSFunction.FunctionKind;
 
 public class FlexUnitTestCreator implements TestCreator {
   public boolean isAvailable(final Project project, final Editor editor, final PsiFile file) {
-    return FlexUnitTestFinder.findContextClass(file) != null;
+    final VirtualFile vFile = file.getVirtualFile();
+    return FlexUnitTestFinder.findContextClass(file) != null &&
+           vFile != null &&
+           !ProjectRootManager.getInstance(project).getFileIndex().isInTestSourceContent(vFile);
   }
 
   public void createTest(final Project project, final Editor editor, final PsiFile file) {
