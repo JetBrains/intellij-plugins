@@ -16,6 +16,8 @@ import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaField;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.tapestry.intellij.toolwindow.nodes.*;
+import com.intellij.ui.DoubleClickListener;
+import com.intellij.ui.PopupHandler;
 import com.intellij.ui.treeStructure.actions.CollapseAllAction;
 import com.intellij.ui.treeStructure.actions.ExpandAllAction;
 import com.intellij.util.ui.UIUtil;
@@ -27,7 +29,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class DependenciesTab {
@@ -49,63 +50,67 @@ public class DependenciesTab {
         _navigateToElementAction = new NavigateToElementAction();
         _navigateToUsageAction = new NavigateToUsageAction();
 
-        _dependenciesTree.addMouseListener(
-                new MouseAdapter() {
-                    public void mouseClicked(MouseEvent event) {
-                        TreePath selected = _dependenciesTree.getSelectionPath();
+      _dependenciesTree.addMouseListener(new PopupHandler() {
+        @Override
+        public void invokePopup(Component comp, int x, int y) {
+          TreePath selected = _dependenciesTree.getSelectionPath();
 
-                        // When is double click
-                        if (event.getClickCount() == 2 && event.getButton() == MouseEvent.BUTTON1 && selected != null) {
-                            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) _dependenciesTree.getSelectionPath().getLastPathComponent();
-                            Object selectedObject = selectedNode.getUserObject();
+          // When object it's selected
+          if (selected != null) {
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) _dependenciesTree.getSelectionPath().getLastPathComponent();
+            Object selectedObject = selectedNode.getUserObject();
 
-                            if (selectedNode.getParent() instanceof InjectedPagesNode || selectedNode.getParent() instanceof EmbeddedComponentsNode) {
-                              if (selectedObject instanceof InjectedElement) {
-                                ((IntellijJavaField) ((InjectedElement) selectedObject).getField()).getPsiField().navigate(true);
-                              }
-                            }
-                        }
+            if (selectedObject instanceof InjectedElement || selectedObject instanceof PresentationLibraryElement || selectedObject instanceof IResource) {
+              DefaultActionGroup actions = new DefaultActionGroup("NavigateToGroup", true);
 
-                        // When is right click and a object is selected
-                        if (event.getButton() == MouseEvent.BUTTON3) {
+              actions.add(_navigateToElementAction);
+              actions.add(_navigateToUsageAction);
 
-                            // When object it's selected
-                            if (selected != null) {
-                                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) _dependenciesTree.getSelectionPath().getLastPathComponent();
-                                Object selectedObject = selectedNode.getUserObject();
+              actions.addSeparator();
 
-                                if (selectedObject instanceof InjectedElement || selectedObject instanceof PresentationLibraryElement || selectedObject instanceof IResource) {
-                                    DefaultActionGroup actions = new DefaultActionGroup("NavigateToGroup", true);
+              actions.add(new CollapseAllAction(_dependenciesTree));
+              actions.add(new ExpandAllAction(_dependenciesTree));
 
-                                    actions.add(_navigateToElementAction);
-                                    actions.add(_navigateToUsageAction);
+              ActionPopupMenu popupMenu = ActionManager.getInstance().createActionPopupMenu("ElementUsagesTree", actions);
+              popupMenu.getComponent().show(comp, x, y);
+            }
+          }
 
-                                    actions.addSeparator();
+          // When object it's not selected
+          if (selected == null) {
+            DefaultActionGroup actions = new DefaultActionGroup("NavigateToGroup", true);
 
-                                    actions.add(new CollapseAllAction(_dependenciesTree));
-                                    actions.add(new ExpandAllAction(_dependenciesTree));
+            actions.add(new CollapseAllAction(_dependenciesTree));
+            actions.add(new ExpandAllAction(_dependenciesTree));
 
-                                    ActionPopupMenu popupMenu = ActionManager.getInstance().createActionPopupMenu("ElementUsagesTree", actions);
-                                    popupMenu.getComponent().show(event.getComponent(), event.getX(), event.getY());
-                                    event.consume();
-                                }
-                            }
+            ActionPopupMenu popupMenu = ActionManager.getInstance().createActionPopupMenu("ElementUsagesTree", actions);
+            popupMenu.getComponent().show(comp, x, y);
+          }
+        }
+      });
 
-                            // When object it's not selected
-                            if (selected == null) {
-                                DefaultActionGroup actions = new DefaultActionGroup("NavigateToGroup", true);
+      new DoubleClickListener() {
+        @Override
+        protected boolean onDoubleClick(MouseEvent e) {
+          TreePath selected = _dependenciesTree.getSelectionPath();
 
-                                actions.add(new CollapseAllAction(_dependenciesTree));
-                                actions.add(new ExpandAllAction(_dependenciesTree));
+          // When is double click
+          if (selected != null) {
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) _dependenciesTree.getSelectionPath().getLastPathComponent();
+            Object selectedObject = selectedNode.getUserObject();
 
-                                ActionPopupMenu popupMenu = ActionManager.getInstance().createActionPopupMenu("ElementUsagesTree", actions);
-                                popupMenu.getComponent().show(event.getComponent(), event.getX(), event.getY());
-                                event.consume();
-                            }
-                        }
-                    }
-                }
-        );
+            if (selectedNode.getParent() instanceof InjectedPagesNode || selectedNode.getParent() instanceof EmbeddedComponentsNode) {
+              if (selectedObject instanceof InjectedElement) {
+                ((IntellijJavaField) ((InjectedElement) selectedObject).getField()).getPsiField().navigate(true);
+              }
+            }
+            return true;
+          }
+          return false;
+        }
+      }.installOn(_dependenciesTree);
+
+
         _dependenciesTree.addTreeSelectionListener(
                 new TreeSelectionListener() {
                     public void valueChanged(TreeSelectionEvent event) {
