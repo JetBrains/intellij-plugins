@@ -26,10 +26,7 @@
 package org.osmorc.settings;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
-import com.intellij.ui.AnActionButtonUpdater;
-import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
@@ -41,7 +38,6 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -107,15 +103,16 @@ public class FrameworkDefinitionsEditorComponent {
       }
     });
 
-    myFrameworkInstances.addMouseListener(new MouseAdapter() {
+    new DoubleClickListener() {
       @Override
-      public void mouseClicked(MouseEvent e) {
-        if (mySelectedFrameworkInstance != null && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-          // edit on doubleclick
+      protected boolean onDoubleClick(MouseEvent e) {
+        if (mySelectedFrameworkInstance != null) {
           editFrameworkInstance();
+          return true;
         }
+        return false;
       }
-    });
+    }.installOn(myFrameworkInstances);
   }
 
   private void addFrameworkInstance() {

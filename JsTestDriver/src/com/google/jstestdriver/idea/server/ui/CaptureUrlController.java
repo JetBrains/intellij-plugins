@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.DoubleClickListener;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
 
@@ -135,14 +136,15 @@ public class CaptureUrlController {
         textField.selectAll();
       }
     };
-    textField.addMouseListener(new MouseAdapter() {
+
+    new DoubleClickListener() {
       @Override
-      public void mouseClicked(final MouseEvent e) {
-        if (e.getClickCount() == 2) {
-          selectAll.run();
-        }
+      protected boolean onDoubleClick(MouseEvent e) {
+        selectAll.run();
+        return true;
       }
-    });
+    }.installOn(textField);
+
     textField.addFocusListener(new FocusAdapter() {
       @Override
       public void focusGained(FocusEvent e) {
