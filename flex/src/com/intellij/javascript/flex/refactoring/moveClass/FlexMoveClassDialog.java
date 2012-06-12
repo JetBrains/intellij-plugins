@@ -148,7 +148,7 @@ public class FlexMoveClassDialog extends RefactoringDialog {
     final String packageName = myTargetPackageField.getText();
     for (final String s : StringUtil.split(packageName, ".")) {
       if (!namesValidator.isIdentifier(s, myProject)) {
-        throw new ConfigurationException(FlexBundle.message("invalid.package", packageName));
+        throw new ConfigurationException(JSBundle.message("invalid.package", packageName));
       }
     }
   }
