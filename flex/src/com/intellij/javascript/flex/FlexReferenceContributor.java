@@ -14,7 +14,7 @@ import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinIntention;
-import com.intellij.lang.javascript.validation.fixes.CreateFlexMobileViewIntentionAndFix;
+import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexMobileViewIntention;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
@@ -459,7 +459,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
           SKIN_CLASS_ATTR_NAME.equals(tagOrAttrName)
           ? new CreateFlexSkinIntention(classFqn, element)
           : "firstView".equals(tagOrAttrName)
-            ? new CreateFlexMobileViewIntentionAndFix(classFqn, element, false)
+            ? new CreateFlexMobileViewIntention(classFqn, element)
             : new CreateClassOrInterfaceAction(classFqn, null, element);
 
         intention.setCreatedClassFqnConsumer(new Consumer<String>() {
