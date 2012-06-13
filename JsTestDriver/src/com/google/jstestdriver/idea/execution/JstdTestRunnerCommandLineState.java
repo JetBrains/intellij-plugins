@@ -22,6 +22,7 @@ import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.TestConsoleProperties;
+import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.ui.ConsoleView;
@@ -79,7 +80,9 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
 
     //consoleView.addMessageFilter(new NodeJSStacktraceFilter(myProject));
 
-    return new DefaultExecutionResult(consoleView, processHandler);
+    DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
+    executionResult.setRestartActions(new ToggleAutoTestAction());
+    return executionResult;
   }
 
   private static ConsoleView createConsole(@NotNull Project project,
