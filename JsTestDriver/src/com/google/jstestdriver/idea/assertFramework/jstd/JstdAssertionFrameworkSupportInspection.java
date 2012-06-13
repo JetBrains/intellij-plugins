@@ -11,7 +11,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryModel;
+import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;

@@ -5,7 +5,7 @@ import com.google.jstestdriver.idea.util.ProjectRootUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryModel;
+import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VirtualFile;

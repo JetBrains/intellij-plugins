@@ -1,13 +1,13 @@
 package com.google.jstestdriver.idea.assertFramework.library;
 
-import com.intellij.ide.scriptingContext.ScriptingLibraryMappings;
+import com.intellij.webcore.libraries.ScriptingLibraryMappings;
 import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.scripting.ScriptingLibraryModel;
+import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
