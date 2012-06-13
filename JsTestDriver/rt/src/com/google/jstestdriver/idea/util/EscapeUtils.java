@@ -53,6 +53,7 @@ public class EscapeUtils {
     private final char myDelimiterChar;
     private int myInd;
     private final StringBuilder myBuffer = new StringBuilder();
+    private boolean myExtraEmptyString = false;
 
     public Splitter(@NotNull String str, char delimiterChar) {
       myStr = str;
@@ -61,15 +62,20 @@ public class EscapeUtils {
     }
 
     public boolean hasNext() {
-      return myInd < myStr.length();
+      return myExtraEmptyString || myInd < myStr.length();
     }
 
     public String next() {
+      if (myExtraEmptyString) {
+        myExtraEmptyString = false;
+        return "";
+      }
       myBuffer.setLength(0);
       while (myInd < myStr.length()) {
         char ch = myStr.charAt(myInd);
         if (ch == myDelimiterChar) {
           myInd++;
+          myExtraEmptyString = myInd == myStr.length();
           return myBuffer.toString();
         }
         if (ch == ESCAPE_CHAR) {

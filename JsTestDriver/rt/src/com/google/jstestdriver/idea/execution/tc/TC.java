@@ -80,6 +80,11 @@ public class TC {
   private static void addParentNodeIdAttribute(@NotNull TCMessage message, @NotNull AbstractNodeWithParent node) {
     AbstractNode parent = node.getParent();
     message.addIntAttribute(TCAttribute.PARENT_NODE_ID, parent.getId());
+    String protocolId = node.getProtocolId();
+    String locationPath = node.getLocationPath();
+    if (protocolId != null && locationPath != null) {
+      message.addAttribute(TCAttribute.LOCATION_URL, protocolId + "://" + locationPath);
+    }
   }
 
   private static TCMessage newMessageWithId(@NotNull TCCommand command,

@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.util;
 
 import junit.framework.Assert;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,4 +31,14 @@ public class EscapeUtilsTest {
     Assert.assertEquals(strs, decoded);
   }
 
+  @Test
+  public void testTrailingEmptyString() throws Exception {
+    List<String> list = Arrays.asList("hello", "");
+    String encoded = EscapeUtils.join(list, ',');
+    Assert.assertEquals("hello,", encoded);
+    System.out.println("encoded: " + encoded);
+    List<String> decoded = EscapeUtils.split(encoded, ',');
+    System.out.println("decoded: " + decoded);
+    Assert.assertEquals(list, decoded);
+  }
 }

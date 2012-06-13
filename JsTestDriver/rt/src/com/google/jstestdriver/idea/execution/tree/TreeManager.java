@@ -34,7 +34,7 @@ public class TreeManager {
 
   public void onJstdConfigRunningStarted(@NotNull File jstdConfigFile) {
     String jstdConfigNodeDisplayName = buildJstdConfigDisplayName(jstdConfigFile);
-    myCurrentJstdConfigNode = new ConfigNode(jstdConfigNodeDisplayName, myRootNode);
+    myCurrentJstdConfigNode = new ConfigNode(jstdConfigNodeDisplayName, jstdConfigFile, myRootNode);
     myRootNode.addChild(myCurrentJstdConfigNode);
   }
 
@@ -103,7 +103,7 @@ public class TreeManager {
 
     TestCaseNode testCaseNode = browserNode.findChildByName(message.testCaseName);
     if (testCaseNode == null) {
-      testCaseNode = new TestCaseNode(message.testCaseName, browserNode);
+      testCaseNode = new TestCaseNode(message.testCaseName, message.jsTestFilePath, browserNode);
       browserNode.addChild(testCaseNode);
     }
 

@@ -72,13 +72,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
   @Override
   public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
     ProcessHandler processHandler = startProcess();
-    TestLocationProvider locationProvider = new TestLocationProvider() {
-      @NotNull
-      @Override
-      public List<Location> getLocation(@NotNull String protocolId, @NotNull String locationData, Project project) {
-        return Collections.emptyList();
-      }
-    };
+    TestLocationProvider locationProvider = new JstdTestLocationProvider();
     ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment,
                                             executor, locationProvider);
     consoleView.attachToProcess(processHandler);

@@ -1,11 +1,12 @@
 package com.google.jstestdriver.idea.execution.tree;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Sergey Simonchik
  */
-public class AbstractNodeWithParent<T extends AbstractNodeWithParent> extends AbstractNode<T> {
+public abstract class AbstractNodeWithParent<T extends AbstractNodeWithParent> extends AbstractNode<T> {
 
   private final AbstractNode myParent;
   private final String myName;
@@ -25,4 +26,10 @@ public class AbstractNodeWithParent<T extends AbstractNodeWithParent> extends Ab
   public AbstractNode getParent() {
     return myParent;
   }
+
+  @Nullable
+  public abstract String getProtocolId();
+
+  @Nullable
+  public abstract String getLocationPath();
 }
