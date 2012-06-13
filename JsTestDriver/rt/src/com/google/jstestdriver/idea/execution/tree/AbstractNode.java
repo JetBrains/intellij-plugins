@@ -13,31 +13,23 @@ import java.util.Map;
 /**
  * @author Sergey Simonchik
  */
-public abstract class AbstractJstdNode<T extends AbstractJstdNode> {
+public abstract class AbstractNode<T extends AbstractNodeWithParent> {
 
   private final int myId;
-  private final String myName;
   private final TreeManager myTreeManager;
   private Map<String, T> myChildByName = null;
 
-  public AbstractJstdNode(@NotNull String name,
-                          @NotNull TreeManager treeManager) {
+  public AbstractNode(@NotNull TreeManager treeManager) {
     if (this instanceof RootNode) {
       myId = 0;
     } else {
       myId = treeManager.getNextNodeId();
     }
-    myName = name;
     myTreeManager = treeManager;
   }
 
   public int getId() {
     return myId;
-  }
-
-  @NotNull
-  public String getName() {
-    return myName;
   }
 
   @NotNull
@@ -53,10 +45,10 @@ public abstract class AbstractJstdNode<T extends AbstractJstdNode> {
     }
     map.put(child.getName(), child);
     if (child instanceof TestNode) {
-      TCMessage message = TC.testStarted((TestNode) child);
+      TCMessage message = TC.newTestStartedMessage((TestNode)child);
       myTreeManager.printTCMessage(message);
     } else {
-      TCMessage message = TC.testSuiteStarted((AbstractSuiteNode) child);
+      TCMessage message = TC.newTestSuiteStartedMessage((AbstractSuiteNode)child);
       myTreeManager.printTCMessage(message);
     }
   }

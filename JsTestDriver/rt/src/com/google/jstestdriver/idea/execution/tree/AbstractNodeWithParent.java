@@ -5,17 +5,24 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Sergey Simonchik
  */
-public class AbstractNodeWithParent<T extends AbstractJstdNode> extends AbstractJstdNode<T> {
+public class AbstractNodeWithParent<T extends AbstractNodeWithParent> extends AbstractNode<T> {
 
-  private final AbstractJstdNode myParent;
+  private final AbstractNode myParent;
+  private final String myName;
 
-  public AbstractNodeWithParent(@NotNull String name, @NotNull AbstractJstdNode parent) {
-    super(name, parent.getTreeManager());
+  public AbstractNodeWithParent(@NotNull String name, @NotNull AbstractNode parent) {
+    super(parent.getTreeManager());
+    myName = name;
     myParent = parent;
   }
 
   @NotNull
-  public AbstractJstdNode getParent() {
+  public String getName() {
+    return myName;
+  }
+
+  @NotNull
+  public AbstractNode getParent() {
     return myParent;
   }
 }

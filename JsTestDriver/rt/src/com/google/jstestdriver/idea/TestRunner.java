@@ -23,6 +23,7 @@ import com.google.inject.Module;
 import com.google.inject.multibindings.Multibinder;
 import com.google.jstestdriver.*;
 import com.google.jstestdriver.config.Configuration;
+import com.google.jstestdriver.config.ConfigurationException;
 import com.google.jstestdriver.config.ParsedConfiguration;
 import com.google.jstestdriver.embedded.JsTestDriverBuilder;
 import com.google.jstestdriver.hooks.PluginInitializer;
@@ -47,8 +48,8 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Run JSTD in its own process, and stream messages via a socket to a server that lives in the IDEA process,
- * which will update the UI with our results.
+ * Main class of JsTestDriver test runner, that runs tests in a separate process and streams messages
+ * via stdout/stderr to IDEA process, which will update the UI with our results.
  *
  * @author alexeagle@google.com (Alex Eagle)
  */
@@ -81,7 +82,7 @@ public class TestRunner {
     }
   }
 
-  public void executeAll() throws InterruptedException {
+  public void executeAll() {
     for (File config : mySettings.getConfigFiles()) {
       executeConfig(config);
     }
@@ -90,15 +91,7 @@ public class TestRunner {
     }
   }
 
-  public void executeConfig(@NotNull File config) throws InterruptedException {
-    try {
-      unsafeExecuteConfig(config);
-    } catch (Exception e) {
-      myTreeManager.printThrowable(e);
-    }
-  }
-
-  private void unsafeExecuteConfig(@NotNull File config) {
+  public void executeConfig(@NotNull File config) {
     final String testCaseName;
     if (!mySettings.getTestCaseName().isEmpty()) {
       if (!mySettings.getTestMethodName().isEmpty()) {
@@ -109,28 +102,40 @@ public class TestRunner {
     } else {
       testCaseName = "all";
     }
-    executeTestCase(config, testCaseName);
+    executeTests(config, testCaseName);
   }
 
-  private void executeTestCase(@NotNull File config, @NotNull String testCaseName) {
+  private void executeTests(@NotNull File config, @NotNull String tests) {
+    Exception exception = null;
     PrintStream nullSystemOut = new PrintStream(new NullOutputStream());
     try {
       System.setOut(nullSystemOut);
       myTreeManager.onJstdConfigRunningStarted(config);
-      runTests(config, new String[]{"--reset", "--dryRunFor", testCaseName}, true);
-      runTests(config, new String[]{"--tests", testCaseName}, false);
+      runTests(config, new String[]{"--reset", "--dryRunFor", tests}, true);
+      runTests(config, new String[]{"--tests", tests}, false);
+    } catch (ConfigurationException ce) {
+      exception = ce;
+    } catch (Exception e) {
+      exception = new Exception("Can't run tests. Details:", e);
     } finally {
-      myTreeManager.onJstdConfigRunningFinished();
+      myTreeManager.onJstdConfigRunningFinished(exception);
       nullSystemOut.close();
       System.setOut(myTreeManager.getSystemOutStream());
     }
   }
 
   @SuppressWarnings("deprecation")
-  private void runTests(@NotNull final File configFile, @NotNull String[] extraArgs, boolean dryRun) {
+  private void runTests(@NotNull final File configFile, @NotNull String[] extraArgs, boolean dryRun) throws ConfigurationException {
     JsTestDriverBuilder builder = new JsTestDriverBuilder();
 
-    final ParsedConfiguration parsedConfiguration = JstdConfigParsingUtils.parseConfiguration(configFile);
+    final ParsedConfiguration parsedConfiguration;
+    try {
+      parsedConfiguration = JstdConfigParsingUtils.parseConfiguration(configFile);
+    } catch (Exception e) {
+      throw new ConfigurationException("Configuration file parsing failed.\n" +
+                                       "See http://code.google.com/p/js-test-driver/wiki/ConfigurationFile for clarification.\n\n" +
+                                       "Details:", e);
+    }
     wipeCoveragePlugin(parsedConfiguration);
     builder.setDefaultConfiguration(parsedConfiguration);
     builder.withPluginInitializer(new PluginInitializer() {
@@ -294,12 +299,13 @@ public class TestRunner {
     Settings settings = Settings.build(paramMap);
     TreeManager treeManager = new TreeManager(settings.getRunAllConfigsInDirectory());
     if (!validateServer(settings, treeManager)) {
+      System.exit(1);
       return;
     }
     try {
       new TestRunner(settings, treeManager).executeAll();
     } catch (Exception ex) {
-      treeManager.printThrowable("JsTestDriver crashed!", ex);
+      treeManager.printThrowable("Unexpected crash!", ex);
     } finally {
       treeManager.onTestingFinished();
     }
@@ -317,7 +323,7 @@ public class TestRunner {
                 "To capture browser open '" + serverUrl + "' in browser.";
     }
     if (message != null) {
-      treeManager.printErrorMessage(message);
+      treeManager.reportRootError(message);
       return false;
     }
     return true;

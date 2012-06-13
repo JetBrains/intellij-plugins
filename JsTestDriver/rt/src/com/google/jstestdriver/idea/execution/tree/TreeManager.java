@@ -63,14 +63,14 @@ public class TreeManager {
   public void onTestCompleted(@NotNull TestResultProtocolMessage message) {
     TestNode testNode = getOrCreateTestNode(message);
     if (message.log != null && !message.log.isEmpty()) {
-      TCMessage stdOutMessage = TC.testStdOut(testNode);
+      TCMessage stdOutMessage = TC.newTestStdOutMessage(testNode);
       stdOutMessage.addAttribute(TCAttribute.STDOUT, message.log + "\n");
       printTCMessage(stdOutMessage);
     }
 
     TestResult.Result result = TestResult.Result.valueOf(message.result);
     if (result == TestResult.Result.passed) {
-      TCMessage testFinishedMessage = TC.testFinished(testNode);
+      TCMessage testFinishedMessage = TC.newTestFinishedMessage(testNode);
       testFinishedMessage.addIntAttribute(TCAttribute.TEST_DURATION, (int)message.duration);
       printTCMessage(testFinishedMessage);
     } else {
@@ -81,7 +81,7 @@ public class TreeManager {
       } else {
         stackStr = message.stack;
       }
-      TCMessage testFailedMessage = TC.testFailed(testNode);
+      TCMessage testFailedMessage = TC.newTestFailedMessage(testNode);
       testFailedMessage.addAttribute(TCAttribute.EXCEPTION_MESSAGE, message.message);
       testFailedMessage.addAttribute(TCAttribute.EXCEPTION_STACKTRACE, stackStr);
       if (result == TestResult.Result.error) {
@@ -120,13 +120,9 @@ public class TreeManager {
   private ConfigNode getCurrentConfigNode() {
     ConfigNode configNode = myCurrentJstdConfigNode;
     if (configNode == null) {
-      throw new RuntimeException("JstdConfigNode is null!");
+      throw new RuntimeException("Current " + ConfigNode.class.getSimpleName() + " is null!");
     }
     return configNode;
-  }
-
-  public void printErrorMessage(@NotNull String message) {
-    myErrStream.println(message);
   }
 
   public void printThrowable(@NotNull String message, @NotNull Throwable t) {
@@ -135,7 +131,7 @@ public class TreeManager {
   }
 
   public void printThrowable(@NotNull Throwable t) {
-    String message = formatMessage(null, t);
+    String message = formatStacktrace(t);
     myErrStream.println(message);
   }
 
@@ -144,17 +140,26 @@ public class TreeManager {
     return myOutStream;
   }
 
-  public void onJstdConfigRunningFinished() {
+  public void onJstdConfigRunningFinished(@Nullable Exception testsRunException) {
     ConfigNode configNode = getCurrentConfigNode();
     for (BrowserNode browserNode : configNode.getChildren()) {
       for (TestCaseNode testCaseNode : browserNode.getChildren()) {
-        TCMessage testCaseFinishedMessage = TC.testSuiteFinished(testCaseNode);
+        TCMessage testCaseFinishedMessage = TC.newTestSuiteFinishedMessage(testCaseNode);
         printTCMessage(testCaseFinishedMessage);
       }
-      TCMessage browserFinishedMessage = TC.testSuiteFinished(browserNode);
+      TCMessage browserFinishedMessage = TC.newTestSuiteFinishedMessage(browserNode);
       printTCMessage(browserFinishedMessage);
     }
-    TCMessage configFinishedMessage = TC.testSuiteFinished(configNode);
+    if (testsRunException != null) {
+      ConfigErrorNode configErrorNode = new ConfigErrorNode(configNode);
+      TCMessage startedMessage = TC.newConfigErrorStartedMessage(configErrorNode);
+      printTCMessage(startedMessage);
+      TCMessage finishedMessage = TC.newConfigErrorFinishedMessage(configErrorNode);
+      String fullMessage = formatMessage(testsRunException.getMessage(), testsRunException.getCause());
+      finishedMessage.addAttribute(TCAttribute.EXCEPTION_MESSAGE, fullMessage);
+      printTCMessage(finishedMessage);
+    }
+    TCMessage configFinishedMessage = TC.newTestSuiteFinishedMessage(configNode);
     printTCMessage(configFinishedMessage);
   }
 
@@ -169,7 +174,26 @@ public class TreeManager {
     myOutStream.println(message.getText());
   }
 
-  private static String formatMessage(@Nullable String message, @NotNull Throwable t) {
+  public void reportRootError(@NotNull String message) {
+    RootErrorNode rootErrorNode = new RootErrorNode(myRootNode);
+    TCMessage startedMessage = TC.newRootErrorStartedMessage(rootErrorNode);
+    printTCMessage(startedMessage);
+    TCMessage finishedMessage = TC.newRootErrorFinishedMessage(rootErrorNode);
+    finishedMessage.addAttribute(TCAttribute.EXCEPTION_MESSAGE, message);
+    printTCMessage(finishedMessage);
+  }
+
+  @NotNull
+  private static String formatMessage(@NotNull String message, @Nullable Throwable t) {
+    if (t == null) {
+      return message;
+    }
+    String stacktrace = formatStacktrace(t);
+    return message + "\n" + stacktrace;
+  }
+
+  @NotNull
+  private static String formatStacktrace(@NotNull Throwable t) {
     StringWriter sw = new StringWriter();
     PrintWriter pw = new PrintWriter(sw);
     try {
@@ -177,11 +201,7 @@ public class TreeManager {
     } finally {
       pw.close();
     }
-    if (message == null) {
-      return sw.toString();
-    } else {
-      return message + "\n\n" + sw.toString();
-    }
+    return sw.toString();
   }
 
 }

@@ -11,7 +11,7 @@ public class TC {
   private TC() {}
 
   @NotNull
-  public static TCMessage testSuiteStarted(@NotNull AbstractSuiteNode suiteNode) {
+  public static TCMessage newTestSuiteStartedMessage(@NotNull AbstractSuiteNode suiteNode) {
     TCMessage message = newMessageWithId(TCCommand.TEST_SUITE_STARTED, suiteNode);
     addParentNodeIdAttribute(message, suiteNode);
     message.addAttribute(TCAttribute.NAME, suiteNode.getName());
@@ -19,41 +19,67 @@ public class TC {
   }
 
   @NotNull
-  public static TCMessage testSuiteFinished(@NotNull AbstractSuiteNode suiteNode) {
+  public static TCMessage newTestSuiteFinishedMessage(@NotNull AbstractSuiteNode suiteNode) {
     return newMessageWithId(TCCommand.TEST_SUITE_FINISHED, suiteNode);
   }
 
   @NotNull
-  public static TCMessage testStarted(@NotNull TestNode testNode) {
-    TCMessage message = newMessageWithId(TCCommand.TEST_STARTED, testNode);
-    addParentNodeIdAttribute(message, testNode);
-    message.addAttribute(TCAttribute.NAME, testNode.getName());
-    return message;
-  }
-
-  private static void addParentNodeIdAttribute(@NotNull TCMessage message, @NotNull AbstractNodeWithParent node) {
-    AbstractJstdNode parent = node.getParent();
-    message.addIntAttribute(TCAttribute.PARENT_NODE_ID, parent.getId());
+  public static TCMessage newTestStartedMessage(@NotNull TestNode testNode) {
+    return newLeafStartedMessage(testNode);
   }
 
   @NotNull
-  public static TCMessage testFinished(@NotNull TestNode testNode) {
+  public static TCMessage newTestFinishedMessage(@NotNull TestNode testNode) {
     return newMessageWithId(TCCommand.TEST_FINISHED, testNode);
   }
 
   @NotNull
-  public static TCMessage testStdOut(@NotNull TestNode testNode) {
+  public static TCMessage newTestStdOutMessage(@NotNull TestNode testNode) {
     return newMessageWithId(TCCommand.TEST_STDOUT, testNode);
   }
 
   @NotNull
-  public static TCMessage testStdErr(@NotNull String name) {
-    return new TCMessage(TCCommand.TEST_STDERR).addAttribute(TCAttribute.NAME, name);
+  public static TCMessage newTestFailedMessage(@NotNull TestNode testNode) {
+    return newMessageWithId(TCCommand.TEST_FAILED, testNode);
   }
 
   @NotNull
-  public static TCMessage testFailed(@NotNull TestNode testNode) {
-    return newMessageWithId(TCCommand.TEST_FAILED, testNode);
+  public static TCMessage newConfigErrorStartedMessage(@NotNull ConfigErrorNode configErrorNode) {
+    return newLeafStartedMessage(configErrorNode);
+  }
+
+  @NotNull
+  public static TCMessage newConfigErrorFinishedMessage(@NotNull ConfigErrorNode configErrorNode) {
+    return newLeafFinishedAsErrorMessage(configErrorNode);
+  }
+
+  @NotNull
+  public static TCMessage newRootErrorStartedMessage(@NotNull RootErrorNode rootErrorNode) {
+    return newLeafStartedMessage(rootErrorNode);
+  }
+
+  @NotNull
+  public static TCMessage newRootErrorFinishedMessage(@NotNull RootErrorNode rootErrorNode) {
+    return newLeafFinishedAsErrorMessage(rootErrorNode);
+  }
+
+  private static TCMessage newLeafStartedMessage(@NotNull AbstractNodeWithParent node) {
+    TCMessage message = newMessageWithId(TCCommand.TEST_STARTED, node);
+    addParentNodeIdAttribute(message, node);
+    message.addAttribute(TCAttribute.NAME, node.getName());
+    return message;
+  }
+
+  @NotNull
+  private static TCMessage newLeafFinishedAsErrorMessage(@NotNull AbstractNodeWithParent node) {
+    TCMessage message = newMessageWithId(TCCommand.TEST_FAILED, node);
+    message.addAttribute(TCAttribute.IS_TEST_ERROR, "yes");
+    return message;
+  }
+
+  private static void addParentNodeIdAttribute(@NotNull TCMessage message, @NotNull AbstractNodeWithParent node) {
+    AbstractNode parent = node.getParent();
+    message.addIntAttribute(TCAttribute.PARENT_NODE_ID, parent.getId());
   }
 
   private static TCMessage newMessageWithId(@NotNull TCCommand command,
