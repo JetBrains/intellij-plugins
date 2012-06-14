@@ -29,11 +29,11 @@ public class IdeaTestListener implements TestListener {
   public IdeaTestListener(
     @NotNull TreeManager treeManager,
     @NotNull File jstdConfigFile,
-    @NotNull BasePaths basePaths
+    @NotNull File singleBasePath
   ) {
     myTreeManager = treeManager;
     myJstdConfigFile = jstdConfigFile;
-    myBasePath = JstdConfigParsingUtils.getSingleBasePath(basePaths, jstdConfigFile);
+    myBasePath = singleBasePath;
   }
 
   @Override

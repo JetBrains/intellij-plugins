@@ -1,5 +1,7 @@
 package com.google.jstestdriver.idea.execution.tree;
 
+import com.google.jstestdriver.idea.execution.tc.TC;
+import com.google.jstestdriver.idea.execution.tc.TCMessage;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,5 +26,11 @@ public class ConfigErrorNode extends AbstractNodeWithParent<ConfigErrorNode> {
   @Override
   public String getLocationPath() {
     return getParent().getLocationPath();
+  }
+
+  @NotNull
+  @Override
+  public TCMessage createStartedMessage() {
+    return TC.newConfigErrorStartedMessage(this);
   }
 }

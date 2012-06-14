@@ -18,7 +18,10 @@ public enum TCAttribute {
   EXCEPTION_MESSAGE("message"),
   EXCEPTION_STACKTRACE("details"),
   IS_TEST_ERROR("error"),
-  PARENT_NODE_ID("parentNodeId");
+  PARENT_NODE_ID("parentNodeId"),
+  NODE_TYPE("nodeType"),
+  NODE_ARGS("nodeArgs"),
+  ;
 
   private final String myName;
 

@@ -136,6 +136,8 @@ public class TestRunner {
                                        "See http://code.google.com/p/js-test-driver/wiki/ConfigurationFile for clarification.\n\n" +
                                        "Details:", e);
     }
+    final File singleBasePath = JstdConfigParsingUtils.getSingleBasePath(parsedConfiguration.getBasePaths(), configFile);
+    myTreeManager.setCurrentBasePath(singleBasePath.getAbsolutePath());
     wipeCoveragePlugin(parsedConfiguration);
     builder.setDefaultConfiguration(parsedConfiguration);
     builder.withPluginInitializer(new PluginInitializer() {
@@ -149,7 +151,7 @@ public class TestRunner {
             testListeners.addBinding().toInstance(new IdeaTestListener(
               myTreeManager,
               configFile,
-              parsedConfiguration.getBasePaths()
+              singleBasePath
             ));
           }
         };

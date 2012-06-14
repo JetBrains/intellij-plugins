@@ -1,13 +1,18 @@
 package com.google.jstestdriver.idea.execution.tree;
 
+import com.google.jstestdriver.idea.execution.tc.TCAttribute;
+import com.google.jstestdriver.idea.execution.tc.TCMessage;
+import com.google.jstestdriver.idea.util.EscapeUtils;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 /**
  * @author Sergey Simonchik
  */
 public class BrowserNode extends AbstractSuiteNode<TestCaseNode> {
-  public BrowserNode(@NotNull String name, @NotNull ConfigNode parent) {
-    super(name, parent);
+  public BrowserNode(@NotNull String browserName, @NotNull ConfigNode parent) {
+    super(browserName, parent);
   }
 
   @Override
@@ -18,5 +23,24 @@ public class BrowserNode extends AbstractSuiteNode<TestCaseNode> {
   @Override
   public String getLocationPath() {
     return null;
+  }
+
+  @NotNull
+  @Override
+  public ConfigNode getParent() {
+    return (ConfigNode) super.getParent();
+  }
+
+  @NotNull
+  @Override
+  public TCMessage createStartedMessage() {
+    TCMessage message = super.createStartedMessage();
+    String basePath = getParent().getAbsoluteBasePath();
+    if (basePath != null) {
+      message.addAttribute(TCAttribute.NODE_TYPE, "browser");
+      String args = EscapeUtils.join(Arrays.asList(basePath, getName()), ',');
+      message.addAttribute(TCAttribute.NODE_ARGS, args);
+    }
+    return message;
   }
 }

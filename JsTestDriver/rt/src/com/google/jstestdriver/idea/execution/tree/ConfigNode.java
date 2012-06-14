@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.execution.tree;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
@@ -9,6 +10,7 @@ import java.io.File;
  */
 public class ConfigNode extends AbstractSuiteNode<BrowserNode> {
   private final File myConfigFile;
+  private String myAbsoluteBasePath;
 
   public ConfigNode(@NotNull String name, @NotNull File configFile, @NotNull RootNode parent) {
     super(name, parent);
@@ -23,5 +25,14 @@ public class ConfigNode extends AbstractSuiteNode<BrowserNode> {
   @Override
   public String getLocationPath() {
     return myConfigFile.getAbsolutePath();
+  }
+
+  public void setBasePath(@NotNull String absoluteBasePath) {
+    myAbsoluteBasePath = absoluteBasePath;
+  }
+
+  @Nullable
+  public String getAbsoluteBasePath() {
+    return myAbsoluteBasePath;
   }
 }

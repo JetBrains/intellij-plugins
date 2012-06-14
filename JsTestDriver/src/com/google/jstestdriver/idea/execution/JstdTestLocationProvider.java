@@ -1,6 +1,5 @@
 package com.google.jstestdriver.idea.execution;
 
-import com.google.jstestdriver.idea.execution.tree.NavUtils;
 import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;

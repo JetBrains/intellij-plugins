@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.execution.tree;
 
+import com.google.jstestdriver.idea.execution.tc.TCMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,4 +33,7 @@ public abstract class AbstractNodeWithParent<T extends AbstractNodeWithParent> e
 
   @Nullable
   public abstract String getLocationPath();
+
+  @NotNull
+  public abstract TCMessage createStartedMessage();
 }

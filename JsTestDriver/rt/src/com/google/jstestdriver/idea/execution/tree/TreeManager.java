@@ -38,6 +38,11 @@ public class TreeManager {
     myRootNode.addChild(myCurrentJstdConfigNode);
   }
 
+  public void setCurrentBasePath(@NotNull String absoluteBasePath) {
+    ConfigNode configNode = getCurrentConfigNode();
+    configNode.setBasePath(absoluteBasePath);
+  }
+
   private String buildJstdConfigDisplayName(@NotNull File jstdConfigFile) {
     String displayName = null;
     if (myRunAllConfigsInDirectory != null) {
@@ -152,7 +157,7 @@ public class TreeManager {
     }
     if (testsRunException != null) {
       ConfigErrorNode configErrorNode = new ConfigErrorNode(configNode);
-      TCMessage startedMessage = TC.newConfigErrorStartedMessage(configErrorNode);
+      TCMessage startedMessage = configErrorNode.createStartedMessage();
       printTCMessage(startedMessage);
       TCMessage finishedMessage = TC.newConfigErrorFinishedMessage(configErrorNode);
       String fullMessage = formatMessage(testsRunException.getMessage(), testsRunException.getCause());
@@ -176,12 +181,13 @@ public class TreeManager {
 
   public void reportRootError(@NotNull String message) {
     RootErrorNode rootErrorNode = new RootErrorNode(myRootNode);
-    TCMessage startedMessage = TC.newRootErrorStartedMessage(rootErrorNode);
+    TCMessage startedMessage = rootErrorNode.createStartedMessage();
     printTCMessage(startedMessage);
     TCMessage finishedMessage = TC.newRootErrorFinishedMessage(rootErrorNode);
     finishedMessage.addAttribute(TCAttribute.EXCEPTION_MESSAGE, message);
     printTCMessage(finishedMessage);
   }
+
 
   @NotNull
   private static String formatMessage(@NotNull String message, @Nullable Throwable t) {

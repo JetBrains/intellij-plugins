@@ -1,4 +1,4 @@
-package com.google.jstestdriver.idea.execution.tree;
+package com.google.jstestdriver.idea.execution;
 
 import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;

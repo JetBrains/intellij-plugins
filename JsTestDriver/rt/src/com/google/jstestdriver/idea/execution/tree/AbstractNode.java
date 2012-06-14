@@ -1,7 +1,6 @@
 package com.google.jstestdriver.idea.execution.tree;
 
 import com.google.common.collect.Maps;
-import com.google.jstestdriver.idea.execution.tc.TC;
 import com.google.jstestdriver.idea.execution.tc.TCMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,13 +43,8 @@ public abstract class AbstractNode<T extends AbstractNodeWithParent> {
       myChildByName = map;
     }
     map.put(child.getName(), child);
-    if (child instanceof TestNode) {
-      TCMessage message = TC.newTestStartedMessage((TestNode)child);
-      myTreeManager.printTCMessage(message);
-    } else {
-      TCMessage message = TC.newTestSuiteStartedMessage((AbstractSuiteNode)child);
-      myTreeManager.printTCMessage(message);
-    }
+    TCMessage startedMessage = child.createStartedMessage();
+    myTreeManager.printTCMessage(startedMessage);
   }
 
   @Nullable

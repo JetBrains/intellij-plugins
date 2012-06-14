@@ -1,6 +1,8 @@
 package com.google.jstestdriver.idea.execution.tree;
 
 import com.google.common.collect.Lists;
+import com.google.jstestdriver.idea.execution.tc.TC;
+import com.google.jstestdriver.idea.execution.tc.TCMessage;
 import com.google.jstestdriver.idea.util.EscapeUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,5 +37,11 @@ public class TestNode extends AbstractNodeWithParent<TestNode> {
     }
     List<String> path = Lists.newArrayList(jsTestFilePath, testCase.getName(), getName());
     return EscapeUtils.join(path, ':');
+  }
+
+  @NotNull
+  @Override
+  public TCMessage createStartedMessage() {
+    return  TC.newTestStartedMessage(this);
   }
 }

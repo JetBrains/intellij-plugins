@@ -1,9 +1,8 @@
-package com.google.jstestdriver.idea.execution.tree;
+package com.google.jstestdriver.idea.execution;
 
-import com.google.jstestdriver.idea.config.JstdConfigStructure;
 import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
-import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.testframework.ui.TestsOutputConsolePrinter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
@@ -20,41 +19,46 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class StacktracePrinter extends TestsOutputConsolePrinter {
+public class StacktracePrinter extends TestsOutputConsolePrinter {
 
   private static final String DEFAULT_PATH_PREFIX = "/test/";
+  private static final String COMPONENT_SEPARATOR = ":";
+  private static final Pattern COMPONENT_PATTERN = Pattern.compile(Pattern.quote(COMPONENT_SEPARATOR));
 
   @NotNull
   private final Project myProject;
-  private final JstdConfigStructure myConfigStructure;
-  private final HyperlinkInfoHelper myHyperlinkInfoHelper;
+  private final File myBasePath;
+  private final HyperlinkBuilder myHyperlinkBuilder;
 
-  public StacktracePrinter(SMTRunnerConsoleView consoleView, JstdConfigStructure configStructure, String browserName) {
+
+  public StacktracePrinter(@NotNull BaseTestsOutputConsoleView consoleView,
+                           @NotNull File basePath,
+                           @NotNull String browserName) {
     super(consoleView, consoleView.getProperties(), null);
     myProject = consoleView.getProperties().getProject();
-    myConfigStructure = configStructure;
-    myHyperlinkInfoHelper = findHyperlinkPrinter(browserName);
+    myBasePath = basePath;
+    myHyperlinkBuilder = findHyperlinkBuilder(browserName);
   }
 
   @Nullable
-  private static HyperlinkInfoHelper findHyperlinkPrinter(String browserName) {
+  private static HyperlinkBuilder findHyperlinkBuilder(String browserName) {
     if (browserName == null) {
       return null;
     }
     browserName = browserName.toLowerCase();
     if (browserName.startsWith("chrome")) {
-      return ChromeHyperlinkInfoHelper.INSTANCE;
+      return ChromeHyperlinkBuilder.INSTANCE;
     } else if (browserName.startsWith("firefox")) {
-      return FirefoxHyperlinkInfoHelper.INSTANCE;
+      return FirefoxHyperlinkBuilder.INSTANCE;
     } else if (browserName.startsWith("opera")) {
-      return OperaHyperlinkInfoHelper.INSTANCE;
+      return OperaHyperlinkBuilder.INSTANCE;
     }
     return null;
   }
 
   @Override
   public void print(String text, ConsoleViewContentType contentType) {
-    if (myHyperlinkInfoHelper == null) {
+    if (myHyperlinkBuilder == null) {
       defaultPrint(text, contentType);
       return;
     }
@@ -63,7 +67,7 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
       StringTokenizer tokenizer = new StringTokenizer(text, "\n", true);
       while (tokenizer.hasMoreTokens()) {
         String token = tokenizer.nextToken();
-        if (!writeHyperlinkIfPossible(myHyperlinkInfoHelper, token, contentType)) {
+        if (!writeHyperlinkIfPossible(myHyperlinkBuilder, token)) {
           defaultPrint(token, contentType);
         }
       }
@@ -76,17 +80,17 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
     super.print(text, contentType);
   }
 
-  private boolean writeHyperlinkIfPossible(HyperlinkInfoHelper hyperlinkInfoHelper, String line, ConsoleViewContentType consoleViewContentType) {
-    Pattern[] urlPatterns = hyperlinkInfoHelper.getAllPossibleUrlPatterns();
+  private boolean writeHyperlinkIfPossible(@NotNull HyperlinkBuilder hyperlinkBuilder, @NotNull String line) {
+    Pattern[] urlPatterns = hyperlinkBuilder.getAllPossibleUrlPatterns();
     for (Pattern urlPattern : urlPatterns) {
       Matcher matcher = urlPattern.matcher(line);
       if (matcher.find()) {
         String text = matcher.group(1);
-        HyperlinkInfo hyperlinkInfo = buildHyperlinkInfo(text, hyperlinkInfoHelper);
+        HyperlinkInfo hyperlinkInfo = buildHyperlinkInfo(text);
         if (hyperlinkInfo != null) {
-          defaultPrint(line.substring(0, matcher.start(1)), consoleViewContentType);
+          defaultPrint(line.substring(0, matcher.start(1)), ConsoleViewContentType.ERROR_OUTPUT);
           printHyperlink(text, hyperlinkInfo);
-          defaultPrint(line.substring(matcher.end(1)), consoleViewContentType);
+          defaultPrint(line.substring(matcher.end(1)), ConsoleViewContentType.ERROR_OUTPUT);
           return true;
         }
       }
@@ -94,8 +98,9 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
     return false;
   }
 
-  private HyperlinkInfo buildHyperlinkInfo(String urlWithPosition, HyperlinkInfoHelper hyperlinkInfoHelper) {
-    String[] components = urlWithPosition.split(":");
+  @Nullable
+  private HyperlinkInfo buildHyperlinkInfo(@NotNull String urlWithPosition) {
+    String[] components = COMPONENT_PATTERN.split(urlWithPosition);
     if (components.length < 2) {
       return null;
     }
@@ -103,24 +108,24 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
     if (lastNum == null) {
       return null;
     }
-    int lineNo = lastNum;
-    Integer columnNo = null;
-    String urlStr = StringUtil.join(components, 0, components.length - 1, ":");
+    int zeroBasedLineNo = lastNum - 1;
+    Integer zeroBasedColumnNo = null;
+    String urlStr = null;
     if (components.length >= 3) {
       Integer preLastNum = toInteger(components[components.length - 2]);
       if (preLastNum != null) {
-        urlStr = StringUtil.join(components, 0, components.length - 2, ":");
-        lineNo = preLastNum;
-        columnNo = lastNum;
+        urlStr = StringUtil.join(components, 0, components.length - 2, COMPONENT_SEPARATOR);
+        zeroBasedLineNo = preLastNum - 1;
+        zeroBasedColumnNo = lastNum - 1;
       }
     }
-    lineNo = hyperlinkInfoHelper.zeroBaseLineNo(lineNo);
-    if (columnNo != null) {
-      columnNo = hyperlinkInfoHelper.zeroBaseColumnNo(columnNo);
+    if (urlStr == null) {
+      urlStr = StringUtil.join(components, 0, components.length - 1, COMPONENT_SEPARATOR);
     }
-    return createHyperlinkInfoFromParts(urlStr, lineNo, columnNo);
+    return createHyperlinkInfoFromParts(urlStr, zeroBasedLineNo, zeroBasedColumnNo);
   }
 
+  @Nullable
   private static Integer toInteger(@NotNull String s) {
     try {
       return Integer.parseInt(s);
@@ -151,8 +156,9 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
     return null;
   }
 
+  @Nullable
   private File findFileByPath(String urlStr) {
-    File file = myConfigStructure.findLoadFile(urlStr);
+    File file = findFileByBasePath(urlStr);
     if (file != null) {
       return file;
     }
@@ -162,61 +168,69 @@ class StacktracePrinter extends TestsOutputConsolePrinter {
       if (path.startsWith(DEFAULT_PATH_PREFIX)) {
         path = path.substring(DEFAULT_PATH_PREFIX.length());
       }
-      return myConfigStructure.findLoadFile(path);
+      return findFileByBasePath(path);
     } catch (MalformedURLException ignored) {
     }
     return null;
   }
 
-  private static abstract class HyperlinkInfoHelper {
-    abstract Pattern[] getAllPossibleUrlPatterns();
-
-    int zeroBaseLineNo(int lineNo) {
-      return lineNo - 1;
+  @Nullable
+  private File findFileByBasePath(@NotNull String subPath) {
+    File file = new File(myBasePath, subPath);
+    if (!file.isFile()) {
+      File absoluteFile = new File(subPath);
+      if (absoluteFile.isAbsolute() && absoluteFile.isFile()) {
+        file = absoluteFile;
+      }
     }
-
-    int zeroBaseColumnNo(int columnNo) {
-      return columnNo - 1;
-    }
+    return file.isFile() ? file : null;
   }
 
-  private static class ChromeHyperlinkInfoHelper extends HyperlinkInfoHelper {
+  private static abstract class HyperlinkBuilder {
+    @NotNull
+    public abstract Pattern[] getAllPossibleUrlPatterns();
+  }
 
-    private static final ChromeHyperlinkInfoHelper INSTANCE = new ChromeHyperlinkInfoHelper();
+  private static class ChromeHyperlinkBuilder extends HyperlinkBuilder {
+
+    private static final ChromeHyperlinkBuilder INSTANCE = new ChromeHyperlinkBuilder();
     private static final Pattern[] URL_PATTERNS = {
         Pattern.compile("^\\s*at\\s.*\\(([^\\(]*)\\)$"),
         Pattern.compile("^\\s*at\\s*(http://[^\\(]*)$")
     };
 
+    @NotNull
     @Override
-    Pattern[] getAllPossibleUrlPatterns() {
+    public Pattern[] getAllPossibleUrlPatterns() {
       return URL_PATTERNS;
     }
   }
 
-  private static class FirefoxHyperlinkInfoHelper extends HyperlinkInfoHelper {
+  private static class FirefoxHyperlinkBuilder extends HyperlinkBuilder {
 
-    private static final FirefoxHyperlinkInfoHelper INSTANCE = new FirefoxHyperlinkInfoHelper();
+    private static final FirefoxHyperlinkBuilder INSTANCE = new FirefoxHyperlinkBuilder();
     private static final Pattern[] FIREFOX_URL_WITH_LINE = {
         Pattern.compile("^\\s*\\w*\\(.*\\)@([^\\(]*)$")
     };
 
+    @NotNull
     @Override
-    Pattern[] getAllPossibleUrlPatterns() {
+    public Pattern[] getAllPossibleUrlPatterns() {
       return FIREFOX_URL_WITH_LINE;
     }
   }
 
-  private static class OperaHyperlinkInfoHelper extends HyperlinkInfoHelper {
+  private static class OperaHyperlinkBuilder extends HyperlinkBuilder {
 
-    private static final OperaHyperlinkInfoHelper INSTANCE = new OperaHyperlinkInfoHelper();
+    private static final OperaHyperlinkBuilder INSTANCE = new OperaHyperlinkBuilder();
     private static final Pattern[] PATTERNS = {
         //<anonymous function: window.equals>([arguments not available])@http://localhost:9876/test/qunit-lib/QUnitAdapter.js:57
         Pattern.compile("^.*\\(.*\\)@([^\\(@]*)$")
     };
 
+    @NotNull
     @Override
-    Pattern[] getAllPossibleUrlPatterns() {
+    public Pattern[] getAllPossibleUrlPatterns() {
       return PATTERNS;
     }
   }

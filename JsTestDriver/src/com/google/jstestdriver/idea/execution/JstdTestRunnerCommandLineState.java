@@ -12,7 +12,10 @@ import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
 import com.google.jstestdriver.idea.util.EscapeUtils;
-import com.intellij.execution.*;
+import com.intellij.execution.DefaultExecutionResult;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.ExecutionResult;
+import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
@@ -21,21 +24,27 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.execution.testframework.Printer;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
+import com.intellij.execution.testframework.sm.runner.TestProxyPrinterProvider;
+import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testIntegration.TestLocationProvider;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static java.io.File.pathSeparator;
 
@@ -73,9 +82,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
   @Override
   public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
     ProcessHandler processHandler = startProcess();
-    TestLocationProvider locationProvider = new JstdTestLocationProvider();
-    ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment,
-                                            executor, locationProvider);
+    ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment, executor);
     consoleView.attachToProcess(processHandler);
 
     //consoleView.addMessageFilter(new NodeJSStacktraceFilter(myProject));
@@ -87,8 +94,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
 
   private static ConsoleView createConsole(@NotNull Project project,
                                            @NotNull ExecutionEnvironment env,
-                                           Executor executor,
-                                            @NotNull TestLocationProvider locationProvider)
+                                           Executor executor)
     throws ExecutionException {
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) env.getRunProfile();
     TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(
@@ -97,17 +103,20 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
       executor
     );
 
-    ConsoleView testsOutputConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
+    JstdTestProxyPrinterProvider printerProvider = new JstdTestProxyPrinterProvider();
+    SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
       JSTD_FRAMEWORK_NAME,
       testConsoleProperties,
       env.getRunnerSettings(),
       env.getConfigurationSettings(),
-      locationProvider,
-      true
+      new JstdTestLocationProvider(),
+      true,
+      printerProvider
     );
+    printerProvider.setConsoleView(smtConsoleView);
 
-    Disposer.register(project, testsOutputConsoleView);
-    return testsOutputConsoleView;
+    Disposer.register(project, smtConsoleView);
+    return smtConsoleView;
   }
 
   @NotNull
@@ -197,4 +206,30 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
     return EscapeUtils.join(paths, ',');
   }
 
+  private static class JstdTestProxyPrinterProvider implements TestProxyPrinterProvider {
+    private BaseTestsOutputConsoleView myConsoleView;
+
+    @Override
+    public Printer getPrinterByType(@NotNull String nodeType, @Nullable String arguments) {
+      BaseTestsOutputConsoleView consoleView = myConsoleView;
+      if (consoleView == null) {
+        return null;
+      }
+      if ("browser".equals(nodeType) && arguments != null) {
+        List<String> args = EscapeUtils.split(arguments, ',');
+        if (args.size() == 2) {
+          File basePath = new File(args.get(0));
+          String browserName = args.get(1);
+          if (basePath.isAbsolute() && basePath.isDirectory()) {
+            return new StacktracePrinter(consoleView, basePath, browserName);
+          }
+        }
+      }
+      return null;
+    }
+
+    public void setConsoleView(@NotNull BaseTestsOutputConsoleView consoleView) {
+      myConsoleView = consoleView;
+    }
+  }
 }

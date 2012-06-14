@@ -1,5 +1,7 @@
 package com.google.jstestdriver.idea.execution.tree;
 
+import com.google.jstestdriver.idea.execution.tc.TC;
+import com.google.jstestdriver.idea.execution.tc.TCMessage;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,5 +20,11 @@ public class RootErrorNode extends AbstractNodeWithParent<RootErrorNode> {
   @Override
   public String getLocationPath() {
     return null;
+  }
+
+  @NotNull
+  @Override
+  public TCMessage createStartedMessage() {
+    return TC.newRootErrorStartedMessage(this);
   }
 }
