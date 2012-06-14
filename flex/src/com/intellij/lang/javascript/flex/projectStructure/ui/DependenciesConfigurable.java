@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
@@ -869,16 +868,16 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         }
       }).disableUpDownActions().createPanel(), BorderLayout.CENTER);
 
-    myTable.addMouseListener(new MouseAdapter() {
+    new DoubleClickListener() {
       @Override
-      public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-          if (myTable.getSelectedRowCount() == 1) {
-            myTable.getItemAt(myTable.getSelectedRow()).onDoubleClick();
-          }
+      protected boolean onDoubleClick(MouseEvent e) {
+        if (myTable.getSelectedRowCount() == 1) {
+          myTable.getItemAt(myTable.getSelectedRow()).onDoubleClick();
+          return true;
         }
+        return false;
       }
-    });
+    }.installOn(myTable);
 
     FlexBuildConfigurationsExtension.getInstance().getConfigurator().addListener(new FlexIdeBCConfigurator.Listener() {
       @Override

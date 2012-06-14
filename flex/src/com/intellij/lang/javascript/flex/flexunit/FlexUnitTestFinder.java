@@ -8,7 +8,11 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSNameIndex;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
@@ -58,14 +62,16 @@ public class FlexUnitTestFinder implements TestFinder {
 
   @NotNull
   public Collection<PsiElement> findTestsForClass(@NotNull final PsiElement element) {
+    final VirtualFile file = element.getContainingFile().getVirtualFile();
     final JSClass jsClass = findSourceElement(element);
     final String className = jsClass == null ? null : jsClass.getName();
 
     final Pair<Module, FlexUnitSupport> moduleAndSupport = FlexUnitSupport.getModuleAndSupport(element);
     final Module module = moduleAndSupport == null ? null : moduleAndSupport.first;
     final FlexUnitSupport flexUnitSupport = moduleAndSupport == null ? null : moduleAndSupport.second;
+    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(element.getProject()).getFileIndex();
 
-    if (className == null || module == null || flexUnitSupport == null) {
+    if (className == null || module == null || flexUnitSupport == null || (file != null && fileIndex.isInTestSourceContent(file))) {
       return Collections.emptyList();
     }
 
@@ -76,7 +82,11 @@ public class FlexUnitTestFinder implements TestFinder {
     for (final String possibleTestName : allNames) {
       if (possibleTestName.contains(className)) {
         for (final JSQualifiedNamedElement jsElement : JSResolveUtil.findElementsByName(possibleTestName, element.getProject(), scope)) {
-          if (jsElement instanceof JSClass && flexUnitSupport.isTestClass((JSClass)jsElement, true)) {
+          final VirtualFile f = jsElement.getContainingFile().getVirtualFile();
+          final boolean inTestSource = f != null && fileIndex.isInTestSourceContent(f);
+
+          if (jsElement instanceof JSClass && jsElement != jsClass &&
+              ((inTestSource && possibleTestName.contains("Test")) || flexUnitSupport.isTestClass((JSClass)jsElement, true))) {
             classesWithProximity.add(Pair.create(jsElement, TestFinderHelper.calcTestNameProximity(className, jsElement.getName())));
           }
         }
@@ -105,7 +115,8 @@ public class FlexUnitTestFinder implements TestFinder {
     final List<Pair<? extends PsiNamedElement, Integer>> classesWithWeights = new ArrayList<Pair<? extends PsiNamedElement, Integer>>();
     for (Pair<String, Integer> nameWithWeight : TestFinderHelper.collectPossibleClassNamesWithWeights(className)) {
       for (final JSQualifiedNamedElement jsElement : JSResolveUtil.findElementsByName(nameWithWeight.first, module.getProject(), scope)) {
-        if (jsElement instanceof JSClass && !((JSClass)jsElement).isInterface() && !flexUnitSupport.isTestClass((JSClass)jsElement, true)) {
+        if (jsElement instanceof JSClass && jsElement != jsClass && !((JSClass)jsElement).isInterface() &&
+            !flexUnitSupport.isTestClass((JSClass)jsElement, true)) {
           classesWithWeights.add(new Pair<JSQualifiedNamedElement, Integer>(jsElement, nameWithWeight.second));
         }
       }
@@ -117,6 +128,10 @@ public class FlexUnitTestFinder implements TestFinder {
   public boolean isTest(@NotNull final PsiElement element) {
     final JSClass jsClass = findSourceElement(element);
     final Pair<Module, FlexUnitSupport> moduleAndSupport = FlexUnitSupport.getModuleAndSupport(element);
-    return jsClass != null && moduleAndSupport != null && moduleAndSupport.second.isTestClass(jsClass, true);
+    final VirtualFile file = element.getContainingFile().getVirtualFile();
+    return jsClass != null && moduleAndSupport != null &&
+           ((file != null && file.getName().contains("Test") &&
+             ModuleRootManager.getInstance(moduleAndSupport.first).getFileIndex().isInTestSourceContent(file))
+            || moduleAndSupport.second.isTestClass(jsClass, true));
   }
 }

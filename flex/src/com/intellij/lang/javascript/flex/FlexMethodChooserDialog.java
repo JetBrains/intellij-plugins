@@ -1,22 +1,18 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.execution.ExecutionBundle;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
-import com.intellij.ui.ColoredListCellRenderer;
-import com.intellij.ui.ListScrollingUtil;
-import com.intellij.ui.ScrollPaneFactory;
-import com.intellij.ui.SortedListModel;
+import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Comparator;
 
@@ -53,15 +49,13 @@ public class FlexMethodChooserDialog extends DialogWrapper {
     });
 
     myList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    myList.addMouseListener(new MouseAdapter() {
+    new DoubleClickListener() {
       @Override
-      public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-          FlexMethodChooserDialog.this.close(OK_EXIT_CODE);
-          e.consume();
-        }
+      protected boolean onDoubleClick(MouseEvent e) {
+        FlexMethodChooserDialog.this.close(OK_EXIT_CODE);
+        return true;
       }
-    });
+    }.installOn(myList);
 
     int index = getIndexToSelect(clazz, initialSelection);
     if (index == -1) {

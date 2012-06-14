@@ -17,6 +17,7 @@ import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.navigation.Place;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.tree.TreeUtil;
@@ -28,7 +29,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -81,13 +81,13 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
       }
     });
 
-    myTree.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(final MouseEvent e) {
-        if (MouseEvent.BUTTON1 == e.getButton() && e.getClickCount() == 2) {
-          openProjectStructure();
-        }
+    new DoubleClickListener() {
+      @Override
+      protected boolean onDoubleClick(MouseEvent e) {
+        openProjectStructure();
+        return true;
       }
-    });
+    }.installOn(myTree);
 
     setTitle(FlexBundle.message("project.setup.problem.title"));
     setOKButtonText(FlexBundle.message("open.project.structure"));

@@ -18,7 +18,7 @@ public class DefaultProfilerExecutor extends Executor {
   @NonNls
   public static final String EXECUTOR_ID = "Profile";
 
-  private static final Icon TOOL_WINDOW_ICON = AllIcons.General.ToolWindowDebugger;
+  private static final Icon TOOL_WINDOW_ICON = AllIcons.Toolwindows.ToolWindowDebugger;
   public static final Icon ICON;
 
   static {

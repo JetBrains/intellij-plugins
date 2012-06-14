@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.actions.newfile;
 
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.lang.LanguageNamesValidation;
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -73,7 +74,7 @@ public class CreateFlexSkinDialog extends DialogWrapper {
     final String packageName = getPackageName();
     for (final String s : StringUtil.split(packageName, ".")) {
       if (!namesValidator.isIdentifier(s, null)) {
-        setErrorText(FlexBundle.message("invalid.package", packageName));
+        setErrorText(JSBundle.message("invalid.package", packageName));
         return;
       }
     }
