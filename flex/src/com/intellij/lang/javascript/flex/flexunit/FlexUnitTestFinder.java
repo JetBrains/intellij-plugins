@@ -115,7 +115,8 @@ public class FlexUnitTestFinder implements TestFinder {
     final List<Pair<? extends PsiNamedElement, Integer>> classesWithWeights = new ArrayList<Pair<? extends PsiNamedElement, Integer>>();
     for (Pair<String, Integer> nameWithWeight : TestFinderHelper.collectPossibleClassNamesWithWeights(className)) {
       for (final JSQualifiedNamedElement jsElement : JSResolveUtil.findElementsByName(nameWithWeight.first, module.getProject(), scope)) {
-        if (jsElement instanceof JSClass && !((JSClass)jsElement).isInterface() && !flexUnitSupport.isTestClass((JSClass)jsElement, true)) {
+        if (jsElement instanceof JSClass && jsElement != jsClass && !((JSClass)jsElement).isInterface() &&
+            !flexUnitSupport.isTestClass((JSClass)jsElement, true)) {
           classesWithWeights.add(new Pair<JSQualifiedNamedElement, Integer>(jsElement, nameWithWeight.second));
         }
       }
