@@ -455,12 +455,16 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
                                      : ((XmlTag)element).getLocalName();
 
 
-        final CreateClassIntentionWithCallback intention =
-          SKIN_CLASS_ATTR_NAME.equals(tagOrAttrName)
-          ? new CreateFlexSkinIntention(classFqn, element)
-          : "firstView".equals(tagOrAttrName)
-            ? new CreateFlexMobileViewIntentionAndFix(classFqn, element, false)
-            : new CreateClassOrInterfaceAction(classFqn, null, element);
+        final CreateClassIntentionWithCallback intention;
+        if (SKIN_CLASS_ATTR_NAME.equals(tagOrAttrName)) {
+          intention = new CreateFlexSkinIntention(classFqn, element);
+        }
+        else if ("firstView".equals(tagOrAttrName)) {
+          intention = new CreateFlexMobileViewIntentionAndFix(classFqn, element, false);
+        }
+        else {
+          intention = new CreateClassOrInterfaceAction(classFqn, null, element);
+        }
 
         intention.setCreatedClassFqnConsumer(new Consumer<String>() {
           @Override
