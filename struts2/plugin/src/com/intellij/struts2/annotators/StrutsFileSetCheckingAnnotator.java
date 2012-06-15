@@ -59,11 +59,11 @@ import java.util.Set;
 public class StrutsFileSetCheckingAnnotator implements Annotator {
 
   public void annotate(@NotNull final PsiElement psiElement, @NotNull final AnnotationHolder holder) {
-    if (psiElement instanceof JspFile) {
+    if (!(psiElement instanceof XmlFile)) {
       return;
     }
 
-    if (!(psiElement instanceof XmlFile)) {
+    if (psiElement instanceof JspFile) {
       return;
     }
 
@@ -77,7 +77,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
       return;
     }
 
-    final XmlFile xmlFile = (XmlFile) psiElement;
+    final XmlFile xmlFile = (XmlFile)psiElement;
     final Project project = psiElement.getProject();
 
     final StrutsManager strutsManager = StrutsManager.getInstance(project);
@@ -97,16 +97,17 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
 
     final boolean fileSetAvailable = allConfigFileSets.size() != 0;
     final Annotation annotation =
-        holder.createWarningAnnotation(xmlFile,
-                                       fileSetAvailable ?
-                                           StrutsBundle.message("annotators.fileset.file.not.registered") :
-                                           StrutsBundle.message("annotators.fileset.no.file.sets"));
+      holder.createWarningAnnotation(xmlFile,
+                                     fileSetAvailable ?
+                                     StrutsBundle.message("annotators.fileset.file.not.registered") :
+                                     StrutsBundle.message("annotators.fileset.no.file.sets"));
     annotation.setFileLevelAnnotation(true);
 
     if (fileSetAvailable) {
       final AddToFileSetFix addToFileSetFix = new AddToFileSetFix(xmlFile.getName());
       annotation.registerFix(addToFileSetFix);
-    } else {
+    }
+    else {
       annotation.registerFix(new IntentionAction() {
         @NotNull
         public String getText() {
@@ -134,7 +135,6 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
           return false;
         }
       });
-
     }
   }
 
@@ -170,31 +170,30 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
 
       final Set<StrutsFileSet> strutsFileSets = strutsFacet.getConfiguration().getFileSets();
       final BaseListPopupStep<StrutsFileSet> step =
-          new BaseListPopupStep<StrutsFileSet>(StrutsBundle.message("annotators.fileset.fix.choose.fileset"),
-                                               new ArrayList<StrutsFileSet>(strutsFileSets)) {
+        new BaseListPopupStep<StrutsFileSet>(StrutsBundle.message("annotators.fileset.fix.choose.fileset"),
+                                             new ArrayList<StrutsFileSet>(strutsFileSets)) {
 
-            public Icon getIconFor(final StrutsFileSet aValue) {
-              return StrutsIcons.STRUTS_CONFIG_FILE;
-            }
+          public Icon getIconFor(final StrutsFileSet aValue) {
+            return StrutsIcons.STRUTS_CONFIG_FILE;
+          }
 
-            public PopupStep onChosen(final StrutsFileSet selectedValue, final boolean finalChoice) {
-              selectedValue.addFile(file.getVirtualFile());
-              ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                public void run() {
-                  ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true);
-                }
-              });
+          public PopupStep onChosen(final StrutsFileSet selectedValue, final boolean finalChoice) {
+            selectedValue.addFile(file.getVirtualFile());
+            ApplicationManager.getApplication().runWriteAction(new Runnable() {
+              public void run() {
+                ProjectRootManagerEx.getInstanceEx(project).makeRootsChange(EmptyRunnable.getInstance(), false, true);
+              }
+            });
 
-              // re-highlight (remove annotation)
-              DaemonCodeAnalyzer.getInstance(project).restart();
+            // re-highlight (remove annotation)
+            DaemonCodeAnalyzer.getInstance(project).restart();
 
-              return super.onChosen(selectedValue, finalChoice);
-            }
-          };
+            return super.onChosen(selectedValue, finalChoice);
+          }
+        };
       JBPopupFactory.getInstance()
-                    .createListPopup(step)
-                    .showInBestPositionFor(DataManager.getInstance().getDataContext(editor.getComponent()));
+        .createListPopup(step)
+        .showInBestPositionFor(DataManager.getInstance().getDataContext(editor.getComponent()));
     }
   }
-
 }
