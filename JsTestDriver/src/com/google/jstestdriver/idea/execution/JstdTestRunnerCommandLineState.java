@@ -225,6 +225,12 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
           }
         }
       }
+      if ("browserError".equals(nodeType) && arguments != null) {
+        File basePath = new File(arguments);
+        if (basePath.isDirectory() && basePath.isAbsolute()) {
+          return new JsErrorPrinter(consoleView, basePath);
+        }
+      }
       return null;
     }
 

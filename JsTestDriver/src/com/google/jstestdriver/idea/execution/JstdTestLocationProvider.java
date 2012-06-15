@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.execution;
 import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
+import com.intellij.execution.testframework.sm.FileUrlProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -25,6 +26,7 @@ public class JstdTestLocationProvider implements TestLocationProvider {
   private static final String PROTOCOL_ID__CONFIG_FILE = "config";
   private static final String PROTOCOL_ID__TEST_CASE = "testCase";
   private static final String PROTOCOL_ID__TEST = "test";
+  private static final String PROTOCOL_ID__BROWSER_ERROR = "browserError";
 
   @NotNull
   @Override
@@ -36,6 +38,9 @@ public class JstdTestLocationProvider implements TestLocationProvider {
     else if (PROTOCOL_ID__TEST_CASE.equals(protocolId) || PROTOCOL_ID__TEST.equals(protocolId)) {
       location = findTest(locationData, project);
     }
+    else if (PROTOCOL_ID__BROWSER_ERROR.equals(protocolId)) {
+      location = findJsFile(locationData, project);
+    }
     else {
       location = null;
     }
@@ -43,6 +48,32 @@ public class JstdTestLocationProvider implements TestLocationProvider {
       return Collections.singletonList(location);
     }
     return Collections.emptyList();
+  }
+
+  @Nullable
+  private static Location findJsFile(@NotNull String locationData, Project project) {
+    List<String> components = EscapeUtils.split(locationData, ':');
+    if (components.size() != 3) {
+      return null;
+    }
+    String jsFilePath = components.get(0);
+    Integer lineNumber = toInteger(components.get(1));
+    int line = lineNumber != null ? lineNumber : 1;
+
+    VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByIoFile(new File(jsFilePath));
+    if (virtualFile != null && virtualFile.isValid()) {
+      return FileUrlProvider.createLocationFor(project, virtualFile, line);
+    }
+    return null;
+  }
+
+  private static Integer toInteger(@NotNull String s) {
+    try {
+      return Integer.parseInt(s);
+    }
+    catch (NumberFormatException e) {
+      return null;
+    }
   }
 
   @Nullable

@@ -125,7 +125,7 @@ public class TestRunner {
   }
 
   @SuppressWarnings("deprecation")
-  private void runTests(@NotNull final File configFile, @NotNull String[] extraArgs, boolean dryRun) throws ConfigurationException {
+  private void runTests(@NotNull final File configFile, @NotNull String[] extraArgs, final boolean dryRun) throws ConfigurationException {
     JsTestDriverBuilder builder = new JsTestDriverBuilder();
 
     final ParsedConfiguration parsedConfiguration;
@@ -151,7 +151,8 @@ public class TestRunner {
             testListeners.addBinding().toInstance(new IdeaTestListener(
               myTreeManager,
               configFile,
-              singleBasePath
+              singleBasePath,
+              dryRun
             ));
           }
         };

@@ -1,14 +1,9 @@
 package com.google.jstestdriver.idea;
 
-import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.FileResult;
-import com.google.jstestdriver.TestCase;
-import com.google.jstestdriver.TestResult;
+import com.google.jstestdriver.*;
 import com.google.jstestdriver.hooks.TestListener;
-import com.google.jstestdriver.idea.execution.tree.TreeManager;
 import com.google.jstestdriver.idea.execution.tree.TestResultProtocolMessage;
-import com.google.jstestdriver.idea.util.JstdConfigParsingUtils;
-import com.google.jstestdriver.model.BasePaths;
+import com.google.jstestdriver.idea.execution.tree.TreeManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,19 +20,29 @@ public class IdeaTestListener implements TestListener {
   private final File myJstdConfigFile;
   private final File myBasePath;
   private final Object MONITOR = new Object();
+  private final boolean myDryRun;
 
   public IdeaTestListener(
     @NotNull TreeManager treeManager,
     @NotNull File jstdConfigFile,
-    @NotNull File singleBasePath
+    @NotNull File singleBasePath,
+    boolean dryRun
   ) {
     myTreeManager = treeManager;
     myJstdConfigFile = jstdConfigFile;
     myBasePath = singleBasePath;
+    myDryRun = dryRun;
   }
 
   @Override
   public void onFileLoad(BrowserInfo browserInfo, FileResult fileResult) {
+    if (!fileResult.isSuccess() && !myDryRun) {
+      synchronized (MONITOR) {
+        FileSource jsFileSource = fileResult.getFileSource();
+        String jsFilePath = jsFileSource != null ? jsFileSource.getBasePath() : null;
+        myTreeManager.onFileLoadError(browserInfo.toString(), jsFilePath, fileResult.getMessage());
+      }
+    }
   }
 
   @Override

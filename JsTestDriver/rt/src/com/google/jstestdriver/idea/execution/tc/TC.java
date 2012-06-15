@@ -44,6 +44,16 @@ public class TC {
   }
 
   @NotNull
+  public static TCMessage newRootErrorStartedMessage(@NotNull RootErrorNode rootErrorNode) {
+    return newLeafStartedMessage(rootErrorNode);
+  }
+
+  @NotNull
+  public static TCMessage newRootErrorFinishedMessage(@NotNull RootErrorNode rootErrorNode) {
+    return newLeafFinishedAsErrorMessage(rootErrorNode);
+  }
+
+  @NotNull
   public static TCMessage newConfigErrorStartedMessage(@NotNull ConfigErrorNode configErrorNode) {
     return newLeafStartedMessage(configErrorNode);
   }
@@ -54,13 +64,13 @@ public class TC {
   }
 
   @NotNull
-  public static TCMessage newRootErrorStartedMessage(@NotNull RootErrorNode rootErrorNode) {
-    return newLeafStartedMessage(rootErrorNode);
+  public static TCMessage newBrowserErrorStartedMessage(@NotNull BrowserErrorNode browserErrorNode) {
+    return newLeafStartedMessage(browserErrorNode);
   }
 
   @NotNull
-  public static TCMessage newRootErrorFinishedMessage(@NotNull RootErrorNode rootErrorNode) {
-    return newLeafFinishedAsErrorMessage(rootErrorNode);
+  public static TCMessage newBrowserErrorFinishedMessage(@NotNull BrowserErrorNode browserErrorNode) {
+    return newLeafFinishedAsErrorMessage(browserErrorNode);
   }
 
   private static TCMessage newLeafStartedMessage(@NotNull AbstractNodeWithParent node) {
