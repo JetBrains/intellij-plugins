@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" defaultCharsetForPropertiesFiles="UTF-8" />
+  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/flex-injection" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/impl" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/main" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/main-loader" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/plaf/aqua" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/plaf/base" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/shared" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/test-data-helper" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/test-plugin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ui" charset="UTF-8" />
+  </component>
 </project>
 

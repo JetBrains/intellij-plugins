@@ -10,7 +10,6 @@
 			<path-element>@@target@@/shared-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/3.1.0.4880/airglobal.swc</path-element>
 		</external-library-path>
-		<fixed-literal-vector>true</fixed-literal-vector>
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>

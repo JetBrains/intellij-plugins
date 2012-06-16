@@ -14,6 +14,10 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="generator-server" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-flex-compiler:5.0-beta" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-threadlocaltoolkit-wrapper:5.0-beta" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-generator-internal-compiler-iface:5.0-beta" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-generator-api:5.0-beta" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-flex-compiler:4.1-beta" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-threadlocaltoolkit-wrapper:4.1-beta" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-generator-internal-compiler-iface:4.1-beta" level="project" />

@@ -94,7 +94,7 @@
         <artifactId>flexmojos-maven-plugin</artifactId>
         <configuration>
           <debug>true</debug>
-          <fixedLiteralVector>true</fixedLiteralVector>
+          <!--<fixedLiteralVector>true</fixedLiteralVector>-->
           <swfVersion>11</swfVersion>
         </configuration>
       </plugin>
@@ -148,7 +148,17 @@
           <plugin>
             <groupId>org.sonatype.flexmojos</groupId>
             <artifactId>flexmojos-maven-plugin</artifactId>
+            <dependencies>
+              <dependency>
+                <groupId>com.adobe.flex</groupId>
+                <artifactId>compiler</artifactId>
+                <version>4.6.0.23201</version>
+                <type>pom</type>
+              </dependency>
+            </dependencies>
             <configuration>
+              <iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking>true
+              </iKnowWhatImDoingPleaseBreakMyBuildIwontBlameFlexmojosForStopWorking>
               <debug>false</debug>
             </configuration>
           </plugin>
