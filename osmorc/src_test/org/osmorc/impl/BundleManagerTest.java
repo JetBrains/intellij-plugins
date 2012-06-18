@@ -94,9 +94,7 @@ public class BundleManagerTest extends LightIdeaTestCase {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
-        LibraryTable.ModifiableModel projectLibraryModel = ProjectLibraryTable.getInstance(getProject()).getModifiableModel();
-        projectLibraryModel.removeLibrary(myFakeJarLibrary);
-        projectLibraryModel.commit();
+        ProjectLibraryTable.getInstance(getProject()).removeLibrary(myFakeJarLibrary);
       }
     });
     super.tearDown();
