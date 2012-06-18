@@ -187,7 +187,7 @@ public class GeneratorServer {
     }
   }
 
-  private String getCompileGoalName(final MavenProject project) {
+  private static String getCompileGoalName(final MavenProject project) {
     return "swc".equals(project.getPackaging()) ? "compile-swc" : "compile-swf";
   }
 
@@ -299,7 +299,10 @@ public class GeneratorServer {
     request.setSystemProperties(request.getSystemProperties());
     request.setGlobalSettingsFile(mavenExecutionRequest.getGlobalSettingsFile());
     request.setUserSettingsFile(mavenExecutionRequest.getUserSettingsFile());
-    return plexusContainer.lookup(SettingsBuilder.class).build(request).getEffectiveSettings();
+    // IDEA-87004, getEffectiveSettings contains local repo as null, but our mavenExecutionRequest already has not-null local repo
+    Settings settings = plexusContainer.lookup(SettingsBuilder.class).build(request).getEffectiveSettings();
+    settings.setLocalRepository(mavenExecutionRequest.getLocalRepositoryPath().getPath());
+    return settings;
   }
 
   private static DefaultPlexusContainer createPlexusContainer() throws PlexusContainerException, ComponentLookupException {

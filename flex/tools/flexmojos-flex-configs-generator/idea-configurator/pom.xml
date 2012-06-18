@@ -16,12 +16,12 @@
       <version>4.1-beta</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>net.flexmojos.oss</groupId>
-      <artifactId>flexmojos-flex-compiler</artifactId>
-      <version>5.0-beta</version>
-      <scope>provided</scope>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>net.flexmojos.oss</groupId>-->
+      <!--<artifactId>flexmojos-flex-compiler</artifactId>-->
+      <!--<version>5.0-beta</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>com.intellij.flex.maven</groupId>
       <artifactId>shared</artifactId>

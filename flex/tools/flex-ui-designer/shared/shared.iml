@@ -9,7 +9,7 @@
               <dependency linkage="External" />
             </entry>
           </entries>
-          <sdk name="Flexmojos SDK 4.5.2.21576" />
+          <sdk name="compiler-4.5.2.21576.pom" />
         </dependencies>
         <compiler-options>
           <map>
@@ -31,7 +31,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="Flexmojos SDK 4.5.2.21576" jdkType="Flexmojos SDK Type" />
+    <orderEntry type="jdk" jdkName="compiler-4.5.2.21576.pom" jdkType="Flexmojos SDK Type" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airglobal:swc:3.1.0.4880" level="project" />
   </component>
