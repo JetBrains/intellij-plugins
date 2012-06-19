@@ -347,8 +347,6 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return (adtVersion = AirPackageUtil.getAdtVersion(project, sdk)) != null
            && AirPackageUtil.checkAdtVersion(module, bc, adtVersion)
            && AirPackageUtil.checkAirRuntimeOnDevice(project, sdk, adtVersion)
-           && (!bc.getAndroidPackagingOptions().getSigningOptions().isUseTempCertificate() ||
-               AirPackageUtil.ensureCertificateExists(project, sdk))
            && AirPackageUtil.packageApk(module, bc, runnerParameters, isDebug)
            && AirPackageUtil.installApk(project, sdk, apkPath, applicationId);
   }

@@ -430,7 +430,6 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         else if (myMobileRunTarget == AirMobileRunTarget.iOSSimulator) {
           if (bc.getOutputType() == OutputType.Application) {
             checkCustomDescriptor(bc.getIosPackagingOptions());
-            // todo check cert
           }
 
           if (!SystemInfo.isMac) {

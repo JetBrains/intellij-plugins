@@ -111,11 +111,6 @@ public class AirPackageAction extends DumbAwareAction {
       final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
 
       if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
-        if (bc.getAirDesktopPackagingOptions().getSigningOptions().isUseTempCertificate() &&
-            !AirPackageUtil.ensureCertificateExists(project, bc.getSdk())) {
-          return;
-        }
-
         final DesktopPackageType packageType = params.desktopPackageType;
         final ExternalTask task = AirPackageUtil.createAirDesktopTask(moduleAndBC.first, bc, packageType, passwords);
         final String packagePath = outputFolder + "/" +
@@ -125,11 +120,6 @@ public class AirPackageAction extends DumbAwareAction {
       else {
         if (bc.getAndroidPackagingOptions().isEnabled()) {
           final AndroidPackagingOptions packagingOptions = bc.getAndroidPackagingOptions();
-          if (packagingOptions.getSigningOptions().isUseTempCertificate() &&
-              !AirPackageUtil.ensureCertificateExists(project, bc.getSdk())) {
-            return;
-          }
-
           final ExternalTask task = AirPackageUtil.createAndroidPackageTask(moduleAndBC.first, bc, params.androidPackageType,
                                                                             params.apkCaptiveRuntime, params.apkDebugListenPort, passwords);
           final String packagePath = outputFolder + "/" + packagingOptions.getPackageFileName() + ".apk";

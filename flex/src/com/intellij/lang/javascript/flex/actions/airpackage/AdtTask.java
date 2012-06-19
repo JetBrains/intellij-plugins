@@ -51,7 +51,7 @@ public abstract class AdtTask extends ExternalTask {
     }
 
     command.add("-storetype");
-    command.add(tempCertificate ? AirPackageUtil.PKCS12_KEYSTORE_TYPE : signingOptions.getKeystoreType());
+    command.add(tempCertificate ? "PKCS12" : signingOptions.getKeystoreType());
 
     command.add("-keystore");
     command.add(FileUtil.toSystemDependentName(tempCertificate ? AirPackageUtil.getTempKeystorePath() : signingOptions.getKeystorePath()));

@@ -7,7 +7,6 @@ import com.intellij.lang.javascript.flex.actions.MessageDialogWithHyperlinkListe
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -25,7 +24,6 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,11 +41,8 @@ public class AirPackageUtil {
 
   public static final int DEBUG_PORT_DEFAULT = 7936;
 
-  private static final String KEYSTORE_FILE_NAME = "idea_temp_keystore.p12";
-  private static final String TEMP_CERTIFICATE_NAME = "TempCertificate";
-  private static final String TEMP_KEY_TYPE = "1024-RSA";
-  public static final String PKCS12_KEYSTORE_TYPE = "PKCS12";
-  public static final String TEMP_KEYSTORE_PASSWORD = "a";
+  public static final String TEMP_KEYSTORE_PASSWORD = "keystore_password";
+
   private static final Pattern AIR_VERSION_PATTERN = Pattern.compile("[1-9]\\.[0-9]{1,2}(\\.[0-9]{1,6})*");
   private static final String ADB_RELATIVE_PATH = "/lib/android/bin/adb" + (SystemInfo.isWindows ? ".exe" : "");
 
@@ -55,14 +50,7 @@ public class AirPackageUtil {
   }
 
   public static String getTempKeystorePath() {
-    return FileUtil.getTempDirectory() + File.separatorChar + KEYSTORE_FILE_NAME;
-  }
-
-  public static boolean ensureCertificateExists(final Project project, Sdk flexSdk) {
-    if (!new File(getTempKeystorePath()).exists()) {
-      return createCertificate(project, flexSdk);
-    }
-    return true;
+    return FlexUtils.getPathToBundledJar("temp_keystore.p12");
   }
 
   @Nullable
@@ -299,18 +287,10 @@ public class AirPackageUtil {
                                                final FlexIdeBuildConfiguration bc,
                                                final FlashRunnerParameters runnerParameters,
                                                final boolean isDebug) {
-    final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
-    final boolean tempCertificate = false; // todo simulator doesn't require real cert
-
-    final PasswordStore passwords = tempCertificate
-                                    ? null
-                                    : AirPackageAction.getPasswords(module.getProject(), Collections.singletonList(packagingOptions));
-    if (!tempCertificate && passwords == null) return false; // user canceled
-
     FileDocumentManager.getInstance().saveAllDocuments();
 
     final IOSPackageType packageType = isDebug ? IOSPackageType.DebugOnSimulator : IOSPackageType.TestOnSimulator;
-    final ExternalTask task = createIOSPackageTask(module, bc, packageType, true, runnerParameters.getIOSSimulatorSdkPath(), passwords);
+    final ExternalTask task = createIOSPackageTask(module, bc, packageType, true, runnerParameters.getIOSSimulatorSdkPath(), null);
     return ExternalTask.runWithProgress(task, FlexBundle.message("creating.ios.package"), FlexBundle.message("create.ios.package.title"));
   }
 
@@ -415,9 +395,10 @@ public class AirPackageUtil {
     final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
     final AirSigningOptions signingOptions = packagingOptions.getSigningOptions();
 
+    final boolean simulator = packageType == IOSPackageType.TestOnSimulator || packageType == IOSPackageType.DebugOnSimulator;
     // temp certificate not applicable for iOS
-    final String keystorePassword = passwords.getKeystorePassword(signingOptions.getKeystorePath());
-    final String keyPassword = passwords.getKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias());
+    final String keystorePassword = simulator ? TEMP_KEYSTORE_PASSWORD : passwords.getKeystorePassword(signingOptions.getKeystorePath());
+    final String keyPassword = simulator ? null : passwords.getKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias());
 
     return new AdtTask(module.getProject(), bc.getSdk()) {
       protected void appendAdtOptions(List<String> command) {
@@ -446,9 +427,19 @@ public class AirPackageUtil {
             break;
         }
 
-        appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
+        if (simulator) {
+          command.add("-storetype");
+          command.add("PKCS12");
+          command.add("-keystore");
+          command.add(getTempKeystorePath());
+          command.add("-storepass");
+          command.add(TEMP_KEYSTORE_PASSWORD);
+        }
+        else {
+          appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
+        }
 
-        if (packageType != IOSPackageType.TestOnSimulator && packageType != IOSPackageType.DebugOnSimulator) {
+        if (!simulator) {
           command.add("-provisioning-profile");
           command.add(FileUtil.toSystemDependentName(signingOptions.getProvisioningProfilePath()));
         }
@@ -612,29 +603,5 @@ public class AirPackageUtil {
     }
 
     return null;
-  }
-
-  private static boolean createCertificate(final Project project, final Sdk flexSdk) {
-    final AdtTask task = new AdtTask(project, flexSdk) {
-      protected void appendAdtOptions(List<String> command) {
-        command.add("-certificate");
-        command.add("-cn");
-        command.add(TEMP_CERTIFICATE_NAME);
-        command.add(TEMP_KEY_TYPE);
-        command.add(getTempKeystorePath());
-        command.add(TEMP_KEYSTORE_PASSWORD);
-      }
-    };
-
-    final boolean ok = ExternalTask.runWithProgress(task, "Creating certificate", "Create Certificate");
-    if (ok) {
-      ApplicationManager.getApplication().runWriteAction(new Runnable() {
-        public void run() {
-          LocalFileSystem.getInstance().refreshAndFindFileByPath(getTempKeystorePath());
-        }
-      });
-    }
-
-    return ok;
   }
 }
