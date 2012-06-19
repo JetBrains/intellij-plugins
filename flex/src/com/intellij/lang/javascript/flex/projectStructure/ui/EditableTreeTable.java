@@ -202,6 +202,11 @@ abstract class EditableTreeTable<T> extends TreeTable {
     @Override
     public void exchangeRows(int oldIndex, int newIndex) {
     }
+
+    @Override
+    public boolean canExchangeRows(int oldIndex, int newIndex) {
+      return false;
+    }
   }
 
   private static class FirstColumnInfo<T> extends ColumnInfo<DefaultMutableTreeNode, T> {
