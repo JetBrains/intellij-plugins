@@ -20,11 +20,32 @@ import java.util.List;
  *         Time: 11:43:22 PM
  */
 public class FlexReferenceImporter implements ReferenceImporter {
+  @Override
   public boolean autoImportReferenceAtCursor(@NotNull final Editor editor, @NotNull final PsiFile file) {
     if (!(file instanceof JSFile) || file.getLanguage() != JavaScriptSupportLoader.ECMA_SCRIPT_L4) return false;
     int caretOffset = editor.getCaretModel().getOffset();
     Document document = editor.getDocument();
     int lineNumber = document.getLineNumber(caretOffset);
+    int startOffset = document.getLineStartOffset(lineNumber);
+    int endOffset = document.getLineEndOffset(lineNumber);
+
+    List<PsiElement> elements = CollectHighlightsUtil.getElementsInRange(file, startOffset, endOffset);
+    for (PsiElement element : elements) {
+      if (element instanceof JSReferenceExpression && ((JSReferenceExpression)element).getQualifier() == null) {
+        if (((JSReferenceExpression)element).multiResolve(false).length == 0) {
+          new AddImportECMAScriptClassOrFunctionAction(editor, (PsiPolyVariantReference)element).execute();
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean autoImportReferenceAt(@NotNull Editor editor, @NotNull PsiFile file, int offset) {
+    if (!(file instanceof JSFile) || file.getLanguage() != JavaScriptSupportLoader.ECMA_SCRIPT_L4) return false;
+    Document document = editor.getDocument();
+    int lineNumber = document.getLineNumber(offset);
     int startOffset = document.getLineStartOffset(lineNumber);
     int endOffset = document.getLineEndOffset(lineNumber);
 

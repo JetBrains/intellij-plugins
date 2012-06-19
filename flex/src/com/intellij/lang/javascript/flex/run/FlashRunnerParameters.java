@@ -17,6 +17,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -25,13 +26,14 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Collections;
 
 public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cloneable {
 
   public enum AirMobileRunTarget {
-    Emulator, AndroidDevice, iOSDevice
+    Emulator, AndroidDevice, iOSSimulator, iOSDevice
   }
 
   public enum Emulator {
@@ -64,7 +66,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     public final int fullScreenWidth;
     public final int fullScreenHeight;
 
-    private Emulator(String name, String adlAlias, int screenWidth, int screenHeight, int fullScreenWidth, int fullScreenHeight) {
+    Emulator(String name, String adlAlias, int screenWidth, int screenHeight, int fullScreenWidth, int fullScreenHeight) {
       this.name = name;
       this.adlAlias = adlAlias;
       this.screenWidth = screenWidth;
@@ -101,6 +103,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   private int myScreenHeight = 0;
   private int myFullScreenWidth = 0;
   private int myFullScreenHeight = 0;
+  private String myIOSSimulatorSdkPath = "";
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
   private int myUsbDebugPort = AirPackageUtil.DEBUG_PORT_DEFAULT;
   private @NotNull String myEmulatorAdlOptions = "";
@@ -234,6 +237,14 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
   public void setFullScreenHeight(final int fullScreenHeight) {
     myFullScreenHeight = fullScreenHeight;
+  }
+
+  public String getIOSSimulatorSdkPath() {
+    return myIOSSimulatorSdkPath;
+  }
+
+  public void setIOSSimulatorSdkPath(final String IOSSimulatorSdkPath) {
+    myIOSSimulatorSdkPath = IOSSimulatorSdkPath;
   }
 
   @NotNull
@@ -397,11 +408,6 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         break;
 
       case Mobile:
-        if (bc.getOutputType() == OutputType.Application && myMobileRunTarget == AirMobileRunTarget.AndroidDevice) {
-          final AndroidPackagingOptions packagingOptions = bc.getAndroidPackagingOptions();
-          checkCustomDescriptor(packagingOptions);
-        }
-
         if (myMobileRunTarget == AirMobileRunTarget.Emulator) {
           checkAdlAndAirRuntime(sdk);
 
@@ -416,6 +422,30 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
               break;
           }
         }
+        else if (myMobileRunTarget == AirMobileRunTarget.AndroidDevice) {
+          if (bc.getOutputType() == OutputType.Application) {
+            checkCustomDescriptor(bc.getAndroidPackagingOptions());
+          }
+        }
+        else if (myMobileRunTarget == AirMobileRunTarget.iOSSimulator) {
+          if (bc.getOutputType() == OutputType.Application) {
+            checkCustomDescriptor(bc.getIosPackagingOptions());
+            // todo check cert
+          }
+
+          if (!SystemInfo.isMac) {
+            throw new RuntimeConfigurationError(FlexBundle.message("ios.simulator.on.mac.only.warning"));
+          }
+
+          if (myIOSSimulatorSdkPath.isEmpty()) {
+            throw new RuntimeConfigurationError(FlexBundle.message("ios.simulator.sdk.not.set"));
+          }
+          else if (!new File(FileUtil.toSystemDependentName(myIOSSimulatorSdkPath)).isDirectory()) {
+            throw new RuntimeConfigurationError(
+              FlexBundle.message("ios.simulator.sdk.not.found", FileUtil.toSystemDependentName(myIOSSimulatorSdkPath)));
+          }
+        }
+
         break;
     }
   }

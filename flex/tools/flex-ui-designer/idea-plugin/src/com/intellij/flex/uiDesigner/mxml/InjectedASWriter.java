@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageFacadeImpl;
 import com.intellij.psi.xml.XmlTag;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +73,7 @@ class InjectedASWriter implements ValueReferenceResolver {
   public ValueWriter processProperty(PsiElement host, String name, @Nullable String type, boolean isStyle, @NotNull MxmlObjectReferenceProvider mxmlObjectReferenceProvider)
     throws InvalidPropertyException {
     final InjectedPsiVisitor visitor = new InjectedPsiVisitor(host, type, problemsHolder);
-    InjectedLanguageUtil.enumerate(host, visitor);
+    InjectedLanguageFacadeImpl.enumerate(host, visitor);
 
     //noinspection ThrowableResultOfMethodCallIgnored
     if (visitor.getInvalidPropertyException() != null) {

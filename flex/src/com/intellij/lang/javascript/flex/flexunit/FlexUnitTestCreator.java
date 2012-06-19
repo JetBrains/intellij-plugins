@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -53,7 +54,7 @@ public class FlexUnitTestCreator implements TestCreator {
       selectedMemberInfos = new JSMemberInfo[0];
     }
     else {
-      final CreateFlexUnitTestDialog dialog = new CreateFlexUnitTestDialog(project, jsClass);
+      final CreateFlexUnitTestDialog dialog = new CreateFlexUnitTestDialog(ModuleUtil.findModuleForPsiElement(jsClass), jsClass);
       dialog.show();
 
       if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {

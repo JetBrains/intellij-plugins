@@ -2,7 +2,7 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="Flex" version="4">
   <component name="FlexBuildConfigurationManager" active="test">
     <configurations>
-      <configuration name="test" target-platform="Desktop" main-class="com.intellij.flex.uiDesigner.TestPlugin" output-file="test-1.0-SNAPSHOT.swf" output-folder="$MODULE_DIR$/target">
+      <configuration name="test" main-class="com.intellij.flex.uiDesigner.TestPlugin" output-file="test-1.0-SNAPSHOT.swf" output-folder="$MODULE_DIR$/target">
         <dependencies>
           <entries>
             <entry module-name="shared" build-configuration-name="shared">
@@ -75,7 +75,7 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="Flexmojos SDK 4.5.2.21576" />
+          <sdk name="compiler-4.5.2.21576.pom" />
         </dependencies>
         <compiler-options>
           <map>
@@ -84,7 +84,7 @@
           <option name="resourceFilesMode" value="None" />
           <option name="additionalConfigFilePath" value="$MODULE_DIR$/../.idea/flexmojos/test-com.intellij.flex.uiDesigner.xml" />
         </compiler-options>
-        <packaging-air-desktop package-file-name="test-1.0-SNAPSHOT.swf" />
+        <packaging-air-desktop />
         <packaging-android />
         <packaging-ios />
       </configuration>
@@ -98,7 +98,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="Flexmojos SDK 4.5.2.21576" jdkType="Flexmojos SDK Type" />
+    <orderEntry type="jdk" jdkName="compiler-4.5.2.21576.pom" jdkType="Flexmojos SDK Type" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.flyti.cocoa:acocoa:swc:2.0" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" level="project" />

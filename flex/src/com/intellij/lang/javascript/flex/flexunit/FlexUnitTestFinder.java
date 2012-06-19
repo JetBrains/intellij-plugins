@@ -16,7 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageFacadeImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.psi.stubs.StubIndex;
@@ -47,7 +47,7 @@ public class FlexUnitTestFinder implements TestFinder {
 
     PsiFile psiFile = PsiTreeUtil.getParentOfType(element, PsiFile.class, false);
     if (psiFile instanceof JSFile) {
-      psiFile = InjectedLanguageUtil.getTopLevelFile(psiFile);
+      psiFile = InjectedLanguageFacadeImpl.getTopLevelFile(psiFile);
     }
 
     if (psiFile instanceof JSFile) {
@@ -115,7 +115,8 @@ public class FlexUnitTestFinder implements TestFinder {
     final List<Pair<? extends PsiNamedElement, Integer>> classesWithWeights = new ArrayList<Pair<? extends PsiNamedElement, Integer>>();
     for (Pair<String, Integer> nameWithWeight : TestFinderHelper.collectPossibleClassNamesWithWeights(className)) {
       for (final JSQualifiedNamedElement jsElement : JSResolveUtil.findElementsByName(nameWithWeight.first, module.getProject(), scope)) {
-        if (jsElement instanceof JSClass && !((JSClass)jsElement).isInterface() && !flexUnitSupport.isTestClass((JSClass)jsElement, true)) {
+        if (jsElement instanceof JSClass && jsElement != jsClass && !((JSClass)jsElement).isInterface() &&
+            !flexUnitSupport.isTestClass((JSClass)jsElement, true)) {
           classesWithWeights.add(new Pair<JSQualifiedNamedElement, Integer>(jsElement, nameWithWeight.second));
         }
       }

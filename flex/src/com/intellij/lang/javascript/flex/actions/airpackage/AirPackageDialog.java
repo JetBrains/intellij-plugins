@@ -82,7 +82,8 @@ public class AirPackageDialog extends DialogWrapper {
   private void setupComboBoxes() {
     myDesktopTypeCombo.setModel(new DefaultComboBoxModel(DesktopPackageType.values()));
     myAndroidTypeCombo.setModel(new DefaultComboBoxModel(AndroidPackageType.values()));
-    myIOSTypeCombo.setModel(new DefaultComboBoxModel(IOSPackageType.values()));
+    myIOSTypeCombo.setModel(new DefaultComboBoxModel(
+      new IOSPackageType[]{IOSPackageType.Test, IOSPackageType.DebugOverNetwork, IOSPackageType.AdHoc, IOSPackageType.AppStore}));
 
     final ActionListener listener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {

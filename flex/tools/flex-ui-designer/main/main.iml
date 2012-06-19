@@ -2,7 +2,7 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="Flex" version="4">
   <component name="FlexBuildConfigurationManager" active="main">
     <configurations>
-      <configuration name="main" target-platform="Desktop" main-class="com.intellij.flex.uiDesigner.Main" output-file="main-1.0-SNAPSHOT.swf" output-folder="$MODULE_DIR$/target">
+      <configuration name="main" main-class="com.intellij.flex.uiDesigner.Main" output-file="main-1.0-SNAPSHOT.swf" output-folder="$MODULE_DIR$/target" skip-build="true">
         <dependencies>
           <entries>
             <entry module-name="shared" build-configuration-name="shared">
@@ -87,7 +87,7 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="Flexmojos SDK 4.5.2.21576" />
+          <sdk name="compiler-4.5.2.21576.pom" />
         </dependencies>
         <compiler-options>
           <map>
@@ -96,7 +96,7 @@
           <option name="resourceFilesMode" value="None" />
           <option name="additionalConfigFilePath" value="$MODULE_DIR$/../.idea/flexmojos/main-com.intellij.flex.uiDesigner.xml" />
         </compiler-options>
-        <packaging-air-desktop package-file-name="main-1.0-SNAPSHOT.swf" />
+        <packaging-air-desktop />
         <packaging-android />
         <packaging-ios />
       </configuration>
@@ -111,7 +111,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="Flexmojos SDK 4.5.2.21576" jdkType="Flexmojos SDK Type" />
+    <orderEntry type="jdk" jdkName="compiler-4.5.2.21576.pom" jdkType="Flexmojos SDK Type" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.flyti.cocoa:aquaLaF:swc:2.0" level="project" />
     <orderEntry type="library" name="Maven: org.flyti.cocoa:cocoa:swc:2.0" level="project" />
@@ -135,11 +135,11 @@
     <orderEntry type="library" name="Maven: org.tinytlf:core:swc:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.tinytlf:fte-utils:swc:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.flyti.cocoa:cocoa:rb.swc:en_US:2.0" level="project" />
-    <orderEntry type="module" module-name="shared" />
     <orderEntry type="module" module-name="aqua" />
+    <orderEntry type="module" module-name="shared" />
     <orderEntry type="module" module-name="base" />
-    <orderEntry type="module" module-name="impl" />
     <orderEntry type="module" module-name="ui" />
+    <orderEntry type="module" module-name="impl" />
   </component>
 </module>
 

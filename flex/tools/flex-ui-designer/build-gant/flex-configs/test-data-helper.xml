@@ -8,7 +8,6 @@
 			<path-element>@@repo@@/com/adobe/flex/framework/mx/4.5.2.21576/mx-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/playerglobal/11.1/playerglobal.swc</path-element>
 		</external-library-path>
-		<fixed-literal-vector>true</fixed-literal-vector>
 		<fonts>
 			<local-fonts-snapshot>@@repo@@/fonts.ser</local-fonts-snapshot>
 		</fonts>

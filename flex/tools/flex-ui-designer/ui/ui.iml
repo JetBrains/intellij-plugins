@@ -2,7 +2,7 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="Flex" version="4">
   <component name="FlexBuildConfigurationManager" active="ui">
     <configurations>
-      <configuration name="ui" target-platform="Desktop" output-type="Library" output-file="ui-1.0-SNAPSHOT.swc" output-folder="$MODULE_DIR$/target">
+      <configuration name="ui" output-type="Library" output-file="ui-1.0-SNAPSHOT.swc" output-folder="$MODULE_DIR$/target">
         <dependencies>
           <entries>
             <entry module-name="shared" build-configuration-name="shared">
@@ -72,7 +72,7 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="Flexmojos SDK 4.5.2.21576" />
+          <sdk name="compiler-4.5.2.21576.pom" />
         </dependencies>
         <compiler-options>
           <map>
@@ -95,7 +95,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="Flexmojos SDK 4.5.2.21576" jdkType="Flexmojos SDK Type" />
+    <orderEntry type="jdk" jdkName="compiler-4.5.2.21576.pom" jdkType="Flexmojos SDK Type" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.flyti.cocoa:acocoa:swc:2.0" level="project" />
     <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" level="project" />

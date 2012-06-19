@@ -353,6 +353,21 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
            && AirPackageUtil.installApk(project, sdk, apkPath, applicationId);
   }
 
+  public static boolean packAndInstallToIOSSimulator(final Module module,
+                                                     final FlexIdeBuildConfiguration bc,
+                                                     final FlashRunnerParameters runnerParameters,
+                                                     final String applicationId,
+                                                     final boolean isDebug) {
+    final Project project = module.getProject();
+    final Sdk sdk = bc.getSdk();
+    final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
+    final String ipaPath = outputFolder + "/" + bc.getIosPackagingOptions().getPackageFileName() + ".ipa";
+
+    // todo check apk version (>=3.3), use temporary cert if needed
+    return (AirPackageUtil.packageIpaForSimulator(module, bc, runnerParameters, isDebug)
+            && AirPackageUtil.installOnIosSimulator(project, sdk, ipaPath, applicationId, runnerParameters.getIOSSimulatorSdkPath()));
+  }
+
   @Nullable
   public static String getApplicationId(final String airDescriptorPath) {
     final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(airDescriptorPath);
@@ -369,6 +384,17 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     if (AirPackageUtil.launchAndroidApplication(project, flexSdk, applicationId)) {
       ToolWindowManager.getInstance(project).notifyByBalloon(isDebug ? ToolWindowId.DEBUG : ToolWindowId.RUN, MessageType.INFO,
                                                              FlexBundle.message("android.application.launched"));
+    }
+  }
+
+  public static void launchOnIosSimulator(final Project project,
+                                          final Sdk flexSdk,
+                                          final String applicationId,
+                                          final String iOSSdkPath,
+                                          final boolean isDebug) {
+    if (AirPackageUtil.launchOnIosSimulator(project, flexSdk, applicationId, iOSSdkPath)) {
+      ToolWindowManager.getInstance(project).notifyByBalloon(isDebug ? ToolWindowId.DEBUG : ToolWindowId.RUN, MessageType.INFO,
+                                                             FlexBundle.message("ios.simulator.application.launched"));
     }
   }
 

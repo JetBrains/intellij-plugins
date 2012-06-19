@@ -61,6 +61,8 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
   public enum IOSPackageType {
     Test("test without debugging"),
     DebugOverNetwork("debug over network"),
+    TestOnSimulator("test on iOS Simulator"),
+    DebugOnSimulator("debug on iOS Simulator"),
     AdHoc("ad hoc distribution"),
     AppStore("Apple App Store distribution");
 

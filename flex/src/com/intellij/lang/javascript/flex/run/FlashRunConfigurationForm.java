@@ -1,7 +1,8 @@
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionBundle;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
@@ -21,9 +22,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
+import com.intellij.openapi.util.SystemInfo;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.PathUtil;
@@ -34,6 +38,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -43,6 +49,8 @@ import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDes
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.Emulator;
 
 public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfiguration> {
+
+  private static final String LATEST_SELECTED_IOS_SIMULATOR_SDK_PATH_KEY = "LatestSelectedIosSimulatorSdk";
 
   // Application Main Class must inherit from this class
   public static final String SPRITE_CLASS_NAME = "flash.display.Sprite";
@@ -75,6 +83,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private JPanel myMobileRunPanel;
   private JRadioButton myOnEmulatorRadioButton;
   private JRadioButton myOnAndroidDeviceRadioButton;
+  private JRadioButton myOnIOSSimulatorRadioButton;
+  private TextFieldWithBrowseButton myIOSSimulatorSdkTextWithBrowse;
   private JRadioButton myOnIOSDeviceRadioButton;
 
   private JComboBox myEmulatorCombo;
@@ -233,6 +243,16 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
   private void initMobileControls() {
     initEmulatorRelatedControls();
+
+    if (!SystemInfo.isMac) {
+      myOnIOSSimulatorRadioButton.setEnabled(false);
+      myOnIOSSimulatorRadioButton.setText(FlexBundle.message("ios.simulator.on.mac.only.button.text"));
+      myIOSSimulatorSdkTextWithBrowse.setVisible(false);
+    }
+
+    myIOSSimulatorSdkTextWithBrowse
+      .addBrowseFolderListener(null, null, myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor());
+
     myOnIOSDeviceRadioButton.setVisible(false); // until supported
 
     final ActionListener debugTransportListener = new ActionListener() {
@@ -295,11 +315,15 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
         if (myOnEmulatorRadioButton.isSelected()) {
           IdeFocusManager.getInstance(myProject).requestFocus(myEmulatorCombo, true);
         }
+        if (myOnIOSSimulatorRadioButton.isSelected()) {
+          IdeFocusManager.getInstance(myProject).requestFocus(myIOSSimulatorSdkTextWithBrowse.getTextField(), true);
+        }
       }
     };
 
     myOnEmulatorRadioButton.addActionListener(targetDeviceListener);
     myOnAndroidDeviceRadioButton.addActionListener(targetDeviceListener);
+    myOnIOSSimulatorRadioButton.addActionListener(targetDeviceListener);
     myOnIOSDeviceRadioButton.addActionListener(targetDeviceListener);
 
     final int preferredWidth = new JLabel("999999").getPreferredSize().width;
@@ -359,6 +383,14 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
         updateEmulatorRelatedControls();
       }
 
+      myIOSSimulatorSdkTextWithBrowse.setEnabled(myOnIOSSimulatorRadioButton.isSelected());
+
+      if (myIOSSimulatorSdkTextWithBrowse.isEnabled() && myIOSSimulatorSdkTextWithBrowse.getText().isEmpty() && SystemInfo.isMac) {
+        final String latestSelected = PropertiesComponent.getInstance().getValue(LATEST_SELECTED_IOS_SIMULATOR_SDK_PATH_KEY);
+        myIOSSimulatorSdkTextWithBrowse
+          .setText(FileUtil.toSystemDependentName(StringUtil.notNullize(latestSelected, guessIosSimulatorSdkPath())));
+      }
+
       updateDebugTransportRelatedControls();
     }
   }
@@ -400,10 +432,10 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   private void updateDebugTransportRelatedControls() {
-    final boolean enabled = !myOnEmulatorRadioButton.isSelected();
-    myDebugOverLabel.setEnabled(enabled);
-    UIUtil.setEnabled(myDebugTransportPanel, enabled, true);
-    if (enabled) {
+    final boolean onDevice = myOnAndroidDeviceRadioButton.isSelected() || myOnIOSDeviceRadioButton.isSelected();
+    myDebugOverLabel.setEnabled(onDevice);
+    UIUtil.setEnabled(myDebugTransportPanel, onDevice, true);
+    if (onDevice) {
       myUsbDebugPortTextField.setEnabled(myDebugOverUSBRadioButton.isSelected());
     }
   }
@@ -454,6 +486,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     }
 
     myOnAndroidDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice);
+    myOnIOSSimulatorRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.iOSSimulator);
+    myIOSSimulatorSdkTextWithBrowse.setText(FileUtil.toSystemDependentName(params.getIOSSimulatorSdkPath()));
     myOnIOSDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.iOSDevice);
 
     myDebugOverNetworkRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.Network);
@@ -469,6 +503,35 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     mySdkForDebuggingCombo.setSelectedSdkRaw(params.getDebuggerSdkRaw());
 
     updateControls();
+  }
+
+  private static String guessIosSimulatorSdkPath() {
+    final File appDir = new File("/Applications");
+    if (appDir.isDirectory()) {
+      final String relPath = "/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs";
+      final File[] xCodeDirs = appDir.listFiles(new FileFilter() {
+        public boolean accept(final File file) {
+          final String name = file.getName().toLowerCase();
+          return file.isDirectory() && name.startsWith("xcode") && name.endsWith(".app")
+                 && new File(file.getPath() + relPath).isDirectory();
+        }
+      });
+
+      if (xCodeDirs.length > 0) {
+        final File sdksDir = new File (xCodeDirs[0] + relPath);
+        final File[] simulatorSdkDirs = sdksDir.listFiles(new FileFilter() {
+          public boolean accept(final File file) {
+            final String filename = file.getName().toLowerCase();
+            return file.isDirectory() && filename.startsWith("iphonesimulator") && filename.endsWith(".sdk");
+          }
+        });
+
+        if (simulatorSdkDirs.length > 0) {
+          return simulatorSdkDirs[0].getPath();
+        }
+      }
+    }
+    return "";
   }
 
   protected void applyEditorTo(final FlashRunConfiguration configuration) throws ConfigurationException {
@@ -494,7 +557,9 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
                                                ? AirMobileRunTarget.Emulator
                                                : myOnAndroidDeviceRadioButton.isSelected()
                                                  ? AirMobileRunTarget.AndroidDevice
-                                                 : AirMobileRunTarget.iOSDevice;
+                                                 : myOnIOSSimulatorRadioButton.isSelected()
+                                                   ? AirMobileRunTarget.iOSSimulator
+                                                   : AirMobileRunTarget.iOSDevice;
     params.setMobileRunTarget(mobileRunTarget);
 
     final Emulator emulator = (Emulator)myEmulatorCombo.getSelectedItem();
@@ -509,6 +574,16 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       }
       catch (NumberFormatException e) {/**/}
     }
+
+    final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+    if (SystemInfo.isMac && bc != null && bc.getTargetPlatform() == TargetPlatform.Mobile && myOnIOSSimulatorRadioButton.isSelected()) {
+      final String path = FileUtil.toSystemIndependentName(myIOSSimulatorSdkTextWithBrowse.getText().trim());
+      if (!path.isEmpty()) {
+        PropertiesComponent.getInstance().setValue(LATEST_SELECTED_IOS_SIMULATOR_SDK_PATH_KEY, path);
+      }
+    }
+
+    params.setIOSSimulatorSdkPath(FileUtil.toSystemIndependentName(myIOSSimulatorSdkTextWithBrowse.getText().trim()));
 
     params.setDebugTransport(myDebugOverNetworkRadioButton.isSelected()
                              ? AirMobileDebugTransport.Network

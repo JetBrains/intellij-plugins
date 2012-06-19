@@ -31,7 +31,7 @@ import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageFacadeImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
@@ -318,7 +318,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
         templateBuilder.replaceElement(referenceElement, "handlerReference", "handlerName", false);
       }
 
-      final Editor topEditor = InjectedLanguageUtil.getTopLevelEditor(editor);
+      final Editor topEditor = InjectedLanguageFacadeImpl.getTopLevelEditor(editor);
       PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(topEditor.getDocument());
 
       final Template template = templateBuilder.buildInlineTemplate();
@@ -339,7 +339,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
           final PsiLanguageInjectionHost valueElement = (PsiLanguageInjectionHost)xmlAttribute.getValueElement();
           if (valueElement != null) {
             final Ref<PsiElement> ref = new Ref<PsiElement>();
-            InjectedLanguageUtil.enumerate(valueElement, new PsiLanguageInjectionHost.InjectedPsiVisitor() {
+            InjectedLanguageFacadeImpl.enumerate(valueElement, new PsiLanguageInjectionHost.InjectedPsiVisitor() {
               public void visit(@NotNull final PsiFile injectedPsi, @NotNull final List<PsiLanguageInjectionHost.Shred> places) {
                 int i = injectedPsi.getText().indexOf(attributeValue);
                 if (i != -1) {
