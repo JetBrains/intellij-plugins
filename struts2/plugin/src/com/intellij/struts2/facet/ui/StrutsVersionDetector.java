@@ -30,7 +30,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.zip.ZipEntry;
 
 /**
  * Detects the Struts2 version from attached struts-2core.jar.
@@ -50,7 +49,7 @@ public class StrutsVersionDetector {
         return null;
       }
 
-      final ZipEntry zipEntry = strutsJar.getEntry("META-INF/maven/org.apache.struts/struts2-core/pom.properties");
+      final JarFile.JarEntry zipEntry = strutsJar.getEntry("META-INF/maven/org.apache.struts/struts2-core/pom.properties");
       if (zipEntry == null) {
         return null;
       }
