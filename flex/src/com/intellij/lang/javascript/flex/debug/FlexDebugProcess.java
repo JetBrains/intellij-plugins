@@ -218,12 +218,16 @@ public class FlexDebugProcess extends XDebugProcess {
               sendAdlStartingCommand(bc, appParams);
               break;
             case AndroidDevice:
-              final String appId =
+              final String androidAppId =
                 FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
               sendCommand(appParams.getDebugTransport() == AirMobileDebugTransport.Network
-                          ? new StartAppOnAndroidDeviceCommand(bc.getSdk(), appId)
+                          ? new StartAppOnAndroidDeviceCommand(bc.getSdk(), androidAppId)
                           : new StartDebuggingCommand());
               break;
+            case iOSSimulator:
+              final String iosAppId = FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
+              sendCommand(
+                new StartAppOnIosSimulatorCommand(bc.getSdk(), iosAppId, ((FlashRunnerParameters)params).getIOSSimulatorSdkPath()));
           }
       }
     }
@@ -1348,6 +1352,27 @@ public class FlexDebugProcess extends XDebugProcess {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         public void run() {
           FlexBaseRunner.launchOnAndroidDevice(getSession().getProject(), myFlexSdk, myAppId, true);
+        }
+      });
+    }
+  }
+
+  class StartAppOnIosSimulatorCommand extends StartDebuggingCommand {
+
+    private final Sdk myFlexSdk;
+    private final String myAppId;
+    private final String myIOSSdkPath;
+
+    StartAppOnIosSimulatorCommand(final Sdk flexSdk, final String appId, final String iOSSdkPath) {
+      myFlexSdk = flexSdk;
+      myAppId = appId;
+      myIOSSdkPath = iOSSdkPath;
+    }
+
+    void launchDebuggedApplication() throws IOException {
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        public void run() {
+          FlexBaseRunner.launchOnIosSimulator(getSession().getProject(), myFlexSdk, myAppId, myIOSSdkPath, true);
         }
       });
     }

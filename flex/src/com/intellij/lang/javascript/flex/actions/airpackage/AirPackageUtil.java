@@ -295,6 +295,25 @@ public class AirPackageUtil {
                                         FlexBundle.message("create.android.package.title"));
   }
 
+  public static boolean packageIpaForSimulator(final Module module,
+                                               final FlexIdeBuildConfiguration bc,
+                                               final FlashRunnerParameters runnerParameters,
+                                               final boolean isDebug) {
+    final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
+    final boolean tempCertificate = false; // todo simulator doesn't require real cert
+
+    final PasswordStore passwords = tempCertificate
+                                    ? null
+                                    : AirPackageAction.getPasswords(module.getProject(), Collections.singletonList(packagingOptions));
+    if (!tempCertificate && passwords == null) return false; // user canceled
+
+    FileDocumentManager.getInstance().saveAllDocuments();
+
+    final IOSPackageType packageType = isDebug ? IOSPackageType.DebugOnSimulator : IOSPackageType.TestOnSimulator;
+    final ExternalTask task = createIOSPackageTask(module, bc, packageType, true, runnerParameters.getIOSSimulatorSdkPath(), passwords);
+    return ExternalTask.runWithProgress(task, FlexBundle.message("creating.ios.package"), FlexBundle.message("create.ios.package.title"));
+  }
+
   public static ExternalTask createAirDesktopTask(final Module module,
                                                   final FlexIdeBuildConfiguration bc,
                                                   final DesktopPackageType packageType,
@@ -413,6 +432,12 @@ public class AirPackageUtil {
           case Test:
             command.add(fastPackaging ? "ipa-test-interpreter" : "ipa-test");
             break;
+          case TestOnSimulator:
+            command.add("ipa-test-interpreter-simulator");
+            break;
+          case DebugOnSimulator:
+            command.add("ipa-debug-interpreter-simulator");
+            break;
           case AdHoc:
             command.add("ipa-ad-hoc");
             break;
@@ -423,8 +448,10 @@ public class AirPackageUtil {
 
         appendSigningOptions(command, packagingOptions, keystorePassword, keyPassword);
 
-        command.add("-provisioning-profile");
-        command.add(FileUtil.toSystemDependentName(signingOptions.getProvisioningProfilePath()));
+        if (packageType != IOSPackageType.TestOnSimulator && packageType != IOSPackageType.DebugOnSimulator) {
+          command.add("-provisioning-profile");
+          command.add(FileUtil.toSystemDependentName(signingOptions.getProvisioningProfilePath()));
+        }
 
         appendPaths(command, module, bc, packagingOptions, iosSDKPath, ".ipa");
       }
@@ -445,6 +472,54 @@ public class AirPackageUtil {
                                         FlexBundle.message("install.android.application.title"));
   }
 
+  public static boolean installOnIosSimulator(final Project project,
+                                              final Sdk flexSdk,
+                                              final String ipaPath,
+                                              final String applicationId,
+                                              final String iOSSdkPath) {
+    return uninstallFromIosSimulator(project, flexSdk, applicationId, iOSSdkPath) &&
+           ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
+             protected void appendAdtOptions(final List<String> command) {
+               command.add("-installApp");
+               command.add("-platform");
+               command.add("ios");
+               command.add("-platformsdk");
+               command.add(iOSSdkPath);
+               command.add("-device");
+               command.add("ios-simulator");
+               command.add("-package");
+               command.add(ipaPath);
+             }
+           }, FlexBundle.message("installing.0", ipaPath.substring(ipaPath.lastIndexOf('/') + 1)),
+                                        FlexBundle.message("install.ipa.on.simulator.title"));
+  }
+
+  private static boolean uninstallFromIosSimulator(final Project project,
+                                                   final Sdk sdk,
+                                                   final String applicationId,
+                                                   final String iOSSdkPath) {
+    return ExternalTask.runWithProgress(new AdtTask(project, sdk) {
+      protected void appendAdtOptions(final List<String> command) {
+        command.add("-uninstallApp");
+        command.add("-platform");
+        command.add("ios");
+        command.add("-platformsdk");
+        command.add(iOSSdkPath);
+        command.add("-device");
+        command.add("ios-simulator");
+        command.add("-appid");
+        command.add(applicationId);
+      }
+
+      protected boolean checkMessages() {
+        return myMessages.isEmpty() ||
+               (myMessages.size() == 1 &&
+                (myMessages.get(0).startsWith("Application is not installed") ||
+                 myMessages.get(0).equals("Failed to find package " + applicationId)));
+      }
+    }, FlexBundle.message("uninstalling.0", applicationId), FlexBundle.message("uninstall.ios.simulator.application.title"));
+  }
+
   private static boolean uninstallAndroidApplication(final Project project, final Sdk flexSdk, final String applicationId) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
       protected void appendAdtOptions(final List<String> command) {
@@ -456,10 +531,7 @@ public class AirPackageUtil {
       }
 
       protected boolean checkMessages() {
-        if (myMessages.isEmpty() || (myMessages.size() == 1 && myMessages.get(0).equals("Failed to find package " + applicationId))) {
-          return true;
-        }
-        return false;
+        return myMessages.isEmpty() || (myMessages.size() == 1 && myMessages.get(0).equals("Failed to find package " + applicationId));
       }
     }, FlexBundle.message("uninstalling.0", applicationId), FlexBundle.message("uninstall.android.application.title"));
   }
@@ -474,6 +546,25 @@ public class AirPackageUtil {
         command.add(applicationId);
       }
     }, FlexBundle.message("launching.android.application", applicationId), FlexBundle.message("launch.android.application.title"));
+  }
+
+  public static boolean launchOnIosSimulator(final Project project,
+                                             final Sdk flexSdk,
+                                             final String applicationId,
+                                             final String iOSSdkPath) {
+    return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
+      protected void appendAdtOptions(final List<String> command) {
+        command.add("-launchApp");
+        command.add("-platform");
+        command.add("ios");
+        command.add("-platformsdk");
+        command.add(iOSSdkPath);
+        command.add("-device");
+        command.add("ios-simulator");
+        command.add("-appid");
+        command.add(applicationId);
+      }
+    }, FlexBundle.message("launching.ios.application", applicationId), FlexBundle.message("launch.ios.application.title"));
   }
 
   public static void forwardTcpPort(final Project project, final Sdk sdk, final int usbDebugPort) {

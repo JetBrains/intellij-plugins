@@ -24,7 +24,6 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
@@ -64,10 +63,15 @@ public class FlexRunner extends FlexBaseRunner {
           case Emulator:
             return standardLaunch(module.getProject(), executor, state, contentToReuse, environment);
           case AndroidDevice:
-            final String appId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
-            final Sdk sdk = bc.getSdk();
-            if (packAndInstallToAndroidDevice(module, bc, runnerParameters, appId, false)) {
-              launchOnAndroidDevice(module.getProject(), sdk, appId, false);
+            final String androidAppId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
+            if (packAndInstallToAndroidDevice(module, bc, runnerParameters, androidAppId, false)) {
+              launchOnAndroidDevice(module.getProject(), bc.getSdk(), androidAppId, false);
+            }
+            return null;
+          case iOSSimulator:
+            final String iosAppId = getApplicationId(getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
+            if (packAndInstallToIOSSimulator(module, bc, runnerParameters, iosAppId, false)) {
+              launchOnIosSimulator(module.getProject(), bc.getSdk(), iosAppId, runnerParameters.getIOSSimulatorSdkPath(), false);
             }
             return null;
         }
