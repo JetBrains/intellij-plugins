@@ -27,6 +27,7 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.Nullable;
@@ -115,7 +116,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
     assert configurations.length == 1;
     final ModifiableFlexIdeBuildConfiguration bc = configurations[0];
 
-    setupBC(module, bc);
+    setupBC(modifiableRootModel, bc);
 
     if (bc.getOutputType() == OutputType.Application) {
       createRunConfiguration(module, bc.getName());
@@ -132,7 +133,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
     }
 
     if (myCreateHtmlWrapperTemplate && myFlexSdk != null) {
-      final String path = VfsUtil.urlToPath(contentEntry.getUrl()) + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME;
+      final String path = VfsUtilCore.urlToPath(contentEntry.getUrl()) + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME;
       if (CreateHtmlWrapperTemplateDialog.createHtmlWrapperTemplate(module.getProject(), myFlexSdk, path,
                                                                     myEnableHistory, myCheckPlayerVersion, myExpressInstall)) {
         bc.setUseHtmlWrapper(true);
@@ -145,7 +146,8 @@ public class FlexModuleBuilder extends ModuleBuilder {
     }
   }
 
-  private void setupBC(final Module module, final ModifiableFlexIdeBuildConfiguration bc) {
+  private void setupBC(final ModifiableRootModel modifiableRootModel, final ModifiableFlexIdeBuildConfiguration bc) {
+    final Module module = modifiableRootModel.getModule();
     bc.setName(module.getName());
     bc.setTargetPlatform(myTargetPlatform);
     bc.setPureAs(isPureActionScript);
@@ -185,7 +187,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
       }
     }
 
-    bc.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension.getInstance(module).getCompilerOutputUrl()));
+    bc.setOutputFolder(VfsUtilCore.urlToPath(modifiableRootModel.getModuleExtension(CompilerModuleExtension.class).getCompilerOutputUrl()));
 
     bc.getDependencies().setSdkEntry(myFlexSdk != null ? Factory.createSdkEntry(myFlexSdk.getName()) : null);
     if (myTargetPlayer != null) {
