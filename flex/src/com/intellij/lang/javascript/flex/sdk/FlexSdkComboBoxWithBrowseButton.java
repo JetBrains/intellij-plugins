@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.sdk;
 
 import com.intellij.ide.DataManager;
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -12,6 +11,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor;
 import com.intellij.openapi.roots.ui.configuration.ProjectJdksConfigurable;
@@ -21,7 +21,9 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.ComboboxWithBrowseButton;
+import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.Nullable;
@@ -31,9 +33,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
   public interface Listener {
@@ -59,7 +59,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
 
   public static final String BC_SDK_KEY = "BC SDK";
 
-  private final Condition<Sdk> mySdkEvaluator;
+  private final Condition<Sdk> mySdkFilter;
 
   private BCSdk myBCSdk = new BCSdk();
   private boolean myShowBCSdk = false;
@@ -68,8 +68,8 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     this(FLEX_SDK);
   }
 
-  public FlexSdkComboBoxWithBrowseButton(final Condition<Sdk> sdkEvaluator) {
-    mySdkEvaluator = sdkEvaluator;
+  public FlexSdkComboBoxWithBrowseButton(final Condition<Sdk> sdkFilter) {
+    mySdkFilter = sdkFilter;
     rebuildSdkListAndSelectSdk(null); // if SDKs exist first will be selected automatically
 
     final JComboBox sdkCombo = getComboBox();
@@ -139,7 +139,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
         editor.show();
         if (editor.isOK()) {
           final Sdk selectedSdk = editor.getSelectedJdk();
-          if (mySdkEvaluator.value(selectedSdk)) {
+          if (mySdkFilter.value(selectedSdk)) {
             rebuildSdkListAndSelectSdk(selectedSdk);
           }
           else {
@@ -165,12 +165,31 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
 
     final Sdk[] sdks = FlexSdkUtils.getAllSdks();
     for (final Sdk sdk : sdks) {
-      if (mySdkEvaluator.value(sdk)) {
+      if (mySdkFilter.value(sdk)) {
         sdkList.add(sdk);
       }
     }
 
     if (!sdkList.isEmpty()) {
+      // sort by version descending, Flexmojos SDKs - to the end of the list
+      Collections.sort(sdkList, new Comparator<Object>() {
+        public int compare(final Object sdk1, final Object sdk2) {
+          if (sdk1 == myBCSdk && sdk2 != myBCSdk) return -1;
+          if (sdk1 != myBCSdk && sdk2 == myBCSdk) return 1;
+
+          if (sdk1 instanceof Sdk && sdk2 instanceof Sdk) {
+            final SdkTypeId type1 = ((Sdk)sdk1).getSdkType();
+            final SdkTypeId type2 = ((Sdk)sdk2).getSdkType();
+
+            if (type1 == type2) return -StringUtil.compareVersionNumbers(((Sdk)sdk1).getVersionString(), ((Sdk)sdk2).getVersionString());
+            if (type1 == FlexSdkType2.getInstance()) return -1;
+            if (type2 == FlexSdkType2.getInstance()) return 1;
+          }
+
+          return 0;
+        }
+      });
+
       getComboBox().setModel(new DefaultComboBoxModel(ArrayUtil.toObjectArray(sdkList)));
       if (selectedSdk != null) {
         setSelectedSdkRaw(selectedSdk.getName(), false);
