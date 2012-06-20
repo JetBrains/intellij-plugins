@@ -617,7 +617,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
       }
     }
     if (module != null) {
-      String[] javadocPaths = ModuleRootManager.getInstance(module).getRootUrls(JavadocOrderRootType.getInstance());
+      String[] javadocPaths = JavaModuleExternalPaths.getInstance(module).getJavadocUrls();
       List<String> httpRoots = PlatformDocumentationUtil.getHttpRoots(correctHttpRoots(javadocPaths), relPath);
       if (httpRoots != null) return httpRoots;
     }
