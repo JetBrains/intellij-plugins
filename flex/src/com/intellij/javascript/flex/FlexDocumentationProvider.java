@@ -343,7 +343,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
             final List<OrderEntry> orderEntries = projectFileIndex.getOrderEntriesForFile(containingFile);
             for (OrderEntry orderEntry : orderEntries) {
-              String[] roots = orderEntry.getUrls(JavadocOrderRootType.getInstance());
+              String[] roots = JavadocOrderRootType.getUrls(orderEntry);
               if (PlatformDocumentationUtil.getHttpRoots(correctHttpRoots(roots), relPath) != null) {
                 withAsdoc.set(candidate);
               }
@@ -624,7 +624,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
     final List<OrderEntry> orderEntries = fileIndex.getOrderEntriesForFile(virtualFile);
     for (OrderEntry orderEntry : orderEntries) {
-      final String[] files = orderEntry.getUrls(JavadocOrderRootType.getInstance());
+      final String[] files = JavadocOrderRootType.getUrls(orderEntry);
       final List<String> httpRoot = PlatformDocumentationUtil.getHttpRoots(correctHttpRoots(files), relPath);
       if (httpRoot != null) return httpRoot;
     }
