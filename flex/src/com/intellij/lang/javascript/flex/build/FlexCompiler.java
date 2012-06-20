@@ -441,7 +441,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
       final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
       if (additionalConfigFile == null || additionalConfigFile.isDirectory()) {
         errorConsumer.consume(FlashProjectStructureProblem.createCompilerOptionsProblem(
-          FlexBundle.message("additional.config.file.not.found", additionalConfigFilePath),
+          FlexBundle.message("additional.config.file.not.found", FileUtil.toSystemDependentName(additionalConfigFilePath)),
           CompilerOptionsConfigurable.Location.AdditonalConfigFile));
       }
       if (!bc.isTempBCForCompilation()) {
@@ -492,7 +492,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
       else if (!FileUtil.isAbsolute(bc.getOutputFolder())) {
         errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
-          .message("output.folder.not.absolute", bc.getOutputFolder()), FlexIdeBCConfigurable.Location.OutputFolder));
+          .message("output.folder.not.absolute", FileUtil.toSystemDependentName(bc.getOutputFolder())),
+                                                                                      FlexIdeBCConfigurable.Location.OutputFolder));
       }
     }
 
@@ -564,8 +565,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
         }
         else if (LocalFileSystem.getInstance().findFileByPath(cssPath) == null) {
           errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
-            .message("css.not.found", bc.getName(), moduleName,
-                     FileUtil.toSystemDependentName(cssPath)), FlexIdeBCConfigurable.Location.RuntimeStyleSheets));
+            .message("css.not.found", FileUtil.toSystemDependentName(cssPath)), FlexIdeBCConfigurable.Location.RuntimeStyleSheets));
         }
       }
     }
