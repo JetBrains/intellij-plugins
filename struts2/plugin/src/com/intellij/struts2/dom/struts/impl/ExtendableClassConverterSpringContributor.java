@@ -96,7 +96,7 @@ public class ExtendableClassConverterSpringContributor
       this.extendClass = extendClass;
     }
 
-    @Nullable
+    @NotNull
     private SpringModel getSpringModel() {
       return SpringManager.getInstance(module.getProject()).getCombinedModelWithDeps(module);
     }
@@ -108,10 +108,6 @@ public class ExtendableClassConverterSpringContributor
       }
 
       final SpringModel springModel = getSpringModel();
-      if (springModel == null) {
-        return null;
-      }
-
       final SpringBeanPointer springBean = springModel.findBeanByName(beanName);
       if (springBean == null) {
         return null;
@@ -128,9 +124,6 @@ public class ExtendableClassConverterSpringContributor
     @SuppressWarnings({"unchecked"})
     public Object[] getVariants() {
       final SpringModel springModel = getSpringModel();
-      if (springModel == null) {
-        return EMPTY_ARRAY;
-      }
 
       final PsiClass subClass = getPossibleSubClass();
       final Collection<? extends SpringBeanPointer> list;
