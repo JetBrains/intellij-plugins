@@ -116,7 +116,7 @@ def buildFlex(config, basedir, flexBuildHome, flexSandbox, isSwc, swfVersion) {
     jvmarg(value: "-Duser.region=en")
     jvmarg(value: "-Dflex.swf.uncompressed=true")
     classpath {
-      fileset(dir: "$flexBuildHome/compiler-libs");
+      fileset(dir: "$flexBuildHome/../idea-plugin/testData/lib/flex-sdk/4.6/lib");
     }
     arg(value: "-load-config=$flexSandbox/${config}")
     if (swfVersion != 0) {
