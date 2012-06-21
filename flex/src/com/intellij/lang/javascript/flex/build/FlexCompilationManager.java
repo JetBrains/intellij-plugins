@@ -97,7 +97,9 @@ public class FlexCompilationManager {
         if (matcher.matches()) {
           final String outputFilePath = matcher.group(2);
           // need to refresh FS in order to notify artifact compiler that Flex output has changed
-          refreshAndFindFileInWriteAction(outputFilePath);
+          if (!ApplicationManager.getApplication().isUnitTestMode()) {
+            refreshAndFindFileInWriteAction(outputFilePath);
+          }
         }
       }
 
