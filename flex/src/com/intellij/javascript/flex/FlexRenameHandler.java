@@ -4,17 +4,21 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.findUsages.SuperMethodUtil;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.refactoring.RenameMoveUtils;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.rename.RenamePsiElementProcessor;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.openapi.editor.Editor;
+import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  * @author Maxim.Mossienko
@@ -41,9 +45,28 @@ public class FlexRenameHandler extends RenamePsiElementProcessor {
   @Override
    public PsiElement substituteElementToRename(final PsiElement element, final Editor editor) {
     if (element instanceof JSFunction) {
-      return SuperMethodUtil
-        .checkSuperMethod((JSFunction)element, RefactoringBundle.message("rename.title"), RefactoringBundle.message("to.rename"));
+      return SuperMethodUtil.checkSuperMethod((JSFunction)element, RefactoringBundle.message("rename.title"),
+                                              RefactoringBundle.message("to.rename"));
     }
     return super.substituteElementToRename(element, editor);
+  }
+
+  @Override
+  public void prepareRenaming(final PsiElement element,
+                              final String newName,
+                              final Map<PsiElement, String> allRenames,
+                              final SearchScope scope) {
+    if (!(element instanceof JSFunction)) {
+      return;
+    }
+
+    JSInheritanceUtil.iterateMethodsDown((JSFunction)element, new Processor<JSFunction>() {
+      // synchronized to protect the map
+      @Override
+      public synchronized boolean process(final JSFunction jsFunction) {
+        allRenames.put(jsFunction, newName);
+        return true;
+      }
+    }, true); // check override modifier to keep consistency with current logic
   }
 }
