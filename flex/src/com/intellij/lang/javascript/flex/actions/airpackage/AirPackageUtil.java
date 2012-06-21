@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.flex.actions.MessageDialogWithHyperlinkListe
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -201,6 +202,31 @@ public class AirPackageUtil {
   }
   */
 
+  public static boolean startAdbServer(final Project project, final Sdk sdk) {
+    return ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
+      protected List<String> createCommandLine() {
+        final ArrayList<String> command = new ArrayList<String>();
+        command.add(sdk.getHomePath() + ADB_RELATIVE_PATH);
+        command.add("start-server");
+        return command;
+      }
+
+      protected void scheduleInputStreamReading() {
+        // Reading input stream causes hang because adb starts child process that never exits (IDEA-87648)
+        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+          public void run() {
+            try {
+              getProcess().waitFor();
+            }
+            catch (InterruptedException ignore) {/**/}
+            finally {
+              cancel();
+            }
+          }
+        });
+      }
+    }, "adb start-server", "ADB Server Start");
+  }
 
   public static boolean checkAirRuntimeOnDevice(final Project project, final Sdk sdk, final String adtVersion) {
     try {

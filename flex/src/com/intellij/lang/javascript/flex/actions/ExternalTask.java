@@ -50,7 +50,7 @@ public abstract class ExternalTask {
 
     try {
       myProcess = processBuilder.start();
-      readInputStream();
+      scheduleInputStreamReading();
     }
     catch (IOException e) {
       myFinished = true;
@@ -97,7 +97,11 @@ public abstract class ExternalTask {
     return myExitCode;
   }
 
-  private void readInputStream() {
+  protected Process getProcess() {
+    return myProcess;
+  }
+
+  protected void scheduleInputStreamReading() {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       public void run() {
         boolean usageStarted = false;
