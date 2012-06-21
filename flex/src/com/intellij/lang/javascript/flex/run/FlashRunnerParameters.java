@@ -382,6 +382,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     switch (bc.getTargetPlatform()) {
       case Web:
         if (myLaunchUrl) {
+          if (myUrl.isEmpty()) throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.url.not.set"));
           try {
             if (BrowserUtil.getURL(myUrl) == null) throw new RuntimeConfigurationError(FlexBundle.message("flex.run.config.incorrect.url"));
           }
