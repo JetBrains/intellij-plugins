@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.uml;
 
 import com.intellij.javascript.flex.FlexReferenceContributor;
 import com.intellij.lang.Language;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -19,7 +20,6 @@ import com.intellij.psi.css.CssDeclaration;
 import com.intellij.psi.css.CssElementVisitor;
 import com.intellij.psi.css.CssFunction;
 import com.intellij.psi.css.CssString;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageFacadeImpl;
 import com.intellij.psi.scope.BaseScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.*;
@@ -204,7 +204,7 @@ public class JSUmlDependencyProvider {
 
         @Override
         public void visitXmlText(final XmlText text) {
-          List<Pair<PsiElement, TextRange>> injectedFiles = InjectedLanguageFacadeImpl.getInstance().getInjectedPsiFiles(text);
+          List<Pair<PsiElement, TextRange>> injectedFiles = InjectedLanguageManager.getInstance(text.getProject()).getInjectedPsiFiles(text);
           if (injectedFiles != null) {
             for (Pair<PsiElement, TextRange> pair : injectedFiles) {
               if (CSS.is(pair.first.getLanguage())) {

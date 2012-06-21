@@ -23,7 +23,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssFile;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageFacadeImpl;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -225,7 +225,7 @@ public final class ModuleInfoUtil {
         PsiElement host = MxmlUtil.getInjectedHost(tag);
         if (host != null) {
           MyInjectedPsiVisitor visitor = new MyInjectedPsiVisitor(host);
-          InjectedLanguageFacadeImpl.enumerate(host, visitor);
+          InjectedLanguageUtil.enumerate(host, visitor);
           cssFile = visitor.getCssFile();
         }
       }
@@ -234,7 +234,7 @@ public final class ModuleInfoUtil {
         return null;
       }
       else {
-        return new LocalStyleHolder(InjectedLanguageFacadeImpl.getTopLevelFile(cssFile).getVirtualFile(), cssWriter.write(cssFile, module));
+        return new LocalStyleHolder(InjectedLanguageUtil.getTopLevelFile(cssFile).getVirtualFile(), cssWriter.write(cssFile, module));
       }
     }
 
