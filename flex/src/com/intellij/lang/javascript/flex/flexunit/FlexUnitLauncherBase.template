@@ -168,7 +168,9 @@
         protected function onRunFinished():void {
             changeCurrentSuite(null);
             traceRaw("Finish");
-            doQuit(null);
+            setTimeout(function () {
+              doQuit(null);
+            }, 100);
         }
 
         private function doQuit(error:String):void {
