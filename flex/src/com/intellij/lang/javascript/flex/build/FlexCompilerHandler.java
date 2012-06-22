@@ -74,6 +74,18 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
   public static Key<FlexBuildConfiguration> OVERRIDE_BUILD_CONFIG = Key.create("OVERRIDE_FLEX_BUILD_CONFIG");
   private ActiveBuildConfigurationWidget myWidget;
 
+  private String myLastCompilationMessages;
+
+  public String getLastCompilationMessages() {
+    assert ApplicationManager.getApplication().isUnitTestMode();
+    return myLastCompilationMessages;
+  }
+
+  public void setLastCompilationMessages(final String lastCompilationMessages) {
+    assert ApplicationManager.getApplication().isUnitTestMode();
+    myLastCompilationMessages = lastCompilationMessages;
+  }
+
   public static String getPathToMainClassFile(final FlexBuildConfiguration config) {
     if (StringUtil.isEmpty(config.MAIN_CLASS)) return "";
 

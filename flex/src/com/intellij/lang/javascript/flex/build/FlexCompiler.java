@@ -39,6 +39,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -181,6 +182,21 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
 
       FlexCompilerHandler.deleteTempFlexUnitFiles(context);
+
+      if (ApplicationManager.getApplication().isUnitTestMode()) {
+        Function<CompilerMessage, String> toString = new Function<CompilerMessage, String>() {
+          @Override
+          public String fun(final CompilerMessage compilerMessage) {
+            return compilerMessage.getMessage();
+          }
+        };
+
+        StringBuilder s = new StringBuilder("Compiler errors:\n");
+        s.append(StringUtil.join(context.getMessages(CompilerMessageCategory.ERROR), toString, "\n"));
+        s.append("\nCompiler warnings:\n");
+        s.append(StringUtil.join(context.getMessages(CompilerMessageCategory.WARNING), toString, "\n"));
+        FlexCompilerHandler.getInstance(context.getProject()).setLastCompilationMessages(s.toString());
+      }
       return items;
     }
   }
