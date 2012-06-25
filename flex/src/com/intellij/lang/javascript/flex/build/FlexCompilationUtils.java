@@ -398,6 +398,10 @@ public class FlexCompilationUtils {
 
         final String outputFilePath = bc.getActualOutputFilePath();
         final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
+        if (ApplicationManager.getApplication().isUnitTestMode()) {
+          // hack: we were not able to do refresh after SWF creation, but we can do it now
+          FlexCompilationManager.refreshAndFindFileInWriteAction(outputFilePath);
+        }
         final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
         if (outputFolder == null) {
           exceptionRef.set(new FlexCompilerException(

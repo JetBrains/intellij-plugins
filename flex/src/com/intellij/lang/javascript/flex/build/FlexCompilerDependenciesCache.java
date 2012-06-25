@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessage;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -175,8 +176,13 @@ public class FlexCompilerDependenciesCache {
       final VirtualFile configFile = configFiles.get(configFiles.size() - 1);
       final String outputFilePath = FlexUtils.findXMLElement(configFile.getInputStream(), OUTPUT_FILE_TAG);
       if (outputFilePath == null) return null;
-      final VirtualFile outputFile =
-        FlexCompilationManager.refreshAndFindFileInWriteAction(outputFilePath, configFile.getParent().getPath());
+      final VirtualFile outputFile;
+      if (ApplicationManager.getApplication().isUnitTestMode()) {
+        outputFile = LocalFileSystem.getInstance().findFileByPath(outputFilePath);
+      }
+      else {
+        outputFile = FlexCompilationManager.refreshAndFindFileInWriteAction(outputFilePath, configFile.getParent().getPath());
+      }
       if (outputFile == null) return null;
 
       for (final CompilerMessage message : messages) {

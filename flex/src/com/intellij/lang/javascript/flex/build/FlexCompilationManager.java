@@ -11,6 +11,7 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.GuiUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -97,7 +98,9 @@ public class FlexCompilationManager {
         if (matcher.matches()) {
           final String outputFilePath = matcher.group(2);
           // need to refresh FS in order to notify artifact compiler that Flex output has changed
-          refreshAndFindFileInWriteAction(outputFilePath);
+          if (!ApplicationManager.getApplication().isUnitTestMode()) {
+            refreshAndFindFileInWriteAction(outputFilePath);
+          }
         }
       }
 
@@ -263,12 +266,11 @@ public class FlexCompilationManager {
 
   static VirtualFile refreshAndFindFileInWriteAction(final String outputFilePath, final String... possibleBaseDirs) {
     final LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
-    final Application application = ApplicationManager.getApplication();
     final Ref<VirtualFile> outputFileRef = new Ref<VirtualFile>();
 
-    application.invokeAndWait(new Runnable() {
+    GuiUtils.invokeAndWaitIfNeeded(new Runnable() {
       public void run() {
-        outputFileRef.set(application.runWriteAction(new NullableComputable<VirtualFile>() {
+        outputFileRef.set(ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
           public VirtualFile compute() {
             VirtualFile outputFile = localFileSystem.refreshAndFindFileByPath(outputFilePath);
             //if (outputFile == null) {

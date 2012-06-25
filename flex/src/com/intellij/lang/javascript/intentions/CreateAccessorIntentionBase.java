@@ -82,11 +82,12 @@ public abstract class CreateAccessorIntentionBase extends PsiElementBaseIntentio
 
   protected abstract boolean isAvailableFor(final JSClass jsClass, final String accessorName);
 
-  public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
+  @Override
+  public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
+    final PsiFile file = element.getContainingFile();
     final JSClass jsClass = BaseJSGenerateHandler.findClass(file, editor);
     if (jsClass == null) return;
 
-    final PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
     final JSVariable variable = getVariable(element);
     final JSNamedElementNode node = variable == null ? null : new JSNamedElementNode(variable);
 

@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript.intentions;
 
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
+import com.intellij.codeInsight.intention.impl.BaseIntentionAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.generation.JavaScriptGenerateEventHandler;
 import com.intellij.lang.javascript.psi.JSCallExpression;
@@ -14,7 +16,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 
-public class CreateEventHandlerIntention extends PsiElementBaseIntentionAction {
+public class CreateEventHandlerIntention extends BaseIntentionAction {
 
   public CreateEventHandlerIntention() {
     setText(FlexBundle.message("intention.create.event.handler"));
@@ -25,23 +27,23 @@ public class CreateEventHandlerIntention extends PsiElementBaseIntentionAction {
     return getText();
   }
 
-  public boolean isAvailable(final @NotNull Project project, final Editor editor, final @NotNull PsiElement element) {
+  @Override
+  public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
     // keep consistency with JavaScriptGenerateEventHandler.GenerateEventHandlerFix.beforeInvoke()
 
-    final PsiFile psiFile = element.getContainingFile();
-    final XmlAttribute xmlAttribute = JavaScriptGenerateEventHandler.getXmlAttribute(psiFile, editor);
+    final XmlAttribute xmlAttribute = JavaScriptGenerateEventHandler.getXmlAttribute(file, editor);
     final String eventType = xmlAttribute == null ? null : JavaScriptGenerateEventHandler.getEventType(xmlAttribute);
     if (eventType != null) {
       return true;
     }
 
-    final JSCallExpression callExpression = JavaScriptGenerateEventHandler.getEventListenerCallExpression(psiFile, editor);
+    final JSCallExpression callExpression = JavaScriptGenerateEventHandler.getEventListenerCallExpression(file, editor);
     if (callExpression != null) {
       return true;
     }
 
     final Trinity<JSExpressionStatement, String, String> eventConstantInfo =
-      JavaScriptGenerateEventHandler.getEventConstantInfo(psiFile, editor);
+      JavaScriptGenerateEventHandler.getEventConstantInfo(file, editor);
     if (eventConstantInfo != null) {
       return true;
     }

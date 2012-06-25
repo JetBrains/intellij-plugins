@@ -39,6 +39,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -181,6 +182,21 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
 
       FlexCompilerHandler.deleteTempFlexUnitFiles(context);
+
+      if (ApplicationManager.getApplication().isUnitTestMode()) {
+        Function<CompilerMessage, String> toString = new Function<CompilerMessage, String>() {
+          @Override
+          public String fun(final CompilerMessage compilerMessage) {
+            return compilerMessage.getMessage();
+          }
+        };
+
+        StringBuilder s = new StringBuilder("Compiler errors:\n");
+        s.append(StringUtil.join(context.getMessages(CompilerMessageCategory.ERROR), toString, "\n"));
+        s.append("\nCompiler warnings:\n");
+        s.append(StringUtil.join(context.getMessages(CompilerMessageCategory.WARNING), toString, "\n"));
+        FlexCompilerHandler.getInstance(context.getProject()).setLastCompilationMessages(s.toString());
+      }
       return items;
     }
   }
@@ -441,7 +457,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
       final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
       if (additionalConfigFile == null || additionalConfigFile.isDirectory()) {
         errorConsumer.consume(FlashProjectStructureProblem.createCompilerOptionsProblem(
-          FlexBundle.message("additional.config.file.not.found", additionalConfigFilePath),
+          FlexBundle.message("additional.config.file.not.found", FileUtil.toSystemDependentName(additionalConfigFilePath)),
           CompilerOptionsConfigurable.Location.AdditonalConfigFile));
       }
       if (!bc.isTempBCForCompilation()) {
@@ -492,7 +508,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
       else if (!FileUtil.isAbsolute(bc.getOutputFolder())) {
         errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
-          .message("output.folder.not.absolute", bc.getOutputFolder()), FlexIdeBCConfigurable.Location.OutputFolder));
+          .message("output.folder.not.absolute", FileUtil.toSystemDependentName(bc.getOutputFolder())),
+                                                                                      FlexIdeBCConfigurable.Location.OutputFolder));
       }
     }
 
@@ -564,8 +581,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
         }
         else if (LocalFileSystem.getInstance().findFileByPath(cssPath) == null) {
           errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
-            .message("css.not.found", bc.getName(), moduleName,
-                     FileUtil.toSystemDependentName(cssPath)), FlexIdeBCConfigurable.Location.RuntimeStyleSheets));
+            .message("css.not.found", FileUtil.toSystemDependentName(cssPath)), FlexIdeBCConfigurable.Location.RuntimeStyleSheets));
         }
       }
     }

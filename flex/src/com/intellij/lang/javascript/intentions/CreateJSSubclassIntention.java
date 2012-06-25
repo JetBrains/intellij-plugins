@@ -121,9 +121,8 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     return new TextRange(start, end);
   }
 
-  public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-    final PsiElement element = file.findElementAt(editor.getCaretModel().getOffset());
-
+  @Override
+  public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) throws IncorrectOperationException {
     final JSClass jsClass = PsiTreeUtil.getParentOfType(element, JSClass.class);
     if (jsClass == null) return;
 
