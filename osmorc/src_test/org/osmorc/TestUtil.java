@@ -36,10 +36,11 @@ import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
-import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
@@ -47,6 +48,7 @@ import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.util.io.ZipUtil;
+import junit.framework.Assert;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
@@ -84,6 +86,9 @@ public class TestUtil {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
         try {
+          final VirtualFile virtualDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(projectDir);
+          Assert.assertNotNull("Directory not found: " + projectDir, virtualDir);
+          virtualDir.refresh(false, true);
           List<ModifiableRootModel> rootModels = new ArrayList<ModifiableRootModel>();
           for (File moduleDir : projectDir.listFiles(new FileFilter() {
             public boolean accept(File pathname) {

@@ -3,12 +3,11 @@ package com.google.jstestdriver.idea.assertFramework.support;
 import com.google.jstestdriver.idea.assertFramework.library.JsLibraryHelper;
 import com.google.jstestdriver.idea.util.ProjectRootUtils;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,8 +20,6 @@ import java.util.List;
  * All operations should be executed on EDT.
  */
 public class LibraryCreationController implements ExtractedSourceLocationController.ChangeListener {
-
-  private static final Logger LOG = Logger.getInstance(LibraryCreationController.class);
 
   private final Project myProject;
   private final JTextField myJsLibraryNameTextField;

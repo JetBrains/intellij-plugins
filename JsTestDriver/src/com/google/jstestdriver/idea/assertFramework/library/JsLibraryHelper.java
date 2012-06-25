@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.assertFramework.library;
 
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.webcore.libraries.ScriptingLibraryMappings;
 import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
@@ -80,10 +81,11 @@ public class JsLibraryHelper {
     return true;
   }
 
-  private static <E> boolean isEmpty(Collection<E> collection) {
+  private static <E> boolean isEmpty(@Nullable Collection<E> collection) {
     return collection == null || collection.isEmpty();
   }
 
+  @NotNull
   public String findAvailableJsLibraryName(@NotNull String initialLibraryName) {
     myScriptingLibraryManager.reset();
 
@@ -123,12 +125,11 @@ public class JsLibraryHelper {
           }
           libraryModel = myScriptingLibraryManager.createLibrary(
             libraryName,
-            VfsUtil.toVirtualFileArray(sourceFiles),
+            VfsUtilCore.toVirtualFileArray(sourceFiles),
             VirtualFile.EMPTY_ARRAY,
             ArrayUtil.EMPTY_STRING_ARRAY,
             ScriptingLibraryModel.LibraryLevel.GLOBAL
           );
-          myScriptingLibraryManager.commitChanges();
           LOG.info("Library '" + libraryModel.getName() + "' has been successfully created.");
           return libraryModel;
         } catch (Exception ex) {
@@ -154,6 +155,7 @@ public class JsLibraryHelper {
           }
           libraryMappings.associateWithProject(libraryModel.getName());
           LOG.info("Library '" + libraryModel.getName() + "' has been successfully associated with the project");
+          myScriptingLibraryManager.commitChanges();
           return true;
         } catch (Exception ex) {
           LOG.error(ex);
