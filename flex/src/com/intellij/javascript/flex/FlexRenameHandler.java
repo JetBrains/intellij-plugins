@@ -67,6 +67,6 @@ public class FlexRenameHandler extends RenamePsiElementProcessor {
         allRenames.put(jsFunction, newName);
         return true;
       }
-    }, true); // check override modifier to keep consistency with current logic
+    }); // check override modifier to keep consistency with current logic
   }
 }
