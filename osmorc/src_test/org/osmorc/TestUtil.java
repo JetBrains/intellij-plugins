@@ -32,18 +32,17 @@ import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.module.ModifiableModuleModel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleWithNameAlreadyExists;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
+import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
@@ -57,7 +56,6 @@ import org.osmorc.facet.OsmorcFacetType;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -81,15 +79,12 @@ public class TestUtil {
     final File projectDir = new File(projectDirPath);
     ZipUtil.extract(projectZIP, projectDir, null);
 
-    final ModifiableModuleModel moduleModel = ModuleManager.getInstance(project).getModifiableModel();
-
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
         try {
           final VirtualFile virtualDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(projectDir);
           Assert.assertNotNull("Directory not found: " + projectDir, virtualDir);
           virtualDir.refresh(false, true);
-          List<ModifiableRootModel> rootModels = new ArrayList<ModifiableRootModel>();
           for (File moduleDir : projectDir.listFiles(new FileFilter() {
             public boolean accept(File pathname) {
               return pathname.isDirectory() && !pathname.getName().startsWith(".");
@@ -98,17 +93,12 @@ public class TestUtil {
             String moduleDirPath = moduleDir.getPath().replace(File.separatorChar, '/') + "/";
             final String moduleFileName = moduleDirPath + moduleDir.getName() + ".iml";
             if (new File(moduleFileName).exists()) {
-              Module module = moduleModel.loadModule(moduleFileName);
-              ModifiableRootModel rootModel = ModuleRootManager.getInstance(module).getModifiableModel();
+              Module module = ModuleManager.getInstance(project).loadModule(moduleFileName);
               VirtualFile file = VirtualFileManager.getInstance().getFileSystem("file").findFileByPath(moduleDirPath);
-              ContentEntry contentEntry = rootModel.addContentEntry(file);
-              contentEntry.addSourceFolder(file.findChild("src"), false);
-              rootModels.add(rootModel);
+              PsiTestUtil.addContentRoot(module, file);
+              PsiTestUtil.addSourceRoot(module, file.findChild("src"));
             }
           }
-
-          ModifiableRootModel[] rootModels1 = rootModels.toArray(new ModifiableRootModel[rootModels.size()]);
-          ModifiableModelCommitter.multiCommit(rootModels1, moduleModel);
         }
         catch (InvalidDataException e) {
           throw new RuntimeException(e);
