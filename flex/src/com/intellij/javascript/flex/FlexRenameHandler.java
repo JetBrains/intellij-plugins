@@ -43,7 +43,7 @@ public class FlexRenameHandler extends RenamePsiElementProcessor {
   }
 
   @Override
-   public PsiElement substituteElementToRename(final PsiElement element, final Editor editor) {
+  public PsiElement substituteElementToRename(final PsiElement element, final Editor editor) {
     if (element instanceof JSFunction) {
       return SuperMethodUtil.checkSuperMethod((JSFunction)element, RefactoringBundle.message("rename.title"),
                                               RefactoringBundle.message("to.rename"));

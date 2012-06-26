@@ -495,7 +495,8 @@ public class CompilerConfigGenerator {
         FlexCompilerConfigFileUtil.getInfoFromConfigFile(myBC.getCompilerOptions().getAdditionalConfigFilePath());
 
       final String pathToMainClassFile = myCSS ? myBC.getMainClass()
-                                               : myFlexUnit ? FlexUtils.getPathToFlexUnitTempDirectory() + "/" + myBC.getMainClass()
+                                               : myFlexUnit ? FlexUtils.getPathToFlexUnitTempDirectory(myModule.getProject().getName())
+                                                              + "/" + myBC.getMainClass()
                                                               + FlexUnitPrecompileTask.DOT_FLEX_UNIT_LAUNCHER_EXTENSION
                                                             : FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
 

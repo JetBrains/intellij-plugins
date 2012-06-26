@@ -194,7 +194,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(moduleAndBC.second);
     overriddenBC.setSkipCompile(false);
     overriddenBC.setCssFilesToCompile(Collections.<String>emptyList());
-    overriddenBC.setMainClass(FlexUnitPrecompileTask.getFlexUnitLauncherName(getModuleName()));
+    overriddenBC.setMainClass(FlexUnitPrecompileTask.FLEX_UNIT_LAUNCHER);
     overriddenBC.setOutputFileName("_flexunit.swf");
     overriddenBC.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension.getInstance(moduleAndBC.first).getCompilerOutputUrlForTests()));
     //overriddenBC.getAndroidPackagingOptions().setPackageFileName("_flexunit.apk");
