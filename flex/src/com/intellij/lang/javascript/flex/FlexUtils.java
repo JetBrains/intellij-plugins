@@ -303,8 +303,9 @@ public class FlexUtils {
     return "";
   }
 
-  public static String getPathToFlexUnitTempDirectory() {
-    return getTempFlexConfigsDirPath();
+  public static String getPathToFlexUnitTempDirectory(String projectName) {
+    return getTempFlexConfigsDirPath() + "/flexunit-" +
+           Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()).toUpperCase();
   }
 
   public static void removeFileLater(final @NotNull VirtualFile file) {

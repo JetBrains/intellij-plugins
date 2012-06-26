@@ -68,7 +68,7 @@ public class BCUtils {
   }
 
   public static boolean isFlexUnitBC(final FlexIdeBuildConfiguration bc) {
-    return bc.isTempBCForCompilation() && bc.getMainClass().endsWith(FlexUnitPrecompileTask.getFlexUnitLauncherName(""));
+    return bc.isTempBCForCompilation() && bc.getMainClass().endsWith(FlexUnitPrecompileTask.FLEX_UNIT_LAUNCHER);
   }
 
   public static boolean canHaveRuntimeStylesheets(final FlexIdeBuildConfiguration bc) {

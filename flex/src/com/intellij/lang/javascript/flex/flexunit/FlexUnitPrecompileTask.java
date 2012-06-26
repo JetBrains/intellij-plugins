@@ -31,7 +31,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.UIBundle;
 import com.intellij.util.ResourceUtil;
-import com.intellij.util.SystemProperties;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +45,7 @@ import java.util.Set;
 public class FlexUnitPrecompileTask implements CompileTask {
 
   private static final String FLEX_UNIT_LAUNCHER_BASE = "____FlexUnitLauncherBase.mxml";
-  private static final String FLEX_UNIT_LAUNCHER = "____FlexUnitLauncher";
+  public static final String FLEX_UNIT_LAUNCHER = "____FlexUnitLauncher";
   public static final String DOT_FLEX_UNIT_LAUNCHER_EXTENSION = ".mxml";
   private static final String FLEX_UNIT_LOG_TARGET = "____FlexUnitTestListener.as";
 
@@ -254,13 +253,9 @@ public class FlexUnitPrecompileTask implements CompileTask {
         assert false : "Unknown scope: " + params.getScope();
     }
 
-    String prefix = module.getName().replaceAll("[^\\p{Alnum}]", "_") +
-                    "_" +
-                    SystemProperties.getUserName().toLowerCase().replaceAll("[^\\p{Alnum}]", "_");
-
-    final String launcherBaseFileName = prefix + FLEX_UNIT_LAUNCHER_BASE;
-    final String launcherFileName = getFlexUnitLauncherName(module.getName()) + DOT_FLEX_UNIT_LAUNCHER_EXTENSION;
-    final String logTargetFileName = prefix + FLEX_UNIT_LOG_TARGET;
+    final String launcherBaseFileName = FLEX_UNIT_LAUNCHER_BASE;
+    final String launcherFileName = FLEX_UNIT_LAUNCHER + DOT_FLEX_UNIT_LAUNCHER_EXTENSION;
+    final String logTargetFileName = FLEX_UNIT_LOG_TARGET;
 
     String launcherText;
     String logTargetText;
@@ -296,7 +291,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
 
     logTargetText = logTargetText.replace("/*className*/", FileUtil.getNameWithoutExtension(logTargetFileName));
 
-    final File tmpDir = new File(FlexUtils.getPathToFlexUnitTempDirectory());
+    final File tmpDir = new File(FlexUtils.getPathToFlexUnitTempDirectory(myProject.getName()));
     boolean ok = true;
     if (tmpDir.isFile()) ok &= FileUtil.delete(tmpDir);
     if (!tmpDir.isDirectory()) ok &= tmpDir.mkdirs();
@@ -349,16 +344,6 @@ public class FlexUnitPrecompileTask implements CompileTask {
 
     context.putUserData(FILES_TO_DELETE, filesToDelete);
     return true;
-  }
-
-  public static String getFlexUnitLauncherName(final String moduleName) {
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      return FLEX_UNIT_LAUNCHER;
-    }
-
-    return moduleName.replaceAll("[^\\p{Alnum}]", "_") + "_" +
-           SystemProperties.getUserName().toLowerCase().replaceAll("[^\\p{Alnum}]", "_") +
-           FLEX_UNIT_LAUNCHER;
   }
 
   private static void collectCustomRunners(Set<String> result,
