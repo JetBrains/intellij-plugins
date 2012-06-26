@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigura
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.lang.javascript.flex.sdk.RslUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
@@ -242,31 +243,33 @@ public class CompilerConfigGenerator {
       addOption(rootElement, info, swcPath);
 
       if (linkageType == LinkageType.RSL) {
-        final String swcName = PathUtil.getFileName(swcPath);
-        final String libName = swcName.substring(0, swcName.length() - ".swc".length());
-
-        final String swzVersion = libName.equals("textLayout")
-                                  ? getTextLayoutSwzVersion(mySdk.getVersionString())
-                                  : libName.equals("osmf")
-                                    ? getOsmfSwzVersion(mySdk.getVersionString())
-                                    : mySdk.getVersionString();
-        final String swzUrl;
-        swzUrl = libName.equals("textLayout")
-                 ? "http://fpdownload.adobe.com/pub/swz/tlf/" + swzVersion + "/textLayout_" + swzVersion + ".swz"
-                 : "http://fpdownload.adobe.com/pub/swz/flex/" + mySdk.getVersionString() + "/" + libName + "_" + swzVersion + ".swz";
+        final List<String> rslUrls = RslUtil.getRslUrls(mySdk, swcPath);
+        if (rslUrls.isEmpty()) continue;
 
         final StringBuilder rslBuilder = new StringBuilder();
+        final String firstUrl = rslUrls.get(0);
         rslBuilder
           .append(swcPath)
           .append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
-          .append(swzUrl)
-          .append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
-          .append("http://fpdownload.adobe.com/pub/swz/crossdomain.xml")
-          .append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
-          .append(libName).append('_').append(swzVersion).append(".swz")
-          .append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
-          .append(""); // no failover policy file url
+          .append(firstUrl)
+          .append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
+        if (firstUrl.startsWith("http://")) {
+          rslBuilder.append("http://fpdownload.adobe.com/pub/swz/crossdomain.xml");
+        }
 
+        if (rslUrls.size() > 1) {
+          final String secondUrl = rslUrls.get(1);
+          rslBuilder
+            .append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
+            .append(secondUrl)
+            .append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
+          if (secondUrl.startsWith("http://")) {
+            rslBuilder.append("http://fpdownload.adobe.com/pub/swz/crossdomain.xml");
+          }
+        }
+
+        final String swcName = PathUtil.getFileName(swcPath);
+        final String libName = swcName.substring(0, swcName.length() - ".swc".length());
         libNameToRslInfo.put(libName, rslBuilder.toString());
       }
     }
@@ -281,26 +284,20 @@ public class CompilerConfigGenerator {
     for (final String libName : LIB_ORDER) {
       final String rslInfo = libNameToRslInfo.remove(libName);
       if (rslInfo != null) {
-        addOption(rootElement, CompilerOptionInfo.RSL_TWO_URLS_PATH_INFO, rslInfo);
+        final CompilerOptionInfo option = StringUtil.split(rslInfo, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).size() == 2
+                                          ? CompilerOptionInfo.RSL_ONE_URL_PATH_INFO
+                                          : CompilerOptionInfo.RSL_TWO_URLS_PATH_INFO;
+        addOption(rootElement, option, rslInfo);
       }
     }
 
     // now add other in random order, though up to Flex SDK 4.5.1 the map should be empty at this stage
     for (final String rslInfo : libNameToRslInfo.values()) {
-      addOption(rootElement, CompilerOptionInfo.RSL_TWO_URLS_PATH_INFO, rslInfo);
+      final CompilerOptionInfo option = StringUtil.split(rslInfo, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).size() == 2
+                                        ? CompilerOptionInfo.RSL_ONE_URL_PATH_INFO
+                                        : CompilerOptionInfo.RSL_TWO_URLS_PATH_INFO;
+      addOption(rootElement, option, rslInfo);
     }
-  }
-
-  private static String getTextLayoutSwzVersion(final String sdkVersion) {
-    return sdkVersion.startsWith("4.0")
-           ? "textLayout_1.0.0.595"
-           : sdkVersion.startsWith("4.1")
-             ? "1.1.0.604"
-             : "2.0.0.232";
-  }
-
-  private static String getOsmfSwzVersion(final String sdkVersion) {
-    return StringUtil.compareVersionNumbers(sdkVersion, "4.5") < 0 ? "4.0.0.13495" : "1.0.0.16316";
   }
 
   private void addLibs(final Element rootElement) {
