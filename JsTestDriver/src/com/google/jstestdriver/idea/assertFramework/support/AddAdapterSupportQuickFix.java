@@ -19,7 +19,8 @@ class AddAdapterSupportQuickFix implements LocalQuickFix {
   private final String myAssertionFrameworkName;
   private final Provider<List<VirtualFile>> myAdapterSourceFilesProvider;
 
-  public AddAdapterSupportQuickFix(String assertionFrameworkName, Provider<List<VirtualFile>> adapterSourceFilesProvider) {
+  public AddAdapterSupportQuickFix(@NotNull String assertionFrameworkName,
+                                   @NotNull Provider<List<VirtualFile>> adapterSourceFilesProvider) {
     myAssertionFrameworkName = assertionFrameworkName;
     myAdapterSourceFilesProvider = adapterSourceFilesProvider;
   }
@@ -33,7 +34,7 @@ class AddAdapterSupportQuickFix implements LocalQuickFix {
   @NotNull
   @Override
   public String getName() {
-    return "Add " + myAssertionFrameworkName + " adapter support for JsTestDriver";
+    return "Add " + myAssertionFrameworkName + " JsTestDriver adapter";
   }
 
   @Override
@@ -50,6 +51,7 @@ class AddAdapterSupportQuickFix implements LocalQuickFix {
       public void run() {
         AddAdapterSupportDialog dialog = new AddAdapterSupportDialog(
           project,
+          psiFile,
           myAssertionFrameworkName,
           myAdapterSourceFilesProvider.get()
         );

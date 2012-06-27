@@ -7,6 +7,7 @@ import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.VfsUtils;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class QUnitAdapterSupportInspection extends AbstractAddAdapterSupportInsp
   }
 
   @Override
-  protected boolean isSuitableMethod(String methodName, JSExpression[] methodArguments) {
+  protected boolean isSuitableMethod(@NotNull String methodName, @NotNull JSExpression[] methodArguments) {
     if (methodArguments.length == 0) {
       return false;
     }

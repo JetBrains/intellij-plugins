@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractMethodBasedInspection extends JSInspection {
 
-  protected abstract boolean isSuitableMethod(String methodName, JSExpression[] methodArguments);
+  protected abstract boolean isSuitableMethod(@NotNull String methodName, @NotNull JSExpression[] methodArguments);
 
   protected abstract LocalQuickFix getQuickFix();
 
@@ -32,7 +32,11 @@ public abstract class AbstractMethodBasedInspection extends JSInspection {
         JSArgumentList jsArgumentList = jsCallExpression.getArgumentList();
         if (methodExpression != null && jsArgumentList != null) {
           JSExpression[] arguments = ObjectUtils.notNull(jsArgumentList.getArguments(), JSExpression.EMPTY_ARRAY);
-          boolean suitableSymbol = isSuitableMethod(methodExpression.getReferencedName(), arguments);
+          String methodName = methodExpression.getReferencedName();
+          if (methodName == null) {
+            return;
+          }
+          boolean suitableSymbol = isSuitableMethod(methodName, arguments);
           if (suitableSymbol) {
             boolean resolved = isResolved(methodExpression);
             if (!resolved) {
@@ -59,10 +63,4 @@ public abstract class AbstractMethodBasedInspection extends JSInspection {
     return HighlightDisplayLevel.ERROR;
   }
 
-  @Nls
-  @NotNull
-  @Override
-  public final String getDisplayName() {
-    return getQuickFix().getName();
-  }
 }

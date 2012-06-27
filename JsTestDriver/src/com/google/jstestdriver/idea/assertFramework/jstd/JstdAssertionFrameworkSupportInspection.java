@@ -27,7 +27,7 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
   private static final AddJstdLibraryLocalQuickFix ADD_JSTD_LIBRARY_LOCAL_QUICK_FIX = new AddJstdLibraryLocalQuickFix();
 
   @Override
-  protected boolean isSuitableMethod(String methodName, JSExpression[] methodArguments) {
+  protected boolean isSuitableMethod(@NotNull String methodName, @NotNull JSExpression[] methodArguments) {
     if (methodArguments.length < 1) {
       return false;
     }
