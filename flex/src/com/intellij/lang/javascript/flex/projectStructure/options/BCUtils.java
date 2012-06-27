@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.lang.javascript.flex.sdk.RslUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.application.ApplicationManager;
@@ -112,8 +113,9 @@ public class BCUtils {
    * @return <code>null</code> if entry should not be included at all
    */
   @Nullable
-  public static LinkageType getSdkEntryLinkageType(String path, FlexIdeBuildConfiguration bc) {
-    return getSdkEntryLinkageType(path, bc.getNature(), bc.getDependencies().getTargetPlayer(), bc.getDependencies().getComponentSet());
+  public static LinkageType getSdkEntryLinkageType(String swcPath, FlexIdeBuildConfiguration bc) {
+    return getSdkEntryLinkageType(bc.getSdk(), swcPath, bc.getNature(), bc.getDependencies().getTargetPlayer(),
+                                  bc.getDependencies().getComponentSet());
   }
 
   /**
@@ -122,127 +124,124 @@ public class BCUtils {
    * @return <code>null</code> if entry should not be included at all
    */
   @Nullable
-  public static LinkageType getSdkEntryLinkageType(final String path,
+  public static LinkageType getSdkEntryLinkageType(final Sdk sdk,
+                                                   final String swcPath,
                                                    final BuildConfigurationNature bcNature,
                                                    final String targetPlayer,
                                                    final ComponentSet componentSet) {
-    LOG.assertTrue(!path.endsWith(JarFileSystem.JAR_SEPARATOR), "plain local filesystem path is expected");
+    LOG.assertTrue(!swcPath.endsWith(JarFileSystem.JAR_SEPARATOR), "plain local filesystem path is expected");
 
-    if (path.endsWith("/frameworks/libs/air/airglobal.swc")) {
+    if (swcPath.endsWith("/frameworks/libs/air/airglobal.swc")) {
       return bcNature.isWebPlatform() ? null : LinkageType.External;
     }
 
-    if (path.endsWith("/playerglobal.swc") && path.contains("/frameworks/libs/player/")) {
-      if (path.endsWith("/frameworks/libs/player/" + targetPlayer + "/playerglobal.swc")) {
+    if (swcPath.endsWith("/playerglobal.swc") && swcPath.contains("/frameworks/libs/player/")) {
+      if (swcPath.endsWith("/frameworks/libs/player/" + targetPlayer + "/playerglobal.swc")) {
         return bcNature.isWebPlatform() ? LinkageType.External : null;
       }
       return null;
     }
 
-    final LinkageType linkageType;
+    final boolean swcIncluded;
 
-    final int lastSlashIndex = path.lastIndexOf('/');
-    if (lastSlashIndex <= 0 || lastSlashIndex == path.length() - 1) {
-      LOG.error("Unexpected Flex SDK root: " + path);
+    final int lastSlashIndex = swcPath.lastIndexOf('/');
+    if (lastSlashIndex <= 0 || lastSlashIndex == swcPath.length() - 1) {
+      LOG.error("Unexpected Flex SDK root: " + swcPath);
     }
-    final String swcName = path.substring(lastSlashIndex + 1);
-    final String folderPath = path.substring(0, lastSlashIndex);
+    final String swcName = swcPath.substring(lastSlashIndex + 1);
+    final String folderPath = swcPath.substring(0, lastSlashIndex);
 
     if (folderPath.endsWith("/frameworks/libs")) {
-      linkageType = getLibraryFromLibsFolderLinkage(bcNature, componentSet, swcName);
+      swcIncluded = isSwcFromLibsFolderIncluded(bcNature, componentSet, swcName);
     }
     else if (folderPath.endsWith("/frameworks/libs/air")) {
-      linkageType = getAirLibraryLinkage(bcNature, componentSet, swcName);
+      swcIncluded = isSwcFromAirFolderIncluded(bcNature, componentSet, swcName);
     }
     else if (folderPath.endsWith("/frameworks/libs/mobile")) {
-      linkageType = getMobileLibraryLinkage(bcNature, swcName);
+      swcIncluded = isSwcFromMobileFolderIncluded(bcNature, swcName);
     }
     else if (folderPath.endsWith("/frameworks/libs/mx")) {
-      linkageType = getMxLibraryLinkage(bcNature, componentSet, swcName);
+      swcIncluded = isSwcFromMxFolderIncluded(bcNature, componentSet, swcName);
     }
     else if (folderPath.contains("/frameworks/themes/")) {
-      linkageType = null;
+      swcIncluded = false;
     }
     else {
       if (!ApplicationManager.getApplication().isUnitTestMode()) {
-        LOG.warn("Unknown Flex SDK root: " + path);
+        LOG.warn("Unknown Flex SDK root: " + swcPath);
       }
-      linkageType = LinkageType.Merged;
+      swcIncluded = true;
     }
 
+    if (!swcIncluded) return null;
+
     // our difference from FB is that in case of library _ALL_ SWCs from SDK are external by default (except *global.swc)
-    return bcNature.isLib() && linkageType != null ? LinkageType.Default : linkageType;
+    if (bcNature.isLib()) return LinkageType.Default;
+
+    return RslUtil.canBeRsl(sdk, swcPath) ? LinkageType.Default : LinkageType.Merged;
   }
 
-  @Nullable
-  private static LinkageType getLibraryFromLibsFolderLinkage(final BuildConfigurationNature bcNature,
-                                                             final ComponentSet componentSet,
-                                                             final String swcName) {
+  private static boolean isSwcFromLibsFolderIncluded(final BuildConfigurationNature bcNature,
+                                                     final ComponentSet componentSet,
+                                                     final String swcName) {
     if (swcName.equals("advancedgrids.swc")) {
-      return bcNature.isMobilePlatform() || bcNature.pureAS || componentSet == ComponentSet.SparkOnly
-             ? null
-             : LinkageType.Default;
+      return !(bcNature.isMobilePlatform() || bcNature.pureAS || componentSet == ComponentSet.SparkOnly);
     }
 
     if (swcName.equals("authoringsupport.swc")) {
-      return LinkageType.Merged;
+      return true;
     }
 
     if (swcName.equals("charts.swc")) {
-      return bcNature.pureAS ? null : LinkageType.Default;
+      return !bcNature.pureAS;
     }
 
     if (swcName.equals("core.swc")) {
-      return bcNature.pureAS ? LinkageType.Merged : null;
+      return bcNature.pureAS;
     }
 
     if (swcName.equals("datavisualization.swc")) {
-      return bcNature.pureAS ? null : LinkageType.Merged;
+      return !bcNature.pureAS;
     }
 
     if (swcName.endsWith("flash-integration.swc")) {
-      return bcNature.pureAS ? null : LinkageType.Merged;
+      return !bcNature.pureAS;
     }
 
     if (swcName.equals("flex.swc")) {
-      return bcNature.pureAS ? LinkageType.Merged : null;
+      return bcNature.pureAS;
     }
 
     if (swcName.endsWith("framework.swc")) {
-      return bcNature.pureAS ? null : LinkageType.Default;
+      return !bcNature.pureAS;
     }
 
     if (swcName.endsWith("osmf.swc")) {
-      return LinkageType.Default;
+      return true;
     }
 
     if (swcName.endsWith("rpc.swc")) {
-      return bcNature.pureAS ? null : LinkageType.Default;
+      return !bcNature.pureAS;
     }
 
     if (swcName.endsWith("spark.swc")) {
-      return bcNature.pureAS ? null
-                             : (bcNature.isMobilePlatform() || componentSet != ComponentSet.MxOnly)
-                               ? LinkageType.Default
-                               : null;
+      return !bcNature.pureAS && (bcNature.isMobilePlatform() || componentSet != ComponentSet.MxOnly);
     }
 
     if (swcName.endsWith("spark_dmv.swc")) {
-      return !bcNature.pureAS && !bcNature.isMobilePlatform() && componentSet == ComponentSet.SparkAndMx
-             ? LinkageType.Default : null;
+      return !bcNature.pureAS && !bcNature.isMobilePlatform() && componentSet == ComponentSet.SparkAndMx;
     }
 
     if (swcName.endsWith("sparkskins.swc")) {
-      return !bcNature.pureAS && !bcNature.isMobilePlatform() && componentSet != ComponentSet.MxOnly
-             ? LinkageType.Default : null;
+      return !bcNature.pureAS && !bcNature.isMobilePlatform() && componentSet != ComponentSet.MxOnly;
     }
 
     if (swcName.endsWith("textLayout.swc")) {
-      return LinkageType.Default;
+      return true;
     }
 
     if (swcName.endsWith("utilities.swc")) {
-      return LinkageType.Merged;
+      return true;
     }
 
     if (swcName.equals("automation.swc") ||
@@ -251,54 +250,49 @@ public class BCUtils {
         swcName.equals("automation_flashflexkit.swc") ||
         swcName.equals("qtp.swc")) {
       // additionally installed on top of Flex SDK 3.x
-      return LinkageType.Merged;
+      return true;
     }
 
     LOG.warn("Unknown SWC in '<Flex SDK>/frameworks/libs' folder: " + swcName);
-    return LinkageType.Merged;
+    return true;
   }
 
-  @Nullable
-  private static LinkageType getAirLibraryLinkage(final BuildConfigurationNature bcNature,
-                                                  final ComponentSet componentSet,
-                                                  final String swcName) {
+  private static boolean isSwcFromAirFolderIncluded(final BuildConfigurationNature bcNature,
+                                                    final ComponentSet componentSet,
+                                                    final String swcName) {
     if (bcNature.isMobilePlatform()) {
-      return swcName.equals("servicemonitor.swc") ? LinkageType.Merged : null;
+      return swcName.equals("servicemonitor.swc");
     }
 
     if (bcNature.isDesktopPlatform()) {
       if (swcName.equals("airframework.swc")) {
-        return bcNature.pureAS ? null : LinkageType.Merged;
+        return !bcNature.pureAS;
       }
 
       if (swcName.equals("airspark.swc")) {
-        return bcNature.pureAS || componentSet == ComponentSet.MxOnly ? null : LinkageType.Merged;
+        return !bcNature.pureAS && componentSet != ComponentSet.MxOnly;
       }
 
-      return LinkageType.Merged;
+      return true;
     }
 
-    return null;
+    return false;
   }
 
-  @Nullable
-  private static LinkageType getMobileLibraryLinkage(final BuildConfigurationNature bcNature, final String swcName) {
+  private static boolean isSwcFromMobileFolderIncluded(final BuildConfigurationNature bcNature, final String swcName) {
     if (!swcName.equals("mobilecomponents.swc")) {
       LOG.warn("Unknown SWC in '<Flex SDK>/frameworks/libs/mobile' folder: " + swcName);
     }
-    return bcNature.pureAS || !bcNature.isMobilePlatform() ? null : LinkageType.Merged;
+    return !bcNature.pureAS && bcNature.isMobilePlatform();
   }
 
-  @Nullable
-  private static LinkageType getMxLibraryLinkage(final BuildConfigurationNature bcNature,
-                                                 final ComponentSet componentSet,
-                                                 final String swcName) {
+  private static boolean isSwcFromMxFolderIncluded(final BuildConfigurationNature bcNature,
+                                                   final ComponentSet componentSet,
+                                                   final String swcName) {
     if (!swcName.equals("mx.swc")) {
       LOG.warn("Unknown SWC in '<Flex SDK>/frameworks/libs/mx' folder: " + swcName);
     }
-    return bcNature.isMobilePlatform() || bcNature.pureAS || componentSet == ComponentSet.SparkOnly
-           ? null
-           : LinkageType.Default;
+    return !bcNature.isMobilePlatform() && !bcNature.pureAS && componentSet != ComponentSet.SparkOnly;
   }
 
   public static boolean isApplicable(final BuildConfigurationNature dependantNature,
