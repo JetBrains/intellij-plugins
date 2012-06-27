@@ -199,7 +199,7 @@ public class CompilerConfigGenerator {
           namespaceBuilder.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
         }
         namespaceBuilder.append(namespace).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
-          .append("${FLEX_SDK}/").append(relativePath);
+          .append(CompilerOptionInfo.FLEX_SDK_MACRO + "/").append(relativePath);
       }
     });
 

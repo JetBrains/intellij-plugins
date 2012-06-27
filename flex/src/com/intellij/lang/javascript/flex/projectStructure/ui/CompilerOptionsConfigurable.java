@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
@@ -604,7 +605,14 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         assert value instanceof CompilerOptionInfo;
 
         final CompilerOptionInfo info = (CompilerOptionInfo)value;
-        final String optionValue = getValueAndSource(info).first;
+
+        final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
+        final String sdkHome = sdk == null || sdk.getSdkType() == FlexmojosSdkType.getInstance() ? null : sdk.getHomePath();
+
+        final String optionValue = sdkHome == null
+                                   ? getValueAndSource(info).first
+                                   : getValueAndSource(info).first.replace(CompilerOptionInfo.FLEX_SDK_MACRO, sdkHome);
+
 
         switch (info.TYPE) {
           case Boolean:
@@ -644,10 +652,18 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
           return myTextField.getText().trim();
         }
         if (myCurrentEditor == myTextWithBrowse) {
-          return FileUtil.toSystemIndependentName(myTextWithBrowse.getText().trim());
+          final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
+          final String sdkHome = sdk == null || sdk.getSdkType() == FlexmojosSdkType.getInstance() ? null : sdk.getHomePath();
+
+          final String path = FileUtil.toSystemIndependentName(myTextWithBrowse.getText().trim());
+          return sdkHome == null ? path : path.replace(sdkHome, CompilerOptionInfo.FLEX_SDK_MACRO);
         }
         if (myCurrentEditor == myRepeatableValueEditor) {
-          return myRepeatableValueEditor.getValue();
+          final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
+          final String sdkHome = sdk == null ? null : sdk.getHomePath();
+
+          final String value = myRepeatableValueEditor.getValue();
+          return sdkHome == null ? value : value.replace(sdkHome, CompilerOptionInfo.FLEX_SDK_MACRO);
         }
         assert false;
         return null;

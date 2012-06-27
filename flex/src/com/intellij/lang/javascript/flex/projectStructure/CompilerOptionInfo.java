@@ -50,6 +50,7 @@ public class CompilerOptionInfo {
   public static final String LIST_ENTRIES_SEPARATOR = "\n";
   public static final String LIST_ENTRY_PARTS_SEPARATOR = "\t"; // if list entry contains several values, e.g. uri and manifest
   public static final String FLEX_SDK_MACRO_NAME = "FLEX_SDK";
+  public static final String FLEX_SDK_MACRO = "${" + FLEX_SDK_MACRO_NAME + "}";
   private static final String SPECIAL_DEFAULT_VALUE = "SPECIAL";
 
   private static final Logger LOG = Logger.getInstance(CompilerOptionInfo.class.getName());
@@ -249,12 +250,12 @@ public class CompilerOptionInfo {
       }
       else if ("compiler.theme".equals(ID)) {
         if (!nature.pureAS && !nature.isDesktopPlatform() && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0) {
-          if (nature.isMobilePlatform()) return "${FLEX_SDK}/frameworks/themes/Mobile/mobile.swc";
+          if (nature.isMobilePlatform()) return FLEX_SDK_MACRO + "/frameworks/themes/Mobile/mobile.swc";
           if (StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 && componentSet == ComponentSet.MxOnly) {
-            return "${FLEX_SDK}/frameworks/themes/Halo/halo.swc";
+            return FLEX_SDK_MACRO + "/frameworks/themes/Halo/halo.swc";
           }
           else {
-            return "${FLEX_SDK}/frameworks/themes/Spark/spark.css";
+            return FLEX_SDK_MACRO + "/frameworks/themes/Spark/spark.css";
           }
         }
         return "";
