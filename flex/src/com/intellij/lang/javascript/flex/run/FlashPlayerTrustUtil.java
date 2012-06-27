@@ -85,6 +85,12 @@ public class FlashPlayerTrustUtil {
     }
 
     final File ideaTrustedCfgFile = new File(flashPlayerTrustDir, INTELLIJ_IDEA_CFG);
+
+    if (ideaTrustedCfgFile.isFile() && ideaTrustedCfgFile.length() > 102400) {
+      // this file may become such big only because of a bug like IDEA-86188
+      FileUtil.delete(ideaTrustedCfgFile);
+    }
+
     if (!ideaTrustedCfgFile.exists() && runTrusted) {
       try {
         final boolean ok = ideaTrustedCfgFile.createNewFile();
