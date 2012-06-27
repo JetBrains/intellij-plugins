@@ -1015,6 +1015,10 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     return mySdkCombo.getSelectedJdk();
   }
 
+  ComponentSet getCurrentComponentSet() {
+    return (ComponentSet)myComponentSetCombo.getSelectedItem();
+  }
+
   void addSdkChangeListener(final ChangeListener changeListener) {
     mySdkChangeDispatcher.addListener(changeListener);
   }

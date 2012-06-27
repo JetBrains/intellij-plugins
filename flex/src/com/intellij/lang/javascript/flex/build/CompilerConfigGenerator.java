@@ -660,7 +660,8 @@ public class CompilerConfigGenerator {
     final String projectLevelValue = myProjectLevelCompilerOptions.getOption(info.ID);
     if (projectLevelValue != null) return Pair.create(projectLevelValue, ValueSource.ProjectDefault);
 
-    return Pair.create(info.getDefaultValue(mySdk.getVersionString(), myBC.getNature()), ValueSource.GlobalDefault);
+    return Pair.create(info.getDefaultValue(mySdk.getVersionString(), myBC.getNature(), myBC.getDependencies().getComponentSet()),
+                       ValueSource.GlobalDefault);
   }
 
   private static VirtualFile getOrCreateConfigFile(final Project project, final String name, final String text) throws IOException {
