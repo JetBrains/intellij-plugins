@@ -41,7 +41,7 @@ import com.intellij.psi.css.*;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.util.references.HtmlCssClassOrIdReference;
 import com.intellij.psi.css.impl.util.table.CssElementDescriptorProviderImpl;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageFacadeImpl;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilBase;
@@ -80,7 +80,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
     Module module = ModuleUtil.findModuleForPsiElement(file);
     if (module == null) {
-      file = InjectedLanguageFacadeImpl.getTopLevelFile(context);
+      file = InjectedLanguageUtil.getTopLevelFile(context);
       if (file != null) {
         module = ModuleUtil.findModuleForPsiElement(file);
       }
@@ -564,7 +564,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @Nullable
   private static VirtualFile checkForQuickFixAndGetVFile(@NotNull PsiElement context) {
-    final PsiFile file = InjectedLanguageFacadeImpl.getTopLevelFile(context);
+    final PsiFile file = InjectedLanguageUtil.getTopLevelFile(context);
     if (file == null) {
       return null;
     }

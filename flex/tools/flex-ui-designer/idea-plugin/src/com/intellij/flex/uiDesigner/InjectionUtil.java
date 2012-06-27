@@ -12,7 +12,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageFacadeImpl;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -151,11 +151,11 @@ public final class InjectionUtil {
 
   @Nullable
   private static PsiFileSystemItem resolveResult(PsiElement element, ResolveResult[] resolveResults) {
-    final PsiFile currentTopLevelFile = InjectedLanguageFacadeImpl.getTopLevelFile(element);
+    final PsiFile currentTopLevelFile = InjectedLanguageUtil.getTopLevelFile(element);
     // find equal files
     for (ResolveResult resolveResult : resolveResults) {
       PsiElement resolvedElement = resolveResult.getElement();
-      if (InjectedLanguageFacadeImpl.getTopLevelFile(resolvedElement).equals(currentTopLevelFile)) {
+      if (InjectedLanguageUtil.getTopLevelFile(resolvedElement).equals(currentTopLevelFile)) {
         return (PsiFileSystemItem)resolvedElement;
       }
     }

@@ -21,7 +21,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.css.CssFile;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageFacadeImpl;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -168,7 +168,7 @@ final class IncrementalDocumentSynchronizer extends Update {
     XmlAttributeValueProvider valueProvider = new XmlAttributeValueProvider(attribute);
     // skip binding
     PsiLanguageInjectionHost injectedHost = valueProvider.getInjectedHost();
-    if (injectedHost != null && InjectedLanguageFacadeImpl.hasInjections(injectedHost)) {
+    if (injectedHost != null && InjectedLanguageUtil.hasInjections(injectedHost)) {
       return null;
     }
 
