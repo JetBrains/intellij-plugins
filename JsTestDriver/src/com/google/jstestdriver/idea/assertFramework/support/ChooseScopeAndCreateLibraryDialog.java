@@ -62,6 +62,7 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
       createDescription(warnAboutOutsideCode),
       Box.createVerticalStrut(10),
       createLibraryNamePanel(),
+      Box.createVerticalStrut(5),
       createCompletionPanel()
     );
     super.init();

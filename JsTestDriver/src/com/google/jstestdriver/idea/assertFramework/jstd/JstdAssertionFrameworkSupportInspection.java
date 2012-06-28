@@ -1,23 +1,25 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.jstestdriver.idea.assertFramework.jstd.jsSrc.JstdDefaultAssertionFrameworkSrcMarker;
-import com.google.jstestdriver.idea.assertFramework.library.JsLibraryHelper;
 import com.google.jstestdriver.idea.assertFramework.library.JstdLibraryUtil;
 import com.google.jstestdriver.idea.assertFramework.support.AbstractMethodBasedInspection;
+import com.google.jstestdriver.idea.assertFramework.support.ChooseScopeAndCreateLibraryDialog;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.VfsUtils;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.webcore.libraries.ScriptingLibraryModel;
-import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -85,38 +87,51 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
     }
 
     @Override
-    public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      installLibrary(project);
-      PsiElement psiElement = descriptor.getPsiElement();
-      PsiFile psiFile = psiElement.getContainingFile();
-      VirtualFile virtualFile = psiFile.getVirtualFile();
-
-      if (virtualFile != null) {
-        FileContentUtil.reparseFiles(project, Collections.singletonList(virtualFile), true);
-      }
+    public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          List<VirtualFile> sources = getLibrarySourceFiles();
+          final VirtualFile fileRequestor = findVirtualFile(descriptor.getPsiElement());
+          DialogWrapper dialog = new ChooseScopeAndCreateLibraryDialog(
+            project,
+            JstdLibraryUtil.LIBRARY_NAME,
+            sources,
+            fileRequestor,
+            false
+          );
+          AsyncResult<Boolean> result = dialog.showAndGetOk();
+          result.doWhenDone(new AsyncResult.Handler<Boolean>() {
+            @Override
+            public void run(Boolean done) {
+              if (done) {
+                FileContentUtil.reparseFiles(project, Collections.singletonList(fileRequestor), true);
+              }
+            }
+          });
+        }
+      });
     }
 
-    private static void installLibrary(@NotNull Project project) {
-      List<VirtualFile> sources = getLibrarySourceFiles();
-      JsLibraryHelper libraryHelper = new JsLibraryHelper(project);
-      ScriptingLibraryModel libraryModel = libraryHelper.createJsLibrary(JstdLibraryUtil.LIBRARY_NAME, sources);
-      String dialogTitle = "Adding JsTestDriver assertion framework support";
-      if (libraryModel == null) {
-        Messages.showErrorDialog("Unable to create '" + JstdLibraryUtil.LIBRARY_NAME + "' JavaScript library", dialogTitle);
-        return;
-      }
-      boolean associated = libraryHelper.associateLibraryWithProject(libraryModel);
-      if (!associated) {
-        Messages.showErrorDialog("Unable to associate '" + JstdLibraryUtil.LIBRARY_NAME
-                                 + "' JavaScript library with project", dialogTitle);
-      }
+    @NotNull
+    private static List<VirtualFile> getLibrarySourceFiles() {
+      return VfsUtils.findVirtualFilesByResourceNames(
+        JstdDefaultAssertionFrameworkSrcMarker.class,
+        new String[]{"Asserts.js", "TestCase.js"}
+      );
     }
+
+    @Nullable
+    private static VirtualFile findVirtualFile(@Nullable PsiElement element) {
+      if (element != null) {
+        PsiFile file = element.getContainingFile();
+        if (file != null) {
+          return file.getVirtualFile();
+        }
+      }
+      return null;
+    }
+
   }
 
-  private static List<VirtualFile> getLibrarySourceFiles() {
-    return VfsUtils.findVirtualFilesByResourceNames(
-      JstdDefaultAssertionFrameworkSrcMarker.class,
-      new String[]{"Asserts.js", "TestCase.js"}
-    );
-  }
 }

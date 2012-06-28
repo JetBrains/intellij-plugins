@@ -307,7 +307,9 @@ public class JstdConfigFileAnnotator implements Annotator {
         if (previousKeyValueEndLineNumberRef.get() < startLineNumber) {
           if (element instanceof YAMLKeyValue) {
             YAMLKeyValue yamlKeyValue = (YAMLKeyValue)element;
-            previousKeyValueEndLineNumberRef.set(JstdConfigFileUtils.getEndLineNumber(document, yamlKeyValue));
+            int endOffset = yamlKeyValue.getTextRange().getEndOffset();
+            int endLine = document.getLineNumber(Math.max(0, endOffset - 1));
+            previousKeyValueEndLineNumberRef.set(endLine);
             keyValues.add(yamlKeyValue);
           }
           else {
