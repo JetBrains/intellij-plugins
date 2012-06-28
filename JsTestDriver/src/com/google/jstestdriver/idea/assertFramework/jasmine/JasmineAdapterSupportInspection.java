@@ -14,13 +14,17 @@ import java.util.List;
 public class JasmineAdapterSupportInspection extends AbstractAddAdapterSupportInspection {
 
   public JasmineAdapterSupportInspection() {
-    super("Jasmine", new Provider<List<VirtualFile>>() {
-      @Override
-      public List<VirtualFile> get() {
-        String[] relativePaths = new String[] {"jasmine-1.1.0.js", "JasmineAdapter-1.1.2.js"};
-        return VfsUtils.findVirtualFilesByResourceNames(JasmineAdapterSrcMarker.class, relativePaths);
-      }
-    });
+    super(
+      "Jasmine",
+      new Provider<List<VirtualFile>>() {
+        @Override
+        public List<VirtualFile> get() {
+          String[] relativePaths = new String[]{"jasmine-1.1.0.js", "JasmineAdapter-1.1.2.js"};
+          return VfsUtils.findVirtualFilesByResourceNames(JasmineAdapterSrcMarker.class, relativePaths);
+        }
+      },
+      "https://github.com/ibolmo/jasmine-jstd-adapter"
+    );
   }
 
   @Override

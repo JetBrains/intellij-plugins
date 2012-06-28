@@ -14,13 +14,17 @@ import java.util.List;
 public class QUnitAdapterSupportInspection extends AbstractAddAdapterSupportInspection {
 
   public QUnitAdapterSupportInspection() {
-    super("QUnit", new Provider<List<VirtualFile>>() {
-      @Override
-      public List<VirtualFile> get() {
-        String[] relativePaths = new String[]{"equiv.js", "QUnitAdapter.js"};
-        return VfsUtils.findVirtualFilesByResourceNames(QUnitAdapterSrcMarker.class, relativePaths);
-      }
-    });
+    super(
+      "QUnit",
+      new Provider<List<VirtualFile>>() {
+        @Override
+        public List<VirtualFile> get() {
+          String[] relativePaths = new String[]{"equiv.js", "QUnitAdapter.js"};
+          return VfsUtils.findVirtualFilesByResourceNames(QUnitAdapterSrcMarker.class, relativePaths);
+        }
+      },
+      "http://code.google.com/p/js-test-driver/wiki/QUnitAdapter"
+    );
   }
 
   @Override

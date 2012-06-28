@@ -51,6 +51,11 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
   }
 
   @Override
+  protected String getProblemDescription() {
+    return "No code assistance for JsTestDriver assertion framework";
+  }
+
+  @Override
   protected boolean isResolved(@NotNull JSReferenceExpression methodExpression) {
     if (JsPsiUtils.isResolvedToFunction(methodExpression)) {
       return true;

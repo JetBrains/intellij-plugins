@@ -23,6 +23,8 @@ public abstract class AbstractMethodBasedInspection extends JSInspection {
 
   protected abstract LocalQuickFix getQuickFix();
 
+  protected abstract String getProblemDescription();
+
   @Override
   protected final JSElementVisitor createVisitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
     return new JSElementVisitor() {
@@ -42,7 +44,7 @@ public abstract class AbstractMethodBasedInspection extends JSInspection {
             if (!resolved) {
               holder.registerProblem(
                 methodExpression,
-                getDisplayName(),
+                getProblemDescription(),
                 ProblemHighlightType.GENERIC_ERROR,
                 TextRange.create(0, methodExpression.getTextLength()),
                 getQuickFix()
