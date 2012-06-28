@@ -178,11 +178,10 @@ public class AddAdapterSupportDialog extends DialogWrapper {
     );
     Dimension oldDimension = directoryTextFieldWithBrowseButton.getPreferredSize();
     directoryTextFieldWithBrowseButton.setMaximumSize(oldDimension);
-    return SwingHelper.newLeftAlignedVerticalPanel(
-      new JLabel("Copy these files to directory:"),
-      Box.createVerticalStrut(2),
-      directoryTextFieldWithBrowseButton
-    );
+    JPanel panel = new JPanel(new BorderLayout(0, 2));
+    panel.add(new JLabel("Copy these files to directory:"), BorderLayout.NORTH);
+    panel.add(directoryTextFieldWithBrowseButton, BorderLayout.CENTER);
+    return panel;
   }
 
   private String getAssertFrameworkAdapterName() {
