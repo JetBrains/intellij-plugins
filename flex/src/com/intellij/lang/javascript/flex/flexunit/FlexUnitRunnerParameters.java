@@ -34,7 +34,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
   }
 
   public enum OutputLogLevel {
-    Fatal("FATAL"), Error("ERROR"), Warn("WARN"), Info("INFO"), Debug("DEBUG"), All("ALL");
+    Fatal("1000"), Error("8"), Warn("6"), Info("4"), Debug("2"), All("0");
 
     private final String myFlexConstant;
 
@@ -237,6 +237,10 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     final FlexUnitSupport support = FlexUnitSupport.getSupport(bc, moduleAndBC.first);
     if (support == null) {
       throw new RuntimeConfigurationError(FlexBundle.message("flexunit.not.found.for.bc", bc.getName()));
+    }
+
+    if (!support.flexUnit4Present && bc.isPureAs()) {
+      throw new RuntimeConfigurationError(FlexBundle.message("cant.execute.flexunit1.for.pure.as.bc"));
     }
 
     final GlobalSearchScope searchScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(moduleAndBC.first, bc, true);

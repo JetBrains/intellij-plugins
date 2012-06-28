@@ -6,8 +6,11 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -44,19 +47,16 @@ import java.util.Set;
 
 public class FlexUnitPrecompileTask implements CompileTask {
 
-  private static final String FLEX_UNIT_LAUNCHER_BASE = "____FlexUnitLauncherBase.mxml";
   public static final String FLEX_UNIT_LAUNCHER = "____FlexUnitLauncher";
-  public static final String DOT_FLEX_UNIT_LAUNCHER_EXTENSION = ".mxml";
-  private static final String FLEX_UNIT_LOG_TARGET = "____FlexUnitTestListener.as";
 
   public static final Key<Collection<String>> FILES_TO_DELETE = Key.create("FlexUnitPrecompileTask.filesToRemove");
 
   private final Project myProject;
-  private static final String TEST_SUITE_VAR = "__testSuite__";
+  private static final String TEST_RUNNER_VAR = "__testRunner";
 
-  private static final int FLEXUNIT_PORT_START = 7832;
+  private static final int FLEX_UNIT_PORT_START = 7832;
   private static final int PORTS_ATTEMPT_NUMBER = 20;
-  private static final int SWC_POLICY_PORT_START = FLEXUNIT_PORT_START + PORTS_ATTEMPT_NUMBER;
+  private static final int SWC_POLICY_PORT_START = FLEX_UNIT_PORT_START + PORTS_ATTEMPT_NUMBER;
 
   public FlexUnitPrecompileTask(Project project) {
     myProject = project;
@@ -98,7 +98,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
       return false;
     }
 
-    int flexUnitPort = ServerConnectionBase.getFreePort(FLEXUNIT_PORT_START, PORTS_ATTEMPT_NUMBER);
+    int flexUnitPort = ServerConnectionBase.getFreePort(FLEX_UNIT_PORT_START, PORTS_ATTEMPT_NUMBER);
     if (flexUnitPort == -1) {
       context.addMessage(CompilerMessageCategory.ERROR, FlexBundle.message("no.free.port"), null, -1, -1);
       return false;
@@ -180,7 +180,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
         // FlexUnit4 can't run FlexUnit1 TestSuite subclasses, fallback to FlexUnit1 runner
         flexUnit4 = support.flexUnit4Present && !isFlexUnit1Suite.get();
         generateImportCode(imports, params.getClassName(), customRunners);
-        generateTestClassCode(code, params.getClassName(), flexUnit4, customRunners, isSuite.get());
+        generateTestClassCode(code, params.getClassName(), customRunners, isSuite.get());
       }
       break;
 
@@ -201,7 +201,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
 
         flexUnit4 = support.flexUnit4Present;
         generateImportCode(imports, params.getClassName(), customRunners);
-        generateTestMethodCode(code, params.getClassName(), params.getMethodName(), flexUnit4, customRunners);
+        generateTestMethodCode(code, params.getClassName(), params.getMethodName(), customRunners);
       }
       break;
 
@@ -244,7 +244,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
         flexUnit4 = support.flexUnit4Present;
         for (Pair<String, Set<String>> classAndRunner : classes) {
           generateImportCode(imports, classAndRunner.first, classAndRunner.second);
-          generateTestClassCode(code, classAndRunner.first, flexUnit4, classAndRunner.second, false);
+          generateTestClassCode(code, classAndRunner.first, classAndRunner.second, false);
         }
       }
       break;
@@ -253,17 +253,13 @@ public class FlexUnitPrecompileTask implements CompileTask {
         assert false : "Unknown scope: " + params.getScope();
     }
 
-    final String launcherBaseFileName = FLEX_UNIT_LAUNCHER_BASE;
-    final String launcherFileName = FLEX_UNIT_LAUNCHER + DOT_FLEX_UNIT_LAUNCHER_EXTENSION;
-    final String logTargetFileName = FLEX_UNIT_LOG_TARGET;
+    if (!flexUnit4 && bc.isPureAs()) {
+      context.addMessage(CompilerMessageCategory.ERROR, FlexBundle.message("cant.execute.flexunit1.for.pure.as.bc"), null, -1, -1);
+    }
 
     String launcherText;
-    String logTargetText;
-    final String launcherBaseText;
     try {
-      launcherText = getLauncherTemplate(flexUnit4);
-      launcherBaseText = getLauncherBaseText();
-      logTargetText = getLogTargetText();
+      launcherText = getLauncherTemplate(bc);
     }
     catch (IOException e) {
       context.addMessage(CompilerMessageCategory.ERROR, e.getMessage(), null, -1, -1);
@@ -275,21 +271,19 @@ public class FlexUnitPrecompileTask implements CompileTask {
       generateImportCode(imports, "flash.desktop.NativeApplication");
     }
 
-    launcherText = launcherText.replace("/*imports*/", imports);
-    launcherText = launcherText.replace("/*code*/", code);
-    launcherText = launcherText.replace("/*port*/", String.valueOf(flexUnitPort));
-    launcherText = launcherText.replace("/*socketPolicyPort*/", String.valueOf(socketPolicyPort));
-    launcherText = launcherText.replace("/*base*/", FileUtil.getNameWithoutExtension(launcherBaseFileName));
-    launcherText = launcherText.replace("/*module*/", module.getName());
-    launcherText = launcherText.replace("/*closeApp*/", desktop ? "NativeApplication.nativeApplication.exit(0)" : "fscommand(\"quit\")");
-    launcherText = launcherText.replace("/*logTargetClass*/", FileUtil.getNameWithoutExtension(logTargetFileName));
-    final FlexUnitRunnerParameters.OutputLogLevel logLevel = params.getOutputLogLevel();
-    launcherText = launcherText.replace("/*logEnabled*/", logLevel != null ? "true" : "false");
-    launcherText = launcherText.replace("/*logLevel*/", logLevel != null
-                                                        ? logLevel.getFlexConstant()
-                                                        : FlexUnitRunnerParameters.OutputLogLevel.values()[0].getFlexConstant());
-
-    logTargetText = logTargetText.replace("/*className*/", FileUtil.getNameWithoutExtension(logTargetFileName));
+    launcherText = replace(launcherText, "/*imports*/", imports.toString());
+    launcherText = replace(launcherText, "/*code*/", code.toString());
+    launcherText = replace(launcherText, "/*port*/", String.valueOf(flexUnitPort));
+    launcherText = replace(launcherText, "/*socketPolicyPort*/", String.valueOf(socketPolicyPort));
+    launcherText = replace(launcherText, "/*module*/", module.getName());
+    if (!bc.isPureAs()) {
+      launcherText = replace(launcherText, "/*isFlexUnit4*/", flexUnit4 ? "1" : "0");
+      final FlexUnitRunnerParameters.OutputLogLevel logLevel = params.getOutputLogLevel();
+      launcherText = replace(launcherText, "/*isLogEnabled*/", logLevel != null ? "1" : "0");
+      launcherText = replace(launcherText, "/*logLevel*/", logLevel != null
+                                                           ? logLevel.getFlexConstant()
+                                                           : FlexUnitRunnerParameters.OutputLogLevel.All.getFlexConstant());
+    }
 
     final File tmpDir = new File(FlexUtils.getPathToFlexUnitTempDirectory(myProject.getName()));
     boolean ok = true;
@@ -304,7 +298,6 @@ public class FlexUnitPrecompileTask implements CompileTask {
 
     final Ref<VirtualFile> launcherFile = new Ref<VirtualFile>();
     final Ref<IOException> createLauncherError = new Ref<IOException>();
-    final String logTargetText1 = logTargetText;
     final String launcherText1 = launcherText;
     final Collection<String> filesToDelete = new ArrayList<String>();
     final Runnable createLauncherRunnable = new Runnable() {
@@ -313,13 +306,9 @@ public class FlexUnitPrecompileTask implements CompileTask {
           public void run() {
             try {
               final VirtualFile tempDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(tmpDir);
-              VirtualFile launcherBaseFile = FlexUtils.addFileWithContent(launcherBaseFileName, launcherBaseText, tempDir);
-              VirtualFile logTargetFile = FlexUtils.addFileWithContent(logTargetFileName, logTargetText1, tempDir);
-              launcherFile.set(FlexUtils.addFileWithContent(launcherFileName, launcherText1, tempDir));
+              launcherFile.set(FlexUtils.addFileWithContent(FLEX_UNIT_LAUNCHER + getFlexUnitLauncherExtension(bc), launcherText1, tempDir));
 
               filesToDelete.add(launcherFile.get().getPath());
-              filesToDelete.add(launcherBaseFile.getPath());
-              filesToDelete.add(logTargetFile.getPath());
             }
             catch (IOException ex) {
               createLauncherError.set(ex);
@@ -344,6 +333,17 @@ public class FlexUnitPrecompileTask implements CompileTask {
 
     context.putUserData(FILES_TO_DELETE, filesToDelete);
     return true;
+  }
+
+  private static String replace(final String text, final String pattern, final String replacement) {
+    if (!text.contains(pattern)) {
+      throw new RuntimeException("Pattern '" + pattern + "' not found in launcher text");
+    }
+    return text.replace(pattern, replacement);
+  }
+
+  public static String getFlexUnitLauncherExtension(FlexIdeBuildConfiguration bc) {
+    return bc.getNature().pureAS ? ".as" : ".mxml";
   }
 
   private static void collectCustomRunners(Set<String> result,
@@ -378,35 +378,16 @@ public class FlexUnitPrecompileTask implements CompileTask {
   private static void generateTestMethodCode(StringBuilder code,
                                              String className,
                                              String methodName,
-                                             boolean flexUnit4Present,
                                              Collection<String> customRunners) {
-    if (flexUnit4Present) {
-      code.append(TEST_SUITE_VAR).append(".push(Request.method(").append(className).append(", \"").append(methodName).append("\"));\n");
-    }
-    else {
-      code.append("var __test__ : TestCase = new ").append(className).append("();\n");
-      code.append("__test__.methodName = \"").append(methodName).append("\";\n");
-      code.append(TEST_SUITE_VAR).append(".addTest(__test__);\n");
-    }
+    code.append(TEST_RUNNER_VAR).append(".addTestMethod(").append(className).append(", \"").append(methodName).append("\");\n");
     generateReferences(code, className, customRunners);
   }
 
   private static void generateTestClassCode(StringBuilder code,
                                             String className,
-                                            boolean flexUnit4Present,
                                             Collection<String> customRunners,
                                             boolean isSuite) {
-    if (flexUnit4Present) {
-      code.append(TEST_SUITE_VAR).append(".push(Request.aClass(").append(className).append("));\n");
-    }
-    else {
-      if (isSuite) {
-        code.append(TEST_SUITE_VAR).append(".addTest(new ").append(className).append("());\n");
-      }
-      else {
-        code.append(TEST_SUITE_VAR).append(".addTestSuite(").append(className).append(");\n");
-      }
-    }
+    code.append(TEST_RUNNER_VAR).append(".").append(isSuite ? "addTestSuiteClass(" : "addTestClass(").append(className).append(");\n");
     generateReferences(code, className, customRunners);
   }
 
@@ -417,19 +398,30 @@ public class FlexUnitPrecompileTask implements CompileTask {
     }
   }
 
-  private static String getLauncherTemplate(boolean flexUnit4Present) throws IOException {
-    final URL resource =
-      FlexUnitPrecompileTask.class.getResource(flexUnit4Present ? "FlexUnit4Launch.template" : "FlexUnit1Launch.template");
+  private static String getLauncherTemplate(FlexIdeBuildConfiguration bc) throws IOException {
+    String templateName;
+    if (bc.isPureAs()) {
+      templateName = "LauncherTemplateAs.as";
+    }
+    else if (bc.getDependencies().getComponentSet() == ComponentSet.MxOnly) {
+      templateName = "LauncherTemplateMx.mxml";
+    }
+    else {
+      templateName = "LauncherTemplateSpark.mxml";
+    }
+    final URL resource = FlexUnitPrecompileTask.class.getResource("/unittestingsupport/" + templateName);
     return ResourceUtil.loadText(resource);
   }
 
-  private static String getLauncherBaseText() throws IOException {
-    final URL resource = FlexUnitPrecompileTask.class.getResource("FlexUnitLauncherBase.template");
-    return ResourceUtil.loadText(resource);
-  }
-
-  private static String getLogTargetText() throws IOException {
-    final URL resource = FlexUnitPrecompileTask.class.getResource("LogTarget.template");
-    return ResourceUtil.loadText(resource);
+  public static String getSupportLibraryName(final FlexIdeBuildConfiguration bc) {
+    if (bc.isPureAs()) {
+      return "unittestingsupport_as.swc";
+    }
+    else if (bc.getDependencies().getComponentSet() == ComponentSet.MxOnly) {
+      return "unittestingsupport_mx.swc";
+    }
+    else {
+      return "unittestingsupport_spark.swc";
+    }
   }
 }

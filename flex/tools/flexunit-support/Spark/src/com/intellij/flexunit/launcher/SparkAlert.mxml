@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!-- based on http://devgirl.org/2011/06/07/flex-4-5-mobile-development-alert-popup-and-other-skinnable-popups-with-source-code/ -->
+<s:SkinnablePopUpContainer xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+                           creationComplete="creationCompleteHandler(event)">
+    <s:TitleWindow id="title" close="close()">
+        <s:VGroup horizontalAlign="center" paddingTop="8" paddingBottom="8" paddingLeft="8" paddingRight="8" gap="5"
+                  width="100%">
+            <s:TextArea id="label" borderVisible="false" editable="false" heightInLines="3"/>
+            <s:Button label="OK" click="close()"/>
+        </s:VGroup>
+    </s:TitleWindow>
+    <fx:Script><![CDATA[
+        import mx.events.FlexEvent;
+        import mx.managers.PopUpManager;
+
+        import spark.events.PopUpEvent;
+
+        private var _titleText:String;
+        private var _messageText:String;
+
+        private function creationCompleteHandler(event:FlexEvent):void {
+            title.title = _titleText;
+            label.text = _messageText;
+        }
+
+        internal static function show(message:String, title:String, pane:Sprite, callback:Function):void {
+            var alert:SparkAlert = new SparkAlert();
+            alert._messageText = message;
+            alert._titleText = title;
+            alert.addEventListener(PopUpEvent.CLOSE, function (event:PopUpEvent):void {
+                callback();
+            });
+            alert.open(pane, true);
+            PopUpManager.centerPopUp(alert);
+        }
+        ]]></fx:Script>
+</s:SkinnablePopUpContainer>

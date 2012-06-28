@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Flex-Common/Flex-Common.iml" filepath="$PROJECT_DIR$/Flex-Common/Flex-Common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Mx/Mx.iml" filepath="$PROJECT_DIR$/Mx/Mx.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PureAs/PureAs.iml" filepath="$PROJECT_DIR$/PureAs/PureAs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Spark/Spark.iml" filepath="$PROJECT_DIR$/Spark/Spark.iml" />
+      <module fileurl="file://$PROJECT_DIR$/_tests/_tests.iml" filepath="$PROJECT_DIR$/_tests/_tests.iml" />
+    </modules>
+  </component>
+</project>
+

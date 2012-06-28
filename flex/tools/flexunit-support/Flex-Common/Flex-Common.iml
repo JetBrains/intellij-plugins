@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="Flex" version="4">
+  <component name="FlexBuildConfigurationManager" active="Flex">
+    <configurations>
+      <configuration name="Flex" output-type="Library" output-file="Flex.swc" output-folder="$APPLICATION_HOME_DIR$/flex/tools/flexunit-support/out/production/Flex">
+        <dependencies target-player="9">
+          <entries>
+            <entry module-name="PureAs" build-configuration-name="PureAs">
+              <dependency linkage="Include" />
+            </entry>
+            <entry library-name="FlexUnit1" library-level="project">
+              <dependency linkage="Merged" />
+            </entry>
+            <entry library-name="FlexUnit4-Flex" library-level="project">
+              <dependency linkage="Merged" />
+            </entry>
+          </entries>
+          <sdk name="flex_sdk_3.2.0.3958" />
+        </dependencies>
+        <compiler-options />
+        <packaging-air-desktop />
+        <packaging-android />
+        <packaging-ios />
+      </configuration>
+    </configurations>
+    <compiler-options />
+  </component>
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="flex_sdk_3.2.0.3958" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="PureAs" exported="" />
+    <orderEntry type="library" exported="" name="FlexUnit1" level="project" />
+    <orderEntry type="library" exported="" name="FlexUnit4-Flex" level="project" />
+  </component>
+</module>
+

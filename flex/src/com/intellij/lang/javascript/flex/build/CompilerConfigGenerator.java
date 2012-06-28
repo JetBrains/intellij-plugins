@@ -335,6 +335,13 @@ public class CompilerConfigGenerator {
         }
       }
     }
+
+    if (myFlexUnit) {
+      String unitTestingSupportSwc = FlexUtils.getPathToBundledJar(FlexUnitPrecompileTask.getSupportLibraryName(myBC));
+      VirtualFile file = LocalFileSystem.getInstance().findFileByPath(unitTestingSupportSwc);
+      assert file != null;
+      addLibraryRoots(rootElement, new VirtualFile[]{file}, LinkageType.Merged);
+    }
   }
 
   private void addLibraryRoots(final Element rootElement, final VirtualFile[] libClassRoots, final LinkageType linkageType) {
@@ -494,7 +501,7 @@ public class CompilerConfigGenerator {
       final String pathToMainClassFile = myCSS ? myBC.getMainClass()
                                                : myFlexUnit ? FlexUtils.getPathToFlexUnitTempDirectory(myModule.getProject().getName())
                                                               + "/" + myBC.getMainClass()
-                                                              + FlexUnitPrecompileTask.DOT_FLEX_UNIT_LAUNCHER_EXTENSION
+                                                              + FlexUnitPrecompileTask.getFlexUnitLauncherExtension(myBC)
                                                             : FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
 
       if (pathToMainClassFile.isEmpty() && info.getMainClass(myModule) == null && !ApplicationManager.getApplication().isUnitTestMode()) {

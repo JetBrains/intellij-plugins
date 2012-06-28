@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<launcher:TestLauncherSpark xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:launcher="com.intellij.flexunit.launcher.*">
+
+    <fx:Script><![CDATA[
+      import com.intellij.flexunit.runner.TestRunnerBase;
+
+      /*imports*/
+
+      override protected virtual function get isFlexUnit4():Boolean {
+        return 0/*isFlexUnit4*/ != 0;
+      }
+
+      override protected virtual function get dataPort():int {
+        return 0/*port*/;
+      }
+
+      override protected virtual function get socketPolicyPort():int {
+        return 0/*socketPolicyPort*/;
+      }
+
+      override protected virtual function get moduleName():String {
+        return "/*module*/";
+      }
+
+      override protected virtual function get isLogEnabled():Boolean {
+        return 0/*isLogEnabled*/ != 0;
+      }
+
+      override protected virtual function get logLevel():int {
+        return 0/*logLevel*/;
+      }
+
+      override protected virtual function addTests(__testRunner:com.intellij.flexunit.runner.TestRunnerBase):void {
+        /*code*/
+      }
+      ]]></fx:Script>
+</launcher:TestLauncherSpark>
+

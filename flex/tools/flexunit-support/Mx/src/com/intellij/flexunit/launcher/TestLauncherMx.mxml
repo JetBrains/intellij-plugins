@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="creationComplete();"
+                width="500" height="375">
+    <mx:Text id="mainLabel" width="100%" height="100%" textAlign="center" htmlText="{Constants.DEFAULT_MAIN_LABEL}"/>
+
+    <mx:Text id="statusLabel" width="100%" height="100%" textAlign="center"/>
+
+    <mx:Script><![CDATA[
+        import com.intellij.flexunit.log.LogTarget;
+        import com.intellij.flexunit.runner.UpdateTextEvent;
+        import com.intellij.flexunit.runner.FailureEvent;
+        import com.intellij.flexunit.runner.TestRunner1;
+        import com.intellij.flexunit.runner.TestRunner4;
+        import com.intellij.flexunit.runner.TestRunnerBase;
+
+        import mx.controls.Alert;
+        import mx.logging.Log;
+
+        private function creationComplete():void {
+            var beforeRunTests:Function;
+            beforeRunTests = isLogEnabled ? function (runner:TestRunnerBase):void {
+                var logTarget:LogTarget = new LogTarget(runner, runner.onLogMessage);
+                logTarget.level = logLevel;
+                Log.addTarget(logTarget);
+            } : null;
+
+            var testRunner:TestRunnerBase = isFlexUnit4 ?
+                    new TestRunner4(dataPort, socketPolicyPort, moduleName, beforeRunTests) :
+                    new TestRunner1(dataPort, socketPolicyPort, moduleName, beforeRunTests);
+
+            testRunner.addEventListener(TestRunnerBase.MAIN_MESSAGE, function (event:UpdateTextEvent):void {
+                mainLabel.htmlText = event.newText;
+            });
+
+            testRunner.addEventListener(TestRunnerBase.STATUS_MESSAGE, function (event:UpdateTextEvent):void {
+                statusLabel.text = event.newText;
+            });
+
+            var pane:Sprite = this;
+            testRunner.addEventListener(FailureEvent.TYPE, function (event:FailureEvent):void {
+                Alert.show(event.message, event.title, Alert.OK, pane, event.callback);
+            });
+
+            addTests(testRunner);
+            testRunner.run();
+        }
+
+        protected virtual function get isFlexUnit4():Boolean {
+            throw new Error("Not implemented");
+        }
+
+        protected virtual function get dataPort():int {
+            throw new Error("Not implemented");
+        }
+
+        protected virtual function get socketPolicyPort():int {
+            throw new Error("Not implemented");
+        }
+
+        protected virtual function get moduleName():String {
+            throw new Error("Not implemented");
+        }
+
+        protected virtual function get isLogEnabled():Boolean {
+            throw new Error("Not implemented");
+        }
+
+        protected virtual function get logLevel():int {
+            throw new Error("Not implemented");
+        }
+
+        protected virtual function addTests(__testRunner:TestRunnerBase):void {
+            throw new Error("Not implemented");
+        }
+        ]]></mx:Script>
+</mx:Application>
