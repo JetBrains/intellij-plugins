@@ -28,7 +28,7 @@
     <name>Osmorc</name>
     <description>
         <![CDATA[
-      <p>This plugin adds support for the development of OSGI-based applications to IDEA<p/>
+      This plugin adds support for the development of OSGI-based applications to IDEA
     ]]>
     </description>
     <change-notes>
