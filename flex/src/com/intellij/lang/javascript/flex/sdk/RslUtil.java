@@ -1,8 +1,10 @@
 package com.intellij.lang.javascript.flex.sdk;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.PathUtil;
 import gnu.trove.THashMap;
 import org.jdom.Document;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public class RslUtil {
+  private static final Logger LOG = Logger.getInstance(RslUtil.class.getName());
 
   private static final Map<String, Pair<Long, Map<String, List<String>>>> ourConfigFilePathToTimestampAndSwcPathToRslUrls =
     new THashMap<String, Pair<Long, Map<String, List<String>>>>();
@@ -27,7 +30,7 @@ public class RslUtil {
 
   public static List<String> getRslUrls(final Sdk sdk, final String swcPath) {
     final Map<String, List<String>> swcPathToRslUrlMap = getSwcPathToRslUrlsMap(sdk);
-    final List<String> rslUrls = swcPathToRslUrlMap.get(swcPath);
+    final List<String> rslUrls = swcPathToRslUrlMap.get(SystemInfo.isFileSystemCaseSensitive ? swcPath : swcPath.toLowerCase());
     return rslUrls == null ? Collections.<String>emptyList() : rslUrls;
   }
 
@@ -35,6 +38,7 @@ public class RslUtil {
     final String configFilePath = sdk.getHomePath() + "/frameworks/flex-config.xml";
     final File configFile = new File(configFilePath);
     if (!configFile.isFile()) {
+      LOG.warn("File not found: " + configFilePath);
       ourConfigFilePathToTimestampAndSwcPathToRslUrls.remove(configFilePath);
       return Collections.emptyMap();
     }
@@ -64,13 +68,17 @@ public class RslUtil {
                 rslUrls.add(rslUrl);
               }
               final String swcPath = PathUtil.getParentPath(configFilePath) + "/" + swcPathElement.getTextNormalize();
-              swcPathToRslMap.put(swcPath, rslUrls);
+              swcPathToRslMap.put(SystemInfo.isFileSystemCaseSensitive ? swcPath : swcPath.toLowerCase(), rslUrls);
             }
           }
         }
       }
-      catch (IOException ignore) {/*ignore*/ }
-      catch (JDOMException ignore) {/*ignore*/ }
+      catch (IOException e) {
+        LOG.warn(configFilePath, e);
+      }
+      catch (JDOMException e) {
+        LOG.warn(configFilePath, e);
+      }
 
       data = Pair.create(currentTimestamp, swcPathToRslMap);
       ourConfigFilePathToTimestampAndSwcPathToRslUrls.put(configFilePath, data);
