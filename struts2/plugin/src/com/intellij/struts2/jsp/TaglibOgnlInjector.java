@@ -69,8 +69,12 @@ public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar multiHostRegistrar,
                                    @NotNull final PsiElement psiElement) {
-
     if (!STRUTS_TAG_ATTRIBUTE.accepts(psiElement)) {
+      return;
+    }
+
+    if (!psiElement.isValid() ||
+        !psiElement.getContainingFile().isValid()) {
       return;
     }
 
