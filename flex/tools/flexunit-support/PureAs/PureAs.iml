@@ -6,7 +6,7 @@
         <dependencies target-player="9">
           <entries>
             <entry library-name="FlexUnit4-AS3" library-level="project">
-              <dependency linkage="Merged" />
+              <dependency linkage="External" />
             </entry>
             <entry library-name="MinimalComponents" library-level="project">
               <dependency linkage="Merged" />

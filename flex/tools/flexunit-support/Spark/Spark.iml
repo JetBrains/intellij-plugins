@@ -6,7 +6,13 @@
         <dependencies target-player="10.2" component-set="SparkOnly">
           <entries>
             <entry module-name="Flex-Common" build-configuration-name="Flex">
-              <dependency linkage="Merged" />
+              <dependency linkage="Include" />
+            </entry>
+            <entry library-name="FlexUnit1" library-level="project">
+              <dependency linkage="External" />
+            </entry>
+            <entry library-name="FlexUnit4-Flex" library-level="project">
+              <dependency linkage="External" />
             </entry>
           </entries>
           <sdk name="flex_sdk_4.5.1.21328A" />
@@ -29,6 +35,8 @@
     <orderEntry type="jdk" jdkName="flex_sdk_4.5.1.21328A" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Flex-Common" exported="" />
+    <orderEntry type="library" exported="" name="FlexUnit1" level="project" />
+    <orderEntry type="library" exported="" name="FlexUnit4-Flex" level="project" />
   </component>
 </module>
 

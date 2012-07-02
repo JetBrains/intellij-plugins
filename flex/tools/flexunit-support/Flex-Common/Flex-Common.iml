@@ -9,10 +9,10 @@
               <dependency linkage="Include" />
             </entry>
             <entry library-name="FlexUnit1" library-level="project">
-              <dependency linkage="Merged" />
+              <dependency linkage="External" />
             </entry>
             <entry library-name="FlexUnit4-Flex" library-level="project">
-              <dependency linkage="Merged" />
+              <dependency linkage="External" />
             </entry>
           </entries>
           <sdk name="flex_sdk_3.2.0.3958" />
