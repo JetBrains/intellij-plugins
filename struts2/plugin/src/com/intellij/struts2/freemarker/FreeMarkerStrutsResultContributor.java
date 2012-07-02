@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.freemarker;
 
-import com.intellij.freemarker.FreeMarkerApplicationComponent;
+import com.intellij.freemarker.FtlIcons;
 import com.intellij.freemarker.psi.files.FtlFileType;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.Comparing;
@@ -58,7 +58,7 @@ public class FreeMarkerStrutsResultContributor extends StrutsResultContributor {
   }
 
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
-    return createDefaultPathReference(path, element, FreeMarkerApplicationComponent.FREEMARKER_ICON);
+    return createDefaultPathReference(path, element, FtlIcons.FREEMARKER_ICON);
   }
 
 }
