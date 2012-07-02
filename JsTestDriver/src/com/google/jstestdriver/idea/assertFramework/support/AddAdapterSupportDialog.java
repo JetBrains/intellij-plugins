@@ -1,15 +1,11 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
 import com.google.common.collect.Lists;
-import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
 import com.google.jstestdriver.idea.util.ProjectRootUtils;
-import com.intellij.ide.BrowserUtil;
-import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -28,7 +24,6 @@ import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.PlatformIcons;
 import com.intellij.webcore.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,8 +32,6 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -94,16 +87,7 @@ public class AddAdapterSupportDialog extends DialogWrapper {
   @NotNull
   private static JComponent createInformationPanel(@NotNull final String adapterHomePageUrl) {
     JLabel label1 = new JLabel("See");
-    HyperlinkLabel hyperlink = new HyperlinkLabel(adapterHomePageUrl);
-    hyperlink.setHyperlinkTarget(adapterHomePageUrl);
-
-    DefaultActionGroup actionGroup = new DefaultActionGroup();
-    actionGroup.add(new OpenLinkInBrowser(adapterHomePageUrl));
-    actionGroup.add(new CopyLinkAction(adapterHomePageUrl));
-
-    ActionPopupMenu actionPopupMenu = ActionManager.getInstance()
-      .createActionPopupMenu(JstdToolWindowPanel.PLACE, actionGroup);
-    hyperlink.setComponentPopupMenu(actionPopupMenu.getComponent());
+    HyperlinkLabel hyperlink = SwingHelper.createWebHyperlink(adapterHomePageUrl);
 
     JLabel label2 = new JLabel("for details.");
 
@@ -284,47 +268,6 @@ public class AddAdapterSupportDialog extends DialogWrapper {
         true
       );
       dialog.show();
-    }
-  }
-
-  private static class CopyLinkAction extends AnAction {
-
-    private final String myUrl;
-
-    private CopyLinkAction(@NotNull String url) {
-      super("Copy Link Address", null, PlatformIcons.COPY_ICON);
-      myUrl = url;
-    }
-
-    @Override
-    public void update(AnActionEvent e) {
-      e.getPresentation().setEnabled(true);
-    }
-
-    @Override
-    public void actionPerformed(AnActionEvent e) {
-      Transferable content = new StringSelection(myUrl);
-      CopyPasteManager.getInstance().setContents(content);
-    }
-  }
-
-  private static class OpenLinkInBrowser extends AnAction {
-
-    private final String myUrl;
-
-    private OpenLinkInBrowser(@NotNull String url) {
-      super("Open Link in Browser", null, PlatformIcons.WEB_ICON);
-      myUrl = url;
-    }
-
-    @Override
-    public void update(AnActionEvent e) {
-      e.getPresentation().setEnabled(true);
-    }
-
-    @Override
-    public void actionPerformed(AnActionEvent e) {
-      BrowserUtil.launchBrowser(myUrl);
     }
   }
 
