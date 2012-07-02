@@ -403,11 +403,11 @@ public class FlexUnitPrecompileTask implements CompileTask {
     if (bc.isPureAs()) {
       templateName = "LauncherTemplateAs.as";
     }
-    else if (bc.getDependencies().getComponentSet() == ComponentSet.MxOnly) {
-      templateName = "LauncherTemplateMx.mxml";
+    else if (bc.getDependencies().getComponentSet() == ComponentSet.SparkOnly) {
+      templateName = "LauncherTemplateSpark.mxml";
     }
     else {
-      templateName = "LauncherTemplateSpark.mxml";
+      templateName = "LauncherTemplateMx.mxml";
     }
     final URL resource = FlexUnitPrecompileTask.class.getResource("/unittestingsupport/" + templateName);
     return ResourceUtil.loadText(resource);
@@ -417,11 +417,11 @@ public class FlexUnitPrecompileTask implements CompileTask {
     if (bc.isPureAs()) {
       return "unittestingsupport_as.swc";
     }
-    else if (bc.getDependencies().getComponentSet() == ComponentSet.MxOnly) {
-      return "unittestingsupport_mx.swc";
+    else if (bc.getDependencies().getComponentSet() == ComponentSet.SparkOnly) {
+      return "unittestingsupport_spark.swc";
     }
     else {
-      return "unittestingsupport_spark.swc";
+      return "unittestingsupport_mx.swc";
     }
   }
 }
