@@ -1,3 +1,3 @@
-<error descr="Add JsTestDriver assertion framework support">TestCase</error>("", {
+<error descr="No code assistance for JsTestDriver assertion framework">TestCase</error>("", {
 
 });
