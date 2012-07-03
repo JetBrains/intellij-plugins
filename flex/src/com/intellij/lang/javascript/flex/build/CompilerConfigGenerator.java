@@ -199,7 +199,7 @@ public class CompilerConfigGenerator {
           namespaceBuilder.append(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
         }
         namespaceBuilder.append(namespace).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
-          .append("${FLEX_SDK}/").append(relativePath);
+          .append(CompilerOptionInfo.FLEX_SDK_MACRO + "/").append(relativePath);
       }
     });
 
@@ -334,6 +334,13 @@ public class CompilerConfigGenerator {
           addLibraryRoots(rootElement, library.getFiles((OrderRootType.CLASSES)), linkageType);
         }
       }
+    }
+
+    if (myFlexUnit) {
+      String unitTestingSupportSwc = FlexUtils.getPathToBundledJar(FlexUnitPrecompileTask.getSupportLibraryName(myBC));
+      VirtualFile file = LocalFileSystem.getInstance().findFileByPath(unitTestingSupportSwc);
+      assert file != null;
+      addLibraryRoots(rootElement, new VirtualFile[]{file}, LinkageType.Merged);
     }
   }
 
@@ -494,7 +501,7 @@ public class CompilerConfigGenerator {
       final String pathToMainClassFile = myCSS ? myBC.getMainClass()
                                                : myFlexUnit ? FlexUtils.getPathToFlexUnitTempDirectory(myModule.getProject().getName())
                                                               + "/" + myBC.getMainClass()
-                                                              + FlexUnitPrecompileTask.DOT_FLEX_UNIT_LAUNCHER_EXTENSION
+                                                              + FlexUnitPrecompileTask.getFlexUnitLauncherExtension(myBC)
                                                             : FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
 
       if (pathToMainClassFile.isEmpty() && info.getMainClass(myModule) == null && !ApplicationManager.getApplication().isUnitTestMode()) {
@@ -660,7 +667,8 @@ public class CompilerConfigGenerator {
     final String projectLevelValue = myProjectLevelCompilerOptions.getOption(info.ID);
     if (projectLevelValue != null) return Pair.create(projectLevelValue, ValueSource.ProjectDefault);
 
-    return Pair.create(info.getDefaultValue(mySdk.getVersionString(), myBC.getNature()), ValueSource.GlobalDefault);
+    return Pair.create(info.getDefaultValue(mySdk.getVersionString(), myBC.getNature(), myBC.getDependencies().getComponentSet()),
+                       ValueSource.GlobalDefault);
   }
 
   private static VirtualFile getOrCreateConfigFile(final Project project, final String name, final String text) throws IOException {

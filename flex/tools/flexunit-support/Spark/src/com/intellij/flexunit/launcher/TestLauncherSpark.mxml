@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+               creationComplete="creationComplete();" width="500" height="375">
+    <s:layout>
+        <s:VerticalLayout/>
+    </s:layout>
+
+    <s:Label id="mainLabel" text="{Constants.DEFAULT_MAIN_LABEL}" width="100%" textAlign="center" paddingTop="50"/>
+    <s:Label id="statusLabel" percentWidth="100" percentHeight="100" textAlign="center" verticalAlign="middle"/>
+
+    <fx:Script><![CDATA[
+        import com.intellij.flexunit.log.LogTarget;
+        import com.intellij.flexunit.runner.UpdateTextEvent;
+        import com.intellij.flexunit.runner.FailureEvent;
+        import com.intellij.flexunit.runner.TestRunner1;
+        import com.intellij.flexunit.runner.TestRunner4;
+        import com.intellij.flexunit.runner.TestRunnerBase;
+
+        import mx.logging.Log;
+
+        private function creationComplete():void {
+            var beforeRunTests:Function;
+            beforeRunTests = isLogEnabled ? function (runner:TestRunnerBase):void {
+                var logTarget:LogTarget = new LogTarget(runner, runner.onLogMessage);
+                logTarget.level = logLevel;
+                Log.addTarget(logTarget);
+            } : null;
+
+            var testRunner:TestRunnerBase = isFlexUnit4 ?
+                    new TestRunner4(dataPort, socketPolicyPort, moduleName, beforeRunTests) :
+                    new TestRunner1(dataPort, socketPolicyPort, moduleName, beforeRunTests);
+
+            testRunner.addEventListener(TestRunnerBase.MAIN_MESSAGE, function (event:UpdateTextEvent):void {
+                mainLabel.text = event.newText;
+            });
+
+            testRunner.addEventListener(TestRunnerBase.STATUS_MESSAGE, function (event:UpdateTextEvent):void {
+                statusLabel.text = event.newText;
+            });
+
+            var pane:Sprite = this;
+            testRunner.addEventListener(FailureEvent.TYPE, function (event:FailureEvent):void {
+                SparkAlert.show(event.message, event.title, pane, event.callback);
+            });
+
+            addTests(testRunner);
+            testRunner.run();
+        }
+
+        protected virtual function get isFlexUnit4():Boolean {
+            throw new Error("Not implemented");
+        }
+
+        protected virtual function get dataPort():int {
+            throw new Error("Not implemented");
+        }
+
+        protected virtual function get socketPolicyPort():int {
+            throw new Error("Not implemented");
+        }
+
+        protected virtual function get moduleName():String {
+            throw new Error("Not implemented");
+        }
+
+        protected virtual function get isLogEnabled():Boolean {
+            throw new Error("Not implemented");
+        }
+
+        protected virtual function get logLevel():int {
+            throw new Error("Not implemented");
+        }
+
+        protected virtual function addTests(__testRunner:TestRunnerBase):void {
+            throw new Error("Not implemented");
+        }
+        ]]></fx:Script>
+</s:Application>

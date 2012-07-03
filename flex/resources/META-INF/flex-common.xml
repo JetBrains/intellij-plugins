@@ -54,7 +54,7 @@
     <syntaxHighlighter key="SWF" factoryClass="com.intellij.javascript.flex.compiled.SwfSyntaxHighlighterProvider"/>
     <codeInsight.lineMarkerProvider language="Decompiled SWF"
                                     implementationClass="com.intellij.javascript.flex.compiled.DecompiledSwfLineMarkerProvider"/>
-    <codeInsight.lineMarkerProvider language="XML"
+    <codeInsight.lineMarkerProvider language="Mxml"
                                     implementationClass="com.intellij.javascript.flex.mxml.XmlBackedClassLineMarkerProvider"/>
     <lang.parserDefinition language="Decompiled SWF"
                            implementationClass="com.intellij.javascript.flex.compiled.DecompiledSwfParserDefinition"/>
@@ -67,15 +67,15 @@
     <lookup.charFilter implementation="com.intellij.lang.javascript.flex.ActionScriptCharFilter"/>
     <codeInsight.overrideMethod language="JavaScript"
                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
-    <codeInsight.overrideMethod language="XML"
+    <codeInsight.overrideMethod language="Mxml"
                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
     <codeInsight.implementMethod language="JavaScript"
                                  implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
-    <codeInsight.implementMethod language="XML"
+    <codeInsight.implementMethod language="Mxml"
                                  implementationClass="com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler"/>
     <codeInsight.delegateMethods language="JavaScript"
                                  implementationClass="com.intellij.lang.javascript.generation.JavaScriptGenerateDelegatesHandler"/>
-    <codeInsight.delegateMethods language="XML"
+    <codeInsight.delegateMethods language="Mxml"
                                  implementationClass="com.intellij.lang.javascript.generation.JavaScriptGenerateDelegatesHandler"/>
     <projectImportBuilder implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderImporter"/>
     <projectImportProvider implementation="com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderImportProvider"/>
@@ -100,7 +100,7 @@
                     serviceImplementation="com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters"/>
     <consoleFilterProvider implementation="com.intellij.lang.javascript.flex.FlexStackTraceFilterProvider"/>
     <gotoSymbolContributor implementation="com.intellij.javascript.flex.mxml.FlexXmlBackedSymbolContributor"/>
-    <annotator language="XML" implementationClass="com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator"/>
+    <annotator language="Mxml" implementationClass="com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator"/>
 
     <internalFileTemplate name="ActionScript Class"/>
     <internalFileTemplate name="ActionScript Interface"/>
@@ -109,7 +109,7 @@
     <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptCodeContextType"/>
     <liveTemplateContext implementation="com.intellij.lang.javascript.flex.MxmlTemplateContextType"/>
     <defaultLiveTemplatesProvider implementation="com.intellij.lang.javascript.ActionScriptLiveTemplatesProvider"/>
-    <lang.refactoringSupport language="XML" implementationClass="com.intellij.lang.javascript.flex.MxmlRefactoringSupportProvider"/>
+    <lang.refactoringSupport language="Mxml" implementationClass="com.intellij.lang.javascript.flex.MxmlRefactoringSupportProvider"/>
     <lang.refactoringSupport language="JavaScript"
                              implementationClass="com.intellij.lang.javascript.flex.ActionScriptRefactoringSupportProvider"
                              order="before JavascriptRefactoringSupportProvider"/>
@@ -122,7 +122,7 @@
     <writingAccessProvider implementation="com.intellij.lang.javascript.flex.FlashWritingAccessProvider"/>
     <testFinder implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestFinder"/>
     <testCreator language="JavaScript" implementationClass="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestCreator"/>
-    <testCreator language="XML" implementationClass="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestCreator"/>
+    <testCreator language="Mxml" implementationClass="com.intellij.lang.javascript.flex.flexunit.FlexUnitTestCreator"/>
     <codeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptCodeStyleSettingsProvider"/>
     <colorSettingsPage implementation="com.intellij.lang.javascript.highlighting.ActionScriptColorsAndFontsPage"/>
     <projectStructureDetector implementation="com.intellij.lang.javascript.flex.projectStructure.detection.FlexProjectStructureDetector"/>
