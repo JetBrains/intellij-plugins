@@ -29,6 +29,7 @@ import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlSchemaProvider;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -54,7 +55,9 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     return url.length() > 0 && JavaScriptSupportLoader.isFlexMxmFile(baseFile) ? getFakeSchemaReference(url, module) : null;
   }
 
-  private static final Key<Map<String, ParameterizedCachedValue<XmlFile, Module>>> DESCRIPTORS_MAP_IN_MODULE = Key.create("FLEX_DESCRIPTORS_MAP_IN_MODULE");
+  private static final Key<Map<String, ParameterizedCachedValue<XmlFile, Module>>> DESCRIPTORS_MAP_IN_MODULE =
+    Key.create("FLEX_DESCRIPTORS_MAP_IN_MODULE");
+
   @Nullable
   private static synchronized XmlFile getFakeSchemaReference(final String uri, @Nullable final Module module) {
     if (module == null) {
@@ -70,11 +73,12 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
 
       ParameterizedCachedValue<XmlFile, Module> reference = descriptors.get(uri);
       if (reference == null) {
-        reference = CachedValuesManager.getManager(module.getProject()).createParameterizedCachedValue(new ParameterizedCachedValueProvider<XmlFile, Module>() {
-          @Override
-          public CachedValueProvider.Result<XmlFile> compute(Module module) {
-            final URL resource = FlexSchemaHandler.class.getResource("z.xsd");
-            final VirtualFile fileByURL = VfsUtil.findFileByURL(resource);
+        reference = CachedValuesManager.getManager(module.getProject())
+          .createParameterizedCachedValue(new ParameterizedCachedValueProvider<XmlFile, Module>() {
+            @Override
+            public CachedValueProvider.Result<XmlFile> compute(Module module) {
+              final URL resource = FlexSchemaHandler.class.getResource("z.xsd");
+              final VirtualFile fileByURL = VfsUtil.findFileByURL(resource);
 
               XmlFile result = (XmlFile)PsiManager.getInstance(module.getProject()).findFile(fileByURL).copy();
               result.putUserData(FlexMxmlNSDescriptor.NS_KEY, uri);
@@ -82,7 +86,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
 
               return new CachedValueProvider.Result<XmlFile>(result, PsiModificationTracker.MODIFICATION_COUNT);
             }
-        }, false);
+          }, false);
 
         descriptors.put(uri, reference);
       }
@@ -99,7 +103,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
 
   @NotNull
   @Override
-  public Set<String> getAvailableNamespaces(@NotNull XmlFile _file, @NonNls final String tagName) {
+  public Set<String> getAvailableNamespaces(@NotNull XmlFile _file, @Nullable @NonNls final String tagName) {
     PsiFile originalFile = _file.getOriginalFile();
     if (originalFile instanceof XmlFile) _file = (XmlFile)originalFile;
 
@@ -109,17 +113,27 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     final Collection<String> illegalNamespaces = getIllegalNamespaces(file);
 
     final Set<String> result = new THashSet<String>();
+    final Set<String> componentsThatHaveNotPackageBackedNamespace = new THashSet<String>();
 
-    if (tagName == null) {
-      for (final String namespace : CodeContextHolder.getInstance(project).getNamespaces(module)) {
-        if (!illegalNamespaces.contains(namespace)) {
-          result.add(namespace);
+    for (final String namespace : CodeContextHolder.getInstance(project).getNamespaces(module)) {
+      if (tagName == null) {
+        if (CodeContext.isPackageBackedNamespace(namespace) || !illegalNamespaces.contains(namespace)) {
+          result.add(namespace); // package backed namespace can't be illegal
         }
       }
-
-      if (!illegalNamespaces.contains(JavaScriptSupportLoader.MXML_URI)) {
-        result.add(JavaScriptSupportLoader.MXML_URI);
+      else {
+        if (!CodeContext.isPackageBackedNamespace(namespace) && !illegalNamespaces.contains(namespace)) {
+          final XmlElementDescriptor descriptor = CodeContext.getContext(namespace, module).getElementDescriptor(tagName, (XmlTag)null);
+          if (descriptor != null) {
+            result.add(namespace);
+            componentsThatHaveNotPackageBackedNamespace.add(descriptor.getQualifiedName());
+          }
+        }
       }
+    }
+
+    if (tagName == null && !illegalNamespaces.contains(JavaScriptSupportLoader.MXML_URI)) {
+      result.add(JavaScriptSupportLoader.MXML_URI);
     }
 
     if (XmlBackedJSClassImpl.SCRIPT_TAG_NAME.equals(tagName) || "Style".equals(tagName)) return result;
@@ -136,7 +150,9 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
 
           if (proxy.getType() == JSNamedElementProxy.NamedItemType.Clazz && proxy.getAccessType() == JSAttributeList.AccessType.PUBLIC) {
             final @NonNls String packageName = proxy.getNamespace().getQualifiedName();
-            result.add(getNamespaceForClass(module, packageName, tagName, illegalNamespaces));
+            if (!componentsThatHaveNotPackageBackedNamespace.contains(StringUtil.getQualifiedName(packageName, tagName))) {
+              result.add(StringUtil.isEmpty(packageName) ? "*" : packageName + ".*");
+            }
           }
         }
         return true;
@@ -151,8 +167,9 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
       }
     });
 
-    final GlobalSearchScope scope = module != null ? GlobalSearchScope.moduleWithDependenciesScope(module) : GlobalSearchScope.projectScope(
-      project);
+    final GlobalSearchScope scope = module != null
+                                    ? GlobalSearchScope.moduleWithDependenciesScope(module)
+                                    : GlobalSearchScope.projectScope(project);
     FlexResolveHelper.processAllMxmlAndFxgFiles(scope, project,
                                                 new FlexResolveHelper.MxmlAndFxgFilesProcessor() {
                                                   public void addDependency(final PsiDirectory directory) {
@@ -160,8 +177,10 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
 
                                                   public boolean processFile(final VirtualFile file, final VirtualFile root) {
                                                     final String packageName = VfsUtilCore.getRelativePath(file.getParent(), root, '.');
-                                                    if (packageName != null) {
-                                                      result.add(getNamespaceForClass(module, packageName, tagName, illegalNamespaces));
+                                                    if (packageName != null &&
+                                                        !componentsThatHaveNotPackageBackedNamespace
+                                                          .contains(StringUtil.getQualifiedName(packageName, tagName))) {
+                                                      result.add(StringUtil.isEmpty(packageName) ? "*" : packageName + ".*");
                                                     }
                                                     return true;
                                                   }
@@ -184,26 +203,6 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
       }
     }
     return illegalNamespaces;
-  }
-
-  private static String getNamespaceForClass(final Module module,
-                                             final String packageName,
-                                             final String className,
-                                             final Collection<String> illegalNamespaces) {
-    if (className != null) {
-      final String qName = StringUtil.isEmpty(packageName) ? className : packageName + "." + className;
-
-      for (final String standardNamespace : JavaScriptSupportLoader.MXML_URIS) {
-        if (!illegalNamespaces.contains(standardNamespace)) {
-          final CodeContext codeContext = CodeContext.getContext(standardNamespace, module);
-          if (codeContext.getElementDescriptor(className, qName) != null) {
-            return standardNamespace;
-          }
-        }
-      }
-    }
-
-    return StringUtil.isEmpty(packageName) ? "*" : packageName + ".*";
   }
 
   @Override
