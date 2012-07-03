@@ -4,7 +4,7 @@ import com.google.jstestdriver.hooks.ServerListener;
 import com.google.jstestdriver.idea.MessageBundle;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.util.PlatformIcons;
@@ -12,8 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
@@ -25,8 +23,6 @@ import java.text.MessageFormat;
  * @author Sergey Simonchik
  */
 public class CaptureUrlController {
-
-  private static final Logger LOG = Logger.getInstance(CaptureUrlController.class);
 
   private final JTextField myCaptureUrlTextField;
   private final JComponent myComponent;
@@ -170,31 +166,8 @@ public class CaptureUrlController {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-      String url = myCaptureUrlTextField.getText();
-      new ClipboardCopier().toClipboard(url);
-    }
-  }
-
-  private static class ClipboardCopier implements ClipboardOwner {
-
-    public void toClipboard(String value) {
-      SecurityManager sm = System.getSecurityManager();
-      if (sm != null) {
-        try {
-          sm.checkSystemClipboardAccess();
-        } catch (Exception e) {
-          LOG.warn("[JsTestDriver] Can't copy capture url: no access to system clipboard", e);
-          return;
-        }
-      }
-      Toolkit tk = Toolkit.getDefaultToolkit();
-      StringSelection st = new StringSelection(value);
-      Clipboard cp = tk.getSystemClipboard();
-      cp.setContents(st, this);
-    }
-
-    public void lostOwnership(Clipboard clipboard, Transferable contents) {
-      // this doesn't seem to be important
+      Transferable content = new StringSelection(myCaptureUrlTextField.getText());
+      CopyPasteManager.getInstance().setContents(content);
     }
   }
 

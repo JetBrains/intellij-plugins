@@ -1,18 +1,17 @@
 package com.google.jstestdriver.idea.assertFramework.library;
 
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.webcore.libraries.ScriptingLibraryMappings;
 import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
+import com.intellij.webcore.libraries.ScriptingLibraryMappings;
+import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

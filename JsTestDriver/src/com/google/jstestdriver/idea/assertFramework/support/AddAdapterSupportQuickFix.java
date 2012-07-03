@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,10 +19,14 @@ class AddAdapterSupportQuickFix implements LocalQuickFix {
 
   private final String myAssertionFrameworkName;
   private final Provider<List<VirtualFile>> myAdapterSourceFilesProvider;
+  private final String myAdapterHomePageUrl;
 
-  public AddAdapterSupportQuickFix(String assertionFrameworkName, Provider<List<VirtualFile>> adapterSourceFilesProvider) {
+  public AddAdapterSupportQuickFix(@NotNull String assertionFrameworkName,
+                                   @NotNull Provider<List<VirtualFile>> adapterSourceFilesProvider,
+                                   @Nullable String adapterHomePageUrl) {
     myAssertionFrameworkName = assertionFrameworkName;
     myAdapterSourceFilesProvider = adapterSourceFilesProvider;
+    myAdapterHomePageUrl = adapterHomePageUrl;
   }
 
   @NotNull
@@ -33,7 +38,7 @@ class AddAdapterSupportQuickFix implements LocalQuickFix {
   @NotNull
   @Override
   public String getName() {
-    return "Add " + myAssertionFrameworkName + " adapter support for JsTestDriver";
+    return "Add " + myAssertionFrameworkName + " JsTestDriver adapter";
   }
 
   @Override
@@ -50,8 +55,10 @@ class AddAdapterSupportQuickFix implements LocalQuickFix {
       public void run() {
         AddAdapterSupportDialog dialog = new AddAdapterSupportDialog(
           project,
+          psiFile,
           myAssertionFrameworkName,
-          myAdapterSourceFilesProvider.get()
+          myAdapterSourceFilesProvider.get(),
+          myAdapterHomePageUrl
         );
         final AsyncResult<Boolean> result = dialog.showAndGetOk();
         final VirtualFile virtualFile = psiFile.getVirtualFile();

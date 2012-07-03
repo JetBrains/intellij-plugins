@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.PsiElementFragment;
+import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.Document;
@@ -55,7 +56,7 @@ public class JstdConfigFileAnnotator implements Annotator {
     boolean annotated = false;
     for (YAMLDocument yamlDocument : yamlDocuments) {
       if (annotated) {
-        holder.createErrorAnnotation(yamlDocument, "JsTestDriver Configuration File must have only one document");
+        holder.createErrorAnnotation(yamlDocument, "JsTestDriver configuration file must have only one document");
       }
       else {
         annotateDocument(yamlDocument, holder);
@@ -85,6 +86,10 @@ public class JstdConfigFileAnnotator implements Annotator {
       else if (JstdConfigFileUtils.isTopLevelKeyWithInnerFileSequence(keyValue)) {
         annotateKeyValueWithInnerFileSequence(keyValue, holder, basePathInfo.getBasePath());
       }
+    }
+    if (!visitedKeys.contains("test")) {
+      Annotation annotation = holder.createWeakWarningAnnotation(yamlDocument, "JsTestDriver configuration file should have 'test:' section");
+      annotation.registerFix(new AddTestSectionAction());
     }
   }
 
@@ -302,7 +307,9 @@ public class JstdConfigFileAnnotator implements Annotator {
         if (previousKeyValueEndLineNumberRef.get() < startLineNumber) {
           if (element instanceof YAMLKeyValue) {
             YAMLKeyValue yamlKeyValue = (YAMLKeyValue)element;
-            previousKeyValueEndLineNumberRef.set(JstdConfigFileUtils.getEndLineNumber(document, yamlKeyValue));
+            int endOffset = yamlKeyValue.getTextRange().getEndOffset();
+            int endLine = document.getLineNumber(Math.max(0, endOffset - 1));
+            previousKeyValueEndLineNumberRef.set(endLine);
             keyValues.add(yamlKeyValue);
           }
           else {
