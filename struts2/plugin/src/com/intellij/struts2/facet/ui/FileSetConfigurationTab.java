@@ -125,6 +125,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     myTree = new SimpleTree();
     myTree.setRootVisible(false);
     myTree.setShowsRootHandles(true); // show expand/collapse handles
+    myTree.getEmptyText().setText(StrutsBundle.message("facet.fileset.no.filesets.defined"), SimpleTextAttributes.ERROR_ATTRIBUTES);
+
     myBuilder = new SimpleTreeBuilder(myTree, (DefaultTreeModel) myTree.getModel(), structure, null);
     myBuilder.initRoot();
 
