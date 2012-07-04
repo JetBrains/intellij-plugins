@@ -184,7 +184,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       final PsiElement contextParent = _context.getParent();
       if (contextParent instanceof XmlDocument && JavaScriptSupportLoader.isLanguageNamespace(_context.getNamespace())) {
         // Predefined tags like <fx:Declaration/> can be children of a tag with [DefaultProperty] annotation if this tag is root tag in the mxml file
-        for (XmlElementDescriptor descriptor : context.getAllDescriptors()) {
+        for (XmlElementDescriptor descriptor : context.getDescriptorsWithAllowedDeclaration()) {
           if (descriptor instanceof ClassBackedElementDescriptor && ((ClassBackedElementDescriptor)descriptor).predefined) {
             resultList.add(descriptor);
           }
@@ -194,7 +194,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       final String type = parentDescriptor.getDefaultPropertyType();
       ContainerUtil.addAll(resultList, isAdequateType(type)
                                        ? getElementDescriptorsInheritedFromGivenType(type)
-                                       : context.getAllDescriptors());
+                                       : context.getDescriptorsWithAllowedDeclaration());
 
       if (JavaScriptSupportLoader.isLanguageNamespace(context.namespace)) {
         ContainerUtil.addIfNotNull(context.getElementDescriptor(FlexPredefinedTagNames.SCRIPT, (XmlTag)null), resultList);
@@ -209,8 +209,9 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       }
     }
     else if (parentDescriptor.predefined || isContainerClass(parentDescriptor)) {
-      context.appendAllDescriptors(resultList);
+      context.appendDescriptorsWithAllowedDeclaration(resultList);
     }
+
     if (includeProperties && myDescriptors != null) {
       resultList.addAll(myDescriptors.values());
 
@@ -812,9 +813,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
 
     final PsiElement declaration = getDeclaration();
-    final JSFunction constructor = declaration instanceof JSClass ? ((JSClass)declaration).getConstructor() : null;
-    final JSParameter[] parameters = constructor == null ? null : constructor.getParameters();
-    if (parameters != null && parameters.length > 0 && !parameters[0].isOptional() && !parameters[0].isRest()) {
+    if ((declaration instanceof JSClass) && !CodeContext.hasDefaultConstructor((JSClass)declaration)) {
       host.addMessage(tag, JSBundle.message("class.0.does.not.have.default.constructor", ((JSClass)declaration).getQualifiedName()),
                       Validator.ValidationHost.ErrorType.ERROR);
     }
@@ -927,11 +926,13 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       final String jsClassName = jsClass.getName();
       if (jsClassName != null) {
         final XmlElementDescriptor descriptor = context.getElementDescriptor(jsClassName, jsClass.getQualifiedName());
-        ContainerUtil.addIfNotNull(descriptor, result);
+        if (descriptor instanceof ClassBackedElementDescriptor && CodeContext.checkDeclaration((ClassBackedElementDescriptor)descriptor)) {
+          result.add(descriptor);
+        }
       }
     }
     else {
-      for (final XmlElementDescriptor descriptor : context.getAllDescriptors()) {
+      for (final XmlElementDescriptor descriptor : context.getDescriptorsWithAllowedDeclaration()) {
         if (descriptor instanceof ClassBackedElementDescriptor && !((ClassBackedElementDescriptor)descriptor).predefined) {
           final PsiElement decl = descriptor.getDeclaration();
           if (decl instanceof JSClass && JSInheritanceUtil.isParentClass((JSClass)decl, jsClass, false)) {

@@ -104,7 +104,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
 
   @NotNull
   public XmlElementDescriptor[] getRootElementsDescriptors(@Nullable final XmlDocument document) {
-    XmlElementDescriptor[] elementDescriptors = CodeContext.getContext(namespace, module).getAllDescriptors();
+    XmlElementDescriptor[] elementDescriptors = CodeContext.getContext(namespace, module).getDescriptorsWithAllowedDeclaration();
     ArrayList<XmlElementDescriptor> results = new ArrayList<XmlElementDescriptor>(elementDescriptors.length);
 
     final XmlTag rootTag = document == null ? null : document.getRootTag();

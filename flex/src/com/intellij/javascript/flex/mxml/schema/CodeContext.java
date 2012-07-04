@@ -17,6 +17,9 @@ import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
+import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSParameter;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.SwcCatalogXmlUtil;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.module.Module;
@@ -32,9 +35,11 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Consumer;
 import com.intellij.util.PairConsumer;
@@ -399,14 +404,29 @@ public class CodeContext {
     return descriptor;
   }
 
-  public void appendAllDescriptors(final Collection<XmlElementDescriptor> resultList) {
-    resultList.addAll(myNameToDescriptorsMap.values());
+  public void appendDescriptorsWithAllowedDeclaration(final Collection<XmlElementDescriptor> resultList) {
+    for (ClassBackedElementDescriptor descriptor : myNameToDescriptorsMap.values()) {
+      if (checkDeclaration(descriptor)) {
+        resultList.add(descriptor);
+      }
+    }
   }
 
-  public XmlElementDescriptor[] getAllDescriptors() {
+  public static boolean checkDeclaration(final @NotNull ClassBackedElementDescriptor descriptor) {
+    final PsiElement declaration = descriptor.getDeclaration();
+    return ((declaration instanceof XmlFile || ((declaration instanceof JSClass) && hasDefaultConstructor((JSClass)declaration))));
+  }
+
+  public XmlElementDescriptor[] getDescriptorsWithAllowedDeclaration() {
     THashSet<XmlElementDescriptor> descriptors = new THashSet<XmlElementDescriptor>();
-    appendAllDescriptors(descriptors);
+    appendDescriptorsWithAllowedDeclaration(descriptors);
     return descriptors.toArray(new XmlElementDescriptor[descriptors.size()]);
+  }
+
+  public static boolean hasDefaultConstructor(final @NotNull JSClass jsClass) {
+    final JSFunction constructor = jsClass.getConstructor();
+    final JSParameter[] parameters = constructor == null ? null : constructor.getParameters();
+    return parameters == null || parameters.length == 0 || parameters[0].isOptional() || parameters[0].isRest();
   }
 
   public int getAllDescriptorsSize() {

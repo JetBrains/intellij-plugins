@@ -328,7 +328,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       return ArrayUtil.EMPTY_STRING_ARRAY;
     }
     CodeContext codeContext = CodeContext.getContext(JavaScriptSupportLoader.MXML_URI, module);
-    XmlElementDescriptor[] descriptors = codeContext.getAllDescriptors();
+    XmlElementDescriptor[] descriptors = codeContext.getDescriptorsWithAllowedDeclaration();
     String[] selectors = new String[descriptors.length + 1];
     selectors[0] = "global";
     int i = 1;

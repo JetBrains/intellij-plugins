@@ -677,7 +677,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       return EMPTY_ARRAY;
     }
 
-    return parentDescriptor.context.getAllDescriptors();
+    return parentDescriptor.context.getDescriptorsWithAllowedDeclaration();
   }
 
   public XmlElementDescriptor getElementDescriptor(final XmlTag childTag, XmlTag contextTag) {
