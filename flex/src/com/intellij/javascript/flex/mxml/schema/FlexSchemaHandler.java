@@ -247,12 +247,17 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     }
     else {
       final String schemaMarker = "://";
-      int schemaEndIndex = namespace.indexOf(schemaMarker);
-      if (schemaEndIndex > 0) {
-        String path = namespace.substring(schemaEndIndex + schemaMarker.length());
-        if (path.startsWith("www.")) {
-          path = path.substring(4);
+      int schemaMarkerIndex = namespace.indexOf(schemaMarker);
+      if (schemaMarkerIndex > 0) {
+        String path = namespace.substring(schemaMarkerIndex + schemaMarker.length());
+        path = StringUtil.trimStart(path, "www.");
+        path = StringUtil.trimEnd(path, "/");
+
+        final String lastSegment = path.substring(path.lastIndexOf('/') + 1);
+        if (prefixPattern.matcher(lastSegment).matches()) {
+          return lastSegment;
         }
+
         final int dotIndex = path.indexOf('.');
         final int slashIndex = path.indexOf('/');
         final int endIndex = (dotIndex == -1)
