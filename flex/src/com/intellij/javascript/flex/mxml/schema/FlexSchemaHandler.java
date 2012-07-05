@@ -4,8 +4,10 @@ import com.intellij.javascript.flex.FlexResolveHelper;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.index.*;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.index.JSPackageIndex;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.DumbAware;
@@ -19,7 +21,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -28,7 +29,9 @@ import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlSchemaProvider;
 import gnu.trove.THashMap;
@@ -104,6 +107,9 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
   @NotNull
   @Override
   public Set<String> getAvailableNamespaces(@NotNull XmlFile _file, @Nullable @NonNls final String tagName) {
+    // tagName == null => tag name completion
+    // tagName != null => guess namespace of unresolved tag
+
     PsiFile originalFile = _file.getOriginalFile();
     if (originalFile instanceof XmlFile) _file = (XmlFile)originalFile;
 
@@ -116,13 +122,12 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     final Set<String> componentsThatHaveNotPackageBackedNamespace = new THashSet<String>();
 
     for (final String namespace : CodeContextHolder.getInstance(project).getNamespaces(module)) {
-      if (tagName == null) {
-        if (CodeContext.isPackageBackedNamespace(namespace) || !illegalNamespaces.contains(namespace)) {
-          result.add(namespace); // package backed namespace can't be illegal
+      if (!CodeContext.isPackageBackedNamespace(namespace) && !illegalNamespaces.contains(namespace)) {
+        // package backed namespaces will be added later from JSPackageIndex
+        if (tagName == null) {
+          result.add(namespace);
         }
-      }
-      else {
-        if (!CodeContext.isPackageBackedNamespace(namespace) && !illegalNamespaces.contains(namespace)) {
+        else {
           final XmlElementDescriptor descriptor = CodeContext.getContext(namespace, module).getElementDescriptor(tagName, (XmlTag)null);
           if (descriptor != null) {
             result.add(namespace);
@@ -140,51 +145,54 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
 
     if (DumbService.isDumb(project)) return result;
 
-    final JavaScriptIndex index = JavaScriptIndex.getInstance(project);
-
-    index.processAllSymbols(new JavaScriptSymbolProcessor.DefaultSymbolProcessor() {
-
-      protected boolean process(final PsiElement namedElement, final JSNamespace namespace) {
-        if (namedElement instanceof JSNamedElementProxy) {
-          final JSNamedElementIndexItem proxy = ((JSNamedElementProxy)namedElement).getIndexItem();
-
-          if (proxy.getType() == JSNamedElementProxy.NamedItemType.Clazz && proxy.getAccessType() == JSAttributeList.AccessType.PUBLIC) {
-            final @NonNls String packageName = proxy.getNamespace().getQualifiedName();
-            if (!componentsThatHaveNotPackageBackedNamespace.contains(StringUtil.getQualifiedName(packageName, tagName))) {
-              result.add(StringUtil.isEmpty(packageName) ? "*" : packageName + ".*");
-            }
+    if (tagName == null) {
+      FileBasedIndex.getInstance().processAllKeys(JSPackageIndex.INDEX_ID, new Processor<String>() {
+        public boolean process(final String packageName) {
+          // packages that don't contain suitable classes will be filtered out
+          // in DefultXmlExtension.getAvailableTagNames -> TagNameReference.getTagNameVariants()
+          result.add(StringUtil.isEmpty(packageName) ? "*" : packageName + ".*");
+          return true;
+        }
+      }, project);
+    }
+    else {
+      final GlobalSearchScope scopeWithLibs = module != null
+                                              ? GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)
+                                              : GlobalSearchScope.allScope(project);
+      for (JSQualifiedNamedElement element : JSResolveUtil.findElementsByName(tagName, project, scopeWithLibs, false)) {
+        if (element instanceof JSClass && CodeContext.hasDefaultConstructor((JSClass)element)) {
+          final String packageName = StringUtil.getPackageName(element.getQualifiedName());
+          if (!componentsThatHaveNotPackageBackedNamespace.contains(StringUtil.getQualifiedName(packageName, tagName))) {
+            result.add(StringUtil.isEmpty(packageName) ? "*" : packageName + ".*");
           }
         }
-        return true;
       }
+    }
 
-      public PsiFile getBaseFile() {
-        return file;
-      }
+    final GlobalSearchScope scopeWithoutLibs = module != null
+                                               ? GlobalSearchScope.moduleWithDependenciesScope(module)
+                                               : GlobalSearchScope.allScope(project);
 
-      public int getRequiredNameId() {
-        return index.getIndexOf(tagName);
-      }
-    });
+    // packages that contain *.mxml files and do not contain *.as are not retrieved from JSPackageIndex
+    FlexResolveHelper
+      .processAllMxmlAndFxgFiles(scopeWithoutLibs, project,
+                                 new FlexResolveHelper.MxmlAndFxgFilesProcessor() {
+                                   public void addDependency(final PsiDirectory directory) {
+                                   }
 
-    final GlobalSearchScope scope = module != null
-                                    ? GlobalSearchScope.moduleWithDependenciesScope(module)
-                                    : GlobalSearchScope.projectScope(project);
-    FlexResolveHelper.processAllMxmlAndFxgFiles(scope, project,
-                                                new FlexResolveHelper.MxmlAndFxgFilesProcessor() {
-                                                  public void addDependency(final PsiDirectory directory) {
-                                                  }
-
-                                                  public boolean processFile(final VirtualFile file, final VirtualFile root) {
-                                                    final String packageName = VfsUtilCore.getRelativePath(file.getParent(), root, '.');
-                                                    if (packageName != null &&
-                                                        !componentsThatHaveNotPackageBackedNamespace
-                                                          .contains(StringUtil.getQualifiedName(packageName, tagName))) {
-                                                      result.add(StringUtil.isEmpty(packageName) ? "*" : packageName + ".*");
-                                                    }
-                                                    return true;
-                                                  }
-                                                }, tagName);
+                                   public boolean processFile(final VirtualFile file, final VirtualFile root) {
+                                     if (tagName == null || tagName.equals(file.getNameWithoutExtension())) {
+                                       final String packageName = VfsUtilCore.getRelativePath(file.getParent(), root, '.');
+                                       if (packageName != null &&
+                                           (tagName == null || !componentsThatHaveNotPackageBackedNamespace
+                                             .contains(StringUtil.getQualifiedName(packageName, tagName)))) {
+                                         result.add(StringUtil.isEmpty(packageName) ? "*" : packageName + ".*");
+                                       }
+                                     }
+                                     return true;
+                                   }
+                                 },
+                                 tagName);
 
     return result;
   }
