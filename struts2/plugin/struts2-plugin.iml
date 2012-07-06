@@ -28,7 +28,6 @@
     <orderEntry type="module" module-name="StrutsAssistant" />
     <orderEntry type="module" module-name="properties" />
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
-    <orderEntry type="library" name="commons-collections" level="project" />
     <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
     <orderEntry type="module" module-name="ultimate-resources" scope="TEST" />
     <orderEntry type="module" module-name="spring-web" scope="TEST" />

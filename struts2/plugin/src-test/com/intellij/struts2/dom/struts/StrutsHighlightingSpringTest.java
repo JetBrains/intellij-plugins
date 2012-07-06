@@ -28,7 +28,6 @@ import com.intellij.spring.facet.appContextDescriptors.XmlContextDescriptor;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.util.containers.ContainerUtil;
 import junit.framework.Assert;
-import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,7 +68,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     createStrutsFileSet(strutsXml);
 
     final List<String> variants = myFixture.getCompletionVariants(strutsXml);
-    Assert.assertTrue(CollectionUtils.isSubCollection(Arrays.asList("MyClass"), variants));
+    Assert.assertTrue(variants.indexOf("MyClass") != -1);
   }
 
   @HasJavaSources
@@ -83,9 +82,11 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     final List<String> variants = myFixture.getCompletionVariants(strutsXml);
     assert variants != null;
 
-    Assert.assertTrue(CollectionUtils.isSubCollection(Arrays.asList("MyClass", "bean1", "bean2", "springInterceptor",
-                                                                    "springResultType"),
-                                                      variants));
+    List<String> strings = Arrays.asList("MyClass", "bean1", "bean2", "springInterceptor",
+                                         "springResultType");
+    for(String s:strings) {
+      Assert.assertTrue(variants.indexOf(s) != -1);
+    }
     Assert.assertFalse(ContainerUtil.intersects(variants, Arrays.asList("abstractBean")));
   }
 
