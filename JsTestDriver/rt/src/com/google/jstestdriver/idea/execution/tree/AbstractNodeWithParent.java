@@ -9,13 +9,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class AbstractNodeWithParent<T extends AbstractNodeWithParent> extends AbstractNode<T> {
 
-  private final AbstractNode myParent;
+  private final AbstractNode<AbstractNodeWithParent<T>> myParent;
   private final String myName;
 
   public AbstractNodeWithParent(@NotNull String name, @NotNull AbstractNode parent) {
     super(parent.getTreeManager());
     myName = name;
-    myParent = parent;
+    //noinspection unchecked
+    myParent = (AbstractNode<AbstractNodeWithParent<T>>) parent;
   }
 
   @NotNull
@@ -36,4 +37,8 @@ public abstract class AbstractNodeWithParent<T extends AbstractNodeWithParent> e
 
   @NotNull
   public abstract TCMessage createStartedMessage();
+
+  public void detachFromParent() {
+    myParent.removeChild(this);
+  }
 }

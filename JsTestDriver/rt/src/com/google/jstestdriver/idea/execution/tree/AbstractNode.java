@@ -63,4 +63,7 @@ public abstract class AbstractNode<T extends AbstractNodeWithParent> {
     return myChildByName.values();
   }
 
+  void removeChild(@NotNull T child) {
+    myChildByName.remove(child.getName());
+  }
 }

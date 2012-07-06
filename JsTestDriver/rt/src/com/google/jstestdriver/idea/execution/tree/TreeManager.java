@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.execution.tree;
 
 import com.google.jstestdriver.TestResult;
+import com.google.jstestdriver.idea.execution.TestPath;
 import com.google.jstestdriver.idea.execution.tc.TC;
 import com.google.jstestdriver.idea.execution.tc.TCAttribute;
 import com.google.jstestdriver.idea.execution.tc.TCMessage;
@@ -61,60 +62,65 @@ public class TreeManager {
     return displayName;
   }
 
-  public void onTestRegistered(@NotNull TestResultProtocolMessage message) {
+  public void onTestRegistered(@NotNull TestPath message) {
     getOrCreateTestNode(message);
   }
 
-  public void onTestCompleted(@NotNull TestResultProtocolMessage message) {
-    TestNode testNode = getOrCreateTestNode(message);
-    if (message.log != null && !message.log.isEmpty()) {
+  public void onTestCompleted(@NotNull TestPath testPath, @NotNull TestResult testResult) {
+    TestNode testNode = getOrCreateTestNode(testPath);
+    testNode.detachFromParent();
+    String log = testResult.getLog();
+    if (log != null && !log.isEmpty()) {
       TCMessage stdOutMessage = TC.newTestStdOutMessage(testNode);
-      stdOutMessage.addAttribute(TCAttribute.STDOUT, message.log + "\n");
+      stdOutMessage.addAttribute(TCAttribute.STDOUT, log + "\n");
       printTCMessage(stdOutMessage);
     }
 
-    TestResult.Result result = TestResult.Result.valueOf(message.result);
-    if (result == TestResult.Result.passed) {
+    int durationMillis = (int) testResult.getTime();
+    TestResult.Result status = testResult.getResult();
+    if (status == TestResult.Result.passed) {
       TCMessage testFinishedMessage = TC.newTestFinishedMessage(testNode);
-      testFinishedMessage.addIntAttribute(TCAttribute.TEST_DURATION, (int)message.duration);
+      testFinishedMessage.addIntAttribute(TCAttribute.TEST_DURATION, durationMillis);
       printTCMessage(testFinishedMessage);
     } else {
+      final String originalStack = testResult.getStack();
+      final String parsedMessage = testResult.getParsedMessage();
       final String stackStr;
-      if (message.stack.startsWith(message.message)) {
-        String s = message.stack.substring(message.message.length());
+      if (originalStack.startsWith(parsedMessage)) {
+        String s = originalStack.substring(parsedMessage.length());
         stackStr = s.replaceFirst("^[\n\r]*", "");
       } else {
-        stackStr = message.stack;
+        stackStr = originalStack;
       }
       TCMessage testFailedMessage = TC.newTestFailedMessage(testNode);
-      testFailedMessage.addAttribute(TCAttribute.EXCEPTION_MESSAGE, message.message);
+      testFailedMessage.addAttribute(TCAttribute.EXCEPTION_MESSAGE, parsedMessage);
       testFailedMessage.addAttribute(TCAttribute.EXCEPTION_STACKTRACE, stackStr);
-      if (result == TestResult.Result.error) {
+      if (status == TestResult.Result.error) {
         testFailedMessage.addAttribute(TCAttribute.IS_TEST_ERROR, "yes");
       }
-      testFailedMessage.addIntAttribute(TCAttribute.TEST_DURATION, (int)message.duration);
+      testFailedMessage.addIntAttribute(TCAttribute.TEST_DURATION, durationMillis);
       printTCMessage(testFailedMessage);
     }
   }
 
   @NotNull
-  private TestNode getOrCreateTestNode(@NotNull TestResultProtocolMessage message) {
+  private TestNode getOrCreateTestNode(@NotNull TestPath testPath) {
     ConfigNode configNode = getCurrentConfigNode();
-    BrowserNode browserNode = configNode.findChildByName(message.browser);
+    BrowserNode browserNode = configNode.findChildByName(testPath.getBrowserDisplayName());
     if (browserNode == null) {
-      browserNode = new BrowserNode(message.browser, configNode);
+      browserNode = new BrowserNode(testPath.getBrowserDisplayName(), configNode);
       configNode.addChild(browserNode);
     }
 
-    TestCaseNode testCaseNode = browserNode.findChildByName(message.testCaseName);
+    TestCaseNode testCaseNode = browserNode.findChildByName(testPath.getTestCaseName());
     if (testCaseNode == null) {
-      testCaseNode = new TestCaseNode(message.testCaseName, message.jsTestFilePath, browserNode);
+      testCaseNode = new TestCaseNode(testPath.getTestCaseName(), testPath.getJsTestFileAbsolutePath(), browserNode);
       browserNode.addChild(testCaseNode);
     }
 
-    TestNode testNode = testCaseNode.findChildByName(message.testName);
+    TestNode testNode = testCaseNode.findChildByName(testPath.getTestName());
     if (testNode == null) {
-      testNode = new TestNode(message.testName, testCaseNode);
+      testNode = new TestNode(testPath.getTestName(), testCaseNode);
       testCaseNode.addChild(testNode);
     }
 

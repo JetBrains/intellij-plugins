@@ -2,7 +2,8 @@ package com.google.jstestdriver.idea;
 
 import com.google.jstestdriver.*;
 import com.google.jstestdriver.hooks.TestListener;
-import com.google.jstestdriver.idea.execution.tree.TestResultProtocolMessage;
+import com.google.jstestdriver.idea.execution.TestPath;
+import com.google.jstestdriver.idea.execution.TestPathFactory;
 import com.google.jstestdriver.idea.execution.tree.TreeManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,10 +18,10 @@ public class IdeaTestListener implements TestListener {
   private static final String PREFIX = "/test/";
 
   private final TreeManager myTreeManager;
-  private final File myJstdConfigFile;
   private final File myBasePath;
   private final Object MONITOR = new Object();
   private final boolean myDryRun;
+  private final TestPathFactory myTestPathFactory;
 
   public IdeaTestListener(
     @NotNull TreeManager treeManager,
@@ -29,9 +30,9 @@ public class IdeaTestListener implements TestListener {
     boolean dryRun
   ) {
     myTreeManager = treeManager;
-    myJstdConfigFile = jstdConfigFile;
     myBasePath = singleBasePath;
     myDryRun = dryRun;
+    myTestPathFactory = new TestPathFactory(jstdConfigFile);
   }
 
   @Override
@@ -50,10 +51,13 @@ public class IdeaTestListener implements TestListener {
     synchronized (MONITOR) {
       for (String testName : testCase.getTests()) {
         File jsTestFile = resolveTestFile(testCase.getFileName());
-        TestResultProtocolMessage message = TestResultProtocolMessage.fromDryRun(
-          myJstdConfigFile, browser, jsTestFile, testCase.getName(), testName
+        TestPath testPath = myTestPathFactory.createTestPath(
+          browser,
+          jsTestFile,
+          testCase.getName(),
+          testName
         );
-        myTreeManager.onTestRegistered(message);
+        myTreeManager.onTestRegistered(testPath);
       }
     }
   }
@@ -61,8 +65,8 @@ public class IdeaTestListener implements TestListener {
   @Override
   public void onTestComplete(TestResult testResult) {
     synchronized (MONITOR) {
-      TestResultProtocolMessage message = TestResultProtocolMessage.fromTestResult(myJstdConfigFile, testResult);
-      myTreeManager.onTestCompleted(message);
+      TestPath testPath = myTestPathFactory.createTestPath(testResult);
+      myTreeManager.onTestCompleted(testPath, testResult);
     }
   }
 
