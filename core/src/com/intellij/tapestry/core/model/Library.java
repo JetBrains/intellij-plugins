@@ -1,11 +1,13 @@
 package com.intellij.tapestry.core.model;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.exceptions.NotTapestryElementException;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
-import org.apache.commons.collections.map.CaseInsensitiveMap;
+import gnu.trove.THashMap;
+import gnu.trove.TObjectHashingStrategy;
 
 import java.util.Map;
 
@@ -112,7 +114,17 @@ public class Library implements Comparable {
      * @return all the Tapestry elements implemented under the given package.
      */
     private Map<String, PresentationLibraryElement> findElements(String componentsOrPages, String basePackage) {
-        Map<String, PresentationLibraryElement> components = new CaseInsensitiveMap();
+        Map<String, PresentationLibraryElement> components = new THashMap<String, PresentationLibraryElement>(new TObjectHashingStrategy<String>() {
+          @Override
+          public int computeHashCode(String object) {
+            return StringUtil.stringHashCodeInsensitive(object);
+          }
+
+          @Override
+          public boolean equals(String o1, String o2) {
+            return o1.equalsIgnoreCase(o2);
+          }
+        });
 
         for (IJavaClassType type : _project.getJavaTypeFinder().findTypesInPackageRecursively(basePackage + "." + componentsOrPages, true)) {
             try {

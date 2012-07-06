@@ -8,7 +8,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="commons-collections" level="project" />
     <orderEntry type="module" module-name="tapestry-core" />
     <orderEntry type="library" name="Velocity" level="project" />
     <orderEntry type="library" scope="TEST" name="JUnit3" level="project" />
