@@ -13,6 +13,7 @@ import com.intellij.openapi.fileEditor.*;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AsyncResult;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
@@ -271,7 +272,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       @Override
       protected boolean isExpired() {
         //noinspection ConstantConditions
-        return toolWindowForm == null || toolWindowForm.getFile() != file;
+        return toolWindowForm == null || !Comparing.equal(toolWindowForm.getFile(), file);
       }
 
       @Override
@@ -382,7 +383,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
           return;
         }
 
-        final boolean doRender = toolWindowForm.getFile() != psiFile;
+        final boolean doRender = !Comparing.equal(toolWindowForm.getFile(), psiFile);
         if (doRender) {
           toolWindowForm.setFile(psiFile);
         }

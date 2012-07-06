@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +42,7 @@ public class ProblemDescriptor {
 
     if (obj instanceof ProblemDescriptor) {
       ProblemDescriptor a = (ProblemDescriptor)obj;
-      return a.getMessage().equals(getMessage()) && a.getLineNumber() == getLineNumber() && a.getFile() == getFile();
+      return a.getMessage().equals(getMessage()) && a.getLineNumber() == getLineNumber() && Comparing.equal(a.getFile(), getFile());
     }
 
     return false;

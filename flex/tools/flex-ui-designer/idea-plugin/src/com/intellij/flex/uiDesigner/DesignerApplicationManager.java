@@ -36,6 +36,7 @@ import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.AsyncResult;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -616,7 +617,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
 
       if (isApplicationClosed()) {
-        if (psiFile.getViewProvider().getVirtualFile() == previewToolWindowManager.getServedFile()) {
+        if (Comparing.equal(psiFile.getViewProvider().getVirtualFile(), previewToolWindowManager.getServedFile())) {
           IncrementalDocumentSynchronizer.initialRender(DesignerApplicationManager.this, (XmlFile)psiFile);
         }
         return;

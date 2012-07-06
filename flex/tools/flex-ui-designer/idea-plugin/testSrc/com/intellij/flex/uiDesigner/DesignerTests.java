@@ -8,6 +8,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -115,11 +116,11 @@ public final class DesignerTests {
       if (rootSpecified) {
         final List<String> fromParents = new ArrayList<String>(4);
         VirtualFile fromP = fromFile.getParent();
-        if (fromP != rawProjectRoot) {
+        if (!Comparing.equal(fromP, rawProjectRoot)) {
           do {
             fromParents.add(fromP.getName());
           }
-          while ((fromP = fromP.getParent()) != rawProjectRoot);
+          while (!Comparing.equal((fromP = fromP.getParent()), rawProjectRoot));
 
           for (int j = fromParents.size() - 1; j >= 0; j--) {
             toP = toP.createChildDirectory(null, fromParents.get(j));

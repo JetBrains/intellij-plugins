@@ -5,6 +5,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ComponentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AsyncResult;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -90,14 +91,14 @@ class RenderActionQueue implements Runnable {
   private <T extends AsyncResult> T findResult(@Nullable final VirtualFile file) {
     if (queue.size() == 1) {
       RenderAction action = queue.peekFirst();
-      return action.file == file ? (T)action.result : null;
+      return Comparing.equal(action.file, file) ? (T)action.result : null;
     }
 
     final Ref<AsyncResult> result = new Ref<AsyncResult>();
     processActions(new Processor<RenderAction>() {
       @Override
       public boolean process(RenderAction action) {
-        if (action.file == file) {
+        if (Comparing.equal(action.file, file)) {
           result.set(action.result);
           return false;
         }

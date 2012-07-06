@@ -30,6 +30,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ModuleRootModel;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
@@ -267,7 +268,7 @@ public class FlexCompilationUtils {
         exceptionRef.set(ApplicationManager.getApplication().runWriteAction(new NullableComputable<FlexCompilerException>() {
           public FlexCompilerException compute() {
             for (VirtualFile file : templateDir.getChildren()) {
-              if (file == templateFile) {
+              if (Comparing.equal(file, templateFile)) {
                 final String wrapperText;
                 try {
                   wrapperText = VfsUtilCore.loadText(file);
