@@ -17,6 +17,7 @@ import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -235,7 +236,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
         }
         entity = entity.getParent();
       }
-      if (entity == projectDir && testFound) {
+      if (Comparing.equal(entity, projectDir) && testFound) {
         JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
         builder.setTestType(TestType.JS_FILE);
         builder.setConfigType(JstdConfigType.GENERATED);
