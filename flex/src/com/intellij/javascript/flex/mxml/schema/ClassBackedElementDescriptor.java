@@ -484,7 +484,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     Map<String, AnnotationBackedDescriptor> map;
     Map<String, Map<String, AnnotationBackedDescriptor>> packageToInternalDescriptors;
 
-    synchronized (context) {
+    synchronized (CodeContext.class) {
       map = myDescriptors;
       packageToInternalDescriptors = myPackageToInternalDescriptors;
       if (map != null && packageToInternalDescriptors != null) return;

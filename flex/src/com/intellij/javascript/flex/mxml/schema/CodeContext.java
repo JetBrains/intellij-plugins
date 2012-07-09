@@ -123,7 +123,7 @@ public class CodeContext {
     return dependencies.toArray();
   }
 
-  public static synchronized CodeContext getContext(final String namespace, final Module module) {
+  public static CodeContext getContext(final String namespace, final Module module) {
     if (StringUtil.isEmptyOrSpaces(namespace) ||
         module == null || module.isDisposed() || !(ModuleType.get(module) instanceof FlexModuleType)) {
       return CodeContextHolder.EMPTY;
@@ -132,18 +132,22 @@ public class CodeContext {
     final FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
     if (bc == null) return CodeContextHolder.EMPTY;
 
-    if (isStdNamespace(namespace)) {
-      return getStdCodeContext(namespace, module, bc);
-    }
+    CodeContext codeContext;
 
-    final CodeContextHolder contextHolder = CodeContextHolder.getInstance(module.getProject());
-    CodeContext codeContext = contextHolder.getCodeContext(namespace, module);
+    synchronized (CodeContext.class) {
+      if (isStdNamespace(namespace)) {
+        return getStdCodeContext(namespace, module, bc);
+      }
 
-    if (codeContext == null) {
-      codeContext = createCodeContext(namespace, module, bc);
-      if (codeContext.getAllDescriptorsSize() > 0) {
-        // avoid adding of incorrect namespaces that appear during completion like "http://www.adobe.IntellijIdeaRulezzz com/2006/mxml"
-        contextHolder.putCodeContext(namespace, module, codeContext);
+      final CodeContextHolder contextHolder = CodeContextHolder.getInstance(module.getProject());
+      codeContext = contextHolder.getCodeContext(namespace, module);
+
+      if (codeContext == null) {
+        codeContext = createCodeContext(namespace, module, bc);
+        if (codeContext.getAllDescriptorsSize() > 0) {
+          // avoid adding of incorrect namespaces that appear during completion like "http://www.adobe.IntellijIdeaRulezzz com/2006/mxml"
+          contextHolder.putCodeContext(namespace, module, codeContext);
+        }
       }
     }
 
