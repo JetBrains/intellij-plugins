@@ -1,29 +1,200 @@
-<mx:Application xmlns:fx="http://ns.adobe.com/mxml/2009"
-                xmlns:mx="library://ns.adobe.com/flex/mx">
-  <fx:Script><![CDATA[
-    import mx.collections.ArrayCollection;
+<?xml version="1.0"?>
+<s:SkinnableContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
+                      xmlns:s="library://ns.adobe.com/flex/spark"
+                      xmlns:mx="library://ns.adobe.com/flex/mx">
 
-    public var expenses:ArrayCollection = new ArrayCollection([
-                                                                {Month: "Jan", Profit: 2000, Expenses: 1500},
-                                                                {Month: "Feb", Profit: 1000, Expenses: 500},
-                                                                {Month: "Mar", Profit: 2300, Expenses: 800}
-                                                              ]);
-    ]]></fx:Script>
+    <fx:Script><![CDATA[
+        import mx.collections.ArrayCollection;
+        import mx.collections.ArrayList;
+        import mx.collections.ICollectionView;
 
-  <mx:Panel title="edwqe" height="500" width="500">
-    <mx:BarChart id="myChart"
-                 dataProvider="{expenses}"
-                 height="100%"
-                 width="100%"
-                 showDataTips="true"> 
-      <mx:verticalAxis>
-        <mx:CategoryAxis dataProvider="{expenses}" categoryField="Month"/>
-      </mx:verticalAxis>
-      <mx:series>
-        <mx:BarSeries yField="Month" xField="Profit" displayName="Profit"/>
-        <mx:BarSeries yField="Month" xField="Expenses" displayName="Expenses"/>
-      </mx:series>
-    </mx:BarChart>
-    <mx:Legend dataProvider="{myChart}"/>
-  </mx:Panel>
-</mx:Application>
+        import spark.collections.Sort;
+        import spark.collections.SortField;
+        import spark.components.SkinnableDataContainer;
+        import spark.events.IndexChangeEvent;
+
+        use namespace mx_internal;
+
+        private var _enabledDocuments:ArrayCollection;
+        private var _enabledDocumentsChanged:Boolean = false;
+
+        private var _disabledDocuments:ArrayCollection;
+        private var _disabledDocumentsChanged:Boolean = false;
+
+        public function get enabledDocuments():Array
+        {
+            return (_enabledDocuments != null) ? _enabledDocuments.source : null;
+        }
+
+        public function set enabledDocuments(value:Array):void
+        {
+            _enabledDocuments = new ArrayCollection(value);
+            _enabledDocumentsChanged = true;
+            invalidateProperties();
+        }
+
+        public function get disabledDocuments():Array
+        {
+            return (_disabledDocuments != null) ? _disabledDocuments.source : null;
+        }
+
+        public function set disabledDocuments(value:Array):void
+        {
+            _disabledDocuments = new ArrayCollection(value);
+            _disabledDocumentsChanged = true;
+            invalidateProperties();
+        }
+
+        override protected function commitProperties():void
+        {
+            super.commitProperties();
+            if (_enabledDocumentsChanged && enabledDocumentsList)
+            {
+                enabledDocumentsList.dataProvider = _enabledDocuments;
+                _enabledDocumentsChanged = false;
+            }
+
+            if (_disabledDocumentsChanged && disabledDocumentsList)
+            {
+                disabledDocumentsList.dataProvider = _disabledDocuments;
+                _disabledDocumentsChanged = false;
+            }
+        }
+
+        private function _sortCollection(collection:ICollectionView, fields:Array):ICollectionView
+        {
+            var sort:Sort = new Sort();
+            sort.fields = fields;
+
+            collection.sort = sort;
+            collection.refresh();
+
+            return collection;
+        }
+
+        private function _setListSelection(list:List, selectionHash:Dictionary):void
+        {
+            var selectedIndices:Vector.<int> = new Vector.<int>();
+
+            var length:int = list.dataProvider.length;
+
+            for (var index:int = 0; index < length; index++)
+            {
+                document = list.dataProvider.getItemAt(index);
+                if (selectionHash[document])
+                {
+                    selectedIndices.push(index);
+                }
+            }
+
+            mx_internal:list.setSelectedIndices(selectedIndices);
+        }
+
+        private function _swapSelectedDocumentAffiliation(origin:List, destination:List):void
+        {
+            if (origin.selectedIndices.length > 0)
+            {
+                var document:Object;
+                var selectedIndex:int;
+
+                var index:int;
+                var length:int = origin.selectedIndices.length;
+
+                var movedHash:Dictionary = new Dictionary(true);
+
+                for (index = length - 1; index >= 0; index--)
+                {
+                    selectedIndex = origin.selectedIndices[index];
+                    document = origin.dataProvider.removeItemAt(selectedIndex); // as EDIDocumentConfigurationVO;
+                    destination.dataProvider.addItem(document);
+                    movedHash[document] = true;
+                }
+
+                var sortField:SortField = new SortField();
+                sortField.name = destination.labelField;
+                sortField.numeric = true;
+
+                _sortCollection(destination.dataProvider as ICollectionView, [sortField])
+                _setListSelection(destination, movedHash);
+            }
+        }
+
+        private function setDocumentControlsAvailability(value:Boolean):void
+        {
+            if (value != enableDocumentButton.enabled)
+            {
+                enableDocumentButton.enabled = value
+                disableDocumentButton.enabled = value
+            }
+        }
+
+        private function _disableDocumentButton_clickHandler(event:MouseEvent):void
+        {
+            _swapSelectedDocumentAffiliation(enabledDocumentsList, disabledDocumentsList);
+        }
+
+        private function _enableDocumentButton_clickHandler(event:MouseEvent):void
+        {
+            _swapSelectedDocumentAffiliation(disabledDocumentsList, enabledDocumentsList);
+        }
+
+        private function _enabledDocumentsList_changeHandler(event:IndexChangeEvent):void
+        {
+            disabledDocumentsList.selectedIndex = -1;
+            setDocumentControlsAvailability((event.newIndex != -1));
+        }
+
+        private function _disabledDocumentsList_changeHandler(event:IndexChangeEvent):void
+        {
+            enabledDocumentsList.selectedIndex = -1;
+            setDocumentControlsAvailability((event.newIndex != -1));
+        }
+        ]]></fx:Script>
+
+    <s:layout>
+        <s:VerticalLayout verticalAlign="middle"
+                          horizontalAlign="center"/>
+    </s:layout>
+
+    <s:Group width="400">
+        <s:layout>
+            <s:HorizontalLayout horizontalAlign="center"
+                                verticalAlign="middle"/>
+        </s:layout>
+
+        <s:List id="disabledDocumentsList"
+                allowMultipleSelection="true"
+                labelField="documentNumber"
+                change="_disabledDocumentsList_changeHandler(event)">
+        </s:List>
+
+        <s:Group id="addRemoveControlsGroup">
+            <s:layout>
+                <s:VerticalLayout horizontalAlign="center"
+                                  verticalAlign="middle"/>
+            </s:layout>
+            <s:Button id="enableDocumentButton"
+                      label="enable >>"
+                      enabled="false"
+                      click="_enableDocumentButton_clickHandler(event)"/>
+            <s:Button id="disableDocumentButton"
+                      label="&lt;&lt; disable"
+                      enabled="false"
+                      click="_disableDocumentButton_clickHandler(event)"/>
+        </s:Group>
+
+        <s:List id="enabledDocumentsList"
+                allowMultipleSelection="true"
+                labelField="documentNumber"
+                change="_enabledDocumentsList_changeHandler(event)">
+        </s:List>
+    </s:Group>
+
+    <s:List id="documentVersionSelectionList" contentBackgroundAlpha="0xffcc00"
+            width="200"
+            itemRenderer="com.neimanmarcus.edidocumenttool.renderers.EDIDocumentVersionSelectionRenderer"/>
+
+
+
+
+</s:SkinnableContainer>

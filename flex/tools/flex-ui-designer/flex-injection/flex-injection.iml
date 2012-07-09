@@ -33,7 +33,7 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="compiler-4.5.2.21576.pom" />
+          <sdk name="Flexmojos SDK 4.5.2.21576" />
         </dependencies>
         <compiler-options>
           <map>
@@ -55,17 +55,17 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="compiler-4.5.2.21576.pom" jdkType="Flexmojos SDK Type" />
+    <orderEntry type="jdk" jdkName="Flexmojos SDK 4.5.2.21576" jdkType="Flexmojos SDK Type" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:framework:swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:spark:swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:airglobal:swc:3.1.0.4880" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-flex:swc:4.3.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.flex.framework:mobilecomponents:swc:4.6.0.23201" level="project" />
-    <orderEntry type="module" module-name="shared" />
+    <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:framework:swc:4.5.2.21576" level="project" />
+    <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:spark:swc:4.5.2.21576" level="project" />
+    <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.2.21576" level="project" />
+    <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" level="project" />
+    <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:airglobal:swc:3.1.0.4880" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.jetbrains.miglayout:miglayout-flex:swc:4.3.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:mobilecomponents:swc:4.6.0.23201" level="project" />
+    <orderEntry type="module" module-name="shared" exported="" />
   </component>
 </module>
 
