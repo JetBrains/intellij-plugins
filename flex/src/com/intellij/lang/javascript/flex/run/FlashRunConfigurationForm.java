@@ -469,7 +469,9 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     myBCOutputRadioButton.setSelected(!params.isLaunchUrl());
     myUrlOrFileRadioButton.setSelected(params.isLaunchUrl());
-    myUrlOrFileTextWithBrowse.setText(params.getUrl());
+    final String url = params.getUrl();
+    final boolean windowsLocalFile = SystemInfo.isWindows && url.length() >= 2 && Character.isLetter(url.charAt(0)) && ':' == url.charAt(1);
+    myUrlOrFileTextWithBrowse.setText(windowsLocalFile ? FileUtil.toSystemDependentName(url) : url);
 
     myRunTrustedCheckBox.setSelected(params.isRunTrusted());
 
@@ -518,7 +520,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       });
 
       if (xCodeDirs.length > 0) {
-        final File sdksDir = new File (xCodeDirs[0] + relPath);
+        final File sdksDir = new File(xCodeDirs[0] + relPath);
         final File[] simulatorSdkDirs = sdksDir.listFiles(new FileFilter() {
           public boolean accept(final File file) {
             final String filename = file.getName().toLowerCase();
@@ -545,7 +547,9 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     params.setOverriddenOutputFileName(overrideMainClass ? myOutputFileNameTextField.getText().trim() : "");
 
     params.setLaunchUrl(myUrlOrFileRadioButton.isSelected());
-    params.setUrl(myUrlOrFileTextWithBrowse.getText().trim());
+    final String url = myUrlOrFileTextWithBrowse.getText().trim();
+    final boolean windowsLocalFile = SystemInfo.isWindows && url.length() >= 2 && Character.isLetter(url.charAt(0)) && ':' == url.charAt(1);
+    params.setUrl(windowsLocalFile ? FileUtil.toSystemIndependentName(url) : url);
 
     params.setLauncherParameters(myLauncherParameters);
     params.setRunTrusted(myRunTrustedCheckBox.isSelected());
