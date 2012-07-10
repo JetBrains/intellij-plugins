@@ -360,16 +360,16 @@ public class FlexCompilationUtils {
     final JSAttribute swfMetadata = swfMetadataRef.isNull() ? null : swfMetadataRef.get();
 
     final JSAttributeNameValuePair titleAttr = swfMetadata == null ? null : swfMetadata.getValueByName("pageTitle");
-    final String title = titleAttr != null ? titleAttr.getSimpleValue() : outputFileName;
+    final String title = titleAttr != null ? StringUtil.notNullize(titleAttr.getSimpleValue(), outputFileName) : outputFileName;
 
     final JSAttributeNameValuePair bgColorAttr = swfMetadata == null ? null : swfMetadata.getValueByName("backgroundColor");
-    final String bgColor = bgColorAttr != null ? bgColorAttr.getSimpleValue() : "#ffffff";
+    final String bgColor = bgColorAttr != null ? StringUtil.notNullize(bgColorAttr.getSimpleValue(), "#ffffff") : "#ffffff";
 
     final JSAttributeNameValuePair widthAttr = swfMetadata == null ? null : swfMetadata.getValueByName("width");
-    final String width = widthAttr != null ? widthAttr.getSimpleValue() : "100%";
+    final String width = widthAttr != null ? StringUtil.notNullize(widthAttr.getSimpleValue(), "100%") : "100%";
 
     final JSAttributeNameValuePair heightAttr = swfMetadata == null ? null : swfMetadata.getValueByName("height");
-    final String height = heightAttr != null ? heightAttr.getSimpleValue() : "100%";
+    final String height = heightAttr != null ? StringUtil.notNullize(heightAttr.getSimpleValue(), "100%") : "100%";
 
     final String[] replacement = {outputFileName, title, outputFileName, bgColor, width, height, major, minor, revision};
     return StringUtil.replace(wrapperText, MACROS_TO_REPLACE, replacement);
