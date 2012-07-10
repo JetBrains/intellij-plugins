@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<idea-plugin version="2">
+
+  <id>cucumber</id>
+  <name>Cucumber</name>
+
+  <description>Provides support of Cucumber language</description>
+
+  <version>1.0</version>
+  <depends>com.intellij.modules.xml</depends>
+  <depends>com.intellij.modules.ultimate</depends>
+  <vendor logo="/general/ijLogo.png">JetBrains</vendor>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <fileTypeFactory implementation="org.jetbrains.plugins.cucumber.psi.CucumberFileTypeFactory"/>
+    <lang.syntaxHighlighterFactory key="Gherkin"
+                                   implementationClass="org.jetbrains.plugins.cucumber.psi.GherkinSyntaxHighlighterFactory"/>
+
+    <lang.parserDefinition language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.psi.GherkinParserDefinition"/>
+    <lang.commenter language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.psi.GherkinCommenter"/>
+    <lang.psiStructureViewFactory language="Gherkin"
+                                  implementationClass="org.jetbrains.plugins.cucumber.psi.structure.GherkinStructureViewFactory"/>
+    <lang.formatter language="Gherkin"
+                    implementationClass="org.jetbrains.plugins.cucumber.psi.formatter.GherkinFormattingModelBuilder"/>
+    <annotator language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.psi.annotator.GherkinAnnotator"/>
+    <lang.foldingBuilder language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.psi.GherkinFoldingBuilder"/>
+    <langCodeStyleSettingsProvider
+        implementation="org.jetbrains.plugins.cucumber.psi.formatter.GherkinLanguageCodeStyleSettingsProvider"/>
+    <codeStyleSettingsProvider implementation="org.jetbrains.plugins.cucumber.psi.formatter.GherkinCodeStyleSettingsProvider"/>
+
+    <projectService serviceInterface="org.jetbrains.plugins.cucumber.psi.CucumberLanguageService"
+                    serviceImplementation="org.jetbrains.plugins.cucumber.psi.CucumberLanguageService"/>
+    <lang.findUsagesProvider language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.psi.GherkinFindUsagesProvider"/>
+    <colorSettingsPage implementation="org.jetbrains.plugins.cucumber.psi.GherkinColorsPage"/>
+  </extensions>
+
+  <extensionPoints>
+    <extensionPoint qualifiedName="cucumber.KeywordProvider" interface="org.jetbrains.plugins.cucumber.psi.GherkinKeywordProviderBuilder"/>
+  </extensionPoints>
+
+  <project-components>
+    <component>
+      <implementation-class>org.jetbrains.plugins.cucumber.psi.GherkinPsiManager</implementation-class>
+    </component>
+  </project-components>
+</idea-plugin>
