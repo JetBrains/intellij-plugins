@@ -1,6 +1,7 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.documentation.AbstractExternalFilter;
+import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.documentation.PlatformDocumentationUtil;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.javascript.documentation.JSDocumentationProvider;
@@ -124,7 +125,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
           String resolved = getSeeAlsoLinkResolved(elementToShowDoc, link);
           if (resolved != null) {
-            return PSI_ELEMENT_PROTOCOL + resolved;
+            return DocumentationManager.PSI_ELEMENT_PROTOCOL + resolved;
           }
 
           String originFile = ourAnchorsuffix.matcher(origin).replaceAll("");
@@ -140,7 +141,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
         protected String convertReference(String root, String href) {
           if (StringUtil.startsWithChar(href, '#')) {
-            return DOC_ELEMENT_PROTOCOL + root + href;
+            return DocumentationManager.DOC_ELEMENT_PROTOCOL + root + href;
           }
 
           if (root.startsWith("file://") && SystemInfo.isWindows) {
@@ -149,7 +150,6 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
           return doAnnihilate(ourHTMLFilesuffix.matcher(root).replaceAll("/") + href);
         }
       }
-
       };
 
       @Override
@@ -247,7 +247,6 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
         }
         result.append(HTML_CLOSE);
       }
-
     };
 
     for (String docURL : findUrls(elementToShowDoc)) {
@@ -322,7 +321,7 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
   @NotNull
   public static PsiElement findTopLevelNavigationElement(JSQualifiedNamedElement element) {
-    if(element.getName() == null) return element;
+    if (element.getName() == null) return element;
 
     final Ref<JSQualifiedNamedElement> withAsdoc = new Ref<JSQualifiedNamedElement>();
     final PsiElement sourceElement =
