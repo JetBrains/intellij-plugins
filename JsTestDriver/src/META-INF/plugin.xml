@@ -45,7 +45,7 @@
     <configurationProducer implementation="com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer"/>
     <toolWindow id="JsTestDriver Server" anchor="bottom" icon="/com/google/jstestdriver/idea/icons/toolWindowTestDriver.png"
                 factoryClass="com.google.jstestdriver.idea.server.ui.JstdToolWindow" canCloseContents="false"/>
-    <fileBasedIndex implementation="com.google.jstestdriver.idea.JstdEmptyIndex"/>
+    <fileBasedIndex implementation="com.google.jstestdriver.idea.JstdConfigFileIndex"/>
   </extensions>
 
   <change-notes>
