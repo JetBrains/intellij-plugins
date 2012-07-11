@@ -53,7 +53,7 @@ public class TargetPlayerUtils {
   }
 
   @NotNull
-  private static String getMaximumVersion(final String[] versions) {
+  public static String getMaximumVersion(final String[] versions) {
     String version = versions.length > 0 ? versions[0] : "";
     for (int i = 1; i < versions.length; i++) {
       if (StringUtil.compareVersionNumbers(versions[i], version) > 0) {

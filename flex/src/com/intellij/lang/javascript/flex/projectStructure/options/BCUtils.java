@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
@@ -119,7 +120,7 @@ public class BCUtils {
   }
 
   /**
-   * If <code>LinkageType.Default</code> is returned then use {@link #getDefaultFrameworkLinkage(BuildConfigurationNature)} to get real value.
+   * If <code>LinkageType.Default</code> is returned then use {@link #getDefaultFrameworkLinkage(String, BuildConfigurationNature)} to get real value.
    *
    * @return <code>null</code> if entry should not be included at all
    */
@@ -347,9 +348,14 @@ public class BCUtils {
         });
 
         final Object selectedItem = targetPlayerCombo.getSelectedItem();
-        targetPlayerCombo.setModel(new DefaultComboBoxModel(ArrayUtil.toStringArray(availablePlayers)));
-        if (selectedItem != null) {
+        final String[] availablePlayersArray = ArrayUtil.toStringArray(availablePlayers);
+        targetPlayerCombo.setModel(new DefaultComboBoxModel(availablePlayersArray));
+        //noinspection SuspiciousMethodCalls
+        if (selectedItem != null && availablePlayers.contains(selectedItem)) {
           targetPlayerCombo.setSelectedItem(selectedItem);
+        }
+        else {
+          targetPlayerCombo.setSelectedItem(TargetPlayerUtils.getMaximumVersion(availablePlayersArray));
         }
       }
     }

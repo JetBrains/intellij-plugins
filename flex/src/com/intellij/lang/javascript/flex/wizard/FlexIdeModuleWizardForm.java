@@ -26,20 +26,26 @@ public class FlexIdeModuleWizardForm {
   private NonFocusableCheckBox myPureActionScriptCheckBox;
   private JComboBox myOutputTypeCombo;
 
+  private JLabel myTargetDevicesLabel;
+  private JCheckBox myAndroidCheckBox;
+  private JCheckBox myIOSCheckBox;
+
+  private JLabel mySdkLabel;
+  private FlexSdkComboBoxWithBrowseButton mySdkCombo;
+
   private JLabel myTargetPlayerLabel;
   private JComboBox myTargetPlayerCombo;
 
   private JCheckBox mySampleAppCheckBox;
   private JTextField mySampleAppTextField;
+
   private JCheckBox myHtmlWrapperCheckBox;
   private JCheckBox myEnableHistoryCheckBox;
   private JCheckBox myCheckPlayerVersionCheckBox;
   private JCheckBox myExpressInstallCheckBox;
-  private FlexSdkComboBoxWithBrowseButton mySdkCombo;
-  private JLabel mySdkLabel;
 
-  private boolean myClassNameChangedByUser;
-  private boolean mySettingModuleNameFromCode;
+  private boolean mySampleAppNameNameChangedByUser;
+  private boolean mySettingSampleAppNameFromCode;
 
   public FlexIdeModuleWizardForm() {
     mySdkLabel.setLabelFor(mySdkCombo.getChildComponent());
@@ -68,19 +74,19 @@ public class FlexIdeModuleWizardForm {
     myPureActionScriptCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         final String sampleApp = mySampleAppTextField.getText().trim();
-        if (sampleApp.endsWith(".as") || sampleApp.endsWith("mxml")) {
-          mySettingModuleNameFromCode = true;
+        if (sampleApp.endsWith(".as") || sampleApp.endsWith(".mxml")) {
+          mySettingSampleAppNameFromCode = true;
           mySampleAppTextField
             .setText(FileUtil.getNameWithoutExtension(sampleApp) + (myPureActionScriptCheckBox.isSelected() ? ".as" : ".mxml"));
-          mySettingModuleNameFromCode = false;
+          mySettingSampleAppNameFromCode = false;
         }
       }
     });
 
     mySampleAppTextField.getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(final DocumentEvent e) {
-        if (!mySettingModuleNameFromCode) {
-          myClassNameChangedByUser = true;
+        if (!mySettingSampleAppNameFromCode) {
+          mySampleAppNameNameChangedByUser = true;
         }
       }
     });
@@ -101,6 +107,8 @@ public class FlexIdeModuleWizardForm {
     myTargetPlayerCombo.setSelectedItem(TargetPlatform.Web);
     myPureActionScriptCheckBox.setSelected(false);
     myOutputTypeCombo.setSelectedItem(OutputType.Application);
+    myAndroidCheckBox.setSelected(true);
+    myIOSCheckBox.setSelected(true);
     BCUtils.updateAvailableTargetPlayers(mySdkCombo.getSelectedSdk(), myTargetPlayerCombo);
     mySampleAppCheckBox.setSelected(true);
     onModuleNameChanged(moduleName);
@@ -109,7 +117,7 @@ public class FlexIdeModuleWizardForm {
     myCheckPlayerVersionCheckBox.setSelected(true);
     myExpressInstallCheckBox.setSelected(true);
 
-    myClassNameChangedByUser = false;
+    mySampleAppNameNameChangedByUser = false;
     updateControls();
   }
 
@@ -117,16 +125,35 @@ public class FlexIdeModuleWizardForm {
     final Sdk sdk = mySdkCombo.getSelectedSdk();
     final boolean sdkSet = sdk != null;
     final boolean web = myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Web;
+    final boolean mobile = myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Mobile;
     final boolean app = myOutputTypeCombo.getSelectedItem() == OutputType.Application;
 
     final boolean createSampleAppWasEnabled = mySampleAppCheckBox.isEnabled();
     final boolean createHtmlWrapperWasEnabled = myHtmlWrapperCheckBox.isEnabled();
+    final boolean targetDeviceWasEnabled = myTargetDevicesLabel.isEnabled();
+
+    myTargetDevicesLabel.setEnabled(mobile && app);
+    myAndroidCheckBox.setEnabled(mobile && app);
+    myIOSCheckBox.setEnabled(mobile && app);
 
     myTargetPlayerLabel.setEnabled(web && sdkSet);
     myTargetPlayerCombo.setEnabled(web && sdkSet);
+
     mySampleAppCheckBox.setEnabled(app && sdkSet);
     mySampleAppTextField.setEnabled(app && sdkSet);
+
     myHtmlWrapperCheckBox.setEnabled(web && app && sdkSet);
+
+    if (myTargetDevicesLabel.isEnabled() && !targetDeviceWasEnabled) {
+      myAndroidCheckBox.setSelected(true);
+      myIOSCheckBox.setSelected(true);
+    }
+
+    if (!myTargetDevicesLabel.isEnabled()) {
+      // disabled but checked for mobile library
+      myAndroidCheckBox.setSelected(mobile);
+      myIOSCheckBox.setSelected(mobile);
+    }
 
     if (!mySampleAppCheckBox.isEnabled() || !createSampleAppWasEnabled) {
       mySampleAppCheckBox.setSelected(mySampleAppCheckBox.isEnabled());
@@ -147,6 +174,8 @@ public class FlexIdeModuleWizardForm {
     moduleBuilder.setTargetPlatform((TargetPlatform)myTargetPlatformCombo.getSelectedItem());
     moduleBuilder.setPureActionScript(myPureActionScriptCheckBox.isSelected());
     moduleBuilder.setOutputType((OutputType)myOutputTypeCombo.getSelectedItem());
+    moduleBuilder.setAndroidEnabled(myAndroidCheckBox.isSelected());
+    moduleBuilder.setIOSEnabled(myIOSCheckBox.isSelected());
     moduleBuilder.setFlexSdk(mySdkCombo.getSelectedSdk());
     moduleBuilder.setTargetPlayer((String)myTargetPlayerCombo.getSelectedItem());
     moduleBuilder.setCreateSampleApp(mySampleAppCheckBox.isEnabled() && mySampleAppCheckBox.isSelected());
@@ -157,7 +186,7 @@ public class FlexIdeModuleWizardForm {
   }
 
   public void onModuleNameChanged(final String moduleName) {
-    if (!myClassNameChangedByUser) {
+    if (!mySampleAppNameNameChangedByUser) {
       final StringBuilder builder = new StringBuilder();
       for (int i = 0; i < moduleName.length(); i++) {
         final char ch = moduleName.charAt(i);
@@ -174,9 +203,9 @@ public class FlexIdeModuleWizardForm {
       builder.replace(0, 1, String.valueOf(Character.toUpperCase(builder.charAt(0))));
       builder.append(myPureActionScriptCheckBox.isSelected() ? ".as" : ".mxml");
 
-      mySettingModuleNameFromCode = true;
+      mySettingSampleAppNameFromCode = true;
       mySampleAppTextField.setText(builder.toString());
-      mySettingModuleNameFromCode = false;
+      mySettingSampleAppNameFromCode = false;
     }
   }
 

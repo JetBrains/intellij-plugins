@@ -40,6 +40,8 @@ public class FlexModuleBuilder extends ModuleBuilder {
   private TargetPlatform myTargetPlatform = TargetPlatform.Web;
   private boolean isPureActionScript = false;
   private OutputType myOutputType = OutputType.Application;
+  private boolean myAndroidEnabled;
+  private boolean myIOSEnabled;
   private Sdk myFlexSdk;
   private String myTargetPlayer;
   private boolean myCreateSampleApp;
@@ -63,6 +65,14 @@ public class FlexModuleBuilder extends ModuleBuilder {
 
   public void setOutputType(final OutputType outputType) {
     myOutputType = outputType;
+  }
+
+  public void setAndroidEnabled(final boolean enabled) {
+    myAndroidEnabled = enabled;
+  }
+
+  public void setIOSEnabled(final boolean enabled) {
+    myIOSEnabled = enabled;
   }
 
   public void setFlexSdk(final Sdk flexSdk) {
@@ -165,8 +175,10 @@ public class FlexModuleBuilder extends ModuleBuilder {
           bc.getAirDesktopPackagingOptions().setPackageFileName(className);
         }
         else if (nature.isMobilePlatform()) {
-          bc.getAndroidPackagingOptions().setEnabled(true);
+          bc.getAndroidPackagingOptions().setEnabled(myAndroidEnabled);
           bc.getAndroidPackagingOptions().setPackageFileName(className);
+
+          bc.getIosPackagingOptions().setEnabled(myIOSEnabled);
           bc.getIosPackagingOptions().setPackageFileName(className);
         }
       }
@@ -180,8 +192,10 @@ public class FlexModuleBuilder extends ModuleBuilder {
           bc.getAirDesktopPackagingOptions().setPackageFileName(fileName);
         }
         else if (nature.isMobilePlatform()) {
-          bc.getAndroidPackagingOptions().setEnabled(true);
+          bc.getAndroidPackagingOptions().setEnabled(myAndroidEnabled);
           bc.getAndroidPackagingOptions().setPackageFileName(fileName);
+
+          bc.getIosPackagingOptions().setEnabled(myIOSEnabled);
           bc.getIosPackagingOptions().setPackageFileName(fileName);
         }
       }
