@@ -39,12 +39,13 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
-    <fileTypeFactory implementation="com.google.jstestdriver.idea.config.JstdConfigFileLoader"/>
+    <fileTypeFactory implementation="com.google.jstestdriver.idea.config.JstdConfigFileTypeFactory"/>
     <configurationType implementation="com.google.jstestdriver.idea.execution.JstdConfigurationType"/>
     <programRunner implementation="com.google.jstestdriver.idea.execution.JstdClientRunner"/>
     <configurationProducer implementation="com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer"/>
     <toolWindow id="JsTestDriver Server" anchor="bottom" icon="/com/google/jstestdriver/idea/icons/toolWindowTestDriver.png"
                 factoryClass="com.google.jstestdriver.idea.server.ui.JstdToolWindow" canCloseContents="false"/>
+    <fileBasedIndex implementation="com.google.jstestdriver.idea.config.JstdConfigFileIndex"/>
   </extensions>
 
   <change-notes>
