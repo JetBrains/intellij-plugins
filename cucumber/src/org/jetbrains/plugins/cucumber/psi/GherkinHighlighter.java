@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.psi;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.colors.TextAttributesKeyDefaults;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import org.jetbrains.annotations.NonNls;
 
@@ -14,16 +15,16 @@ import java.awt.*;
 public class GherkinHighlighter {
   @NonNls
   static final String COMMENT_ID = "GHERKIN_COMMENT";
-  public static final TextAttributes COMMENT_DEFAULT_ATTRS = SyntaxHighlighterColors.DOC_COMMENT.getDefaultAttributes().clone();
-  public static final TextAttributesKey COMMENT = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributes COMMENT_DEFAULT_ATTRS = TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.DOC_COMMENT).clone();
+  public static final TextAttributesKey COMMENT = TextAttributesKeyDefaults.createTextAttributesKey(
     COMMENT_ID,
     COMMENT_DEFAULT_ATTRS
   );
 
   @NonNls
   static final String KEYWORD_ID = "GHERKIN_KEYWORD";
-  public static final TextAttributes KEYWORD_DEFAULT_ATTRS = SyntaxHighlighterColors.KEYWORD.getDefaultAttributes().clone();
-  public static final TextAttributesKey KEYWORD = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributes KEYWORD_DEFAULT_ATTRS = TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.KEYWORD).clone();
+  public static final TextAttributesKey KEYWORD = TextAttributesKeyDefaults.createTextAttributesKey(
     KEYWORD_ID,
     KEYWORD_DEFAULT_ATTRS
   );
@@ -32,20 +33,20 @@ public class GherkinHighlighter {
   @NonNls
   static final String GHERKIN_TABLE_HEADER_CELL_ID = "GHERKIN_TABLE_HEADER_CELL";
   static final String GHERKIN_OUTLINE_PARAMETER_SUBSTITUTION_ID = "GHERKIN_OUTLINE_PARAMETER_SUBSTITUTION";
-  public static final TextAttributes PARAMETER_DEFAULT_ATTRS = HighlighterColors.TEXT.getDefaultAttributes().clone();
-  public static final TextAttributesKey TABLE_HEADER_CELL = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributes PARAMETER_DEFAULT_ATTRS = TextAttributesKeyDefaults.getDefaultAttributes(HighlighterColors.TEXT).clone();
+  public static final TextAttributesKey TABLE_HEADER_CELL = TextAttributesKeyDefaults.createTextAttributesKey(
     GHERKIN_TABLE_HEADER_CELL_ID,
     PARAMETER_DEFAULT_ATTRS
   );
-  public static final TextAttributesKey OUTLINE_PARAMETER_SUBSTITUTION = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributesKey OUTLINE_PARAMETER_SUBSTITUTION = TextAttributesKeyDefaults.createTextAttributesKey(
     GHERKIN_OUTLINE_PARAMETER_SUBSTITUTION_ID,
     PARAMETER_DEFAULT_ATTRS
   );
 
   @NonNls
   static final String GHERKIN_TAG_ID = "GHERKIN_TAG";
-  public static final TextAttributes TAG_ATTRS = HighlighterColors.TEXT.getDefaultAttributes().clone();
-  public static final TextAttributesKey TAG = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributes TAG_ATTRS = TextAttributesKeyDefaults.getDefaultAttributes(HighlighterColors.TEXT).clone();
+  public static final TextAttributesKey TAG = TextAttributesKeyDefaults.createTextAttributesKey(
     GHERKIN_TAG_ID,
     TAG_ATTRS
   );
@@ -54,30 +55,30 @@ public class GherkinHighlighter {
   static final String GHERKIN_TABLE_CELL_ID = "GHERKIN_TABLE_CELL";
   @NonNls
   static final String GHERKIN_REGEXP_PARAMETER_ID = "GHERKIN_REGEXP_PARAMETER";
-  public static final TextAttributes HEREDOC_CONTENT_DEFAULT_ATTRS = HighlighterColors.TEXT.getDefaultAttributes().clone();
-  public static final TextAttributesKey TABLE_CELL = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributes HEREDOC_CONTENT_DEFAULT_ATTRS = TextAttributesKeyDefaults.getDefaultAttributes(HighlighterColors.TEXT).clone();
+  public static final TextAttributesKey TABLE_CELL = TextAttributesKeyDefaults.createTextAttributesKey(
     GHERKIN_TABLE_CELL_ID,
     HEREDOC_CONTENT_DEFAULT_ATTRS
   );
 
-  public static final TextAttributesKey REGEXP_PARAMETER = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributesKey REGEXP_PARAMETER = TextAttributesKeyDefaults.createTextAttributesKey(
     GHERKIN_REGEXP_PARAMETER_ID,
     HEREDOC_CONTENT_DEFAULT_ATTRS
   );
 
   @NonNls
   static final String GHERKIN_PYSTRING_ID = "GHERKIN_PYSTRING";
-  public static final TextAttributes GHERKIN_PYSTRING_ATTRS = HighlighterColors.TEXT.getDefaultAttributes().clone();
-  public static final TextAttributesKey PYSTRING = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributes GHERKIN_PYSTRING_ATTRS = TextAttributesKeyDefaults.getDefaultAttributes(HighlighterColors.TEXT).clone();
+  public static final TextAttributesKey PYSTRING = TextAttributesKeyDefaults.createTextAttributesKey(
     GHERKIN_PYSTRING_ID,
     GHERKIN_PYSTRING_ATTRS
   );
 
-  public static final TextAttributesKey TEXT = TextAttributesKey.createTextAttributesKey("GHERKIN_TEXT",
-                                                                                         HighlighterColors.TEXT.getDefaultAttributes());
+  public static final TextAttributesKey TEXT = TextAttributesKeyDefaults.createTextAttributesKey("GHERKIN_TEXT",
+                                                                                         TextAttributesKeyDefaults.getDefaultAttributes(HighlighterColors.TEXT));
 
   public static final TextAttributesKey PIPE =
-    TextAttributesKey.createTextAttributesKey("GHERKIN_TABLE_PIPE", KEYWORD.getDefaultAttributes());
+    TextAttributesKeyDefaults.createTextAttributesKey("GHERKIN_TABLE_PIPE", TextAttributesKeyDefaults.getDefaultAttributes(KEYWORD));
 
   static {
     //Init additional color, font types and effects
