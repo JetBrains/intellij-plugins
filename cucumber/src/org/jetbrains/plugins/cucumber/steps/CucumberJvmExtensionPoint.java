@@ -80,4 +80,6 @@ public interface CucumberJvmExtensionPoint {
 
   void loadStepDefinitionRootsFromLibraries(Module module, final boolean excludeAlreadyLoadedRoots,
                                             final List<PsiDirectory> newAbstractStepDefinitionsRoots, @NotNull final Set<String> processedStepDirectories);
+
+  boolean isInStepDefinitionDirectory(@NotNull final PsiDirectory dir);
 }
