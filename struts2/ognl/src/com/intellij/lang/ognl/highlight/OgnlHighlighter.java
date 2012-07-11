@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.JspHighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.colors.TextAttributesKeyDefaults;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.StringEscapesTokenTypes;
 import com.intellij.psi.TokenType;
@@ -54,49 +55,49 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
     return pack(BACKGROUND, keys1.get(iElementType));
   }
 
-  public static final TextAttributesKey BACKGROUND = TextAttributesKey.createTextAttributesKey(
-      "OGNL.BACKGROUND",
-      JspHighlighterColors.JSP_ACTION_AND_DIRECTIVE_BACKGROUND.getDefaultAttributes());
+  public static final TextAttributesKey BACKGROUND = TextAttributesKeyDefaults.createTextAttributesKey(
+    "OGNL.BACKGROUND",
+    TextAttributesKeyDefaults.getDefaultAttributes(JspHighlighterColors.JSP_ACTION_AND_DIRECTIVE_BACKGROUND));
 
-  public static final TextAttributesKey EXPRESSION = TextAttributesKey.createTextAttributesKey(
-      "OGNL.EXPRESSION",
-      SyntaxHighlighterColors.KEYWORD.getDefaultAttributes());
+  public static final TextAttributesKey EXPRESSION = TextAttributesKeyDefaults.createTextAttributesKey(
+    "OGNL.EXPRESSION",
+    TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.KEYWORD));
 
-  public static final TextAttributesKey BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(
-      "OGNL.BAD_CHARACTER",
-      HighlighterColors.BAD_CHARACTER.getDefaultAttributes());
+  public static final TextAttributesKey BAD_CHARACTER = TextAttributesKeyDefaults.createTextAttributesKey(
+    "OGNL.BAD_CHARACTER",
+    TextAttributesKeyDefaults.getDefaultAttributes(HighlighterColors.BAD_CHARACTER));
 
-  public static final TextAttributesKey IDENTIFIER = TextAttributesKey.createTextAttributesKey(
-      "OGNL.IDENTIFIER",
-      CodeInsightColors.LOCAL_VARIABLE_ATTRIBUTES.getDefaultAttributes());
+  public static final TextAttributesKey IDENTIFIER = TextAttributesKeyDefaults.createTextAttributesKey(
+    "OGNL.IDENTIFIER",
+    TextAttributesKeyDefaults.getDefaultAttributes(CodeInsightColors.LOCAL_VARIABLE_ATTRIBUTES));
 
-  public static final TextAttributesKey KEYWORDS = TextAttributesKey.createTextAttributesKey(
-      "OGNL.KEYWORDS",
-      SyntaxHighlighterColors.KEYWORD.getDefaultAttributes());
+  public static final TextAttributesKey KEYWORDS = TextAttributesKeyDefaults.createTextAttributesKey(
+    "OGNL.KEYWORDS",
+    TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.KEYWORD));
 
-  public static final TextAttributesKey OPERATIONS = TextAttributesKey.createTextAttributesKey(
-      "OGNL.OPERATIONS",
-      SyntaxHighlighterColors.OPERATION_SIGN.getDefaultAttributes());
+  public static final TextAttributesKey OPERATIONS = TextAttributesKeyDefaults.createTextAttributesKey(
+    "OGNL.OPERATIONS",
+    TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.OPERATION_SIGN));
 
-  public static final TextAttributesKey NUMBER = TextAttributesKey.createTextAttributesKey(
-      "OGNL.NUMBER",
-      SyntaxHighlighterColors.NUMBER.getDefaultAttributes());
+  public static final TextAttributesKey NUMBER = TextAttributesKeyDefaults.createTextAttributesKey(
+    "OGNL.NUMBER",
+    TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.NUMBER));
 
-  public static final TextAttributesKey STRING = TextAttributesKey.createTextAttributesKey(
-      "OGNL.STRING",
-      SyntaxHighlighterColors.STRING.getDefaultAttributes());
+  public static final TextAttributesKey STRING = TextAttributesKeyDefaults.createTextAttributesKey(
+    "OGNL.STRING",
+    TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.STRING));
 
-  public static final TextAttributesKey BRACKETS = TextAttributesKey.createTextAttributesKey(
-      "OGNL.BRACKETS",
-      SyntaxHighlighterColors.BRACKETS.getDefaultAttributes());
+  public static final TextAttributesKey BRACKETS = TextAttributesKeyDefaults.createTextAttributesKey(
+    "OGNL.BRACKETS",
+    TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.BRACKETS));
 
-  public static final TextAttributesKey PARENTHS = TextAttributesKey.createTextAttributesKey(
-      "OGNL.PARENTHS",
-      SyntaxHighlighterColors.PARENTHS.getDefaultAttributes());
+  public static final TextAttributesKey PARENTHS = TextAttributesKeyDefaults.createTextAttributesKey(
+    "OGNL.PARENTHS",
+    TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.PARENTHS));
 
-  public static final TextAttributesKey BRACES = TextAttributesKey.createTextAttributesKey(
-      "OGNL.BRACES",
-      SyntaxHighlighterColors.BRACES.getDefaultAttributes());
+  public static final TextAttributesKey BRACES = TextAttributesKeyDefaults.createTextAttributesKey(
+    "OGNL.BRACES",
+    TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.BRACES));
 
   static {
     keys1 = new HashMap<IElementType, TextAttributesKey>();
