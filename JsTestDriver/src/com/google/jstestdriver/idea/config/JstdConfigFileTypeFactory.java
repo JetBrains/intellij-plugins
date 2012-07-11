@@ -36,14 +36,15 @@ public class JstdConfigFileTypeFactory extends FileTypeFactory {
   }
 
   /**
-   * Accepts some predefined file names that match a following pattern:
-   * (prefix_1 | prefix_2 | ... | prefix_N)*(suffix_1 | suffix_2 | ... | suffix_N).
-   *
-   * The motivation is that configuration file name may have some common extension ('*.conf' for instance).
-   * But in that case configuration file name should start with one of predefined prefixes.
-   *
+   * Accepts file names that match a following pattern:
+   * (prefix_1 | prefix_2 | ... | prefix_N).*(suffix_1 | suffix_2 | ... | suffix_N).
+   * <p/>
+   * The motivation is that configuration file name may have some common extension ('*.conf', '*.yml', etc),
+   * that could be applicable not only for JsTestDriver configuration files.
+   * That is why matching is restricted by requiring file names to be started with one of predefined prefixes.
+   * <p/>
    * For instance following file names will be accepted:
-   *    'jsTestDriver.conf', 'jsTestDriver.yaml', * 'jstd.yml', 'jsTestDriver-coverage.conf'.
+   *    'jsTestDriver.conf', 'jsTestDriver.yaml', 'jstd.yml', 'jsTestDriver-coverage.conf'.
    */
   private static class JstdPredefinedFileNameMatcher implements FileNameMatcher {
 
@@ -70,9 +71,7 @@ public class JstdConfigFileTypeFactory extends FileTypeFactory {
       }
       for (String prefix : PREFIXES) {
         if (fileName.startsWith(prefix)) {
-          if (hasSuitableExtension(fileName)) {
-            return true;
-          }
+          return hasSuitableExtension(fileName);
         }
       }
       return false;
@@ -82,7 +81,7 @@ public class JstdConfigFileTypeFactory extends FileTypeFactory {
     @Override
     public String getPresentableString() {
       Joiner joiner = Joiner.on("|");
-      return "(" + joiner.join(PREFIXES) + ")*(" + joiner.join(DOT_SUFFIXES) + ")";
+      return "(" + joiner.join(PREFIXES) + ").*(" + joiner.join(DOT_SUFFIXES) + ")";
     }
 
     private static boolean hasSuitableExtension(@NotNull String fileName) {
