@@ -30,7 +30,6 @@ import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStr
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Pair;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
@@ -187,28 +186,41 @@ public class FlexIdeBCConfigurator {
         final AddBuildConfigurationDialog dialog =
           new AddBuildConfigurationDialog(myConfigEditor.getProject(), FlexBundle.message("change.bc.type.title"),
                                           Collections.<String>emptyList(), oldNature, false);
-        dialog.setBCNameEditable(false);
-        dialog.setBCName(bc.getName());
+        dialog.reset(bc.getName(), bc.getAndroidPackagingOptions().isEnabled(), bc.getIosPackagingOptions().isEnabled());
         dialog.show();
-        if (dialog.isOK()) {
-          final BuildConfigurationNature newNature = dialog.getNature();
-          if (newNature.equals(oldNature)) return;
+        if (!dialog.isOK()) return;
 
-          bc.setNature(newNature);
-          fixOutputFileExtension(bc);
-          if (newNature.targetPlatform != oldNature.targetPlatform || newNature.outputType != oldNature.outputType) {
-            // set package names only if corresponding tabs were not applicable before
-            updatePackageFileName(bc, PathUtil.suggestFileName(bc.getName()));
+        final BuildConfigurationNature newNature = dialog.getNature();
+        if (newNature.equals(oldNature)) {
+          if (newNature.isApp() && newNature.isMobilePlatform()) {
+            bc.getAndroidPackagingOptions().setEnabled(dialog.isAndroidEnabled());
+            bc.getIosPackagingOptions().setEnabled(dialog.isIOSEnabled());
+            compositeConfigurable.reset();
           }
-          FlexProjectConfigurationEditor.resetNonApplicableValuesToDefaults(bc);
 
-          final FlexIdeBCConfigurable bcConfigurable = FlexIdeBCConfigurable.unwrap(compositeConfigurable);
-          bcConfigurable.createChildConfigurables();
-          bcConfigurable.updateTabs(compositeConfigurable);
-          compositeConfigurable.reset();
-
-          myEventDispatcher.getMulticaster().natureChanged(bcConfigurable);
+          return;
         }
+
+        bc.setNature(newNature);
+        fixOutputFileExtension(bc);
+        if (newNature.targetPlatform != oldNature.targetPlatform || newNature.outputType != oldNature.outputType) {
+          // set package names only if corresponding tabs were not applicable before
+          updatePackageFileName(bc, PathUtil.suggestFileName(bc.getName()));
+        }
+
+        if (newNature.isApp() && newNature.isMobilePlatform()) {
+          bc.getAndroidPackagingOptions().setEnabled(dialog.isAndroidEnabled());
+          bc.getIosPackagingOptions().setEnabled(dialog.isIOSEnabled());
+        }
+
+        FlexProjectConfigurationEditor.resetNonApplicableValuesToDefaults(bc);
+
+        final FlexIdeBCConfigurable bcConfigurable = FlexIdeBCConfigurable.unwrap(compositeConfigurable);
+        bcConfigurable.createChildConfigurables();
+        bcConfigurable.updateTabs(compositeConfigurable);
+        compositeConfigurable.reset();
+
+        myEventDispatcher.getMulticaster().natureChanged(bcConfigurable);
       }
     };
   }
@@ -308,16 +320,17 @@ public class FlexIdeBCConfigurator {
       return;
     }
 
-    Pair<String, BuildConfigurationNature> nameAndNature =
-      promptForCreation(module, FlexBundle.message("add.build.configuration.title", module.getName()), BuildConfigurationNature.DEFAULT);
-    if (nameAndNature == null) {
-      return;
-    }
+    final String title = FlexBundle.message("add.build.configuration.title", module.getName());
+    final AddBuildConfigurationDialog dialog =
+      new AddBuildConfigurationDialog(module.getProject(), title, getUsedNames(module), BuildConfigurationNature.DEFAULT, true);
+    dialog.show();
+    if (!dialog.isOK()) return;
 
     final ModifiableFlexIdeBuildConfiguration bc = myConfigEditor.createConfiguration(module);
-    final String bcName = nameAndNature.first;
+    final String bcName = dialog.getBCName();
     final String fileName = PathUtil.suggestFileName(bcName);
-    final BuildConfigurationNature nature = nameAndNature.second;
+    final BuildConfigurationNature nature = dialog.getNature();
+
     bc.setName(bcName);
     bc.setNature(nature);
 
@@ -325,6 +338,11 @@ public class FlexIdeBCConfigurator {
     bc.setOutputFileName(fileName + (bc.getOutputType() == OutputType.Library ? ".swc" : ".swf"));
     bc.setOutputFolder(someExistingConfig.getOutputFolder());
     updatePackageFileName(bc, fileName);
+
+    if (nature.isApp() && nature.isMobilePlatform()) {
+      bc.getAndroidPackagingOptions().setEnabled(dialog.isAndroidEnabled());
+      bc.getIosPackagingOptions().setEnabled(dialog.isIOSEnabled());
+    }
 
     final SdkEntry sdkEntry = someExistingConfig.getDependencies().getSdkEntry();
     final SdkEntry newSdkEntry;
@@ -355,20 +373,27 @@ public class FlexIdeBCConfigurator {
 
     FlexIdeBCConfigurable unwrapped = FlexIdeBCConfigurable.unwrap(configurable);
     final String title = FlexBundle.message("copy.build.configuration", existingBC.getName(), unwrapped.getModule().getName());
-    Pair<String, BuildConfigurationNature> nameAndNature = promptForCreation(unwrapped.getModule(), title, existingBC.getNature());
-    if (nameAndNature == null) {
-      return;
-    }
+    Module module = unwrapped.getModule();
+    AddBuildConfigurationDialog dialog =
+      new AddBuildConfigurationDialog(module.getProject(), title, getUsedNames(module), existingBC.getNature(), true);
+    dialog.reset("", existingBC.getAndroidPackagingOptions().isEnabled(), existingBC.getIosPackagingOptions().isEnabled());
+    dialog.show();
+    if (!dialog.isOK()) return;
 
-    final String newBCName = nameAndNature.first;
+    final String newBCName = dialog.getBCName();
     final String fileName = PathUtil.suggestFileName(newBCName);
-    final BuildConfigurationNature newBCNature = nameAndNature.second;
+    final BuildConfigurationNature newNature = dialog.getNature();
 
-    ModifiableFlexIdeBuildConfiguration newBC = myConfigEditor.copyConfiguration(existingBC, newBCNature);
+    ModifiableFlexIdeBuildConfiguration newBC = myConfigEditor.copyConfiguration(existingBC, newNature);
     newBC.setName(newBCName);
 
     newBC.setOutputFileName(fileName + (newBC.getOutputType() == OutputType.Library ? ".swc" : ".swf"));
     updatePackageFileName(newBC, fileName);
+
+    if (newNature.isApp() && newNature.isMobilePlatform()) {
+      newBC.getAndroidPackagingOptions().setEnabled(dialog.isAndroidEnabled());
+      newBC.getIosPackagingOptions().setEnabled(dialog.isIOSEnabled());
+    }
 
     createConfigurableNode(newBC, unwrapped.getModule(), treeNodeNameUpdater);
   }
@@ -386,16 +411,6 @@ public class FlexIdeBCConfigurator {
     }
   }
 
-
-  @Nullable
-  private Pair<String, BuildConfigurationNature> promptForCreation(Module module,
-                                                                   String dialogTitle,
-                                                                   BuildConfigurationNature defaultNature) {
-    Project project = module.getProject();
-    AddBuildConfigurationDialog dialog = new AddBuildConfigurationDialog(project, dialogTitle, getUsedNames(module), defaultNature, true);
-    dialog.show();
-    return dialog.isOK() ? Pair.create(dialog.getName(), dialog.getNature()) : null;
-  }
 
   private void createConfigurableNode(ModifiableFlexIdeBuildConfiguration bc, Module module, Runnable treeNodeNameUpdater) {
     CompositeConfigurable wrapped = createBcConfigurable(module, bc, treeNodeNameUpdater);

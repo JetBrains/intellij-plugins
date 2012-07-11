@@ -17,6 +17,8 @@ import com.intellij.util.PlatformIcons;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
@@ -25,18 +27,22 @@ import java.util.Collection;
 public class AddBuildConfigurationDialog extends DialogWrapper {
 
   private JPanel myMainPanel;
-  private JTextField myNameTextField;
+  private JTextField myBCNameTextField;
+  private JLabel myUpDownHint;
   private JComboBox myTargetPlatformCombo;
   private NonFocusableCheckBox myPureActionScriptCheckBox;
   private JComboBox myOutputTypeCombo;
-  private JLabel myUpDownHint;
+  private JLabel myTargetDevicesLabel;
+  private JCheckBox myAndroidCheckBox;
+  private JCheckBox myIOSCheckBox;
+
   private final Collection<String> myUsedNames;
 
   public AddBuildConfigurationDialog(final Project project,
                                      final String dialogTitle,
                                      final Collection<String> usedNames,
-                                     BuildConfigurationNature defaultNature,
-                                     boolean hintEnabled) {
+                                     final BuildConfigurationNature defaultNature,
+                                     final boolean bcNameEditable) {
     super(project);
     myUsedNames = usedNames;
     setTitle(dialogTitle);
@@ -44,7 +50,11 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
     myTargetPlatformCombo.setSelectedItem(defaultNature.targetPlatform);
     myPureActionScriptCheckBox.setSelected(defaultNature.pureAS);
     myOutputTypeCombo.setSelectedItem(defaultNature.outputType);
-    if (hintEnabled) {
+
+    myBCNameTextField.setEditable(bcNameEditable);
+    myUpDownHint.setVisible(bcNameEditable);
+
+    if (bcNameEditable) {
       myUpDownHint.setIcon(PlatformIcons.UP_DOWN_ARROWS);
       myUpDownHint.setToolTipText(FlexBundle.message("bc.dialog.up.down.tooltip"));
       final AnAction arrow = new AnAction() {
@@ -61,12 +71,32 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
       final KeyboardShortcut upShift = new KeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.SHIFT_DOWN_MASK), null);
       final KeyboardShortcut down = new KeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), null);
       final KeyboardShortcut downShift = new KeyboardShortcut(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.SHIFT_DOWN_MASK), null);
-      arrow.registerCustomShortcutSet(new CustomShortcutSet(up, down, upShift, downShift), myNameTextField);
+      arrow.registerCustomShortcutSet(new CustomShortcutSet(up, down, upShift, downShift), myBCNameTextField);
     }
-    else {
-      myUpDownHint.setVisible(false);
-    }
+
     init();
+    updateControls();
+  }
+
+  private void updateControls() {
+    final boolean mobile = myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Mobile;
+    final boolean app = myOutputTypeCombo.getSelectedItem() == OutputType.Application;
+    final boolean targetDeviceWasEnabled = myTargetDevicesLabel.isEnabled();
+
+    myTargetDevicesLabel.setEnabled(mobile && app);
+    myAndroidCheckBox.setEnabled(mobile && app);
+    myIOSCheckBox.setEnabled(mobile && app);
+
+    if (myTargetDevicesLabel.isEnabled() && !targetDeviceWasEnabled) {
+      myAndroidCheckBox.setSelected(true);
+      myIOSCheckBox.setSelected(true);
+    }
+
+    if (!myTargetDevicesLabel.isEnabled()) {
+      // disabled but checked for mobile library
+      myAndroidCheckBox.setSelected(mobile);
+      myIOSCheckBox.setSelected(mobile);
+    }
   }
 
   private void scrollBy(final int delta, boolean shiftPressed) {
@@ -86,18 +116,26 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
   private void initCombos() {
     TargetPlatform.initCombo(myTargetPlatformCombo);
     OutputType.initCombo(myOutputTypeCombo);
+
+    final ActionListener actionListener = new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        updateControls();
+      }
+    };
+
+    myTargetPlatformCombo.addActionListener(actionListener);
+    myOutputTypeCombo.addActionListener(actionListener);
   }
 
-  public void setBCNameEditable(final boolean editable) {
-    myNameTextField.setEditable(editable);
-  }
-
-  public void setBCName(final String name) {
-    myNameTextField.setText(name);
+  public void reset(final String bcName, final boolean androidEnabled, final boolean iosEnabled) {
+    myBCNameTextField.setText(bcName);
+    myAndroidCheckBox.setSelected(androidEnabled);
+    myIOSCheckBox.setSelected(iosEnabled);
+    updateControls();
   }
 
   public JComponent getPreferredFocusedComponent() {
-    return myNameTextField.isEditable() ? myNameTextField : myTargetPlatformCombo;
+    return myBCNameTextField.isEditable() ? myBCNameTextField : myTargetPlatformCombo;
   }
 
   protected JComponent createCenterPanel() {
@@ -105,23 +143,23 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
   }
 
   protected ValidationInfo doValidate() {
-    final String name = getName();
+    final String name = getBCName();
 
     if (name.isEmpty()) {
-      return new ValidationInfo("Empty name", myNameTextField);
+      return new ValidationInfo("Empty name", myBCNameTextField);
     }
 
     for (final String usedName : myUsedNames) {
       if (name.equals(usedName)) {
-        return new ValidationInfo(MessageFormat.format("Name ''{0}'' is already used", name), myNameTextField);
+        return new ValidationInfo(MessageFormat.format("Name ''{0}'' is already used", name), myBCNameTextField);
       }
     }
 
     return null;
   }
 
-  public String getName() {
-    return myNameTextField.getText().trim();
+  public String getBCName() {
+    return myBCNameTextField.getText().trim();
   }
 
   public BuildConfigurationNature getNature() {
@@ -129,6 +167,14 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
     boolean isPureAs = myPureActionScriptCheckBox.isSelected();
     OutputType outputType = (OutputType)myOutputTypeCombo.getSelectedItem();
     return new BuildConfigurationNature(targetPlatform, isPureAs, outputType);
+  }
+
+  public boolean isAndroidEnabled() {
+    return myAndroidCheckBox.isSelected();
+  }
+
+  public boolean isIOSEnabled() {
+    return myIOSCheckBox.isSelected();
   }
 }
 
