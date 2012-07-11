@@ -7,6 +7,7 @@ import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.XmlHighlighterColors;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.editor.colors.TextAttributesKeyDefaults;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
@@ -40,7 +41,7 @@ public class TemplateColorSettingsPage implements ColorSettingsPage {
   public static final TextAttributesKey TEL_BAD_CHAR = createTextAttributesKey("TEL_BAD_CHAR", HighlighterColors.BAD_CHARACTER);
 
   private static TextAttributesKey createTextAttributesKey(@NonNls String externalName, TextAttributesKey defaultTextAttr) {
-    return TextAttributesKey.createTextAttributesKey(externalName, defaultTextAttr.getDefaultAttributes());
+    return TextAttributesKeyDefaults.createTextAttributesKey(externalName, TextAttributesKeyDefaults.getDefaultAttributes(defaultTextAttr));
   }
 
   private static AttributesDescriptor createAttributesDescriptor(String displayNameKey, TextAttributesKey textAttributesKey) {
