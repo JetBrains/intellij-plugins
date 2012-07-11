@@ -24,7 +24,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public class JstdConfigFileLoader extends FileTypeFactory {
+public class JstdConfigFileTypeFactory extends FileTypeFactory {
 
   @Override
   public void createFileTypes(@NotNull FileTypeConsumer consumer) {
