@@ -5,6 +5,7 @@
 package com.intellij.tapestry.tests;
 
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.completion.impl.CamelHumpMatcher;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.javaee.ExternalResourceManagerEx;
 import com.intellij.testFramework.UsefulTestCase;
@@ -25,6 +26,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   public void testTagNameInTmlParent() throws Throwable {
+    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     initByComponent();
     addComponentToProject("subpackage.Count");
     doTestBasicCompletionVariants(
@@ -34,6 +36,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   public void testAttrNameInHtmlParent() throws Throwable {
+    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
     final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
     manager.setDefaultHtmlDoctype(XmlUtil.XHTML_URI, myFixture.getProject());
@@ -50,6 +53,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   public void testAttrNameInHtmlParent1() throws Throwable {
+    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     initByComponent();
     doTestBasicCompletionVariants("t:id", "t:type", "tabindex", "target", "title", "type");
 
@@ -72,6 +76,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   public void testAttrNameInTmlParent1() throws Throwable {
+    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     initByComponent();
     addComponentToProject("Count");
     doTestBasicCompletionVariants("class", "contenteditable", "contextmenu");
@@ -185,6 +190,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   public void testTelPropertyByGetter() throws Throwable {
+    CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     initByComponent();
     myFixture.complete(CompletionType.BASIC);
     checkResultByFile();
