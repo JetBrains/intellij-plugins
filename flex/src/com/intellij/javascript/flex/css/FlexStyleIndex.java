@@ -1,7 +1,6 @@
 package com.intellij.javascript.flex.css;
 
 import com.intellij.javascript.flex.FlexAnnotationNames;
-import com.intellij.lang.javascript.JSLanguageDialect;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.index.JSPackageIndex;
@@ -17,12 +16,12 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubTree;
-import com.intellij.psi.xml.*;
-import com.intellij.util.Processor;
+import com.intellij.psi.xml.XmlDocument;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
@@ -126,35 +125,16 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
   private static void indexMxmlFile(@NotNull final XmlFile file,
                                     @NotNull final VirtualFile virtualFile,
                                     @NotNull final Map<String, Set<FlexStyleIndexInfo>> map) {
-    final JSResolveUtil.JSInjectedFilesVisitor jsFilesVisitor = new JSResolveUtil.JSInjectedFilesVisitor() {
-      @Override
-      protected void process(JSFile file) {
-        indexAttributes(file, file.getName(), false, map);
-      }
-    };
-    final Project project = file.getProject();
-    final PsiFileFactory factory = PsiFileFactory.getInstance(project);
-    Processor<XmlTag> processor = new Processor<XmlTag>() {
-      @Override
-      public boolean process(XmlTag tag) {
-        for (XmlTagChild child : tag.getValue().getChildren()) {
-          if (child instanceof XmlText) {
-            String text = ((XmlText)child).getValue();
-            if (text != null) {
-              JSLanguageDialect dialect = JavaScriptSupportLoader.ECMA_SCRIPT_L4;
-              PsiFile dummyFile = factory.createFileFromText("dummy." + dialect.getFileExtension(), dialect, text);
-              if (dummyFile instanceof JSFile) {
-                indexAttributes(dummyFile, getQualifiedNameByMxmlFile(virtualFile, project), true, map);
-              }
-            }
-          }
-        }
-        return true;
-      }
-    };
     XmlTag rootTag = getRootTag(file);
     if (rootTag != null) {
-      FlexUtils.processMxmlTags(rootTag, jsFilesVisitor, processor);
+      final String classQName = getQualifiedNameByMxmlFile(virtualFile, file.getProject());
+      final JSResolveUtil.JSInjectedFilesVisitor jsFilesVisitor = new JSResolveUtil.JSInjectedFilesVisitor() {
+        @Override
+        protected void process(JSFile file) {
+          indexAttributes(file, classQName, true, map);
+        }
+      };
+      FlexUtils.processMxmlTags(rootTag, false, jsFilesVisitor);
     }
   }
 
@@ -178,7 +158,7 @@ public class FlexStyleIndex extends FileBasedIndexExtension<String, Set<FlexStyl
         if (JavaScriptSupportLoader.isFlexMxmFile(inputData.getFileName())) {
           PsiFile file = inputData.getPsiFile();
           VirtualFile virtualFile = inputData.getFile();
-          if (file instanceof XmlFile && virtualFile != null) {
+          if (file instanceof XmlFile) {
             indexMxmlFile((XmlFile)file, virtualFile, map);
           }
         }

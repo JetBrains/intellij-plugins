@@ -299,7 +299,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       element = parentDescriptorDeclaration;
       while (element instanceof XmlFile) {
         XmlTag rootTag = ((XmlFile)element).getDocument().getRootTag();
-        FlexUtils.processMxmlTags(rootTag, injectedFilesVisitor);
+        FlexUtils.processMxmlTags(rootTag, true, injectedFilesVisitor);
         if (result[0] != null) break;
         element = JSResolveUtil.getClassFromTagNameInMxml(rootTag.getFirstChild());
         if (element instanceof XmlBackedJSClassImpl) {

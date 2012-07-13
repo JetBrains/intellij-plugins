@@ -556,7 +556,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
           collectMyAttributes(file, map, packageToInternalDescriptors);
         }
       };
-      FlexUtils.processMxmlTags(rootTag, injectedFilesVisitor);
+      FlexUtils.processMxmlTags(rootTag, true, injectedFilesVisitor);
 
       processClassBackedTagsWithIdAttribute(rootTag, new Processor<Pair<XmlAttribute, String>>() {
         public boolean process(final Pair<XmlAttribute, String> idAttributeAndItsType) {

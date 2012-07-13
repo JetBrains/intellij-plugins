@@ -325,7 +325,7 @@ public class FlexUtils {
     });
   }
 
-  public static void processMxmlTags(final XmlTag rootTag,
+  private static void processMxmlTags(final XmlTag rootTag,
                                      final JSResolveUtil.JSInjectedFilesVisitor injectedFilesVisitor,
                                      Processor<XmlTag> processor) {
     String namespace = JSResolveUtil.findMxmlNamespace(rootTag);
@@ -335,14 +335,14 @@ public class FlexUtils {
     scriptsVisitor.go();
 
     for (XmlTag s : rootTag.findSubTags("Metadata", namespace)) {
-      //JSResolveUtil.processInjectedFileForTag(s, injectedFilesVisitor);
       processor.process(s);
     }
   }
 
-  public static void processMxmlTags(final XmlTag rootTag, final JSResolveUtil.JSInjectedFilesVisitor injectedFilesVisitor) {
+  public static void processMxmlTags(final XmlTag rootTag, boolean isPhysical,
+                                     final JSResolveUtil.JSInjectedFilesVisitor injectedFilesVisitor) {
     processMxmlTags(rootTag, injectedFilesVisitor,
-                    new XmlBackedJSClassImpl.InjectedScriptsVisitor.InjectingProcessor(injectedFilesVisitor, rootTag, true));
+                    new XmlBackedJSClassImpl.InjectedScriptsVisitor.InjectingProcessor(injectedFilesVisitor, rootTag, isPhysical));
   }
 
   public static void processMetaAttributesForClass(@NotNull PsiElement jsClass, @NotNull final JSResolveUtil.MetaDataProcessor processor) {
@@ -364,7 +364,7 @@ public class FlexUtils {
                   }
                 }
               };
-              processMxmlTags(rootTag, visitor);
+              processMxmlTags(rootTag, true, visitor);
             }
           }
         }
