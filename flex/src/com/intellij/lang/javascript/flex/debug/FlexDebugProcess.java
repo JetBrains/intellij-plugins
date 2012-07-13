@@ -32,6 +32,8 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.MessageType;
@@ -96,6 +98,9 @@ public class FlexDebugProcess extends XDebugProcess {
   private final MyFdbOutputReader reader;
   private Alarm myOutputAlarm;
 
+  private final Module myModule;
+  private final FlexIdeBuildConfiguration myBC;
+  private final boolean myFlexUnit;
   protected final String myAppSdkHome;
   private final String myDebuggerSdkHome;
   private final String myDebuggerVersion;
@@ -172,8 +177,13 @@ public class FlexDebugProcess extends XDebugProcess {
                           final FlexIdeBuildConfiguration bc,
                           final BCBasedRunnerParameters params) throws IOException {
     super(session);
+    myModule = ModuleManager.getInstance(session.getProject()).findModuleByName(params.getModuleName());
+    LOG.assertTrue(myModule != null);
+    myBC = bc;
+    myFlexUnit = params instanceof FlexUnitRunnerParameters;
+
     final Sdk sdk = bc.getSdk();
-    assert sdk != null;
+    LOG.assertTrue(sdk != null);
     myAppSdkHome = FileUtil.toSystemIndependentName(sdk.getHomePath());
 
     final Sdk sdkForDebugger = params instanceof FlashRunnerParameters && bc.getTargetPlatform() == TargetPlatform.Web
@@ -252,13 +262,25 @@ public class FlexDebugProcess extends XDebugProcess {
     startCommandProcessingThread();
   }
 
+  public Module getModule() {
+    return myModule;
+  }
+
+  public FlexIdeBuildConfiguration getBC() {
+    return myBC;
+  }
+
+  public boolean isFlexUnit() {
+    return myFlexUnit;
+  }
+
   public static Sdk getDebuggerSdk(final String sdkRaw, final Sdk bcSdk) {
     if (sdkRaw.equals(FlexSdkComboBoxWithBrowseButton.BC_SDK_KEY)) {
       return bcSdk;
     }
     else {
       final Sdk sdk = FlexSdkUtils.findFlexOrFlexmojosSdk(sdkRaw);
-      assert sdk != null;
+      LOG.assertTrue(sdk != null);
       return sdk;
     }
   }
@@ -378,7 +400,7 @@ public class FlexDebugProcess extends XDebugProcess {
   private void sendAdlStartingCommand(final FlexIdeBuildConfiguration bc, final BCBasedRunnerParameters params) throws IOException {
     try {
       final Sdk sdk = bc.getSdk();
-      assert sdk != null;
+      LOG.assertTrue(sdk != null);
 
       final boolean needToRemoveAirRuntimeDir;
       final VirtualFile airRuntimeDirForFlexmojosSdk;
