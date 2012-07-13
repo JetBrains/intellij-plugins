@@ -1,4 +1,4 @@
-<html xmlns:t="<error>http://tapestry.apache.org/schema/tapestry_5_0_0.xsd</error>">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <head>
         <<info>t:count</info> <info>end</info>="<inject>2</inject>" <info>t:start</info>="<inject>5</inject>">
         </<info>t:count</info>>

@@ -1,4 +1,4 @@
-<html xmlns:t="<error>http://tapestry.apache.org/schema/tapestry_5_0_0.xsd</error>">
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <body>
         <<info>t:count</info> <info>t:end</info>="<inject>3</inject>"/>
         <<error descr="Element t:count doesn't have required attribute end">t:count</error>/>
