@@ -190,7 +190,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   public CssPropertyDescriptor getPropertyDescriptor(@NotNull String propertyName, @Nullable PsiElement context) {
     if (context != null) {
       Module module = ModuleUtil.findModuleForPsiElement(context);
-      GlobalSearchScope scope = module != null ? module.getModuleWithDependenciesAndLibrariesScope(false):context.getResolveScope();
+      GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
       List<Set<FlexStyleIndexInfo>> lists = FileBasedIndex.getInstance().getValues(FlexStyleIndex.INDEX_ID, propertyName, scope);
       List<CssSimpleSelector> selectors = findSimpleSelectorsAbove(context);
       List<FlexStyleIndexInfo> infos = filter(lists, selectors, scope, module);
@@ -203,8 +203,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   public boolean isPossibleSelector(@NotNull String selector, @NotNull PsiElement context) {
     if (selector.equals("global")) return true;
-    Module module = ModuleUtil.findModuleForPsiElement(context);
-    GlobalSearchScope scope = module != null ? module.getModuleWithDependenciesAndLibrariesScope(false) :context.getResolveScope();
+    GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
     Collection<JSQualifiedNamedElement> classes = JSResolveUtil.findElementsByName(selector, context.getProject(), scope);
     for (JSQualifiedNamedElement c : classes) {
       if (c instanceof JSClass) {

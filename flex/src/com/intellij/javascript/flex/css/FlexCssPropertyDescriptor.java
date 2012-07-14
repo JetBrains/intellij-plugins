@@ -13,8 +13,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Computable;
@@ -291,8 +289,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     Map<PsiElement, PairInfo> navElement2pairInfo = new HashMap<PsiElement, PairInfo>();
     final Project project = context.getProject();
 
-    Module module = ModuleUtil.findModuleForPsiElement(context);
-    GlobalSearchScope scope = module != null ? module.getModuleWithDependenciesAndLibrariesScope(false) : context.getResolveScope();
+    GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
 
     StubIndex stubIndex = StubIndex.getInstance();
 

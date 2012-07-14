@@ -5,7 +5,10 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSIncludeDirective;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -64,5 +67,11 @@ public class FlexCssUtil {
         collectAllIncludes(elt, result);
       }
     }
+  }
+
+  public static GlobalSearchScope getResolveScope(PsiElement context) {
+    Module module = ModuleUtilCore.findModuleForPsiElement(context);
+    GlobalSearchScope scope = module != null ? module.getModuleWithDependenciesAndLibrariesScope(false) : context.getResolveScope();
+    return FlexStylesIndexableSetContributor.enlarge(scope);
   }
 }
