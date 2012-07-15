@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.projectStructure.conversion;
 import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.ConversionContext;
 import com.intellij.conversion.ModuleSettings;
-import com.intellij.facet.FacetManagerImpl;
 import com.intellij.facet.impl.invalid.InvalidFacetManagerImpl;
 import com.intellij.facet.impl.invalid.InvalidFacetType;
 import com.intellij.facet.pointers.FacetPointersManager;
@@ -35,6 +34,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.serialization.facet.JpsFacetLoader;
 
 import java.util.*;
 
@@ -237,7 +237,7 @@ public class ConversionParams {
       @Nullable
       @Override
       public String fun(Element facet) {
-        Element oldConfigurationElement = facet.getChild(FacetManagerImpl.CONFIGURATION_ELEMENT);
+        Element oldConfigurationElement = facet.getChild(JpsFacetLoader.CONFIGURATION_ELEMENT);
         if (oldConfigurationElement != null) {
           FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
           if (oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
