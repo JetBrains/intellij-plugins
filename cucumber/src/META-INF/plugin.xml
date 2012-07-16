@@ -33,6 +33,9 @@
                     serviceImplementation="org.jetbrains.plugins.cucumber.psi.CucumberLanguageService"/>
     <lang.findUsagesProvider language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.psi.GherkinFindUsagesProvider"/>
     <colorSettingsPage implementation="org.jetbrains.plugins.cucumber.psi.GherkinColorsPage"/>
+
+    <projectService serviceInterface="org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex"
+                    serviceImplementation="org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex"/>
   </extensions>
 
   <extensionPoints>
