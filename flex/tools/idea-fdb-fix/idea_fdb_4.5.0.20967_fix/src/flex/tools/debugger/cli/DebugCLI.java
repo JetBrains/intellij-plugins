@@ -1174,7 +1174,7 @@ public class DebugCLI implements Runnable, SourceLocator
 			{
 				// keep spitting out frames until we can't
 				Frame frame = stack[i];
-				boolean valid = appendFrameInfo(sb, frame, i, showThis, false);
+				boolean valid = appendFrameInfo(sb, frame, i, showThis, true);
 				sb.append(m_newline);
                 if (!valid)
                     break;
