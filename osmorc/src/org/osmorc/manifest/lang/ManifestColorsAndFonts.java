@@ -28,43 +28,40 @@ package org.osmorc.manifest.lang;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.editor.colors.TextAttributesKeyDefaults;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestColorsAndFonts {
   static final TextAttributesKey HEADER_NAME_KEY =
-    TextAttributesKeyDefaults.createTextAttributesKey("osmorc.headerName",
-                                                      TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.KEYWORD));
+    TextAttributesKey.createTextAttributesKey("osmorc.headerName",
+                                              SyntaxHighlighterColors.KEYWORD.getDefaultAttributes());
   static final TextAttributesKey HEADER_VALUE_KEY =
-    TextAttributesKeyDefaults.createTextAttributesKey("osmorc.headerValue",
-                                                      TextAttributesKeyDefaults.getDefaultAttributes(HighlighterColors.TEXT));
+    TextAttributesKey.createTextAttributesKey("osmorc.headerValue",
+                                              HighlighterColors.TEXT.getDefaultAttributes());
   static final TextAttributesKey DIRECTIVE_NAME_KEY =
-    TextAttributesKeyDefaults.createTextAttributesKey("osmorc.directiveName",
-                                                      TextAttributesKeyDefaults
-                                                        .getDefaultAttributes(
-                                                          TextAttributesKey.createTextAttributesKey("INSTANCE_FIELD_ATTRIBUTES")));
+    TextAttributesKey.createTextAttributesKey("osmorc.directiveName",
+                                              TextAttributesKey
+                                                .createTextAttributesKey("INSTANCE_FIELD_ATTRIBUTES").getDefaultAttributes());
   static final TextAttributesKey ATTRIBUTE_NAME_KEY =
-    TextAttributesKeyDefaults.createTextAttributesKey("osmorc.attributeName",
-                                                      TextAttributesKeyDefaults
-                                                        .getDefaultAttributes(
-                                                          TextAttributesKey.createTextAttributesKey("INSTANCE_FIELD_ATTRIBUTES")));
+    TextAttributesKey.createTextAttributesKey("osmorc.attributeName",
+                                              TextAttributesKey
+                                                .createTextAttributesKey("INSTANCE_FIELD_ATTRIBUTES").getDefaultAttributes());
   static final TextAttributesKey HEADER_ASSIGNMENT_KEY =
-    TextAttributesKeyDefaults.createTextAttributesKey("osmorc.headerAssignment",
-                                                      TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.COMMA));
+    TextAttributesKey.createTextAttributesKey("osmorc.headerAssignment",
+                                              SyntaxHighlighterColors.COMMA.getDefaultAttributes());
   static final TextAttributesKey ATTRIBUTE_ASSIGNMENT_KEY =
-    TextAttributesKeyDefaults.createTextAttributesKey("osmorc.attributeAssignment",
-                                                      TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.COMMA));
+    TextAttributesKey.createTextAttributesKey("osmorc.attributeAssignment",
+                                              SyntaxHighlighterColors.COMMA.getDefaultAttributes());
   static final TextAttributesKey DIRECTIVE_ASSIGNMENT_KEY =
-    TextAttributesKeyDefaults.createTextAttributesKey("osmorc.directiveAssignment",
-                                                      TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.COMMA));
+    TextAttributesKey.createTextAttributesKey("osmorc.directiveAssignment",
+                                              SyntaxHighlighterColors.COMMA.getDefaultAttributes());
   static final TextAttributesKey CLAUSE_SEPARATOR_KEY =
-    TextAttributesKeyDefaults.createTextAttributesKey("osmorc.clauseSeparator",
-                                                      TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.COMMA));
+    TextAttributesKey.createTextAttributesKey("osmorc.clauseSeparator",
+                                              SyntaxHighlighterColors.COMMA.getDefaultAttributes());
   static final TextAttributesKey PARAMETER_SEPARATOR_KEY =
-    TextAttributesKeyDefaults.createTextAttributesKey("osmorc.parameterSeparator",
-                                                      TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.COMMA));
+    TextAttributesKey.createTextAttributesKey("osmorc.parameterSeparator",
+                                              SyntaxHighlighterColors.COMMA.getDefaultAttributes());
 
   private ManifestColorsAndFonts() {
   }

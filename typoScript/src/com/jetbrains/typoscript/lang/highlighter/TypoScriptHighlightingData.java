@@ -19,43 +19,33 @@ import com.intellij.ide.highlighter.custom.CustomHighlighterColors;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.editor.colors.TextAttributesKeyDefaults;
 
 
 public class TypoScriptHighlightingData {
   public static final TextAttributesKey ONE_LINE_COMMENT =
-    TextAttributesKeyDefaults.createTextAttributesKey("TS_ONE_LINE_COMMENT", TextAttributesKeyDefaults
-      .getDefaultAttributes(SyntaxHighlighterColors.LINE_COMMENT));
+    TextAttributesKey.createTextAttributesKey("TS_ONE_LINE_COMMENT", SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes());
   public static final TextAttributesKey MULTILINE_COMMENT =
-    TextAttributesKeyDefaults.createTextAttributesKey("TS_MULTILINE_COMMENT", TextAttributesKeyDefaults
-      .getDefaultAttributes(SyntaxHighlighterColors.JAVA_BLOCK_COMMENT));
+    TextAttributesKey.createTextAttributesKey("TS_MULTILINE_COMMENT", SyntaxHighlighterColors.JAVA_BLOCK_COMMENT.getDefaultAttributes());
   public static final TextAttributesKey IGNORED_TEXT =
-    TextAttributesKeyDefaults.createTextAttributesKey("TS_IGNORED_TEXT", TextAttributesKeyDefaults
-      .getDefaultAttributes(SyntaxHighlighterColors.LINE_COMMENT));
+    TextAttributesKey.createTextAttributesKey("TS_IGNORED_TEXT", SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes());
   public static final TextAttributesKey OPERATOR_SIGN =
-    TextAttributesKeyDefaults.createTextAttributesKey("TS_OPERATOR_SIGN", TextAttributesKeyDefaults
-      .getDefaultAttributes(SyntaxHighlighterColors.OPERATION_SIGN));
+    TextAttributesKey.createTextAttributesKey("TS_OPERATOR_SIGN", SyntaxHighlighterColors.OPERATION_SIGN.getDefaultAttributes());
   public static final TextAttributesKey STRING_VALUE =
-    TextAttributesKeyDefaults
-      .createTextAttributesKey("STRING_VALUE", TextAttributesKeyDefaults.getDefaultAttributes(SyntaxHighlighterColors.STRING));
+    TextAttributesKey
+      .createTextAttributesKey("STRING_VALUE", SyntaxHighlighterColors.STRING.getDefaultAttributes());
   public static final TextAttributesKey ASSIGNED_VALUE =
-    TextAttributesKeyDefaults
-      .createTextAttributesKey("ASSIGNED_VALUE", TextAttributesKeyDefaults.getDefaultAttributes(HighlighterColors.TEXT));
+    TextAttributesKey
+      .createTextAttributesKey("ASSIGNED_VALUE", HighlighterColors.TEXT.getDefaultAttributes());
   public static final TextAttributesKey OBJECT_PATH_ENTITY =
-    TextAttributesKeyDefaults.createTextAttributesKey("TS_OBJECT_PATH_ENTITY", TextAttributesKeyDefaults
-      .getDefaultAttributes(SyntaxHighlighterColors.KEYWORD));
+    TextAttributesKey.createTextAttributesKey("TS_OBJECT_PATH_ENTITY", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes());
   public static final TextAttributesKey OBJECT_PATH_SEPARATOR =
-    TextAttributesKeyDefaults.createTextAttributesKey("TS_OBJECT_PATH_SEPARATOR", TextAttributesKeyDefaults
-      .getDefaultAttributes(SyntaxHighlighterColors.KEYWORD));
+    TextAttributesKey.createTextAttributesKey("TS_OBJECT_PATH_SEPARATOR", SyntaxHighlighterColors.KEYWORD.getDefaultAttributes());
   public static final TextAttributesKey CONDITION =
-    TextAttributesKeyDefaults.createTextAttributesKey("TS_CONDITION", TextAttributesKeyDefaults
-      .getDefaultAttributes(CustomHighlighterColors.CUSTOM_KEYWORD3_ATTRIBUTES));
+    TextAttributesKey.createTextAttributesKey("TS_CONDITION", CustomHighlighterColors.CUSTOM_KEYWORD3_ATTRIBUTES.getDefaultAttributes());
   public static final TextAttributesKey INCLUDE_STATEMENT =
-    TextAttributesKeyDefaults.createTextAttributesKey("TS_INCLUDE", TextAttributesKeyDefaults
-      .getDefaultAttributes(CustomHighlighterColors.CUSTOM_KEYWORD4_ATTRIBUTES));
+    TextAttributesKey.createTextAttributesKey("TS_INCLUDE", CustomHighlighterColors.CUSTOM_KEYWORD4_ATTRIBUTES.getDefaultAttributes());
 
 
   public static final TextAttributesKey BAD_CHARACTER =
-    TextAttributesKeyDefaults.createTextAttributesKey("TS_BAD_CHARACTER", TextAttributesKeyDefaults
-      .getDefaultAttributes(HighlighterColors.BAD_CHARACTER));
+    TextAttributesKey.createTextAttributesKey("TS_BAD_CHARACTER", HighlighterColors.BAD_CHARACTER.getDefaultAttributes());
 }
