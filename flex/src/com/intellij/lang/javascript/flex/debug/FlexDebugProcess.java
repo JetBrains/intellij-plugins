@@ -36,6 +36,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.util.NullableComputable;
@@ -43,7 +44,8 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -128,7 +130,6 @@ public class FlexDebugProcess extends XDebugProcess {
   private boolean myFileIdIsUpToDate = false;
   protected final BidirectionalMap<String, String> myFilePathToIdMap = new BidirectionalMap<String, String>();
   protected final Map<String, Collection<String>> myFileNameToPathsMap = new THashMap<String, Collection<String>>();
-  protected final Map<String, Collection<VirtualFile>> myFileNameToFilesMap = new THashMap<String, Collection<VirtualFile>>();
 
   private String myFdbLaunchCommand;
 
@@ -508,11 +509,11 @@ public class FlexDebugProcess extends XDebugProcess {
       while (iterator.hasNext()) {
         final String line = iterator.next();
 
-        if (line.indexOf("Additional ActionScript code has been loaded") != -1) {
+        if (line.contains("Additional ActionScript code has been loaded")) {
           if (!suspended) reader.readLine(false);
           myFileIdIsUpToDate = false;
         }
-        else if ((index = line.indexOf(BREAKPOINT_MARKER)) != -1 && line.indexOf(" created") == -1) { // TODO: move to break point handler
+        else if ((index = line.indexOf(BREAKPOINT_MARKER)) != -1 && !line.contains(" created")) { // TODO: move to break point handler
           // Breakpoint 1, aaa() at A.mxml:14
           try {
             final int from = index + BREAKPOINT_MARKER.length();
@@ -537,10 +538,6 @@ public class FlexDebugProcess extends XDebugProcess {
               if (breakpoint != null) {
                 FlexSuspendContext suspendContext = new FlexSuspendContext(new FlexStackFrame(this, breakpoint.getSourcePosition()));
                 boolean suspend = getSession().breakpointReached(breakpoint, suspendContext);
-                final VirtualFile file = breakpoint.getSourcePosition().getFile();
-
-                final String shortName = file.getName();
-                addToMap(myFileNameToFilesMap, shortName, file);
 
                 if (!suspend) {
                   encounteredNonsuspendableBreakpoint = true;
@@ -572,17 +569,17 @@ public class FlexDebugProcess extends XDebugProcess {
           int breakpointId = Integer.parseInt(line.substring(ATTEMPTING_TO_RESOLVE_BREAKPOINT_MARKER.length(), line.indexOf(',')));
           final XLineBreakpoint<XBreakpointProperties> breakpoint = myBreakpointsHandler.getBreakpointByIndex(breakpointId);
 
-          if (iterator.hasNext() && iterator.getNext().indexOf("no executable code") != -1) {
+          if (iterator.hasNext() && iterator.getNext().contains("no executable code")) {
             iterator.next();
 
             myBreakpointsHandler.updateBreakpointStatusToInvalid(breakpoint);
             toInsertContinue = true;
           }
-          else if (iterator.hasNext() && iterator.getNext().indexOf(AMBIGUOUS_MATCHING_FILE_NAMES) != -1) {
+          else if (iterator.hasNext() && iterator.getNext().contains(AMBIGUOUS_MATCHING_FILE_NAMES)) {
             iterator.next();
             iterator.next();
 
-            while (iterator.hasNext() && iterator.getNext().indexOf("#") != -1) {
+            while (iterator.hasNext() && iterator.getNext().contains("#")) {
               iterator.next();
             }
 
@@ -602,7 +599,7 @@ public class FlexDebugProcess extends XDebugProcess {
         else if (line.startsWith("Player session terminated")) {
           handleProbablyUnexpectedStop(line);
         }
-        else if (line.indexOf("Execution halted") != -1) {
+        else if (line.contains("Execution halted")) {
           if (!getSession().isPaused()) {
             getSession().pause();
           }
@@ -712,12 +709,10 @@ public class FlexDebugProcess extends XDebugProcess {
   /**
    * Looks for file with specified <code>fileName</code> in caches or anywhere in the project in following order:
    * <ul>
-   * <li>[1] matching <code>id</code></li>
-   * <li>[2] in <code>myFileNameToFilesMap</code> matching <code>packageName</code></li>
-   * <li>[3] in <code>myFileNameToPathsMap</code> matching <code>packageName</code></li>
-   * <li>[4] in the whole project with libraries matching <code>packageName</code></li>
-   * <li>[5] in <code>myFileNameToPathsMap</code></li>
-   * <li>[6] in the whole project with libraries</li>
+   * <li>[1] matching <code>id</code>. If the file is not within the project - try to find if its copy exists within the project</li>
+   * <li>[2] in <code>myFileNameToPathsMap</code> matching <code>packageName</code>. If the file is not within the project - try to find if its copy exists within the project</li>
+   * <li>[3] in the whole project with libraries matching <code>packageName</code> (prefer in BC scope)</li>
+   * <li>[4] in the whole project with libraries (prefer BC scope)</li>
    * </ul>
    *
    * @param fileName
@@ -726,142 +721,152 @@ public class FlexDebugProcess extends XDebugProcess {
    * @param id
    */
   @Nullable
-  VirtualFile findFileByNameOrId(@NotNull String fileName, @Nullable String packageName, @Nullable String id) {
+  VirtualFile findFileByNameOrId(final @NotNull String fileName, @Nullable String packageName, final @Nullable String id) {
     // [1]
     if (id != null) {
       ensureFilePathToIdMapIsUpToDate();
-      List<String> value = myFilePathToIdMap.getKeysByValue(id);
+      final List<String> value = myFilePathToIdMap.getKeysByValue(id);
+
       if (value != null && value.size() > 0) {
         final String path = value.get(0);
-        final VirtualFile file = doFindFileByPath(path);
-        if (file != null) return file;
+        final VirtualFile fileById = LocalFileSystem.getInstance().findFileByPath(path);
 
-        log("Cannot find file " + fileName + " by id " + id);
         if (packageName == null) {
-          final int srcIndex = path.indexOf(SRC_PATH_ELEMENT);
+          // try to guess package name
+          final String mavenStyleSrc = "/src/main/flex/";
+          int srcIndex = path.indexOf(mavenStyleSrc);
           if (srcIndex > 0) {
-            packageName = StringUtil.getPackageName(path.substring(srcIndex + SRC_PATH_ELEMENT.length()), '/').replace('/', '.');
+            packageName = StringUtil.getPackageName(path.substring(srcIndex + mavenStyleSrc.length()), '/').replace('/', '.');
           }
+          else {
+            srcIndex = path.indexOf(SRC_PATH_ELEMENT);
+            if (srcIndex > 0) {
+              packageName = StringUtil.getPackageName(path.substring(srcIndex + SRC_PATH_ELEMENT.length()), '/').replace('/', '.');
+            }
+          }
+        }
+
+        if (fileById != null) {
+          return getThisOrSimilarFileInProject(fileById, packageName);
         }
       }
     }
 
-    return findFile(fileName, packageName);
+    if ("<null>".equals(fileName)) return null;
+
+    return packageName == null ? findFile(fileName) : findFile(fileName, packageName);
   }
 
   /**
    * @see #findFileByNameOrId(String, String, String)
    */
   @Nullable
-  private VirtualFile findFile(final String shortName, @Nullable String packageName) {
-    if ("<null>".equals(shortName)) return null;
-
-    if (packageName == null) {
-      return findFile(shortName);
-    }
-
-    final String packagePath = packageName.replace(".", "/");
+  private VirtualFile findFile(final String fileName, @NotNull String packageName) {
+    final String packagePath = packageName.replace('.', '/');
 
     // [2]
-    final Collection<VirtualFile> cachedFiles = myFileNameToFilesMap.get(shortName);
-    if (cachedFiles != null && !cachedFiles.isEmpty()) {
-      for (final VirtualFile cachedFile : cachedFiles) {
-        if (cachedFile != null) {
-          final String path = cachedFile.getPath();
-          int lastSlashIndex = path.lastIndexOf("/");
-          final String folderPath = lastSlashIndex > 0 ? path.substring(0, lastSlashIndex) : "";
-          if (folderPath.endsWith(packagePath)) {
-            return cachedFile;
+    final Collection<String> paths = myFileNameToPathsMap.get(fileName);
+
+    if (paths != null) {
+      for (final String path : paths) {
+        final String folderPath = PathUtil.getParentPath(path);
+        if (folderPath.endsWith(packagePath)) {
+          final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
+          if (file != null) {
+            return getThisOrSimilarFileInProject(file, packageName);
           }
         }
       }
     }
 
     // [3]
-    final Collection<String> paths = myFileNameToPathsMap.get(shortName);
-    if (paths != null && !paths.isEmpty()) {
-      for (final String path : paths) {
-        int lastSlashIndex = path.lastIndexOf("/");
-        final String folderPath = lastSlashIndex > 0 ? path.substring(0, lastSlashIndex) : "";
-        if (folderPath.endsWith(packagePath)) {
-          final VirtualFile file = doFindFileByPath(path);
-          if (file != null) {
-            addToMap(myFileNameToFilesMap, shortName, file);
-            return file;
-          }
-          break;
-        }
-      }
+    final GlobalSearchScope bcScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, myFlexUnit);
+    Collection<VirtualFile> files = getFilesByName(getSession().getProject(), bcScope, fileName);
+
+    VirtualFile file = getFileMatchingPackageName(getSession().getProject(), files, packageName);
+    if (file == null) {
+      files = getFilesByName(getSession().getProject(), GlobalSearchScope.allScope(getSession().getProject()), fileName);
+      file = getFileMatchingPackageName(getSession().getProject(), files, packageName);
     }
 
-    // [4]
-    final Collection<VirtualFile> files =
-      ApplicationManager.getApplication().runReadAction(new NullableComputable<Collection<VirtualFile>>() {
-        public Collection<VirtualFile> compute() {
-          final Project project = getSession().getProject();
-          return FilenameIndex.getVirtualFilesByName(project, shortName, GlobalSearchScope.allScope(project));
-        }
-      });
-
-    if (files != null && !files.isEmpty()) {
-      for (final VirtualFile file : files) {
-        if (file != null) {
-          final String path = file.getPath();
-          int lastSlashIndex = path.lastIndexOf("/");
-          final String folderPath = lastSlashIndex > 0 ? path.substring(0, lastSlashIndex) : "";
-          if (folderPath.endsWith(packagePath)) {
-            addToMap(myFileNameToFilesMap, shortName, file);
-            return file;
-          }
-        }
-      }
-    }
-
-    return findFile(shortName);
+    return file != null ? file : findFile(fileName);
   }
 
   /**
    * @see #findFileByNameOrId(String, String, String)
    */
   @Nullable
-  private VirtualFile findFile(final String shortName) {
-    // [5]
-    final Collection<String> paths = myFileNameToPathsMap.get(shortName);
-    if (paths != null && !paths.isEmpty()) {
-      final VirtualFile file = doFindFileByPath(paths.iterator().next());
-      if (file != null) {
-        addToMap(myFileNameToFilesMap, shortName, file);
-        return file;
-      }
+  private VirtualFile findFile(final String fileName) {
+    // [4]
+    final GlobalSearchScope bcScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, myFlexUnit);
+    Collection<VirtualFile> files = getFilesByName(getSession().getProject(), bcScope, fileName);
+
+    if (files.isEmpty()) {
+      files = getFilesByName(getSession().getProject(), GlobalSearchScope.allScope(getSession().getProject()), fileName);
     }
 
-    // [6]
-    final Collection<VirtualFile> files =
-      ApplicationManager.getApplication().runReadAction(new NullableComputable<Collection<VirtualFile>>() {
-        public Collection<VirtualFile> compute() {
-          final Project project = getSession().getProject();
-          return FilenameIndex.getVirtualFilesByName(project, shortName, GlobalSearchScope.allScope(project));
-        }
-      });
+    if (!fileName.isEmpty()) {
+      return files.iterator().next();
+    }
 
-    if (files != null && !files.isEmpty()) {
-      final VirtualFile file = files.iterator().next();
-      addToMap(myFileNameToFilesMap, shortName, file);
-      return file;
+    // last chance to find file out of project
+    final Collection<String> paths = myFileNameToPathsMap.get(fileName);
+    if (paths != null) {
+      for (final String path : paths) {
+        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
+        if (file != null) {
+          return file;
+        }
+      }
     }
 
     return null;
   }
 
-  @Nullable
-  private static VirtualFile doFindFileByPath(final String path) {
-    VirtualFile file;
-    file = ApplicationManager.getApplication().runReadAction(new NullableComputable<VirtualFile>() {
-      public VirtualFile compute() {
-        return VfsUtil.findRelativeFile(path, null);
+  @NotNull
+  private VirtualFile getThisOrSimilarFileInProject(final @NotNull VirtualFile file, final String packageName) {
+    final Project project = getSession().getProject();
+    final GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
+
+    if (allScope.contains(file)) {
+      return file;
+    }
+
+    // File is found on the computer but it doesn't belong to the project. That means that the library is compiled on this computer,
+    // but in this project it is configured as if it were a 3rd party library. So we'll try to find if sources of this library are also configured.
+
+    final Collection<VirtualFile> files = getFilesByName(project, allScope, file.getName());
+
+    if (packageName == null) {
+      return !files.isEmpty() ? files.iterator().next() : file;
+    }
+    else {
+      final VirtualFile fileMatchingPackage = getFileMatchingPackageName(project, files, packageName);
+      return fileMatchingPackage != null ? fileMatchingPackage : file;
+    }
+  }
+
+  private static Collection<VirtualFile> getFilesByName(final Project project, final GlobalSearchScope scope, final String fileName) {
+    return ApplicationManager.getApplication().runReadAction(new NullableComputable<Collection<VirtualFile>>() {
+      public Collection<VirtualFile> compute() {
+        return FilenameIndex.getVirtualFilesByName(project, fileName, scope);
       }
     });
-    return file;
+  }
+
+  @Nullable
+  private static VirtualFile getFileMatchingPackageName(final Project project,
+                                                        final Collection<VirtualFile> files,
+                                                        final String packageName) {
+    for (VirtualFile file : files) {
+      final VirtualFile sourceRoot = ProjectRootManager.getInstance(project).getFileIndex().getSourceRootForFile(file);
+      final String relPath = sourceRoot == null ? null : VfsUtilCore.getRelativePath(file, sourceRoot, '/');
+      final String packagePath = relPath == null ? null : PathUtil.getParentPath(relPath).replace('/', '.');
+      if (packagePath != null && packagePath.equals(packageName)) {
+        return file;
+      }
+    }
+    return null;
   }
 
   private void handleProbablyUnexpectedStop(final String s) {
@@ -1447,8 +1452,8 @@ public class FlexDebugProcess extends XDebugProcess {
 
       while (tokenizer.hasMoreTokens()) {
         String next = tokenizer.nextToken();
-        if (next.indexOf("type 'continue'") == -1) {
-          builder.append(next + "\n");
+        if (!next.contains("type 'continue'")) {
+          builder.append(next).append("\n");
         }
       }
 
@@ -1467,18 +1472,18 @@ public class FlexDebugProcess extends XDebugProcess {
         }
       }
 
-      if (s.indexOf("Another Flash debugger is probably running") != -1) {
+      if (s.contains("Another Flash debugger is probably running")) {
         reportProblem(s);
         getProcessHandler().detachProcess();
         return CommandOutputProcessingMode.DONE;
       }
-      if (s.indexOf("Failed to connect") != -1) {
+      if (s.contains("Failed to connect")) {
         reportProblem(s);
         handleProbablyUnexpectedStop(s);
         return CommandOutputProcessingMode.DONE;
       }
 
-      if (s.indexOf(WAITING_PLAYER_MARKER) != -1) {
+      if (s.contains(WAITING_PLAYER_MARKER)) {
         fdbWaitingForPlayerStateReached = true;
         getSession().rebuildViews();
         notifyFdbWaitingForPlayerStateReached();
@@ -1493,7 +1498,7 @@ public class FlexDebugProcess extends XDebugProcess {
         }
       }
       else {
-        startupDone = (s.indexOf("Player connected; session starting.") != -1);
+        startupDone = (s.contains("Player connected; session starting."));
         if (startupDone) {
           if (connectToRunningFlashPlayerMode) {
             final Balloon balloon = ToolWindowManager.getInstance(getSession().getProject()).getToolWindowBalloon(ToolWindowId.DEBUG);

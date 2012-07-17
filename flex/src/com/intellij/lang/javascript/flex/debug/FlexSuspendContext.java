@@ -84,11 +84,16 @@ public class FlexSuspendContext extends XSuspendContext {
         int line = fileNameAndIndexAndLine.third;
 
         if (!StringUtil.isEmpty(fileName)) {
-          String packageName = null;
-          final int classMarkerPosition = stackFrame.indexOf(FlexStackFrame.CLASS_MARKER);
-          final int packageEndPosition = stackFrame.indexOf("::", classMarkerPosition);
-          if (classMarkerPosition > 0 && packageEndPosition > classMarkerPosition) {
-            packageName = stackFrame.substring(classMarkerPosition + FlexStackFrame.CLASS_MARKER.length(), packageEndPosition);
+          final String packageName;
+          final int classMarkerIndex = stackFrame.indexOf(FlexStackFrame.CLASS_MARKER);
+          final int packageEndIndex = stackFrame.indexOf("::", classMarkerIndex);
+          final int classEndIndex = stackFrame.indexOf("'", classMarkerIndex);
+
+          if (classMarkerIndex > 0 && packageEndIndex > classMarkerIndex && packageEndIndex < classEndIndex) {
+            packageName = stackFrame.substring(classMarkerIndex + FlexStackFrame.CLASS_MARKER.length(), packageEndIndex);
+          }
+          else {
+            packageName = "";
           }
 
           file = flexDebugProcess.findFileByNameOrId(fileName, packageName, fileId);
