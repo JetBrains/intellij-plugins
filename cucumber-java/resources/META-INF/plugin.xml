@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<idea-plugin version="2">
+  <id>cucumber-java</id>
+  <name>Cucumber for Java</name>
+  <description>Provides support of Cucumber for Java</description>
+  <version>1.0</version>
+  <depends>cucumber</depends>
+  <vendor logo="/general/ijLogo.png">JetBrains</vendor>
+
+  <extensions defaultExtensionNs="com.intellij">
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">
+    <cucumberJvmExtensionPoint implementation="org.jetbrains.plugins.cucumber.java.steps.JavaCucumberExtension"/>
+  </extensions>
+</idea-plugin>

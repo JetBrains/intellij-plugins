@@ -21,7 +21,7 @@ import java.util.Set;
 public interface CucumberJvmExtensionPoint {
 
   ExtensionPointName<CucumberJvmExtensionPoint> EP_NAME =
-    ExtensionPointName.create("org.jetbrains.plugins.ruby.cucumber.steps.cucumberJvmExtensionPoint");
+    ExtensionPointName.create("org.jetbrains.plugins.cucumber.steps.cucumberJvmExtensionPoint");
 
   // ToDo: remove parent
   /**

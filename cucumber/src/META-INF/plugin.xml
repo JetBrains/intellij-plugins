@@ -3,13 +3,12 @@
 <idea-plugin version="2">
 
   <id>cucumber</id>
-  <name>Cucumber</name>
+  <name>Base Cucumber</name>
 
   <description>Provides support of Cucumber language</description>
 
   <version>1.0</version>
   <depends>com.intellij.modules.xml</depends>
-  <depends>com.intellij.modules.ultimate</depends>
   <vendor logo="/general/ijLogo.png">JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -40,6 +39,9 @@
 
   <extensionPoints>
     <extensionPoint qualifiedName="cucumber.KeywordProvider" interface="org.jetbrains.plugins.cucumber.psi.GherkinKeywordProviderBuilder"/>
+
+    <extensionPoint qualifiedName="org.jetbrains.plugins.cucumber.steps.cucumberJvmExtensionPoint"
+                    interface="org.jetbrains.plugins.cucumber.steps.CucumberJvmExtensionPoint"/>
   </extensionPoints>
 
   <project-components>
