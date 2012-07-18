@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
@@ -31,8 +32,6 @@ import java.util.regex.Pattern;
 
 public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
 
-  public static final String[] AIR_VERSIONS =
-    {"1.0", "1.1", "1.5", "1.5.1", "1.5.2", "1.5.3", "2.0", "2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3"};
   public static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]{1,3}(\\.[0-9]{1,3}){0,2}");
 
   public static final int ANDROID_PERMISSION_INTERNET = 1;
@@ -179,7 +178,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     myDescriptorFolderTextWithBrowse
       .addBrowseFolderListener(null, null, myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
-    myAirVersionCombo.setModel(new DefaultComboBoxModel(AIR_VERSIONS));
+    myAirVersionCombo.setModel(new DefaultComboBoxModel(FlexApplicationComponent.AIR_VERSIONS));
 
     final ActionListener listener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {

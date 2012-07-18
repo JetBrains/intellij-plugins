@@ -1,0 +1,316 @@
+<?xml version="1.0"?>
+<xs:schema 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	targetNamespace="http://ns.adobe.com/air/application/3.4" 
+	xmlns="http://ns.adobe.com/air/application/3.4" 
+	elementFormDefault="qualified"
+>
+  <xs:element name="application">
+    <xs:complexType>
+      <xs:all>
+        <!-- About this application -->
+        <xs:element name="id">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:pattern value="[A-Za-z0-9\-\.]{1,212}" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="publisherID" minOccurs="0">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:pattern value="[A-Fa-f0-9]{40}\.1" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="name" type="LocalizableType" minOccurs="0" />
+        <xs:element name="versionLabel" type="xs:string" minOccurs="0" />
+        <xs:element name="versionNumber">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <!-- has to be of format <0-999>.<0-999>.<0-999> -->
+              <xs:pattern value='[0-9]{1,3}(\.[0-9]{1,3}){0,2}' />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="filename">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <!-- name cannot begin with a ' ' (space), have any of these characters: *"/:<>?\|, and end with a . (dot) or ' ' (space) -->
+              <xs:pattern value='[^\*"/:&gt;&lt;\?\\\|\. ]|[^\*"/:&gt;&lt;\?\\\| ][^\*"/:&gt;&lt;\?\\\|]*[^\*"/:&gt;&lt;\?\\\|\. ]'/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="description" type="LocalizableType" minOccurs="0" />
+        <xs:element name="copyright" type="xs:string" minOccurs="0" />
+        <xs:element name="icon" type="IconType" minOccurs="0" />
+
+        <!-- How to start this application -->
+        <xs:element name="initialWindow">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="content" type="xs:anyURI" minOccurs="1" />
+              <xs:element name="title" type="xs:string" minOccurs="0" />
+
+              <xs:element name="systemChrome" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="none" />
+                    <xs:enumeration value="standard" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="transparent" type="xs:boolean" minOccurs="0" />
+              <xs:element name="visible" type="xs:boolean" minOccurs="0" />
+			  
+			  <xs:element name="minimizable" type="xs:boolean" minOccurs="0" />
+              <xs:element name="maximizable" type="xs:boolean" minOccurs="0" />
+              <xs:element name="resizable" type="xs:boolean" minOccurs="0" />
+			  
+              <xs:element name="x" type="xs:int" minOccurs="0" />
+              <xs:element name="y" type="xs:int" minOccurs="0" />
+              <xs:element name="width" type="xs:unsignedInt" minOccurs="0" />
+              <xs:element name="height" type="xs:unsignedInt" minOccurs="0" />
+              <xs:element name="minSize" type="BoundsSizeType" minOccurs="0" />
+              <xs:element name="maxSize" type="BoundsSizeType" minOccurs="0" />
+
+			  <!-- default is 'pan'-->
+			  <xs:element name="softKeyboardBehavior" minOccurs="0"  >
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="pan" />
+                    <xs:enumeration value="none"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+	
+			  <!-- Mobile only -->
+              <xs:element name="aspectRatio" minOccurs="0"  >
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="portrait" />
+                    <xs:enumeration value="landscape"/>
+                    <xs:enumeration value="any"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+
+              <!-- Mobile only; default is false -->
+              <xs:element name="autoOrients" type="xs:boolean" minOccurs="0" />
+
+              <!-- Mobile only; default is false -->
+              <xs:element name="fullScreen"  type="xs:boolean" minOccurs="0" />
+
+			  <!-- Default is auto -->
+			  <xs:element name="renderMode" minOccurs="0"  >
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="auto" />
+                    <xs:enumeration value="cpu"/>
+					<xs:enumeration value="gpu"/>
+					<xs:enumeration value="direct"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+			  
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+		
+        <!-- About installing this application -->
+        <xs:element name="supportedProfiles" minOccurs="0" maxOccurs="1">
+		  <xs:simpleType>
+	        <xs:restriction base="profileList">
+		      <xs:minLength value="1"/>
+		    </xs:restriction>
+		  </xs:simpleType>
+        </xs:element>
+
+        <xs:element name="supportedLanguages" minOccurs="0" maxOccurs="1">
+		  <xs:simpleType>
+	        <xs:restriction base="languageList">
+		      <xs:minLength value="1"/>
+		    </xs:restriction>
+		  </xs:simpleType>
+        </xs:element>
+
+	    <xs:element name="installFolder" minOccurs="0" >
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <!-- installFolder cannot begin with a / (forward-slash) or a ' ' (space), have any of these characters: *":<>?\|, and end with a . (dot), ' ' (space), or / (forward slash) -->
+              <xs:pattern value='[^\*"/:&gt;&lt;\?\\\|\. ]|[^\*"/:&gt;&lt;\?\\\| ][^\*":&gt;&lt;\?\\\|]*[^\*":&gt;&lt;\?\\\|\. /]'/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="programMenuFolder" minOccurs="0" >
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <!-- programMenuFolder cannot begin with a / (forward-slash) or a ' ' (space), have any of these characters: *":<>?\|, and end with a . (dot), ' ' (space), or / (forward slash) -->
+              <xs:pattern value='[^\*"/:&gt;&lt;\?\\\|\. ]|[^\*"/:&gt;&lt;\?\\\| ][^\*":&gt;&lt;\?\\\|]*[^\*":&gt;&lt;\?\\\|\. /]'/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+		
+        <!-- Features this application can opt in to -->
+        <xs:element name="customUpdateUI" type="xs:boolean" minOccurs="0" />
+        <xs:element name="allowBrowserInvocation" type="xs:boolean" minOccurs="0" />
+        <xs:element name="fileTypes" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="fileType" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:all>
+                    <xs:element name="name">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:pattern value='[A-Za-z]'/>
+                          <xs:pattern value='[A-Za-z][A-Za-z0-9\.]{0,36}[A-Za-z]'/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="extension">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                          <xs:pattern value='[A-Za-z0-9]{1,38}'/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                    <xs:element name="description" type="xs:string" minOccurs="0" />
+                    <xs:element name="contentType">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:string">
+						  <!-- See RFC2045 for a more detailed grammar for valid content types -->
+                          <xs:pattern value='.+'/>
+                        </xs:restriction>
+                      </xs:simpleType>
+					</xs:element>
+                    <xs:element name="icon" type="IconType" minOccurs="0" />
+                  </xs:all>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <!-- Flash Runtime Extension Support -->
+        <xs:element name="extensions" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="extensionID" minOccurs="0" maxOccurs="unbounded">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:pattern value="[A-Za-z0-9\-\.]{1,212}" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+
+        <!-- iPhone-specific capabilities -->
+      	<xs:element name="iPhone" minOccurs="0">
+       	  <xs:complexType>
+       	    <xs:all>
+		 	  <!-- A list of plist key/value pairs to be added to the application Info.plist -->
+       	      <xs:element name="InfoAdditions" type="xs:string" minOccurs="0"/>
+              <xs:element name="requestedDisplayResolution" type="xs:string" minOccurs="0"/>
+       	    </xs:all>
+       	  </xs:complexType>
+      	</xs:element>
+
+	<!-- android-specific capabilities -->
+        <xs:element name="android" minOccurs="0" maxOccurs="1">
+          <xs:complexType>
+            <xs:all>
+              <xs:element name="manifestAdditions" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+          </xs:complexType>
+        </xs:element>
+
+	</xs:all>	  
+
+      <!-- About the runtime version required -->
+      <xs:attribute name="minimumPatchLevel" type="xs:unsignedInt" minOccurs="0"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:simpleType name="profileList">
+    <xs:list itemType="profileNameType"/>
+  </xs:simpleType>
+			
+  <xs:simpleType name="profileNameType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="desktop"             />
+      <xs:enumeration value="extendedDesktop"     />
+      <xs:enumeration value="mobileDevice"        />
+      <xs:enumeration value="extendedMobileDevice"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="languageList">
+    <xs:list itemType="languageNameType"/>
+  </xs:simpleType>
+			
+  <xs:simpleType name="languageNameType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="en" />
+      <xs:enumeration value="de" />
+      <xs:enumeration value="cs" />
+      <xs:enumeration value="es" />
+      <xs:enumeration value="fr" />
+      <xs:enumeration value="it" />
+      <xs:enumeration value="ja" />
+      <xs:enumeration value="ko" />
+      <xs:enumeration value="nl" />
+      <xs:enumeration value="pl" />
+      <xs:enumeration value="pt" />
+      <xs:enumeration value="ru" />
+      <xs:enumeration value="sv" />
+      <xs:enumeration value="tr" />
+      <xs:enumeration value="zh" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- Type definitions -->
+  <xs:complexType name="IconType">
+    <xs:all>
+      <xs:element name="image16x16"   	type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image29x29"   	type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image32x32"   	type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image36x36"   	type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image48x48"   	type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image50x50"   	type="xs:anyURI" minOccurs="0" />
+	  <!-- 57x57 is never used by file icons -->
+      <xs:element name="image57x57"   	type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image58x58"     type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image72x72"   	type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image100x100"   type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image114x114"	type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image128x128" 	type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image144x144" 	type="xs:anyURI" minOccurs="0" />  
+      <xs:element name="image512x512" 	type="xs:anyURI" minOccurs="0" />
+      <xs:element name="image1024x1024"	type="xs:anyURI" minOccurs="0" />
+  </xs:all>
+  </xs:complexType>
+  <xs:simpleType name="UnsignedIntListType">
+    <xs:list itemType="xs:unsignedInt" />
+  </xs:simpleType>
+  <xs:simpleType name="BoundsSizeType">
+    <xs:restriction base="UnsignedIntListType">
+      <xs:length value="2" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="LocalizableType" mixed="true">
+    <xs:sequence>
+      <xs:element name="text" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attribute ref="xml:lang" use="required"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
