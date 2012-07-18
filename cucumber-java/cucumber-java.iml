@@ -11,6 +11,7 @@
     <orderEntry type="module" module-name="cucumber" />
     <orderEntry type="module" module-name="core-api" />
     <orderEntry type="module" module-name="java-psi-impl" />
+    <orderEntry type="module" module-name="lang-api" />
   </component>
 </module>
 

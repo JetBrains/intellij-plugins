@@ -8,6 +8,7 @@
   <vendor logo="/general/ijLogo.png">JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
+    <psi.referenceContributor implementation="org.jetbrains.plugins.cucumber.java.steps.JavaCucumberReferenceContributor"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">

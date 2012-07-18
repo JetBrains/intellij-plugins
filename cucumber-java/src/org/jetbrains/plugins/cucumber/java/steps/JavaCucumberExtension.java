@@ -90,4 +90,9 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
   public boolean isInStepDefinitionDirectory(@NotNull PsiDirectory dir) {
     return false;  //To change body of implemented methods use File | Settings | File Templates.
   }
+
+  @Override
+  public ResolveResult[] resolveStep(@NotNull PsiElement step) {
+    return new ResolveResult[0];  //To change body of implemented methods use File | Settings | File Templates.
+  }
 }

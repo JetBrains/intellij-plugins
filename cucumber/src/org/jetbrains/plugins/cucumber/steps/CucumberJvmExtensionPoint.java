@@ -8,6 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.ResolveResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
@@ -82,4 +83,6 @@ public interface CucumberJvmExtensionPoint {
                                             final List<PsiDirectory> newAbstractStepDefinitionsRoots, @NotNull final Set<String> processedStepDirectories);
 
   boolean isInStepDefinitionDirectory(@NotNull final PsiDirectory dir);
+
+  ResolveResult[] resolveStep(@NotNull final PsiElement step);
 }
