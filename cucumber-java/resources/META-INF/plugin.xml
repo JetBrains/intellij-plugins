@@ -8,10 +8,10 @@
   <vendor logo="/general/ijLogo.png">JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
-    <psi.referenceContributor implementation="org.jetbrains.plugins.cucumber.java.steps.JavaCucumberReferenceContributor"/>
+    <psi.referenceContributor implementation="org.jetbrains.plugins.cucumber.java.steps.reference.JavaCucumberReferenceContributor"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">
-    <cucumberJvmExtensionPoint implementation="org.jetbrains.plugins.cucumber.java.steps.JavaCucumberExtension"/>
+    <cucumberJvmExtensionPoint implementation="org.jetbrains.plugins.cucumber.java.JavaCucumberExtension"/>
   </extensions>
 </idea-plugin>

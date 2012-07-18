@@ -1,4 +1,4 @@
-package org.jetbrains.plugins.cucumber.java.steps;
+package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
@@ -6,9 +6,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinition;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.CucumberJvmExtensionPoint;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,6 +95,7 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
 
   @Override
   public ResolveResult[] resolveStep(@NotNull PsiElement step) {
+    final CucumberStepsIndex index = CucumberStepsIndex.getInstance(step.getProject());
     return new ResolveResult[0];  //To change body of implemented methods use File | Settings | File Templates.
   }
 }
