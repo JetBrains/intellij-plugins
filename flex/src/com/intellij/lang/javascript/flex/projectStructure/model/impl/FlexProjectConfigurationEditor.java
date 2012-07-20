@@ -180,42 +180,42 @@ public class FlexProjectConfigurationEditor implements Disposable {
                                                                    final @Nullable LibraryTableBase.ModifiableModelEx projectLibrariesModel,
                                                                    final @Nullable LibraryTableBase.ModifiableModelEx globalLibrariesModel) {
     return new ProjectModifiableModelProvider() {
-        public Module[] getModules() {
-          final Set<Module> modules = moduleToModifiableModel.keySet();
-          return modules.toArray(new Module[modules.size()]);
-        }
+      public Module[] getModules() {
+        final Set<Module> modules = moduleToModifiableModel.keySet();
+        return modules.toArray(new Module[modules.size()]);
+      }
 
-        public ModifiableRootModel getModuleModifiableModel(final Module module) {
-          final ModifiableRootModel model = moduleToModifiableModel.get(module);
-          LOG.assertTrue(model != null, "No model for module " + module.getName());
-          return model;
-        }
+      public ModifiableRootModel getModuleModifiableModel(final Module module) {
+        final ModifiableRootModel model = moduleToModifiableModel.get(module);
+        LOG.assertTrue(model != null, "No model for module " + module.getName());
+        return model;
+      }
 
-        public void addListener(final FlexIdeBCConfigurator.Listener listener,
-                                final Disposable parentDisposable) {
-          // modules and BCs must not be removed
-        }
+      public void addListener(final FlexIdeBCConfigurator.Listener listener,
+                              final Disposable parentDisposable) {
+        // modules and BCs must not be removed
+      }
 
-        public void commitModifiableModels() throws ConfigurationException {
-          // commit must be performed somewhere else
-        }
+      public void commitModifiableModels() throws ConfigurationException {
+        // commit must be performed somewhere else
+      }
 
-        @Nullable
-        public Library findSourceLibrary(final String name, final String level) {
-          if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
-            return globalLibrariesModel.getLibraryByName(name);
-          }
-          else if (LibraryTablesRegistrar.PROJECT_LEVEL.equals(level)) {
-            LOG.assertTrue(projectLibrariesModel != null);
-            return projectLibrariesModel.getLibraryByName(name);
-          }
-          LOG.error("Unexpected argument: " + level);
-          return null;
+      @Nullable
+      public Library findSourceLibrary(final String name, final String level) {
+        if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(level)) {
+          return globalLibrariesModel.getLibraryByName(name);
         }
+        else if (LibraryTablesRegistrar.PROJECT_LEVEL.equals(level)) {
+          LOG.assertTrue(projectLibrariesModel != null);
+          return projectLibrariesModel.getLibraryByName(name);
+        }
+        LOG.error("Unexpected argument: " + level);
+        return null;
+      }
 
-        public Library findSourceLibraryForLiveName(final String name, final String level) {
-          return findSourceLibrary(name, level);
-        }
+      public Library findSourceLibraryForLiveName(final String name, final String level) {
+        return findSourceLibrary(name, level);
+      }
     };
   }
 
@@ -307,40 +307,41 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return libraryCopy;
   }
 
-  public static void resetNonApplicableValuesToDefaults(final ModifiableFlexIdeBuildConfiguration configuration) {
+  public static void resetNonApplicableValuesToDefaults(final ModifiableFlexIdeBuildConfiguration bc) {
     final FlexIdeBuildConfiguration defaultConfiguration = new FlexIdeBuildConfigurationImpl();
-    final BuildConfigurationNature nature = configuration.getNature();
+    final BuildConfigurationNature nature = bc.getNature();
 
-    if (configuration.getOutputType() != OutputType.RuntimeLoadedModule) {
-      configuration.setOptimizeFor(defaultConfiguration.getOptimizeFor());
+    if (bc.getOutputType() != OutputType.RuntimeLoadedModule) {
+      bc.setOptimizeFor(defaultConfiguration.getOptimizeFor());
     }
 
     if (nature.isLib()) {
-      configuration.setMainClass(defaultConfiguration.getMainClass());
+      bc.setMainClass(defaultConfiguration.getMainClass());
     }
 
     if (!nature.isWebPlatform() || !nature.isApp()) {
-      configuration.setUseHtmlWrapper(defaultConfiguration.isUseHtmlWrapper());
-      configuration.setWrapperTemplatePath(defaultConfiguration.getWrapperTemplatePath());
+      bc.setUseHtmlWrapper(defaultConfiguration.isUseHtmlWrapper());
+      bc.setWrapperTemplatePath(defaultConfiguration.getWrapperTemplatePath());
     }
 
-    if (nature.isMobilePlatform() || !nature.isApp()) {
-      configuration.setCssFilesToCompile(defaultConfiguration.getCssFilesToCompile());
+    if (!BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
+      bc.setRLMs(defaultConfiguration.getRLMs());
+      bc.setCssFilesToCompile(defaultConfiguration.getCssFilesToCompile());
     }
 
-    if (!ArrayUtil.contains(configuration.getDependencies().getFrameworkLinkage(), BCUtils.getSuitableFrameworkLinkages(nature))) {
-      configuration.getDependencies().setFrameworkLinkage(defaultConfiguration.getDependencies().getFrameworkLinkage());
+    if (!ArrayUtil.contains(bc.getDependencies().getFrameworkLinkage(), BCUtils.getSuitableFrameworkLinkages(nature))) {
+      bc.getDependencies().setFrameworkLinkage(defaultConfiguration.getDependencies().getFrameworkLinkage());
     }
 
     if (!nature.isWebPlatform()) {
-      configuration.getDependencies().setTargetPlayer(defaultConfiguration.getDependencies().getTargetPlayer());
+      bc.getDependencies().setTargetPlayer(defaultConfiguration.getDependencies().getTargetPlayer());
     }
 
-    if (nature.isMobilePlatform() || configuration.isPureAs()) {
-      configuration.getDependencies().setComponentSet(defaultConfiguration.getDependencies().getComponentSet());
+    if (nature.isMobilePlatform() || bc.isPureAs()) {
+      bc.getDependencies().setComponentSet(defaultConfiguration.getDependencies().getComponentSet());
     }
 
-    for (Iterator<ModifiableDependencyEntry> i = configuration.getDependencies().getModifiableEntries().iterator(); i.hasNext(); ) {
+    for (Iterator<ModifiableDependencyEntry> i = bc.getDependencies().getModifiableEntries().iterator(); i.hasNext(); ) {
       final ModifiableDependencyEntry entry = i.next();
       if (entry instanceof BuildConfigurationEntry) {
         final FlexIdeBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
@@ -350,20 +351,20 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
     }
 
-    if (configuration.getTargetPlatform() != TargetPlatform.Desktop || configuration.getOutputType() != OutputType.Application) {
+    if (bc.getTargetPlatform() != TargetPlatform.Desktop || bc.getOutputType() != OutputType.Application) {
       ((AirDesktopPackagingOptionsImpl)defaultConfiguration.getAirDesktopPackagingOptions())
-        .applyTo(((AirDesktopPackagingOptionsImpl)configuration.getAirDesktopPackagingOptions()));
+        .applyTo(((AirDesktopPackagingOptionsImpl)bc.getAirDesktopPackagingOptions()));
     }
 
-    if (configuration.getTargetPlatform() != TargetPlatform.Mobile || configuration.getOutputType() != OutputType.Application) {
+    if (bc.getTargetPlatform() != TargetPlatform.Mobile || bc.getOutputType() != OutputType.Application) {
       ((AndroidPackagingOptionsImpl)defaultConfiguration.getAndroidPackagingOptions())
-        .applyTo(((AndroidPackagingOptionsImpl)configuration.getAndroidPackagingOptions()));
+        .applyTo(((AndroidPackagingOptionsImpl)bc.getAndroidPackagingOptions()));
       ((IosPackagingOptionsImpl)defaultConfiguration.getIosPackagingOptions())
-        .applyTo(((IosPackagingOptionsImpl)configuration.getIosPackagingOptions()));
+        .applyTo(((IosPackagingOptionsImpl)bc.getIosPackagingOptions()));
     }
 
     if (!nature.isLib()) {
-      configuration.getCompilerOptions().setFilesToIncludeInSWC(Collections.<String>emptyList());
+      bc.getCompilerOptions().setFilesToIncludeInSWC(Collections.<String>emptyList());
     }
   }
 

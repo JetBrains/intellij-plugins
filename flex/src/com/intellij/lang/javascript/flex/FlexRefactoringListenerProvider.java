@@ -224,7 +224,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
 
     protected void filePathChanged(final String oldFilePath, final String newFilePath) {
       for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
-        if (BCUtils.canHaveRuntimeStylesheets(bc)) {
+        if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
           final Collection<String> cssFiles = bc.getCssFilesToCompile();
           if (cssFiles.isEmpty()) continue;
 

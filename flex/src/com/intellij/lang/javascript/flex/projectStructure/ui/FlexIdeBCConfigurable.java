@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.execution.ExecutionBundle;
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
@@ -10,6 +9,7 @@ import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -70,16 +70,17 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   public static final String TAB_NAME = FlexBundle.message("bc.tab.general.display.name");
   public static final String LOCATION_ON_TAB = "FlashBuildConfiguration.locationOnTab";
 
-  public static enum Location {
+  public enum Location {
     MainClass("main-class"),
     OutputFileName("output-file-name"),
     OutputFolder("output-folder"),
     HtmlTemplatePath("html-template-path"),
+    RLMs("runtime-loaded-modules"),
     RuntimeStyleSheets("runtime-style-sheets");
 
     public final String errorId;
 
-    private Location(final String errorId) {
+    Location(final String errorId) {
       this.errorId = errorId;
     }
   }
@@ -107,6 +108,10 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   private JLabel myWrapperFolderLabel;
   private TextFieldWithBrowseButton myWrapperTemplateTextWithBrowse;
   private JButton myCreateHtmlWrapperTemplateButton;
+
+  private JLabel myRLMLabel;
+  private TextFieldWithBrowseButton.NoPathCompletion myRLMTextWithBrowse;
+  private Collection<FlexIdeBuildConfiguration.RLMInfo> myRLMs;
 
   private JLabel myCssFilesLabel;
   private TextFieldWithBrowseButton.NoPathCompletion myCssFilesTextWithBrowse;
@@ -157,6 +162,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
         myDependenciesConfigurable.libraryReplaced(library, replacement);
       }
     };
+
+    myRLMs = Collections.emptyList();
     myCssFilesToCompile = Collections.emptyList();
 
     myDisposable = Disposer.newDisposable();
@@ -209,23 +216,45 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     myOutputFolderField.addBrowseFolderListener(null, null, module.getProject(),
                                                 FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
+    initHtmlWrapperControls();
+    initRLMControls();
+    initCSSControls();
+
+    myOptimizeForCombo.setModel(new CollectionComboBoxModel(Arrays.asList(""), ""));
+    myOptimizeForCombo.setRenderer(new ListCellRendererWrapper(myOptimizeForCombo.getRenderer()) {
+      @Override
+      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
+        if ("".equals(value)) {
+          setText("<no optimization>");
+        }
+      }
+    });
+
+    myMainClassWarning.setIcon(IconLoader.getIcon("smallWarning.png"));
+    myOutputFileNameWarning.setIcon(IconLoader.getIcon("smallWarning.png"));
+    myOutputFolderWarning.setIcon(IconLoader.getIcon("smallWarning.png"));
+
+    myWarning.setIcon(UIUtil.getBalloonWarningIcon());
+  }
+
+  private void initHtmlWrapperControls() {
     myUseHTMLWrapperCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
-        IdeFocusManager.getInstance(module.getProject()).requestFocus(myWrapperTemplateTextWithBrowse.getTextField(), true);
+        IdeFocusManager.getInstance(myModule.getProject()).requestFocus(myWrapperTemplateTextWithBrowse.getTextField(), true);
       }
     });
 
     final String title = "Select folder with HTML wrapper template";
     final String description = "Folder must contain 'index.template.html' file which must contain '${swf}' macro.";
-    myWrapperTemplateTextWithBrowse.addBrowseFolderListener(title, description, module.getProject(),
+    myWrapperTemplateTextWithBrowse.addBrowseFolderListener(title, description, myModule.getProject(),
                                                             FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     myCreateHtmlWrapperTemplateButton.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
         if (sdk == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) {
-          final SelectFlexSdkDialog dialog = new SelectFlexSdkDialog(module.getProject(), CreateHtmlWrapperTemplateDialog.TITLE,
+          final SelectFlexSdkDialog dialog = new SelectFlexSdkDialog(myModule.getProject(), CreateHtmlWrapperTemplateDialog.TITLE,
                                                                      FlexBundle.message("take.wrapper.template.from.sdk"));
           dialog.show();
           if (dialog.isOK()) {
@@ -240,7 +269,25 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
         }
       }
     });
+  }
 
+  private void initRLMControls() {
+    myRLMTextWithBrowse.getTextField().setEditable(false);
+    myRLMTextWithBrowse.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
+    myRLMTextWithBrowse.addActionListener(new ActionListener() {
+      public void actionPerformed(final ActionEvent e) {
+        final RLMsDialog dialog = new RLMsDialog(myModule, myRLMs);
+        dialog.show();
+
+        if (dialog.isOK()) {
+          myRLMs = dialog.getRLMs();
+          updateRLMsText();
+        }
+      }
+    });
+  }
+
+  private void initCSSControls() {
     myCssFilesTextWithBrowse.getTextField().setEditable(false);
     myCssFilesTextWithBrowse.setButtonIcon(PlatformIcons.OPEN_EDIT_DIALOG_ICON);
     myCssFilesTextWithBrowse.addActionListener(new ActionListener() {
@@ -250,7 +297,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
           value.add(new StringBuilder(cssFilePath));
         }
         final RepeatableValueDialog dialog =
-          new RepeatableValueDialog(module.getProject(), FlexBundle.message("css.files.to.compile.dialog.title"), value,
+          new RepeatableValueDialog(myModule.getProject(), FlexBundle.message("css.files.to.compile.dialog.title"), value,
                                     CompilerOptionInfo.CSS_FILES_INFO_FOR_UI);
         dialog.show();
         if (dialog.isOK()) {
@@ -263,23 +310,6 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
         }
       }
     });
-
-    myOptimizeForCombo.setModel(new CollectionComboBoxModel(Arrays.asList(""), ""));
-    myOptimizeForCombo.setRenderer(new ListCellRendererWrapper(myOptimizeForCombo.getRenderer()) {
-      @Override
-      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        if ("".equals(value)) {
-          setText("<no optimization>");
-        }
-      }
-    });
-
-
-    myMainClassWarning.setIcon(IconLoader.getIcon("smallWarning.png"));
-    myOutputFileNameWarning.setIcon(IconLoader.getIcon("smallWarning.png"));
-    myOutputFolderWarning.setIcon(IconLoader.getIcon("smallWarning.png"));
-
-    myWarning.setIcon(UIUtil.getBalloonWarningIcon());
   }
 
   private void showHtmlWrapperCreationDialog(final @NotNull Sdk sdk) {
@@ -494,10 +524,24 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     myWrapperTemplateTextWithBrowse.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
     myCreateHtmlWrapperTemplateButton.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
 
-    final boolean cssFilesVisible = outputType == OutputType.Application && targetPlatform != TargetPlatform.Mobile;
-    myCssFilesLabel.setVisible(cssFilesVisible);
-    myCssFilesTextWithBrowse.setVisible(cssFilesVisible);
+    final boolean canHaveRLMsAndRuntimeStylesheets = BCUtils.canHaveRLMsAndRuntimeStylesheets(outputType, targetPlatform);
+
+    myRLMLabel.setVisible(canHaveRLMsAndRuntimeStylesheets);
+    myRLMTextWithBrowse.setVisible(canHaveRLMsAndRuntimeStylesheets);
+    updateRLMsText();
+
+    myCssFilesLabel.setVisible(canHaveRLMsAndRuntimeStylesheets);
+    myCssFilesTextWithBrowse.setVisible(canHaveRLMsAndRuntimeStylesheets);
     updateCssFilesText();
+  }
+
+  private void updateRLMsText() {
+    final String s = StringUtil.join(myRLMs, new Function<FlexIdeBuildConfiguration.RLMInfo, String>() {
+      public String fun(final FlexIdeBuildConfiguration.RLMInfo info) {
+        return info.MAIN_CLASS;
+      }
+    }, ", ");
+    myRLMTextWithBrowse.setText(s);
   }
 
   private void updateCssFilesText() {
@@ -529,6 +573,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       .equals(FileUtil.toSystemIndependentName(myWrapperTemplateTextWithBrowse.getText().trim()))) {
       return true;
     }
+    if (!myConfiguration.getRLMs().equals(myRLMs)) return true;
     if (!myConfiguration.getCssFilesToCompile().equals(myCssFilesToCompile)) return true;
     if (myConfiguration.isSkipCompile() != mySkipCompilationCheckBox.isSelected()) return true;
 
@@ -563,12 +608,13 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       throw new ConfigurationException("Module '" + getModuleName() + "': build configuration name is empty");
     }
     configuration.setName(myName);
-    configuration.setOptimizeFor((String)myOptimizeForCombo.getSelectedItem()); // todo myOptimizeForCombo should contain live information
+    configuration.setOptimizeFor((String)myOptimizeForCombo.getSelectedItem());
     configuration.setMainClass(myMainClassComponent.getText().trim());
     configuration.setOutputFileName(myOutputFileNameTextField.getText().trim());
     configuration.setOutputFolder(FileUtil.toSystemIndependentName(myOutputFolderField.getText().trim()));
     configuration.setUseHtmlWrapper(myUseHTMLWrapperCheckBox.isSelected());
     configuration.setWrapperTemplatePath(FileUtil.toSystemIndependentName(myWrapperTemplateTextWithBrowse.getText().trim()));
+    configuration.setRLMs(myRLMs);
     configuration.setCssFilesToCompile(myCssFilesToCompile);
     configuration.setSkipCompile(mySkipCompilationCheckBox.isSelected());
   }
@@ -585,6 +631,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.getOutputFolder()));
       myUseHTMLWrapperCheckBox.setSelected(myConfiguration.isUseHtmlWrapper());
       myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(myConfiguration.getWrapperTemplatePath()));
+      myRLMs = new ArrayList<FlexIdeBuildConfiguration.RLMInfo>(myConfiguration.getRLMs());
       myCssFilesToCompile = new ArrayList<String>(myConfiguration.getCssFilesToCompile());
       mySkipCompilationCheckBox.setSelected(myConfiguration.isSkipCompile());
 
@@ -712,6 +759,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
             return IdeFocusManager.findInstance().requestFocus(myWrapperTemplateTextWithBrowse.getChildComponent(), true);
           case RuntimeStyleSheets:
             return IdeFocusManager.findInstance().requestFocus(myCssFilesTextWithBrowse.getChildComponent(), true);
+          case RLMs:
+            return IdeFocusManager.findInstance().requestFocus(myRLMTextWithBrowse.getChildComponent(), true);
         }
       }
     }

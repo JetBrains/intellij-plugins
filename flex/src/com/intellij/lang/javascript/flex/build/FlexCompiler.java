@@ -34,7 +34,6 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
@@ -139,7 +138,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
         compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies)
                                      : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies));
 
-        if (BCUtils.canHaveRuntimeStylesheets(bc)) {
+        if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
           for (String cssPath : bc.getCssFilesToCompile()) {
             final VirtualFile cssFile = LocalFileSystem.getInstance().findFileByPath(cssPath);
             if (cssFile == null) continue;
@@ -435,8 +434,6 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                         final FlexIdeBuildConfiguration bc,
                                         final boolean checkPackaging,
                                         final Consumer<FlashProjectStructureProblem> errorConsumer) {
-    final String moduleName = module.getName();
-
     final Sdk sdk = bc.getSdk();
     if (sdk == null) {
       errorConsumer.consume(FlashProjectStructureProblem.createDependenciesProblem(FlexBundle.message("sdk.not.set"),
@@ -553,13 +550,13 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
             for (String url : ModuleRootManager.getInstance(module).getContentRootUrls()) {
               if (ok) {
-                ok = checkWrapperFolderClash(bc, templateFolderPath, VfsUtil.urlToPath(url), "module content root", errorConsumer);
+                ok = checkWrapperFolderClash(bc, templateFolderPath, VfsUtilCore.urlToPath(url), "module content root", errorConsumer);
               }
             }
 
             for (String url : ModuleRootManager.getInstance(module).getSourceRootUrls()) {
               if (ok) {
-                ok = checkWrapperFolderClash(bc, templateFolderPath, VfsUtil.urlToPath(url), "source folder", errorConsumer);
+                ok = checkWrapperFolderClash(bc, templateFolderPath, VfsUtilCore.urlToPath(url), "source folder", errorConsumer);
               }
             }
 
@@ -572,7 +569,43 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
     }
 
-    if (BCUtils.canHaveRuntimeStylesheets(bc)) {
+    if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
+      for (FlexIdeBuildConfiguration.RLMInfo rlm : bc.getRLMs()) {
+        if (rlm.MAIN_CLASS.isEmpty()) {
+          errorConsumer
+            .consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message("rlm.main.class.not.set"),
+                                                                             FlexIdeBCConfigurable.Location.RLMs));
+        }
+        else {
+          if (FlexUtils.getPathToMainClassFile(rlm.MAIN_CLASS, module).isEmpty()) {
+            errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
+              .message("rlm.main.class.not.found", rlm.MAIN_CLASS), FlexIdeBCConfigurable.Location.RLMs));
+          }
+        }
+
+        if (bc.getMainClass().equals(rlm.MAIN_CLASS)) {
+          errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
+            .message("rlm.main.class.equal.to.bc.main.class", rlm.MAIN_CLASS), FlexIdeBCConfigurable.Location.RLMs));
+        }
+
+        if (bc.getOutputFileName().equals(rlm.OUTPUT_FILE)) {
+          errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
+            .message("rlm.output.equal.to.bc.output", rlm.OUTPUT_FILE), FlexIdeBCConfigurable.Location.RLMs));
+        }
+
+        if (rlm.OUTPUT_FILE.isEmpty()) {
+          errorConsumer.consume(FlashProjectStructureProblem
+                                  .createGeneralOptionProblem(bc.getName(), FlexBundle.message("rlm.output.file.name.not.specified"),
+                                                              FlexIdeBCConfigurable.Location.RLMs));
+        }
+        else {
+          if (!rlm.OUTPUT_FILE.toLowerCase().endsWith(".swf")) {
+            errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message(
+              "rlm.output.file.must.have.swf.extension"), FlexIdeBCConfigurable.Location.RLMs));
+          }
+        }
+      }
+
       for (String cssPath : bc.getCssFilesToCompile()) {
         if (!cssPath.toLowerCase().endsWith(".css")) {
           errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle

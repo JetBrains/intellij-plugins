@@ -98,6 +98,12 @@ public class NonStructuralModifiableBuildConfiguration implements FlexIdeBuildCo
 
   @NotNull
   @Override
+  public Collection<RLMInfo> getRLMs() {
+    return myOriginal.getRLMs();
+  }
+
+  @NotNull
+  @Override
   public Collection<String> getCssFilesToCompile() {
     return myOriginal.getCssFilesToCompile();
   }

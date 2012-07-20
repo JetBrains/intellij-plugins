@@ -42,6 +42,9 @@ public class FlexBuildConfigurationState {
   @Attribute(value = "wrapper-template-path")
   public String WRAPPER_TEMPLATE_PATH = "";
 
+  @Attribute(value = "runtime-loaded-modules")
+  public String RLMS = "";
+
   @Attribute(value = "css-to-compile")
   public String CSS_FILES_TO_COMPILE = "";
 

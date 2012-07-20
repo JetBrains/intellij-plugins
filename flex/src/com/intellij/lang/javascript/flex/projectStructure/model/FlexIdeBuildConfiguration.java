@@ -13,6 +13,38 @@ import java.util.Collection;
  */
 public interface FlexIdeBuildConfiguration {
 
+  class RLMInfo {
+    public final @NotNull String MAIN_CLASS;
+    public final @NotNull String OUTPUT_FILE;
+    public final boolean OPTIMIZE;
+
+    public RLMInfo(final @NotNull String mainClass, final @NotNull String outputFileName, final boolean optimize) {
+      this.MAIN_CLASS = mainClass;
+      this.OUTPUT_FILE = outputFileName;
+      this.OPTIMIZE = optimize;
+    }
+
+    public boolean equals(final Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      final RLMInfo info = (RLMInfo)o;
+
+      if (OPTIMIZE != info.OPTIMIZE) return false;
+      if (!MAIN_CLASS.equals(info.MAIN_CLASS)) return false;
+      if (!OUTPUT_FILE.equals(info.OUTPUT_FILE)) return false;
+
+      return true;
+    }
+
+    public int hashCode() {
+      int result = MAIN_CLASS.hashCode();
+      result = 31 * result + OUTPUT_FILE.hashCode();
+      result = 31 * result + (OPTIMIZE ? 1 : 0);
+      return result;
+    }
+  }
+
   String UNNAMED = "Unnamed";
 
   @NotNull
@@ -55,6 +87,9 @@ public interface FlexIdeBuildConfiguration {
 
   @NotNull
   String getWrapperTemplatePath();
+
+  @NotNull
+  Collection<RLMInfo> getRLMs();
 
   @NotNull
   Collection<String> getCssFilesToCompile();

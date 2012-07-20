@@ -50,6 +50,8 @@ public interface ModifiableFlexIdeBuildConfiguration extends FlexIdeBuildConfigu
 
   void setWrapperTemplatePath(@NotNull String wrapperTemplatePath);
 
+  void setRLMs(Collection<RLMInfo> rlms);
+
   void setCssFilesToCompile(Collection<String> cssFilesToCompile);
 
   void setSkipCompile(boolean skipCompile);

@@ -73,8 +73,12 @@ public class BCUtils {
     return bc.isTempBCForCompilation() && bc.getMainClass().endsWith(FlexUnitPrecompileTask.FLEX_UNIT_LAUNCHER);
   }
 
-  public static boolean canHaveRuntimeStylesheets(final FlexIdeBuildConfiguration bc) {
-    return bc.getOutputType() == OutputType.Application && bc.getTargetPlatform() != TargetPlatform.Mobile;
+  public static boolean canHaveRLMsAndRuntimeStylesheets(final FlexIdeBuildConfiguration bc) {
+    return canHaveRLMsAndRuntimeStylesheets(bc.getOutputType(), bc.getTargetPlatform());
+  }
+
+  public static boolean canHaveRLMsAndRuntimeStylesheets(final OutputType outputType, final TargetPlatform targetPlatform) {
+    return outputType == OutputType.Application && targetPlatform != TargetPlatform.Mobile;
   }
 
   public static boolean isRuntimeStyleSheetBC(final FlexIdeBuildConfiguration bc) {

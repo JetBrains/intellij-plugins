@@ -68,14 +68,21 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
 
       public Class getColumnClass(final int column) {
         final ListElementType type = myInfo.LIST_ELEMENTS[column].LIST_ELEMENT_TYPE;
-        return (type == ListElementType.File || type == ListElementType.FileOrFolder) ? VirtualFile.class : String.class;
+        return (type == ListElementType.File || type == ListElementType.FileOrFolder)
+               ? VirtualFile.class
+               : type == ListElementType.Boolean
+                 ? Boolean.class
+                 : String.class;
       }
 
       protected Object getValue(final StringBuilder s, final int column) {
         final String value = StringUtil.split(s.toString(), CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).get(column);
         final ListElementType type = myInfo.LIST_ELEMENTS[column].LIST_ELEMENT_TYPE;
-        return (type == ListElementType.File || type == ListElementType.FileOrFolder) ? FileUtil.toSystemDependentName(value)
-                                                                                      : value;
+        return (type == ListElementType.File || type == ListElementType.FileOrFolder)
+               ? FileUtil.toSystemDependentName(value)
+               : type == ListElementType.Boolean
+                 ? Boolean.valueOf(value)
+                 : value;
       }
 
       protected void setValue(final StringBuilder s, final int column, final Object aValue) {
@@ -100,7 +107,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
     };
   }
 
-  protected void addObject() {
+  protected boolean addObject() {
     final CompilerOptionInfo.ListElement firstElement = myInfo.LIST_ELEMENTS[0];
     if (myInfo.LIST_ELEMENTS.length == 1 &&
         (firstElement.LIST_ELEMENT_TYPE == ListElementType.File ||
@@ -111,6 +118,7 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
       final VirtualFile file = FileChooser.chooseFile(descriptor, myProject, null);
       if (file != null) {
         getCurrentList().add(new StringBuilder(file.getPath()));
+        return true;
       }
     }
     else {
@@ -126,6 +134,9 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
         b.append(listElement.DEFAULT_VALUE);
       }
       getCurrentList().add(b);
+      return true;
     }
+
+    return false;
   }
 }

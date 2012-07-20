@@ -14,14 +14,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.StringTokenizer;
+import java.util.*;
 
 class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfiguration {
 
@@ -52,6 +51,9 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
 
   @NotNull
   private String myWrapperTemplatePath = "";
+
+  @NotNull
+  private String myRLMs = "";
 
   @NotNull
   private String myCssFilesToCompile = "";
@@ -125,6 +127,21 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
 
   @Override
   @NotNull
+  public Collection<RLMInfo> getRLMs() {
+    if (myRLMs.isEmpty()) return Collections.emptyList();
+
+    final List<String> entries = StringUtil.split(myRLMs, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+    final ArrayList<RLMInfo> result = new ArrayList<RLMInfo>(entries.size());
+    for (String entry : entries) {
+      final List<String> parts = StringUtil.split(entry, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false);
+      assert parts.size() == 3 : entry;
+      result.add(new FlexIdeBuildConfiguration.RLMInfo(parts.get(0), parts.get(1), Boolean.valueOf(parts.get(2))));
+    }
+    return result;
+  }
+
+  @Override
+  @NotNull
   public Collection<String> getCssFilesToCompile() {
     if (myCssFilesToCompile.isEmpty()) return Collections.emptyList();
     return StringUtil.split(myCssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
@@ -190,6 +207,20 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
   @Override
   public void setWrapperTemplatePath(@NotNull String wrapperTemplatePath) {
     myWrapperTemplatePath = wrapperTemplatePath;
+  }
+
+  @Override
+  public void setRLMs(@NotNull Collection<RLMInfo> rlms) {
+    if (rlms.isEmpty()) myRLMs = "";
+    myRLMs = StringUtil.join(rlms, new Function<RLMInfo, String>() {
+      public String fun(final RLMInfo info) {
+        return info.MAIN_CLASS +
+               CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
+               info.OUTPUT_FILE +
+               CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
+               info.OPTIMIZE;
+      }
+    }, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 
   @Override
@@ -277,6 +308,7 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     copy.myOutputFolder = myOutputFolder;
     copy.myOutputType = myOutputType;
     copy.myPureAs = myPureAs;
+    copy.myRLMs = myRLMs;
     copy.mySkipCompile = mySkipCompile;
     copy.myTargetPlatform = myTargetPlatform;
     copy.myUseHtmlWrapper = myUseHtmlWrapper;
@@ -298,6 +330,7 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     if (!other.myOutputFolder.equals(myOutputFolder)) return false;
     if (other.myOutputType != myOutputType) return false;
     if (other.myPureAs != myPureAs) return false;
+    if (!other.myRLMs.equals(myRLMs)) return false;
     if (other.mySkipCompile != mySkipCompile) return false;
     if (other.myTargetPlatform != myTargetPlatform) return false;
     if (other.myUseHtmlWrapper != myUseHtmlWrapper) return false;
@@ -397,6 +430,7 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     state.OUTPUT_FOLDER = myOutputFolder;
     state.OUTPUT_TYPE = myOutputType;
     state.PURE_ACTION_SCRIPT = myPureAs;
+    state.RLMS = myRLMs;
     state.SKIP_COMPILE = mySkipCompile;
     state.TARGET_PLATFORM = myTargetPlatform;
     state.USE_HTML_WRAPPER = myUseHtmlWrapper;
@@ -419,6 +453,7 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     myOutputFolder = state.OUTPUT_FOLDER;
     myOutputType = state.OUTPUT_TYPE;
     myPureAs = state.PURE_ACTION_SCRIPT;
+    myRLMs = state.RLMS;
     mySkipCompile = state.SKIP_COMPILE;
     myTargetPlatform = state.TARGET_PLATFORM;
     myUseHtmlWrapper = state.USE_HTML_WRAPPER;

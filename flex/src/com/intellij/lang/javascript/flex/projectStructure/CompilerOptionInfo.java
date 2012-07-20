@@ -24,7 +24,7 @@ public class CompilerOptionInfo {
 
   public enum OptionType {Group, Boolean, String, Int, File, List, IncludeClasses, IncludeFiles}
 
-  public enum ListElementType {String, File, FileOrFolder, Locale}
+  public enum ListElementType {String, File, FileOrFolder, Class, Boolean, Locale}
 
   public static class ListElement {
     public final String NAME;
@@ -120,6 +120,13 @@ public class CompilerOptionInfo {
   public static final CompilerOptionInfo INCLUDE_NAMESPACES_INFO =
     new CompilerOptionInfo("include-namespaces", "fake", OptionType.List, null,
                            new ListElement[]{new ListElement("uri")},
+                           false, null, true, true, true, true, "");
+  public static final CompilerOptionInfo RLMS_INFO_FOR_UI =
+    new CompilerOptionInfo("rlm.list.fake", "fake", OptionType.List, null,
+                           new ListElement[]{
+                             new ListElement("fake", "Main Class", ListElementType.Class, null, ""),
+                             new ListElement("fake", "Output File", ListElementType.String, null, ""),
+                             new ListElement("fake", "Optimize", ListElementType.Boolean, null, "true")},
                            false, null, true, true, true, true, "");
   public static final CompilerOptionInfo CSS_FILES_INFO_FOR_UI =
     new CompilerOptionInfo("css.files.list.fake", "fake", OptionType.List, null,

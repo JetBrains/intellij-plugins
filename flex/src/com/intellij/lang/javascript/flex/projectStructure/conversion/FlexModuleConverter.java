@@ -332,7 +332,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
       module.getOrderEntries().removeAll(orderEntriesToRemove);
     }
 
-    if (BCUtils.canHaveRuntimeStylesheets(newBuildConfiguration) &&
+    if (BCUtils.canHaveRLMsAndRuntimeStylesheets(newBuildConfiguration) &&
         oldConfiguration != null && !oldConfiguration.CSS_FILES_LIST.isEmpty()) {
       final Collection<String> cssFilesToCompile = new ArrayList<String>();
       for (String cssPath : oldConfiguration.CSS_FILES_LIST) {

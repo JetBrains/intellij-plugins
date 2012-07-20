@@ -63,17 +63,18 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
   protected abstract TableModelBase createTableModel();
 
   protected int getPreferredColumnWidth(final int columnIndex) {
-    return 75;
+    return myTable.getColumnClass(columnIndex) == Boolean.class ? 50 : 200;
   }
 
   private void initButtons() {
     ToolbarDecorator d = ToolbarDecorator.createDecorator(myTable);
     d.setAddAction(new AnActionButtonRunnable() {
       public void run(AnActionButton button) {
-        addObject();
-        ((AbstractTableModel)myTable.getModel()).fireTableDataChanged();
-        if (myEditAddedRow) {
-          myTable.editCellAt(myTable.getRowCount() - 1, 0);
+        if (addObject()) {
+          ((AbstractTableModel)myTable.getModel()).fireTableDataChanged();
+          if (myEditAddedRow) {
+            myTable.editCellAt(myTable.getRowCount() - 1, 0);
+          }
         }
       }
     });
@@ -97,7 +98,7 @@ public abstract class AddRemoveTableRowsDialog<T> extends DialogWrapper {
     myEditAddedRow = editAddedRow;
   }
 
-  protected abstract void addObject();
+  protected abstract boolean addObject();
 
   protected JComponent createCenterPanel() {
     return myMainPanel;

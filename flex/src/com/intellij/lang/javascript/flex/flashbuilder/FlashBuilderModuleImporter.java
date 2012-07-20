@@ -128,7 +128,7 @@ public class FlashBuilderModuleImporter {
 
     mainBC.setOutputFolder(getAbsolutePathWithLinksHandled(fbProject, fbProject.getOutputFolderPath()));
 
-    if (BCUtils.canHaveRuntimeStylesheets(mainBC) && !fbProject.getCssFilesToCompile().isEmpty()) {
+    if (BCUtils.canHaveRLMsAndRuntimeStylesheets(mainBC) && !fbProject.getCssFilesToCompile().isEmpty()) {
       final Collection<String> cssPaths = new ArrayList<String>();
       for (final String path : fbProject.getCssFilesToCompile()) {
         final String cssPath = getAbsolutePathWithLinksHandled(fbProject, path);
