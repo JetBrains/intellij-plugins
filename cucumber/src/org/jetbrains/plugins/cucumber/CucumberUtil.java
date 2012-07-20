@@ -33,6 +33,7 @@ public class CucumberUtil {
    * @return true if pattern could by found by @param word
    */
   public static boolean matches(@Nullable Pattern pattern, @NotNull final String word) {
+    // ToDo: rename
     if (pattern == null) {
       return false;
     }

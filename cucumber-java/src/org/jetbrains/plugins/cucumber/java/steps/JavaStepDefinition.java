@@ -1,8 +1,12 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
+import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,17 +14,30 @@ import java.util.List;
  * Date: 7/16/12
  */
 public class JavaStepDefinition extends AbstractStepDefinition {
-  public JavaStepDefinition(PsiElement element) {
-    super(element);
+  private String pattern;
+
+  public JavaStepDefinition(PsiMethod method, @NotNull final PsiAnnotation stepAnnotation) {
+    super(method);
+
+    if (stepAnnotation.getParameterList().getAttributes().length > 0) {
+      final PsiElement annotationValue = stepAnnotation.getParameterList().getAttributes()[0].getValue();
+      if (annotationValue != null) {
+        final PsiElement patternLiteral = annotationValue.getFirstChild();
+        if (patternLiteral != null) {
+          final String patternContainer = patternLiteral.getText();
+          pattern =  patternContainer.substring(1, patternContainer.length() - 1).replace("\\\\", "\\");
+        }
+      }
+    }
   }
 
   @Override
   public List<String> getVariableNames() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return new ArrayList<String>();
   }
 
   @Override
   public String getElementText() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return pattern;
   }
 }

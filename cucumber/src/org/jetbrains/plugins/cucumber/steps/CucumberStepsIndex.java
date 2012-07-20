@@ -72,17 +72,15 @@ public class CucumberStepsIndex {
         final PsiElement parent = event.getParent();
         PsiElement child = event.getChild();
         if (isStepLikeFile(child, parent)) {
-          if (isInStepDefinitionDirectory((PsiDirectory)parent)) {
-            final PsiFile file = (PsiFile)child;
-            myUpdateQueue.queue(new Update(parent) {
-              public void run() {
-                if (file.isValid()) {
-                  reloadAbstractStepDefinitions(file);
-                  createWatcher(file);
-                }
+          final PsiFile file = (PsiFile)child;
+          myUpdateQueue.queue(new Update(parent) {
+            public void run() {
+              if (file.isValid()) {
+                reloadAbstractStepDefinitions(file);
+                createWatcher(file);
               }
-            });
-          }
+            }
+          });
         }
       }
 
@@ -91,13 +89,11 @@ public class CucumberStepsIndex {
         final PsiElement parent = event.getParent();
         final PsiElement child = event.getChild();
         if (isStepLikeFile(child, parent)) {
-          if (isInStepDefinitionDirectory((PsiDirectory) parent)) {
-            myUpdateQueue.queue(new Update(parent) {
-              public void run() {
-                removeAbstractStepDefinitionsRelatedTo((PsiFile)child);
-              }
-            });
-          }
+          myUpdateQueue.queue(new Update(parent) {
+            public void run() {
+              removeAbstractStepDefinitionsRelatedTo((PsiFile)child);
+            }
+          });
         }
       }
     });
@@ -144,18 +140,6 @@ public class CucumberStepsIndex {
     });
 
     Disposer.register(project, connection);
-  }
-
-  private boolean isInStepDefinitionDirectory(PsiDirectory dir) {
-    boolean result = false;
-    for (CucumberJvmExtensionPoint extension : myExtensionList) {
-      if (extension.isInStepDefinitionDirectory(dir)) {
-        result = true;
-        break;
-      }
-    }
-
-    return result;
   }
 
   /**
@@ -247,7 +231,6 @@ public class CucumberStepsIndex {
     return result;
   }
 
-
   @Nullable
   public PsiElement findStep(PsiFile featureFile, String stepName) {
     final AbstractStepDefinition definition = findStepDefinition(featureFile, stepName);
@@ -293,12 +276,12 @@ public class CucumberStepsIndex {
   //
   //  final List<PsiFile> stepDefs = new ArrayList<PsiFile>();
   //  for (PsiDirectory root : stepDefsRoots) {
-  //    stepDefs.addAll(gatherAbstractStepDefinitionsFilesFromDirectory(root));
+  //    stepDefs.addAll(gatherStepDefinitionsFilesFromDirectory(root));
   //  }
   //  return !stepDefs.isEmpty() ? stepDefs : Collections.<PsiFile>emptyList();
   //}
 
-  public List<PsiFile> gatherAbstractStepDefinitionsFilesFromDirectory(@NotNull final PsiDirectory dir) {
+  public List<PsiFile> gatherStepDefinitionsFilesFromDirectory(@NotNull final PsiDirectory dir) {
     List<PsiFile> result = new ArrayList<PsiFile>();
     addAllStepsFiles(dir, result);
     return result;
@@ -339,7 +322,7 @@ public class CucumberStepsIndex {
         // let's process each folder separately
         try{
           myProcessedStepDirectories.add(root.getVirtualFile().getPath());
-          List<PsiFile> files = gatherAbstractStepDefinitionsFilesFromDirectory(root);
+          List<PsiFile> files = gatherStepDefinitionsFilesFromDirectory(root);
           for (final PsiFile file : files) {
             removeAbstractStepDefinitionsRelatedTo(file);
             stepDefinitions.addAll(getStepDefinitions(file));
