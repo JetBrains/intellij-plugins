@@ -309,6 +309,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       if (overriddenBC.getOutputType() != OutputType.Application) {
         overriddenBC.setOutputType(OutputType.Application);
         overriddenBC.setUseHtmlWrapper(false);
+        overriddenBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
         overriddenBC.setCssFilesToCompile(Collections.<String>emptyList());
 
         overriddenBC.getDependencies().setFrameworkLinkage(LinkageType.Merged);

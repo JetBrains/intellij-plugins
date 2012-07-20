@@ -1,11 +1,13 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.openapi.application.Application;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
@@ -127,7 +129,7 @@ public class FlexCompilationManager {
         myFinishedTasks.add(task);
 
         if (task.isCompilationFailed()) {
-          final Collection<FlexCompilationTask> cancelledTasks = getNotStartedDependentTasks(task);
+          final Collection<FlexCompilationTask> cancelledTasks = cancelNotStartedDependentTasks(task);
           if (cancelledTasks.isEmpty()) {
             addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.failed"), null, -1, -1);
           }
@@ -163,13 +165,19 @@ public class FlexCompilationManager {
     }
   }
 
-  private Collection<FlexCompilationTask> getNotStartedDependentTasks(final FlexCompilationTask failedTask) {
-    final Collection<FlexCompilationTask> cancelledTasks = new LinkedList<FlexCompilationTask>();
-    appendNotStartedDependentTasks(cancelledTasks, failedTask);
-    return cancelledTasks;
+  private Collection<FlexCompilationTask> cancelNotStartedDependentTasks(final FlexCompilationTask failedTask) {
+    final Collection<FlexCompilationTask> tasksToCancel = new LinkedList<FlexCompilationTask>();
+    appendAndCancelNotStartedDependentTasks(tasksToCancel, failedTask);
+
+    if (BCUtils.canHaveRLMsAndRuntimeStylesheets(failedTask.getBC())) {
+      appendAndCancelNotStartedRLMTasks(tasksToCancel, failedTask.getModule(), failedTask.getBC());
+    }
+
+    return tasksToCancel;
   }
 
-  private void appendNotStartedDependentTasks(final Collection<FlexCompilationTask> cancelledTasks, final FlexCompilationTask task) {
+  private void appendAndCancelNotStartedDependentTasks(final Collection<FlexCompilationTask> cancelledTasks,
+                                                       final FlexCompilationTask task) {
     final Collection<FlexCompilationTask> tasksToCancel = new ArrayList<FlexCompilationTask>();
 
     for (FlexCompilationTask notStartedTask : myNotStartedTasks) {
@@ -184,7 +192,21 @@ public class FlexCompilationManager {
       if (myNotStartedTasks.remove(taskToCancel)) {
         myFinishedTasks.add(taskToCancel);
         cancelledTasks.add(taskToCancel);
-        appendNotStartedDependentTasks(cancelledTasks, taskToCancel);
+        appendAndCancelNotStartedDependentTasks(cancelledTasks, taskToCancel);
+      }
+    }
+  }
+
+  private void appendAndCancelNotStartedRLMTasks(final Collection<FlexCompilationTask> tasks,
+                                                 final Module module,
+                                                 final FlexIdeBuildConfiguration bc) {
+    final Iterator<FlexCompilationTask> iterator = myNotStartedTasks.iterator();
+    while (iterator.hasNext()) {
+      final FlexCompilationTask task = iterator.next();
+      if (module == task.getModule() && bc.getName().equals(task.getBC().getName()) && BCUtils.isRLMTemporaryBC(task.getBC())) {
+        iterator.remove();
+        myFinishedTasks.add(task);
+        tasks.add(task);
       }
     }
   }
@@ -196,6 +218,11 @@ public class FlexCompilationManager {
       boolean allTasksHaveDependenciesOnlyInNotStarted = true; // to handle cyclic dependencies
 
       for (FlexCompilationTask task : myNotStartedTasks) {
+
+        if (BCUtils.isRLMTemporaryBC(task.getBC()) && !isMainAppCompiledForRLM(task.getModule(), task.getBC())) {
+          allTasksHaveDependenciesOnlyInNotStarted = false;
+          continue;
+        }
 
         if (hasDependenciesIn(task, myInProgressTasks)) {
           allTasksHaveDependenciesOnlyInNotStarted = false;
@@ -237,6 +264,21 @@ public class FlexCompilationManager {
         startNewTaskIfPossible();
       }
     }
+  }
+
+  private boolean isMainAppCompiledForRLM(final Module module, final FlexIdeBuildConfiguration rlmBC) {
+    for (FlexCompilationTask task : myFinishedTasks) {
+      final FlexIdeBuildConfiguration bc = task.getBC();
+      if (task.getModule() == module &&
+          bc.getName().equals(rlmBC.getName()) &&
+          !BCUtils.isRLMTemporaryBC(bc) &&
+          !BCUtils.isRuntimeStyleSheetBC(bc) &&
+          BCUtils.canHaveRLMsAndRuntimeStylesheets(bc) &&
+          bc.getRLMs().size() > 0) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private static boolean hasDependenciesIn(final FlexCompilationTask task,

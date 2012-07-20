@@ -123,8 +123,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
       final Collection<FlexCompilationTask> compilationTasks = new ArrayList<FlexCompilationTask>();
       for (final ProcessingItem item : items) {
         final Collection<FlexIdeBuildConfiguration> dependencies = new HashSet<FlexIdeBuildConfiguration>();
-        // todo add 'optimize for' dependencies
         final FlexIdeBuildConfiguration bc = ((MyProcessingItem)item).myBC;
+
         for (final DependencyEntry entry : bc.getDependencies().getEntries()) {
           if (entry instanceof BuildConfigurationEntry) {
             final FlexIdeBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
@@ -139,6 +139,29 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                      : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies));
 
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
+          for (FlexIdeBuildConfiguration.RLMInfo rlm : bc.getRLMs()) {
+            final ModifiableFlexIdeBuildConfiguration rlmBC = Factory.getTemporaryCopyForCompilation(bc);
+            final String subdir = PathUtil.getParentPath(rlm.OUTPUT_FILE);
+            final String outputFileName = PathUtil.getFileName(rlm.OUTPUT_FILE);
+
+            rlmBC.setMainClass(BCUtils.RLM_MAIN_CLASS_PREFIX + rlm.MAIN_CLASS);
+
+            if (!subdir.isEmpty()) {
+              final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
+              rlmBC.setOutputFolder(outputFolder + "/" + subdir);
+            }
+
+            rlmBC.setOutputFileName(outputFileName);
+
+            rlmBC.setUseHtmlWrapper(false);
+            rlmBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
+            rlmBC.setCssFilesToCompile(Collections.<String>emptyList());
+            rlmBC.getCompilerOptions().setResourceFilesMode(ResourceFilesMode.None);
+
+            compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, rlmBC, dependencies)
+                                         : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, rlmBC, dependencies));
+          }
+
           for (String cssPath : bc.getCssFilesToCompile()) {
             final VirtualFile cssFile = LocalFileSystem.getInstance().findFileByPath(cssPath);
             if (cssFile == null) continue;
@@ -146,6 +169,9 @@ public class FlexCompiler implements SourceProcessingCompiler {
             final ModifiableFlexIdeBuildConfiguration cssBC = Factory.getTemporaryCopyForCompilation(bc);
             cssBC.setMainClass(cssPath);
             cssBC.setOutputFileName(FileUtil.getNameWithoutExtension(PathUtil.getFileName(cssPath)) + ".swf");
+
+            cssBC.setUseHtmlWrapper(false);
+            cssBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
             cssBC.setCssFilesToCompile(Collections.<String>emptyList());
             cssBC.getCompilerOptions().setResourceFilesMode(ResourceFilesMode.None);
 
@@ -198,26 +224,6 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
       return items;
     }
-  }
-
-  private static Map<Module, Collection<FlexIdeBuildConfiguration>> mapModuleToBCsWithResourceFiles(final ProcessingItem[] items) {
-    final Map<Module, Collection<FlexIdeBuildConfiguration>> result = new THashMap<Module, Collection<FlexIdeBuildConfiguration>>();
-
-    for (ProcessingItem item : items) {
-      final Module module = ((MyProcessingItem)item).myModule;
-      final FlexIdeBuildConfiguration bc = ((MyProcessingItem)item).myBC;
-      if (!bc.isSkipCompile() && BCUtils.canHaveResourceFiles(bc.getNature()) &&
-          bc.getCompilerOptions().getResourceFilesMode() != ResourceFilesMode.None) {
-        Collection<FlexIdeBuildConfiguration> bcs = result.get(module);
-        if (bcs == null) {
-          bcs = new ArrayList<FlexIdeBuildConfiguration>();
-          result.put(module, bcs);
-        }
-        bcs.add(bc);
-      }
-    }
-
-    return result;
   }
 
   @SuppressWarnings("ConstantConditions") // already checked in validateConfiguration()

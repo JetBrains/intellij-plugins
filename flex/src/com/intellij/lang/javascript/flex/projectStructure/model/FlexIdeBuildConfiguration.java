@@ -15,6 +15,9 @@ public interface FlexIdeBuildConfiguration {
 
   class RLMInfo {
     public final @NotNull String MAIN_CLASS;
+    /**
+     * path to output swf file relative to output folder, e.g. "com/foo/Module1.swf"
+     */
     public final @NotNull String OUTPUT_FILE;
     public final boolean OPTIMIZE;
 

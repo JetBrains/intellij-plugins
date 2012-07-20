@@ -218,7 +218,7 @@ public class FlexCompilationUtils {
 
   public static void performPostCompileActions(final Module module,
                                                final @NotNull FlexIdeBuildConfiguration bc) throws FlexCompilerException {
-    if (BCUtils.isRuntimeStyleSheetBC(bc)) return;
+    if (BCUtils.isRLMTemporaryBC(bc) || BCUtils.isRuntimeStyleSheetBC(bc)) return;
 
     switch (bc.getTargetPlatform()) {
       case Web:

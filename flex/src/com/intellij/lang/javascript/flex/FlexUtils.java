@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -285,8 +286,10 @@ public class FlexUtils {
            ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_');
   }
 
-  public static String getPathToMainClassFile(final String mainClassFqn, final Module module) {
+  public static String getPathToMainClassFile(String mainClassFqn, final Module module) {
     if (StringUtil.isEmpty(mainClassFqn)) return "";
+
+    mainClassFqn = StringUtil.trimStart(mainClassFqn, BCUtils.RLM_MAIN_CLASS_PREFIX);
 
     final String s = mainClassFqn.replace('.', '/');
     final String[] classFileRelPaths = {s + ".mxml", s + ".as"};
@@ -326,8 +329,8 @@ public class FlexUtils {
   }
 
   private static void processMxmlTags(final XmlTag rootTag,
-                                     final JSResolveUtil.JSInjectedFilesVisitor injectedFilesVisitor,
-                                     Processor<XmlTag> processor) {
+                                      final JSResolveUtil.JSInjectedFilesVisitor injectedFilesVisitor,
+                                      Processor<XmlTag> processor) {
     String namespace = JSResolveUtil.findMxmlNamespace(rootTag);
 
     XmlBackedJSClassImpl.InjectedScriptsVisitor scriptsVisitor =

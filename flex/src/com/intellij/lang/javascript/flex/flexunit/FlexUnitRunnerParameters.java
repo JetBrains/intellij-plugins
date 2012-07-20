@@ -17,7 +17,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.xmlb.annotations.Attribute;
@@ -193,10 +193,12 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
 
     final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(moduleAndBC.second);
     overriddenBC.setSkipCompile(false);
+    overriddenBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
     overriddenBC.setCssFilesToCompile(Collections.<String>emptyList());
     overriddenBC.setMainClass(FlexUnitPrecompileTask.FLEX_UNIT_LAUNCHER);
     overriddenBC.setOutputFileName("_flexunit.swf");
-    overriddenBC.setOutputFolder(VfsUtil.urlToPath(CompilerModuleExtension.getInstance(moduleAndBC.first).getCompilerOutputUrlForTests()));
+    overriddenBC
+      .setOutputFolder(VfsUtilCore.urlToPath(CompilerModuleExtension.getInstance(moduleAndBC.first).getCompilerOutputUrlForTests()));
     //overriddenBC.getAndroidPackagingOptions().setPackageFileName("_flexunit.apk");
     //overriddenBC.getIosPackagingOptions().setPackageFileName("_flexunit.ipa");
 
