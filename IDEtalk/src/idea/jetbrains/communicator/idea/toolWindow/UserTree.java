@@ -16,7 +16,7 @@
 package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.util.ui.tree.MacTreeUI;
+import com.intellij.util.ui.tree.WideSelectionTreeUI;
 import jetbrains.communicator.commands.SendMessageCommand;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.commands.UserCommand;
@@ -82,7 +82,7 @@ public class UserTree extends KirTree {
 
   private MyTreeUI createUI() {
     if (SystemInfo.isMac  && isUnderAquaLookAndFeel()) {
-      return new MyMacTreeUIImpl();
+      return new MyWideSelectionTreeUIImpl();
     }
     return new MyBasicTreeUIImpl();
   }
@@ -218,7 +218,7 @@ public class UserTree extends KirTree {
     }
   }
 
-  public static class MyMacTreeUIImpl extends MacTreeUI implements MyTreeUI {
+  public static class MyWideSelectionTreeUIImpl extends WideSelectionTreeUI implements MyTreeUI {
     public void invalidatePath(TreePath path) {
       treeState.invalidatePathBounds(path);
     }
