@@ -47,7 +47,7 @@ public class FacetEditor extends FacetEditorTab {
 
   @Override
   public void onFacetInitialized(@NotNull final Facet facet) {
-    if (_configuration.getVersion() == null) _configuration.setVersion(TapestryVersion.TAPESTRY_5_1_0_5);
+    if (_configuration.getVersion() == null) _configuration.setVersion(TapestryVersion.TAPESTRY_5_3_3);
 
     AddTapestrySupportUtil.addSupportInWriteCommandAction(facet.getModule(), _configuration, false, false);
   }

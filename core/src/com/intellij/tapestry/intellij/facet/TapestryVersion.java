@@ -2,7 +2,7 @@ package com.intellij.tapestry.intellij.facet;
 
 public enum TapestryVersion {
 
-  TAPESTRY_5_1_0_5("5.1.0.5");
+  TAPESTRY_5_3_3("5.3.3");
 
   private final String _name;
 
