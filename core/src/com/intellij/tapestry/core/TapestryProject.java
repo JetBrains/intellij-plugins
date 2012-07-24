@@ -1,6 +1,7 @@
 package com.intellij.tapestry.core;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.tapestry.core.events.TapestryEventsManager;
@@ -49,6 +50,7 @@ public class TapestryProject {
   private final IResourceFinder myResourceFinder;
   private Collection<Library> myCachedLibraries;
   private String myLastApplicationPackage;
+  private String myLastApplicationFilterName;
 
   private final IJavaTypeFinder myJavaTypeFinder;
   private final IJavaTypeCreator myJavaTypeCreator;
@@ -66,6 +68,7 @@ public class TapestryProject {
 
     myEventsManager = new TapestryEventsManager();
     myLastApplicationPackage = null;
+    myLastApplicationFilterName = null;
   }
 
   /**
@@ -75,6 +78,15 @@ public class TapestryProject {
   public String getApplicationRootPackage() {
     TapestryFacetConfiguration myConfiguration = TapestryFacet.findFacetConfiguration(myModule);
     return myConfiguration == null ? null : myConfiguration.getApplicationPackage();
+  }
+
+  /**
+   * @return the application filter name.
+   */
+  @Nullable
+  public String getApplicationFilterName() {
+    TapestryFacetConfiguration myConfiguration = TapestryFacet.findFacetConfiguration(myModule);
+    return myConfiguration == null ? null : myConfiguration.getFilterName();
   }
 
   /**
@@ -117,17 +129,20 @@ public class TapestryProject {
   public Collection<Library> getLibraries() {
 
     String applicationRootPackage = getApplicationRootPackage();
+    String applicationFilterName = getApplicationFilterName();
     if (applicationRootPackage == null) return Collections.emptyList();
-    if (myCachedLibraries != null && isNotEmpty(myLastApplicationPackage)) {
-      if (myLastApplicationPackage.equals(applicationRootPackage)) {
+    if (myCachedLibraries != null && isNotEmpty(myLastApplicationPackage) && isNotEmpty(myLastApplicationFilterName)) {
+      if (myLastApplicationPackage.equals(applicationRootPackage) && myLastApplicationFilterName.equals(applicationFilterName)) {
         return myCachedLibraries;
       }
     }
 
     myCachedLibraries = new ArrayList<Library>();
     myLastApplicationPackage = applicationRootPackage;
+    myLastApplicationFilterName = applicationFilterName;
 
     myCachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage, this));
+    myCachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage + "." + applicationFilterName, this));
     myCachedLibraries.add(myCoreLibrary);
 
     return myCachedLibraries;
