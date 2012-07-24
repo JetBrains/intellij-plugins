@@ -141,6 +141,9 @@ public class FlexCompiler implements SourceProcessingCompiler {
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
           for (FlexIdeBuildConfiguration.RLMInfo rlm : bc.getRLMs()) {
             final ModifiableFlexIdeBuildConfiguration rlmBC = Factory.getTemporaryCopyForCompilation(bc);
+            final ModifiableCompilerOptions compilerOptions = rlmBC.getCompilerOptions();
+            compilerOptions.setAdditionalOptions(FlexUtils.removeOptions(compilerOptions.getAdditionalOptions(), "link-report"));
+
             final String subdir = PathUtil.getParentPath(rlm.OUTPUT_FILE);
             final String outputFileName = PathUtil.getFileName(rlm.OUTPUT_FILE);
 
@@ -156,7 +159,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
             rlmBC.setUseHtmlWrapper(false);
             rlmBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
             rlmBC.setCssFilesToCompile(Collections.<String>emptyList());
-            rlmBC.getCompilerOptions().setResourceFilesMode(ResourceFilesMode.None);
+            compilerOptions.setResourceFilesMode(ResourceFilesMode.None);
 
             compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, rlmBC, dependencies)
                                          : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, rlmBC, dependencies));
@@ -639,25 +642,11 @@ public class FlexCompiler implements SourceProcessingCompiler {
       checkPackagingOptions(bc, errorConsumer);
     }
 
-    // This verification is disabled because Vladimir Krivosheev has app on app dependency because he needs predictable compilation order.
-    // So we do not check dependencies and ignore incompatible ones when doing highlighting and compilation.
     //checkDependencies(moduleName, bc);
   }
 
-  private static boolean checkWrapperFolderClash(final FlexIdeBuildConfiguration bc,
-                                                 final String templateFolderPath,
-                                                 final String otherFolderPath,
-                                                 final String otherFolderDescription,
-                                                 final Consumer<FlashProjectStructureProblem> errorConsumer) {
-    if (FileUtil.isAncestor(templateFolderPath, otherFolderPath, false)) {
-      errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message(
-        "html.wrapper.folder.clash", otherFolderDescription, FileUtil.toSystemDependentName(templateFolderPath)),
-                                                                                    FlexIdeBCConfigurable.Location.HtmlTemplatePath));
-      return false;
-    }
-    return true;
-  }
-
+  /* This verification is disabled because Vladimir Krivosheev has app on app dependency because he needs predictable compilation order.
+   So we do not check dependencies and ignore incompatible ones when doing highlighting and compilation. */
   private static void checkDependencies(final String moduleName, final FlexIdeBuildConfiguration bc) throws ConfigurationException {
     for (final DependencyEntry entry : bc.getDependencies().getEntries()) {
       if (entry instanceof BuildConfigurationEntry) {
@@ -679,6 +668,20 @@ public class FlexCompiler implements SourceProcessingCompiler {
         }
       }
     }
+  }
+
+  private static boolean checkWrapperFolderClash(final FlexIdeBuildConfiguration bc,
+                                                 final String templateFolderPath,
+                                                 final String otherFolderPath,
+                                                 final String otherFolderDescription,
+                                                 final Consumer<FlashProjectStructureProblem> errorConsumer) {
+    if (FileUtil.isAncestor(templateFolderPath, otherFolderPath, false)) {
+      errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message(
+        "html.wrapper.folder.clash", otherFolderDescription, FileUtil.toSystemDependentName(templateFolderPath)),
+                                                                                    FlexIdeBCConfigurable.Location.HtmlTemplatePath));
+      return false;
+    }
+    return true;
   }
 
   public static void checkPackagingOptions(final FlexIdeBuildConfiguration bc, final Consumer<FlashProjectStructureProblem> errorConsumer) {

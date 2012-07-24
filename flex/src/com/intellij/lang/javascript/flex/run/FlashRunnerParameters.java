@@ -306,6 +306,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       overriddenBC.getAndroidPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
       overriddenBC.getIosPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
 
+      overriddenBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
+
       if (overriddenBC.getOutputType() != OutputType.Application) {
         overriddenBC.setOutputType(OutputType.Application);
         overriddenBC.setUseHtmlWrapper(false);

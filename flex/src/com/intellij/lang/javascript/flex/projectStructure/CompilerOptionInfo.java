@@ -108,6 +108,10 @@ public class CompilerOptionInfo {
     new CompilerOptionInfo("compiler.preloader", "fake", OptionType.String, null, null, false, "4.5", true, true, true, true, "");
   public static final CompilerOptionInfo WARN_NO_CONSTRUCTOR_INFO =
     new CompilerOptionInfo("compiler.warn-no-constructor", "fake", OptionType.Boolean, null, null, false, null, true, true, true, true, "");
+  public static final CompilerOptionInfo LINK_REPORT_INFO =
+    new CompilerOptionInfo("link-report", "fake", OptionType.File, "xml", null, false, null, true, true, true, true, "");
+  public static final CompilerOptionInfo LOAD_EXTERNS_INFO =
+    new CompilerOptionInfo("load-externs", "fake", OptionType.File, "xml", null, false, null, true, true, true, true, "");
   public static final CompilerOptionInfo FONT_MANAGERS_INFO =
     new CompilerOptionInfo("compiler.fonts.managers", "fake", OptionType.List, null,
                            new ListElement[]{new ListElement("manager-class")},

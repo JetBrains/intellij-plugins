@@ -24,7 +24,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
@@ -47,6 +46,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -99,7 +99,7 @@ public class CompilerConfigGenerator {
 
     final String name =
       getConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), BCUtils.getBCSpecifier(bc));
-    return getOrCreateConfigFile(module.getProject(), name, text);
+    return getOrCreateConfigFile(name, text);
   }
 
   private String generateConfigFileText() throws IOException {
@@ -121,6 +121,17 @@ public class CompilerConfigGenerator {
   }
 
   private void addMandatoryOptions(final Element rootElement) {
+    if (!BCUtils.isRLMTemporaryBC(myBC) && !BCUtils.isRuntimeStyleSheetBC(myBC) &&
+        BCUtils.canHaveRLMsAndRuntimeStylesheets(myBC) && myBC.getRLMs().size() > 0) {
+      addOption(rootElement, CompilerOptionInfo.LINK_REPORT_INFO, getLinkReportFilePath(myModule, myBC.getName()));
+    }
+
+    if (BCUtils.isRLMTemporaryBC(myBC) && needToOptimize(myModule, myBC)) {
+      final String customLinkReportPath = getCustomLinkReportPath(myModule, myBC);
+      final String linkReportPath = StringUtil.notNullize(customLinkReportPath, getLinkReportFilePath(myModule, myBC.getName()));
+      addOption(rootElement, CompilerOptionInfo.LOAD_EXTERNS_INFO, linkReportPath);
+    }
+
     addOption(rootElement, CompilerOptionInfo.WARN_NO_CONSTRUCTOR_INFO, "false");
     if (myFlexmojos) return;
 
@@ -158,6 +169,58 @@ public class CompilerConfigGenerator {
     addOption(rootElement, CompilerOptionInfo.FONT_MANAGERS_INFO, fontManagers);
 
     addOption(rootElement, CompilerOptionInfo.STATIC_RSLS_INFO, "false");
+  }
+
+  private static boolean needToOptimize(final Module module, final FlexIdeBuildConfiguration rlmBC) {
+    boolean needToOptimize = false;
+
+    final FlexIdeBuildConfiguration appBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(rlmBC.getName());
+    if (appBC != null) {
+      for (FlexIdeBuildConfiguration.RLMInfo rlmInfo : appBC.getRLMs()) {
+        if (rlmBC.getMainClass().equals(BCUtils.RLM_MAIN_CLASS_PREFIX + rlmInfo.MAIN_CLASS)) {
+          needToOptimize = rlmInfo.OPTIMIZE;
+          break;
+        }
+      }
+    }
+    return needToOptimize;
+  }
+
+  @Nullable
+  private static String getCustomLinkReportPath(final Module module, final FlexIdeBuildConfiguration rlmBC) {
+    final FlexIdeBuildConfiguration appBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(rlmBC.getName());
+    if (appBC != null) {
+      final List<String> linkReports = FlexUtils.getOptionValues(appBC.getCompilerOptions().getAdditionalOptions(), "link-report");
+      if (!linkReports.isEmpty()) {
+        final String path = linkReports.get(0);
+        if (new File(path).isFile()) return path;
+        final String absPath = FlexUtils.getFlexCompilerWorkDirPath(module.getProject(), null) + "/" + path;
+        if (new File(absPath).isFile()) return absPath;
+      }
+      else {
+        final String configFilePath = appBC.getCompilerOptions().getAdditionalConfigFilePath();
+        if (!configFilePath.isEmpty()) {
+          final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(configFilePath);
+          if (configFile != null) {
+            try {
+              String path = FlexUtils.findXMLElement(configFile.getInputStream(), "<flex-config><link-report>");
+              if (path != null) {
+                path = path.trim();
+                if (new File(path).isFile()) return path;
+                // I have no idea why Flex compiler treats path relative to source root for "link-report" option
+                for (VirtualFile srcRoot : ModuleRootManager.getInstance(module).getSourceRoots()) {
+                  final String absPath = srcRoot.getPath() + "/" + path;
+                  if (new File(absPath).isFile()) return absPath;
+                }
+              }
+            }
+            catch (IOException ignore) {/*ignore*/}
+          }
+        }
+      }
+    }
+
+    return null;
   }
 
   private static String getSwfVersionForTargetPlayer(final String targetPlayer) {
@@ -671,10 +734,13 @@ public class CompilerConfigGenerator {
                        ValueSource.GlobalDefault);
   }
 
-  private static VirtualFile getOrCreateConfigFile(final Project project, final String name, final String text) throws IOException {
-    final VirtualFile existingConfigFile = VfsUtil.findRelativeFile(name, FlexUtils.getFlexCompilerWorkDir(project, null));
+  private static VirtualFile getOrCreateConfigFile(final String fileName, final String text) throws IOException {
 
-    if (existingConfigFile != null && Arrays.equals(text.getBytes(), existingConfigFile.contentsToByteArray())) {
+    final VirtualFile existingConfigFile = FlexCompilationManager.refreshAndFindFileInWriteAction(
+      FlexUtils.getTempFlexConfigsDirPath() + "/" + fileName);
+
+    if (existingConfigFile != null && existingConfigFile.isValid() &&
+        Arrays.equals(text.getBytes(), existingConfigFile.contentsToByteArray())) {
       return existingConfigFile;
     }
 
@@ -690,9 +756,9 @@ public class CompilerConfigGenerator {
               final String baseDirPath = FlexUtils.getTempFlexConfigsDirPath();
               final VirtualFile baseDir = VfsUtil.createDirectories(baseDirPath);
 
-              VirtualFile configFile = baseDir.findChild(name);
+              VirtualFile configFile = baseDir.findChild(fileName);
               if (configFile == null) {
-                configFile = baseDir.createChildData(this, name);
+                configFile = baseDir.createChildData(this, fileName);
               }
               VfsUtil.saveText(configFile, text);
               return configFile;
@@ -720,14 +786,19 @@ public class CompilerConfigGenerator {
     return fileRef.get();
   }
 
-  static String getConfigFileName(final Module module, final @Nullable String configName,
-                                  final String prefix, final @Nullable String postfix) {
+  private static String getConfigFileName(final Module module, final @Nullable String bcName,
+                                          final String prefix, final @Nullable String postfix) {
     final String hash1 = Integer.toHexString((SystemProperties.getUserName() + module.getProject().getName()).hashCode()).toUpperCase();
-    final String hash2 = Integer.toHexString((module.getName() + StringUtil.notNullize(configName)).hashCode()).toUpperCase();
+    final String hash2 = Integer.toHexString((module.getName() + StringUtil.notNullize(bcName)).hashCode()).toUpperCase();
     return prefix + "-" + hash1 + "-" + hash2 + (postfix == null ? ".xml" : ("-" + StringUtil.replaceChar(postfix, ' ', '-') + ".xml"));
   }
 
-  static boolean isSourceFileWithPublicDeclaration(final Module module, final VirtualFile file, final String qName) {
+  private static String getLinkReportFilePath(final Module module, final String bcName) {
+    final String fileName = getConfigFileName(module, bcName, PlatformUtils.getPlatformPrefix().toLowerCase(), "link-report");
+    return FlexUtils.getTempFlexConfigsDirPath() + "/" + fileName;
+  }
+
+  private static boolean isSourceFileWithPublicDeclaration(final Module module, final VirtualFile file, final String qName) {
     return JavaScriptSupportLoader.isMxmlOrFxgFile(file) ||
            ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
              @Override

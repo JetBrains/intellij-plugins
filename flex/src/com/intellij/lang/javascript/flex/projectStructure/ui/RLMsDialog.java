@@ -90,8 +90,10 @@ public class RLMsDialog extends RepeatableValueDialog {
       final JSClass clazz = chooser.getSelectedClass();
       if (clazz != null) {
         final StringBuilder b = new StringBuilder();
-        b.append(clazz.getQualifiedName()).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
-        b.append(clazz.getName()).append(".swf").append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
+        b.append(clazz.getQualifiedName());
+        b.append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
+        b.append(StringUtil.replaceChar(clazz.getQualifiedName(), '.', '/')).append(".swf");
+        b.append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
         b.append("true");
         getCurrentList().add(b);
         return true;

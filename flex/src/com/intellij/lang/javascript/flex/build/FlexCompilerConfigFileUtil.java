@@ -64,6 +64,9 @@ public class FlexCompilerConfigFileUtil {
       // main class and output path are taken according to run configuration, i.e. as set in generated config file text
       /*"debug",*/ "file-specs", "output",
 
+      // link-report option in custom config file is actual only for main app. Need to remove it for RLMs, tests, etc.
+      "link-report",
+
       // load-externs option should not be used because it can lead to runtime errors like IDEA-70155
       "load-externs"
     };
