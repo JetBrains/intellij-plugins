@@ -805,7 +805,7 @@ public class FlexDebugProcess extends XDebugProcess {
       files = getFilesByName(getSession().getProject(), GlobalSearchScope.allScope(getSession().getProject()), fileName);
     }
 
-    if (!fileName.isEmpty()) {
+    if (!files.isEmpty()) {
       return files.iterator().next();
     }
 
