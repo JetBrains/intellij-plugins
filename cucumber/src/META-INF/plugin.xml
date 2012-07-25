@@ -35,6 +35,7 @@
 
     <projectService serviceInterface="org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex"
                     serviceImplementation="org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex"/>
+    <psi.referenceContributor implementation="org.jetbrains.plugins.cucumber.steps.reference.CucumberReferenceContributor"/>
   </extensions>
 
   <extensionPoints>
