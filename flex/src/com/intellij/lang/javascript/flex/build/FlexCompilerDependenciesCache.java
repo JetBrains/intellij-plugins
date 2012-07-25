@@ -49,7 +49,8 @@ public class FlexCompilerDependenciesCache {
       "<flex-config><include-stylesheet><path>", "<flex-config><file-specs><path-element>",
       "<flex-config><compiler><include-libraries><library>", "<flex-config><compiler><local-fonts-snapshot>",
       "<flex-config><compiler><defaults-css-url>", "<flex-config><compiler><defaults-css-files><filename>",
-      "<flex-config><load-config>", "<flex-config><load-externs>", "<flex-config><services>", "<flex-config><metadata><raw-metadata>",
+      "<flex-config><load-config>", "<flex-config><load-externs>", "<flex-config><link-report>",
+      "<flex-config><services>", "<flex-config><metadata><raw-metadata>",
       // "<flex-config><output>"   intentionally excluded, because already handled
     };
 
@@ -172,9 +173,15 @@ public class FlexCompilerDependenciesCache {
   @Nullable
   private static VirtualFile getOutputFile(final CompilerMessage[] messages, final List<VirtualFile> configFiles) {
     try {
-      final LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
-      final VirtualFile configFile = configFiles.get(configFiles.size() - 1);
-      final String outputFilePath = FlexUtils.findXMLElement(configFile.getInputStream(), OUTPUT_FILE_TAG);
+      VirtualFile configFile = null;
+      String outputFilePath = null;
+
+      for (int i = configFiles.size() - 1; i >= 0; i--) {
+        configFile = configFiles.get(i);
+        outputFilePath = FlexUtils.findXMLElement(configFile.getInputStream(), OUTPUT_FILE_TAG);
+        if (outputFilePath != null) break;
+      }
+
       if (outputFilePath == null) return null;
       final VirtualFile outputFile;
       if (ApplicationManager.getApplication().isUnitTestMode()) {
@@ -192,7 +199,7 @@ public class FlexCompilerDependenciesCache {
           final String outputFilePath1 = matcher1.group(2);
           final int size;
           size = Integer.parseInt(matcher1.group(3));
-          if (outputFile.equals(localFileSystem.findFileByPath(outputFilePath1)) && size == outputFile.getLength()) {
+          if (outputFile.equals(LocalFileSystem.getInstance().findFileByPath(outputFilePath1)) && size == outputFile.getLength()) {
             return outputFile;
           }
         }
@@ -200,7 +207,7 @@ public class FlexCompilerDependenciesCache {
           final Matcher matcher2 = OUTPUT_FILE_IS_UP_TO_DATE.matcher(text);
           if (matcher2.matches()) {
             final String outputFilePath2 = matcher2.group(2);
-            if (outputFile.equals(localFileSystem.findFileByPath(outputFilePath2))) {
+            if (outputFile.equals(LocalFileSystem.getInstance().findFileByPath(outputFilePath2))) {
               return outputFile;
             }
           }
