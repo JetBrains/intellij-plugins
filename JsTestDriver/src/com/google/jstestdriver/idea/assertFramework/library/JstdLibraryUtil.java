@@ -90,11 +90,14 @@ public class JstdLibraryUtil {
             return false;
           }
           ScriptingLibraryManager libraryManager = ServiceManager.getService(project, JSLibraryManager.class);
-          ScriptingLibraryModel libraryModel = libraryManager.getLibraryByName(JstdLibraryUtil.LIBRARY_NAME);
-          if (libraryModel == null) {
-            return false;
+          for (ScriptingLibraryModel libraryModel : libraryManager.getAllLibraries()) {
+            if (libraryModel.getName().startsWith(JstdLibraryUtil.LIBRARY_NAME)) {
+              if (libraryModel.containsFile(libVirtualFile)) {
+                return true;
+              }
+            }
           }
-          return libraryModel.containsFile(libVirtualFile);
+          return false;
         }
       });
       JSTD_LIBRARY_EXISTS = correctJstdLibExists;

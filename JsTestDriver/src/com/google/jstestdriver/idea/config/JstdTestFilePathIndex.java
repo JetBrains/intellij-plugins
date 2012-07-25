@@ -66,7 +66,7 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
               return doIndexConfigFile(reader, basePaths);
             }
             catch (Exception e) {
-              LOG.info("Can't index JsTD config file", e);
+              LOG.info("Can't index JsTD config file: " + file.getPath(), e);
             }
             finally {
               try {

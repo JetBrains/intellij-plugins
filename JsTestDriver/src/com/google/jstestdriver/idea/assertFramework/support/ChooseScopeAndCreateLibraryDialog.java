@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.assertFramework.support;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.idea.assertFramework.library.JsLibraryHelper;
+import com.google.jstestdriver.idea.assertFramework.library.JstdLibraryUtil;
 import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.ApplicationManager;
@@ -15,8 +16,10 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.IdeBorderFactory;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.webcore.libraries.ScriptingLibraryMappings;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
@@ -129,52 +132,73 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
 
   @Override
   protected void doOKAction() {
-    createLibraryAndAssociate();
+    ErrorMessage errorMessage = ApplicationManager.getApplication().runWriteAction(new Computable<ErrorMessage>() {
+      @Override
+      @Nullable
+      public ErrorMessage compute() {
+        return createLibraryAndAssociate();
+      }
+    });
+    if (errorMessage != null) {
+      Messages.showErrorDialog(errorMessage.getDescription(), "Adding " + myLibraryName);
+      LOG.warn(errorMessage.getDescription(), errorMessage.getThrowable());
+    }
     super.doOKAction();
   }
 
-  private void createLibraryAndAssociate() {
-    JsLibraryHelper jsLibraryHelper = new JsLibraryHelper(myProject);
+  @Nullable
+  private ErrorMessage createLibraryAndAssociate() {
     String libraryName = myLibraryNameTextField.getText();
-    final ScriptingLibraryModel libraryModel = jsLibraryHelper.createJsLibrary(libraryName, myLibraryFiles);
+    JSLibraryManager jsLibraryManager = ServiceManager.getService(myProject, JSLibraryManager.class);
+    ScriptingLibraryModel libraryModel = jsLibraryManager.createLibrary(
+      JstdLibraryUtil.LIBRARY_NAME,
+      VfsUtilCore.toVirtualFileArray(myLibraryFiles),
+      VirtualFile.EMPTY_ARRAY,
+      ArrayUtil.EMPTY_STRING_ARRAY,
+      ScriptingLibraryModel.LibraryLevel.GLOBAL,
+      false
+    );
 
-    String dialogTitle = "Adding " + myLibraryName;
-    if (libraryModel == null) {
-      Messages.showErrorDialog("Unable to create '" + libraryName + "' JavaScript library", dialogTitle);
-      return;
-    }
-
-    boolean success = ApplicationManager.getApplication().runWriteAction(new Computable<Boolean>() {
-      @Override
-      @NotNull
-      public Boolean compute() {
-        try {
-          ScriptingLibraryMappings libraryMappings = ServiceManager.getService(myProject, JSLibraryMappings.class);
-          if (myModuleSelector.isProjectAssociationAllowed()) {
-            libraryMappings.associateWithProject(libraryModel.getName());
-            LOG.info("Library '" + libraryModel.getName() + "' has been successfully associated with the project");
+    try {
+      ScriptingLibraryMappings libraryMappings = ServiceManager.getService(myProject, JSLibraryMappings.class);
+      if (myModuleSelector.isProjectAssociationAllowed()) {
+        libraryMappings.associateWithProject(libraryModel.getName());
+        LOG.info("Library '" + libraryModel.getName() + "' has been successfully associated with the project");
+      }
+      else {
+        for (Module module : myModuleSelector.getSelectedModules()) {
+          ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
+          VirtualFile[] roots = moduleRootManager.getContentRoots();
+          for (VirtualFile root : roots) {
+            libraryMappings.associate(root, libraryModel.getName(), false);
+            LOG.info("Library '" + libraryModel.getName() + "' has been associated with " + root);
           }
-          else {
-            for (Module module : myModuleSelector.getSelectedModules()) {
-              ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-              VirtualFile[] roots = moduleRootManager.getContentRoots();
-              for (VirtualFile root : roots) {
-                libraryMappings.associate(root, libraryModel.getName(), false);
-                LOG.info("Library '" + libraryModel.getName() + "' has been associated with " + root);
-              }
-            }
-          }
-          JSLibraryManager libraryManager = ServiceManager.getService(myProject, JSLibraryManager.class);
-          libraryManager.commitChanges();
-          return true;
-        } catch (Exception ex) {
-          LOG.error(ex);
-          return false;
         }
       }
-    });
-    if (!success) {
-      Messages.showErrorDialog("Unable to associate '" + libraryName + "' JavaScript library", dialogTitle);
+      jsLibraryManager.commitChanges();
+      return null;
+    } catch (Exception ex) {
+      return new ErrorMessage("Unable to associate '" + libraryName + "' JavaScript library", ex);
+    }
+  }
+
+  private static class ErrorMessage {
+    private final String myDescription;
+    private final Throwable myThrowable;
+
+    private ErrorMessage(@NotNull String description, @Nullable Throwable throwable) {
+      myDescription = description;
+      myThrowable = throwable;
+    }
+
+    @NotNull
+    public String getDescription() {
+      return myDescription;
+    }
+
+    @Nullable
+    public Throwable getThrowable() {
+      return myThrowable;
     }
   }
 }
