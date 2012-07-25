@@ -43,8 +43,6 @@ public class BCUtils {
   private static LinkageType[] FLEX_WEB_OR_DESKTOP_APP_LINKAGES = {LinkageType.Default, LinkageType.Merged, LinkageType.RSL};
   private static LinkageType[] AS_LINKAGES = {LinkageType.Default};
 
-  public static final String RLM_MAIN_CLASS_PREFIX = "RLM:";
-
   private static Logger LOG = Logger.getInstance(BCUtils.class);
 
   public static boolean isTransitiveDependency(final LinkageType linkageType) {
@@ -67,7 +65,7 @@ public class BCUtils {
   public static String getBCSpecifier(final FlexIdeBuildConfiguration bc) {
     if (!bc.isTempBCForCompilation()) return null;
     if (isFlexUnitBC(bc)) return "flexunit";
-    if (isRLMTemporaryBC(bc)) return "module " + StringUtil.getShortName(StringUtil.trimStart(bc.getMainClass(), RLM_MAIN_CLASS_PREFIX));
+    if (isRLMTemporaryBC(bc)) return "module " + StringUtil.getShortName(bc.getMainClass());
     if (isRuntimeStyleSheetBC(bc)) return PathUtil.getFileName(bc.getMainClass());
     return StringUtil.getShortName(bc.getMainClass());
   }
@@ -85,7 +83,7 @@ public class BCUtils {
   }
 
   public static boolean isRLMTemporaryBC(final FlexIdeBuildConfiguration bc) {
-    return bc.isTempBCForCompilation() && bc.getMainClass().startsWith(RLM_MAIN_CLASS_PREFIX);
+    return bc.isTempBCForCompilation() && bc.getOutputType() == OutputType.RuntimeLoadedModule;
   }
 
   public static boolean isRuntimeStyleSheetBC(final FlexIdeBuildConfiguration bc) {

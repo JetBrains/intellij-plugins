@@ -286,10 +286,8 @@ public class FlexUtils {
            ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_');
   }
 
-  public static String getPathToMainClassFile(String mainClassFqn, final Module module) {
+  public static String getPathToMainClassFile(final String mainClassFqn, final Module module) {
     if (StringUtil.isEmpty(mainClassFqn)) return "";
-
-    mainClassFqn = StringUtil.trimStart(mainClassFqn, BCUtils.RLM_MAIN_CLASS_PREFIX);
 
     final String s = mainClassFqn.replace('.', '/');
     final String[] classFileRelPaths = {s + ".mxml", s + ".as"};

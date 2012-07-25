@@ -126,7 +126,7 @@ public class CompilerConfigGenerator {
       addOption(rootElement, CompilerOptionInfo.LINK_REPORT_INFO, getLinkReportFilePath(myModule, myBC.getName()));
     }
 
-    if (BCUtils.isRLMTemporaryBC(myBC) && needToOptimize(myModule, myBC)) {
+    if (BCUtils.isRLMTemporaryBC(myBC) && !myBC.getOptimizeFor().isEmpty()) {
       final String customLinkReportPath = getCustomLinkReportPath(myModule, myBC);
       final String linkReportPath = StringUtil.notNullize(customLinkReportPath, getLinkReportFilePath(myModule, myBC.getName()));
       addOption(rootElement, CompilerOptionInfo.LOAD_EXTERNS_INFO, linkReportPath);
@@ -169,21 +169,6 @@ public class CompilerConfigGenerator {
     addOption(rootElement, CompilerOptionInfo.FONT_MANAGERS_INFO, fontManagers);
 
     addOption(rootElement, CompilerOptionInfo.STATIC_RSLS_INFO, "false");
-  }
-
-  private static boolean needToOptimize(final Module module, final FlexIdeBuildConfiguration rlmBC) {
-    boolean needToOptimize = false;
-
-    final FlexIdeBuildConfiguration appBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(rlmBC.getName());
-    if (appBC != null) {
-      for (FlexIdeBuildConfiguration.RLMInfo rlmInfo : appBC.getRLMs()) {
-        if (rlmBC.getMainClass().equals(BCUtils.RLM_MAIN_CLASS_PREFIX + rlmInfo.MAIN_CLASS)) {
-          needToOptimize = rlmInfo.OPTIMIZE;
-          break;
-        }
-      }
-    }
-    return needToOptimize;
   }
 
   @Nullable

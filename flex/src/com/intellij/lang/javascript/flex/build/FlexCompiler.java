@@ -141,25 +141,30 @@ public class FlexCompiler implements SourceProcessingCompiler {
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
           for (FlexIdeBuildConfiguration.RLMInfo rlm : bc.getRLMs()) {
             final ModifiableFlexIdeBuildConfiguration rlmBC = Factory.getTemporaryCopyForCompilation(bc);
-            final ModifiableCompilerOptions compilerOptions = rlmBC.getCompilerOptions();
-            compilerOptions.setAdditionalOptions(FlexUtils.removeOptions(compilerOptions.getAdditionalOptions(), "link-report"));
+
+            rlmBC.setOutputType(OutputType.RuntimeLoadedModule);
+            rlmBC.setOptimizeFor(rlm.OPTIMIZE ? bc.getName() : ""); // any not empty string means that need to optimize
 
             final String subdir = PathUtil.getParentPath(rlm.OUTPUT_FILE);
             final String outputFileName = PathUtil.getFileName(rlm.OUTPUT_FILE);
 
-            rlmBC.setMainClass(BCUtils.RLM_MAIN_CLASS_PREFIX + rlm.MAIN_CLASS);
+            rlmBC.setMainClass(rlm.MAIN_CLASS);
+            rlmBC.setOutputFileName(outputFileName);
 
             if (!subdir.isEmpty()) {
               final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
               rlmBC.setOutputFolder(outputFolder + "/" + subdir);
             }
 
-            rlmBC.setOutputFileName(outputFileName);
 
             rlmBC.setUseHtmlWrapper(false);
+
             rlmBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
             rlmBC.setCssFilesToCompile(Collections.<String>emptyList());
+
+            final ModifiableCompilerOptions compilerOptions = rlmBC.getCompilerOptions();
             compilerOptions.setResourceFilesMode(ResourceFilesMode.None);
+            compilerOptions.setAdditionalOptions(FlexUtils.removeOptions(compilerOptions.getAdditionalOptions(), "link-report"));
 
             compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, rlmBC, dependencies)
                                          : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, rlmBC, dependencies));
@@ -170,13 +175,10 @@ public class FlexCompiler implements SourceProcessingCompiler {
             if (cssFile == null) continue;
 
             final ModifiableFlexIdeBuildConfiguration cssBC = Factory.getTemporaryCopyForCompilation(bc);
+            cssBC.setOutputType(OutputType.Application);
+
             cssBC.setMainClass(cssPath);
             cssBC.setOutputFileName(FileUtil.getNameWithoutExtension(PathUtil.getFileName(cssPath)) + ".swf");
-
-            cssBC.setUseHtmlWrapper(false);
-            cssBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
-            cssBC.setCssFilesToCompile(Collections.<String>emptyList());
-            cssBC.getCompilerOptions().setResourceFilesMode(ResourceFilesMode.None);
 
             VirtualFile root = ProjectRootManager.getInstance(context.getProject()).getFileIndex().getSourceRootForFile(cssFile);
             if (root == null) root = ProjectRootManager.getInstance(context.getProject()).getFileIndex().getContentRootForFile(cssFile);
@@ -185,6 +187,12 @@ public class FlexCompiler implements SourceProcessingCompiler {
               final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
               cssBC.setOutputFolder(outputFolder + "/" + relativePath);
             }
+
+            cssBC.setUseHtmlWrapper(false);
+            cssBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
+            cssBC.setCssFilesToCompile(Collections.<String>emptyList());
+
+            cssBC.getCompilerOptions().setResourceFilesMode(ResourceFilesMode.None);
 
             compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, cssBC, dependencies)
                                          : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, cssBC, dependencies));

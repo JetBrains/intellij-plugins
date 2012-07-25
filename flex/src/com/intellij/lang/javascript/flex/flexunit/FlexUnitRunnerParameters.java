@@ -192,18 +192,18 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     doCheck(project, moduleAndBC);
 
     final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(moduleAndBC.second);
-    overriddenBC.setSkipCompile(false);
-    overriddenBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
-    overriddenBC.setCssFilesToCompile(Collections.<String>emptyList());
+    overriddenBC.setOutputType(OutputType.Application);
+
     overriddenBC.setMainClass(FlexUnitPrecompileTask.FLEX_UNIT_LAUNCHER);
     overriddenBC.setOutputFileName("_flexunit.swf");
     overriddenBC
       .setOutputFolder(VfsUtilCore.urlToPath(CompilerModuleExtension.getInstance(moduleAndBC.first).getCompilerOutputUrlForTests()));
-    //overriddenBC.getAndroidPackagingOptions().setPackageFileName("_flexunit.apk");
-    //overriddenBC.getIosPackagingOptions().setPackageFileName("_flexunit.ipa");
 
-    overriddenBC.setOutputType(OutputType.Application);
     overriddenBC.setUseHtmlWrapper(false);
+
+    overriddenBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
+    overriddenBC.setCssFilesToCompile(Collections.<String>emptyList());
+    overriddenBC.setSkipCompile(false);
 
     overriddenBC.getDependencies().setFrameworkLinkage(LinkageType.Merged);
 
@@ -216,12 +216,15 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     overriddenBC.getAirDesktopPackagingOptions().setUseGeneratedDescriptor(true);
 
     /*
+    overriddenBC.getAndroidPackagingOptions().setPackageFileName("_flexunit.apk");
+
     final ModifiableAndroidPackagingOptions androidOptions = overriddenBC.getAndroidPackagingOptions();
     androidOptions.setEnabled(true);
     androidOptions.setUseGeneratedDescriptor(true);
     androidOptions.getSigningOptions().setUseTempCertificate(true);
 
-    overriddenBC.getIosPackagingOptions().setEnabled(false); // impossible without extra user input: app id, provisioning, etc.
+    overriddenBC.getIosPackagingOptions().setEnabled(false);
+    overriddenBC.getIosPackagingOptions().setPackageFileName("_flexunit.ipa");
     */
 
     return Pair.create(moduleAndBC.first, ((FlexIdeBuildConfiguration)overriddenBC));

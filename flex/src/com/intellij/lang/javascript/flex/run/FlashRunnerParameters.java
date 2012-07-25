@@ -300,18 +300,18 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     doCheck(moduleAndBC);
 
     if (myOverrideMainClass) {
-      final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(moduleAndBC.second);
+      final FlexIdeBuildConfiguration origBC = moduleAndBC.second;
+      final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(origBC);
+
+      overriddenBC.setOutputType(OutputType.Application);
+
       overriddenBC.setMainClass(myOverriddenMainClass);
       overriddenBC.setOutputFileName(myOverriddenOutputFileName);
-      overriddenBC.getAndroidPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
-      overriddenBC.getIosPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
 
       overriddenBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
 
-      if (overriddenBC.getOutputType() != OutputType.Application) {
-        overriddenBC.setOutputType(OutputType.Application);
+      if (origBC.getOutputType() != OutputType.Application) {
         overriddenBC.setUseHtmlWrapper(false);
-        overriddenBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
         overriddenBC.setCssFilesToCompile(Collections.<String>emptyList());
 
         overriddenBC.getDependencies().setFrameworkLinkage(LinkageType.Merged);
@@ -333,9 +333,12 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         overriddenBC.getIosPackagingOptions().setEnabled(false);
       }
 
-      if (BCUtils.canHaveResourceFiles(overriddenBC.getNature()) && !BCUtils.canHaveResourceFiles(moduleAndBC.second.getNature())) {
+      if (BCUtils.canHaveResourceFiles(overriddenBC.getNature()) && !BCUtils.canHaveResourceFiles(origBC.getNature())) {
         overriddenBC.getCompilerOptions().setResourceFilesMode(CompilerOptions.ResourceFilesMode.None);
       }
+
+      overriddenBC.getAndroidPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
+      overriddenBC.getIosPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
 
       return Pair.create(moduleAndBC.first, ((FlexIdeBuildConfiguration)overriddenBC));
     }
