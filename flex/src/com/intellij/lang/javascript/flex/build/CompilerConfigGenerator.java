@@ -347,7 +347,7 @@ public class CompilerConfigGenerator {
     for (final String libName : LIB_ORDER) {
       final String rslInfo = libNameToRslInfo.remove(libName);
       if (rslInfo != null) {
-        final CompilerOptionInfo option = StringUtil.split(rslInfo, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).size() == 2
+        final CompilerOptionInfo option = StringUtil.split(rslInfo, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).size() == 3
                                           ? CompilerOptionInfo.RSL_ONE_URL_PATH_INFO
                                           : CompilerOptionInfo.RSL_TWO_URLS_PATH_INFO;
         addOption(rootElement, option, rslInfo);
@@ -356,7 +356,7 @@ public class CompilerConfigGenerator {
 
     // now add other in random order, though up to Flex SDK 4.5.1 the map should be empty at this stage
     for (final String rslInfo : libNameToRslInfo.values()) {
-      final CompilerOptionInfo option = StringUtil.split(rslInfo, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).size() == 2
+      final CompilerOptionInfo option = StringUtil.split(rslInfo, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).size() == 3
                                         ? CompilerOptionInfo.RSL_ONE_URL_PATH_INFO
                                         : CompilerOptionInfo.RSL_TWO_URLS_PATH_INFO;
       addOption(rootElement, option, rslInfo);
