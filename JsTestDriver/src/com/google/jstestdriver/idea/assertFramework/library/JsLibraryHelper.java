@@ -127,7 +127,8 @@ public class JsLibraryHelper {
             VfsUtilCore.toVirtualFileArray(sourceFiles),
             VirtualFile.EMPTY_ARRAY,
             ArrayUtil.EMPTY_STRING_ARRAY,
-            ScriptingLibraryModel.LibraryLevel.GLOBAL
+            ScriptingLibraryModel.LibraryLevel.GLOBAL,
+            false
           );
           LOG.info("Library '" + libraryModel.getName() + "' has been successfully created.");
           return libraryModel;
