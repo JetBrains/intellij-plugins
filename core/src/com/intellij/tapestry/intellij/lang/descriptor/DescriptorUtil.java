@@ -15,6 +15,9 @@ import com.intellij.tapestry.core.model.presentation.TapestryParameter;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.psi.TmlFile;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlNSDescriptor;
@@ -25,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Alexey Chmutov
@@ -54,12 +58,14 @@ class DescriptorUtil {
     return prefix.length() > 0 ? prefix + ":" + attrName : attrName;
   }
 
-  private static @Nullable XmlElementDescriptor getImplicitHtmlContainer(@NotNull Component component, @NotNull XmlTag context) {
+  private static
+  @Nullable
+  XmlElementDescriptor getImplicitHtmlContainer(@NotNull Component component, @NotNull XmlTag context) {
     IJavaClassType aClass = component.getElementClass();
 
     if (aClass != null && aClass.supportsInformalParameters()) {
       XmlNSDescriptor descriptor = context.getNSDescriptor(XmlUtil.XHTML_URI, false);
-      if(descriptor instanceof XmlNSDescriptorEx) {
+      if (descriptor instanceof XmlNSDescriptorEx) {
         return ((XmlNSDescriptorEx)descriptor).getElementDescriptor("div", XmlUtil.XHTML_URI);
       }
     }
@@ -82,13 +88,14 @@ class DescriptorUtil {
     }
 
     Collection<TapestryParameter> params = component.getParameters().values();
-    XmlAttributeDescriptor[] descriptors = new XmlAttributeDescriptor[params.size() + (idAttrDescriptor != null ? 1 : 0) + additionalParameters.length];
+    XmlAttributeDescriptor[] descriptors =
+      new XmlAttributeDescriptor[params.size() + (idAttrDescriptor != null ? 1 : 0) + additionalParameters.length];
     int i = 0;
     for (TapestryParameter param : params) {
       descriptors[i++] = new TapestryAttributeDescriptor(param);
     }
     if (idAttrDescriptor != null) descriptors[i++] = idAttrDescriptor;
-    for(XmlAttributeDescriptor attr:additionalParameters) {
+    for (XmlAttributeDescriptor attr : additionalParameters) {
       descriptors[i++] = attr;
     }
     return descriptors;
@@ -119,6 +126,20 @@ class DescriptorUtil {
     return param == null ? null : new TapestryAttributeDescriptor(param);
   }
 
+  public static XmlElementDescriptor[] getTmlSubelementDescriptors(@NotNull XmlTag context) {
+    TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(context);
+    if (project == null) return XmlElementDescriptor.EMPTY_ARRAY;
+    final String namespacePrefix = context.getPrefixByNamespace(TapestryConstants.TEMPLATE_NAMESPACE);
+    final XmlElementDescriptor[] namespaceElements = getElementDescriptors(project.getAvailableElements(), namespacePrefix);
+    final String parametersPrefix = context.getPrefixByNamespace(TapestryConstants.PARAMETERS_NAMESPACE);
+    final Component component = TapestryUtils.getTypeOfTag(context);
+    if (parametersPrefix == null || component == null) {
+      return namespaceElements;
+    }
+    final XmlElementDescriptor[] parameterElements = getParameterDescriptors(component, parametersPrefix);
+    return ArrayUtil.mergeArrays(namespaceElements, parameterElements);
+  }
+
   private static XmlElementDescriptor[] getElementDescriptors(@NotNull Collection<PresentationLibraryElement> elements,
                                                               String namespacePrefix) {
     TapestryTagDescriptor[] descriptors = new TapestryTagDescriptor[elements.size()];
@@ -129,11 +150,15 @@ class DescriptorUtil {
     return descriptors;
   }
 
-  public static XmlElementDescriptor[] getTmlSubelementDescriptors(@NotNull XmlTag context) {
-    TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(context);
-    if (project == null) return XmlElementDescriptor.EMPTY_ARRAY;
-    String namespacePrefix = context.getPrefixByNamespace(TapestryConstants.TEMPLATE_NAMESPACE);
-    return getElementDescriptors(project.getAvailableElements(), namespacePrefix);
+  private static XmlElementDescriptor[] getParameterDescriptors(@NotNull final Component component, final String namespacePrefix) {
+    final List<XmlElementDescriptor> result =
+      ContainerUtil.map(component.getParameters().values(), new Function<TapestryParameter, XmlElementDescriptor>() {
+        @Override
+        public XmlElementDescriptor fun(TapestryParameter parameter) {
+          return new TapestryParameterDescriptor(component, parameter, namespacePrefix);
+        }
+      });
+    return ArrayUtil.toObjectArray(result, XmlElementDescriptor.class);
   }
 
   @Nullable
@@ -178,9 +203,21 @@ class DescriptorUtil {
 
   @Nullable
   public static XmlElementDescriptor getTmlTagDescriptor(XmlTag tag) {
-    if (!TapestryConstants.TEMPLATE_NAMESPACE.equals(tag.getNamespace())) return null;
-    final Component component = TapestryUtils.getTypeOfTag(tag);
     final String prefix = tag.getNamespacePrefix();
-    return component == null ? new TapestryUnknownTagDescriptor(tag.getLocalName(), prefix) : new TapestryTagDescriptor(component, prefix);
+    if (TapestryConstants.TEMPLATE_NAMESPACE.equals(tag.getNamespace())) {
+      final Component component = TapestryUtils.getTypeOfTag(tag);
+      return component == null
+             ? new TapestryUnknownTagDescriptor(tag.getLocalName(), prefix)
+             : new TapestryTagDescriptor(component, prefix);
+    }
+    else if (TapestryConstants.PARAMETERS_NAMESPACE.equals(tag.getNamespace())) {
+      final Component component = TapestryUtils.getTypeOfTag(tag.getParentTag());
+      final String parameterName = tag.getLocalName();
+      final TapestryParameter parameter = component == null ? null : component.getParameters().get(parameterName);
+      return parameter == null
+             ? new TapestryUnknownTagDescriptor(parameterName, prefix)
+             : new TapestryParameterDescriptor(component, parameter, prefix);
+    }
+    return null;
   }
 }

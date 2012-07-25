@@ -8,6 +8,11 @@ public interface TapestryConstants {
   String TEMPLATE_NAMESPACE = "http://tapestry.apache.org/schema/tapestry_5_1_0.xsd";
 
   /**
+   * The Tapestry namespace used for parameters.
+   */
+  String PARAMETERS_NAMESPACE = "tapestry:parameter";
+
+  /**
    * Service builder method name prefix.
    */
   String SERVICE_BUILDER_METHOD_PREFIX = "build";

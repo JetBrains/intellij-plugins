@@ -22,7 +22,8 @@
     <fileTemplateGroup implementation="com.intellij.tapestry.intellij.TapestryFileTemplateGroupFactory"/>
 
     <colorSettingsPage implementation="com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage"/>
-    
+    <standardResourceProvider implementation="com.intellij.tapestry.intellij.TapestryResourceProvider"/>
+
     <fileTypeFactory implementation="com.intellij.tapestry.lang.TmlFileTypeFactory"/>
     <typedHandler implementation="com.intellij.tapestry.lang.TmlTypedHandler"/>
     <lang.fileViewProviderFactory language="TML" implementationClass="com.intellij.tapestry.lang.TmlFileViewProviderFactory"/>

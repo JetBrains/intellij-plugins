@@ -17,13 +17,15 @@ public class ComponentUtils {
    */
   public static boolean _isComponentTag(XmlTag tag) {
     return tag.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)
+           ||tag.getNamespace().equals(TapestryConstants.PARAMETERS_NAMESPACE)
            || hasTapestryNamespaceAttribute(tag.getAttributes());
   }
 
   private static boolean hasTapestryNamespaceAttribute(XmlAttribute[] attributes) {
     for (XmlAttribute attribute : attributes) {
-      if (attribute.getLocalName().length() > 0
-          && attribute.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE)) return true;
+      final boolean isTapestryNamespace = attribute.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE) ||
+                        attribute.getNamespace().equals(TapestryConstants.PARAMETERS_NAMESPACE);
+      if (attribute.getLocalName().length() > 0 && isTapestryNamespace) return true;
     }
     return false;
   }

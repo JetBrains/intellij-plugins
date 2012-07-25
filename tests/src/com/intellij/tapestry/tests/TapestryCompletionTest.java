@@ -30,9 +30,9 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     initByComponent();
     addComponentToProject("subpackage.Count");
     doTestBasicCompletionVariants(
-      mergeArrays(CORE_5_1_0_5_TAG_NAMES, "base", "command", "link", "meta", "noscript", "script", "style", "title", "t:subpackage.count",
+      mergeArrays(CORE_5_1_0_5_TAG_NAMES, "base", "command", "link", "meta", "noscript", "p:clientId",
+                  "p:element", "script", "style", "title", "t:subpackage.count",
                   getElementTagName()));
-
   }
 
   public void testAttrNameInHtmlParent() throws Throwable {
@@ -56,7 +56,6 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     initByComponent();
     doTestBasicCompletionVariants("t:id", "t:type", "tabindex", "target", "title", "type");
-
   }
 
   public void testAttrNameInTmlParent() throws Throwable {
@@ -80,7 +79,6 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     initByComponent();
     addComponentToProject("Count");
     doTestBasicCompletionVariants("class", "contenteditable", "contextmenu");
-
   }
 
   public void testRootTagName() throws Throwable {

@@ -28,12 +28,19 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
   @Nullable
   @Override
   public String[][] getNamespacesFromDocument(final XmlDocument parent, boolean declarationsExist) {
-    String[][] namespaces = {{"", XmlUtil.XHTML_URI}, {"t", TapestryConstants.TEMPLATE_NAMESPACE}};
+    String[][] namespaces = {
+      {"", XmlUtil.XHTML_URI},
+      {"t", TapestryConstants.TEMPLATE_NAMESPACE},
+      {"p", TapestryConstants.PARAMETERS_NAMESPACE}
+    };
     XmlTag rootTag = parent.getRootTag();
     if (rootTag == null) return namespaces;
     for (final XmlAttribute attribute : rootTag.getAttributes()) {
       if (!attribute.isNamespaceDeclaration()) continue;
-      if (TapestryConstants.TEMPLATE_NAMESPACE.equals(attribute.getValue())) {
+      if (TapestryConstants.PARAMETERS_NAMESPACE.equals(attribute.getValue())) {
+        namespaces[2][0] = getNamespacePrefixFromDeclaration(attribute);
+      }
+      else if (TapestryConstants.TEMPLATE_NAMESPACE.equals(attribute.getValue())) {
         namespaces[1][0] = getNamespacePrefixFromDeclaration(attribute);
       }
       else if (XmlUtil.XHTML_URI.equals(attribute.getValue())) {
@@ -72,6 +79,7 @@ public class TapestryXmlExtension extends DefaultXmlExtension {
     PsiFile file = element.getContainingFile();
     if (!(file instanceof TmlFile)) return null;
     if (TapestryConstants.TEMPLATE_NAMESPACE.equals(namespace)) return TapestryNamespaceDescriptor.INSTANCE;
+    if (TapestryConstants.PARAMETERS_NAMESPACE.equals(namespace)) return TapestryParametersNamespaceDescriptor.INSTANCE;
     if (XmlUtil.XHTML_URI.equals(namespace)) return DescriptorUtil.getHtmlNSDescriptor((TmlFile)file);
     return null;
   }

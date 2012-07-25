@@ -71,6 +71,7 @@ public abstract class BasicTapestryTagDescriptor implements XmlElementDescriptor
     return null;
   }
 
+  @Nullable
   public PsiElement getDeclaration() {
     return null;
   }
