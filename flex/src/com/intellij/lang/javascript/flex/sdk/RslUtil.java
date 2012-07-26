@@ -25,7 +25,14 @@ public class RslUtil {
     new THashMap<String, Pair<Long, Map<String, List<String>>>>();
 
   public static boolean canBeRsl(final Sdk sdk, final String swcPath) {
-    return !getRslUrls(sdk, swcPath).isEmpty();
+    final List<String> rslUrls = getRslUrls(sdk, swcPath);
+    for (String url : rslUrls) {
+      if (url.startsWith("http://") ||
+          new File(sdk.getHomePath() + "/frameworks/rsls/" + url).isFile()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public static List<String> getRslUrls(final Sdk sdk, final String swcPath) {
