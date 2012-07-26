@@ -108,13 +108,11 @@ public class BCUtils {
                                                        final BuildConfigurationNature nature) {
     return nature.isLib()
            ? LinkageType.External
-           : nature.pureAS
+           : nature.pureAS || !nature.isWebPlatform()
              ? LinkageType.Merged
-             : nature.isWebPlatform()
-               ? StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 // Web Flex App
-                 ? LinkageType.RSL      // Flex 4
-                 : LinkageType.Merged   // Flex 3
-               : LinkageType.Merged;  // AIR Flex App (Desktop or Mobile)
+             : StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 && StringUtil.compareVersionNumbers(sdkVersion, "4.8") < 0
+               ? LinkageType.RSL
+               : LinkageType.Merged; // Flex 3 or Apache Flex
   }
 
   /**
