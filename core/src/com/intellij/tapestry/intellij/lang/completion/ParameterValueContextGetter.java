@@ -57,7 +57,7 @@ public class ParameterValueContextGetter implements ContextGetter {
 
       // Completion of type and id attributes is handled by ComponentNameContextGetter
       if (attribute.getNamespace().equals(TapestryConstants.TEMPLATE_NAMESPACE) &&
-          (attribute.getLocalName().equals("type") || attribute.getLocalName().equals("id"))) {
+          (attribute.getLocalName().equals("type") || attribute.getLocalName().equals("id") || attribute.getLocalName().equals("mixins"))) {
         return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }
 

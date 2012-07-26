@@ -21,12 +21,14 @@ import java.util.Map;
 abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, PresentationLibraryElement>, Module> {
   private final boolean myCacheComponents;
   private final boolean myCachePages;
+  private final boolean myCacheMixin;
 
-  public ElementsCachedMap(@NonNls String keyName, boolean cacheComponents, boolean cachePages) {
+  public ElementsCachedMap(@NonNls String keyName, boolean cacheComponents, boolean cachePages, boolean cacheMixin) {
     super(keyName);
     myCacheComponents = cacheComponents;
     myCachePages = cachePages;
-    assert myCachePages || myCacheComponents;
+    myCacheMixin = cacheMixin;
+    assert myCachePages || myCacheComponents || myCacheMixin;
   }
 
   protected Map<String, PresentationLibraryElement> computeValue(Module module) {
@@ -36,6 +38,7 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
     for (Library library : project.getLibraries()) {
       if (myCacheComponents) computeKeyAndAddAll(map, library.getComponents().values());
       if (myCachePages) computeKeyAndAddAll(map, library.getPages().values());
+      if (myCacheMixin) computeKeyAndAddAll(map, library.getMixins().values());
     }
     if (myCacheComponents) computeKeyAndAddAll(map, project.getBuiltinComponents());
     if (myCachePages) computeKeyAndAddAll(map, project.getBuiltinPages());

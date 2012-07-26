@@ -4,11 +4,12 @@
     targetNamespace="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
     <!-- comp is a component within the template -->
     <xs:element name="comp">
-        <xs:complexType mixed="true">
-            <xs:attribute name="id" type="xs:ID"/>
-            <xs:attribute name="type" type="xs:string"/>
-            <xs:anyAttribute/>
-        </xs:complexType>
+      <xs:complexType mixed="true">
+          <xs:attribute name="id" type="xs:ID"/>
+          <xs:attribute name="mixins" type="xs:string"/>
+          <xs:attribute name="type" type="xs:string"/>
+          <xs:anyAttribute/>
+      </xs:complexType>
     </xs:element>
     <!-- body identifies where the body of the component belongs within the component's template -->
     <xs:element name="body"/>

@@ -18,7 +18,7 @@ import com.intellij.xml.util.XmlUtil;
 public class TapestryParamInfoTest extends TapestryBaseTestCase {
   public void testTmlTagAttrs() throws Exception {
     addComponentToProject("Count");
-    doTest("end start value");
+    doTest("end mixins start value");
   }
 
   public void testHtmlTagAttrs() throws Exception {
@@ -28,7 +28,7 @@ public class TapestryParamInfoTest extends TapestryBaseTestCase {
     try {
       addComponentToProject("Count");
       doTest(
-        "class dir end id lang onclick ondblclick onkeydown onkeypress onkeyup onmousedown onmousemove onmouseout onmouseover onmouseup start style title value");
+        "class dir end id lang mixins onclick ondblclick onkeydown onkeypress onkeyup onmousedown onmousemove onmouseout onmouseover onmouseup start style title value");
     }
     finally {
       manager.setDefaultHtmlDoctype(doctype, myFixture.getProject());

@@ -9,9 +9,8 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaClassType;
-import com.intellij.tapestry.core.model.presentation.Component;
-import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
-import com.intellij.tapestry.core.model.presentation.TapestryParameter;
+import com.intellij.tapestry.core.model.presentation.*;
+import com.intellij.tapestry.core.model.presentation.components.DummyTapestryParameter;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.psi.TmlFile;
@@ -27,7 +26,9 @@ import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -60,7 +61,7 @@ class DescriptorUtil {
 
   private static
   @Nullable
-  XmlElementDescriptor getImplicitHtmlContainer(@NotNull Component component, @NotNull XmlTag context) {
+  XmlElementDescriptor getImplicitHtmlContainer(@NotNull ParameterReceiverElement component, @NotNull XmlTag context) {
     IJavaClassType aClass = component.getElementClass();
 
     if (aClass != null && aClass.supportsInformalParameters()) {
@@ -72,7 +73,7 @@ class DescriptorUtil {
     return null;
   }
 
-  public static XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable Component component,
+  public static XmlAttributeDescriptor[] getAttributeDescriptors(@Nullable ParameterReceiverElement component,
                                                                  @Nullable TapestryIdOrTypeAttributeDescriptor idAttrDescriptor) {
     if (component == null) return XmlAttributeDescriptor.EMPTY;
 
@@ -107,11 +108,12 @@ class DescriptorUtil {
     if (attr != null && attr.getName().equals(attributeName)) return new TapestryIdOrTypeAttributeDescriptor(attributeName, context);
     String id = getTAttributeName(context, "id");
     if (attributeName.equals(id)) return new TapestryIdOrTypeAttributeDescriptor(id, context);
-    Component tag = TapestryUtils.getTypeOfTag(context);
-    XmlAttributeDescriptor descriptor = getAttributeDescriptor(attributeName, tag);
+    Component component = TapestryUtils.getTypeOfTag(context);
+    final List<Mixin> mixins = findMixins(context);
+    XmlAttributeDescriptor descriptor = getAttributeDescriptor(attributeName, component, mixins);
     if (descriptor != null) return descriptor;
-    if (tag != null) {
-      XmlElementDescriptor container = getImplicitHtmlContainer(tag, context);
+    if (component != null) {
+      XmlElementDescriptor container = getImplicitHtmlContainer(component, context);
       if (container != null) {
         descriptor = container.getAttributeDescriptor(attributeName, context);
       }
@@ -120,7 +122,25 @@ class DescriptorUtil {
   }
 
   @Nullable
-  public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName, @Nullable Component component) {
+  public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName,
+                                                              @Nullable ParameterReceiverElement component,
+                                                              List<Mixin> mixins) {
+    XmlAttributeDescriptor descriptor = getAttributeDescriptor(attributeName, component);
+    if (descriptor != null) {
+      return descriptor;
+    }
+    for (Mixin mixin : mixins) {
+      descriptor = getAttributeDescriptor(attributeName, mixin);
+      if (descriptor != null) {
+        return descriptor;
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  public static XmlAttributeDescriptor getAttributeDescriptor(@NotNull String attributeName,
+                                                              @Nullable ParameterReceiverElement component) {
     if (component == null) return null;
     TapestryParameter param = component.getParameters().get(XmlUtil.findLocalNameByQualifiedName(attributeName));
     return param == null ? null : new TapestryAttributeDescriptor(param);
@@ -168,7 +188,8 @@ class DescriptorUtil {
     XmlElementDescriptor tmlDescriptor = getTmlTagDescriptor(tag);
     if (tmlDescriptor != null) return tmlDescriptor;
     XmlElementDescriptor htmlDescriptor = getHtmlTagDescriptor(tag, file);
-    return htmlDescriptor != null ? new TapestryHtmlTagDescriptor(htmlDescriptor, TapestryUtils.getTypeOfTag(tag)) : null;
+    final List<Mixin> mixins = findMixins(tag);
+    return htmlDescriptor != null ? new TapestryHtmlTagDescriptor(htmlDescriptor, TapestryUtils.getTypeOfTag(tag), mixins) : null;
   }
 
   @Nullable
@@ -206,9 +227,10 @@ class DescriptorUtil {
     final String prefix = tag.getNamespacePrefix();
     if (TapestryConstants.TEMPLATE_NAMESPACE.equals(tag.getNamespace())) {
       final Component component = TapestryUtils.getTypeOfTag(tag);
+      final List<Mixin> mixins = findMixins(tag);
       return component == null
              ? new TapestryUnknownTagDescriptor(tag.getLocalName(), prefix)
-             : new TapestryTagDescriptor(component, prefix);
+             : new TapestryTagDescriptor(component, mixins, prefix);
     }
     else if (TapestryConstants.PARAMETERS_NAMESPACE.equals(tag.getNamespace())) {
       final Component component = TapestryUtils.getTypeOfTag(tag.getParentTag());
@@ -219,5 +241,26 @@ class DescriptorUtil {
              : new TapestryParameterDescriptor(component, parameter, prefix);
     }
     return null;
+  }
+
+  @NotNull
+  private static List<Mixin> findMixins(@Nullable XmlTag tag) {
+    if (tag == null) {
+      return Collections.emptyList();
+    }
+    final TapestryProject tapestryProject = TapestryUtils.getTapestryProject(tag);
+    final XmlAttribute mixinsAttribute = tag.getAttribute("mixins", TapestryConstants.TEMPLATE_NAMESPACE);
+    if (tapestryProject == null || mixinsAttribute == null) {
+      return Collections.emptyList();
+    }
+    final List<Mixin> result = new ArrayList<Mixin>();
+    final String[] components = mixinsAttribute.getValue().split(",");
+    for (String mixinName : components) {
+      final Mixin mixin = tapestryProject.findMixin(mixinName);
+      if (mixin != null) {
+        result.add(mixin);
+      }
+    }
+    return result;
   }
 }

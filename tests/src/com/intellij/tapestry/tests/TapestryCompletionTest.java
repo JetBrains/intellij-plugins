@@ -31,7 +31,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     addComponentToProject("subpackage.Count");
     doTestBasicCompletionVariants(
       mergeArrays(CORE_5_1_0_5_TAG_NAMES, "base", "command", "link", "meta", "noscript", "p:clientId",
-                  "p:element", "script", "style", "title", "t:subpackage.count",
+                  "p:element", "p:mixins", "script", "style", "title", "t:subpackage.count",
                   getElementTagName()));
   }
 
@@ -65,7 +65,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     try {
       initByComponent();
       addComponentToProject("Count");
-      doTestBasicCompletionVariants("class", "dir", "end", "id", "lang", "onclick", "ondblclick", "onkeydown", "onkeypress", "onkeyup",
+      doTestBasicCompletionVariants("class", "dir", "end", "id", "lang", "mixins", "onclick", "ondblclick", "onkeydown", "onkeypress", "onkeyup",
                                     "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "start", "style", "title",
                                     "value", "t:id");
     }

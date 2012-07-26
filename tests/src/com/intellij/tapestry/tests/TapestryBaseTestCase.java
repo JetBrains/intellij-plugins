@@ -35,7 +35,9 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
   static final String TEST_APPLICATION_PACKAGE = "com.testapp";
   static final String COMPONENTS = "components";
   static final String PAGES = "pages";
+  static final String MIXINS = "mixins";
   static final String COMPONENTS_PACKAGE_PATH = TEST_APPLICATION_PACKAGE.replace('.', '/') + "/" + COMPONENTS + "/";
+  static final String MIXINS_PACKAGE_PATH = TEST_APPLICATION_PACKAGE.replace('.', '/') + "/" + MIXINS + "/";
   static final String PAGES_PACKAGE_PATH = TEST_APPLICATION_PACKAGE.replace('.', '/') + "/" + PAGES + "/";
 
   @NonNls
@@ -202,6 +204,10 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
 
   protected void addComponentToProject(String className) throws IOException {
     addElementToProject(COMPONENTS_PACKAGE_PATH, className, getAuxClassExtension());
+  }
+
+  protected void addMixinToProject(String className) throws IOException {
+    addElementToProject(MIXINS_PACKAGE_PATH, className, getAuxClassExtension());
   }
 
   protected VirtualFile addPageToProject(String className) throws IOException {

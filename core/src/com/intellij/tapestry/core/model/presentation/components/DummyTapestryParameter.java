@@ -19,7 +19,7 @@ public class DummyTapestryParameter extends TapestryParameter {
   private final String _name;
   private final boolean _required;
 
-  DummyTapestryParameter(TapestryProject tapestryProject, String name, boolean required) {
+  public DummyTapestryParameter(TapestryProject tapestryProject, String name, boolean required) {
     super(null, new DummyJavaField(name, tapestryProject.getJavaTypeFinder().findType("java.lang.String", true)));
     _name = name;
     _required = required;

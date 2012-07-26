@@ -1,7 +1,6 @@
 package com.intellij.tapestry.core;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.tapestry.core.events.TapestryEventsManager;
@@ -10,6 +9,7 @@ import com.intellij.tapestry.core.java.IJavaTypeCreator;
 import com.intellij.tapestry.core.java.IJavaTypeFinder;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.Mixin;
 import com.intellij.tapestry.core.model.presentation.Page;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.model.presentation.components.BlockComponent;
@@ -19,7 +19,6 @@ import com.intellij.tapestry.core.model.presentation.components.ParameterCompone
 import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.core.resource.IResourceFinder;
 import com.intellij.tapestry.core.util.LocalizationUtils;
-import static com.intellij.tapestry.core.util.StringUtils.isNotEmpty;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
 import com.intellij.util.ArrayUtil;
@@ -28,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
+
+import static com.intellij.tapestry.core.util.StringUtils.isNotEmpty;
 
 /**
  * A Tapestry project. Every IDE implementation must hold a reference to an instance of this class for each project.
@@ -176,7 +177,7 @@ public class TapestryProject {
     return ArrayUtil.toStringArray(names);
   }
 
-  private static final ElementsCachedMap ourNameToPageMap = new ElementsCachedMap("ourNameToPageMap", false, true) {
+  private static final ElementsCachedMap ourNameToPageMap = new ElementsCachedMap("ourNameToPageMap", false, true, false) {
     protected String computeKey(PresentationLibraryElement element) {
       return element.getName().toLowerCase();
     }
@@ -194,7 +195,7 @@ public class TapestryProject {
     return (Page)ourFqnToPageMap.get(myModule).get(pageClass.getFullyQualifiedName());
   }
 
-  private static final ElementsCachedMap ourFqnToPageMap = new ElementsCachedMap("ourFqnToPageMap", false, true) {
+  private static final ElementsCachedMap ourFqnToPageMap = new ElementsCachedMap("ourFqnToPageMap", false, true, false) {
     protected String computeKey(PresentationLibraryElement element) {
       return element.getElementClass().getFullyQualifiedName();
     }
@@ -211,21 +212,40 @@ public class TapestryProject {
     return (Component)ourNameToComponentMap.get(myModule).get(componentName.toLowerCase());
   }
 
+  /**
+   * Finds a mixin by name in the Tapestry application.
+   *
+   *
+   * @param mixinName the component name to look.
+   * @return the mixin component with the given name, or <code>null</code> if the mixin isn't found.
+   */
+  @Nullable
+  public Mixin findMixin(String mixinName) {
+    return (Mixin)ourNameToMixinMap.get(myModule).get(mixinName.toLowerCase());
+  }
+
   @NotNull
   public String[] getAvailableComponentNames() {
     final Set<String> names = ourNameToComponentMap.get(myModule).keySet();
     return ArrayUtil.toStringArray(names);
   }
 
-  private static final ElementsCachedMap ourNameToComponentMap = new ElementsCachedMap("ourNameToComponentMap", true, false) {
+  private static final ElementsCachedMap ourNameToComponentMap = new ElementsCachedMap("ourNameToComponentMap", true, false, false) {
+    protected String computeKey(PresentationLibraryElement element) {
+      return element.getName().toLowerCase();
+    }
+  };
+
+  private static final ElementsCachedMap ourNameToMixinMap = new ElementsCachedMap("ourNameToComponentMap", false, false, true) {
     protected String computeKey(PresentationLibraryElement element) {
       return element.getName().toLowerCase();
     }
   };
 
   public Collection<PresentationLibraryElement> getBuiltinComponents() {
-    return Arrays.<PresentationLibraryElement>asList(BodyComponent.getInstance(this), BlockComponent.getInstance(this), ParameterComponent.getInstance(this),
-                         ContainerComponent.getInstance(this));
+    return Arrays.<PresentationLibraryElement>asList(BodyComponent.getInstance(this), BlockComponent.getInstance(this),
+                                                     ParameterComponent.getInstance(this),
+                                                     ContainerComponent.getInstance(this));
   }
 
   public Collection<PresentationLibraryElement> getBuiltinPages() {
@@ -255,7 +275,7 @@ public class TapestryProject {
     return (Component)ourFqnToComponentMap.get(myModule).get(componentClass.getFullyQualifiedName());
   }
 
-  private static final ElementsCachedMap ourFqnToComponentMap = new ElementsCachedMap("ourFqnToComponentMap", true, false) {
+  private static final ElementsCachedMap ourFqnToComponentMap = new ElementsCachedMap("ourFqnToComponentMap", true, false, false) {
     protected String computeKey(PresentationLibraryElement element) {
       return element.getElementClass().getFullyQualifiedName();
     }
@@ -273,7 +293,7 @@ public class TapestryProject {
     return ourTemplateToElementMap.get(myModule).get(LocalizationUtils.unlocalizeFileName(templatePath));
   }
 
-  private static final ElementsCachedMap ourTemplateToElementMap = new ElementsCachedMap("ourTemplateToElementMap", true, true) {
+  private static final ElementsCachedMap ourTemplateToElementMap = new ElementsCachedMap("ourTemplateToElementMap", true, true, false) {
     @Nullable
     protected String computeKey(PresentationLibraryElement element) {
       final IResource[] resources = element.getTemplate();

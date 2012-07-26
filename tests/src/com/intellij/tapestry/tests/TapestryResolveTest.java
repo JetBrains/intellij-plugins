@@ -74,6 +74,14 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     Assert.assertEquals("org.apache.tapestry5.corelib.components.Any", ref.getQualifiedName());
   }
 
+  public void testTmlMixin() throws Throwable {
+    addComponentToProject("Count");
+    addMixinToProject("FooMixin");
+    initByComponent();
+    PsiField ref = resolveReferenceAtCaretPosition(PsiField.class);
+    Assert.assertEquals("bar", ref.getName());
+  }
+
   public void testTmlParameter() throws Throwable {
     addComponentToProject("Count");
     initByComponent();

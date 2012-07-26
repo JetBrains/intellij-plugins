@@ -6,6 +6,7 @@ import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.model.presentation.Component;
+import com.intellij.tapestry.core.model.presentation.Mixin;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.util.ArrayUtil;
@@ -19,6 +20,8 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * @author Alexey Chmutov
  *         Date: Jul 8, 2009
@@ -28,10 +31,12 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
   private final XmlElementDescriptor myHtmlDelegate;
   @Nullable
   private final Component myComponent;
+  private final List<Mixin> myMixins;
 
-  public TapestryHtmlTagDescriptor(@NotNull XmlElementDescriptor htmlDelegate, @Nullable Component component) {
+  public TapestryHtmlTagDescriptor(@NotNull XmlElementDescriptor htmlDelegate, @Nullable Component component, List<Mixin> mixins) {
     myHtmlDelegate = htmlDelegate;
     myComponent = component;
+    myMixins = mixins;
   }
 
   public String getQualifiedName() {
@@ -70,7 +75,7 @@ public class TapestryHtmlTagDescriptor implements XmlElementDescriptor, PsiWrita
     if (attributeDescriptor != null) return attributeDescriptor;
     return context != null
            ? DescriptorUtil.getAttributeDescriptor(attributeName, context)
-           : DescriptorUtil.getAttributeDescriptor(attributeName, myComponent);
+           : DescriptorUtil.getAttributeDescriptor(attributeName, myComponent, myMixins);
   }
 
   public XmlAttributeDescriptor getAttributeDescriptor(XmlAttribute attribute) {

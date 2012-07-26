@@ -4,6 +4,7 @@ import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.Library;
+import com.intellij.tapestry.core.model.presentation.components.DummyTapestryParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import gnu.trove.THashMap;
@@ -32,6 +33,7 @@ public abstract class ParameterReceiverElement extends PresentationLibraryElemen
     }
 
     Map<String, TapestryParameter> _parameters = new THashMap<String, TapestryParameter>();
+    _parameters.put("mixins", new DummyTapestryParameter(getProject(), "mixins", false));
     _parametersCacheTimestamp = getElementClass().getFile().getFile().lastModified();
 
     Map<String, IJavaField> fields = getElementClass().getFields(true);
