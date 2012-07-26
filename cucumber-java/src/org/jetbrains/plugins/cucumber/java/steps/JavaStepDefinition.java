@@ -3,7 +3,7 @@ package org.jetbrains.plugins.cucumber.java.steps;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.ArrayList;
@@ -16,9 +16,11 @@ import java.util.List;
 public class JavaStepDefinition extends AbstractStepDefinition {
   private String pattern;
 
-  public JavaStepDefinition(PsiMethod method, @NotNull final PsiAnnotation stepAnnotation) {
+  public JavaStepDefinition(PsiMethod method) {
     super(method);
 
+    PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberAnnotation(method);
+    assert stepAnnotation != null;
     if (stepAnnotation.getParameterList().getAttributes().length > 0) {
       final PsiElement annotationValue = stepAnnotation.getParameterList().getAttributes()[0].getValue();
       if (annotationValue != null) {
