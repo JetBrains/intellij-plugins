@@ -66,6 +66,11 @@
 
     <languageInjector implementation="com.google.jstestdriver.idea.assertFramework.jstd.JstdFixtureHtmlLanguageInjector"/>
     <!--<completion.contributor order="first" language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.codeInsight.FilteringCompletionContributor"/>-->
+    <!--<iconProvider implementation="com.google.jstestdriver.idea.js.JsTestDriverIconProvider" order="before nodejs"/>-->
+  </extensions>
+
+  <extensions defaultExtensionNs="JavaScript">
+    <!--<customFileIndexerFactory implementation="com.google.jstestdriver.idea.js.JsTestDriverIndexer$Factory"/>-->
   </extensions>
 
 </idea-plugin>
