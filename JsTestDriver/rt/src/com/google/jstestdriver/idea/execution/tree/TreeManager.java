@@ -155,6 +155,13 @@ public class TreeManager {
     ConfigNode configNode = getCurrentConfigNode();
     for (BrowserNode browserNode : configNode.getChildren()) {
       for (TestCaseNode testCaseNode : browserNode.getChildren()) {
+        for (TestNode testNode : testCaseNode.getChildren()) {
+          TCMessage testFailedMessage = TC.newTestFailedMessage(testNode);
+          String reason = testsRunException != null ? "JsTestDriver crash" : "unknown reason";
+          testFailedMessage.addAttribute(TCAttribute.EXCEPTION_MESSAGE, "Can't execute test due to " + reason + ".");
+          testFailedMessage.addAttribute(TCAttribute.IS_TEST_ERROR, "yes");
+          printTCMessage(testFailedMessage);
+        }
         TCMessage testCaseFinishedMessage = TC.newTestSuiteFinishedMessage(testCaseNode);
         printTCMessage(testCaseFinishedMessage);
       }
