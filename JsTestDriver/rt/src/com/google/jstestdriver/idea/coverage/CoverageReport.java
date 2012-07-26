@@ -1,10 +1,10 @@
 package com.google.jstestdriver.idea.coverage;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.*;
 
 /**
@@ -26,17 +26,24 @@ public class CoverageReport {
   }
 
   public void mergeFileReport(@NotNull String filePath, @NotNull List<LineHits> report) {
-    refineReport(report);
-    List<LineHits> old = myInfo.get(filePath);
+    String normalizedFilePath = normalizeFilePath(filePath);
+    normalizeLineHitsList(report);
+    List<LineHits> old = myInfo.get(normalizedFilePath);
     if (old != null) {
       doMerge(old, report);
     } else {
-      myInfo.put(filePath, report);
+      myInfo.put(normalizedFilePath, report);
     }
   }
 
-  public void clearReportByFilePath(String filePath) {
+  public void clearReportByFilePath(@NotNull String filePath) {
     myInfo.remove(filePath);
+  }
+
+  @NotNull
+  private static String normalizeFilePath(@NotNull String filePath) {
+    File file = new File(filePath);
+    return file.toURI().normalize().getPath();
   }
 
   private static List<LineHits> doMerge(@NotNull List<LineHits> aList, @NotNull List<LineHits> bList) {
@@ -72,44 +79,42 @@ public class CoverageReport {
     }
   }
 
-  private static ImmutableList<LineHits> refineReport(@NotNull List<LineHits> report) {
-    ImmutableList<LineHits> original = ImmutableList.copyOf(report);
-    ImmutableList<LineHits> sorted = makeSortedByLineNumber(original);
-    return makeUniqueByLineNumber(sorted);
+  private static void normalizeLineHitsList(@NotNull List<LineHits> lineHitsList) {
+    makeSortedByLineNumber(lineHitsList);
+    makeUniqueByLineNumber(lineHitsList);
   }
 
-  private static ImmutableList<LineHits> makeSortedByLineNumber(@NotNull ImmutableList<LineHits> report) {
+  private static void makeSortedByLineNumber(@NotNull List<LineHits> report) {
     LineHits prev = null;
     for (LineHits cur : report) {
       if (prev != null && prev.getLineNumber() > cur.getLineNumber()) {
-        LineHits[] array = report.toArray(new LineHits[report.size()]);
-        Arrays.sort(array);
-        return ImmutableList.of(array);
+        Collections.sort(report);
+        return;
       }
       prev = cur;
     }
-    return report;
   }
 
-  private static ImmutableList<LineHits> makeUniqueByLineNumber(@NotNull ImmutableList<LineHits> report) {
+  private static void makeUniqueByLineNumber(@NotNull List<LineHits> report) {
     boolean unique = checkForLineUniqueness(report);
     if (unique) {
-      return report;
+      return;
     }
-    List<LineHits> out = Lists.newArrayList();
+    List<LineHits> out = new ArrayList<LineHits>(report.size());
     LineHits prev = null;
     for (LineHits cur : report) {
       if (prev != null && prev.getLineNumber() == cur.getLineNumber()) {
         prev.addHits(cur.getHits());
       } else {
         out.add(cur);
+        prev = cur;
       }
-      prev = cur;
     }
-    return ImmutableList.copyOf(out);
+    report.clear();
+    report.addAll(out);
   }
 
-  private static boolean checkForLineUniqueness(List<LineHits> lineHitsList) {
+  private static boolean checkForLineUniqueness(@NotNull List<LineHits> lineHitsList) {
     LineHits prev = null;
     for (LineHits cur : lineHitsList) {
       if (prev != null && prev.getLineNumber() == cur.getLineNumber()) {
