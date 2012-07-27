@@ -29,7 +29,6 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Ref;
@@ -44,7 +43,6 @@ import com.intellij.psi.css.impl.util.table.CssElementDescriptorProviderImpl;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -58,6 +56,10 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+
+import static com.intellij.openapi.module.ModuleUtilCore.findModuleForFile;
+import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
+import static com.intellij.psi.util.PsiUtilCore.toPsiElementArray;
 
 /**
  * @author Eugene.Kudelevsky
@@ -78,11 +80,11 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       }
     }
 
-    Module module = ModuleUtil.findModuleForPsiElement(file);
+    Module module = findModuleForPsiElement(file);
     if (module == null) {
       file = InjectedLanguageUtil.getTopLevelFile(context);
       if (file != null) {
-        module = ModuleUtil.findModuleForPsiElement(file);
+        module = findModuleForPsiElement(file);
       }
     }
     if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) {
@@ -189,7 +191,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   public CssPropertyDescriptor getPropertyDescriptor(@NotNull String propertyName, @Nullable PsiElement context) {
     if (context != null) {
-      Module module = ModuleUtil.findModuleForPsiElement(context);
+      Module module = findModuleForPsiElement(context);
       GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
       List<Set<FlexStyleIndexInfo>> lists = FileBasedIndex.getInstance().getValues(FlexStyleIndex.INDEX_ID, propertyName, scope);
       List<CssSimpleSelector> selectors = findSimpleSelectorsAbove(context);
@@ -301,10 +303,13 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   @NotNull
-  public String[] getPropertyNames(@NotNull PsiElement context) {
+  public String[] getPropertyNames(@Nullable PsiElement context) {
+    if(context == null) {
+      return ArrayUtil.EMPTY_STRING_ARRAY;
+    }
     List<CssSimpleSelector> simpleSelectors = findSimpleSelectorsAbove(context);
     if (simpleSelectors.size() > 0 && !containsGlobalSelectors(simpleSelectors)) {
-      Module module = ModuleUtil.findModuleForPsiElement(context);
+      Module module = findModuleForPsiElement(context);
       if (module != null) {
         return getPropertyNamesDynamically(simpleSelectors, module);
       }
@@ -321,8 +326,11 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   @NotNull
-  public String[] getSimpleSelectors(@NotNull PsiElement context) {
-    Module module = ModuleUtil.findModuleForPsiElement(context);
+  public String[] getSimpleSelectors(@Nullable PsiElement context) {
+    if (context == null) {
+      return ArrayUtil.EMPTY_STRING_ARRAY;
+    }
+    Module module = findModuleForPsiElement(context);
     if (module == null) {
       return ArrayUtil.EMPTY_STRING_ARRAY;
     }
@@ -340,7 +348,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   @Nullable
   private static Collection<JSQualifiedNamedElement> getClasses(String className, PsiElement context) {
     if (context == null) return null;
-    Module module = ModuleUtil.findModuleForPsiElement(context);
+    Module module = findModuleForPsiElement(context);
     GlobalSearchScope scope = module != null ? module.getModuleWithDependenciesAndLibrariesScope(false) : context.getResolveScope();
     return JSResolveUtil.findElementsByName(className, context.getProject(), scope);
   }
@@ -370,7 +378,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   @NotNull
   public PsiElement[] getDeclarationsForSimpleSelector(@NotNull CssSimpleSelector selector) {
     // flex 4
-    Module module = ModuleUtil.findModuleForPsiElement(selector);
+    Module module = findModuleForPsiElement(selector);
     // only for project files, due to unknown code context otherwise
     if (module != null) {
       final JSClass jsClass = getClassFromMxmlDescriptor(selector, module);
@@ -415,7 +423,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
           }
         }
       }
-      return PsiUtilBase.toPsiElementArray(result);
+      return toPsiElementArray(result);
     }
     return PsiElement.EMPTY_ARRAY;
   }
@@ -573,7 +581,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       return null;
     }
 
-    final Module module = ModuleUtil.findModuleForFile(vFile, context.getProject());
+    final Module module = findModuleForFile(vFile, context.getProject());
     if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) {
       return null;
     }
