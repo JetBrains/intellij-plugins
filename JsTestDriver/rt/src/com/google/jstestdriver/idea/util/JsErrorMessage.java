@@ -102,19 +102,18 @@ public class JsErrorMessage {
     }
     String errorNameAndOther = pathAndOther.substring(textMessageStartInd).trim();
     String uncaughtPrefix = "Uncaught ";
-    String errorName = null;
     if (errorNameAndOther.startsWith(uncaughtPrefix)) {
-      errorName = errorNameAndOther.substring(uncaughtPrefix.length()).trim();
-      String exceptionStr = "exception:";
-      if (errorName.startsWith(exceptionStr)) {
-        errorName = errorName.substring(exceptionStr.length()).trim();
-      }
-      int detailsStartInd = errorName.indexOf(':');
-      if (detailsStartInd > 0) {
-        errorName = errorName.substring(0, detailsStartInd);
-      }
+      errorNameAndOther = errorNameAndOther.substring(uncaughtPrefix.length()).trim();
     }
-    return new JsErrorMessage(file, lineNumber, columnNumber, errorName,
+    String exceptionStr = "exception:";
+    if (errorNameAndOther.startsWith(exceptionStr)) {
+      errorNameAndOther = errorNameAndOther.substring(exceptionStr.length()).trim();
+    }
+    int detailsStartInd = errorNameAndOther.indexOf(':');
+    if (detailsStartInd > 0) {
+      errorNameAndOther = errorNameAndOther.substring(0, detailsStartInd);
+    }
+    return new JsErrorMessage(file, lineNumber, columnNumber, errorNameAndOther,
                               prefix.length(), prefix.length() + textMessageStartInd - 1);
   }
 

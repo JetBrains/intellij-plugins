@@ -63,4 +63,15 @@ public class JsErrorMessageTest {
     Assert.assertEquals(errorMessage.getColumnNumber(), null);
     Assert.assertEquals(errorMessage.getErrorName(), "ReferenceError");
   }
+
+  @Test
+  public void testName() throws Exception {
+    String text = "error loading file: /test/assertFramework/qunit/structure/basicUsage.js:1: ReferenceError: s is not defined";
+    JsErrorMessage errorMessage = JsErrorMessage.parseFromText(text, myBasePath);
+    Assert.assertNotNull(errorMessage);
+    Assert.assertEquals(errorMessage.getFileWithError(), new File(myBasePath, "assertFramework/qunit/structure/basicUsage.js"));
+    Assert.assertEquals(errorMessage.getLineNumber(), 1);
+    Assert.assertEquals(errorMessage.getColumnNumber(), null);
+    Assert.assertEquals(errorMessage.getErrorName(), "ReferenceError");
+  }
 }

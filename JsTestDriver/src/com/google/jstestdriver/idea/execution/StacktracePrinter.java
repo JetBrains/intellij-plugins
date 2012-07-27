@@ -210,7 +210,8 @@ public class StacktracePrinter extends TestsOutputConsolePrinter {
 
     private static final FirefoxHyperlinkBuilder INSTANCE = new FirefoxHyperlinkBuilder();
     private static final Pattern[] FIREFOX_URL_WITH_LINE = {
-        Pattern.compile("^\\s*\\w*\\(.*\\)@([^\\(]*)$")
+        Pattern.compile("^\\s*\\w*\\(.*\\)@([^\\(]*)$"),
+        Pattern.compile("^\\s*@([^\\(]*)$")
     };
 
     @NotNull
