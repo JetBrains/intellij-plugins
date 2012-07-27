@@ -13,7 +13,6 @@ import com.intellij.psi.*;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinition;
-import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotationProvider;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.CucumberJvmExtensionPoint;
@@ -33,23 +32,6 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
     return child instanceof PsiJavaFile;
   }
 
-  private boolean isCucumberAnnotation(@NotNull final PsiAnnotation annotation) {
-    final String qualifiedName = annotation.getQualifiedName();
-    if (qualifiedName == null) {
-      return false;
-    }
-    if (qualifiedName.startsWith("cucumber.annotation")) {
-      return true;
-    } else {
-      for (String providedAnnotations : CucumberJavaAnnotationProvider.getCucumberAnnotations()) {
-        if (providedAnnotations.equals(qualifiedName)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
   @NotNull
   @Override
   public List<AbstractStepDefinition> getStepDefinitions(@NotNull PsiFile psiFile) {
@@ -58,13 +40,8 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
       @Override
       public void visitMethod(PsiMethod method) {
         super.visitMethod(method);
-        final PsiAnnotation[] annotations = method.getModifierList().getAnnotations();
-
-        for (PsiAnnotation annotation : annotations) {
-          if (annotation != null && isCucumberAnnotation(annotation)) {
-            newDefs.add(new JavaStepDefinition(method, annotation));
-            break;
-          }
+        if (CucumberJavaUtil.isStepDefinition(method)) {
+          newDefs.add(new JavaStepDefinition(method));
         }
       }
     });
