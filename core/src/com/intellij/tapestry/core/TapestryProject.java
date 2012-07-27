@@ -1,7 +1,11 @@
 package com.intellij.tapestry.core;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.impl.java.stubs.index.JavaMethodNameIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.tapestry.core.events.TapestryEventsManager;
 import com.intellij.tapestry.core.java.IJavaClassType;
@@ -22,6 +26,7 @@ import com.intellij.tapestry.core.util.LocalizationUtils;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
 import com.intellij.util.ArrayUtil;
+import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,12 +55,15 @@ public class TapestryProject {
   private final Module myModule;
   private final IResourceFinder myResourceFinder;
   private Collection<Library> myCachedLibraries;
+  private Map<String, String> myCachedLibraryMapping;
   private String myLastApplicationPackage;
   private String myLastApplicationFilterName;
 
   private final IJavaTypeFinder myJavaTypeFinder;
   private final IJavaTypeCreator myJavaTypeCreator;
   private final TapestryEventsManager myEventsManager;
+
+  private final MappingDataCache mappingData = new MappingDataCache();
 
 
   public TapestryProject(@NotNull Module module,
@@ -132,8 +140,11 @@ public class TapestryProject {
     String applicationRootPackage = getApplicationRootPackage();
     String applicationFilterName = getApplicationFilterName();
     if (applicationRootPackage == null) return Collections.emptyList();
+    final Map<String, String> libraryMapping = findLibraryMapping();
     if (myCachedLibraries != null && isNotEmpty(myLastApplicationPackage) && isNotEmpty(myLastApplicationFilterName)) {
-      if (myLastApplicationPackage.equals(applicationRootPackage) && myLastApplicationFilterName.equals(applicationFilterName)) {
+      if (myLastApplicationPackage.equals(applicationRootPackage)
+          && myLastApplicationFilterName.equals(applicationFilterName)
+          && libraryMapping.equals(myCachedLibraryMapping)) {
         return myCachedLibraries;
       }
     }
@@ -143,8 +154,11 @@ public class TapestryProject {
     myLastApplicationFilterName = applicationFilterName;
 
     myCachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage, this));
-    myCachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage + "." + applicationFilterName, this));
     myCachedLibraries.add(myCoreLibrary);
+
+    for (String libraryShortName : libraryMapping.keySet()) {
+      myCachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, libraryMapping.get(libraryShortName), this, libraryShortName));
+    }
 
     return myCachedLibraries;
   }
@@ -215,13 +229,32 @@ public class TapestryProject {
   /**
    * Finds a mixin by name in the Tapestry application.
    *
-   *
    * @param mixinName the component name to look.
    * @return the mixin component with the given name, or <code>null</code> if the mixin isn't found.
    */
   @Nullable
   public Mixin findMixin(String mixinName) {
     return (Mixin)ourNameToMixinMap.get(myModule).get(mixinName.toLowerCase());
+  }
+
+  @NotNull
+  public Map<String, String> findLibraryMapping() {
+    final Collection<PsiMethod> psiMethods = JavaMethodNameIndex.getInstance().get(
+      "contributeComponentClassResolver",
+      myModule.getProject(),
+      GlobalSearchScope.moduleScope(myModule)
+    );
+
+    Map<String, String> result = new THashMap<String, String>();
+
+    for (PsiMethod psiMethod : psiMethods) {
+      final Map<String, String> computedMap = mappingData.compute(psiMethod.getContainingFile());
+      for (String key : computedMap.keySet()) {
+        result.put(key, computedMap.get(key));
+      }
+    }
+
+    return result;
   }
 
   @NotNull
@@ -236,7 +269,7 @@ public class TapestryProject {
     }
   };
 
-  private static final ElementsCachedMap ourNameToMixinMap = new ElementsCachedMap("ourNameToComponentMap", false, false, true) {
+  private static final ElementsCachedMap ourNameToMixinMap = new ElementsCachedMap("ourNameToMixinMap", false, false, true) {
     protected String computeKey(PresentationLibraryElement element) {
       return element.getName().toLowerCase();
     }

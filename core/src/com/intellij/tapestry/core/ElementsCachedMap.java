@@ -2,6 +2,7 @@ package com.intellij.tapestry.core;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
@@ -36,12 +37,12 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
     TapestryProject project = TapestryModuleSupportLoader.getTapestryProject(module);
     assert project != null;
     for (Library library : project.getLibraries()) {
-      if (myCacheComponents) computeKeyAndAddAll(map, library.getComponents().values());
-      if (myCachePages) computeKeyAndAddAll(map, library.getPages().values());
-      if (myCacheMixin) computeKeyAndAddAll(map, library.getMixins().values());
+      if (myCacheComponents) computeKeyAndAddAll(map, library.getComponents().values(), library.getShortName());
+      if (myCachePages) computeKeyAndAddAll(map, library.getPages().values(), library.getShortName());
+      if (myCacheMixin) computeKeyAndAddAll(map, library.getMixins().values(), library.getShortName());
     }
-    if (myCacheComponents) computeKeyAndAddAll(map, project.getBuiltinComponents());
-    if (myCachePages) computeKeyAndAddAll(map, project.getBuiltinPages());
+    if (myCacheComponents) computeKeyAndAddAll(map, project.getBuiltinComponents(), null);
+    if (myCachePages) computeKeyAndAddAll(map, project.getBuiltinPages(), null);
     return map;
   }
 
@@ -54,10 +55,15 @@ abstract class ElementsCachedMap extends CachedUserDataCache<Map<String, Present
     return projectOwner.getProject();
   }
 
-  private void computeKeyAndAddAll(Map<String, PresentationLibraryElement> map, Collection<PresentationLibraryElement> elements) {
+  private void computeKeyAndAddAll(Map<String, PresentationLibraryElement> map,
+                                   Collection<PresentationLibraryElement> elements,
+                                   @Nullable String name) {
     for (PresentationLibraryElement element : elements) {
       String key = element == null ? null : computeKey(element);
       if (key != null) {
+        if(!StringUtil.isEmpty(name)) {
+          key = name + "/" + key;
+        }
         map.put(key, element);
       }
     }

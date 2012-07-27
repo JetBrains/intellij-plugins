@@ -1,10 +1,15 @@
 package com.intellij.tapestry.core.util;
 
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiExpression;
+import com.intellij.psi.PsiLiteralExpression;
+import com.intellij.psi.PsiNewExpression;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.java.IJavaMethod;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,6 +19,15 @@ import java.util.Map;
  * Utility methods for manipulating classes.
  */
 public class ClassUtils {
+
+  public static boolean instanceOf(Object[] items, @NotNull Class aClass) {
+    for (Object item : items) {
+      if(!aClass.isInstance(item)){
+        return false;
+      }
+    }
+    return true;
+  }
 
   /**
      * Finds every property declared in a class.

@@ -5,12 +5,15 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.tapestry.core.MappingDataCache;
 import com.intellij.tapestry.psi.TapestryAccessorMethod;
 import com.intellij.tapestry.psi.TmlFile;
 import com.intellij.xml.Html5SchemaProvider;
 import com.intellij.xml.util.XmlUtil;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 /**
  * @author Alexey Chmutov
@@ -72,6 +75,13 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     initByComponent();
     PsiClass ref = resolveReferenceAtCaretPosition(PsiClass.class);
     Assert.assertEquals("org.apache.tapestry5.corelib.components.Any", ref.getQualifiedName());
+  }
+
+  public void testTmlMapping() throws Throwable {
+    final MappingDataCache cache = new MappingDataCache();
+    final PsiFile psiFile = myFixture.configureByFile("TmlMapping.java");
+    final Map<String,String> compute = cache.compute(psiFile);
+    Assert.assertTrue(compute.containsKey("foo"));
   }
 
   public void testTmlMixin() throws Throwable {

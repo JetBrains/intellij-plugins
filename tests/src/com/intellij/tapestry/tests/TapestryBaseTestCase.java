@@ -215,7 +215,7 @@ public abstract class TapestryBaseTestCase extends UsefulTestCase {
     return addElementToProject(PAGES_PACKAGE_PATH, className, getTemplateExtension());
   }
 
-  private VirtualFile addElementToProject(String relativePath, String className, String ext) throws IOException {
+  protected VirtualFile addElementToProject(String relativePath, String className, String ext) throws IOException {
     final int afterDotIndex = className.lastIndexOf('.');
     String fileText;
     if (afterDotIndex != -1) { // we want the element to be placed in the subpackage
