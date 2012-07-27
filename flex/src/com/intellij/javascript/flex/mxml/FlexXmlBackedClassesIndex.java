@@ -81,7 +81,7 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
 
   @Override
   public int getVersion() {
-    return JSFileElementType.VERSION + INDEX_VERSION;
+    return JSFileElementType.getVersion() + INDEX_VERSION;
   }
 
   public static Collection<JSClass> searchClassInheritors(ID<String, Void> indexId, String name, Project project, final GlobalSearchScope scope) {

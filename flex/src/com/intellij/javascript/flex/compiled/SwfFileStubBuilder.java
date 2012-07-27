@@ -48,6 +48,6 @@ public class SwfFileStubBuilder implements BinaryFileStubBuilder {
   }
 
   public int getStubVersion() {
-    return JSFileElementType.VERSION + VERSION;
+    return JSFileElementType.getVersion() + VERSION;
   }
 }
