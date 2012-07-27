@@ -40,25 +40,28 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <localInspection groupName="JsTestDriver"
+    <localInspection groupPath="JavaScript"
+                     groupName="JsTestDriver"
                      displayName="Add JsTestDriver assertion framework support"
                      shortName="JstdAssertionFrameworkSupport"
                      enabledByDefault="true"
-                     level="ERROR"
+                     level="WARNING"
                      implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JstdAssertionFrameworkSupportInspection"
     />
-    <localInspection groupName="JsTestDriver"
+    <localInspection groupPath="JavaScript"
+                     groupName="JsTestDriver"
                      displayName="Add QUnit JsTestDriver adapter"
                      shortName="QUnitAdapterSupport"
                      enabledByDefault="true"
-                     level="ERROR"
+                     level="WARNING"
                      implementationClass="com.google.jstestdriver.idea.assertFramework.qunit.QUnitAdapterSupportInspection"
     />
-    <localInspection groupName="JsTestDriver"
+    <localInspection groupPath="JavaScript"
+                     groupName="JsTestDriver"
                      displayName="Add Jasmine JsTestDriver adapter"
                      shortName="JasmineAdapterSupport"
                      enabledByDefault="true"
-                     level="ERROR"
+                     level="WARNING"
                      implementationClass="com.google.jstestdriver.idea.assertFramework.jasmine.JasmineAdapterSupportInspection"
     />
 

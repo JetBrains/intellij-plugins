@@ -1,7 +1,7 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
 import com.google.inject.Provider;
-import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,14 +10,14 @@ import java.util.List;
 
 public abstract class AbstractAddAdapterSupportInspection extends AbstractMethodBasedInspection {
 
-  private final AddAdapterSupportQuickFix myAddAdapterQuickSupportQuickFix;
+  private final AddAdapterSupportIntentionAction myAddAdapterQuickSupportIntentionAction;
   private final String myAssertionFrameworkName;
 
   protected AbstractAddAdapterSupportInspection(@NotNull String assertionFrameworkName,
                                                 @NotNull Provider<List<VirtualFile>> adapterSourceFilesProvider,
                                                 @Nullable String adapterHomePageUrl) {
     myAssertionFrameworkName = assertionFrameworkName;
-    myAddAdapterQuickSupportQuickFix = new AddAdapterSupportQuickFix(
+    myAddAdapterQuickSupportIntentionAction = new AddAdapterSupportIntentionAction(
       assertionFrameworkName,
       adapterSourceFilesProvider,
       adapterHomePageUrl
@@ -25,8 +25,8 @@ public abstract class AbstractAddAdapterSupportInspection extends AbstractMethod
   }
 
   @Override
-  protected LocalQuickFix getQuickFix() {
-    return myAddAdapterQuickSupportQuickFix;
+  protected IntentionAction getFix() {
+    return myAddAdapterQuickSupportIntentionAction;
   }
 
   @Override
