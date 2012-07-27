@@ -51,6 +51,14 @@
                 canCloseContents="false"
     />
     <fileBasedIndex implementation="com.google.jstestdriver.idea.config.JstdTestFilePathIndex"/>
+    <localInspection groupPath="JavaScript"
+                     groupName="Node.js"
+                     displayName="Code assistance for Node.js external modules"
+                     shortName="CodeAssistanceForExternalNodeModule"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.jetbrains.nodejs.codeInsight.CodeAssistanceForExternalNodeModuleInspection"
+    />
   </extensions>
 
   <change-notes>
