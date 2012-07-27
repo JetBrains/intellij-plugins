@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.compiler.impl.CompilerUtil;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -46,6 +47,7 @@ import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
 import com.intellij.util.text.StringTokenizer;
+import gnu.trove.THashSet;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -217,7 +219,20 @@ public class FlexCompilationUtils {
   }
 
   public static void performPostCompileActions(final Module module,
-                                               final @NotNull FlexIdeBuildConfiguration bc) throws FlexCompilerException {
+                                               final @NotNull FlexIdeBuildConfiguration bc,
+                                               final List<String> compileInfoMessages) throws FlexCompilerException {
+    final Sdk sdk = bc.getSdk();
+    assert sdk != null;
+
+    LinkageType linkage = bc.getDependencies().getFrameworkLinkage();
+    if (linkage == LinkageType.Default) {
+      linkage = BCUtils.getDefaultFrameworkLinkage(sdk.getVersionString(), bc.getNature());
+    }
+
+    if (linkage == LinkageType.RSL) {
+      handleFrameworkRsls(bc, compileInfoMessages);
+    }
+
     if (BCUtils.isRLMTemporaryBC(bc) || BCUtils.isRuntimeStyleSheetBC(bc)) return;
 
     switch (bc.getTargetPlatform()) {
@@ -238,6 +253,60 @@ public class FlexCompilationUtils {
         }
         break;
     }
+  }
+
+  private static void handleFrameworkRsls(final FlexIdeBuildConfiguration bc,
+                                          final List<String> compileInfoMessages) throws FlexCompilerException {
+    final Sdk sdk = bc.getSdk();
+    assert sdk != null;
+
+    if (StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.8") >= 0) {
+      final List<String> rsls = getRequiredRsls(compileInfoMessages);
+      final Collection<File> filesToRefresh = new THashSet<File>();
+
+      final String rslBaseDir = sdk.getHomePath() + "/frameworks/rsls/";
+      final String outputPath = PathUtil.getParentPath(bc.getActualOutputFilePath());
+
+      for (String rsl : rsls) {
+        final File file = new File(rslBaseDir + rsl);
+        if (file.isFile()) {
+          try {
+            final File toFile = new File(outputPath + '/' + rsl);
+            FileUtil.copy(file, toFile);
+            filesToRefresh.add(toFile);
+          }
+          catch (IOException e) {
+            throw new FlexCompilerException(FlexBundle.message("failed.to.copy.file", rsl, rslBaseDir, outputPath, e.getMessage()));
+          }
+        }
+      }
+
+      CompilerUtil.refreshIOFiles(filesToRefresh);
+    }
+  }
+
+  private static List<String> getRequiredRsls(final List<String> compileInfoMessages) {
+    final List<String> rsls = new ArrayList<String>();
+
+    boolean rslListStarted = false;
+
+    for (String message : compileInfoMessages) {
+      if (rslListStarted) {
+        // see tools_en.properties from Flex SDK sources
+        if (message.startsWith("\u0020\u0020\u0020\u0020") && message.length() > 4 && !Character.isWhitespace(message.charAt(5))) {
+          final String text = message.substring(4);
+          final int nextSpaceIndex = text.indexOf(' ');
+          rsls.add(nextSpaceIndex == -1 ? text : text.substring(0, nextSpaceIndex));
+        }
+        else {
+          break;
+        }
+      }
+      else if ("Required RSLs:".equals(message)) {
+        rslListStarted = true;
+      }
+    }
+    return rsls;
   }
 
   private static void handleHtmlWrapper(final Module module, final FlexIdeBuildConfiguration bc) throws FlexCompilerException {

@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompileContext;
+import com.intellij.openapi.compiler.CompilerMessage;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -16,10 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.GuiUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,7 +104,7 @@ public class FlexCompilationManager {
         }
       }
 
-      final String prefix = "[" + task.getPresentableName() + "] ";
+      final String prefix = getMessagePrefix(task);
       myCompileContext.addMessage(category, prefix + message, url, lineNum, columnNum);
 
       if (message.contains(OUT_OF_MEMORY) || message.contains(JAVA_HEAP_SPACE)) {
@@ -144,8 +142,16 @@ public class FlexCompilationManager {
         else {
           addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.successful"), null, -1, -1);
 
+          final String prefix = getMessagePrefix(task);
+          final List<String> taskMessages = new ArrayList<String>();
+          for (CompilerMessage message : myCompileContext.getMessages(CompilerMessageCategory.INFORMATION)) {
+            if (message.getMessage().startsWith(prefix)) {
+              taskMessages.add(message.getMessage().substring(prefix.length()));
+            }
+          }
+
           try {
-            FlexCompilationUtils.performPostCompileActions(task.getModule(), task.getBC());
+            FlexCompilationUtils.performPostCompileActions(task.getModule(), task.getBC(), taskMessages);
           }
           catch (FlexCompilerException e) {
             addMessage(task, CompilerMessageCategory.ERROR, e.getMessage(), e.getUrl(), e.getLine(), e.getColumn());
@@ -163,6 +169,10 @@ public class FlexCompilationManager {
         }
       }
     }
+  }
+
+  private String getMessagePrefix(final FlexCompilationTask task) {
+    return "[" + task.getPresentableName() + "] ";
   }
 
   private Collection<FlexCompilationTask> cancelNotStartedDependentTasks(final FlexCompilationTask failedTask) {
@@ -250,7 +260,7 @@ public class FlexCompilationManager {
           myFinishedTasks.add(taskToStart);
 
           try {
-            FlexCompilationUtils.performPostCompileActions(taskToStart.getModule(), taskToStart.getBC());
+            FlexCompilationUtils.performPostCompileActions(taskToStart.getModule(), taskToStart.getBC(), Collections.<String>emptyList());
           }
           catch (FlexCompilerException e) {
             addMessage(taskToStart, CompilerMessageCategory.ERROR, e.getMessage(), e.getUrl(), e.getLine(), e.getColumn());
