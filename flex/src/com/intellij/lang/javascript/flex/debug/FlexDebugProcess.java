@@ -297,8 +297,11 @@ public class FlexDebugProcess extends XDebugProcess {
           StringUtil.compareVersionNumbers(myDebuggerVersion, "4.1.1") < 0) {
         classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.0.0.14159-fix.jar") + File.pathSeparator + classpath;
       }
-      else if (StringUtil.compareVersionNumbers(myDebuggerVersion, "4.5") >= 0 &&
-               StringUtil.compareVersionNumbers(myDebuggerVersion, "4.6.1") < 0) {
+      else if ((StringUtil.compareVersionNumbers(myDebuggerVersion, "4.5") >= 0 &&
+                StringUtil.compareVersionNumbers(myDebuggerVersion, "4.6.1") < 0)
+               ||
+               (StringUtil.compareVersionNumbers(myDebuggerVersion, "4.8") >= 0 &&
+                StringUtil.compareVersionNumbers(myDebuggerVersion, "4.8.1") < 0)) {
         classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.5.0.20967-fix.jar") + File.pathSeparator + classpath;
       }
     }
