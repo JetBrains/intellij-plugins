@@ -14,47 +14,42 @@ import java.util.List;
 
 public class JstdStructureTest extends AbstractJsPsiTestCase {
 
-  @Test
   public void testEmptyAsyncTestCase() throws Exception {
     validateJsFile();
   }
 
-  @Test
   public void testEmptyTestCase() throws Exception {
     validateJsFile();
   }
 
-  @Test
   public void testSingleObjectLiteralTest() throws Exception {
     validateJsFile();
   }
 
-  @Test
   public void testMultipleObjectLiteralTests() throws Exception {
     validateJsFile();
   }
 
-  @Test
   public void testMultipleTestCases() throws Exception {
     validateJsFile();
   }
 
-  @Test
   public void testPrototypeTestCase() throws Exception {
     validateJsFile();
   }
 
-  @Test
+  public void testPrototypeTestCase1() throws Exception {
+    validateJsFile();
+  }
+
   public void testMixObjectLiteralAndPrototypeMethodTests_with_var() throws Exception {
     validateJsFile();
   }
 
-  @Test
   public void testMixObjectLiteralAndPrototypeMethodTests_without_var() throws Exception {
     validateJsFile();
   }
 
-  @Test
   public void testTestCaseNameResolve() throws Exception {
     validateJsFile();
   }

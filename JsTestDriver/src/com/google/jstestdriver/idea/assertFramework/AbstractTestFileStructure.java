@@ -19,6 +19,8 @@ public abstract class AbstractTestFileStructure {
     return myJsFile;
   }
 
+  public abstract boolean isEmpty();
+
   @Nullable
   public abstract JstdRunElement findJstdRunElement(@NotNull TextRange textRange);
 

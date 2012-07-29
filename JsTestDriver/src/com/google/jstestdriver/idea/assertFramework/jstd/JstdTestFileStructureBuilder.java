@@ -6,13 +6,10 @@ import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.Processor;
-import com.intellij.util.Query;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -26,14 +23,14 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
   @Override
   public JstdTestFileStructure buildTestFileStructure(@NotNull JSFile jsFile) {
     JstdTestFileStructure jsTestFileStructure = new JstdTestFileStructure(jsFile);
-    List<JSElement> jsElements = JsPsiUtils.listJsElementsInExecutionOrder(jsFile);
-    for (JSElement jsElement : jsElements) {
-      fillJsTestFileStructure(jsTestFileStructure, jsElement);
+    List<JSStatement> statements = JsPsiUtils.listStatementsInExecutionOrder(jsFile);
+    for (JSStatement statement : statements) {
+      fillJsTestFileStructure(jsTestFileStructure, statement);
     }
     return jsTestFileStructure;
   }
 
-  private static void fillJsTestFileStructure(JstdTestFileStructure jsTestFileStructure, JSElement jsElement) {
+  private static void fillJsTestFileStructure(JstdTestFileStructure jsTestFileStructure, JSStatement jsElement) {
     {
       JSExpressionStatement jsExpressionStatement = CastUtils.tryCast(jsElement, JSExpressionStatement.class);
       if (jsExpressionStatement != null) {
@@ -56,9 +53,9 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
                 if (jsDefinitionExpression != null) {
                   JSReferenceExpression jsReferenceExpression = CastUtils.tryCast(jsDefinitionExpression.getExpression(), JSReferenceExpression.class);
                   if (jsReferenceExpression != null) {
-                    PsiElement psiElement = JsPsiUtils.resolveUniquely(jsReferenceExpression);
-                    if (psiElement instanceof JSElement) {
-                      addPrototypeTests(testCaseStructure, (JSElement) psiElement);
+                    String refName = jsReferenceExpression.getReferencedName();
+                    if (refName != null) {
+                      addPrototypeTests(testCaseStructure, refName, jsExpressionStatement);
                     }
                   }
                 }
@@ -78,7 +75,10 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
           if (jsCallExpression != null) {
             JstdTestCaseStructure testCaseStructure = createTestCaseStructure(jsTestFileStructure, jsCallExpression);
             if (testCaseStructure != null) {
-              addPrototypeTests(testCaseStructure, jsVariable);
+              String refName = jsVariable.getQualifiedName();
+              if (refName != null) {
+                addPrototypeTests(testCaseStructure, refName, jsVarStatement);
+              }
             }
           }
         }
@@ -86,50 +86,49 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
     }
   }
 
-  private static void addPrototypeTests(@NotNull final JstdTestCaseStructure testCaseStructure, @NotNull final JSElement jsVariable) {
-    Query<PsiReference> referenceQuery = ReferencesSearch.search(jsVariable);
-    referenceQuery.forEach(new Processor<PsiReference>() {
-      @Override
-      public boolean process(PsiReference psiReference) {
-        JSReferenceExpression testCaseJsReferenceExpression = CastUtils.tryCast(psiReference, JSReferenceExpression.class);
-        if (testCaseJsReferenceExpression != null) {
-          JSReferenceExpression prototypeJsReferenceExpression =
-            CastUtils.tryCast(testCaseJsReferenceExpression.getParent(), JSReferenceExpression.class);
-          if (prototypeJsReferenceExpression != null && "prototype".equals(prototypeJsReferenceExpression.getReferencedName())) {
-            JSReferenceExpression testOnPrototypeJsReferenceExpression =
-              CastUtils.tryCast(prototypeJsReferenceExpression.getParent(), JSReferenceExpression.class);
-            if (testOnPrototypeJsReferenceExpression != null) {
-              addPrototypeTest(testCaseStructure, testOnPrototypeJsReferenceExpression);
+  private static void addPrototypeTests(@NotNull JstdTestCaseStructure testCaseStructure,
+                                        @NotNull String referenceName,
+                                        @NotNull JSStatement refStatement) {
+    List<JSStatement> statements = JsPsiUtils.listStatementsInExecutionOrderNextTo(refStatement);
+    for (JSStatement statement : statements) {
+      JSExpressionStatement expressionStatement = CastUtils.tryCast(statement, JSExpressionStatement.class);
+      if (expressionStatement != null) {
+        JSAssignmentExpression assignmentExpr = CastUtils.tryCast(expressionStatement.getExpression(), JSAssignmentExpression.class);
+        if (assignmentExpr != null) {
+          JSDefinitionExpression wholeLeftDefExpr = CastUtils.tryCast(assignmentExpr.getLOperand(), JSDefinitionExpression.class);
+          if (wholeLeftDefExpr != null) {
+            JSReferenceExpression wholeLeftRefExpr = CastUtils.tryCast(wholeLeftDefExpr.getExpression(), JSReferenceExpression.class);
+            if (wholeLeftRefExpr != null) {
+              JSReferenceExpression testCaseAndPrototypeRefExpr = CastUtils.tryCast(wholeLeftRefExpr.getQualifier(), JSReferenceExpression.class);
+              if (testCaseAndPrototypeRefExpr != null) {
+                if ("prototype".equals(testCaseAndPrototypeRefExpr.getReferencedName())) {
+                  JSReferenceExpression testCaseRefExpr = CastUtils.tryCast(testCaseAndPrototypeRefExpr.getQualifier(), JSReferenceExpression.class);
+                  if (testCaseRefExpr != null && testCaseRefExpr.getQualifier() == null) {
+                    if (referenceName.equals(testCaseRefExpr.getReferencedName())) {
+                      addPrototypeTest(testCaseStructure, assignmentExpr.getROperand(), wholeLeftRefExpr.getReferenceNameElement());
+                    }
+                  }
+                }
+              }
             }
           }
-        }
-        return true;
-      }
-    });
-  }
-
-  private static void addPrototypeTest(JstdTestCaseStructure testCaseStructure, JSReferenceExpression testOnPrototypeJsReferenceExpression) {
-    JSDefinitionExpression testJsDefinitionExpression =
-      CastUtils.tryCast(testOnPrototypeJsReferenceExpression.getParent(), JSDefinitionExpression.class);
-    if (testJsDefinitionExpression != null) {
-      JSAssignmentExpression testJsAssignmentExpression =
-        CastUtils.tryCast(testJsDefinitionExpression.getParent(), JSAssignmentExpression.class);
-      if (testJsAssignmentExpression != null) {
-        LeafPsiElement testMethodIdentifierPsiElement =
-          CastUtils.tryCast(testOnPrototypeJsReferenceExpression.getLastChild(), LeafPsiElement.class);
-        if (testMethodIdentifierPsiElement != null &&
-            testMethodIdentifierPsiElement.getElementType() == JSTokenTypes.IDENTIFIER) {
-          JSFunctionExpression jsFunctionExpression = JsPsiUtils.extractFunctionExpression(
-            testJsAssignmentExpression.getROperand()
-          );
-          JstdTestStructure jstdTestStructure = JstdTestStructure.newPrototypeBasedTestStructure(testMethodIdentifierPsiElement,
-                                                                                                 jsFunctionExpression);
-          testCaseStructure.addTestStructure(jstdTestStructure);
         }
       }
     }
   }
 
+  private static void addPrototypeTest(@NotNull JstdTestCaseStructure testCaseStructure,
+                                       @Nullable JSExpression rightAssignmentOperand,
+                                       @Nullable PsiElement testMethodIdentifierPsiElement) {
+    LeafPsiElement leafPsiElement = CastUtils.tryCast(testMethodIdentifierPsiElement, LeafPsiElement.class);
+    if (leafPsiElement != null && leafPsiElement.getElementType() == JSTokenTypes.IDENTIFIER) {
+      JSFunctionExpression jsFunctionExpression = JsPsiUtils.extractFunctionExpression(rightAssignmentOperand);
+      JstdTestStructure jstdTestStructure = JstdTestStructure.newPrototypeBasedTestStructure(leafPsiElement, jsFunctionExpression);
+      testCaseStructure.addTestStructure(jstdTestStructure);
+    }
+  }
+
+  @Nullable
   private static JstdTestCaseStructure createTestCaseStructure(@NotNull JstdTestFileStructure jsTestFileStructure,
                                                                @NotNull JSCallExpression testCaseCallExpression) {
     JSReferenceExpression referenceExpression = CastUtils.tryCast(testCaseCallExpression.getMethodExpression(), JSReferenceExpression.class);

@@ -15,6 +15,9 @@ import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class JsPsiUtils {
@@ -61,38 +64,48 @@ public class JsPsiUtils {
 
   @Nullable
   private static JSExpression extractInitExpression(@NotNull JSReferenceExpression jsReferenceExpression) {
-    PsiElement resolved = resolveUniquely(jsReferenceExpression);
-    if (resolved == null) {
+    JSElement scopeElement = getNearestContainingScopeElement(jsReferenceExpression);
+    if (scopeElement == null) {
       return null;
     }
-    JSVariable jsVariable = CastUtils.tryCast(resolved, JSVariable.class);
-    if (jsVariable != null) {
-      return jsVariable.getInitializer();
+    String refName = jsReferenceExpression.getReferencedName();
+    if (refName == null || refName.isEmpty()) {
+      return null;
     }
-    JSDefinitionExpression jsDefinitionExpression = CastUtils.tryCast(resolved, JSDefinitionExpression.class);
-    if (jsDefinitionExpression != null) {
-      JSAssignmentExpression jsAssignmentExpression = CastUtils.tryCast(resolved.getParent(), JSAssignmentExpression.class);
-      if (jsAssignmentExpression != null) {
-        return jsAssignmentExpression.getROperand();
+    List<JSStatement> statements = getTopLevelStatementsOf(scopeElement);
+    int maxOffset = jsReferenceExpression.getTextRange().getStartOffset();
+    JSExpression lastExpr = null;
+    for (JSStatement statement : statements) {
+      if (statement.getTextRange().getEndOffset() > maxOffset) {
+        break;
       }
-    }
-    return null;
-  }
-
-  @Nullable
-  public static PsiElement resolveUniquely(@NotNull PsiPolyVariantReference psiPolyVariantReference) {
-    ResolveResult[] resolveResults = psiPolyVariantReference.multiResolve(false);
-    PsiElement candidate = null;
-    for (ResolveResult resolveResult : resolveResults) {
-      PsiElement resolvedElement = resolveResult.getElement();
-      if (resolvedElement != null && resolveResult.isValidResult()) {
-        if (candidate != null) {
-          return null;
+      {
+        JSVarStatement varStmt = CastUtils.tryCast(statement, JSVarStatement.class);
+        if (varStmt != null) {
+          JSVariable[] vars = ObjectUtils.notNull(varStmt.getVariables(), JSVariable.EMPTY_ARRAY);
+          for (JSVariable var : vars) {
+            if (refName.equals(var.getQualifiedName())) {
+              lastExpr = var.getInitializer();
+            }
+          }
         }
-        candidate = resolvedElement;
+      }
+      {
+        JSAssignmentExpression assignmentExpr = CastUtils.tryCast(statement, JSAssignmentExpression.class);
+        if (assignmentExpr != null) {
+          JSDefinitionExpression defExpr = CastUtils.tryCast(assignmentExpr.getLOperand(), JSDefinitionExpression.class);
+          if (defExpr != null) {
+            JSReferenceExpression refExpr = CastUtils.tryCast(defExpr.getExpression(), JSReferenceExpression.class);
+            if (refExpr != null && refExpr.getQualifier() == null) {
+              if (refName.equals(refExpr.getReferencedName())) {
+                lastExpr = assignmentExpr.getROperand();
+              }
+            }
+          }
+        }
       }
     }
-    return candidate;
+    return lastExpr;
   }
 
   @Nullable
@@ -165,19 +178,19 @@ public class JsPsiUtils {
   }
 
   @NotNull
-  public static List<JSElement> listJsElementsInExecutionOrder(@NotNull JSFile jsFile) {
-    List<JSElement> jsElements = Lists.newArrayList();
+  public static List<JSStatement> listStatementsInExecutionOrder(@NotNull JSFile jsFile) {
+    List<JSStatement> jsElements = Lists.newArrayList();
     for (PsiElement psiElement : jsFile.getChildren()) {
-      JSElement jsElement = CastUtils.tryCast(psiElement, JSElement.class);
-      if (jsElement != null) {
-        collectJsElementsInExecutionOrder(jsElement, jsElements);
+      JSStatement statement = CastUtils.tryCast(psiElement, JSStatement.class);
+      if (statement != null) {
+        collectJsElementsInExecutionOrder(statement, jsElements);
       }
     }
     return jsElements;
   }
 
-  private static void collectJsElementsInExecutionOrder(@NotNull JSElement jsElement, @NotNull List<JSElement> jsElements) {
-    JSExpressionStatement jsExpressionStatement = CastUtils.tryCast(jsElement, JSExpressionStatement.class);
+  private static void collectJsElementsInExecutionOrder(@NotNull JSStatement statement, @NotNull List<JSStatement> jsElements) {
+    JSExpressionStatement jsExpressionStatement = CastUtils.tryCast(statement, JSExpressionStatement.class);
     if (jsExpressionStatement != null) {
       JSFunctionExpression jsFunctionExpression = null;
       {
@@ -199,21 +212,23 @@ public class JsPsiUtils {
         }
       }
       if (jsFunctionExpression != null) {
-        JSSourceElement[] jsSourceElements = ObjectUtils.notNull(jsFunctionExpression.getBody(), JSSourceElement.EMPTY_ARRAY);
-        for (JSSourceElement jsSourceElement : jsSourceElements) {
-          if (jsSourceElement instanceof JSBlockStatement) {
-            JSBlockStatement jsBlockStatement = (JSBlockStatement) jsSourceElement;
+        JSSourceElement[] sourceElements = ObjectUtils.notNull(jsFunctionExpression.getBody(), JSSourceElement.EMPTY_ARRAY);
+        for (JSSourceElement sourceElement : sourceElements) {
+          if (sourceElement instanceof JSBlockStatement) {
+            JSBlockStatement jsBlockStatement = (JSBlockStatement) sourceElement;
             for (JSStatement jsStatement : jsBlockStatement.getStatements()) {
               collectJsElementsInExecutionOrder(jsStatement, jsElements);
             }
-          } else {
-            collectJsElementsInExecutionOrder(jsSourceElement, jsElements);
+          }
+          else if (sourceElement instanceof JSStatement) {
+            JSStatement childStatement = (JSStatement) sourceElement;
+            collectJsElementsInExecutionOrder(childStatement, jsElements);
           }
         }
         return;
       }
     }
-    jsElements.add(jsElement);
+    jsElements.add(statement);
   }
 
   public static boolean isStringElement(@Nullable JSExpression jsExpression) {
@@ -373,7 +388,7 @@ public class JsPsiUtils {
   public static boolean isResolvedToFunction(@NotNull PsiPolyVariantReference psiPolyVariantReference) {
     ResolveResult[] resolveResults = psiPolyVariantReference.multiResolve(false);
     for (ResolveResult resolveResult : resolveResults) {
-      boolean resolvedCorrectly = isResolvedToFunction(resolveResult);
+      boolean resolvedCorrectly = isResolveResultFunction(resolveResult);
       if (resolvedCorrectly) {
         return true;
       }
@@ -381,7 +396,7 @@ public class JsPsiUtils {
     return false;
   }
 
-  private static boolean isResolvedToFunction(@NotNull ResolveResult resolveResult) {
+  private static boolean isResolveResultFunction(@NotNull ResolveResult resolveResult) {
     PsiElement resolvedElement = resolveResult.getElement();
     if (resolvedElement == null || !resolveResult.isValidResult()) {
       return false;
@@ -392,6 +407,63 @@ public class JsPsiUtils {
       return element != null && !(element instanceof PsiComment);
     }
     return !(resolvedElement instanceof PsiComment);
+  }
+
+  @NotNull
+  public static List<JSStatement> listStatementsInExecutionOrderNextTo(@NotNull JSStatement stmt) {
+    JSElement nearestScopeElement = getNearestContainingScopeElement(stmt);
+    if (nearestScopeElement == null) {
+      return Collections.emptyList();
+    }
+    List<JSStatement> statements = getTopLevelStatementsOf(nearestScopeElement);
+    int minStartOffset = stmt.getTextRange().getEndOffset();
+    for (Iterator<JSStatement> it = statements.iterator(); it.hasNext(); ) {
+      JSStatement statement = it.next();
+      if (minStartOffset > statement.getTextRange().getStartOffset()) {
+        it.remove();
+      }
+    }
+    return statements;
+  }
+
+  @Nullable
+  private static JSElement getNearestContainingScopeElement(@NotNull JSElement element) {
+    PsiElement parent = element.getParent();
+    while (parent != null) {
+      if (parent instanceof JSFunction) {
+        return (JSFunction) parent;
+      }
+      if (parent instanceof PsiFile) {
+        return CastUtils.tryCast(parent, JSFile.class);
+      }
+      PsiElement newParent = parent.getParent();
+      if (newParent == parent) {
+        break;
+      }
+      parent = newParent;
+    }
+    return null;
+  }
+
+  @NotNull
+  private static List<JSStatement> getTopLevelStatementsOf(@NotNull JSElement parent) {
+    JSSourceElement[] elements = JSSourceElement.EMPTY_ARRAY;
+    if (parent instanceof JSFile) {
+      JSFile jsFile = (JSFile) parent;
+      elements = jsFile.getStatements();
+    }
+    else if (parent instanceof JSFunction) {
+      JSFunction f = (JSFunction) parent;
+      elements = f.getBody();
+    }
+    List<JSStatement> out = new ArrayList<JSStatement>();
+    for (JSSourceElement element : elements) {
+      if (element instanceof JSStatement) {
+        JSStatement statement = (JSStatement) element;
+        collectJsElementsInExecutionOrder(statement, out);
+      }
+    }
+    return out;
   }
 
 }

@@ -27,6 +27,16 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
     myTestCaseStructureByNameMap = Maps.newHashMap();
   }
 
+  @Override
+  public boolean isEmpty() {
+    for (JstdTestCaseStructure testCaseStructure : myTestCaseStructures) {
+      if (testCaseStructure.getTestCount() > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public List<JstdTestCaseStructure> getTestCaseStructures() {
     return myTestCaseStructures;
   }

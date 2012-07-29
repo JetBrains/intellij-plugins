@@ -30,9 +30,9 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder 
     }
 
     public QUnitFileStructure build() {
-      List<JSElement> jsElements = JsPsiUtils.listJsElementsInExecutionOrder(myFileStructure.getJsFile());
-      for (JSElement jsElement : jsElements) {
-        update(jsElement);
+      List<JSStatement> jsStatements = JsPsiUtils.listStatementsInExecutionOrder(myFileStructure.getJsFile());
+      for (JSStatement jsStatement : jsStatements) {
+        update(jsStatement);
       }
       return myFileStructure;
     }

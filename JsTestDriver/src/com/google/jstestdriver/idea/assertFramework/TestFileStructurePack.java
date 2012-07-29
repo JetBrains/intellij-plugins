@@ -11,10 +11,20 @@ import java.util.List;
  * @author Sergey Simonchik
  */
 public class TestFileStructurePack {
+
   private final List<AbstractTestFileStructure> myTestFileStructures;
 
   public TestFileStructurePack(List<AbstractTestFileStructure> testFileStructures) {
     myTestFileStructures = testFileStructures;
+  }
+
+  public boolean isEmpty() {
+    for (AbstractTestFileStructure structure : myTestFileStructures) {
+      if (!structure.isEmpty()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Nullable

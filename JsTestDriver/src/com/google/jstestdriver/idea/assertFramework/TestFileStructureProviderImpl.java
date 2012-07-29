@@ -6,11 +6,7 @@ import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructureBu
 import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Key;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -21,37 +17,29 @@ public class TestFileStructureProviderImpl implements TestFileStructureManager.P
 
   private static final Logger LOG = Logger.getInstance(TestFileStructureProviderImpl.class);
 
-  private static final Key<CachedValue<TestFileStructurePack>> TEST_FILE_STRUCTURE_REGISTRY_KEY = Key.create(
-    TestFileStructurePack.class.getName()
-  );
-
   private final List<AbstractTestFileStructureBuilder> myBuilders = Lists.newArrayList(
     JstdTestFileStructureBuilder.getInstance(),
     QUnitFileStructureBuilder.getInstance(),
     JasmineFileStructureBuilder.getInstance()
   );
 
-  @Nullable
-  public TestFileStructurePack fetchTestFileStructurePackByJsFile(final JSFile jsFile) {
-    CachedValuesManager cachedValuesManager = CachedValuesManager.getManager(jsFile.getProject());
-    return cachedValuesManager.getCachedValue(jsFile, TEST_FILE_STRUCTURE_REGISTRY_KEY,
-                                              new CachedValueProvider<TestFileStructurePack>() {
-          @Override
-          public Result<TestFileStructurePack> compute() {
-            long startTimeNano = System.nanoTime();
-            List<AbstractTestFileStructure> fileStructures = Lists.newArrayList();
-            for (AbstractTestFileStructureBuilder builder : myBuilders) {
-              AbstractTestFileStructure testFileStructure = builder.buildTestFileStructure(jsFile);
-              fileStructures.add(testFileStructure);
-            }
-            long endTimeNano = System.nanoTime();
-            String message = String.format("JsTestDriver: Creating TestFileStructurePack for %s takes %.2f ms",
-                                           jsFile.getName(),
-                                           (endTimeNano - startTimeNano) / 1000000.0);
-            LOG.info(message);
-            return Result.create(new TestFileStructurePack(fileStructures), jsFile);
-          }
-        }, false);
+  @NotNull
+  public TestFileStructurePack createTestFileStructurePack(@NotNull JSFile jsFile) {
+    long startTimeNano = System.nanoTime();
+    List<AbstractTestFileStructure> fileStructures = Lists.newArrayList();
+    for (AbstractTestFileStructureBuilder builder : myBuilders) {
+      AbstractTestFileStructure testFileStructure = builder.buildTestFileStructure(jsFile);
+      fileStructures.add(testFileStructure);
+    }
+    long durationNano = System.nanoTime() - startTimeNano;
+    if (durationNano > 100 * 1000000) {
+      // more than 0.1 sec
+      String message = String.format("JsTestDriver: Creating TestFileStructurePack for %s takes %.2f ms",
+                                     jsFile.getName(),
+                                     durationNano / 1000000.0);
+      LOG.info(message);
+    }
+    return new TestFileStructurePack(fileStructures);
   }
 
 }

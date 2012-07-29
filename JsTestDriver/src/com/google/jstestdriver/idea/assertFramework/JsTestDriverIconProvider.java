@@ -1,9 +1,6 @@
-package com.google.jstestdriver.idea.js;
+package com.google.jstestdriver.idea.assertFramework;
 
-import com.google.jstestdriver.idea.MessageBundle;
 import com.google.jstestdriver.idea.icons.JstdIcons;
-import com.intellij.icons.AllIcons;
-import com.intellij.ide.IconLayerProvider;
 import com.intellij.ide.IconProvider;
 import com.intellij.lang.javascript.index.JSIndexEntry;
 import com.intellij.lang.javascript.index.JavaScriptIndex;

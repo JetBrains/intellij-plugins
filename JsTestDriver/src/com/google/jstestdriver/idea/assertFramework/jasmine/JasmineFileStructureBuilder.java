@@ -32,9 +32,9 @@ public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilde
     }
 
     public JasmineFileStructure build() {
-      List<JSElement> elements = JsPsiUtils.listJsElementsInExecutionOrder(myFileStructure.getJsFile());
-      for (JSElement element : elements) {
-        JSCallExpression jsCallExpression = JsPsiUtils.asCallExpressionStatement(element);
+      List<JSStatement> statements = JsPsiUtils.listStatementsInExecutionOrder(myFileStructure.getJsFile());
+      for (JSStatement statement : statements) {
+        JSCallExpression jsCallExpression = JsPsiUtils.asCallExpressionStatement(statement);
         if (jsCallExpression != null) {
           handleCallExpr(null, jsCallExpression);
         }

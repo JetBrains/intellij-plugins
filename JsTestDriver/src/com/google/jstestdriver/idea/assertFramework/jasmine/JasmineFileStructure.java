@@ -22,6 +22,11 @@ public class JasmineFileStructure extends AbstractTestFileStructure {
     super(jsFile);
   }
 
+  @Override
+  public boolean isEmpty() {
+    return mySuiteMap.isEmpty();
+  }
+
   public void addDescribeStructure(JasmineSuiteStructure suiteStructure) {
     mySuiteStructures.add(suiteStructure);
     mySuiteMap.put(suiteStructure.getName(), suiteStructure);

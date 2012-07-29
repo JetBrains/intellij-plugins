@@ -8,6 +8,7 @@ import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +24,11 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
 
   public QUnitFileStructure(@NotNull JSFile jsFile) {
     super(jsFile);
+  }
+
+  @Override
+  public boolean isEmpty() {
+    return myNonDefaultModuleStructures.isEmpty();
   }
 
   public int getAllModuleCount() {
@@ -106,7 +112,7 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
     AbstractQUnitModuleStructure qunitModuleStructure = getQUnitModuleByName(testCaseName);
     if (qunitModuleStructure != null) {
       if (testMethodName != null) {
-        String name = removePrefix(testMethodName, "test ");
+        String name = StringUtil.trimStart(testMethodName, "test ");
         QUnitTestMethodStructure test = qunitModuleStructure.getTestMethodStructureByName(name);
         if (test != null) {
           return test.getCallExpression();
@@ -119,14 +125,6 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
       }
     }
     return null;
-  }
-
-  @NotNull
-  private static String removePrefix(@NotNull String s, @NotNull String prefix) {
-    if (s.startsWith(prefix)) {
-      return s.substring(prefix.length());
-    }
-    return s;
   }
 
 }
