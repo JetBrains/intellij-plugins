@@ -18,10 +18,10 @@ public class JstdTestStructure {
   private final JSFunctionExpression myTestMethodBody;
   private final JSProperty myJsProperty;
 
-  public JstdTestStructure(@NotNull String testName,
-                           @NotNull PsiElement testMethodNameDeclaration,
-                           @Nullable JSFunctionExpression testMethodBody,
-                           @Nullable JSProperty jsProperty) {
+  private JstdTestStructure(@NotNull String testName,
+                            @NotNull PsiElement testMethodNameDeclaration,
+                            @Nullable JSFunctionExpression testMethodBody,
+                            @Nullable JSProperty jsProperty) {
     myTestName = testName;
     myTestMethodNameDeclaration = testMethodNameDeclaration;
     myTestMethodBody = testMethodBody;

@@ -91,14 +91,17 @@ public class JsPsiUtils {
         }
       }
       {
-        JSAssignmentExpression assignmentExpr = CastUtils.tryCast(statement, JSAssignmentExpression.class);
-        if (assignmentExpr != null) {
-          JSDefinitionExpression defExpr = CastUtils.tryCast(assignmentExpr.getLOperand(), JSDefinitionExpression.class);
-          if (defExpr != null) {
-            JSReferenceExpression refExpr = CastUtils.tryCast(defExpr.getExpression(), JSReferenceExpression.class);
-            if (refExpr != null && refExpr.getQualifier() == null) {
-              if (refName.equals(refExpr.getReferencedName())) {
-                lastExpr = assignmentExpr.getROperand();
+        JSExpressionStatement exprStmt = CastUtils.tryCast(statement, JSExpressionStatement.class);
+        if (exprStmt != null) {
+          JSAssignmentExpression assignmentExpr = CastUtils.tryCast(exprStmt.getExpression(), JSAssignmentExpression.class);
+          if (assignmentExpr != null) {
+            JSDefinitionExpression defExpr = CastUtils.tryCast(assignmentExpr.getLOperand(), JSDefinitionExpression.class);
+            if (defExpr != null) {
+              JSReferenceExpression refExpr = CastUtils.tryCast(defExpr.getExpression(), JSReferenceExpression.class);
+              if (refExpr != null && refExpr.getQualifier() == null) {
+                if (refName.equals(refExpr.getReferencedName())) {
+                  lastExpr = assignmentExpr.getROperand();
+                }
               }
             }
           }

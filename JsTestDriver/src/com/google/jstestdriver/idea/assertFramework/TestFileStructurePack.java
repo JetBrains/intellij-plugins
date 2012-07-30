@@ -49,4 +49,9 @@ public class TestFileStructurePack {
     }
     return null;
   }
+
+  @NotNull
+  public List<AbstractTestFileStructure> getTestFileStructures() {
+    return myTestFileStructures;
+  }
 }
