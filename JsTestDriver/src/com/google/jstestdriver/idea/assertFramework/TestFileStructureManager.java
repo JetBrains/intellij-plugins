@@ -9,6 +9,8 @@ import com.intellij.psi.util.CachedValuesManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
+
 /**
  * @author Sergey Simonchik
  */
@@ -40,7 +42,7 @@ public abstract class TestFileStructureManager {
   }
 
   @Nullable
-  public static TestFileStructurePack createTestFileStructurePackByJsFile(final JSFile jsFile) {
+  public static TestFileStructurePack createTestFileStructurePackByJsFile(final JSFile jsFile, final Collection<String> symbolNames) {
     final Provider provider = ServiceManager.getService(TestFileStructureProviderImpl.class);
     if (provider == null) {
       return null;
