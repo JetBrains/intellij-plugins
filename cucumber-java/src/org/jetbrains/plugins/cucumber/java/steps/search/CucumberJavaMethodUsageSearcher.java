@@ -22,17 +22,18 @@ public class CucumberJavaMethodUsageSearcher extends QueryExecutorBase<PsiRefere
   public void processQuery(@NotNull MethodReferencesSearch.SearchParameters p, @NotNull final Processor<PsiReference> consumer) {
     final PsiMethod method = p.getMethod();
     final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberAnnotation(method);
-    final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
-    final String word = org.jetbrains.plugins.cucumber.CucumberUtil.getTheBiggestWordToSearchByIndex(regexp);
-    if (StringUtil.isEmpty(word)) {
-      return;
-    }
+    if (stepAnnotation != null) {
+      final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
+      final String word = org.jetbrains.plugins.cucumber.CucumberUtil.getTheBiggestWordToSearchByIndex(regexp);
+      if (StringUtil.isEmpty(word)) {
+        return;
+      }
 
-    if (p.getScope() instanceof GlobalSearchScope) {
-      GlobalSearchScope restrictedScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)p.getScope(),
-                                                                                          GherkinFileType.INSTANCE);
-      //p.getOptimizer().searchWord(word, restrictedScope, UsageSearchContext.IN_FOREIGN_LANGUAGES, true, new MethodTextOccurrenceProcessor(psiClass, true, method));
-      ReferencesSearch.search(new ReferencesSearch.SearchParameters(method, restrictedScope, false, p.getOptimizer())).forEach(consumer);
+      if (p.getScope() instanceof GlobalSearchScope) {
+        GlobalSearchScope restrictedScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)p.getScope(),
+                                                                                            GherkinFileType.INSTANCE);
+        ReferencesSearch.search(new ReferencesSearch.SearchParameters(method, restrictedScope, false, p.getOptimizer())).forEach(consumer);
+      }
     }
   }
 }

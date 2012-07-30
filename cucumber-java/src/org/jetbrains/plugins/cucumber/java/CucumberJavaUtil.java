@@ -63,7 +63,7 @@ public class CucumberJavaUtil {
   }
 
   @Nullable
-  public static String getPatternFromStepDefinition(PsiAnnotation stepAnnotation) {
+  public static String getPatternFromStepDefinition(@NotNull final PsiAnnotation stepAnnotation) {
     String result = null;
     if (stepAnnotation.getParameterList().getAttributes().length > 0) {
       final PsiElement annotationValue = stepAnnotation.getParameterList().getAttributes()[0].getValue();
