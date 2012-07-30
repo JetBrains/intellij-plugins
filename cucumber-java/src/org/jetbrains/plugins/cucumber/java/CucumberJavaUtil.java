@@ -1,5 +1,7 @@
 package org.jetbrains.plugins.cucumber.java;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -13,15 +15,23 @@ import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotatio
  */
 public class CucumberJavaUtil {
   public static boolean isCucumberAnnotation(@NotNull final PsiAnnotation annotation) {
-    final String qualifiedName = annotation.getQualifiedName();
-    if (qualifiedName == null) {
+    final Ref<String> qualifiedAnnotationName = new Ref<String>();
+    ApplicationManager.getApplication().runReadAction(new Runnable() {
+      public void run() {
+        String qualifiedName = annotation.getQualifiedName();
+        qualifiedAnnotationName.set(qualifiedName);
+      }
+    }
+    );
+
+    if (qualifiedAnnotationName.get() == null) {
       return false;
     }
-    if (qualifiedName.startsWith("cucumber.annotation.en")) {
+    if (qualifiedAnnotationName.get().startsWith("cucumber.annotation.en")) {
       return true;
     } else {
       for (String providedAnnotations : CucumberJavaAnnotationProvider.getCucumberAnnotations()) {
-        if (providedAnnotations.equals(qualifiedName)) {
+        if (providedAnnotations.equals(qualifiedAnnotationName.get())) {
           return true;
         }
       }
