@@ -10,6 +10,7 @@ import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -19,7 +20,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -55,7 +55,7 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
     if (element == null) return null;
 
     final FlexUnitRunnerParameters fakeParams = new FlexUnitRunnerParameters();
-    if (!configureRunnerParameters(fakeParams, context.getModule(), element)) return null;
+    if (!configureRunnerParameters(fakeParams, module, element)) return null;
 
     for (final RunnerAndConfigurationSettings configuration : existingConfigurations) {
       final RunConfiguration runConfiguration = configuration.getConfiguration();
@@ -84,41 +84,67 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
     final RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(location.getProject(), context);
     final LocatableConfiguration runConfig = (LocatableConfiguration)settings.getConfiguration();
     final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)runConfig).getRunnerParameters();
-    if (!configureRunnerParameters(params, context.getModule(), element)) return null;
-
-    // todo need better logic to select BC
-    params.setBCName(FlexBuildConfigurationManager.getInstance(context.getModule()).getActiveConfiguration().getName());
+    if (!configureRunnerParameters(params, module, element)) return null;
 
     mySourceElement = location.getPsiElement();
     settings.setName(runConfig.suggestedName());
     return settings;
   }
 
-  // todo only some of BCs for current module may have FlexUnit library
   private static boolean configureRunnerParameters(final FlexUnitRunnerParameters params, final Module module, final PsiElement element) {
+    final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
+    FlexUnitSupport support = null;
+    FlexIdeBuildConfiguration bc = null;
+
+    if (module.getName().equals(params.getModuleName()) && !params.getBCName().isEmpty()) {
+      bc = manager.findConfigurationByName(params.getBCName());
+      if (bc != null) {
+        support = FlexUnitSupport.getSupport(bc, module);
+      }
+    }
+
+    if (support == null) {
+      bc = manager.getActiveConfiguration();
+      support = FlexUnitSupport.getSupport(bc, module);
+    }
+
+    if (support == null) {
+      for (FlexIdeBuildConfiguration anyBC : manager.getBuildConfigurations()) {
+        bc = anyBC;
+        support = FlexUnitSupport.getSupport(bc, module);
+        if (support != null) {
+          break;
+        }
+      }
+    }
+
+    if (support == null) {
+      return false;
+    }
+
+    params.setModuleName(module.getName());
+    params.setBCName(bc.getName());
+
     if (element instanceof JSClass) {
       final JSClass clazz = (JSClass)element;
+      if (!support.isTestClass(clazz, true)) return false;
 
-      Pair<Module, FlexUnitSupport> supportForModule = FlexUnitSupport.getModuleAndSupport(clazz);
-      if (supportForModule == null || !supportForModule.second.isTestClass(clazz, true)) return false;
-
-      forClass(clazz, supportForModule.first, params);
+      forClass(clazz, params);
     }
     else if (element instanceof JSFunction) {
-      JSFunction method = (JSFunction)element;
+      final JSFunction method = (JSFunction)element;
+      final String methodName = method.getName();
       final JSClass clazz = (JSClass)element.getParent();
 
-      Pair<Module, FlexUnitSupport> supportForModule = FlexUnitSupport.getModuleAndSupport(clazz);
-      if (supportForModule == null || !supportForModule.second.isTestClass(clazz, true)) return false;
+      if (!support.isTestClass(clazz, true)) return false;
 
-      if (!supportForModule.second.isTestMethod(method)) {
-        forClass(clazz, supportForModule.first, params);
+      if (methodName == null || !support.isTestMethod(method)) {
+        forClass(clazz, params);
       }
       else {
         params.setClassName(clazz.getQualifiedName());
-        params.setMethodName(method.getName());
+        params.setMethodName(methodName);
         params.setScope(FlexUnitRunnerParameters.Scope.Method);
-        params.setModuleName(supportForModule.first.getName());
       }
     }
     else if (element instanceof PsiDirectory) {
@@ -151,18 +177,16 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
     if (rootForFile == null) return false;
 
     String packageName = VfsUtilCore.getRelativePath(file, rootForFile, '.');
-    if (!JSUtils.packageExists(packageName, GlobalSearchScope.moduleScope(module))) return false;
+    if (packageName == null || !JSUtils.packageExists(packageName, GlobalSearchScope.moduleScope(module))) return false;
 
     params.setPackageName(packageName);
     params.setScope(FlexUnitRunnerParameters.Scope.Package);
-    params.setModuleName(module.getName());
     return true;
   }
 
-  private static void forClass(JSClass clazz, Module module, FlexUnitRunnerParameters params) {
+  private static void forClass(JSClass clazz, FlexUnitRunnerParameters params) {
     params.setClassName(clazz.getQualifiedName());
     params.setScope(FlexUnitRunnerParameters.Scope.Class);
-    params.setModuleName(module.getName());
   }
 
   @Nullable
