@@ -20,6 +20,7 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.openapi.util.Iconable;
+import com.intellij.openapi.util.ProperTextRange;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
@@ -40,7 +41,7 @@ import java.util.Map;
  * @author Yann C&eacute;bron
  */
 public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
-    implements EmptyResolveMessageProvider, LocalQuickFixProvider {
+  implements EmptyResolveMessageProvider, LocalQuickFixProvider {
 
   private final BeanPropertyPathReferenceSet referenceSet;
   private final int index;
@@ -49,6 +50,9 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
                             final TextRange range,
                             final int index) {
     super(referenceSet.getElement(), range, referenceSet.isSoft());
+    ProperTextRange.assertProperRange(range, "invalid range: " + range +
+                                             " with index " + index +
+                                             " for '" + referenceSet.getElement().getText() + "'");
     this.referenceSet = referenceSet;
     this.index = index;
   }
@@ -74,7 +78,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     }
 
     final Map<String, PsiMethod> properties =
-        PropertyUtil.getAllProperties(psiClass, true, !isLast() || referenceSet.isSupportsReadOnlyProperties());
+      PropertyUtil.getAllProperties(psiClass, true, !isLast() || referenceSet.isSupportsReadOnlyProperties());
 
     final Object[] variants = new Object[properties.size()];
     int i = 0;
@@ -86,9 +90,9 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
       assert propertyType != null;
 
       final LookupElementBuilder variant =
-          LookupElementBuilder.create(propertyName)
-                              .withIcon(member.getIcon(Iconable.ICON_FLAG_OPEN))
-                              .withTypeText(propertyType.getPresentableText());
+        LookupElementBuilder.create(propertyName)
+          .withIcon(member.getIcon(Iconable.ICON_FLAG_OPEN))
+          .withTypeText(propertyType.getPresentableText());
       variants[i++] = variant;
     }
 
@@ -106,7 +110,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
 
   public PsiElement bindToElement(@NotNull final PsiElement element) throws IncorrectOperationException {
     if (element instanceof PsiMethod) {
-      final String propertyName = PropertyUtil.getPropertyName((PsiMember) element);
+      final String propertyName = PropertyUtil.getPropertyName((PsiMember)element);
       if (propertyName != null) {
         return super.handleElementRename(propertyName);
       }
@@ -131,8 +135,8 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
   @Nullable
   private PsiMethod resolveProperty(@NotNull final PsiClass psiClass, final String propertyName) {
     PsiMethod method = isLast() ?
-        PropertyUtil.findPropertySetter(psiClass, propertyName, false, true) :
-        PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
+                       PropertyUtil.findPropertySetter(psiClass, propertyName, false, true) :
+                       PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
     if (method == null && referenceSet.isSupportsReadOnlyProperties()) {
       method = PropertyUtil.findPropertyGetter(psiClass, propertyName, false, true);
     }
@@ -149,11 +153,10 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     if (method != null) {
       final PsiType type = method.getReturnType();
       if (type instanceof PsiClassType) {
-        return ((PsiClassType) type).resolve();
+        return ((PsiClassType)type).resolve();
       }
     }
 
     return null;
   }
-
 }
