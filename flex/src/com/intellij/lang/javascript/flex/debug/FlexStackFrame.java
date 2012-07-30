@@ -420,11 +420,11 @@ public class FlexStackFrame extends XStackFrame {
     public boolean evaluateCondition(@NotNull final String expression) {
       final String result = eval(expression, myDebugProcess);
 
-      if (result.equalsIgnoreCase("true") || result.equalsIgnoreCase("false")) {
+      if (result != null && (result.equalsIgnoreCase("true") || result.equalsIgnoreCase("false"))) {
         return Boolean.valueOf(result);
       }
       else {
-        final String message = result.startsWith(CANNOT_EVALUATE_EXPRESSION)
+        final String message = result == null || result.startsWith(CANNOT_EVALUATE_EXPRESSION)
                                ? FlexBundle.message("failed.to.evaluate.breakpoint.condition", expression)
                                : FlexBundle.message("not.boolean.breakpoint.condition", expression, result);
         final Ref<Boolean> stopRef = new Ref<Boolean>(false);
