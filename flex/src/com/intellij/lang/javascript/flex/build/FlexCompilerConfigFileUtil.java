@@ -76,7 +76,7 @@ public class FlexCompilerConfigFileUtil {
   private static final String[] NON_REPEATABLE_OPTIONS_THAT_CAN_BE_IN_GENERATED_FILE =
     {"mobile", "preloader", "warn-no-constructor", "accessible", "keep-generated-actionscript", "services", "context-root",
       "defaults-css-url", "debug", "target-player", "swf-version", "static-link-runtime-shared-libraries",
-      "date", "title", "language", "contributor", "creator", "publisher", "description"};
+      "date", "title", "language", "contributor", "creator", "publisher", "description", "manager-class"};
 
   public static class NamespacesInfo {
     public final String namespace;
