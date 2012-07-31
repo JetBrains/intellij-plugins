@@ -169,7 +169,7 @@ class FlexSmartStepIntoHandler extends XSmartStepIntoHandler<PsiBackedSmartStepI
     final String[] frames = FlexSuspendContext.splitStackFrames(btCommandOutput);
     for (int i = 0; i < frames.length; i++) {
       final String frame = frames[i];
-      frames[i] = frame.substring(frame.indexOf(" ") + 1);
+      frames[i] = frame.substring(frame.indexOf(" ") + 1).trim();
     }
     return frames;
   }
