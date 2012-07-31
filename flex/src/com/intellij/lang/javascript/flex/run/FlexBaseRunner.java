@@ -509,26 +509,6 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                      final AppDescriptorForEmulator appDescriptorForEmulator) throws CantRunException {
     final String airDescriptorPath;
     switch (appDescriptorForEmulator) {
-      case Generated:
-        if (bc.getAndroidPackagingOptions().isEnabled() && bc.getAndroidPackagingOptions().isUseGeneratedDescriptor()) {
-          airDescriptorPath = getAirDescriptorPath(bc, bc.getAndroidPackagingOptions());
-        }
-        else if (bc.getIosPackagingOptions().isEnabled() && bc.getIosPackagingOptions().isUseGeneratedDescriptor()) {
-          airDescriptorPath = getAirDescriptorPath(bc, bc.getIosPackagingOptions());
-        }
-        else {
-          try {
-            final String outputFilePath = bc.getActualOutputFilePath();
-            final String descriptorFileName =
-              FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + "-emulator-descriptor.xml";
-            FlexCompilationUtils.generateAirDescriptor(module, bc, descriptorFileName, true, true);
-            airDescriptorPath = PathUtil.getParentPath(outputFilePath) + "/" + descriptorFileName;
-          }
-          catch (FlexCompilerException e) {
-            throw new CantRunException(e.getMessage());
-          }
-        }
-        break;
       case Android:
         airDescriptorPath = getAirDescriptorPath(bc, bc.getAndroidPackagingOptions());
         break;

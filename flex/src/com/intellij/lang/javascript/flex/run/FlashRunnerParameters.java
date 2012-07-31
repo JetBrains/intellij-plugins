@@ -81,7 +81,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   }
 
   public enum AppDescriptorForEmulator {
-    Generated, Android, IOS
+    Android, IOS
   }
 
   private boolean myOverrideMainClass = false;
@@ -107,7 +107,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
   private int myUsbDebugPort = AirPackageUtil.DEBUG_PORT_DEFAULT;
   private @NotNull String myEmulatorAdlOptions = "";
-  private @NotNull AppDescriptorForEmulator myAppDescriptorForEmulator = AppDescriptorForEmulator.Generated;
+  private @NotNull AppDescriptorForEmulator myAppDescriptorForEmulator = AppDescriptorForEmulator.Android;
 
   private @NotNull String myDebuggerSdkRaw = FlexSdkComboBoxWithBrowseButton.BC_SDK_KEY;
 
@@ -278,8 +278,11 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     return myAppDescriptorForEmulator;
   }
 
-  public void setAppDescriptorForEmulator(@NotNull final AppDescriptorForEmulator appDescriptorForEmulator) {
-    myAppDescriptorForEmulator = appDescriptorForEmulator;
+  @SuppressWarnings("NullableProblems") // compatibility (AppDescriptorForEmulator.Generated enum constant removed)
+  public void setAppDescriptorForEmulator(final AppDescriptorForEmulator appDescriptorForEmulator) {
+    if (appDescriptorForEmulator != null) {
+      myAppDescriptorForEmulator = appDescriptorForEmulator;
+    }
   }
 
   @NotNull
@@ -419,8 +422,6 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
           checkAdlAndAirRuntime(sdk);
 
           switch (myAppDescriptorForEmulator) {
-            case Generated:
-              break;
             case Android:
               checkCustomDescriptor(bc.getAndroidPackagingOptions());
               break;

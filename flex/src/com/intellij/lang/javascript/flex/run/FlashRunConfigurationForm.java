@@ -5,9 +5,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -33,6 +31,7 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.util.PathUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,8 +39,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
@@ -124,7 +121,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myBCCombo.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateMainClassField();
-        updateAppDescriptorsForEmulator();
+        myAppDescriptorForEmulatorCombo.repaint();
 
         final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
         mySdkForDebuggingCombo.setBCSdk(bc == null ? null : bc.getSdk());
@@ -146,30 +143,6 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       myMainClassFilter = Conditions.alwaysFalse();
       myMainClassComponent.setChooserBlockingMessage("Build configuration not selected");
     }
-  }
-
-  private void updateAppDescriptorsForEmulator() {
-    final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
-    final Object previousSelection = myAppDescriptorForEmulatorCombo.getSelectedItem();
-
-    if (bc == null || bc.getTargetPlatform() != TargetPlatform.Mobile || bc.getOutputType() != OutputType.Application) {
-      myAppDescriptorForEmulatorCombo
-        .setModel(new DefaultComboBoxModel(new AppDescriptorForEmulator[]{AppDescriptorForEmulator.Generated}));
-    }
-    else {
-      final Collection<AppDescriptorForEmulator> items = new ArrayList<AppDescriptorForEmulator>();
-      items.add(AppDescriptorForEmulator.Generated);
-      if (bc.getAndroidPackagingOptions().isEnabled() && !bc.getAndroidPackagingOptions().isUseGeneratedDescriptor()) {
-        items.add(AppDescriptorForEmulator.Android);
-      }
-      if (bc.getIosPackagingOptions().isEnabled() && !bc.getIosPackagingOptions().isUseGeneratedDescriptor()) {
-        items.add(AppDescriptorForEmulator.IOS);
-      }
-
-      myAppDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel(items.toArray(new AppDescriptorForEmulator[items.size()])));
-    }
-
-    myAppDescriptorForEmulatorCombo.setSelectedItem(previousSelection);
   }
 
   private void initMainClassRelatedControls() {
@@ -263,33 +236,42 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myDebugOverNetworkRadioButton.addActionListener(debugTransportListener);
     myDebugOverUSBRadioButton.addActionListener(debugTransportListener);
 
-    myAppDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel(new AppDescriptorForEmulator[]{AppDescriptorForEmulator.Generated}));
+    myAppDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel(AppDescriptorForEmulator.values()));
     myAppDescriptorForEmulatorCombo
       .setRenderer(new ListCellRendererWrapper<AppDescriptorForEmulator>(myAppDescriptorForEmulatorCombo.getRenderer()) {
         @Override
         public void customize(JList list, AppDescriptorForEmulator value, int index, boolean selected, boolean hasFocus) {
-          FlexIdeBuildConfiguration bc;
-          String descriptorPath;
+          final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
 
           switch (value) {
-            case Generated:
-              setText("Generated");
-              break;
             case Android:
-              bc = myBCCombo.getBC();
-              descriptorPath = bc == null ? null : bc.getAndroidPackagingOptions().getCustomDescriptorPath();
-              setText("as set for Android: " + (StringUtil.isEmpty(descriptorPath) ? "<custom template is not set>"
-                                                                                   : PathUtil.getFileName(descriptorPath)));
+              setText(getDescriptorForEmulatorText("Android", bc == null ? null : bc.getAndroidPackagingOptions()));
               break;
             case IOS:
-              bc = myBCCombo.getBC();
-              descriptorPath = bc == null ? null : bc.getIosPackagingOptions().getCustomDescriptorPath();
-              setText("as set for iOS: " + (StringUtil.isEmpty(descriptorPath) ? "<custom template is not set>"
-                                                                               : PathUtil.getFileName(descriptorPath)));
+              setText(getDescriptorForEmulatorText("iOS", bc == null ? null : bc.getIosPackagingOptions()));
               break;
           }
         }
       });
+  }
+
+  private static String getDescriptorForEmulatorText(final String mobilePlatform, final @Nullable AirPackagingOptions packagingOptions) {
+    final String prefix = "as set for " + mobilePlatform;
+
+    if (packagingOptions == null) return prefix;
+
+    if (packagingOptions instanceof AndroidPackagingOptions && !((AndroidPackagingOptions)packagingOptions).isEnabled() ||
+        packagingOptions instanceof IosPackagingOptions && !((IosPackagingOptions)packagingOptions).isEnabled()) {
+      return prefix + ": <" + mobilePlatform + " support is not enabled>";
+    }
+
+    if (packagingOptions.isUseGeneratedDescriptor()) return prefix + ": generated";
+
+    final String descriptorPath = packagingOptions.getCustomDescriptorPath();
+
+    if (descriptorPath.isEmpty()) return prefix + ": <custom descriptor is not set>";
+
+    return prefix + ": " + PathUtil.getFileName(descriptorPath);
   }
 
   private void initEmulatorRelatedControls() {

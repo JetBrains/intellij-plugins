@@ -11,16 +11,14 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.NotNull;
@@ -68,6 +66,23 @@ public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer 
         params.setOverrideMainClass(true);
         params.setOverriddenMainClass(jsClass.getQualifiedName());
         params.setOverriddenOutputFileName(jsClass.getName() + ".swf");
+      }
+
+      if (bc.getTargetPlatform() == TargetPlatform.Mobile &&
+          bc.getOutputType() == OutputType.Application &&
+          params.getMobileRunTarget() == FlashRunnerParameters.AirMobileRunTarget.Emulator) {
+
+        if (params.getAppDescriptorForEmulator() == FlashRunnerParameters.AppDescriptorForEmulator.Android &&
+            !bc.getAndroidPackagingOptions().isEnabled() &&
+            bc.getIosPackagingOptions().isEnabled()) {
+          params.setAppDescriptorForEmulator(FlashRunnerParameters.AppDescriptorForEmulator.IOS);
+        }
+
+        if (params.getAppDescriptorForEmulator() == FlashRunnerParameters.AppDescriptorForEmulator.IOS &&
+            bc.getAndroidPackagingOptions().isEnabled() &&
+            !bc.getIosPackagingOptions().isEnabled()) {
+          params.setAppDescriptorForEmulator(FlashRunnerParameters.AppDescriptorForEmulator.Android);
+        }
       }
 
       runConfig.setName(params.suggestUniqueName(context.getRunManager().getConfigurations(FlashRunConfigurationType.getInstance())));
