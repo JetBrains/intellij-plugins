@@ -19,7 +19,7 @@ public class JsTestDriverIconProvider extends IconProvider {
   @Override
   public Icon getIcon(@NotNull final PsiElement element, @Iconable.IconFlags final int flags) {
     if (element instanceof JSFile && isTestFile((JSFile)element)) {
-      return JstdIcons.TEST_FILE;
+      return JstdIcons.TEST_FILE_ICON;
     }
     return null;
   }

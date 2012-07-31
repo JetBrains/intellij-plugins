@@ -17,7 +17,7 @@ public class JstdIcons {
   private JstdIcons() {}
 
   public static final Icon JSTD_SMALL_ICON = IconLoader.findIcon("JsTestDriver.png");
-  public static final Icon TEST_FILE = IconLoader.findIcon("JsTestFile.png");
+  public static final Icon TEST_FILE_ICON = IconLoader.findIcon("JsTestFile.png");
 
   @NotNull
   public static ImageIcon getIcon(@NotNull String resourceName) {

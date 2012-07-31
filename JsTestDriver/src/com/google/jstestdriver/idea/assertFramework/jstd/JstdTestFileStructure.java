@@ -6,6 +6,7 @@ import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
 import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import net.jcip.annotations.NotThreadSafe;
@@ -17,6 +18,8 @@ import java.util.Map;
 
 @NotThreadSafe
 public class JstdTestFileStructure extends AbstractTestFileStructure {
+
+  public static final Key<String> TEST_ELEMENT_NAME_KEY = Key.create("jstd-test-element-name-key");
 
   private final List<JstdTestCaseStructure> myTestCaseStructures;
   private final Map<String, JstdTestCaseStructure> myTestCaseStructureByNameMap;

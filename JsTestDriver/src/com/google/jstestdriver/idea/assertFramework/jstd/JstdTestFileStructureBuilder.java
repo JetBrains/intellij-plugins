@@ -27,6 +27,16 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
     for (JSStatement statement : statements) {
       fillJsTestFileStructure(jsTestFileStructure, statement);
     }
+    for (JstdTestCaseStructure testCaseStructure : jsTestFileStructure.getTestCaseStructures()) {
+      for (JstdTestStructure testStructure : testCaseStructure.getTestStructures()) {
+        PsiElement anchor = testStructure.getTestMethodNameDeclaration();
+        anchor.putUserData(JstdTestFileStructure.TEST_ELEMENT_NAME_KEY, testStructure.getName());
+      }
+      JSExpression testCaseMethodExpr = testCaseStructure.getEnclosingCallExpression().getMethodExpression();
+      if (testCaseMethodExpr != null) {
+        testCaseMethodExpr.putUserData(JstdTestFileStructure.TEST_ELEMENT_NAME_KEY, testCaseStructure.getName());
+      }
+    }
     return jsTestFileStructure;
   }
 

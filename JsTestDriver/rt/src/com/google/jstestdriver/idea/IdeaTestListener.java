@@ -5,6 +5,7 @@ import com.google.jstestdriver.hooks.TestListener;
 import com.google.jstestdriver.idea.execution.TestPath;
 import com.google.jstestdriver.idea.execution.TestPathFactory;
 import com.google.jstestdriver.idea.execution.tree.TreeManager;
+import com.google.jstestdriver.idea.util.TestFileScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,17 +22,18 @@ public class IdeaTestListener implements TestListener {
   private final File myBasePath;
   private final Object MONITOR = new Object();
   private final boolean myDryRun;
+  private final TestFileScope myTestFileScope;
   private final TestPathFactory myTestPathFactory;
 
-  public IdeaTestListener(
-    @NotNull TreeManager treeManager,
-    @NotNull File jstdConfigFile,
-    @NotNull File singleBasePath,
-    boolean dryRun
-  ) {
+  public IdeaTestListener(@NotNull TreeManager treeManager,
+                          @NotNull File jstdConfigFile,
+                          @NotNull File singleBasePath,
+                          boolean dryRun,
+                          @NotNull TestFileScope testFileScope) {
     myTreeManager = treeManager;
     myBasePath = singleBasePath;
     myDryRun = dryRun;
+    myTestFileScope = testFileScope;
     myTestPathFactory = new TestPathFactory(jstdConfigFile);
   }
 
@@ -49,7 +51,15 @@ public class IdeaTestListener implements TestListener {
   @Override
   public void onTestRegistered(BrowserInfo browser, TestCase testCase) {
     synchronized (MONITOR) {
+      String testCaseName = myTestFileScope.getTestCaseName();
+      if (testCaseName != null && !testCaseName.equals(testCase.getName())) {
+        return;
+      }
+      String testMethodName = myTestFileScope.getTestMethodName();
       for (String testName : testCase.getTests()) {
+        if (testMethodName != null && !testMethodName.equals(testName)) {
+          continue;
+        }
         File jsTestFile = resolveTestFile(testCase.getFileName());
         TestPath testPath = myTestPathFactory.createTestPath(
           browser,

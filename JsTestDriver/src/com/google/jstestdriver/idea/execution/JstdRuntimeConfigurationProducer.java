@@ -4,30 +4,32 @@ import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
+import com.google.jstestdriver.idea.config.JstdTestFilePathIndex;
 import com.google.jstestdriver.idea.execution.settings.JstdConfigType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.execution.Location;
-import com.intellij.execution.PsiLocation;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.index.JSIndexEntry;
+import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.List;
 
 public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProducer {
 
@@ -88,9 +90,9 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     }
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) runnerSettings.getConfiguration();
 
-    runConfiguration.setRunSettings(runSettingsContext.runSettings);
+    runConfiguration.setRunSettings(runSettingsContext.myRunSettings);
 
-    mySourceElement = runSettingsContext.psiElement;
+    mySourceElement = runSettingsContext.myPsiElement;
     runnerSettings.setName(runConfiguration.suggestedName());
     logDoneCreateConfigurationByElement(startTimeNano, "3");
     return runnerSettings;
@@ -107,10 +109,10 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       logDoneFindExistingByElement(startTimeNano, "1");
       return null;
     }
-    final JstdRunSettings runSettingsPattern = runSettingsContext.runSettings;
+    final JstdRunSettings runSettingsPattern = runSettingsContext.myRunSettings;
     RunnerAndConfigurationSettings bestRaCSettings = null;
     for (RunnerAndConfigurationSettings candidateRaCSettings : existingConfigurations) {
-      JstdRunConfiguration runConfiguration = CastUtils.tryCast(candidateRaCSettings.getConfiguration(), JstdRunConfiguration.class);
+      JstdRunConfiguration runConfiguration = ObjectUtils.tryCast(candidateRaCSettings.getConfiguration(), JstdRunConfiguration.class);
       if (runConfiguration == null) {
         continue;
       }
@@ -145,7 +147,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
             if (bestRaCSettings == null) {
               bestRaCSettings = candidateRaCSettings;
             } else {
-              JstdRunConfiguration bestRunConfiguration = CastUtils.tryCast(bestRaCSettings.getConfiguration(), JstdRunConfiguration.class);
+              JstdRunConfiguration bestRunConfiguration = ObjectUtils.tryCast(bestRaCSettings.getConfiguration(), JstdRunConfiguration.class);
               if (bestRunConfiguration != null) {
                 JstdRunSettings bestRunSettings = bestRunConfiguration.getRunSettings();
                 if (bestRunSettings.getConfigType() == JstdConfigType.GENERATED) {
@@ -164,8 +166,8 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
   }
 
   @Nullable
-  private static RunSettingsContext buildRunSettingsContext(@Nullable Location<PsiElement> location) {
-    if (location instanceof PsiLocation) {
+  private static RunSettingsContext buildRunSettingsContext(@Nullable Location<?> location) {
+    if (location != null) {
       PsiElement element = location.getPsiElement();
       JstdRunSettings runSettings = findJstdRunSettings(element);
       if (runSettings != null) {
@@ -186,13 +188,18 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     return null;
   }
 
+  @Override
+  public int compareTo(Object o) {
+    return PREFERED;
+  }
+
   private static class RunSettingsContext {
-    final JstdRunSettings runSettings;
-    final PsiElement psiElement;
+    private final JstdRunSettings myRunSettings;
+    private final PsiElement myPsiElement;
 
     private RunSettingsContext(JstdRunSettings runSettings, PsiElement psiElement) {
-      this.runSettings = runSettings;
-      this.psiElement = psiElement;
+      myRunSettings = runSettings;
+      myPsiElement = psiElement;
     }
   }
 
@@ -203,18 +210,8 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
 
   private static class JsFileRunSettingsProvider implements JstdRunSettingsProvider {
 
-    private static boolean matchTestSource(String s) {
-      StringTokenizer st = new StringTokenizer(s, "-_");
-      while (st.hasMoreTokens()) {
-        String token = st.nextToken().toLowerCase();
-        if ("test".equals(token)) {
-          return true;
-        }
-      }
-      return false;
-    }
-
     @Override
+    @Nullable
     public JstdRunSettings provideSettings(@NotNull PsiElement psiElement) {
       PsiFile psiFile = psiElement.getContainingFile();
       if (psiFile == null) {
@@ -224,27 +221,21 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       if (virtualFile == null || virtualFile.getFileType() != JavaScriptSupportLoader.JAVASCRIPT) {
         return null;
       }
-      VirtualFile entity = virtualFile;
-      VirtualFile projectDir = psiElement.getProject().getBaseDir();
-      boolean testFound = false;
-      while (entity != null) {
-        if (matchTestSource(entity.getName())) {
-          testFound = true;
-        }
-        if (entity.equals(projectDir)) {
-          break;
-        }
-        entity = entity.getParent();
+      Project project = psiFile.getProject();
+      JSIndexEntry entry = JavaScriptIndex.getInstance(project).getEntryForFile(psiFile);
+      if (entry == null || !entry.isTestFile()) {
+        return null;
       }
-      if (Comparing.equal(entity, projectDir) && testFound) {
-        JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
-        builder.setTestType(TestType.JS_FILE);
-        builder.setConfigType(JstdConfigType.GENERATED);
-        builder.setJSFilePath(virtualFile.getPath());
-        builder.setServerType(ServerType.INTERNAL);
-        return builder.build();
+      JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
+      builder.setTestType(TestType.JS_FILE);
+      builder.setConfigType(JstdConfigType.FILE_PATH);
+      List<VirtualFile> jstdConfigFiles = JstdTestFilePathIndex.findConfigFilesInProject(virtualFile, project);
+      if (jstdConfigFiles.size() == 1) {
+        builder.setConfigFile(jstdConfigFiles.get(0).getPath());
       }
-      return null;
+      builder.setJSFilePath(virtualFile.getPath());
+      builder.setServerType(ServerType.INTERNAL);
+      return builder.build();
     }
   }
 
@@ -270,10 +261,10 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
 
     @Override
     public JstdRunSettings provideSettings(@NotNull PsiElement psiElement) {
-      if (!(psiElement instanceof PsiDirectory)) {
+      PsiDirectory psiDirectory = ObjectUtils.tryCast(psiElement, PsiDirectory.class);
+      if (psiDirectory == null) {
         return null;
       }
-      PsiDirectory psiDirectory = (PsiDirectory) psiElement;
       VirtualFile directory = psiDirectory.getVirtualFile();
       boolean jstdConfigs = JstdSettingsUtil.areJstdConfigFilesInDirectory(psiDirectory.getProject(), directory);
       if (!jstdConfigs) {
@@ -291,39 +282,41 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
 
     @Override
     public JstdRunSettings provideSettings(@NotNull PsiElement psiElement) {
-      JSFile jsFile = CastUtils.tryCast(psiElement.getContainingFile(), JSFile.class);
-      VirtualFile virtualFile = jsFile != null ? jsFile.getVirtualFile() : null;
-      if (virtualFile == null) {
+      JSFile jsFile = ObjectUtils.tryCast(psiElement.getContainingFile(), JSFile.class);
+      if (jsFile == null) {
+        return null;
+      }
+      VirtualFile virtualFile = jsFile.getVirtualFile();
+      if (virtualFile == null || virtualFile.getFileType() != JavaScriptSupportLoader.JAVASCRIPT) {
         return null;
       }
       TestFileStructurePack pack = TestFileStructureManager.fetchTestFileStructurePackByJsFile(jsFile);
-      if (pack != null) {
-        JstdRunElement jstdRunElement = pack.getJstdRunElement(psiElement);
-        if (jstdRunElement != null) {
-          String testMethodName = jstdRunElement.getTestMethodName();
-          if (testMethodName != null) {
-            return new JstdRunSettings.Builder()
-                .setTestType(TestType.TEST_METHOD)
-                .setJSFilePath(virtualFile.getPath())
-                .setTestCaseName(jstdRunElement.getTestCaseName())
-                .setTestMethodName(testMethodName)
-                .build();
-          } else {
-            return new JstdRunSettings.Builder()
-                .setTestType(TestType.TEST_CASE)
-                .setJSFilePath(virtualFile.getPath())
-                .setTestCaseName(jstdRunElement.getTestCaseName())
-                .build();
-          }
+      if (pack == null) {
+        return null;
+      }
+      JstdRunElement jstdRunElement = pack.getJstdRunElement(psiElement);
+      if (jstdRunElement != null) {
+        Project project = jsFile.getProject();
+        JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
+        builder.setJSFilePath(virtualFile.getPath());
+        builder.setTestCaseName(jstdRunElement.getTestCaseName());
+        builder.setConfigType(JstdConfigType.FILE_PATH);
+        List<VirtualFile> jstdConfigs = JstdTestFilePathIndex.findConfigFilesInProject(virtualFile, project);
+        if (jstdConfigs.size() == 1) {
+          builder.setConfigFile(jstdConfigs.get(0).getPath());
         }
+        String testMethodName = jstdRunElement.getTestMethodName();
+        if (testMethodName != null) {
+          builder.setTestType(TestType.TEST_METHOD);
+          builder.setTestMethodName(testMethodName);
+        } else {
+          builder.setTestType(TestType.TEST_CASE);
+        }
+        return builder.build();
       }
       return null;
     }
 
   }
 
-  @Override
-  public int compareTo(Object o) {
-    return PREFERED;
-  }
 }

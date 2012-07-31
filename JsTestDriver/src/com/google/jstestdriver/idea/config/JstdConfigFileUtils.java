@@ -16,7 +16,6 @@
 package com.google.jstestdriver.idea.config;
 
 import com.google.common.collect.Lists;
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.PsiElementFragment;
 import com.intellij.openapi.editor.Document;
@@ -31,6 +30,7 @@ import com.intellij.patterns.VirtualFilePattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -136,13 +136,10 @@ public class JstdConfigFileUtils {
       }
       psiElement = psiElement.getParent();
     }
-    return CastUtils.tryCast(psiElement, headHierarchyClass);
+    return ObjectUtils.tryCast(psiElement, headHierarchyClass);
   }
 
   public static boolean isJstdConfigFile(@NotNull VirtualFile virtualFile) {
-    if (!virtualFile.isInLocalFileSystem()) {
-      return false;
-    }
     FileType fileType = virtualFile.getFileType();
     return fileType == JstdConfigFileType.INSTANCE;
   }

@@ -10,6 +10,7 @@ import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.model.BasePaths;
 import com.google.jstestdriver.util.DisplayPathSanitizer;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -19,7 +20,6 @@ import com.intellij.util.io.EnumeratorStringDescriptor;
 import com.intellij.util.io.KeyDescriptor;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -104,7 +104,7 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
 
   @Override
   public int getVersion() {
-    return 0;
+    return 1;
   }
 
   @NotNull
@@ -133,9 +133,15 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
     }
   }
 
-  @Nullable
-  public static List<VirtualFile> findConfigFiles(@NotNull VirtualFile jsTestFile, @NotNull GlobalSearchScope scope) {
-    final List<VirtualFile> jstdConfigs = new ArrayList<VirtualFile>();
+  @NotNull
+  public static List<VirtualFile> findConfigFilesInProject(@NotNull VirtualFile jsTestFile, @NotNull Project project) {
+    GlobalSearchScope allScope = GlobalSearchScope.allScope(project);
+    return findConfigFilesInScope(jsTestFile, allScope);
+  }
+
+  @NotNull
+  public static List<VirtualFile> findConfigFilesInScope(@NotNull VirtualFile jsTestFile, @NotNull GlobalSearchScope scope) {
+    final List<VirtualFile> jstdConfigs = new ArrayList<VirtualFile>(1);
     FileBasedIndex.getInstance().processValues(
       KEY,
       jsTestFile.getPath(),

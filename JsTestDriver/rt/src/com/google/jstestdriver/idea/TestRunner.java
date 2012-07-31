@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver.idea;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
@@ -67,11 +66,11 @@ public class TestRunner {
     COVERAGE_EXCLUDED_PATHS
   }
 
-  private final Settings mySettings;
+  private final JstdSettings mySettings;
   private final TreeManager myTreeManager;
   private final CoverageSession myCoverageSession;
 
-  public TestRunner(@NotNull Settings settings, @NotNull TreeManager treeManager) {
+  public TestRunner(@NotNull JstdSettings settings, @NotNull TreeManager treeManager) {
     mySettings = settings;
     myTreeManager = treeManager;
     File ideCoverageFile = mySettings.getIdeCoverageFile();
@@ -84,35 +83,22 @@ public class TestRunner {
 
   public void executeAll() {
     for (File config : mySettings.getConfigFiles()) {
-      executeConfig(config);
+      executeTests(config);
     }
     if (myCoverageSession != null) {
       myCoverageSession.finish();
     }
   }
 
-  public void executeConfig(@NotNull File config) {
-    final String testCaseName;
-    if (!mySettings.getTestCaseName().isEmpty()) {
-      if (!mySettings.getTestMethodName().isEmpty()) {
-        testCaseName = mySettings.getTestCaseName() + "." + mySettings.getTestMethodName();
-      } else {
-        testCaseName = mySettings.getTestCaseName();
-      }
-    } else {
-      testCaseName = "all";
-    }
-    executeTests(config, testCaseName);
-  }
-
-  private void executeTests(@NotNull File config, @NotNull String tests) {
+  private void executeTests(@NotNull File config) {
     Exception exception = null;
     PrintStream nullSystemOut = new PrintStream(new NullOutputStream());
     try {
       System.setOut(nullSystemOut);
       myTreeManager.onJstdConfigRunningStarted(config);
-      runTests(config, new String[]{"--reset", "--dryRunFor", tests}, true);
-      runTests(config, new String[]{"--tests", tests}, false);
+      String runScope = mySettings.getTestFileScope().toJstdScope();
+      runTests(config, new String[]{"--reset", "--dryRunFor", runScope}, true);
+      runTests(config, new String[]{"--tests", runScope}, false);
     } catch (ConfigurationException ce) {
       exception = ce;
     } catch (Exception e) {
@@ -152,7 +138,8 @@ public class TestRunner {
               myTreeManager,
               configFile,
               singleBasePath,
-              dryRun
+              dryRun,
+              mySettings.getTestFileScope()
             ));
           }
         };
@@ -299,7 +286,7 @@ public class TestRunner {
 
   public static void main(String[] args) throws Exception {
     Map<ParameterKey, String> paramMap = parseParams(args);
-    Settings settings = Settings.build(paramMap);
+    JstdSettings settings = JstdSettings.build(paramMap);
     TreeManager treeManager = new TreeManager(settings.getRunAllConfigsInDirectory());
     if (!validateServer(settings, treeManager)) {
       System.exit(1);
@@ -314,7 +301,7 @@ public class TestRunner {
     }
   }
 
-  private static boolean validateServer(@NotNull Settings settings, @NotNull TreeManager treeManager) throws IOException {
+  private static boolean validateServer(@NotNull JstdSettings settings, @NotNull TreeManager treeManager) throws IOException {
     String serverUrl = settings.getServerUrl();
     JstdServerFetchResult fetchResult = JstdServerUtilsRt.syncFetchServerInfo(serverUrl);
     String message = null;
@@ -344,120 +331,6 @@ public class TestRunner {
       }
     }
     return params;
-  }
-
-  private static class Settings {
-    private final String myServerUrl;
-    private final List<File> myConfigFiles;
-    private final File myRunAllConfigsInDirectory;
-    private final String myTestCaseName;
-    private final String myTestMethodName;
-    private final File myIdeCoverageFile;
-    private final ImmutableList<String> myFilesExcludedFromCoverage;
-
-    private Settings(
-      @NotNull String serverUrl,
-      @NotNull List<File> configFiles,
-      @Nullable File runAllConfigsInDirectory,
-      @NotNull String testCaseName,
-      @NotNull String testMethodName,
-      @Nullable File ideCoverageFile,
-      @NotNull List<String> filesExcludedFromCoverage)
-    {
-      myServerUrl = serverUrl;
-      myConfigFiles = configFiles;
-      myRunAllConfigsInDirectory = runAllConfigsInDirectory;
-      myTestCaseName = testCaseName;
-      myTestMethodName = testMethodName;
-      myIdeCoverageFile = ideCoverageFile;
-      myFilesExcludedFromCoverage = ImmutableList.copyOf(filesExcludedFromCoverage);
-    }
-
-    @NotNull
-    public String getServerUrl() {
-      return myServerUrl;
-    }
-
-    @NotNull
-    public List<File> getConfigFiles() {
-      return myConfigFiles;
-    }
-
-    @Nullable
-    public File getRunAllConfigsInDirectory() {
-      return myRunAllConfigsInDirectory;
-    }
-
-    @NotNull
-    public String getTestCaseName() {
-      return myTestCaseName;
-    }
-
-    @NotNull
-    public String getTestMethodName() {
-      return myTestMethodName;
-    }
-
-    @Nullable
-    public File getIdeCoverageFile() {
-      return myIdeCoverageFile;
-    }
-
-    @NotNull
-    public ImmutableList<String> getFilesExcludedFromCoverage() {
-      return myFilesExcludedFromCoverage;
-    }
-
-    @NotNull
-    private static Settings build(@NotNull Map<ParameterKey, String> parameters) {
-      String serverUrl = parameters.get(ParameterKey.SERVER_URL);
-      if (serverUrl == null) {
-        throw new RuntimeException("server_url parameter must be specified");
-      }
-      String configFilesStr = notNullize(parameters.get(ParameterKey.CONFIG_FILES));
-      List<String> paths = EscapeUtils.split(configFilesStr, ',');
-      List<File> configFiles = Lists.newArrayList();
-      for (String path : paths) {
-        File file = new File(path);
-        if (file.isFile()) {
-          configFiles.add(file);
-        }
-      }
-      if (configFiles.isEmpty()) {
-        throw new RuntimeException("No valid config files found");
-      }
-      String runAllConfigsInDirectoryPath = parameters.get(ParameterKey.ALL_CONFIGS_IN_DIRECTORY);
-      File runAllConfigsInDirectory = null;
-      if (runAllConfigsInDirectoryPath != null && !runAllConfigsInDirectoryPath.isEmpty()) {
-        runAllConfigsInDirectory = new File(runAllConfigsInDirectoryPath);
-        if (!runAllConfigsInDirectory.isDirectory()) {
-          runAllConfigsInDirectory = null;
-        }
-      }
-      String testCaseName = notNullize(parameters.get(ParameterKey.TEST_CASE));
-      String testMethodName = notNullize(parameters.get(ParameterKey.TEST_METHOD));
-      String coverageFilePath = notNullize(parameters.get(ParameterKey.COVERAGE_OUTPUT_FILE));
-      File ideCoverageFile = null;
-      List<String> excludedPaths = Collections.emptyList();
-      if (!coverageFilePath.isEmpty()) {
-        ideCoverageFile = new File(coverageFilePath);
-        String joinedPaths = notNullize(parameters.get(ParameterKey.COVERAGE_EXCLUDED_PATHS));
-        excludedPaths = EscapeUtils.split(joinedPaths, ',');
-      }
-      return new Settings(
-        serverUrl,
-        configFiles,
-        runAllConfigsInDirectory,
-        testCaseName,
-        testMethodName,
-        ideCoverageFile,
-        excludedPaths
-      );
-    }
-  }
-
-  private static String notNullize(@Nullable String str) {
-    return str == null ? "" : str;
   }
 
   @SuppressWarnings("SSBasedInspection")
