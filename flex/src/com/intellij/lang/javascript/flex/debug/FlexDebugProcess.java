@@ -131,6 +131,10 @@ public class FlexDebugProcess extends XDebugProcess {
   protected final BidirectionalMap<String, String> myFilePathToIdMap = new BidirectionalMap<String, String>();
   protected final Map<String, Collection<String>> myFileNameToPathsMap = new THashMap<String, Collection<String>>();
 
+  // if java.io.File.exists() takes more time than this timeout we assume that this is network drive and do not ping it any more
+  private static final int FILE_EXISTS_MAX_TIMEOUT_MILLIS = 10;
+  private final Map<Character, Boolean> myWindowsDrivesMap = new THashMap<Character, Boolean>();
+
   private String myFdbLaunchCommand;
 
   private final LinkedList<DebuggerCommand> commandsToWrite = new LinkedList<DebuggerCommand>() {
@@ -732,7 +736,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
       if (value != null && value.size() > 0) {
         final String path = value.get(0);
-        final VirtualFile fileById = LocalFileSystem.getInstance().findFileByPath(path);
+        final VirtualFile fileById = findFileByPath(path);
 
         if (packageName == null) {
           // try to guess package name
@@ -774,7 +778,7 @@ public class FlexDebugProcess extends XDebugProcess {
       for (final String path : paths) {
         final String folderPath = PathUtil.getParentPath(path);
         if (folderPath.endsWith(packagePath)) {
-          final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
+          final VirtualFile file = findFileByPath(path);
           if (file != null) {
             return getThisOrSimilarFileInProject(file, packageName);
           }
@@ -816,7 +820,7 @@ public class FlexDebugProcess extends XDebugProcess {
     final Collection<String> paths = myFileNameToPathsMap.get(fileName);
     if (paths != null) {
       for (final String path : paths) {
-        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
+        final VirtualFile file = findFileByPath(path);
         if (file != null) {
           return file;
         }
@@ -824,6 +828,38 @@ public class FlexDebugProcess extends XDebugProcess {
     }
 
     return null;
+  }
+
+  @Nullable
+  private VirtualFile findFileByPath(final String path) {
+    if (!SystemInfo.isWindows || windowsDriveExists(path)) {
+      return LocalFileSystem.getInstance().findFileByPath(path);
+    }
+    return null;
+  }
+
+  private boolean windowsDriveExists(final String filePath) {
+    if (filePath.length() > 2 && Character.isLetter(filePath.charAt(0)) && filePath.charAt(1) == ':') {
+      final char driveLetter = Character.toUpperCase(filePath.charAt(0));
+      final Boolean driveExists = myWindowsDrivesMap.get(driveLetter);
+
+      if (driveExists != null) {
+        return driveExists;
+      }
+      else {
+        final long t0 = System.currentTimeMillis();
+        boolean exists = new File(driveLetter + ":" + File.separator).exists();
+
+        if (System.currentTimeMillis() - t0 > FILE_EXISTS_MAX_TIMEOUT_MILLIS) {
+          exists = false; // may be a slow network drive
+        }
+
+        myWindowsDrivesMap.put(driveLetter, exists);
+        return exists;
+      }
+    }
+
+    return false;
   }
 
   @NotNull
