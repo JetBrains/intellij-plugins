@@ -168,7 +168,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
           setIcon(ModuleType.get(module).getNodeIcon(expanded));
           append(module.getName());
         }
-        else {
+        else if (object instanceof FlexIdeBCConfigurable) {
           FlexIdeBCConfigurable configurable = (FlexIdeBCConfigurable)object;
           setIcon(configurable.getIcon());
           BCUtils.renderBuildConfiguration(configurable.getEditableObject(), null).appendToComponent(this);
