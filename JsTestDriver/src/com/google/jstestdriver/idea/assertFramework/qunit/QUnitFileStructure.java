@@ -4,12 +4,12 @@ import com.google.common.collect.Lists;
 import com.google.inject.internal.Maps;
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
 import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -118,7 +118,7 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
           return test.getCallExpression();
         }
       } else {
-        QUnitModuleStructure nonDefault = CastUtils.tryCast(qunitModuleStructure, QUnitModuleStructure.class);
+        QUnitModuleStructure nonDefault = ObjectUtils.tryCast(qunitModuleStructure, QUnitModuleStructure.class);
         if (nonDefault != null) {
           return nonDefault.getEnclosingCallExpression();
         }

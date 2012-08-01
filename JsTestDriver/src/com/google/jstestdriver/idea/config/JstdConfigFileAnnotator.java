@@ -17,7 +17,6 @@ package com.google.jstestdriver.idea.config;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.PsiElementFragment;
 import com.intellij.lang.annotation.Annotation;
@@ -32,6 +31,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.YAMLTokenTypes;
@@ -45,7 +45,7 @@ public class JstdConfigFileAnnotator implements Annotator {
 
   @Override
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-    YAMLFile yamlFile = CastUtils.tryCast(element, YAMLFile.class);
+    YAMLFile yamlFile = ObjectUtils.tryCast(element, YAMLFile.class);
     if (yamlFile != null && JstdConfigFileUtils.isJstdConfigFile(yamlFile)) {
       annotateFile(yamlFile, holder);
     }
@@ -130,7 +130,7 @@ public class JstdConfigFileAnnotator implements Annotator {
       holder.createErrorAnnotation(keyValue, "File sequence was expected here");
       return;
     }
-    YAMLCompoundValue compoundValue = CastUtils.tryCast(value, YAMLCompoundValue.class);
+    YAMLCompoundValue compoundValue = ObjectUtils.tryCast(value, YAMLCompoundValue.class);
     if (compoundValue == null) {
       holder.createErrorAnnotation(value, "File sequence should start with a dash symbol");
       return;
@@ -139,7 +139,7 @@ public class JstdConfigFileAnnotator implements Annotator {
     compoundValue.acceptChildren(new PsiElementVisitor() {
       @Override
       public void visitElement(PsiElement element) {
-        final YAMLSequence sequence = CastUtils.tryCast(element, YAMLSequence.class);
+        final YAMLSequence sequence = ObjectUtils.tryCast(element, YAMLSequence.class);
         if (sequence != null) {
           annotateFileSequence(sequence, holder, basePath, firstIndent);
           return;

@@ -3,8 +3,8 @@ package com.google.jstestdriver.idea.assertFramework.jasmine;
 import com.google.common.collect.Maps;
 import com.google.jstestdriver.idea.assertFramework.Annotation;
 import com.google.jstestdriver.idea.assertFramework.CompoundId;
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,7 +41,7 @@ class MarkedJasmineFileStructureBuilder {
     for (MarkedJasmineSpecStructure specStructure : markedJasmineSpecStructures) {
       CompoundId suiteId = specStructure.getSuiteId();
       MarkedJasmineSuiteStructureContainer container = findContainerById(markedJasmineFileStructure, suiteId);
-      MarkedJasmineSuiteStructure suiteStructure = CastUtils.tryCast(container, MarkedJasmineSuiteStructure.class);
+      MarkedJasmineSuiteStructure suiteStructure = ObjectUtils.tryCast(container, MarkedJasmineSuiteStructure.class);
       if (suiteStructure == null) {
         throw new RuntimeException("Suite structure was not found by id '" + suiteId + "'!");
       }

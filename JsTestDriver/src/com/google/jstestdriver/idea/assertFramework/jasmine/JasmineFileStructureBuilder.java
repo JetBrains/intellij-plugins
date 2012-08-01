@@ -1,7 +1,6 @@
 package com.google.jstestdriver.idea.assertFramework.jasmine;
 
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructureBuilder;
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.util.ObjectUtils;
@@ -12,7 +11,7 @@ import java.util.List;
 
 public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilder {
 
-  private static JasmineFileStructureBuilder ourInstance = new JasmineFileStructureBuilder();
+  private static final JasmineFileStructureBuilder ourInstance = new JasmineFileStructureBuilder();
 
   @NotNull
   @Override
@@ -43,7 +42,7 @@ public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilde
     }
 
     private void handleCallExpr(@Nullable JasmineSuiteStructure parentSuiteStructure, @NotNull JSCallExpression callExpression) {
-      JSReferenceExpression methodExpression = CastUtils.tryCast(callExpression.getMethodExpression(), JSReferenceExpression.class);
+      JSReferenceExpression methodExpression = ObjectUtils.tryCast(callExpression.getMethodExpression(), JSReferenceExpression.class);
       JSArgumentList argumentList = callExpression.getArgumentList();
       if (methodExpression != null && argumentList != null) {
         String methodName = methodExpression.getReferencedName();
@@ -78,7 +77,7 @@ public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilde
                                                @NotNull JSFunctionExpression specDefinitions) {
       JSSourceElement[] sourceElements = ObjectUtils.notNull(specDefinitions.getBody(), JSSourceElement.EMPTY_ARRAY);
       for (JSSourceElement sourceElement : sourceElements) {
-        JSBlockStatement jsBlockStatement = CastUtils.tryCast(sourceElement, JSBlockStatement.class);
+        JSBlockStatement jsBlockStatement = ObjectUtils.tryCast(sourceElement, JSBlockStatement.class);
         if (jsBlockStatement != null) {
           JSStatement[] statements = ObjectUtils.notNull(jsBlockStatement.getStatements(), JSStatement.EMPTY);
           for (JSStatement statement : statements) {

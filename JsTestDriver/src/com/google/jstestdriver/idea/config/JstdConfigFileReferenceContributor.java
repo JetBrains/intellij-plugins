@@ -1,7 +1,6 @@
 package com.google.jstestdriver.idea.config;
 
 import com.google.common.collect.Lists;
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.PsiElementFragment;
 import com.intellij.openapi.editor.DocumentFragment;
 import com.intellij.openapi.project.Project;
@@ -12,10 +11,14 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.yaml.psi.*;
+import org.jetbrains.yaml.psi.YAMLCompoundValue;
+import org.jetbrains.yaml.psi.YAMLDocument;
+import org.jetbrains.yaml.psi.YAMLKeyValue;
+import org.jetbrains.yaml.psi.YAMLSequence;
 
 import java.util.List;
 
@@ -30,11 +33,11 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
       @NotNull
       @Override
       public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
-        final YAMLKeyValue keyValue = CastUtils.tryCast(element, YAMLKeyValue.class);
+        final YAMLKeyValue keyValue = ObjectUtils.tryCast(element, YAMLKeyValue.class);
         if (keyValue == null) {
           return PsiReference.EMPTY_ARRAY;
         }
-        final YAMLDocument yamlDocument = CastUtils.tryCast(keyValue.getParent(), YAMLDocument.class);
+        final YAMLDocument yamlDocument = ObjectUtils.tryCast(keyValue.getParent(), YAMLDocument.class);
         if (yamlDocument == null) {
           return PsiReference.EMPTY_ARRAY;
         }
@@ -76,12 +79,12 @@ public class JstdConfigFileReferenceContributor extends PsiReferenceContributor 
     keyValue.acceptChildren(new PsiElementVisitor() {
       @Override
       public void visitElement(PsiElement element) {
-        YAMLCompoundValue compoundValue = CastUtils.tryCast(element, YAMLCompoundValue.class);
+        YAMLCompoundValue compoundValue = ObjectUtils.tryCast(element, YAMLCompoundValue.class);
         if (compoundValue != null) {
           compoundValue.acceptChildren(new PsiElementVisitor() {
             @Override
             public void visitElement(PsiElement element) {
-              YAMLSequence yamlSequence = CastUtils.tryCast(element, YAMLSequence.class);
+              YAMLSequence yamlSequence = ObjectUtils.tryCast(element, YAMLSequence.class);
               if (yamlSequence != null) {
                 PsiReference ref = getReferenceBySequence(basePathInfo, keyValue, yamlSequence);
                 if (ref != null) {

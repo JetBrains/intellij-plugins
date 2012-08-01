@@ -1,6 +1,5 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSFunctionExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
@@ -8,6 +7,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -67,7 +67,7 @@ public class JstdTestStructure {
     if (testMethodNameDeclaration == null) {
       return null;
     }
-    JSFunctionExpression testMethodBody = CastUtils.tryCast(jsProperty.getValue(), JSFunctionExpression.class);
+    JSFunctionExpression testMethodBody = ObjectUtils.tryCast(jsProperty.getValue(), JSFunctionExpression.class);
     String testName = StringUtil.stripQuotesAroundValue(testMethodNameDeclaration.getText());
     return new JstdTestStructure(testName, testMethodNameDeclaration, testMethodBody, jsProperty);
   }

@@ -2,10 +2,10 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.common.collect.Maps;
 import com.google.jstestdriver.idea.assertFramework.Annotation;
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.util.ObjectUtils;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,7 +69,7 @@ class MarkedJstdTestStructureUtils {
       if (markedTestCaseStructure.getPsiElement() == null) {
         throw new RuntimeException("End was not found for " + markedTestCaseStructure);
       }
-      JSCallExpression jsCallExpression = CastUtils.tryCast(markedTestCaseStructure.getPsiElement(), JSCallExpression.class);
+      JSCallExpression jsCallExpression = ObjectUtils.tryCast(markedTestCaseStructure.getPsiElement(), JSCallExpression.class);
       if (jsCallExpression == null) {
         Assert.fail("Unable to find underlying " + JSCallExpression.class + " for " + markedTestCaseStructure);
       }

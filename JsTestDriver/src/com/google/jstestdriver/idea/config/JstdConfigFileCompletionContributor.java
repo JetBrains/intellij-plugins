@@ -15,7 +15,6 @@
  */
 package com.google.jstestdriver.idea.config;
 
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupItem;
@@ -25,6 +24,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -108,7 +108,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
                                                         @NotNull CompletionResultSet result,
                                                         @NotNull BipartiteString caretBipartiteElementText) {
     PsiElement element = parameters.getPosition();
-    YAMLDocument yamlDocument = CastUtils.tryCast(element.getParent(), YAMLDocument.class);
+    YAMLDocument yamlDocument = ObjectUtils.tryCast(element.getParent(), YAMLDocument.class);
     if (yamlDocument == null) {
       yamlDocument = JstdConfigFileUtils.getVerifiedHierarchyHead(
         element.getParent(),
@@ -151,7 +151,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
 
   @Nullable
   private static BasePathInfo newBasePathInfo(@NotNull CompletionParameters parameters) {
-    YAMLFile yamlFile = CastUtils.tryCast(parameters.getOriginalFile(), YAMLFile.class);
+    YAMLFile yamlFile = ObjectUtils.tryCast(parameters.getOriginalFile(), YAMLFile.class);
     if (yamlFile != null) {
       List<YAMLDocument> yamlDocuments = yamlFile.getDocuments();
       if (!yamlDocuments.isEmpty()) {
@@ -164,7 +164,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
   private static void addBasePathCompletionsIfNeeded(@NotNull CompletionParameters parameters,
                                                      @NotNull CompletionResultSet result,
                                                      @NotNull BipartiteString caretBipartiteElementText) {
-    YAMLKeyValue keyValue = CastUtils.tryCast(parameters.getPosition().getParent(), YAMLKeyValue.class);
+    YAMLKeyValue keyValue = ObjectUtils.tryCast(parameters.getPosition().getParent(), YAMLKeyValue.class);
     if (keyValue != null) {
       if (keyValue.getParent() instanceof YAMLDocument && BasePathInfo.isBasePathKey(keyValue)) {
         BasePathInfo basePathInfo = newBasePathInfo(parameters);

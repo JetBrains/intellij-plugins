@@ -3,11 +3,11 @@ package com.google.jstestdriver.idea.assertFramework.jasmine;
 import com.google.jstestdriver.idea.JsTestDriverTestUtils;
 import com.google.jstestdriver.idea.assertFramework.Annotation;
 import com.google.jstestdriver.idea.assertFramework.CompoundId;
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.ObjectUtils;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,7 +57,7 @@ class MarkedJasmineSpecStructure {
   }
 
   public void validate() {
-    JSCallExpression jsCallExpression = CastUtils.tryCast(myPsiElement, JSCallExpression.class);
+    JSCallExpression jsCallExpression = ObjectUtils.tryCast(myPsiElement, JSCallExpression.class);
     if (jsCallExpression == null) {
       Assert.fail("Unable to find underlying " + JSCallExpression.class + " for " + this + ", found: " + myPsiElement);
     }

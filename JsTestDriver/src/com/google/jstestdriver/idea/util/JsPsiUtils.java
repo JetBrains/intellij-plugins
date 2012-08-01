@@ -32,13 +32,13 @@ public class JsPsiUtils {
       return null;
     }
     {
-      JSLiteralExpression jsLiteralExpression = CastUtils.tryCast(jsExpression, JSLiteralExpression.class);
+      JSLiteralExpression jsLiteralExpression = ObjectUtils.tryCast(jsExpression, JSLiteralExpression.class);
       if (jsLiteralExpression != null && jsLiteralExpression.isQuotedLiteral()) {
         return StringUtil.stripQuotesAroundValue(StringUtil.notNullize(jsLiteralExpression.getText()));
       }
     }
     {
-      JSBinaryExpression jsBinaryExpression = CastUtils.tryCast(jsExpression, JSBinaryExpression.class);
+      JSBinaryExpression jsBinaryExpression = ObjectUtils.tryCast(jsExpression, JSBinaryExpression.class);
       if (jsBinaryExpression != null) {
         IElementType operationType = jsBinaryExpression.getOperationSign();
         if (operationType == JSTokenTypes.PLUS) {
@@ -51,7 +51,7 @@ public class JsPsiUtils {
       }
     }
     {
-      JSReferenceExpression jsReferenceExpression = CastUtils.tryCast(jsExpression, JSReferenceExpression.class);
+      JSReferenceExpression jsReferenceExpression = ObjectUtils.tryCast(jsExpression, JSReferenceExpression.class);
       if (jsReferenceExpression != null) {
         JSExpression initializer = extractInitExpression(jsReferenceExpression);
         if (initializer != null) {
@@ -80,7 +80,7 @@ public class JsPsiUtils {
         break;
       }
       {
-        JSVarStatement varStmt = CastUtils.tryCast(statement, JSVarStatement.class);
+        JSVarStatement varStmt = ObjectUtils.tryCast(statement, JSVarStatement.class);
         if (varStmt != null) {
           JSVariable[] vars = ObjectUtils.notNull(varStmt.getVariables(), JSVariable.EMPTY_ARRAY);
           for (JSVariable var : vars) {
@@ -91,13 +91,13 @@ public class JsPsiUtils {
         }
       }
       {
-        JSExpressionStatement exprStmt = CastUtils.tryCast(statement, JSExpressionStatement.class);
+        JSExpressionStatement exprStmt = ObjectUtils.tryCast(statement, JSExpressionStatement.class);
         if (exprStmt != null) {
-          JSAssignmentExpression assignmentExpr = CastUtils.tryCast(exprStmt.getExpression(), JSAssignmentExpression.class);
+          JSAssignmentExpression assignmentExpr = ObjectUtils.tryCast(exprStmt.getExpression(), JSAssignmentExpression.class);
           if (assignmentExpr != null) {
-            JSDefinitionExpression defExpr = CastUtils.tryCast(assignmentExpr.getLOperand(), JSDefinitionExpression.class);
+            JSDefinitionExpression defExpr = ObjectUtils.tryCast(assignmentExpr.getLOperand(), JSDefinitionExpression.class);
             if (defExpr != null) {
-              JSReferenceExpression refExpr = CastUtils.tryCast(defExpr.getExpression(), JSReferenceExpression.class);
+              JSReferenceExpression refExpr = ObjectUtils.tryCast(defExpr.getExpression(), JSReferenceExpression.class);
               if (refExpr != null && refExpr.getQualifier() == null) {
                 if (refName.equals(refExpr.getReferencedName())) {
                   lastExpr = assignmentExpr.getROperand();
@@ -117,13 +117,13 @@ public class JsPsiUtils {
       return null;
     }
     {
-      JSObjectLiteralExpression jsObjectLiteralExpression = CastUtils.tryCast(expression, JSObjectLiteralExpression.class);
+      JSObjectLiteralExpression jsObjectLiteralExpression = ObjectUtils.tryCast(expression, JSObjectLiteralExpression.class);
       if (jsObjectLiteralExpression != null) {
         return jsObjectLiteralExpression;
       }
     }
     {
-      JSReferenceExpression jsReferenceExpression = CastUtils.tryCast(expression, JSReferenceExpression.class);
+      JSReferenceExpression jsReferenceExpression = ObjectUtils.tryCast(expression, JSReferenceExpression.class);
       if (jsReferenceExpression != null) {
         JSExpression initializer = extractInitExpression(jsReferenceExpression);
         if (initializer != null) {
@@ -140,13 +140,13 @@ public class JsPsiUtils {
       return null;
     }
     {
-      JSLiteralExpression jsLiteralExpression = CastUtils.tryCast(jsExpression, JSLiteralExpression.class);
+      JSLiteralExpression jsLiteralExpression = ObjectUtils.tryCast(jsExpression, JSLiteralExpression.class);
       if (jsLiteralExpression != null && jsLiteralExpression.isNumericLiteral()) {
         return jsLiteralExpression.getText();
       }
     }
     {
-      JSReferenceExpression jsReferenceExpression = CastUtils.tryCast(jsExpression, JSReferenceExpression.class);
+      JSReferenceExpression jsReferenceExpression = ObjectUtils.tryCast(jsExpression, JSReferenceExpression.class);
       if (jsReferenceExpression != null) {
         JSExpression initializer = extractInitExpression(jsReferenceExpression);
         if (initializer != null) {
@@ -163,13 +163,13 @@ public class JsPsiUtils {
       return null;
     }
     {
-      JSFunctionExpression jsFunctionExpression = CastUtils.tryCast(expression, JSFunctionExpression.class);
+      JSFunctionExpression jsFunctionExpression = ObjectUtils.tryCast(expression, JSFunctionExpression.class);
       if (jsFunctionExpression != null) {
         return jsFunctionExpression;
       }
     }
     {
-      JSReferenceExpression jsReferenceExpression = CastUtils.tryCast(expression, JSReferenceExpression.class);
+      JSReferenceExpression jsReferenceExpression = ObjectUtils.tryCast(expression, JSReferenceExpression.class);
       if (jsReferenceExpression != null) {
         JSExpression initializer = extractInitExpression(jsReferenceExpression);
         if (initializer != null) {
@@ -184,7 +184,7 @@ public class JsPsiUtils {
   public static List<JSStatement> listStatementsInExecutionOrder(@NotNull JSFile jsFile) {
     List<JSStatement> jsElements = Lists.newArrayList();
     for (PsiElement psiElement : jsFile.getChildren()) {
-      JSStatement statement = CastUtils.tryCast(psiElement, JSStatement.class);
+      JSStatement statement = ObjectUtils.tryCast(psiElement, JSStatement.class);
       if (statement != null) {
         collectJsElementsInExecutionOrder(statement, jsElements);
       }
@@ -193,24 +193,24 @@ public class JsPsiUtils {
   }
 
   private static void collectJsElementsInExecutionOrder(@NotNull JSStatement statement, @NotNull List<JSStatement> jsElements) {
-    JSExpressionStatement jsExpressionStatement = CastUtils.tryCast(statement, JSExpressionStatement.class);
+    JSExpressionStatement jsExpressionStatement = ObjectUtils.tryCast(statement, JSExpressionStatement.class);
     if (jsExpressionStatement != null) {
       JSFunctionExpression jsFunctionExpression = null;
       {
-        JSCallExpression jsCallExpression = CastUtils.tryCast(jsExpressionStatement.getExpression(), JSCallExpression.class);
+        JSCallExpression jsCallExpression = ObjectUtils.tryCast(jsExpressionStatement.getExpression(), JSCallExpression.class);
         if (jsCallExpression != null) {
-          JSParenthesizedExpression jsParenthesizedExpression = CastUtils.tryCast(jsCallExpression.getMethodExpression(), JSParenthesizedExpression.class);
+          JSParenthesizedExpression jsParenthesizedExpression = ObjectUtils.tryCast(jsCallExpression.getMethodExpression(), JSParenthesizedExpression.class);
           if (jsParenthesizedExpression != null) {
-            jsFunctionExpression = CastUtils.tryCast(jsParenthesizedExpression.getInnerExpression(), JSFunctionExpression.class);
+            jsFunctionExpression = ObjectUtils.tryCast(jsParenthesizedExpression.getInnerExpression(), JSFunctionExpression.class);
           }
         }
       }
       {
-        JSParenthesizedExpression jsParenthesizedExpression = CastUtils.tryCast(jsExpressionStatement.getExpression(), JSParenthesizedExpression.class);
+        JSParenthesizedExpression jsParenthesizedExpression = ObjectUtils.tryCast(jsExpressionStatement.getExpression(), JSParenthesizedExpression.class);
         if (jsParenthesizedExpression != null) {
-          JSCallExpression jsCallExpression = CastUtils.tryCast(jsParenthesizedExpression.getInnerExpression(), JSCallExpression.class);
+          JSCallExpression jsCallExpression = ObjectUtils.tryCast(jsParenthesizedExpression.getInnerExpression(), JSCallExpression.class);
           if (jsCallExpression != null) {
-            jsFunctionExpression = CastUtils.tryCast(jsCallExpression.getMethodExpression(), JSFunctionExpression.class);
+            jsFunctionExpression = ObjectUtils.tryCast(jsCallExpression.getMethodExpression(), JSFunctionExpression.class);
           }
         }
       }
@@ -252,9 +252,9 @@ public class JsPsiUtils {
 
   @Nullable
   public static JSCallExpression asCallExpressionStatement(JSElement element) {
-    JSExpressionStatement expressionStatement = CastUtils.tryCast(element, JSExpressionStatement.class);
+    JSExpressionStatement expressionStatement = ObjectUtils.tryCast(element, JSExpressionStatement.class);
     if (expressionStatement != null) {
-      return CastUtils.tryCast(expressionStatement.getExpression(), JSCallExpression.class);
+      return ObjectUtils.tryCast(expressionStatement.getExpression(), JSCallExpression.class);
     }
     return null;
   }
@@ -308,7 +308,7 @@ public class JsPsiUtils {
 
   @Nullable
   public static PsiElement getPropertyNamePsiElement(@NotNull JSProperty property) {
-    return CastUtils.tryCast(property.getFirstChild(), LeafPsiElement.class);
+    return ObjectUtils.tryCast(property.getFirstChild(), LeafPsiElement.class);
   }
 
   @Nullable
@@ -437,7 +437,7 @@ public class JsPsiUtils {
         return (JSFunction) parent;
       }
       if (parent instanceof PsiFile) {
-        return CastUtils.tryCast(parent, JSFile.class);
+        return ObjectUtils.tryCast(parent, JSFile.class);
       }
       PsiElement newParent = parent.getParent();
       if (newParent == parent) {

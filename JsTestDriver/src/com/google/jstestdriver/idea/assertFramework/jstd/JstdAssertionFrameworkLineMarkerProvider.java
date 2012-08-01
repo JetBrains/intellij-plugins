@@ -4,7 +4,6 @@ import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.assertFramework.library.JstdLibraryUtil;
 import com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer;
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
@@ -25,6 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +40,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
   @Override
   public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
     Project project = element.getProject();
-    JSFile jsFile = CastUtils.tryCast(element.getContainingFile(), JSFile.class);
+    JSFile jsFile = ObjectUtils.tryCast(element.getContainingFile(), JSFile.class);
     if (jsFile == null) {
       return null;
     }

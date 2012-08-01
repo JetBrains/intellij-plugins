@@ -1,7 +1,6 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructureBuilder;
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
@@ -42,10 +41,10 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
 
   private static void fillJsTestFileStructure(JstdTestFileStructure jsTestFileStructure, JSStatement jsElement) {
     {
-      JSExpressionStatement jsExpressionStatement = CastUtils.tryCast(jsElement, JSExpressionStatement.class);
+      JSExpressionStatement jsExpressionStatement = ObjectUtils.tryCast(jsElement, JSExpressionStatement.class);
       if (jsExpressionStatement != null) {
         {
-          JSCallExpression callExpression = CastUtils.tryCast(jsExpressionStatement.getExpression(), JSCallExpression.class);
+          JSCallExpression callExpression = ObjectUtils.tryCast(jsExpressionStatement.getExpression(), JSCallExpression.class);
           if (callExpression != null) {
             // TestCase("testCaseName", { test1: function() {} });
             createTestCaseStructure(jsTestFileStructure, callExpression);
@@ -53,15 +52,15 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
         }
         {
           // testCase = TestCase("testCaseName");
-          JSAssignmentExpression jsAssignmentExpression = CastUtils.tryCast(jsExpressionStatement.getExpression(), JSAssignmentExpression.class);
+          JSAssignmentExpression jsAssignmentExpression = ObjectUtils.tryCast(jsExpressionStatement.getExpression(), JSAssignmentExpression.class);
           if (jsAssignmentExpression != null) {
-            JSCallExpression jsCallExpression = CastUtils.tryCast(jsAssignmentExpression.getROperand(), JSCallExpression.class);
+            JSCallExpression jsCallExpression = ObjectUtils.tryCast(jsAssignmentExpression.getROperand(), JSCallExpression.class);
             if (jsCallExpression != null) {
               JstdTestCaseStructure testCaseStructure = createTestCaseStructure(jsTestFileStructure, jsCallExpression);
               if (testCaseStructure != null) {
-                JSDefinitionExpression jsDefinitionExpression = CastUtils.tryCast(jsAssignmentExpression.getLOperand(), JSDefinitionExpression.class);
+                JSDefinitionExpression jsDefinitionExpression = ObjectUtils.tryCast(jsAssignmentExpression.getLOperand(), JSDefinitionExpression.class);
                 if (jsDefinitionExpression != null) {
-                  JSReferenceExpression jsReferenceExpression = CastUtils.tryCast(jsDefinitionExpression.getExpression(), JSReferenceExpression.class);
+                  JSReferenceExpression jsReferenceExpression = ObjectUtils.tryCast(jsDefinitionExpression.getExpression(), JSReferenceExpression.class);
                   if (jsReferenceExpression != null) {
                     String refName = jsReferenceExpression.getReferencedName();
                     if (refName != null) {
@@ -77,11 +76,11 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
     }
     {
       // var testCase = TestCase("testCaseName");
-      JSVarStatement jsVarStatement = CastUtils.tryCast(jsElement, JSVarStatement.class);
+      JSVarStatement jsVarStatement = ObjectUtils.tryCast(jsElement, JSVarStatement.class);
       if (jsVarStatement != null) {
         JSVariable[] jsVariables = ObjectUtils.notNull(jsVarStatement.getVariables(), JSVariable.EMPTY_ARRAY);
         for (JSVariable jsVariable : jsVariables) {
-          JSCallExpression jsCallExpression = CastUtils.tryCast(jsVariable.getInitializer(), JSCallExpression.class);
+          JSCallExpression jsCallExpression = ObjectUtils.tryCast(jsVariable.getInitializer(), JSCallExpression.class);
           if (jsCallExpression != null) {
             JstdTestCaseStructure testCaseStructure = createTestCaseStructure(jsTestFileStructure, jsCallExpression);
             if (testCaseStructure != null) {
@@ -101,18 +100,18 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
                                         @NotNull JSStatement refStatement) {
     List<JSStatement> statements = JsPsiUtils.listStatementsInExecutionOrderNextTo(refStatement);
     for (JSStatement statement : statements) {
-      JSExpressionStatement expressionStatement = CastUtils.tryCast(statement, JSExpressionStatement.class);
+      JSExpressionStatement expressionStatement = ObjectUtils.tryCast(statement, JSExpressionStatement.class);
       if (expressionStatement != null) {
-        JSAssignmentExpression assignmentExpr = CastUtils.tryCast(expressionStatement.getExpression(), JSAssignmentExpression.class);
+        JSAssignmentExpression assignmentExpr = ObjectUtils.tryCast(expressionStatement.getExpression(), JSAssignmentExpression.class);
         if (assignmentExpr != null) {
-          JSDefinitionExpression wholeLeftDefExpr = CastUtils.tryCast(assignmentExpr.getLOperand(), JSDefinitionExpression.class);
+          JSDefinitionExpression wholeLeftDefExpr = ObjectUtils.tryCast(assignmentExpr.getLOperand(), JSDefinitionExpression.class);
           if (wholeLeftDefExpr != null) {
-            JSReferenceExpression wholeLeftRefExpr = CastUtils.tryCast(wholeLeftDefExpr.getExpression(), JSReferenceExpression.class);
+            JSReferenceExpression wholeLeftRefExpr = ObjectUtils.tryCast(wholeLeftDefExpr.getExpression(), JSReferenceExpression.class);
             if (wholeLeftRefExpr != null) {
-              JSReferenceExpression testCaseAndPrototypeRefExpr = CastUtils.tryCast(wholeLeftRefExpr.getQualifier(), JSReferenceExpression.class);
+              JSReferenceExpression testCaseAndPrototypeRefExpr = ObjectUtils.tryCast(wholeLeftRefExpr.getQualifier(), JSReferenceExpression.class);
               if (testCaseAndPrototypeRefExpr != null) {
                 if ("prototype".equals(testCaseAndPrototypeRefExpr.getReferencedName())) {
-                  JSReferenceExpression testCaseRefExpr = CastUtils.tryCast(testCaseAndPrototypeRefExpr.getQualifier(), JSReferenceExpression.class);
+                  JSReferenceExpression testCaseRefExpr = ObjectUtils.tryCast(testCaseAndPrototypeRefExpr.getQualifier(), JSReferenceExpression.class);
                   if (testCaseRefExpr != null && testCaseRefExpr.getQualifier() == null) {
                     if (referenceName.equals(testCaseRefExpr.getReferencedName())) {
                       addPrototypeTest(testCaseStructure, assignmentExpr.getROperand(), wholeLeftRefExpr.getReferenceNameElement());
@@ -130,7 +129,7 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
   private static void addPrototypeTest(@NotNull JstdTestCaseStructure testCaseStructure,
                                        @Nullable JSExpression rightAssignmentOperand,
                                        @Nullable PsiElement testMethodIdentifierPsiElement) {
-    LeafPsiElement leafPsiElement = CastUtils.tryCast(testMethodIdentifierPsiElement, LeafPsiElement.class);
+    LeafPsiElement leafPsiElement = ObjectUtils.tryCast(testMethodIdentifierPsiElement, LeafPsiElement.class);
     if (leafPsiElement != null && leafPsiElement.getElementType() == JSTokenTypes.IDENTIFIER) {
       JSFunctionExpression jsFunctionExpression = JsPsiUtils.extractFunctionExpression(rightAssignmentOperand);
       JstdTestStructure jstdTestStructure = JstdTestStructure.newPrototypeBasedTestStructure(leafPsiElement, jsFunctionExpression);
@@ -141,7 +140,7 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
   @Nullable
   private static JstdTestCaseStructure createTestCaseStructure(@NotNull JstdTestFileStructure jsTestFileStructure,
                                                                @NotNull JSCallExpression testCaseCallExpression) {
-    JSReferenceExpression referenceExpression = CastUtils.tryCast(testCaseCallExpression.getMethodExpression(), JSReferenceExpression.class);
+    JSReferenceExpression referenceExpression = ObjectUtils.tryCast(testCaseCallExpression.getMethodExpression(), JSReferenceExpression.class);
     if (referenceExpression != null) {
       String referenceName = referenceExpression.getReferencedName();
       if ("TestCase".equals(referenceName) || "AsyncTestCase".equals(referenceName)) {

@@ -1,6 +1,5 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalInspectionToolSession;
@@ -28,7 +27,7 @@ public abstract class AbstractMethodBasedInspection extends JSInspection {
     return new JSElementVisitor() {
       @Override
       public void visitJSCallExpression(final JSCallExpression jsCallExpression) {
-        JSReferenceExpression methodExpression = CastUtils.tryCast(jsCallExpression.getMethodExpression(), JSReferenceExpression.class);
+        JSReferenceExpression methodExpression = ObjectUtils.tryCast(jsCallExpression.getMethodExpression(), JSReferenceExpression.class);
         JSArgumentList jsArgumentList = jsCallExpression.getArgumentList();
         if (methodExpression != null && jsArgumentList != null) {
           JSExpression[] arguments = ObjectUtils.notNull(jsArgumentList.getArguments(), JSExpression.EMPTY_ARRAY);

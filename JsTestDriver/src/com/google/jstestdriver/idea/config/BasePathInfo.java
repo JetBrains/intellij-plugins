@@ -1,6 +1,5 @@
 package com.google.jstestdriver.idea.config;
 
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.intellij.openapi.editor.DocumentFragment;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
@@ -8,6 +7,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLDocument;
@@ -121,7 +121,7 @@ class BasePathInfo {
     yamlDocument.acceptChildren(new PsiElementVisitor() {
       @Override
       public void visitElement(PsiElement element) {
-        YAMLKeyValue keyValue = CastUtils.tryCast(element, YAMLKeyValue.class);
+        YAMLKeyValue keyValue = ObjectUtils.tryCast(element, YAMLKeyValue.class);
         if (keyValue != null && isBasePathKey(keyValue) && result.isNull()) {
           DocumentFragment valueFragment = JstdConfigFileUtils.extractValueAsDocumentFragment(keyValue);
           result.set(Pair.create(keyValue, valueFragment));

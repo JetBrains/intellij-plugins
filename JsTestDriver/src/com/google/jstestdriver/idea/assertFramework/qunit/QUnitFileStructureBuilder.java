@@ -1,7 +1,6 @@
 package com.google.jstestdriver.idea.assertFramework.qunit;
 
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructureBuilder;
-import com.google.jstestdriver.idea.util.CastUtils;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.util.ObjectUtils;
@@ -11,7 +10,7 @@ import java.util.List;
 
 public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder {
 
-  private static QUnitFileStructureBuilder ourInstance = new QUnitFileStructureBuilder();
+  private static final QUnitFileStructureBuilder ourInstance = new QUnitFileStructureBuilder();
 
   @NotNull
   @Override
@@ -38,9 +37,9 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder 
     }
 
     private void update(JSElement jsElement) {
-      JSExpressionStatement expressionStatement = CastUtils.tryCast(jsElement, JSExpressionStatement.class);
+      JSExpressionStatement expressionStatement = ObjectUtils.tryCast(jsElement, JSExpressionStatement.class);
       if (expressionStatement != null) {
-        JSCallExpression callExpression = CastUtils.tryCast(expressionStatement.getExpression(), JSCallExpression.class);
+        JSCallExpression callExpression = ObjectUtils.tryCast(expressionStatement.getExpression(), JSCallExpression.class);
         if (callExpression != null) {
           updateJsCallExpression(callExpression);
         }
@@ -48,7 +47,7 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder 
     }
 
     private void updateJsCallExpression(@NotNull JSCallExpression callExpression) {
-      JSReferenceExpression methodExpression = CastUtils.tryCast(callExpression.getMethodExpression(), JSReferenceExpression.class);
+      JSReferenceExpression methodExpression = ObjectUtils.tryCast(callExpression.getMethodExpression(), JSReferenceExpression.class);
       JSArgumentList argumentList = callExpression.getArgumentList();
       if (methodExpression != null && argumentList != null) {
         String methodName = methodExpression.getReferencedName();
