@@ -60,6 +60,7 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
           myFileNameTextField.setText(newItem.getDefaultFileName());
           myModel.setFileName(newItem.getDefaultFileName());
         }
+        myDirectoryTextField.setText(FileUtil.toSystemDependentName(model.getDirectory().getVirtualFile().getPath()));
       }
     });
 

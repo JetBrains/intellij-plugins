@@ -46,8 +46,6 @@ public class CucumberStepsIndex {
 
   private final Map<FileType, CucumberJvmExtensionPoint> myExtensionMap;
 
-  private final Map<FileType, String> mySupportedFileTypesAndFileNames;
-
   private final CucumberPsiTreeListener myCucumberPsiTreeListener;
 
   public CucumberStepsIndex(final Project project, final ProjectRootManager manager) {
@@ -60,10 +58,7 @@ public class CucumberStepsIndex {
 
     myCucumberPsiTreeListener = new CucumberPsiTreeListener();
 
-    // ToDo: move to StepDefinitionCreator
-    mySupportedFileTypesAndFileNames = new HashMap<FileType, String>();
     for (CucumberJvmExtensionPoint e : myExtensionList) {
-      mySupportedFileTypesAndFileNames.put(e.getStepFileType(), e.getDefaultStepFileName());
       myExtensionMap.put(e.getStepFileType(), e);
     }
 
@@ -159,10 +154,6 @@ public class CucumberStepsIndex {
     }
 
     return extension.getStepDefinitionCreator().createStepDefinitionContainer(dir, fileNameWithoutExtension);
-  }
-
-  public Map<FileType, String> getSupportedFileTypesAndDefaultFileNames() {
-    return mySupportedFileTypesAndFileNames;
   }
 
   // ToDo: move to q-fix
@@ -469,5 +460,9 @@ public class CucumberStepsIndex {
 
   public void flush() {
     myUpdateQueue.flush();
+  }
+
+  public Map<FileType, CucumberJvmExtensionPoint> getExtensionMap() {
+    return myExtensionMap;
   }
 }

@@ -18,11 +18,11 @@ public class CreateStepDefinitionFileModel {
 
   private String myFileName;
 
-  private PsiDirectory myDirectory;
+  private final Map<FileType, PsiDirectory> myFileTypeToDefaultDirectoryMap;
 
   DefaultComboBoxModel myFileTypeModel;
 
-  public CreateStepDefinitionFileModel(@NotNull final Map<FileType, String> fileTypeToDefaultNameMap, @NotNull final PsiDirectory directory) {
+  public CreateStepDefinitionFileModel(@NotNull final Map<FileType, String> fileTypeToDefaultNameMap, @NotNull final Map<FileType, PsiDirectory> fileTypeToDefaultDirectoryMap) {
     List<FileTypeComboboxItem> myFileTypeList = new ArrayList<FileTypeComboboxItem>();
     for (Map.Entry<FileType, String> entry : fileTypeToDefaultNameMap.entrySet()) {
       if (myFileName == null) {
@@ -32,12 +32,12 @@ public class CreateStepDefinitionFileModel {
       myFileTypeList.add(item);
     }
     myFileTypeModel = new DefaultComboBoxModel(myFileTypeList.toArray());
-    myDirectory = directory;
+    myFileTypeToDefaultDirectoryMap = fileTypeToDefaultDirectoryMap;
   }
 
   public String getFilePath() {
     final StringBuilder result = new StringBuilder();
-    result.append(myDirectory.getVirtualFile().getPath()).append(File.separator).append(getFileNameWithExtension());
+    result.append(getDirectory().getVirtualFile().getPath()).append(File.separator).append(getFileNameWithExtension());
     return result.toString();
   }
 
@@ -57,7 +57,7 @@ public class CreateStepDefinitionFileModel {
   }
 
   public PsiDirectory getDirectory() {
-    return myDirectory;
+    return myFileTypeToDefaultDirectoryMap.get(getSelectedFileType());
   }
 
   public FileType getSelectedFileType() {

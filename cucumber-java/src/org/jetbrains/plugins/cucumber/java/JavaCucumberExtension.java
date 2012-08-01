@@ -12,10 +12,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
+import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinition;
+import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
-import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import java.util.ArrayList;
@@ -54,20 +56,10 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
     return JavaFileType.INSTANCE;
   }
 
-  @Override
-  public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull PsiFile file) {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
   @NotNull
   @Override
-  public PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  @Override
-  public boolean validateNewStepDefinitionFileName(@NotNull Project project, @NotNull String fileName) {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+  public StepDefinitionCreator getStepDefinitionCreator() {
+    return new JavaStepDefinitionCreator();
   }
 
   @NotNull
