@@ -21,6 +21,7 @@ import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 
 import java.util.*;
 
@@ -59,6 +60,7 @@ public class CucumberStepsIndex {
 
     myCucumberPsiTreeListener = new CucumberPsiTreeListener();
 
+    // ToDo: move to StepDefinitionCreator
     mySupportedFileTypesAndFileNames = new HashMap<FileType, String>();
     for (CucumberJvmExtensionPoint e : myExtensionList) {
       mySupportedFileTypesAndFileNames.put(e.getStepFileType(), e.getDefaultStepFileName());
@@ -156,18 +158,19 @@ public class CucumberStepsIndex {
       return null;
     }
 
-    return extension.createStepDefinitionFile(dir, fileNameWithoutExtension);
+    return extension.getStepDefinitionCreator().createStepDefinitionContainer(dir, fileNameWithoutExtension);
   }
 
   public Map<FileType, String> getSupportedFileTypesAndDefaultFileNames() {
     return mySupportedFileTypesAndFileNames;
   }
 
+  // ToDo: move to q-fix
   public boolean validateNewStepDefinitionFileName(@NotNull final PsiDirectory directory, @NotNull final String fileName,
                                                    @NotNull final FileType fileType) {
     CucumberJvmExtensionPoint ep = myExtensionMap.get(fileType);
     assert ep != null;
-    return ep.validateNewStepDefinitionFileName(directory.getProject(), fileName);
+    return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(directory.getProject(), fileName);
   }
 
   private boolean isStepLikeFile(PsiElement child, PsiElement parent) {
@@ -265,7 +268,7 @@ public class CucumberStepsIndex {
   //  return null;
   //}
 
-  //public List<PsiFile> getStepDefinitionFiles(final PsiFile featureFile) {
+  //public List<PsiFile> getStepDefinitionContainers(final PsiFile featureFile) {
   //  final List<PsiDirectory> stepDefsRoots = new ArrayList<PsiDirectory>();
   //
   //  PsiDirectory dir = findStepDefinitionDirectory(featureFile);

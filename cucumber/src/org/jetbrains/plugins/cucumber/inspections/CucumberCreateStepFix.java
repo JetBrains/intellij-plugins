@@ -32,7 +32,7 @@ import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.inspections.model.CreateStepDefinitionFileModel;
 import org.jetbrains.plugins.cucumber.inspections.ui.CreateStepDefinitionFileDialog;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
-import org.jetbrains.plugins.cucumber.steps.CucumberJvmExtensionPoint;
+import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import javax.swing.*;
@@ -77,7 +77,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     return null;
   }
 
-  public List<PsiFile> getStepDefinitionFiles(final PsiFile featureFile) {
+  public List<PsiFile> getStepDefinitionContainers(final PsiFile featureFile) {
     final List<PsiDirectory> stepDefsRoots = new ArrayList<PsiDirectory>();
 
     PsiDirectory dir = findStepDefinitionDirectory(featureFile);
@@ -98,7 +98,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     final GherkinStep step = (GherkinStep) descriptor.getPsiElement();
     final PsiFile featureFile = step.getContainingFile();
     // TODO + step defs files from other content roots
-    final List<PsiFile> files = getStepDefinitionFiles(featureFile);
+    final List<PsiFile> files = getStepDefinitionContainers(featureFile);
     if (files.size() > 0) {
       files.add(null);
       BaseListPopupStep<PsiFile> popupStep = new BaseListPopupStep<PsiFile>("Choose step definition file", files) {
@@ -278,7 +278,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
 
     CucumberJvmExtensionPoint[] epList = CucumberJvmExtensionPoint.EP_NAME.getExtensions();
     for (CucumberJvmExtensionPoint ep : epList) {
-      if (ep.createStepDefinition(step, file)) {
+      if (ep.getStepDefinitionCreator().createStepDefinition(step, file)) {
         return;
       }
     }

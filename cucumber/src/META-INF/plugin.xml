@@ -46,7 +46,7 @@
     <extensionPoint qualifiedName="cucumber.KeywordProvider" interface="org.jetbrains.plugins.cucumber.psi.GherkinKeywordProviderBuilder"/>
 
     <extensionPoint qualifiedName="org.jetbrains.plugins.cucumber.steps.cucumberJvmExtensionPoint"
-                    interface="org.jetbrains.plugins.cucumber.steps.CucumberJvmExtensionPoint"/>
+                    interface="org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint"/>
   </extensionPoints>
 
   <project-components>

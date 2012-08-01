@@ -1,4 +1,4 @@
-package org.jetbrains.plugins.cucumber.steps;
+package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.fileTypes.FileType;
@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveResult;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.psi.GherkinStep;
+import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.List;
 import java.util.Set;
@@ -40,26 +40,14 @@ public interface CucumberJvmExtensionPoint {
   @NotNull List<AbstractStepDefinition> getStepDefinitions(@NotNull final PsiFile psiFile);
 
   /**
-   * Creates step definition
-   * @param step to implement
-   * @param file where to create step definition
-   * @return true if success, false otherwise
-   */
-  boolean createStepDefinition(@NotNull final GherkinStep step, @NotNull final PsiFile file);
-
-  /**
    * Provides type of step definition file
    * @return FileType
    */
   @NotNull FileType getStepFileType();
 
-  /**
-   * Creates step definition file
-   * @param dir where to create file
-   * @param name of created file
-   * @return PsiFile object of created file
-   */
-  @NotNull PsiFile createStepDefinitionFile(@NotNull final PsiDirectory dir, @NotNull final String name);
+
+  @NotNull
+  StepDefinitionCreator getStepDefinitionCreator();
 
   /**
    * Provides default name of step definition file
@@ -67,12 +55,6 @@ public interface CucumberJvmExtensionPoint {
    */
   @NotNull String getDefaultStepFileName();
 
-  /**
-   * Validates name of new step definition file
-   * @param fileName name of file to check
-   * @return true if name is valid, false otherwise
-   */
-  boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String fileName);
 
   void collectAllStepDefsProviders(@NotNull final List<VirtualFile> providers, @NotNull final Project project);
 
