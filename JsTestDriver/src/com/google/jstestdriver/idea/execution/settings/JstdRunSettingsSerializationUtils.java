@@ -120,12 +120,8 @@ public class JstdRunSettingsSerializationUtils {
   }
 
   private static void readJsFile(@NotNull Element element, @NotNull JstdRunSettings.Builder builder) {
-    JstdConfigType configType = readEnumByName(element, Key.CONFIG_TYPE, JstdConfigType.GENERATED);
-    builder.setConfigType(configType);
-    if (configType == JstdConfigType.FILE_PATH) {
-      String configFile = readString(element, Key.JSTD_CONFIG_FILE, "");
-      builder.setConfigFile(FileUtil.toSystemDependentName(configFile));
-    }
+    String configFile = readString(element, Key.JSTD_CONFIG_FILE, "");
+    builder.setConfigFile(FileUtil.toSystemDependentName(configFile));
     String jsFile = readString(element, Key.JS_FILE, "");
     builder.setJSFilePath(FileUtil.toSystemDependentName(jsFile));
   }
@@ -176,11 +172,8 @@ public class JstdRunSettingsSerializationUtils {
   }
 
   private static void writeJsFile(@NotNull Element element, @NotNull JstdRunSettings runSettings) {
-    JstdConfigType configType = runSettings.getConfigType();
-    writeString(element, Key.CONFIG_TYPE, configType.name());
-    if (configType == JstdConfigType.FILE_PATH) {
-      writeString(element, Key.JSTD_CONFIG_FILE, FileUtil.toSystemIndependentName(runSettings.getConfigFile()));
-    }
+    writeString(element, Key.CONFIG_TYPE, "FILE_PATH");
+    writeString(element, Key.JSTD_CONFIG_FILE, FileUtil.toSystemIndependentName(runSettings.getConfigFile()));
     writeString(element, Key.JS_FILE, FileUtil.toSystemIndependentName(runSettings.getJsFilePath()));
   }
 

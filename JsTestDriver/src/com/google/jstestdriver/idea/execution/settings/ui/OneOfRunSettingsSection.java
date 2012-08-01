@@ -15,15 +15,16 @@ import java.util.Map;
 /**
  * All methods should be executed on EDT.
  */
-class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionProvider> extends AbstractRunSettingsSection {
+public class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionProvider> extends AbstractRunSettingsSection {
 
-  private T mySelectedKey;
-  private JPanel myCardPanel;
+  private final JPanel myCardPanel;
   private final Collection<T> myRunSettingsSectionProviders;
   private final Map<String, RunSettingsSection> mySectionByIdMap = Maps.newHashMap();
+  private T mySelectedKey;
 
-  public OneOfRunSettingsSection(@NotNull Collection<T> runSettingsSectionProviders) {
+  OneOfRunSettingsSection(@NotNull Collection<T> runSettingsSectionProviders) {
     myRunSettingsSectionProviders = runSettingsSectionProviders;
+    myCardPanel = new JPanel(new CardLayout());
   }
 
   @Override
@@ -41,7 +42,6 @@ class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionProvider>
   @NotNull
   @Override
   protected JPanel createComponent(@NotNull CreationContext creationContext) {
-    myCardPanel = new JPanel(new CardLayout());
     for (T child : myRunSettingsSectionProviders) {
       RunSettingsSection runSettingsSection = child.provideRunSettingsSection();
       JComponent comp = runSettingsSection.getComponent(creationContext);
@@ -54,7 +54,7 @@ class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionProvider>
     } else {
       throw new RuntimeException("No child items were found");
     }
-    myAnchor = UIUtil.mergeComponentsWithAnchor(mySectionByIdMap.values());
+    setAnchor(UIUtil.mergeComponentsWithAnchor(mySectionByIdMap.values()));
     return myCardPanel;
   }
 
@@ -64,10 +64,6 @@ class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionProvider>
       cardLayout.show(myCardPanel, key.getId());
       mySelectedKey = key;
     }
-  }
-
-  public T getSelectedKey() {
-    return mySelectedKey;
   }
 
   private RunSettingsSection getSelectedRunSettingsSection() {

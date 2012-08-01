@@ -79,6 +79,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
     @Override
     protected JComponent createComponent(@NotNull CreationContext creationContext) {
       JPanel panel = new JPanel(new GridBagLayout());
+      myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
       panel.add(myLabel, new GridBagConstraints(
         0, 0,
         1, 1,

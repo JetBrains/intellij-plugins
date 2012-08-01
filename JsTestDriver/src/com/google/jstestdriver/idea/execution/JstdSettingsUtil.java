@@ -2,15 +2,12 @@ package com.google.jstestdriver.idea.execution;
 
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.idea.config.JstdConfigFileType;
-import com.google.jstestdriver.idea.execution.generator.JstdConfigGenerator;
-import com.google.jstestdriver.idea.execution.settings.JstdConfigType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
@@ -21,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -43,28 +39,13 @@ public class JstdSettingsUtil {
         res = collectJstdConfigFilesInDirectory(project, virtualFile);
       }
     } else {
-      File configFile = extractConfigFile(project, runSettings);
-      VirtualFile configVirtualFile = null;
-      if (configFile != null) {
-        configVirtualFile = LocalFileSystem.getInstance().findFileByIoFile(configFile);
-      }
+      File configFile = new File(runSettings.getConfigFile());
+      VirtualFile configVirtualFile = VfsUtil.findFileByIoFile(configFile, false);
       if (configVirtualFile != null) {
         res = Collections.singletonList(configVirtualFile);
       }
     }
     return res;
-  }
-
-  @Nullable
-  private static File extractConfigFile(@NotNull Project project, @NotNull JstdRunSettings runSettings) {
-    if (runSettings.getTestType() == TestType.CONFIG_FILE || runSettings.getConfigType() == JstdConfigType.FILE_PATH) {
-      return new File(runSettings.getConfigFile());
-    }
-    try {
-      return JstdConfigGenerator.INSTANCE.generateTempConfig(project, new File(runSettings.getJsFilePath()));
-    } catch (IOException ignored) {
-    }
-    return null;
   }
 
   @NotNull

@@ -2,6 +2,7 @@ package com.google.jstestdriver.idea.execution.settings.ui;
 
 import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
+import com.google.jstestdriver.idea.util.SwingUtils;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,12 +15,13 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-class ConfigFileRunSettingsSection extends AbstractRunSettingsSection {
+public class ConfigFileRunSettingsSection extends AbstractRunSettingsSection {
 
-  private TextFieldWithBrowseButton myConfigFileTextFieldWithBrowseButton;
+  private final TextFieldWithBrowseButton myConfigFileTextFieldWithBrowseButton;
   private final JBLabel myLabel = new JBLabel("Configuration file:");
 
   ConfigFileRunSettingsSection() {
+    myConfigFileTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
     setAnchor(myLabel);
   }
 
@@ -35,20 +37,21 @@ class ConfigFileRunSettingsSection extends AbstractRunSettingsSection {
 
   @NotNull
   @Override
-  public JComponent createComponent(@NotNull CreationContext creationContext) {
+  protected JComponent createComponent(@NotNull CreationContext creationContext) {
     JPanel panel = new JPanel(new GridBagLayout());
     {
       GridBagConstraints c = new GridBagConstraints(
           0, 0,
           1, 1,
           0.0, 0.0,
-          GridBagConstraints.WEST,
+          GridBagConstraints.EAST,
           GridBagConstraints.NONE,
           new Insets(UIUtil.DEFAULT_VGAP, 0, 0, UIUtil.DEFAULT_HGAP),
           0, 0
       );
       myLabel.setDisplayedMnemonic('C');
-      myLabel.setLabelFor(myConfigFileTextFieldWithBrowseButton);
+      myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+      myLabel.setLabelFor(myConfigFileTextFieldWithBrowseButton.getTextField());
       panel.add(myLabel, c);
     }
     {
@@ -61,7 +64,6 @@ class ConfigFileRunSettingsSection extends AbstractRunSettingsSection {
           new Insets(UIUtil.DEFAULT_VGAP, 0, 0, 0),
           0, 0
       );
-      myConfigFileTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
       myConfigFileTextFieldWithBrowseButton.addBrowseFolderListener(
           "Select JsTestDriver configuration file",
           null,
@@ -79,18 +81,7 @@ class ConfigFileRunSettingsSection extends AbstractRunSettingsSection {
       );
       panel.add(myConfigFileTextFieldWithBrowseButton, c);
     }
-    {
-      GridBagConstraints c = new GridBagConstraints(
-          0, 1,
-          2, 1,
-          1.0, 1.0,
-          GridBagConstraints.WEST,
-          GridBagConstraints.BOTH,
-          new Insets(0, 0, 0, 0),
-          0, 0
-      );
-      panel.add(new JPanel(), c);
-    }
+    SwingUtils.addGreedyBottomRow(panel);
     return panel;
   }
 
@@ -99,4 +90,5 @@ class ConfigFileRunSettingsSection extends AbstractRunSettingsSection {
     super.setAnchor(anchor);
     myLabel.setAnchor(anchor);
   }
+
 }

@@ -10,7 +10,6 @@ import java.util.List;
 public class JstdRunSettings {
 
   private final TestType myTestType;
-  private final JstdConfigType myJstdConfigType;
   private final String myConfigFile;
   private final String myDirectory;
   private final String myJSFilePath;
@@ -22,7 +21,6 @@ public class JstdRunSettings {
 
   public JstdRunSettings(
       @NotNull TestType testType,
-      @NotNull JstdConfigType jstdConfigType,
       @NotNull String configFile,
       @NotNull String directory,
       @NotNull String jsFilePath,
@@ -33,7 +31,6 @@ public class JstdRunSettings {
       @NotNull ImmutableList<String> filesExcludedFromCoverage
   ) {
     myTestType = testType;
-    myJstdConfigType = jstdConfigType;
     myConfigFile = configFile;
     myDirectory = directory;
     myJSFilePath = jsFilePath;
@@ -47,10 +44,6 @@ public class JstdRunSettings {
   @NotNull
   public TestType getTestType() {
     return myTestType;
-  }
-
-  public JstdConfigType getConfigType() {
-    return myJstdConfigType;
   }
 
   @NotNull
@@ -102,7 +95,6 @@ public class JstdRunSettings {
   public static class Builder {
 
     private TestType myTestType = TestType.CONFIG_FILE;
-    private JstdConfigType myConfigType = JstdConfigType.GENERATED;
     private String myConfigFile = "";
     private String myDirectory = "";
     private String myJSFilePath = "";
@@ -117,7 +109,6 @@ public class JstdRunSettings {
 
     public Builder(JstdRunSettings runSettings) {
       myTestType = runSettings.getTestType();
-      myConfigType = runSettings.getConfigType();
       myConfigFile = runSettings.getConfigFile();
       myDirectory = runSettings.getDirectory();
       myJSFilePath = runSettings.getJsFilePath();
@@ -130,10 +121,6 @@ public class JstdRunSettings {
     public Builder setTestType(@NotNull TestType testType) {
       myTestType = testType;
       return this;
-    }
-
-    public void setConfigType(@NotNull JstdConfigType jstdConfigType) {
-      myConfigType = jstdConfigType;
     }
 
     public Builder setConfigFile(@NotNull String configFile) {
@@ -180,7 +167,6 @@ public class JstdRunSettings {
     public JstdRunSettings build() {
       return new JstdRunSettings(
         myTestType,
-        myConfigType,
         myConfigFile,
         myDirectory,
         myJSFilePath,
@@ -192,4 +178,5 @@ public class JstdRunSettings {
       );
     }
   }
+
 }

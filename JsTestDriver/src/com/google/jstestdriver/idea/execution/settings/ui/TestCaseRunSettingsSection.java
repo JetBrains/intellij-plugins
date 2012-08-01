@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.execution.settings.ui;
 
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
+import com.google.jstestdriver.idea.util.SwingUtils;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.UIUtil;
@@ -10,28 +11,56 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-class TestCaseRunSettingsSection extends JsFileRunSettingsSection {
-  private JTextField myTestCaseNameTextField;
-  private JBLabel myLabel;
+public class TestCaseRunSettingsSection extends AbstractRunSettingsSection {
+
+  private final JsFileRunSettingsSection myJsFileRunSettingsSection;
+  private final JTextField myTestCaseNameTextField;
+  private final JBLabel myLabel;
 
   TestCaseRunSettingsSection() {
-    super();
-    if (myLabel == null) {
-      myLabel = new JBLabel("Case:");
-    }
-    setAnchor(super.getAnchor());
+    myJsFileRunSettingsSection = new JsFileRunSettingsSection();
+    myTestCaseNameTextField = new JTextField();
+    myLabel = new JBLabel("Case:");
+    setAnchor(SwingUtils.getWiderComponent(myLabel, myJsFileRunSettingsSection));
   }
 
   @Override
-  protected JComponent getAdditionalComponent() {
+  public void resetFrom(@NotNull JstdRunSettings runSettings) {
+    myJsFileRunSettingsSection.resetFrom(runSettings);
+    myTestCaseNameTextField.setText(runSettings.getTestCaseName());
+  }
+
+  @Override
+  public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
+    myJsFileRunSettingsSection.applyTo(runSettingsBuilder);
+    runSettingsBuilder.setTestCaseName(ObjectUtils.notNull(myTestCaseNameTextField.getText(), ""));
+  }
+
+  @NotNull
+  @Override
+  protected JComponent createComponent(@NotNull CreationContext creationContext) {
     JPanel panel = new JPanel(new GridBagLayout());
-    myLabel.setDisplayedMnemonic('e');
     {
       GridBagConstraints c = new GridBagConstraints(
         0, 0,
+        2, 1,
+        1.0, 0.0,
+        GridBagConstraints.NORTHWEST,
+        GridBagConstraints.HORIZONTAL,
+        new Insets(0, 0, 0, 0),
+        0, 0
+      );
+      JComponent jsFileComponent = myJsFileRunSettingsSection.getComponent(creationContext);
+      panel.add(jsFileComponent, c);
+    }
+    {
+      myLabel.setDisplayedMnemonic('e');
+      myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+      GridBagConstraints c = new GridBagConstraints(
+        0, 1,
         1, 1,
         0.0, 0.0,
-        GridBagConstraints.WEST,
+        GridBagConstraints.EAST,
         GridBagConstraints.NONE,
         new Insets(UIUtil.DEFAULT_VGAP, 0, 0, UIUtil.DEFAULT_HGAP),
         0, 0
@@ -40,40 +69,28 @@ class TestCaseRunSettingsSection extends JsFileRunSettingsSection {
     }
     {
       GridBagConstraints c = new GridBagConstraints(
-        1, 0,
         1, 1,
-        1.0, 1.0,
+        1, 1,
+        1.0, 0.0,
         GridBagConstraints.WEST,
         GridBagConstraints.HORIZONTAL,
         new Insets(UIUtil.DEFAULT_VGAP, 0, 0, 0),
         0, 0
       );
-      myTestCaseNameTextField = new JTextField();
       panel.add(myTestCaseNameTextField, c);
       myLabel.setLabelFor(myTestCaseNameTextField);
     }
-    return panel;
 
+    SwingUtils.addGreedyBottomRow(panel);
+
+    return panel;
   }
 
   @Override
   public void setAnchor(@Nullable JComponent anchor) {
     super.setAnchor(anchor);
-    if (myLabel == null) {
-      myLabel = new JBLabel("Case:");
-    }
     myLabel.setAnchor(anchor);
+    myJsFileRunSettingsSection.setAnchor(anchor);
   }
 
-  @Override
-  public void resetFrom(@NotNull JstdRunSettings runSettings) {
-    super.resetFrom(runSettings);
-    myTestCaseNameTextField.setText(runSettings.getTestCaseName());
-  }
-
-  @Override
-  public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
-    super.applyTo(runSettingsBuilder);
-    runSettingsBuilder.setTestCaseName(ObjectUtils.notNull(myTestCaseNameTextField.getText(), ""));
-  }
 }

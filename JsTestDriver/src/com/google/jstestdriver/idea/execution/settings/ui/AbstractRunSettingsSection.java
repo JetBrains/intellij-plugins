@@ -8,10 +8,10 @@ import org.jetbrains.annotations.Nullable;
 /**
  * All methods should be called on EDT.
  */
-abstract class AbstractRunSettingsSection implements RunSettingsSection {
+public abstract class AbstractRunSettingsSection implements RunSettingsSection {
 
   private JComponent myComponent;
-  protected JComponent myAnchor;
+  private JComponent myAnchor;
 
   @NotNull
   @Override
@@ -32,6 +32,6 @@ abstract class AbstractRunSettingsSection implements RunSettingsSection {
 
   @Override
   public void setAnchor(@Nullable JComponent anchor) {
-    this.myAnchor = anchor;
+    myAnchor = anchor;
   }
 }

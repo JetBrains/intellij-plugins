@@ -29,13 +29,14 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection {
+public class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection {
 
-  private TextFieldWithBrowseButton myDirectoryTextFieldWithBrowseButton;
+  private final TextFieldWithBrowseButton myDirectoryTextFieldWithBrowseButton;
   private final JBLabel myLabel;
 
   AllInDirectoryRunSettingsSection() {
-    myLabel = new JBLabel("Directory: ");
+    myDirectoryTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
+    myLabel = new JBLabel("Directory:");
     setAnchor(myLabel);
   }
 
@@ -55,18 +56,18 @@ class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection {
     JPanel panel = new JPanel(new GridBagLayout());
 
     myLabel.setDisplayedMnemonic('D');
-    myLabel.setLabelFor(myDirectoryTextFieldWithBrowseButton);
+    myLabel.setLabelFor(myDirectoryTextFieldWithBrowseButton.getTextField());
+    myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
     panel.add(myLabel, new GridBagConstraints(
       0, 0,
       1, 1,
       0.0, 0.0,
-      GridBagConstraints.WEST,
+      GridBagConstraints.EAST,
       GridBagConstraints.NONE,
       new Insets(UIUtil.DEFAULT_VGAP, 0, 0, UIUtil.DEFAULT_HGAP),
       0, 0
     ));
 
-    myDirectoryTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
     myDirectoryTextFieldWithBrowseButton.addBrowseFolderListener(
       "Select directory",
       "All JsTestDriver configuration files in this folder will be executed",
@@ -79,7 +80,7 @@ class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection {
       1.0, 0.0,
       GridBagConstraints.WEST,
       GridBagConstraints.HORIZONTAL,
-      new Insets(UIUtil.DEFAULT_VGAP, 0, UIUtil.DEFAULT_VGAP, 0),
+      new Insets(UIUtil.DEFAULT_VGAP, 0, 0, 0),
       0, 0
     ));
 
@@ -90,7 +91,7 @@ class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection {
       1.0, 1.0,
       GridBagConstraints.WEST,
       GridBagConstraints.BOTH,
-      new Insets(5, 0, 0, 0),
+      new Insets(UIUtil.DEFAULT_VGAP + 5, 0, 0, 0),
       0, 0
     ));
 

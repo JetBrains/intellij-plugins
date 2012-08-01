@@ -1,6 +1,5 @@
 package com.google.jstestdriver.idea.execution;
 
-import com.google.jstestdriver.idea.execution.settings.JstdConfigType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
@@ -78,9 +77,7 @@ public class JstdRunConfigurationVerifier {
   }
 
   private static void verifyJSFileType(JstdRunSettings runSettings) throws RuntimeConfigurationError {
-    if (runSettings.getConfigType() == JstdConfigType.FILE_PATH) {
-      verifyConfigFile(runSettings);
-    }
+    verifyConfigFile(runSettings);
     verifyJSFilePath(runSettings);
   }
 

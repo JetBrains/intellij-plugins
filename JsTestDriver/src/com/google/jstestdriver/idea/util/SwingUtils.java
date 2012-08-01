@@ -1,8 +1,10 @@
 package com.google.jstestdriver.idea.util;
 
+import com.intellij.ui.PanelWithAnchor;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -71,4 +73,30 @@ public class SwingUtils {
     BufferedImage greyImage = op.filter(originalImage, null);
     return new ImageIcon(greyImage);
   }
+
+  public static void addGreedyBottomRow(@NotNull JPanel gridBagPanel) {
+      GridBagConstraints c = new GridBagConstraints(
+        0, GridBagConstraints.RELATIVE,
+        GridBagConstraints.REMAINDER, 1,
+        1.0, 1.0,
+        GridBagConstraints.CENTER,
+        GridBagConstraints.BOTH,
+        new Insets(0, 0, 0, 0),
+        0, 0
+      );
+      gridBagPanel.add(new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)), c);
+  }
+
+  @NotNull
+  public static JComponent getWiderComponent(@NotNull JComponent anchor, @NotNull PanelWithAnchor panelWithAnchor) {
+    JComponent panelAnchor = panelWithAnchor.getAnchor();
+    if (panelAnchor == null) {
+      return anchor;
+    }
+    if (panelAnchor.getPreferredSize().width < anchor.getPreferredSize().width) {
+      return anchor;
+    }
+    return panelAnchor;
+  }
+
 }

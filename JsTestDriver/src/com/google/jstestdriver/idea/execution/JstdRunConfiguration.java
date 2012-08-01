@@ -49,10 +49,10 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
   private @NotNull JstdRunSettings myRunSettings = new JstdRunSettings.Builder().build();
   private volatile String myGeneratedName;
 
-  public JstdRunConfiguration(Project project,
-                              ConfigurationFactory jsTestDriverConfigurationFactory,
-                              String pluginName) {
-    super(project, jsTestDriverConfigurationFactory, pluginName);
+  public JstdRunConfiguration(@Nullable Project project,
+                              @NotNull ConfigurationFactory jsTestDriverConfigurationFactory,
+                              @NotNull String configurationTypeName) {
+    super(project, jsTestDriverConfigurationFactory, configurationTypeName);
   }
 
   @Override

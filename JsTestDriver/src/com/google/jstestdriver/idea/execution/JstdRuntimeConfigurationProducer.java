@@ -5,7 +5,6 @@ import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
 import com.google.jstestdriver.idea.config.JstdTestFilePathIndex;
-import com.google.jstestdriver.idea.execution.settings.JstdConfigType;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
@@ -150,9 +149,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
               JstdRunConfiguration bestRunConfiguration = ObjectUtils.tryCast(bestRaCSettings.getConfiguration(), JstdRunConfiguration.class);
               if (bestRunConfiguration != null) {
                 JstdRunSettings bestRunSettings = bestRunConfiguration.getRunSettings();
-                if (bestRunSettings.getConfigType() == JstdConfigType.GENERATED) {
-                  bestRaCSettings = candidateRaCSettings;
-                } else if (!new File(bestRunSettings.getConfigFile()).isFile()) {
+                if (!new File(bestRunSettings.getConfigFile()).isFile()) {
                   bestRaCSettings = candidateRaCSettings;
                 }
               }
@@ -228,7 +225,6 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       }
       JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
       builder.setTestType(TestType.JS_FILE);
-      builder.setConfigType(JstdConfigType.FILE_PATH);
       List<VirtualFile> jstdConfigFiles = JstdTestFilePathIndex.findConfigFilesInProject(virtualFile, project);
       if (jstdConfigFiles.size() == 1) {
         builder.setConfigFile(jstdConfigFiles.get(0).getPath());
@@ -300,7 +296,6 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
         JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
         builder.setJSFilePath(virtualFile.getPath());
         builder.setTestCaseName(jstdRunElement.getTestCaseName());
-        builder.setConfigType(JstdConfigType.FILE_PATH);
         List<VirtualFile> jstdConfigs = JstdTestFilePathIndex.findConfigFilesInProject(virtualFile, project);
         if (jstdConfigs.size() == 1) {
           builder.setConfigFile(jstdConfigs.get(0).getPath());
