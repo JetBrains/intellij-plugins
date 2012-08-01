@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.plugins.cucumber.inspections.ui.CreateStepDefinitionFileDialog">
+  <grid id="27dc6" binding="myContentPanel" layout-manager="FormLayout">
+    <rowspec value="center:25px:noGrow"/>
+    <rowspec value="top:4dlu:noGrow"/>
+    <rowspec value="center:max(d;4px):noGrow"/>
+    <colspec value="fill:68px:noGrow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="fill:max(p;100px):grow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="fill:57px:noGrow"/>
+    <colspec value="left:4dlu:noGrow"/>
+    <colspec value="fill:max(d;4px):noGrow"/>
+    <constraints>
+      <xy x="20" y="20" width="317" height="53"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="52eda" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="44" height="25"/>
+          </grid>
+          <forms/>
+        </constraints>
+        <properties>
+          <horizontalAlignment value="10"/>
+          <labelFor value="493c5"/>
+          <text resource-bundle="org/jetbrains/plugins/cucumber/CucumberBundle" key="cucumber.quick.fix.create.step.choose.new.file.dialog.label.file.name"/>
+        </properties>
+      </component>
+      <component id="493c5" class="javax.swing.JTextField" binding="myFileNameTextField">
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="25"/>
+          </grid>
+          <forms defaultalign-horz="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="87b3a" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="29" height="25"/>
+          </grid>
+          <forms/>
+        </constraints>
+        <properties>
+          <labelFor value="84ccc"/>
+          <text resource-bundle="org/jetbrains/plugins/cucumber/CucumberBundle" key="cucumber.quick.fix.create.step.choose.new.file.dialog.label.file.type"/>
+        </properties>
+      </component>
+      <component id="84ccc" class="javax.swing.JComboBox" binding="myFileTypeCombobox">
+        <constraints>
+          <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="33" height="25"/>
+          </grid>
+          <forms/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="e76a8" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myDirectoryTextField">
+        <constraints>
+          <grid row="2" column="2" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <forms defaultalign-horz="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="64c39" class="javax.swing.JLabel" binding="myDirectoryLabel">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
+            <preferred-size width="44" height="14"/>
+          </grid>
+          <forms/>
+        </constraints>
+        <properties>
+          <text resource-bundle="org/jetbrains/plugins/cucumber/CucumberBundle" key="cucumber.quick.fix.create.step.choose.new.file.dialog.label.file.location"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

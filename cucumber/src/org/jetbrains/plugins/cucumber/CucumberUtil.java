@@ -20,6 +20,7 @@ public class CucumberUtil {
   public static final char ESCAPE_SLASH = '\\';
   public static final String PREFIX_CHAR = "^";
   public static final String SUFFIX_CHAR = "$";
+  public static String STEP_DEFINITIONS_DIR_NAME = "step_definitions";
 
   private static boolean isAlphabetCharOrSpace(char c) {
     return 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || c == ' ';

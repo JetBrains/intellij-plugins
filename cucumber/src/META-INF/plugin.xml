@@ -36,6 +36,10 @@
     <projectService serviceInterface="org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex"
                     serviceImplementation="org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex"/>
     <psi.referenceContributor implementation="org.jetbrains.plugins.cucumber.steps.reference.CucumberReferenceContributor"/>
+
+    <localInspection language="Gherkin" shortName="CucumberUndefinedStep" bundle="org.jetbrains.plugins.ruby.RBundle"
+                     key="inspection.undefined.step.name" groupKey="inspection.group.cucumer.name" enabledByDefault="true" level="WARNING"
+                     implementationClass="org.jetbrains.plugins.cucumber.inspections.CucumberStepInspection"/>
   </extensions>
 
   <extensionPoints>

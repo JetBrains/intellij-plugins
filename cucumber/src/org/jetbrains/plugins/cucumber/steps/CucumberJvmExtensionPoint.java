@@ -20,7 +20,6 @@ import java.util.Set;
  * Date: 12/13/10
  */
 public interface CucumberJvmExtensionPoint {
-
   ExtensionPointName<CucumberJvmExtensionPoint> EP_NAME =
     ExtensionPointName.create("org.jetbrains.plugins.cucumber.steps.cucumberJvmExtensionPoint");
 
