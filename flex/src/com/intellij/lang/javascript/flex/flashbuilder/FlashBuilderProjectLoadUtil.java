@@ -65,6 +65,8 @@ public class FlashBuilderProjectLoadUtil {
   private static final String MODULES_ELEMENT = "modules";
   private static final String MODULE_ELEMENT = "module";
   private static final String DEST_PATH_ATTR = "destPath";
+  private static final String OPTIMIZE_ATTR = "optimize";
+  private static final String APPLICATION_ATTR = "application";
   private static final String SOURCE_PATH_ATTR = "sourcePath";
   private static final String BUILD_CSS_FILES_ELEMENT = "buildCSSFiles";
   private static final String BUILD_CSS_FILE_ENTRY_ELEMENT = "buildCSSFileEntry";
@@ -493,10 +495,12 @@ public class FlashBuilderProjectLoadUtil {
     for (final Element modulesElement : ((Iterable<Element>)actionScriptPropertiesElement.getChildren(MODULES_ELEMENT))) {
       //noinspection unchecked
       for (final Element moduleElement : ((Iterable<Element>)modulesElement.getChildren(MODULE_ELEMENT))) {
-        final String sourcePath = moduleElement.getAttributeValue(SOURCE_PATH_ATTR);
-        final String destPath = moduleElement.getAttributeValue(DEST_PATH_ATTR);
-        if (!StringUtil.isEmpty(sourcePath) && !StringUtil.isEmpty(DEST_PATH_ATTR)) {
-          project.addModule(FileUtil.toSystemIndependentName(sourcePath), FileUtil.toSystemIndependentName(destPath));
+        final String mainClassPath = moduleElement.getAttributeValue(SOURCE_PATH_ATTR);
+        final String outputPath = moduleElement.getAttributeValue(DEST_PATH_ATTR);
+        final String optimize = moduleElement.getAttributeValue(OPTIMIZE_ATTR);
+        final String optimizeFor = moduleElement.getAttributeValue(APPLICATION_ATTR);
+        if (!StringUtil.isEmpty(mainClassPath) && !StringUtil.isEmpty(DEST_PATH_ATTR) && !StringUtil.isEmpty(optimizeFor)) {
+          project.addModule(new FlashBuilderProject.FBRLMInfo(mainClassPath, outputPath, "true".equalsIgnoreCase(optimize), optimizeFor));
         }
       }
     }

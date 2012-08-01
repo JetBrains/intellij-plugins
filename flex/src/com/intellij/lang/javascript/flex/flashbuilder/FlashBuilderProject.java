@@ -35,8 +35,22 @@ public class FlashBuilderProject {
   private boolean myUseHtmlWrapper = false;
   private Map<String, Collection<String>> myLibraryPathsAndSources = new LinkedHashMap<String, Collection<String>>();
   private Collection<Pair<String, String>> myNamespacesAndManifestPaths = new ArrayList<Pair<String, String>>(1);
-  private Collection<Pair<String, String>> myModules = new ArrayList<Pair<String, String>>();
+  private Collection<FBRLMInfo> myModules = new ArrayList<FBRLMInfo>();
   private Collection<String> myCssFilesToCompile = new ArrayList<String>();
+
+  public static class FBRLMInfo {
+    public final String MAIN_CLASS_PATH;
+    public final String OUTPUT_PATH;
+    public final boolean OPTIMIZE;
+    public final String OPTIMIZE_FOR;
+
+    public FBRLMInfo(final String mainClassPath, final String outputPath, final boolean optimize, final String optimizeFor) {
+      this.MAIN_CLASS_PATH = mainClassPath;
+      this.OUTPUT_PATH = outputPath;
+      this.OPTIMIZE = optimize;
+      this.OPTIMIZE_FOR = optimizeFor;
+    }
+  }
 
   FlashBuilderProject() {
   }
@@ -242,12 +256,14 @@ public class FlashBuilderProject {
     return myNamespacesAndManifestPaths;
   }
 
-  public void addModule(final String sourcePath, final String destPath) {
-    checkIfPathMacroUsed(sourcePath);
-    myModules.add(Pair.create(sourcePath, destPath));
+  public void addModule(final FBRLMInfo rlmInfo) {
+    checkIfPathMacroUsed(rlmInfo.MAIN_CLASS_PATH);
+    checkIfPathMacroUsed(rlmInfo.OUTPUT_PATH);
+    checkIfPathMacroUsed(rlmInfo.OPTIMIZE_FOR);
+    myModules.add(rlmInfo);
   }
 
-  public Collection<Pair<String, String>> getModules() {
+  public Collection<FBRLMInfo> getModules() {
     return myModules;
   }
 

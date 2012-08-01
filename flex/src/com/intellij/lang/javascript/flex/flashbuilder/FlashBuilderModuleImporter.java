@@ -238,6 +238,9 @@ public class FlashBuilderModuleImporter {
   private void setupOtherAppsAndModules(final ModuleRootModel rootModel,
                                         final ModifiableFlexIdeBuildConfiguration mainBC,
                                         final FlashBuilderProject fbProject) {
+    final Collection<ModifiableFlexIdeBuildConfiguration> allApps = new ArrayList<ModifiableFlexIdeBuildConfiguration>();
+    allApps.add(mainBC);
+
     for (String mainClass : fbProject.getApplicationClassNames()) {
       final ModifiableFlexIdeBuildConfiguration bc = myFlexConfigEditor.copyConfiguration(mainBC, mainBC.getNature());
       final String shortClassName = StringUtil.getShortName(mainClass);
@@ -258,42 +261,34 @@ public class FlashBuilderModuleImporter {
       }
 
       FlexModuleBuilder.createRunConfiguration(rootModel.getModule(), bc.getName());
+
+      allApps.add(bc);
     }
 
-    final Collection<ModifiableFlexIdeBuildConfiguration> rlms = new ArrayList<ModifiableFlexIdeBuildConfiguration>();
-
-    for (final Pair<String, String> sourcePathAndDestPath : fbProject.getModules()) {
-      final ModifiableFlexIdeBuildConfiguration bc = myFlexConfigEditor.copyConfiguration(mainBC, mainBC.getNature());
-      bc.setCssFilesToCompile(Collections.<String>emptyList());
-      final String mainClass = getModuleClassName(fbProject, sourcePathAndDestPath.first, rootModel.getSourceRootUrls());
-      final String shortName = StringUtil.getShortName(mainClass);
-      bc.setName(shortName);
-      bc.setOutputType(OutputType.RuntimeLoadedModule);
-      //bc.setOptimizeFor(); todo
-      bc.setMainClass(mainClass);
-      bc.setOutputFileName(PathUtil.getFileName(sourcePathAndDestPath.second));
-      final String parentPath = PathUtil.getParentPath(sourcePathAndDestPath.second);
-      bc.setOutputFolder(bc.getOutputFolder() + (parentPath.isEmpty() ? "" : ("/" + parentPath)));
-
-      rlms.add(bc);
+    if (BCUtils.canHaveRLMsAndRuntimeStylesheets(mainBC)) {
+      setupModules(rootModel, allApps, fbProject);
     }
+  }
 
-    if (!rlms.isEmpty()) {
-      int indexForBCDependency = 0;
-      for (ModifiableDependencyEntry entry : mainBC.getDependencies().getModifiableEntries()) {
-        if (entry instanceof BuildConfigurationEntry) {
-          indexForBCDependency++;
-        }
-        else {
-          break;
+  private void setupModules(final ModuleRootModel rootModel,
+                            final Collection<ModifiableFlexIdeBuildConfiguration> apps,
+                            final FlashBuilderProject fbProject) {
+    for (final FlashBuilderProject.FBRLMInfo rlm : fbProject.getModules()) {
+      ModifiableFlexIdeBuildConfiguration hostApp = apps.iterator().next();
+      if (rlm.OPTIMIZE) {
+        final String hostAppMainClass = getMainClassFqn(fbProject, rlm.OPTIMIZE_FOR, rootModel.getSourceRootUrls());
+        for (ModifiableFlexIdeBuildConfiguration appBC : apps) {
+          if (hostAppMainClass.equals(appBC.getMainClass())) {
+            hostApp = appBC;
+            break;
+          }
         }
       }
 
-      for (ModifiableFlexIdeBuildConfiguration rlm : rlms) {
-        final ModifiableBuildConfigurationEntry bcEntry = myFlexConfigEditor.createBcEntry(mainBC.getDependencies(), rlm, null);
-        bcEntry.getDependencyType().setLinkageType(LinkageType.LoadInRuntime);
-        mainBC.getDependencies().getModifiableEntries().add(indexForBCDependency, bcEntry);
-      }
+      final Collection<FlexIdeBuildConfiguration.RLMInfo> rlms = new ArrayList<FlexIdeBuildConfiguration.RLMInfo>(hostApp.getRLMs());
+      final String rlmMainClass = getMainClassFqn(fbProject, rlm.MAIN_CLASS_PATH, rootModel.getSourceRootUrls());
+      rlms.add(new FlexIdeBuildConfiguration.RLMInfo(rlmMainClass, rlm.OUTPUT_PATH, rlm.OPTIMIZE));
+      hostApp.setRLMs(rlms);
     }
   }
 
@@ -303,10 +298,10 @@ public class FlashBuilderModuleImporter {
            : fbProject.getName();
   }
 
-  private String getModuleClassName(final FlashBuilderProject flashBuilderProject,
-                                    final String moduleSourcePath,
-                                    final String[] sourceRootUrls) {
-    final String mainClassPathUrl = VfsUtil.pathToUrl(getAbsolutePathWithLinksHandled(flashBuilderProject, moduleSourcePath));
+  private String getMainClassFqn(final FlashBuilderProject flashBuilderProject,
+                                 final String mainClassPath,
+                                 final String[] sourceRootUrls) {
+    final String mainClassPathUrl = VfsUtilCore.pathToUrl(getAbsolutePathWithLinksHandled(flashBuilderProject, mainClassPath));
     for (final String sourceRootUrl : sourceRootUrls) {
       if (mainClassPathUrl.startsWith(sourceRootUrl + "/")) {
         return FlashBuilderProjectLoadUtil.getClassName(mainClassPathUrl.substring(sourceRootUrl.length() + 1));
@@ -317,7 +312,7 @@ public class FlashBuilderModuleImporter {
   }
 
   private void setupRoots(final ModifiableRootModel rootModel, final FlashBuilderProject fbProject) {
-    final String mainContentEntryUrl = VfsUtil.pathToUrl(fbProject.getProjectRootPath());
+    final String mainContentEntryUrl = VfsUtilCore.pathToUrl(fbProject.getProjectRootPath());
     final ContentEntry mainContentEntry = rootModel.addContentEntry(mainContentEntryUrl);
     final Collection<ContentEntry> otherContentEntries = new ArrayList<ContentEntry>();
 
@@ -355,7 +350,7 @@ public class FlashBuilderModuleImporter {
                                    final Collection<ContentEntry> otherContentEntries,
                                    final String rawSourcePath) {
     final String sourcePath = getAbsolutePathWithLinksHandled(fbProject, rawSourcePath);
-    final String sourceUrl = VfsUtil.pathToUrl(sourcePath);
+    final String sourceUrl = VfsUtilCore.pathToUrl(sourcePath);
     if (FileUtil.isAncestor(new File(mainContentEntryUrl), new File(sourceUrl), false)) {
       mainContentEntry.addSourceFolder(sourceUrl, false);
     }
@@ -400,11 +395,11 @@ public class FlashBuilderModuleImporter {
                                        OrderRootType.CLASSES);
       }
       else {
-        libraryModifiableModel.addJarDirectory(VfsUtil.pathToUrl(libraryPath), false);
+        libraryModifiableModel.addJarDirectory(VfsUtilCore.pathToUrl(libraryPath), false);
       }
 
       for (final String librarySourcePath : fbProject.getLibrarySourcePaths(libraryPathOrig)) {
-        libraryModifiableModel.addRoot(VfsUtil.pathToUrl(getAbsolutePathWithLinksHandled(fbProject, librarySourcePath)),
+        libraryModifiableModel.addRoot(VfsUtilCore.pathToUrl(getAbsolutePathWithLinksHandled(fbProject, librarySourcePath)),
                                        OrderRootType.SOURCES);
       }
 
