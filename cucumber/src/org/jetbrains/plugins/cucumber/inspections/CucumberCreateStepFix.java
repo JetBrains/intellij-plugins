@@ -85,7 +85,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
           assert file != null;
 
           return CucumberStepsIndex.getInstance(value.getProject()).getExtensionMap().get(file.getFileType()).getStepDefinitionCreator()
-            .getStepDefinitionFilePath(file);
+            .getStepDefinitionFilePath(value);
         }
 
         @Override

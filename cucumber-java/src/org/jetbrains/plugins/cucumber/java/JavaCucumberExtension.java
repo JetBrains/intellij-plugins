@@ -80,7 +80,13 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
   }
 
   @Override
-  public boolean isStepDefinitionsRoot(@NotNull VirtualFile file) {
+  public boolean isStepDefinitionsRoot(@NotNull VirtualFile file, @NotNull final Module module) {
+    //final ContentEntry[] contentEntries = ModuleRootManager.getInstance(module).getContentEntries();
+    //for (final ContentEntry contentEntry : contentEntries) {
+    //  final SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
+    //}
+    //final VirtualFile[] roots = ModuleRootManager.getInstance(module).getContentRoots();
+    //
     return file.isDirectory();
   }
 

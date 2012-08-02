@@ -1,7 +1,6 @@
 package org.jetbrains.plugins.cucumber;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -40,5 +39,5 @@ public interface StepDefinitionCreator {
   PsiDirectory getDefaultStepDefinitionFolder(@NotNull final GherkinStep step);
 
   @NotNull
-  public String getStepDefinitionFilePath(@NotNull final VirtualFile file);
+  public String getStepDefinitionFilePath(@NotNull final PsiFile file);
 }

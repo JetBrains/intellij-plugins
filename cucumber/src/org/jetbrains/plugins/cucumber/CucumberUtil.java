@@ -16,11 +16,9 @@ public class CucumberUtil {
   public static final char LEFT_BRACE = '{';
   public static final char RIGHT_BRACE = '}';
 
-
   public static final char ESCAPE_SLASH = '\\';
   public static final String PREFIX_CHAR = "^";
   public static final String SUFFIX_CHAR = "$";
-
 
   private static boolean isAlphabetCharOrSpace(char c) {
     return 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || c == ' ';
@@ -33,8 +31,7 @@ public class CucumberUtil {
    * @param wordList word from cucumber step call
    * @return true if pattern could by found by @param word
    */
-  public static boolean matches(@Nullable Pattern pattern, @NotNull final String word) {
-    // ToDo: rename
+  public static boolean isPatternRelatedToPartOfName(@Nullable Pattern pattern, @NotNull final String word) {
     if (pattern == null) {
       return false;
     }
@@ -115,6 +112,4 @@ public class CucumberUtil {
     }
     return result;
   }
-
-
 }

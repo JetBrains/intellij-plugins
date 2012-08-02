@@ -22,6 +22,7 @@ import com.intellij.util.ui.update.Update;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
 
 import java.util.*;
 
@@ -196,12 +197,11 @@ public class CucumberStepsIndex {
   }
 
   @NotNull
-  public Set<AbstractStepDefinition> findStepDefinitionByWord(final PsiFile featureFile, final String word) {
-    loadStepsFor(featureFile);
+  public Set<AbstractStepDefinition> findStepDefinitionsByPartOfName(@NotNull final String word) {
     final Set<AbstractStepDefinition> result = new HashSet<AbstractStepDefinition>();
     synchronized (myAbstractStepDefinitions) {
       for (AbstractStepDefinition stepDefinition : myAbstractStepDefinitions) {
-        if (org.jetbrains.plugins.cucumber.CucumberUtil.matches(stepDefinition.getPattern(), word)) {
+        if (CucumberUtil.isPatternRelatedToPartOfName(stepDefinition.getPattern(), word)) {
           if (!result.contains(stepDefinition)) {
             result.add(stepDefinition);
           }
@@ -211,13 +211,12 @@ public class CucumberStepsIndex {
     return result;
   }
 
-  public List<AbstractStepDefinition> findAllStepDefinition(final PsiFile featureFile, final String regexp) {
+  public List<AbstractStepDefinition> findStepDefinitionsByPattern(@NotNull final String pattern) {
     final List<AbstractStepDefinition> result = new ArrayList<AbstractStepDefinition>();
-    loadStepsFor(featureFile);
     synchronized (myAbstractStepDefinitions) {
       for (AbstractStepDefinition stepDefinition : myAbstractStepDefinitions) {
         final String elementText = stepDefinition.getElementText();
-        if (elementText != null && elementText.equals(regexp)) {
+        if (elementText != null && elementText.equals(pattern)) {
           result.add(stepDefinition);
         }
       }
@@ -231,7 +230,7 @@ public class CucumberStepsIndex {
     return definition != null ? definition.getElement() : null;
   }
 
-  public List<AbstractStepDefinition> getAllStepDefinitions(PsiFile featureFile) {
+  public List<AbstractStepDefinition> getAllStepDefinitions(@NotNull final PsiFile featureFile) {
     loadStepsFor(featureFile);
     synchronized (myAbstractStepDefinitions) {
       return new ArrayList<AbstractStepDefinition>(myAbstractStepDefinitions);
@@ -357,6 +356,7 @@ public class CucumberStepsIndex {
                                         final boolean excludeAlreadyLoadedRoots) {
     // get local steps_definitions from the same content root
     final Module module = ModuleUtil.findModuleForPsiElement(featureFile);
+    assert module != null;
     final VirtualFile contentRoot = findContentRoot(module, featureFile.getVirtualFile());
     if (contentRoot == null) {
       return;
@@ -365,7 +365,7 @@ public class CucumberStepsIndex {
       public boolean processFile(final VirtualFile stepDefsRoot) {
         boolean isStepDefRoot = false;
         for (CucumberJvmExtensionPoint extension : myExtensionList) {
-          if (extension.isStepDefinitionsRoot(stepDefsRoot)) {
+          if (extension.isStepDefinitionsRoot(stepDefsRoot, module)) {
             isStepDefRoot = true;
             break;
           }

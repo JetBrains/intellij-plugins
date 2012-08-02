@@ -1,9 +1,9 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiJavaFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
@@ -37,7 +37,10 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
 
   @NotNull
   @Override
-  public String getStepDefinitionFilePath(@NotNull VirtualFile file) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+  public String getStepDefinitionFilePath(@NotNull PsiFile file) {
+    if (file instanceof PsiJavaFile) {
+      return ((PsiJavaFile)file).getPackageName() + file.getName();
+    }
+    return file.getVirtualFile().getCanonicalPath();
   }
 }
