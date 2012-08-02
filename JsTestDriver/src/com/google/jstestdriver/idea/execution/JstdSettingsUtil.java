@@ -58,6 +58,11 @@ public class JstdSettingsUtil {
     return Lists.newArrayList(configs);
   }
 
+  public static boolean areJstdConfigFilesInProject(@NotNull Project project) {
+    GlobalSearchScope projectScope = GlobalSearchScope.projectScope(project);
+    return areJstdConfigFilesInScope(projectScope);
+  }
+
   public static boolean areJstdConfigFilesInDirectory(@NotNull Project project, @NotNull VirtualFile directory) {
     GlobalSearchScope directorySearchScope = buildDirectorySearchScope(project, directory);
     if (directorySearchScope == null) {
