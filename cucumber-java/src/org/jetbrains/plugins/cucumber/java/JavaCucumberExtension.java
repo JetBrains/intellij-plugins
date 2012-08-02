@@ -12,6 +12,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
@@ -82,17 +83,6 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
   }
 
   @Override
-  public boolean isStepDefinitionsRoot(@NotNull VirtualFile file, @NotNull final Module module) {
-    final ContentEntry[] contentEntries = ModuleRootManager.getInstance(module).getContentEntries();
-    for (final ContentEntry contentEntry : contentEntries) {
-      final SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
-    }
-    final VirtualFile[] roots = ModuleRootManager.getInstance(module).getContentRoots();
-
-    return file.isDirectory();
-  }
-
-  @Override
   public void loadStepDefinitionRootsFromLibraries(Module module,
                                                    List<PsiDirectory> newAbstractStepDefinitionsRoots,
                                                    @NotNull Set<String> processedStepDirectories) {
@@ -134,9 +124,22 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
   }
 
   @Override
-  public void findRelatedStepDefsRoots(Module module, PsiFile featureFile,
-                                       List<PsiDirectory> newAbstractStepDefinitionsRoots,
-                                       Set<String> processedStepDirectories) {
-    //To change body of implemented methods use File | Settings | File Templates.
+  public void findRelatedStepDefsRoots(@NotNull final Module module, @NotNull final PsiFile featureFile,
+                                       @NotNull final List<PsiDirectory> newStepDefinitionsRoots,
+                                       @NotNull final Set<String> processedStepDirectories) {
+
+    final ContentEntry[] contentEntries = ModuleRootManager.getInstance(module).getContentEntries();
+    for (final ContentEntry contentEntry : contentEntries) {
+      final SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
+      for (SourceFolder sf : sourceFolders) {
+        if (sf.isTestSource()) {
+          VirtualFile sfDirectory = sf.getFile();
+          if (sfDirectory != null && sfDirectory.isDirectory()) {
+            PsiDirectory sourceRoot = PsiDirectoryFactory.getInstance(module.getProject()).createDirectory(sfDirectory);
+            newStepDefinitionsRoots.add(sourceRoot);
+          }
+        }
+      }
+    }
   }
 }

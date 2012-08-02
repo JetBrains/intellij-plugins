@@ -58,8 +58,6 @@ public interface CucumberJvmExtensionPoint {
 
   void collectAllStepDefsProviders(@NotNull final List<VirtualFile> providers, @NotNull final Project project);
 
-  boolean isStepDefinitionsRoot(@NotNull final VirtualFile file, @NotNull final Module module);
-
   void loadStepDefinitionRootsFromLibraries(Module module, final List<PsiDirectory> newAbstractStepDefinitionsRoots,
                                             @NotNull final Set<String> processedStepDirectories);
 

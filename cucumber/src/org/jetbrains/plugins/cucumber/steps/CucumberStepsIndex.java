@@ -340,20 +340,22 @@ public class CucumberStepsIndex {
   }
 
   public void findRelatedStepDefsRoots(final PsiFile featureFile,
-                                       final List<PsiDirectory> newAbstractStepDefinitionsRoots,
+                                       final List<PsiDirectory> newStepDefinitionsRoots,
                                        final Set<String> processedStepDirectories) {
-    // get local steps_definitions from the same content root
+
     final Module module = ModuleUtil.findModuleForPsiElement(featureFile);
     assert module != null;
 
     for (CucumberJvmExtensionPoint extension : myExtensionList) {
-      extension.findRelatedStepDefsRoots(module, featureFile, newAbstractStepDefinitionsRoots, processedStepDirectories);
-      extension.loadStepDefinitionRootsFromLibraries(module, newAbstractStepDefinitionsRoots, processedStepDirectories);
+      // get local steps_definitions from the same content root
+      extension.findRelatedStepDefsRoots(module, featureFile, newStepDefinitionsRoots, processedStepDirectories);
+
+      extension.loadStepDefinitionRootsFromLibraries(module, newStepDefinitionsRoots, processedStepDirectories);
     }
   }
 
   public static void addStepDefsRootIfNecessary(final VirtualFile root,
-                                                @NotNull final List<PsiDirectory> newAbstractStepDefinitionsRoots,
+                                                @NotNull final List<PsiDirectory> newStepDefinitionsRoots,
                                                 @NotNull final Set<String> processedStepDirectories,
                                                 @NotNull final Project project) {
     if (root == null || !root.isValid()) {
@@ -366,8 +368,8 @@ public class CucumberStepsIndex {
 
     final PsiDirectory rootPathDir = PsiManager.getInstance(project).findDirectory(root);
     if (rootPathDir != null && rootPathDir.isValid()) {
-      if (!newAbstractStepDefinitionsRoots.contains(rootPathDir)) {
-        newAbstractStepDefinitionsRoots.add(rootPathDir);
+      if (!newStepDefinitionsRoots.contains(rootPathDir)) {
+        newStepDefinitionsRoots.add(rootPathDir);
       }
     }
   }
