@@ -60,8 +60,11 @@ public interface CucumberJvmExtensionPoint {
 
   boolean isStepDefinitionsRoot(@NotNull final VirtualFile file, @NotNull final Module module);
 
-  void loadStepDefinitionRootsFromLibraries(Module module, final boolean excludeAlreadyLoadedRoots,
-                                            final List<PsiDirectory> newAbstractStepDefinitionsRoots, @NotNull final Set<String> processedStepDirectories);
+  void loadStepDefinitionRootsFromLibraries(Module module, final List<PsiDirectory> newAbstractStepDefinitionsRoots,
+                                            @NotNull final Set<String> processedStepDirectories);
 
   ResolveResult[] resolveStep(@NotNull final PsiElement step);
+
+  public void findRelatedStepDefsRoots(Module module, final PsiFile featureFile, final List<PsiDirectory> newAbstractStepDefinitionsRoots,
+                                       final Set<String> processedStepDirectories);
 }

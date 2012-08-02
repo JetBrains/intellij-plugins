@@ -7,7 +7,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.containers.ContainerUtil;
@@ -81,18 +83,17 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
 
   @Override
   public boolean isStepDefinitionsRoot(@NotNull VirtualFile file, @NotNull final Module module) {
-    //final ContentEntry[] contentEntries = ModuleRootManager.getInstance(module).getContentEntries();
-    //for (final ContentEntry contentEntry : contentEntries) {
-    //  final SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
-    //}
-    //final VirtualFile[] roots = ModuleRootManager.getInstance(module).getContentRoots();
-    //
+    final ContentEntry[] contentEntries = ModuleRootManager.getInstance(module).getContentEntries();
+    for (final ContentEntry contentEntry : contentEntries) {
+      final SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
+    }
+    final VirtualFile[] roots = ModuleRootManager.getInstance(module).getContentRoots();
+
     return file.isDirectory();
   }
 
   @Override
   public void loadStepDefinitionRootsFromLibraries(Module module,
-                                                   boolean excludeAlreadyLoadedRoots,
                                                    List<PsiDirectory> newAbstractStepDefinitionsRoots,
                                                    @NotNull Set<String> processedStepDirectories) {
     //To change body of implemented methods use File | Settings | File Templates.
@@ -130,5 +131,12 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
     }
 
     return ResolveResult.EMPTY_ARRAY;
+  }
+
+  @Override
+  public void findRelatedStepDefsRoots(Module module, PsiFile featureFile,
+                                       List<PsiDirectory> newAbstractStepDefinitionsRoots,
+                                       Set<String> processedStepDirectories) {
+    //To change body of implemented methods use File | Settings | File Templates.
   }
 }

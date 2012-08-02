@@ -10,9 +10,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.containers.HashMap;
@@ -37,7 +37,6 @@ public class CucumberStepsIndex {
   }
 
   private Project myProject;
-  private ProjectRootManager myProjectRootManager;
   private final List<AbstractStepDefinition> myAbstractStepDefinitions = new ArrayList<AbstractStepDefinition>();
   private Set<String> myProcessedStepDirectories = new HashSet<String>();
 
@@ -49,10 +48,9 @@ public class CucumberStepsIndex {
 
   private final CucumberPsiTreeListener myCucumberPsiTreeListener;
 
-  public CucumberStepsIndex(final Project project, final ProjectRootManager manager) {
+  public CucumberStepsIndex(final Project project) {
     myUpdateQueue.setPassThrough(false);
     myProject = project;
-    myProjectRootManager = manager;
 
     myExtensionList = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
     myExtensionMap = new HashMap<FileType, CucumberJvmExtensionPoint>();
@@ -142,9 +140,10 @@ public class CucumberStepsIndex {
 
   /**
    * Creates file that will contain step definitions
-   * @param dir container for created file
+   *
+   * @param dir                      container for created file
    * @param fileNameWithoutExtension name of the file with out "." and extension
-   * @param fileType type of file to create
+   * @param fileType                 type of file to create
    */
   public PsiFile createStepDefinitionFile(@NotNull final PsiDirectory dir, @NotNull final String fileNameWithoutExtension,
                                           @NotNull final FileType fileType) {
@@ -283,7 +282,7 @@ public class CucumberStepsIndex {
   private void addAllStepsFiles(@NotNull final PsiDirectory dir,
                                 final List<PsiFile> result) {
     // find step definitions in current folder
-    for (PsiFile file: dir.getFiles()) {
+    for (PsiFile file : dir.getFiles()) {
       final VirtualFile virtualFile = file.getVirtualFile();
       boolean isStepFile = isStepLikeFile(file, file.getParent());
       if (isStepFile && virtualFile != null) {
@@ -301,8 +300,9 @@ public class CucumberStepsIndex {
     // New step definitions folders roots
     final List<PsiDirectory> notLoadedAbstractStepDefinitionsRoots = new ArrayList<PsiDirectory>();
     try {
-      findRelatedStepDefsRoots(featureFile, notLoadedAbstractStepDefinitionsRoots, true);
-    } catch (ProcessCanceledException e) {
+      findRelatedStepDefsRoots(featureFile, notLoadedAbstractStepDefinitionsRoots, myProcessedStepDirectories);
+    }
+    catch (ProcessCanceledException e) {
       // just stop items gathering
       return;
     }
@@ -313,7 +313,7 @@ public class CucumberStepsIndex {
       for (PsiDirectory root : notLoadedAbstractStepDefinitionsRoots) {
         stepDefinitions.clear();
         // let's process each folder separately
-        try{
+        try {
           myProcessedStepDirectories.add(root.getVirtualFile().getPath());
           List<PsiFile> files = gatherStepDefinitionsFilesFromDirectory(root);
           for (final PsiFile file : files) {
@@ -323,7 +323,8 @@ public class CucumberStepsIndex {
           }
 
           myAbstractStepDefinitions.addAll(stepDefinitions);
-        } catch (ProcessCanceledException e) {
+        }
+        catch (ProcessCanceledException e) {
           // remove from processed
           myProcessedStepDirectories.remove(root.getVirtualFile().getPath());
           // remove new step definitions
@@ -338,61 +339,28 @@ public class CucumberStepsIndex {
     }
   }
 
-  @Nullable
-  private static VirtualFile findContentRoot(final Module module, final VirtualFile file) {
-    if (file == null || module == null) return null;
-
-    final VirtualFile[] contentRoots = ModuleRootManager.getInstance(module).getContentRoots();
-    for (VirtualFile root : contentRoots) {
-      if (VfsUtil.isAncestor(root, file, false)) {
-        return root;
-      }
-    }
-    return null;
-  }
-
   public void findRelatedStepDefsRoots(final PsiFile featureFile,
-                                        final List<PsiDirectory> newAbstractStepDefinitionsRoots,
-                                        final boolean excludeAlreadyLoadedRoots) {
+                                       final List<PsiDirectory> newAbstractStepDefinitionsRoots,
+                                       final Set<String> processedStepDirectories) {
     // get local steps_definitions from the same content root
     final Module module = ModuleUtil.findModuleForPsiElement(featureFile);
     assert module != null;
-    final VirtualFile contentRoot = findContentRoot(module, featureFile.getVirtualFile());
-    if (contentRoot == null) {
-      return;
-    }
-    myProjectRootManager.getFileIndex().iterateContentUnderDirectory(contentRoot, new ContentIterator() {
-      public boolean processFile(final VirtualFile stepDefsRoot) {
-        boolean isStepDefRoot = false;
-        for (CucumberJvmExtensionPoint extension : myExtensionList) {
-          if (extension.isStepDefinitionsRoot(stepDefsRoot, module)) {
-            isStepDefRoot = true;
-            break;
-          }
-        }
-        if (isStepDefRoot) {
-          addStepDefsRootIfNecessary(stepDefsRoot, excludeAlreadyLoadedRoots, newAbstractStepDefinitionsRoots, myProcessedStepDirectories, myProject);
-        }
-        return true;
-      }
-    });
-
 
     for (CucumberJvmExtensionPoint extension : myExtensionList) {
-      extension.loadStepDefinitionRootsFromLibraries(module, excludeAlreadyLoadedRoots, newAbstractStepDefinitionsRoots, myProcessedStepDirectories);
+      extension.findRelatedStepDefsRoots(module, featureFile, newAbstractStepDefinitionsRoots, processedStepDirectories);
+      extension.loadStepDefinitionRootsFromLibraries(module, newAbstractStepDefinitionsRoots, processedStepDirectories);
     }
   }
 
   public static void addStepDefsRootIfNecessary(final VirtualFile root,
-                                          final boolean excludeAlreadyLoadedRoots,
-                                          final List<PsiDirectory> newAbstractStepDefinitionsRoots, @NotNull final Set<String> processedStepDirectories, @NotNull final Project project) {
-
+                                                @NotNull final List<PsiDirectory> newAbstractStepDefinitionsRoots,
+                                                @NotNull final Set<String> processedStepDirectories,
+                                                @NotNull final Project project) {
     if (root == null || !root.isValid()) {
       return;
     }
     final String path = root.getPath();
-
-    if (excludeAlreadyLoadedRoots && processedStepDirectories.contains(path)) {
+    if (processedStepDirectories.contains(path)) {
       return;
     }
 
@@ -440,7 +408,7 @@ public class CucumberStepsIndex {
   private void removeAbstractStepDefinitionsRelatedTo(final PsiFile file) {
     // file may be invalid !!!!
     synchronized (myAbstractStepDefinitions) {
-      for (Iterator<AbstractStepDefinition> iterator = myAbstractStepDefinitions.iterator(); iterator.hasNext();) {
+      for (Iterator<AbstractStepDefinition> iterator = myAbstractStepDefinitions.iterator(); iterator.hasNext(); ) {
         AbstractStepDefinition definition = iterator.next();
         final PsiElement element = definition.getElement();
         if (element == null || element.getContainingFile().equals(file)) {
