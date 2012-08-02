@@ -109,7 +109,8 @@ public class BuiltInFlexCompilerHandler {
   private void readInputStreamUntilConnected(final Process process, final CompileContext context) {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       public void run() {
-        final InputStreamReader reader = new InputStreamReader(process.getInputStream());
+        final InputStreamReader reader = FlexSdkUtils.createInputStreamReader(process.getInputStream());
+
         try {
           char[] buf = new char[1024];
           int read;

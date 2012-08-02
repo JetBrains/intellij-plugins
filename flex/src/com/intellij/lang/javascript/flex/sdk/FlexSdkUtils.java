@@ -40,17 +40,18 @@ import com.intellij.util.io.ZipUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FlexSdkUtils {
+  public static final String SDK_TOOLS_ENCODING = "UTF-8";
+
   public static final String ADL_RELATIVE_PATH =
     File.separatorChar + "bin" + File.separatorChar + "adl" + (SystemInfo.isWindows ? ".exe" : "");
+
   static final String AIR_RUNTIME_RELATIVE_PATH =
     File.separatorChar + "runtimes" + File.separatorChar + "air" + File.separatorChar +
     (SystemInfo.isWindows ? "win" : (SystemInfo.isLinux ? "linux" : "mac"));
@@ -421,6 +422,10 @@ public class FlexSdkUtils {
     final String vmOptions = FlexCompilerProjectConfiguration.getInstance(project).VM_OPTIONS;
     if (StringUtil.isNotEmpty(vmOptions)) result.addAll(StringUtil.split(vmOptions, " "));
 
+    if (!additionalJavaArgs.contains("file.encoding")) {
+      result.add("-Dfile.encoding=" + SDK_TOOLS_ENCODING);
+    }
+
     result.add("-Djava.awt.headless=true");
     result.add("-Duser.language=en");
     result.add("-Duser.region=en");
@@ -472,6 +477,15 @@ public class FlexSdkUtils {
     catch (ExecutionException e) {/*ignore*/}
 
     return false;
+  }
+
+  public static InputStreamReader createInputStreamReader(final InputStream inputStream) {
+    try {
+      return new InputStreamReader(inputStream, SDK_TOOLS_ENCODING);
+    }
+    catch (UnsupportedEncodingException e) {
+      return new InputStreamReader(inputStream);
+    }
   }
 
   public static void openModuleConfigurable(final Module module) {

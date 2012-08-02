@@ -74,10 +74,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
@@ -1193,7 +1190,7 @@ public class FlexDebugProcess extends XDebugProcess {
     private final InputStream myInputStream;
 
     public MyFdbOutputReader(final InputStream _inputStream) {
-      myReader = new InputStreamReader(_inputStream);
+      myReader = FlexSdkUtils.createInputStreamReader(_inputStream);
       myInputStream = _inputStream;
     }
 

@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.actions;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -105,7 +106,7 @@ public abstract class ExternalTask {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       public void run() {
         boolean usageStarted = false;
-        final InputStreamReader reader = new InputStreamReader(myProcess.getInputStream());
+        final InputStreamReader reader = FlexSdkUtils.createInputStreamReader(myProcess.getInputStream());
 
         try {
           char[] buf = new char[4096];

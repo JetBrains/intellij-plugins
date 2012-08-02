@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
@@ -51,7 +52,8 @@ public class MxmlcCompcCompilationTask extends FlexCompilationTask {
   private void readInputStream(final FlexCompilationManager compilationManager) {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       public void run() {
-        final InputStreamReader reader = new InputStreamReader(myProcess.getInputStream());
+        final InputStreamReader reader = FlexSdkUtils.createInputStreamReader(myProcess.getInputStream());
+
         try {
           char[] buf = new char[2048];
           int read;
