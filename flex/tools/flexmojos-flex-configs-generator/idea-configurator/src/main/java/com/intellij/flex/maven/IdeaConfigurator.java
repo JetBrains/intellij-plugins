@@ -191,8 +191,9 @@ public class IdeaConfigurator implements FlexConfigGenerator {
           out.append(indent).append("</").append(name).append('>');
         }
       }
-      else if (name.equals("load-externs") || (configuration instanceof IMetadataConfiguration &&
-                                               (name.equals("language") || name.equals("creator") || name.equals("publisher")))) {
+      else if (name.equals("load-externs") ||
+               (configuration instanceof IMetadataConfiguration &&
+                (name.equals("language") || name.equals("creator") || name.equals("publisher") || name.equals("contributor")))) {
         for (String v : (String[])value) {
           out.append(indent).append("<").append(name).append(">").append(v).append("</").append(name).append('>');
         }
