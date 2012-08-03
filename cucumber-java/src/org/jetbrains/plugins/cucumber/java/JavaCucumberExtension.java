@@ -34,7 +34,7 @@ import java.util.Set;
 public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
   @Override
   public boolean isStepLikeFile(@NotNull PsiElement child, @NotNull PsiElement parent) {
-    return child instanceof PsiJavaFile;
+    return child instanceof PsiJavaFile && ((PsiJavaFile)child).getName().endsWith("Stepdefs.java");
   }
 
   @NotNull
