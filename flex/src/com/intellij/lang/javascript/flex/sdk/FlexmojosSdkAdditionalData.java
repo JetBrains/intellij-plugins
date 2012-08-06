@@ -215,8 +215,8 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
     }
 
     final String adlPath = element.getChildText(ADL_PATH_ELEMENT_NAME);
-    myAdlPath = adlPath == null ? "" : adlPath;
+    myAdlPath = adlPath == null ? "" : FileUtil.toSystemIndependentName(adlPath);
     final String airRuntimePath = element.getChildText(AIR_RUNTIME_PATH_ELEMENT_NAME);
-    myAirRuntimePath = airRuntimePath == null ? "" : airRuntimePath;
+    myAirRuntimePath = airRuntimePath == null ? "" : FileUtil.toSystemIndependentName(airRuntimePath);
   }
 }

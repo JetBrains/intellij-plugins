@@ -14,7 +14,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
 
 import javax.swing.*;
-import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -120,25 +119,25 @@ public class FlexmojosSdkDataConfigurable implements AdditionalDataConfigurable 
     void setFlexCompilerClasspath(final Collection<String> classpathEntries) {
       myClasspathTextArea.setText(StringUtil.join(classpathEntries, new Function<String, String>() {
         public String fun(final String s) {
-          return s.replace('/', File.separatorChar);
+          return FileUtil.toSystemDependentName(s);
         }
       }, "\n"));
     }
 
     void setAdlPath(final String adlPath) {
-      myAdlComponent.getComponent().setText(adlPath);
+      myAdlComponent.getComponent().setText(FileUtil.toSystemDependentName(adlPath));
     }
 
     String getAdlPath() {
-      return myAdlComponent.getComponent().getText();
+      return FileUtil.toSystemIndependentName(myAdlComponent.getComponent().getText().trim());
     }
 
     void setAirRuntimePath(final String airRuntimePath) {
-      myAirRuntimeComponent.getComponent().setText(airRuntimePath);
+      myAirRuntimeComponent.getComponent().setText(FileUtil.toSystemDependentName(airRuntimePath));
     }
 
     String getAirRuntimePath() {
-      return myAirRuntimeComponent.getComponent().getText();
+      return FileUtil.toSystemIndependentName(myAirRuntimeComponent.getComponent().getText().trim());
     }
   }
 }
