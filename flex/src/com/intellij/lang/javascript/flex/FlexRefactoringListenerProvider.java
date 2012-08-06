@@ -146,6 +146,35 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
             }
           });
         }
+
+        if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
+          final Collection<FlexIdeBuildConfiguration.RLMInfo> oldRLMs = bc.getRLMs();
+          final Collection<FlexIdeBuildConfiguration.RLMInfo> newRLMs = new ArrayList<FlexIdeBuildConfiguration.RLMInfo>();
+          boolean changed = false;
+
+          for (FlexIdeBuildConfiguration.RLMInfo rlm : oldRLMs) {
+            if (rlm.MAIN_CLASS.startsWith(oldPackageWithDot)) {
+              changed = true;
+              final String mainClass = (newPackageName.isEmpty() ? "" : (newPackageName + ".")) +
+                                       rlm.MAIN_CLASS.substring(oldPackageWithDot.length());
+              final String outputFileName = rlm.OUTPUT_FILE.equals(BCUtils.suggestRLMOutputPath(rlm.MAIN_CLASS))
+                                            ? BCUtils.suggestRLMOutputPath(mainClass)
+                                            : rlm.OUTPUT_FILE;
+              newRLMs.add(new FlexIdeBuildConfiguration.RLMInfo(mainClass, outputFileName, rlm.OPTIMIZE));
+            }
+            else {
+              newRLMs.add(rlm);
+            }
+          }
+
+          if (changed) {
+            FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
+              public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
+                configuration.setRLMs(newRLMs);
+              }
+            });
+          }
+        }
       }
     }
   }
@@ -184,6 +213,33 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
               configuration.setMainClass(newClassName);
             }
           });
+        }
+
+        if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
+          final Collection<FlexIdeBuildConfiguration.RLMInfo> oldRLMs = bc.getRLMs();
+          final Collection<FlexIdeBuildConfiguration.RLMInfo> newRLMs = new ArrayList<FlexIdeBuildConfiguration.RLMInfo>();
+          boolean changed = false;
+
+          for (FlexIdeBuildConfiguration.RLMInfo rlm : oldRLMs) {
+            if (rlm.MAIN_CLASS.equals(oldClassName)) {
+              changed = true;
+              final String outputFileName = rlm.OUTPUT_FILE.equals(BCUtils.suggestRLMOutputPath(rlm.MAIN_CLASS))
+                                            ? BCUtils.suggestRLMOutputPath(newClassName)
+                                            : rlm.OUTPUT_FILE;
+              newRLMs.add(new FlexIdeBuildConfiguration.RLMInfo(newClassName, outputFileName, rlm.OPTIMIZE));
+            }
+            else {
+              newRLMs.add(rlm);
+            }
+          }
+
+          if (changed) {
+            FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
+              public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
+                configuration.setRLMs(newRLMs);
+              }
+            });
+          }
         }
       }
     }

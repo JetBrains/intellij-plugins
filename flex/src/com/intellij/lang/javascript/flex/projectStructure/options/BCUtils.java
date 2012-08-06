@@ -413,4 +413,8 @@ public class BCUtils {
            ? new SimpleColoredText(bcName + " - " + moduleName, SimpleTextAttributes.ERROR_ATTRIBUTES)
            : new SimpleColoredText(bcName, SimpleTextAttributes.ERROR_ATTRIBUTES);
   }
+
+  public static String suggestRLMOutputPath(final String mainClass) {
+    return StringUtil.replaceChar(mainClass, '.', '/') + ".swf";
+  }
 }

@@ -39,6 +39,10 @@ public class NonStructuralModifiableBuildConfiguration implements FlexIdeBuildCo
     myOriginal.setCssFilesToCompile(cssFilesToCompile);
   }
 
+  public void setRLMs(final @NotNull Collection<RLMInfo> rlms) {
+    myOriginal.setRLMs(rlms);
+  }
+
   @NotNull
   public String getName() {
     return myOriginal.getName();

@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
@@ -92,7 +93,7 @@ public class RLMsDialog extends RepeatableValueDialog {
         final StringBuilder b = new StringBuilder();
         b.append(clazz.getQualifiedName());
         b.append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
-        b.append(StringUtil.replaceChar(clazz.getQualifiedName(), '.', '/')).append(".swf");
+        b.append(BCUtils.suggestRLMOutputPath(clazz.getQualifiedName()));
         b.append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
         b.append("true");
         getCurrentList().add(b);
