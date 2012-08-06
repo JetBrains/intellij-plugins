@@ -6,6 +6,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public abstract class AbstractTestFileStructure {
 
   private final JSFile myJsFile;
@@ -26,4 +28,7 @@ public abstract class AbstractTestFileStructure {
 
   @Nullable
   public abstract PsiElement findPsiElement(@NotNull String testCaseName, @Nullable String testMethodName);
+
+  @NotNull
+  public abstract List<String> getTopLevelElements();
 }

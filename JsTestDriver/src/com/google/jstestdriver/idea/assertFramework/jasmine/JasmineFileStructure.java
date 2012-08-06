@@ -10,6 +10,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -94,4 +96,18 @@ public class JasmineFileStructure extends AbstractTestFileStructure {
     }
     return null;
   }
+
+  @NotNull
+  @Override
+  public List<String> getTopLevelElements() {
+    if (mySuiteStructures.isEmpty()) {
+      return Collections.emptyList();
+    }
+    List<String> out = new ArrayList<String>(mySuiteStructures.size());
+    for (JasmineSuiteStructure structure : mySuiteStructures) {
+      out.add(structure.getName());
+    }
+    return out;
+  }
+
 }

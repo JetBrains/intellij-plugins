@@ -7,11 +7,14 @@ import com.google.common.collect.Maps;
 import com.google.inject.internal.ImmutableSet;
 import com.google.jstestdriver.JsTestDriverServer;
 import com.google.jstestdriver.idea.TestRunner;
+import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
+import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
 import com.google.jstestdriver.idea.util.EscapeUtils;
+import com.google.jstestdriver.idea.util.TestFileScope;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -33,18 +36,20 @@ import com.intellij.execution.testframework.sm.runner.TestProxyPrinterProvider;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.ui.ConsoleView;
+import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.io.File.pathSeparator;
 
@@ -84,8 +89,6 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
     ProcessHandler processHandler = startProcess();
     ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment, executor);
     consoleView.attachToProcess(processHandler);
-
-    //consoleView.addMessageFilter(new NodeJSStacktraceFilter(myProject));
 
     DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
     executionResult.setRestartActions(new ToggleAutoTestAction());
@@ -169,24 +172,26 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
     return classpath;
   }
 
-  public Map<TestRunner.ParameterKey, String> createParameterMap() {
+  public Map<TestRunner.ParameterKey, String> createParameterMap() throws ExecutionException {
     Map<TestRunner.ParameterKey, String> parameters = Maps.newLinkedHashMap();
     String serverUrl = myRunSettings.getServerType() == ServerType.INTERNAL ?
                        "http://localhost:" + JstdToolWindowPanel.serverPort :
                        myRunSettings.getServerAddress();
     parameters.put(TestRunner.ParameterKey.SERVER_URL, serverUrl);
-    if (myRunSettings.getTestType() == TestType.ALL_CONFIGS_IN_DIRECTORY) {
+    TestType testType = myRunSettings.getTestType();
+    if (testType == TestType.ALL_CONFIGS_IN_DIRECTORY) {
       parameters.put(TestRunner.ParameterKey.ALL_CONFIGS_IN_DIRECTORY, myRunSettings.getDirectory());
     }
     List<VirtualFile> jstdConfigs = JstdSettingsUtil.collectJstdConfigs(myProject, myRunSettings);
+    if (jstdConfigs.isEmpty()) {
+      throw new ExecutionException("Can't find JsTestDriver configuration file.");
+    }
     parameters.put(TestRunner.ParameterKey.CONFIG_FILES, joinJstdConfigs(jstdConfigs));
-    if (myRunSettings.getTestType() == TestType.TEST_CASE) {
-      parameters.put(TestRunner.ParameterKey.TEST_CASE, myRunSettings.getTestCaseName());
+    TestFileScope testFileScope = buildTestFileScope(myProject, myRunSettings);
+    if (!testFileScope.isAll()) {
+      parameters.put(TestRunner.ParameterKey.TESTS, testFileScope.serialize());
     }
-    if (myRunSettings.getTestType() == TestType.TEST_METHOD) {
-      parameters.put(TestRunner.ParameterKey.TEST_CASE, myRunSettings.getTestCaseName());
-      parameters.put(TestRunner.ParameterKey.TEST_METHOD, myRunSettings.getTestMethodName());
-    }
+
     if (myCoverageFilePath != null) {
       parameters.put(TestRunner.ParameterKey.COVERAGE_OUTPUT_FILE, myCoverageFilePath);
       if (!myRunSettings.getFilesExcludedFromCoverage().isEmpty()) {
@@ -195,6 +200,50 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
       }
     }
     return parameters;
+  }
+
+  @NotNull
+  private static TestFileScope buildTestFileScope(@NotNull Project project, @NotNull JstdRunSettings settings) throws ExecutionException {
+    TestType testType = settings.getTestType();
+    if (testType == TestType.ALL_CONFIGS_IN_DIRECTORY || testType == TestType.CONFIG_FILE) {
+      return TestFileScope.allScope();
+    }
+    if (testType == TestType.JS_FILE) {
+      File jsFile = new File(settings.getJsFilePath());
+      if (jsFile.isAbsolute() && jsFile.isFile()) {
+        VirtualFile virtualFile = VfsUtil.findFileByIoFile(jsFile, true);
+        if (virtualFile != null) {
+          PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+          if (psiFile instanceof JSFile) {
+            JSFile jsPsiFile = (JSFile) psiFile;
+            TestFileStructurePack pack = TestFileStructureManager.fetchTestFileStructurePackByJsFile(jsPsiFile);
+            if (pack != null) {
+              List<String> testCases = pack.getTopLevelElements();
+              if (testCases.isEmpty()) {
+                throw new ExecutionException("No tests found in " + jsPsiFile.getName());
+              }
+              Map<String, Set<String>> scope = ContainerUtilRt.newHashMap();
+              for (String testCase : testCases) {
+                scope.put(testCase, Collections.<String>emptySet());
+              }
+              return TestFileScope.customScope(scope);
+            }
+          }
+        }
+      }
+      throw new ExecutionException("Unable to extract tests from " + jsFile.getName());
+    }
+    if (testType == TestType.TEST_CASE) {
+      Map<String, Set<String>> scope = Collections.singletonMap(settings.getTestCaseName(),
+                                                                Collections.<String>emptySet());
+      return TestFileScope.customScope(scope);
+    }
+    if (testType == TestType.TEST_METHOD) {
+      Map<String, Set<String>> scope = Collections.singletonMap(settings.getTestCaseName(),
+                                                                Collections.singleton(settings.getTestMethodName()));
+      return TestFileScope.customScope(scope);
+    }
+    throw new RuntimeException("Unexpected test type: " + testType);
   }
 
   @NotNull

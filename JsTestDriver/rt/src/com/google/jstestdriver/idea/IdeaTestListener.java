@@ -51,13 +51,12 @@ public class IdeaTestListener implements TestListener {
   @Override
   public void onTestRegistered(BrowserInfo browser, TestCase testCase) {
     synchronized (MONITOR) {
-      String testCaseName = myTestFileScope.getTestCaseName();
-      if (testCaseName != null && !testCaseName.equals(testCase.getName())) {
+      String testCaseName = testCase.getName();
+      if (!myTestFileScope.containsTestCase(testCaseName)) {
         return;
       }
-      String testMethodName = myTestFileScope.getTestMethodName();
       for (String testName : testCase.getTests()) {
-        if (testMethodName != null && !testMethodName.equals(testName)) {
+        if (!myTestFileScope.containsTestCaseAndMethod(testCaseName, testName)) {
           continue;
         }
         File jsTestFile = resolveTestFile(testCase.getFileName());

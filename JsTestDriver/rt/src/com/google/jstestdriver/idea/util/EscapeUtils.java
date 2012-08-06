@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.util;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,8 +26,12 @@ public class EscapeUtils {
   }
 
   @NotNull
-  public static String join(@NotNull List<String> list, char delimiterChar) {
-    StringBuilder out = new StringBuilder();
+  public static String join(@NotNull Collection<String> list, char delimiterChar) {
+    if (list.isEmpty()) {
+      return "";
+    }
+    int expectedSize = calcExpectedJoinedSize(list);
+    StringBuilder out = new StringBuilder(expectedSize);
     boolean addDelimiter = false;
     for (String str : list) {
       if (addDelimiter) {
@@ -45,6 +50,14 @@ public class EscapeUtils {
       }
     }
     return out.toString();
+  }
+
+  private static int calcExpectedJoinedSize(@NotNull Collection<String> list) {
+    int size = list.size() - 1;
+    for (String s : list) {
+      size += s.length();
+    }
+    return size;
   }
 
   private static class Splitter {
