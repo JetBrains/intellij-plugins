@@ -8,7 +8,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.ResolveResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
@@ -61,7 +60,7 @@ public interface CucumberJvmExtensionPoint {
   void loadStepDefinitionRootsFromLibraries(Module module, final List<PsiDirectory> newAbstractStepDefinitionsRoots,
                                             @NotNull final Set<String> processedStepDirectories);
 
-  ResolveResult[] resolveStep(@NotNull final PsiElement step);
+  List<PsiElement> resolveStep(@NotNull final PsiElement step);
 
   public void findRelatedStepDefsRoots(Module module, final PsiFile featureFile, final List<PsiDirectory> newAbstractStepDefinitionsRoots,
                                        final Set<String> processedStepDirectories);

@@ -90,37 +90,25 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
   }
 
   @Override
-  public ResolveResult[] resolveStep(@NotNull final PsiElement element) {
+  public List<PsiElement> resolveStep(@NotNull final PsiElement element) {
     final CucumberStepsIndex index = CucumberStepsIndex.getInstance(element.getProject());
 
     if (element instanceof GherkinStep) {
       final GherkinStep step = (GherkinStep)element;
-      final List<ResolveResult> result = new ArrayList<ResolveResult>();
-
+      final List<PsiElement> result = new ArrayList<PsiElement>();
       final Set<String> substitutedNameList = step.getSubstitutedNameList();
-      if (substitutedNameList.size() == 0) {
-        return ResolveResult.EMPTY_ARRAY;
-      }
-      for (String s : substitutedNameList) {
-        final AbstractStepDefinition definition = index.findStepDefinition(element.getContainingFile(), s);
-        if (definition != null) {
-          result.add(new ResolveResult() {
-            @Override
-            public PsiElement getElement() {
-              return definition.getElement();
-            }
-
-            @Override
-            public boolean isValidResult() {
-              return true;
-            }
-          });
+      if (substitutedNameList.size() > 0) {
+        for (String s : substitutedNameList) {
+          final AbstractStepDefinition definition = index.findStepDefinition(element.getContainingFile(), s);
+          if (definition != null) {
+            result.add(definition.getElement());
+          }
         }
+        return result;
       }
-      return result.toArray(new ResolveResult[result.size()]);
     }
 
-    return ResolveResult.EMPTY_ARRAY;
+    return new ArrayList<PsiElement>();
   }
 
   @Override
@@ -136,7 +124,9 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
         VirtualFile sfDirectory = sf.getFile();
         if (sfDirectory != null && sfDirectory.isDirectory()) {
           PsiDirectory sourceRoot = PsiDirectoryFactory.getInstance(module.getProject()).createDirectory(sfDirectory);
-          newStepDefinitionsRoots.add(sourceRoot);
+          if (!processedStepDirectories.contains(sourceRoot.getVirtualFile().getPath())) {
+            newStepDefinitionsRoots.add(sourceRoot);
+          }
         }
       }
     }
