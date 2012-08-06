@@ -83,13 +83,20 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     }
 
     final RunnerAndConfigurationSettings runnerSettings = cloneTemplateConfiguration(location.getProject(), context);
-    if (!(runnerSettings.getConfiguration() instanceof JstdRunConfiguration)) {
+    JstdRunConfiguration runConfiguration = ObjectUtils.tryCast(runnerSettings.getConfiguration(), JstdRunConfiguration.class);
+    if (runConfiguration == null) {
       logDoneCreateConfigurationByElement(startTimeNano, "2");
       return null;
     }
-    JstdRunConfiguration runConfiguration = (JstdRunConfiguration) runnerSettings.getConfiguration();
 
-    runConfiguration.setRunSettings(runSettingsContext.myRunSettings);
+    JstdRunSettings settings = runSettingsContext.myRunSettings;
+    if (settings.getConfigFile().isEmpty()) {
+      JstdRunSettings clonedSettings = runConfiguration.getRunSettings();
+      JstdRunSettings.Builder builder = new JstdRunSettings.Builder(settings);
+      builder.setConfigFile(clonedSettings.getConfigFile());
+      settings = builder.build();
+    }
+    runConfiguration.setRunSettings(settings);
 
     mySourceElement = runSettingsContext.myPsiElement;
     runnerSettings.setName(runConfiguration.suggestedName());
