@@ -8,7 +8,6 @@ import com.intellij.psi.PsiElement;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.Test;
 
 import java.util.List;
 

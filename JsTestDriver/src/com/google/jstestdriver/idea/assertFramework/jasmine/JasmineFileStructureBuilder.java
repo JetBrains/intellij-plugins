@@ -9,9 +9,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilder {
+public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilder<JasmineFileStructure> {
 
-  private static final JasmineFileStructureBuilder ourInstance = new JasmineFileStructureBuilder();
+  private static final JasmineFileStructureBuilder INSTANCE = new JasmineFileStructureBuilder();
+  private static final String DESCRIBE_NAME = "describe";
+  private static final String IT_NAME = "it";
 
   @NotNull
   @Override
@@ -20,7 +22,7 @@ public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilde
   }
 
   public static JasmineFileStructureBuilder getInstance() {
-    return ourInstance;
+    return INSTANCE;
   }
 
   private static class Builder {
@@ -33,7 +35,7 @@ public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilde
     public JasmineFileStructure build() {
       List<JSStatement> statements = JsPsiUtils.listStatementsInExecutionOrder(myFileStructure.getJsFile());
       for (JSStatement statement : statements) {
-        JSCallExpression jsCallExpression = JsPsiUtils.asCallExpressionStatement(statement);
+        JSCallExpression jsCallExpression = JsPsiUtils.toCallExpressionFromStatement(statement);
         if (jsCallExpression != null) {
           handleCallExpr(null, jsCallExpression);
         }
@@ -47,7 +49,7 @@ public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilde
       if (methodExpression != null && argumentList != null) {
         String methodName = methodExpression.getReferencedName();
         JSExpression[] arguments = ObjectUtils.notNull(argumentList.getArguments(), JSExpression.EMPTY_ARRAY);
-        if ("describe".equals(methodName) && arguments.length == 2) {
+        if (DESCRIBE_NAME.equals(methodName) && arguments.length == 2) {
           String name = JsPsiUtils.extractStringValue(arguments[0]);
           JSFunctionExpression specDefinitions = JsPsiUtils.extractFunctionExpression(arguments[1]);
           if (name != null && specDefinitions != null) {
@@ -60,7 +62,7 @@ public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilde
             handleDescribeSpecDefinitions(suiteStructure, specDefinitions);
           }
         }
-        if ("it".equals(methodName) && arguments.length == 2) {
+        if (IT_NAME.equals(methodName) && arguments.length == 2) {
           String name = JsPsiUtils.extractStringValue(arguments[0]);
           JSFunctionExpression body = JsPsiUtils.extractFunctionExpression(arguments[1]);
           if (name != null && body != null) {
@@ -81,7 +83,7 @@ public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilde
         if (jsBlockStatement != null) {
           JSStatement[] statements = ObjectUtils.notNull(jsBlockStatement.getStatements(), JSStatement.EMPTY);
           for (JSStatement statement : statements) {
-            JSCallExpression jsCallExpression = JsPsiUtils.asCallExpressionStatement(statement);
+            JSCallExpression jsCallExpression = JsPsiUtils.toCallExpressionFromStatement(statement);
             if (jsCallExpression != null) {
               handleCallExpr(suiteStructure, jsCallExpression);
             }

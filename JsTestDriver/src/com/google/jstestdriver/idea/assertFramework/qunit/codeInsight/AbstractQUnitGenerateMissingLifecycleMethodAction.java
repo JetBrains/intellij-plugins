@@ -34,7 +34,7 @@ abstract class AbstractQUnitGenerateMissingLifecycleMethodAction extends Abstrac
   @Nullable
   private static QUnitModuleStructure findModuleStructure(@NotNull GenerateActionContext context) {
     QUnitFileStructureBuilder builder = QUnitFileStructureBuilder.getInstance();
-    QUnitFileStructure fileStructure = builder.buildTestFileStructure(context.getJsFile());
+    QUnitFileStructure fileStructure = builder.fetchCachedTestFileStructure(context.getJsFile());
     if (fileStructure.hasQUnitSymbols()) {
       QUnitTestMethodStructure testMethodStructure = fileStructure.findTestMethodStructureContainingOffset(context.getDocumentCaretOffset());
       if (testMethodStructure != null) {

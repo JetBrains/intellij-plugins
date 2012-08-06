@@ -36,7 +36,7 @@ public class JasmineGenerateNewSpecAction extends AbstractJsGenerateAction {
   @Nullable
   private static Runnable createGenerator(final @NotNull GenerateActionContext context) {
     JasmineFileStructureBuilder builder = JasmineFileStructureBuilder.getInstance();
-    JasmineFileStructure fileStructure = builder.buildTestFileStructure(context.getJsFile());
+    JasmineFileStructure fileStructure = builder.fetchCachedTestFileStructure(context.getJsFile());
     return createGenerator(context, fileStructure);
   }
 

@@ -36,7 +36,7 @@ public class QUnitGenerateNewTestAction extends AbstractJsGenerateAction {
   @Nullable
   private static Runnable createGenerator(final @NotNull GenerateActionContext context) {
     QUnitFileStructureBuilder builder = QUnitFileStructureBuilder.getInstance();
-    QUnitFileStructure fileStructure = builder.buildTestFileStructure(context.getJsFile());
+    QUnitFileStructure fileStructure = builder.fetchCachedTestFileStructure(context.getJsFile());
     return createGenerator(context, fileStructure);
   }
 

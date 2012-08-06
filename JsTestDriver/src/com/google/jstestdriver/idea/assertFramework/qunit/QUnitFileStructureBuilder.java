@@ -8,9 +8,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder {
+public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder<QUnitFileStructure> {
 
-  private static final QUnitFileStructureBuilder ourInstance = new QUnitFileStructureBuilder();
+  private static final QUnitFileStructureBuilder INSTANCE = new QUnitFileStructureBuilder();
+  private static final String MODULE_NAME = "module";
+  private static final String TEST_NAME = "test";
 
   @NotNull
   @Override
@@ -55,7 +57,7 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder 
         if (arguments.length >= 1) {
           String name = JsPsiUtils.extractStringValue(arguments[0]);
           if (name != null) {
-            if ("module".equals(methodName)) {
+            if (MODULE_NAME.equals(methodName)) {
               boolean ok = arguments.length == 1;
               JSObjectLiteralExpression lifecycleObjectLiteral = null;
               if (arguments.length == 2) {
@@ -69,7 +71,7 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder 
                 myFileStructure.addModuleStructure(moduleStructure);
                 myCurrentModuleStructure = moduleStructure;
               }
-            } else if ("test".equals(methodName) && arguments.length == 2) {
+            } else if (TEST_NAME.equals(methodName) && arguments.length == 2) {
               JSFunctionExpression body = JsPsiUtils.extractFunctionExpression(arguments[1]);
               if (body != null) {
                 QUnitTestMethodStructure testMethodStructure = new QUnitTestMethodStructure(myCurrentModuleStructure, name, callExpression, body);
@@ -83,7 +85,7 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder 
   }
 
   public static QUnitFileStructureBuilder getInstance() {
-    return ourInstance;
+    return INSTANCE;
   }
 
 }

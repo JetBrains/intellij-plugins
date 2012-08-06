@@ -74,7 +74,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
-    <customFileIndexerFactory implementation="com.google.jstestdriver.idea.assertFramework.JsTestDriverIndexer$Factory"/>
+    <customFileIndexerFactory implementation="com.google.jstestdriver.idea.assertFramework.JsTestFileIndexer$Factory"/>
   </extensions>
 
 </idea-plugin>

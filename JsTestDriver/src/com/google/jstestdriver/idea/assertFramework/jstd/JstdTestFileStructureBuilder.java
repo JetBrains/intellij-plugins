@@ -12,9 +12,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuilder {
+public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuilder<JstdTestFileStructure> {
 
   private static final JstdTestFileStructureBuilder INSTANCE = new JstdTestFileStructureBuilder();
+  private static final String TEST_CASE_NAME = "TestCase";
+  private static final String ASYNC_TEST_CASE_NAME = "AsyncTestCase";
 
   private JstdTestFileStructureBuilder() {}
 
@@ -39,34 +41,30 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
     return jsTestFileStructure;
   }
 
-  private static void fillJsTestFileStructure(JstdTestFileStructure jsTestFileStructure, JSStatement jsElement) {
-    {
-      JSExpressionStatement jsExpressionStatement = ObjectUtils.tryCast(jsElement, JSExpressionStatement.class);
-      if (jsExpressionStatement != null) {
-        {
-          JSCallExpression callExpression = ObjectUtils.tryCast(jsExpressionStatement.getExpression(), JSCallExpression.class);
-          if (callExpression != null) {
-            // TestCase("testCaseName", { test1: function() {} });
-            createTestCaseStructure(jsTestFileStructure, callExpression);
-          }
-        }
-        {
-          // testCase = TestCase("testCaseName");
-          JSAssignmentExpression jsAssignmentExpression = ObjectUtils.tryCast(jsExpressionStatement.getExpression(), JSAssignmentExpression.class);
-          if (jsAssignmentExpression != null) {
-            JSCallExpression jsCallExpression = ObjectUtils.tryCast(jsAssignmentExpression.getROperand(), JSCallExpression.class);
-            if (jsCallExpression != null) {
-              JstdTestCaseStructure testCaseStructure = createTestCaseStructure(jsTestFileStructure, jsCallExpression);
-              if (testCaseStructure != null) {
-                JSDefinitionExpression jsDefinitionExpression = ObjectUtils.tryCast(jsAssignmentExpression.getLOperand(), JSDefinitionExpression.class);
-                if (jsDefinitionExpression != null) {
-                  JSReferenceExpression jsReferenceExpression = ObjectUtils.tryCast(jsDefinitionExpression.getExpression(), JSReferenceExpression.class);
-                  if (jsReferenceExpression != null) {
-                    String refName = jsReferenceExpression.getReferencedName();
-                    if (refName != null) {
-                      addPrototypeTests(testCaseStructure, refName, jsExpressionStatement);
-                    }
-                  }
+  private static void fillJsTestFileStructure(@NotNull JstdTestFileStructure jsTestFileStructure,
+                                              @NotNull JSStatement statement) {
+    if (statement instanceof JSExpressionStatement) {
+      JSExpressionStatement jsExpressionStatement = (JSExpressionStatement) statement;
+      JSExpression expressionOfStatement = jsExpressionStatement.getExpression();
+      if (expressionOfStatement instanceof JSCallExpression) {
+        // TestCase("testCaseName", { test1: function() {} });
+        JSCallExpression callExpression = (JSCallExpression) expressionOfStatement;
+        createTestCaseStructure(jsTestFileStructure, callExpression);
+      }
+      else if (expressionOfStatement instanceof JSAssignmentExpression) {
+        // testCase = TestCase("testCaseName");
+        JSAssignmentExpression jsAssignmentExpression = (JSAssignmentExpression) expressionOfStatement;
+        JSCallExpression rOperandCallExpression = ObjectUtils.tryCast(jsAssignmentExpression.getROperand(), JSCallExpression.class);
+        if (rOperandCallExpression != null) {
+          JstdTestCaseStructure testCaseStructure = createTestCaseStructure(jsTestFileStructure, rOperandCallExpression);
+          if (testCaseStructure != null) {
+            JSDefinitionExpression jsDefinitionExpression = ObjectUtils.tryCast(jsAssignmentExpression.getLOperand(), JSDefinitionExpression.class);
+            if (jsDefinitionExpression != null) {
+              JSReferenceExpression jsReferenceExpression = ObjectUtils.tryCast(jsDefinitionExpression.getExpression(), JSReferenceExpression.class);
+              if (jsReferenceExpression != null) {
+                String refName = jsReferenceExpression.getReferencedName();
+                if (refName != null) {
+                  addPrototypeTests(testCaseStructure, refName, jsExpressionStatement);
                 }
               }
             }
@@ -74,20 +72,18 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
         }
       }
     }
-    {
+    if (statement instanceof JSVarStatement) {
       // var testCase = TestCase("testCaseName");
-      JSVarStatement jsVarStatement = ObjectUtils.tryCast(jsElement, JSVarStatement.class);
-      if (jsVarStatement != null) {
-        JSVariable[] jsVariables = ObjectUtils.notNull(jsVarStatement.getVariables(), JSVariable.EMPTY_ARRAY);
-        for (JSVariable jsVariable : jsVariables) {
-          JSCallExpression jsCallExpression = ObjectUtils.tryCast(jsVariable.getInitializer(), JSCallExpression.class);
-          if (jsCallExpression != null) {
-            JstdTestCaseStructure testCaseStructure = createTestCaseStructure(jsTestFileStructure, jsCallExpression);
-            if (testCaseStructure != null) {
-              String refName = jsVariable.getQualifiedName();
-              if (refName != null) {
-                addPrototypeTests(testCaseStructure, refName, jsVarStatement);
-              }
+      JSVarStatement jsVarStatement = (JSVarStatement) statement;
+      JSVariable[] jsVariables = ObjectUtils.notNull(jsVarStatement.getVariables(), JSVariable.EMPTY_ARRAY);
+      for (JSVariable jsVariable : jsVariables) {
+        JSCallExpression jsCallExpression = ObjectUtils.tryCast(jsVariable.getInitializer(), JSCallExpression.class);
+        if (jsCallExpression != null) {
+          JstdTestCaseStructure testCaseStructure = createTestCaseStructure(jsTestFileStructure, jsCallExpression);
+          if (testCaseStructure != null) {
+            String refName = jsVariable.getQualifiedName();
+            if (refName != null) {
+              addPrototypeTests(testCaseStructure, refName, jsVarStatement);
             }
           }
         }
@@ -143,7 +139,7 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
     JSReferenceExpression referenceExpression = ObjectUtils.tryCast(testCaseCallExpression.getMethodExpression(), JSReferenceExpression.class);
     if (referenceExpression != null) {
       String referenceName = referenceExpression.getReferencedName();
-      if ("TestCase".equals(referenceName) || "AsyncTestCase".equals(referenceName)) {
+      if (TEST_CASE_NAME.equals(referenceName) || ASYNC_TEST_CASE_NAME.equals(referenceName)) {
         JSExpression[] arguments = JsPsiUtils.getArguments(testCaseCallExpression);
         if (arguments.length >= 1) {
           String testCaseName = JsPsiUtils.extractStringValue(arguments[0]);

@@ -11,6 +11,7 @@ import com.intellij.codeInsight.template.Template;
 import com.intellij.lang.javascript.psi.JSFunctionExpression;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Sergey Simonchik
@@ -29,6 +30,7 @@ abstract class JasmineGenerateMissingLifecycleMethodAction extends AbstractJsGen
     return generator != null;
   }
 
+  @Nullable
   protected Runnable createGenerator(@NotNull GenerateActionContext context) {
     JasmineSuiteStructure suiteStructure = findSuiteStructure(context);
     if (suiteStructure == null) {
@@ -37,6 +39,7 @@ abstract class JasmineGenerateMissingLifecycleMethodAction extends AbstractJsGen
     return createGenerator(context, suiteStructure);
   }
 
+  @Nullable
   private Runnable createGenerator(@NotNull final GenerateActionContext context, @NotNull final JasmineSuiteStructure suiteStructure) {
     final PsiElement elementUnderCaret = context.getPsiElementUnderCaret();
     if (elementUnderCaret == null) {
@@ -59,9 +62,10 @@ abstract class JasmineGenerateMissingLifecycleMethodAction extends AbstractJsGen
     };
   }
 
+  @Nullable
   private static JasmineSuiteStructure findSuiteStructure(GenerateActionContext context) {
     JasmineFileStructureBuilder builder = JasmineFileStructureBuilder.getInstance();
-    JasmineFileStructure fileStructure = builder.buildTestFileStructure(context.getJsFile());
+    JasmineFileStructure fileStructure = builder.fetchCachedTestFileStructure(context.getJsFile());
     return fileStructure.findLowestSuiteStructureContainingOffset(context.getDocumentCaretOffset());
   }
 

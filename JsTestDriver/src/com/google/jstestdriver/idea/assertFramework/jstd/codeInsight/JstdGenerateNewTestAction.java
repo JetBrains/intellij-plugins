@@ -25,7 +25,7 @@ public class JstdGenerateNewTestAction extends AbstractJsGenerateAction {
   @Override
   public boolean isEnabled(@NotNull GenerateActionContext context) {
     JstdTestFileStructureBuilder builder = JstdTestFileStructureBuilder.getInstance();
-    JstdTestFileStructure fileStructure = builder.buildTestFileStructure(context.getJsFile());
+    JstdTestFileStructure fileStructure = builder.fetchCachedTestFileStructure(context.getJsFile());
     if (fileStructure.getTestCaseCount() == 0) {
       return false;
     }
@@ -36,7 +36,7 @@ public class JstdGenerateNewTestAction extends AbstractJsGenerateAction {
   @Override
   public void actionPerformed(@NotNull GenerateActionContext context) {
     JstdTestFileStructureBuilder builder = JstdTestFileStructureBuilder.getInstance();
-    JstdTestFileStructure fileStructure = builder.buildTestFileStructure(context.getJsFile());
+    JstdTestFileStructure fileStructure = builder.fetchCachedTestFileStructure(context.getJsFile());
     Runnable testGenerator = buildGenerator(fileStructure, context);
     if (testGenerator != null) {
       testGenerator.run();

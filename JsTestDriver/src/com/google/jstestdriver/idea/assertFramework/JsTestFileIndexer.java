@@ -11,7 +11,7 @@ import com.intellij.util.ObjectUtils;
 /**
  * User: ksafonov
  */
-public class JsTestDriverIndexer extends JSElementVisitor {
+public class JsTestFileIndexer extends JSElementVisitor {
 
   public static class Factory extends JSFileIndexerFactory {
 
@@ -26,7 +26,7 @@ public class JsTestDriverIndexer extends JSElementVisitor {
                                           final PsiFile file) {
       JSFile jsFile = ObjectUtils.tryCast(file, JSFile.class);
       if (jsFile != null) {
-        TestFileStructurePack pack = TestFileStructureManager.createTestFileStructurePackByJsFile(jsFile, indexer.getSymbolNames());
+        TestFileStructurePack pack = TestFileStructureManager.createTestFileStructurePackByJsFile(jsFile);
         if (pack != null) {
           if (!pack.isEmpty()) {
             indexer.setIsTestFile();

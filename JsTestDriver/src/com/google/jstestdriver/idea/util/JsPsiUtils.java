@@ -182,56 +182,56 @@ public class JsPsiUtils {
 
   @NotNull
   public static List<JSStatement> listStatementsInExecutionOrder(@NotNull JSFile jsFile) {
-    List<JSStatement> jsElements = Lists.newArrayList();
+    List<JSStatement> jsStatements = Lists.newArrayList();
     for (PsiElement psiElement : jsFile.getChildren()) {
       JSStatement statement = ObjectUtils.tryCast(psiElement, JSStatement.class);
       if (statement != null) {
-        collectJsElementsInExecutionOrder(statement, jsElements);
+        collectJsStatementsInExecutionOrder(statement, jsStatements);
       }
     }
-    return jsElements;
+    return jsStatements;
   }
 
-  private static void collectJsElementsInExecutionOrder(@NotNull JSStatement statement, @NotNull List<JSStatement> jsElements) {
-    JSExpressionStatement jsExpressionStatement = ObjectUtils.tryCast(statement, JSExpressionStatement.class);
-    if (jsExpressionStatement != null) {
+  private static void collectJsStatementsInExecutionOrder(@NotNull JSStatement statement, @NotNull List<JSStatement> statements) {
+    if (statement instanceof JSExpressionStatement) {
+      JSExpression expressionOfStatement = ((JSExpressionStatement) statement).getExpression();
+      if (expressionOfStatement == null) {
+        return;
+      }
       JSFunctionExpression jsFunctionExpression = null;
-      {
-        JSCallExpression jsCallExpression = ObjectUtils.tryCast(jsExpressionStatement.getExpression(), JSCallExpression.class);
-        if (jsCallExpression != null) {
-          JSParenthesizedExpression jsParenthesizedExpression = ObjectUtils.tryCast(jsCallExpression.getMethodExpression(), JSParenthesizedExpression.class);
-          if (jsParenthesizedExpression != null) {
-            jsFunctionExpression = ObjectUtils.tryCast(jsParenthesizedExpression.getInnerExpression(), JSFunctionExpression.class);
-          }
+      if (expressionOfStatement instanceof JSCallExpression) {
+        JSCallExpression jsCallExpression = (JSCallExpression) expressionOfStatement;
+        JSParenthesizedExpression jsParenthesizedExpression = ObjectUtils.tryCast(jsCallExpression.getMethodExpression(), JSParenthesizedExpression.class);
+        if (jsParenthesizedExpression != null) {
+          jsFunctionExpression = ObjectUtils.tryCast(jsParenthesizedExpression.getInnerExpression(), JSFunctionExpression.class);
         }
       }
-      {
-        JSParenthesizedExpression jsParenthesizedExpression = ObjectUtils.tryCast(jsExpressionStatement.getExpression(), JSParenthesizedExpression.class);
-        if (jsParenthesizedExpression != null) {
-          JSCallExpression jsCallExpression = ObjectUtils.tryCast(jsParenthesizedExpression.getInnerExpression(), JSCallExpression.class);
-          if (jsCallExpression != null) {
-            jsFunctionExpression = ObjectUtils.tryCast(jsCallExpression.getMethodExpression(), JSFunctionExpression.class);
-          }
+      else if (expressionOfStatement instanceof JSParenthesizedExpression) {
+        JSParenthesizedExpression jsParenthesizedExpression = (JSParenthesizedExpression) expressionOfStatement;
+        JSCallExpression jsCallExpression = ObjectUtils.tryCast(jsParenthesizedExpression.getInnerExpression(), JSCallExpression.class);
+        if (jsCallExpression != null) {
+          jsFunctionExpression = ObjectUtils.tryCast(jsCallExpression.getMethodExpression(), JSFunctionExpression.class);
         }
       }
       if (jsFunctionExpression != null) {
         JSSourceElement[] sourceElements = ObjectUtils.notNull(jsFunctionExpression.getBody(), JSSourceElement.EMPTY_ARRAY);
         for (JSSourceElement sourceElement : sourceElements) {
-          if (sourceElement instanceof JSBlockStatement) {
-            JSBlockStatement jsBlockStatement = (JSBlockStatement) sourceElement;
-            for (JSStatement jsStatement : jsBlockStatement.getStatements()) {
-              collectJsElementsInExecutionOrder(jsStatement, jsElements);
-            }
-          }
-          else if (sourceElement instanceof JSStatement) {
+          if (sourceElement instanceof JSStatement) {
             JSStatement childStatement = (JSStatement) sourceElement;
-            collectJsElementsInExecutionOrder(childStatement, jsElements);
+            collectJsStatementsInExecutionOrder(childStatement, statements);
           }
         }
         return;
       }
     }
-    jsElements.add(statement);
+    else if (statement instanceof JSBlockStatement) {
+      JSBlockStatement blockStatement = (JSBlockStatement) statement;
+      JSStatement[] childStatements = ObjectUtils.notNull(blockStatement.getStatements(), JSStatement.EMPTY);
+      for (JSStatement childStatement : childStatements) {
+        collectJsStatementsInExecutionOrder(childStatement, statements);
+      }
+    }
+    statements.add(statement);
   }
 
   public static boolean isStringElement(@Nullable JSExpression jsExpression) {
@@ -251,9 +251,9 @@ public class JsPsiUtils {
   }
 
   @Nullable
-  public static JSCallExpression asCallExpressionStatement(JSElement element) {
-    JSExpressionStatement expressionStatement = ObjectUtils.tryCast(element, JSExpressionStatement.class);
-    if (expressionStatement != null) {
+  public static JSCallExpression toCallExpressionFromStatement(@NotNull JSStatement statement) {
+    if (statement instanceof JSExpressionStatement) {
+      JSExpressionStatement expressionStatement = (JSExpressionStatement) statement;
       return ObjectUtils.tryCast(expressionStatement.getExpression(), JSCallExpression.class);
     }
     return null;
@@ -463,7 +463,7 @@ public class JsPsiUtils {
     for (JSSourceElement element : elements) {
       if (element instanceof JSStatement) {
         JSStatement statement = (JSStatement) element;
-        collectJsElementsInExecutionOrder(statement, out);
+        collectJsStatementsInExecutionOrder(statement, out);
       }
     }
     return out;

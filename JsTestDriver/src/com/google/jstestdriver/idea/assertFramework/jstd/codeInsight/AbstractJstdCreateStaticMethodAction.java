@@ -23,7 +23,7 @@ public abstract class AbstractJstdCreateStaticMethodAction extends AbstractJsGen
   @Override
   public boolean isEnabled(@NotNull GenerateActionContext context) {
     JstdTestFileStructureBuilder builder = JstdTestFileStructureBuilder.getInstance();
-    JstdTestFileStructure fileStructure = builder.buildTestFileStructure(context.getJsFile());
+    JstdTestFileStructure fileStructure = builder.fetchCachedTestFileStructure(context.getJsFile());
     Runnable generator = buildGenerator(context, fileStructure);
     return generator != null;
   }
@@ -77,7 +77,7 @@ public abstract class AbstractJstdCreateStaticMethodAction extends AbstractJsGen
   @Override
   public void actionPerformed(@NotNull GenerateActionContext context) {
     JstdTestFileStructureBuilder builder = JstdTestFileStructureBuilder.getInstance();
-    JstdTestFileStructure fileStructure = builder.buildTestFileStructure(context.getJsFile());
+    JstdTestFileStructure fileStructure = builder.fetchCachedTestFileStructure(context.getJsFile());
     Runnable generator = buildGenerator(context, fileStructure);
     if (generator != null) {
       generator.run();
