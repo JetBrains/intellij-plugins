@@ -19,7 +19,7 @@ class FlexProjectConverter extends ProjectConverter {
     myContext = context;
   }
 
-  private boolean isConversionNeeded() {
+  private boolean _isConversionNeeded() {
     for (File file : myContext.getModuleFiles()) {
       try {
         ModuleSettings moduleSettings = myContext.getModuleSettings(file);
@@ -38,7 +38,7 @@ class FlexProjectConverter extends ProjectConverter {
 
   @Nullable
   public ConversionProcessor<WorkspaceSettings> createWorkspaceFileConverter() {
-    return isConversionNeeded() ? new FlexWorkspaceConverter(getParams()) : null;
+    return _isConversionNeeded() ? new FlexWorkspaceConverter(getParams()) : null;
   }
 
   public ConversionParams getParams() {
