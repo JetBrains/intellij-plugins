@@ -83,7 +83,7 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
   }
 
   @Override
-  public void loadStepDefinitionRootsFromLibraries(Module module,
+  public void loadStepDefinitionRootsFromLibraries(@NotNull Module module,
                                                    List<PsiDirectory> newAbstractStepDefinitionsRoots,
                                                    @NotNull Set<String> processedStepDirectories) {
     //To change body of implemented methods use File | Settings | File Templates.

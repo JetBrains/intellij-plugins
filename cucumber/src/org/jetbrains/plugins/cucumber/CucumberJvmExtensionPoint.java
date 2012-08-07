@@ -57,7 +57,7 @@ public interface CucumberJvmExtensionPoint {
 
   void collectAllStepDefsProviders(@NotNull final List<VirtualFile> providers, @NotNull final Project project);
 
-  void loadStepDefinitionRootsFromLibraries(Module module, final List<PsiDirectory> newAbstractStepDefinitionsRoots,
+  void loadStepDefinitionRootsFromLibraries(@NotNull Module module, final List<PsiDirectory> newAbstractStepDefinitionsRoots,
                                             @NotNull final Set<String> processedStepDirectories);
 
   List<PsiElement> resolveStep(@NotNull final PsiElement step);

@@ -37,7 +37,7 @@ public class CucumberStepsIndex {
   }
 
   private Project myProject;
-  private final List<AbstractStepDefinition> myAbstractStepDefinitions = new ArrayList<AbstractStepDefinition>();
+  private final List<AbstractStepDefinition> myStepDefinitions = new ArrayList<AbstractStepDefinition>();
   private Set<String> myProcessedStepDirectories = new HashSet<String>();
 
   private final MergingUpdateQueue myUpdateQueue = new MergingUpdateQueue("Steps reparse", 500, true, null);
@@ -176,17 +176,18 @@ public class CucumberStepsIndex {
 
   public void reset() {
     myUpdateQueue.cancelAllUpdates();
-    synchronized (myAbstractStepDefinitions) {
-      myAbstractStepDefinitions.clear();
+    synchronized (myStepDefinitions) {
+      myStepDefinitions.clear();
     }
     myProcessedStepDirectories.clear();
   }
 
   @Nullable
-  public AbstractStepDefinition findStepDefinition(final PsiFile featureFile, final String stepName) {
-    loadStepsFor(featureFile);
-    synchronized (myAbstractStepDefinitions) {
-      for (AbstractStepDefinition stepDefinition : myAbstractStepDefinitions) {
+  public AbstractStepDefinition findStepDefinition(final @NotNull PsiFile featureFile, final String stepName) {
+    final Module module = ModuleUtil.findModuleForPsiElement(featureFile);
+    loadStepsFor(featureFile, module);
+    synchronized (myStepDefinitions) {
+      for (AbstractStepDefinition stepDefinition : myStepDefinitions) {
         if (stepDefinition.matches(stepName)) {
           return stepDefinition;
         }
@@ -198,8 +199,8 @@ public class CucumberStepsIndex {
   @NotNull
   public Set<AbstractStepDefinition> findStepDefinitionsByPartOfName(@NotNull final String word) {
     final Set<AbstractStepDefinition> result = new HashSet<AbstractStepDefinition>();
-    synchronized (myAbstractStepDefinitions) {
-      for (AbstractStepDefinition stepDefinition : myAbstractStepDefinitions) {
+    synchronized (myStepDefinitions) {
+      for (AbstractStepDefinition stepDefinition : myStepDefinitions) {
         if (CucumberUtil.isPatternRelatedToPartOfName(stepDefinition.getPattern(), word)) {
           if (!result.contains(stepDefinition)) {
             result.add(stepDefinition);
@@ -210,10 +211,11 @@ public class CucumberStepsIndex {
     return result;
   }
 
-  public List<AbstractStepDefinition> findStepDefinitionsByPattern(@NotNull final String pattern) {
+  public List<AbstractStepDefinition> findStepDefinitionsByPattern(@NotNull final String pattern, @NotNull final Module module) {
+    loadStepsFor(null, module);
     final List<AbstractStepDefinition> result = new ArrayList<AbstractStepDefinition>();
-    synchronized (myAbstractStepDefinitions) {
-      for (AbstractStepDefinition stepDefinition : myAbstractStepDefinitions) {
+    synchronized (myStepDefinitions) {
+      for (AbstractStepDefinition stepDefinition : myStepDefinitions) {
         final String elementText = stepDefinition.getElementText();
         if (elementText != null && elementText.equals(pattern)) {
           result.add(stepDefinition);
@@ -230,48 +232,12 @@ public class CucumberStepsIndex {
   }
 
   public List<AbstractStepDefinition> getAllStepDefinitions(@NotNull final PsiFile featureFile) {
-    loadStepsFor(featureFile);
-    synchronized (myAbstractStepDefinitions) {
-      return new ArrayList<AbstractStepDefinition>(myAbstractStepDefinitions);
+    final Module module = ModuleUtil.findModuleForPsiElement(featureFile);
+    loadStepsFor(featureFile, module);
+    synchronized (myStepDefinitions) {
+      return new ArrayList<AbstractStepDefinition>(myStepDefinitions);
     }
   }
-
-  //@Nullable
-  //public PsiDirectory findStepDefinitionDirectory(@NotNull final PsiFile featureFile) {
-  //  final PsiDirectory psiFeatureDir = featureFile.getContainingDirectory();
-  //  assert psiFeatureDir != null;
-  //
-  //  VirtualFile featureDir = psiFeatureDir.getVirtualFile();
-  //  VirtualFile contentRoot = ProjectRootManager.getInstance(myProject).getFileIndex().getContentRootForFile(featureDir);
-  //  while (featureDir != null &&
-  //         !Comparing.equal(featureDir, contentRoot) &&
-  //         featureDir.findChild(CucumberUtil.STEP_DEFINITIONS_DIR_NAME) == null) {
-  //    featureDir = featureDir.getParent();
-  //  }
-  //  if (featureDir != null) {
-  //    VirtualFile stepsDir = featureDir.findChild(CucumberUtil.STEP_DEFINITIONS_DIR_NAME);
-  //    if (stepsDir != null) {
-  //      return PsiManager.getInstance(myProject).findDirectory(stepsDir);
-  //    }
-  //  }
-  //  return null;
-  //}
-
-  //public List<PsiFile> getStepDefinitionContainers(final PsiFile featureFile) {
-  //  final List<PsiDirectory> stepDefsRoots = new ArrayList<PsiDirectory>();
-  //
-  //  PsiDirectory dir = findStepDefinitionDirectory(featureFile);
-  //  if (dir != null) {
-  //    stepDefsRoots.add(dir);
-  //  }
-  //  findRelatedStepDefsRoots(featureFile, stepDefsRoots, false);
-  //
-  //  final List<PsiFile> stepDefs = new ArrayList<PsiFile>();
-  //  for (PsiDirectory root : stepDefsRoots) {
-  //    stepDefs.addAll(gatherStepDefinitionsFilesFromDirectory(root));
-  //  }
-  //  return !stepDefs.isEmpty() ? stepDefs : Collections.<PsiFile>emptyList();
-  //}
 
   public List<PsiFile> gatherStepDefinitionsFilesFromDirectory(@NotNull final PsiDirectory dir) {
     List<PsiFile> result = new ArrayList<PsiFile>();
@@ -296,21 +262,21 @@ public class CucumberStepsIndex {
     }
   }
 
-  private void loadStepsFor(@NotNull final PsiFile featureFile) {
+  private void loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module) {
     // New step definitions folders roots
-    final List<PsiDirectory> notLoadedAbstractStepDefinitionsRoots = new ArrayList<PsiDirectory>();
+    final List<PsiDirectory> notLoadedStepDefinitionsRoots = new ArrayList<PsiDirectory>();
     try {
-      findRelatedStepDefsRoots(featureFile, notLoadedAbstractStepDefinitionsRoots, myProcessedStepDirectories);
+      findRelatedStepDefsRoots(featureFile, module, notLoadedStepDefinitionsRoots, myProcessedStepDirectories);
     }
     catch (ProcessCanceledException e) {
       // just stop items gathering
       return;
     }
 
-    synchronized (myAbstractStepDefinitions) {
+    synchronized (myStepDefinitions) {
       // Parse new folders
       final List<AbstractStepDefinition> stepDefinitions = new ArrayList<AbstractStepDefinition>();
-      for (PsiDirectory root : notLoadedAbstractStepDefinitionsRoots) {
+      for (PsiDirectory root : notLoadedStepDefinitionsRoots) {
         stepDefinitions.clear();
         // let's process each folder separately
         try {
@@ -322,15 +288,15 @@ public class CucumberStepsIndex {
             createWatcher(file);
           }
 
-          myAbstractStepDefinitions.addAll(stepDefinitions);
+          myStepDefinitions.addAll(stepDefinitions);
         }
         catch (ProcessCanceledException e) {
           // remove from processed
           myProcessedStepDirectories.remove(root.getVirtualFile().getPath());
           // remove new step definitions
           if (!stepDefinitions.isEmpty()) {
-            synchronized (myAbstractStepDefinitions) {
-              myAbstractStepDefinitions.removeAll(stepDefinitions);
+            synchronized (myStepDefinitions) {
+              myStepDefinitions.removeAll(stepDefinitions);
             }
           }
           throw e;
@@ -339,16 +305,15 @@ public class CucumberStepsIndex {
     }
   }
 
-  public void findRelatedStepDefsRoots(final PsiFile featureFile,
+  public void findRelatedStepDefsRoots(@Nullable final PsiFile featureFile, @NotNull final Module module,
                                        final List<PsiDirectory> newStepDefinitionsRoots,
                                        final Set<String> processedStepDirectories) {
 
-    final Module module = ModuleUtil.findModuleForPsiElement(featureFile);
-    assert module != null;
-
     for (CucumberJvmExtensionPoint extension : myExtensionList) {
-      // get local steps_definitions from the same content root
-      extension.findRelatedStepDefsRoots(module, featureFile, newStepDefinitionsRoots, processedStepDirectories);
+      if (featureFile != null) {
+        // get local steps_definitions from the same content root
+        extension.findRelatedStepDefsRoots(module, featureFile, newStepDefinitionsRoots, processedStepDirectories);
+      }
 
       extension.loadStepDefinitionRootsFromLibraries(module, newStepDefinitionsRoots, processedStepDirectories);
     }
@@ -401,16 +366,16 @@ public class CucumberStepsIndex {
 
     // read definitions from file
     if (file.isValid()) {
-      synchronized (myAbstractStepDefinitions) {
-        myAbstractStepDefinitions.addAll(getStepDefinitions(file));
+      synchronized (myStepDefinitions) {
+        myStepDefinitions.addAll(getStepDefinitions(file));
       }
     }
   }
 
   private void removeAbstractStepDefinitionsRelatedTo(final PsiFile file) {
     // file may be invalid !!!!
-    synchronized (myAbstractStepDefinitions) {
-      for (Iterator<AbstractStepDefinition> iterator = myAbstractStepDefinitions.iterator(); iterator.hasNext(); ) {
+    synchronized (myStepDefinitions) {
+      for (Iterator<AbstractStepDefinition> iterator = myStepDefinitions.iterator(); iterator.hasNext(); ) {
         AbstractStepDefinition definition = iterator.next();
         final PsiElement element = definition.getElement();
         if (element == null || element.getContainingFile().equals(file)) {

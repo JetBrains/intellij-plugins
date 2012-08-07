@@ -9,6 +9,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
@@ -58,7 +60,8 @@ public class CucumberCreateStepFix implements LocalQuickFix {
 
   public List<PsiFile> getStepDefinitionContainers(final PsiFile featureFile) {
     final List<PsiDirectory> stepDefsRoots = new ArrayList<PsiDirectory>();
-    CucumberStepsIndex.getInstance(featureFile.getProject()).findRelatedStepDefsRoots(featureFile, stepDefsRoots, new HashSet<String>());
+    final Module module = ModuleUtil.findModuleForPsiElement(featureFile);
+    CucumberStepsIndex.getInstance(featureFile.getProject()).findRelatedStepDefsRoots(featureFile, module, stepDefsRoots, new HashSet<String>());
 
     final List<PsiFile> stepDefs = new ArrayList<PsiFile>();
     for (PsiDirectory root : stepDefsRoots) {
