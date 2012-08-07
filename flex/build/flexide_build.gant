@@ -341,7 +341,7 @@ private layoutFull(Map args, String target, Set usedJars) {
         module("forms_rt")
       }
 
-      jar([name: "resources_en.jar", duplicate: "preserve"]) {
+      jar("resources_en.jar") {
         // Flex IDE resources come first to override platform resources (using duplicate=preserve)
         fileset(dir: "$home/flex/ideResources") {
           include(name: "**/tips/**")
