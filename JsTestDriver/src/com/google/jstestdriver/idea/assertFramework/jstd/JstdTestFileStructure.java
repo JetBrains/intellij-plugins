@@ -13,6 +13,8 @@ import net.jcip.annotations.NotThreadSafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -95,4 +97,18 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
     }
     return null;
   }
+
+  @NotNull
+  @Override
+  public List<String> getTopLevelElements() {
+    if (myTestCaseStructures.isEmpty()) {
+      return Collections.emptyList();
+    }
+    List<String> out = new ArrayList<String>(myTestCaseStructures.size());
+    for (JstdTestCaseStructure structure : myTestCaseStructures) {
+      out.add(structure.getName());
+    }
+    return out;
+  }
+
 }

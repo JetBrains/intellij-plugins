@@ -13,6 +13,8 @@ import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -127,4 +129,16 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
     return null;
   }
 
+  @NotNull
+  @Override
+  public List<String> getTopLevelElements() {
+    if (myNonDefaultModuleStructures.isEmpty()) {
+      return Collections.emptyList();
+    }
+    List<String> out = new ArrayList<String>(myNonDefaultModuleStructures.size());
+    for (QUnitModuleStructure structure : myNonDefaultModuleStructures) {
+      out.add(structure.getName());
+    }
+    return out;
+  }
 }

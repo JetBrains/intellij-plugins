@@ -5,6 +5,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ public class TestFileStructurePack {
 
   private final List<AbstractTestFileStructure> myTestFileStructures;
 
-  public TestFileStructurePack(List<AbstractTestFileStructure> testFileStructures) {
+  public TestFileStructurePack(@NotNull List<AbstractTestFileStructure> testFileStructures) {
     myTestFileStructures = testFileStructures;
   }
 
@@ -54,4 +55,15 @@ public class TestFileStructurePack {
   public List<AbstractTestFileStructure> getTestFileStructures() {
     return myTestFileStructures;
   }
+
+  @NotNull
+  public List<String> getTopLevelElements() {
+    List<String> out = new ArrayList<String>();
+    for (AbstractTestFileStructure structure : myTestFileStructures) {
+      List<String> topLevel = structure.getTopLevelElements();
+      out.addAll(topLevel);
+    }
+    return out;
+  }
+
 }

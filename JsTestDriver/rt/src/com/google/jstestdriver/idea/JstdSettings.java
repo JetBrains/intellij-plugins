@@ -96,9 +96,14 @@ public class JstdSettings {
       }
     }
 
-    String testCaseName = parameters.get(TestRunner.ParameterKey.TEST_CASE);
-    String testMethodName = parameters.get(TestRunner.ParameterKey.TEST_METHOD);
-    TestFileScope testFileScope = new TestFileScope(testCaseName, testMethodName);
+    String testsScope = parameters.get(TestRunner.ParameterKey.TESTS);
+    final TestFileScope testFileScope;
+    if (testsScope == null) {
+      testFileScope = TestFileScope.allScope();
+    }
+    else {
+      testFileScope = TestFileScope.deserialize(testsScope);
+    }
 
     String coverageFilePath = notNullize(parameters.get(TestRunner.ParameterKey.COVERAGE_OUTPUT_FILE));
     File ideCoverageFile = null;
