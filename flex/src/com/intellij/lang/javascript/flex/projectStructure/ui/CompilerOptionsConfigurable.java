@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
@@ -890,18 +891,32 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
             buffers.add(new StringBuilder(entry));
           }
 
-          final RepeatableValueDialog dialog =
-            new RepeatableValueDialog(myProject, StringUtil.capitalizeWords(myInfo.DISPLAY_NAME, true), buffers, myInfo);
-          dialog.show();
+          Sdk sdk;
+          if (myInfo.ID.equals("compiler.locale") &&
+              (sdk = myDependenciesConfigurable.getCurrentSdk()) != null &&
+              sdk.getSdkType() == FlexSdkType2.getInstance()) {
 
-          if (dialog.isOK()) {
-            myValue = StringUtil.join(dialog.getCurrentList(), new Function<StringBuilder, String>() {
-              public String fun(final StringBuilder stringBuilder) {
-                return stringBuilder.toString();
-              }
-            }, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+            final LocalesDialog dialog =
+              new LocalesDialog(myProject, sdk, StringUtil.split(myValue, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR));
+            dialog.show();
+
+            if (dialog.isOK()) {
+              myValue = StringUtil.join(dialog.getLocales(), CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+            }
           }
+          else {
+            final RepeatableValueDialog dialog =
+              new RepeatableValueDialog(myProject, StringUtil.capitalizeWords(myInfo.DISPLAY_NAME, true), buffers, myInfo);
+            dialog.show();
 
+            if (dialog.isOK()) {
+              myValue = StringUtil.join(dialog.getCurrentList(), new Function<StringBuilder, String>() {
+                public String fun(final StringBuilder stringBuilder) {
+                  return stringBuilder.toString();
+                }
+              }, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+            }
+          }
           TableUtil.stopEditing(myTreeTable);
         }
       });
