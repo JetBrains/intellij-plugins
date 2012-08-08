@@ -8,23 +8,35 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.platform.DirectoryProjectGenerator;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.jetbrains.python.newProject.PyFrameworkProjectGenerator;
+import com.jetbrains.python.psi.PyPsiFacade;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
-public class FlaskProjectGenerator implements DirectoryProjectGenerator {
+public class FlaskProjectGenerator implements PyFrameworkProjectGenerator {
   @Nls
   @Override
   public String getName() {
     return "Flask project";
+  }
+
+  @Override
+  public String getFrameworkTitle() {
+    return "Flask";
+  }
+
+  @Override
+  public boolean isFrameworkInstalled(Project project, Sdk sdk) {
+    return PyPsiFacade.getInstance(project).qualifiedNameResolver("flask").fromSdk(project, sdk).firstResult() != null;
   }
 
   @Override

@@ -8,6 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="lang-impl" />
+    <orderEntry type="module" module-name="python-openapi" />
   </component>
 </module>
 
