@@ -4,7 +4,6 @@ import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.ConversionProcessor;
 import com.intellij.conversion.ModuleSettings;
 import com.intellij.facet.FacetManagerImpl;
-import com.intellij.ide.impl.convert.JDomConvertingUtil;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
@@ -35,7 +34,7 @@ import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
@@ -46,6 +45,7 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.serialization.JDomSerializationUtil;
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 
 import java.io.File;
@@ -175,12 +175,12 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
       sdkEntryElement.setAttribute(ModuleJdkOrderEntryImpl.JDK_TYPE_ATTR, FlexCompositeSdk.TYPE_ID);
       moduleSettings.getOrderEntries().add(sdkEntryElement);
     }
-    Element rootManagerElement = JDomConvertingUtil.findOrCreateComponentElement(moduleSettings.getRootElement(),
-                                                                                 ModuleSettings.MODULE_ROOT_MANAGER_COMPONENT);
+    Element rootManagerElement = JDomSerializationUtil.findOrCreateComponentElement(moduleSettings.getRootElement(),
+                                                                                    ModuleSettings.MODULE_ROOT_MANAGER_COMPONENT);
     rootManagerElement.addContent(orderEntriesToAdd);
 
     Element componentElement =
-      JDomConvertingUtil.findOrCreateComponentElement(moduleSettings.getRootElement(), FlexBuildConfigurationManagerImpl.COMPONENT_NAME);
+      JDomSerializationUtil.findOrCreateComponentElement(moduleSettings.getRootElement(), FlexBuildConfigurationManagerImpl.COMPONENT_NAME);
     addContent(ConversionHelper.serialize(configurationManager), componentElement);
 
     ignoreInapplicableFacets(moduleSettings);
@@ -502,7 +502,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
         final Element outputElement = rootManagerElement.getChild("output");
         final String outputUrl = outputElement == null ? null : outputElement.getAttributeValue("url");
         if (outputUrl != null) {
-          String path = PathUtil.getCanonicalPath(VfsUtil.urlToPath(moduleSettings.expandPath(outputUrl)));
+          String path = PathUtil.getCanonicalPath(VfsUtilCore.urlToPath(moduleSettings.expandPath(outputUrl)));
           return moduleSettings.collapsePath(path);
         }
       }
@@ -510,8 +510,8 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
 
     final String projectOutputUrl = moduleSettings.getProjectOutputUrl();
     String path = projectOutputUrl == null ? "" :
-                  VfsUtil.urlToPath(moduleSettings.expandPath(projectOutputUrl) +
-                                    "/" + CompilerModuleExtension.PRODUCTION + "/" + moduleSettings.getModuleName());
+                  VfsUtilCore.urlToPath(moduleSettings.expandPath(projectOutputUrl) +
+                                        "/" + CompilerModuleExtension.PRODUCTION + "/" + moduleSettings.getModuleName());
     return moduleSettings.collapsePath(path);
   }
 

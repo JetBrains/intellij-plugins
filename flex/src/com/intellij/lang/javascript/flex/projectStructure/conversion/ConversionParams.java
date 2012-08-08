@@ -6,7 +6,6 @@ import com.intellij.conversion.ModuleSettings;
 import com.intellij.facet.impl.invalid.InvalidFacetManagerImpl;
 import com.intellij.facet.impl.invalid.InvalidFacetType;
 import com.intellij.facet.pointers.FacetPointersManager;
-import com.intellij.ide.impl.convert.JDomConvertingUtil;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
@@ -34,6 +33,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.serialization.JDomSerializationUtil;
 import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 
 import java.util.*;
@@ -72,8 +72,8 @@ public class ConversionParams {
 
   private void ignoreInvalidFacets() throws CannotConvertException {
     if (!myFacetsToIgnore.isEmpty()) {
-      Element invalidFacetManager = JDomConvertingUtil.findOrCreateComponentElement(myContext.getWorkspaceSettings().getRootElement(),
-                                                                                    InvalidFacetManagerImpl.COMPONENT_NAME);
+      Element invalidFacetManager = JDomSerializationUtil.findOrCreateComponentElement(myContext.getWorkspaceSettings().getRootElement(),
+                                                                                       InvalidFacetManagerImpl.COMPONENT_NAME);
       InvalidFacetManagerImpl.InvalidFacetManagerState state =
         XmlSerializer.deserialize(invalidFacetManager, InvalidFacetManagerImpl.InvalidFacetManagerState.class);
       state.getIgnoredFacets().addAll(myFacetsToIgnore);
