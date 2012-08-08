@@ -46,7 +46,7 @@ import org.jdom.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.model.serialization.facet.JpsFacetLoader;
+import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -134,7 +134,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
           newConfiguration = ConversionHelper.createBuildConfiguration(configurationManager);
         }
         newConfiguration.setName(generateFacetBcName(flexFacets, facet));
-        Element oldConfigurationElement = facet.getChild(JpsFacetLoader.CONFIGURATION_ELEMENT);
+        Element oldConfigurationElement = facet.getChild(JpsFacetSerializer.CONFIGURATION_TAG);
         if (oldConfigurationElement != null) {
           FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
 
@@ -155,7 +155,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
         }
       }
       moduleSettings.setModuleType(FlexModuleType.MODULE_TYPE_ID);
-      moduleSettings.getComponentElement(FacetManagerImpl.COMPONENT_NAME).getChildren(JpsFacetLoader.FACET_ELEMENT).removeAll(flexFacets);
+      moduleSettings.getComponentElement(FacetManagerImpl.COMPONENT_NAME).getChildren(JpsFacetSerializer.FACET_TAG).removeAll(flexFacets);
     }
 
     Collection<Element> allEntries = new ArrayList<Element>();
@@ -189,12 +189,12 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
   private void ignoreInapplicableFacets(ModuleSettings module) {
     boolean allowFlexFacets = isJavaModule(module);
     final Element facetManager = module.getComponentElement(FacetManagerImpl.COMPONENT_NAME);
-    for (Element facet : JDOMUtil.getChildren(facetManager, JpsFacetLoader.FACET_ELEMENT)) {
-      String type = facet.getAttributeValue(JpsFacetLoader.TYPE_ATTRIBUTE);
+    for (Element facet : JDOMUtil.getChildren(facetManager, JpsFacetSerializer.FACET_TAG)) {
+      String type = facet.getAttributeValue(JpsFacetSerializer.TYPE_ATTRIBUTE);
       if (allowFlexFacets && FLEX_FACET_TYPE_ID.equals(type)) {
         continue;
       }
-      String name = facet.getAttributeValue(JpsFacetLoader.NAME_ATTRIBUTE);
+      String name = facet.getAttributeValue(JpsFacetSerializer.NAME_ATTRIBUTE);
       myParams.ignoreInvalidFacet(module.getModuleName(), type, name);
     }
   }
@@ -589,7 +589,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
     List<String> names = FlexBuildConfigurationManagerImpl.generateUniqueNames(ContainerUtil.map(facets, new Function<Element, String>() {
       @Override
       public String fun(Element element) {
-        return element.getAttributeValue(JpsFacetLoader.NAME_ATTRIBUTE);
+        return element.getAttributeValue(JpsFacetSerializer.NAME_ATTRIBUTE);
       }
     }));
     return names.get(facets.indexOf(facet));

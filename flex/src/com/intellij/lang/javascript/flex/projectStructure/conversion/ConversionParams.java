@@ -34,7 +34,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.model.serialization.facet.JpsFacetLoader;
+import org.jetbrains.jps.model.serialization.facet.JpsFacetSerializer;
 
 import java.util.*;
 
@@ -237,7 +237,7 @@ public class ConversionParams {
       @Nullable
       @Override
       public String fun(Element facet) {
-        Element oldConfigurationElement = facet.getChild(JpsFacetLoader.CONFIGURATION_ELEMENT);
+        Element oldConfigurationElement = facet.getChild(JpsFacetSerializer.CONFIGURATION_TAG);
         if (oldConfigurationElement != null) {
           FlexBuildConfiguration oldConfiguration = XmlSerializer.deserialize(oldConfigurationElement, FlexBuildConfiguration.class);
           if (oldConfiguration != null && FlexBuildConfiguration.LIBRARY.equals(oldConfiguration.OUTPUT_TYPE)) {
