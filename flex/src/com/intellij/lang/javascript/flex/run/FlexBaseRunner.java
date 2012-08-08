@@ -20,7 +20,6 @@ import com.intellij.lang.javascript.flex.FlexStackTraceFilter;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
-import com.intellij.lang.javascript.flex.build.FlexCompilerException;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
 import com.intellij.lang.javascript.flex.debug.FlexDebugRunner;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConsoleProperties;
@@ -470,22 +469,41 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       assert bc.getNature().isMobilePlatform() : bc.getTargetPlatform();
       assert flashParams.getMobileRunTarget() == FlashRunnerParameters.AirMobileRunTarget.Emulator : flashParams.getMobileRunTarget();
 
-      if (FlexUtils.getOptionValues(flashParams.getEmulatorAdlOptions(), "profile").isEmpty()) {
+      final String adlOptions = flashParams.getEmulatorAdlOptions();
+
+      if (FlexUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
         commandLine.addParameter("-profile");
         commandLine.addParameter("extendedMobileDevice");
       }
 
+      final FlashRunnerParameters.Emulator emulator = flashParams.getEmulator();
+      final boolean customSize = emulator.adlAlias == null;
+
       commandLine.addParameter("-screensize");
-      final String adlAlias = flashParams.getEmulator().adlAlias;
-      if (adlAlias != null) {
-        commandLine.addParameter(adlAlias);
-      }
-      else {
+      if (customSize) {
         commandLine.addParameter(flashParams.getScreenWidth() + "x" + flashParams.getScreenHeight() +
                                  ":" + flashParams.getFullScreenWidth() + "x" + flashParams.getFullScreenHeight());
       }
+      else {
+        commandLine.addParameter(emulator.adlAlias);
+      }
 
-      final String adlOptions = flashParams.getEmulatorAdlOptions();
+      if (FlexUtils.getOptionValues(adlOptions, "XscreenDPI").isEmpty()) {
+        if (customSize && flashParams.getScreenDpi() > 0) {
+          commandLine.addParameter("-XscreenDPI");
+          commandLine.addParameter(String.valueOf(flashParams.getScreenDpi()));
+        }
+        else if (!customSize && emulator.screenDPI > 0) {
+          commandLine.addParameter("-XscreenDPI");
+          commandLine.addParameter(String.valueOf(emulator.screenDPI));
+        }
+      }
+
+      if (FlexUtils.getOptionValues(adlOptions, "XversionPlatform").isEmpty() && emulator.versionPlatform != null) {
+        commandLine.addParameter("-XversionPlatform");
+        commandLine.addParameter(emulator.versionPlatform);
+      }
+
       if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
         for (StringTokenizer tokenizer = new CommandLineTokenizer(adlOptions); tokenizer.hasMoreTokens(); ) {
           commandLine.addParameter(tokenizer.nextToken());

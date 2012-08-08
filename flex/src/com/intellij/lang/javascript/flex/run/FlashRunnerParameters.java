@@ -25,10 +25,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Collections;
+import java.util.EnumSet;
 
 public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cloneable {
 
@@ -37,38 +39,55 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   }
 
   public enum Emulator {
-    E480("720 x 480", "480", 720, 480, 720, 480),
-    E720("1280 x 720", "720", 1280, 720, 1280, 720),
-    E1080("1920 x 1080", "1080", 1920, 1080, 1920, 1080),
-    iPad("Apple iPad", "iPad", 768, 1004, 768, 1024),
-    iPhone("Apple iPhone", "iPhone", 320, 460, 320, 480),
-    iPhoneRetina("Apple iPhone Retina", "iPhoneRetina", 640, 920, 640, 960),
-    //iPod("Apple iPod", "iPod", 320, 460, 320, 480),
-    //iPodRetina("Apple iPod Retina", "iPodRetina", 640, 920, 640, 960),
-    NexusOne("Google Nexus One", "NexusOne", 480, 762, 480, 800),
-    Droid("Motorola Droid", "Droid", 480, 816, 480, 854),
-    SamsungGalaxyS("Samsung Galaxy S", "SamsungGalaxyS", 480, 762, 780, 800),
-    SamsungGalaxyTab("Samsung Galaxy Tab", "SamsungGalaxyTab", 600, 986, 600, 1024),
+    E480("720 x 480", "480", 0, null, 720, 480, 720, 480),
+    E720("1280 x 720", "720", 0, null, 1280, 720, 1280, 720),
+    E1080("1920 x 1080", "1080", 0, null, 1920, 1080, 1920, 1080),
 
-    FWQVGA("FWQVGA", "FWQVGA", 240, 432, 240, 432),
-    FWVGA("FWVGA", "FWVGA", 480, 584, 480, 854),
-    HVGA("HVGA", "HVGA", 320, 480, 320, 480),
-    QVGA("QVGA", "QVGA", 240, 320, 240, 320),
-    WQVGA("WQVGA", "WQVGA", 240, 400, 240, 400),
-    WVGA("WVGA", "WVGA", 480, 800, 480, 800),
+    iPad("Apple iPad", "iPad", 132, "IOS", 768, 1004, 768, 1024),
+    iPadRetina("Apple iPad Retina", "iPadRetina", 132 * 2, "IOS", 768 * 2, 1004 * 2, 768 * 2, 1024 * 2),
+    iPhone("Apple iPhone", "iPhone", 163, "IOS", 320, 460, 320, 480),
+    iPhoneRetina("Apple iPhone Retina", "iPhoneRetina", 163 * 2, "IOS", 320 * 2, 460 * 2, 320 * 2, 480 * 2),
+    //iPod("Apple iPod", "iPod", 163, "IOS", 320, 460, 320, 480),
+    //iPodRetina("Apple iPod Retina", "iPodRetina", 163 * 2, "IOS", 320 * 2, 460 * 2, 320 * 2, 480 * 2),
 
-    Other("Other...", null, 0, 0, 0, 0);
+    NexusOne("Google Nexus One", "NexusOne", 252, "AND", 480, 762, 480, 800),
+    Droid("Motorola Droid", "Droid", 265, "AND", 480, 816, 480, 854),
+    SamsungGalaxyS("Samsung Galaxy S", "SamsungGalaxyS", 233, "AND", 480, 762, 480, 800),
+    SamsungGalaxyTab("Samsung Galaxy Tab", "SamsungGalaxyTab", 168, "AND", 600, 986, 600, 1024),
+
+    Other("Other...", null, 0, null, 0, 0, 0, 0),
+
+    // Following values are kept in enum for compatibility, but not shown in UI any more.
+    FWQVGA("FWQVGA", "FWQVGA", 0, null, 240, 432, 240, 432),
+    FWVGA("FWVGA", "FWVGA", 0, null, 480, 584, 480, 854),
+    HVGA("HVGA", "HVGA", 0, null, 320, 480, 320, 480),
+    QVGA("QVGA", "QVGA", 0, null, 240, 320, 240, 320),
+    WQVGA("WQVGA", "WQVGA", 0, null, 240, 400, 240, 400),
+    WVGA("WVGA", "WVGA", 0, null, 480, 800, 480, 800);
+
+    public static final EnumSet<Emulator> ALL_EMULATORS = EnumSet.range(Emulator.values()[0], Other);
 
     public final String name;
-    public final String adlAlias;
+    public final @Nullable String adlAlias; // null means that screen size parameters are set by user explicitly
+    public final int screenDPI; // 0 means that this option should not be passed to adl
+    public final @Nullable String versionPlatform; // null means that this option should not be passed to adl
     public final int screenWidth;
     public final int screenHeight;
     public final int fullScreenWidth;
     public final int fullScreenHeight;
 
-    Emulator(String name, String adlAlias, int screenWidth, int screenHeight, int fullScreenWidth, int fullScreenHeight) {
+    Emulator(String name,
+             String adlAlias,
+             final int screenDPI,
+             final @Nullable String versionPlatform,
+             int screenWidth,
+             int screenHeight,
+             int fullScreenWidth,
+             int fullScreenHeight) {
       this.name = name;
       this.adlAlias = adlAlias;
+      this.screenDPI = screenDPI;
+      this.versionPlatform = versionPlatform;
       this.screenWidth = screenWidth;
       this.screenHeight = screenHeight;
       this.fullScreenWidth = fullScreenWidth;
@@ -103,6 +122,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   private int myScreenHeight = 0;
   private int myFullScreenWidth = 0;
   private int myFullScreenHeight = 0;
+  private int myScreenDpi = 0;
   private String myIOSSimulatorSdkPath = "";
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
   private int myUsbDebugPort = AirPackageUtil.DEBUG_PORT_DEFAULT;
@@ -204,7 +224,9 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   }
 
   public void setEmulator(@NotNull final Emulator emulator) {
-    myEmulator = emulator;
+    if (Emulator.ALL_EMULATORS.contains(emulator)) {
+      myEmulator = emulator;
+    }
   }
 
   public int getScreenWidth() {
@@ -237,6 +259,14 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
   public void setFullScreenHeight(final int fullScreenHeight) {
     myFullScreenHeight = fullScreenHeight;
+  }
+
+  public int getScreenDpi() {
+    return myScreenDpi;
+  }
+
+  public void setScreenDpi(final int screenDpi) {
+    myScreenDpi = screenDpi;
   }
 
   public String getIOSSimulatorSdkPath() {
@@ -564,6 +594,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
     final FlashRunnerParameters that = (FlashRunnerParameters)o;
 
+    if (myScreenDpi != that.myScreenDpi) return false;
     if (myFullScreenHeight != that.myFullScreenHeight) return false;
     if (myFullScreenWidth != that.myFullScreenWidth) return false;
     if (myLaunchUrl != that.myLaunchUrl) return false;

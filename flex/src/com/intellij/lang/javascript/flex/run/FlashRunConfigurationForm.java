@@ -90,6 +90,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private JTextField myScreenHeight;
   private JTextField myFullScreenWidth;
   private JTextField myFullScreenHeight;
+  private JTextField myScreenDpi;
 
   private JPanel myMobileOptionsPanel;
   private JPanel myDebugTransportPanel;
@@ -106,6 +107,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private final Project myProject;
 
   private LauncherParameters myLauncherParameters;
+
+  private boolean myResetting = false;
 
   public FlashRunConfigurationForm(final Project project) {
     myProject = project;
@@ -275,7 +278,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   private void initEmulatorRelatedControls() {
-    myEmulatorCombo.setModel(new DefaultComboBoxModel(Emulator.values()));
+    myEmulatorCombo.setModel(new DefaultComboBoxModel(Emulator.ALL_EMULATORS.toArray()));
 
     myEmulatorCombo.setRenderer(new ListCellRendererWrapper<Emulator>(myEmulatorCombo.getRenderer()) {
       @Override
@@ -313,6 +316,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myScreenHeight.setPreferredSize(new Dimension(preferredWidth, myScreenHeight.getPreferredSize().height));
     myFullScreenWidth.setPreferredSize(new Dimension(preferredWidth, myFullScreenWidth.getPreferredSize().height));
     myFullScreenHeight.setPreferredSize(new Dimension(preferredWidth, myFullScreenHeight.getPreferredSize().height));
+    myScreenDpi.setPreferredSize(new Dimension(preferredWidth, myScreenDpi.getPreferredSize().height));
   }
 
   private void updateControls() {
@@ -400,16 +404,24 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       myScreenHeight.setEditable(true);
       myFullScreenWidth.setEditable(true);
       myFullScreenHeight.setEditable(true);
+
+      if (!myResetting && !myScreenDpi.isEditable()) {
+        myScreenDpi.setText(""); // User have selected 'Custom...' screen size. Let him select dpi explicitly if needed.
+      }
+
+      myScreenDpi.setEditable(true);
     }
     else {
       myScreenWidth.setEditable(false);
       myScreenHeight.setEditable(false);
       myFullScreenWidth.setEditable(false);
       myFullScreenHeight.setEditable(false);
+      myScreenDpi.setEditable(false);
       myScreenWidth.setText(String.valueOf(emulator.screenWidth));
       myScreenHeight.setText(String.valueOf(emulator.screenHeight));
       myFullScreenWidth.setText(String.valueOf(emulator.fullScreenWidth));
       myFullScreenHeight.setText(String.valueOf(emulator.fullScreenHeight));
+      myScreenDpi.setText(emulator.screenDPI > 0 ? String.valueOf(emulator.screenDPI) : "");
     }
   }
 
@@ -438,6 +450,16 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   protected void resetEditorFrom(final FlashRunConfiguration configuration) {
+    myResetting = true;
+    try {
+      doResetEditorFrom(configuration);
+    }
+    finally {
+      myResetting = false;
+    }
+  }
+
+  private void doResetEditorFrom(final FlashRunConfiguration configuration) {
     final FlashRunnerParameters params = configuration.getRunnerParameters();
     myLauncherParameters = params.getLauncherParameters().clone(); // must be before myBCsCombo.setModel()
 
@@ -467,6 +489,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       myScreenHeight.setText(String.valueOf(params.getScreenHeight()));
       myFullScreenWidth.setText(String.valueOf(params.getFullScreenWidth()));
       myFullScreenHeight.setText(String.valueOf(params.getFullScreenHeight()));
+      myScreenDpi.setText(params.getScreenDpi() > 0 ? String.valueOf(params.getScreenDpi()) : "");
     }
 
     myOnAndroidDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice);
@@ -553,12 +576,19 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     if (emulator.adlAlias == null) {
       try {
-        params.setScreenWidth(Integer.parseInt(myScreenWidth.getText()));
-        params.setScreenHeight(Integer.parseInt(myScreenHeight.getText()));
-        params.setFullScreenWidth(Integer.parseInt(myFullScreenWidth.getText()));
-        params.setFullScreenHeight(Integer.parseInt(myFullScreenHeight.getText()));
+        params.setScreenWidth(Integer.parseInt(myScreenWidth.getText().trim()));
+        params.setScreenHeight(Integer.parseInt(myScreenHeight.getText().trim()));
+        params.setFullScreenWidth(Integer.parseInt(myFullScreenWidth.getText().trim()));
+        params.setFullScreenHeight(Integer.parseInt(myFullScreenHeight.getText().trim()));
       }
       catch (NumberFormatException e) {/**/}
+
+      try {
+        params.setScreenDpi(Integer.parseInt(myScreenDpi.getText().trim()));
+      }
+      catch (NumberFormatException e) {
+        params.setScreenDpi(0);
+      }
     }
 
     final FlexIdeBuildConfiguration bc = myBCCombo.getBC();

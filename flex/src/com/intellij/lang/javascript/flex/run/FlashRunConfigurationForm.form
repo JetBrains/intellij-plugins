@@ -214,7 +214,7 @@
             </constraints>
             <properties/>
           </component>
-          <grid id="bc865" binding="myEmulatorScreenSizePanel" layout-manager="GridLayoutManager" row-count="1" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
+          <grid id="bc865" binding="myEmulatorScreenSizePanel" layout-manager="GridLayoutManager" row-count="1" column-count="10" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -228,7 +228,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="7d7ca"/>
-                  <text value="Screen si&amp;ze:"/>
+                  <text value="Sc&amp;reen:"/>
                 </properties>
               </component>
               <component id="32678" class="javax.swing.JTextField" binding="myScreenWidth" default-binding="true">
@@ -259,7 +259,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="a67c8"/>
-                  <text value="  &amp;Full screen:"/>
+                  <text value="  &amp;Full:"/>
                 </properties>
               </component>
               <component id="a39f0" class="javax.swing.JTextField" binding="myFullScreenWidth" default-binding="true">
@@ -281,6 +281,21 @@
               <component id="4c938" class="javax.swing.JTextField" binding="myFullScreenHeight" default-binding="true">
                 <constraints>
                   <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="f9407" class="javax.swing.JLabel">
+                <constraints>
+                  <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <labelFor value="14c81"/>
+                  <text value="pp&amp;i:"/>
+                </properties>
+              </component>
+              <component id="14c81" class="javax.swing.JTextField" binding="myScreenDpi">
+                <constraints>
+                  <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
               </component>
