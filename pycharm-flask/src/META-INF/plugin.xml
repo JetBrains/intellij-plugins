@@ -10,5 +10,6 @@
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <directoryProjectGenerator implementation="com.jetbrains.flask.project.FlaskProjectGenerator"/>
     <internalFileTemplate name="Flask Main"/>
+    <psi.referenceContributor implementation="com.jetbrains.flask.codeInsight.references.FlaskTemplateReferenceContributor"/>
   </extensions>
 </idea-plugin>
