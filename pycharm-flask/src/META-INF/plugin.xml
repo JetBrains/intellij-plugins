@@ -9,5 +9,6 @@
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <directoryProjectGenerator implementation="com.jetbrains.flask.project.FlaskProjectGenerator"/>
+    <internalFileTemplate name="Flask Main"/>
   </extensions>
 </idea-plugin>
