@@ -22,6 +22,7 @@ import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.packaging.PyExternalProcessException;
 import com.jetbrains.python.packaging.PyPackageManager;
 import com.jetbrains.python.psi.PyPsiFacade;
+import com.jetbrains.python.run.PyRunConfigurationFactory;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +54,7 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
   }
 
   @Override
-  public void generateProject(final Project project, final VirtualFile baseDir, final PyNewProjectSettings settings, Module module) {
+  public void generateProject(final Project project, final VirtualFile baseDir, final PyNewProjectSettings settings, final Module module) {
     if (settings.installFramework()) {
       ProgressManager.getInstance().run(new Task.Backgroundable(project, "Installing Flask", false) {
         @Override
@@ -88,6 +89,7 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
         }
         projectDir.createSubdirectory("static");
         projectDir.createSubdirectory("templates");
+        PyRunConfigurationFactory.getInstance().createPythonScriptRunConfiguration(module, appFile.getVirtualFile().getPath());
         appFile.navigate(true);
       }
     }.execute();
