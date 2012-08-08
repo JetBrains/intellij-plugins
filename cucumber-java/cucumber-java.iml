@@ -17,6 +17,9 @@
     <orderEntry type="module" module-name="testFramework" scope="TEST" />
     <orderEntry type="module" module-name="testFramework-java" />
     <orderEntry type="library" name="cucumber-jvm" level="project" />
+    <orderEntry type="module" module-name="execution-impl" />
+    <orderEntry type="module" module-name="execution-openapi" />
+    <orderEntry type="module" module-name="smRunner" />
   </component>
 </module>
 

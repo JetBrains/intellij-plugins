@@ -138,7 +138,7 @@ public class VFSUtilTest extends IdeaTestCase {
     VirtualFile childData = newSrc.createChildData(this, "some.file");
     VirtualFile virtualFile = VFSUtil.getVirtualFile(vFile);
 
-    assertSame("Should find source file basing on src path", childData, virtualFile);
+    assertEquals("Should find source file basing on src path", childData, virtualFile);
   }
 
   private void updateRoots(final Updater updater) {
@@ -173,7 +173,7 @@ public class VFSUtilTest extends IdeaTestCase {
 
     assertEquals("Wrong content path", expectedPath, vFile.getContentPath());
     assertEquals("Wrong full path", expectedFullPath, vFile.getFullPath());
-    assertSame("Should restore Virtual File from " + vFile,
+    assertEquals("Should restore Virtual File from " + vFile,
         file, VFSUtil.getVirtualFile(vFile));
 
     return vFile;
