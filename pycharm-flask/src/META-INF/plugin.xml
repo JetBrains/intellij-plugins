@@ -1,0 +1,13 @@
+<idea-plugin version="2">
+  <name>Flask Microframework Support</name>
+  <id>org.jetbrains.plugins.flask</id>
+  <description>Provides support for developing Flask applications. This is an open-source plugin that serves as an example for
+    developing framework support plugins in PyCharm.</description>
+  <vendor logo="/general/ijLogo.png">JetBrains</vendor>
+  <depends>com.intellij.modules.ultimate</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+    <directoryProjectGenerator implementation="com.jetbrains.flask.project.FlaskProjectGenerator"/>
+  </extensions>
+</idea-plugin>
