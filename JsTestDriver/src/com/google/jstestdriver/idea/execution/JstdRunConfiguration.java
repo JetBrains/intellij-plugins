@@ -73,15 +73,13 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
   }
 
   @Override
-  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env)
-    throws ExecutionException {
-    if (DefaultDebugExecutor.EXECUTOR_ID.equals(executor.getId())) {
-      throw new ExecutionException("Debugging is not implemented");
-    }
+  @NotNull
+  public JstdTestRunnerCommandLineState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
     return getCoverageState(env, null);
   }
 
-  public RunProfileState getCoverageState(@NotNull ExecutionEnvironment env, @Nullable String coverageFilePath)
+  @NotNull
+  public JstdTestRunnerCommandLineState getCoverageState(@NotNull ExecutionEnvironment env, @Nullable String coverageFilePath)
     throws ExecutionException {
     try {
       checkConfiguration();

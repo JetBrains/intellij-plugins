@@ -18,6 +18,7 @@ package com.google.jstestdriver.idea.server.ui;
 import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.ServerStartupAction;
 import com.google.jstestdriver.hooks.ServerListener;
+import com.google.jstestdriver.idea.server.JstdServerState;
 import com.intellij.ide.BrowserSettings;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -40,8 +41,6 @@ public class JstdToolWindowPanel extends SimpleToolWindowPanel {
 
   // TODO - make configurable
   public final static int serverPort = 9876;
-  public static final JstdServerState SHARED_STATE = new JstdServerState();
-  static ServerStartupAction myServerStartupAction;
 
   private final CaptureUrlController myCaptureUrlController;
 
@@ -67,16 +66,17 @@ public class JstdToolWindowPanel extends SimpleToolWindowPanel {
           }
         }
     );
+    JstdServerState jstdServerState = JstdServerState.getInstance();
     for (ServerListener serverListener : serverListeners) {
-      if (SHARED_STATE.isServerRunning()) {
+      if (jstdServerState.isServerRunning()) {
         serverListener.serverStarted();
-        for (BrowserInfo browserInfo : SHARED_STATE.getCapturedBrowsers()) {
+        for (BrowserInfo browserInfo : jstdServerState.getCapturedBrowsers()) {
           serverListener.browserCaptured(browserInfo);
         }
       } else {
         serverListener.serverStopped();
       }
-      SHARED_STATE.addServerListener(serverListener);
+      jstdServerState.addServerListener(serverListener);
     }
 
     setBackground(UIUtil.getTreeTextBackground());
@@ -125,8 +125,8 @@ public class JstdToolWindowPanel extends SimpleToolWindowPanel {
   @NotNull
   private static ActionToolbar createActionToolbar() {
     DefaultActionGroup actionGroup = new DefaultActionGroup();
-    actionGroup.add(new ServerStartAction(SHARED_STATE));
-    actionGroup.add(new ServerStopAction(SHARED_STATE));
+    actionGroup.add(new ServerStartAction());
+    actionGroup.add(new ServerStopAction());
     actionGroup.add(new AnAction("Configure paths to local web browsers", null, PlatformIcons.WEB_ICON) {
       @Override
       public void actionPerformed(AnActionEvent e) {

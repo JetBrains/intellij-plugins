@@ -56,12 +56,9 @@ public class JstdRunSettings {
     return myDirectory;
   }
 
+  @NotNull
   public String getJsFilePath() {
     return myJSFilePath;
-  }
-
-  public boolean isAllInDirectory() {
-    return myTestType == TestType.ALL_CONFIGS_IN_DIRECTORY;
   }
 
   @NotNull

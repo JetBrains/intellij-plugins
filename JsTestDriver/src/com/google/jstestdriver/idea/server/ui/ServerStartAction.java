@@ -11,18 +11,23 @@ import com.google.jstestdriver.html.HtmlDocLexer;
 import com.google.jstestdriver.html.HtmlDocParser;
 import com.google.jstestdriver.html.InlineHtmlProcessor;
 import com.google.jstestdriver.idea.icons.JstdIcons;
+import com.google.jstestdriver.idea.server.JstdServerState;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.server.JstdTestCaseStore;
 import com.google.jstestdriver.util.NullStopWatch;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.Messages;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.SocketAddress;
 import java.util.Collections;
 import java.util.Set;
 
@@ -33,20 +38,40 @@ public class ServerStartAction extends AnAction {
 
   private static final Logger LOG = Logger.getInstance(ServerStartAction.class);
 
-  private final JstdServerState myServerState;
+  public static volatile ServerStartupAction ACTIVE_SERVER_STARTUP_ACTION = null;
 
-  public ServerStartAction(@NotNull JstdServerState serverState) {
+  public ServerStartAction() {
     super("Start a local server", null, JstdIcons.getIcon("startLocalServer.png"));
-    myServerState = serverState;
   }
 
   @Override
   public void update(AnActionEvent e) {
-    e.getPresentation().setEnabled(!myServerState.isServerRunning());
+    JstdServerState jstdServerState = JstdServerState.getInstance();
+    e.getPresentation().setEnabled(!jstdServerState.isServerRunning());
   }
 
   @Override
   public void actionPerformed(AnActionEvent e) {
+    asyncStartServer(null);
+  }
+
+  public static void asyncStartServer(@Nullable final Runnable callback) {
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
+      public void run() {
+        syncStartServer();
+        if (callback != null) {
+          callback.run();
+        }
+      }
+    });
+  }
+
+  public static void syncStartServer() {
+    JstdServerState jstdServerState = JstdServerState.getInstance();
+    if (jstdServerState.isServerRunning()) {
+      return;
+    }
     int serverPort = JstdToolWindowPanel.serverPort;
     FileLoader fileLoader = new ProcessingFileLoader(
         new SimpleFileReader(),
@@ -54,11 +79,12 @@ public class ServerStartAction extends AnAction {
         new NullStopWatch()
     );
     CapturedBrowsers browsers = new CapturedBrowsers(new BrowserIdStrategy(new TimeImpl()));
+    jstdServerState.setCapturedBrowsers(browsers);
     JsTestDriverServer.Factory factory = new DefaultServerFactory(
         browsers,
         SlaveBrowser.TIMEOUT,
         new NullPathPrefix(),
-        Sets.<ServerListener>newHashSet(JstdToolWindowPanel.SHARED_STATE)
+        Sets.<ServerListener>newHashSet(jstdServerState)
     );
     ServerStartupAction serverStartupAction = new ServerStartupAction(
         serverPort,
@@ -70,33 +96,31 @@ public class ServerStartAction extends AnAction {
     );
     try {
       serverStartupAction.run(null);
-      JstdToolWindowPanel.myServerStartupAction = serverStartupAction;
+      ACTIVE_SERVER_STARTUP_ACTION = serverStartupAction;
     } catch (Exception ex) {
       ServerStopAction.runStopAction(serverStartupAction);
 
-      String title = "JsTestDriver Server Launching";
+      final String title = "JsTestDriver Server Launching";
       int sslPort = serverPort + 1;
+      final String message;
       if (!isLocalPortAvailable(serverPort)) {
-        Messages.showErrorDialog(
-          "Can't start JsTestDriver server on port " + serverPort
-          + ".\nMake sure the port is free.",
-          title
-        );
+        message = "Can't start JsTestDriver server on port " + serverPort
+          + ".\nMake sure the port is free.";
       }
       else if (!isLocalPortAvailable(sslPort)) {
-          Messages.showErrorDialog(
-            "Can't start JsTestDriver server.\nMake sure the ssl port " + sslPort + " is free.",
-            title
-          );
+        message = "Can't start JsTestDriver server.\nMake sure the ssl port " + sslPort + " is free.";
       }
       else {
-        String message = "Can't start JsTestDriver server due to unknown reasons.";
-        Messages.showErrorDialog(
-          message + "\n" + "See idea.log (Help->Reveal Log in ...).",
-          title
-        );
+        message = "Can't start JsTestDriver server due to unknown reasons." + "\n"
+                         + "See idea.log (Help->Reveal Log in ...).";
         LOG.warn(message, ex);
       }
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          Messages.showErrorDialog(message, title);
+        }
+      });
     }
   }
 

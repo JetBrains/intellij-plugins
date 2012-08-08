@@ -37,19 +37,16 @@
   <depends optional="true" config-file="jstd-coverage.xml">Coverage</depends>
   <depends optional="true" config-file="jstd-coverage.xml">com.intellij.modules.coverage</depends>
 
+  <depends optional="true" config-file="jstd-javascript-debugger.xml">JavaScriptDebugger</depends>
+
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <fileTypeFactory implementation="com.google.jstestdriver.idea.config.JstdConfigFileTypeFactory"/>
     <configurationType implementation="com.google.jstestdriver.idea.execution.JstdConfigurationType"/>
-    <programRunner implementation="com.google.jstestdriver.idea.execution.JstdClientRunner"/>
+    <programRunner implementation="com.google.jstestdriver.idea.execution.JstdRunProgramRunner"/>
     <configurationProducer implementation="com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer"/>
-    <toolWindow id="JsTestDriver Server"
-                anchor="bottom"
-                secondary="true"
-                icon="/com/google/jstestdriver/idea/icons/toolWindowTestDriver.png"
-                factoryClass="com.google.jstestdriver.idea.server.ui.JstdToolWindow"
-                canCloseContents="false"
-    />
+    <applicationService serviceImplementation="com.google.jstestdriver.idea.server.JstdServerState"/>
+    <projectService serviceImplementation="com.google.jstestdriver.idea.server.ui.JstdToolWindowManager"/>
     <fileBasedIndex implementation="com.google.jstestdriver.idea.config.JstdTestFilePathIndex"/>
   </extensions>
 

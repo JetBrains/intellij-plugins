@@ -1,7 +1,9 @@
-package com.google.jstestdriver.idea.server.ui;
+package com.google.jstestdriver.idea.server;
 
 import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.hooks.ServerListener;
+import com.intellij.openapi.components.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -17,6 +19,10 @@ public class JstdServerState implements ServerListener {
   private volatile boolean myServerRunning = false;
   private final Map<String, BrowserInfo> myCapturedBrowsers = new ConcurrentHashMap<String, BrowserInfo>();
   private final Map<ServerListener, Object> myServerListeners = new IdentityHashMap<ServerListener, Object>();
+  private volatile CapturedBrowsers myBrowsers = null;
+
+  public JstdServerState() {
+  }
 
   @Override
   public void serverStarted() {
@@ -65,4 +71,17 @@ public class JstdServerState implements ServerListener {
   public void removeServerListener(@NotNull ServerListener serverListener) {
     myServerListeners.remove(serverListener);
   }
+
+  public void setCapturedBrowsers(@NotNull CapturedBrowsers capturedBrowsers) {
+    myBrowsers = capturedBrowsers;
+  }
+
+  public CapturedBrowsers getCaptured() {
+    return myBrowsers;
+  }
+
+  public static JstdServerState getInstance() {
+    return ServiceManager.getService(JstdServerState.class);
+  }
+
 }
