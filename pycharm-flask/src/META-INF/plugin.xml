@@ -12,6 +12,7 @@
     <internalFileTemplate name="Flask Main"/>
     <psi.referenceContributor implementation="com.jetbrains.flask.codeInsight.references.FlaskTemplateReferenceContributor"/>
     <codeInsight.lineMarkerProvider language="Python" implementationClass="com.jetbrains.flask.codeInsight.FlaskLineMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language="Jinja2" implementationClass="com.jetbrains.flask.codeInsight.FlaskLineMarkerProvider"/>
   </extensions>
   <extensions defaultExtensionNs="Pythonid">
     <unresolvedReferenceQuickFixProvider implementation="com.jetbrains.flask.codeInsight.references.FlaskTemplateQuickFixProvider"/>
