@@ -32,6 +32,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.jetbrains.flask.codeInsight.FlaskNames;
 import com.jetbrains.python.newProject.PyFrameworkProjectGenerator;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.packaging.PyExternalProcessException;
@@ -104,7 +105,7 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
           return;
         }
         projectDir.createSubdirectory("static");
-        PsiDirectory templates = projectDir.createSubdirectory("templates");
+        PsiDirectory templates = projectDir.createSubdirectory(FlaskNames.TEMPLATES);
         PyRunConfigurationFactory.getInstance().createPythonScriptRunConfiguration(module, appFile.getVirtualFile().getPath());
         TemplatesService templatesService = TemplatesService.getInstance(module);
         templatesService.setTemplateLanguage(TemplatesService.JINJA2);

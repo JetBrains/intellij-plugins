@@ -13,4 +13,7 @@
     <psi.referenceContributor implementation="com.jetbrains.flask.codeInsight.references.FlaskTemplateReferenceContributor"/>
     <codeInsight.lineMarkerProvider language="Python" implementationClass="com.jetbrains.flask.codeInsight.FlaskLineMarkerProvider"/>
   </extensions>
+  <extensions defaultExtensionNs="Pythonid">
+    <unresolvedReferenceQuickFixProvider implementation="com.jetbrains.flask.codeInsight.references.FlaskTemplateQuickFixProvider"/>
+  </extensions>
 </idea-plugin>
