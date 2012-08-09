@@ -1,5 +1,6 @@
 package org.jetbrains.plugins.cucumber.resolve;
 
+import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
 import com.intellij.testFramework.CodeInsightTestCase;
@@ -18,30 +19,48 @@ public abstract class CucumberResolveTest extends CodeInsightTestCase {
     super.setUp();
   }
 
-  public void doTest(@NotNull final String folder, @NotNull final String step, @NotNull final String stepDefinitionName) throws Exception {
-    CucumberStepsIndex.getInstance(myFixture.getProject()).reset();
-    myFixture.copyDirectoryToProject(folder, "");
-
-    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("test.feature"));
+  protected void checkReference(@NotNull final String step, @Nullable final String stepDefinitionName) {
     final CucumberStepReference ref = (CucumberStepReference)findReferenceBySignature(step);
+    assert ref != null;
 
     final ResolveResult[] result = ref.multiResolve(true);
-    boolean ok = false;
+    boolean ok = stepDefinitionName == null;
     for (ResolveResult rr : result) {
       final PsiElement resolvedElement = rr.getElement();
       if (resolvedElement != null) {
-        final String resolvedStepDefName = getStepDefinitionName(resolvedElement);
-        if (resolvedStepDefName != null && resolvedStepDefName.equals(stepDefinitionName)) {
-          ok = true;
-          break;
+        if (stepDefinitionName == null) {
+          ok = false;
+        } else {
+          final String resolvedStepDefName = getStepDefinitionName(resolvedElement);
+          if (resolvedStepDefName != null && resolvedStepDefName.equals(stepDefinitionName)) {
+            ok = true;
+            break;
+          }
         }
       }
     }
     assertTrue(ok);
   }
 
-  @Nullable
-  protected abstract String getStepDefinitionName(PsiElement stepDefinition);
+  public void doTest(@NotNull final String folder, @NotNull final String step, @Nullable final String stepDefinitionName) throws Exception {
+    init(folder);
 
-  protected abstract String getTestDataPath();
+    checkReference(step, stepDefinitionName);
+  }
+
+  protected void init(String folder) {
+    CucumberStepsIndex.getInstance(myFixture.getProject()).reset();
+    myFixture.copyDirectoryToProject(folder, "");
+    myFixture.configureFromExistingVirtualFile(myFixture.findFileInTempDir("test.feature"));
+  }
+
+  @Override
+  protected String getTestDataPath() {
+    return PathManager.getHomePath() + getRelatedTestDataPath();
+  }
+
+  @Nullable
+  protected abstract String getStepDefinitionName(@NotNull PsiElement stepDefinition);
+
+  protected abstract String getRelatedTestDataPath();
 }
