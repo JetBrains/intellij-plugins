@@ -22,19 +22,20 @@ import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.icons.AllIcons;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
+import com.intellij.psi.search.searches.ReferencesSearch;
+import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ConstantFunction;
+import com.intellij.util.Processor;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author yole
@@ -43,7 +44,13 @@ public class FlaskLineMarkerProvider extends RelatedItemLineMarkerProvider {
   @Override
   protected void collectNavigationMarkers(@NotNull PsiElement element, Collection<? super RelatedItemLineMarkerInfo> result) {
     if (element instanceof PyFunction) {
-      RelatedItemLineMarkerInfo<PyFunction> info = createTemplateLineMarker((PyFunction)element);
+      RelatedItemLineMarkerInfo<PyFunction> info = createCodeLineMarker((PyFunction)element);
+      if (info != null) {
+        result.add(info);
+      }
+    }
+    else if (element instanceof PsiFile && ((PsiFile)element).getViewProvider() instanceof TemplateLanguageFileViewProvider) {
+      RelatedItemLineMarkerInfo<PsiFile> info = createTemplateLineMarker((PsiFile)element);
       if (info != null) {
         result.add(info);
       }
@@ -51,7 +58,7 @@ public class FlaskLineMarkerProvider extends RelatedItemLineMarkerProvider {
   }
 
   @Nullable
-  private static RelatedItemLineMarkerInfo<PyFunction> createTemplateLineMarker(PyFunction function) {
+  private static RelatedItemLineMarkerInfo<PyFunction> createCodeLineMarker(PyFunction function) {
     if (function.getText().contains(FlaskNames.RENDER_TEMPLATE)) {
       List<PsiFile> referencedFiles = new ArrayList<PsiFile>();
       List<PyStringLiteralExpression> templateReferences = FlaskTemplateManager.collectTemplateReferences(function);
@@ -73,14 +80,44 @@ public class FlaskLineMarkerProvider extends RelatedItemLineMarkerProvider {
   }
 
   private static RelatedItemLineMarkerInfo<PyFunction> createTemplateNavigationLineMarker(PyFunction function, List<PsiFile> templates) {
-    PsiFile template = templates.iterator().next();
+    return createNavigationLineMarker(function, templates, "template");
+  }
+
+  private static <T extends PsiElement, U extends PsiNamedElement & NavigatablePsiElement>
+  RelatedItemLineMarkerInfo<T> createNavigationLineMarker(T function, Collection<U> targets, String targetTypeName) {
+    U template = targets.iterator().next();
     String templateName = template.getName();
-    final String msg = templates.size() == 1 ? "Go to template '" + templateName + "'" : "Goto templates";
-    return new RelatedItemLineMarkerInfo<PyFunction>(function, function.getTextRange(),
-                                                     AllIcons.FileTypes.Html, Pass.UPDATE_OVERRIDEN_MARKERS,
-                                                     new ConstantFunction<PyFunction, String>(msg),
-                                                     new DefaultGutterIconNavigationHandler<PyFunction>(templates, msg),
-                                                     GutterIconRenderer.Alignment.RIGHT,
-                                                     GotoRelatedItem.createItems(templates, "Templates"));
+    final String msg = targets.size() == 1 ? "Go to " + targetTypeName + " '" + templateName + "'" : "Go to " + StringUtil.pluralize(targetTypeName);
+    return new RelatedItemLineMarkerInfo<T>(function, function.getTextRange(),
+                                            AllIcons.FileTypes.Html, Pass.UPDATE_OVERRIDEN_MARKERS,
+                                            new ConstantFunction<T, String>(msg),
+                                            new DefaultGutterIconNavigationHandler<T>(targets, msg),
+                                            GutterIconRenderer.Alignment.RIGHT,
+                                            GotoRelatedItem.createItems(targets, StringUtil.pluralize(targetTypeName)));
+  }
+
+  @Nullable
+  private static RelatedItemLineMarkerInfo<PsiFile> createTemplateLineMarker(PsiFile element) {
+    final Set<PyFunction> viewFunctions = new HashSet<PyFunction>();
+    ReferencesSearch.search(element).forEach(new Processor<PsiReference>() {
+      @Override
+      public boolean process(PsiReference reference) {
+        if (reference.getElement() instanceof PyStringLiteralExpression) {
+          PyStringLiteralExpression literal = (PyStringLiteralExpression)reference.getElement();
+          if (FlaskTemplateManager.isTemplateReference(literal)) {
+            viewFunctions.add(PsiTreeUtil.getParentOfType(literal, PyFunction.class));
+          }
+        }
+        return true;
+      }
+    });
+    if (!viewFunctions.isEmpty()) {
+      return createViewFunctionNavigationMarker(element, viewFunctions);
+    }
+    return null;
+  }
+
+  private static RelatedItemLineMarkerInfo<PsiFile> createViewFunctionNavigationMarker(PsiFile element, Collection<PyFunction> targets) {
+    return createNavigationLineMarker(element, targets, "view function");
   }
 }
