@@ -33,7 +33,7 @@ public class JstdRunProgramRunner extends GenericProgramRunner {
   protected RunContentDescriptor doExecute(final Project project, final Executor executor, final RunProfileState state, final RunContentDescriptor contentToReuse,
                                            final ExecutionEnvironment env) throws ExecutionException {
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) env.getRunProfile();
-    JstdRunConfigurationVerifier.isJstdLocalServerReady(project, runConfiguration.getRunSettings(), false);
+    JstdRunConfigurationVerifier.checkJstdServerAndBrowserEnvironment(project, runConfiguration.getRunSettings(), false);
 
     FileDocumentManager.getInstance().saveAllDocuments();
     ExecutionResult executionResult = state.execute(executor, this);

@@ -23,13 +23,15 @@ public class JstdSettings {
   private final TestFileScope myTestFileScope;
   private final File myIdeCoverageFile;
   private final ImmutableList<String> myFilesExcludedFromCoverage;
+  private final boolean myDebug;
 
   public JstdSettings(@NotNull String serverUrl,
                       @NotNull List<File> configFiles,
                       @Nullable File runAllConfigsInDirectory,
                       @NotNull TestFileScope testFileScope,
                       @Nullable File ideCoverageFile,
-                      @NotNull List<String> filesExcludedFromCoverage)
+                      @NotNull List<String> filesExcludedFromCoverage,
+                      boolean debug)
   {
     myServerUrl = serverUrl;
     myConfigFiles = configFiles;
@@ -37,6 +39,7 @@ public class JstdSettings {
     myTestFileScope = testFileScope;
     myIdeCoverageFile = ideCoverageFile;
     myFilesExcludedFromCoverage = ImmutableList.copyOf(filesExcludedFromCoverage);
+    myDebug = debug;
   }
 
   @NotNull
@@ -67,6 +70,10 @@ public class JstdSettings {
   @NotNull
   public ImmutableList<String> getFilesExcludedFromCoverage() {
     return myFilesExcludedFromCoverage;
+  }
+
+  public boolean isDebug() {
+    return myDebug;
   }
 
   @NotNull
@@ -113,13 +120,15 @@ public class JstdSettings {
       String joinedPaths = notNullize(parameters.get(TestRunner.ParameterKey.COVERAGE_EXCLUDED_PATHS));
       excludedPaths = EscapeUtils.split(joinedPaths, ',');
     }
+    boolean debug = Boolean.TRUE.toString().equals(parameters.get(TestRunner.ParameterKey.DEBUG));
     return new JstdSettings(
       serverUrl,
       configFiles,
       runAllConfigsInDirectory,
       testFileScope,
       ideCoverageFile,
-      excludedPaths
+      excludedPaths,
+      debug
     );
   }
 

@@ -1,14 +1,17 @@
 package com.google.jstestdriver.idea.debug;
 
-import com.google.jstestdriver.CapturedBrowsers;
-import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.config.ParsedConfiguration;
 import com.google.jstestdriver.config.YamlParser;
+import com.google.jstestdriver.idea.TestRunner;
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.JstdRunConfigurationVerifier;
 import com.google.jstestdriver.idea.execution.JstdTestRunnerCommandLineState;
-import com.google.jstestdriver.idea.server.JstdServerState;
+import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
 import com.google.jstestdriver.model.BasePaths;
+import com.intellij.chromeConnector.connection.ChromeConnectionManager;
+import com.intellij.chromeConnector.connection.impl.ChromeConnectionManagerImpl;
+import com.intellij.chromeConnector.connection.impl.ExistentTabProviderFactory;
+import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
@@ -22,6 +25,7 @@ import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.execution.RemoteJavaScriptDebugConfiguration;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
+import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -57,65 +61,73 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
   }
 
   @Override
-  protected RunContentDescriptor doExecute(Project project,
-                                           Executor executor,
+  protected RunContentDescriptor doExecute(@NotNull Project project,
+                                           @NotNull Executor executor,
                                            RunProfileState state,
-                                           RunContentDescriptor contentToReuse,
-                                           ExecutionEnvironment env) throws ExecutionException {
+                                           @Nullable RunContentDescriptor contentToReuse,
+                                           @NotNull ExecutionEnvironment env) throws ExecutionException {
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) env.getRunProfile();
-
-    JstdRunConfigurationVerifier.isJstdLocalServerReady(project, runConfiguration.getRunSettings(), true);
-    JstdServerState jstdServerState = JstdServerState.getInstance();
-    if (!jstdServerState.isServerRunning()) {
-      throw new ExecutionException("JsTestDriver server isn't running");
+    if (runConfiguration.getRunSettings().isExternalServerType()) {
+      throw new ExecutionException("Debug is available only for local browsers captured by a local JsTestDriver server.");
     }
-    Context<?> context = getContext(jstdServerState);
+
+    JstdRunConfigurationVerifier.checkJstdServerAndBrowserEnvironment(project, runConfiguration.getRunSettings(), true);
+    JstdDebugBrowserInfo<?> context = JstdDebugBrowserInfo.build();
     if (context == null) {
-      throw new ExecutionException("Debug is available in Firefox and Chrome.\n" +
-                                   "Please capture one of these browsers and try again.");
+      throw new ExecutionException("Can not find a browser that supports debugging.");
     }
 
-
-    // start debugger
     RunContentDescriptor descriptor = startSession(project, contentToReuse, env, context, executor, runConfiguration);
 
     return descriptor;
   }
 
   @Nullable
-  private <Connection> RunContentDescriptor startSession(Project project,
-                                                         RunContentDescriptor contentToReuse,
-                                                         final ExecutionEnvironment env,
-                                                         @NotNull Context<Connection> context,
-                                                         final Executor executor,
+  private <Connection> RunContentDescriptor startSession(@NotNull Project project,
+                                                         @Nullable RunContentDescriptor contentToReuse,
+                                                         @NotNull ExecutionEnvironment env,
+                                                         @NotNull JstdDebugBrowserInfo<Connection> debugBrowserInfo,
+                                                         @NotNull Executor executor,
                                                          @NotNull JstdRunConfiguration runConfiguration) throws ExecutionException {
-    final JSDebugEngine<Connection> debugEngine = context.getDebugEngine();
+    FileDocumentManager.getInstance().saveAllDocuments();
+
+    final JSDebugEngine<Connection> debugEngine = debugBrowserInfo.getDebugEngine();
     if (!debugEngine.prepareDebugger(project)) return null;
 
-    final Connection connection = debugEngine.openConnection();
+    final String url;
+    final Connection connection;
+    if (debugEngine instanceof ChromeDebuggerEngine) {
+      ChromeConnectionManagerImpl chromeConnectionManager = (ChromeConnectionManagerImpl) ChromeConnectionManager.getInstance();
+      ExistentTabProviderFactory tabProviderFactory = ExistentTabProviderFactory.getInstance();
+      connection = (Connection) chromeConnectionManager.createConnection(tabProviderFactory);
+      url = "http://localhost:" + JstdToolWindowPanel.serverPort + debugBrowserInfo.getCapturedBrowserUrl();
+    }
+    else {
+      connection = debugEngine.openConnection();
+      url = null;
+    }
 
-    FileDocumentManager.getInstance().saveAllDocuments();
-    final String url = "http://localhost:9876" + context.getUrl();
+    JstdTestRunnerCommandLineState runState = runConfiguration.getState(env, null, true);
+    final ExecutionResult executionResult = runState.execute(executor, JstdDebugProgramRunner.this);
+
     File configFile = new File(runConfiguration.getRunSettings().getConfigFile());
     List<RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean> mapping = extractMappings(configFile);
 
-    final JstdTestRunnerCommandLineState runState = runConfiguration.getState(executor, env);
     final DebuggableFileFinder fileFinder = new RemoteDebuggingFileFinder(project, mapping);
-    final XDebugSession
-      debugSession = XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
+
+    XDebuggerManager xDebuggerManager = XDebuggerManager.getInstance(project);
+    XDebugSession xDebugSession = xDebuggerManager.startSession(this, env, contentToReuse, new XDebugProcessStarter() {
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
-        try {
-          ExecutionResult executionResult = runState.execute(executor, JstdDebugProgramRunner.this);
-          return debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
-        }
-        catch (ExecutionException e) {
-          throw new RuntimeException(e);
-        }
+        JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
+        return debugProcess;
       }
     });
+    PrintWriter writer = new PrintWriter(executionResult.getProcessHandler().getProcessInput());
+    writer.println(TestRunner.DEBUG_SESSION_STARTED + "\n");
+    writer.flush();
 
-    return debugSession.getRunContentDescriptor();
+    return xDebugSession.getRunContentDescriptor();
   }
 
   private List<RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean> extractMappings(@NotNull File configFile) throws ExecutionException {
@@ -157,45 +169,6 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     YamlParser yamlParser = new YamlParser();
     ParsedConfiguration parsedConfiguration = (ParsedConfiguration) yamlParser.parse(configFileReader, initialBasePaths);
     return parsedConfiguration.getBasePaths();
-  }
-
-  @Nullable
-  private static Context<?> getContext(@NotNull JstdServerState jstdServerState) {
-    JSDebugEngine<?>[] engines = JSDebugEngine.getEngines();
-    CapturedBrowsers browsers = jstdServerState.getCaptured();
-    if (browsers == null) {
-      return null;
-    }
-    for (SlaveBrowser slaveBrowser : browsers.getSlaveBrowsers()) {
-      String browserName = slaveBrowser.getBrowserInfo().getName();
-      for (JSDebugEngine<?> engine : engines) {
-        if (engine.getId().equalsIgnoreCase(browserName)) {
-          return new Context(engine, slaveBrowser.getCaptureUrl());
-        }
-      }
-    }
-    return null;
-  }
-
-  private static class Context<C> {
-    private final JSDebugEngine<C> myDebugEngine;
-    private final String myUrl;
-
-    private Context(@NotNull JSDebugEngine<C> debugEngine, @NotNull String url) {
-      myUrl = url;
-      myDebugEngine = debugEngine;
-    }
-
-    @NotNull
-    public JSDebugEngine<C> getDebugEngine() {
-      return myDebugEngine;
-    }
-
-    @NotNull
-    public String getUrl() {
-      return myUrl;
-    }
-
   }
 
 }
