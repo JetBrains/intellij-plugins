@@ -20,4 +20,5 @@ package com.jetbrains.flask.codeInsight;
  */
 public class FlaskNames {
   public static final String RENDER_TEMPLATE = "render_template";
+  public static final String TEMPLATES = "templates";
 }
