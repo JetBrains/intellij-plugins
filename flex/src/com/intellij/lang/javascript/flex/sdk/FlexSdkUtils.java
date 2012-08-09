@@ -422,7 +422,7 @@ public class FlexSdkUtils {
     final String vmOptions = FlexCompilerProjectConfiguration.getInstance(project).VM_OPTIONS;
     if (StringUtil.isNotEmpty(vmOptions)) result.addAll(StringUtil.split(vmOptions, " "));
 
-    if (!additionalJavaArgs.contains("file.encoding")) {
+    if (additionalJavaArgs == null || !additionalJavaArgs.contains("file.encoding")) {
       result.add("-Dfile.encoding=" + SDK_TOOLS_ENCODING);
     }
 
