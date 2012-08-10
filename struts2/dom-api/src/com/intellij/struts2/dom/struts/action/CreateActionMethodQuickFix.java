@@ -57,7 +57,7 @@ public class CreateActionMethodQuickFix extends LocalQuickFixAndIntentionActionO
 
   @NotNull
   public String getFamilyName() {
-    return "Struts 2 Quickfixes";
+    return "Create action-method";
   }
 
   @Override
