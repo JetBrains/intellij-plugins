@@ -6,6 +6,7 @@ import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
 import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 public class QUnitFileStructure extends AbstractTestFileStructure {
+
+  public static final Key<String> TEST_ELEMENT_NAME_KEY = Key.create("qunit-test-element-name-key");
 
   private final List<QUnitModuleStructure> myNonDefaultModuleStructures = Lists.newArrayList();
   private final Map<String, QUnitModuleStructure> myNonDefaultModuleStructureByNameMap = Maps.newHashMap();

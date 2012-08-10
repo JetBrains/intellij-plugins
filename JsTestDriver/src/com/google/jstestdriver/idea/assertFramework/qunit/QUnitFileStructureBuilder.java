@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.assertFramework.qunit;
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructureBuilder;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,21 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder<
   @NotNull
   @Override
   public QUnitFileStructure buildTestFileStructure(@NotNull JSFile jsFile) {
-    return new Builder(jsFile).build();
+    QUnitFileStructure fileStructure = new Builder(jsFile).build();
+    for (QUnitModuleStructure moduleStructure : fileStructure.getNonDefaultModuleStructures()) {
+      PsiElement element = moduleStructure.getEnclosingCallExpression();
+      element.putUserData(QUnitFileStructure.TEST_ELEMENT_NAME_KEY, moduleStructure.getName());
+      handleModuleStructure(moduleStructure);
+    }
+    handleModuleStructure(fileStructure.getDefaultModuleStructure());
+    return fileStructure;
+  }
+
+  private static void handleModuleStructure(@NotNull AbstractQUnitModuleStructure moduleStructure) {
+    for (QUnitTestMethodStructure testMethodStructure : moduleStructure.getTestMethodStructures()) {
+      PsiElement methodElement = testMethodStructure.getCallExpression();
+      methodElement.putUserData(QUnitFileStructure.TEST_ELEMENT_NAME_KEY, testMethodStructure.getName());
+    }
   }
 
   private static class Builder {

@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.execution.settings;
 
 import com.google.common.collect.Lists;
+import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
@@ -27,7 +28,8 @@ public class JstdRunSettingsSerializationUtils {
     SERVER_TYPE("serverType"),
     COVERAGE("coverage"),
     COVERAGE_EXCLUDED("excluded"),
-    COVERAGE_EXCLUDED_PATH("path");
+    COVERAGE_EXCLUDED_PATH("path"),
+    PREFERRED_DEBUG_BROWSER("preferredDebugBrowser");
 
     private final String key;
 
@@ -68,6 +70,10 @@ public class JstdRunSettingsSerializationUtils {
     }
     List<String> filesExcludedFromCoverage = readFilesExcludedFromCoverage(element);
     builder.setFilesExcludedFromCoverage(filesExcludedFromCoverage);
+
+    BrowsersConfiguration.BrowserFamily browser = readEnumByName(element, Key.PREFERRED_DEBUG_BROWSER,
+                                                                 JstdRunSettings.DEFAULT_PREFERRED_DEBUG_BROWSER);
+    builder.setPreferredDebugBrowser(browser);
     return builder.build();
   }
 
@@ -159,6 +165,7 @@ public class JstdRunSettingsSerializationUtils {
       writeString(element, Key.SERVER_ADDRESS, runSettings.getServerAddress());
     }
     writeFilesExcludedFromCoverage(element, runSettings.getFilesExcludedFromCoverage());
+    writeString(element, Key.PREFERRED_DEBUG_BROWSER, runSettings.getPreferredDebugBrowser().name());
   }
 
   private static void writeTestMethod(@NotNull Element element, @NotNull JstdRunSettings runSettings) {

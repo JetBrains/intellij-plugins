@@ -168,10 +168,21 @@ public class JstdRunConfigurationVerifier {
         );
       }
     }
+    ensureJstdToolWindowRegistered(project);
   }
 
   public static void fail(@NotNull Project project, @NotNull String message) throws ExecutionException {
     throw new JstdSlaveBrowserIsNotReadyExecutionException(project, message);
+  }
+
+  private static void ensureJstdToolWindowRegistered(@NotNull final Project project) {
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        JstdToolWindowManager manager = JstdToolWindowManager.getInstance(project);
+        manager.registerToolWindowIfNeeded();
+      }
+    });
   }
 
   private static class JstdSlaveBrowserIsNotReadyExecutionException extends ExecutionException implements HyperlinkListener {
