@@ -44,7 +44,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -222,7 +222,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
               if (testCases.isEmpty()) {
                 throw new ExecutionException("No tests found in " + jsPsiFile.getName());
               }
-              Map<String, Set<String>> scope = ContainerUtilRt.newHashMap();
+              Map<String, Set<String>> scope = ContainerUtil.newHashMap();
               for (String testCase : testCases) {
                 scope.put(testCase, Collections.<String>emptySet());
               }

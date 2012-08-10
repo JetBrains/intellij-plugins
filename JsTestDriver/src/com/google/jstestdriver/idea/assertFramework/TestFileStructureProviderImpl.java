@@ -5,7 +5,7 @@ import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructureBu
 import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.util.containers.ContainerUtilRt;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class TestFileStructureProviderImpl implements TestFileStructureManager.P
 
   private static final Logger LOG = Logger.getInstance(TestFileStructureProviderImpl.class);
 
-  private final List<AbstractTestFileStructureBuilder<? extends AbstractTestFileStructure>> myBuilders = ContainerUtilRt.newArrayList(
+  private final List<AbstractTestFileStructureBuilder<? extends AbstractTestFileStructure>> myBuilders = ContainerUtil.newArrayList(
     JstdTestFileStructureBuilder.getInstance(),
     QUnitFileStructureBuilder.getInstance(),
     JasmineFileStructureBuilder.getInstance()
