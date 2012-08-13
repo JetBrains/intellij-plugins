@@ -90,7 +90,6 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
   // String value consists of one or more "[module name] \t [bc name]" entries separated with new line ("\n").
   public String deselectedBCs = "";
 
-  @Transient
   private boolean myPackagingInProgress = false;
 
   @Transient
@@ -112,10 +111,12 @@ public class AirPackageProjectParameters implements PersistentStateComponent<Air
     XmlSerializerUtil.copyBean(state, this);
   }
 
+  @Transient
   public void setPackagingInProgress(final boolean packagingInProgress) {
     myPackagingInProgress = packagingInProgress;
   }
 
+  @Transient
   public boolean isPackagingInProgress() {
     return myPackagingInProgress;
   }
