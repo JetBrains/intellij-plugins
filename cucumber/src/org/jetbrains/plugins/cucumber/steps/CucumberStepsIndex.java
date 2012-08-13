@@ -56,6 +56,7 @@ public class CucumberStepsIndex {
     myExtensionMap = new HashMap<FileType, CucumberJvmExtensionPoint>();
 
     myCucumberPsiTreeListener = new CucumberPsiTreeListener();
+    PsiManager.getInstance(project).addPsiTreeChangeListener(myCucumberPsiTreeListener);
 
     for (CucumberJvmExtensionPoint e : myExtensionList) {
       myExtensionMap.put(e.getStepFileType(), e);

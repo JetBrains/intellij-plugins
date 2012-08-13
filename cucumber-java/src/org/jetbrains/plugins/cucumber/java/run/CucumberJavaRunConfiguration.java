@@ -75,9 +75,6 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
         final ProcessHandler processHandler = startProcess();
         final ConsoleView console = createConsole(executor, processHandler);
-        if (console != null) {
-          console.attachToProcess(processHandler);
-        }
         return new DefaultExecutionResult(console, processHandler, createActions(console, processHandler, executor));
 
       }
