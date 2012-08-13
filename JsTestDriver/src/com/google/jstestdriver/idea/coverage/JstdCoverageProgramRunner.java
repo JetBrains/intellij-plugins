@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.coverage;
 
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
+import com.google.jstestdriver.idea.execution.JstdRunConfigurationVerifier;
 import com.intellij.coverage.CoverageExecutor;
 import com.intellij.coverage.CoverageHelper;
 import com.intellij.coverage.CoverageRunnerData;
@@ -25,10 +26,12 @@ import org.jetbrains.annotations.Nullable;
  */
 public class JstdCoverageProgramRunner extends GenericProgramRunner {
 
+  private static final String COVERAGE_RUNNER_ID = JstdCoverageProgramRunner.class.getSimpleName();
+
   @NotNull
   @Override
   public String getRunnerId() {
-    return "JstdCoverageProgramRunner";
+    return COVERAGE_RUNNER_ID;
   }
 
   @Override
@@ -56,8 +59,9 @@ public class JstdCoverageProgramRunner extends GenericProgramRunner {
                                                 Executor executor,
                                                 RunContentDescriptor contentToReuse,
                                                 ExecutionEnvironment env) throws ExecutionException {
-    FileDocumentManager.getInstance().saveAllDocuments();
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) env.getRunProfile();
+    JstdRunConfigurationVerifier.checkJstdServerAndBrowserEnvironment(project, runConfiguration.getRunSettings(), false);
+    FileDocumentManager.getInstance().saveAllDocuments();
     CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
     RunProfileState state = runConfiguration.getCoverageState(env, coverageFilePath);

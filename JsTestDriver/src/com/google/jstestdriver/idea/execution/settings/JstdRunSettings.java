@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.execution.settings;
 
 import com.google.common.collect.ImmutableList;
+import com.intellij.ide.browsers.BrowsersConfiguration;
 import net.jcip.annotations.Immutable;
 import org.jetbrains.annotations.NotNull;
 
@@ -8,6 +9,8 @@ import java.util.List;
 
 @Immutable
 public class JstdRunSettings {
+
+  public static final BrowsersConfiguration.BrowserFamily DEFAULT_PREFERRED_DEBUG_BROWSER = BrowsersConfiguration.BrowserFamily.CHROME;
 
   private final TestType myTestType;
   private final String myConfigFile;
@@ -18,18 +21,20 @@ public class JstdRunSettings {
   private final String myTestCaseName;
   private final String myTestMethodName;
   private final ImmutableList<String> myFilesExcludedFromCoverage;
+  private final BrowsersConfiguration.BrowserFamily myPreferredDebugBrowser;
+
 
   public JstdRunSettings(
-      @NotNull TestType testType,
-      @NotNull String configFile,
-      @NotNull String directory,
-      @NotNull String jsFilePath,
-      @NotNull String serverAddress,
-      @NotNull ServerType serverType,
-      @NotNull String testCaseName,
-      @NotNull String testMethodName,
-      @NotNull ImmutableList<String> filesExcludedFromCoverage
-  ) {
+    @NotNull TestType testType,
+    @NotNull String configFile,
+    @NotNull String directory,
+    @NotNull String jsFilePath,
+    @NotNull String serverAddress,
+    @NotNull ServerType serverType,
+    @NotNull String testCaseName,
+    @NotNull String testMethodName,
+    @NotNull ImmutableList<String> filesExcludedFromCoverage,
+    @NotNull BrowsersConfiguration.BrowserFamily preferredDebugBrowser) {
     myTestType = testType;
     myConfigFile = configFile;
     myDirectory = directory;
@@ -39,6 +44,7 @@ public class JstdRunSettings {
     myTestCaseName = testCaseName;
     myTestMethodName = testMethodName;
     myFilesExcludedFromCoverage = filesExcludedFromCoverage;
+    myPreferredDebugBrowser = preferredDebugBrowser;
   }
 
   @NotNull
@@ -56,12 +62,9 @@ public class JstdRunSettings {
     return myDirectory;
   }
 
+  @NotNull
   public String getJsFilePath() {
     return myJSFilePath;
-  }
-
-  public boolean isAllInDirectory() {
-    return myTestType == TestType.ALL_CONFIGS_IN_DIRECTORY;
   }
 
   @NotNull
@@ -92,6 +95,11 @@ public class JstdRunSettings {
     return myFilesExcludedFromCoverage;
   }
 
+  @NotNull
+  public BrowsersConfiguration.BrowserFamily getPreferredDebugBrowser() {
+    return myPreferredDebugBrowser;
+  }
+
   public static class Builder {
 
     private TestType myTestType = TestType.CONFIG_FILE;
@@ -103,6 +111,7 @@ public class JstdRunSettings {
     private String myTestCaseName = "";
     private String myTestMethodName = "";
     private ImmutableList<String> myFilesExcludedFromCoverage = ImmutableList.of();
+    private BrowsersConfiguration.BrowserFamily myPreferredDebugBrowser = DEFAULT_PREFERRED_DEBUG_BROWSER;
 
     public Builder() {
     }
@@ -163,6 +172,10 @@ public class JstdRunSettings {
       return this;
     }
 
+    public void setPreferredDebugBrowser(@NotNull BrowsersConfiguration.BrowserFamily preferredDebugBrowser) {
+      myPreferredDebugBrowser = preferredDebugBrowser;
+    }
+
     @NotNull
     public JstdRunSettings build() {
       return new JstdRunSettings(
@@ -174,7 +187,8 @@ public class JstdRunSettings {
         myServerType,
         myTestCaseName,
         myTestMethodName,
-        myFilesExcludedFromCoverage
+        myFilesExcludedFromCoverage,
+        myPreferredDebugBrowser
       );
     }
   }

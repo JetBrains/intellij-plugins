@@ -55,6 +55,7 @@ import java.util.*;
 public class TestRunner {
 
   private static final String COVERAGE_MODULE_NAME = "com.google.jstestdriver.coverage.CoverageModule";
+  public static final String DEBUG_SESSION_STARTED = "debug session started";
 
   public enum ParameterKey {
     SERVER_URL,
@@ -62,7 +63,8 @@ public class TestRunner {
     ALL_CONFIGS_IN_DIRECTORY,
     TESTS,
     COVERAGE_OUTPUT_FILE,
-    COVERAGE_EXCLUDED_PATHS
+    COVERAGE_EXCLUDED_PATHS,
+    DEBUG
   }
 
   private final JstdSettings mySettings;
@@ -290,6 +292,15 @@ public class TestRunner {
     if (!validateServer(settings, treeManager)) {
       System.exit(1);
       return;
+    }
+    if (settings.isDebug()) {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        if (DEBUG_SESSION_STARTED.equals(line)) {
+          break;
+        }
+      }
     }
     try {
       new TestRunner(settings, treeManager).executeAll();

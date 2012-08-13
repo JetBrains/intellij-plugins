@@ -70,21 +70,25 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
   private final ExecutionEnvironment myExecutionEnvironment;
   private final JstdRunSettings myRunSettings;
   private final String myCoverageFilePath;
+  private final boolean myDebug;
 
   public JstdTestRunnerCommandLineState(
     @NotNull Project project,
     @NotNull ExecutionEnvironment executionEnvironment,
     @NotNull JstdRunSettings runSettings,
-    @Nullable String coverageFilePath)
+    @Nullable String coverageFilePath,
+    boolean debug)
   {
     super(executionEnvironment);
     myProject = project;
     myExecutionEnvironment = executionEnvironment;
     myRunSettings = runSettings;
     myCoverageFilePath = coverageFilePath;
+    myDebug = debug;
   }
 
   @Override
+  @NotNull
   public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
     ProcessHandler processHandler = startProcess();
     ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment, executor);
@@ -198,6 +202,9 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
         String excludedPaths = EscapeUtils.join(myRunSettings.getFilesExcludedFromCoverage(), ',');
         parameters.put(TestRunner.ParameterKey.COVERAGE_EXCLUDED_PATHS, excludedPaths);
       }
+    }
+    if (myDebug) {
+      parameters.put(TestRunner.ParameterKey.DEBUG, Boolean.TRUE.toString());
     }
     return parameters;
   }
