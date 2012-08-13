@@ -42,7 +42,7 @@ public class FlaskImportResolver implements PyImportResolver {
         return item;
       }
       qName = PyQualifiedName.fromComponents("flaskext", topName).append(subName);
-      item = psiFacade.qualifiedNameResolver(qName).withContext(resolveContext).firstResult();
+      item = psiFacade.qualifiedNameResolver(qName).withContext(resolveContext).withPlainDirectories().firstResult();
       if (item != null) {
         return item;
       }
