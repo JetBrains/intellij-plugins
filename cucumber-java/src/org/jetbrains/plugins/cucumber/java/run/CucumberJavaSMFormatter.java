@@ -32,6 +32,8 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
 
     private String currentScenarioName;
 
+    private String uri;
+
     public CucumberJavaSMFormatter(Appendable appendable) {
         this.appendable = appendable;
         queue = new ArrayDeque<Step>();
@@ -39,14 +41,14 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
 
     @Override
     public void uri(String s) {
-        out(s);
+        uri = s;
     }
 
     @Override
     public void feature(Feature feature) {
         final String featureFullName = "Feature: " + feature.getName();
         out(String.format(TEMPLATE_ENTER_THE_MATRIX, getCurrentTime()));
-        out(String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), "", featureFullName));
+        out(String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), uri + ":" + feature.getLine(), featureFullName));
     }
 
     @Override
@@ -60,7 +62,7 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
 
         final String scenarioFullName = "Scenario: " + scenario.getName();
         currentScenarioName = scenarioFullName;
-        out(String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), "", scenarioFullName));
+        out(String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), uri + ":" + scenario.getLine(), scenarioFullName));
     }
 
     @Override
@@ -69,7 +71,7 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
         queue.clear();
         final String scenarioFullName = "Scenario: " + outline.getName();
         currentScenarioName = scenarioFullName;
-        out(String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), "", scenarioFullName));
+        out(String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), uri + ":" + outline.getLine(), scenarioFullName));
     }
 
     @Override
@@ -81,7 +83,7 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
     public void step(Step step) {
         queue.add(step);
         final String stepFullName = step.getKeyword() + " " + step.getName();
-        out(String.format(TEMPLATE_TEST_STARTED, getCurrentTime(), "", stepFullName));
+        out(String.format(TEMPLATE_TEST_STARTED, getCurrentTime(), uri + ":" + step.getLine(), stepFullName));
     }
 
     @Override
