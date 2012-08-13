@@ -27,6 +27,7 @@
     <lang.foldingBuilder language="TypoScript" implementationClass="com.jetbrains.typoscript.lang.TypoScriptFoldingBuilder"/>
 
     <lang.psiStructureViewFactory language="TypoScript" implementationClass="com.jetbrains.typoscript.lang.TypoScriptStructureViewFactory"/>
+    <lang.commenter language="TypoScript" implementationClass="com.jetbrains.typoscript.lang.TypoScriptCommenter"/>
   </extensions>
 
   <application-components>
