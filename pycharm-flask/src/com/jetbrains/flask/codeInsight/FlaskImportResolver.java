@@ -16,7 +16,6 @@
 package com.jetbrains.flask.codeInsight;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileSystemItem;
 import com.jetbrains.python.psi.PyElement;
 import com.jetbrains.python.psi.PyPsiFacade;
 import com.jetbrains.python.psi.impl.PyImportResolver;
@@ -47,7 +46,7 @@ public class FlaskImportResolver implements PyImportResolver {
   @Nullable
   private static PsiElement resolveFlaskExtModule(PyElement importElement, String submodule) {
     PyPsiFacade psiFacade = PyPsiFacade.getInstance(importElement.getProject());
-    PsiFileSystemItem item = psiFacade.qualifiedNameResolver("flask_" + submodule).fromElement(importElement).firstResult();
+    PsiElement item = psiFacade.qualifiedNameResolver("flask_" + submodule).fromElement(importElement).firstResult();
     if (item != null) {
       return item;
     }
