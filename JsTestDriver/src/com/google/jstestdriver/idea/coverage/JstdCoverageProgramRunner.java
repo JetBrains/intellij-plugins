@@ -60,7 +60,7 @@ public class JstdCoverageProgramRunner extends GenericProgramRunner {
                                                 RunContentDescriptor contentToReuse,
                                                 ExecutionEnvironment env) throws ExecutionException {
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) env.getRunProfile();
-    JstdRunConfigurationVerifier.isJstdLocalServerReady(project, runConfiguration.getRunSettings(), false);
+    JstdRunConfigurationVerifier.checkJstdServerAndBrowserEnvironment(project, runConfiguration.getRunSettings(), false);
     FileDocumentManager.getInstance().saveAllDocuments();
     CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();

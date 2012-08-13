@@ -60,6 +60,7 @@ public class JstdServerState implements ServerListener {
     return myServerRunning;
   }
 
+  @NotNull
   public Collection<BrowserInfo> getCapturedBrowsers() {
     return myCapturedBrowsers.values();
   }

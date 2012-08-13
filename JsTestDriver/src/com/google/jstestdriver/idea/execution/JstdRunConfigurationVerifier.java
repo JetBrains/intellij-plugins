@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.execution;
 
+import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
@@ -8,6 +9,7 @@ import com.google.jstestdriver.idea.server.ui.JstdToolWindowManager;
 import com.google.jstestdriver.idea.server.ui.ServerStartAction;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -18,6 +20,7 @@ import javax.swing.event.HyperlinkListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 
 public class JstdRunConfigurationVerifier {
 
@@ -122,25 +125,60 @@ public class JstdRunConfigurationVerifier {
     }
   }
 
-  public static void isJstdLocalServerReady(@NotNull Project project,
-                                            @NotNull JstdRunSettings settings,
-                                            boolean debug) throws ExecutionException {
+  public static void checkJstdServerAndBrowserEnvironment(@NotNull Project project,
+                                                          @NotNull JstdRunSettings settings,
+                                                          boolean debug) throws ExecutionException {
     if (settings.isExternalServerType()) {
       return;
     }
     JstdServerState jstdServerState = JstdServerState.getInstance();
     if (!jstdServerState.isServerRunning()) {
       String browserMessage = debug ? "Firefox or Chrome" : "a browser";
-      throw new MyExecutionException(project, "JsTestDriver server is not running.<br>" +
-                                              "<a href=\"\">Start a local server</a> and capture " + browserMessage);
+      throw new JstdSlaveBrowserIsNotReadyExecutionException(project, "JsTestDriver local server is not running.<br>" +
+                                              "<a href=\"\">Start a local server</a>, capture " + browserMessage + " and try again.");
+    }
+    if (debug) {
+      JSDebugEngine<?>[] engines = JSDebugEngine.getEngines();
+      Collection<BrowserInfo> capturedBrowsers = jstdServerState.getCapturedBrowsers();
+      boolean ok = false;
+      for (BrowserInfo browser : capturedBrowsers) {
+        String browserName = browser.getName();
+        for (JSDebugEngine<?> engine : engines) {
+          if (engine.getId().equalsIgnoreCase(browserName)) {
+            ok = true;
+            break;
+          }
+        }
+        if (ok) break;
+      }
+      if (!ok) {
+        throw new JstdSlaveBrowserIsNotReadyExecutionException(
+          project,
+          "Debug is available in Firefox or Chrome only.\n" +
+          "Please <a href=\"\">capture</a> one of these browsers and try again."
+        );
+      }
+    }
+    else {
+      if (jstdServerState.getCapturedBrowsers().isEmpty()) {
+        throw new JstdSlaveBrowserIsNotReadyExecutionException(
+          project,
+          "JsTestDriver local server is running without captured browsers.\n" +
+          "Please <a href=\"\">capture</a> a browser and try again."
+        );
+      }
     }
   }
 
-  private static class MyExecutionException extends ExecutionException implements HyperlinkListener {
+  public static void fail(@NotNull Project project, @NotNull String message) throws ExecutionException {
+    throw new JstdSlaveBrowserIsNotReadyExecutionException(project, message);
+  }
+
+  private static class JstdSlaveBrowserIsNotReadyExecutionException extends ExecutionException implements HyperlinkListener {
 
     private final Project myProject;
 
-    public MyExecutionException(Project project, String s) {
+    public JstdSlaveBrowserIsNotReadyExecutionException(Project project, String s) {
       super(s);
       myProject = project;
     }
