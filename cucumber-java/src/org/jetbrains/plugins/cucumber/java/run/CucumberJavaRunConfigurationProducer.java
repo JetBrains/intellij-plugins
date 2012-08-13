@@ -40,7 +40,7 @@ public class CucumberJavaRunConfigurationProducer extends JavaRuntimeConfigurati
     final Project project = context.getProject();
     RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(project, context);
     final CucumberJavaRunConfiguration configuration = (CucumberJavaRunConfiguration)settings.getConfiguration();
-    configuration.setProgramParameters(mySourceElement.getContainingFile().getVirtualFile().getCanonicalPath() + " --glue cucumber --format pretty --monochrome");
+    configuration.setProgramParameters(mySourceElement.getContainingFile().getVirtualFile().getCanonicalPath() + " --glue cucumber --format org.jetbrains.plugins.cucumber.java.run.CucumberJavaSMFormatter --monochrome");
     configuration.MAIN_CLASS_NAME = "cucumber.cli.Main";
 
     setupConfigurationModule(context, configuration);
