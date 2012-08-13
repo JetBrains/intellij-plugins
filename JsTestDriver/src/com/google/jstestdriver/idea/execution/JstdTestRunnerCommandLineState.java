@@ -85,6 +85,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
   }
 
   @Override
+  @NotNull
   public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
     ProcessHandler processHandler = startProcess();
     ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment, executor);
