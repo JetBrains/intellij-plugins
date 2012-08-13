@@ -17,5 +17,6 @@
   <extensions defaultExtensionNs="Pythonid">
     <unresolvedReferenceQuickFixProvider implementation="com.jetbrains.flask.codeInsight.references.FlaskTemplateQuickFixProvider"/>
     <importResolver implementation="com.jetbrains.flask.codeInsight.FlaskImportResolver"/>
+    <pyModuleMembersProvider implementation="com.jetbrains.flask.codeInsight.FlaskModuleMembersProvider"/>
   </extensions>
 </idea-plugin>
