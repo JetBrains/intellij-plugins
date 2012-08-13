@@ -3,13 +3,17 @@ package com.google.jstestdriver.idea.execution.settings.ui;
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.TestType;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.IdeBorderFactory;
+import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTabbedPane;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.UIUtil;
+import com.intellij.webcore.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,6 +78,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
     private final ServerConfigurationForm myServerConfigurationForm = new ServerConfigurationForm();
     private Map<TestType, TestTypeListItem> myListItemByTestTypeMap;
     private final JBLabel myLabel = new JBLabel("Test:");
+    private JComboBox myPreferredDebugBrowserComboBox;
 
     @NotNull
     @Override
@@ -125,8 +130,54 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
         0, 0
       ));
 
+      panel.add(createDebugPanel(), new GridBagConstraints(
+        0, 3,
+        2, 1,
+        1.0, 0.0,
+        GridBagConstraints.WEST,
+        GridBagConstraints.HORIZONTAL,
+        new Insets(0, 0, 0, 0),
+        0, 0
+      ));
+
       setAnchor(myTestTypeContentRunSettingsSection.getAnchor());
       return panel;
+    }
+
+    @NotNull
+    private JPanel createDebugPanel() {
+      BrowsersConfiguration.BrowserFamily[] supportedBrowsers = new BrowsersConfiguration.BrowserFamily[] {
+        BrowsersConfiguration.BrowserFamily.CHROME,
+        BrowsersConfiguration.BrowserFamily.FIREFOX
+      };
+      final JComboBox comboBox = new JComboBox(supportedBrowsers);
+      comboBox.setRenderer(new ListCellRendererWrapper<BrowsersConfiguration.BrowserFamily>(comboBox.getRenderer()) {
+        @Override
+        public void customize(JList list,
+                              BrowsersConfiguration.BrowserFamily value,
+                              int index,
+                              boolean selected,
+                              boolean hasFocus) {
+          setIcon(value.getIcon());
+          setText(value.getName());
+        }
+      });
+      myPreferredDebugBrowserComboBox = comboBox;
+      JPanel secondLinePanel = SwingHelper.newHorizontalPanel(
+        Component.CENTER_ALIGNMENT,
+        new JLabel("Debug in"),
+        comboBox,
+        new JLabel(" if both browsers are captured.")
+      );
+      JPanel allLinesPanel = SwingHelper.newLeftAlignedVerticalPanel(
+        new JLabel("Debugging is available in Chrome and Firefox only."),
+        Box.createVerticalStrut(10),
+        secondLinePanel
+      );
+      JPanel result = new JPanel(new BorderLayout(0, 0));
+      result.add(allLinesPanel, BorderLayout.WEST);
+      result.setBorder(IdeBorderFactory.createTitledBorder("Debug", true));
+      return result;
     }
 
     @Override
@@ -134,6 +185,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
       selectTestType(runSettings.getTestType());
       myTestTypeContentRunSettingsSection.resetFrom(runSettings);
       myServerConfigurationForm.resetFrom(runSettings);
+      myPreferredDebugBrowserComboBox.setSelectedItem(runSettings.getPreferredDebugBrowser());
     }
 
     @Override
@@ -143,6 +195,13 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
       runSettingsBuilder.setTestType(selectedTestType);
       myTestTypeContentRunSettingsSection.applyTo(runSettingsBuilder);
       myServerConfigurationForm.applyTo(runSettingsBuilder);
+      BrowsersConfiguration.BrowserFamily selectedBrowser = ObjectUtils.tryCast(
+        myPreferredDebugBrowserComboBox.getSelectedItem(),
+        BrowsersConfiguration.BrowserFamily.class
+      );
+      if (selectedBrowser != null) {
+        runSettingsBuilder.setPreferredDebugBrowser(selectedBrowser);
+      }
     }
 
     private static @NotNull List<TestTypeListItem> createTestTypeListItems() {

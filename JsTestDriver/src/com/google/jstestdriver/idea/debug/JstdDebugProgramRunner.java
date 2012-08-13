@@ -9,7 +9,6 @@ import com.google.jstestdriver.idea.execution.JstdTestRunnerCommandLineState;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
 import com.google.jstestdriver.model.BasePaths;
 import com.intellij.chromeConnector.connection.ChromeConnectionManager;
-import com.intellij.chromeConnector.connection.impl.ChromeConnectionManagerImpl;
 import com.intellij.chromeConnector.connection.impl.ExistentTabProviderFactory;
 import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
 import com.intellij.execution.ExecutionException;
@@ -70,25 +69,20 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     if (runConfiguration.getRunSettings().isExternalServerType()) {
       throw new ExecutionException("Debug is available only for local browsers captured by a local JsTestDriver server.");
     }
-
     JstdRunConfigurationVerifier.checkJstdServerAndBrowserEnvironment(project, runConfiguration.getRunSettings(), true);
-    JstdDebugBrowserInfo<?> context = JstdDebugBrowserInfo.build();
-    if (context == null) {
-      throw new ExecutionException("Can not find a browser that supports debugging.");
-    }
-
-    RunContentDescriptor descriptor = startSession(project, contentToReuse, env, context, executor, runConfiguration);
-
-    return descriptor;
+    return startSession(project, contentToReuse, env, executor, runConfiguration);
   }
 
   @Nullable
   private <Connection> RunContentDescriptor startSession(@NotNull Project project,
                                                          @Nullable RunContentDescriptor contentToReuse,
                                                          @NotNull ExecutionEnvironment env,
-                                                         @NotNull JstdDebugBrowserInfo<Connection> debugBrowserInfo,
                                                          @NotNull Executor executor,
                                                          @NotNull JstdRunConfiguration runConfiguration) throws ExecutionException {
+    JstdDebugBrowserInfo<Connection> debugBrowserInfo = JstdDebugBrowserInfo.build(runConfiguration.getRunSettings());
+    if (debugBrowserInfo == null) {
+      throw new ExecutionException("Can not find a browser that supports debugging.");
+    }
     FileDocumentManager.getInstance().saveAllDocuments();
 
     final JSDebugEngine<Connection> debugEngine = debugBrowserInfo.getDebugEngine();
@@ -97,8 +91,9 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     final String url;
     final Connection connection;
     if (debugEngine instanceof ChromeDebuggerEngine) {
-      ChromeConnectionManagerImpl chromeConnectionManager = (ChromeConnectionManagerImpl) ChromeConnectionManager.getInstance();
+      ChromeConnectionManager chromeConnectionManager = ChromeConnectionManager.getInstance();
       ExistentTabProviderFactory tabProviderFactory = ExistentTabProviderFactory.getInstance();
+      //noinspection unchecked
       connection = (Connection) chromeConnectionManager.createConnection(tabProviderFactory);
       url = "http://localhost:" + JstdToolWindowPanel.serverPort + debugBrowserInfo.getCapturedBrowserUrl();
     }
