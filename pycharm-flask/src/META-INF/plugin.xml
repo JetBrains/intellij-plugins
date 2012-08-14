@@ -19,5 +19,6 @@
     <importResolver implementation="com.jetbrains.flask.codeInsight.FlaskImportResolver"/>
     <pyModuleMembersProvider implementation="com.jetbrains.flask.codeInsight.FlaskModuleMembersProvider"/>
     <pyClassMembersProvider implementation="com.jetbrains.flask.codeInsight.FlaskSQLAlchemyMembersProvider"/>
+    <keywordArgumentProvider implementation="com.jetbrains.flask.codeInsight.FlaskKeywordArgumentProvider"/>
   </extensions>
 </idea-plugin>
