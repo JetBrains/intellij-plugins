@@ -32,10 +32,11 @@ public class TestCaseNode extends AbstractSuiteNode<TestNode> {
 
   @Override
   public String getLocationPath() {
-    if (myJsTestFilePath == null) {
-      return null;
+    String jsTestFilePath = myJsTestFilePath;
+    if (jsTestFilePath == null) {
+      jsTestFilePath = "";
     }
-    List<String> path = Lists.newArrayList(myJsTestFilePath, getName());
+    List<String> path = Lists.newArrayList(jsTestFilePath, getName());
     return EscapeUtils.join(path, ':');
   }
 }

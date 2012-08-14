@@ -24,6 +24,11 @@ public class JasmineFileStructure extends AbstractTestFileStructure {
     super(jsFile);
   }
 
+  @NotNull
+  public List<JasmineSuiteStructure> getSuites() {
+    return mySuiteStructures;
+  }
+
   @Override
   public boolean isEmpty() {
     return mySuiteMap.isEmpty();
@@ -83,16 +88,38 @@ public class JasmineFileStructure extends AbstractTestFileStructure {
 
   @Override
   public PsiElement findPsiElement(@NotNull String testCaseName, @Nullable String testMethodName) {
-    JasmineSuiteStructure suiteStructure = mySuiteMap.get(testCaseName);
-    if (suiteStructure != null) {
-      if (testMethodName != null) {
-        JasmineSpecStructure specStructure = suiteStructure.getInnerSpecByName(testMethodName);
-        if (specStructure != null) {
-          return specStructure.getEnclosingCallExpression();
+    JasmineSuiteStructure suite = findSuite(testCaseName);
+    if (suite == null) {
+      return null;
+    }
+    if (testMethodName == null) {
+      return suite.getEnclosingCallExpression();
+    }
+    JasmineSpecStructure spec = suite.getInnerSpecByName(testMethodName);
+    if (spec != null) {
+      return spec.getEnclosingCallExpression();
+    }
+    return null;
+  }
+
+  @Nullable
+  private JasmineSuiteStructure findSuite(@NotNull String suiteName) {
+    JasmineSuiteStructure suite = mySuiteMap.get(suiteName);
+    if (suite != null) {
+      return suite;
+    }
+    int ind = suiteName.lastIndexOf(' ');
+    while (ind >= 0) {
+      String prefix = suiteName.substring(0, ind);
+      suite = mySuiteMap.get(prefix);
+      if (suite != null) {
+        String suffix = suiteName.substring(ind + 1);
+        JasmineSuiteStructure res = suite.findSuite(suffix);
+        if (res != null) {
+          return res;
         }
-      } else {
-        return suiteStructure.getEnclosingCallExpression();
       }
+      ind = suiteName.lastIndexOf(' ', ind - 1);
     }
     return null;
   }

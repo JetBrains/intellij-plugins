@@ -33,7 +33,7 @@ public class TestNode extends AbstractNodeWithParent<TestNode> {
     TestCaseNode testCase = getParent();
     String jsTestFilePath = testCase.getJsTestFilePath();
     if (jsTestFilePath == null) {
-      return null;
+      jsTestFilePath = "";
     }
     List<String> path = Lists.newArrayList(jsTestFilePath, testCase.getName(), getName());
     return EscapeUtils.join(path, ':');
