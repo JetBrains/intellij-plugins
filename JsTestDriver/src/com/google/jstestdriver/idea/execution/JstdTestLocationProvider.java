@@ -1,16 +1,24 @@
 package com.google.jstestdriver.idea.execution;
 
+import com.google.jstestdriver.idea.assertFramework.JsTestFileByTestNameIndex;
+import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineFileStructure;
+import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineFileStructureBuilder;
 import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
 import com.intellij.execution.testframework.sm.FileUrlProvider;
+import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testIntegration.TestLocationProvider;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,24 +85,79 @@ public class JstdTestLocationProvider implements TestLocationProvider {
   }
 
   @Nullable
-  private static Location findTest(@NotNull String locationData, Project project) {
+  private Location<PsiElement> findTest(final @NotNull String locationData, Project project) {
     List<String> path = EscapeUtils.split(locationData, ':');
     if (path.size() < 2) {
       return null;
     }
     String jsTestFilePath = path.get(0);
     String testCaseName = path.get(1);
-    String testName = path.size() > 2 ? path.get(2) : null;
-    PsiElement element = NavUtils.findPsiElement(
-      project,
-      new File(jsTestFilePath),
-      testCaseName,
-      testName
-    );
-    if (element != null) {
-      return PsiLocation.fromPsiElement(element);
+    String testMethodName = path.size() > 2 ? path.get(2) : null;
+
+    File jsTestFile = new File(jsTestFilePath);
+
+    final PsiElement psiElement;
+    if (jsTestFile.isFile() && jsTestFile.isAbsolute()) {
+      VirtualFile jsTestVirtualFile = VfsUtil.findFileByIoFile(jsTestFile, false);
+      if (jsTestVirtualFile == null || !jsTestVirtualFile.isValid()) {
+        return null;
+      }
+      psiElement = NavUtils.findPsiLocation(
+        project,
+        jsTestVirtualFile,
+        testCaseName,
+        testMethodName
+      );
+    }
+    else {
+      psiElement = findJasmineTestLocation(project, testCaseName, testMethodName);
+    }
+    if (psiElement != null && psiElement.isValid()) {
+      return PsiLocation.fromPsiElement(psiElement);
     }
     return null;
+  }
+
+  @Nullable
+  private PsiElement findJasmineTestLocation(@NotNull Project project,
+                                                       @NotNull String testCaseName,
+                                                       @Nullable String testMethodName) {
+    GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(testCaseName, scope);
+    List<VirtualFile> validJsTestVirtualFiles = filterVirtualFiles(jsTestVirtualFiles);
+
+    for (VirtualFile jsTestVirtualFile : validJsTestVirtualFiles) {
+      PsiFile psiFile = PsiManager.getInstance(project).findFile(jsTestVirtualFile);
+      if (psiFile instanceof JSFile) {
+        JSFile jsFile = (JSFile) psiFile;
+        JasmineFileStructureBuilder builder = JasmineFileStructureBuilder.getInstance();
+        JasmineFileStructure jasmineFileStructure = builder.fetchCachedTestFileStructure(jsFile);
+        PsiElement element = jasmineFileStructure.findPsiElement(testCaseName, testMethodName);
+        if (element != null && element.isValid()) {
+          return element;
+        }
+      }
+    }
+    return null;
+  }
+
+  private static List<VirtualFile> filterVirtualFiles(@NotNull List<VirtualFile> files) {
+    boolean ok = true;
+    for (VirtualFile file : files) {
+      if (!file.isValid()) {
+        ok = false;
+        break;
+      }
+    }
+    if (ok) {
+      return files;
+    }
+    return ContainerUtil.filter(files, new Condition<VirtualFile>() {
+      @Override
+      public boolean value(VirtualFile file) {
+        return file.isValid();
+      }
+    });
   }
 
   @Nullable

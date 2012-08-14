@@ -7,6 +7,7 @@ import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFunctionExpression;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,10 +70,7 @@ public class JasmineSuiteStructure implements JasmineSuiteChild {
   @Nullable
   public JasmineSpecStructure getInnerSpecByName(String specName) {
     JasmineSuiteChild child = myChildByNameMap.get(specName);
-    if (child instanceof JasmineSpecStructure) {
-      return (JasmineSpecStructure) child;
-    }
-    return null;
+    return ObjectUtils.tryCast(child, JasmineSpecStructure.class);
   }
 
   public int getSuiteChildrenCount() {
@@ -134,4 +132,38 @@ public class JasmineSuiteStructure implements JasmineSuiteChild {
     }
     return null;
   }
+
+  @NotNull
+  public List<JasmineSuiteStructure> getSuites() {
+    return mySuiteChildren;
+  }
+
+  @NotNull
+  public List<JasmineSpecStructure> getSpecs() {
+    return mySpecChildren;
+  }
+
+  @Nullable
+  public JasmineSuiteStructure findSuite(@NotNull String suiteName) {
+    JasmineSuiteChild child = myChildByNameMap.get(suiteName);
+    if (child instanceof JasmineSuiteStructure) {
+      return (JasmineSuiteStructure) child;
+    }
+    int ind = suiteName.lastIndexOf(' ');
+    while (ind >= 0) {
+      String prefix = suiteName.substring(0, ind);
+      child = myChildByNameMap.get(prefix);
+      if (child instanceof JasmineSuiteStructure) {
+        JasmineSuiteStructure suite = (JasmineSuiteStructure) child;
+        String suffix = suiteName.substring(ind + 1);
+        JasmineSuiteStructure res = suite.findSuite(suffix);
+        if (res != null) {
+          return res;
+        }
+      }
+      ind = suiteName.lastIndexOf(' ', ind - 1);
+    }
+    return null;
+  }
+
 }
