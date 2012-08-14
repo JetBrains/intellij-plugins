@@ -27,6 +27,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -37,7 +38,6 @@ import com.jetbrains.python.newProject.PyFrameworkProjectGenerator;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.packaging.PyExternalProcessException;
 import com.jetbrains.python.packaging.PyPackageManager;
-import com.jetbrains.python.psi.PyPsiFacade;
 import com.jetbrains.python.run.PyRunConfigurationFactory;
 import com.jetbrains.python.templateLanguages.TemplatesService;
 import org.jetbrains.annotations.Nls;
@@ -62,7 +62,13 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
 
   @Override
   public boolean isFrameworkInstalled(Project project, Sdk sdk) {
-    return PyPsiFacade.getInstance(project).qualifiedNameResolver("flask").fromSdk(project, sdk).firstResult() != null;
+    VirtualFile[] roots = sdk.getRootProvider().getFiles(OrderRootType.CLASSES);
+    for (VirtualFile root : roots) {
+      if (root.findChild("flask") != null) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
