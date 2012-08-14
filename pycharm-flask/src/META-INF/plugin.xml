@@ -10,7 +10,7 @@
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <directoryProjectGenerator implementation="com.jetbrains.flask.project.FlaskProjectGenerator"/>
     <internalFileTemplate name="Flask Main"/>
-    <psi.referenceContributor implementation="com.jetbrains.flask.codeInsight.references.FlaskTemplateReferenceContributor"/>
+    <psi.referenceContributor implementation="com.jetbrains.flask.codeInsight.references.FlaskReferenceContributor"/>
     <codeInsight.lineMarkerProvider language="Python" implementationClass="com.jetbrains.flask.codeInsight.FlaskLineMarkerProvider"/>
     <codeInsight.lineMarkerProvider language="Jinja2" implementationClass="com.jetbrains.flask.codeInsight.FlaskLineMarkerProvider"/>
   </extensions>
