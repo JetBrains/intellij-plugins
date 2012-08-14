@@ -82,7 +82,7 @@ public class FlaskViewMethodReference extends PsiReferenceBase<PyStringLiteralEx
     return result;
   }
 
-  private static boolean isRouteDecorator(PyDecorator decorator) {
+  public static boolean isRouteDecorator(PyDecorator decorator) {
     PyQualifiedName qualifiedName = decorator.getQualifiedName();
     if (qualifiedName != null && qualifiedName.endsWith(FlaskNames.ROUTE)) {
       return true;
