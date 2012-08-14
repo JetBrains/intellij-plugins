@@ -2,7 +2,8 @@ package com.google.jstestdriver.idea.execution.settings.ui;
 
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.util.SwingUtils;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileTypeDescriptor;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ObjectUtils;
@@ -83,11 +84,12 @@ public class JsFileRunSettingsSection extends AbstractRunSettingsSection {
           new Insets(UIUtil.DEFAULT_VGAP, 0, 0, 0),
           0, 0
       );
+      FileChooserDescriptor jsFileChooserDescriptor = new FileTypeDescriptor("Select JavaScript test file", ".js");
       myJsFileTextFieldWithBrowseButton.addBrowseFolderListener(
-          "Select JavaScript test file",
-          "",
-          creationContext.getProject(),
-          FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
+        null,
+        null,
+        creationContext.getProject(),
+        jsFileChooserDescriptor
       );
       panel.add(myJsFileTextFieldWithBrowseButton, c);
       myLabel.setLabelFor(myJsFileTextFieldWithBrowseButton);
