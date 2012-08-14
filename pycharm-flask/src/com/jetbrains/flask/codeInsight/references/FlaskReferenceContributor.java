@@ -23,10 +23,10 @@ import com.jetbrains.python.psi.PyStringLiteralExpression;
 /**
  * @author yole
  */
-public class FlaskTemplateReferenceContributor extends PsiReferenceContributor {
+public class FlaskReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(PsiReferenceRegistrar registrar) {
     registrar.registerReferenceProvider(PlatformPatterns.psiElement(PyStringLiteralExpression.class),
-                                        new FlaskTemplateReferenceProvider());
+                                        new FlaskReferenceProvider());
   }
 }

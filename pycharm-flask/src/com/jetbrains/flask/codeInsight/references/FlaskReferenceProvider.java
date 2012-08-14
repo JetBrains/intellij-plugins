@@ -19,6 +19,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.util.ProcessingContext;
+import com.jetbrains.flask.codeInsight.FlaskNames;
 import com.jetbrains.flask.codeInsight.FlaskTemplateManager;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.templateLanguages.TemplateFileReferenceSet;
@@ -27,14 +28,16 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author yole
  */
-public class FlaskTemplateReferenceProvider extends PsiReferenceProvider {
+public class FlaskReferenceProvider extends PsiReferenceProvider {
   @NotNull
   @Override
   public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     PyStringLiteralExpression stringLiteral = (PyStringLiteralExpression)element;
     if (FlaskTemplateManager.isTemplateReference(stringLiteral)) {
       return new TemplateFileReferenceSet(stringLiteral, null).getAllReferences();
-
+    }
+    else if (FlaskTemplateManager.isCallArgument(stringLiteral, 0, FlaskNames.URL_FOR, "helpers.py")) {
+      return new PsiReference[] { new FlaskViewMethodReference(stringLiteral) };
     }
     return PsiReference.EMPTY_ARRAY;
   }

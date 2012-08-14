@@ -33,12 +33,19 @@ import java.util.List;
  */
 public class FlaskTemplateManager {
   public static boolean isTemplateReference(PyStringLiteralExpression expr) {
+    return isCallArgument(expr, 0, FlaskNames.RENDER_TEMPLATE, "templating.py");
+  }
+
+  public static boolean isCallArgument(PyStringLiteralExpression expr,
+                                        int parameterIndex,
+                                        String methodName,
+                                        String filename) {
     PyCallExpression call = PsiTreeUtil.getParentOfType(expr, PyCallExpression.class);
     if (call != null) {
       int index = PyPsiUtils.findArgumentIndex(call, expr);
-      if (index == 0 && call.isCalleeText(FlaskNames.RENDER_TEMPLATE)) {
+      if (index == parameterIndex && call.isCalleeText(methodName)) {
         PyCallExpression.PyMarkedCallee callee = call.resolveCallee(PyResolveContext.noImplicits());
-        if (callee != null && callee.getCallable().getContainingFile().getName().equals("templating.py")) {
+        if (callee != null && callee.getCallable().getContainingFile().getName().equals(filename)) {
           return true;
         }
       }
