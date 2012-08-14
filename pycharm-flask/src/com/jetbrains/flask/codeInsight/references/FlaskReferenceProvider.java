@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
  * @author yole
  */
 public class FlaskReferenceProvider extends PsiReferenceProvider {
+
   @NotNull
   @Override
   public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
@@ -36,7 +37,7 @@ public class FlaskReferenceProvider extends PsiReferenceProvider {
     if (FlaskTemplateManager.isTemplateReference(stringLiteral)) {
       return new TemplateFileReferenceSet(stringLiteral, null).getAllReferences();
     }
-    else if (FlaskTemplateManager.isCallArgument(stringLiteral, 0, FlaskNames.URL_FOR, "helpers.py")) {
+    else if (FlaskTemplateManager.isCallArgument(stringLiteral, 0, FlaskNames.URL_FOR, FlaskNames.HELPERS_PY)) {
       return new PsiReference[] { new FlaskViewMethodReference(stringLiteral) };
     }
     return PsiReference.EMPTY_ARRAY;

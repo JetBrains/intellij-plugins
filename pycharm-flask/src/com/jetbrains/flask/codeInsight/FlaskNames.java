@@ -23,4 +23,5 @@ public class FlaskNames {
   public static final String URL_FOR = "url_for";
   public static final String ROUTE = "route";
   public static final String TEMPLATES = "templates";
+  public static final String HELPERS_PY = "helpers.py";
 }
