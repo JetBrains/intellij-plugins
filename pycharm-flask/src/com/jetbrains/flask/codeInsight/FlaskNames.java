@@ -30,4 +30,6 @@ public class FlaskNames {
   public static final String RULE_CLASS = "werkzeug.routing.Rule";
   public static final String REQUEST_CLASS = "flask.wrappers.Request";
   public static final String REQUEST = "request";
+  public static final String ABORT = "abort";
+  public static final String REDIRECT = "redirect";
 }

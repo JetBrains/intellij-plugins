@@ -22,5 +22,6 @@
     <pyClassMembersProvider implementation="com.jetbrains.flask.codeInsight.FlaskSQLAlchemyMembersProvider"/>
     <keywordArgumentProvider implementation="com.jetbrains.flask.codeInsight.FlaskKeywordArgumentProvider"/>
     <typeProvider implementation="com.jetbrains.flask.codeInsight.FlaskTypeProvider"/>
+    <canonicalPathProvider implementation="com.jetbrains.flask.codeInsight.FlaskCanonicalPathProvider"/>
   </extensions>
 </idea-plugin>
