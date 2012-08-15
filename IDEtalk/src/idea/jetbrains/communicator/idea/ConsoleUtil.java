@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.idea;
 
+import com.intellij.execution.filters.BrowserHyperlinkInfo;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
