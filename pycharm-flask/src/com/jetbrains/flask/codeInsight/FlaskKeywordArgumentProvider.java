@@ -15,9 +15,11 @@
  */
 package com.jetbrains.flask.codeInsight;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.jetbrains.flask.codeInsight.references.FlaskViewMethodReference;
+import com.jetbrains.python.PyNames;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyKeywordArgumentProvider;
 
@@ -32,22 +34,50 @@ public class FlaskKeywordArgumentProvider implements PyKeywordArgumentProvider {
   @Override
   public List<String> getKeywordArguments(PyFunction function, PyCallExpression callExpr) {
     if (FlaskNames.URL_FOR.equals(function.getName()) && function.getContainingFile().getName().equals(FlaskNames.HELPERS_PY)) {
-      PyExpression[] arguments = callExpr.getArguments();
-      if (arguments.length > 0) {
-        PsiReference[] references = arguments[0].getReferences();
-        for (PsiReference reference : references) {
-          if (reference instanceof FlaskViewMethodReference) {
-            PsiElement result = reference.resolve();
-            if (result instanceof PyFunction) {
-              PyFunction viewFunction = (PyFunction)result;
-              List<String> args = new ArrayList<String>();
-              for (PyParameter parameter : viewFunction.getParameterList().getParameters()) {
-                if (parameter instanceof PyNamedParameter) {
-                  args.add(parameter.getName());
-                }
+      return getUrlForKeywordArguments(callExpr);
+    }
+    else if (FlaskNames.ROUTE.equals(function.getName())) {
+      PyClass aClass = function.getContainingClass();
+      if (aClass != null && FlaskNames.FLASK.equals(aClass.getName())) {
+        return getRouteKeywordArguments(function.getProject());
+      }
+    }
+    return Collections.emptyList();
+  }
+
+  public static List<String> getRouteKeywordArguments(Project project) {
+    PyClass ruleClass = PyPsiFacade.getInstance(project).findClass(FlaskNames.WERKZEUG_RULE);
+    if (ruleClass != null) {
+      PyFunction initMethod = ruleClass.findMethodByName(PyNames.INIT, false);
+      if (initMethod != null) {
+        List<String> defaults = new ArrayList<String>();
+        for (PyParameter parameter: initMethod.getParameterList().getParameters()) {
+          if (parameter.getDefaultValue() != null) {
+            defaults.add(parameter.getName());
+          }
+        }
+        return defaults;
+      }
+    }
+    return Collections.emptyList();
+  }
+
+  private static List<String> getUrlForKeywordArguments(PyCallExpression callExpr) {
+    PyExpression[] arguments = callExpr.getArguments();
+    if (arguments.length > 0) {
+      PsiReference[] references = arguments[0].getReferences();
+      for (PsiReference reference : references) {
+        if (reference instanceof FlaskViewMethodReference) {
+          PsiElement result = reference.resolve();
+          if (result instanceof PyFunction) {
+            PyFunction viewFunction = (PyFunction)result;
+            List<String> args = new ArrayList<String>();
+            for (PyParameter parameter : viewFunction.getParameterList().getParameters()) {
+              if (parameter instanceof PyNamedParameter) {
+                args.add(parameter.getName());
               }
-              return args;
             }
+            return args;
           }
         }
       }
