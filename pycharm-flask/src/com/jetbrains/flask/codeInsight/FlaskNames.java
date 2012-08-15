@@ -25,6 +25,9 @@ public class FlaskNames {
   public static final String ROUTE = "route";
   public static final String TEMPLATES = "templates";
   public static final String HELPERS_PY = "helpers.py";
+  public static final String GLOBALS_PY = "globals.py";
   public static final String DEFAULT_CONVERTERS = "DEFAULT_CONVERTERS";
-  public static final String WERKZEUG_RULE = "werkzeug.routing.Rule";
+  public static final String RULE_CLASS = "werkzeug.routing.Rule";
+  public static final String REQUEST_CLASS = "flask.wrappers.Request";
+  public static final String REQUEST = "request";
 }

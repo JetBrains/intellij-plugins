@@ -46,7 +46,7 @@ public class FlaskKeywordArgumentProvider implements PyKeywordArgumentProvider {
   }
 
   public static List<String> getRouteKeywordArguments(Project project) {
-    PyClass ruleClass = PyPsiFacade.getInstance(project).findClass(FlaskNames.WERKZEUG_RULE);
+    PyClass ruleClass = PyPsiFacade.getInstance(project).findClass(FlaskNames.RULE_CLASS);
     if (ruleClass != null) {
       PyFunction initMethod = ruleClass.findMethodByName(PyNames.INIT, false);
       if (initMethod != null) {
