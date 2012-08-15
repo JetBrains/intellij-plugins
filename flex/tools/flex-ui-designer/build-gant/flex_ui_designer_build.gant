@@ -29,7 +29,7 @@ def execute(home, sandbox, targetFolder) {
   if (isDefined("pluginFilter")) {
     if (!pluginFilter.contains("flex-ui-designer")) return
   }
-  project.stage("building Flex library for flex-ui-designer plugin")
+  projectBuilder.stage("building Flex library for flex-ui-designer plugin")
   doExecute(home, sandbox, targetFolder)
 }
 

@@ -21,7 +21,7 @@ def execute(home, sandbox, targetFolder) {
   if (isDefined("pluginFilter")) {
     if (!pluginFilter.contains("flex-profiler")) return
   }
-  project.stage("building Flex library for flex-profiler plugin")
+  projectBuilder.stage("building Flex library for flex-profiler plugin")
   doExecute(home, sandbox, targetFolder)
 }
 
