@@ -49,6 +49,14 @@
     <projectService serviceImplementation="com.google.jstestdriver.idea.server.ui.JstdToolWindowManager"/>
     <fileBasedIndex implementation="com.google.jstestdriver.idea.config.JstdTestFilePathIndex"/>
     <fileBasedIndex implementation="com.google.jstestdriver.idea.assertFramework.JsTestFileByTestNameIndex"/>
+    <toolWindow id="JsTestDriver Server"
+                anchor="bottom"
+                secondary="true"
+                icon="/com/google/jstestdriver/idea/icons/toolWindowTestDriver.png"
+                factoryClass="com.google.jstestdriver.idea.server.ui.JstdToolWindowManager$Factory"
+                canCloseContents="false"
+                conditionClass="com.google.jstestdriver.idea.server.ui.JstdToolWindowManager$ToolWindowCondition"
+    />
   </extensions>
 
   <change-notes>
