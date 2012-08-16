@@ -24,5 +24,6 @@
     <keywordArgumentProvider implementation="com.jetbrains.flask.codeInsight.FlaskKeywordArgumentProvider"/>
     <typeProvider implementation="com.jetbrains.flask.codeInsight.FlaskTypeProvider"/>
     <canonicalPathProvider implementation="com.jetbrains.flask.codeInsight.FlaskCanonicalPathProvider"/>
+    <templateContextProvider implementation="com.jetbrains.flask.codeInsight.FlaskTemplateContextProvider"/>
   </extensions>
 </idea-plugin>

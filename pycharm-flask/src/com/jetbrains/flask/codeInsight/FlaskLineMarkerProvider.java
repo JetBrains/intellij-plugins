@@ -25,11 +25,9 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
-import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ConstantFunction;
-import com.intellij.util.Processor;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
@@ -98,20 +96,12 @@ public class FlaskLineMarkerProvider extends RelatedItemLineMarkerProvider {
 
   @Nullable
   private static RelatedItemLineMarkerInfo<PsiFile> createTemplateLineMarker(PsiFile element) {
-    final Set<PyFunction> viewFunctions = new HashSet<PyFunction>();
-    ReferencesSearch.search(element).forEach(new Processor<PsiReference>() {
-      @Override
-      public boolean process(PsiReference reference) {
-        if (reference.getElement() instanceof PyStringLiteralExpression) {
-          PyStringLiteralExpression literal = (PyStringLiteralExpression)reference.getElement();
-          if (FlaskTemplateManager.isTemplateReference(literal)) {
-            viewFunctions.add(PsiTreeUtil.getParentOfType(literal, PyFunction.class));
-          }
-        }
-        return true;
+    final List<PyStringLiteralExpression> references = FlaskTemplateManager.findTemplateReferences(element);
+    if (!references.isEmpty()) {
+      final Set<PyFunction> viewFunctions = new HashSet<PyFunction>();
+      for (PyStringLiteralExpression literal : references) {
+        viewFunctions.add(PsiTreeUtil.getParentOfType(literal, PyFunction.class));
       }
-    });
-    if (!viewFunctions.isEmpty()) {
       return createViewFunctionNavigationMarker(element, viewFunctions);
     }
     return null;
