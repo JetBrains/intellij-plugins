@@ -55,6 +55,14 @@ public class FlaskViewMethodReference extends PsiReferenceBase<StringLiteralExpr
     return getElement().getContainingFile();
   }
 
+  @Override
+  public boolean isReferenceTo(PsiElement element) {
+    if (element instanceof PyFunction && getElement().getStringValue().equals(((PyFunction)element).getName())) {
+      return super.isReferenceTo(element);
+    }
+    return false;
+  }
+
   @NotNull
   @Override
   public Object[] getVariants() {
