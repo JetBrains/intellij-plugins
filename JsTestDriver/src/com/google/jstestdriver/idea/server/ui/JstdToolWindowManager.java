@@ -5,6 +5,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowEP;
+import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,12 +32,16 @@ public class JstdToolWindowManager {
     ToolWindowManagerEx toolWindowManagerEx = ToolWindowManagerEx.getInstanceEx(myProject);
     ToolWindow toolWindow = toolWindowManagerEx.getToolWindow(TOOL_WINDOW_ID);
     if (toolWindow == null) {
-      ToolWindowEP toolWindowEP = new ToolWindowEP();
+      ToolWindowEP toolWindowEP = new ToolWindowEP() {
+        @Override
+        public ToolWindowFactory getToolWindowFactory() {
+          return new JstdToolWindow();
+        }
+      };
       toolWindowEP.id = TOOL_WINDOW_ID;
       toolWindowEP.anchor = ToolWindowAnchor.BOTTOM.toString();
       toolWindowEP.secondary = false;
       toolWindowEP.icon = "/com/google/jstestdriver/idea/icons/toolWindowTestDriver.png";
-      toolWindowEP.factoryClass = JstdToolWindow.class.getName();
       toolWindowEP.canCloseContents = false;
       toolWindowManagerEx.initToolWindow(toolWindowEP);
       toolWindow = toolWindowManagerEx.getToolWindow(TOOL_WINDOW_ID);
