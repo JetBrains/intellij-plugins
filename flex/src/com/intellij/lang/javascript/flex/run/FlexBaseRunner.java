@@ -258,6 +258,15 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   public static void launchWithSelectedApplication(final String urlOrPath, final LauncherParameters launcherParams) {
     switch (launcherParams.getLauncherType()) {
       case OSDefault:
+        if (SystemInfo.isWindows) {
+          // workaround of http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6457572
+          try {
+            Runtime.getRuntime().exec(new String[]{"cmd.exe", "/c", "start", "\"\"", urlOrPath});
+            break;
+          }
+          catch (IOException ignored) {/*ignored*/}
+        }
+
         if (Desktop.isDesktopSupported()) {
           final Desktop desktop = Desktop.getDesktop();
           if (BrowserUtil.isAbsoluteURL(urlOrPath)) {
