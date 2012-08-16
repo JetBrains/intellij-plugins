@@ -33,14 +33,25 @@ public class FlaskTypeProvider extends PyTypeProviderBase {
   public PyType getReferenceType(@NotNull PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
     if (referenceTarget instanceof PyTargetExpression) {
       PyTargetExpression target = (PyTargetExpression)referenceTarget;
-      if (FlaskNames.REQUEST.equals(target.getName()) && target.getContainingFile().getName().equals(FlaskNames.GLOBALS_PY)) {
-        PyPsiFacade pyPsiFacade = PyPsiFacade.getInstance(referenceTarget.getProject());
-        PyClass requestClass = pyPsiFacade.findClass(FlaskNames.REQUEST_CLASS);
-        if (requestClass != null) {
-          return pyPsiFacade.createClassType(requestClass, false);
+      if (target.getContainingFile().getName().equals(FlaskNames.GLOBALS_PY)) {
+        if (FlaskNames.REQUEST.equals(target.getName())) {
+          return getClassType(referenceTarget, FlaskNames.REQUEST_CLASS);
+        }
+        if (FlaskNames.SESSION.equals(target.getName())) {
+          return getClassType(referenceTarget, FlaskNames.SESSION_CLASS);
         }
       }
     }
     return super.getReferenceType(referenceTarget, context, anchor);
+  }
+
+  @Nullable
+  private static PyType getClassType(PsiElement referenceTarget, String className) {
+    PyPsiFacade pyPsiFacade = PyPsiFacade.getInstance(referenceTarget.getProject());
+    PyClass requestClass = pyPsiFacade.findClass(className);
+    if (requestClass != null) {
+      return pyPsiFacade.createClassType(requestClass, false);
+    }
+    return null;
   }
 }

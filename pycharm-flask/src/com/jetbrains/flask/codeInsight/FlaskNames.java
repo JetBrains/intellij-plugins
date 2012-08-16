@@ -32,6 +32,7 @@ public class FlaskNames {
   public static final String DEFAULT_CONVERTERS = "DEFAULT_CONVERTERS";
   public static final String RULE_CLASS = "werkzeug.routing.Rule";
   public static final String REQUEST_CLASS = "flask.wrappers.Request";
+  public static final String SESSION_CLASS = "werkzeug.contrib.sessions.Session";
   public static final String REQUEST = "request";
   public static final String SESSION = "session";
   public static final String G = "g";
