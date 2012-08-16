@@ -15,6 +15,8 @@
  */
 package com.jetbrains.flask.codeInsight;
 
+import com.jetbrains.python.psi.impl.PyQualifiedName;
+
 /**
  * @author yole
  */
@@ -36,4 +38,6 @@ public class FlaskNames {
   public static final String ABORT = "abort";
   public static final String REDIRECT = "redirect";
   public static final String GET_FLASHED_MESSAGES = "get_flashed_messages";
+  public static final String FLASKEXT = "flaskext";
+  public static final PyQualifiedName FLASK_EXT = PyQualifiedName.fromDottedString("flask.ext");
 }

@@ -26,13 +26,12 @@ import org.jetbrains.annotations.Nullable;
  * @author yole
  */
 public class FlaskImportResolver implements PyImportResolver {
-  private static final PyQualifiedName FLASK_EXT = PyQualifiedName.fromDottedString("flask.ext");
 
   @Nullable
   @Override
   public PsiElement resolveImportReference(PyQualifiedName qualifiedName,
                                            QualifiedNameResolveContext resolveContext) {
-    if (qualifiedName.matchesPrefix(FLASK_EXT) && qualifiedName.getComponentCount() >= 3) {
+    if (qualifiedName.matchesPrefix(FlaskNames.FLASK_EXT) && qualifiedName.getComponentCount() >= 3) {
       PyPsiFacade psiFacade = PyPsiFacade.getInstance(resolveContext.getProject());
       String topName = qualifiedName.getComponents().get(2);
       PyQualifiedName subName = qualifiedName.removeHead(3);
@@ -41,7 +40,7 @@ public class FlaskImportResolver implements PyImportResolver {
       if (item != null) {
         return item;
       }
-      qName = PyQualifiedName.fromComponents("flaskext", topName).append(subName);
+      qName = PyQualifiedName.fromComponents(FlaskNames.FLASKEXT, topName).append(subName);
       item = psiFacade.qualifiedNameResolver(qName).withContext(resolveContext).withPlainDirectories().firstResult();
       if (item != null) {
         return item;

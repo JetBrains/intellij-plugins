@@ -36,7 +36,16 @@ public class FlaskCanonicalPathProvider implements PyCanonicalPathProvider {
       return null;
     }
     if (flaskReexportsWerkzeug(qName, foothold.getText()) && importsFlask(foothold.getContainingFile())) {
-      return PyQualifiedName.fromComponents("flask");
+      return PyQualifiedName.fromComponents(FlaskNames.FLASK_MODULE);
+    }
+    if (qName.getComponentCount() > 0) {
+      String head = qName.getComponents().get(0);
+      if (head.startsWith("flask_")) {
+        return FlaskNames.FLASK_EXT.append(PyQualifiedName.fromComponents(head.substring(6))).append(qName.removeHead(1));
+      }
+      else if (head.equals(FlaskNames.FLASKEXT)) {
+        return FlaskNames.FLASK_EXT.append(qName.removeHead(1));
+      }
     }
     return null;
   }
