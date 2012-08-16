@@ -15,6 +15,8 @@
  */
 package com.jetbrains.flask.codeInsight.references;
 
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -23,6 +25,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import com.jetbrains.flask.codeInsight.FlaskNames;
 import com.jetbrains.flask.codeInsight.FlaskTemplateManager;
+import com.jetbrains.flask.project.FlaskProjectConfigurator;
+import com.jetbrains.python.psi.PyFile;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.templateLanguages.psi.TemplateFunctionCall;
 import com.jetbrains.python.templateLanguages.psi.TemplateStringLiteral;
@@ -49,6 +53,19 @@ public class FlaskTemplateReferenceProvider extends PsiReferenceProvider {
             List<PyStringLiteralExpression> references = FlaskTemplateManager.findTemplateReferences(templateFile);
             if (references.size() > 0) {
               return references.get(0).getContainingFile();
+            }
+            VirtualFile vFile = templateFile.getVirtualFile();
+            if (vFile != null) {
+              VirtualFile root = ProjectFileIndex.SERVICE.getInstance(getElement().getProject()).getContentRootForFile(vFile);
+              if (root != null) {
+                VirtualFile appFile = FlaskProjectConfigurator.findFlaskAppFile(root);
+                if (appFile != null) {
+                  PsiFile appPsiFile = getElement().getManager().findFile(appFile);
+                  if (appPsiFile instanceof PyFile) {
+                    return appPsiFile;
+                  }
+                }
+              }
             }
             return super.getViewFunctionsFile();
           }

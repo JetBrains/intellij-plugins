@@ -55,7 +55,7 @@ public class FlaskProjectConfigurator implements DirectoryProjectConfigurator {
   }
 
   @Nullable
-  private static VirtualFile findFlaskAppFile(VirtualFile dir) {
+  public static VirtualFile findFlaskAppFile(VirtualFile dir) {
     VirtualFile[] children = dir.getChildren();
     for (VirtualFile child : children) {
       if (!child.isDirectory() && child.getFileType() instanceof PythonFileType) {
