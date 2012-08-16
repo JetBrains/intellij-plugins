@@ -35,4 +35,5 @@ public class FlaskNames {
   public static final String G = "g";
   public static final String ABORT = "abort";
   public static final String REDIRECT = "redirect";
+  public static final String GET_FLASHED_MESSAGES = "get_flashed_messages";
 }
