@@ -35,14 +35,22 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     return new TreeBasedStructureViewBuilder() {
       @NotNull
       public StructureViewModel createStructureViewModel() {
-        final JSClass clazz = XmlBackedJSClassImpl.getXmlBackedClass(file);
-
-        return new JSStructureViewModel(clazz) {
+        return new JSStructureViewModel(file) {
           @Override
           protected JSStructureViewElement createRoot(PsiElement root) {
-            return new FlexStructureViewElement(clazz, file);
+            return new JSStructureViewElement(root) {
+              @Override
+              public StructureViewTreeElement[] getChildren() {
+                return new StructureViewTreeElement[] { new FlexStructureViewElement(XmlBackedJSClassImpl.getXmlBackedClass(file), file)};
+              }
+            };
           }
         };
+      }
+
+      @Override
+      public boolean isRootNodeShown() {
+        return false;
       }
     };
   }
