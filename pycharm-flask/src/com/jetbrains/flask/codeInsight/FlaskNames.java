@@ -19,7 +19,8 @@ package com.jetbrains.flask.codeInsight;
  * @author yole
  */
 public class FlaskNames {
-  public static final String FLASK = "Flask";
+  public static final String FLASK_MODULE = "flask";
+  public static final String FLASK_CLASS = "Flask";
   public static final String RENDER_TEMPLATE = "render_template";
   public static final String URL_FOR = "url_for";
   public static final String ROUTE = "route";
@@ -30,6 +31,8 @@ public class FlaskNames {
   public static final String RULE_CLASS = "werkzeug.routing.Rule";
   public static final String REQUEST_CLASS = "flask.wrappers.Request";
   public static final String REQUEST = "request";
+  public static final String SESSION = "session";
+  public static final String G = "g";
   public static final String ABORT = "abort";
   public static final String REDIRECT = "redirect";
 }

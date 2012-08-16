@@ -38,7 +38,7 @@ public class FlaskKeywordArgumentProvider implements PyKeywordArgumentProvider {
     }
     else if (FlaskNames.ROUTE.equals(function.getName())) {
       PyClass aClass = function.getContainingClass();
-      if (aClass != null && FlaskNames.FLASK.equals(aClass.getName())) {
+      if (aClass != null && FlaskNames.FLASK_CLASS.equals(aClass.getName())) {
         return getRouteKeywordArguments(function.getProject());
       }
     }
