@@ -58,9 +58,13 @@ public class FlaskTemplateContextProvider implements TemplateContextProvider {
       flaskModule = ((PsiDirectory)flaskModule).findFile(PyNames.INIT_DOT_PY);
     }
     if (flaskModule instanceof PyFile) {
+      // _default_template_ctx_processor() in flask/templating.py
       addFlaskVariable(result, (PyFile) flaskModule, FlaskNames.REQUEST);
       addFlaskVariable(result, (PyFile) flaskModule, FlaskNames.SESSION);
       addFlaskVariable(result, (PyFile) flaskModule, FlaskNames.G);
+      // create_jinja_environment() in flask/app.py
+      addFlaskVariable(result, (PyFile) flaskModule, FlaskNames.URL_FOR);
+      addFlaskVariable(result, (PyFile) flaskModule, FlaskNames.GET_FLASHED_MESSAGES);
     }
     return result;
   }
