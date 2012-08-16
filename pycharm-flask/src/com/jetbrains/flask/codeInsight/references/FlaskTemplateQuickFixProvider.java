@@ -28,6 +28,7 @@ import com.intellij.util.Consumer;
 import com.jetbrains.flask.codeInsight.FlaskTemplateManager;
 import com.jetbrains.python.inspections.PyUnresolvedReferenceQuickFixProvider;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.templateLanguages.ConfigureTemplateDirectoriesAction;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -46,6 +47,7 @@ public class FlaskTemplateQuickFixProvider implements PyUnresolvedReferenceQuick
           FlaskTemplateManager.isTemplateReference((PyStringLiteralExpression)element)) {
         PyStringLiteralExpression literal = (PyStringLiteralExpression)element;
         fixConsumer.consume(new CreateTemplateIntentionAction(literal.getStringValue()));
+        fixConsumer.consume(new ConfigureTemplateDirectoriesAction());
       }
     }
   }
