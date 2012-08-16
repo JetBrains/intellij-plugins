@@ -35,26 +35,30 @@ import java.util.List;
  *
  * @author yole
  */
-public class FlaskViewMethodReference extends PsiReferenceBase<PyStringLiteralExpression> {
-  public FlaskViewMethodReference(@NotNull PyStringLiteralExpression element) {
-    super(element, element.getStringValueTextRanges().get(0), true);
+public class FlaskViewMethodReference extends PsiReferenceBase<StringLiteralExpression> {
+  public FlaskViewMethodReference(@NotNull StringLiteralExpression element) {
+    super(element, element.getStringValueTextRange(), true);
   }
 
   @Nullable
   @Override
   public PsiElement resolve() {
     String routeName = getElement().getStringValue();
-    PsiFile containingFile = getElement().getContainingFile();
+    PsiFile containingFile = getViewFunctionsFile();
     if (containingFile instanceof PyFile) {
       return ((PyFile) containingFile).findTopLevelFunction(routeName);
     }
     return null;
   }
 
+  protected PsiFile getViewFunctionsFile() {
+    return getElement().getContainingFile();
+  }
+
   @NotNull
   @Override
   public Object[] getVariants() {
-    PsiFile containingFile = getElement().getContainingFile();
+    PsiFile containingFile = getViewFunctionsFile();
     if (containingFile instanceof PyFile) {
       List<Object> result = new ArrayList<Object>();
       for (PyFunction function : getRouteFunctions((PyFile)containingFile)) {

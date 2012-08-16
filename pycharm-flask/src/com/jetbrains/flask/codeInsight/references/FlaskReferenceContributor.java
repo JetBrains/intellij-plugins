@@ -19,6 +19,7 @@ import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
+import com.jetbrains.python.templateLanguages.psi.TemplateStringLiteral;
 
 /**
  * @author yole
@@ -26,7 +27,7 @@ import com.jetbrains.python.psi.PyStringLiteralExpression;
 public class FlaskReferenceContributor extends PsiReferenceContributor {
   @Override
   public void registerReferenceProviders(PsiReferenceRegistrar registrar) {
-    registrar.registerReferenceProvider(PlatformPatterns.psiElement(PyStringLiteralExpression.class),
-                                        new FlaskReferenceProvider());
+    registrar.registerReferenceProvider(PlatformPatterns.psiElement(PyStringLiteralExpression.class), new FlaskReferenceProvider());
+    registrar.registerReferenceProvider(PlatformPatterns.psiElement(TemplateStringLiteral.class), new FlaskTemplateReferenceProvider());
   }
 }
