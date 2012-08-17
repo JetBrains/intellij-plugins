@@ -69,7 +69,7 @@ public class FlaskProjectConfigurator implements DirectoryProjectConfigurator {
   }
 
   private static boolean projectRequiresFlask(Module module) {
-    List<PyRequirement> requirements = PyPackageManagers.getInstance().getRequirements(module);
+    List<PyRequirement> requirements = PyPackageManagers.getInstance().getRequirementsFromTxt(module);
     if (requirements != null) {
       for (PyRequirement requirement : requirements) {
         if (requirement.getName().equals("Flask")) {
