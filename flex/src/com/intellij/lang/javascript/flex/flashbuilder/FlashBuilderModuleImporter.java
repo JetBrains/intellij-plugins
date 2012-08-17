@@ -28,9 +28,9 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
-import com.intellij.util.PathUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -162,7 +162,7 @@ public class FlashBuilderModuleImporter {
     // todo parse options, replace "-a b" to "-a=b", move some to dedicated fields
     final String fbOptions = fbProject.getAdditionalCompilerOptions();
     final List<String> locales = FlexUtils.getOptionValues(fbOptions, "locale", "compiler.locale");
-    final String ideaOptions = FlexUtils.removeOptions(fbOptions, "locale", "compiler.locale");
+    final String ideaOptions = FlexUtils.removeOptions(fbOptions, "locale", "compiler.locale", "source-path", "compiler.source-path");
     mainBC.getCompilerOptions().setAdditionalOptions(ideaOptions);
 
     final StringBuilder localesBuf = new StringBuilder();
@@ -328,6 +328,8 @@ public class FlashBuilderModuleImporter {
     }
     else {
       final List<String> locales = FlexUtils.getOptionValues(fbProject.getAdditionalCompilerOptions(), "locale", "compiler.locale");
+      final List<String> moreSourcePaths =
+        FlexUtils.getOptionValues(fbProject.getAdditionalCompilerOptions(), "source-path", "compiler.source-path");
 
       for (final String rawSourcePath : sourcePaths) {
         if (rawSourcePath.contains(LOCALE_TOKEN)) {
@@ -340,7 +342,45 @@ public class FlashBuilderModuleImporter {
           handleRawSourcePath(rootModel, fbProject, mainContentEntryUrl, mainContentEntry, otherContentEntries, rawSourcePath);
         }
       }
+
+      for (String sourcePath : moreSourcePaths) {
+        if (sourcePath.contains(LOCALE_TOKEN)) {
+          for (String locale : locales) {
+            final String path = getPathToSourceRootSetInAdditionalOptions(sourcePath.replace(LOCALE_TOKEN, locale),
+                                                                          mainContentEntryUrl, mainContentEntry);
+
+            if (path != null) {
+              handleRawSourcePath(rootModel, fbProject, mainContentEntryUrl, mainContentEntry, otherContentEntries, path);
+            }
+          }
+        }
+        else {
+          final String path = getPathToSourceRootSetInAdditionalOptions(sourcePath, mainContentEntryUrl, mainContentEntry);
+          if (path != null) {
+            handleRawSourcePath(rootModel, fbProject, mainContentEntryUrl, mainContentEntry, otherContentEntries, path);
+          }
+        }
+      }
     }
+  }
+
+  @Nullable
+  private static String getPathToSourceRootSetInAdditionalOptions(final String rawPath,
+                                                                  final String mainContentEntryUrl,
+                                                                  final ContentEntry mainContentEntry) {
+    // sourcePath can be absolute or relative to project root or relative to main source root
+    String path = rawPath;
+    if (new File(path).isDirectory()) return path;
+
+    path = VfsUtilCore.urlToPath(mainContentEntryUrl) + "/" + rawPath;
+    if (new File(path).isDirectory()) return path;
+
+    if (mainContentEntry.getSourceFolders().length > 0) {
+      path = VfsUtilCore.urlToPath(mainContentEntry.getSourceFolders()[0].getUrl()) + "/" + rawPath;
+      if (new File(path).isDirectory()) return path;
+    }
+
+    return null;
   }
 
   private void handleRawSourcePath(final ModifiableRootModel rootModel,
@@ -351,12 +391,12 @@ public class FlashBuilderModuleImporter {
                                    final String rawSourcePath) {
     final String sourcePath = getAbsolutePathWithLinksHandled(fbProject, rawSourcePath);
     final String sourceUrl = VfsUtilCore.pathToUrl(sourcePath);
-    if (FileUtil.isAncestor(new File(mainContentEntryUrl), new File(sourceUrl), false)) {
+    if (FileUtil.isAncestor(new File(VfsUtilCore.urlToPath(mainContentEntryUrl)), new File(VfsUtilCore.urlToPath(sourceUrl)), false)) {
       mainContentEntry.addSourceFolder(sourceUrl, false);
     }
     else {
       for (final ContentEntry otherContentEntry : otherContentEntries) {
-        if (FileUtil.isAncestor(new File(mainContentEntryUrl), new File(sourceUrl), false)) {
+        if (FileUtil.isAncestor(new File(VfsUtilCore.urlToPath(mainContentEntryUrl)), new File(VfsUtilCore.urlToPath(sourceUrl)), false)) {
           otherContentEntry.addSourceFolder(sourceUrl, false);
           return;
         }

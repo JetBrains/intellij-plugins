@@ -474,11 +474,18 @@ public class FlexUtils {
       if (remove) {
         String nextToken = null;
 
-        while (tokenizer.hasMoreElements()) {
+        WHILE: while (tokenizer.hasMoreElements()) {
           nextToken = tokenizer.nextToken();
           if (StringUtil.isEmptyOrSpaces(nextToken) || canBeCompilerOptionValue(nextToken)) {
             continue;
           }
+
+          for (String option : optionsToRemove) {
+            if (nextToken.startsWith("-" + option)) {
+              continue WHILE;
+            }
+          }
+
           break;
         }
 
