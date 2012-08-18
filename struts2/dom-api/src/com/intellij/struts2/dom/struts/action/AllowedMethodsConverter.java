@@ -19,6 +19,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiReference;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericDomValue;
@@ -62,7 +63,7 @@ public class AllowedMethodsConverter extends DelimitedListConverter<String> {
       variants.add(psiMethod);
     }
 
-    return variants.toArray(new Object[variants.size()]);
+    return ArrayUtil.toObjectArray(variants);
   }
 
   @Override

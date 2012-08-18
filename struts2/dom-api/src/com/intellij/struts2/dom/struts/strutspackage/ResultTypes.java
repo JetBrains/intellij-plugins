@@ -26,6 +26,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"UnusedDeclaration"})
 public interface ResultTypes extends DomElement {
 
   @SubTagList(value = "result-type")

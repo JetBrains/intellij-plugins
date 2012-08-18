@@ -29,6 +29,7 @@ import com.intellij.util.xml.Required;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"UnusedDeclaration"})
 @Presentation(typeName = "Include",
               icon = StrutsIcons.INCLUDE_PATH,
               provider = Struts2PresentationProvider.class)

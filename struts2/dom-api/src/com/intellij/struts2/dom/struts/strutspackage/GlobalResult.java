@@ -29,6 +29,7 @@ import com.intellij.util.xml.*;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"UnusedDeclaration"})
 @Convert(StrutsPathReferenceConverter.class)
 @Presentation(typeName = "Global Result", provider = Struts2PresentationProvider.class)
 public interface GlobalResult extends HasResultType, ParamsElement, GenericDomValue<PathReference> {

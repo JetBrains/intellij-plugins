@@ -28,6 +28,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"UnusedDeclaration"})
 public interface ParamsElement extends DomElement {
 
   @NotNull

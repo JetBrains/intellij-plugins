@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NonNls;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"UnusedDeclaration"})
 @Convert(StrutsPathReferenceConverter.class)
 @Presentation(typeName = "Result", icon = StrutsIcons.RESULT_PATH, provider = Struts2PresentationProvider.class)
 public interface Result extends HasResultType, ParamsElement, GenericDomValue<PathReference> {

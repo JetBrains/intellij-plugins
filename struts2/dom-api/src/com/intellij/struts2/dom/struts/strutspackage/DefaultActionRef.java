@@ -28,6 +28,7 @@ import com.intellij.util.xml.Scope;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"UnusedDeclaration"})
 @Presentation(typeName = "Default Action Reference", provider = Struts2PresentationProvider.class)
 public interface DefaultActionRef extends DomElement {
 

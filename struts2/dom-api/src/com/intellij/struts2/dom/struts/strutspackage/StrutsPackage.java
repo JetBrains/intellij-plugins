@@ -31,6 +31,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"UnusedDeclaration"})
 @Namespace(StrutsDomConstants.STRUTS_NAMESPACE_KEY)
 @Presentation(typeName = "Struts Package", icon = StrutsIcons.PACKAGE_PATH)
 public interface StrutsPackage extends CommonDomModelElement {

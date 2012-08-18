@@ -25,6 +25,7 @@ import com.intellij.util.xml.Required;
 /**
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"UnusedDeclaration"})
 @Presentation(typeName = "Default Interceptor Reference", provider = Struts2PresentationProvider.class)
 public interface DefaultInterceptorRef extends DomElement {
 

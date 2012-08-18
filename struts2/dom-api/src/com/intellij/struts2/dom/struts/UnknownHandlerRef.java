@@ -25,6 +25,7 @@ import com.intellij.util.xml.Required;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"UnusedDeclaration"})
 public interface UnknownHandlerRef extends DomElement {
 
   @Required

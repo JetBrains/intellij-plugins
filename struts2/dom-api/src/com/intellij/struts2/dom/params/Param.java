@@ -27,6 +27,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings({"UnusedDeclaration"})
 @Presentation(typeName = "Parameter", icon = StrutsIcons.PARAM_PATH)
 public interface Param extends DomElement {
 
