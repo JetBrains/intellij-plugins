@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.inspection;
 
+import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.compiler.options.ValidationConfiguration;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.util.InspectionValidator;
@@ -28,9 +29,10 @@ import org.jetbrains.annotations.NotNull;
  */
 abstract class ValidatorBase extends InspectionValidator {
 
-  protected ValidatorBase(@NotNull final String description,
-                          @NotNull final String progressIndicatorText) {
-    super(description, progressIndicatorText);
+  protected ValidatorBase(@NotNull String description,
+                          @NotNull String progressIndicatorText,
+                          Class<? extends LocalInspectionTool>... inspectionToolClasses) {
+    super(description, progressIndicatorText, inspectionToolClasses);
   }
 
   protected final boolean isEnabledForModule(final Module module) {

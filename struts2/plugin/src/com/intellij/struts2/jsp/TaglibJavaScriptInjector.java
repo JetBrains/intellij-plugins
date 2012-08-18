@@ -23,7 +23,6 @@ import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.ElementPattern;
-import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -58,11 +57,11 @@ public class TaglibJavaScriptInjector implements MultiHostInjector, DumbAware {
   private static final ElementPattern<XmlAttributeValue> JS_TAGLIB_PATTERN =
       xmlAttributeValue()
           .withLocalName(
-              StandardPatterns.and(
-                  string().longerThan(5), // shortest "onXXX" attribute name: 6 characters
-                  or(string().startsWith("on"),
-                     string().startsWith("doubleOn")),  // **TransferSelect-tags
-                  not(string().endsWith("Topics"))));   // exclude jQuery-plugin "onXXXTopics"
+              and(
+                string().longerThan(5), // shortest "onXXX" attribute name: 6 characters
+                or(string().startsWith("on"),
+                   string().startsWith("doubleOn")),  // **TransferSelect-tags
+                not(string().endsWith("Topics"))));   // exclude jQuery-plugin "onXXXTopics"
 
   // struts2-jQuery taglib "pseudo" JS-highlighting
   private static final ElementPattern<XmlAttributeValue> JS_JQUERY_PATTERN =

@@ -162,6 +162,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
         new PackageWrapper(manager, StringUtil.getPackageName(actionClassQualifiedName));
 
     final Module module = ModuleUtil.findModuleForPsiElement(actionClass);
+    assert module != null;
     final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots(false);
     final VirtualFile sourceRoot = sourceRoots.length == 1 ? sourceRoots[0] :
         MoveClassesOrPackagesUtil.chooseSourceRoot(targetPackage,

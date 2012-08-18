@@ -68,6 +68,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     createStrutsFileSet(strutsXml);
 
     final List<String> variants = myFixture.getCompletionVariants(strutsXml);
+    assertNotNull(variants);
     Assert.assertTrue(variants.indexOf("MyClass") != -1);
   }
 

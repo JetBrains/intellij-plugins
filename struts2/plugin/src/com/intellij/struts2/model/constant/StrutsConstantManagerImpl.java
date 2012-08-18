@@ -157,6 +157,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
                                        @NotNull @NonNls final String name) {
     final Project project = context.getProject();
     final Module module = ModuleUtil.findModuleForPsiElement(context);
+    assert module != null : context;
 
     // collect all properties with matching key
     final List<IProperty> properties = PropertiesUtil.findPropertiesByKey(project, name);

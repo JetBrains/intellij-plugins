@@ -148,9 +148,9 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
    * @param lineMarkerInfos Current line markers.
    * @param actions         Corresponding Actions.
    */
-  private void installActionTargets(final PsiElement element,
-                                    final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
-                                    final List<Action> actions) {
+  private static void installActionTargets(final PsiElement element,
+                                           final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
+                                           final List<Action> actions) {
     final String tooltip = actions.size() == 1 ? StrutsBundle.message("annotators.action.goto.tooltip.single") :
         StrutsBundle.message("annotators.action.goto.tooltip");
     final NavigationGutterIconBuilder<DomElement> gutterIconBuilder =
@@ -171,9 +171,9 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
    * @param clazz           Class to annotate.
    * @param actions         Corresponding Actions.
    */
-  private void installActionMethods(final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
-                                    final PsiClass clazz,
-                                    final List<Action> actions) {
+  private static void installActionMethods(final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
+                                           final PsiClass clazz,
+                                           final List<Action> actions) {
     final Map<PsiMethod, Set<PathReference>> pathReferenceMap = new HashMap<PsiMethod, Set<PathReference>>();
     for (final Action action : actions) {
       final PsiMethod method = action.searchActionMethod();
@@ -215,9 +215,9 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
    * @param lineMarkerInfos Current line markers.
    * @param clazz           Class to find validation files for.
    */
-  private void installValidationTargets(final PsiElement element,
-                                        final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
-                                        final PsiClass clazz) {
+  private static void installValidationTargets(final PsiElement element,
+                                               final Collection<? super RelatedItemLineMarkerInfo> lineMarkerInfos,
+                                               final PsiClass clazz) {
     final List<XmlFile> files = ValidatorManager.getInstance(element.getProject()).findValidationFilesFor(clazz);
     if (files.isEmpty()) {
       return;

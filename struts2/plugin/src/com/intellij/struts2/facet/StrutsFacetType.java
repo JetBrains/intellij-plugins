@@ -87,7 +87,7 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
 
     @Override
     public FacetType<StrutsFacet, StrutsFacetConfiguration> getFacetType() {
-      return StrutsFacetType.getInstance();
+      return getInstance();
     }
 
     @NotNull

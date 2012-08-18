@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.inspection;
 
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.util.InspectionValidatorUtil;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -31,7 +30,6 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
 import gnu.trove.THashSet;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Set;
@@ -45,13 +43,8 @@ public class Struts2ModelValidator extends ValidatorBase {
 
   public Struts2ModelValidator() {
     super(StrutsBundle.message("inspections.struts2.model.validator"),
-          StrutsBundle.message("inspections.struts2.model.validator.progress"));
-  }
-
-  @NotNull
-  @Override
-  public Class<? extends LocalInspectionTool>[] getInspectionToolClasses(final CompileContext context) {
-    return new Class[]{Struts2ModelInspection.class};
+          StrutsBundle.message("inspections.struts2.model.validator.progress"),
+          Struts2ModelInspection.class);
   }
 
   public Collection<VirtualFile> getFilesToProcess(final Project project, final CompileContext context) {
@@ -59,6 +52,7 @@ public class Struts2ModelValidator extends ValidatorBase {
     final PsiManager psiManager = PsiManager.getInstance(project);
 
     // cache validation settings per module
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     final FactoryMap<Module, Boolean> enabledForModule = new FactoryMap<Module, Boolean>() {
       protected Boolean create(final Module module) {
         return isEnabledForModule(module);
