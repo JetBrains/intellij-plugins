@@ -103,7 +103,8 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     }
 
     JstdTestRunnerCommandLineState runState = runConfiguration.getState(env, null, true);
-    final ExecutionResult executionResult = runState.execute(executor, JstdDebugProgramRunner.this);
+    final ExecutionResult executionResult = runState.execute(executor, this);
+    debugBrowserInfo.fixIfChrome(executionResult.getProcessHandler());
 
     File configFile = new File(runConfiguration.getRunSettings().getConfigFile());
     List<RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean> mapping = extractMappings(configFile);
@@ -125,7 +126,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     return xDebugSession.getRunContentDescriptor();
   }
 
-  private List<RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean> extractMappings(@NotNull File configFile) throws ExecutionException {
+  private static List<RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean> extractMappings(@NotNull File configFile) throws ExecutionException {
     VirtualFile virtualFile = VfsUtil.findFileByIoFile(configFile, false);
     if (virtualFile == null) {
       throw new ExecutionException("Can not find config file " + configFile.getAbsolutePath());
@@ -148,7 +149,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
       }
       return mapping;
     }
-    catch (Exception e) {
+    catch (Exception ignored) {
     }
     finally {
       try {
@@ -160,7 +161,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     throw new ExecutionException("Unknown error");
   }
 
-  private BasePaths readBasePath(@NotNull Reader configFileReader, @NotNull BasePaths initialBasePaths) {
+  private static BasePaths readBasePath(@NotNull Reader configFileReader, @NotNull BasePaths initialBasePaths) {
     YamlParser yamlParser = new YamlParser();
     ParsedConfiguration parsedConfiguration = (ParsedConfiguration) yamlParser.parse(configFileReader, initialBasePaths);
     return parsedConfiguration.getBasePaths();

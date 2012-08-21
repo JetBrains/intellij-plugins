@@ -46,8 +46,26 @@ public class TestFileScope {
     return methods.contains(testMethodName);
   }
 
+  @Nullable
+  public Map.Entry<String, Set<String>> getSingleTestCaseEntry() {
+    if (myMethodsByCaseMap.isEmpty()) {
+      return null;
+    }
+    return myMethodsByCaseMap.entrySet().iterator().next();
+  }
+
   @NotNull
   public String toJstdScope() {
+    return format(true);
+  }
+
+  @NotNull
+  public String humanize() {
+    return format(false);
+  }
+
+  @NotNull
+  private String format(boolean asJstdScope) {
     if (myAll) {
       return "all";
     }
@@ -56,11 +74,11 @@ public class TestFileScope {
       String testCaseName = entry.getKey();
       Set<String> testMethodNames = entry.getValue();
       if (testMethodNames.isEmpty()) {
-        append(buffer, testCaseName, null);
+        append(buffer, testCaseName, null, asJstdScope);
       }
       else {
         for (String testMethodName : entry.getValue()) {
-          append(buffer, testCaseName, testMethodName);
+          append(buffer, testCaseName, testMethodName, asJstdScope);
         }
       }
     }
@@ -73,16 +91,27 @@ public class TestFileScope {
 
   private static void append(@NotNull StringBuilder buf,
                              @NotNull String testCaseName,
-                             @Nullable String testMethodName) {
+                             @Nullable String testMethodName,
+                             boolean asJstdScope) {
     if (buf.length() > 0) {
       buf.append(",");
     }
-    buf.append('^').append(testCaseName);
-    if (testMethodName != null) {
-      buf.append(".");
-      buf.append(testMethodName);
+    if (asJstdScope) {
+      buf.append('^');
     }
-    buf.append('$');
+    buf.append(testCaseName);
+    if (asJstdScope) {
+      buf.append("#");
+    }
+    if (testMethodName != null) {
+      if (!asJstdScope) {
+        buf.append(".");
+      }
+      buf.append(testMethodName);
+      if (asJstdScope) {
+        buf.append('$');
+      }
+    }
   }
 
   public String serialize() {

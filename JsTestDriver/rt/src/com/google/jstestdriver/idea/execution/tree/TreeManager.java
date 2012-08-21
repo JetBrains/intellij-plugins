@@ -5,6 +5,7 @@ import com.google.jstestdriver.idea.execution.TestPath;
 import com.google.jstestdriver.idea.execution.tc.TC;
 import com.google.jstestdriver.idea.execution.tc.TCAttribute;
 import com.google.jstestdriver.idea.execution.tc.TCMessage;
+import com.google.jstestdriver.idea.util.TestFileScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,6 +13,8 @@ import java.io.File;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Sergey Simonchik
@@ -151,7 +154,7 @@ public class TreeManager {
     return myOutStream;
   }
 
-  public void onJstdConfigRunningFinished(@Nullable Exception testsRunException) {
+  public void onJstdConfigRunningFinished(@Nullable Exception testsRunException, @NotNull TestFileScope testFileScope) {
     ConfigNode configNode = getCurrentConfigNode();
     for (BrowserNode browserNode : configNode.getChildren()) {
       for (TestCaseNode testCaseNode : browserNode.getChildren()) {
@@ -176,6 +179,23 @@ public class TreeManager {
       String fullMessage = formatMessage(testsRunException.getMessage(), testsRunException.getCause());
       finishedMessage.addAttribute(TCAttribute.EXCEPTION_MESSAGE, fullMessage);
       printTCMessage(finishedMessage);
+    }
+    else if (configNode.getChildren().isEmpty()) {
+      final String message;
+      Map.Entry<String, Set<String>> testCaseEntry = testFileScope.getSingleTestCaseEntry();
+      if (testCaseEntry != null) {
+        Set<String> testMethodNames = testCaseEntry.getValue();
+        if (testMethodNames.isEmpty()) {
+          message = "No '" + testCaseEntry.getKey() + "' test case found.";
+        }
+        else {
+          message = "No '" + testFileScope.humanize() + "' test method found.";
+        }
+      }
+      else {
+        message = "No tests found. Please check 'test:' section of the configuration file.";
+      }
+      myErrStream.println(message);
     }
     TCMessage configFinishedMessage = TC.newTestSuiteFinishedMessage(configNode);
     printTCMessage(configFinishedMessage);
