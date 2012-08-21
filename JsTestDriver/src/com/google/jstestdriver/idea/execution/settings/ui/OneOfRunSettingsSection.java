@@ -29,8 +29,9 @@ public class OneOfRunSettingsSection<T extends IdProvider & RunSettingsSectionPr
 
   @Override
   public void resetFrom(@NotNull JstdRunSettings runSettings) {
-    RunSettingsSection runSettingsSection = getSelectedRunSettingsSection();
-    runSettingsSection.resetFrom(runSettings);
+    for (RunSettingsSection runSettingsSection : mySectionByIdMap.values()) {
+      runSettingsSection.resetFrom(runSettings);
+    }
   }
 
   @Override
