@@ -159,6 +159,13 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
     return generatedName;
   }
 
+  public String resetNameToGenerated() {
+    String name = generateName();
+    setName(name);
+    myGeneratedName = name;
+    return name;
+  }
+
   @NotNull
   private String generateName() {
     TestType testType = myRunSettings.getTestType();
