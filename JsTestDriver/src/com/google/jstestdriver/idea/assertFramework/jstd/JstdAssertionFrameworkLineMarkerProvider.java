@@ -63,9 +63,9 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
   }
 
   @Nullable
-  private LineMarkerInfo getJstdLineMarkerInfo(@NotNull Project project,
-                                               @NotNull JSFile jsFile,
-                                               @NotNull PsiElement element) {
+  private static LineMarkerInfo getJstdLineMarkerInfo(@NotNull Project project,
+                                                      @NotNull JSFile jsFile,
+                                                      @NotNull PsiElement element) {
     VirtualFile virtualFile = jsFile.getVirtualFile();
     if (virtualFile == null) {
       return null;
@@ -83,8 +83,8 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
   }
 
   @Nullable
-  private LineMarkerInfo getQUnitLineMarkerInfo(@NotNull JSFile jsFile,
-                                                @NotNull PsiElement element) {
+  private static LineMarkerInfo getQUnitLineMarkerInfo(@NotNull JSFile jsFile,
+                                                       @NotNull PsiElement element) {
     QUnitFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
     String testElementName = element.getUserData(QUnitFileStructure.TEST_ELEMENT_NAME_KEY);
     if (testElementName == null) {
@@ -108,7 +108,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
       new Function<PsiElement, String>() {
         @Override
         public String fun(PsiElement element) {
-          return "Execute '" + displayName;
+          return "Execute '" + displayName + "'";
         }
       },
       new GutterIconNavigationHandler<PsiElement>() {
