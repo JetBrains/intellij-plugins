@@ -45,9 +45,9 @@ public class FlaskTemplateContextProvider implements TemplateContextProvider {
         if (arg instanceof PyKeywordArgument) {
           PyKeywordArgument keywordArgument = (PyKeywordArgument)arg;
           String keyword = keywordArgument.getKeyword();
-          PyExpression value = keywordArgument.getValueExpression();
+          PsiElement value = keywordArgument.getValueExpression();
           if (keyword != null && value != null) {
-            result.add(LookupElementBuilder.create(value, keyword));
+            result.add(LookupElementBuilder.create(keywordArgument, keyword));
           }
         }
       }
