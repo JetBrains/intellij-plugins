@@ -28,6 +28,7 @@ import com.jetbrains.python.psi.PyRecursiveElementVisitor;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
 import com.jetbrains.python.psi.resolve.PyResolveContext;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,9 +71,10 @@ public class FlaskTemplateManager {
     return result;
   }
 
+  @Nullable
   public static PsiDirectory getTemplatesDirectory(PsiElement element) {
     PsiDirectory directory = element.getContainingFile().getContainingDirectory();
-    return directory.findSubdirectory(FlaskNames.TEMPLATES);
+    return directory == null ? null : directory.findSubdirectory(FlaskNames.TEMPLATES);
   }
 
   public static List<PyStringLiteralExpression> findTemplateReferences(PsiFile element) {
