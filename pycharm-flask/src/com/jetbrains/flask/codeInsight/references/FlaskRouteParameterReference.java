@@ -18,6 +18,7 @@ package com.jetbrains.flask.codeInsight.references;
 import com.intellij.codeInsight.TailType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.TailTypeDecorator;
+import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
@@ -26,6 +27,7 @@ import com.jetbrains.flask.codeInsight.FlaskNames;
 import com.jetbrains.flask.codeInsight.WerkzeugRoutingRule;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.impl.PyPsiUtils;
+import com.jetbrains.python.psi.types.TypeEvalContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,7 +37,7 @@ import java.util.List;
 /**
  * @author yole
  */
-public class FlaskRouteParameterReference extends PsiReferenceBase<PyStringLiteralExpression> {
+public class FlaskRouteParameterReference extends PsiReferenceBase<PyStringLiteralExpression> implements PsiReferenceEx {
   private final WerkzeugRoutingRule.Parameter myParameter;
 
   public FlaskRouteParameterReference(PyStringLiteralExpression literal, WerkzeugRoutingRule.Parameter parameter) {
@@ -89,5 +91,21 @@ public class FlaskRouteParameterReference extends PsiReferenceBase<PyStringLiter
       }
     }
     return variants.toArray();
+  }
+
+  @Nullable
+  @Override
+  public HighlightSeverity getUnresolvedHighlightSeverity(TypeEvalContext context) {
+    return HighlightSeverity.WARNING;
+  }
+
+  @Nullable
+  @Override
+  public String getUnresolvedDescription() {
+    PyFunction function = PsiTreeUtil.getParentOfType(getElement(), PyFunction.class);
+    if (function == null) {
+      return null;
+    }
+    return "Function '" + function.getName() + "' does not have a parameter '" + getCanonicalText() + "'";
   }
 }
