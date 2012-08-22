@@ -85,6 +85,7 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
           final PyPackageManager packageManager = PyPackageManager.getInstance(settings.getSdk());
           try {
             packageManager.install("Flask");
+            packageManager.refresh();
           }
           catch (final PyExternalProcessException e) {
             SwingUtilities.invokeLater(new Runnable() {
