@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.platform.DirectoryProjectConfigurator;
 import com.jetbrains.flask.codeInsight.FlaskNames;
+import com.jetbrains.python.PyNames;
 import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.packaging.PyPackageManagers;
 import com.jetbrains.python.packaging.PyRequirement;
@@ -49,6 +50,12 @@ public class FlaskProjectConfigurator implements DirectoryProjectConfigurator {
       if (templatesDir != null) {
         templatesService.setTemplateFolders(templatesDir);
       }
+      else if (appFile != null) {
+        VirtualFile packageTemplatesDir = appFile.getParent().findChild(FlaskNames.TEMPLATES);
+        if (packageTemplatesDir != null) {
+          templatesService.setTemplateFolders(packageTemplatesDir);
+        }
+      }
       if (appFile != null) {
         createFlaskRunConfiguration(module, appFile);
       }
@@ -65,14 +72,30 @@ public class FlaskProjectConfigurator implements DirectoryProjectConfigurator {
   public static VirtualFile findFlaskAppFile(VirtualFile dir) {
     VirtualFile[] children = dir.getChildren();
     for (VirtualFile child : children) {
-      if (!child.isDirectory() && child.getFileType() instanceof PythonFileType) {
-        CharSequence text = LoadTextUtil.loadText(child);
-        if (text.toString().contains("Flask(__name__)")) {
-          return child;
+      if (isFlaskAppFile(child)) {
+        return child;
+      }
+    }
+    for (VirtualFile child : children) {
+      if (child.isDirectory() && child.findChild(PyNames.INIT_DOT_PY) != null && child.findChild(FlaskNames.TEMPLATES) != null) {
+        for (VirtualFile file : child.getChildren()) {
+          if (isFlaskAppFile(file)) {
+            return file;
+          }
         }
       }
     }
     return null;
+  }
+
+  private static boolean isFlaskAppFile(VirtualFile child) {
+    if (!child.isDirectory() && child.getFileType() instanceof PythonFileType) {
+      CharSequence text = LoadTextUtil.loadText(child);
+      if (text.toString().contains("Flask(__name__)")) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private static boolean projectRequiresFlask(Module module) {
