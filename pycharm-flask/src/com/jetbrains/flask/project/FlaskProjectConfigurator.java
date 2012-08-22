@@ -26,6 +26,7 @@ import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.packaging.PyPackageManagers;
 import com.jetbrains.python.packaging.PyRequirement;
 import com.jetbrains.python.run.PyRunConfigurationFactory;
+import com.jetbrains.python.run.PythonRunConfigurationParams;
 import com.jetbrains.python.templateLanguages.TemplatesService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -49,9 +50,15 @@ public class FlaskProjectConfigurator implements DirectoryProjectConfigurator {
         templatesService.setTemplateFolders(templatesDir);
       }
       if (appFile != null) {
-        PyRunConfigurationFactory.getInstance().createPythonScriptRunConfiguration(module, appFile.getPath());
+        createFlaskRunConfiguration(module, appFile);
       }
     }
+  }
+
+  public static void createFlaskRunConfiguration(Module module, VirtualFile appFile) {
+    PyRunConfigurationFactory factory = PyRunConfigurationFactory.getInstance();
+    PythonRunConfigurationParams configuration = factory.createPythonScriptRunConfiguration(module, appFile.getPath(), true);
+    configuration.setMultiprocessMode(true);
   }
 
   @Nullable
