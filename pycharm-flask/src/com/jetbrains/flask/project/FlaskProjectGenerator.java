@@ -38,7 +38,6 @@ import com.jetbrains.python.newProject.PyFrameworkProjectGenerator;
 import com.jetbrains.python.newProject.PyNewProjectSettings;
 import com.jetbrains.python.packaging.PyExternalProcessException;
 import com.jetbrains.python.packaging.PyPackageManager;
-import com.jetbrains.python.run.PyRunConfigurationFactory;
 import com.jetbrains.python.templateLanguages.TemplatesService;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -112,7 +111,7 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
         }
         projectDir.createSubdirectory("static");
         PsiDirectory templates = projectDir.createSubdirectory(FlaskNames.TEMPLATES);
-        PyRunConfigurationFactory.getInstance().createPythonScriptRunConfiguration(module, appFile.getVirtualFile().getPath());
+        FlaskProjectConfigurator.createFlaskRunConfiguration(module, appFile.getVirtualFile());
         TemplatesService templatesService = TemplatesService.getInstance(module);
         templatesService.setTemplateLanguage(TemplatesService.JINJA2);
         templatesService.setTemplateFolders(templates.getVirtualFile());
