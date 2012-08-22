@@ -16,9 +16,7 @@
 package com.jetbrains.flask.codeInsight;
 
 import com.intellij.psi.PsiElement;
-import com.jetbrains.python.psi.PyClass;
-import com.jetbrains.python.psi.PyPsiFacade;
-import com.jetbrains.python.psi.PyTargetExpression;
+import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeProviderBase;
 import com.jetbrains.python.psi.types.TypeEvalContext;
@@ -40,6 +38,12 @@ public class FlaskTypeProvider extends PyTypeProviderBase {
         if (FlaskNames.SESSION.equals(target.getName())) {
           return getClassType(referenceTarget, FlaskNames.SESSION_CLASS);
         }
+      }
+    }
+    if (referenceTarget instanceof PyFunction) {
+      PyFunction function = (PyFunction)referenceTarget;
+      if (FlaskNames.JINJA_ENV.equals(function.getQualifiedName())) {
+        return getClassType(function, FlaskNames.ENVIRONMENT_CLASS);
       }
     }
     return super.getReferenceType(referenceTarget, context, anchor);
