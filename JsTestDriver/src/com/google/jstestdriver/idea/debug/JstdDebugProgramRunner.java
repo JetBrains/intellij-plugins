@@ -1,13 +1,10 @@
 package com.google.jstestdriver.idea.debug;
 
-import com.google.jstestdriver.config.ParsedConfiguration;
-import com.google.jstestdriver.config.YamlParser;
 import com.google.jstestdriver.idea.TestRunner;
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.JstdRunConfigurationVerifier;
 import com.google.jstestdriver.idea.execution.JstdTestRunnerCommandLineState;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
-import com.google.jstestdriver.model.BasePaths;
 import com.intellij.chromeConnector.connection.ChromeConnectionManager;
 import com.intellij.chromeConnector.connection.impl.ExistentTabProviderFactory;
 import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
@@ -21,15 +18,10 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
-import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
-import com.intellij.javascript.debugger.execution.RemoteJavaScriptDebugConfiguration;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
 import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
@@ -37,9 +29,8 @@ import com.intellij.xdebugger.XDebuggerManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.List;
+import java.io.File;
+import java.io.PrintWriter;
 
 /**
  * @author Sergey Simonchik
@@ -107,9 +98,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     debugBrowserInfo.fixIfChrome(executionResult.getProcessHandler());
 
     File configFile = new File(runConfiguration.getRunSettings().getConfigFile());
-    List<RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean> mapping = extractMappings(configFile);
-
-    final DebuggableFileFinder fileFinder = new RemoteDebuggingFileFinder(project, mapping);
+    final DebuggableFileFinder fileFinder = JstdDebuggableFileFinderProvider.createFileFinder(project, configFile);
 
     XDebuggerManager xDebuggerManager = XDebuggerManager.getInstance(project);
     XDebugSession xDebugSession = xDebuggerManager.startSession(this, env, contentToReuse, new XDebugProcessStarter() {
@@ -124,47 +113,6 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     writer.flush();
 
     return xDebugSession.getRunContentDescriptor();
-  }
-
-  private static List<RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean> extractMappings(@NotNull File configFile) throws ExecutionException {
-    VirtualFile virtualFile = VfsUtil.findFileByIoFile(configFile, false);
-    if (virtualFile == null) {
-      throw new ExecutionException("Can not find config file " + configFile.getAbsolutePath());
-    }
-    BasePaths dirBasePaths = new BasePaths(configFile.getParentFile());
-    byte[] content;
-    try {
-      content = virtualFile.contentsToByteArray();
-    }
-    catch (IOException e) {
-      throw new ExecutionException("Can not read " + configFile.getAbsolutePath());
-    }
-    Reader reader = new InputStreamReader(new ByteArrayInputStream(content), Charset.defaultCharset());
-    try {
-      BasePaths allBasePaths = readBasePath(reader, dirBasePaths);
-      List<RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean> mapping = ContainerUtilRt.newArrayList();
-      for (File basePath : allBasePaths) {
-        String normalizedPath = basePath.toURI().normalize().getPath();
-        mapping.add(new RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean(normalizedPath, "http://localhost:9876/test"));
-      }
-      return mapping;
-    }
-    catch (Exception ignored) {
-    }
-    finally {
-      try {
-        reader.close();
-      }
-      catch (IOException ignored) {
-      }
-    }
-    throw new ExecutionException("Unknown error");
-  }
-
-  private static BasePaths readBasePath(@NotNull Reader configFileReader, @NotNull BasePaths initialBasePaths) {
-    YamlParser yamlParser = new YamlParser();
-    ParsedConfiguration parsedConfiguration = (ParsedConfiguration) yamlParser.parse(configFileReader, initialBasePaths);
-    return parsedConfiguration.getBasePaths();
   }
 
 }

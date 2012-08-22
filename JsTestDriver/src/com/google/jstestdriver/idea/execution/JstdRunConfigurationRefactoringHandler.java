@@ -1,13 +1,13 @@
 package com.google.jstestdriver.idea.execution;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.TestType;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class JstdRunConfigurationRefactoringHandler {
@@ -25,14 +25,17 @@ public class JstdRunConfigurationRefactoringHandler {
     JstdRunSettings settings = configuration.getRunSettings();
     String path = fileAtElement.getPath();
     if (settings.getTestType() == TestType.ALL_CONFIGS_IN_DIRECTORY) {
-      if (settings.getDirectory().equals(path)) {
+      String allInDirectory = FileUtil.toSystemIndependentName(settings.getDirectory());
+      if (allInDirectory.equals(path)) {
         return new FilePathRefactoringElementListener(configuration, false, false, true);
       }
     } else {
-      if (settings.getJsFilePath().equals(path)) {
+      String jsFilePath = FileUtil.toSystemIndependentName(settings.getJsFilePath());
+      if (jsFilePath.equals(path)) {
         return new FilePathRefactoringElementListener(configuration, false, true, false);
       }
-      if (settings.getConfigFile().equals(path)) {
+      String configFilePath = FileUtil.toSystemIndependentName(settings.getConfigFile());
+      if (configFilePath.equals(path)) {
         return new FilePathRefactoringElementListener(configuration, true, false, false);
       }
     }
@@ -78,7 +81,7 @@ public class JstdRunConfigurationRefactoringHandler {
     private void refactorIt(PsiElement newElement) {
       VirtualFile newFile = toVirtualFile(newElement);
       if (newFile != null) {
-        String newPath = newFile.getPath();
+        String newPath = FileUtil.toSystemDependentName(newFile.getPath());
         JstdRunSettings.Builder settingsBuilder = new JstdRunSettings.Builder(myConfiguration.getRunSettings());
         if (myIsConfigFile) {
           settingsBuilder.setConfigFile(newPath);
