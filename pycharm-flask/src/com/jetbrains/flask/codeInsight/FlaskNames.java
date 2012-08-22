@@ -23,6 +23,7 @@ import com.jetbrains.python.psi.impl.PyQualifiedName;
 public class FlaskNames {
   public static final String FLASK_MODULE = "flask";
   public static final String FLASK_CLASS = "Flask";
+  public static final String FLASK_FQN = "flask.app.Flask";
   public static final String RENDER_TEMPLATE = "render_template";
   public static final String URL_FOR = "url_for";
   public static final String ROUTE = "route";
@@ -36,6 +37,7 @@ public class FlaskNames {
   public static final String ENVIRONMENT_CLASS = "flask.templating.Environment";
   public static final String REQUEST = "request";
   public static final String SESSION = "session";
+  public static final String CONFIG = "config";
   public static final String JINJA_ENV = "flask.app.Flask.jinja_env";
   public static final String G = "g";
   public static final String ABORT = "abort";
