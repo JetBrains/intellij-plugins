@@ -34,6 +34,7 @@ import java.util.List;
  * @author yole
  */
 public class FlaskTemplateContextProvider implements TemplateContextProvider {
+
   @Override
   public Collection<LookupElement> getTemplateContext(PsiFile template) {
     List<LookupElement> result = new ArrayList<LookupElement>();
@@ -62,6 +63,15 @@ public class FlaskTemplateContextProvider implements TemplateContextProvider {
       addFlaskVariable(result, (PyFile) flaskModule, FlaskNames.REQUEST);
       addFlaskVariable(result, (PyFile) flaskModule, FlaskNames.SESSION);
       addFlaskVariable(result, (PyFile) flaskModule, FlaskNames.G);
+
+      PyClass flaskClass = PyPsiFacade.getInstance(flaskModule.getProject()).findClass(FlaskNames.FLASK_FQN);
+      if (flaskClass != null) {
+        PyTargetExpression attribute = flaskClass.findInstanceAttribute(FlaskNames.CONFIG, false);
+        if (attribute != null) {
+          result.add(LookupElementBuilder.createWithIcon(attribute));
+        }
+      }
+
       // create_jinja_environment() in flask/app.py
       addFlaskVariable(result, (PyFile) flaskModule, FlaskNames.URL_FOR);
       addFlaskVariable(result, (PyFile) flaskModule, FlaskNames.GET_FLASHED_MESSAGES);
