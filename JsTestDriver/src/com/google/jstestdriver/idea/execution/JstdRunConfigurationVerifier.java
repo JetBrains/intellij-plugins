@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
@@ -127,8 +126,8 @@ public class JstdRunConfigurationVerifier {
     }
     TestFileStructurePack pack = TestFileStructureManager.fetchTestFileStructurePackByJsFile(jsFile);
     if (pack != null) {
-      PsiElement element = pack.findPsiElement(runSettings.getTestCaseName(), null);
-      if (element == null) {
+      boolean found = pack.contains(runSettings.getTestCaseName(), null);
+      if (!found) {
         throw new RuntimeConfigurationWarning("Can't find test case with name '" + runSettings.getTestCaseName() + "'.");
       }
       return pack;
@@ -143,8 +142,8 @@ public class JstdRunConfigurationVerifier {
       throw new RuntimeConfigurationError("Test method name is empty.");
     }
     if (pack != null) {
-      PsiElement element = pack.findPsiElement(runSettings.getTestCaseName(), runSettings.getTestMethodName());
-      if (element == null) {
+      boolean found = pack.contains(runSettings.getTestCaseName(), runSettings.getTestMethodName());
+      if (!found) {
         throw new RuntimeConfigurationWarning("Can't find test method with name '" + runSettings.getTestMethodName() + "'.");
       }
     }

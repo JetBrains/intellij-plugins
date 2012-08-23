@@ -74,15 +74,15 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
   @Override
   public PsiElement findPsiElement(@NotNull String testCaseName, @Nullable String testMethodName) {
     JstdTestCaseStructure testCaseStructure = myTestCaseStructureByNameMap.get(testCaseName);
-    if (testCaseStructure != null) {
-      if (testMethodName != null) {
-        JstdTestStructure testStructure = testCaseStructure.getTestStructureByName(testMethodName);
-        if (testStructure != null) {
-          return testStructure.getTestMethodNameDeclaration();
-        }
-      } else {
-        return testCaseStructure.getEnclosingCallExpression();
-      }
+    if (testCaseStructure == null) {
+      return null;
+    }
+    if (testMethodName == null) {
+      return testCaseStructure.getEnclosingCallExpression();
+    }
+    JstdTestStructure testStructure = testCaseStructure.getTestStructureByName(testMethodName);
+    if (testStructure != null) {
+      return testStructure.getTestMethodNameDeclaration();
     }
     return null;
   }
@@ -123,5 +123,10 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
       out.add(testStructure.getName());
     }
     return out;
+  }
+
+  @Override
+  public boolean contains(@NotNull String testCaseName, @Nullable String testMethodName) {
+    return findPsiElement(testCaseName, testMethodName) != null;
   }
 }
