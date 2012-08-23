@@ -20,7 +20,7 @@ abstract class JpsFlexDependencyEntryBase<Self extends JpsFlexDependencyEntryBas
 
   public void applyChanges(@NotNull final Self modified) {
     super.applyChanges(modified);
-    myLinkageType = modified.myLinkageType;
+    //myLinkageType = modified.myLinkageType;
   }
 
 // ------------------------------------
