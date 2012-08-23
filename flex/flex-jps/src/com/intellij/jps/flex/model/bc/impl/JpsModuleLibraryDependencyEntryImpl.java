@@ -43,10 +43,8 @@ class JpsModuleLibraryDependencyEntryImpl extends JpsFlexDependencyEntryBase<Jps
   public JpsLibrary getLibrary() {
     final JpsModule module = ((JpsFlexBuildConfiguration)myParent.getParent().getParent()).getModule();
 
-    for (JpsLibrary library : module.getLibraryCollection().getLibraries()) {
-      if (library.getType() == JpsFlexLibraryType.INSTANCE &&
-          myLibraryId
-            .equals(((JpsTypedLibrary<JpsSimpleElement<JpsFlexLibraryProperties>>)library).getProperties().getData().getLibraryId())) {
+    for (JpsTypedLibrary<JpsSimpleElement<JpsFlexLibraryProperties>> library : module.getLibraryCollection().getLibraries(JpsFlexLibraryType.INSTANCE)) {
+      if (myLibraryId.equals(library.getProperties().getData().getLibraryId())) {
         return library;
       }
     }
