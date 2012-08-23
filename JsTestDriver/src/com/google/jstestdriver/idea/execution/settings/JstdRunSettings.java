@@ -86,6 +86,7 @@ public class JstdRunSettings {
     return myTestCaseName;
   }
 
+  @NotNull
   public String getTestMethodName() {
     return myTestMethodName;
   }

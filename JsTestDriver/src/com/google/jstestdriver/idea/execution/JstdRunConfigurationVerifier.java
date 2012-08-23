@@ -15,6 +15,8 @@ import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.execution.configurations.RuntimeConfigurationWarning;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -222,7 +224,8 @@ public class JstdRunConfigurationVerifier {
     });
   }
 
-  private static class JstdSlaveBrowserIsNotReadyExecutionException extends ExecutionException implements HyperlinkListener {
+  private static class JstdSlaveBrowserIsNotReadyExecutionException extends ExecutionException implements HyperlinkListener,
+                                                                                                          NotificationListener {
 
     private final Project myProject;
 
@@ -233,6 +236,15 @@ public class JstdRunConfigurationVerifier {
 
     @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
+      handleEvent(e);
+    }
+
+    @Override
+    public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
+      handleEvent(event);
+    }
+
+    private void handleEvent(HyperlinkEvent e) {
       if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
         JstdServerState jstdServerState = JstdServerState.getInstance();
         if (!jstdServerState.isServerRunning()) {

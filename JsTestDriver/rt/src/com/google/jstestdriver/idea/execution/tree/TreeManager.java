@@ -186,7 +186,7 @@ public class TreeManager {
       if (testCaseEntry != null) {
         Set<String> testMethodNames = testCaseEntry.getValue();
         if (testMethodNames.isEmpty()) {
-          message = "No '" + testCaseEntry.getKey() + "' test case found.";
+          message = "No '" + testCaseEntry.getKey() + "' test case found or it has no tests.";
         }
         else {
           message = "No '" + testFileScope.humanize() + "' test method found.";

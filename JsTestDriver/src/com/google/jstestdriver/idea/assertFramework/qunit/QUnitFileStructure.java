@@ -144,4 +144,18 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
     }
     return out;
   }
+
+  @NotNull
+  @Override
+  public List<String> getChildrenOf(@NotNull String topLevelElementName) {
+    QUnitModuleStructure moduleStructure = myNonDefaultModuleStructureByNameMap.get(topLevelElementName);
+    if (moduleStructure == null) {
+      return Collections.emptyList();
+    }
+    List<String> out = new ArrayList<String>(moduleStructure.getTestCount());
+    for (QUnitTestMethodStructure methodStructure : moduleStructure.getTestMethodStructures()) {
+      out.add("test " + methodStructure.getName());
+    }
+    return out;
+  }
 }

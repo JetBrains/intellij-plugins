@@ -66,4 +66,13 @@ public class TestFileStructurePack {
     return out;
   }
 
+  @NotNull
+  public List<String> getChildrenOf(String topLevelElementName) {
+    List<String> out = new ArrayList<String>();
+    for (AbstractTestFileStructure structure : myTestFileStructures) {
+      List<String> localChildren = structure.getChildrenOf(topLevelElementName);
+      out.addAll(localChildren);
+    }
+    return out;
+  }
 }

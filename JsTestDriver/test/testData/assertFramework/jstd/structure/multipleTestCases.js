@@ -6,5 +6,5 @@
 
 /*TestCase name:second test-case, id:2*/TestCase("second test-case", {
     /*Test id:2_1, name:test1, type:property*/test1: function() {}/*TestEnd id:2_1, type:property*/,
-    /*Test id:2_2, name:test2, type:property*/test2: function() {}/*TestEnd id:2_2, type:property*/,
+    /*Test id:2_2, name:test 2, type:property*/"test 2": function() {}/*TestEnd id:2_2, type:property*/,
 })/*TestCaseEnd id:2*/;

@@ -31,4 +31,7 @@ public abstract class AbstractTestFileStructure {
 
   @NotNull
   public abstract List<String> getTopLevelElements();
+
+  @NotNull
+  public abstract List<String> getChildrenOf(@NotNull String topLevelElementName);
 }
