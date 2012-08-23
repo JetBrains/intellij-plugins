@@ -8,7 +8,7 @@ import org.jetbrains.jps.model.impl.JpsCompositeElementBase;
 abstract class JpsFlexDependencyEntryBase<Self extends JpsFlexDependencyEntryBase<Self>> extends JpsCompositeElementBase<Self>
   implements JpsFlexDependencyEntry {
 
-  private JpsLinkageType myLinkageType;
+  JpsLinkageType myLinkageType;
 
   protected JpsFlexDependencyEntryBase(final JpsLinkageType linkageType) {
     myLinkageType = linkageType;
