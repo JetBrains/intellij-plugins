@@ -23,7 +23,7 @@ public interface TapestryIcons extends PlatformIcons {
   Icon LIBRARY = AllIcons.Modules.Library;
   Icon NAVIGATE = AllIcons.Actions.Browser_externalJavaDoc;
   Icon REFERENCE = AllIcons.Nodes.EjbReference;
-  Icon SHOW_LIBRARIES = AllIcons.Nodes.PpLibClosed;
+  Icon SHOW_LIBRARIES = AllIcons.Nodes.PpLibFolder;
   Icon LOOMY_LOGO = IconLoader.getIcon("/com/intellij/tapestry/core/icons/g5004.png");
 }
 
