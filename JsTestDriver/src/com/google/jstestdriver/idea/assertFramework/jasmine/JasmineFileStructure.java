@@ -137,4 +137,17 @@ public class JasmineFileStructure extends AbstractTestFileStructure {
     return out;
   }
 
+  @NotNull
+  @Override
+  public List<String> getChildrenOf(@NotNull String topLevelElementName) {
+    JasmineSuiteStructure suiteStructure = mySuiteMap.get(topLevelElementName);
+    if (suiteStructure == null) {
+      return Collections.emptyList();
+    }
+    List<String> out = new ArrayList<String>(suiteStructure.getSpecCount());
+    for (JasmineSpecStructure specStructure : suiteStructure.getSpecs()) {
+      out.add(specStructure.getName());
+    }
+    return out;
+  }
 }

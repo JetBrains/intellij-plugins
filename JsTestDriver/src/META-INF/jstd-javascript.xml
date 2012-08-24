@@ -64,6 +64,14 @@
                      level="WARNING"
                      implementationClass="com.google.jstestdriver.idea.assertFramework.jasmine.JasmineAdapterSupportInspection"
     />
+    <localInspection groupPath="JavaScript"
+                     groupName="JsTestDriver"
+                     displayName="Reports about JsTestDriver TestCase without tests"
+                     shortName="JsTestDriverTestCaseWithoutTests"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JsTestDriverTestCaseWithoutTestsInspection"
+    />
 
     <applicationService serviceImplementation="com.google.jstestdriver.idea.assertFramework.TestFileStructureProviderImpl"/>
 

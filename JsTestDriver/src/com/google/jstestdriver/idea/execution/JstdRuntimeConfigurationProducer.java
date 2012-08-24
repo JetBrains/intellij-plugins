@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -238,9 +239,9 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       builder.setTestType(TestType.JS_FILE);
       List<VirtualFile> jstdConfigFiles = JstdTestFilePathIndex.findConfigFilesInProject(virtualFile, project);
       if (jstdConfigFiles.size() == 1) {
-        builder.setConfigFile(jstdConfigFiles.get(0).getPath());
+        builder.setConfigFile(getPath(jstdConfigFiles.get(0)));
       }
-      builder.setJSFilePath(virtualFile.getPath());
+      builder.setJSFilePath(getPath(virtualFile));
       builder.setServerType(ServerType.INTERNAL);
       return builder.build();
     }
@@ -255,7 +256,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
         VirtualFile virtualFile = psiFile.getVirtualFile();
         if (virtualFile != null && JstdConfigFileUtils.isJstdConfigFile(virtualFile)) {
           JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
-          builder.setConfigFile(virtualFile.getPath())
+          builder.setConfigFile(getPath(virtualFile))
                  .setServerType(ServerType.INTERNAL);
           return builder.build();
         }
@@ -279,7 +280,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       }
       JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
       builder.setTestType(TestType.ALL_CONFIGS_IN_DIRECTORY)
-             .setDirectory(directory.getPath())
+             .setDirectory(getPath(directory))
              .setServerType(ServerType.INTERNAL);
       return builder.build();
     }
@@ -305,11 +306,11 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       if (jstdRunElement != null) {
         Project project = jsFile.getProject();
         JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
-        builder.setJSFilePath(virtualFile.getPath());
+        builder.setJSFilePath(getPath(virtualFile));
         builder.setTestCaseName(jstdRunElement.getTestCaseName());
         List<VirtualFile> jstdConfigs = JstdTestFilePathIndex.findConfigFilesInProject(virtualFile, project);
         if (jstdConfigs.size() == 1) {
-          builder.setConfigFile(jstdConfigs.get(0).getPath());
+          builder.setConfigFile(getPath(jstdConfigs.get(0)));
         }
         String testMethodName = jstdRunElement.getTestMethodName();
         if (testMethodName != null) {
@@ -325,4 +326,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
 
   }
 
+  private static String getPath(@NotNull VirtualFile virtualFile) {
+    return FileUtil.toSystemDependentName(virtualFile.getPath());
+  }
 }

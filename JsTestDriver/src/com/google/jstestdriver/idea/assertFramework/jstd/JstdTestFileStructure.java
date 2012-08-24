@@ -111,4 +111,17 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
     return out;
   }
 
+  @NotNull
+  @Override
+  public List<String> getChildrenOf(@NotNull String topLevelElementName) {
+    JstdTestCaseStructure testCaseStructure = myTestCaseStructureByNameMap.get(topLevelElementName);
+    if (testCaseStructure == null) {
+      return Collections.emptyList();
+    }
+    List<String> out = new ArrayList<String>(testCaseStructure.getTestCount());
+    for (JstdTestStructure testStructure : testCaseStructure.getTestStructures()) {
+      out.add(testStructure.getName());
+    }
+    return out;
+  }
 }
