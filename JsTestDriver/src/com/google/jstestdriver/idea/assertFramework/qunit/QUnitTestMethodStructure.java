@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class QUnitTestMethodStructure {
 
+  public static final String JSTD_NAME_PREFIX = "test ";
+
   private final AbstractQUnitModuleStructure myModuleStructure;
   private final String myName;
   private final JSCallExpression myJsCallExpression;
@@ -21,8 +23,14 @@ public class QUnitTestMethodStructure {
     myFunctionExpression = jsFunctionExpression;
   }
 
+  @NotNull
   public String getName() {
     return myName;
+  }
+
+  @NotNull
+  public String getNameWithJstdPrefix() {
+    return JSTD_NAME_PREFIX + myName;
   }
 
   @NotNull

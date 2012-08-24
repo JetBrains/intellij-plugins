@@ -3,6 +3,10 @@ package com.google.jstestdriver.idea.assertFramework;
 import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineFileStructure;
 import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineFileStructureBuilder;
 import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineSuiteStructure;
+import com.google.jstestdriver.idea.assertFramework.qunit.DefaultQUnitModuleStructure;
+import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructure;
+import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructureBuilder;
+import com.google.jstestdriver.idea.assertFramework.qunit.QUnitTestMethodStructure;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -55,20 +59,31 @@ public class JsTestFileByTestNameIndex extends FileBasedIndexExtension<String, V
         }
         JasmineFileStructureBuilder jasmineFileStructureBuilder = JasmineFileStructureBuilder.getInstance();
         JasmineFileStructure jasmineFileStructure = jasmineFileStructureBuilder.fetchCachedTestFileStructure(jsFile);
-        if (!jasmineFileStructure.hasJasmineSymbols()) {
+
+        QUnitFileStructure qunitFileStructure = QUnitFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
+        DefaultQUnitModuleStructure defaultQUnitModuleStructure = qunitFileStructure.getDefaultModuleStructure();
+
+        if (!jasmineFileStructure.hasJasmineSymbols() && defaultQUnitModuleStructure.getTestCount() == 0) {
           return Collections.emptyMap();
         }
         Map<String, Void> testNames = new HashMap<String, Void>();
         for (JasmineSuiteStructure suiteStructure : jasmineFileStructure.getSuites()) {
           addAllDescendantSuites(testNames, suiteStructure, "");
         }
+        for (QUnitTestMethodStructure testMethodStructure : defaultQUnitModuleStructure.getTestMethodStructures()) {
+          testNames.put(getQUnitTestNameKey(testMethodStructure.getNameWithJstdPrefix()), null);
+        }
         return testNames;
       }
     };
   }
 
-  private void addAllDescendantSuites(@NotNull Map<String, Void> testNames, @NotNull JasmineSuiteStructure suite,
-                                      @NotNull String prefix) {
+  public static String getQUnitTestNameKey(@NotNull String testMethodName) {
+    return "QUnit." + DefaultQUnitModuleStructure.NAME + "#" + testMethodName;
+  }
+
+  private static void addAllDescendantSuites(@NotNull Map<String, Void> testNames, @NotNull JasmineSuiteStructure suite,
+                                             @NotNull String prefix) {
     String suiteName = prefix.isEmpty() ? suite.getName() : prefix + " " + suite.getName();
     testNames.put(suiteName, null);
     for (JasmineSuiteStructure childSuite : suite.getSuites()) {
@@ -98,7 +113,7 @@ public class JsTestFileByTestNameIndex extends FileBasedIndexExtension<String, V
 
   @Override
   public int getVersion() {
-    return 1;
+    return 2;
   }
 
   @NotNull

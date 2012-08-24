@@ -22,7 +22,6 @@ import java.util.Map;
 public class QUnitFileStructure extends AbstractTestFileStructure {
 
   public static final Key<String> TEST_ELEMENT_NAME_KEY = Key.create("qunit-test-element-name-key");
-  private static final String TEST_NAME_PREFIX = "test ";
 
   private final List<QUnitModuleStructure> myNonDefaultModuleStructures = Lists.newArrayList();
   private final Map<String, QUnitModuleStructure> myNonDefaultModuleStructureByNameMap = Maps.newHashMap();
@@ -118,7 +117,7 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
     AbstractQUnitModuleStructure qunitModuleStructure = findQUnitModuleByName(testCaseName);
     if (qunitModuleStructure != null) {
       if (testMethodName != null) {
-        String name = StringUtil.trimStart(testMethodName, TEST_NAME_PREFIX);
+        String name = StringUtil.trimStart(testMethodName, QUnitTestMethodStructure.JSTD_NAME_PREFIX);
         QUnitTestMethodStructure test = qunitModuleStructure.getTestMethodStructureByName(name);
         if (test != null) {
           return test.getCallExpression();
@@ -165,7 +164,7 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
       return false;
     }
     if (testMethodName != null) {
-      String name = StringUtil.trimStart(testMethodName, TEST_NAME_PREFIX);
+      String name = StringUtil.trimStart(testMethodName, QUnitTestMethodStructure.JSTD_NAME_PREFIX);
       QUnitTestMethodStructure test = qunitModuleStructure.getTestMethodStructureByName(name);
       return test != null;
     }

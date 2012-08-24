@@ -3,6 +3,9 @@ package com.google.jstestdriver.idea.execution;
 import com.google.jstestdriver.idea.assertFramework.JsTestFileByTestNameIndex;
 import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineFileStructure;
 import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineFileStructureBuilder;
+import com.google.jstestdriver.idea.assertFramework.qunit.DefaultQUnitModuleStructure;
+import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructure;
+import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructureBuilder;
 import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
@@ -10,6 +13,7 @@ import com.intellij.execution.testframework.sm.FileUrlProvider;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -85,7 +89,7 @@ public class JstdTestLocationProvider implements TestLocationProvider {
   }
 
   @Nullable
-  private Location<PsiElement> findTest(final @NotNull String locationData, Project project) {
+  private static Location<PsiElement> findTest(final @NotNull String locationData, Project project) {
     List<String> path = EscapeUtils.split(locationData, ':');
     if (path.size() < 2) {
       return null;
@@ -102,12 +106,19 @@ public class JstdTestLocationProvider implements TestLocationProvider {
       if (jsTestVirtualFile == null || !jsTestVirtualFile.isValid()) {
         return null;
       }
-      psiElement = NavUtils.findPsiLocation(
-        project,
-        jsTestVirtualFile,
-        testCaseName,
-        testMethodName
-      );
+      String name = jsTestVirtualFile.getName().toLowerCase();
+      if (testMethodName != null && testCaseName.equals(DefaultQUnitModuleStructure.NAME)
+          && StringUtil.startsWithIgnoreCase(name, "QUnitAdapter")) {
+        psiElement = findTestFromQUnitDefaultModule(project, testMethodName);
+      }
+      else {
+        psiElement = NavUtils.findPsiLocation(
+          project,
+          jsTestVirtualFile,
+          testCaseName,
+          testMethodName
+        );
+      }
     }
     else {
       psiElement = findJasmineTestLocation(project, testCaseName, testMethodName);
@@ -119,9 +130,32 @@ public class JstdTestLocationProvider implements TestLocationProvider {
   }
 
   @Nullable
-  private PsiElement findJasmineTestLocation(@NotNull Project project,
-                                                       @NotNull String testCaseName,
-                                                       @Nullable String testMethodName) {
+  private static PsiElement findTestFromQUnitDefaultModule(@NotNull Project project,
+                                                           @NotNull String testMethodName) {
+    GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    String key = JsTestFileByTestNameIndex.getQUnitTestNameKey(testMethodName);
+    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
+    List<VirtualFile> validJsTestVirtualFiles = filterVirtualFiles(jsTestVirtualFiles);
+
+    for (VirtualFile jsTestVirtualFile : validJsTestVirtualFiles) {
+      PsiFile psiFile = PsiManager.getInstance(project).findFile(jsTestVirtualFile);
+      if (psiFile instanceof JSFile) {
+        JSFile jsFile = (JSFile) psiFile;
+        QUnitFileStructureBuilder builder = QUnitFileStructureBuilder.getInstance();
+        QUnitFileStructure qunitFileStructure = builder.fetchCachedTestFileStructure(jsFile);
+        PsiElement element = qunitFileStructure.findPsiElement(DefaultQUnitModuleStructure.NAME, testMethodName);
+        if (element != null && element.isValid()) {
+          return element;
+        }
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  private static PsiElement findJasmineTestLocation(@NotNull Project project,
+                                                    @NotNull String testCaseName,
+                                                    @Nullable String testMethodName) {
     GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
     List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(testCaseName, scope);
     List<VirtualFile> validJsTestVirtualFiles = filterVirtualFiles(jsTestVirtualFiles);
