@@ -34,4 +34,6 @@ public abstract class AbstractTestFileStructure {
 
   @NotNull
   public abstract List<String> getChildrenOf(@NotNull String topLevelElementName);
+
+  public abstract boolean contains(@NotNull String testCaseName, @Nullable String testMethodName);
 }

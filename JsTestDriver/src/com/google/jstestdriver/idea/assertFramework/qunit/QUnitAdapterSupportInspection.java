@@ -23,7 +23,7 @@ public class QUnitAdapterSupportInspection extends AbstractAddAdapterSupportInsp
           return VfsUtils.findVirtualFilesByResourceNames(QUnitAdapterSrcMarker.class, relativePaths);
         }
       },
-      "http://code.google.com/p/js-test-driver/wiki/QUnitAdapter"
+      "https://github.com/exnor/QUnit-to-JsTestDriver-adapter"
     );
   }
 

@@ -150,4 +150,9 @@ public class JasmineFileStructure extends AbstractTestFileStructure {
     }
     return out;
   }
+
+  @Override
+  public boolean contains(@NotNull String testCaseName, @Nullable String testMethodName) {
+    return findPsiElement(testCaseName, testMethodName) != null;
+  }
 }

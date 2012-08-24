@@ -51,6 +51,16 @@ public class TestFileStructurePack {
     return null;
   }
 
+  public boolean contains(@NotNull String testCaseName, @Nullable String testMethodName) {
+    for (AbstractTestFileStructure testFileStructure : myTestFileStructures) {
+      boolean ok = testFileStructure.contains(testCaseName, testMethodName);
+      if (ok) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @NotNull
   public List<AbstractTestFileStructure> getTestFileStructures() {
     return myTestFileStructures;
