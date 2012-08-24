@@ -20,9 +20,6 @@ public interface TapestryIcons extends PlatformIcons {
   Icon MIXIN = IconLoader.getIcon("/com/intellij/tapestry/core/icons/mixin.png");
   Icon GROUP_ELEMENT_FILES = IconLoader.getIcon("/com/intellij/tapestry/core/icons/groupElementFiles.png");
   Icon COMPACT_BASE_PACKAGE = IconLoader.getIcon("/com/intellij/tapestry/core/icons/compactBasePackage.png");
-  Icon REFRESH = SYNCHRONIZE_ICON;
-  Icon FILTER = AllIcons.Ant.Filter;
-  Icon DELETE = AllIcons.Actions.Cancel;
   Icon LIBRARY = AllIcons.Modules.Library;
   Icon NAVIGATE = AllIcons.Actions.Browser_externalJavaDoc;
   Icon REFERENCE = AllIcons.Nodes.EjbReference;

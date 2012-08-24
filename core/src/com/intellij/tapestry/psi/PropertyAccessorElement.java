@@ -15,6 +15,7 @@
  */
 package com.intellij.tapestry.psi;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -22,7 +23,6 @@ import com.intellij.psi.PsiField;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiType;
 import com.intellij.psi.impl.FakePsiElement;
-import com.intellij.psi.impl.beanProperties.BeanProperty;
 import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.meta.PsiMetaOwner;
 import com.intellij.psi.meta.PsiPresentableMetaData;
@@ -92,7 +92,7 @@ public class PropertyAccessorElement extends FakePsiElement implements PsiMetaOw
 
   @Nullable
   public Icon getIcon(boolean flags) {
-    return BeanProperty.ICON;
+    return AllIcons.Nodes.Property;
   }
 
   public PsiElement getParent() {
