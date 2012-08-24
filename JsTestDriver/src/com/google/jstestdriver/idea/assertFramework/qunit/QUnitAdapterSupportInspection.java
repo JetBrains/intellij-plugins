@@ -32,7 +32,7 @@ public class QUnitAdapterSupportInspection extends AbstractAddAdapterSupportInsp
     if (methodArguments.length == 0) {
       return false;
     }
-    if ("module".equals(methodName) && JsPsiUtils.isStringElement(methodArguments[0])) {
+    if (QUnitFileStructureBuilder.MODULE_NAME.equals(methodName) && JsPsiUtils.isStringElement(methodArguments[0])) {
       if (methodArguments.length == 1) {
         return true;
       }
@@ -40,7 +40,8 @@ public class QUnitAdapterSupportInspection extends AbstractAddAdapterSupportInsp
         return true;
       }
     }
-    if ("test".equals(methodName) && JsPsiUtils.isStringElement(methodArguments[0])) {
+    if ((QUnitFileStructureBuilder.TEST_NAME.equals(methodName) || QUnitFileStructureBuilder.ASYNC_TEST_NAME.equals(methodName))
+        && JsPsiUtils.isStringElement(methodArguments[0])) {
       if (methodArguments.length == 1) {
         return true;
       }

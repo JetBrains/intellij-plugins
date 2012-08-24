@@ -39,6 +39,7 @@ public class ServerStartAction extends AnAction {
   private static final Logger LOG = Logger.getInstance(ServerStartAction.class);
 
   public static volatile ServerStartupAction ACTIVE_SERVER_STARTUP_ACTION = null;
+  private static boolean myLocalServerStarting = false;
 
   public ServerStartAction() {
     super("Start a local server", null, JstdIcons.getIcon("startLocalServer.png"));
@@ -55,19 +56,35 @@ public class ServerStartAction extends AnAction {
     asyncStartServer(null);
   }
 
+  /**
+   * Called on EDT.
+   */
   public static void asyncStartServer(@Nullable final Runnable callback) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-      @Override
-      public void run() {
-        syncStartServer();
-        if (callback != null) {
-          callback.run();
+    if (!myLocalServerStarting) {
+      myLocalServerStarting = true;
+      ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+        @Override
+        public void run() {
+          syncStartServer();
+          if (callback != null) {
+            callback.run();
+          }
+          ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              localServerStarted();
+            }
+          });
         }
-      }
-    });
+      });
+    }
   }
 
-  public static void syncStartServer() {
+  private static void localServerStarted() {
+    myLocalServerStarting = false;
+  }
+
+  private static void syncStartServer() {
     JstdServerState jstdServerState = JstdServerState.getInstance();
     if (jstdServerState.isServerRunning()) {
       return;
