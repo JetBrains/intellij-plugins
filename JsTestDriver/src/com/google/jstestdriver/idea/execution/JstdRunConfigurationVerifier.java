@@ -1,6 +1,8 @@
 package com.google.jstestdriver.idea.execution;
 
 import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
+import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
@@ -9,11 +11,21 @@ import com.google.jstestdriver.idea.server.ui.JstdToolWindowManager;
 import com.google.jstestdriver.idea.server.ui.ServerStartAction;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.execution.configurations.RuntimeConfigurationException;
+import com.intellij.execution.configurations.RuntimeConfigurationWarning;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
+import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.psi.PsiManager;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -26,7 +38,7 @@ public class JstdRunConfigurationVerifier {
 
   private JstdRunConfigurationVerifier() {}
 
-  public static void verify(@NotNull JstdRunSettings runSettings) throws RuntimeConfigurationError {
+  public static void verify(@NotNull Project project, @NotNull JstdRunSettings runSettings) throws RuntimeConfigurationException {
     if (runSettings.getTestType() == TestType.ALL_CONFIGS_IN_DIRECTORY) {
       verifyAllInDirectory(runSettings);
     } else if (runSettings.getTestType() == TestType.CONFIG_FILE) {
@@ -34,9 +46,9 @@ public class JstdRunConfigurationVerifier {
     } else if (runSettings.getTestType() == TestType.JS_FILE) {
       verifyJSFileType(runSettings);
     } else if (runSettings.getTestType() == TestType.TEST_CASE) {
-      verifyTestCase(runSettings);
+      verifyTestCase(project, runSettings);
     } else if (runSettings.getTestType() == TestType.TEST_METHOD) {
-      verifyTestMethod(runSettings);
+      verifyTestMethod(project, runSettings);
     }
     verifyServer(runSettings);
   }
@@ -44,11 +56,11 @@ public class JstdRunConfigurationVerifier {
   private static void verifyAllInDirectory(@NotNull JstdRunSettings runSettings) throws RuntimeConfigurationError {
     String directory = runSettings.getDirectory();
     if (directory.trim().isEmpty()) {
-      throw new RuntimeConfigurationError("Directory name is empty");
+      throw new RuntimeConfigurationError("Directory name is empty.");
     }
     File dirFile = new File(directory);
     if (!dirFile.exists()) {
-      throw new RuntimeConfigurationError("Specified directory '" + directory + "' does not exists");
+      throw new RuntimeConfigurationError("Specified directory '" + directory + "' does not exist.");
     }
     if (dirFile.isFile()) {
       throw new RuntimeConfigurationError("You have specified file, but directory was expected.");
@@ -61,11 +73,11 @@ public class JstdRunConfigurationVerifier {
   private static void verifyConfigFile(@NotNull JstdRunSettings runSettings) throws RuntimeConfigurationError {
     String fileStr = runSettings.getConfigFile();
     if (fileStr.trim().isEmpty()) {
-      throw new RuntimeConfigurationError("Configuration file name is empty");
+      throw new RuntimeConfigurationError("Configuration file name is empty.");
     }
     File configFile = new File(fileStr);
     if (!configFile.exists()) {
-      throw new RuntimeConfigurationError("Configuration file does not exists");
+      throw new RuntimeConfigurationError("Configuration file does not exist.");
     }
     if (configFile.isDirectory()) {
       throw new RuntimeConfigurationError("You have specified directory, but file was expected.");
@@ -83,11 +95,11 @@ public class JstdRunConfigurationVerifier {
   private static void verifyJSFilePath(@NotNull JstdRunSettings runSettings) throws RuntimeConfigurationError {
     String fileStr = runSettings.getJsFilePath();
     if (fileStr.trim().isEmpty()) {
-      throw new RuntimeConfigurationError("JavaScript file name is empty");
+      throw new RuntimeConfigurationError("JavaScript file name is empty.");
     }
     File configFile = new File(fileStr);
     if (!configFile.exists()) {
-      throw new RuntimeConfigurationError("JavaScript file does not exists");
+      throw new RuntimeConfigurationError("JavaScript file does not exist.");
     }
     if (configFile.isDirectory()) {
       throw new RuntimeConfigurationError("You have specified directory, but file was expected.");
@@ -97,17 +109,43 @@ public class JstdRunConfigurationVerifier {
     }
   }
 
-  private static void verifyTestCase(@NotNull JstdRunSettings runSettings) throws RuntimeConfigurationError {
+  @Nullable
+  private static TestFileStructurePack verifyTestCase(@NotNull Project project,
+                                                      @NotNull JstdRunSettings runSettings) throws RuntimeConfigurationException {
     verifyJSFileType(runSettings);
     if (runSettings.getTestCaseName().isEmpty()) {
-      throw new RuntimeConfigurationError("Test case name is empty");
+      throw new RuntimeConfigurationError("Test case name is empty.");
     }
+    VirtualFile jsTestVirtualFile = VfsUtil.findFileByIoFile(new File(runSettings.getJsFilePath()), false);
+    if (jsTestVirtualFile == null) {
+      throw new RuntimeConfigurationWarning("Can't find JavaScript test file.");
+    }
+    JSFile jsFile = ObjectUtils.tryCast(PsiManager.getInstance(project).findFile(jsTestVirtualFile), JSFile.class);
+    if (jsFile == null) {
+      throw new RuntimeConfigurationWarning("Wrong JavaScript test file.");
+    }
+    TestFileStructurePack pack = TestFileStructureManager.fetchTestFileStructurePackByJsFile(jsFile);
+    if (pack != null) {
+      boolean found = pack.contains(runSettings.getTestCaseName(), null);
+      if (!found) {
+        throw new RuntimeConfigurationWarning("Can't find test case with name '" + runSettings.getTestCaseName() + "'.");
+      }
+      return pack;
+    }
+    return null;
   }
 
-  private static void verifyTestMethod(@NotNull JstdRunSettings runSettings) throws RuntimeConfigurationError {
-    verifyTestCase(runSettings);
+  private static void verifyTestMethod(@NotNull Project project,
+                                       @NotNull JstdRunSettings runSettings) throws RuntimeConfigurationException {
+    TestFileStructurePack pack = verifyTestCase(project, runSettings);
     if (runSettings.getTestMethodName().isEmpty()) {
-      throw new RuntimeConfigurationError("Test method name is empty");
+      throw new RuntimeConfigurationError("Test method name is empty.");
+    }
+    if (pack != null) {
+      boolean found = pack.contains(runSettings.getTestCaseName(), runSettings.getTestMethodName());
+      if (!found) {
+        throw new RuntimeConfigurationWarning("Can't find test method with name '" + runSettings.getTestMethodName() + "'.");
+      }
     }
   }
 
@@ -115,12 +153,12 @@ public class JstdRunConfigurationVerifier {
     if (runSettings.getServerType() == ServerType.EXTERNAL) {
       String serverAddressStr = runSettings.getServerAddress();
       if (serverAddressStr.trim().isEmpty()) {
-        throw new RuntimeConfigurationError("Server address is empty");
+        throw new RuntimeConfigurationError("Server address is empty.");
       }
       try {
         new URL(serverAddressStr);
       } catch (MalformedURLException e) {
-        throw new RuntimeConfigurationError("Please specify server address correctly");
+        throw new RuntimeConfigurationError("Please specify server address correctly.");
       }
     }
   }
@@ -185,7 +223,8 @@ public class JstdRunConfigurationVerifier {
     });
   }
 
-  private static class JstdSlaveBrowserIsNotReadyExecutionException extends ExecutionException implements HyperlinkListener {
+  private static class JstdSlaveBrowserIsNotReadyExecutionException extends ExecutionException implements HyperlinkListener,
+                                                                                                          NotificationListener {
 
     private final Project myProject;
 
@@ -196,6 +235,15 @@ public class JstdRunConfigurationVerifier {
 
     @Override
     public void hyperlinkUpdate(HyperlinkEvent e) {
+      handleEvent(e);
+    }
+
+    @Override
+    public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
+      handleEvent(event);
+    }
+
+    private void handleEvent(HyperlinkEvent e) {
       if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
         JstdServerState jstdServerState = JstdServerState.getInstance();
         if (!jstdServerState.isServerRunning()) {

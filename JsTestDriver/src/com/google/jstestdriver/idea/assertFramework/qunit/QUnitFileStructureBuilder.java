@@ -12,8 +12,9 @@ import java.util.List;
 public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder<QUnitFileStructure> {
 
   private static final QUnitFileStructureBuilder INSTANCE = new QUnitFileStructureBuilder();
-  private static final String MODULE_NAME = "module";
-  private static final String TEST_NAME = "test";
+  public static final String MODULE_NAME = "module";
+  public static final String TEST_NAME = "test";
+  public static final String ASYNC_TEST_NAME = "asyncTest";
 
   @NotNull
   @Override
@@ -86,7 +87,8 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder<
                 myFileStructure.addModuleStructure(moduleStructure);
                 myCurrentModuleStructure = moduleStructure;
               }
-            } else if (TEST_NAME.equals(methodName) && arguments.length == 2) {
+            }
+            else if ((TEST_NAME.equals(methodName) || ASYNC_TEST_NAME.equals(methodName)) && arguments.length == 2) {
               JSFunctionExpression body = JsPsiUtils.extractFunctionExpression(arguments[1]);
               if (body != null) {
                 QUnitTestMethodStructure testMethodStructure = new QUnitTestMethodStructure(myCurrentModuleStructure, name, callExpression, body);

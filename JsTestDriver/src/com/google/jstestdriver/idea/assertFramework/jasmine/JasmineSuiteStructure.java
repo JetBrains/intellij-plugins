@@ -77,7 +77,7 @@ public class JasmineSuiteStructure implements JasmineSuiteChild {
     return mySuiteChildren.size();
   }
 
-  public int getSpecChildrenCount() {
+  public int getSpecCount() {
     return mySpecChildren.size();
   }
 

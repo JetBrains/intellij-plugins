@@ -69,14 +69,24 @@ public class JstdTestStructure {
     }
     JSFunctionExpression testMethodBody = ObjectUtils.tryCast(jsProperty.getValue(), JSFunctionExpression.class);
     String testName = StringUtil.stripQuotesAroundValue(testMethodNameDeclaration.getText());
-    return new JstdTestStructure(testName, testMethodNameDeclaration, testMethodBody, jsProperty);
+    if (checkTestName(testName)) {
+      return new JstdTestStructure(testName, testMethodNameDeclaration, testMethodBody, jsProperty);
+    }
+    return null;
   }
 
-  @NotNull
+  @Nullable
   public static JstdTestStructure newPrototypeBasedTestStructure(@NotNull LeafPsiElement testMethodDeclaration,
                                                                  @Nullable JSFunctionExpression testMethodBody) {
     String testName = testMethodDeclaration.getText();
-    return new JstdTestStructure(testName, testMethodDeclaration, testMethodBody, null);
+    if (checkTestName(testName)) {
+      return new JstdTestStructure(testName, testMethodDeclaration, testMethodBody, null);
+    }
+    return null;
+  }
+
+  private static boolean checkTestName(@Nullable String testName) {
+    return testName != null && testName.startsWith("test");
   }
 
 }

@@ -104,7 +104,7 @@ public class JasmineStructureTest extends AbstractJsPsiTestCase {
     Assert.assertEquals(
         "Checking inner spec count of '" + jasmineSuiteStructure.getName() + "' suite",
         innerMarkedSpecStructures.size(),
-        jasmineSuiteStructure.getSpecChildrenCount()
+        jasmineSuiteStructure.getSpecCount()
     );
   }
 

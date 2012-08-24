@@ -17,7 +17,7 @@ public class JsTestFileIndexer extends JSElementVisitor {
 
     @Override
     protected int getVersion() {
-      return 2;
+      return 3;
     }
 
     @Override

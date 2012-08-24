@@ -90,8 +90,11 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
     try {
       checkConfiguration();
     }
-    catch (RuntimeConfigurationException e) {
+    catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e.getMessage());
+    }
+    catch (RuntimeConfigurationException e) {
+      // does nothing
     }
     return new JstdTestRunnerCommandLineState(getProject(), env, myRunSettings, coverageFilePath, debug);
   }
@@ -107,7 +110,7 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
 
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
-    JstdRunConfigurationVerifier.verify(myRunSettings);
+    JstdRunConfigurationVerifier.verify(getProject(), myRunSettings);
   }
 
   @Override
@@ -156,6 +159,12 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
     return generatedName;
   }
 
+  public String resetGeneratedName() {
+    String name = generateName();
+    myGeneratedName = name;
+    return name;
+  }
+
   @NotNull
   private String generateName() {
     TestType testType = myRunSettings.getTestType();
@@ -187,7 +196,6 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
   @Override
   @Nullable
   public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
-    JstdRunConfigurationRefactoringHandler refactoringHandler = new JstdRunConfigurationRefactoringHandler(this);
-    return refactoringHandler.getRefactoringElementListener(element);
+    return JstdRunConfigurationRefactoringHandler.getRefactoringElementListener(this, element);
   }
 }

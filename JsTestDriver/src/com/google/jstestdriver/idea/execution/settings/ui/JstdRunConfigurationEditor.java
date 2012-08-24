@@ -163,20 +163,15 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
         }
       });
       myPreferredDebugBrowserComboBox = comboBox;
-      JPanel secondLinePanel = SwingHelper.newHorizontalPanel(
+      JPanel linePanel = SwingHelper.newHorizontalPanel(
         Component.CENTER_ALIGNMENT,
         new JLabel("Debug in"),
         comboBox,
         new JLabel(" if both browsers are captured.")
       );
-      JPanel allLinesPanel = SwingHelper.newLeftAlignedVerticalPanel(
-        new JLabel("Debugging is available in Chrome and Firefox only."),
-        Box.createVerticalStrut(10),
-        secondLinePanel
-      );
       JPanel result = new JPanel(new BorderLayout(0, 0));
-      result.add(allLinesPanel, BorderLayout.WEST);
-      result.setBorder(IdeBorderFactory.createTitledBorder("Debug", true));
+      result.add(linePanel, BorderLayout.WEST);
+      result.setBorder(IdeBorderFactory.createTitledBorder("Debugging in Chrome or Firefox", true));
       return result;
     }
 

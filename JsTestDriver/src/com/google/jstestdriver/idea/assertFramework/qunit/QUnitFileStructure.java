@@ -33,7 +33,7 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
 
   @Override
   public boolean isEmpty() {
-    return myNonDefaultModuleStructures.isEmpty();
+    return !hasQUnitSymbols();
   }
 
   public int getAllModuleCount() {
@@ -54,7 +54,7 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
   }
 
   @Nullable
-  public AbstractQUnitModuleStructure getQUnitModuleByName(String qunitModuleName) {
+  public AbstractQUnitModuleStructure findQUnitModuleByName(@NotNull String qunitModuleName) {
     AbstractQUnitModuleStructure moduleStructure = myNonDefaultModuleStructureByNameMap.get(qunitModuleName);
     if (moduleStructure == null) {
       if (myDefaultModuleStructure.getName().equals(qunitModuleName)) {
@@ -70,7 +70,7 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
   }
 
   public boolean hasQUnitSymbols() {
-    return getDefaultModuleStructure().getTestCount() > 0 || getNonDefaultModuleCount() > 0;
+    return myDefaultModuleStructure.getTestCount() > 0 || getNonDefaultModuleCount() > 0;
   }
 
   @Nullable
@@ -114,10 +114,10 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
 
   @Override
   public PsiElement findPsiElement(@NotNull String testCaseName, @Nullable String testMethodName) {
-    AbstractQUnitModuleStructure qunitModuleStructure = getQUnitModuleByName(testCaseName);
+    AbstractQUnitModuleStructure qunitModuleStructure = findQUnitModuleByName(testCaseName);
     if (qunitModuleStructure != null) {
       if (testMethodName != null) {
-        String name = StringUtil.trimStart(testMethodName, "test ");
+        String name = StringUtil.trimStart(testMethodName, QUnitTestMethodStructure.JSTD_NAME_PREFIX);
         QUnitTestMethodStructure test = qunitModuleStructure.getTestMethodStructureByName(name);
         if (test != null) {
           return test.getCallExpression();
@@ -135,13 +135,39 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
   @NotNull
   @Override
   public List<String> getTopLevelElements() {
-    if (myNonDefaultModuleStructures.isEmpty()) {
-      return Collections.emptyList();
-    }
-    List<String> out = new ArrayList<String>(myNonDefaultModuleStructures.size());
+    List<String> out = new ArrayList<String>(myNonDefaultModuleStructures.size() + 1);
+    out.add(myDefaultModuleStructure.getName());
     for (QUnitModuleStructure structure : myNonDefaultModuleStructures) {
       out.add(structure.getName());
     }
     return out;
+  }
+
+  @NotNull
+  @Override
+  public List<String> getChildrenOf(@NotNull String topLevelElementName) {
+    AbstractQUnitModuleStructure moduleStructure = findQUnitModuleByName(topLevelElementName);
+    if (moduleStructure == null) {
+      return Collections.emptyList();
+    }
+    List<String> out = new ArrayList<String>(moduleStructure.getTestCount());
+    for (QUnitTestMethodStructure methodStructure : moduleStructure.getTestMethodStructures()) {
+      out.add("test " + methodStructure.getName());
+    }
+    return out;
+  }
+
+  @Override
+  public boolean contains(@NotNull String testCaseName, @Nullable String testMethodName) {
+    AbstractQUnitModuleStructure qunitModuleStructure = findQUnitModuleByName(testCaseName);
+    if (qunitModuleStructure == null) {
+      return false;
+    }
+    if (testMethodName != null) {
+      String name = StringUtil.trimStart(testMethodName, QUnitTestMethodStructure.JSTD_NAME_PREFIX);
+      QUnitTestMethodStructure test = qunitModuleStructure.getTestMethodStructureByName(name);
+      return test != null;
+    }
+    return true;
   }
 }

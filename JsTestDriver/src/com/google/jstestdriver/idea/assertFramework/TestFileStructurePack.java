@@ -51,6 +51,16 @@ public class TestFileStructurePack {
     return null;
   }
 
+  public boolean contains(@NotNull String testCaseName, @Nullable String testMethodName) {
+    for (AbstractTestFileStructure testFileStructure : myTestFileStructures) {
+      boolean ok = testFileStructure.contains(testCaseName, testMethodName);
+      if (ok) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @NotNull
   public List<AbstractTestFileStructure> getTestFileStructures() {
     return myTestFileStructures;
@@ -66,4 +76,13 @@ public class TestFileStructurePack {
     return out;
   }
 
+  @NotNull
+  public List<String> getChildrenOf(String topLevelElementName) {
+    List<String> out = new ArrayList<String>();
+    for (AbstractTestFileStructure structure : myTestFileStructures) {
+      List<String> localChildren = structure.getChildrenOf(topLevelElementName);
+      out.addAll(localChildren);
+    }
+    return out;
+  }
 }

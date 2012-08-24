@@ -17,26 +17,31 @@ import java.awt.*;
 public class JsFileRunSettingsSection extends AbstractRunSettingsSection {
 
   private final ConfigFileRunSettingsSection myConfigFileRunSettingsSection;
-  private final TextFieldWithBrowseButton myJsFileTextFieldWithBrowseButton;
+  private final TextFieldWithBrowseButton myJsTestFileTextFieldWithBrowseButton;
   private final JBLabel myLabel;
 
   JsFileRunSettingsSection() {
     myConfigFileRunSettingsSection = new ConfigFileRunSettingsSection();
-    myJsFileTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
+    myJsTestFileTextFieldWithBrowseButton = new TextFieldWithBrowseButton();
     myLabel = new JBLabel("JavaScript test file:");
     setAnchor(SwingUtils.getWiderComponent(myLabel, myConfigFileRunSettingsSection));
+  }
+
+  @NotNull
+  public JTextField getJsTestFileTextField() {
+    return myJsTestFileTextFieldWithBrowseButton.getTextField();
   }
 
   @Override
   public void resetFrom(@NotNull JstdRunSettings runSettings) {
     myConfigFileRunSettingsSection.resetFrom(runSettings);
-    myJsFileTextFieldWithBrowseButton.setText(runSettings.getJsFilePath());
+    myJsTestFileTextFieldWithBrowseButton.setText(runSettings.getJsFilePath());
   }
 
   @Override
   public void applyTo(@NotNull JstdRunSettings.Builder runSettingsBuilder) {
     myConfigFileRunSettingsSection.applyTo(runSettingsBuilder);
-    runSettingsBuilder.setJSFilePath(ObjectUtils.notNull(myJsFileTextFieldWithBrowseButton.getText(), ""));
+    runSettingsBuilder.setJSFilePath(ObjectUtils.notNull(myJsTestFileTextFieldWithBrowseButton.getText(), ""));
   }
 
   @NotNull
@@ -61,7 +66,7 @@ public class JsFileRunSettingsSection extends AbstractRunSettingsSection {
     {
       myLabel.setHorizontalAlignment(SwingConstants.RIGHT);
       myLabel.setDisplayedMnemonic('J');
-      myLabel.setLabelFor(myJsFileTextFieldWithBrowseButton.getTextField());
+      myLabel.setLabelFor(myJsTestFileTextFieldWithBrowseButton.getTextField());
       GridBagConstraints c = new GridBagConstraints(
           0, 1,
           1, 1,
@@ -85,14 +90,14 @@ public class JsFileRunSettingsSection extends AbstractRunSettingsSection {
           0, 0
       );
       FileChooserDescriptor jsFileChooserDescriptor = new FileTypeDescriptor("Select JavaScript test file", ".js");
-      myJsFileTextFieldWithBrowseButton.addBrowseFolderListener(
+      myJsTestFileTextFieldWithBrowseButton.addBrowseFolderListener(
         null,
         null,
         creationContext.getProject(),
         jsFileChooserDescriptor
       );
-      panel.add(myJsFileTextFieldWithBrowseButton, c);
-      myLabel.setLabelFor(myJsFileTextFieldWithBrowseButton);
+      panel.add(myJsTestFileTextFieldWithBrowseButton, c);
+      myLabel.setLabelFor(myJsTestFileTextFieldWithBrowseButton);
     }
 
     SwingUtils.addGreedyBottomRow(panel);

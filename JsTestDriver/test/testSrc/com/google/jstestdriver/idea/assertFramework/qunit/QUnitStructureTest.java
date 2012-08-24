@@ -5,7 +5,6 @@ import com.google.jstestdriver.idea.JsTestDriverTestUtils;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import junit.framework.Assert;
-import org.junit.Test;
 
 public class QUnitStructureTest extends AbstractJsPsiTestCase {
 
@@ -50,7 +49,7 @@ public class QUnitStructureTest extends AbstractJsPsiTestCase {
 
   private static void validateQUnitFileStructure(MarkedQUnitFileStructure markedFileStructure, QUnitFileStructure fileStructure) {
     for (MarkedQUnitModuleStructure markedModuleStructure : markedFileStructure.getModules()) {
-      AbstractQUnitModuleStructure moduleStructure = fileStructure.getQUnitModuleByName(markedModuleStructure.getName());
+      AbstractQUnitModuleStructure moduleStructure = fileStructure.findQUnitModuleByName(markedModuleStructure.getName());
       if (moduleStructure != null) {
         validateQUnitModule(markedModuleStructure, moduleStructure);
       }

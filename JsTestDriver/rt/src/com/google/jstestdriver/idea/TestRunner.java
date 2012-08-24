@@ -105,7 +105,7 @@ public class TestRunner {
     } catch (Exception e) {
       exception = new Exception("Can't run tests. Details:", e);
     } finally {
-      myTreeManager.onJstdConfigRunningFinished(exception);
+      myTreeManager.onJstdConfigRunningFinished(exception, mySettings.getTestFileScope());
       nullSystemOut.close();
       System.setOut(myTreeManager.getSystemOutStream());
     }
