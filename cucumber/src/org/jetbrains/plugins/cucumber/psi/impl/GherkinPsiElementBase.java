@@ -63,7 +63,7 @@ public abstract class GherkinPsiElementBase extends ASTWrapperPsiElement impleme
       }
 
       public Icon getIcon(final boolean open) {
-        return GherkinPsiElementBase.this.getIcon((open ? Iconable.ICON_FLAG_OPEN : Iconable.ICON_FLAG_CLOSED) | Iconable.ICON_FLAG_VISIBILITY);
+        return GherkinPsiElementBase.this.getIcon(Iconable.ICON_FLAG_VISIBILITY);
       }
     };
   }

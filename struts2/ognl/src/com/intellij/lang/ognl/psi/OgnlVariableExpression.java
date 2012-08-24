@@ -44,7 +44,6 @@ public class OgnlVariableExpression extends OgnlExpressionBase {
     return new PresentationData(getIdentifier().getText(),
                                 null,
                                 PlatformIcons.VARIABLE_ICON,
-                                PlatformIcons.VARIABLE_ICON,
                                 null);
   }
 

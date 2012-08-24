@@ -19,7 +19,6 @@ import com.intellij.codeInsight.TailType;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.TailTypeDecorator;
 import com.intellij.lang.annotation.HighlightSeverity;
-import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -70,7 +69,7 @@ public class FlaskRouteParameterReference extends PsiReferenceBase<PyStringLiter
       for (PyParameter parameter : function.getParameterList().getParameters()) {
         if (parameter instanceof PyNamedParameter) {
           variants.add(LookupElementBuilder.create(parameter, existingConverter + parameter.getName())
-                         .withIcon(parameter.getIcon(Iconable.ICON_FLAG_CLOSED)));
+                         .withIcon(parameter.getIcon(0)));
         }
       }
     }

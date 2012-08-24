@@ -19,7 +19,6 @@ import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
-import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.ProperTextRange;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -91,7 +90,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
 
       final LookupElementBuilder variant =
         LookupElementBuilder.create(propertyName)
-          .withIcon(member.getIcon(Iconable.ICON_FLAG_OPEN))
+          .withIcon(member.getIcon(0))
           .withTypeText(propertyType.getPresentableText());
       variants[i++] = variant;
     }

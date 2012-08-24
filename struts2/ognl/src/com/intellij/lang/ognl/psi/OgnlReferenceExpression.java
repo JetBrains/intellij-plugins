@@ -41,7 +41,6 @@ public class OgnlReferenceExpression extends OgnlExpressionBase {
     return new PresentationData(getIdentifier().getText(),
                                 null,
                                 PlatformIcons.PARAMETER_ICON,
-                                PlatformIcons.PARAMETER_ICON,
                                 null);
   }
 

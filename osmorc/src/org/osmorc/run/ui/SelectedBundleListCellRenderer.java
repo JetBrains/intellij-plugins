@@ -25,6 +25,7 @@
 
 package org.osmorc.run.ui;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.util.PlatformIcons;
 import org.osmorc.i18n.OsmorcBundle;
 
@@ -44,7 +45,7 @@ public class SelectedBundleListCellRenderer extends DefaultListCellRenderer {
     JLabel component = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
     SelectedBundle selectedBundle = (SelectedBundle)value;
     if (selectedBundle.isModule()) {
-      component.setIcon(PlatformIcons.OPENED_MODULE_GROUP_ICON);
+      component.setIcon(AllIcons.Nodes.ModuleClosed);
     }
     else if (selectedBundle.getBundleType() == SelectedBundle.BundleType.FrameworkBundle) {
       component.setIcon(OsmorcBundle.getSmallIcon());
