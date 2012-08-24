@@ -95,12 +95,30 @@ public class JstdConfigFileAnnotator implements Annotator {
 
   private static void markStrangeSymbols(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
     TextRange textRange = psiElement.getTextRange();
+    int startOffset = textRange.getStartOffset();
     String text = psiElement.getText();
+    int specialCharactersStartOffset = -1;
+    int specialCharactersEndOffset = -1;
     for (int i = 0; i < text.length(); i++) {
-      if (text.charAt(i) == '\t') {
-        int offset = textRange.getStartOffset() + i;
+      char ch = text.charAt(i);
+      if (ch == '\t') {
+        int offset = startOffset + i;
         holder.createErrorAnnotation(new TextRange(offset, offset + 1), "Tab character is not allowed");
       }
+      else if (ch > 127) {
+        if (specialCharactersStartOffset == -1) {
+          specialCharactersStartOffset = startOffset + i;
+        }
+        specialCharactersEndOffset = startOffset + i;
+      }
+      if (specialCharactersEndOffset != -1 && specialCharactersEndOffset != startOffset + i) {
+        holder.createErrorAnnotation(new TextRange(specialCharactersStartOffset, specialCharactersEndOffset + 1), "Special characters are not allowed");
+        specialCharactersStartOffset = -1;
+        specialCharactersEndOffset = -1;
+      }
+    }
+    if (specialCharactersStartOffset != -1) {
+      holder.createErrorAnnotation(new TextRange(specialCharactersStartOffset, specialCharactersEndOffset + 1), "Special characters are not allowed");
     }
   }
 
