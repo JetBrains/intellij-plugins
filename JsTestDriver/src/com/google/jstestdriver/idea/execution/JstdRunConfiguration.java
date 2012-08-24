@@ -90,8 +90,11 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
     try {
       checkConfiguration();
     }
-    catch (RuntimeConfigurationException e) {
+    catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e.getMessage());
+    }
+    catch (RuntimeConfigurationException e) {
+      // does nothing
     }
     return new JstdTestRunnerCommandLineState(getProject(), env, myRunSettings, coverageFilePath, debug);
   }
@@ -107,7 +110,7 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
 
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
-    JstdRunConfigurationVerifier.verify(myRunSettings);
+    JstdRunConfigurationVerifier.verify(getProject(), myRunSettings);
   }
 
   @Override
