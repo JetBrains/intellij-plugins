@@ -99,7 +99,11 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     runConfiguration.setRunSettings(settings);
 
     mySourceElement = runSettingsContext.myPsiElement;
-    runnerSettings.setName(runConfiguration.resetNameToGenerated());
+
+    String configurationName = runConfiguration.resetGeneratedName();
+    runConfiguration.setName(configurationName);
+    runnerSettings.setName(configurationName);
+
     logDoneCreateConfigurationByElement(startTimeNano, "3");
     return runnerSettings;
   }

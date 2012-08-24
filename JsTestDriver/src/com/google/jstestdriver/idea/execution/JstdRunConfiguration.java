@@ -159,9 +159,8 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
     return generatedName;
   }
 
-  public String resetNameToGenerated() {
+  public String resetGeneratedName() {
     String name = generateName();
-    setName(name);
     myGeneratedName = name;
     return name;
   }
@@ -197,7 +196,6 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
   @Override
   @Nullable
   public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
-    JstdRunConfigurationRefactoringHandler refactoringHandler = new JstdRunConfigurationRefactoringHandler(this);
-    return refactoringHandler.getRefactoringElementListener(element);
+    return JstdRunConfigurationRefactoringHandler.getRefactoringElementListener(this, element);
   }
 }
