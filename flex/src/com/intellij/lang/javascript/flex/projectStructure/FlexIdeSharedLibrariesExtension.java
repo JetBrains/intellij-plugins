@@ -190,7 +190,7 @@ public class FlexIdeSharedLibrariesExtension extends ModuleStructureExtension {
                                                final String displayName,
                                                final String bannerSlogan,
                                                final String descriptionText) {
-      super(object, displayName, bannerSlogan, descriptionText, PlatformIcons.LIBRARY_ICON, PlatformIcons.LIBRARY_ICON);
+      super(object, displayName, bannerSlogan, descriptionText, PlatformIcons.LIBRARY_ICON);
     }
 
     public String getHelpTopic() {

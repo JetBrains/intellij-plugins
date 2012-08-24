@@ -41,7 +41,7 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
   @Override
   protected void update(PresentationData presentation) {
     presentation.setPresentableText(getValue().getName());
-    presentation.setIcons(getValue().getIcon(Iconable.ICON_FLAG_VISIBILITY));
+    presentation.setIcon(getValue().getIcon(Iconable.ICON_FLAG_VISIBILITY));
   }
 
   @Override

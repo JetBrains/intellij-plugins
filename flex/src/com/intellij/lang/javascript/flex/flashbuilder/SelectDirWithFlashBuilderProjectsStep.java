@@ -68,20 +68,12 @@ public class SelectDirWithFlashBuilderProjectsStep extends ProjectImportWizardSt
                 FlashBuilderProjectFinder.hasArchiveExtension(file.getPath()));
       }
 
-      public Icon getOpenIcon(final VirtualFile file) {
+      public Icon getIcon(final VirtualFile file) {
         // do not use Flash Builder specific icon for zip
         return !file.isDirectory() &&
                (FlashBuilderProjectFinder.hasFxpExtension(file.getPath()) || FlashBuilderProjectFinder.isFlashBuilderProject(file))
                ? dressIcon(file, getBuilder().getIcon())
-               : super.getOpenIcon(file);
-      }
-
-      public Icon getClosedIcon(final VirtualFile file) {
-        // do not use Flash Builder specific icon for zip
-        return !file.isDirectory() &&
-               (FlashBuilderProjectFinder.hasFxpExtension(file.getPath()) || FlashBuilderProjectFinder.isFlashBuilderProject(file))
-               ? dressIcon(file, getBuilder().getIcon())
-               : super.getOpenIcon(file);
+               : super.getIcon(file);
       }
     };
 

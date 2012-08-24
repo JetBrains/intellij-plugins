@@ -64,7 +64,7 @@ public class FlexClassMemberNode extends ProjectViewNode<JSElement> {
       text = value.getName();
     }
     presentation.setPresentableText(text);
-    presentation.setIcons(value.getIcon(Iconable.ICON_FLAG_VISIBILITY));
+    presentation.setIcon(value.getIcon(Iconable.ICON_FLAG_VISIBILITY));
   }
 
   @Override

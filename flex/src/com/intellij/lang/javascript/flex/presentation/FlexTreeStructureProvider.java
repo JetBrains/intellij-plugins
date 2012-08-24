@@ -143,7 +143,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
 
       if (className != null) {
         data.setPresentableText(className);
-        data.setIcons(icon);
+        data.setIcon(icon);
         return;
       }
 
@@ -207,8 +207,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
       final ItemPresentation p = myElement.getPresentation();
 
       presentation.setPresentableText(p.getPresentableText());
-      presentation.setOpenIcon(p.getIcon(true));
-      presentation.setClosedIcon(p.getIcon(false));
+      presentation.setIcon(p.getIcon(false));
       presentation.addText(p.getPresentableText(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
       presentation.addText(" ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
