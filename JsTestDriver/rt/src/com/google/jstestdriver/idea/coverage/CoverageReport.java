@@ -2,6 +2,7 @@ package com.google.jstestdriver.idea.coverage;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.jstestdriver.idea.util.PathConverter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -26,7 +27,7 @@ public class CoverageReport {
   }
 
   public void mergeFileReport(@NotNull String filePath, @NotNull List<LineHits> report) {
-    String normalizedFilePath = normalizeFilePath(filePath);
+    String normalizedFilePath = PathConverter.getNormalizedPath(new File(filePath));
     normalizeLineHitsList(report);
     List<LineHits> old = myInfo.get(normalizedFilePath);
     if (old != null) {
@@ -38,12 +39,6 @@ public class CoverageReport {
 
   public void clearReportByFilePath(@NotNull String filePath) {
     myInfo.remove(filePath);
-  }
-
-  @NotNull
-  private static String normalizeFilePath(@NotNull String filePath) {
-    File file = new File(filePath);
-    return file.toURI().normalize().getPath();
   }
 
   private static List<LineHits> doMerge(@NotNull List<LineHits> aList, @NotNull List<LineHits> bList) {
