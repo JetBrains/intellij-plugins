@@ -52,7 +52,6 @@ import java.util.List;
 class ViewFilesPanel extends JPanel implements DataProvider {
   static final String NON_PROJECT_NODE = StringUtil.getMsg("non.project.files");
   private static final Icon UNKNOWN_ICON = IconLoader.getIcon("/nodes/unknown.png");
-  private static final Icon PROJECT_ICON = AllIcons.Nodes.IdeaProject;
 
   private final FileTypeManager myFileTypeManager;
   private final IDEFacade myIdeFacade;
@@ -252,7 +251,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
         label.setIcon(UNKNOWN_ICON);
       }
       else {
-        label.setIcon(PROJECT_ICON);
+        label.setIcon(AllIcons.Nodes.IdeaProject);
       }
       return label;
     }

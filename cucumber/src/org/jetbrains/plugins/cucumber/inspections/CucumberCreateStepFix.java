@@ -46,7 +46,6 @@ import java.util.Map;
  * @author yole
  */
 public class CucumberCreateStepFix implements LocalQuickFix {
-  private static final Icon NEW_FILE_ICON = AllIcons.Actions.CreateFromUsage;
 
   @NotNull
   public String getName() {
@@ -94,7 +93,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
 
         @Override
         public Icon getIconFor(PsiFile value) {
-          return value == null ? NEW_FILE_ICON : value.getIcon(0);
+          return value == null ? AllIcons.Actions.CreateFromUsage : value.getIcon(0);
         }
 
         @Override
