@@ -10,6 +10,6 @@ public class FileNode extends TapestryNode {
     public FileNode(PsiFile file, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(file, new PresentationData(file.getName(), file.getName(), file.getFileType().getIcon(), file.getFileType().getIcon(), null));
+        init(file, new PresentationData(file.getName(), file.getName(), file.getFileType().getIcon(), null));
     }
 }

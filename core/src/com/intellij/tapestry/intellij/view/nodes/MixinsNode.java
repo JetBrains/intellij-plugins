@@ -12,12 +12,12 @@ public class MixinsNode extends PackageNode {
     public MixinsNode(Library library, PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {
         super(library, psiDirectory, module, treeBuilder);
 
-        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryIcons.MIXINS, TapestryIcons.MIXINS, null));
+        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryIcons.MIXINS, null));
     }
 
     public MixinsNode(PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {
         super(psiDirectory, module, treeBuilder);
 
-        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryIcons.MIXINS, TapestryIcons.MIXINS, null));
+        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryIcons.MIXINS, null));
     }
 }

@@ -29,7 +29,7 @@ public class PackageNode extends TapestryNode {
         super(module, treeBuilder);
         _library = library;
 
-        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), PlatformIcons.PACKAGE_ICON,
+        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(),
                                                 PlatformIcons.PACKAGE_ICON, null));
     }
 

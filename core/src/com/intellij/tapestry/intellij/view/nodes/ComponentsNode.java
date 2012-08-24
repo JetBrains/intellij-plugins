@@ -12,14 +12,14 @@ public class ComponentsNode extends PackageNode {
     public ComponentsNode(Library library, PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {
         super(library, psiDirectory, module, treeBuilder);
 
-        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryIcons.COMPONENTS,
+        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(),
                                                 TapestryIcons.COMPONENTS, null));
     }
 
     public ComponentsNode(PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {
         super(psiDirectory, module, treeBuilder);
 
-        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryIcons.COMPONENTS,
+        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(),
                                                 TapestryIcons.COMPONENTS, null));
     }
 }

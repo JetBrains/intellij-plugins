@@ -18,7 +18,7 @@ public class ExternalLibraryNode extends TapestryNode {
     public ExternalLibraryNode(Library library, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(library, new PresentationData(library.getId(), library.getId(), TapestryIcons.LIBRARY, TapestryIcons.LIBRARY, null));
+        init(library, new PresentationData(library.getId(), library.getId(), TapestryIcons.LIBRARY, null));
     }
 
     /**

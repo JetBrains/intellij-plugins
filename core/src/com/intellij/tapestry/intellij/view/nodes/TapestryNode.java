@@ -33,8 +33,7 @@ public abstract class TapestryNode extends SimpleNode {
 
         _element = id;
         _presentation = presentation;
-        myOpenIcon = _presentation.getIcon(true);
-        myClosedIcon = _presentation.getIcon(false);
+        myIcon = _presentation.getIcon(false);
     }
 
     /**
@@ -64,10 +63,8 @@ public abstract class TapestryNode extends SimpleNode {
      */
     protected void doUpdate() {
         _presentation = updatePresentation(_presentation);
-        myOpenIcon = _presentation.getIcon(true);
-        myClosedIcon = _presentation.getIcon(false);
+        myIcon = _presentation.getIcon(false);
         setPlainText(_presentation.getPresentableText());
-        setIcons(getClosedIcon(), getOpenIcon());
     }
 
     /**

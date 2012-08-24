@@ -23,7 +23,7 @@ public class PageNode extends TapestryNode {
     public PageNode(PresentationLibraryElement page, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(page, new PresentationData(page.getElementClass().getName(), page.getName(), TapestryIcons.PAGE, TapestryIcons.PAGE, null));
+        init(page, new PresentationData(page.getElementClass().getName(), page.getName(), TapestryIcons.PAGE, null));
     }
 
     /**

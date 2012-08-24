@@ -12,7 +12,7 @@ public class LibraryNode extends PackageNode {
     public LibraryNode(Library library, PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {
         super(library, psiDirectory, module, treeBuilder);
 
-        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryIcons.LIBRARY,
+        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(),
                                                 TapestryIcons.LIBRARY, null));
     }
 }

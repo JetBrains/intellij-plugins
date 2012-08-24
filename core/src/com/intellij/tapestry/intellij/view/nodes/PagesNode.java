@@ -12,12 +12,12 @@ public class PagesNode extends PackageNode {
     public PagesNode(Library library, PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {
         super(library, psiDirectory, module, treeBuilder);
 
-        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryIcons.PAGES, TapestryIcons.PAGES, null));
+        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryIcons.PAGES, null));
     }
 
     public PagesNode(PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {
         super(psiDirectory, module, treeBuilder);
 
-        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryIcons.PAGES, TapestryIcons.PAGES, null));
+        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryIcons.PAGES, null));
     }
 }

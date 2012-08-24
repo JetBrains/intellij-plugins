@@ -18,7 +18,7 @@ public class MixinNode extends TapestryNode {
     public MixinNode(PresentationLibraryElement mixin, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(mixin, new PresentationData(mixin.getName(), mixin.getName(), TapestryIcons.MIXIN, TapestryIcons.MIXIN, null));
+        init(mixin, new PresentationData(mixin.getName(), mixin.getName(), TapestryIcons.MIXIN, null));
     }
 
     /**

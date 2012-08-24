@@ -15,7 +15,7 @@ public class FolderNode extends TapestryNode {
     public FolderNode(String folder, Library library, Class classToCreate, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(folder, new PresentationData(PathUtils.getLastPathElement(folder), folder, TapestryIcons.FOLDER, TapestryIcons.FOLDER, null));
+        init(folder, new PresentationData(PathUtils.getLastPathElement(folder), folder, TapestryIcons.FOLDER, null));
 
         _classToCreate = classToCreate;
         _library = library;

@@ -11,6 +11,6 @@ public class ClassNode extends TapestryNode {
     public ClassNode(PsiClassOwner psiClassOwner, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(psiClassOwner, new PresentationData(psiClassOwner.getName(), psiClassOwner.getName(), PlatformIcons.CLASS_ICON, PlatformIcons.CLASS_ICON, null));
+        init(psiClassOwner, new PresentationData(psiClassOwner.getName(), psiClassOwner.getName(), PlatformIcons.CLASS_ICON, null));
     }
 }

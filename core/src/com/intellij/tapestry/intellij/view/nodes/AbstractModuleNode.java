@@ -12,7 +12,7 @@ public abstract class AbstractModuleNode extends TapestryNode {
     public AbstractModuleNode(@NotNull final Module module, final AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(module, new PresentationData(module.getName(), module.getName(), PlatformIcons.WEB_ICON, PlatformIcons.WEB_ICON, null));
+        init(module, new PresentationData(module.getName(), module.getName(), PlatformIcons.WEB_ICON, null));
     }
 
     /**

@@ -17,7 +17,7 @@ public class LibrariesNode extends TapestryNode {
     public LibrariesNode(Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init("Libraries", new PresentationData("Libraries", "Libraries", TapestryIcons.LIBRARY, TapestryIcons.LIBRARY, null));
+        init("Libraries", new PresentationData("Libraries", "Libraries", TapestryIcons.LIBRARY, null));
     }
 
     /**

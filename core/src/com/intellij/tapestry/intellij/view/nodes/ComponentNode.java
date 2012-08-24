@@ -23,7 +23,7 @@ public class ComponentNode extends TapestryNode {
     public ComponentNode(PresentationLibraryElement component, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(component, new PresentationData(component.getElementClass().getName(), component.getElementClass().getName(), TapestryIcons.COMPONENT, TapestryIcons.COMPONENT, null));
+        init(component, new PresentationData(component.getElementClass().getName(), component.getElementClass().getName(), TapestryIcons.COMPONENT, null));
     }
 
     /**
