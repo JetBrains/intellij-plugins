@@ -112,7 +112,6 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
     try {
       for (String targetPath : targetPaths) {
         FileUtil.copyContent(file, new File(targetPath));
-        context.processMessage(new CompilerMessage("Copied", BuildMessage.Kind.INFO, file.getPath() + " to " + targetPath));
       }
 
       try {
