@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.compiler.impl.CompilerUtil;
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
@@ -129,11 +130,11 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
           final Set<String> targetPaths = new THashSet<String>();
 
           if (isTestRoot) {
-            if (!FlexCompiler.isSourceFile(file)) {
+            if (!FlexCommonUtils.isSourceFile(file.getName())) {
               final CompilerModuleExtension compilerModuleExtension = CompilerModuleExtension.getInstance(module);
               final String outputUrl = compilerModuleExtension == null ? null : compilerModuleExtension.getCompilerOutputUrlForTests();
               if (outputUrl != null) {
-                targetPaths.add(VfsUtil.urlToPath(outputUrl) + "/" + relativePath);
+                targetPaths.add(VfsUtilCore.urlToPath(outputUrl) + "/" + relativePath);
               }
             }
           }
@@ -145,7 +146,7 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
               }
 
               final CompilerOptions.ResourceFilesMode mode = bc.getCompilerOptions().getResourceFilesMode();
-              if (mode == CompilerOptions.ResourceFilesMode.All && !FlexCompiler.isSourceFile(file) ||
+              if (mode == CompilerOptions.ResourceFilesMode.All && !FlexCommonUtils.isSourceFile(file.getName()) ||
                   mode == CompilerOptions.ResourceFilesMode.ResourcePatterns && compilerConfiguration.isResourceFile(file)) {
                 final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
                 targetPaths.add(outputFolder + "/" + relativePath);

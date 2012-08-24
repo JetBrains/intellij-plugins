@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.CompilerConfiguration;
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -582,7 +583,9 @@ public class CompilerConfigGenerator {
         VfsUtilCore.visitChildrenRecursively(fileOrDir, new VirtualFileVisitor() {
           @Override
           public boolean visitFile(@NotNull final VirtualFile file) {
-            if (!file.isDirectory() && !FlexCompiler.isSourceFile(file) && !compilerConfiguration.isExcludedFromCompilation(file)) {
+            if (!file.isDirectory() &&
+                !FlexCommonUtils.isSourceFile(file.getName()) &&
+                !compilerConfiguration.isExcludedFromCompilation(file)) {
               final String relativePath = VfsUtilCore.getRelativePath(file, fileOrDir, '/');
               final String pathInSwc = baseRelativePath.isEmpty() ? relativePath : baseRelativePath + "/" + relativePath;
               filePathToPathInSwc.put(file.getPath(), pathInSwc);
@@ -615,7 +618,7 @@ public class CompilerConfigGenerator {
         @Override
         public boolean processFile(final VirtualFile file) {
           if (file.isDirectory()) return true;
-          if (!FlexCompiler.isSourceFile(file)) return true;
+          if (!FlexCommonUtils.isSourceFile(file.getName())) return true;
           if (compilerConfiguration.isExcludedFromCompilation(file)) return true;
 
           final String packageText = VfsUtilCore.getRelativePath(file.getParent(), sourceRoot, '.');

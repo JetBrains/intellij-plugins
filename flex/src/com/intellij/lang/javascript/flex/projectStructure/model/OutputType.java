@@ -1,14 +1,14 @@
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
+import com.intellij.flex.FlexCommonBundle;
 import com.intellij.ui.ListCellRendererWrapper;
-import com.intellij.lang.javascript.flex.FlexBundle;
 
 import javax.swing.*;
 
 public enum OutputType {
-  Application(FlexBundle.message("bc.app.long.text"), FlexBundle.message("bc.app.short.text")),
-  Library(FlexBundle.message("bc.lib.long.text"), FlexBundle.message("bc.lib.short.text")),
-  RuntimeLoadedModule(FlexBundle.message("bc.rlm.long.text"), FlexBundle.message("bc.rlm.short.text"));
+  Application(FlexCommonBundle.message("bc.app.long.text"), FlexCommonBundle.message("bc.app.short.text")),
+  Library(FlexCommonBundle.message("bc.lib.long.text"), FlexCommonBundle.message("bc.lib.short.text")),
+  RuntimeLoadedModule(FlexCommonBundle.message("bc.rlm.long.text"), FlexCommonBundle.message("bc.rlm.short.text"));
 
   private final String myPresentableText;
   private final String myShortText;

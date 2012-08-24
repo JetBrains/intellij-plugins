@@ -20,7 +20,7 @@
     <compiler order="before FlexCompiler" implementation="com.intellij.lang.javascript.flex.build.FlexResourceCompiler"/>
     <compiler id="FlexCompiler" implementation="com.intellij.lang.javascript.flex.build.FlexCompiler"/>
     <compiler.resourceCompilerExtension implementation="com.intellij.lang.javascript.flex.build.FlexResourceCompilerExtension"/>
-    <compileServer.plugin classpath="flex-jps.jar"/>
+    <compileServer.plugin classpath="flex-jps.jar;flex-shared.jar"/>
     <programRunner implementation="com.intellij.lang.javascript.flex.debug.FlexDebugRunner"/>
     <programRunner implementation="com.intellij.lang.javascript.flex.run.FlexRunner"/>
     <xdebugger.breakpointType implementation="com.intellij.lang.javascript.flex.debug.FlexBreakpointType"/>
@@ -115,7 +115,7 @@
                              implementationClass="com.intellij.lang.javascript.flex.ActionScriptRefactoringSupportProvider"
                              order="before JavascriptRefactoringSupportProvider"/>
     <implicitUsageProvider implementation="com.intellij.lang.javascript.flex.FlexImplicitUsageProvider"/>
-    <cantBeStatic implementation="com.intellij.lang.javascript.flex.FlexImplicitUsageProvider" />
+    <cantBeStatic implementation="com.intellij.lang.javascript.flex.FlexImplicitUsageProvider"/>
     <refactoring.elementListenerProvider implementation="com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider"/>
     <langCodeStyleSettingsProvider implementation="com.intellij.lang.javascript.formatter.ActionScriptLanguageCodeStyleSettingsProvider"/>
 
@@ -144,14 +144,17 @@
     <sdkFinder implementation="com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk$SdkFinderImpl"/>
 
     <projectStructureValidator implementation="com.intellij.lang.javascript.flex.projectStructure.ui.FlexProjectStructureValidator"/>
-    <project.converterProvider implementation="com.intellij.lang.javascript.flex.projectStructure.conversion.FlexBuildConfigurationsConverterProvider"/>
+    <project.converterProvider
+        implementation="com.intellij.lang.javascript.flex.projectStructure.conversion.FlexBuildConfigurationsConverterProvider"/>
 
     <moduleRendererFactory implementation="com.intellij.lang.javascript.flex.FlexModuleRendererFactory"/>
-    <treeStructureProvider implementation="com.intellij.lang.javascript.flex.projectStructure.ui.FlexCompositeSdkProjectViewStructureProvider"/>
+    <treeStructureProvider
+        implementation="com.intellij.lang.javascript.flex.projectStructure.ui.FlexCompositeSdkProjectViewStructureProvider"/>
 
     <resolveScopeProvider implementation="com.intellij.lang.javascript.flex.MxmlResolveScopeProvider"/>
 
-    <statistics.usagesCollector implementation="com.intellij.lang.javascript.flex.projectStructure.FlashBuildConfigurationsUsagesCollector"/>
+    <statistics.usagesCollector
+        implementation="com.intellij.lang.javascript.flex.projectStructure.FlashBuildConfigurationsUsagesCollector"/>
 
     <indexedRootsProvider implementation="com.intellij.javascript.flex.css.FlexStylesIndexableSetContributor"/>
 

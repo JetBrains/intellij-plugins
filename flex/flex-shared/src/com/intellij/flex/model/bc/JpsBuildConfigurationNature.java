@@ -1,16 +1,11 @@
-package com.intellij.lang.javascript.flex.projectStructure.options;
+package com.intellij.flex.model.bc;
 
 import com.intellij.flex.FlexCommonBundle;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
 
-/**
- * @author ksafonov
- */
-public class BuildConfigurationNature {
+public class JpsBuildConfigurationNature {
 
   private static final Icon ICON_WEB_AS = IconLoader.getIcon("/images/bc-web-as.png");
   private static final Icon ICON_WEB_FLEX = IconLoader.getIcon("/images/bc-web-flex.png");
@@ -19,39 +14,40 @@ public class BuildConfigurationNature {
   private static final Icon ICON_MOBILE_AS = IconLoader.getIcon("/images/bc-mobile-as.png");
   private static final Icon ICON_MOBILE_FLEX = IconLoader.getIcon("/images/bc-mobile-flex.png");
 
-  public final TargetPlatform targetPlatform;
+  public final JpsTargetPlatform targetPlatform;
   public final boolean pureAS;
-  public final OutputType outputType;
+  public final JpsOutputType outputType;
 
-  public BuildConfigurationNature(TargetPlatform targetPlatform,
-                                  boolean pureAS,
-                                  OutputType outputType) {
+  public JpsBuildConfigurationNature(JpsTargetPlatform targetPlatform,
+                                     boolean pureAS,
+                                     JpsOutputType outputType) {
     this.targetPlatform = targetPlatform;
     this.pureAS = pureAS;
     this.outputType = outputType;
   }
 
   public boolean isWebPlatform() {
-    return targetPlatform == TargetPlatform.Web;
+    return targetPlatform == JpsTargetPlatform.Web;
   }
 
   public boolean isDesktopPlatform() {
-    return targetPlatform == TargetPlatform.Desktop;
+    return targetPlatform == JpsTargetPlatform.Desktop;
   }
 
   public boolean isMobilePlatform() {
-    return targetPlatform == TargetPlatform.Mobile;
+    return targetPlatform == JpsTargetPlatform.Mobile;
   }
 
   public boolean isApp() {
-    return outputType == OutputType.Application;
+    return outputType == JpsOutputType.Application;
   }
 
   public boolean isLib() {
-    return outputType == OutputType.Library;
+    return outputType == JpsOutputType.Library;
   }
 
-  public static final BuildConfigurationNature DEFAULT = new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application);
+  public static final JpsBuildConfigurationNature
+    DEFAULT = new JpsBuildConfigurationNature(JpsTargetPlatform.Web, false, JpsOutputType.Application);
 
   public String toString() {
     return targetPlatform.getPresentableText() + " " + outputType.getPresentableText() + (pureAS ? " (pure ActionScript)" : "");
@@ -61,7 +57,7 @@ public class BuildConfigurationNature {
     if (this == other) return true;
     if (other == null || getClass() != other.getClass()) return false;
 
-    final BuildConfigurationNature otherNature = (BuildConfigurationNature)other;
+    final JpsBuildConfigurationNature otherNature = (JpsBuildConfigurationNature)other;
 
     if (pureAS != otherNature.pureAS) return false;
     if (outputType != otherNature.outputType) return false;

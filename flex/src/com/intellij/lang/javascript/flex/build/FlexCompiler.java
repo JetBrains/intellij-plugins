@@ -838,11 +838,6 @@ public class FlexCompiler implements SourceProcessingCompiler {
     return new EmptyValidityState();
   }
 
-  static boolean isSourceFile(final VirtualFile file) {
-    final String ext = file.getExtension();
-    return ext != null && (ext.equalsIgnoreCase("as") || ext.equalsIgnoreCase("mxml") || ext.equalsIgnoreCase("fxg"));
-  }
-
   private static class MyProcessingItem implements ProcessingItem {
     private final Module myModule;
     private final FlexIdeBuildConfiguration myBC;
