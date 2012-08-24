@@ -45,7 +45,7 @@ public class SelectedBundleListCellRenderer extends DefaultListCellRenderer {
     JLabel component = (JLabel)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
     SelectedBundle selectedBundle = (SelectedBundle)value;
     if (selectedBundle.isModule()) {
-      component.setIcon(AllIcons.Nodes.ModuleClosed);
+      component.setIcon(AllIcons.Nodes.Module);
     }
     else if (selectedBundle.getBundleType() == SelectedBundle.BundleType.FrameworkBundle) {
       component.setIcon(OsmorcBundle.getSmallIcon());
