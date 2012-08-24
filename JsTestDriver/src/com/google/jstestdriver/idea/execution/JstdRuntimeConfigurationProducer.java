@@ -82,7 +82,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
       return null;
     }
 
-    final RunnerAndConfigurationSettings runnerSettings = cloneTemplateConfiguration(location.getProject(), context);
+    final RunnerAndConfigurationSettings runnerSettings = cloneTemplateConfiguration(location.getProject(), null);
     JstdRunConfiguration runConfiguration = ObjectUtils.tryCast(runnerSettings.getConfiguration(), JstdRunConfiguration.class);
     if (runConfiguration == null) {
       logDoneCreateConfigurationByElement(startTimeNano, "2");
@@ -99,7 +99,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
     runConfiguration.setRunSettings(settings);
 
     mySourceElement = runSettingsContext.myPsiElement;
-    runnerSettings.setName(runConfiguration.suggestedName());
+    runnerSettings.setName(runConfiguration.resetNameToGenerated());
     logDoneCreateConfigurationByElement(startTimeNano, "3");
     return runnerSettings;
   }
