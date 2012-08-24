@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.debug;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
@@ -16,7 +17,6 @@ import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
-import com.intellij.xdebugger.ui.DebuggerIcons;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.annotations.NonNls;
@@ -101,7 +101,7 @@ class FlexBreakpointsHandler {
 
   void updateBreakpointStatusToInvalid(XLineBreakpoint<XBreakpointProperties> breakpoint) {
     if (breakpoint != null) {
-      myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, DebuggerIcons.INVALID_BREAKPOINT_ICON, null);
+      myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, AllIcons.Debugger.Db_invalid_breakpoint, null);
     }
   }
 
@@ -112,7 +112,7 @@ class FlexBreakpointsHandler {
     final XLineBreakpoint<XBreakpointProperties> breakpoint = myIndexToBreakpointMap.get(index);
 
     if (breakpoint != null) {
-      myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, DebuggerIcons.VERIFIED_BREAKPOINT_ICON, null);
+      myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, AllIcons.Debugger.Db_verified_breakpoint, null);
     }
     else {
       // run to cursor

@@ -1,5 +1,6 @@
 package com.jetbrains.actionscript.profiler.ui;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.scopeChooser.ScopeChooserCombo;
 import com.intellij.ide.util.scopeChooser.ScopeDescriptor;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -20,7 +21,6 @@ import com.intellij.ui.TreeTableSpeedSearch;
 import com.intellij.util.Function;
 import com.intellij.util.ui.tree.TreeUtil;
 import com.jetbrains.actionscript.profiler.ProfilerBundle;
-import com.jetbrains.actionscript.profiler.ProfilerIcons;
 import com.jetbrains.actionscript.profiler.livetable.LiveModelController;
 import com.jetbrains.actionscript.profiler.livetable.LiveObjectsTreeTable;
 import com.jetbrains.actionscript.profiler.livetable.SizeInfoNode;
@@ -156,9 +156,9 @@ public class LiveObjectsView extends ProfileView implements Disposable {
     liveObjectsTreeTable.getTree().setCellRenderer(new SizeInfoCellRenderer() {
       @Override
       public void customizeCellRenderer(Object value, boolean selected) {
-        Icon icon = ProfilerIcons.INFORMATION;
+        Icon icon = AllIcons.Compiler.Information;
         if (value instanceof SizeInfoNode) {
-          icon = ((SizeInfoNode)value).isMethod() ? ProfilerIcons.METHOD : ProfilerIcons.CLASS;
+          icon = ((SizeInfoNode)value).isMethod() ? AllIcons.Nodes.Method : AllIcons.Nodes.Class;
         }
         setPaintFocusBorder(false);
         setIcon(icon);

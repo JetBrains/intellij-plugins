@@ -29,7 +29,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
-import com.intellij.psi.css.CssFileType;
 import com.intellij.psi.xml.*;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
@@ -80,7 +79,6 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   private static final @NonNls String ENUMERATION_ATTR_NAME = "enumeration";
   private static final @NonNls String FORMAT_ATTR_NAME = "format";
   private static final @NonNls String TYPE_ATTR_NAME = "type";
-  private static final Icon EFFECT_ICON = AllIcons.Actions.Lightning;
 
   private String percentProxy;
   private boolean myScriptable;
@@ -855,10 +853,10 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       return PlatformIcons.EXCEPTION_CLASS_ICON;
     }
     if (myAnnotationName.equals(FlexAnnotationNames.STYLE)) {
-      return CssFileType.ICON;
+      return AllIcons.FileTypes.Css;
     }
     if (myAnnotationName.equals(FlexAnnotationNames.EFFECT)) {
-      return EFFECT_ICON;
+      return AllIcons.Actions.Lightning;
     }
     return null;
   }

@@ -101,11 +101,10 @@ public class ActiveBuildConfigurationWidget {
 
   private static class MyWidget extends EditorBasedWidget implements CustomStatusBarWidget, StatusBarWidget.Multiframe {
 
-    private static final Icon ARROWS_ICON = AllIcons.Ide.Statusbar_arrows;
     private final JLabel myEnabledLabel = new JLabel();
     private final JLabel myDisabledLabel = new JLabel(FlexBundle.message("active.bc.widget.empty.text"));
     private final JPanel myPanel;
-    private final JLabel myUpDownLabel = new JLabel(ARROWS_ICON);
+    private final JLabel myUpDownLabel = new JLabel(AllIcons.Ide.Statusbar_arrows);
 
     private MyWidget(@NotNull Project project) {
       super(project);

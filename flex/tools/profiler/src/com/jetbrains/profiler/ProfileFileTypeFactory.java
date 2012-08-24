@@ -1,5 +1,6 @@
 package com.jetbrains.profiler;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
@@ -31,7 +32,7 @@ public class ProfileFileTypeFactory extends FileTypeFactory {
     }
 
     public Icon getIcon() {
-      return DefaultProfilerExecutor.ICON;
+      return AllIcons.Actions.ProfileCPU;
     }
 
     public boolean isBinary() {

@@ -1,18 +1,14 @@
 package com.jetbrains.actionscript.profiler;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
 
 public interface ProfilerIcons {
-  Icon INFORMATION = AllIcons.Compiler.Information;
   Icon CALLER_SOLID_ARROW = IconLoader.getIcon("/icons/callerArrow.png");
   Icon CALLER_DOTTED_ARROW = IconLoader.getIcon("/icons/callerLeafArrow.png");
   Icon CALLEE_SOLID_ARROW = IconLoader.getIcon("/icons/calleeArrow.png");
   Icon CALLEE_DOTTED_ARROW = IconLoader.getIcon("/icons/calleeLeafArrow.png");
-  Icon CLASS = AllIcons.Nodes.Class;
-  Icon METHOD = AllIcons.Nodes.Method;
 
   Icon START_CPU = IconLoader.getIcon("/icons/startCPU.png");
   Icon STOP_CPU = IconLoader.getIcon("/icons/stopCPU.png");

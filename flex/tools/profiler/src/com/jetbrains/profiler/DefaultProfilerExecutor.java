@@ -3,7 +3,6 @@ package com.jetbrains.profiler;
 import com.intellij.execution.Executor;
 import com.intellij.execution.ExecutorRegistry;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,17 +17,6 @@ public class DefaultProfilerExecutor extends Executor {
   @NonNls
   public static final String EXECUTOR_ID = "Profile";
 
-  private static final Icon TOOL_WINDOW_ICON = AllIcons.Toolwindows.ToolWindowDebugger;
-  public static final Icon ICON;
-
-  static {
-    Icon icon = IconLoader.findIcon("/actions/profuleCPU.png", DefaultProfilerExecutor.class, true);
-    if (icon == null) icon = AllIcons.Actions.ProfileCPU;
-    ICON = icon;
-  }
-
-  private static final Icon DISABLED_ICON = AllIcons.Process.DisabledDebug;
-
   @Override
   public String getToolWindowId() {
     return "Profiler";
@@ -36,18 +24,18 @@ public class DefaultProfilerExecutor extends Executor {
 
   @Override
   public Icon getToolWindowIcon() {
-    return TOOL_WINDOW_ICON;
+    return AllIcons.Toolwindows.ToolWindowDebugger;
   }
 
   @NotNull
   @Override
   public Icon getIcon() {
-    return ICON;
+    return AllIcons.Actions.ProfileCPU;
   }
 
   @Override
   public Icon getDisabledIcon() {
-    return DISABLED_ICON;
+    return AllIcons.Process.DisabledDebug;
   }
 
   @Override

@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.debug;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.javascript.JSDebuggerSupportUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.*;
@@ -20,8 +21,9 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.Function;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.evaluation.XDebuggerEvaluator;
-import com.intellij.xdebugger.frame.*;
-import com.intellij.xdebugger.ui.DebuggerIcons;
+import com.intellij.xdebugger.frame.XCompositeNode;
+import com.intellij.xdebugger.frame.XStackFrame;
+import com.intellij.xdebugger.frame.XValueChildrenList;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -480,7 +482,7 @@ public class FlexStackFrame extends XStackFrame {
     else {
       component.append("<file name is not available>", SimpleTextAttributes.REGULAR_ATTRIBUTES);
     }
-    component.setIcon(DebuggerIcons.STACK_FRAME_ICON);
+    component.setIcon(AllIcons.Debugger.StackFrame);
   }
 
   public void setScope(final String scope) {

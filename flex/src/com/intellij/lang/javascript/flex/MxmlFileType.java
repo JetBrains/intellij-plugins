@@ -39,8 +39,6 @@ public class MxmlFileType extends XmlLikeFileType {
 
   @Override
   public Icon getIcon() {
-    return ICON;
+    return AllIcons.FileTypes.Xml; // TODO own icon
   }
-
-  private static final Icon ICON = AllIcons.FileTypes.Xml; // TODO icon
 }

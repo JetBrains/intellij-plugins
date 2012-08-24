@@ -23,7 +23,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class AnyApplication implements ConfigurationType {
-  private static final Icon ICON = AllIcons.RunConfigurations.Application;
   private final ConfigurationFactory factory;
 
   AnyApplication() {
@@ -46,7 +45,7 @@ public class AnyApplication implements ConfigurationType {
 
   @Override
   public Icon getIcon() {
-    return ICON;
+    return AllIcons.RunConfigurations.Application;
   }
 
   @NotNull

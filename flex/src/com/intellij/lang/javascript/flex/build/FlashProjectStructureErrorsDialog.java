@@ -34,7 +34,6 @@ import java.util.Collection;
 import java.util.Enumeration;
 
 public class FlashProjectStructureErrorsDialog extends DialogWrapper {
-  private static final Icon ERROR_ICON = AllIcons.Ide.ErrorSign;
 
   private JPanel myMainPanel;
   private Tree myTree;
@@ -67,7 +66,7 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
           BCUtils.renderBuildConfiguration((FlexIdeBuildConfiguration)userObject, null).appendToComponent(this);
         }
         else if (userObject instanceof FlashProjectStructureProblem) {
-          setIcon(ERROR_ICON);
+          setIcon(AllIcons.Ide.ErrorSign);
           append(((FlashProjectStructureProblem)userObject).errorMessage);
         }
       }
