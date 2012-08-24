@@ -77,11 +77,12 @@ public class TestFileScope {
     if (buf.length() > 0) {
       buf.append(",");
     }
-    buf.append(testCaseName);
+    buf.append('^').append(testCaseName);
     if (testMethodName != null) {
       buf.append(".");
       buf.append(testMethodName);
     }
+    buf.append('$');
   }
 
   public String serialize() {
