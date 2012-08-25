@@ -237,7 +237,9 @@ public class CapturedBrowsersController implements ServerListener {
       boolean success;
       try {
         success = tryCapture();
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
+        LOG.debug(ex);
         success = false;
       }
       if (success) {
