@@ -10,10 +10,7 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.*;
 import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
 import org.jdom.Element;
@@ -158,16 +155,16 @@ public class FlexSdkType2 extends SdkType {
   }
 
   private static void findSourceRoots(final VirtualFile dir, final SdkModificator sdkModificator) {
-    for (final VirtualFile child : dir.getChildren()) {
-      if (child.isDirectory()) {
-        if (child.getName().equals("src")) {
+    VfsUtilCore.visitChildrenRecursively(dir, new VirtualFileVisitor(VirtualFileVisitor.SKIP_ROOT) {
+      @Override
+      public boolean visitFile(@NotNull VirtualFile child) {
+        if (child.isDirectory() && child.getName().equals("src")) {
           sdkModificator.addRoot(child, OrderRootType.SOURCES);
+          return false;
         }
-        else {
-          findSourceRoots(child, sdkModificator);
-        }
+        return true;
       }
-    }
+    });
   }
 
   private static void addSwcRoots(final SdkModificator sdkModificator,

@@ -10,14 +10,14 @@ import com.intellij.openapi.roots.libraries.ui.RootDetector;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.util.containers.DistinctRootsCollection;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
 /**
- * User: ksafonov
+ * @author ksafonov
  */
 class FlexSourcesRootDetector extends RootDetector {
 
@@ -41,44 +41,41 @@ class FlexSourcesRootDetector extends RootDetector {
     return result;
   }
 
-  /**
-   *
-   * @return detected root or <code>null</code>
-   */
-  @Nullable
-  private VirtualFile collectRoots(VirtualFile file,
-                                          Collection<VirtualFile> result,
-                                          VirtualFile topmostRoot,
-                                          ProgressIndicator progressIndicator) {
-    progressIndicator.checkCanceled();
-    progressIndicator.setText2(file.getPresentableUrl());
-    String extension;
-    if (!file.isDirectory() &&
-        ((extension = file.getExtension()) != null)) {
-      if (JavaScriptSupportLoader.ECMA_SCRIPT_L4.equals(JavaScriptSupportLoader.getLanguageDialect(extension))) {
+  private void collectRoots(final VirtualFile startFile,
+                            final Collection<VirtualFile> result,
+                            final VirtualFile topmostRoot,
+                            final ProgressIndicator progressIndicator) {
+    VfsUtilCore.visitChildrenRecursively(startFile, new VirtualFileVisitor() {
+      @NotNull
+      @Override
+      public Result visitFileEx(@NotNull VirtualFile file) {
+        progressIndicator.checkCanceled();
+        progressIndicator.setText2(file.getPresentableUrl());
 
-        Pair<VirtualFile, String> root =
-          CommonSourceRootDetectionUtil.VIRTUAL_FILE
-            .suggestRootForFileWithPackageStatement(file, topmostRoot, FlexProjectStructureDetector.PACKAGE_NAME_FETCHER, false);
-        if (root != null) {
-          result.add(root.first);
-          return root.first;
-        }
-      }
-      else if (myDetectMxml && JavaScriptSupportLoader.isFlexMxmFile(file.getName())) {
-        result.add(file.getParent());
-        return null; // don't skip parent directory since this MXML class may be located in package
-      }
-    }
+        String extension;
+        if (!file.isDirectory() &&
+            ((extension = file.getExtension()) != null)) {
+          if (JavaScriptSupportLoader.ECMA_SCRIPT_L4.equals(JavaScriptSupportLoader.getLanguageDialect(extension))) {
 
-    for (VirtualFile child : file.getChildren()) {
-      VirtualFile detectedRoot = collectRoots(child, result, topmostRoot, progressIndicator);
-      if (detectedRoot != null) {
-        if (VfsUtilCore.isAncestor(detectedRoot, file, false)) {
-          return detectedRoot; // skip all the directories under detectedRoot
+            Pair<VirtualFile, String> root =
+              CommonSourceRootDetectionUtil.VIRTUAL_FILE
+                .suggestRootForFileWithPackageStatement(file, topmostRoot, FlexProjectStructureDetector.PACKAGE_NAME_FETCHER, false);
+            if (root != null) {
+              final VirtualFile detectedRoot = root.first;
+              result.add(detectedRoot);
+              if (VfsUtilCore.isAncestor(detectedRoot, startFile, false)) {
+                return skipTo(detectedRoot);  // skip all the directories under detectedRoot
+              }
+            }
+          }
+          else if (myDetectMxml && JavaScriptSupportLoader.isFlexMxmFile(file.getName())) {
+            result.add(file.getParent());
+            // don't skip parent directory since this MXML class may be located in package
+          }
         }
+
+        return CONTINUE;
       }
-    }
-    return null;
+    });
   }
 }

@@ -4,7 +4,9 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.libraries.ui.RootDetector;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -12,10 +14,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * User: ksafonov
+ * @author ksafonov
  */
 class FlexDocsRootDetector extends RootDetector {
-
   public FlexDocsRootDetector() {
     super(JavadocOrderRootType.getInstance(), false, FlexBundle.message("docs.root.detector.name"));
   }
@@ -28,18 +29,21 @@ class FlexDocsRootDetector extends RootDetector {
     return result;
   }
 
-  private static void collectRoots(VirtualFile file, List<VirtualFile> result, ProgressIndicator progressIndicator) {
-    progressIndicator.checkCanceled();
-    if (!file.isDirectory()) return;
+  private static void collectRoots(VirtualFile file, final List<VirtualFile> result, final ProgressIndicator progressIndicator) {
+    VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
+      @Override
+      public boolean visitFile(@NotNull VirtualFile file) {
+        progressIndicator.checkCanceled();
+        if (!file.isDirectory()) return false;
+        progressIndicator.setText2(file.getPresentableUrl());
 
-    progressIndicator.setText2(file.getPresentableUrl());
+        if (file.findChild("all-classes.html") != null) {
+          result.add(file);
+          return false;
+        }
 
-    if (file.findChild("all-classes.html") != null) {
-      result.add(file);
-      return;
-    }
-    for (VirtualFile child : file.getChildren()) {
-      collectRoots(child, result, progressIndicator);
-    }
+        return true;
+      }
+    });
   }
 }
