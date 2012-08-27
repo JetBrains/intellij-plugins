@@ -5,8 +5,6 @@ import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.JstdRunConfigurationVerifier;
 import com.google.jstestdriver.idea.execution.JstdTestRunnerCommandLineState;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
-import com.intellij.chromeConnector.connection.ChromeConnectionManager;
-import com.intellij.chromeConnector.connection.impl.ExistentTabProviderFactory;
 import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -19,7 +17,6 @@ import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
-import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.xdebugger.XDebugProcess;
@@ -80,16 +77,11 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     if (!debugEngine.prepareDebugger(project)) return null;
 
     final String url;
-    final Connection connection;
+    final Connection connection = debugEngine.openConnection();
     if (debugEngine instanceof ChromeDebuggerEngine) {
-      ChromeConnectionManager chromeConnectionManager = ChromeConnectionManager.getInstance();
-      ExistentTabProviderFactory tabProviderFactory = ExistentTabProviderFactory.getInstance();
-      //noinspection unchecked
-      connection = (Connection) chromeConnectionManager.createConnection(tabProviderFactory);
       url = "http://localhost:" + JstdToolWindowPanel.serverPort + debugBrowserInfo.getCapturedBrowserUrl();
     }
     else {
-      connection = debugEngine.openConnection();
       url = null;
     }
 
@@ -104,8 +96,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     XDebugSession xDebugSession = xDebuggerManager.startSession(this, env, contentToReuse, new XDebugProcessStarter() {
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
-        JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
-        return debugProcess;
+        return debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
       }
     });
     PrintWriter writer = new PrintWriter(executionResult.getProcessHandler().getProcessInput());
