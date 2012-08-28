@@ -3,17 +3,14 @@ package com.google.jstestdriver.idea.execution.settings.ui;
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.TestType;
-import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTabbedPane;
-import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
-import com.intellij.webcore.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,36 +25,44 @@ import java.util.Map;
 
 public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfiguration> {
 
-  private final RootSection myConfigurationSection;
-  private final CoverageSection myCoverageSection;
+  private final Map<String, RunSettingsSection> myTabSections;
   private final JComponent myRootComponent;
 
   public JstdRunConfigurationEditor(@NotNull Project project) {
-    myConfigurationSection = new RootSection();
+    myTabSections = ContainerUtil.newLinkedHashMap();
+    myTabSections.put("Configuration", new RootSection());
+    myTabSections.put("Debug", new JstdDebugSection());
+    myTabSections.put("Coverage", new JstdCoverageSection(project));
+    myRootComponent = createTabbedPane(project, myTabSections);
+  }
+
+  @NotNull
+  private static JBTabbedPane createTabbedPane(@NotNull Project project,
+                                               @NotNull Map<String, RunSettingsSection> tabs) {
     JBTabbedPane tabbedPane = new JBTabbedPane();
     CreationContext content = new CreationContext(project);
-    JComponent configurationComponent = myConfigurationSection.getComponent(content);
-    tabbedPane.addTab("Configuration", configurationComponent);
-
-    myCoverageSection = new CoverageSection(project);
-    JComponent coverageComponent = myCoverageSection.getComponent(content);
-    tabbedPane.addTab("Coverage", coverageComponent);
-
-    myRootComponent = tabbedPane;
+    for (Map.Entry<String, RunSettingsSection> entry : tabs.entrySet()) {
+      JComponent component = entry.getValue().getComponent(content);
+      tabbedPane.addTab(entry.getKey(), component);
+    }
+    tabbedPane.setSelectedIndex(0);
+    return tabbedPane;
   }
 
   @Override
   protected void resetEditorFrom(JstdRunConfiguration runConfiguration) {
     JstdRunSettings runSettings = runConfiguration.getRunSettings();
-    myConfigurationSection.resetFrom(runSettings);
-    myCoverageSection.resetFrom(runSettings);
+    for (RunSettingsSection section : myTabSections.values()) {
+      section.resetFrom(runSettings);
+    }
   }
 
   @Override
   protected void applyEditorTo(JstdRunConfiguration runConfiguration) throws ConfigurationException {
     JstdRunSettings.Builder builder = new JstdRunSettings.Builder();
-    myConfigurationSection.applyTo(builder);
-    myCoverageSection.applyTo(builder);
+    for (RunSettingsSection section : myTabSections.values()) {
+      section.applyTo(builder);
+    }
     runConfiguration.setRunSettings(builder.build());
   }
 
@@ -78,7 +83,6 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
     private final ServerConfigurationForm myServerConfigurationForm = new ServerConfigurationForm();
     private Map<TestType, TestTypeListItem> myListItemByTestTypeMap;
     private final JBLabel myLabel = new JBLabel("Test:");
-    private JComboBox myPreferredDebugBrowserComboBox;
 
     @NotNull
     @Override
@@ -130,49 +134,8 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
         0, 0
       ));
 
-      panel.add(createDebugPanel(), new GridBagConstraints(
-        0, 3,
-        2, 1,
-        1.0, 0.0,
-        GridBagConstraints.WEST,
-        GridBagConstraints.HORIZONTAL,
-        new Insets(0, 0, 0, 0),
-        0, 0
-      ));
-
       setAnchor(myTestTypeContentRunSettingsSection.getAnchor());
       return panel;
-    }
-
-    @NotNull
-    private JPanel createDebugPanel() {
-      BrowsersConfiguration.BrowserFamily[] supportedBrowsers = new BrowsersConfiguration.BrowserFamily[] {
-        BrowsersConfiguration.BrowserFamily.CHROME,
-        BrowsersConfiguration.BrowserFamily.FIREFOX
-      };
-      final JComboBox comboBox = new JComboBox(supportedBrowsers);
-      comboBox.setRenderer(new ListCellRendererWrapper<BrowsersConfiguration.BrowserFamily>(comboBox.getRenderer()) {
-        @Override
-        public void customize(JList list,
-                              BrowsersConfiguration.BrowserFamily value,
-                              int index,
-                              boolean selected,
-                              boolean hasFocus) {
-          setIcon(value.getIcon());
-          setText(value.getName());
-        }
-      });
-      myPreferredDebugBrowserComboBox = comboBox;
-      JPanel linePanel = SwingHelper.newHorizontalPanel(
-        Component.CENTER_ALIGNMENT,
-        new JLabel("Debug in"),
-        comboBox,
-        new JLabel(" if both browsers are captured.")
-      );
-      JPanel result = new JPanel(new BorderLayout(0, 0));
-      result.add(linePanel, BorderLayout.WEST);
-      result.setBorder(IdeBorderFactory.createTitledBorder("Debugging in Chrome or Firefox", true));
-      return result;
     }
 
     @Override
@@ -180,7 +143,6 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
       selectTestType(runSettings.getTestType());
       myTestTypeContentRunSettingsSection.resetFrom(runSettings);
       myServerConfigurationForm.resetFrom(runSettings);
-      myPreferredDebugBrowserComboBox.setSelectedItem(runSettings.getPreferredDebugBrowser());
     }
 
     @Override
@@ -190,13 +152,6 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
       runSettingsBuilder.setTestType(selectedTestType);
       myTestTypeContentRunSettingsSection.applyTo(runSettingsBuilder);
       myServerConfigurationForm.applyTo(runSettingsBuilder);
-      BrowsersConfiguration.BrowserFamily selectedBrowser = ObjectUtils.tryCast(
-        myPreferredDebugBrowserComboBox.getSelectedItem(),
-        BrowsersConfiguration.BrowserFamily.class
-      );
-      if (selectedBrowser != null) {
-        runSettingsBuilder.setPreferredDebugBrowser(selectedBrowser);
-      }
     }
 
     private static @NotNull List<TestTypeListItem> createTestTypeListItems() {

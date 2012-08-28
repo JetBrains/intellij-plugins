@@ -28,7 +28,7 @@ public class TestCaseRunSettingsSection extends AbstractRunSettingsSection {
   private final JsFileRunSettingsSection myJsFileRunSettingsSection;
   private final JComboBox myTestCaseNameComboBox;
   private final JBLabel myLabel;
-  private TestMethodRunSettingsSection myTestMethodSettingsSection;
+  private final TestMethodRunSettingsSection myTestMethodSettingsSection;
 
   TestCaseRunSettingsSection() {
     this(null);

@@ -70,8 +70,10 @@ public class TestFileStructurePack {
   public List<String> getTopLevelElements() {
     List<String> out = new ArrayList<String>();
     for (AbstractTestFileStructure structure : myTestFileStructures) {
-      List<String> topLevel = structure.getTopLevelElements();
-      out.addAll(topLevel);
+      if (!structure.isEmpty()) {
+        List<String> topLevel = structure.getTopLevelElements();
+        out.addAll(topLevel);
+      }
     }
     return out;
   }
