@@ -33,7 +33,7 @@ public abstract class TapestryNode extends SimpleNode {
 
         _element = id;
         _presentation = presentation;
-        myIcon = _presentation.getIcon(false);
+        setIcon(_presentation.getIcon(false));
     }
 
     /**
@@ -63,7 +63,7 @@ public abstract class TapestryNode extends SimpleNode {
      */
     protected void doUpdate() {
         _presentation = updatePresentation(_presentation);
-        myIcon = _presentation.getIcon(false);
+        setIcon(_presentation.getIcon(false));
         setPlainText(_presentation.getPresentableText());
     }
 
