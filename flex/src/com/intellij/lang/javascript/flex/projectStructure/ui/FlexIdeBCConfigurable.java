@@ -230,9 +230,9 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       }
     });
 
-    myMainClassWarning.setIcon(IconLoader.getIcon("smallWarning.png"));
-    myOutputFileNameWarning.setIcon(IconLoader.getIcon("smallWarning.png"));
-    myOutputFolderWarning.setIcon(IconLoader.getIcon("smallWarning.png"));
+    myMainClassWarning.setIcon(IconLoader.getIcon("/images/flex/smallWarning.png"));
+    myOutputFileNameWarning.setIcon(IconLoader.getIcon("/images/flex/smallWarning.png"));
+    myOutputFolderWarning.setIcon(IconLoader.getIcon("/images/flex/smallWarning.png"));
 
     myWarning.setIcon(UIUtil.getBalloonWarningIcon());
   }

@@ -12,7 +12,7 @@ import javax.swing.*;
 
 public class FlexUnitRunConfigurationType implements ConfigurationType {
 
-  private static final Icon ourIcon = IconLoader.getIcon("flexunit.png", FlexUnitRunConfigurationType.class);
+  private static final Icon ourIcon = IconLoader.getIcon("/images/flex/flexunit.png", FlexUnitRunConfigurationType.class);
 
   private final ConfigurationFactory myFactory;
 

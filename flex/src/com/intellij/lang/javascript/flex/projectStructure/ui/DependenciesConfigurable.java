@@ -810,7 +810,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     myComponentSetCombo.addItemListener(updateSdkItemsListener);
     myFrameworkLinkageCombo.addItemListener(updateSdkItemsListener);
 
-    myTargetPlayerWarning.setIcon(IconLoader.getIcon("smallWarning.png"));
+    myTargetPlayerWarning.setIcon(IconLoader.getIcon("/images/flex/smallWarning.png"));
     myWarning.setIcon(UIUtil.getBalloonWarningIcon());
 
     myTable = new EditableTreeTable<MyTableItem>("", DEPENDENCY_TYPE_COLUMN) {

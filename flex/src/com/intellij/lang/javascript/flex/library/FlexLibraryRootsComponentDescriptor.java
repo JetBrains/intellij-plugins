@@ -22,7 +22,7 @@ import java.util.List;
 
 public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDescriptor {
 
-  private static final Icon DOC_ICON = IconLoader.findIcon("documentation.png");
+  private static final Icon DOC_ICON = IconLoader.findIcon("/images/flex/documentation.png");
 
   public OrderRootTypePresentation getRootTypePresentation(@NotNull final OrderRootType type) {
     if (type instanceof JavadocOrderRootType) {

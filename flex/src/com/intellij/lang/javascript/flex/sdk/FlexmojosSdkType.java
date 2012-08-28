@@ -13,7 +13,7 @@ import javax.swing.*;
 
 public class FlexmojosSdkType extends SdkType {
 
-  public static final Icon mavenFlexIcon = IconLoader.getIcon("mavenFlex.png", FlexmojosSdkType.class);
+  public static final Icon mavenFlexIcon = IconLoader.getIcon("/images/flex/sdk/mavenFlex.png", FlexmojosSdkType.class);
 
   static final String COMPILER_POM_PATTERN = ".+/com/adobe/flex/compiler/.+/compiler-.+\\.pom";
 
