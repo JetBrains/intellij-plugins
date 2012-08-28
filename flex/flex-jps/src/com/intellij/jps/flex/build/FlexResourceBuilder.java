@@ -56,11 +56,11 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
           final String relativePath = FileUtil.getRelativePath(sourceRoot, FileUtil.toSystemIndependentName(file.getPath()), '/');
 
           final SourceToOutputMapping sourceToOutputMap =
-            context.getProjectDescriptor().dataManager.getSourceToOutputMap(module.getName(), context.isCompilingTests());
+            context.getProjectDescriptor().dataManager.getSourceToOutputMap(module.getName(), chunk.isTests());
 
-          if (context.isCompilingTests()) {
+          if (chunk.isTests()) {
             if (!FlexCommonUtils.isSourceFile(file.getName())) {
-              final String outputRootUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, context.isCompilingTests());
+              final String outputRootUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, chunk.isTests());
               if (outputRootUrl == null) return true;
 
               final String targetPath = JpsPathUtil.urlToPath(outputRootUrl) + '/' + relativePath;
