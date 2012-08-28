@@ -47,8 +47,10 @@ public class JstdDebugSection extends AbstractRunSettingsSection {
     );
     JPanel result = SwingHelper.newLeftAlignedVerticalPanel(
       Box.createVerticalStrut(5),
-      new JLabel("Debugging is available in a local browser (Chrome or Firefox) captured by a local JsTestDriver server."),
-      Box.createVerticalStrut(10),
+      new JLabel("Debugging is available in a local browser (Chrome or Firefox)"),
+      Box.createVerticalStrut(4),
+      new JLabel("captured by a local JsTestDriver server running in IDE."),
+      Box.createVerticalStrut(15),
       SwingHelper.wrapWithNoFilling(linePanel)
     );
     return SwingHelper.wrapWithNoFilling(result);
