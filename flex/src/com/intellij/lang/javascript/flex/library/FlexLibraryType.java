@@ -20,7 +20,7 @@ import javax.swing.*;
  * @author nik
  */
 public class FlexLibraryType extends LibraryType<FlexLibraryProperties> {
-  public static final PersistentLibraryKind<FlexLibraryProperties> FLEX_LIBRARY = new PersistentLibraryKind<FlexLibraryProperties>("flex", false) {
+  public static final PersistentLibraryKind<FlexLibraryProperties> FLEX_LIBRARY = new PersistentLibraryKind<FlexLibraryProperties>("flex") {
     @NotNull
     @Override
     public FlexLibraryProperties createDefaultProperties() {
