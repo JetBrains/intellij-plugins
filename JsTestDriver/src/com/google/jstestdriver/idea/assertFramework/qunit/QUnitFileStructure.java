@@ -136,7 +136,9 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
   @Override
   public List<String> getTopLevelElements() {
     List<String> out = new ArrayList<String>(myNonDefaultModuleStructures.size() + 1);
-    out.add(myDefaultModuleStructure.getName());
+    if (myDefaultModuleStructure.getTestCount() > 0) {
+      out.add(myDefaultModuleStructure.getName());
+    }
     for (QUnitModuleStructure structure : myNonDefaultModuleStructures) {
       out.add(structure.getName());
     }

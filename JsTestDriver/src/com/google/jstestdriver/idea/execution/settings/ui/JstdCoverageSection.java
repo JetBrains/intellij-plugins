@@ -21,12 +21,15 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
-public class CoverageSection extends AbstractRunSettingsSection {
+/**
+ * @author Sergey Simonchik
+ */
+public class JstdCoverageSection extends AbstractRunSettingsSection {
 
   private final ExcludedTableModel myExcludedTableModel;
   private final JComponent myComponent;
 
-  public CoverageSection(@NotNull final Project project) {
+  public JstdCoverageSection(@NotNull final Project project) {
     myExcludedTableModel = new ExcludedTableModel();
     final JBTable table = new JBTable(myExcludedTableModel);
     table.getEmptyText().setText("No files excluded from coverage");
@@ -44,7 +47,7 @@ public class CoverageSection extends AbstractRunSettingsSection {
     tableHeader.setReorderingAllowed(false);
     tableHeader.setPreferredSize(new Dimension(
       tableHeader.getPreferredSize().width,
-      (int) (tableHeader.getPreferredSize().height * 1.1)
+      (int) (tableHeader.getPreferredSize().height * 1.2)
     ));
 
     JScrollPane scrollPane = new JScrollPane(
@@ -54,7 +57,7 @@ public class CoverageSection extends AbstractRunSettingsSection {
     );
     Dimension scrollDimension = new Dimension(
       preferredScrollableViewportSize.width,
-      table.getTableHeader().getPreferredSize().height + preferredScrollableViewportSize.height + 4
+      tableHeader.getPreferredSize().height + preferredScrollableViewportSize.height + 4
     );
     scrollPane.setMinimumSize(scrollDimension);
 
