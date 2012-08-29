@@ -79,6 +79,7 @@
     <!--<completion.contributor order="first" language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.codeInsight.FilteringCompletionContributor"/>-->
     <iconProvider implementation="com.google.jstestdriver.idea.assertFramework.JsTestDriverIconProvider" order="before nodejs"/>
     <codeInsight.lineMarkerProvider language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JstdAssertionFrameworkLineMarkerProvider"/>
+    <implicitUsageProvider implementation="com.google.jstestdriver.idea.assertFramework.jstd.JstdImplicitUsageProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">

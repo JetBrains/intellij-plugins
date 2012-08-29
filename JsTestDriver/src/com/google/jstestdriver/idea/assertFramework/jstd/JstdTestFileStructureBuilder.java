@@ -32,6 +32,10 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
       for (JstdTestStructure testStructure : testCaseStructure.getTestStructures()) {
         PsiElement anchor = testStructure.getTestMethodNameDeclaration();
         anchor.putUserData(JstdTestFileStructure.TEST_ELEMENT_NAME_KEY, testStructure.getName());
+        JSDefinitionExpression wholeLeftDefExpr = testStructure.getWholeLeftDefExpr();
+        if (wholeLeftDefExpr != null) {
+          wholeLeftDefExpr.putUserData(JstdTestFileStructure.PROTOTYPE_TEST_DEFINITION_KEY, true);
+        }
       }
       JSExpression testCaseMethodExpr = testCaseStructure.getEnclosingCallExpression().getMethodExpression();
       if (testCaseMethodExpr != null) {
@@ -110,7 +114,7 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
                   JSReferenceExpression testCaseRefExpr = ObjectUtils.tryCast(testCaseAndPrototypeRefExpr.getQualifier(), JSReferenceExpression.class);
                   if (testCaseRefExpr != null && testCaseRefExpr.getQualifier() == null) {
                     if (referenceName.equals(testCaseRefExpr.getReferencedName())) {
-                      addPrototypeTest(testCaseStructure, assignmentExpr.getROperand(), wholeLeftRefExpr.getReferenceNameElement());
+                      addPrototypeTest(testCaseStructure, assignmentExpr.getROperand(), wholeLeftDefExpr);
                     }
                   }
                 }
@@ -124,11 +128,17 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
 
   private static void addPrototypeTest(@NotNull JstdTestCaseStructure testCaseStructure,
                                        @Nullable JSExpression rightAssignmentOperand,
-                                       @Nullable PsiElement testMethodIdentifierPsiElement) {
-    LeafPsiElement leafPsiElement = ObjectUtils.tryCast(testMethodIdentifierPsiElement, LeafPsiElement.class);
-    if (leafPsiElement != null && leafPsiElement.getElementType() == JSTokenTypes.IDENTIFIER) {
+                                       @NotNull JSDefinitionExpression wholeLeftDefExpr) {
+    JSReferenceExpression wholeLeftRefExpr = ObjectUtils.tryCast(wholeLeftDefExpr.getExpression(), JSReferenceExpression.class);
+    LeafPsiElement testMethodLeafPsiElement = null;
+    if (wholeLeftRefExpr != null) {
+      testMethodLeafPsiElement = ObjectUtils.tryCast(wholeLeftRefExpr.getReferenceNameElement(), LeafPsiElement.class);
+    }
+    if (testMethodLeafPsiElement != null && testMethodLeafPsiElement.getElementType() == JSTokenTypes.IDENTIFIER) {
       JSFunctionExpression jsFunctionExpression = JsPsiUtils.extractFunctionExpression(rightAssignmentOperand);
-      JstdTestStructure jstdTestStructure = JstdTestStructure.newPrototypeBasedTestStructure(leafPsiElement, jsFunctionExpression);
+      JstdTestStructure jstdTestStructure = JstdTestStructure.newPrototypeBasedTestStructure(wholeLeftDefExpr,
+                                                                                             testMethodLeafPsiElement,
+                                                                                             jsFunctionExpression);
       testCaseStructure.addTestStructure(jstdTestStructure);
     }
   }

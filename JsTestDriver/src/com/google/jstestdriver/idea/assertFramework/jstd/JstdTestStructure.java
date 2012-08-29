@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSFunctionExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.openapi.util.TextRange;
@@ -15,15 +16,18 @@ public class JstdTestStructure {
 
   private final String myTestName;
   private final PsiElement myTestMethodNameDeclaration;
+  private final JSDefinitionExpression myWholeLeftDefExpr;
   private final JSFunctionExpression myTestMethodBody;
   private final JSProperty myJsProperty;
 
   private JstdTestStructure(@NotNull String testName,
                             @NotNull PsiElement testMethodNameDeclaration,
+                            @Nullable JSDefinitionExpression wholeLeftDefExpr,
                             @Nullable JSFunctionExpression testMethodBody,
                             @Nullable JSProperty jsProperty) {
     myTestName = testName;
     myTestMethodNameDeclaration = testMethodNameDeclaration;
+    myWholeLeftDefExpr = wholeLeftDefExpr;
     myTestMethodBody = testMethodBody;
     myJsProperty = jsProperty;
   }
@@ -41,6 +45,11 @@ public class JstdTestStructure {
   @NotNull
   public PsiElement getTestMethodNameDeclaration() {
     return myTestMethodNameDeclaration;
+  }
+
+  @Nullable
+  public JSDefinitionExpression getWholeLeftDefExpr() {
+    return myWholeLeftDefExpr;
   }
 
   @Nullable
@@ -70,17 +79,18 @@ public class JstdTestStructure {
     JSFunctionExpression testMethodBody = ObjectUtils.tryCast(jsProperty.getValue(), JSFunctionExpression.class);
     String testName = StringUtil.stripQuotesAroundValue(testMethodNameDeclaration.getText());
     if (checkTestName(testName)) {
-      return new JstdTestStructure(testName, testMethodNameDeclaration, testMethodBody, jsProperty);
+      return new JstdTestStructure(testName, testMethodNameDeclaration, null, testMethodBody, jsProperty);
     }
     return null;
   }
 
   @Nullable
-  public static JstdTestStructure newPrototypeBasedTestStructure(@NotNull LeafPsiElement testMethodDeclaration,
+  public static JstdTestStructure newPrototypeBasedTestStructure(@NotNull JSDefinitionExpression wholeLeftDefExpr,
+                                                                 @NotNull LeafPsiElement testMethodDeclaration,
                                                                  @Nullable JSFunctionExpression testMethodBody) {
     String testName = testMethodDeclaration.getText();
     if (checkTestName(testName)) {
-      return new JstdTestStructure(testName, testMethodDeclaration, testMethodBody, null);
+      return new JstdTestStructure(testName, testMethodDeclaration, wholeLeftDefExpr, testMethodBody, null);
     }
     return null;
   }

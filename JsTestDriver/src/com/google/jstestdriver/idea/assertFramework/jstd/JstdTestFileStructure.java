@@ -22,6 +22,7 @@ import java.util.Map;
 public class JstdTestFileStructure extends AbstractTestFileStructure {
 
   public static final Key<String> TEST_ELEMENT_NAME_KEY = Key.create("jstd-test-element-name-key");
+  public static final Key<Boolean> PROTOTYPE_TEST_DEFINITION_KEY = Key.create("jstd-prototype-test-definition-key");
 
   private final List<JstdTestCaseStructure> myTestCaseStructures;
   private final Map<String, JstdTestCaseStructure> myTestCaseStructureByNameMap;
