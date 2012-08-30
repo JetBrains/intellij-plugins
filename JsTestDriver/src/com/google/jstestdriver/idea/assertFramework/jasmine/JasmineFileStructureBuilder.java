@@ -12,8 +12,8 @@ import java.util.List;
 public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilder<JasmineFileStructure> {
 
   private static final JasmineFileStructureBuilder INSTANCE = new JasmineFileStructureBuilder();
-  private static final String DESCRIBE_NAME = "describe";
-  private static final String IT_NAME = "it";
+  public static final String DESCRIBE_NAME = "describe";
+  public static final String IT_NAME = "it";
 
   @NotNull
   @Override

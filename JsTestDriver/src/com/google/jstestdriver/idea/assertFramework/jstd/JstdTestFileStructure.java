@@ -5,27 +5,24 @@ import com.google.common.collect.Maps;
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
 import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.intellij.lang.javascript.psi.JSDefinitionExpression;
+import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import net.jcip.annotations.NotThreadSafe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @NotThreadSafe
 public class JstdTestFileStructure extends AbstractTestFileStructure {
 
-  public static final Key<String> TEST_ELEMENT_NAME_KEY = Key.create("jstd-test-element-name-key");
-  public static final Key<Boolean> PROTOTYPE_TEST_DEFINITION_KEY = Key.create("jstd-prototype-test-definition-key");
-
   private final List<JstdTestCaseStructure> myTestCaseStructures;
   private final Map<String, JstdTestCaseStructure> myTestCaseStructureByNameMap;
+  private Map<PsiElement, String> myNameByPsiElementMap;
+  private Map<PsiElement, Void> myPrototypeBasedTestElements;
 
   public JstdTestFileStructure(@NotNull JSFile jsFile) {
     super(jsFile);
@@ -58,6 +55,15 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
 
   public int getTestCaseCount() {
     return myTestCaseStructures.size();
+  }
+
+  @Nullable
+  public String getNameByPsiElement(@NotNull PsiElement element) {
+    return myNameByPsiElementMap.get(element);
+  }
+
+  public boolean isPrototypeTestElement(@NotNull PsiElement element) {
+    return myPrototypeBasedTestElements.containsKey(element);
   }
 
   @Override
@@ -130,4 +136,41 @@ public class JstdTestFileStructure extends AbstractTestFileStructure {
   public boolean contains(@NotNull String testCaseName, @Nullable String testMethodName) {
     return findPsiElement(testCaseName, testMethodName) != null;
   }
+
+  void postProcess() {
+    myNameByPsiElementMap = Collections.emptyMap();
+    myPrototypeBasedTestElements = Collections.emptyMap();
+    if (myTestCaseStructures.isEmpty()) {
+      return;
+    }
+    int totalCount = 0;
+    int prototypeBasedTestCount = 0;
+    for (JstdTestCaseStructure testCaseStructure : myTestCaseStructures) {
+      totalCount += testCaseStructure.getTestCount() + 1;
+      for (JstdTestStructure testStructure : testCaseStructure.getTestStructures()) {
+        if (testStructure.getWholeLeftDefExpr() != null) {
+          prototypeBasedTestCount++;
+        }
+      }
+    }
+    myNameByPsiElementMap = new IdentityHashMap<PsiElement, String>(totalCount);
+    if (prototypeBasedTestCount > 0) {
+      myPrototypeBasedTestElements = new IdentityHashMap<PsiElement, Void>(prototypeBasedTestCount);
+    }
+    for (JstdTestCaseStructure testCaseStructure : myTestCaseStructures) {
+      JSExpression testCaseMethodExpr = testCaseStructure.getEnclosingCallExpression().getMethodExpression();
+      if (testCaseMethodExpr != null) {
+        myNameByPsiElementMap.put(testCaseMethodExpr, testCaseStructure.getName());
+      }
+      for (JstdTestStructure testStructure : testCaseStructure.getTestStructures()) {
+        PsiElement anchor = testStructure.getTestMethodNameDeclaration();
+        myNameByPsiElementMap.put(anchor, testStructure.getName());
+        JSDefinitionExpression wholeLeftDefExpr = testStructure.getWholeLeftDefExpr();
+        if (wholeLeftDefExpr != null) {
+          myPrototypeBasedTestElements.put(wholeLeftDefExpr, null);
+        }
+      }
+    }
+  }
+
 }

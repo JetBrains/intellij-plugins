@@ -1,22 +1,18 @@
 package com.google.jstestdriver.idea.assertFramework.library;
 
 import com.intellij.lang.javascript.library.JSLibraryManager;
-import com.intellij.lang.javascript.library.JSLibraryMappings;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
-import com.intellij.webcore.libraries.ScriptingLibraryMappings;
+import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,27 +23,51 @@ public class JsLibraryHelper {
 
   private static final Logger LOG = Logger.getInstance(JsLibraryHelper.class);
 
-  private final Project myProject;
-  private final JSLibraryManager myScriptingLibraryManager;
+  private final List<VirtualFile> myLibraryFiles;
+  private final JSLibraryManager myJsLibraryManager;
+  private final String myAvailableLibraryName;
+  private final ScriptingLibraryModel myReusableJsLibraryModel;
 
-  public JsLibraryHelper(@NotNull Project project) {
-    myProject = project;
-    myScriptingLibraryManager = ServiceManager.getService(project, JSLibraryManager.class);
+  public JsLibraryHelper(@NotNull Project project,
+                         @NotNull String desiredLibraryName,
+                         @NotNull List<VirtualFile> libraryFiles,
+                         @NotNull ScriptingFrameworkDescriptor frameworkDescriptor) {
+    myJsLibraryManager = ServiceManager.getService(project, JSLibraryManager.class);
+    myAvailableLibraryName = findAvailableJsLibraryName(desiredLibraryName);
+    myLibraryFiles = libraryFiles;
+    myReusableJsLibraryModel = findReusableJavaScriptLibraryModel(myJsLibraryManager,
+                                                                  desiredLibraryName,
+                                                                  libraryFiles,
+                                                                  frameworkDescriptor);
   }
 
   @Nullable
-  public ScriptingLibraryModel lookupLibraryByContent(@NotNull Collection<VirtualFile> expectedSourceFiles) {
-    ScriptingLibraryModel[] libraryModels = myScriptingLibraryManager.getAllLibraries();
+  private static ScriptingLibraryModel findReusableJavaScriptLibraryModel(@NotNull JSLibraryManager jsLibraryManager,
+                                                                          @NotNull String desiredLibraryName,
+                                                                          @NotNull List<VirtualFile> expectedSourceFiles,
+                                                                          @NotNull ScriptingFrameworkDescriptor frameworkDescriptor) {
+    ScriptingLibraryModel[] libraryModels = jsLibraryManager.getAllLibraries();
     for (ScriptingLibraryModel libraryModel : libraryModels) {
-      if (scriptingLibraryModelConsistsOf(libraryModel, expectedSourceFiles)) {
-        return libraryModel;
+      if (libraryModel != null) {
+        ScriptingFrameworkDescriptor libraryFrameworkDescriptor = libraryModel.getFrameworkDescriptor();
+        if (libraryFrameworkDescriptor != null) {
+          String libraryFrameworkName = libraryFrameworkDescriptor.getFrameworkName();
+          if (libraryFrameworkName != null && libraryFrameworkName.equals(frameworkDescriptor.getFrameworkName())) {
+            return libraryModel;
+          }
+        }
+        else if (StringUtil.startsWith(libraryModel.getName(), desiredLibraryName)) {
+          if (scriptingLibraryModelConsistsOf(libraryModel, expectedSourceFiles)) {
+            return libraryModel;
+          }
+        }
       }
     }
     return null;
   }
 
-  public static boolean scriptingLibraryModelConsistsOf(@NotNull ScriptingLibraryModel libraryModel,
-                                                        @NotNull Collection<VirtualFile> expectedSourceFiles) {
+  private static boolean scriptingLibraryModelConsistsOf(@NotNull ScriptingLibraryModel libraryModel,
+                                                         @NotNull Collection<VirtualFile> expectedSourceFiles) {
     if (!isEmpty(libraryModel.getDocUrls()) || !isEmpty(libraryModel.getCompactFiles())) {
       return false;
     }
@@ -59,18 +79,8 @@ public class JsLibraryHelper {
       boolean found = false;
       for (VirtualFile expected : expectedSourceFiles) {
         if (sourceFile.getName().equals(expected.getName())) {
-          if (sourceFile.getLength() == expected.getLength()) {
-            try {
-              byte[] content1 = sourceFile.contentsToByteArray();
-              byte[] content2 = expected.contentsToByteArray();
-              found = Arrays.equals(content1, content2);
-              if (found) {
-                break;
-              }
-            }
-            catch (IOException ignored) {
-            }
-          }
+          found = true;
+          break;
         }
       }
       if (!found) {
@@ -80,89 +90,59 @@ public class JsLibraryHelper {
     return true;
   }
 
+  public boolean hasReusableLibraryModel() {
+    return myReusableJsLibraryModel != null;
+  }
+
   private static <E> boolean isEmpty(@Nullable Collection<E> collection) {
     return collection == null || collection.isEmpty();
   }
 
   @NotNull
   public String findAvailableJsLibraryName(@NotNull String initialLibraryName) {
-    myScriptingLibraryManager.reset();
+    myJsLibraryManager.reset();
 
     String libraryName = initialLibraryName;
-    boolean available = getScriptingLibraryModel(libraryName) == null;
+    boolean available = myJsLibraryManager.getLibraryByName(libraryName) == null;
     int id = 1;
     while (!available) {
       libraryName = initialLibraryName + " #" + id;
-      available = getScriptingLibraryModel(libraryName) == null;
+      available = myJsLibraryManager.getLibraryByName(libraryName) == null;
       id++;
     }
     return libraryName;
   }
 
-  @Nullable
-  public ScriptingLibraryModel getScriptingLibraryModel(@NotNull String libraryName) {
-    return myScriptingLibraryManager.getLibraryByName(libraryName);
+  public boolean doesJavaScriptLibraryModelExist(@NotNull String libraryName) {
+    return myJsLibraryManager.getLibraryByName(libraryName) != null;
   }
 
-  @Nullable
-  public ScriptingLibraryModel createJsLibrary(final String libraryName, final List<VirtualFile> sourceFiles) {
-    Computable<ScriptingLibraryModel> task = new Computable<ScriptingLibraryModel>() {
-      @Override
-      @Nullable
-      public ScriptingLibraryModel compute() {
-        try {
-          ScriptingLibraryModel libraryModel = getScriptingLibraryModel(libraryName);
-          if (libraryModel != null) {
-            if (scriptingLibraryModelConsistsOf(libraryModel, sourceFiles)) {
-              LOG.info("Library '" + libraryModel.getName() + "' will be reused, new library creation isn't needed.");
-              return libraryModel;
-            } else {
-              myScriptingLibraryManager.removeLibrary(libraryModel);
-              myScriptingLibraryManager.commitChanges();
-              LOG.info("Library '" + libraryModel.getName() + "' has been removed (it's impossible to reuse).");
-            }
-          }
-          libraryModel = myScriptingLibraryManager.createLibrary(
-            libraryName,
-            VfsUtilCore.toVirtualFileArray(sourceFiles),
-            VirtualFile.EMPTY_ARRAY,
-            ArrayUtil.EMPTY_STRING_ARRAY,
-            ScriptingLibraryModel.LibraryLevel.GLOBAL,
-            false
-          );
-          LOG.info("Library '" + libraryModel.getName() + "' has been successfully created.");
-          return libraryModel;
-        } catch (Exception ex) {
-          LOG.error("Can not create JavaScript Library '" + libraryName + "'", ex);
-          return null;
-        }
-      }
-    };
-    return ApplicationManager.getApplication().runWriteAction(task);
+  @NotNull
+  public String getJsLibraryName() {
+    if (myReusableJsLibraryModel != null) {
+      return myReusableJsLibraryModel.getName();
+    }
+    return myAvailableLibraryName;
   }
 
-  public boolean associateLibraryWithProject(@NotNull final ScriptingLibraryModel libraryModel) {
-    Computable<Boolean> task = new Computable<Boolean>() {
-      @Override
-      @NotNull
-      public Boolean compute() {
-        try {
-          ScriptingLibraryMappings libraryMappings = ServiceManager.getService(myProject, JSLibraryMappings.class);
-          boolean isAssociated = libraryMappings.isAssociatedWithProject(libraryModel.getName());
-          if (isAssociated) {
-            LOG.info("Library '" + libraryModel.getName() + "' is already associated with the project");
-            return true;
-          }
-          libraryMappings.associateWithProject(libraryModel.getName());
-          LOG.info("Library '" + libraryModel.getName() + "' has been successfully associated with the project");
-          myScriptingLibraryManager.commitChanges();
-          return true;
-        } catch (Exception ex) {
-          LOG.error(ex);
-          return false;
-        }
-      }
-    };
-    return ApplicationManager.getApplication().runWriteAction(task);
+  @NotNull
+  public ScriptingLibraryModel getOrCreateJsLibraryModel(@NotNull String libraryName) {
+    if (myReusableJsLibraryModel != null) {
+      return myReusableJsLibraryModel;
+    }
+    ScriptingLibraryModel libraryModel = myJsLibraryManager.createLibrary(
+      libraryName,
+      VfsUtilCore.toVirtualFileArray(myLibraryFiles),
+      VirtualFile.EMPTY_ARRAY,
+      ArrayUtil.EMPTY_STRING_ARRAY,
+      ScriptingLibraryModel.LibraryLevel.GLOBAL,
+      false
+    );
+    LOG.info("JavaScript library '" + libraryModel.getName() + "' has been successfully created.");
+    return libraryModel;
+  }
+
+  public void commit() {
+    myJsLibraryManager.commitChanges();
   }
 }
