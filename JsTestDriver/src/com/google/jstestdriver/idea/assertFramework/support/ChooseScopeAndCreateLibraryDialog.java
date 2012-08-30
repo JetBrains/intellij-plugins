@@ -1,10 +1,7 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.idea.assertFramework.library.JsLibraryHelper;
-import com.google.jstestdriver.idea.assertFramework.library.JstdLibraryUtil;
-import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
@@ -16,11 +13,11 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.IdeBorderFactory;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.UIUtil;
+import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import com.intellij.webcore.libraries.ScriptingLibraryMappings;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.intellij.webcore.libraries.ui.ModuleScopeSelectorComponent;
@@ -30,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,35 +38,48 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
   private static final Logger LOG = Logger.getInstance(ChooseScopeAndCreateLibraryDialog.class);
 
   private final Project myProject;
-  private final String myLibraryName;
-  private final ImmutableList<VirtualFile> myLibraryFiles;
   private final ModuleScopeSelectorComponent myModuleSelector;
   private final JTextField myLibraryNameTextField;
   private final JPanel myComponent;
+  private final JsLibraryHelper myLibraryHelper;
 
   public ChooseScopeAndCreateLibraryDialog(@NotNull Project project,
                                            @NotNull String desiredLibraryName,
                                            @NotNull List<VirtualFile> libraryFiles,
+                                           @NotNull ScriptingFrameworkDescriptor frameworkDescriptor,
                                            @Nullable VirtualFile requestor,
                                            boolean warnAboutOutsideCode) {
     super(project);
     myProject = project;
-    JsLibraryHelper jsLibraryHelper = new JsLibraryHelper(myProject);
-    myLibraryName = jsLibraryHelper.findAvailableJsLibraryName(desiredLibraryName);
-    myLibraryFiles = ImmutableList.copyOf(libraryFiles);
+    myLibraryHelper = new JsLibraryHelper(myProject, desiredLibraryName, libraryFiles, frameworkDescriptor);
+
     setTitle("Code Assistance For " + desiredLibraryName);
 
     myModuleSelector = new ModuleScopeSelectorComponent(project, requestor);
-    myLibraryNameTextField = new JTextField(myLibraryName);
-
-    myComponent = SwingHelper.newLeftAlignedVerticalPanel(
-      createDescription(warnAboutOutsideCode),
-      Box.createVerticalStrut(10),
+    myLibraryNameTextField = createTextField(myLibraryHelper);
+    List<Component> components = Lists.newArrayList();
+    if (!myLibraryHelper.hasReusableLibraryModel()) {
+      components.addAll(Arrays.asList(
+        createDescription(warnAboutOutsideCode),
+        Box.createVerticalStrut(10)
+      ));
+    }
+    components.addAll(Arrays.asList(
       createLibraryNamePanel(),
       Box.createVerticalStrut(5),
       createCompletionPanel()
-    );
+    ));
+
+    myComponent = SwingHelper.newLeftAlignedVerticalPanel(components);
     super.init();
+  }
+
+  private static JTextField createTextField(JsLibraryHelper helper) {
+    JTextField textField = new JTextField(helper.getJsLibraryName());
+    textField.setEnabled(!helper.hasReusableLibraryModel());
+    Dimension prefSize = textField.getPreferredSize();
+    textField.setPreferredSize(new Dimension((int) (prefSize.width * 1.2), prefSize.height));
+    return textField;
   }
 
   private static JComponent createDescription(boolean warnAboutOutsideCode) {
@@ -122,9 +133,15 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
 
   @Override
   public ValidationInfo doValidate() {
-    JsLibraryHelper jsLibraryHelper = new JsLibraryHelper(myProject);
-    ScriptingLibraryModel libraryModel = jsLibraryHelper.getScriptingLibraryModel(myLibraryNameTextField.getText());
-    if (libraryModel != null) {
+    if (myLibraryHelper.hasReusableLibraryModel()) {
+      return null;
+    }
+    String text=  myLibraryNameTextField.getText();
+    if (StringUtil.isEmpty(text)) {
+      return new ValidationInfo("Library name is empty", myLibraryNameTextField);
+    }
+    boolean exists = myLibraryHelper.doesJavaScriptLibraryModelExist(myLibraryNameTextField.getText());
+    if (exists) {
       return new ValidationInfo("Library with such name already exists", myLibraryNameTextField);
     }
     return null;
@@ -140,7 +157,7 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
       }
     });
     if (errorMessage != null) {
-      Messages.showErrorDialog(errorMessage.getDescription(), "Adding " + myLibraryName);
+      Messages.showErrorDialog(errorMessage.getDescription(), "Adding " + myLibraryHelper.getJsLibraryName());
       LOG.warn(errorMessage.getDescription(), errorMessage.getThrowable());
     }
     super.doOKAction();
@@ -149,21 +166,17 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
   @Nullable
   private ErrorMessage createLibraryAndAssociate() {
     String libraryName = myLibraryNameTextField.getText();
-    JSLibraryManager jsLibraryManager = ServiceManager.getService(myProject, JSLibraryManager.class);
-    ScriptingLibraryModel libraryModel = jsLibraryManager.createLibrary(
-      JstdLibraryUtil.LIBRARY_NAME,
-      VfsUtilCore.toVirtualFileArray(myLibraryFiles),
-      VirtualFile.EMPTY_ARRAY,
-      ArrayUtil.EMPTY_STRING_ARRAY,
-      ScriptingLibraryModel.LibraryLevel.GLOBAL,
-      false
-    );
-
+    ScriptingLibraryModel libraryModel = myLibraryHelper.getOrCreateJsLibraryModel(libraryName);
     try {
       ScriptingLibraryMappings libraryMappings = ServiceManager.getService(myProject, JSLibraryMappings.class);
       if (myModuleSelector.isProjectAssociationAllowed()) {
-        libraryMappings.associateWithProject(libraryModel.getName());
-        LOG.info("Library '" + libraryModel.getName() + "' has been successfully associated with the project");
+        if (myModuleSelector.isProjectAssociationRequested()) {
+          libraryMappings.associateWithProject(libraryModel.getName());
+          LOG.info("Library '" + libraryModel.getName() + "' has been successfully associated with the project");
+        }
+        else {
+          libraryMappings.disassociateWithProject(libraryModel.getName());
+        }
       }
       else {
         for (Module module : myModuleSelector.getSelectedModules()) {
@@ -175,7 +188,7 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
           }
         }
       }
-      jsLibraryManager.commitChanges();
+      myLibraryHelper.commit();
       return null;
     } catch (Exception ex) {
       return new ErrorMessage("Unable to associate '" + libraryName + "' JavaScript library", ex);

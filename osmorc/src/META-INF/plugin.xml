@@ -226,7 +226,7 @@
     <actions>
         <group id="osmorc.viewGeneratedManifests" class="org.osmorc.make.ViewGeneratedManifestGroup" popup="true"
                text="View Generated Manifest" description="View the manifest of a recently generated OSGi bundle"
-                icon="/org/osmorc/i18n/Osmorc-Icon_16x16.png">
+                icon="OsmorcIdeaIcons.Osmorc_Icon_16x16">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </group>
     </actions>

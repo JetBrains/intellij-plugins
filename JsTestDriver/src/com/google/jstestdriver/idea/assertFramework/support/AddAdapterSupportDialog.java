@@ -24,6 +24,7 @@ import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ArrayUtil;
+import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import com.intellij.webcore.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -264,6 +265,7 @@ public class AddAdapterSupportDialog extends DialogWrapper {
         myProject,
         getAssertFrameworkAdapterName(),
         extractedAdapterSourceFiles,
+        new ScriptingFrameworkDescriptor(getAssertFrameworkAdapterName(), null),
         myFileRequestor,
         true
       );

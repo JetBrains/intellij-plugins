@@ -22,6 +22,7 @@ public abstract class AbstractMethodBasedInspection extends JSInspection {
 
   protected abstract String getProblemDescription();
 
+  @NotNull
   @Override
   protected final JSElementVisitor createVisitor(final ProblemsHolder holder, LocalInspectionToolSession session) {
     return new JSElementVisitor() {

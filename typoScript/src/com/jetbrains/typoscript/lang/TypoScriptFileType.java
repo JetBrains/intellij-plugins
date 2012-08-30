@@ -16,14 +16,14 @@
 package com.jetbrains.typoscript.lang;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.util.IconLoader;
+import icons.TypoScriptIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 
 public class TypoScriptFileType extends LanguageFileType {
-  private static final Icon ICON = IconLoader.getIcon("/icons/typo3.png");
+  private static final Icon ICON = TypoScriptIcons.Typo3;
 
   public static final TypoScriptFileType INSTANCE = new TypoScriptFileType();
   public static final String DEFAULT_EXTENSION = "ts";

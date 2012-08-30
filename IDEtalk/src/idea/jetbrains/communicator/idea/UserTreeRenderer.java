@@ -18,6 +18,7 @@ package jetbrains.communicator.idea;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.SimpleTextAttributes;
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.util.TreeUtils;
 import jetbrains.communicator.util.UIUtil;
@@ -69,7 +70,7 @@ public class UserTreeRenderer extends ColoredTreeCellRenderer {
 
     if (TreeUtils.getUserObject(value) instanceof String) { // group
       if (leaf) {
-        setIcon(IconLoader.getIcon("/nodes/group_close.png"));
+        setIcon(IdetalkCoreIcons.Nodes.Group_close);
       }
       else {
         setIcon(IconLoader.getIcon(expanded ? "/nodes/group_open.png" : "/nodes/group_close.png"));

@@ -26,8 +26,8 @@ public class JstdImplicitUsageProvider implements ImplicitUsageProvider {
       return false;
     }
     JstdTestFileStructureBuilder builder = JstdTestFileStructureBuilder.getInstance();
-    builder.fetchCachedTestFileStructure(jsFile);
-    return Boolean.TRUE.equals(element.getUserData(JstdTestFileStructure.PROTOTYPE_TEST_DEFINITION_KEY));
+    JstdTestFileStructure fileStructure = builder.fetchCachedTestFileStructure(jsFile);
+    return fileStructure.isPrototypeTestElement(element);
   }
 
   @Override

@@ -28,31 +28,34 @@ public class QUnitAdapterSupportInspection extends AbstractAddAdapterSupportInsp
   }
 
   @Override
-  protected boolean isSuitableMethod(@NotNull String methodName, @NotNull JSExpression[] methodArguments) {
-    if (methodArguments.length == 0) {
+  protected boolean isSuitableMethod(@NotNull String methodName, @NotNull JSExpression[] arguments) {
+    if (arguments.length == 0) {
       return false;
     }
-    if (QUnitFileStructureBuilder.MODULE_NAME.equals(methodName) && JsPsiUtils.isStringElement(methodArguments[0])) {
-      if (methodArguments.length == 1) {
-        return true;
+    if (QUnitFileStructureBuilder.MODULE_NAME.equals(methodName)) {
+      if (arguments.length == 1) {
+        return JsPsiUtils.isStringElement(arguments[0]);
       }
-      if (methodArguments.length == 2 && JsPsiUtils.isObjectElement(methodArguments[1])) {
-        return true;
+      else if (arguments.length == 2) {
+        return isStringAndFunction(arguments);
       }
     }
-    if ((QUnitFileStructureBuilder.TEST_NAME.equals(methodName) || QUnitFileStructureBuilder.ASYNC_TEST_NAME.equals(methodName))
-        && JsPsiUtils.isStringElement(methodArguments[0])) {
-      if (methodArguments.length == 1) {
-        return true;
+    else if (QUnitFileStructureBuilder.TEST_NAME.equals(methodName) ||
+             QUnitFileStructureBuilder.ASYNC_TEST_NAME.equals(methodName)) {
+      if (arguments.length == 2) {
+        return isStringAndFunction(arguments);
       }
-      if (methodArguments.length == 2 && JsPsiUtils.isFunctionExpressionElement(methodArguments[1])) {
-        return true;
-      }
-      if (methodArguments.length == 3 && JsPsiUtils.isNumberElement(methodArguments[1]) && JsPsiUtils.isFunctionExpressionElement(methodArguments[2])) {
-        return true;
+      else if (arguments.length == 3) {
+        return JsPsiUtils.isStringElement(arguments[0]) &&
+               JsPsiUtils.isNumberElement(arguments[1]) &&
+               JsPsiUtils.isFunctionExpressionElement(arguments[2]);
       }
     }
     return false;
+  }
+
+  private static boolean isStringAndFunction(@NotNull JSExpression[] args) {
+    return JsPsiUtils.isStringElement(args[0]) && JsPsiUtils.isFunctionExpressionElement(args[1]);
   }
 
 }

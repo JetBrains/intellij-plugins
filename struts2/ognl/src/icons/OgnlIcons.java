@@ -9,5 +9,9 @@ import javax.swing.*;
  * Don't repeat mistakes of others ;-)
  */
 public class OgnlIcons {
-  public static final Icon Action_small = IconLoader.getIcon("/icons/action_small.png"); // 10x10
+  private static Icon load(String path) {
+    return IconLoader.getIcon(path, OgnlIcons.class);
+  }
+
+  public static final Icon Action_small = load("/icons/action_small.png"); // 10x10
 }

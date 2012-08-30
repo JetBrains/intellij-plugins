@@ -14,7 +14,7 @@
  * the License.
 -->
 <idea-plugin version="2" xmlns="http://plugins.intellij.net/plugin.dtd"
-             url="http://confluence.jetbrains.net/display/WI/JsTestDriver+IntelliJ+plugin" xmlns:xi="http://www.w3.org/2001/XInclude">
+             url="http://confluence.jetbrains.net/display/WI/JsTestDriver+IntelliJ+plugin">
   <name>JSTestDriver Plugin</name>
   <description>Execute JavaScript unit tests using JsTestDriver</description>
   <version>999.999</version>
@@ -52,7 +52,7 @@
     <toolWindow id="JsTestDriver Server"
                 anchor="bottom"
                 secondary="true"
-                icon="/com/google/jstestdriver/idea/icons/toolWindowTestDriver.png"
+                icon="JsTestDriverIcons.ToolWindowTestDriver"
                 factoryClass="com.google.jstestdriver.idea.server.ui.JstdToolWindowManager$Factory"
                 canCloseContents="false"
                 conditionClass="com.google.jstestdriver.idea.server.ui.JstdToolWindowManager$ToolWindowCondition"

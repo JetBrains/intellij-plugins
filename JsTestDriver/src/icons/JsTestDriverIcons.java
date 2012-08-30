@@ -9,18 +9,22 @@ import javax.swing.*;
  * Don't repeat mistakes of others ;-)
  */
 public class JsTestDriverIcons {
+  private static Icon load(String path) {
+    return IconLoader.getIcon(path, JsTestDriverIcons.class);
+  }
+
   
   public static class Browsers {
-    public static final Icon Chrome = IconLoader.getIcon("/com/google/jstestdriver/idea/icons/browsers/Chrome.png"); // 32x32
-    public static final Icon Firefox = IconLoader.getIcon("/com/google/jstestdriver/idea/icons/browsers/Firefox.png"); // 32x32
-    public static final Icon IE = IconLoader.getIcon("/com/google/jstestdriver/idea/icons/browsers/IE.png"); // 32x32
-    public static final Icon Opera = IconLoader.getIcon("/com/google/jstestdriver/idea/icons/browsers/Opera.png"); // 32x32
-    public static final Icon Safari = IconLoader.getIcon("/com/google/jstestdriver/idea/icons/browsers/Safari.png"); // 32x32
+    public static final Icon Chrome = load("/com/google/jstestdriver/idea/icons/browsers/Chrome.png"); // 32x32
+    public static final Icon Firefox = load("/com/google/jstestdriver/idea/icons/browsers/Firefox.png"); // 32x32
+    public static final Icon IE = load("/com/google/jstestdriver/idea/icons/browsers/IE.png"); // 32x32
+    public static final Icon Opera = load("/com/google/jstestdriver/idea/icons/browsers/Opera.png"); // 32x32
+    public static final Icon Safari = load("/com/google/jstestdriver/idea/icons/browsers/Safari.png"); // 32x32
 
   }
-  public static final Icon JsTestDriver = IconLoader.getIcon("/com/google/jstestdriver/idea/icons/JsTestDriver.png"); // 16x16
-  public static final Icon JsTestFile = IconLoader.getIcon("/com/google/jstestdriver/idea/icons/JsTestFile.png"); // 16x16
-  public static final Icon StartLocalServer = IconLoader.getIcon("/com/google/jstestdriver/idea/icons/startLocalServer.png"); // 16x16
-  public static final Icon StopLocalServer = IconLoader.getIcon("/com/google/jstestdriver/idea/icons/stopLocalServer.png"); // 16x16
-  public static final Icon ToolWindowTestDriver = IconLoader.getIcon("/com/google/jstestdriver/idea/icons/toolWindowTestDriver.png"); // 13x13
+  public static final Icon JsTestDriver = load("/com/google/jstestdriver/idea/icons/JsTestDriver.png"); // 16x16
+  public static final Icon JsTestFile = load("/com/google/jstestdriver/idea/icons/JsTestFile.png"); // 16x16
+  public static final Icon StartLocalServer = load("/com/google/jstestdriver/idea/icons/startLocalServer.png"); // 16x16
+  public static final Icon StopLocalServer = load("/com/google/jstestdriver/idea/icons/stopLocalServer.png"); // 16x16
+  public static final Icon ToolWindowTestDriver = load("/com/google/jstestdriver/idea/icons/toolWindowTestDriver.png"); // 13x13
 }

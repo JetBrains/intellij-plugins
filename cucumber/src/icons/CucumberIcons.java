@@ -9,7 +9,11 @@ import javax.swing.*;
  * Don't repeat mistakes of others ;-)
  */
 public class CucumberIcons {
-  public static final Icon Cucumber = IconLoader.getIcon("/org/jetbrains/plugins/cucumber/icons/cucumber.png"); // 16x16
-  public static final Icon Steps_group_closed = IconLoader.getIcon("/org/jetbrains/plugins/cucumber/icons/steps_group_closed.png"); // 16x16
-  public static final Icon Steps_group_opened = IconLoader.getIcon("/org/jetbrains/plugins/cucumber/icons/steps_group_opened.png"); // 16x16
+  private static Icon load(String path) {
+    return IconLoader.getIcon(path, CucumberIcons.class);
+  }
+
+  public static final Icon Cucumber = load("/org/jetbrains/plugins/cucumber/icons/cucumber.png"); // 16x16
+  public static final Icon Steps_group_closed = load("/org/jetbrains/plugins/cucumber/icons/steps_group_closed.png"); // 16x16
+  public static final Icon Steps_group_opened = load("/org/jetbrains/plugins/cucumber/icons/steps_group_opened.png"); // 16x16
 }

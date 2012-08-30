@@ -9,6 +9,10 @@ import javax.swing.*;
  * Don't repeat mistakes of others ;-)
  */
 public class OsmorcIdeaIcons {
-  public static final Icon Osmorc_Icon_16x16 = IconLoader.getIcon("/org/osmorc/i18n/Osmorc-Icon_16x16.png"); // 16x16
-  public static final Icon Osmorc_Icon_32x32 = IconLoader.getIcon("/org/osmorc/i18n/Osmorc-Icon_32x32.png"); // 32x32
+  private static Icon load(String path) {
+    return IconLoader.getIcon(path, OsmorcIdeaIcons.class);
+  }
+
+  public static final Icon Osmorc_Icon_16x16 = load("/org/osmorc/i18n/Osmorc-Icon_16x16.png"); // 16x16
+  public static final Icon Osmorc_Icon_32x32 = load("/org/osmorc/i18n/Osmorc-Icon_32x32.png"); // 32x32
 }
