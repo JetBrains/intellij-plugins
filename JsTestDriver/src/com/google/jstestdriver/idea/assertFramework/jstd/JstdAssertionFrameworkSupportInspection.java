@@ -15,12 +15,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
@@ -63,12 +63,9 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
     if (JsPsiUtils.isResolvedToFunction(methodExpression)) {
       return true;
     }
-    PsiFile psiFile = methodExpression.getContainingFile();
-    if (psiFile != null) {
-      VirtualFile virtualFile = psiFile.getVirtualFile();
-      if (virtualFile != null) {
-        return JstdLibraryUtil.isFileInJstdLibScope(methodExpression.getProject(), virtualFile);
-      }
+    VirtualFile virtualFile = PsiUtilCore.getVirtualFile(methodExpression);
+    if (virtualFile != null) {
+      return JstdLibraryUtil.isFileInJstdLibScope(methodExpression.getProject(), virtualFile);
     }
     return true;
   }
@@ -98,11 +95,12 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
         @Override
         public void run() {
           List<VirtualFile> sources = getLibrarySourceFiles();
-          final VirtualFile fileRequestor = findVirtualFile(file);
+          final VirtualFile fileRequestor = PsiUtilCore.getVirtualFile(file);
           DialogWrapper dialog = new ChooseScopeAndCreateLibraryDialog(
             project,
             JstdLibraryUtil.LIBRARY_NAME,
             sources,
+            new ScriptingFrameworkDescriptor(JstdLibraryUtil.LIBRARY_NAME, "1.3.4.b"),
             fileRequestor,
             false
           );
@@ -130,17 +128,6 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
         JstdDefaultAssertionFrameworkSrcMarker.class,
         new String[]{"Asserts.js", "TestCase.js"}
       );
-    }
-
-    @Nullable
-    private static VirtualFile findVirtualFile(@Nullable PsiElement element) {
-      if (element != null) {
-        PsiFile file = element.getContainingFile();
-        if (file != null) {
-          return file.getVirtualFile();
-        }
-      }
-      return null;
     }
 
   }

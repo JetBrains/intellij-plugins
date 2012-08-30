@@ -4,7 +4,6 @@ import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructureBui
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
@@ -28,20 +27,7 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
     for (JSStatement statement : statements) {
       fillJsTestFileStructure(jsTestFileStructure, statement);
     }
-    for (JstdTestCaseStructure testCaseStructure : jsTestFileStructure.getTestCaseStructures()) {
-      for (JstdTestStructure testStructure : testCaseStructure.getTestStructures()) {
-        PsiElement anchor = testStructure.getTestMethodNameDeclaration();
-        anchor.putUserData(JstdTestFileStructure.TEST_ELEMENT_NAME_KEY, testStructure.getName());
-        JSDefinitionExpression wholeLeftDefExpr = testStructure.getWholeLeftDefExpr();
-        if (wholeLeftDefExpr != null) {
-          wholeLeftDefExpr.putUserData(JstdTestFileStructure.PROTOTYPE_TEST_DEFINITION_KEY, true);
-        }
-      }
-      JSExpression testCaseMethodExpr = testCaseStructure.getEnclosingCallExpression().getMethodExpression();
-      if (testCaseMethodExpr != null) {
-        testCaseMethodExpr.putUserData(JstdTestFileStructure.TEST_ELEMENT_NAME_KEY, testCaseStructure.getName());
-      }
-    }
+    jsTestFileStructure.postProcess();
     return jsTestFileStructure;
   }
 

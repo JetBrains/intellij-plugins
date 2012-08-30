@@ -28,20 +28,20 @@ public class JasmineAdapterSupportInspection extends AbstractAddAdapterSupportIn
   }
 
   @Override
-  protected boolean isSuitableMethod(@NotNull String methodName, @NotNull JSExpression[] methodArguments) {
-    if (methodArguments.length == 0) {
+  protected boolean isSuitableMethod(@NotNull String methodName, @NotNull JSExpression[] arguments) {
+    if (arguments.length != 2) {
       return false;
     }
-    if ("describe".equals(methodName) && JsPsiUtils.isStringElement(methodArguments[0])) {
-      if (methodArguments.length == 2 && JsPsiUtils.isFunctionExpressionElement(methodArguments[1])) {
-        return true;
-      }
+    if (JasmineFileStructureBuilder.DESCRIBE_NAME.equals(methodName)) {
+      return isStringAndFunction(arguments);
     }
-    if ("it".equals(methodName) && JsPsiUtils.isStringElement(methodArguments[0])) {
-      if (methodArguments.length == 2 && JsPsiUtils.isFunctionExpressionElement(methodArguments[1])) {
-        return true;
-      }
+    else if (JasmineFileStructureBuilder.IT_NAME.equals(methodName)) {
+      return isStringAndFunction(arguments);
     }
     return false;
+  }
+
+  private static boolean isStringAndFunction(@NotNull JSExpression[] args) {
+    return JsPsiUtils.isStringElement(args[0]) && JsPsiUtils.isFunctionExpressionElement(args[1]);
   }
 }

@@ -74,8 +74,8 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
     if (!inScope) {
       return null;
     }
-    JstdTestFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
-    String testElementName = element.getUserData(JstdTestFileStructure.TEST_ELEMENT_NAME_KEY);
+    JstdTestFileStructure fileStructure = JstdTestFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
+    String testElementName = fileStructure.getNameByPsiElement(element);
     if (testElementName == null) {
       return null;
     }
@@ -85,8 +85,8 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
   @Nullable
   private static LineMarkerInfo getQUnitLineMarkerInfo(@NotNull JSFile jsFile,
                                                        @NotNull PsiElement element) {
-    QUnitFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
-    String testElementName = element.getUserData(QUnitFileStructure.TEST_ELEMENT_NAME_KEY);
+    QUnitFileStructure qunitFileStructure = QUnitFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
+    String testElementName = qunitFileStructure.getNameByPsiElement(element);
     if (testElementName == null) {
       return null;
     }
