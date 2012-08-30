@@ -9,13 +9,17 @@ import javax.swing.*;
  * Don't repeat mistakes of others ;-)
  */
 public class FlexProfilerIcons {
-  public static final Icon CalleeArrow = IconLoader.getIcon("/icons/calleeArrow.png"); // 16x16
-  public static final Icon CalleeLeafArrow = IconLoader.getIcon("/icons/calleeLeafArrow.png"); // 16x16
-  public static final Icon CallerArrow = IconLoader.getIcon("/icons/callerArrow.png"); // 16x16
-  public static final Icon CallerLeafArrow = IconLoader.getIcon("/icons/callerLeafArrow.png"); // 16x16
-  public static final Icon GC = IconLoader.getIcon("/icons/gc.png"); // 16x16
-  public static final Icon LiveObjects = IconLoader.getIcon("/icons/liveObjects.png"); // 16x16
-  public static final Icon SnapshotCPU = IconLoader.getIcon("/icons/snapshotCPU.png"); // 16x16
-  public static final Icon StartCPU = IconLoader.getIcon("/icons/startCPU.png"); // 16x16
-  public static final Icon StopCPU = IconLoader.getIcon("/icons/stopCPU.png"); // 16x16
+  private static Icon load(String path) {
+    return IconLoader.getIcon(path, FlexProfilerIcons.class);
+  }
+
+  public static final Icon CalleeArrow = load("/icons/calleeArrow.png"); // 16x16
+  public static final Icon CalleeLeafArrow = load("/icons/calleeLeafArrow.png"); // 16x16
+  public static final Icon CallerArrow = load("/icons/callerArrow.png"); // 16x16
+  public static final Icon CallerLeafArrow = load("/icons/callerLeafArrow.png"); // 16x16
+  public static final Icon GC = load("/icons/gc.png"); // 16x16
+  public static final Icon LiveObjects = load("/icons/liveObjects.png"); // 16x16
+  public static final Icon SnapshotCPU = load("/icons/snapshotCPU.png"); // 16x16
+  public static final Icon StartCPU = load("/icons/startCPU.png"); // 16x16
+  public static final Icon StopCPU = load("/icons/stopCPU.png"); // 16x16
 }

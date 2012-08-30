@@ -9,11 +9,15 @@ import javax.swing.*;
  * Don't repeat mistakes of others ;-)
  */
 public class FlexIdeIcons {
-  public static final Icon Flexide = IconLoader.getIcon("/artwork/flexide.png"); // 32x32
-  public static final Icon Flexide12 = IconLoader.getIcon("/artwork/flexide12.png"); // 12x12
-  public static final Icon Flexide16 = IconLoader.getIcon("/artwork/flexide16.png"); // 16x16
-  public static final Icon Flexide24 = IconLoader.getIcon("/artwork/flexide24.png"); // 24x24
-  public static final Icon Flexide32 = IconLoader.getIcon("/artwork/flexide32.png"); // 32x32
-  public static final Icon Flexide48 = IconLoader.getIcon("/artwork/flexide48.png"); // 48x48
-  public static final Icon Flexide_wbg = IconLoader.getIcon("/artwork/flexide_wbg.png"); // 32x32
+  private static Icon load(String path) {
+    return IconLoader.getIcon(path, FlexIdeIcons.class);
+  }
+
+  public static final Icon Flexide = load("/artwork/flexide.png"); // 32x32
+  public static final Icon Flexide12 = load("/artwork/flexide12.png"); // 12x12
+  public static final Icon Flexide16 = load("/artwork/flexide16.png"); // 16x16
+  public static final Icon Flexide24 = load("/artwork/flexide24.png"); // 24x24
+  public static final Icon Flexide32 = load("/artwork/flexide32.png"); // 32x32
+  public static final Icon Flexide48 = load("/artwork/flexide48.png"); // 48x48
+  public static final Icon Flexide_wbg = load("/artwork/flexide_wbg.png"); // 32x32
 }

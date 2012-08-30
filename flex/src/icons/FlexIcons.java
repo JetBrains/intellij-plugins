@@ -9,36 +9,40 @@ import javax.swing.*;
  * Don't repeat mistakes of others ;-)
  */
 public class FlexIcons {
-  public static final Icon Bc_desktop_as = IconLoader.getIcon("/images/bc-desktop-as.png"); // 16x16
-  public static final Icon Bc_desktop_flex = IconLoader.getIcon("/images/bc-desktop-flex.png"); // 16x16
-  public static final Icon Bc_desktop = IconLoader.getIcon("/images/bc-desktop.png"); // 16x16
-  public static final Icon Bc_mobile_as = IconLoader.getIcon("/images/bc-mobile-as.png"); // 16x16
-  public static final Icon Bc_mobile_flex = IconLoader.getIcon("/images/bc-mobile-flex.png"); // 16x16
-  public static final Icon Bc_mobile = IconLoader.getIcon("/images/bc-mobile.png"); // 16x16
-  public static final Icon Bc_web_as = IconLoader.getIcon("/images/bc-web-as.png"); // 16x16
-  public static final Icon Bc_web_flex = IconLoader.getIcon("/images/bc-web-flex.png"); // 16x16
-  public static final Icon Bc_web = IconLoader.getIcon("/images/bc-web.png"); // 16x16
-  public static final Icon Flash_remote_debug = IconLoader.getIcon("/images/flash_remote_debug.png"); // 16x16
-  public static final Icon Flash_run_config = IconLoader.getIcon("/images/flash_run_config.png"); // 16x16
+  private static Icon load(String path) {
+    return IconLoader.getIcon(path, FlexIcons.class);
+  }
+
+  public static final Icon Bc_desktop_as = load("/images/bc-desktop-as.png"); // 16x16
+  public static final Icon Bc_desktop_flex = load("/images/bc-desktop-flex.png"); // 16x16
+  public static final Icon Bc_desktop = load("/images/bc-desktop.png"); // 16x16
+  public static final Icon Bc_mobile_as = load("/images/bc-mobile-as.png"); // 16x16
+  public static final Icon Bc_mobile_flex = load("/images/bc-mobile-flex.png"); // 16x16
+  public static final Icon Bc_mobile = load("/images/bc-mobile.png"); // 16x16
+  public static final Icon Bc_web_as = load("/images/bc-web-as.png"); // 16x16
+  public static final Icon Bc_web_flex = load("/images/bc-web-flex.png"); // 16x16
+  public static final Icon Bc_web = load("/images/bc-web.png"); // 16x16
+  public static final Icon Flash_remote_debug = load("/images/flash_remote_debug.png"); // 16x16
+  public static final Icon Flash_run_config = load("/images/flash_run_config.png"); // 16x16
   
   public static class Flex {
-    public static final Icon BuildConfig = IconLoader.getIcon("/images/flex/buildConfig.png"); // 16x16
-    public static final Icon Documentation = IconLoader.getIcon("/images/flex/documentation.png"); // 16x16
-    public static final Icon Flash_builder = IconLoader.getIcon("/images/flex/flash_builder.png"); // 16x16
-    public static final Icon Flash_module_24 = IconLoader.getIcon("/images/flex/flash_module_24.png"); // 24x24
-    public static final Icon Flash_module_closed = IconLoader.getIcon("/images/flex/flash_module_closed.png"); // 16x16
-    public static final Icon Flash_module_open = IconLoader.getIcon("/images/flex/flash_module_open.png"); // 16x16
-    public static final Icon Flex_compiler_settings = IconLoader.getIcon("/images/flex/flex_compiler_settings.png"); // 16x16
-    public static final Icon Flexunit = IconLoader.getIcon("/images/flex/flexunit.png"); // 16x16
+    public static final Icon BuildConfig = load("/images/flex/buildConfig.png"); // 16x16
+    public static final Icon Documentation = load("/images/flex/documentation.png"); // 16x16
+    public static final Icon Flash_builder = load("/images/flex/flash_builder.png"); // 16x16
+    public static final Icon Flash_module_24 = load("/images/flex/flash_module_24.png"); // 24x24
+    public static final Icon Flash_module_closed = load("/images/flex/flash_module_closed.png"); // 16x16
+    public static final Icon Flash_module_open = load("/images/flex/flash_module_open.png"); // 16x16
+    public static final Icon Flex_compiler_settings = load("/images/flex/flex_compiler_settings.png"); // 16x16
+    public static final Icon Flexunit = load("/images/flex/flexunit.png"); // 16x16
     
     public static class Sdk {
-      public static final Icon Air = IconLoader.getIcon("/images/flex/sdk/air.png"); // 16x16
-      public static final Icon Airmobile = IconLoader.getIcon("/images/flex/sdk/airmobile.png"); // 16x16
-      public static final Icon Flex_sdk = IconLoader.getIcon("/images/flex/sdk/flex_sdk.png"); // 16x16
-      public static final Icon MavenFlex = IconLoader.getIcon("/images/flex/sdk/mavenFlex.png"); // 16x16
+      public static final Icon Air = load("/images/flex/sdk/air.png"); // 16x16
+      public static final Icon Airmobile = load("/images/flex/sdk/airmobile.png"); // 16x16
+      public static final Icon Flex_sdk = load("/images/flex/sdk/flex_sdk.png"); // 16x16
+      public static final Icon MavenFlex = load("/images/flex/sdk/mavenFlex.png"); // 16x16
 
     }
-    public static final Icon SmallWarning = IconLoader.getIcon("/images/flex/smallWarning.png"); // 12x12
+    public static final Icon SmallWarning = load("/images/flex/smallWarning.png"); // 12x12
 
   }
 }

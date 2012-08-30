@@ -9,6 +9,10 @@ import javax.swing.*;
  * Don't repeat mistakes of others ;-)
  */
 public class FlexUIDesignerIcons {
-  public static final Icon Preview_debug = IconLoader.getIcon("/images/preview-debug.png"); // 16x16
-  public static final Icon Ui_designer = IconLoader.getIcon("/images/ui-designer.png"); // 16x15
+  private static Icon load(String path) {
+    return IconLoader.getIcon(path, FlexUIDesignerIcons.class);
+  }
+
+  public static final Icon Preview_debug = load("/images/preview-debug.png"); // 16x16
+  public static final Icon Ui_designer = load("/images/ui-designer.png"); // 16x15
 }
