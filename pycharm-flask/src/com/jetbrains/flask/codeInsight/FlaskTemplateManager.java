@@ -19,9 +19,11 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
+import com.jetbrains.python.PythonFileType;
 import com.jetbrains.python.psi.PyCallExpression;
 import com.jetbrains.python.psi.PyFunction;
 import com.jetbrains.python.psi.PyRecursiveElementVisitor;
@@ -79,7 +81,9 @@ public class FlaskTemplateManager {
 
   public static List<PyStringLiteralExpression> findTemplateReferences(PsiFile element) {
     final List<PyStringLiteralExpression> references = new ArrayList<PyStringLiteralExpression>();
-    ReferencesSearch.search(element).forEach(new Processor<PsiReference>() {
+    final GlobalSearchScope scope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(element.getProject()),
+                                                                                    PythonFileType.INSTANCE);
+    ReferencesSearch.search(element, scope).forEach(new Processor<PsiReference>() {
       @Override
       public boolean process(PsiReference reference) {
         if (reference.getElement() instanceof PyStringLiteralExpression) {
