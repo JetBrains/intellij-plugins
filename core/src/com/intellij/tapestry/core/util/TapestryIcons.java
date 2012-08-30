@@ -3,6 +3,7 @@ package com.intellij.tapestry.core.util;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.PlatformIcons;
+import icons.TapestryCoreIcons;
 
 import javax.swing.*;
 
@@ -10,16 +11,16 @@ import javax.swing.*;
  * @author Konstantin Bulenkov
  */
 public interface TapestryIcons extends PlatformIcons {
-  Icon TAPESTRY_LOGO_SMALL = IconLoader.getIcon("/com/intellij/tapestry/core/icons/tapestry_logo_small.png");
-  Icon PAGES = IconLoader.getIcon("/com/intellij/tapestry/core/icons/pages.png");
-  Icon PAGE = IconLoader.getIcon("/com/intellij/tapestry/core/icons/page.png");
-  Icon FOLDER = IconLoader.getIcon("/com/intellij/tapestry/core/icons/folder.png");
-  Icon COMPONENTS = IconLoader.getIcon("/com/intellij/tapestry/core/icons/components.png");
-  Icon COMPONENT = IconLoader.getIcon("/com/intellij/tapestry/core/icons/component.png");
-  Icon MIXINS = IconLoader.getIcon("/com/intellij/tapestry/core/icons/mixins.png");
-  Icon MIXIN = IconLoader.getIcon("/com/intellij/tapestry/core/icons/mixin.png");
-  Icon GROUP_ELEMENT_FILES = IconLoader.getIcon("/com/intellij/tapestry/core/icons/groupElementFiles.png");
-  Icon COMPACT_BASE_PACKAGE = IconLoader.getIcon("/com/intellij/tapestry/core/icons/compactBasePackage.png");
+  Icon TAPESTRY_LOGO_SMALL = TapestryCoreIcons.Tapestry_logo_small;
+  Icon PAGES = TapestryCoreIcons.Pages;
+  Icon PAGE = TapestryCoreIcons.Page;
+  Icon FOLDER = TapestryCoreIcons.Folder;
+  Icon COMPONENTS = TapestryCoreIcons.Components;
+  Icon COMPONENT = TapestryCoreIcons.Component;
+  Icon MIXINS = TapestryCoreIcons.Mixins;
+  Icon MIXIN = TapestryCoreIcons.Mixin;
+  Icon GROUP_ELEMENT_FILES = TapestryCoreIcons.GroupElementFiles;
+  Icon COMPACT_BASE_PACKAGE = TapestryCoreIcons.CompactBasePackage;
   Icon LIBRARY = AllIcons.Modules.Library;
   Icon NAVIGATE = AllIcons.Actions.Browser_externalJavaDoc;
   Icon REFERENCE = AllIcons.Nodes.EjbReference;
