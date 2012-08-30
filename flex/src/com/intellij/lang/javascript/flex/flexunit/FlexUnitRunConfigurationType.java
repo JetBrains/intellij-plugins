@@ -5,14 +5,14 @@ import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
+import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public class FlexUnitRunConfigurationType implements ConfigurationType {
 
-  private static final Icon ourIcon = IconLoader.getIcon("/images/flex/flexunit.png", FlexUnitRunConfigurationType.class);
+  private static final Icon ourIcon = FlexIcons.Flex.Flexunit;
 
   private final ConfigurationFactory myFactory;
 

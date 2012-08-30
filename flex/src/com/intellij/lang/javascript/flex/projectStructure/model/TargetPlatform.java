@@ -1,15 +1,15 @@
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
 import com.intellij.ui.ListCellRendererWrapper;
-import com.intellij.openapi.util.IconLoader;
+import icons.FlexIcons;
 
 import javax.swing.*;
 
 public enum TargetPlatform {
 
-  Web("Web", IconLoader.getIcon("/images/bc-web.png")),
-  Desktop("Desktop", IconLoader.getIcon("/images/bc-desktop.png")),
-  Mobile("Mobile", IconLoader.getIcon("/images/bc-mobile.png"));
+  Web("Web", FlexIcons.Bc_web),
+  Desktop("Desktop", FlexIcons.Bc_desktop),
+  Mobile("Mobile", FlexIcons.Bc_mobile);
 
   private final String myPresentableText;
   private final Icon myIcon;

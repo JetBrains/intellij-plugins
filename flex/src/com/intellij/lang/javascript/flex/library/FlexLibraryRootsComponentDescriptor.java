@@ -10,9 +10,9 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.ui.*;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.DefaultLibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UIBundle;
+import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +22,7 @@ import java.util.List;
 
 public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDescriptor {
 
-  private static final Icon DOC_ICON = IconLoader.findIcon("/images/flex/documentation.png");
+  private static final Icon DOC_ICON = FlexIcons.Flex.Documentation;
 
   public OrderRootTypePresentation getRootTypePresentation(@NotNull final OrderRootType type) {
     if (type instanceof JavadocOrderRootType) {

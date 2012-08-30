@@ -67,6 +67,7 @@ import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.classpath.ChooseLibrariesFromTablesDialog;
+import icons.FlexIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -810,7 +811,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     myComponentSetCombo.addItemListener(updateSdkItemsListener);
     myFrameworkLinkageCombo.addItemListener(updateSdkItemsListener);
 
-    myTargetPlayerWarning.setIcon(IconLoader.getIcon("/images/flex/smallWarning.png"));
+    myTargetPlayerWarning.setIcon(FlexIcons.Flex.SmallWarning);
     myWarning.setIcon(UIUtil.getBalloonWarningIcon());
 
     myTable = new EditableTreeTable<MyTableItem>("", DEPENDENCY_TYPE_COLUMN) {

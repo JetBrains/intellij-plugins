@@ -7,12 +7,12 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
+import icons.FlexIcons;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +24,7 @@ import java.util.List;
 
 public class FlexSdkType2 extends SdkType {
 
-  public static final Icon ICON = IconLoader.getIcon("/images/flex/sdk/flex_sdk.png");
+  public static final Icon ICON = FlexIcons.Flex.Sdk.Flex_sdk;
   public static final String NAME = "Flex SDK Type (new)";
   public static final String LAST_SELECTED_FLEX_SDK_HOME_KEY = "last.selected.flex.sdk.home";
 

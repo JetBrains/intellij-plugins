@@ -18,7 +18,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.impl.ModifiableModelCommitter;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -28,6 +27,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.io.ZipUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import icons.FlexIcons;
 
 import javax.swing.*;
 import java.io.File;
@@ -46,7 +46,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
   public static final String DOT_FLEX_PROPERTIES = ".flexProperties";
   public static final String DOT_FLEX_LIB_PROPERTIES = ".flexLibProperties";
 
-  private static final Icon flashBuilderIcon = IconLoader.getIcon("/images/flex/flash_builder.png", FlashBuilderImporter.class);
+  private static final Icon flashBuilderIcon = FlexIcons.Flex.Flash_builder;
 
   private Parameters myParameters;
 

@@ -39,7 +39,6 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
@@ -51,6 +50,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
+import icons.FlexIcons;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -230,9 +230,9 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       }
     });
 
-    myMainClassWarning.setIcon(IconLoader.getIcon("/images/flex/smallWarning.png"));
-    myOutputFileNameWarning.setIcon(IconLoader.getIcon("/images/flex/smallWarning.png"));
-    myOutputFolderWarning.setIcon(IconLoader.getIcon("/images/flex/smallWarning.png"));
+    myMainClassWarning.setIcon(FlexIcons.Flex.SmallWarning);
+    myOutputFileNameWarning.setIcon(FlexIcons.Flex.SmallWarning);
+    myOutputFolderWarning.setIcon(FlexIcons.Flex.SmallWarning);
 
     myWarning.setIcon(UIUtil.getBalloonWarningIcon());
   }

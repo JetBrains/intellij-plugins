@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.options;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
-import com.intellij.openapi.util.IconLoader;
+import icons.FlexIcons;
 
 import javax.swing.*;
 
@@ -12,12 +12,12 @@ import javax.swing.*;
  */
 public class BuildConfigurationNature {
 
-  private static final Icon ICON_WEB_AS = IconLoader.getIcon("/images/bc-web-as.png");
-  private static final Icon ICON_WEB_FLEX = IconLoader.getIcon("/images/bc-web-flex.png");
-  private static final Icon ICON_DESKTOP_AS = IconLoader.getIcon("/images/bc-desktop-as.png");
-  private static final Icon ICON_DESKTOP_FLEX = IconLoader.getIcon("/images/bc-desktop-flex.png");
-  private static final Icon ICON_MOBILE_AS = IconLoader.getIcon("/images/bc-mobile-as.png");
-  private static final Icon ICON_MOBILE_FLEX = IconLoader.getIcon("/images/bc-mobile-flex.png");
+  private static final Icon ICON_WEB_AS = FlexIcons.Bc_web_as;
+  private static final Icon ICON_WEB_FLEX = FlexIcons.Bc_web_flex;
+  private static final Icon ICON_DESKTOP_AS = FlexIcons.Bc_desktop_as;
+  private static final Icon ICON_DESKTOP_FLEX = FlexIcons.Bc_desktop_flex;
+  private static final Icon ICON_MOBILE_AS = FlexIcons.Bc_mobile_as;
+  private static final Icon ICON_MOBILE_FLEX = FlexIcons.Bc_mobile_flex;
 
   public final TargetPlatform targetPlatform;
   public final boolean pureAS;

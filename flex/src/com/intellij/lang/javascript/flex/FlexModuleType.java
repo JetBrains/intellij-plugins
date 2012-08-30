@@ -5,7 +5,7 @@ import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
-import com.intellij.openapi.util.IconLoader;
+import icons.FlexIcons;
 import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
@@ -15,9 +15,9 @@ import javax.swing.*;
  */
 public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   @NonNls public static final String MODULE_TYPE_ID = "Flex";
-  private static final Icon FLASH_MODULE_BIG_ICON = IconLoader.getIcon("/images/flex/flash_module_24.png");
-  private static final Icon FLASH_MODULE_OPEN_ICON = IconLoader.getIcon("/images/flex/flash_module_open.png");
-  private static final Icon FLASH_MODULE_CLOSED_ICON = IconLoader.getIcon("/images/flex/flash_module_closed.png");
+  private static final Icon FLASH_MODULE_BIG_ICON = FlexIcons.Flex.Flash_module_24;
+  private static final Icon FLASH_MODULE_OPEN_ICON = FlexIcons.Flex.Flash_module_open;
+  private static final Icon FLASH_MODULE_CLOSED_ICON = FlexIcons.Flex.Flash_module_closed;
 
   public FlexModuleType() {
     super(MODULE_TYPE_ID);

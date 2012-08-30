@@ -4,8 +4,8 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
+import icons.FlexIcons;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,7 +13,7 @@ import javax.swing.*;
 
 public class FlexmojosSdkType extends SdkType {
 
-  public static final Icon mavenFlexIcon = IconLoader.getIcon("/images/flex/sdk/mavenFlex.png", FlexmojosSdkType.class);
+  public static final Icon mavenFlexIcon = FlexIcons.Flex.Sdk.MavenFlex;
 
   static final String COMPILER_POM_PATTERN = ".+/com/adobe/flex/compiler/.+/compiler-.+\\.pom";
 

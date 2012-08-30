@@ -5,14 +5,14 @@ import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
+import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public class RemoteFlashRunConfigurationType implements ConfigurationType {
 
-  private static final Icon ICON = IconLoader.getIcon("/images/flash_remote_debug.png");
+  private static final Icon ICON = FlexIcons.Flash_remote_debug;
   public static final String TYPE = "RemoteFlashRunConfigurationType";
   public static final String DISPLAY_NAME = "Flash Remote Debug";
 

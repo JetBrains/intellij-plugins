@@ -5,14 +5,14 @@ import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
+import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 public class FlashRunConfigurationType implements ConfigurationType {
 
-  public static final Icon ICON = IconLoader.getIcon("/images/flash_run_config.png");
+  public static final Icon ICON = FlexIcons.Flash_run_config;
   public static final String TYPE = "FlashRunConfigurationType";
   public static final String DISPLAY_NAME = "Flash App";
 
