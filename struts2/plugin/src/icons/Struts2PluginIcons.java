@@ -9,18 +9,22 @@ import javax.swing.*;
  * Don't repeat mistakes of others ;-)
  */
 public class Struts2PluginIcons {
-  public static final Icon Action = IconLoader.getIcon("/resources/icons/action.png"); // 16x16
-  public static final Icon Action_small = IconLoader.getIcon("/resources/icons/action_small.png"); // 10x10
-  public static final Icon Arrow_right_blue = IconLoader.getIcon("/resources/icons/arrow_right_blue.png"); // 16x16
-  public static final Icon Coffeebean = IconLoader.getIcon("/resources/icons/coffeebean.png"); // 16x16
-  public static final Icon Folder_gear = IconLoader.getIcon("/resources/icons/folder_gear.png"); // 16x16
-  public static final Icon Funnel = IconLoader.getIcon("/resources/icons/funnel.png"); // 16x16
-  public static final Icon Funnel_up = IconLoader.getIcon("/resources/icons/funnel_up.png"); // 16x16
-  public static final Icon Import1 = IconLoader.getIcon("/resources/icons/import1.png"); // 16x16
-  public static final Icon Message = IconLoader.getIcon("/resources/icons/message.png"); // 16x16
-  public static final Icon Preferences = IconLoader.getIcon("/resources/icons/preferences.png"); // 16x16
-  public static final Icon Presentation = IconLoader.getIcon("/resources/icons/presentation.png"); // 16x16
-  public static final Icon Transform = IconLoader.getIcon("/resources/icons/transform.png"); // 16x16
-  public static final Icon Validation = IconLoader.getIcon("/resources/icons/validation.png"); // 16x16
-  public static final Icon Validation_small = IconLoader.getIcon("/resources/icons/validation_small.png"); // 10x10
+  private static Icon load(String path) {
+    return IconLoader.getIcon(path, Struts2PluginIcons.class);
+  }
+
+  public static final Icon Action = load("/resources/icons/action.png"); // 16x16
+  public static final Icon Action_small = load("/resources/icons/action_small.png"); // 10x10
+  public static final Icon Arrow_right_blue = load("/resources/icons/arrow_right_blue.png"); // 16x16
+  public static final Icon Coffeebean = load("/resources/icons/coffeebean.png"); // 16x16
+  public static final Icon Folder_gear = load("/resources/icons/folder_gear.png"); // 16x16
+  public static final Icon Funnel = load("/resources/icons/funnel.png"); // 16x16
+  public static final Icon Funnel_up = load("/resources/icons/funnel_up.png"); // 16x16
+  public static final Icon Import1 = load("/resources/icons/import1.png"); // 16x16
+  public static final Icon Message = load("/resources/icons/message.png"); // 16x16
+  public static final Icon Preferences = load("/resources/icons/preferences.png"); // 16x16
+  public static final Icon Presentation = load("/resources/icons/presentation.png"); // 16x16
+  public static final Icon Transform = load("/resources/icons/transform.png"); // 16x16
+  public static final Icon Validation = load("/resources/icons/validation.png"); // 16x16
+  public static final Icon Validation_small = load("/resources/icons/validation_small.png"); // 10x10
 }

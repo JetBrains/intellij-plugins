@@ -9,5 +9,9 @@ import javax.swing.*;
  * Don't repeat mistakes of others ;-)
  */
 public class CucumberJavaIcons {
-  public static final Icon CucumberJavaRunConfiguration = IconLoader.getIcon("/org/jetbrains/plugins/cucumber/cucumberJavaRunConfiguration.png"); // 16x16
+  private static Icon load(String path) {
+    return IconLoader.getIcon(path, CucumberJavaIcons.class);
+  }
+
+  public static final Icon CucumberJavaRunConfiguration = load("/org/jetbrains/plugins/cucumber/cucumberJavaRunConfiguration.png"); // 16x16
 }

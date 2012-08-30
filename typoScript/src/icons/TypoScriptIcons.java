@@ -9,8 +9,12 @@ import javax.swing.*;
  * Don't repeat mistakes of others ;-)
  */
 public class TypoScriptIcons {
-  public static final Icon Condition_ts = IconLoader.getIcon("/icons/condition_ts.png"); // 16x16
-  public static final Icon Include_ts = IconLoader.getIcon("/icons/include_ts.png"); // 16x16
-  public static final Icon Property_ts = IconLoader.getIcon("/icons/property_ts.png"); // 16x16
-  public static final Icon Typo3 = IconLoader.getIcon("/icons/typo3.png"); // 16x16
+  private static Icon load(String path) {
+    return IconLoader.getIcon(path, TypoScriptIcons.class);
+  }
+
+  public static final Icon Condition_ts = load("/icons/condition_ts.png"); // 16x16
+  public static final Icon Include_ts = load("/icons/include_ts.png"); // 16x16
+  public static final Icon Property_ts = load("/icons/property_ts.png"); // 16x16
+  public static final Icon Typo3 = load("/icons/typo3.png"); // 16x16
 }

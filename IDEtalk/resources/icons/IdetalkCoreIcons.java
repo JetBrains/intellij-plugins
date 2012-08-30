@@ -9,28 +9,32 @@ import javax.swing.*;
  * Don't repeat mistakes of others ;-)
  */
 public class IdetalkCoreIcons {
-  public static final Icon CodePointer = IconLoader.getIcon("/codePointer.png"); // 17x18
-  public static final Icon EditSource = IconLoader.getIcon("/editSource.png"); // 16x16
+  private static Icon load(String path) {
+    return IconLoader.getIcon(path, IdetalkCoreIcons.class);
+  }
+
+  public static final Icon CodePointer = load("/codePointer.png"); // 17x18
+  public static final Icon EditSource = load("/editSource.png"); // 16x16
   
   public static class IdeTalk {
-    public static final Icon Away = IconLoader.getIcon("/ideTalk/away.png"); // 16x16
-    public static final Icon Jabber = IconLoader.getIcon("/ideTalk/jabber.png"); // 16x16
-    public static final Icon Jabber_dnd = IconLoader.getIcon("/ideTalk/jabber_dnd.png"); // 16x16
-    public static final Icon Notavailable = IconLoader.getIcon("/ideTalk/notavailable.png"); // 16x16
-    public static final Icon Offline = IconLoader.getIcon("/ideTalk/offline.png"); // 16x16
-    public static final Icon Settings = IconLoader.getIcon("/ideTalk/settings.png"); // 16x16
-    public static final Icon User = IconLoader.getIcon("/ideTalk/user.png"); // 16x16
-    public static final Icon User_dnd = IconLoader.getIcon("/ideTalk/user_dnd.png"); // 16x16
+    public static final Icon Away = load("/ideTalk/away.png"); // 16x16
+    public static final Icon Jabber = load("/ideTalk/jabber.png"); // 16x16
+    public static final Icon Jabber_dnd = load("/ideTalk/jabber_dnd.png"); // 16x16
+    public static final Icon Notavailable = load("/ideTalk/notavailable.png"); // 16x16
+    public static final Icon Offline = load("/ideTalk/offline.png"); // 16x16
+    public static final Icon Settings = load("/ideTalk/settings.png"); // 16x16
+    public static final Icon User = load("/ideTalk/user.png"); // 16x16
+    public static final Icon User_dnd = load("/ideTalk/user_dnd.png"); // 16x16
 
   }
-  public static final Icon Message = IconLoader.getIcon("/message.png"); // 17x18
+  public static final Icon Message = load("/message.png"); // 17x18
   
   public static class Nodes {
-    public static final Icon Group_close = IconLoader.getIcon("/nodes/group_close.png"); // 16x16
-    public static final Icon Group_open = IconLoader.getIcon("/nodes/group_open.png"); // 16x16
-    public static final Icon Unknown = IconLoader.getIcon("/nodes/unknown.png"); // 18x18
+    public static final Icon Group_close = load("/nodes/group_close.png"); // 16x16
+    public static final Icon Group_open = load("/nodes/group_open.png"); // 16x16
+    public static final Icon Unknown = load("/nodes/unknown.png"); // 18x18
 
   }
-  public static final Icon Refresh = IconLoader.getIcon("/refresh.png"); // 18x18
-  public static final Icon Stacktrace = IconLoader.getIcon("/stacktrace.png"); // 17x18
+  public static final Icon Refresh = load("/refresh.png"); // 18x18
+  public static final Icon Stacktrace = load("/stacktrace.png"); // 17x18
 }
