@@ -25,8 +25,8 @@ import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.transport.CodePointerEvent;
 import jetbrains.communicator.core.vfs.CodePointer;
@@ -72,7 +72,7 @@ public class IncomingCodePointerMessage extends BaseIncomingLocalMessage {
   }
 
   protected Icon getIcon() {
-    return IconLoader.getIcon("/codePointer.png");
+    return IdetalkCoreIcons.CodePointer;
   }
 
   public void outputMessage(ConsoleView consoleView) {

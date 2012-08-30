@@ -18,10 +18,10 @@ package jetbrains.communicator.idea;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.dispatcher.LocalMessageDispatcher;
 import jetbrains.communicator.util.UIUtil;
@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  * @author Kir
  */
 public abstract class BaseToolWindow implements ProjectComponent {
-  public static final Icon WORKER_ICON = IconLoader.getIcon("/ideTalk/user.png");
+  public static final Icon WORKER_ICON = IdetalkCoreIcons.IdeTalk.User;
 
   protected final ToolWindowManager myToolWindowManager;
   protected final ActionManager myActionManager;

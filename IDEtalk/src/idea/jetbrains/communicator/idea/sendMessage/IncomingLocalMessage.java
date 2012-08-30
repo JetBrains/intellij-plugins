@@ -16,7 +16,7 @@
 package jetbrains.communicator.idea.sendMessage;
 
 import com.intellij.execution.ui.ConsoleView;
-import com.intellij.openapi.util.IconLoader;
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.transport.MessageEvent;
 import jetbrains.communicator.idea.BaseIncomingLocalMessage;
 import jetbrains.communicator.util.StringUtil;
@@ -41,6 +41,6 @@ public class IncomingLocalMessage extends BaseIncomingLocalMessage {
   }
 
   protected Icon getIcon() {
-    return IconLoader.getIcon("/message.png");
+    return IdetalkCoreIcons.Message;
   }
 }

@@ -24,6 +24,7 @@ import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.treeStructure.Tree;
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.vfs.ProjectsData;
@@ -51,7 +52,7 @@ import java.util.List;
  */
 class ViewFilesPanel extends JPanel implements DataProvider {
   static final String NON_PROJECT_NODE = StringUtil.getMsg("non.project.files");
-  private static final Icon UNKNOWN_ICON = IconLoader.getIcon("/nodes/unknown.png");
+  private static final Icon UNKNOWN_ICON = IdetalkCoreIcons.Nodes.Unknown;
 
   private final FileTypeManager myFileTypeManager;
   private final IDEFacade myIdeFacade;
@@ -135,7 +136,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
   }
 
   private void addRefreshAction(DefaultActionGroup actionGroup) {
-    actionGroup.add(new AnAction(StringUtil.getMsg("refresh.file.list"), "", IconLoader.getIcon("/refresh.png")) {
+    actionGroup.add(new AnAction(StringUtil.getMsg("refresh.file.list"), "", IdetalkCoreIcons.Refresh) {
       public void actionPerformed(AnActionEvent e) {
         refreshData(myUser, myUser.getProjectsData(myIdeFacade));
       }

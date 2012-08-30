@@ -16,7 +16,7 @@
 package jetbrains.communicator.idea.viewFiles;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.util.IconLoader;
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.util.StringUtil;
 
@@ -28,7 +28,7 @@ import javax.swing.*;
 class OpenFileAction extends BaseVFileAction {
 
   OpenFileAction(JTree fileTree, IDEFacade ideFacade) {
-    super(StringUtil.getMsg("open.local.version"), "", IconLoader.getIcon("/editSource.png"),
+    super(StringUtil.getMsg("open.local.version"), "", IdetalkCoreIcons.EditSource,
         fileTree, ideFacade);
   }
 

@@ -19,7 +19,7 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.util.IconLoader;
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.Pico;
 import org.apache.log4j.Logger;
 
@@ -35,7 +35,7 @@ public class OptionsButton extends DropDownButton {
   private AnAction myResetSettingsAction;
 
   public OptionsButton() {
-    super(getOptionsActionGroup(), IconLoader.getIcon("/ideTalk/settings.png"));
+    super(getOptionsActionGroup(), IdetalkCoreIcons.IdeTalk.Settings);
   }
 
   public void addNotify() {
