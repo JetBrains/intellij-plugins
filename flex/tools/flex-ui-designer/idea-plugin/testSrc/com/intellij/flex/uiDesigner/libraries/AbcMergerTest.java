@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.DesignerTests;
-import com.intellij.flex.uiDesigner.FlashUIDesignerBaseTestCase;
 import com.intellij.flex.uiDesigner.abc.AbcTranscoder;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;

@@ -1,9 +1,7 @@
 package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.flex.uiDesigner.AssetCounter;
-import com.intellij.flex.uiDesigner.Client;
 import com.intellij.flex.uiDesigner.io.ByteArrayOutputStreamEx;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 
 import java.io.File;
