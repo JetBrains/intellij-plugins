@@ -39,6 +39,9 @@ public class FlaskTemplateContextProvider implements TemplateContextProvider {
   public Collection<LookupElement> getTemplateContext(PsiFile template) {
     List<LookupElement> result = new ArrayList<LookupElement>();
     List<PyStringLiteralExpression> references = FlaskTemplateManager.findTemplateReferences(template);
+    if (references.isEmpty()) {
+      return null;
+    }
     for (PyStringLiteralExpression reference : references) {
       PyCallExpression call = PsiTreeUtil.getParentOfType(reference, PyCallExpression.class);
       assert call != null;
