@@ -7,7 +7,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.module.JpsModuleType;
-import org.jetbrains.jps.model.serialization.JpsModulePropertiesSerializer;
+import org.jetbrains.jps.model.serialization.module.JpsModulePropertiesSerializer;
 
 public class JpsFlexModuleType extends JpsModuleType<JpsFlexBuildConfigurationManager> {
 

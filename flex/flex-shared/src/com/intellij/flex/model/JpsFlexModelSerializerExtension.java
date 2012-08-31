@@ -6,6 +6,9 @@ import com.intellij.flex.model.sdk.JpsFlexSdkType;
 import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.serialization.*;
+import org.jetbrains.jps.model.serialization.library.JpsLibraryPropertiesSerializer;
+import org.jetbrains.jps.model.serialization.library.JpsSdkPropertiesSerializer;
+import org.jetbrains.jps.model.serialization.module.JpsModulePropertiesSerializer;
 
 import java.util.Arrays;
 import java.util.Collections;

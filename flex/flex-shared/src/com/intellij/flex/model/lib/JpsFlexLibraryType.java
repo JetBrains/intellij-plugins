@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsElementFactory;
 import org.jetbrains.jps.model.JpsSimpleElement;
 import org.jetbrains.jps.model.library.JpsLibraryType;
-import org.jetbrains.jps.model.serialization.JpsLibraryPropertiesSerializer;
+import org.jetbrains.jps.model.serialization.library.JpsLibraryPropertiesSerializer;
 
 public class JpsFlexLibraryType extends JpsLibraryType<JpsSimpleElement<JpsFlexLibraryProperties>> {
 

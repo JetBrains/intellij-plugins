@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsElementFactory;
 import org.jetbrains.jps.model.JpsSimpleElement;
 import org.jetbrains.jps.model.library.sdk.JpsSdkType;
-import org.jetbrains.jps.model.serialization.JpsSdkPropertiesSerializer;
+import org.jetbrains.jps.model.serialization.library.JpsSdkPropertiesSerializer;
 
 import java.util.ArrayList;
 import java.util.Collection;

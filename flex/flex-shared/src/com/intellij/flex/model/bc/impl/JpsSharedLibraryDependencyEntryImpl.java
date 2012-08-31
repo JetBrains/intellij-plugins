@@ -8,7 +8,7 @@ import org.jetbrains.jps.model.JpsElementFactory;
 import org.jetbrains.jps.model.impl.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.JpsLibraryReference;
-import org.jetbrains.jps.model.serialization.JpsLibraryTableSerializer;
+import org.jetbrains.jps.model.serialization.library.JpsLibraryTableSerializer;
 
 class JpsSharedLibraryDependencyEntryImpl extends JpsFlexDependencyEntryBase<JpsSharedLibraryDependencyEntryImpl>
   implements JpsLibraryDependencyEntry {

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsDummyElement;
 import org.jetbrains.jps.model.JpsElementFactory;
 import org.jetbrains.jps.model.library.sdk.JpsSdkType;
-import org.jetbrains.jps.model.serialization.JpsSdkPropertiesSerializer;
+import org.jetbrains.jps.model.serialization.library.JpsSdkPropertiesSerializer;
 
 public class JpsFlexSdkType extends JpsSdkType<JpsDummyElement> {
   public static final String ID = "Flex SDK Type (new)";
