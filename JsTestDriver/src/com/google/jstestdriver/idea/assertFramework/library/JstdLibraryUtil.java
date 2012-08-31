@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.jstestdriver.idea.assertFramework.jstd.jsSrc.JstdDefaultAssertionFrameworkSrcMarker;
 import com.intellij.ProjectTopics;
-import com.intellij.webcore.libraries.ScriptingLibraryMappings;
 import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.ApplicationManager;
@@ -17,16 +16,16 @@ import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
-import com.intellij.webcore.libraries.ScriptingLibraryManager;
-import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.webcore.libraries.ScriptingLibraryManager;
+import com.intellij.webcore.libraries.ScriptingLibraryMappings;
+import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -180,19 +179,13 @@ public class JstdLibraryUtil {
   }
 
   private static class ProjectRootsWatcher extends ProjectManagerAdapter {
-    private final Map<Project, MessageBusConnection> myConnections = new HashMap<Project, MessageBusConnection>();
-
     private ProjectRootsWatcher(@NotNull Project project) {
       projectOpened(project);
     }
 
     @Override
     public void projectOpened(Project project) {
-      if (myConnections.containsKey(project)) {
-        return;
-      }
-      MessageBusConnection conn = project.getMessageBus().connect();
-      myConnections.put(project, conn);
+      MessageBusConnection conn = project.getMessageBus().connect(project);
       conn.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
         @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
         @Override
@@ -201,14 +194,5 @@ public class JstdLibraryUtil {
         }
       });
     }
-
-    @Override
-    public void projectClosed(Project project) {
-      final MessageBusConnection conn = myConnections.remove(project);
-      if (conn != null) {
-        conn.disconnect();
-      }
-    }
   }
-
 }
