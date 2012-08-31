@@ -37,6 +37,9 @@ public class FlaskTemplateContextProvider implements TemplateContextProvider {
 
   @Override
   public Collection<LookupElement> getTemplateContext(PsiFile template) {
+    if (PyPsiFacade.getInstance(template.getProject()).qualifiedNameResolver("flask").fromElement(template).firstResult() == null) {
+      return null;
+    }
     List<LookupElement> result = new ArrayList<LookupElement>();
     List<PyStringLiteralExpression> references = FlaskTemplateManager.findTemplateReferences(template);
     if (references.isEmpty()) {
