@@ -92,7 +92,7 @@ class OgnlBlock implements ASTBlock {
   }
 
   @Override
-  public Spacing getSpacing(final Block child1, final Block child2) {
+  public Spacing getSpacing(final Block child1, @NotNull final Block child2) {
     return spacingBuilder.getSpacing(this, child1, child2);
   }
 

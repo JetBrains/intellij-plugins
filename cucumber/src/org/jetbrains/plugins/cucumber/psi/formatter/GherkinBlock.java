@@ -109,7 +109,7 @@ public class GherkinBlock implements ASTBlock {
     return null;
   }
 
-  public Spacing getSpacing(Block child1, Block child2) {
+  public Spacing getSpacing(Block child1, @NotNull Block child2) {
     ASTBlock block1 = (ASTBlock) child1;
     ASTBlock block2 = (ASTBlock) child2;
     final IElementType elementType1 = block1.getNode().getElementType();
