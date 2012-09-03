@@ -16,7 +16,6 @@ import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
 import org.jetbrains.jps.incremental.storage.SourceToOutputMapping;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
-import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsTypedModule;
 
 import java.io.File;
@@ -49,18 +48,17 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
 
     try {
       FSOperations.processFilesToRecompile(context, chunk, JpsFlexModuleType.INSTANCE, new FileProcessor() {
-        public boolean apply(final JpsModule module, final File file, final String sourceRoot) throws IOException {
-          final JpsTypedModule<JpsFlexBuildConfigurationManager> flexModule = module.asTyped(JpsFlexModuleType.INSTANCE);
+        public boolean apply(final ModuleBuildTarget target, final File file, final String sourceRoot) throws IOException {
+          final JpsTypedModule<JpsFlexBuildConfigurationManager> flexModule = target.getModule().asTyped(JpsFlexModuleType.INSTANCE);
           assert flexModule != null; // filtered by moduleTypeFilter
 
           final String relativePath = FileUtil.getRelativePath(sourceRoot, FileUtil.toSystemIndependentName(file.getPath()), '/');
 
-          final SourceToOutputMapping sourceToOutputMap =
-            context.getProjectDescriptor().dataManager.getSourceToOutputMap(module.getName(), chunk.isTests());
+          final SourceToOutputMapping sourceToOutputMap = context.getProjectDescriptor().dataManager.getSourceToOutputMap(target);
 
-          if (chunk.isTests()) {
+          if (target.isTests()) {
             if (!FlexCommonUtils.isSourceFile(file.getName())) {
-              final String outputRootUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, chunk.isTests());
+              final String outputRootUrl = JpsJavaExtensionService.getInstance().getOutputUrl(target.getModule(), target.isTests());
               if (outputRootUrl == null) return true;
 
               final String targetPath = JpsPathUtil.urlToPath(outputRootUrl) + '/' + relativePath;
