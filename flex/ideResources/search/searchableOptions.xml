@@ -3157,8 +3157,8 @@
     <option name="file" hit="Find Usages in File" />
     <option name="find" hit="Find Usages in File" />
     <option name="usages" hit="Find Usages in File" />
-    <option name="find" hit="Find Usages..." />
-    <option name="usages" hit="Find Usages..." />
+    <option name="find" hit="Find Usages" />
+    <option name="usages" hit="Find Usages" />
     <option name="caret" hit="Find Word at Caret" />
     <option name="find" hit="Find Word at Caret" />
     <option name="word" hit="Find Word at Caret" />
