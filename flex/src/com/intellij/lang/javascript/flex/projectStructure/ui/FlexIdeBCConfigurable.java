@@ -221,7 +221,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     initCSSControls();
 
     myOptimizeForCombo.setModel(new CollectionComboBoxModel(Arrays.asList(""), ""));
-    myOptimizeForCombo.setRenderer(new ListCellRendererWrapper(myOptimizeForCombo.getRenderer()) {
+    myOptimizeForCombo.setRenderer(new ListCellRendererWrapper() {
       @Override
       public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
         if ("".equals(value)) {

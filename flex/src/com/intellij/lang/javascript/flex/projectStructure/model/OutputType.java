@@ -28,7 +28,7 @@ public enum OutputType {
 
   public static void initCombo(final JComboBox outputTypeCombo) {
     outputTypeCombo.setModel(new DefaultComboBoxModel(values()));
-    outputTypeCombo.setRenderer(new ListCellRendererWrapper<OutputType>(outputTypeCombo.getRenderer()) {
+    outputTypeCombo.setRenderer(new ListCellRendererWrapper<OutputType>() {
       public void customize(JList list, OutputType value, int index, boolean selected, boolean hasFocus) {
         setText(value.getPresentableText());
       }

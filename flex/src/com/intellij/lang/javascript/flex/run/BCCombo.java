@@ -53,7 +53,7 @@ public class BCCombo extends JComboBox {
     }
     myAllConfigs = allConfigs.toArray(new FlexIdeBuildConfiguration[allConfigs.size()]);
 
-    setRenderer(new HtmlListCellRenderer(getRenderer()) {
+    setRenderer(new HtmlListCellRenderer() {
       @Override
       protected void doCustomize(final JList list, final Object value, final int index, final boolean selected, final boolean hasFocus) {
         if (value instanceof Pair) {

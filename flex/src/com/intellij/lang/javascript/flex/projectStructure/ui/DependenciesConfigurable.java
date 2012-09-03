@@ -768,14 +768,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     });
 
     myComponentSetCombo.setModel(new DefaultComboBoxModel(ComponentSet.values()));
-    myComponentSetCombo.setRenderer(new ListCellRendererWrapper<ComponentSet>(myComponentSetCombo.getRenderer()) {
+    myComponentSetCombo.setRenderer(new ListCellRendererWrapper<ComponentSet>() {
       public void customize(JList list, ComponentSet value, int index, boolean selected, boolean hasFocus) {
         setText(value.getPresentableText());
       }
     });
 
     myFrameworkLinkageCombo
-      .setRenderer(new ListCellRendererWrapper<LinkageType>(myFrameworkLinkageCombo.getRenderer()) {
+      .setRenderer(new ListCellRendererWrapper<LinkageType>() {
         public void customize(JList list, LinkageType value, int index, boolean selected, boolean hasFocus) {
           if (value == LinkageType.Default) {
             final Sdk sdk = mySdkCombo.getSelectedJdk();

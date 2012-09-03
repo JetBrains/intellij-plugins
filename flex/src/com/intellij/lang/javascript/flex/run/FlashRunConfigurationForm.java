@@ -241,7 +241,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     myAppDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel(AppDescriptorForEmulator.values()));
     myAppDescriptorForEmulatorCombo
-      .setRenderer(new ListCellRendererWrapper<AppDescriptorForEmulator>(myAppDescriptorForEmulatorCombo.getRenderer()) {
+      .setRenderer(new ListCellRendererWrapper<AppDescriptorForEmulator>() {
         @Override
         public void customize(JList list, AppDescriptorForEmulator value, int index, boolean selected, boolean hasFocus) {
           final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
@@ -280,7 +280,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private void initEmulatorRelatedControls() {
     myEmulatorCombo.setModel(new DefaultComboBoxModel(Emulator.ALL_EMULATORS.toArray()));
 
-    myEmulatorCombo.setRenderer(new ListCellRendererWrapper<Emulator>(myEmulatorCombo.getRenderer()) {
+    myEmulatorCombo.setRenderer(new ListCellRendererWrapper<Emulator>() {
       @Override
       public void customize(JList list, Emulator value, int index, boolean selected, boolean hasFocus) {
         setText(value.name);

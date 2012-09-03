@@ -73,7 +73,7 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
     rebuildSdkListAndSelectSdk(null); // if SDKs exist first will be selected automatically
 
     final JComboBox sdkCombo = getComboBox();
-    sdkCombo.setRenderer(new ListCellRendererWrapper(sdkCombo.getRenderer()) {
+    sdkCombo.setRenderer(new ListCellRendererWrapper() {
       @Override
       public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
         if (value instanceof BCSdk) {

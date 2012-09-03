@@ -29,7 +29,7 @@ public enum TargetPlatform {
 
   public static void initCombo(final JComboBox targetPlatformCombo) {
     targetPlatformCombo.setModel(new DefaultComboBoxModel(values()));
-    targetPlatformCombo.setRenderer(new ListCellRendererWrapper<TargetPlatform>(targetPlatformCombo.getRenderer()) {
+    targetPlatformCombo.setRenderer(new ListCellRendererWrapper<TargetPlatform>() {
       public void customize(JList list, TargetPlatform value, int index, boolean selected, boolean hasFocus) {
         setText(value.getPresentableText());
         setIcon(value.getIcon());
