@@ -15,9 +15,6 @@ import javax.swing.*;
  */
 public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   @NonNls public static final String MODULE_TYPE_ID = "Flex";
-  private static final Icon FLASH_MODULE_BIG_ICON = FlexIcons.Flex.Flash_module_24;
-  private static final Icon FLASH_MODULE_OPEN_ICON = FlexIcons.Flex.Flash_module_open;
-  private static final Icon FLASH_MODULE_CLOSED_ICON = FlexIcons.Flex.Flash_module_closed;
 
   public FlexModuleType() {
     super(MODULE_TYPE_ID);
@@ -42,11 +39,11 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
   }
 
   public Icon getBigIcon() {
-    return FLASH_MODULE_BIG_ICON;
+    return FlexIcons.Flex.Flash_module_24;
   }
 
   public Icon getNodeIcon(final boolean isOpened) {
-    return isOpened ? FLASH_MODULE_OPEN_ICON : FLASH_MODULE_CLOSED_ICON;
+    return FlexIcons.Flex.Flash_module_closed;
   }
 
   public static FlexModuleType getInstance() {

@@ -129,7 +129,7 @@ public class FlexBCTree extends CheckboxTree {
           getTextRenderer().append(((Project)userObject).getName());
         }
         else if (userObject instanceof Module) {
-          getTextRenderer().setIcon(ModuleType.get((Module)userObject).getNodeIcon(expanded));
+          getTextRenderer().setIcon(ModuleType.get((Module)userObject).getIcon());
           getTextRenderer().append(((Module)userObject).getName());
         }
         else if (userObject instanceof FlexIdeBuildConfiguration) {

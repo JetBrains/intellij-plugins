@@ -58,7 +58,7 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
         final DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode)value;
         final Object userObject = treeNode.getUserObject();
         if (userObject instanceof Module) {
-          setIcon(ModuleType.get((Module)userObject).getNodeIcon(expanded));
+          setIcon(ModuleType.get((Module)userObject).getIcon());
           append(((Module)userObject).getName());
         }
         else if (userObject instanceof FlexIdeBuildConfiguration) {

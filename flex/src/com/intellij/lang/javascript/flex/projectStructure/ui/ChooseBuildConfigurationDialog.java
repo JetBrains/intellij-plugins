@@ -165,7 +165,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
         Object object = treeNode.getUserObject();
         if (object instanceof Module) {
           Module module = (Module)object;
-          setIcon(ModuleType.get(module).getNodeIcon(expanded));
+          setIcon(ModuleType.get(module).getIcon());
           append(module.getName());
         }
         else if (object instanceof FlexIdeBCConfigurable) {
