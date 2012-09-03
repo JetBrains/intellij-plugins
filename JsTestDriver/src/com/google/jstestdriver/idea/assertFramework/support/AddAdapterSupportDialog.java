@@ -140,7 +140,7 @@ public class AddAdapterSupportDialog extends DialogWrapper {
     fileList.setFocusable(false);
     fileList.setRequestFocusEnabled(false);
     fileList.setBackground(Gray._242);
-    fileList.setCellRenderer(new ListCellRendererWrapper<VirtualFile>(fileList.getCellRenderer()) {
+    fileList.setCellRenderer(new ListCellRendererWrapper<VirtualFile>() {
       @Override
       public void customize(JList list, VirtualFile value, int index, boolean selected, boolean hasFocus) {
         setText(" " + value.getName());

@@ -23,7 +23,7 @@ public class JstdDebugSection extends AbstractRunSettingsSection {
       BrowsersConfiguration.BrowserFamily.FIREFOX
     };
     myPreferredDebugBrowserComboBox = new JComboBox(supportedBrowsers);
-    myPreferredDebugBrowserComboBox.setRenderer(new ListCellRendererWrapper<BrowsersConfiguration.BrowserFamily>(myPreferredDebugBrowserComboBox.getRenderer()) {
+    myPreferredDebugBrowserComboBox.setRenderer(new ListCellRendererWrapper<BrowsersConfiguration.BrowserFamily>() {
       @Override
       public void customize(JList list,
                             BrowsersConfiguration.BrowserFamily value,

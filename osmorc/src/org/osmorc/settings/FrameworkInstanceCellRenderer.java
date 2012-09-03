@@ -12,7 +12,7 @@ import java.awt.*;
  */
 public abstract class FrameworkInstanceCellRenderer extends ListCellRendererWrapper {
   public FrameworkInstanceCellRenderer(ListCellRenderer renderer) {
-    super(renderer);
+    super();
   }
 
   @Override

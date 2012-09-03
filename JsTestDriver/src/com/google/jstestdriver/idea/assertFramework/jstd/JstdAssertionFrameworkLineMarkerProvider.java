@@ -125,7 +125,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
 
   private static void showPopup(@NotNull MouseEvent e, @NotNull final PsiElement psiElement, final String displayName) {
     final JBList list = new JBList(Type.values());
-    list.setCellRenderer(new ListCellRendererWrapper(list.getCellRenderer()) {
+    list.setCellRenderer(new ListCellRendererWrapper() {
       @Override
       public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
         if (value == Type.RUN) {

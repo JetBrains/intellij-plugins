@@ -74,7 +74,7 @@ public class TestMethodRunSettingsSection extends AbstractRunSettingsSection {
 
   private static JComboBox createComboBox() {
     JComboBox comboBox = new JComboBox();
-    comboBox.setRenderer(new ListCellRendererWrapper<String>(comboBox.getRenderer()) {
+    comboBox.setRenderer(new ListCellRendererWrapper<String>() {
       @Override
       public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {
         setText(value);

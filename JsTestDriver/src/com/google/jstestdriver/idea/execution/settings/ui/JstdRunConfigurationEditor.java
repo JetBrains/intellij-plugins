@@ -178,7 +178,7 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
     @NotNull
     private JComboBox createTestTypeComboBox(@NotNull List<TestTypeListItem> testTypeListItems) {
       JComboBox comboBox = new JComboBox(testTypeListItems.toArray());
-      comboBox.setRenderer(new ListCellRendererWrapper<TestTypeListItem>(comboBox.getRenderer()) {
+      comboBox.setRenderer(new ListCellRendererWrapper<TestTypeListItem>() {
         @Override
         public void customize(JList list, TestTypeListItem value, int index, boolean selected, boolean hasFocus) {
           setText(value.getDisplayName());

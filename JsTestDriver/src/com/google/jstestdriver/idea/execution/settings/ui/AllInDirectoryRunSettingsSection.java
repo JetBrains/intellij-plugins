@@ -105,7 +105,7 @@ public class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection
 
     final JBList fileList = new JBList(ArrayUtil.EMPTY_STRING_ARRAY);
     fileList.setBorder(BorderFactory.createLineBorder(Color.gray));
-    fileList.setCellRenderer(new ListCellRendererWrapper<String>(fileList.getCellRenderer()) {
+    fileList.setCellRenderer(new ListCellRendererWrapper<String>() {
       @Override
       public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {
         setText(value);

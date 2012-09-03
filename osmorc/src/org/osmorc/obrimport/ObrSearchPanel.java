@@ -64,7 +64,7 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
       }
     });
 
-    _obrBox.setRenderer(new ListCellRendererWrapper<Obr>(_obrBox.getRenderer()) {
+    _obrBox.setRenderer(new ListCellRendererWrapper<Obr>() {
       @Override
       public void customize(JList list, Obr value, int index, boolean selected, boolean hasFocus) {
         setText(value.getDisplayName());

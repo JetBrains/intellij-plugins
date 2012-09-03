@@ -73,7 +73,7 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
   }
 
   private void setupVersionComboBox() {
-    versionComboBox.setRenderer(new ListCellRendererWrapper<DownloadableFileSetDescription>(versionComboBox) {
+    versionComboBox.setRenderer(new ListCellRendererWrapper<DownloadableFileSetDescription>() {
       @Override
       public void customize(final JList list,
                             final DownloadableFileSetDescription value,
