@@ -50,7 +50,7 @@ public class ResultActionPropertyReferenceProvider extends PsiReferenceProvider 
       return PsiReference.EMPTY_ARRAY;
     }
 
-    final int tagValueStartOffset = ElementManipulators.getValueTextRange(result.getXmlTag()).getStartOffset();
+    final int tagValueStartOffset = ElementManipulators.getOffsetInElement(result.getXmlTag());
     PsiReference[] references = new PsiReference[1];
 
     final String resultText = XmlUtil.escape(result.getStringValue());  // fix &amp;
