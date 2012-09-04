@@ -77,7 +77,6 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     FileDocumentManager.getInstance().saveAllDocuments();
 
     final JSDebugEngine<Connection> debugEngine = debugBrowserInfo.getDebugEngine();
-    if (!debugEngine.prepareDebugger(project)) return null;
 
     final String url;
     final Connection connection;
