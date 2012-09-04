@@ -15,10 +15,10 @@
  */
 package com.google.jstestdriver.idea.config;
 
-import com.google.jstestdriver.idea.icons.JstdIcons;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.PlainTextLanguage;
+import icons.JsTestDriverIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -64,7 +64,7 @@ public class JstdConfigFileType extends LanguageFileType {
   @NotNull
   @Override
   public Icon getIcon() {
-    return JstdIcons.JSTD_SMALL_ICON;
+    return JsTestDriverIcons.JsTestDriver;
   }
 
 }

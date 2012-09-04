@@ -52,7 +52,6 @@ import java.util.List;
  */
 class ViewFilesPanel extends JPanel implements DataProvider {
   static final String NON_PROJECT_NODE = StringUtil.getMsg("non.project.files");
-  private static final Icon UNKNOWN_ICON = IdetalkCoreIcons.Nodes.Unknown;
 
   private final FileTypeManager myFileTypeManager;
   private final IDEFacade myIdeFacade;
@@ -249,7 +248,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
 
     protected Component renderIn(JLabel label, boolean selected, boolean hasFocus) {
       if (NON_PROJECT_NODE.equals(myName)) {
-        label.setIcon(UNKNOWN_ICON);
+        label.setIcon(IdetalkCoreIcons.Nodes.Unknown);
       }
       else {
         label.setIcon(AllIcons.Nodes.IdeaProject);
@@ -292,7 +291,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
         FileType fileType = myFileTypeManager.getFileTypeByExtension(getExtension());
         return fileType.getIcon();
       }
-      return UNKNOWN_ICON;
+      return IdetalkCoreIcons.Nodes.Unknown;
     }
 
     private String getExtension() {

@@ -1,6 +1,5 @@
 package com.google.jstestdriver.idea.icons;
 
-import icons.JsTestDriverIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
@@ -15,9 +14,6 @@ import java.io.InputStream;
 public class JstdIcons {
 
   private JstdIcons() {}
-
-  public static final Icon JSTD_SMALL_ICON = JsTestDriverIcons.JsTestDriver;
-  public static final Icon TEST_FILE_ICON = JsTestDriverIcons.JsTestFile;
 
   @NotNull
   public static ImageIcon getIcon(@NotNull String resourceName) {

@@ -5,7 +5,6 @@ import com.intellij.ide.structureView.impl.common.PsiTreeElementBase;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.CucumberIcons;
 import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
 import org.jetbrains.plugins.cucumber.psi.GherkinPsiElement;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
@@ -46,10 +45,10 @@ public class GherkinStructureViewElement extends PsiTreeElementBase<PsiElement> 
     final PsiElement element = getElement();
     if (element instanceof GherkinFeature
         || element instanceof GherkinStepsHolder) {
-      return open ? CucumberIcons.STRUCTURE_STEPS_GROUP_OPEN_ICON : CucumberIcons.STRUCTURE_STEPS_GROUP_CLOSED_ICON;
+      return open ? icons.CucumberIcons.Steps_group_opened : icons.CucumberIcons.Steps_group_closed;
     }
     if (element instanceof GherkinStep) {
-      return CucumberIcons.STRUCTURE_STEP_ICON;
+      return icons.CucumberIcons.Cucumber;
     }
     return null;
   }

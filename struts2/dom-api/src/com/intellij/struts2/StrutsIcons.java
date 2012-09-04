@@ -88,11 +88,6 @@ public final class StrutsIcons {
   }
 
   /**
-   * Overlay icon for "global" elements.
-   */
-  private static final Icon OVERLAY_GLOBAL = AllIcons.General.Web;
-
-  /**
    * Overlay icon for "default" elements.
    */
   private static final Icon OVERLAY_DEFAULT = PlatformIcons.CHECK_ICON;
@@ -147,7 +142,7 @@ public final class StrutsIcons {
 
   private static void createGlobalIcon(final LayeredIcon icon, final Icon baseIcon) {
     icon.setIcon(baseIcon, 0);
-    icon.setIcon(OVERLAY_GLOBAL, 1, OVERLAY_X_OFFSET, OVERLAY_Y_OFFSET);
+    icon.setIcon(AllIcons.General.Web, 1, OVERLAY_X_OFFSET, OVERLAY_Y_OFFSET);
   }
 
   private static void createDefaultIcon(final LayeredIcon icon, final Icon baseIcon) {

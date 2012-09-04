@@ -35,8 +35,6 @@ import java.util.concurrent.TimeUnit;
  * @author Kir
  */
 public abstract class BaseToolWindow implements ProjectComponent {
-  public static final Icon WORKER_ICON = IdetalkCoreIcons.IdeTalk.User;
-
   protected final ToolWindowManager myToolWindowManager;
   protected final ActionManager myActionManager;
   protected final Project myProject;
@@ -69,7 +67,7 @@ public abstract class BaseToolWindow implements ProjectComponent {
 
     createToolWindowComponent();
     myToolWindow = myToolWindowManager.registerToolWindow(getToolWindowId(), myPanel, getAnchor(), myProject, true);
-    myToolWindow.setIcon(WORKER_ICON);
+    myToolWindow.setIcon(IdetalkCoreIcons.IdeTalk.User);
   }
 
   public void projectClosed() {

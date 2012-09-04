@@ -16,12 +16,12 @@
 package com.google.jstestdriver.idea.execution;
 
 import com.google.jstestdriver.idea.MessageBundle;
-import com.google.jstestdriver.idea.icons.JstdIcons;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
+import icons.JsTestDriverIcons;
 
 /**
  * Top-level of the plugin - this class is registered in the plugin XML.
@@ -32,7 +32,7 @@ public class JstdConfigurationType extends ConfigurationTypeBase {
 
   public JstdConfigurationType() {
     super("JSTestDriver:ConfigurationType", MessageBundle.getPluginName(),
-          MessageBundle.getPluginName(), JstdIcons.JSTD_SMALL_ICON);
+          MessageBundle.getPluginName(), JsTestDriverIcons.JsTestDriver);
     addFactory(new ConfigurationFactory(this) {
       @Override
       public RunConfiguration createTemplateConfiguration(Project project) {

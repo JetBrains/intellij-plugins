@@ -30,6 +30,7 @@ import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.content.*;
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.IDEtalkProperties;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.dispatcher.LocalMessageDispatcher;
@@ -326,16 +327,16 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     public void actionPerformed(ActionEvent e) {
       final Icon blinkingIcon = myDispatcher.getBlinkingIcon();
       if (blinkingIcon == null) {
-        myToolWindow.setIcon(WORKER_ICON);
+        myToolWindow.setIcon(IdetalkCoreIcons.IdeTalk.User);
       } else {
         if (System.getProperty(IDEtalkProperties.IDEA_IDE_TALK_NO_TOOLBAR_BLINK) == null) {
           myFlag = !myFlag;
         }
 
         if (myFlag) {
-          myToolWindow.setIcon(new EmptyIcon(WORKER_ICON.getIconWidth(), WORKER_ICON.getIconHeight()));
+          myToolWindow.setIcon(new EmptyIcon(IdetalkCoreIcons.IdeTalk.User.getIconWidth(), IdetalkCoreIcons.IdeTalk.User.getIconHeight()));
         } else {
-          myToolWindow.setIcon(new IconSizeWrapper(WORKER_ICON, blinkingIcon));
+          myToolWindow.setIcon(new IconSizeWrapper(IdetalkCoreIcons.IdeTalk.User, blinkingIcon));
         }
       }
     }

@@ -1,12 +1,12 @@
 package com.google.jstestdriver.idea.assertFramework;
 
-import com.google.jstestdriver.idea.icons.JstdIcons;
 import com.intellij.ide.IconProvider;
 import com.intellij.lang.javascript.index.JSIndexEntry;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiElement;
+import icons.JsTestDriverIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -19,7 +19,7 @@ public class JsTestDriverIconProvider extends IconProvider {
   @Override
   public Icon getIcon(@NotNull final PsiElement element, @Iconable.IconFlags final int flags) {
     if (element instanceof JSFile && isTestFile((JSFile)element)) {
-      return JstdIcons.TEST_FILE_ICON;
+      return JsTestDriverIcons.JsTestFile;
     }
     return null;
   }

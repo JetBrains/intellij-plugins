@@ -8,7 +8,6 @@ import com.intellij.openapi.options.colors.ColorSettingsPage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
-import org.jetbrains.plugins.cucumber.CucumberIcons;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -76,7 +75,7 @@ public class GherkinColorsPage implements ColorSettingsPage {
 
   @NotNull
   public Icon getIcon() {
-    return CucumberIcons.FILE_ICON;
+    return icons.CucumberIcons.Cucumber;
   }
 
   @NotNull

@@ -23,7 +23,6 @@ import javax.swing.*;
 
 
 public class TypoScriptFileType extends LanguageFileType {
-  private static final Icon ICON = TypoScriptIcons.Typo3;
 
   public static final TypoScriptFileType INSTANCE = new TypoScriptFileType();
   public static final String DEFAULT_EXTENSION = "ts";
@@ -52,7 +51,7 @@ public class TypoScriptFileType extends LanguageFileType {
 
   @Override
   public Icon getIcon() {
-    return ICON;
+    return TypoScriptIcons.Typo3;
   }
 }
 

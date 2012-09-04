@@ -2,11 +2,13 @@ package org.jetbrains.plugins.cucumber.java.run;
 
 import com.intellij.execution.application.ApplicationConfigurationType;
 import com.intellij.execution.configuration.ConfigurationFactoryEx;
-import com.intellij.execution.configurations.*;
+import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
+import com.intellij.execution.configurations.ModuleBasedConfiguration;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.java.CucumberJavaIcons;
 
 import javax.swing.*;
 
@@ -54,7 +56,7 @@ public class CucumberJavaRunConfigurationType extends ApplicationConfigurationTy
 
   @Override
   public Icon getIcon() {
-    return CucumberJavaIcons.RUN_CONFIGURATION_ICON;
+    return icons.CucumberJavaIcons.CucumberJavaRunConfiguration;
   }
 
   @Override

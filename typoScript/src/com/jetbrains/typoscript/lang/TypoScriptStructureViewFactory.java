@@ -24,7 +24,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PlatformIcons;
-import com.jetbrains.typoscript.TypoScriptIcons;
 import com.jetbrains.typoscript.lang.psi.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -133,15 +132,15 @@ public class TypoScriptStructureViewFactory implements PsiStructureViewFactory {
         return myElement.getIcon(0);
       }
       else if (myElement instanceof IncludeStatementElement) {
-        return TypoScriptIcons.INCLUDE_ICON;
+        return icons.TypoScriptIcons.Include_ts;
       }
       else if (myElement instanceof ConditionElement) {
-        return TypoScriptIcons.CONDITION_ICON;
+        return icons.TypoScriptIcons.Condition_ts;
       }
       else if (myElement instanceof CodeBlock) {
         return PlatformIcons.FOLDER_ICON;
       }
-      return TypoScriptIcons.PROPERTY_ICON;
+      return icons.TypoScriptIcons.Property_ts;
     }
 
     @Override
