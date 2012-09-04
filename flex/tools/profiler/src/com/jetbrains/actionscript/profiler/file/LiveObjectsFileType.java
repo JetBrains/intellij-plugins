@@ -3,7 +3,7 @@ package com.jetbrains.actionscript.profiler.file;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.actionscript.profiler.ProfilerBundle;
-import com.jetbrains.actionscript.profiler.ProfilerIcons;
+import icons.FlexProfilerIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -34,7 +34,7 @@ public class LiveObjectsFileType implements FileType {
 
   @Override
   public Icon getIcon() {
-    return ProfilerIcons.LIVE_OBJECTS;
+    return FlexProfilerIcons.LiveObjects;
   }
 
   @Override

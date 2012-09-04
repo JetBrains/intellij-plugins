@@ -21,6 +21,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ThreeState;
+import icons.JavaScriptLanguageIcons;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -30,7 +31,7 @@ public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
 
   public NewFlexComponentUmlAction() {
     super(JSBundle.message("new.flex.component.uml.action.text"), JSBundle.message("new.flex.component.action.description"),
-          XmlBackedJSClassImpl.CLASS_ICON);
+          JavaScriptLanguageIcons.Flex.XmlBackedClass);
   }
 
   @Override

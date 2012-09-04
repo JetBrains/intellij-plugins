@@ -24,7 +24,6 @@ import java.util.List;
 
 public class FlexSdkType2 extends SdkType {
 
-  public static final Icon ICON = FlexIcons.Flex.Sdk.Flex_sdk;
   public static final String NAME = "Flex SDK Type (new)";
   public static final String LAST_SELECTED_FLEX_SDK_HOME_KEY = "last.selected.flex.sdk.home";
 
@@ -86,7 +85,7 @@ public class FlexSdkType2 extends SdkType {
   }
 
   public Icon getIcon() {
-    return ICON;
+    return FlexIcons.Flex.Sdk.Flex_sdk;
   }
 
   @NotNull

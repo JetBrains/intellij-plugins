@@ -46,8 +46,6 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
   public static final String DOT_FLEX_PROPERTIES = ".flexProperties";
   public static final String DOT_FLEX_LIB_PROPERTIES = ".flexLibProperties";
 
-  private static final Icon flashBuilderIcon = FlexIcons.Flex.Flash_builder;
-
   private Parameters myParameters;
 
   public static class Parameters {
@@ -75,7 +73,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
   }
 
   public Icon getIcon() {
-    return flashBuilderIcon;
+    return FlexIcons.Flex.Flash_builder;
   }
 
   public boolean isMarked(final String element) {

@@ -16,7 +16,6 @@ import com.intellij.ui.TreeTableSpeedSearch;
 import com.intellij.util.Alarm;
 import com.intellij.util.Function;
 import com.intellij.util.ui.tree.TreeUtil;
-import com.jetbrains.actionscript.profiler.ProfilerIcons;
 import com.jetbrains.actionscript.profiler.calltree.CallTree;
 import com.jetbrains.actionscript.profiler.calltree.CallTreeUtil;
 import com.jetbrains.actionscript.profiler.calltreetable.CallTreeTable;
@@ -30,6 +29,7 @@ import com.jetbrains.actionscript.profiler.util.JTreeUtil;
 import com.jetbrains.actionscript.profiler.util.ResolveUtil;
 import com.jetbrains.actionscript.profiler.vo.CallInfo;
 import com.jetbrains.profiler.ProfileView;
+import icons.FlexProfilerIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -128,8 +128,8 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
       @Override
       public void customizeCellRenderer(Object value, boolean selected) {
         setPaintFocusBorder(false);
-        setScopeIcon(ProfilerIcons.CALLER_SOLID_ARROW);
-        setNonScopeIcon(ProfilerIcons.CALLER_DOTTED_ARROW);
+        setScopeIcon(FlexProfilerIcons.CallerArrow);
+        setNonScopeIcon(FlexProfilerIcons.CallerLeafArrow);
         super.customizeCellRenderer(value, selected);
       }
     });
@@ -137,8 +137,8 @@ public class CPUSnapshotView extends ProfileView implements Disposable {
       @Override
       public void customizeCellRenderer(Object value, boolean selected) {
         setPaintFocusBorder(false);
-        setScopeIcon(ProfilerIcons.CALLEE_SOLID_ARROW);
-        setNonScopeIcon(ProfilerIcons.CALLEE_DOTTED_ARROW);
+        setScopeIcon(FlexProfilerIcons.CalleeArrow);
+        setNonScopeIcon(FlexProfilerIcons.CalleeLeafArrow);
         super.customizeCellRenderer(value, selected);
       }
     });

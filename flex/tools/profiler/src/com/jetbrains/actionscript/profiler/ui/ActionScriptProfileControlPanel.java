@@ -12,7 +12,6 @@ import com.intellij.ui.PopupHandler;
 import com.intellij.util.Alarm;
 import com.intellij.util.EditSourceOnDoubleClickHandler;
 import com.jetbrains.actionscript.profiler.ProfilerBundle;
-import com.jetbrains.actionscript.profiler.ProfilerIcons;
 import com.jetbrains.actionscript.profiler.base.NavigatableTree;
 import com.jetbrains.actionscript.profiler.base.ProfilerActionGroup;
 import com.jetbrains.actionscript.profiler.livetable.LiveModelController;
@@ -21,6 +20,7 @@ import com.jetbrains.actionscript.profiler.model.ProfilerDataConsumer;
 import com.jetbrains.actionscript.profiler.model.ProfilingManager;
 import com.jetbrains.actionscript.profiler.ui.node.CPUSnapshotNode;
 import com.jetbrains.actionscript.profiler.ui.node.LiveObjectsNode;
+import icons.FlexProfilerIcons;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -97,7 +97,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
                                         boolean leaf,
                                         int row,
                                         boolean hasFocus) {
-        setIcon(value instanceof CPUSnapshotNode ? ProfilerIcons.SNAPSHOT_CPU : ProfilerIcons.LIVE_OBJECTS);
+        setIcon(value instanceof CPUSnapshotNode ? FlexProfilerIcons.SnapshotCPU : FlexProfilerIcons.LiveObjects);
         if (value.toString() != null) {
           append(value.toString());
         }
@@ -174,7 +174,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
     return new DefaultActionGroup(
       new ToggleAction(ProfilerBundle.message("start.cpu.profiling"),
                        ProfilerBundle.message("start.cpu.profiling.description"),
-                       ProfilerIcons.START_CPU) {
+                       FlexProfilerIcons.StartCPU) {
         @Override
         public boolean isSelected(AnActionEvent e) {
           return currentState == State.CPU_PROFILING;
@@ -192,7 +192,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
             });
             e.getPresentation().setText(ProfilerBundle.message("stop.cpu.profiling"));
             e.getPresentation().setDescription(ProfilerBundle.message("stop.cpu.profiling.description"));
-            e.getPresentation().setIcon(ProfilerIcons.STOP_CPU);
+            e.getPresentation().setIcon(FlexProfilerIcons.StopCPU);
           }
           else {
             profilingManager.stopCpuProfiling(new ProfilingManager.Callback() {
@@ -204,7 +204,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
             });
             e.getPresentation().setText(ProfilerBundle.message("start.cpu.profiling"));
             e.getPresentation().setDescription(ProfilerBundle.message("start.cpu.profiling.description"));
-            e.getPresentation().setIcon(ProfilerIcons.START_CPU);
+            e.getPresentation().setIcon(FlexProfilerIcons.StartCPU);
           }
         }
 
@@ -216,7 +216,7 @@ public class ActionScriptProfileControlPanel implements ProfilerActionGroup, Dis
       },
       new AnAction(ProfilerBundle.message("do.gc"),
                    ProfilerBundle.message("do.gc.description"),
-                   ProfilerIcons.DO_GC) {
+                   FlexProfilerIcons.GC) {
         @Override
         public void actionPerformed(AnActionEvent e) {
           profilingManager.doGc(new ProfilingManager.Callback() {

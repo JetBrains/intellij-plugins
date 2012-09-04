@@ -1,13 +1,7 @@
 package com.intellij.lang.javascript.flex.actions.newfile;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.template.Expression;
-import com.intellij.codeInsight.template.ExpressionContext;
-import com.intellij.codeInsight.template.Result;
 import com.intellij.codeInsight.template.TemplateBuilderImpl;
 import com.intellij.codeInsight.template.impl.MacroCallNode;
-import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
-import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.codeInsight.template.macro.CompleteMacro;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.javascript.flex.mxml.schema.CodeContextHolder;
@@ -31,6 +25,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlToken;
 import com.intellij.util.ArrayUtil;
 import com.intellij.xml.util.XmlTagUtil;
+import icons.JavaScriptLanguageIcons;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -40,7 +35,7 @@ public class NewFlexComponentAction extends NewJSClassActionBase {
 
   public NewFlexComponentAction() {
     super(JSBundle.message("new.flex.component.action.title"), JSBundle.message("new.flex.component.action.description"),
-          XmlBackedJSClassImpl.CLASS_ICON, CreateClassOrInterfaceAction.FLEX_TEMPLATES_EXTENSIONS);
+          JavaScriptLanguageIcons.Flex.XmlBackedClass, CreateClassOrInterfaceAction.FLEX_TEMPLATES_EXTENSIONS);
   }
 
   @Override

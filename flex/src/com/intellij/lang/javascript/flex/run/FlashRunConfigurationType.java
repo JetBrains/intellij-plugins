@@ -12,7 +12,6 @@ import javax.swing.*;
 
 public class FlashRunConfigurationType implements ConfigurationType {
 
-  public static final Icon ICON = FlexIcons.Flash_run_config;
   public static final String TYPE = "FlashRunConfigurationType";
   public static final String DISPLAY_NAME = "Flash App";
 
@@ -35,7 +34,7 @@ public class FlashRunConfigurationType implements ConfigurationType {
   }
 
   public Icon getIcon() {
-    return ICON;
+    return FlexIcons.Flash_run_config;
   }
 
   public ConfigurationFactory[] getConfigurationFactories() {

@@ -12,8 +12,6 @@ import javax.swing.*;
 
 public class FlexUnitRunConfigurationType implements ConfigurationType {
 
-  private static final Icon ourIcon = FlexIcons.Flex.Flexunit;
-
   private final ConfigurationFactory myFactory;
 
   public FlexUnitRunConfigurationType() {
@@ -33,7 +31,7 @@ public class FlexUnitRunConfigurationType implements ConfigurationType {
   }
 
   public Icon getIcon() {
-    return ourIcon;
+    return FlexIcons.Flex.Flexunit;
   }
 
   public ConfigurationFactory[] getConfigurationFactories() {

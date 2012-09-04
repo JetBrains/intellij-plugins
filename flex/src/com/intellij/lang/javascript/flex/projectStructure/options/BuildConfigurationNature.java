@@ -11,14 +11,6 @@ import javax.swing.*;
  * @author ksafonov
  */
 public class BuildConfigurationNature {
-
-  private static final Icon ICON_WEB_AS = FlexIcons.Bc_web_as;
-  private static final Icon ICON_WEB_FLEX = FlexIcons.Bc_web_flex;
-  private static final Icon ICON_DESKTOP_AS = FlexIcons.Bc_desktop_as;
-  private static final Icon ICON_DESKTOP_FLEX = FlexIcons.Bc_desktop_flex;
-  private static final Icon ICON_MOBILE_AS = FlexIcons.Bc_mobile_as;
-  private static final Icon ICON_MOBILE_FLEX = FlexIcons.Bc_mobile_flex;
-
   public final TargetPlatform targetPlatform;
   public final boolean pureAS;
   public final OutputType outputType;
@@ -80,14 +72,14 @@ public class BuildConfigurationNature {
   public Icon getIcon() {
     switch (targetPlatform) {
       case Web:
-        return pureAS ? ICON_WEB_AS : ICON_WEB_FLEX;
+        return pureAS ? FlexIcons.Bc_web_as : FlexIcons.Bc_web_flex;
       case Desktop:
-        return pureAS ? ICON_DESKTOP_AS : ICON_DESKTOP_FLEX;
+        return pureAS ? FlexIcons.Bc_desktop_as : FlexIcons.Bc_desktop_flex;
       case Mobile:
-        return pureAS ? ICON_MOBILE_AS : ICON_MOBILE_FLEX;
+        return pureAS ? FlexIcons.Bc_mobile_as : FlexIcons.Bc_mobile_flex;
       default:
         assert false : targetPlatform;
-        return ICON_WEB_FLEX;
+        return FlexIcons.Bc_web_flex;
     }
   }
 

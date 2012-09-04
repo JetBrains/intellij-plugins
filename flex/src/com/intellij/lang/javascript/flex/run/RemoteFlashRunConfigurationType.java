@@ -12,7 +12,6 @@ import javax.swing.*;
 
 public class RemoteFlashRunConfigurationType implements ConfigurationType {
 
-  private static final Icon ICON = FlexIcons.Flash_remote_debug;
   public static final String TYPE = "RemoteFlashRunConfigurationType";
   public static final String DISPLAY_NAME = "Flash Remote Debug";
 
@@ -35,7 +34,7 @@ public class RemoteFlashRunConfigurationType implements ConfigurationType {
   }
 
   public Icon getIcon() {
-    return ICON;
+    return FlexIcons.Flash_remote_debug;
   }
 
   public ConfigurationFactory[] getConfigurationFactories() {

@@ -28,6 +28,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.SimpleTextAttributes;
+import icons.JavaScriptLanguageIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -137,7 +138,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
         VirtualFile file = value.getVirtualFile();
         if (file != null && ProjectRootManager.getInstance(myProject).getFileIndex().getSourceRootForFile(file) != null) {
           className = file.getNameWithoutExtension();
-          icon = XmlBackedJSClassImpl.CLASS_ICON;
+          icon = JavaScriptLanguageIcons.Flex.XmlBackedClass;
         }
       }
 

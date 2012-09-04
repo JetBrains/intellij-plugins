@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurab
 import com.intellij.lang.javascript.flex.projectStructure.ui.DependenciesConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexProjectStructureUtil;
-import com.intellij.lang.javascript.flex.run.FlashRunConfigurationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
@@ -33,6 +32,7 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -133,7 +133,7 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
                                                final MasterDetailsComponent.MyNode root) {
     final Collection<AnAction> actions = new ArrayList<AnAction>(2);
     actions.add(new DumbAwareAction(FlexBundle.message("create.bc.action.text"), FlexBundle.message("create.bc.action.description"),
-                                    FlashRunConfigurationType.ICON) {
+                                    FlexIcons.Flash_run_config) {
       public void update(final AnActionEvent e) {
         e.getPresentation().setVisible(getFlexModuleForNode(selectedNodeRetriever.compute()) != null);
       }

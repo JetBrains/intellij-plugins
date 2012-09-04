@@ -22,11 +22,9 @@ import java.util.List;
 
 public class FlexLibraryRootsComponentDescriptor extends LibraryRootsComponentDescriptor {
 
-  private static final Icon DOC_ICON = FlexIcons.Flex.Documentation;
-
   public OrderRootTypePresentation getRootTypePresentation(@NotNull final OrderRootType type) {
     if (type instanceof JavadocOrderRootType) {
-      return new OrderRootTypePresentation(FlexBundle.message("documentation.order.root.type.name"), DOC_ICON);
+      return new OrderRootTypePresentation(FlexBundle.message("documentation.order.root.type.name"), FlexIcons.Flex.Documentation);
     }
     return DefaultLibraryRootsComponentDescriptor.getDefaultPresentation(type);
   }
