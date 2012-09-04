@@ -1,11 +1,11 @@
 package com.intellij.tapestry.intellij.toolwindow.actions;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.psi.PsiField;
 import com.intellij.tapestry.core.model.presentation.InjectedElement;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
-import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaField;
 import com.intellij.tapestry.intellij.toolwindow.nodes.EmbeddedComponentNode;
 import com.intellij.tapestry.intellij.toolwindow.nodes.InjectedPageNode;
@@ -18,7 +18,7 @@ public class NavigateToUsageAction extends AnAction {
     private final JTree _tree;
 
     public NavigateToUsageAction(JTree tree) {
-        super("Navigate to Usage", "Navigate to part of code where the selected element is used", TapestryIcons.REFERENCE);
+        super("Navigate to Usage", "Navigate to part of code where the selected element is used", AllIcons.Nodes.EjbReference);
 
         _tree = tree;
     }

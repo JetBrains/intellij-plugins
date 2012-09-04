@@ -1,5 +1,6 @@
 package com.intellij.tapestry.intellij.toolwindow;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.module.Module;
@@ -11,7 +12,6 @@ import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.model.presentation.InjectedElement;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
-import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaField;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
@@ -238,7 +238,7 @@ public class DependenciesTab {
     public class NavigateToElementAction extends AnAction {
 
         public NavigateToElementAction() {
-            super("Navigate to Element", "Navigate to the selected element class", TapestryIcons.NAVIGATE);
+            super("Navigate to Element", "Navigate to the selected element class", AllIcons.Actions.Browser_externalJavaDoc);
         }
 
         /**
@@ -275,7 +275,7 @@ public class DependenciesTab {
     private class NavigateToUsageAction extends AnAction {
 
         public NavigateToUsageAction() {
-            super("Navigate to Usage", "Navigate to part of code where the selected element is used", TapestryIcons.REFERENCE);
+            super("Navigate to Usage", "Navigate to part of code where the selected element is used", AllIcons.Nodes.EjbReference);
         }
 
         /**

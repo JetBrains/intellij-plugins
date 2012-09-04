@@ -11,8 +11,8 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
-import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.lang.TmlHighlighter;
+import icons.TapestryCoreIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -68,7 +68,7 @@ public class TemplateColorSettingsPage implements ColorSettingsPage {
   }
 
   public Icon getIcon() {
-    return TapestryIcons.TAPESTRY_LOGO_SMALL;
+    return TapestryCoreIcons.Tapestry_logo_small;
   }
 
   @NotNull

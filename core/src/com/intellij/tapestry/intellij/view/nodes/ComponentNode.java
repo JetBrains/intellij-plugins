@@ -7,10 +7,10 @@ import com.intellij.psi.PsiClassOwner;
 import com.intellij.tapestry.core.model.presentation.Component;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.core.resource.IResource;
-import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.ui.treeStructure.SimpleNode;
+import icons.TapestryCoreIcons;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,8 @@ public class ComponentNode extends TapestryNode {
     public ComponentNode(PresentationLibraryElement component, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(component, new PresentationData(component.getElementClass().getName(), component.getElementClass().getName(), TapestryIcons.COMPONENT, null));
+        init(component, new PresentationData(component.getElementClass().getName(), component.getElementClass().getName(),
+                                             TapestryCoreIcons.Component, null));
     }
 
     /**

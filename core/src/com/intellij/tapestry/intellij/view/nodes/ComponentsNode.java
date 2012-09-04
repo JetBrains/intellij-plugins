@@ -5,7 +5,7 @@ import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.tapestry.core.model.Library;
-import com.intellij.tapestry.core.util.TapestryIcons;
+import icons.TapestryCoreIcons;
 
 public class ComponentsNode extends PackageNode {
 
@@ -13,13 +13,13 @@ public class ComponentsNode extends PackageNode {
         super(library, psiDirectory, module, treeBuilder);
 
         init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(),
-                                                TapestryIcons.COMPONENTS, null));
+                                                TapestryCoreIcons.Components, null));
     }
 
     public ComponentsNode(PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {
         super(psiDirectory, module, treeBuilder);
 
         init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(),
-                                                TapestryIcons.COMPONENTS, null));
+                                                TapestryCoreIcons.Components, null));
     }
 }

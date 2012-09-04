@@ -1,10 +1,10 @@
 package com.intellij.tapestry.intellij.toolwindow.actions;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.tapestry.core.model.presentation.InjectedElement;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
-import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 
 import javax.swing.*;
@@ -15,7 +15,7 @@ public class NavigateToElementAction extends AnAction {
     private final JTree _tree;
 
     public NavigateToElementAction(JTree tree) {
-        super("Navigate to Element", "Navigate to the selected element class", TapestryIcons.NAVIGATE);
+        super("Navigate to Element", "Navigate to the selected element class", AllIcons.Actions.Browser_externalJavaDoc);
 
         _tree = tree;
     }

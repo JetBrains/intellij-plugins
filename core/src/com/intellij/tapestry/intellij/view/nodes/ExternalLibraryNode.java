@@ -1,5 +1,6 @@
 package com.intellij.tapestry.intellij.view.nodes;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
@@ -7,7 +8,6 @@ import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.model.Library;
-import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.ui.treeStructure.SimpleNode;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class ExternalLibraryNode extends TapestryNode {
     public ExternalLibraryNode(Library library, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(library, new PresentationData(library.getId(), library.getId(), TapestryIcons.LIBRARY, null));
+        init(library, new PresentationData(library.getId(), library.getId(), AllIcons.Modules.Library, null));
     }
 
     /**

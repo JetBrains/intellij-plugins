@@ -1,11 +1,11 @@
 package com.intellij.tapestry.intellij.view.nodes;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.model.Library;
-import com.intellij.tapestry.core.util.TapestryIcons;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.ui.treeStructure.SimpleNode;
 
@@ -17,7 +17,7 @@ public class LibrariesNode extends TapestryNode {
     public LibrariesNode(Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init("Libraries", new PresentationData("Libraries", "Libraries", TapestryIcons.LIBRARY, null));
+        init("Libraries", new PresentationData("Libraries", "Libraries", AllIcons.Modules.Library, null));
     }
 
     /**
