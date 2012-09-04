@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.reference.jsp;
 
+import com.intellij.codeInsight.daemon.impl.analysis.XmlPathReferenceInspection;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.struts2.BasicHighlightingTestCase;
 import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
@@ -30,7 +31,7 @@ public class UITagsAttributesReferenceProviderTest extends BasicHighlightingTest
 
   @Override
   protected LocalInspectionTool[] getHighlightingInspections() {
-    return new LocalInspectionTool[]{new XmlDuplicatedIdInspection()};
+    return new LocalInspectionTool[]{new XmlDuplicatedIdInspection(), new XmlPathReferenceInspection()};
   }
 
   @Override
