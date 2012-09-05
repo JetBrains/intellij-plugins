@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.reference.jsp;
 
-import com.intellij.codeInspection.htmlInspections.HtmlUnknownTargetInspection;
+import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlTag;
