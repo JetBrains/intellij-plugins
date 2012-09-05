@@ -125,7 +125,9 @@ public class JstdTestFileStructureBuilder extends AbstractTestFileStructureBuild
       JstdTestStructure jstdTestStructure = JstdTestStructure.newPrototypeBasedTestStructure(wholeLeftDefExpr,
                                                                                              testMethodLeafPsiElement,
                                                                                              jsFunctionExpression);
-      testCaseStructure.addTestStructure(jstdTestStructure);
+      if (jstdTestStructure != null) {
+        testCaseStructure.addTestStructure(jstdTestStructure);
+      }
     }
   }
 
