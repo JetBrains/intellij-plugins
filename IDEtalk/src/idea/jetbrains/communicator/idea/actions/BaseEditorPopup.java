@@ -24,7 +24,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserModel;
 import static jetbrains.communicator.idea.actions.ActionUtil.*;
-import jetbrains.communicator.util.UIUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +110,7 @@ public abstract class BaseEditorPopup extends ActionGroup implements DumbAware {
           public void update(AnActionEvent e) {
             super.update(e);
             e.getPresentation().setDescription(getActionDescription(user, file));
-            e.getPresentation().setIcon(UIUtil.getUserIcon(user));
+            e.getPresentation().setIcon(user.getIcon());
           }
         });
       }

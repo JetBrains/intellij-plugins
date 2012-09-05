@@ -23,6 +23,8 @@ import jetbrains.communicator.core.vfs.ProjectsData;
 import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.ide.IDEFacade;
 
+import javax.swing.*;
+
 /**
  * @author Kir Maximov
  */
@@ -30,7 +32,7 @@ public interface User {
 
   String getName();
   String getDisplayName();
-  String getIconPath();
+  Icon getIcon();
   String getGroup();
 
   /** Sets this user's displayName. If userModel is not null and user exists in userModel,

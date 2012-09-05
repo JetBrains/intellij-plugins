@@ -16,6 +16,7 @@
 
 package jetbrains.communicator.commands;
 
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.ide.IDEFacade;
@@ -47,7 +48,7 @@ public class CreateGroupCommand implements NamedUserCommand {
   }
 
   public Icon getIcon() {
-    return UIUtil.getIcon("/nodes/group_open.png");
+    return IdetalkCoreIcons.Nodes.Group_open;
   }
 
   public String getName() {

@@ -366,7 +366,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
       }
     };
     assertTrue("Bob should be online", bob.isOnline());
-    assertEquals("/ideTalk/jabber.png", myTransport.getIconPath(bob.getPresence()));
+    assertEquals("/ideTalk/jabber.png", myTransport.getIcon(bob.getPresence()));
 
     assertEquals("One user in UserModel expected:" + Arrays.asList(myUserModel.getAllUsers()),
         1, myUserModel.getAllUsers().length);
@@ -385,7 +385,7 @@ public class JabberTransport_ConnectionTest extends AbstractTransportTestCase {
       }
     };
     assertFalse("Should become offline", bob.isOnline());
-    assertEquals("/ideTalk/offline.png", myTransport.getIconPath(myTransport.getUserPresence(bob)));
+    assertEquals("/ideTalk/offline.png", myTransport.getIcon(myTransport.getUserPresence(bob)));
     assertEquals("Bob should go offline", bob, ((UserEvent.Offline) checkEvent(true)).getUser());
   }
 

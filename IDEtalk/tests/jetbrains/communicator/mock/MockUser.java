@@ -27,6 +27,8 @@ import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.util.StringUtil;
 
+import javax.swing.*;
+
 /**
  * @author Kir Maximov
  */
@@ -54,7 +56,7 @@ public class MockUser extends BaseUserImpl {
   }
 
   @Override
-  public String getIconPath() {
+  public Icon getIcon() {
     return null;
   }
 

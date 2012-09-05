@@ -33,6 +33,7 @@ import jetbrains.communicator.ide.SendCodePointerEvent;
 import jetbrains.communicator.ide.SendMessageEvent;
 import jetbrains.communicator.util.TimeoutCachedValue;
 
+import javax.swing.*;
 import java.util.List;
 
 /**
@@ -44,7 +45,7 @@ public final class UserImpl extends BaseUserImpl {
 
   private static final int CACHE_TIMEOUT = 800;
   private transient TimeoutCachedValue<UserPresence> myUserPresenceCache;
-  private transient TimeoutCachedValue<String> myIconPathCache;
+  private transient TimeoutCachedValue<Icon> myIconCache;
 
   private UserImpl(String name, String transportCode) {
     super(name, "");
@@ -75,9 +76,9 @@ public final class UserImpl extends BaseUserImpl {
     return getTransport().isSelf(this);
   }
 
-  public String getIconPath() {
+  public Icon getIcon() {
     updateVars();
-    return myIconPathCache.getValue();
+    return myIconCache.getValue();
   }
 
   public String[] getProjects() {
@@ -143,9 +144,9 @@ public final class UserImpl extends BaseUserImpl {
           return getTransport().getUserPresence(UserImpl.this);
         }
       };
-      myIconPathCache = new TimeoutCachedValue<String>(CACHE_TIMEOUT) {
-        protected String calculate() {
-          return getTransport().getIconPath(getPresence());
+      myIconCache = new TimeoutCachedValue<Icon>(CACHE_TIMEOUT) {
+        protected Icon calculate() {
+          return getTransport().getIcon(getPresence());
         }
       };
     }

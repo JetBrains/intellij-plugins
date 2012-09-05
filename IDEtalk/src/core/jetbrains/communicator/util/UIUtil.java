@@ -17,6 +17,7 @@
 package jetbrains.communicator.util;
 
 import com.intellij.ui.ScrollPaneFactory;
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.PresenceMode;
 import jetbrains.communicator.core.users.User;
@@ -44,7 +45,6 @@ import java.util.concurrent.TimeoutException;
 @NonNls
 public class UIUtil {
   public static final int BLINK_DELAY = 800;
-  private static final Map<String,Icon> ourIcons = new HashMap<String, Icon>();
 
   private UIUtil() {
   }
@@ -87,28 +87,11 @@ public class UIUtil {
         Component rendererComponent = super.getListCellRendererComponent(list, user.getDisplayName(), index, isSelected, cellHasFocus);
         if (rendererComponent instanceof JLabel) {
           JLabel jLabel = (JLabel) rendererComponent;
-          jLabel.setIcon(getUserIcon(user));
+          jLabel.setIcon(user.getIcon());
         }
         return rendererComponent;
       }
     });
-  }
-
-  public static Icon getUserIcon(User user) {
-    return getIcon(user.getIconPath());
-  }
-
-  public static Icon getIcon(@NonNls String iconPath) {
-    if (iconPath == null) return null;
-
-    Icon icon = ourIcons.get(iconPath);
-    if (icon == null) {
-      URL resource = UIUtil.class.getResource(iconPath);
-      assert resource != null : "Null resource for " + iconPath;
-      icon = new ImageIcon(resource);
-      ourIcons.put(iconPath, icon);
-    }
-    return icon;
   }
 
   public static void run(final IDEFacade ideFacade, final String title, final Runnable runnable)
@@ -229,16 +212,16 @@ public class UIUtil {
     return false;
   }
 
-  public static String getIcon(UserPresence userPresence, String onlineIcon, String dndIcon) {
-    if (!userPresence.isOnline()) return "/ideTalk/offline.png";
+  public static Icon getIcon(UserPresence userPresence, Icon onlineIcon, Icon dndIcon) {
+    if (!userPresence.isOnline()) return IdetalkCoreIcons.IdeTalk.Offline;
     if (userPresence.getPresenceMode() == PresenceMode.AVAILABLE) {
       return onlineIcon;
     }
     if (userPresence.getPresenceMode() == PresenceMode.AWAY) {
-      return "/ideTalk/away.png";
+      return IdetalkCoreIcons.IdeTalk.Away;
     }
     if (userPresence.getPresenceMode() == PresenceMode.EXTENDED_AWAY) {
-      return "/ideTalk/notavailable.png";
+      return IdetalkCoreIcons.IdeTalk.Notavailable;
     }
     if (userPresence.getPresenceMode() == PresenceMode.DND) {
       return dndIcon;

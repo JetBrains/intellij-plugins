@@ -16,6 +16,7 @@
 
 package jetbrains.communicator.commands;
 
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.transport.Transport;
 import jetbrains.communicator.core.users.User;
@@ -52,7 +53,7 @@ public class FindUsersCommand implements NamedUserCommand {
   }
 
   public Icon getIcon() {
-    return UIUtil.getIcon("/ideTalk/user.png");
+    return IdetalkCoreIcons.IdeTalk.User;
   }
 
   public boolean isEnabled() {

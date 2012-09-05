@@ -16,6 +16,7 @@
 package jetbrains.communicator.jabber.impl;
 
 import com.intellij.util.ArrayUtil;
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.dispatcher.AsyncMessageDispatcher;
@@ -47,6 +48,7 @@ import org.jivesoftware.smack.util.StringUtils;
 import org.picocontainer.Disposable;
 import org.picocontainer.MutablePicoContainer;
 
+import javax.swing.*;
 import java.util.*;
 import java.util.concurrent.Future;
 
@@ -174,8 +176,8 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   }
 
   @NonNls
-  public String getIconPath(UserPresence userPresence) {
-    return UIUtil.getIcon(userPresence, "/ideTalk/jabber.png", "/ideTalk/jabber_dnd.png");
+  public Icon getIcon(UserPresence userPresence) {
+    return UIUtil.getIcon(userPresence, IdetalkCoreIcons.IdeTalk.Jabber, IdetalkCoreIcons.IdeTalk.Jabber_dnd);
   }
 
   public boolean isSelf(User user) {

@@ -23,6 +23,8 @@ import jetbrains.communicator.core.users.UserPresence;
 import jetbrains.communicator.ide.ProgressIndicator;
 import org.picocontainer.MutablePicoContainer;
 
+import javax.swing.*;
+
 /**
  * @author Kir
  */
@@ -42,7 +44,7 @@ public class NullTransport implements Transport {
     return false;
   }
 
-  public String getIconPath(UserPresence userPresence) {
+  public Icon getIcon(UserPresence userPresence) {
     return null;
   }
 

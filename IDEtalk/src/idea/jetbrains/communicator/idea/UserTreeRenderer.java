@@ -21,7 +21,6 @@ import com.intellij.ui.SimpleTextAttributes;
 import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.util.TreeUtils;
-import jetbrains.communicator.util.UIUtil;
 import jetbrains.communicator.util.UserActionWithValue;
 
 import javax.swing.*;
@@ -59,7 +58,7 @@ public class UserTreeRenderer extends ColoredTreeCellRenderer {
         append(user.getDisplayName() + " ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
         append(user.getPresence().getDisplayText(), SimpleTextAttributes.GRAYED_ATTRIBUTES);
 
-        setIcon(UIUtil.getUserIcon(user));
+        setIcon(user.getIcon());
 
         customizeUserNode(user);
 

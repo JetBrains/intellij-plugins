@@ -16,6 +16,7 @@
 package jetbrains.communicator.p2p;
 
 import com.intellij.util.ArrayUtil;
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.dispatcher.AsyncMessageDispatcher;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.picocontainer.Disposable;
 import org.picocontainer.MutablePicoContainer;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -253,8 +255,8 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     return StringUtil.getMyUsername().equals(user.getName()) && NetworkUtil.isOwnAddress(address);
   }
 
-  public String getIconPath(UserPresence userPresence) {
-    return UIUtil.getIcon(userPresence, "/ideTalk/user.png", "/ideTalk/user_dnd.png");
+  public Icon getIcon(UserPresence userPresence) {
+    return UIUtil.getIcon(userPresence, IdetalkCoreIcons.IdeTalk.User, IdetalkCoreIcons.IdeTalk.User_dnd);
   }
 
   public int getPort(User user) {

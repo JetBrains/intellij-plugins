@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 import org.picocontainer.MutablePicoContainer;
 
+import javax.swing.*;
+
 /**
  * @author Kir Maximov
  *
@@ -55,8 +57,7 @@ public interface Transport {
   boolean isSelf(User user);
 
   @NonNls
-  /** @return path to the user icon corresponding to the user presence. The icon should be available as a jar resource */
-  String getIconPath(UserPresence userPresence);
+  Icon getIcon(UserPresence userPresence);
 
   /** Get lists of project opened by user. Simple implementation can use
    * User:getProjectsData call */

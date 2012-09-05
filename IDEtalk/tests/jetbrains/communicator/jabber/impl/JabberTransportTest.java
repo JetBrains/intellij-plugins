@@ -60,7 +60,8 @@ public class JabberTransportTest extends BaseTestCase {
 
   public void testIsOnlineNotConnected() throws Throwable {
     assertFalse("Not online - return false", UserImpl.create("fake", myTransport.getName()).isOnline());
-    assertEquals("Not online - offline icon expected", "/ideTalk/offline.png", myTransport.getIconPath(myTransport.getUserPresence(new MockUser())));
+    assertEquals("Not online - offline icon expected", "/ideTalk/offline.png", myTransport.getIcon(
+      myTransport.getUserPresence(new MockUser())));
   }
 
   public void testInitialize_Connected() throws Exception {

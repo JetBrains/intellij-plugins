@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.jabber.impl;
 
+import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.users.UserModel;
 import jetbrains.communicator.jabber.JabberFacade;
@@ -44,7 +45,7 @@ public class FindByJabberIdCommand implements NamedUserCommand {
   }
 
   public Icon getIcon() {
-    return UIUtil.getIcon("/ideTalk/jabber.png");
+    return IdetalkCoreIcons.IdeTalk.Jabber;
   }
 
   public boolean isEnabled() {
