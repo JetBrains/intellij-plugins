@@ -20,7 +20,6 @@ import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.browser.BrowserCaptureEvent;
 import com.google.jstestdriver.hooks.ServerListener;
-import com.google.jstestdriver.idea.icons.JstdIcons;
 import com.google.jstestdriver.idea.util.SwingUtils;
 import com.intellij.ide.BrowserSettings;
 import com.intellij.ide.browsers.BrowsersConfiguration;
@@ -37,6 +36,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.IdeBorderFactory;
+import icons.JsTestDriverIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -210,7 +210,7 @@ public class CapturedBrowsersController implements ServerListener {
       super(browser.getName());
 
       final Presentation presentation = getTemplatePresentation();
-      Icon capturedIcon = JstdIcons.getIcon(browser.getIconPath());
+      Icon capturedIcon = browser.getIcon();
       Icon notCapturedIcon = SwingUtils.getGreyIcon(capturedIcon);
       presentation.setIcon(notCapturedIcon);
       presentation.setDisabledIcon(notCapturedIcon);
@@ -295,19 +295,19 @@ public class CapturedBrowsersController implements ServerListener {
   }
 
   private enum Browser {
-    CHROME("Chrome", "browsers/Chrome.png", BrowsersConfiguration.BrowserFamily.CHROME),
-    IE("Microsoft Internet Explorer", "browsers/IE.png", BrowsersConfiguration.BrowserFamily.EXPLORER),
-    FIREFOX("Firefox", "browsers/Firefox.png", BrowsersConfiguration.BrowserFamily.FIREFOX),
-    OPERA("Opera", "browsers/Opera.png", BrowsersConfiguration.BrowserFamily.OPERA),
-    SAFARI("Safari", "browsers/Safari.png", BrowsersConfiguration.BrowserFamily.SAFARI);
+    CHROME("Chrome", JsTestDriverIcons.Browsers.Chrome, BrowsersConfiguration.BrowserFamily.CHROME),
+    IE("Microsoft Internet Explorer", JsTestDriverIcons.Browsers.IE, BrowsersConfiguration.BrowserFamily.EXPLORER),
+    FIREFOX("Firefox", JsTestDriverIcons.Browsers.Firefox, BrowsersConfiguration.BrowserFamily.FIREFOX),
+    OPERA("Opera", JsTestDriverIcons.Browsers.Opera, BrowsersConfiguration.BrowserFamily.OPERA),
+    SAFARI("Safari", JsTestDriverIcons.Browsers.Safari, BrowsersConfiguration.BrowserFamily.SAFARI);
 
     private final String myName;
-    private final String myIconPath;
+    private final Icon myIcon;
     private final BrowsersConfiguration.BrowserFamily myBrowserFamily;
 
-    Browser(@NotNull String name, @NotNull String iconPath, @NotNull BrowsersConfiguration.BrowserFamily browserFamily) {
+    Browser(@NotNull String name, Icon icon, @NotNull BrowsersConfiguration.BrowserFamily browserFamily) {
       myName = name;
-      myIconPath = iconPath;
+      myIcon = icon;
       myBrowserFamily = browserFamily;
     }
 
@@ -315,8 +315,8 @@ public class CapturedBrowsersController implements ServerListener {
       return myName;
     }
 
-    public String getIconPath() {
-      return myIconPath;
+    public Icon getIcon() {
+      return myIcon;
     }
 
     @NotNull

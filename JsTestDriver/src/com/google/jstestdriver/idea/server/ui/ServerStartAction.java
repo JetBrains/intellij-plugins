@@ -21,6 +21,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.Messages;
+import icons.JsTestDriverIcons;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class ServerStartAction extends AnAction {
   private static boolean myLocalServerStarting = false;
 
   public ServerStartAction() {
-    super("Start a local server", null, JstdIcons.getIcon("startLocalServer.png"));
+    super("Start a local server", null, JsTestDriverIcons.StartLocalServer);
   }
 
   @Override
