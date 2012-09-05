@@ -71,7 +71,7 @@ public class JstdLibraryUtil {
           }
           JSLibraryManager libraryManager = JSLibraryManager.getInstance(project);
           for (ScriptingLibraryModel libraryModel : libraryManager.getAllLibraries()) {
-            String libraryName = libraryModel.getName();
+            String libraryName = libraryModel != null ? libraryModel.getName() : null;
             if (libraryName != null && libraryName.startsWith(LIBRARY_NAME)) {
               if (libraryModel.containsFile(libVirtualFile)) {
                 return true;

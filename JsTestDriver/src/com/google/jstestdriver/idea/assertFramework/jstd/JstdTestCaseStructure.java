@@ -43,7 +43,7 @@ public class JstdTestCaseStructure {
     return myName;
   }
 
-  public void addTestStructure(JstdTestStructure testStructure) {
+  public void addTestStructure(@NotNull JstdTestStructure testStructure) {
     myTestStructures.add(testStructure);
     myTestStructureByNameMap.put(testStructure.getName(), testStructure);
   }
