@@ -10,7 +10,7 @@
   <id>com.intellij.flex</id>
   <version>1.0</version>
   <category>HTML/JavaScript Development</category>
-  <vendor logo="/general/ijLogo.png">JetBrains</vendor>
+  <vendor>JetBrains</vendor>
   <depends optional="false">JavaScript</depends>
   <depends optional="false">com.intellij.css</depends>
   <depends optional="true" config-file="maven-support.xml">org.jetbrains.idea.maven</depends>
