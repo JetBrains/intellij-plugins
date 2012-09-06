@@ -36,7 +36,7 @@ public class ManifestChangeWatcher implements EditorNotifications.Provider<Manif
     final Alarm myAlarm = new Alarm(Alarm.ThreadToUse.OWN_THREAD, myProject);
 
     // Subscribe to VFS-change events.
-    myMessageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener() {
+    myMessageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener.Adapter() {
       @Override
       public void after(@NotNull List<? extends VFileEvent> events) {
         final ProjectSettings settings = ProjectSettings.getInstance(myProject);
@@ -75,10 +75,6 @@ public class ManifestChangeWatcher implements EditorNotifications.Provider<Manif
             }
           }
         }
-      }
-
-      @Override
-      public void before(@NotNull List<? extends VFileEvent> events) {
       }
     });
   }
