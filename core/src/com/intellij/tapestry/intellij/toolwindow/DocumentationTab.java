@@ -9,6 +9,7 @@ import com.intellij.tapestry.core.model.externalizable.documentation.Home;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
+import icons.TapestryCoreIcons;
 import org.apache.log4j.Logger;
 //import org.lobobrowser.html.UserAgentContext;
 //import org.lobobrowser.html.gui.HtmlPanel;
@@ -51,17 +52,11 @@ public class DocumentationTab {
     public DocumentationTab(Project project) {
         _project = project;
 
-        URL houseImage = this.getClass().getResource("/com/intellij/tapestry/core/icons/house.png");
-        URL backImage = this.getClass().getResource("/com/intellij/tapestry/core/icons/arrow_left.png");
-        URL forwardImage = this.getClass().getResource("/com/intellij/tapestry/core/icons/arrow_right.png");
-        URL reloadImage = this.getClass().getResource("/com/intellij/tapestry/core/icons/arrow_refresh.png");
-        URL goImage = this.getClass().getResource("/com/intellij/tapestry/core/icons/bullet_go.png");
-
-        _homeButton.setIcon(new ImageIcon(houseImage));
-        _backButton.setIcon(new ImageIcon(backImage));
-        _forwardButton.setIcon(new ImageIcon(forwardImage));
-        _reloadButton.setIcon(new ImageIcon(reloadImage));
-        _goButton.setIcon(new ImageIcon(goImage));
+        _homeButton.setIcon(TapestryCoreIcons.House);
+        _backButton.setIcon(TapestryCoreIcons.Arrow_left);
+        _forwardButton.setIcon(TapestryCoreIcons.Arrow_right);
+        _reloadButton.setIcon(TapestryCoreIcons.Arrow_refresh);
+        _goButton.setIcon(TapestryCoreIcons.Bullet_go);
 
         _backButton.setVisible(false);
         _forwardButton.setVisible(false);
