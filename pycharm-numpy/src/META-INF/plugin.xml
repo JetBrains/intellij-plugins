@@ -3,7 +3,7 @@
   <id>org.jetbrains.plugins.numpy</id>
   <description>Provides code insight and inspections for code that uses NumPy. This is an open-source plugin that serves as an example for
     developing library support plugins in PyCharm.</description>
-  <vendor logo="/general/ijLogo.png">JetBrains</vendor>
+  <vendor>JetBrains</vendor>
   <depends>com.intellij.modules.ultimate</depends>
 
   <extensions defaultExtensionNs="com.intellij">

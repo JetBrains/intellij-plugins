@@ -10,7 +10,7 @@
   <version>0.1.0</version>
   <idea-version since-build="107.89"/>
 
-  <vendor logo="/general/ijLogo.png">JetBrains</vendor>
+  <vendor>JetBrains</vendor>
   <depends>com.intellij.modules.lang</depends>
   <resource-bundle>resources.messages.TypoScriptBundle</resource-bundle>
 

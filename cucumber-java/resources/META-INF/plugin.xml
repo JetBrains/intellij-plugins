@@ -5,7 +5,7 @@
   <description>Provides support of Cucumber for Java</description>
   <version>1.0</version>
   <depends>cucumber</depends>
-  <vendor logo="/general/ijLogo.png">JetBrains</vendor>
+  <vendor>JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
     <referencesSearch implementation="org.jetbrains.plugins.cucumber.java.steps.search.CucumberJavaStepDefinitionSearch"/>
