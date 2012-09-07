@@ -132,12 +132,10 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
     for (final ContentEntry contentEntry : contentEntries) {
       final SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
       for (SourceFolder sf : sourceFolders) {
-        if (sf.isTestSource()) {
-          VirtualFile sfDirectory = sf.getFile();
-          if (sfDirectory != null && sfDirectory.isDirectory()) {
-            PsiDirectory sourceRoot = PsiDirectoryFactory.getInstance(module.getProject()).createDirectory(sfDirectory);
-            newStepDefinitionsRoots.add(sourceRoot);
-          }
+        VirtualFile sfDirectory = sf.getFile();
+        if (sfDirectory != null && sfDirectory.isDirectory()) {
+          PsiDirectory sourceRoot = PsiDirectoryFactory.getInstance(module.getProject()).createDirectory(sfDirectory);
+          newStepDefinitionsRoots.add(sourceRoot);
         }
       }
     }
