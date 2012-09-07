@@ -7,12 +7,13 @@ import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.junit.JavaRuntimeConfigurationProducerBase;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 
 /**
- * User: Andrey.Vokin
- * Date: 8/6/12
+ * @author Andrey.Vokin
+ * @since 8/6/12
  */
 public class CucumberJavaRunConfigurationProducer extends JavaRuntimeConfigurationProducerBase implements Cloneable {
   private PsiElement mySourceElement;
@@ -38,9 +39,11 @@ public class CucumberJavaRunConfigurationProducer extends JavaRuntimeConfigurati
 
   private RunnerAndConfigurationSettings createConfiguration(final Location location, final ConfigurationContext context) {
     final Project project = context.getProject();
-    RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(project, context);
+    final RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(project, context);
     final CucumberJavaRunConfiguration configuration = (CucumberJavaRunConfiguration)settings.getConfiguration();
-    configuration.setProgramParameters(mySourceElement.getContainingFile().getVirtualFile().getCanonicalPath() + " --glue cucumber --format org.jetbrains.plugins.cucumber.java.run.CucumberJavaSMFormatter --monochrome");
+    final VirtualFile file = mySourceElement.getContainingFile().getVirtualFile();
+    assert file != null : mySourceElement.getContainingFile();
+    configuration.setProgramParameters(file.getPath() + " --glue cucumber --format org.jetbrains.plugins.cucumber.java.run.CucumberJavaSMFormatter --monochrome");
     configuration.MAIN_CLASS_NAME = "cucumber.cli.Main";
 
     setupConfigurationModule(context, configuration);
