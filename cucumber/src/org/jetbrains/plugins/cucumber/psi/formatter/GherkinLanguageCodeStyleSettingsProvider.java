@@ -27,11 +27,6 @@ public class GherkinLanguageCodeStyleSettingsProvider extends LanguageCodeStyleS
   }
 
   @Override
-  public boolean usesSharedPreview() {
-    return false;
-  }
-
-  @Override
   public String getCodeSample(@NotNull SettingsType settingsType) {
     return "Feature: Formatting\n" +
            "    Scenario: Reformat Cucumber file\n";
