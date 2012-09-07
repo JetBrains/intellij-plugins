@@ -27,7 +27,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.OpenSourceUtil;
-import icons.Struts2DomApiIcons;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +62,7 @@ public class CreateActionMethodQuickFix extends LocalQuickFixAndIntentionActionO
 
   @Override
   public Icon getIcon(final int flags) {
-    return Struts2DomApiIcons.Action;
+    return Struts2Icons.Action;
   }
 
   @Override

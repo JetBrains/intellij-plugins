@@ -34,7 +34,7 @@ import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.model.jam.StrutsJamUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomUtil;
-import icons.Struts2DomApiIcons;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,7 +96,7 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
       @Override
       protected LookupElement createLookupElementFor(@NotNull final StrutsPackage target) {
         return LookupElementBuilder.create(StringUtil.notNullize(target.getName().getStringValue()))
-          .withIcon(Struts2DomApiIcons.Folder_gear)
+          .withIcon(Struts2Icons.Folder_gear)
           .withTailText(" (" + target.searchNamespace() + ")", true)
           .withTypeText(DomUtil.getFile(target).getName());
       }

@@ -27,7 +27,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @SuppressWarnings({"UnusedDeclaration"})
-@Presentation(typeName = "Parameter", icon = "Struts2DomApiIcons.Preferences")
+@Presentation(typeName = "Parameter", icon = "Struts2Icons.Preferences")
 public interface Param extends DomElement {
 
   @Attribute(value = "name")

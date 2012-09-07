@@ -48,7 +48,7 @@ import com.intellij.struts2.dom.validator.ValidatorManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
-import icons.Struts2DomApiIcons;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -107,7 +107,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
 
   @Override
   public Icon getIcon(final int flags) {
-    return Struts2DomApiIcons.Action;
+    return Struts2Icons.Action;
   }
 
   @Override
@@ -123,7 +123,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
 
             @Override
             public Icon getIconFor(final Action value) {
-              return Struts2DomApiIcons.Action;
+              return Struts2Icons.Action;
             }
 
             @NotNull

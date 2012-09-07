@@ -19,7 +19,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.ui.LayeredIcon;
 import com.intellij.util.PlatformIcons;
-import icons.Struts2DomApiIcons;
+import icons.Struts2Icons;
 
 import javax.swing.*;
 
@@ -72,28 +72,28 @@ public final class StrutsIcons {
   public static final LayeredIcon DEFAULT_INTERCEPTOR_REF = new LayeredIcon(2);
 
   // generic reference providers
-  public static final Icon THEME = Struts2DomApiIcons.Transform;
+  public static final Icon THEME = Struts2Icons.Transform;
 
   static {
     STRUTS_CONFIG_FILE.setIcon(StdFileTypes.XML.getIcon(), 0);
-    STRUTS_CONFIG_FILE.setIcon(Struts2DomApiIcons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
+    STRUTS_CONFIG_FILE.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
 
     VALIDATION_CONFIG_FILE.setIcon(StdFileTypes.XML.getIcon(), 0);
-    VALIDATION_CONFIG_FILE.setIcon(Struts2DomApiIcons.Validation_small, 1, 0, OVERLAY_Y_OFFSET);
+    VALIDATION_CONFIG_FILE.setIcon(Struts2Icons.Validation_small, 1, 0, OVERLAY_Y_OFFSET);
 
     ACTION_CLASS.setIcon(PlatformIcons.CLASS_ICON, 0);
-    ACTION_CLASS.setIcon(Struts2DomApiIcons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
+    ACTION_CLASS.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
 
     STRUTS_VARIABLE.setIcon(PlatformIcons.VARIABLE_ICON, 0);
-    STRUTS_VARIABLE.setIcon(Struts2DomApiIcons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
+    STRUTS_VARIABLE.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
 
-    createGlobalIcon(GLOBAL_RESULT, Struts2DomApiIcons.Arrow_right_blue);
+    createGlobalIcon(GLOBAL_RESULT, Struts2Icons.Arrow_right_blue);
     createGlobalIcon(GLOBAL_EXCEPTION_MAPPING, PlatformIcons.EXCEPTION_CLASS_ICON);
 
-    createDefaultIcon(DEFAULT_ACTION_REF, Struts2DomApiIcons.Action);
+    createDefaultIcon(DEFAULT_ACTION_REF, Struts2Icons.Action);
     createDefaultIcon(DEFAULT_CLASS_REF, PlatformIcons.CLASS_ICON);
-    createDefaultIcon(DEFAULT_INTERCEPTOR_REF, Struts2DomApiIcons.Funnel);
-    createDefaultIcon(RESULT_TYPE_DEFAULT, Struts2DomApiIcons.Presentation);
+    createDefaultIcon(DEFAULT_INTERCEPTOR_REF, Struts2Icons.Funnel);
+    createDefaultIcon(RESULT_TYPE_DEFAULT, Struts2Icons.Presentation);
   }
 
   private static void createGlobalIcon(final LayeredIcon icon, final Icon baseIcon) {

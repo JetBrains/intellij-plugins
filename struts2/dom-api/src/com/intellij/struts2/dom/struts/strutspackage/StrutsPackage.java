@@ -32,7 +32,7 @@ import java.util.List;
  */
 @SuppressWarnings({"UnusedDeclaration"})
 @Namespace(StrutsDomConstants.STRUTS_NAMESPACE_KEY)
-@Presentation(typeName = "Struts Package", icon = "Struts2DomApiIcons.Folder_gear")
+@Presentation(typeName = "Struts Package", icon = "Struts2Icons.Folder_gear")
 public interface StrutsPackage extends CommonDomModelElement {
 
   String DEFAULT_NAMESPACE = "/";

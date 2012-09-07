@@ -36,7 +36,7 @@ import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomElement;
-import icons.Struts2DomApiIcons;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -155,7 +155,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
     final String tooltip = actions.size() == 1 ? StrutsBundle.message("annotators.action.goto.tooltip.single") :
         StrutsBundle.message("annotators.action.goto.tooltip");
     final NavigationGutterIconBuilder<DomElement> gutterIconBuilder =
-        NavigationGutterIconBuilder.create(Struts2DomApiIcons.Action, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR,
+        NavigationGutterIconBuilder.create(Struts2Icons.Action, NavigationGutterIconBuilder.DEFAULT_DOM_CONVERTOR,
                                            NavigationGutterIconBuilder.DOM_GOTO_RELATED_ITEM_PROVIDER)
                                    .setAlignment(GutterIconRenderer.Alignment.LEFT)
                                    .setPopupTitle(StrutsBundle.message("annotators.action.goto.declaration"))
@@ -198,7 +198,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
 
     for (final Map.Entry<PsiMethod, Set<PathReference>> entries : pathReferenceMap.entrySet()) {
       final NavigationGutterIconBuilder<PathReference> gutterIconBuilder =
-          NavigationGutterIconBuilder.create(Struts2DomApiIcons.Arrow_right_blue, PATH_REFERENCE_CONVERTER,
+          NavigationGutterIconBuilder.create(Struts2Icons.Arrow_right_blue, PATH_REFERENCE_CONVERTER,
                                              PATH_REFERENCE_GOTO_RELATED_ITEM_PROVIDER)
                                      .setAlignment(GutterIconRenderer.Alignment.LEFT)
                                      .setPopupTitle(StrutsBundle.message("annotators.action.goto.result"))

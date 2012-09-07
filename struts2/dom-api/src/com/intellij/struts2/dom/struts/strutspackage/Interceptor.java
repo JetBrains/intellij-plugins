@@ -26,7 +26,7 @@ import com.intellij.util.xml.GenericAttributeValue;
 /**
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Interceptor", icon = "Struts2DomApiIcons.Funnel")
+@Presentation(typeName = "Interceptor", icon = "Struts2Icons.Funnel")
 public interface Interceptor extends InterceptorOrStackBase {
 
   @Attribute(value = "class")

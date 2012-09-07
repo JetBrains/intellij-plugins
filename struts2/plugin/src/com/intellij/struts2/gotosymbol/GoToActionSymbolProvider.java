@@ -23,7 +23,7 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.Processor;
 import com.intellij.util.xml.model.gotosymbol.GoToSymbolProvider;
-import icons.Struts2DomApiIcons;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -65,7 +65,7 @@ public class GoToActionSymbolProvider extends GoToSymbolProvider {
       final NavigationItem item = createNavigationItem(action.getXmlTag(),
                                                        action.getName().getStringValue() +
                                                        " [" + action.getNamespace() + "]",
-                                                       Struts2DomApiIcons.Action);
+                                                       Struts2Icons.Action);
       result.add(item);
     }
   }

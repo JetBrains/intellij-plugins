@@ -24,7 +24,7 @@ import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.params.Param;
 import com.intellij.util.ReflectionCache;
 import com.intellij.util.xml.DomElement;
-import icons.Struts2DomApiIcons;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -88,7 +88,7 @@ class StructureViewTreeModel extends XmlStructureViewTreeModel implements Struct
       @NotNull
       public ActionPresentation getPresentation() {
         return new ActionPresentationData(StrutsBundle.message("structure.view.filter.params"),
-                                          StrutsBundle.message("structure.view.filter.params"), Struts2DomApiIcons.Preferences);
+                                          StrutsBundle.message("structure.view.filter.params"), Struts2Icons.Preferences);
       }
 
       @NotNull

@@ -33,7 +33,7 @@ import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.reference.TaglibUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
-import icons.Struts2DomApiIcons;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -161,7 +161,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {
           variants.add(LookupElementBuilder.create(actionPath)
-                         .withIcon(Struts2DomApiIcons.Action)
+                         .withIcon(Struts2Icons.Action)
                          .withTypeText(action.getNamespace()));
         }
       }

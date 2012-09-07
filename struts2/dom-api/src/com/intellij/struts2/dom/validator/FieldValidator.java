@@ -31,7 +31,7 @@ import com.intellij.util.xml.*;
 @SuppressWarnings("UnusedDeclaration")
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
 @Presentation(typeName = "Field Validator",
-              icon = "Struts2DomApiIcons.Validation",
+              icon = "Struts2Icons.Validation",
               provider = Struts2ValidationPresentationProvider.class)
 public interface FieldValidator extends ParamsElement {
 

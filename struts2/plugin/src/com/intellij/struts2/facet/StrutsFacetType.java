@@ -32,7 +32,7 @@ import com.intellij.patterns.ElementPattern;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.util.indexing.FileContent;
-import icons.Struts2DomApiIcons;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,7 +70,7 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
   }
 
   public Icon getIcon() {
-    return Struts2DomApiIcons.Action;
+    return Struts2Icons.Action;
   }
 
   @Override

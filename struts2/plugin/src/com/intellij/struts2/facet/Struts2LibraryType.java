@@ -21,7 +21,7 @@ import com.intellij.framework.library.DownloadableLibraryTypeBase;
 import com.intellij.util.download.DownloadableFileService;
 import com.intellij.util.download.DownloadableFileSetDescription;
 import com.intellij.util.download.DownloadableFileSetVersions;
-import icons.Struts2DomApiIcons;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URL;
@@ -38,7 +38,7 @@ public class Struts2LibraryType extends DownloadableLibraryTypeBase {
   private static final String GROUP_ID = "struts2";
 
   public Struts2LibraryType() {
-    super("Struts 2", "struts2", GROUP_ID, Struts2DomApiIcons.Action, getLibrariesUrl());
+    super("Struts 2", "struts2", GROUP_ID, Struts2Icons.Action, getLibrariesUrl());
   }
 
   @Override

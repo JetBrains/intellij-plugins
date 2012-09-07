@@ -30,7 +30,7 @@ import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.ArrayUtil;
-import icons.Struts2DomApiIcons;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,7 +71,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
 
   @Nullable
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
-    return createDefaultPathReference(path, element, Struts2DomApiIcons.Action);
+    return createDefaultPathReference(path, element, Struts2Icons.Action);
   }
 
 
@@ -132,7 +132,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
 
           final LookupElementBuilder builder = LookupElementBuilder.create(action.getXmlTag(), fullPath)
             .withBoldness(isInCurrentPackage)
-            .withIcon(Struts2DomApiIcons.Action)
+            .withIcon(Struts2Icons.Action)
             .withTypeText(action.getNamespace());
           variants.add(builder);
         }

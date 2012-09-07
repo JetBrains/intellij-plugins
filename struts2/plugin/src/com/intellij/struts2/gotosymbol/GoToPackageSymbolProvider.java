@@ -26,7 +26,7 @@ import com.intellij.util.Function;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.model.gotosymbol.GoToSymbolProvider;
-import icons.Struts2DomApiIcons;
+import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -73,7 +73,7 @@ public class GoToPackageSymbolProvider extends GoToSymbolProvider {
       if (Comparing.strEqual(name, strutsPackage.getName().getStringValue())) {
         final NavigationItem item = createNavigationItem(strutsPackage.getXmlTag(),
                                                          name,
-                                                         Struts2DomApiIcons.Folder_gear);
+                                                         Struts2Icons.Folder_gear);
         result.add(item);
       }
     }

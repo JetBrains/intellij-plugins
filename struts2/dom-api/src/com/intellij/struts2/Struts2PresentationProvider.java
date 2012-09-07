@@ -25,7 +25,7 @@ import com.intellij.struts2.dom.struts.strutspackage.*;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.xml.DomUtil;
 import com.intellij.util.xml.GenericAttributeValue;
-import icons.Struts2DomApiIcons;
+import icons.Struts2Icons;
 
 import javax.swing.*;
 
@@ -70,10 +70,10 @@ public class Struts2PresentationProvider extends PresentationProvider {
     if (o instanceof InterceptorRef) {
       final InterceptorOrStackBase interceptorOrStackBase = ((InterceptorRef) o).getName().getValue();
       if (interceptorOrStackBase instanceof Interceptor) {
-        return Struts2DomApiIcons.Funnel;
+        return Struts2Icons.Funnel;
       }
       if (interceptorOrStackBase instanceof InterceptorStack) {
-        return Struts2DomApiIcons.Funnel_up;
+        return Struts2Icons.Funnel_up;
       }
     }
 
@@ -84,7 +84,7 @@ public class Struts2PresentationProvider extends PresentationProvider {
           resultTypeDefault.getValue() == Boolean.TRUE) {
         return StrutsIcons.RESULT_TYPE_DEFAULT;
       }
-      return Struts2DomApiIcons.Presentation;
+      return Struts2Icons.Presentation;
     }
 
     return null;

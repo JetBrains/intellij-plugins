@@ -26,7 +26,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Interceptor Stack", icon = "Struts2DomApiIcons.Funnel_up")
+@Presentation(typeName = "Interceptor Stack", icon = "Struts2Icons.Funnel_up")
 public interface InterceptorStack extends InterceptorOrStackBase {
 
   @SubTagList(value = "interceptor-ref")
