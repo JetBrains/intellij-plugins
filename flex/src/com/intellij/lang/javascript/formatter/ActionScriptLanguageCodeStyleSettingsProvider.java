@@ -109,11 +109,6 @@ public class ActionScriptLanguageCodeStyleSettingsProvider extends LanguageCodeS
     return commonSettings;
   }
 
-  @Override
-  public boolean usesSharedPreview() {
-    return false;
-  }
-
   public final static String GENERAL_CODE_SAMPLE =
     "package {\n" +
     "class Foo {\n" +
