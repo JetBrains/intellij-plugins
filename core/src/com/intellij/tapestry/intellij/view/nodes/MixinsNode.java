@@ -5,19 +5,19 @@ import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.tapestry.core.model.Library;
-import icons.TapestryCoreIcons;
+import icons.TapestryIcons;
 
 public class MixinsNode extends PackageNode {
 
     public MixinsNode(Library library, PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {
         super(library, psiDirectory, module, treeBuilder);
 
-        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryCoreIcons.Mixins, null));
+        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryIcons.Mixins, null));
     }
 
     public MixinsNode(PsiDirectory psiDirectory, Module module, AbstractTreeBuilder treeBuilder) {
         super(psiDirectory, module, treeBuilder);
 
-        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryCoreIcons.Mixins, null));
+        init(psiDirectory, new PresentationData(psiDirectory.getName(), psiDirectory.getName(), TapestryIcons.Mixins, null));
     }
 }

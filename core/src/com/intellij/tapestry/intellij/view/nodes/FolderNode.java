@@ -5,7 +5,7 @@ import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.openapi.module.Module;
 import com.intellij.tapestry.core.model.Library;
 import com.intellij.tapestry.core.util.PathUtils;
-import icons.TapestryCoreIcons;
+import icons.TapestryIcons;
 
 public class FolderNode extends TapestryNode {
 
@@ -15,7 +15,7 @@ public class FolderNode extends TapestryNode {
     public FolderNode(String folder, Library library, Class classToCreate, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(folder, new PresentationData(PathUtils.getLastPathElement(folder), folder, TapestryCoreIcons.Folder, null));
+        init(folder, new PresentationData(PathUtils.getLastPathElement(folder), folder, TapestryIcons.Folder, null));
 
         _classToCreate = classToCreate;
         _library = library;

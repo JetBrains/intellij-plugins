@@ -9,7 +9,7 @@ import com.intellij.tapestry.core.model.externalizable.documentation.Home;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
-import icons.TapestryCoreIcons;
+import icons.TapestryIcons;
 import org.apache.log4j.Logger;
 //import org.lobobrowser.html.UserAgentContext;
 //import org.lobobrowser.html.gui.HtmlPanel;
@@ -22,7 +22,6 @@ import org.w3c.dom.Document;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,11 +51,11 @@ public class DocumentationTab {
     public DocumentationTab(Project project) {
         _project = project;
 
-        _homeButton.setIcon(TapestryCoreIcons.House);
-        _backButton.setIcon(TapestryCoreIcons.Arrow_left);
-        _forwardButton.setIcon(TapestryCoreIcons.Arrow_right);
-        _reloadButton.setIcon(TapestryCoreIcons.Arrow_refresh);
-        _goButton.setIcon(TapestryCoreIcons.Bullet_go);
+        _homeButton.setIcon(TapestryIcons.House);
+        _backButton.setIcon(TapestryIcons.Arrow_left);
+        _forwardButton.setIcon(TapestryIcons.Arrow_right);
+        _reloadButton.setIcon(TapestryIcons.Arrow_refresh);
+        _goButton.setIcon(TapestryIcons.Bullet_go);
 
         _backButton.setVisible(false);
         _forwardButton.setVisible(false);

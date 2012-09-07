@@ -10,7 +10,7 @@ import com.intellij.tapestry.core.resource.IResource;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.core.resource.IntellijResource;
 import com.intellij.ui.treeStructure.SimpleNode;
-import icons.TapestryCoreIcons;
+import icons.TapestryIcons;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,7 @@ public class ComponentNode extends TapestryNode {
         super(module, treeBuilder);
 
         init(component, new PresentationData(component.getElementClass().getName(), component.getElementClass().getName(),
-                                             TapestryCoreIcons.Component, null));
+                                             TapestryIcons.Component, null));
     }
 
     /**

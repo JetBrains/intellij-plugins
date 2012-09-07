@@ -19,7 +19,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.lang.TmlFileType;
 import com.intellij.util.indexing.FileContent;
-import icons.TapestryCoreIcons;
+import icons.TapestryIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,7 +56,7 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
 
   @Override
   public Icon getIcon() {
-    return TapestryCoreIcons.Tapestry_logo_small;
+    return TapestryIcons.Tapestry_logo_small;
   }
 
   public static class TapestryFrameworkDetector extends FacetBasedFrameworkDetector<TapestryFacet, TapestryFacetConfiguration> {

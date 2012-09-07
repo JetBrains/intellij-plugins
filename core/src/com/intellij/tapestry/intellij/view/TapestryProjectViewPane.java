@@ -50,7 +50,7 @@ import com.intellij.util.OpenSourceUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
-import icons.TapestryCoreIcons;
+import icons.TapestryIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -202,7 +202,7 @@ public class TapestryProjectViewPane extends AbstractProjectViewPane implements 
    * {@inheritDoc}
    */
   public Icon getIcon() {
-    return TapestryCoreIcons.Tapestry_logo_small;
+    return TapestryIcons.Tapestry_logo_small;
   }//getIcon
 
   /**

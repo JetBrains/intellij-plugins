@@ -65,7 +65,7 @@
                       facetIdList="tapestry"
                       anchor="bottom"
                       secondary="false"
-                      icon="TapestryCoreIcons.TapestryToolWindow"
+                      icon="TapestryIcons.TapestryToolWindow"
                       factoryClass="com.intellij.tapestry.intellij.toolwindow.TapestryToolWindowFactory"/>
 
     <projectViewPane implementation="com.intellij.tapestry.intellij.view.TapestryProjectViewPane"/>

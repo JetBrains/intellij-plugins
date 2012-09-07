@@ -8,7 +8,7 @@ import com.intellij.tapestry.core.model.presentation.Mixin;
 import com.intellij.tapestry.core.model.presentation.PresentationLibraryElement;
 import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.ui.treeStructure.SimpleNode;
-import icons.TapestryCoreIcons;
+import icons.TapestryIcons;
 
 /**
  * A Mixin node.
@@ -18,7 +18,7 @@ public class MixinNode extends TapestryNode {
     public MixinNode(PresentationLibraryElement mixin, Module module, AbstractTreeBuilder treeBuilder) {
         super(module, treeBuilder);
 
-        init(mixin, new PresentationData(mixin.getName(), mixin.getName(), TapestryCoreIcons.Mixin, null));
+        init(mixin, new PresentationData(mixin.getName(), mixin.getName(), TapestryIcons.Mixin, null));
     }
 
     /**
