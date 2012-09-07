@@ -14,8 +14,8 @@
  */
 package com.intellij.struts2.graph.beans;
 
-import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
+import icons.Struts2DomApiIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +34,7 @@ public class ActionNode extends BasicStrutsNode<Action> {
 
   @NotNull
   public Icon getIcon() {
-    return StrutsIcons.ACTION;
+    return Struts2DomApiIcons.Action;
   }
 
 }

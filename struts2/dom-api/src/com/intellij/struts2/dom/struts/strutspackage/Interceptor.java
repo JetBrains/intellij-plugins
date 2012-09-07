@@ -17,7 +17,6 @@ package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.ide.presentation.Presentation;
 import com.intellij.psi.PsiClass;
-import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.xml.Attribute;
 import com.intellij.util.xml.Convert;
@@ -27,7 +26,7 @@ import com.intellij.util.xml.GenericAttributeValue;
 /**
  * @author Yann C&eacute;bron
  */
-@Presentation(typeName = "Interceptor", icon = StrutsIcons.INTERCEPTOR_PATH)
+@Presentation(typeName = "Interceptor", icon = "Struts2DomApiIcons.Funnel")
 public interface Interceptor extends InterceptorOrStackBase {
 
   @Attribute(value = "class")

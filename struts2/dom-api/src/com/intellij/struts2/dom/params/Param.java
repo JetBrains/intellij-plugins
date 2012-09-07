@@ -17,7 +17,6 @@ package com.intellij.struts2.dom.params;
 
 import com.intellij.ide.presentation.Presentation;
 import com.intellij.psi.impl.beanProperties.BeanProperty;
-import com.intellij.struts2.StrutsIcons;
 import com.intellij.util.xml.*;
 
 import java.util.List;
@@ -28,7 +27,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @SuppressWarnings({"UnusedDeclaration"})
-@Presentation(typeName = "Parameter", icon = StrutsIcons.PARAM_PATH)
+@Presentation(typeName = "Parameter", icon = "Struts2DomApiIcons.Preferences")
 public interface Param extends DomElement {
 
   @Attribute(value = "name")

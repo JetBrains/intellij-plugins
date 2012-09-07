@@ -18,7 +18,6 @@ package com.intellij.struts2.dom.struts;
 import com.intellij.ide.presentation.Presentation;
 import com.intellij.psi.PsiFile;
 import com.intellij.struts2.Struts2PresentationProvider;
-import com.intellij.struts2.StrutsIcons;
 import com.intellij.util.xml.Convert;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.GenericAttributeValue;
@@ -31,7 +30,7 @@ import com.intellij.util.xml.Required;
  */
 @SuppressWarnings({"UnusedDeclaration"})
 @Presentation(typeName = "Include",
-              icon = StrutsIcons.INCLUDE_PATH,
+              icon = "Struts2DomApiIcons.Import1",
               provider = Struts2PresentationProvider.class)
 public interface Include extends DomElement {
 

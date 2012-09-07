@@ -45,6 +45,7 @@ import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.util.IncorrectOperationException;
+import icons.Struts2DomApiIcons;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -155,7 +156,7 @@ public class StrutsFileSetCheckingAnnotator implements Annotator {
 
     @Override
     public Icon getIcon(final int flags) {
-      return StrutsIcons.ACTION;
+      return Struts2DomApiIcons.Action;
     }
 
     public boolean isAvailable(@NotNull final Project project, final Editor editor, final PsiFile file) {

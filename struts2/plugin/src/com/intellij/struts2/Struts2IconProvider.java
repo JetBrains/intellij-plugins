@@ -25,6 +25,7 @@ import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.ui.LayeredIcon;
+import icons.Struts2DomApiIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -72,7 +73,7 @@ public class Struts2IconProvider extends IconProvider {
     final LayeredIcon layeredIcon = new LayeredIcon(2);
     final Icon original = PsiClassImplUtil.getClassIcon(flags, psiClass);
     layeredIcon.setIcon(original, 0);
-    layeredIcon.setIcon(StrutsIcons.ACTION_SMALL, 1, 0, StrutsIcons.OVERLAY_Y_OFFSET);
+    layeredIcon.setIcon(Struts2DomApiIcons.Action_small, 1, 0, StrutsIcons.OVERLAY_Y_OFFSET);
     return layeredIcon;
   }
 }

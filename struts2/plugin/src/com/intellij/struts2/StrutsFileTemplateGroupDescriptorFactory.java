@@ -18,6 +18,7 @@ package com.intellij.struts2;
 import com.intellij.ide.fileTemplates.FileTemplateDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptor;
 import com.intellij.ide.fileTemplates.FileTemplateGroupDescriptorFactory;
+import icons.Struts2DomApiIcons;
 import org.jetbrains.annotations.NonNls;
 
 /**
@@ -57,7 +58,7 @@ public class StrutsFileTemplateGroupDescriptorFactory implements FileTemplateGro
 
   public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
     final FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor(StrutsBundle.message("struts2"),
-                                                                              StrutsIcons.ACTION);
+                                                                              Struts2DomApiIcons.Action);
     group.addTemplate(new FileTemplateDescriptor(STRUTS_2_0_XML,
                                                  StrutsIcons.STRUTS_CONFIG_FILE));
     group.addTemplate(new FileTemplateDescriptor(STRUTS_2_1_XML,

@@ -28,7 +28,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.xml.XmlElement;
-import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -38,6 +37,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.ConstantFunction;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import icons.Struts2DomApiIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,7 +91,7 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
       return null;
     }
 
-    return new PathReference(path, new ConstantFunction<PathReference, Icon>(StrutsIcons.ACTION)); /*{
+    return new PathReference(path, new ConstantFunction<PathReference, Icon>(Struts2DomApiIcons.Action)); /*{
 TODO not needed so far ?!
    public PsiElement resolve() {
         return action.getXmlTag();
@@ -167,7 +167,7 @@ TODO not needed so far ?!
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {
           variants.add(LookupElementBuilder.create(actionPath + firstExtension)
-            .withIcon(StrutsIcons.ACTION)
+            .withIcon(Struts2DomApiIcons.Action)
             .withTypeText(action.getNamespace()));
         }
       }
@@ -256,7 +256,7 @@ TODO not needed so far ?!
         public Object fun(final StrutsPackage strutsPackage) {
           final String packageNamespace = strutsPackage.searchNamespace();
           return LookupElementBuilder.create(packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace)
-            .withIcon(StrutsIcons.PACKAGE)
+            .withIcon(Struts2DomApiIcons.Folder_gear)
             .withTypeText(strutsPackage.getName().getStringValue());
         }
       });

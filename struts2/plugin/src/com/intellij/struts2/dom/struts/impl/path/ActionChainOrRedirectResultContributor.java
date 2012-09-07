@@ -25,12 +25,12 @@ import com.intellij.psi.PsiReferenceBase;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.psi.xml.XmlTagValue;
-import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.util.ArrayUtil;
+import icons.Struts2DomApiIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,7 +71,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
 
   @Nullable
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
-    return createDefaultPathReference(path, element, StrutsIcons.ACTION);
+    return createDefaultPathReference(path, element, Struts2DomApiIcons.Action);
   }
 
 
@@ -132,7 +132,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
 
           final LookupElementBuilder builder = LookupElementBuilder.create(action.getXmlTag(), fullPath)
             .withBoldness(isInCurrentPackage)
-            .withIcon(StrutsIcons.ACTION)
+            .withIcon(Struts2DomApiIcons.Action)
             .withTypeText(action.getNamespace());
           variants.add(builder);
         }

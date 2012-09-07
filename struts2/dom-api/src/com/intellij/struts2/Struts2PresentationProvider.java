@@ -22,8 +22,10 @@ import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.ExceptionMapping;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.strutspackage.*;
+import com.intellij.util.PlatformIcons;
 import com.intellij.util.xml.DomUtil;
 import com.intellij.util.xml.GenericAttributeValue;
+import icons.Struts2DomApiIcons;
 
 import javax.swing.*;
 
@@ -58,7 +60,7 @@ public class Struts2PresentationProvider extends PresentationProvider {
     }
 
     if (o instanceof ExceptionMapping) {
-      return StrutsIcons.EXCEPTION_MAPPING;
+      return PlatformIcons.EXCEPTION_CLASS_ICON;
     }
 
     if (o instanceof StrutsRoot) {
@@ -68,10 +70,10 @@ public class Struts2PresentationProvider extends PresentationProvider {
     if (o instanceof InterceptorRef) {
       final InterceptorOrStackBase interceptorOrStackBase = ((InterceptorRef) o).getName().getValue();
       if (interceptorOrStackBase instanceof Interceptor) {
-        return StrutsIcons.INTERCEPTOR;
+        return Struts2DomApiIcons.Funnel;
       }
       if (interceptorOrStackBase instanceof InterceptorStack) {
-        return StrutsIcons.INTERCEPTOR_STACK;
+        return Struts2DomApiIcons.Funnel_up;
       }
     }
 
@@ -82,7 +84,7 @@ public class Struts2PresentationProvider extends PresentationProvider {
           resultTypeDefault.getValue() == Boolean.TRUE) {
         return StrutsIcons.RESULT_TYPE_DEFAULT;
       }
-      return StrutsIcons.RESULT_TYPE;
+      return Struts2DomApiIcons.Presentation;
     }
 
     return null;

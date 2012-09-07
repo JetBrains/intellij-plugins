@@ -17,13 +17,13 @@ package com.intellij.struts2.gotosymbol;
 
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.module.Module;
-import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.Processor;
 import com.intellij.util.xml.model.gotosymbol.GoToSymbolProvider;
+import icons.Struts2DomApiIcons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -65,7 +65,7 @@ public class GoToActionSymbolProvider extends GoToSymbolProvider {
       final NavigationItem item = createNavigationItem(action.getXmlTag(),
                                                        action.getName().getStringValue() +
                                                        " [" + action.getNamespace() + "]",
-                                                       StrutsIcons.ACTION);
+                                                       Struts2DomApiIcons.Action);
       result.add(item);
     }
   }

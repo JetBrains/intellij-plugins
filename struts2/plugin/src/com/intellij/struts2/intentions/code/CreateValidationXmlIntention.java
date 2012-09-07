@@ -41,7 +41,6 @@ import com.intellij.refactoring.PackageWrapper;
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil;
 import com.intellij.refactoring.util.RefactoringUtil;
 import com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory;
-import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -49,6 +48,7 @@ import com.intellij.struts2.dom.validator.ValidatorManager;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
+import icons.Struts2DomApiIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -107,7 +107,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
 
   @Override
   public Icon getIcon(final int flags) {
-    return StrutsIcons.ACTION;
+    return Struts2DomApiIcons.Action;
   }
 
   @Override
@@ -123,7 +123,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
 
             @Override
             public Icon getIconFor(final Action value) {
-              return StrutsIcons.ACTION;
+              return Struts2DomApiIcons.Action;
             }
 
             @NotNull

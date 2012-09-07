@@ -30,9 +30,9 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.struts2.StrutsConstants;
-import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.util.indexing.FileContent;
+import icons.Struts2DomApiIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,7 +70,7 @@ public class StrutsFacetType extends FacetType<StrutsFacet, StrutsFacetConfigura
   }
 
   public Icon getIcon() {
-    return StrutsIcons.ACTION;
+    return Struts2DomApiIcons.Action;
   }
 
   @Override

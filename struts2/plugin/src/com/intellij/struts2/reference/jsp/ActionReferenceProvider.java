@@ -27,13 +27,13 @@ import com.intellij.psi.PsiReferenceProvider;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.reference.TaglibUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
+import icons.Struts2DomApiIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -161,7 +161,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {
           variants.add(LookupElementBuilder.create(actionPath)
-                         .withIcon(StrutsIcons.ACTION)
+                         .withIcon(Struts2DomApiIcons.Action)
                          .withTypeText(action.getNamespace()));
         }
       }
