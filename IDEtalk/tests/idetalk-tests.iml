@@ -19,6 +19,7 @@
     <orderEntry type="module" module-name="platform-impl" />
     <orderEntry type="module" module-name="idea" />
     <orderEntry type="module" module-name="idetalk-core" />
+    <orderEntry type="library" scope="TEST" name="JUnit3" level="project" />
   </component>
 </module>
 

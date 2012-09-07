@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.core.transport;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 import jetbrains.communicator.core.vfs.CodePointer;
 import jetbrains.communicator.core.vfs.VFile;
@@ -25,6 +26,14 @@ import org.jdom.Element;
  * @author Kir
  */
 public class CodePointerXmlMessageTest extends TestCase {
+
+  public static void assertEquals(VFile file1, VFile file2) {
+    Assert.assertEquals(file1, file2);
+    assertEquals("Bad contents", file1.getContents(), file2.getContents());
+    assertEquals("Bad FQN", file1.getFQName(), file2.getFQName());
+    assertEquals("Bad projectName", file1.getProjectName(), file2.getProjectName());
+    assertEquals("Bad sourcePath", file1.getSourcePath(), file2.getSourcePath());
+  }
 
   public void testSimplest() throws Throwable {
     _test("", VFile.create("some/path"), new CodePointer(1,2,3,4));
@@ -49,7 +58,7 @@ public class CodePointerXmlMessageTest extends TestCase {
 
     assertEquals("someUser", event.getRemoteUser());
     assertEquals("Wrong code pointer restored", codePointer, event.getCodePointer());
-    vFile.assertEquals(event.getFile());
+    assertEquals(vFile, event.getFile());
   }
 
 }

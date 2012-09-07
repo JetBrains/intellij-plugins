@@ -15,7 +15,6 @@
     <orderEntry type="module" module-name="annotations" exported="" />
     <orderEntry type="library" exported="" name="Log4J" level="project" />
     <orderEntry type="library" exported="" name="JDOM" level="project" />
-    <orderEntry type="library" exported="" name="JUnit3" level="project" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>

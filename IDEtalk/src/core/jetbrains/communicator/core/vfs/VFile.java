@@ -17,7 +17,6 @@
 package jetbrains.communicator.core.vfs;
 
 import jetbrains.communicator.util.StringUtil;
-import junit.framework.Assert;
 import org.jdom.Element;
 
 import java.util.List;
@@ -258,13 +257,5 @@ public class VFile implements Comparable, Cloneable {
     if (val != null) {
       root.setAttribute(attrName, val);
     }
-  }
-
-  public void assertEquals(VFile compareWith) {
-    Assert.assertEquals(this, compareWith);
-    Assert.assertEquals("Bad contents", getContents(), compareWith.getContents());
-    Assert.assertEquals("Bad FQN", getFQName(), compareWith.getFQName());
-    Assert.assertEquals("Bad projectName", getProjectName(), compareWith.getProjectName());
-    Assert.assertEquals("Bad sourcePath", getSourcePath(), compareWith.getSourcePath());
   }
 }
