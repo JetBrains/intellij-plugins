@@ -10,8 +10,11 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.javaee.ExternalResourceManagerEx;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.xml.util.XmlUtil;
+import gnu.trove.THashSet;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
+
+import java.util.Set;
 
 import static com.intellij.util.ArrayUtil.mergeArrays;
 
@@ -65,7 +68,8 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     try {
       initByComponent();
       addComponentToProject("Count");
-      doTestBasicCompletionVariants("class", "dir", "end", "id", "lang", "mixins", "onclick", "ondblclick", "onkeydown", "onkeypress", "onkeyup",
+      doTestBasicCompletionVariants("class", "dir", "end", "id", "lang", "mixins", "onclick", "ondblclick", "onkeydown", "onkeypress",
+                                    "onkeyup",
                                     "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup", "start", "style", "title",
                                     "value", "t:id");
     }
@@ -156,6 +160,20 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
     doTestBasicCompletionVariants("dateProp", "strProp", "intFieldProp");
   }
 
+  public void testTapestryMixinAttr() throws Throwable {
+    addComponentToProject("Count");
+    addMixinToProject("FooMixin");
+    initByComponent();
+    doTestBasicCompletionVariants("bar", "end", "mixins", "start", "t:id", "value");
+  }
+
+  public void testTapestryMixinTag() throws Throwable {
+    addComponentToProject("Count");
+    addMixinToProject("FooMixin");
+    initByComponent();
+    doTestBasicCompletionVariants(true, "p:bar");
+  }
+
   public void testTagNameWithDoctypePresent() throws Throwable {
     initByComponent();
     doTestBasicCompletionVariants(mergeArrays(CORE_5_1_0_5_TAG_NAMES, "body", "head", getElementTagName()));
@@ -195,13 +213,24 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   }
 
   void doTestBasicCompletionVariants(@NonNls String... expectedItems) throws Throwable {
-    doTestCompletionVariants(CompletionType.BASIC, expectedItems);
+    doTestBasicCompletionVariants(false, expectedItems);
   }
 
-  void doTestCompletionVariants(final CompletionType type, @NonNls String... expectedItems) throws Throwable {
+  void doTestBasicCompletionVariants(boolean contains, @NonNls String... expectedItems) throws Throwable {
+    doTestCompletionVariants(CompletionType.BASIC, contains, expectedItems);
+  }
+
+  void doTestCompletionVariants(final CompletionType type, boolean contains, @NonNls String... expectedItems) throws Throwable {
     final LookupElement[] items = myFixture.complete(type);
     Assert.assertNotNull("No lookup was shown, probably there was only one lookup element that was inserted automatically", items);
-    UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings(), expectedItems);
+    if (!contains) {
+      UsefulTestCase.assertSameElements(myFixture.getLookupElementStrings(), expectedItems);
+      return;
+    }
+    final Set<String> elements = new THashSet<String>(myFixture.getLookupElementStrings());
+    for (String expectedItem : expectedItems) {
+      assertTrue(expectedItem + " not found", elements.contains(expectedItem));
+    }
   }
 
   @Override

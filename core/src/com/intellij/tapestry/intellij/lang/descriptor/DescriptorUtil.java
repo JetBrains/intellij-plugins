@@ -26,10 +26,7 @@ import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Alexey Chmutov
@@ -41,6 +38,20 @@ class DescriptorUtil {
   }
 
   public static XmlAttributeDescriptor[] getAttributeDescriptors(@NotNull XmlTag context) {
+    final XmlAttributeDescriptor[] result = getAttributeDescriptorsImpl(context);
+    final List<Mixin> mixins = findMixins(context);
+    if(mixins.isEmpty()) {
+      return result;
+    }
+    final List<XmlAttributeDescriptor> listResult = new ArrayList<XmlAttributeDescriptor>(result.length);
+    Collections.addAll(listResult, result);
+    for (Mixin mixin : mixins) {
+      ContainerUtil.addAll(listResult, getAttributeDescriptors(mixin, null));
+    }
+    return listResult.toArray(new XmlAttributeDescriptor[listResult.size()]);
+  }
+
+  private static XmlAttributeDescriptor[] getAttributeDescriptorsImpl(XmlTag context) {
     Component component = TapestryUtils.getTypeOfTag(context);
     String id = getTAttributeName(context, "id");
     if (component != null) {
@@ -156,7 +167,7 @@ class DescriptorUtil {
     if (parametersPrefix == null || component == null) {
       return namespaceElements;
     }
-    final XmlElementDescriptor[] parameterElements = getParameterDescriptors(component, parametersPrefix);
+    final XmlElementDescriptor[] parameterElements = getParameterDescriptors(component, parametersPrefix, findMixins(context));
     return ArrayUtil.mergeArrays(namespaceElements, parameterElements);
   }
 
@@ -170,14 +181,19 @@ class DescriptorUtil {
     return descriptors;
   }
 
-  private static XmlElementDescriptor[] getParameterDescriptors(@NotNull final Component component, final String namespacePrefix) {
-    final List<XmlElementDescriptor> result =
-      ContainerUtil.map(component.getParameters().values(), new Function<TapestryParameter, XmlElementDescriptor>() {
-        @Override
-        public XmlElementDescriptor fun(TapestryParameter parameter) {
-          return new TapestryParameterDescriptor(component, parameter, namespacePrefix);
-        }
-      });
+  private static XmlElementDescriptor[] getParameterDescriptors(@NotNull final Component component,
+                                                                final String namespacePrefix,
+                                                                List<Mixin> mixins) {
+    final Function<TapestryParameter, XmlElementDescriptor> mapping = new Function<TapestryParameter, XmlElementDescriptor>() {
+      @Override
+      public XmlElementDescriptor fun(TapestryParameter parameter) {
+        return new TapestryParameterDescriptor(component, parameter, namespacePrefix);
+      }
+    };
+    final List<XmlElementDescriptor> result = ContainerUtil.map(component.getParameters().values(), mapping);
+    for (Mixin mixin : mixins) {
+      result.addAll(ContainerUtil.map(mixin.getParameters().values(), mapping));
+    }
     return ArrayUtil.toObjectArray(result, XmlElementDescriptor.class);
   }
 

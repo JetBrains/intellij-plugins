@@ -154,6 +154,7 @@ public class TapestryProject {
     myLastApplicationFilterName = applicationFilterName;
 
     myCachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage, this));
+    myCachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage + "." + applicationFilterName, this));
     myCachedLibraries.add(myCoreLibrary);
 
     for (String libraryShortName : libraryMapping.keySet()) {
