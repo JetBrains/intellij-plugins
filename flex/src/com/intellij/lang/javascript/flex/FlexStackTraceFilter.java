@@ -83,7 +83,11 @@ public class FlexStackTraceFilter implements Filter {
     final int textStartOffset = entireLength - line.length();
     final int highlightStartOffset = textStartOffset + m.start(1);
     final int highlightEndOffset = textStartOffset + m.end(1);
-    int lineNumber = StringUtil.isEmpty(m.group(3)) ? 0 : Integer.parseInt(m.group(3)) - 1;
+    int lineNumber = 0;
+    try {
+      lineNumber = StringUtil.isEmpty(m.group(3)) ? 0 : Integer.parseInt(m.group(3)) - 1;
+    }
+    catch (NumberFormatException ignore) {/*ignore*/}
 
     final String filePath = m.group(2);
 
@@ -235,5 +239,4 @@ public class FlexStackTraceFilter implements Filter {
       }
     }
   }
-
 }
