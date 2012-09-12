@@ -175,7 +175,7 @@ public class FlashBuilderModuleImporter {
     compilerOptions.put("compiler.locale", localesBuf.toString());
 
     if (mainBC.getOutputType() == OutputType.Application) {
-      FlexModuleBuilder.createRunConfiguration(rootModel.getModule(), mainBC.getName());
+      FlexModuleBuilder.createRunConfiguration(rootModel.getModule(), mainBC);
     }
 
     if (!fbProject.getNamespacesAndManifestPaths().isEmpty()) {
@@ -260,7 +260,7 @@ public class FlashBuilderModuleImporter {
         bc.getIosPackagingOptions().setPackageFileName(shortClassName);
       }
 
-      FlexModuleBuilder.createRunConfiguration(rootModel.getModule(), bc.getName());
+      FlexModuleBuilder.createRunConfiguration(rootModel.getModule(), bc);
 
       allApps.add(bc);
     }

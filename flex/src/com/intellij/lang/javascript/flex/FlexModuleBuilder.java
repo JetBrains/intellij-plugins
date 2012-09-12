@@ -5,6 +5,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
@@ -129,7 +130,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
     setupBC(modifiableRootModel, bc);
 
     if (bc.getOutputType() == OutputType.Application) {
-      createRunConfiguration(module, bc.getName());
+      createRunConfiguration(module, bc);
     }
 
     if (sourceRoot != null && myCreateSampleApp && myFlexSdk != null) {
@@ -209,13 +210,13 @@ public class FlexModuleBuilder extends ModuleBuilder {
     }
   }
 
-  public static void createRunConfiguration(final Module module, final String bcName) {
+  public static void createRunConfiguration(final Module module, final FlexIdeBuildConfiguration bc) {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
 
     final RunConfiguration[] existingConfigurations = runManager.getConfigurations(FlashRunConfigurationType.getInstance());
     for (RunConfiguration configuration : existingConfigurations) {
       final FlashRunnerParameters parameters = ((FlashRunConfiguration)configuration).getRunnerParameters();
-      if (module.getName().equals(parameters.getModuleName()) && bcName.equals(parameters.getBCName())) {
+      if (module.getName().equals(parameters.getModuleName()) && bc.getName().equals(parameters.getBCName())) {
         //already exists
         return;
       }
@@ -225,7 +226,16 @@ public class FlexModuleBuilder extends ModuleBuilder {
     final FlashRunConfiguration runConfiguration = (FlashRunConfiguration)settings.getConfiguration();
     final FlashRunnerParameters params = runConfiguration.getRunnerParameters();
     params.setModuleName(module.getName());
-    params.setBCName(bcName);
+    params.setBCName(bc.getName());
+
+    if (bc.getNature().isMobilePlatform()) {
+      if (bc.getAndroidPackagingOptions().isEnabled()) {
+        params.setAppDescriptorForEmulator(FlashRunnerParameters.AppDescriptorForEmulator.Android);
+      }
+      else if (bc.getIosPackagingOptions().isEnabled()) {
+        params.setAppDescriptorForEmulator(FlashRunnerParameters.AppDescriptorForEmulator.IOS);
+      }
+    }
 
     settings.setName(params.suggestUniqueName(existingConfigurations));
     settings.setTemporary(false);
