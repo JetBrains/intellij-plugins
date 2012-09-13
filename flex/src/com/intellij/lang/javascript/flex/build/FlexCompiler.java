@@ -45,6 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInput;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -280,9 +281,13 @@ public class FlexCompiler implements SourceProcessingCompiler {
           if (runConfig instanceof FlashRunConfiguration) {
             final FlashRunnerParameters params = ((FlashRunConfiguration)runConfig).getRunnerParameters();
             if (moduleAndBC.first.getName().equals(params.getModuleName()) &&
-                moduleAndBC.second.getName().equals(params.getBCName()) &&
-                params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
-              checkPackagingOptions(moduleAndBC.second.getAndroidPackagingOptions(), errorConsumer);
+                moduleAndBC.second.getName().equals(params.getBCName())) {
+              if (params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
+                checkPackagingOptions(moduleAndBC.second.getAndroidPackagingOptions(), errorConsumer);
+              }
+              else if (params.getMobileRunTarget() == AirMobileRunTarget.iOSDevice) {
+                checkPackagingOptions(moduleAndBC.second.getIosPackagingOptions(), errorConsumer);
+              }
             }
           }
         }
@@ -770,6 +775,15 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                              FileUtil.toSystemDependentName(relPathInPackage)),
                                                                  AirPackagingConfigurableBase.Location.FilesToPackage));
         }
+      }
+    }
+
+    if (packagingOptions instanceof IosPackagingOptions) {
+      final String path = ((IosPackagingOptions)packagingOptions).getIOSSdkPath();
+      if (!path.isEmpty() && !new File(path).isDirectory()) {
+        errorConsumer.consume(FlashProjectStructureProblem.createPackagingOptionsProblem(packagingOptions, FlexBundle
+          .message("packaging.options.bad.ios.sdk.path", device, FileUtil.toSystemDependentName(path)),
+                                                                                         AirPackagingConfigurableBase.Location.IosSdkPath));
       }
     }
 
