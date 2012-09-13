@@ -9,6 +9,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 
 /**
@@ -45,6 +46,13 @@ public class CucumberJavaRunConfigurationProducer extends JavaRuntimeConfigurati
     assert file != null : mySourceElement.getContainingFile();
     configuration.setProgramParameters(file.getPath() + " --glue cucumber --format org.jetbrains.plugins.cucumber.java.run.CucumberJavaSMFormatter --monochrome");
     configuration.MAIN_CLASS_NAME = "cucumber.cli.Main";
+    if (mySourceElement instanceof PsiNamedElement) {
+      if (mySourceElement instanceof GherkinFile) {
+        configuration.setName(((GherkinFile)mySourceElement).getVirtualFile().getNameWithoutExtension());
+      } else {
+        configuration.setName(((PsiNamedElement)mySourceElement).getName());
+      }
+    }
 
     setupConfigurationModule(context, configuration);
     JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
