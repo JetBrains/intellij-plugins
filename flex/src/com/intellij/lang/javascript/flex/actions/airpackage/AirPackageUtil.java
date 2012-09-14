@@ -316,7 +316,28 @@ public class AirPackageUtil {
     FileDocumentManager.getInstance().saveAllDocuments();
 
     final IOSPackageType packageType = isDebug ? IOSPackageType.DebugOnSimulator : IOSPackageType.TestOnSimulator;
-    final ExternalTask task = createIOSPackageTask(module, bc, packageType, true, runnerParameters.getIOSSimulatorSdkPath(), null);
+    final ExternalTask task = createIOSPackageTask(module, bc, packageType, true, runnerParameters.getIOSSimulatorSdkPath(), 0, null);
+    return ExternalTask.runWithProgress(task, FlexBundle.message("creating.ios.package"), FlexBundle.message("create.ios.package.title"));
+  }
+
+  public static boolean packageIpaForDevice(final Module module,
+                                            final FlexIdeBuildConfiguration bc,
+                                            final FlashRunnerParameters runnerParameters,
+                                            final boolean isDebug) {
+    final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
+    final PasswordStore passwords = AirPackageAction.getPasswords(module.getProject(), Collections.singletonList(packagingOptions));
+    if (passwords == null) return false; // user canceled
+
+    FileDocumentManager.getInstance().saveAllDocuments();
+
+    final IOSPackageType packageType = isDebug
+                                       ? runnerParameters.getDebugTransport() == AirMobileDebugTransport.Network
+                                         ? IOSPackageType.DebugOverNetwork
+                                         : IOSPackageType.DebugOverUSB
+                                       : IOSPackageType.Test;
+    final ExternalTask task =
+      createIOSPackageTask(module, bc, packageType, runnerParameters.isFastPackaging(), bc.getIosPackagingOptions().getIOSSdkPath(),
+                           runnerParameters.getUsbDebugPort(), passwords);
     return ExternalTask.runWithProgress(task, FlexBundle.message("creating.ios.package"), FlexBundle.message("create.ios.package.title"));
   }
 
@@ -417,6 +438,7 @@ public class AirPackageUtil {
                                                   final IOSPackageType packageType,
                                                   final boolean fastPackaging,
                                                   final String iosSDKPath,
+                                                  final int usbDebugPort,
                                                   final PasswordStore passwords) {
     final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
     final AirSigningOptions signingOptions = packagingOptions.getSigningOptions();
@@ -432,12 +454,17 @@ public class AirPackageUtil {
         command.add("-target");
 
         switch (packageType) {
+          case Test:
+            command.add(fastPackaging ? "ipa-test-interpreter" : "ipa-test");
+            break;
+          case DebugOverUSB:
+            command.add(fastPackaging ? "ipa-debug-interpreter" : "ipa-debug");
+            command.add("-listen");
+            command.add(String.valueOf(usbDebugPort));
+            break;
           case DebugOverNetwork:
             command.add(fastPackaging ? "ipa-debug-interpreter" : "ipa-debug");
             command.add("-connect");
-            break;
-          case Test:
-            command.add(fastPackaging ? "ipa-test-interpreter" : "ipa-test");
             break;
           case TestOnSimulator:
             command.add("ipa-test-interpreter-simulator");
@@ -509,6 +536,20 @@ public class AirPackageUtil {
              }
            }, FlexBundle.message("installing.0", ipaPath.substring(ipaPath.lastIndexOf('/') + 1)),
                                         FlexBundle.message("install.ipa.on.simulator.title"));
+  }
+
+  public static boolean installOnIosDevice(final Project project, final Sdk flexSdk, final String ipaPath) {
+    return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
+      protected void appendAdtOptions(final List<String> command) {
+        command.add("-installApp");
+        command.add("-platform");
+        command.add("ios");
+        //command.add("-platformsdk");
+        //command.add(iOSSdkPath);
+        command.add("-package");
+        command.add(ipaPath);
+      }
+    }, FlexBundle.message("installing.0", ipaPath.substring(ipaPath.lastIndexOf('/') + 1)), FlexBundle.message("install.ios.app.title"));
   }
 
   private static boolean uninstallFromIosSimulator(final Project project,

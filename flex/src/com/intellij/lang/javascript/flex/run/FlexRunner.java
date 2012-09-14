@@ -15,6 +15,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
@@ -24,7 +25,10 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.wm.ToolWindowId;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
 import org.jetbrains.annotations.NotNull;
@@ -74,6 +78,13 @@ public class FlexRunner extends FlexBaseRunner {
               launchOnIosSimulator(module.getProject(), bc.getSdk(), iosAppId, runnerParameters.getIOSSimulatorSdkPath(), false);
             }
             return null;
+          case iOSDevice:
+            if (packAndInstallToIOSDevice(module, bc, runnerParameters, false)) {
+              final String appName = getApplicationName(getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
+              ToolWindowManager.getInstance(module.getProject()).notifyByBalloon(ToolWindowId.RUN, MessageType.INFO,
+                                                                                 FlexBundle.message("ios.application.installed", appName));
+            }
+            break;
         }
         break;
     }

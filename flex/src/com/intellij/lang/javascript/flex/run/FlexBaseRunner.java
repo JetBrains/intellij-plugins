@@ -375,12 +375,40 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
             && AirPackageUtil.installOnIosSimulator(project, sdk, ipaPath, applicationId, runnerParameters.getIOSSimulatorSdkPath()));
   }
 
+  public static boolean packAndInstallToIOSDevice(final Module module,
+                                                  final FlexIdeBuildConfiguration bc,
+                                                  final FlashRunnerParameters runnerParameters,
+                                                  final boolean isDebug) {
+    final Project project = module.getProject();
+    final Sdk sdk = bc.getSdk();
+    final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
+    final String ipaPath = outputFolder + "/" + bc.getIosPackagingOptions().getPackageFileName() + ".ipa";
+
+    final String adtVersion;
+    return (adtVersion = AirPackageUtil.getAdtVersion(project, sdk)) != null
+           && AirPackageUtil.checkAdtVersion(module, bc, adtVersion)
+           && AirPackageUtil.packageIpaForDevice(module, bc, runnerParameters, isDebug)
+           && AirPackageUtil.installOnIosDevice(project, sdk, ipaPath);
+  }
+
   @Nullable
   public static String getApplicationId(final String airDescriptorPath) {
     final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(airDescriptorPath);
     if (descriptorFile != null) {
       try {
         return FlexUtils.findXMLElement(descriptorFile.getInputStream(), "<application><id>");
+      }
+      catch (IOException e) {/*ignore*/}
+    }
+    return null;
+  }
+
+  @Nullable
+  public static String getApplicationName(final String airDescriptorPath) {
+    final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(airDescriptorPath);
+    if (descriptorFile != null) {
+      try {
+        return FlexUtils.findXMLElement(descriptorFile.getInputStream(), "<application><name>");
       }
       catch (IOException e) {/*ignore*/}
     }

@@ -83,6 +83,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private JRadioButton myOnIOSSimulatorRadioButton;
   private TextFieldWithBrowseButton myIOSSimulatorSdkTextWithBrowse;
   private JRadioButton myOnIOSDeviceRadioButton;
+  private JCheckBox myFastPackagingCheckBox;
 
   private JComboBox myEmulatorCombo;
   private JPanel myEmulatorScreenSizePanel;
@@ -229,8 +230,6 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myIOSSimulatorSdkTextWithBrowse
       .addBrowseFolderListener(null, null, myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
-    myOnIOSDeviceRadioButton.setVisible(false); // until supported
-
     final ActionListener debugTransportListener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateDebugTransportRelatedControls();
@@ -360,6 +359,9 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       final boolean app = bc.getOutputType() == OutputType.Application;
       myEmulatorCombo.setEnabled(runOnEmulator);
       UIUtil.setEnabled(myEmulatorScreenSizePanel, runOnEmulator, true);
+
+      myFastPackagingCheckBox.setEnabled(myOnIOSDeviceRadioButton.isSelected());
+
       myAdlOptionsLabel.setEnabled(runOnEmulator);
       myEmulatorAdlOptionsEditor.setEnabled(runOnEmulator);
       myAppDescriptorForEmulatorLabel.setEnabled(app && runOnEmulator);
@@ -496,6 +498,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myOnIOSSimulatorRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.iOSSimulator);
     myIOSSimulatorSdkTextWithBrowse.setText(FileUtil.toSystemDependentName(params.getIOSSimulatorSdkPath()));
     myOnIOSDeviceRadioButton.setSelected(params.getMobileRunTarget() == AirMobileRunTarget.iOSDevice);
+    myFastPackagingCheckBox.setSelected(params.isFastPackaging());
 
     myDebugOverNetworkRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.Network);
     myDebugOverUSBRadioButton.setSelected(params.getDebugTransport() == AirMobileDebugTransport.USB);
@@ -600,6 +603,8 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     }
 
     params.setIOSSimulatorSdkPath(FileUtil.toSystemIndependentName(myIOSSimulatorSdkTextWithBrowse.getText().trim()));
+
+    params.setFastPackaging(myFastPackagingCheckBox.isSelected());
 
     params.setDebugTransport(myDebugOverNetworkRadioButton.isSelected()
                              ? AirMobileDebugTransport.Network

@@ -74,7 +74,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
@@ -200,7 +203,8 @@ public class FlexDebugProcess extends XDebugProcess {
 
     if (params instanceof FlashRunnerParameters &&
         bc.getTargetPlatform() == TargetPlatform.Mobile &&
-        ((FlashRunnerParameters)params).getMobileRunTarget() == AirMobileRunTarget.AndroidDevice &&
+        (((FlashRunnerParameters)params).getMobileRunTarget() == AirMobileRunTarget.AndroidDevice ||
+         ((FlashRunnerParameters)params).getMobileRunTarget() == AirMobileRunTarget.iOSDevice) &&
         ((FlashRunnerParameters)params).getDebugTransport() == AirMobileDebugTransport.USB) {
       fdbLaunchCommand.add("-p");
       fdbLaunchCommand.add(String.valueOf(((FlashRunnerParameters)params).getUsbDebugPort()));
@@ -237,9 +241,18 @@ public class FlexDebugProcess extends XDebugProcess {
                           : new StartDebuggingCommand());
               break;
             case iOSSimulator:
-              final String iosAppId = FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
-              sendCommand(
-                new StartAppOnIosSimulatorCommand(bc.getSdk(), iosAppId, ((FlashRunnerParameters)params).getIOSSimulatorSdkPath()));
+              final String iosSimulatorAppId =
+                FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
+              sendCommand(new StartAppOnIosSimulatorCommand(bc.getSdk(), iosSimulatorAppId,
+                                                            ((FlashRunnerParameters)params).getIOSSimulatorSdkPath()));
+              break;
+            case iOSDevice:
+              final String iosAppName =
+                FlexBaseRunner.getApplicationName(FlexBaseRunner.getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
+              sendCommand(appParams.getDebugTransport() == AirMobileDebugTransport.Network
+                          ? new StartAppOnIosDeviceCommand(iosAppName)
+                          : new StartDebuggingCommand());
+              break;
           }
       }
     }
@@ -1436,6 +1449,23 @@ public class FlexDebugProcess extends XDebugProcess {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         public void run() {
           FlexBaseRunner.launchOnIosSimulator(getSession().getProject(), myFlexSdk, myAppId, myIOSSdkPath, true);
+        }
+      });
+    }
+  }
+
+  class StartAppOnIosDeviceCommand extends StartDebuggingCommand {
+    private final String myAppName;
+
+    public StartAppOnIosDeviceCommand(final String appName) {
+      myAppName = appName;
+    }
+
+    void launchDebuggedApplication() throws IOException {
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        public void run() {
+          ToolWindowManager.getInstance(myModule.getProject()).notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, FlexBundle
+            .message("ios.application.installed.please.launch", myAppName));
         }
       });
     }

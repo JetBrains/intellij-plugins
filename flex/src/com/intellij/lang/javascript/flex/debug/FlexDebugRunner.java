@@ -28,7 +28,6 @@ import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
-import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
 
 /**
  * User: Maxim.Mossienko
@@ -91,26 +90,36 @@ public class FlexDebugRunner extends FlexBaseRunner {
     final Project project = module.getProject();
 
     if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
-      if (runnerParameters.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
-        final Sdk flexSdk = bc.getSdk();
-        final String appId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
+      switch (runnerParameters.getMobileRunTarget()) {
+        case Emulator:
+          break;
+        case AndroidDevice:
+          final Sdk flexSdk = bc.getSdk();
+          final String androidAppId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
 
-        if (!packAndInstallToAndroidDevice(module, bc, runnerParameters, appId, true)) {
-          return null;
-        }
+          if (!packAndInstallToAndroidDevice(module, bc, runnerParameters, androidAppId, true)) {
+            return null;
+          }
 
-        if (runnerParameters.getDebugTransport() == AirMobileDebugTransport.USB) {
-          launchOnAndroidDevice(project, flexSdk, appId, true);
-          waitUntilCountdownStartsOnDevice(project, appId);
-          AirPackageUtil.forwardTcpPort(project, flexSdk, runnerParameters.getUsbDebugPort());
-        }
-      }
-      else if (runnerParameters.getMobileRunTarget() == AirMobileRunTarget.iOSSimulator) {
-        final String appId = getApplicationId(getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
+          if (runnerParameters.getDebugTransport() == AirMobileDebugTransport.USB) {
+            launchOnAndroidDevice(project, flexSdk, androidAppId, true);
+            waitUntilCountdownStartsOnDevice(project, androidAppId);
+            AirPackageUtil.forwardTcpPort(project, flexSdk, runnerParameters.getUsbDebugPort());
+          }
+          break;
+        case iOSSimulator:
+          final String iosSimulatorAppId = getApplicationId(getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
 
-        if (!packAndInstallToIOSSimulator(module, bc, runnerParameters, appId, true)) {
-          return null;
-        }
+          if (!packAndInstallToIOSSimulator(module, bc, runnerParameters, iosSimulatorAppId, true)) {
+            return null;
+          }
+
+          break;
+        case iOSDevice:
+          if (!packAndInstallToIOSDevice(module, bc, runnerParameters, true)) {
+            return null;
+          }
+          break;
       }
     }
 

@@ -123,7 +123,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   private int myFullScreenWidth = 0;
   private int myFullScreenHeight = 0;
   private int myScreenDpi = 0;
-  private String myIOSSimulatorSdkPath = "";
+  private @NotNull String myIOSSimulatorSdkPath = "";
+  private boolean myFastPackaging = true;
   private @NotNull AirMobileDebugTransport myDebugTransport = AirMobileDebugTransport.USB;
   private int myUsbDebugPort = AirPackageUtil.DEBUG_PORT_DEFAULT;
   private @NotNull String myEmulatorAdlOptions = "";
@@ -269,12 +270,21 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     myScreenDpi = screenDpi;
   }
 
+  @NotNull
   public String getIOSSimulatorSdkPath() {
     return myIOSSimulatorSdkPath;
   }
 
-  public void setIOSSimulatorSdkPath(final String IOSSimulatorSdkPath) {
+  public void setIOSSimulatorSdkPath(@NotNull final String IOSSimulatorSdkPath) {
     myIOSSimulatorSdkPath = IOSSimulatorSdkPath;
+  }
+
+  public boolean isFastPackaging() {
+    return myFastPackaging;
+  }
+
+  public void setFastPackaging(final boolean fastPackaging) {
+    myFastPackaging = fastPackaging;
   }
 
   @NotNull
