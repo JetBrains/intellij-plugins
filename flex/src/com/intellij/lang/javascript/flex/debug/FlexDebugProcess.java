@@ -110,7 +110,8 @@ public class FlexDebugProcess extends XDebugProcess {
   @NonNls static final String RESOLVED_BREAKPOINT_MARKER = "Resolved breakpoint ";
   @NonNls static final String BREAKPOINT_MARKER = "Breakpoint ";
   @NonNls private static final String FDB_MARKER = "(fdb) ";
-  @NonNls private static final String WAITING_PLAYER_MARKER = "Waiting for Player to connect";
+  @NonNls private static final String WAITING_PLAYER_MARKER_1 = "Waiting for Player to connect";
+  @NonNls private static final String WAITING_PLAYER_MARKER_2 = "Trying to connect to Player";
   @NonNls static final String ATTEMPTING_TO_RESOLVE_BREAKPOINT_MARKER = "Attempting to resolve breakpoint ";
 
   @NonNls private static final String ADL_PREFIX = "[AIR Debug Launcher]: ";
@@ -236,9 +237,7 @@ public class FlexDebugProcess extends XDebugProcess {
             case AndroidDevice:
               final String androidAppId =
                 FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
-              sendCommand(appParams.getDebugTransport() == AirMobileDebugTransport.Network
-                          ? new StartAppOnAndroidDeviceCommand(bc.getSdk(), androidAppId)
-                          : new StartDebuggingCommand());
+              sendCommand(new StartAppOnAndroidDeviceCommand(bc.getSdk(), androidAppId));
               break;
             case iOSSimulator:
               final String iosSimulatorAppId =
@@ -1240,7 +1239,9 @@ public class FlexDebugProcess extends XDebugProcess {
       }
 
       if (i == -1 &&
-          (allowEmptyMarker || lastText.indexOf(WAITING_PLAYER_MARKER, lastTextMarkerScanningStart) >= 0) &&
+          (allowEmptyMarker ||
+           lastText.indexOf(WAITING_PLAYER_MARKER_1, lastTextMarkerScanningStart) >= 0 ||
+           lastText.indexOf(WAITING_PLAYER_MARKER_2, lastTextMarkerScanningStart) >= 0) &&
           lastText.length() > 0) {
         i = lastText.length();
         marker = "";
@@ -1549,7 +1550,7 @@ public class FlexDebugProcess extends XDebugProcess {
         return CommandOutputProcessingMode.DONE;
       }
 
-      if (s.contains(WAITING_PLAYER_MARKER)) {
+      if (s.contains(WAITING_PLAYER_MARKER_1) || s.contains(WAITING_PLAYER_MARKER_2)) {
         fdbWaitingForPlayerStateReached = true;
         getSession().rebuildViews();
         notifyFdbWaitingForPlayerStateReached();

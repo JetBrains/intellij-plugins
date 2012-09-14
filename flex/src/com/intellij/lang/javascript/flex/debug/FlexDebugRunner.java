@@ -8,7 +8,6 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
@@ -20,8 +19,6 @@ import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
 import com.intellij.lang.javascript.flex.run.RemoteFlashRunConfiguration;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
@@ -102,8 +99,6 @@ public class FlexDebugRunner extends FlexBaseRunner {
           }
 
           if (runnerParameters.getDebugTransport() == AirMobileDebugTransport.USB) {
-            launchOnAndroidDevice(project, flexSdk, androidAppId, true);
-            waitUntilCountdownStartsOnDevice(project, androidAppId);
             AirPackageUtil.forwardTcpPort(project, flexSdk, runnerParameters.getUsbDebugPort());
           }
           break;
@@ -124,28 +119,5 @@ public class FlexDebugRunner extends FlexBaseRunner {
     }
 
     return launchDebugProcess(module, bc, runnerParameters, executor, contentToReuse, env);
-  }
-
-  /**
-   * While debug mobile application over USB fdb must be launched only when Android AIR app is started and shows countdown.
-   * So this method waits for some time (3 seconds by default) as we hope that it is enough for application for startup and do not want to bother user with a dialog.
-   */
-  private static void waitUntilCountdownStartsOnDevice(final Project project, final String applicationId) {
-    final Runnable process = new Runnable() {
-      public void run() {
-        final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-        if (indicator != null) {
-          indicator.setIndeterminate(true);
-        }
-
-        try {
-          Thread.sleep(Integer.getInteger("air.mobile.application.startup.waiting.time.millis", 3000));
-        }
-        catch (InterruptedException ignored) {/*ignore*/}
-      }
-    };
-
-    ProgressManager.getInstance().runProcessWithProgressSynchronously(process, FlexBundle.message("waiting.for.application.startup"), false,
-                                                                      project);
   }
 }
