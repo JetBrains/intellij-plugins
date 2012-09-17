@@ -248,9 +248,7 @@ public class FlexDebugProcess extends XDebugProcess {
             case iOSDevice:
               final String iosAppName =
                 FlexBaseRunner.getApplicationName(FlexBaseRunner.getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
-              sendCommand(appParams.getDebugTransport() == AirMobileDebugTransport.Network
-                          ? new StartAppOnIosDeviceCommand(iosAppName)
-                          : new StartDebuggingCommand());
+              sendCommand(new StartAppOnIosDeviceCommand(iosAppName));
               break;
           }
       }
@@ -1526,6 +1524,11 @@ public class FlexDebugProcess extends XDebugProcess {
 
       s = builder.toString();
 
+      final int unexpectedVersionIndex = s.indexOf("Unexpected version of the Flash Player");
+      if (unexpectedVersionIndex >= 0) {
+        s = s.substring(0, unexpectedVersionIndex) + "Session timed out or u" + s.substring(unexpectedVersionIndex + 1);
+      }
+
       final ResponseLineIterator iterator = new ResponseLineIterator(s);
       while (iterator.hasNext()) {
         final String line = iterator.next();
@@ -1544,7 +1547,8 @@ public class FlexDebugProcess extends XDebugProcess {
         getProcessHandler().detachProcess();
         return CommandOutputProcessingMode.DONE;
       }
-      if (s.contains("Failed to connect")) {
+
+      if (s.contains("Failed to connect") || s.contains("unexpected version of the Flash Player")) {
         reportProblem(s);
         handleProbablyUnexpectedStop(s);
         return CommandOutputProcessingMode.DONE;

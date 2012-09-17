@@ -61,10 +61,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.PathUtil;
-import com.intellij.xdebugger.XDebugProcess;
-import com.intellij.xdebugger.XDebugProcessStarter;
-import com.intellij.xdebugger.XDebugSession;
-import com.intellij.xdebugger.XDebuggerManager;
+import com.intellij.xdebugger.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -207,12 +204,29 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
             return new FlexDebugProcess(session, bc, params);
           }
           catch (IOException e) {
+            iosStopForwardTcpPortIfNeeded(module.getProject(), bc, params);
             throw new ExecutionException(e.getMessage(), e);
           }
         }
       });
 
+    debugSession.addSessionListener(new XDebugSessionAdapter() {
+      public void sessionStopped() {
+        iosStopForwardTcpPortIfNeeded(module.getProject(), bc, params);
+      }
+    });
+
     return debugSession.getRunContentDescriptor();
+  }
+
+  private static void iosStopForwardTcpPortIfNeeded(final Project project, final FlexIdeBuildConfiguration bc,
+                                                    final BCBasedRunnerParameters params) {
+    if (bc.getTargetPlatform() == TargetPlatform.Mobile &&
+        params instanceof FlashRunnerParameters &&
+        ((FlashRunnerParameters)params).getMobileRunTarget() == FlashRunnerParameters.AirMobileRunTarget.iOSDevice &&
+        ((FlashRunnerParameters)params).getDebugTransport() == FlashRunnerParameters.AirMobileDebugTransport.USB) {
+      AirPackageUtil.iosStopForwardTcpPort(project, bc.getSdk(), ((FlashRunnerParameters)params).getUsbDebugPort());
+    }
   }
 
   @Nullable

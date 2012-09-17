@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -46,6 +47,7 @@ public class AirPackageUtil {
 
   private static final Pattern AIR_VERSION_PATTERN = Pattern.compile("[1-9]\\.[0-9]{1,2}(\\.[0-9]{1,6})*");
   private static final String ADB_RELATIVE_PATH = "/lib/android/bin/adb" + (SystemInfo.isWindows ? ".exe" : "");
+  private static final String IDB_RELATIVE_PATH = "/lib/aot/bin/iOSBin/idb" + (SystemInfo.isWindows ? ".exe" : "");
 
   private AirPackageUtil() {
   }
@@ -226,6 +228,21 @@ public class AirPackageUtil {
         });
       }
     }, "adb start-server", "ADB Server Start");
+  }
+
+  private static void stopAdbServer(final Project project, final Sdk sdk, final String progressTitle, final String frameTitle) {
+    ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
+      protected List<String> createCommandLine() {
+        final ArrayList<String> command = new ArrayList<String>();
+        command.add(sdk.getHomePath() + ADB_RELATIVE_PATH);
+        command.add("kill-server");
+        return command;
+      }
+
+      protected boolean checkMessages() {
+        return true; // do not care
+      }
+    }, progressTitle, frameTitle);
   }
 
   public static boolean checkAirRuntimeOnDevice(final Project project, final Sdk sdk, final String adtVersion) {
@@ -625,13 +642,13 @@ public class AirPackageUtil {
     }, FlexBundle.message("launching.ios.application", applicationId), FlexBundle.message("launch.ios.application.title"));
   }
 
-  public static void forwardTcpPort(final Project project, final Sdk sdk, final int usbDebugPort) {
+  public static boolean androidForwardTcpPort(final Project project, final Sdk sdk, final int usbDebugPort) {
     final String adbPath = sdk.getHomePath() + ADB_RELATIVE_PATH;
     final VirtualFile adbExecutable = LocalFileSystem.getInstance().findFileByPath(adbPath);
     final String presentableCommand = "adb forward tcp:" + usbDebugPort + " tcp:" + usbDebugPort;
 
     if (adbExecutable != null) {
-      ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
+      return ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
         protected List<String> createCommandLine() {
           final List<String> command = new ArrayList<String>();
           command.add(adbExecutable.getPath());
@@ -646,6 +663,100 @@ public class AirPackageUtil {
       Messages
         .showWarningDialog(project, FlexBundle.message("adb.not.found", FileUtil.toSystemDependentName(adbPath), presentableCommand),
                            FlexBundle.message("adb.forward.title"));
+      return false;
+    }
+  }
+
+  public static int getIOSDeviceHandle(final Project project, final Sdk sdk) {
+    final Ref<Integer> deviceHandleRef = new Ref<Integer>();
+
+    final boolean ok = ExternalTask.runWithProgress(new AdtTask(project, sdk) {
+      protected void appendAdtOptions(final List<String> command) {
+        command.add("-devices");
+        command.add("-platform");
+        command.add("ios");
+      }
+
+      protected boolean checkMessages() {
+        if (myMessages.size() < 3) return false;
+        if (!myMessages.get(0).trim().contains("List of attached devices")) return false;
+        if (!myMessages.get(1).trim().startsWith("Handle")) return false;
+
+        final String deviceLine = myMessages.get(2).trim();
+        int spaceIndex = Math.min(deviceLine.indexOf(" "), deviceLine.indexOf("\t"));
+        if (spaceIndex <= 0) return false;
+        try {
+          deviceHandleRef.set(Integer.parseInt(deviceLine.substring(0, spaceIndex)));
+        }
+        catch (NumberFormatException e) {
+          return false;
+        }
+
+        if (myMessages.size() >= 4) {
+          final String secondDeviceLine = myMessages.get(3).trim();
+          spaceIndex = Math.min(secondDeviceLine.indexOf(" "), secondDeviceLine.indexOf("\t"));
+          try {
+            if (spaceIndex > 0 && Integer.parseInt(deviceLine.substring(0, spaceIndex)) >= 0) {
+              myMessages.clear();
+              myMessages.add(FlexBundle.message("more.than.one.ios.device"));
+              return false;
+            }
+          }
+          catch (NumberFormatException ignore) {/*ok, not a device line*/}
+        }
+        return true;
+      }
+    }, FlexBundle.message("checking.ios.devices"), FlexBundle.message("check.ios.devices.title"));
+
+    return ok ? deviceHandleRef.get() : -1;
+  }
+
+  /**
+   * Stops adb server and launches idb process that remains alive;
+   * caller is responsible to invoke {@link #iosStopForwardTcpPort} when debugging is finished.
+   */
+  public static boolean iosForwardTcpPort(final Project project, final Sdk sdk, final int usbDebugPort, final int deviceHandle) {
+    // running adb server may be forwarding the port that needed for iOS debugging
+    stopAdbServer(project, sdk, FlexBundle.message("idb.forward"), FlexBundle.message("idb.forward.title"));
+
+    final String idbPath = sdk.getHomePath() + IDB_RELATIVE_PATH;
+    final VirtualFile idbExecutable = LocalFileSystem.getInstance().findFileByPath(idbPath);
+
+    if (idbExecutable == null) {
+      Messages.showWarningDialog(project, FlexBundle.message("idb.not.found", FileUtil.toSystemDependentName(idbPath)),
+                                 FlexBundle.message("idb.forward.title"));
+      return false;
+    }
+
+    try {
+      // this process remains alive until "idb -stopforward" called
+      Runtime.getRuntime().exec(new String[]{
+        idbExecutable.getPath(),
+        "-forward",
+        String.valueOf(usbDebugPort),
+        String.valueOf(usbDebugPort),
+        String.valueOf(deviceHandle)});
+    }
+    catch (IOException e) {
+      Messages.showErrorDialog(project, e.getMessage(), "idb forward " + usbDebugPort + " " + usbDebugPort + " " + deviceHandle);
+      return false;
+    }
+
+    return true;
+  }
+
+  public static void iosStopForwardTcpPort(final Project project, final Sdk sdk, final int usbDebugPort) {
+    final String idbPath = sdk.getHomePath() + IDB_RELATIVE_PATH;
+
+    try {
+      // this process remains alive until "idb -stopforward" called
+      Runtime.getRuntime().exec(new String[]{
+        idbPath,
+        "-stopforward",
+        String.valueOf(usbDebugPort)});
+    }
+    catch (IOException e) {
+      Logger.getInstance(AirPackageUtil.class.getName()).warn(e);
     }
   }
 

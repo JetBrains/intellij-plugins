@@ -87,11 +87,12 @@ public class FlexDebugRunner extends FlexBaseRunner {
     final Project project = module.getProject();
 
     if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
+      final Sdk sdk = bc.getSdk();
+
       switch (runnerParameters.getMobileRunTarget()) {
         case Emulator:
           break;
         case AndroidDevice:
-          final Sdk flexSdk = bc.getSdk();
           final String androidAppId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
 
           if (!packAndInstallToAndroidDevice(module, bc, runnerParameters, androidAppId, true)) {
@@ -99,8 +100,11 @@ public class FlexDebugRunner extends FlexBaseRunner {
           }
 
           if (runnerParameters.getDebugTransport() == AirMobileDebugTransport.USB) {
-            AirPackageUtil.forwardTcpPort(project, flexSdk, runnerParameters.getUsbDebugPort());
+            if (!AirPackageUtil.androidForwardTcpPort(project, sdk, runnerParameters.getUsbDebugPort())) {
+              return null;
+            }
           }
+
           break;
         case iOSSimulator:
           final String iosSimulatorAppId = getApplicationId(getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
@@ -114,6 +118,18 @@ public class FlexDebugRunner extends FlexBaseRunner {
           if (!packAndInstallToIOSDevice(module, bc, runnerParameters, true)) {
             return null;
           }
+
+          if (runnerParameters.getDebugTransport() == AirMobileDebugTransport.USB) {
+            final int deviceHandle = AirPackageUtil.getIOSDeviceHandle(project, sdk);
+            if (deviceHandle < 0) {
+              return null;
+            }
+
+            if (!AirPackageUtil.iosForwardTcpPort(project, sdk, runnerParameters.getUsbDebugPort(), deviceHandle)) {
+              return null;
+            }
+          }
+
           break;
       }
     }
