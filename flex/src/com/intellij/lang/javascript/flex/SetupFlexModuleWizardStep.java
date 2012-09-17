@@ -31,4 +31,8 @@ public class SetupFlexModuleWizardStep extends ModuleWizardStep {
   public void updateDataModel() {
     myForm.applyTo(myModuleBuilder);
   }
+
+  public String getHelpId() {
+    return "reference.dialogs.new.project.fromScratch.flex";
+  }
 }
