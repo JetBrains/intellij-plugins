@@ -7,6 +7,7 @@ import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.ModuleBasedConfiguration;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
+import icons.CucumberJavaIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,9 +57,10 @@ public class CucumberJavaRunConfigurationType extends ApplicationConfigurationTy
 
   @Override
   public Icon getIcon() {
-    return icons.CucumberJavaIcons.CucumberJavaRunConfiguration;
+    return CucumberJavaIcons.CucumberJavaRunConfiguration;
   }
 
+  @NotNull
   @Override
   public String getId() {
     return ID;
