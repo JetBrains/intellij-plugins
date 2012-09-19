@@ -192,8 +192,10 @@
         <compiler implementation="org.osmorc.make.BundleCompiler"/>
         <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
 <!--        <programRunner implementation="org.osmorc.run.OsgiDebuggerRunner"/> -->
-        <projectConfigurable instance="org.osmorc.settings.ProjectSettingsEditor"/>
-        <applicationConfigurable instance="org.osmorc.settings.ApplicationSettingsEditor"/>
+      <projectConfigurable instance="org.osmorc.settings.ProjectSettingsEditor" id="reference.settings.project.osgi.project.settings"
+                           displayName="OSGi"/>
+
+      <applicationConfigurable instance="org.osmorc.settings.ApplicationSettingsEditor"/>
       <editorNotificationProvider implementation="org.osmorc.ManifestChangeWatcher"/>
       <editorNotificationProvider implementation="org.osmorc.BundleIndexModificationWatcher"/>
     </extensions>
