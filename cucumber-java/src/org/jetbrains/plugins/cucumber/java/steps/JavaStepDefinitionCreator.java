@@ -11,7 +11,10 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.codeStyle.JavaCodeStyleManager;
+import com.intellij.psi.util.CreateClassUtil;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ObjectUtils;
 import cucumber.runtime.java.JavaSnippet;
 import cucumber.runtime.snippets.SnippetGenerator;
 import gherkin.formatter.model.Comment;
@@ -21,6 +24,7 @@ import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * User: Andrey.Vokin
@@ -30,17 +34,17 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
   @NotNull
   @Override
   public PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    PsiClass newClass = CreateClassUtil.createClassNamed(name, CreateClassUtil.DEFAULT_CLASS_TEMPLATE, dir);
+    assert newClass != null;
+    return newClass.getContainingFile();
   }
 
   @Override
   public boolean createStepDefinition(@NotNull GherkinStep step, @NotNull PsiFile file) {
-    if (!(file instanceof PsiJavaFile)) {
-      return false;
-    }
+    if (!(file instanceof PsiJavaFile)) return false;
 
     final Project project = file.getProject();
-    final VirtualFile vFile = file.getVirtualFile();
+    final VirtualFile vFile = ObjectUtils.assertNotNull(file.getVirtualFile());
     final OpenFileDescriptor descriptor = new OpenFileDescriptor(project, vFile);
     FileEditorManager.getInstance(project).getAllEditors(vFile);
     FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
@@ -62,6 +66,7 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
     if (clazz != null) {
       PsiMethod addedElement = (PsiMethod)clazz.add(element);
       addedElement = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(addedElement);
+      JavaCodeStyleManager.getInstance(project).shortenClassReferences(addedElement);
     }
 
     //final RCall call = (RCall)addedElement.getCall();
@@ -96,15 +101,14 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
 
   @Override
   public boolean validateNewStepDefinitionFileName(@NotNull Project project, @NotNull String fileName) {
-    return fileName.endsWith("MyStepdefs.java");
+    return fileName.toLowerCase(Locale.ENGLISH).endsWith("stepdefs");
   }
 
   @NotNull
   @Override
   public PsiDirectory getDefaultStepDefinitionFolder(@NotNull GherkinStep step) {
     final PsiFile featureFile = step.getContainingFile();
-    PsiDirectory dir = featureFile.getParent();
-    return dir;
+    return ObjectUtils.assertNotNull(featureFile.getParent());
   }
 
   @NotNull
@@ -117,13 +121,12 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
     return file.getName();
   }
 
-  private PsiMethod buildStepDefinitionByStep(@NotNull final GherkinStep step) {
+  private static PsiMethod buildStepDefinitionByStep(@NotNull final GherkinStep step) {
     final PsiElementFactory factory = JavaPsiFacade.getInstance(step.getProject()).getElementFactory();
     final Step cucumberStep = new Step(new ArrayList<Comment>(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
     final StringBuilder snippet =  new StringBuilder(new SnippetGenerator(new JavaSnippet()).getSnippet(cucumberStep).replace("PendingException", "cucumber.runtime.PendingException"));
     snippet.insert(1, "cucumber.annotation.en.");
 
-    final PsiMethod element = factory.createMethodFromText(snippet.toString(), step);
-    return element;
+    return factory.createMethodFromText(snippet.toString(), step);
   }
 }
