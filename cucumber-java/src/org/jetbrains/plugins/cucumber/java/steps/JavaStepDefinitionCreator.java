@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
@@ -116,7 +117,13 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
   public String getStepDefinitionFilePath(@NotNull final PsiFile file) {
     final VirtualFile vFile = file.getVirtualFile();
     if (file instanceof PsiJavaFile && vFile != null) {
-      return ((PsiJavaFile)file).getPackageName() + "." + vFile.getNameWithoutExtension();
+      String packageName = ((PsiJavaFile)file).getPackageName();
+      if (StringUtil.isEmptyOrSpaces(packageName)) {
+        return vFile.getNameWithoutExtension();
+      }
+      else {
+        return packageName + "." + vFile.getNameWithoutExtension();
+      }
     }
     return file.getName();
   }
