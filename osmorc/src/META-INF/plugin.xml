@@ -195,7 +195,11 @@
       <projectConfigurable instance="org.osmorc.settings.ProjectSettingsEditor" id="reference.settings.project.osgi.project.settings"
                            displayName="OSGi"/>
 
-      <applicationConfigurable instance="org.osmorc.settings.ApplicationSettingsEditor"/>
+      <applicationConfigurable instance="org.osmorc.settings.ApplicationSettingsEditor" id="osmorc.ide.settings" displayName="OSGi">
+        <configurable instance="org.osmorc.settings.FrameworkDefinitionsEditor" id="reference.settings.project.osgi.framework.definitions" displayName="Framework Definitions" />
+        <configurable instance="org.osmorc.settings.LibraryBundlingEditor" id="reference.settings.project.osgi.library.bundling" displayName="Library Bundling" />
+      </applicationConfigurable>
+
       <editorNotificationProvider implementation="org.osmorc.ManifestChangeWatcher"/>
       <editorNotificationProvider implementation="org.osmorc.BundleIndexModificationWatcher"/>
     </extensions>

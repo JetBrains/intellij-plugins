@@ -44,7 +44,6 @@ import com.jgoodies.binding.list.SelectionInList;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -78,7 +77,11 @@ public class LibraryBundlingEditorComponent {
       project = ProjectManager.getInstance().getDefaultProject();
     }
     manifestEntries = new ManifestEditor(project, "");
-    Bindings.bind(manifestEntries, "text", beanAdapter.getValueModel("additionalProperties"));
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      public void run() {
+        Bindings.bind(manifestEntries, "text", beanAdapter.getValueModel("additionalProperties"));
+      }
+    });
     _manifestEntriesHolder.add(manifestEntries, BorderLayout.CENTER);
 
     beanAdapter.addBeanPropertyChangeListener(beanPropertyChangeListener);
@@ -119,7 +122,6 @@ public class LibraryBundlingEditorComponent {
   private void createUIComponents() {
     selectedRule = new SelectionInList<LibraryBundlificationRule>();
     libraries = BasicComponentFactory.createList(selectedRule);
-    libraries.setBorder(new LineBorder(UIUtil.getBorderColor()));
 
     myLibrariesPanel = ToolbarDecorator.createDecorator(libraries)
       .setAddAction(new AnActionButtonRunnable() {
