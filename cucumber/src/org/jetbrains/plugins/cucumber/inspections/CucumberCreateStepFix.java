@@ -25,6 +25,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
@@ -57,9 +58,9 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     return getName();
   }
 
-  public List<PsiFile> getStepDefinitionContainers(final PsiFile featureFile) {
+  public static List<PsiFile> getStepDefinitionContainers(final PsiFile featureFile) {
     final List<PsiDirectory> stepDefsRoots = new ArrayList<PsiDirectory>();
-    final Module module = ModuleUtil.findModuleForPsiElement(featureFile);
+    final Module module = ObjectUtils.assertNotNull(ModuleUtil.findModuleForPsiElement(featureFile));
     CucumberStepsIndex.getInstance(featureFile.getProject()).findRelatedStepDefsRoots(featureFile, module, stepDefsRoots, new HashSet<String>());
 
     final List<PsiFile> stepDefs = new ArrayList<PsiFile>();
@@ -105,7 +106,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
           });
         }
       };
-      JBPopupFactory.getInstance().createListPopup(popupStep).showInBestPositionFor(DataManager.getInstance().getDataContext());
+      JBPopupFactory.getInstance().createListPopup(popupStep).showInBestPositionFor(DataManager.getInstance().getDataContextFromFocus().getResult());
     }
     else {
       createFileOrStepDefinition(step, null);
