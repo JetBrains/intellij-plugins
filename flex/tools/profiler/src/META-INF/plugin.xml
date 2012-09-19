@@ -43,7 +43,8 @@
 
     <applicationService serviceInterface="com.jetbrains.actionscript.profiler.model.ActionScriptProfileSettings"
                         serviceImplementation="com.jetbrains.actionscript.profiler.model.ActionScriptProfileSettings"/>
-    <applicationConfigurable instance="com.jetbrains.actionscript.profiler.ActionScriptProfileSettingsConfigurable"/>
+    <applicationConfigurable instance="com.jetbrains.actionscript.profiler.ActionScriptProfileSettingsConfigurable" id="asprofile.settings"
+                             key="profile.settings.name" bundle="com.jetbrains.actionscript.profiler.ProfilerBundle"/>
   </extensions>
   <actions>
     <group id="ProfilerViewMenu" popup="true">
