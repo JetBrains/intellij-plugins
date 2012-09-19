@@ -3,10 +3,12 @@ package org.jetbrains.plugins.cucumber.java.steps;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiParameter;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,7 +37,16 @@ public class JavaStepDefinition extends AbstractStepDefinition {
 
   @Override
   public List<String> getVariableNames() {
-    return new ArrayList<String>();
+    PsiElement element = getElement();
+    if (element instanceof PsiMethod) {
+      PsiParameter[] parameters = ((PsiMethod)element).getParameterList().getParameters();
+      ArrayList<String> result = new ArrayList<String>();
+      for (PsiParameter parameter : parameters) {
+        result.add(parameter.getName());
+      }
+      return result;
+    }
+    return Collections.emptyList();
   }
 
   @Override
