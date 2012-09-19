@@ -3,29 +3,21 @@ package com.intellij.lang.javascript.flex.actions.airpackage;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
-import com.intellij.lang.javascript.flex.actions.MessageDialogWithHyperlinkListener;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.HyperlinkAdapter;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.event.HyperlinkEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -135,74 +127,20 @@ public class AirPackageUtil {
     return versionRef.get();
   }
 
-  public static boolean checkAdtVersion(final Module module, final FlexIdeBuildConfiguration bc, final String adtVersion) {
-    if (StringUtil.compareVersionNumbers(adtVersion, "2.6") >= 0) {
-      return true; // todo checkAdtVersionForPackaging
-    }
-
-    final MessageDialogWithHyperlinkListener dialog =
-      new MessageDialogWithHyperlinkListener(module.getProject(),
-                                             FlexBundle.message("air.mobile.version.problem.title"),
-                                             UIUtil.getErrorIcon(),
-                                             FlexBundle.message("run.air.mobile.version.problem", bc.getSdk().getName(), bc.getName(),
-                                                                adtVersion));
-
-    dialog.addHyperlinkListener(new HyperlinkAdapter() {
-      protected void hyperlinkActivated(final HyperlinkEvent e) {
-        dialog.close(DialogWrapper.OK_EXIT_CODE);
-
-        FlexSdkUtils.openModuleConfigurable(module);
-      }
-    });
-
-    dialog.show();
-    return false;
-  }
-
-  /*
   public static boolean checkAdtVersionForPackaging(final Project project,
-                                                    final String adtVersion,
-                                                    final AndroidPackageParameters parameters) {
-    String errorMessageStart = null;
-    String requiredVersion = null;
-
-    if (parameters.MOBILE_PLATFORM == MobilePlatform.Android &&
-        (parameters.ANDROID_PACKAGE_TYPE == AndroidPackageParameters.AndroidPackageType.NoDebugCaptiveRuntime)) {
-      if (StringUtil.compareVersionNumbers(adtVersion, "3.0") < 0) {
-        requiredVersion = "3.0";
-        errorMessageStart = FlexBundle.message("air.android.captive.packaging.requires.3.0");
-      }
-    }
-    else if (parameters.MOBILE_PLATFORM == MobilePlatform.iOS
-             && (parameters.IOS_PACKAGE_TYPE == IOSPackageType.DebugOverNetwork || parameters.IOS_PACKAGE_TYPE == IOSPackageType.Test)
-             && parameters.FAST_PACKAGING) {
-      if (StringUtil.compareVersionNumbers(adtVersion, "2.7") < 0) {
-        requiredVersion = "2.7";
-        errorMessageStart = FlexBundle.message("air.mobile.ios.fast.packaging.requires.2.7");
-      }
-    }
-    else if (parameters.MOBILE_PLATFORM == MobilePlatform.iOS) {
-      if (StringUtil.compareVersionNumbers(adtVersion, "2.6") < 0) {
-        requiredVersion = "2.6";
-        errorMessageStart = FlexBundle.message("air.mobile.ios.packaging.requires.2.6");
-      }
-    }
-    else if (StringUtil.compareVersionNumbers(adtVersion, "2.5") < 0) {
-      requiredVersion = "2.5";
-      errorMessageStart = FlexBundle.message("air.mobile.packaging.requires.2.5");
-    }
-
-    if (errorMessageStart != null) {
+                                                    final String actualAdtVersion,
+                                                    final String requiredAdtVersion,
+                                                    final String sdkName, final String errorMessageStart) {
+    if (StringUtil.compareVersionNumbers(actualAdtVersion, requiredAdtVersion) < 0) {
       Messages.showErrorDialog(project,
-                               FlexBundle.message("air.mobile.packaging.version.problem", errorMessageStart,
-                                                  parameters.getFlexSdk().getName(), adtVersion, requiredVersion),
+                               FlexBundle.message("air.mobile.packaging.version.problem", errorMessageStart, sdkName,
+                                                  actualAdtVersion, requiredAdtVersion),
                                FlexBundle.message("air.mobile.version.problem.title"));
       return false;
     }
 
     return true;
   }
-  */
 
   public static boolean startAdbServer(final Project project, final Sdk sdk) {
     return ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
@@ -214,7 +152,7 @@ public class AirPackageUtil {
       }
 
       protected void scheduleInputStreamReading() {
-        // Reading input stream causes hang because adb starts child process that never exits (IDEA-87648)
+        // Reading input stream causes hang on Windows because adb starts child process that never exits (IDEA-87648)
         ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
           public void run() {
             try {
@@ -340,6 +278,7 @@ public class AirPackageUtil {
   public static boolean packageIpaForDevice(final Module module,
                                             final FlexIdeBuildConfiguration bc,
                                             final FlashRunnerParameters runnerParameters,
+                                            final String adtVersion,
                                             final boolean isDebug) {
     final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
     final PasswordStore passwords = AirPackageAction.getPasswords(module.getProject(), Collections.singletonList(packagingOptions));
@@ -352,6 +291,27 @@ public class AirPackageUtil {
                                          ? IOSPackageType.DebugOverNetwork
                                          : IOSPackageType.DebugOverUSB
                                        : IOSPackageType.Test;
+
+    final Sdk sdk = bc.getSdk();
+    assert sdk != null;
+
+    if (packageType == IOSPackageType.DebugOverUSB &&
+        !checkAdtVersionForPackaging(module.getProject(), adtVersion, "3.4", sdk.getName(),
+                                     FlexBundle.message("air.ios.debug.via.usb.requires.3.4"))) {
+      return false;
+    }
+
+    if (runnerParameters.isFastPackaging() &&
+        !checkAdtVersionForPackaging(module.getProject(), adtVersion, "2.7", sdk.getName(),
+                                     FlexBundle.message("air.mobile.ios.fast.packaging.requires.2.7"))) {
+      return false;
+    }
+
+    if (!checkAdtVersionForPackaging(module.getProject(), adtVersion, "2.6", sdk.getName(),
+                                     FlexBundle.message("air.mobile.packaging.requires.2.6"))) {
+      return false;
+    }
+
     final ExternalTask task =
       createIOSPackageTask(module, bc, packageType, runnerParameters.isFastPackaging(), bc.getIosPackagingOptions().getIOSSdkPath(),
                            runnerParameters.getUsbDebugPort(), passwords);
@@ -643,28 +603,16 @@ public class AirPackageUtil {
   }
 
   public static boolean androidForwardTcpPort(final Project project, final Sdk sdk, final int usbDebugPort) {
-    final String adbPath = sdk.getHomePath() + ADB_RELATIVE_PATH;
-    final VirtualFile adbExecutable = LocalFileSystem.getInstance().findFileByPath(adbPath);
-    final String presentableCommand = "adb forward tcp:" + usbDebugPort + " tcp:" + usbDebugPort;
-
-    if (adbExecutable != null) {
-      return ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
-        protected List<String> createCommandLine() {
-          final List<String> command = new ArrayList<String>();
-          command.add(adbExecutable.getPath());
-          command.add("forward");
-          command.add("tcp:" + usbDebugPort);
-          command.add("tcp:" + usbDebugPort);
-          return command;
-        }
-      }, presentableCommand, FlexBundle.message("adb.forward.title"));
-    }
-    else {
-      Messages
-        .showWarningDialog(project, FlexBundle.message("adb.not.found", FileUtil.toSystemDependentName(adbPath), presentableCommand),
-                           FlexBundle.message("adb.forward.title"));
-      return false;
-    }
+    return ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
+      protected List<String> createCommandLine() {
+        final List<String> command = new ArrayList<String>();
+        command.add(sdk.getHomePath() + ADB_RELATIVE_PATH);
+        command.add("forward");
+        command.add("tcp:" + usbDebugPort);
+        command.add("tcp:" + usbDebugPort);
+        return command;
+      }
+    }, "adb forward tcp:" + usbDebugPort + " tcp:" + usbDebugPort, FlexBundle.message("adb.forward.title"));
   }
 
   public static int getIOSDeviceHandle(final Project project, final Sdk sdk) {
@@ -683,10 +631,12 @@ public class AirPackageUtil {
         if (!myMessages.get(1).trim().startsWith("Handle")) return false;
 
         final String deviceLine = myMessages.get(2).trim();
-        int spaceIndex = Math.min(deviceLine.indexOf(" "), deviceLine.indexOf("\t"));
-        if (spaceIndex <= 0) return false;
+        int spaceIndex = deviceLine.indexOf(" ");
+        int tabIndex = deviceLine.indexOf("\t");
+        int index = spaceIndex > 0 && (spaceIndex < tabIndex || tabIndex < 0) ? spaceIndex : tabIndex;
+        if (index <= 0) return false;
         try {
-          deviceHandleRef.set(Integer.parseInt(deviceLine.substring(0, spaceIndex)));
+          deviceHandleRef.set(Integer.parseInt(deviceLine.substring(0, index)));
         }
         catch (NumberFormatException e) {
           return false;
@@ -694,9 +644,11 @@ public class AirPackageUtil {
 
         if (myMessages.size() >= 4) {
           final String secondDeviceLine = myMessages.get(3).trim();
-          spaceIndex = Math.min(secondDeviceLine.indexOf(" "), secondDeviceLine.indexOf("\t"));
+          spaceIndex = secondDeviceLine.indexOf(" ");
+          tabIndex = secondDeviceLine.indexOf("\t");
+          index = spaceIndex > 0 && (spaceIndex < tabIndex || tabIndex < 0) ? spaceIndex : tabIndex;
           try {
-            if (spaceIndex > 0 && Integer.parseInt(deviceLine.substring(0, spaceIndex)) >= 0) {
+            if (index > 0 && Integer.parseInt(secondDeviceLine.substring(0, index)) >= 0) {
               myMessages.clear();
               myMessages.add(FlexBundle.message("more.than.one.ios.device"));
               return false;
@@ -719,39 +671,28 @@ public class AirPackageUtil {
     // running adb server may be forwarding the port that needed for iOS debugging
     stopAdbServer(project, sdk, FlexBundle.message("idb.forward"), FlexBundle.message("idb.forward.title"));
 
-    final String idbPath = sdk.getHomePath() + IDB_RELATIVE_PATH;
-    final VirtualFile idbExecutable = LocalFileSystem.getInstance().findFileByPath(idbPath);
-
-    if (idbExecutable == null) {
-      Messages.showWarningDialog(project, FlexBundle.message("idb.not.found", FileUtil.toSystemDependentName(idbPath)),
-                                 FlexBundle.message("idb.forward.title"));
-      return false;
-    }
-
     try {
       // this process remains alive until "idb -stopforward" called
       Runtime.getRuntime().exec(new String[]{
-        idbExecutable.getPath(),
+        sdk.getHomePath() + IDB_RELATIVE_PATH,
         "-forward",
         String.valueOf(usbDebugPort),
         String.valueOf(usbDebugPort),
         String.valueOf(deviceHandle)});
     }
     catch (IOException e) {
-      Messages.showErrorDialog(project, e.getMessage(), "idb forward " + usbDebugPort + " " + usbDebugPort + " " + deviceHandle);
+      Messages.showErrorDialog(project, e.getMessage(), "idb -forward " + usbDebugPort + " " + usbDebugPort + " " + deviceHandle);
       return false;
     }
 
     return true;
   }
 
-  public static void iosStopForwardTcpPort(final Project project, final Sdk sdk, final int usbDebugPort) {
-    final String idbPath = sdk.getHomePath() + IDB_RELATIVE_PATH;
-
+  public static void iosStopForwardTcpPort(final Sdk sdk, final int usbDebugPort) {
     try {
       // this process remains alive until "idb -stopforward" called
       Runtime.getRuntime().exec(new String[]{
-        idbPath,
+        sdk.getHomePath() + IDB_RELATIVE_PATH,
         "-stopforward",
         String.valueOf(usbDebugPort)});
     }

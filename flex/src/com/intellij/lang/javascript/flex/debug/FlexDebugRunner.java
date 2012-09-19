@@ -22,6 +22,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
@@ -54,8 +55,8 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                    final FlexUnitRunnerParameters params,
                                                    final String swfFilePath) throws ExecutionException {
     try {
-      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = ((FlexUnitRunnerParameters)params).checkAndGetModuleAndBC(project);
-      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, (FlexUnitRunnerParameters)params, executor, contentToReuse, env);
+      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
+      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, executor, contentToReuse, env);
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e.getMessage());
@@ -107,29 +108,38 @@ public class FlexDebugRunner extends FlexBaseRunner {
 
           break;
         case iOSSimulator:
+          final String adtVersionSimulator = AirPackageUtil.getAdtVersion(module.getProject(), bc.getSdk());
           final String iosSimulatorAppId = getApplicationId(getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
 
-          if (!packAndInstallToIOSSimulator(module, bc, runnerParameters, iosSimulatorAppId, true)) {
+          if (!packAndInstallToIOSSimulator(module, bc, runnerParameters, adtVersionSimulator, iosSimulatorAppId, true)) {
             return null;
           }
 
           break;
         case iOSDevice:
-          if (!packAndInstallToIOSDevice(module, bc, runnerParameters, true)) {
-            return null;
-          }
+          final String adtVersion = AirPackageUtil.getAdtVersion(module.getProject(), bc.getSdk());
 
-          if (runnerParameters.getDebugTransport() == AirMobileDebugTransport.USB) {
-            final int deviceHandle = AirPackageUtil.getIOSDeviceHandle(project, sdk);
-            if (deviceHandle < 0) {
+          if (StringUtil.compareVersionNumbers(adtVersion, "3.4") >= 0) {
+            if (!packAndInstallToIOSDevice(module, bc, runnerParameters, adtVersion, true)) {
               return null;
             }
 
-            if (!AirPackageUtil.iosForwardTcpPort(project, sdk, runnerParameters.getUsbDebugPort(), deviceHandle)) {
+            if (runnerParameters.getDebugTransport() == AirMobileDebugTransport.USB) {
+              final int deviceHandle = AirPackageUtil.getIOSDeviceHandle(project, sdk);
+              if (deviceHandle < 0) {
+                return null;
+              }
+
+              if (!AirPackageUtil.iosForwardTcpPort(project, sdk, runnerParameters.getUsbDebugPort(), deviceHandle)) {
+                return null;
+              }
+            }
+          }
+          else {
+            if (!AirPackageUtil.packageIpaForDevice(module, bc, runnerParameters, adtVersion, true)) {
               return null;
             }
           }
-
           break;
       }
     }

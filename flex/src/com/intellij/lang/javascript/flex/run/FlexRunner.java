@@ -15,7 +15,9 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.ide.actions.ShowFilePathAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
@@ -27,14 +29,18 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.DefaultDebugProcessHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -73,16 +79,35 @@ public class FlexRunner extends FlexBaseRunner {
             }
             return null;
           case iOSSimulator:
+            final String adtVersionSimulator = AirPackageUtil.getAdtVersion(module.getProject(), bc.getSdk());
             final String iosAppId = getApplicationId(getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
-            if (packAndInstallToIOSSimulator(module, bc, runnerParameters, iosAppId, false)) {
+            if (packAndInstallToIOSSimulator(module, bc, runnerParameters, adtVersionSimulator, iosAppId, false)) {
               launchOnIosSimulator(module.getProject(), bc.getSdk(), iosAppId, runnerParameters.getIOSSimulatorSdkPath(), false);
             }
             return null;
           case iOSDevice:
-            if (packAndInstallToIOSDevice(module, bc, runnerParameters, false)) {
-              final String appName = getApplicationName(getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
-              ToolWindowManager.getInstance(module.getProject()).notifyByBalloon(ToolWindowId.RUN, MessageType.INFO,
-                                                                                 FlexBundle.message("ios.application.installed", appName));
+            final String adtVersion = AirPackageUtil.getAdtVersion(module.getProject(), bc.getSdk());
+
+            if (StringUtil.compareVersionNumbers(adtVersion, "3.4") >= 0) {
+              if (packAndInstallToIOSDevice(module, bc, runnerParameters, adtVersion, false)) {
+                final String appName = getApplicationName(getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
+                ToolWindowManager.getInstance(module.getProject())
+                  .notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, FlexBundle.message("ios.application.installed.to.run", appName));
+              }
+            }
+            else {
+              if (AirPackageUtil.packageIpaForDevice(module, bc, runnerParameters, adtVersion, false)) {
+                final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
+                final String ipaName = bc.getIosPackagingOptions().getPackageFileName() + ".ipa";
+
+                final String message = FlexBundle.message("ios.application.packaged.to.run", ipaName);
+                ToolWindowManager.getInstance(module.getProject())
+                  .notifyByBalloon(ToolWindowId.RUN, MessageType.INFO, message, null, new HyperlinkAdapter() {
+                    protected void hyperlinkActivated(final HyperlinkEvent e) {
+                      ShowFilePathAction.openFile(new File(outputFolder + "/" + ipaName));
+                    }
+                  });
+              }
             }
             break;
         }

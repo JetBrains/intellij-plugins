@@ -7,9 +7,11 @@ import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.ide.IdeBundle;
+import com.intellij.ide.actions.ShowFilePathAction;
 import com.intellij.idea.LoggerFactory;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
@@ -1463,8 +1465,23 @@ public class FlexDebugProcess extends XDebugProcess {
     void launchDebuggedApplication() throws IOException {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         public void run() {
-          ToolWindowManager.getInstance(myModule.getProject()).notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, FlexBundle
-            .message("ios.application.installed.please.launch", myAppName));
+          final String adtVersion = AirPackageUtil.getAdtVersion(myModule.getProject(), myBC.getSdk());
+          if (StringUtil.compareVersionNumbers(adtVersion, "3.4") >= 0) {
+            final String message = FlexBundle.message("ios.application.installed.to.debug", myAppName);
+            ToolWindowManager.getInstance(myModule.getProject()).notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, message);
+          }
+          else {
+            final String ipaName = myBC.getIosPackagingOptions().getPackageFileName() + ".ipa";
+            final String outputFolder = PathUtil.getParentPath(myBC.getActualOutputFilePath());
+
+            final String message = FlexBundle.message("ios.application.packaged.to.debug", ipaName);
+            ToolWindowManager.getInstance(myModule.getProject())
+              .notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, message, null, new HyperlinkAdapter() {
+                protected void hyperlinkActivated(final HyperlinkEvent e) {
+                  ShowFilePathAction.openFile(new File(outputFolder + "/" + ipaName));
+                }
+              });
+          }
         }
       });
     }
@@ -1548,7 +1565,7 @@ public class FlexDebugProcess extends XDebugProcess {
         return CommandOutputProcessingMode.DONE;
       }
 
-      if (s.contains("Failed to connect") || s.contains("unexpected version of the Flash Player")) {
+      if (s.contains("Failed to connect") || s.contains("unexpected version of the Flash Player") || s.contains("Connection refused")) {
         reportProblem(s);
         handleProbablyUnexpectedStop(s);
         return CommandOutputProcessingMode.DONE;

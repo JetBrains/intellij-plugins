@@ -204,7 +204,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
             return new FlexDebugProcess(session, bc, params);
           }
           catch (IOException e) {
-            iosStopForwardTcpPortIfNeeded(module.getProject(), bc, params);
+            iosStopForwardTcpPortIfNeeded(bc, params);
             throw new ExecutionException(e.getMessage(), e);
           }
         }
@@ -212,20 +212,20 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     debugSession.addSessionListener(new XDebugSessionAdapter() {
       public void sessionStopped() {
-        iosStopForwardTcpPortIfNeeded(module.getProject(), bc, params);
+        iosStopForwardTcpPortIfNeeded(bc, params);
       }
     });
 
     return debugSession.getRunContentDescriptor();
   }
 
-  private static void iosStopForwardTcpPortIfNeeded(final Project project, final FlexIdeBuildConfiguration bc,
-                                                    final BCBasedRunnerParameters params) {
+  private static void iosStopForwardTcpPortIfNeeded(final FlexIdeBuildConfiguration bc, final BCBasedRunnerParameters params) {
     if (bc.getTargetPlatform() == TargetPlatform.Mobile &&
         params instanceof FlashRunnerParameters &&
         ((FlashRunnerParameters)params).getMobileRunTarget() == FlashRunnerParameters.AirMobileRunTarget.iOSDevice &&
         ((FlashRunnerParameters)params).getDebugTransport() == FlashRunnerParameters.AirMobileDebugTransport.USB) {
-      AirPackageUtil.iosStopForwardTcpPort(project, bc.getSdk(), ((FlashRunnerParameters)params).getUsbDebugPort());
+
+      AirPackageUtil.iosStopForwardTcpPort(bc.getSdk(), ((FlashRunnerParameters)params).getUsbDebugPort());
     }
   }
 
@@ -367,7 +367,6 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
     final String adtVersion;
     return (adtVersion = AirPackageUtil.getAdtVersion(project, sdk)) != null
-           && AirPackageUtil.checkAdtVersion(module, bc, adtVersion)
            && AirPackageUtil.startAdbServer(project, sdk)
            && AirPackageUtil.checkAirRuntimeOnDevice(project, sdk, adtVersion)
            && AirPackageUtil.packageApk(module, bc, runnerParameters, isDebug)
@@ -377,32 +376,34 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   public static boolean packAndInstallToIOSSimulator(final Module module,
                                                      final FlexIdeBuildConfiguration bc,
                                                      final FlashRunnerParameters runnerParameters,
+                                                     final String adtVersion,
                                                      final String applicationId,
                                                      final boolean isDebug) {
-    final Project project = module.getProject();
     final Sdk sdk = bc.getSdk();
+    assert sdk != null;
     final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
     final String ipaPath = outputFolder + "/" + bc.getIosPackagingOptions().getPackageFileName() + ".ipa";
 
-    // todo check apk version (>=3.3), use temporary cert if needed
-    return (AirPackageUtil.packageIpaForSimulator(module, bc, runnerParameters, isDebug)
-            && AirPackageUtil.installOnIosSimulator(project, sdk, ipaPath, applicationId, runnerParameters.getIOSSimulatorSdkPath()));
+    if (!AirPackageUtil.checkAdtVersionForPackaging(module.getProject(), adtVersion, "3.3", sdk.getName(),
+                                                    FlexBundle.message("air.ios.simulator.requires.3.3"))) {
+      return false;
+    }
+
+    return (AirPackageUtil.packageIpaForSimulator(module, bc, runnerParameters, isDebug) &&
+            AirPackageUtil.installOnIosSimulator(module.getProject(), sdk, ipaPath, applicationId,
+                                                 runnerParameters.getIOSSimulatorSdkPath()));
   }
 
   public static boolean packAndInstallToIOSDevice(final Module module,
                                                   final FlexIdeBuildConfiguration bc,
                                                   final FlashRunnerParameters runnerParameters,
+                                                  final String adtVersion,
                                                   final boolean isDebug) {
-    final Project project = module.getProject();
-    final Sdk sdk = bc.getSdk();
     final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
     final String ipaPath = outputFolder + "/" + bc.getIosPackagingOptions().getPackageFileName() + ".ipa";
 
-    final String adtVersion;
-    return (adtVersion = AirPackageUtil.getAdtVersion(project, sdk)) != null
-           && AirPackageUtil.checkAdtVersion(module, bc, adtVersion)
-           && AirPackageUtil.packageIpaForDevice(module, bc, runnerParameters, isDebug)
-           && AirPackageUtil.installOnIosDevice(project, sdk, ipaPath);
+    return AirPackageUtil.packageIpaForDevice(module, bc, runnerParameters, adtVersion, isDebug) &&
+           AirPackageUtil.installOnIosDevice(module.getProject(), bc.getSdk(), ipaPath);
   }
 
   @Nullable
