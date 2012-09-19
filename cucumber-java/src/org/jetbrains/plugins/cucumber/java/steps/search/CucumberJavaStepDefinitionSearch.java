@@ -14,6 +14,7 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
 import com.intellij.util.QueryExecutor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.steps.search.CucumberStepSearchUtil;
 
@@ -34,9 +35,10 @@ public class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiRefere
 
     final PsiMethod method = (PsiMethod)myElement;
     final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberAnnotation(method);
+    assert stepAnnotation != null;
     final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
 
-    final String word = org.jetbrains.plugins.cucumber.CucumberUtil.getTheBiggestWordToSearchByIndex(regexp);
+    final String word = CucumberUtil.getTheBiggestWordToSearchByIndex(regexp);
     if (StringUtil.isEmpty(word)) {
       return true;
     }
@@ -50,9 +52,12 @@ public class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiRefere
     final TextOccurenceProcessor processor = new TextOccurenceProcessor() {
       @Override
       public boolean execute(PsiElement element, int offsetInElement) {
-        for (PsiReference ref : element.getReferences()) {
+        PsiElement parent = element.getParent();
+        if (parent == null) return true;
+
+        for (PsiReference ref : parent.getReferences()) {
           if (ref != null && ref.isReferenceTo(myElement)) {
-            if (!consumer.process(ref)){
+            if (!consumer.process(ref)) {
               return false;
             }
           }
