@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<idea-plugin version="2">
+  <id>cucumber-groovy</id>
+  <name>Cucumber for Groovy</name>
+  <description>Provides support of Cucumber for Groovy</description>
+  <version>1.0</version>
+  <depends>cucumber</depends>
+  <depends>org.intellij.groovy</depends>
+  <vendor>JetBrains</vendor>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <referencesSearch implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrCucumberStepDefinitionSearcher"/>
+    <methodReferencesSearch implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrCucumberMethodUsageSearcher"/>
+    <findUsagesHandlerFactory implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepFindUsageHandlerFactory"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">
+    <cucumberJvmExtensionPoint implementation="org.jetbrains.plugins.cucumber.groovy.GrCucumberExtension"/>
+  </extensions>
+</idea-plugin>
