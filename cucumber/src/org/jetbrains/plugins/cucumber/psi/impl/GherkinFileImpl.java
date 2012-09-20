@@ -5,6 +5,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.TokenType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.*;
 
@@ -46,16 +47,22 @@ public class GherkinFileImpl extends PsiFileBase implements GherkinFile {
   public String getLocaleLanguage() {
     final ASTNode node = getNode();
     assert node != null;
-    
-    final ASTNode comment = node.findChildByType(GherkinTokenTypes.COMMENT);
-    if (comment != null) {
-      // remove '#' sign and spaces
-      final String text = comment.getText().substring(1).trim();
 
-      final String lang = GherkinLexer.fetchLocationLanguage(text);
-      if (lang != null) {
-        return lang;
+    ASTNode child = node.getFirstChildNode();
+    while (child != null) {
+      if (child.getElementType() == GherkinTokenTypes.COMMENT) {
+        final String text = child.getText().substring(1).trim();
+
+        final String lang = GherkinLexer.fetchLocationLanguage(text);
+        if (lang != null) {
+          return lang;
+        }
+      } else {
+        if (child.getElementType() != TokenType.WHITE_SPACE) {
+          break;
+        }
       }
+      child = child.getTreeNext();
     }
     return getDefaultLocale();
   }
