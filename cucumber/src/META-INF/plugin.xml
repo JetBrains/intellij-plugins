@@ -48,6 +48,8 @@
 
     <spellchecker.support language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.spellchecker.GherkinSpellcheckerStrategy"/>
 
+    <liveTemplateContext implementation="org.jetbrains.plugins.cucumber.GherkinLiveTemplateContextType"/>
+
   </extensions>
 
   <extensionPoints>
