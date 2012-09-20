@@ -38,7 +38,7 @@ public class CucumberStepsIndex {
 
   private Project myProject;
   private final List<AbstractStepDefinition> myStepDefinitions = new ArrayList<AbstractStepDefinition>();
-  private Set<String> myProcessedStepDirectories = new HashSet<String>();
+  private final Set<String> myProcessedStepDirectories = new HashSet<String>();
 
   private final MergingUpdateQueue myUpdateQueue = new MergingUpdateQueue("Steps reparse", 500, true, null);
 
@@ -186,6 +186,7 @@ public class CucumberStepsIndex {
   @Nullable
   public AbstractStepDefinition findStepDefinition(final @NotNull PsiFile featureFile, final String stepName) {
     final Module module = ModuleUtil.findModuleForPsiElement(featureFile);
+    assert module != null;
     loadStepsFor(featureFile, module);
     synchronized (myStepDefinitions) {
       for (AbstractStepDefinition stepDefinition : myStepDefinitions) {
@@ -234,6 +235,7 @@ public class CucumberStepsIndex {
 
   public List<AbstractStepDefinition> getAllStepDefinitions(@NotNull final PsiFile featureFile) {
     final Module module = ModuleUtil.findModuleForPsiElement(featureFile);
+    assert module != null;
     loadStepsFor(featureFile, module);
     synchronized (myStepDefinitions) {
       return new ArrayList<AbstractStepDefinition>(myStepDefinitions);
@@ -296,9 +298,7 @@ public class CucumberStepsIndex {
           myProcessedStepDirectories.remove(root.getVirtualFile().getPath());
           // remove new step definitions
           if (!stepDefinitions.isEmpty()) {
-            synchronized (myStepDefinitions) {
-              myStepDefinitions.removeAll(stepDefinitions);
-            }
+            myStepDefinitions.removeAll(stepDefinitions);
           }
           throw e;
         }
