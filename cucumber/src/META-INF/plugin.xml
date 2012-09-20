@@ -44,6 +44,8 @@
     <completion.contributor language="Gherkin"
                             implementationClass="org.jetbrains.plugins.cucumber.completion.CucumberCompletionContributor"/>
 
+    <typedHandler implementation="org.jetbrains.plugins.cucumber.codeinsight.GherkinTypedHandler"/>
+
   </extensions>
 
   <extensionPoints>
