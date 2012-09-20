@@ -50,6 +50,8 @@
 
     <liveTemplateContext implementation="org.jetbrains.plugins.cucumber.GherkinLiveTemplateContextType"/>
 
+    <extendWordSelectionHandler implementation="org.jetbrains.plugins.cucumber.actions.GherkinStepParameterSelectioner"/>
+
   </extensions>
 
   <extensionPoints>
