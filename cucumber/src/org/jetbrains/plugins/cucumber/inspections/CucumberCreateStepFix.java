@@ -5,6 +5,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.extensions.Extensions;
@@ -26,22 +27,21 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
+import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.inspections.model.CreateStepDefinitionFileModel;
 import org.jetbrains.plugins.cucumber.inspections.ui.CreateStepDefinitionFileDialog;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author yole
@@ -58,38 +58,39 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     return getName();
   }
 
-  public static List<PsiFile> getStepDefinitionContainers(final PsiFile featureFile) {
+  public static Set<PsiFile> getStepDefinitionContainers(final PsiFile featureFile) {
     final List<PsiDirectory> stepDefsRoots = new ArrayList<PsiDirectory>();
     final Module module = ObjectUtils.assertNotNull(ModuleUtil.findModuleForPsiElement(featureFile));
     CucumberStepsIndex.getInstance(featureFile.getProject()).findRelatedStepDefsRoots(featureFile, module, stepDefsRoots, new HashSet<String>());
 
-    final List<PsiFile> stepDefs = new ArrayList<PsiFile>();
+    final Set<PsiFile> stepDefs = ContainerUtil.newHashSet();
     for (PsiDirectory root : stepDefsRoots) {
       stepDefs.addAll(CucumberStepsIndex.getInstance(featureFile.getProject()).gatherStepDefinitionsFilesFromDirectory(root));
     }
-    return !stepDefs.isEmpty() ? stepDefs : Collections.<PsiFile>emptyList();
+    return stepDefs.isEmpty() ? Collections.<PsiFile>emptySet() : stepDefs;
   }
 
   public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
     final GherkinStep step = (GherkinStep) descriptor.getPsiElement();
     final PsiFile featureFile = step.getContainingFile();
     // TODO + step defs files from other content roots
-    final List<PsiFile> files = getStepDefinitionContainers(featureFile);
+    final List<PsiFile> files = ContainerUtil.newArrayList(getStepDefinitionContainers(featureFile));
     if (files.size() > 0) {
       files.add(null);
-      BaseListPopupStep<PsiFile> popupStep = new BaseListPopupStep<PsiFile>("Choose step definition file", files) {
+      BaseListPopupStep<PsiFile> popupStep = new BaseListPopupStep<PsiFile>(CucumberBundle.message("choose.step.definition.file"), files) {
         @NotNull
         @Override
         public String getTextFor(PsiFile value) {
           if (value == null) {
-            return "Create New File";
+            return CucumberBundle.message("create.new.file");
           }
 
           final VirtualFile file = value.getVirtualFile();
           assert file != null;
 
-          return CucumberStepsIndex.getInstance(value.getProject()).getExtensionMap().get(file.getFileType()).getStepDefinitionCreator()
-            .getStepDefinitionFilePath(value);
+          CucumberStepsIndex stepsIndex = CucumberStepsIndex.getInstance(value.getProject());
+          StepDefinitionCreator stepDefinitionCreator = stepsIndex.getExtensionMap().get(file.getFileType()).getStepDefinitionCreator();
+          return stepDefinitionCreator.getStepDefinitionFilePath(value);
         }
 
         @Override
@@ -106,7 +107,12 @@ public class CucumberCreateStepFix implements LocalQuickFix {
           });
         }
       };
-      JBPopupFactory.getInstance().createListPopup(popupStep).showInBestPositionFor(DataManager.getInstance().getDataContextFromFocus().getResult());
+      DataContext result = DataManager.getInstance().getDataContextFromFocus().getResult();
+      if (result == null) {
+        result = DataManager.getInstance().getDataContext();
+      }
+
+      JBPopupFactory.getInstance().createListPopup(popupStep).showInBestPositionFor(result);
     }
     else {
       createFileOrStepDefinition(step, null);
