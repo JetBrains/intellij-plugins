@@ -46,6 +46,8 @@
 
     <typedHandler implementation="org.jetbrains.plugins.cucumber.codeinsight.GherkinTypedHandler"/>
 
+    <spellchecker.support language="Gherkin" implementationClass="org.jetbrains.plugins.cucumber.spellchecker.GherkinSpellcheckerStrategy"/>
+
   </extensions>
 
   <extensionPoints>
