@@ -40,6 +40,10 @@
     <localInspection language="Gherkin" shortName="CucumberUndefinedStep" bundle="org.jetbrains.plugins.cucumber.CucumberBundle"
                      key="cucumber.inspection.undefined.step.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true" level="WARNING"
                      implementationClass="org.jetbrains.plugins.cucumber.inspections.CucumberStepInspection"/>
+
+    <completion.contributor language="Gherkin"
+                            implementationClass="org.jetbrains.plugins.cucumber.completion.CucumberCompletionContributor"/>
+
   </extensions>
 
   <extensionPoints>
