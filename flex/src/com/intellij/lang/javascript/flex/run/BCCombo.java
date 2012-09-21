@@ -9,7 +9,7 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.ui.HtmlListCellRenderer;
+import com.intellij.ui.ColoredListCellRendererWrapper;
 import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleTextAttributes;
 import gnu.trove.THashMap;
@@ -53,7 +53,7 @@ public class BCCombo extends JComboBox {
     }
     myAllConfigs = allConfigs.toArray(new FlexIdeBuildConfiguration[allConfigs.size()]);
 
-    setRenderer(new HtmlListCellRenderer() {
+    setRenderer(new ColoredListCellRendererWrapper() {
       @Override
       protected void doCustomize(final JList list, final Object value, final int index, final boolean selected, final boolean hasFocus) {
         if (value instanceof Pair) {
