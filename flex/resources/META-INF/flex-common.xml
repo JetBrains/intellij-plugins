@@ -90,7 +90,9 @@
     <projectService serviceInterface="com.intellij.javascript.flex.css.CssDialectMappings"
                     serviceImplementation="com.intellij.javascript.flex.css.CssDialectMappings"/>
 
-    <compilerSettingsFactory implementation="com.intellij.lang.javascript.flex.build.FlexCompilerProjectSettingsFactory"/>
+    <projectConfigurable instance="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfigurable" id="flex.compiler"
+                         displayName="Flex Compiler" parentId="project.propCompiler"/>
+
     <importFilteringRule implementation="com.intellij.lang.javascript.flex.ImportFilteringRule"/>
     <enterHandlerDelegate implementation="com.intellij.lang.javascript.flex.MxmlEnterHandler"/>
     <iconProvider implementation="com.intellij.lang.javascript.flex.presentation.FlexIconProvider"/>
