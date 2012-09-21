@@ -45,6 +45,10 @@
                      key="inspection.missed.colon.example.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true"
                      level="ERROR" implementationClass="org.jetbrains.plugins.cucumber.inspections.CucumberExamplesColonInspection"/>
 
+    <localInspection language="Gherkin" shortName="CucumberMissedExamples" bundle="org.jetbrains.plugins.cucumber.CucumberBundle"
+                     key="inspection.missed.example.name" groupKey="cucumber.inspection.group.name" enabledByDefault="true" level="ERROR"
+                     implementationClass="org.jetbrains.plugins.cucumber.inspections.CucumberMissedExamplesInspection"/>
+
 
     <completion.contributor language="Gherkin"
                             implementationClass="org.jetbrains.plugins.cucumber.completion.CucumberCompletionContributor"/>
