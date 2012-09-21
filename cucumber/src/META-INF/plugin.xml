@@ -65,6 +65,10 @@
 
     <extendWordSelectionHandler implementation="org.jetbrains.plugins.cucumber.actions.GherkinStepParameterSelectioner"/>
 
+    <lang.refactoringSupport language="Gherkin"
+                             implementationClass="org.jetbrains.plugins.cucumber.refactoring.GherkinRefactoringSupportProvider"/>
+
+
   </extensions>
 
   <extensionPoints>
