@@ -19,7 +19,7 @@ public class FlashBuilderProject {
   private String myOutputFolderPath = "";
   private boolean mySdkUsed;
   private String mySdkName = FlashBuilderSdkFinder.DEFAULT_SDK_NAME;
-  private TargetPlatform myTargetPlatform;
+  private TargetPlatform myTargetPlatform = TargetPlatform.Web;
   private boolean myPureActionScript = false;
   private OutputType myOutputType = OutputType.Application;
   private boolean myAndroidSupported = false;
