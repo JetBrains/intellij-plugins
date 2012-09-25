@@ -458,41 +458,47 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         break;
 
       case Mobile:
-        if (myMobileRunTarget == AirMobileRunTarget.Emulator) {
-          checkAdlAndAirRuntime(sdk);
+        switch (myMobileRunTarget) {
+          case Emulator:
+            checkAdlAndAirRuntime(sdk);
 
-          switch (myAppDescriptorForEmulator) {
-            case Android:
+            switch (myAppDescriptorForEmulator) {
+              case Android:
+                checkCustomDescriptor(bc.getAndroidPackagingOptions());
+                break;
+              case IOS:
+                checkCustomDescriptor(bc.getIosPackagingOptions());
+                break;
+            }
+            break;
+          case AndroidDevice:
+            if (bc.getOutputType() == OutputType.Application) {
               checkCustomDescriptor(bc.getAndroidPackagingOptions());
-              break;
-            case IOS:
+            }
+            break;
+          case iOSSimulator:
+            if (bc.getOutputType() == OutputType.Application) {
               checkCustomDescriptor(bc.getIosPackagingOptions());
-              break;
-          }
-        }
-        else if (myMobileRunTarget == AirMobileRunTarget.AndroidDevice) {
-          if (bc.getOutputType() == OutputType.Application) {
-            checkCustomDescriptor(bc.getAndroidPackagingOptions());
-          }
-        }
-        else if (myMobileRunTarget == AirMobileRunTarget.iOSSimulator) {
-          if (bc.getOutputType() == OutputType.Application) {
-            checkCustomDescriptor(bc.getIosPackagingOptions());
-          }
+            }
 
-          if (!SystemInfo.isMac) {
-            throw new RuntimeConfigurationError(FlexBundle.message("ios.simulator.on.mac.only.warning"));
-          }
+            if (!SystemInfo.isMac) {
+              throw new RuntimeConfigurationError(FlexBundle.message("ios.simulator.on.mac.only.warning"));
+            }
 
-          if (myIOSSimulatorSdkPath.isEmpty()) {
-            throw new RuntimeConfigurationError(FlexBundle.message("ios.simulator.sdk.not.set"));
-          }
-          else if (!new File(FileUtil.toSystemDependentName(myIOSSimulatorSdkPath)).isDirectory()) {
-            throw new RuntimeConfigurationError(
-              FlexBundle.message("ios.simulator.sdk.not.found", FileUtil.toSystemDependentName(myIOSSimulatorSdkPath)));
-          }
+            if (myIOSSimulatorSdkPath.isEmpty()) {
+              throw new RuntimeConfigurationError(FlexBundle.message("ios.simulator.sdk.not.set"));
+            }
+            else if (!new File(FileUtil.toSystemDependentName(myIOSSimulatorSdkPath)).isDirectory()) {
+              throw new RuntimeConfigurationError(
+                FlexBundle.message("ios.simulator.sdk.not.found", FileUtil.toSystemDependentName(myIOSSimulatorSdkPath)));
+            }
+            break;
+          case iOSDevice:
+            if (bc.getOutputType() == OutputType.Application) {
+              checkCustomDescriptor(bc.getIosPackagingOptions());
+            }
+            break;
         }
-
         break;
     }
   }
