@@ -59,6 +59,13 @@ public class FlexCompiler implements SourceProcessingCompiler {
     Key.create("modules.and.bcs.to.compile");
 
   @NotNull
+  public static FlexCompiler getInstance(final @NotNull Project project) {
+    final FlexCompiler[] compilers = CompilerManager.getInstance(project).getCompilers(FlexCompiler.class);
+    LOG.assertTrue(compilers.length == 1, compilers.length);
+    return compilers[0];
+  }
+
+  @NotNull
   public ProcessingItem[] getProcessingItems(final CompileContext context) {
     saveProject(context.getProject());
     final List<ProcessingItem> itemList = new ArrayList<ProcessingItem>();
@@ -262,48 +269,18 @@ public class FlexCompiler implements SourceProcessingCompiler {
     final Project project = modules.length > 0 ? modules[0].getProject() : null;
     if (project == null) return true;
 
-    final Collection<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> problems =
-      new ArrayList<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>>();
-
+    final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile;
     try {
-      final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile = getModulesAndBCsToCompile(scope);
-      for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
-        final Consumer<FlashProjectStructureProblem> errorConsumer = new Consumer<FlashProjectStructureProblem>() {
-          public void consume(final FlashProjectStructureProblem problem) {
-            problems.add(Trinity.create(moduleAndBC.first, moduleAndBC.second, problem));
-          }
-        };
-
-        checkConfiguration(moduleAndBC.first, moduleAndBC.second, false, errorConsumer);
-
-        if (moduleAndBC.second.getNature().isMobilePlatform() && moduleAndBC.second.getNature().isApp()) {
-          final RunConfiguration runConfig = CompileStepBeforeRun.getRunConfiguration(scope);
-          if (runConfig instanceof FlashRunConfiguration) {
-            final FlashRunnerParameters params = ((FlashRunConfiguration)runConfig).getRunnerParameters();
-            if (moduleAndBC.first.getName().equals(params.getModuleName()) &&
-                moduleAndBC.second.getName().equals(params.getBCName())) {
-              if (params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
-                checkPackagingOptions(moduleAndBC.second.getAndroidPackagingOptions(), errorConsumer);
-              }
-              else if (params.getMobileRunTarget() == AirMobileRunTarget.iOSDevice) {
-                checkPackagingOptions(moduleAndBC.second.getIosPackagingOptions(), errorConsumer);
-              }
-            }
-          }
-        }
-      }
-      checkSimilarOutputFiles(modulesAndBCsToCompile,
-                              new Consumer<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>>() {
-                                public void consume(final Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem> trinity) {
-                                  problems.add(trinity);
-                                }
-                              });
+      modulesAndBCsToCompile = getModulesAndBCsToCompile(scope);
     }
     catch (ConfigurationException e) {
       // can't happen because already checked at RunConfiguration.getState()
       Messages.showErrorDialog(project, e.getMessage(), FlexBundle.message("project.setup.problem.title"));
       return false;
     }
+
+    final Collection<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> problems =
+      getProblems(scope, modulesAndBCsToCompile);
 
     if (!problems.isEmpty()) {
       final FlashProjectStructureErrorsDialog dialog = new FlashProjectStructureErrorsDialog(project, problems);
@@ -315,6 +292,45 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
 
     return true;
+  }
+
+  static Collection<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> getProblems(final CompileScope scope,
+                                                                                                          final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile) {
+    final Collection<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> problems =
+      new ArrayList<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>>();
+
+    for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
+      final Consumer<FlashProjectStructureProblem> errorConsumer = new Consumer<FlashProjectStructureProblem>() {
+        public void consume(final FlashProjectStructureProblem problem) {
+          problems.add(Trinity.create(moduleAndBC.first, moduleAndBC.second, problem));
+        }
+      };
+
+      checkConfiguration(moduleAndBC.first, moduleAndBC.second, false, errorConsumer);
+
+      if (moduleAndBC.second.getNature().isMobilePlatform() && moduleAndBC.second.getNature().isApp()) {
+        final RunConfiguration runConfig = CompileStepBeforeRun.getRunConfiguration(scope);
+        if (runConfig instanceof FlashRunConfiguration) {
+          final FlashRunnerParameters params = ((FlashRunConfiguration)runConfig).getRunnerParameters();
+          if (moduleAndBC.first.getName().equals(params.getModuleName()) &&
+              moduleAndBC.second.getName().equals(params.getBCName())) {
+            if (params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
+              checkPackagingOptions(moduleAndBC.second.getAndroidPackagingOptions(), errorConsumer);
+            }
+            else if (params.getMobileRunTarget() == AirMobileRunTarget.iOSDevice) {
+              checkPackagingOptions(moduleAndBC.second.getIosPackagingOptions(), errorConsumer);
+            }
+          }
+        }
+      }
+    }
+    checkSimilarOutputFiles(modulesAndBCsToCompile,
+                            new Consumer<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>>() {
+                              public void consume(final Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem> trinity) {
+                                problems.add(trinity);
+                              }
+                            });
+    return problems;
   }
 
   private static boolean checkSimilarOutputFiles(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile,
