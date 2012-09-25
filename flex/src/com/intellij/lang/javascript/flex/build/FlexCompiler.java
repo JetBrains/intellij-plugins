@@ -248,6 +248,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
   @SuppressWarnings("ConstantConditions") // already checked in validateConfiguration()
   @Nullable
   private static Sdk getSdkIfSame(final ProcessingItem[] items) {
+    if (items.length == 0) return null;
     final Sdk sdk = ((MyProcessingItem)items[0]).myBC.getSdk();
 
     for (int i = 1; i < items.length; i++) {
