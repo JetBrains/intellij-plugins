@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,7 +27,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
-import com.intellij.psi.xml.XmlElement;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -58,7 +57,7 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
                                             @Nullable final ServletMappingInfo info,
                                             final boolean soft) {
     final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject()).
-        getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
+      getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
 
     if (strutsModel == null) {
       return PsiReference.EMPTY_ARRAY;
@@ -71,14 +70,14 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
 
     if (StringUtil.indexOf(text, '/') != -1) {
       return new PsiReference[]{
-          new ActionLinkPackageReference((XmlElement) psiElement, offset, text, soft, strutsModel),
-          new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel, actionExtensions)
+        new ActionLinkPackageReference(psiElement, offset, text, soft, strutsModel),
+        new ActionLinkReference(psiElement, offset, text, soft, strutsModel, actionExtensions)
       };
-    } else {
+    }
+    else {
       return new PsiReference[]{
-          new ActionLinkReference((XmlElement) psiElement, offset, text, soft, strutsModel, actionExtensions)
+        new ActionLinkReference(psiElement, offset, text, soft, strutsModel, actionExtensions)
       };
-
     }
   }
 
@@ -100,13 +99,13 @@ TODO not needed so far ?!
   }
 
 
-  private static class ActionLinkReference extends PsiReferenceBase<XmlElement> implements EmptyResolveMessageProvider {
+  private static class ActionLinkReference extends PsiReferenceBase<PsiElement> implements EmptyResolveMessageProvider {
 
     private final StrutsModel strutsModel;
     private final List<String> actionExtensions;
     private final String fullActionPath;
 
-    private ActionLinkReference(final XmlElement element,
+    private ActionLinkReference(final PsiElement element,
                                 final int offset,
                                 final String text,
                                 final boolean soft,
@@ -167,8 +166,8 @@ TODO not needed so far ?!
         final String actionPath = action.getName().getStringValue();
         if (actionPath != null) {
           variants.add(LookupElementBuilder.create(actionPath + firstExtension)
-            .withIcon(Struts2Icons.Action)
-            .withTypeText(action.getNamespace()));
+                         .withIcon(Struts2Icons.Action)
+                         .withTypeText(action.getNamespace()));
         }
       }
       return ArrayUtil.toObjectArray(variants);
@@ -185,7 +184,6 @@ TODO not needed so far ?!
       final int extensionIndex = fullActionPath.lastIndexOf(ourActionExtension);
       return fullActionPath.substring(slashIndex + 1, extensionIndex);
     }
-
   }
 
   /**
@@ -216,13 +214,13 @@ TODO not needed so far ?!
   /**
    * Provides reference to S2-package within action-path.
    */
-  private static class ActionLinkPackageReference extends PsiReferenceBase<XmlElement> implements EmptyResolveMessageProvider {
+  private static class ActionLinkPackageReference extends PsiReferenceBase<PsiElement> implements EmptyResolveMessageProvider {
 
     private final String namespace;
     private final List<StrutsPackage> allStrutsPackages;
     private final String fullActionPath;
 
-    private ActionLinkPackageReference(final XmlElement element,
+    private ActionLinkPackageReference(final PsiElement element,
                                        final int offset,
                                        final String text,
                                        final boolean soft,
@@ -266,5 +264,4 @@ TODO not needed so far ?!
       return "Cannot resolve Struts 2 package '" + namespace + "'";
     }
   }
-
 }
