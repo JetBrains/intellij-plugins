@@ -26,7 +26,6 @@
 package org.osmorc.settings;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -35,7 +34,7 @@ import java.awt.*;
 
 /**
  * This is actually built into DialogWrapper, but it does not resize properly on long strings, so i had
- * to duplicate it. Relayout of the dialog should fix OSMORC-111
+ * to duplicate it. Re-layout of the dialog should fix OSMORC-111
  *
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
  * @version $Id:$
@@ -85,7 +84,6 @@ public class MyErrorText extends JPanel {
     myLabel.setVerticalAlignment(SwingConstants.TOP);
     setLayout(new BorderLayout());
     setBorder(null);
-    UIUtil.removeQuaquaVisualMarginsIn(this);
     add(myLabel, "Center");
   }
 }
