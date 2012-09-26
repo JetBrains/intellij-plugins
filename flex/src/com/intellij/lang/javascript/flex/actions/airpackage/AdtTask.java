@@ -2,10 +2,7 @@ package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.IosPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.module.Module;
@@ -59,7 +56,13 @@ public abstract class AdtTask extends ExternalTask {
     command.add("-storepass");
     command.add(tempCertificate ? AirPackageUtil.TEMP_KEYSTORE_PASSWORD : keystorePassword);
 
-    if (!tempCertificate) {
+    if (tempCertificate) {
+      if (packagingOptions instanceof AirDesktopPackagingOptions) {
+        command.add("-tsa");
+        command.add("none");
+      }
+    }
+    else {
       if (!signingOptions.getKeyAlias().isEmpty() && !keyPassword.isEmpty()) {
         command.add("-keypass");
         command.add(keyPassword);
