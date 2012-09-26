@@ -10,6 +10,7 @@ import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurab
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
+import com.intellij.openapi.compiler.FileProcessingCompiler;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -31,7 +32,10 @@ public class FlexCompileTask implements CompileTask {
 
     if (validateConfiguration(context)) {
       final FlexCompiler flexCompiler = FlexCompiler.getInstance(context.getProject());
-      flexCompiler.process(context, flexCompiler.getProcessingItems(context));
+      final FileProcessingCompiler.ProcessingItem[] items = flexCompiler.getProcessingItems(context);
+      if (items.length > 0) {
+        flexCompiler.process(context, items);
+      }
     }
 
     return true;
