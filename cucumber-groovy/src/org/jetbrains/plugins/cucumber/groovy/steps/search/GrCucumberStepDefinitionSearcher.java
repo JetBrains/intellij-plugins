@@ -1,5 +1,7 @@
+
 package org.jetbrains.plugins.cucumber.groovy.steps.search;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -12,6 +14,7 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Processor;
 import com.intellij.util.QueryExecutor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
 import org.jetbrains.plugins.cucumber.steps.search.CucumberStepSearchUtil;
@@ -27,8 +30,13 @@ public class GrCucumberStepDefinitionSearcher implements QueryExecutor<PsiRefere
     final PsiElement element = queryParameters.getElementToSearch();
     if (!GrCucumberUtil.isStepDefinition(element)) return true;
 
-    final GrMethodCall stepDefinition = (GrMethodCall)element;
-    final String regexp = GrCucumberUtil.getStepDefinitionPatternText(stepDefinition);
+    final String regexp = ApplicationManager.getApplication().runReadAction(new Computable<String>() {
+      @Nullable
+      @Override
+      public String compute() {
+        return GrCucumberUtil.getStepDefinitionPatternText((GrMethodCall)element);
+      }
+    });
 
     final String word = CucumberUtil.getTheBiggestWordToSearchByIndex(regexp);
     if (StringUtil.isEmpty(word)) return true;
@@ -38,20 +46,28 @@ public class GrCucumberStepDefinitionSearcher implements QueryExecutor<PsiRefere
         return queryParameters.getEffectiveSearchScope();
       }
     });
+
+
     // As far as default CacheBasedRefSearcher doesn't look for references in string we have to write out own to handle this correctly
     final TextOccurenceProcessor processor = new TextOccurenceProcessor() {
       @Override
-      public boolean execute(PsiElement element, int offsetInElement) {
-        PsiElement parent = element.getParent();
-        if (parent == null) return true;
-        for (PsiReference ref : parent.getReferences()) {
-          if (ref != null && ref.isReferenceTo(stepDefinition)) {
-            if (!consumer.process(ref)) {
-              return false;
+      public boolean execute(final PsiElement occurrence, int offsetInElement) {
+        return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
+          @Nullable
+          @Override
+          public Boolean compute() {
+            PsiElement parent = occurrence.getParent();
+            if (parent == null) return true;
+            for (PsiReference ref : parent.getReferences()) {
+              if (ref != null && ref.isReferenceTo(element)) {
+                if (!consumer.process(ref)) {
+                  return false;
+                }
+              }
             }
+            return true;
           }
-        }
-        return true;
+        });
       }
     };
 

@@ -1,0 +1,43 @@
+package org.jetbrains.plugins.cucumber.groovy.steps.search;
+
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.navigation.ItemPresentationProvider;
+import com.intellij.navigation.ItemPresentationProviders;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberBundle;
+import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
+import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
+
+import javax.swing.*;
+
+/**
+ * @author Max Medvedev
+ */
+public class GrStepDefinitionPresentationProvider implements ItemPresentationProvider<GrMethodCall> {
+  @Nullable
+  @Override
+  public ItemPresentation getPresentation(final GrMethodCall item) {
+    if (!GrCucumberUtil.isStepDefinition(item)) return null;
+    return new ItemPresentation() {
+      @Nullable
+      @Override
+      public String getPresentableText() {
+        final String stepRef = GrCucumberUtil.getCucumberStepRef(item).getText();
+        final String pattern = GrCucumberUtil.getStepDefinitionPattern(item).getText();
+        return CucumberBundle.message("step.definition.0.1", stepRef, pattern);
+      }
+
+      @Nullable
+      @Override
+      public String getLocationString() {
+        return ItemPresentationProviders.getItemPresentation(item.getContainingFile()).getPresentableText();
+      }
+
+      @Nullable
+      @Override
+      public Icon getIcon(boolean unused) {
+        return null;
+      }
+    };
+  }
+}

@@ -12,6 +12,10 @@
     <referencesSearch implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrCucumberStepDefinitionSearcher"/>
     <methodReferencesSearch implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrCucumberMethodUsageSearcher"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepFindUsageHandlerFactory"/>
+    <itemPresentationProvider forClass="org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.GrMethodCallImpl"
+                              implementationClass="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepDefinitionPresentationProvider"/>
+    <elementDescriptionProvider implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepDefinitionDescriptionProvider"/>
+
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">
