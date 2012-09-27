@@ -312,9 +312,9 @@ public class AirPackageUtil {
       return false;
     }
 
-    final ExternalTask task =
-      createIOSPackageTask(module, bc, packageType, runnerParameters.isFastPackaging(), bc.getIosPackagingOptions().getIOSSdkPath(),
-                           runnerParameters.getUsbDebugPort(), passwords);
+    final ExternalTask task = createIOSPackageTask(module, bc, packageType, runnerParameters.isFastPackaging(),
+                                                   bc.getIosPackagingOptions().getSigningOptions().getIOSSdkPath(),
+                                                   runnerParameters.getUsbDebugPort(), passwords);
     return ExternalTask.runWithProgress(task, FlexBundle.message("creating.ios.package"), FlexBundle.message("create.ios.package.title"));
   }
 
@@ -428,6 +428,13 @@ public class AirPackageUtil {
     return new AdtTask(module.getProject(), bc.getSdk()) {
       protected void appendAdtOptions(List<String> command) {
         command.add("-package");
+
+        final String adtOptions = packagingOptions.getSigningOptions().getADTOptions();
+        if (!adtOptions.isEmpty()) {
+          final String undocumentedOptions = FlexUtils.removeOptions(adtOptions, "sampler", "hideAneLibSymbols");
+          command.addAll(StringUtil.split(undocumentedOptions, " "));
+        }
+
         command.add("-target");
 
         switch (packageType) {
@@ -455,6 +462,19 @@ public class AirPackageUtil {
           case AppStore:
             command.add("ipa-app-store");
             break;
+        }
+
+        if (!adtOptions.isEmpty() && (adtOptions.equals("-sampler") ||
+                                      adtOptions.startsWith("-sampler ") ||
+                                      adtOptions.endsWith(" -sampler") ||
+                                      adtOptions.contains(" -sampler "))) {
+          command.add("-sampler");
+        }
+
+        final List<String> optionValues = FlexUtils.getOptionValues(adtOptions, "hideAneLibSymbols");
+        if (!optionValues.isEmpty()) {
+          command.add("-hideAneLibSymbols");
+          command.add(optionValues.get(0)); // has one parameter: "yes" or "no"
         }
 
         if (simulator) {

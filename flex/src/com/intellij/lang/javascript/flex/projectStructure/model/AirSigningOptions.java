@@ -9,28 +9,14 @@ public class AirSigningOptions {
   private boolean myUseTempCertificate = true;
   @NotNull private String myProvisioningProfilePath = "";
   @NotNull private String myKeystorePath = "";
+  @NotNull private String myIOSSdkPath = "";
+  @NotNull private String myADTOptions = "";
   @NotNull private String myKeystoreType = "PKCS12";
   @NotNull private String myKeyAlias = "";
   @NotNull private String myProvider = "";
   @NotNull private String myTsa = "";
 
   public AirSigningOptions() {
-  }
-
-  public AirSigningOptions(final boolean useTempCertificate,
-                           @NotNull final String provisioningProfilePath,
-                           @NotNull final String keystorePath,
-                           @NotNull final String keystoreType,
-                           @NotNull final String keyAlias,
-                           @NotNull final String provider,
-                           @NotNull final String tsa) {
-    myUseTempCertificate = useTempCertificate;
-    myProvisioningProfilePath = provisioningProfilePath;
-    myKeystorePath = keystorePath;
-    myKeystoreType = keystoreType;
-    myKeyAlias = keyAlias;
-    myProvider = provider;
-    myTsa = tsa;
   }
 
   @Attribute("use-temp-certificate")
@@ -60,6 +46,26 @@ public class AirSigningOptions {
 
   public void setKeystorePath(@NotNull final String keystorePath) {
     myKeystorePath = FileUtil.toSystemIndependentName(keystorePath);
+  }
+
+  @NotNull
+  @Attribute("sdk")
+  public String getIOSSdkPath() {
+    return myIOSSdkPath;
+  }
+
+  public void setIOSSdkPath(@NotNull final String iOSSdkPath) {
+    myIOSSdkPath = FileUtil.toSystemIndependentName(iOSSdkPath);
+  }
+
+  @NotNull
+  @Attribute("adt-options")
+  public String getADTOptions() {
+    return myADTOptions;
+  }
+
+  public void setADTOptions(@NotNull final String adtOptions) {
+    myADTOptions = adtOptions;
   }
 
   @NotNull
@@ -103,23 +109,36 @@ public class AirSigningOptions {
   }
 
   public AirSigningOptions getCopy() {
-    return new AirSigningOptions(myUseTempCertificate, myProvisioningProfilePath, myKeystorePath, myKeystoreType, myKeyAlias, myProvider,
-                                 myTsa);
+    final AirSigningOptions copy = new AirSigningOptions();
+
+    copy.myUseTempCertificate = myUseTempCertificate;
+    copy.myProvisioningProfilePath = myProvisioningProfilePath;
+    copy.myKeystorePath = myKeystorePath;
+    copy.myIOSSdkPath = myIOSSdkPath;
+    copy.myADTOptions = myADTOptions;
+    copy.myKeystoreType = myKeystoreType;
+    copy.myKeyAlias = myKeyAlias;
+    copy.myProvider = myProvider;
+    copy.myTsa = myTsa;
+
+    return copy;
   }
 
   public boolean equals(final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    final AirSigningOptions that = (AirSigningOptions)o;
+    final AirSigningOptions options = (AirSigningOptions)o;
 
-    if (myUseTempCertificate != that.myUseTempCertificate) return false;
-    if (!myKeyAlias.equals(that.myKeyAlias)) return false;
-    if (!myKeystorePath.equals(that.myKeystorePath)) return false;
-    if (!myKeystoreType.equals(that.myKeystoreType)) return false;
-    if (!myProvider.equals(that.myProvider)) return false;
-    if (!myProvisioningProfilePath.equals(that.myProvisioningProfilePath)) return false;
-    if (!myTsa.equals(that.myTsa)) return false;
+    if (myUseTempCertificate != options.myUseTempCertificate) return false;
+    if (!myProvisioningProfilePath.equals(options.myProvisioningProfilePath)) return false;
+    if (!myKeystorePath.equals(options.myKeystorePath)) return false;
+    if (!myIOSSdkPath.equals(options.myIOSSdkPath)) return false;
+    if (!myADTOptions.equals(options.myADTOptions)) return false;
+    if (!myKeystoreType.equals(options.myKeystoreType)) return false;
+    if (!myKeyAlias.equals(options.myKeyAlias)) return false;
+    if (!myProvider.equals(options.myProvider)) return false;
+    if (!myTsa.equals(options.myTsa)) return false;
 
     return true;
   }

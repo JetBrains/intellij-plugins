@@ -34,9 +34,9 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     CustomDescriptor("custom-descriptor-path"),
     PackageFileName("package-file-name"),
     FilesToPackage("files-to-package"),
-    IosSdkPath("ios-sdk-path"),
     ProvisioningProfile("provisioning-profile"),
-    Keystore("keystore");
+    Keystore("keystore"),
+    IosSdkPath("ios-sdk-path");
 
     public final String errorId;
 
@@ -65,8 +65,6 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
   private AirDescriptorForm myAirDescriptorForm;
   private JTextField myPackageFileNameTextField;
   private FilesToPackageForm myFilesToPackageForm;
-  private JLabel myIosSdkLabel;
-  private TextFieldWithBrowseButton myIosSdkTextWithBrowse;
   private SigningOptionsForm mySigningOptionsForm;
 
   private final Module myModule;
@@ -94,9 +92,6 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
         updateControls();
       }
     });
-
-    myIosSdkTextWithBrowse
-      .addBrowseFolderListener(null, null, module.getProject(), FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
     myDisposable = Disposer.newDisposable();
     UserActivityWatcher watcher = new TableAwareUserActivityWatcher();
@@ -150,8 +145,6 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     myFreeze = true;
     try {
       myEnabledCheckBox.setVisible(isAndroid || isIOS);
-      myIosSdkLabel.setVisible(isIOS);
-      myIosSdkTextWithBrowse.setVisible(isIOS);
 
       if (isAndroid) myEnabledCheckBox.setSelected(((AndroidPackagingOptions)myModel).isEnabled());
       if (isIOS) myEnabledCheckBox.setSelected(((IosPackagingOptions)myModel).isEnabled());
@@ -159,9 +152,6 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
       myAirDescriptorForm.resetFrom(myModel);
       myPackageFileNameTextField.setText(myModel.getPackageFileName());
       myFilesToPackageForm.resetFrom(myModel.getFilesToPackage());
-
-      if (isIOS) myIosSdkTextWithBrowse.setText(FileUtil.toSystemDependentName(((IosPackagingOptions)myModel).getIOSSdkPath()));
-
       mySigningOptionsForm.resetFrom(myModel.getSigningOptions());
 
       updateControls();
@@ -178,10 +168,6 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     if (myAirDescriptorForm.isModified(myModel)) return true;
     if (!myModel.getPackageFileName().equals(myPackageFileNameTextField.getText().trim())) return true;
     if (myFilesToPackageForm.isModified(myModel.getFilesToPackage())) return true;
-    if (isIOS &&
-        !((IosPackagingOptions)myModel).getIOSSdkPath().equals(FileUtil.toSystemIndependentName(myIosSdkTextWithBrowse.getText().trim()))) {
-      return true;
-    }
     if (mySigningOptionsForm.isModified(myModel.getSigningOptions())) return true;
 
     return false;
@@ -198,9 +184,6 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     myAirDescriptorForm.applyTo(model);
     model.setPackageFileName(myPackageFileNameTextField.getText().trim());
     model.setFilesToPackage(myFilesToPackageForm.getFilesToPackage());
-    if (isIOS) {
-      ((ModifiableIosPackagingOptions)model).setIOSSdkPath(FileUtil.toSystemIndependentName(myIosSdkTextWithBrowse.getText().trim()));
-    }
     mySigningOptionsForm.applyTo(model.getSigningOptions());
   }
 
@@ -243,7 +226,10 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
     myAirDescriptorForm = new AirDescriptorForm(myModule.getProject(), descriptorCreator);
     myFilesToPackageForm = new FilesToPackageForm(myModule.getProject());
 
-    mySigningOptionsForm = new SigningOptionsForm(myModule.getProject());
+    final SigningOptionsForm.Mode mode = isIOS ? SigningOptionsForm.Mode.iOS
+                                               : isAndroid ? SigningOptionsForm.Mode.Android
+                                                           : SigningOptionsForm.Mode.Desktop;
+    mySigningOptionsForm = new SigningOptionsForm(myModule.getProject(), mode);
     mySigningOptionsForm.setTempCertificateApplicable(!isIOS);
     mySigningOptionsForm.setProvisioningProfileApplicable(isIOS);
   }
@@ -270,10 +256,9 @@ public abstract class AirPackagingConfigurableBase<T extends ModifiableAirPackag
             return IdeFocusManager.findInstance().requestFocus(myPackageFileNameTextField, true);
           case FilesToPackage:
             return myFilesToPackageForm.navigateTo((Location)location);
-          case IosSdkPath:
-            return IdeFocusManager.findInstance().requestFocus(myIosSdkTextWithBrowse.getTextField(), true);
           case ProvisioningProfile:
           case Keystore:
+          case IosSdkPath:
             return mySigningOptionsForm.navigateTo((Location)location);
         }
       }

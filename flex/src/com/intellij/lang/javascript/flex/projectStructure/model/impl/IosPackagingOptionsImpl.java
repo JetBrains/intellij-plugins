@@ -26,7 +26,6 @@ class IosPackagingOptionsImpl extends AirPackagingOptionsBase implements Modifia
     state.CUSTOM_DESCRIPTOR_PATH = getCustomDescriptorPath();
     state.PACKAGE_FILE_NAME = getPackageFileName();
     state.FILES_TO_PACKAGE = getFilesToPackage();
-    state.IOS_SDK_PATH = getIOSSdkPath();
     state.SIGNING_OPTIONS = getSigningOptions();
     return state;
   }
@@ -37,7 +36,6 @@ class IosPackagingOptionsImpl extends AirPackagingOptionsBase implements Modifia
     setCustomDescriptorPath(state.CUSTOM_DESCRIPTOR_PATH);
     setPackageFileName(state.PACKAGE_FILE_NAME);
     setFilesToPackage(state.FILES_TO_PACKAGE);
-    setIOSSdkPath(state.IOS_SDK_PATH);
     setSigningOptions(state.SIGNING_OPTIONS);
   }
 
@@ -54,8 +52,6 @@ class IosPackagingOptionsImpl extends AirPackagingOptionsBase implements Modifia
     @Tag("files-to-package")
     @AbstractCollection(surroundWithTag = false)
     public List<FilePathAndPathInPackage> FILES_TO_PACKAGE = new ArrayList<FilePathAndPathInPackage>();
-    @Attribute(("ios-sdk"))
-    public String IOS_SDK_PATH = "";
     @Property(surroundWithTag = false)
     public AirSigningOptions SIGNING_OPTIONS = new AirSigningOptions();
   }

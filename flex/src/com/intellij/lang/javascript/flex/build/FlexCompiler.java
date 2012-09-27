@@ -797,7 +797,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
 
     if (packagingOptions instanceof IosPackagingOptions) {
-      final String path = ((IosPackagingOptions)packagingOptions).getIOSSdkPath();
+      final String path = packagingOptions.getSigningOptions().getIOSSdkPath();
       if (!path.isEmpty() && !new File(path).isDirectory()) {
         errorConsumer.consume(FlashProjectStructureProblem.createPackagingOptionsProblem(packagingOptions, FlexBundle
           .message("packaging.options.bad.ios.sdk.path", device, FileUtil.toSystemDependentName(path)),

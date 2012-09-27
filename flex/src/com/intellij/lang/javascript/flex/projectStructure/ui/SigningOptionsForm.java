@@ -2,13 +2,16 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirSigningOptions;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.HoverHyperlinkLabel;
+import com.intellij.ui.RawCommandLineEditor;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
@@ -22,6 +25,8 @@ public class SigningOptionsForm {
   private static final String MORE_OPTIONS = "More options";
   private static final String LESS_OPTIONS = "Less options";
 
+  private final Mode myMode;
+
   private JPanel myMainPanel;
 
   private JCheckBox myUseTempCertificateCheckBox;
@@ -29,8 +34,11 @@ public class SigningOptionsForm {
 
   private JLabel myProvisioningProfileLabel;
   private TextFieldWithBrowseButton myProvisioningProfileTextWithBrowse;
-
   private TextFieldWithBrowseButton myKeystoreFileTextWithBrowse;
+  private JLabel myIosSdkLabel;
+  private TextFieldWithBrowseButton myIosSdkTextWithBrowse;
+  private JLabel myAdtOptionsLabel;
+  private RawCommandLineEditor myAdtOptionsComponent;
   private HoverHyperlinkLabel myMoreOptionsHyperlinkLabel;
   private JLabel myKeystoreTypeLabel;
   private JTextField myKeystoreTypeTextField;
@@ -41,7 +49,10 @@ public class SigningOptionsForm {
   private JLabel myTsaUrlLabel;
   private JTextField myTsaUrlTextField;
 
-  public SigningOptionsForm(final Project project) {
+  enum Mode {Desktop, Android, iOS}
+
+  public SigningOptionsForm(final Project project, final Mode mode) {
+    myMode = mode;
     myUseTempCertificateCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
         updateControls();
@@ -50,8 +61,15 @@ public class SigningOptionsForm {
 
     myProvisioningProfileTextWithBrowse
       .addBrowseFolderListener(null, null, project, FlexUtils.createFileChooserDescriptor("mobileprovision"));
-    myKeystoreFileTextWithBrowse
-      .addBrowseFolderListener(null, null, project, FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor());
+
+    myIosSdkTextWithBrowse
+      .addBrowseFolderListener(null, null, project, FileChooserDescriptorFactory.createSingleFolderDescriptor());
+
+    final FileChooserDescriptor d = mode == Mode.iOS ? FlexUtils.createFileChooserDescriptor("p12")
+                                                     : FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
+    myKeystoreFileTextWithBrowse.addBrowseFolderListener(null, null, project, d);
+
+    myAdtOptionsComponent.setDialogCaption("Additional ADT Options");
 
     myMoreOptionsHyperlinkLabel.setText(MORE_OPTIONS);
     myMoreOptionsHyperlinkLabel.addHyperlinkListener(new HyperlinkListener() {
@@ -63,6 +81,23 @@ public class SigningOptionsForm {
     });
 
     updateMoreOptions();
+
+    switch (mode) {
+      case Desktop:
+      case Android:
+        myProvisioningProfileLabel.setVisible(false);
+        myProvisioningProfileTextWithBrowse.setVisible(false);
+        myIosSdkLabel.setVisible(false);
+        myIosSdkTextWithBrowse.setVisible(false);
+        myAdtOptionsLabel.setVisible(false);
+        myAdtOptionsComponent.setVisible(false);
+        break;
+      case iOS:
+        myUseTempCertificateCheckBox.setVisible(false);
+        showMoreOptions(false);
+        myMoreOptionsHyperlinkLabel.setVisible(false);
+        break;
+    }
   }
 
   private void createUIComponents() {
@@ -87,8 +122,8 @@ public class SigningOptionsForm {
     myKeyAliasTextField.setVisible(showingMoreOption);
     myProviderClassNameLabel.setVisible(showingMoreOption);
     myProviderClassNameTextField.setVisible(showingMoreOption);
-    myTsaUrlLabel.setVisible(showingMoreOption);
-    myTsaUrlTextField.setVisible(showingMoreOption);
+    myTsaUrlLabel.setVisible(showingMoreOption && myMode != Mode.Android);
+    myTsaUrlTextField.setVisible(showingMoreOption && myMode != Mode.Android);
   }
 
   private void updateControls() {
@@ -119,6 +154,8 @@ public class SigningOptionsForm {
     myUseTempCertificateCheckBox.setSelected(signingOptions.isUseTempCertificate());
     myProvisioningProfileTextWithBrowse.setText(FileUtil.toSystemDependentName(signingOptions.getProvisioningProfilePath()));
     myKeystoreFileTextWithBrowse.setText(FileUtil.toSystemDependentName(signingOptions.getKeystorePath()));
+    myIosSdkTextWithBrowse.setText(FileUtil.toSystemDependentName(signingOptions.getIOSSdkPath()));
+    myAdtOptionsComponent.setText(signingOptions.getADTOptions());
     myKeystoreTypeTextField.setText(signingOptions.getKeystoreType());
     myKeyAliasTextField.setText(signingOptions.getKeyAlias());
     myProviderClassNameTextField.setText(signingOptions.getProvider());
@@ -130,13 +167,17 @@ public class SigningOptionsForm {
     if (myUseTempCertificateCheckBox.isVisible() && myUseTempCertificateCheckBox.isSelected() != signingOptions.isUseTempCertificate()) {
       return true;
     }
-    final String provisioningPath = FileUtil.toSystemIndependentName(myProvisioningProfileTextWithBrowse.getText().trim());
-    if (myProvisioningProfileTextWithBrowse.isVisible() && !provisioningPath.equals(signingOptions.getProvisioningProfilePath())) {
-      return true;
-    }
-    if (!FileUtil.toSystemIndependentName(myKeystoreFileTextWithBrowse.getText().trim()).equals(signingOptions.getKeystorePath())) {
-      return true;
-    }
+
+    final String profilePath = FileUtil.toSystemIndependentName(myProvisioningProfileTextWithBrowse.getText().trim());
+    if (myProvisioningProfileTextWithBrowse.isVisible() && !profilePath.equals(signingOptions.getProvisioningProfilePath())) return true;
+
+    final String keystorePath = FileUtil.toSystemIndependentName(myKeystoreFileTextWithBrowse.getText().trim());
+    if (!keystorePath.equals(signingOptions.getKeystorePath())) return true;
+
+    final String iosSdkPath = FileUtil.toSystemIndependentName(myIosSdkTextWithBrowse.getText().trim());
+    if (myIosSdkTextWithBrowse.isVisible() && !iosSdkPath.equals(signingOptions.getIOSSdkPath())) return true;
+
+    if (myAdtOptionsComponent.isVisible() && !myAdtOptionsComponent.getText().equals(signingOptions.getADTOptions())) return false;
     if (!myKeystoreTypeTextField.getText().trim().equals(signingOptions.getKeystoreType())) return true;
     if (!myKeyAliasTextField.getText().equals(signingOptions.getKeyAlias())) return true;
     if (!myProviderClassNameTextField.getText().equals(signingOptions.getProvider())) return true;
@@ -149,6 +190,8 @@ public class SigningOptionsForm {
     signingOptions.setUseTempCertificate(myUseTempCertificateCheckBox.isSelected());
     signingOptions.setProvisioningProfilePath(FileUtil.toSystemIndependentName(myProvisioningProfileTextWithBrowse.getText().trim()));
     signingOptions.setKeystorePath(FileUtil.toSystemIndependentName(myKeystoreFileTextWithBrowse.getText().trim()));
+    signingOptions.setIOSSdkPath(FileUtil.toSystemIndependentName(myIosSdkTextWithBrowse.getText().trim()));
+    signingOptions.setADTOptions(myAdtOptionsComponent.getText().trim());
     signingOptions.setKeystoreType(myKeystoreTypeTextField.getText().trim());
     signingOptions.setKeyAlias(myKeyAliasTextField.getText());
     signingOptions.setProvider(myProviderClassNameTextField.getText());
@@ -161,6 +204,8 @@ public class SigningOptionsForm {
         return IdeFocusManager.findInstance().requestFocus(myProvisioningProfileTextWithBrowse.getChildComponent(), true);
       case Keystore:
         return IdeFocusManager.findInstance().requestFocus(myKeystoreFileTextWithBrowse.getChildComponent(), true);
+      case IosSdkPath:
+        return IdeFocusManager.findInstance().requestFocus(myIosSdkTextWithBrowse.getTextField(), true);
       default:
         return new ActionCallback.Done();
     }

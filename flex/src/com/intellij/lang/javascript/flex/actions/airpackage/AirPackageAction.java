@@ -130,7 +130,7 @@ public class AirPackageAction extends DumbAwareAction {
           final IosPackagingOptions packagingOptions = bc.getIosPackagingOptions();
           final ExternalTask task = AirPackageUtil
             .createIOSPackageTask(moduleAndBC.first, bc, params.iosPackageType, params.iosFastPackaging,
-                                  bc.getIosPackagingOptions().getIOSSdkPath(), 0, passwords);
+                                  bc.getIosPackagingOptions().getSigningOptions().getIOSSdkPath(), 0, passwords);
           final String packagePath = outputFolder + "/" + packagingOptions.getPackageFileName() + ".ipa";
           tasksAndPackagePaths.add(Pair.create(task, packagePath));
         }

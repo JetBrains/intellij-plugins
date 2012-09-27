@@ -15,7 +15,6 @@ class AirPackagingOptionsBase {
   @NotNull private String myCustomDescriptorPath = "";
   @NotNull private String myPackageFileName = "";
   @NotNull private final List<FilePathAndPathInPackage> myFilesToPackage = new ArrayList<FilePathAndPathInPackage>();
-  @NotNull private String myIosSdkPath = "";
   @NotNull private AirSigningOptions mySigningOptions = new AirSigningOptions();
 
   public boolean isEnabled() {
@@ -65,15 +64,6 @@ class AirPackagingOptionsBase {
   }
 
   @NotNull
-  public String getIOSSdkPath() {
-    return myIosSdkPath;
-  }
-
-  public void setIOSSdkPath(@NotNull final String iosSdkPath) {
-    myIosSdkPath = iosSdkPath;
-  }
-
-  @NotNull
   public AirSigningOptions getSigningOptions() {
     return mySigningOptions;
   }
@@ -88,7 +78,6 @@ class AirPackagingOptionsBase {
     copy.myCustomDescriptorPath = myCustomDescriptorPath;
     copy.myPackageFileName = myPackageFileName;
     copy.setFilesToPackage(myFilesToPackage);
-    copy.myIosSdkPath = myIosSdkPath;
     copy.mySigningOptions = mySigningOptions.getCopy();
   }
 
@@ -98,7 +87,6 @@ class AirPackagingOptionsBase {
     if (!copy.myCustomDescriptorPath.equals(myCustomDescriptorPath)) return false;
     if (!copy.myPackageFileName.equals(myPackageFileName)) return false;
     if (!FlexUtils.equalLists(copy.myFilesToPackage, myFilesToPackage)) return false;
-    if (!copy.myIosSdkPath.equals(myIosSdkPath)) return false;
     if (!copy.mySigningOptions.equals(mySigningOptions)) return false;
 
     return true;
