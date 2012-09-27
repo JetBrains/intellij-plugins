@@ -64,8 +64,7 @@ public class FlaskProjectConfigurator implements DirectoryProjectConfigurator {
 
   public static void createFlaskRunConfiguration(Module module, VirtualFile appFile) {
     PyRunConfigurationFactory factory = PyRunConfigurationFactory.getInstance();
-    PythonRunConfigurationParams configuration = factory.createPythonScriptRunConfiguration(module, appFile.getPath(), true);
-    configuration.setMultiprocessMode(true);
+    factory.createPythonScriptRunConfiguration(module, appFile.getPath(), true);
   }
 
   @Nullable
