@@ -306,7 +306,8 @@ public class FlexDebugProcess extends XDebugProcess {
       classpath = FlexUtils.getPathToBundledJar("idea-fdb-3-fix.jar") + File.pathSeparator + classpath;
     }
     else if (isDebuggerFromSdk4()) {
-      if (StringUtil.compareVersionNumbers(myDebuggerVersion, "4.0") >= 0 &&
+      if (myDebuggerVersion.startsWith("4.6.b") ||
+          StringUtil.compareVersionNumbers(myDebuggerVersion, "4.0") >= 0 &&
           StringUtil.compareVersionNumbers(myDebuggerVersion, "4.1.1") < 0) {
         classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.0.0.14159-fix.jar") + File.pathSeparator + classpath;
       }
