@@ -219,7 +219,7 @@ public class JSUmlDependencyProvider {
 
                   @Override
                   public void visitCssFunction(final CssFunction _function) {
-                    if (FlexReferenceContributor.CLASS_REFERENCE.equals(_function.getFunctionName())) {
+                    if (FlexReferenceContributor.CLASS_REFERENCE.equals(_function.getName())) {
                       myInClassReference = true;
                       try {
                         super.visitCssFunction(_function);

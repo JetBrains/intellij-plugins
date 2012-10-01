@@ -394,7 +394,7 @@ public class CssWriter {
 
   @SuppressWarnings("ConstantConditions")
   private void writeFunctionValue(CssFunction cssFunction, @Nullable FlexStyleIndexInfo info) throws InvalidPropertyException {
-    final String functionName = cssFunction.getFunctionName();
+    final String functionName = cssFunction.getName();
     ASTNode termListNode = cssFunction.getNode().findChildByType(CssElementTypes.CSS_TERM_LIST);
     switch (functionName.charAt(0)) {
       case 'C':

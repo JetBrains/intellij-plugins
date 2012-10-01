@@ -12,9 +12,11 @@ import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.*;
+import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinIntention;
-import com.intellij.lang.javascript.validation.fixes.CreateFlexMobileViewIntentionAndFix;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
@@ -22,6 +24,7 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
 import com.intellij.lang.javascript.psi.impl.ReferenceSupport;
 import com.intellij.lang.javascript.validation.fixes.CreateClassIntentionWithCallback;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
+import com.intellij.lang.javascript.validation.fixes.CreateFlexMobileViewIntentionAndFix;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
@@ -29,7 +32,10 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.patterns.*;
+import com.intellij.patterns.PatternCondition;
+import com.intellij.patterns.PlatformPatterns;
+import com.intellij.patterns.StandardPatterns;
+import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.*;
 import com.intellij.psi.css.*;
 import com.intellij.psi.filters.*;
@@ -86,7 +92,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
       public boolean isAcceptable(Object element, PsiElement context) {
         CssFunction fun = PsiTreeUtil.getParentOfType((PsiElement)element, CssFunction.class);
         String funName;
-        return fun != null && (CLASS_REFERENCE.equals(funName = fun.getFunctionName()) || "Embed".equals(funName));
+        return fun != null && (CLASS_REFERENCE.equals(funName = fun.getName()) || "Embed".equals(funName));
       }
 
       public boolean isClassAcceptable(Class hintClass) {
@@ -97,7 +103,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
       @Override
       public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
         CssFunction fun = PsiTreeUtil.getParentOfType(element, CssFunction.class);
-        if (fun != null && "Embed".equals(fun.getFunctionName())) {
+        if (fun != null && "Embed".equals(fun.getName())) {
           // TODO: remove this stuff once css function will have proper psi
           PsiElement prev = PsiTreeUtil.prevLeaf(element);
           if (prev instanceof PsiWhiteSpace) prev = PsiTreeUtil.prevLeaf(prev);
