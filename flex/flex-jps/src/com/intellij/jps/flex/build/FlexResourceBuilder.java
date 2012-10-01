@@ -11,11 +11,11 @@ import com.intellij.util.PathUtilRt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jps.JpsPathUtil;
 import org.jetbrains.jps.ModuleChunk;
+import org.jetbrains.jps.builders.storage.SourceToOutputMapping;
 import org.jetbrains.jps.incremental.*;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
-import org.jetbrains.jps.incremental.storage.SourceToOutputMapping;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.module.JpsTypedModule;
 
@@ -114,7 +114,7 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
       }
 
       try {
-        sourceToOutputMapping.update(file.getPath(), targetPaths);
+        sourceToOutputMapping.setOutputs(file.getPath(), targetPaths);
       }
       catch (Exception e) {
         context.processMessage(new CompilerMessage(BUILDER_NAME, e));
