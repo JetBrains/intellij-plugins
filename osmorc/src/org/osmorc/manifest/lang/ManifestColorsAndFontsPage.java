@@ -26,6 +26,7 @@ package org.osmorc.manifest.lang;
 
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
@@ -71,7 +72,7 @@ public class ManifestColorsAndFontsPage implements ColorSettingsPage {
 
   @NotNull
   public SyntaxHighlighter getHighlighter() {
-    return SyntaxHighlighter.PROVIDER.create(ManifestFileTypeFactory.MANIFEST, null, null);
+    return SyntaxHighlighterFactory.getSyntaxHighlighter(ManifestFileTypeFactory.MANIFEST, null, null);
   }
 
   @NonNls
