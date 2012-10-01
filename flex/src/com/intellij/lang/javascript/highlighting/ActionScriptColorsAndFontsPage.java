@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
 import com.intellij.openapi.options.colors.ColorDescriptor;
 import com.intellij.openapi.options.colors.ColorSettingsPage;
@@ -149,7 +150,9 @@ public class ActionScriptColorsAndFontsPage implements ColorSettingsPage {
   @NotNull
   @Override
   public SyntaxHighlighter getHighlighter() {
-    return SyntaxHighlighter.PROVIDER.create(JavaScriptSupportLoader.JAVASCRIPT, null, null);
+    final SyntaxHighlighter highlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(JavaScriptSupportLoader.JAVASCRIPT, null, null);
+    assert highlighter != null;
+    return highlighter;
   }
 
   @NotNull
