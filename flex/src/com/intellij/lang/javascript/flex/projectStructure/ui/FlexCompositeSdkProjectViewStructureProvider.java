@@ -129,6 +129,7 @@ public class FlexCompositeSdkProjectViewStructureProvider implements TreeStructu
       return getRootUrls(rootType);
     }
 
+    @NotNull
     @Override
     public String getPresentableName() {
       return "<" + getJdkName() + ">";
