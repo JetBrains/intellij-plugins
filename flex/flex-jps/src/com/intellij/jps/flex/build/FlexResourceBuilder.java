@@ -7,6 +7,7 @@ import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
 import com.intellij.flex.model.module.JpsFlexModuleType;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.PathUtilRt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jps.JpsPathUtil;
 import org.jetbrains.jps.ModuleChunk;
@@ -80,7 +81,7 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
               final JpsFlexCompilerOptions.ResourceFilesMode mode = bc.getCompilerOptions().getResourceFilesMode();
               if (mode == JpsFlexCompilerOptions.ResourceFilesMode.All && !FlexCommonUtils.isSourceFile(file.getName()) ||
                   mode == JpsFlexCompilerOptions.ResourceFilesMode.ResourcePatterns && patterns.isResourceFile(file, sourceRoot)) {
-                final String outputFolder = JpsPathUtil.getParentPath(bc.getActualOutputFilePath());
+                final String outputFolder = PathUtilRt.getParentPath(bc.getActualOutputFilePath());
                 targetPaths.add(outputFolder + "/" + relativePath);
               }
             }

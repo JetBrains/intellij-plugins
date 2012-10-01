@@ -3,6 +3,7 @@ package com.intellij.flex.model.bc;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.PathUtilRt;
 import gnu.trove.THashMap;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -75,7 +76,7 @@ public class InfoFromConfigFile {
       mainClassFile = new File(baseDir + File.pathSeparator + mainClassPath);
     }
     if (!mainClassFile.isFile()) {
-      return FileUtil.getNameWithoutExtension(FileUtil.getNameWithoutExtension(JpsPathUtil.getFileName(mainClassPath)));
+      return FileUtil.getNameWithoutExtension(FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(mainClassPath)));
     }
 
     String mainClassCanonicalPath;
@@ -141,8 +142,8 @@ public class InfoFromConfigFile {
       catch (IOException ignore) {/*ignore*/ }
       catch (JDOMException ignore) {/*ignore*/}
 
-      final String outputFileName = outputPath == null ? null : JpsPathUtil.getFileName(outputPath);
-      final String outputFolderPath = outputPath == null ? null : JpsPathUtil.getParentPath(outputPath);
+      final String outputFileName = outputPath == null ? null : PathUtilRt.getFileName(outputPath);
+      final String outputFolderPath = outputPath == null ? null : PathUtilRt.getParentPath(outputPath);
 
       data = Pair.create(currentTimestamp,
                          new InfoFromConfigFile(configFile, mainClassPath, outputFileName, outputFolderPath, targetPlayer));
