@@ -2,13 +2,6 @@ package com.intellij.flex.compiler;
 
 import flex2.compiler.ILocalizableMessage;
 import flex2.compiler.common.Configuration;
-import flex2.tools.oem.Application;
-import flex2.tools.oem.Builder;
-import flex2.tools.oem.Library;
-import flex2.tools.oem.Report;
-
-import java.io.File;
-import java.io.FileWriter;
 
 public class CompilationThread extends Thread {
 
@@ -16,13 +9,16 @@ public class CompilationThread extends Thread {
   private static int traceCompilationsCount = 0;
   private static final Object lock = new Object();
 
+  private final boolean mySwf;
   private final SdkSpecificHandler mySdkSpecificHandler;
   private final String[] myParams;
   private final OutputLogger myLogger;
 
-  public CompilationThread(final SdkSpecificHandler sdkSpecificHandler,
+  public CompilationThread(final boolean isSwf,
+                           final SdkSpecificHandler sdkSpecificHandler,
                            final String[] params,
                            final OutputLogger logger) {
+    mySwf = isSwf;
     mySdkSpecificHandler = sdkSpecificHandler;
     myParams = params;
     myLogger = logger;
@@ -41,31 +37,25 @@ public class CompilationThread extends Thread {
     try {
       mySdkSpecificHandler.initThreadLocals(myLogger);
 
-      final Configuration configuration = mySdkSpecificHandler.processConfiguration(myParams);
-      final Builder builder = mySdkSpecificHandler.createBuilder(configuration);
-      //ConfigurationUtil.setConfiguration(builder, configuration);      now it is done in createBuilder()
-      builder.setLogger(myLogger);
-      builder.setPathResolver(SdkFilesResolver.INSTANCE);
-
-      final String linkReportFileName = configuration.getLinkReportFileName();
-      if (linkReportFileName != null) {
-        builder.getConfiguration().keepLinkReport(true);
-      }
-
-      final long outputFileSize;
-      final boolean omitTrace = mySdkSpecificHandler.omitTrace(configuration);
+      final boolean omitTrace = mySdkSpecificHandler.isOmitTrace(mySwf, myParams);
 
       try {
         acquire(omitTrace);
 
         mySdkSpecificHandler.setupOmitTraceOption(omitTrace);
-        outputFileSize = builder.build(true);
+
+        if (mySwf) {
+          mySdkSpecificHandler.compileSwf(myParams);
+        }
+        else {
+          mySdkSpecificHandler.compileSwc(myParams);
+        }
       }
       finally {
         release(omitTrace);
       }
 
-      if (outputFileSize > 0) {
+      /*if (outputFileSize > 0) {
         final File outputFile = (builder instanceof Application) ? ((Application)builder).getOutput() : ((Library)builder).getOutput();
         myLogger.log(outputFile.getCanonicalPath() + " (" + outputFileSize + " bytes)");
 
@@ -81,7 +71,7 @@ public class CompilationThread extends Thread {
       }
       else if (!myLogger.wereErrorsReported()) {
         myLogger.log(OutputLogger.ERROR_MARKER + "Flex compiler failed to create output file");
-      }
+      }*/
     }
     catch (final Exception e) {
       logError(e);

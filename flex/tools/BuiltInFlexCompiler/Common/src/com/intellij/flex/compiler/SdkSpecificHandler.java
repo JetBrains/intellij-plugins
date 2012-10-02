@@ -1,43 +1,37 @@
 package com.intellij.flex.compiler;
 
 import flex2.compiler.Logger;
-import flex2.compiler.common.Configuration;
-import flex2.compiler.config.ConfigurationException;
-import flex2.tools.oem.Builder;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 public abstract class SdkSpecificHandler {
 
+  private static ThreadLocal<Logger> ourLoggers = new ThreadLocal<Logger>();
+
+  public static Logger getLogger() {
+    return ourLoggers.get();
+  }
+
   /**
-   * similar to flex2.tools.oem.internal.LibraryCompiler.init()
+   * if needed - inheritors should be similar to flex2.tools.oem.internal.LibraryCompiler.init()
    */
-  public abstract void initThreadLocals(final Logger logger);
+  public void initThreadLocals(final Logger logger) {
+    ourLoggers.set(logger);
+  }
 
   /**
    * similar to flex2.tools.oem.internal.LibraryCompiler.clean()
    */
-  public abstract void cleanThreadLocals();
+  public void cleanThreadLocals() {
+    ourLoggers.remove();
+  }
 
-  /**
-   * similar to flex2.tools.oem.internal.LibraryCompiler.getCompcConfiguration(String[] args)
-   * or flex2.tools.oem.internal.ApplicationCompiler.getCommandLineConfiguration(String[] args)
-   */
-  public abstract Configuration processConfiguration(final String[] params) throws ConfigurationException, IOException;
-
-  /**
-   * similar to flex2.tools.oem.internal.LibraryCompiler.run(...)
-   * or flex2.tools.oem.internal.ApplicationCompiler.run(...)
-   */
-  public abstract Builder createBuilder(final Configuration configuration) throws FileNotFoundException, ConfigurationException, URISyntaxException;
-
-  public boolean omitTrace(final Configuration configuration) {
+  public boolean isOmitTrace(final boolean isSwf, final String[] params) {
     return false;
   }
 
-  public void setupOmitTraceOption(final boolean omitTrace){
-
+  public void setupOmitTraceOption(final boolean omitTrace) {
   }
+
+  public abstract void compileSwf(String[] args);
+
+  public abstract void compileSwc(String[] args);
 }

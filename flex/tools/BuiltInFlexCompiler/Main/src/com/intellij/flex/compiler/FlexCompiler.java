@@ -1,16 +1,10 @@
 package com.intellij.flex.compiler;
 
-import com.intellij.flex.compiler.flex3.Flex3CompcHandler;
-import com.intellij.flex.compiler.flex3.Flex3MxmlcHandler;
-import com.intellij.flex.compiler.flex4.Flex4CompcHandler;
-import com.intellij.flex.compiler.flex4.Flex4MxmlcHandler;
-import com.intellij.flex.compiler.flex45.Flex45CompcHandler;
-import com.intellij.flex.compiler.flex45.Flex45MxmlcHandler;
+import com.intellij.flex.compiler.flex3.Flex3Handler;
+import com.intellij.flex.compiler.flex4.Flex4Handler;
 import flex2.tools.VersionInfo;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -29,7 +23,7 @@ public class FlexCompiler implements MessageSender {
   private DataInputStream myDataInputStream;
   private DataOutputStream myDataOutputStream;
 
-  public void openSocket(int port) throws IOException {
+  private void openSocket(int port) throws IOException {
     final int maxAttempts = 10;
     Socket socket;
     for (int i = 0; i < maxAttempts; i++) {
@@ -43,8 +37,7 @@ public class FlexCompiler implements MessageSender {
       catch (IOException e) {
         if (i == maxAttempts - 1) {
           throw e;
-        }
-        else {
+        } else {
           try {
             Thread.sleep(100);
           }
@@ -61,8 +54,7 @@ public class FlexCompiler implements MessageSender {
     final int port;
     try {
       port = Integer.parseInt(args[0]);
-    }
-    catch (NumberFormatException e) {
+    } catch (NumberFormatException e) {
       System.out.println("Incorrect port parameter");
       return;
     }
@@ -71,8 +63,7 @@ public class FlexCompiler implements MessageSender {
       final FlexCompiler flexCompiler = new FlexCompiler();
       flexCompiler.openSocket(port);
       flexCompiler.processInput();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
   }
@@ -108,12 +99,10 @@ public class FlexCompiler implements MessageSender {
 
       if (CANCEL_COMMAND.equals(command)) {
         cancelAllCompilations();
-      }
-      else if (FINISH_COMMAND.equals(command)) {
+      } else if (FINISH_COMMAND.equals(command)) {
         exit();
         return true;
-      }
-      else {
+      } else {
         startCompilationThread(command);
       }
     }
@@ -132,8 +121,7 @@ public class FlexCompiler implements MessageSender {
     final String commandNumberStr = command.substring(0, colonPos);
     try {
       Integer.parseInt(commandNumberStr);
-    }
-    catch (NumberFormatException e) {
+    } catch (NumberFormatException e) {
       sendMessage("Error: Incorrect command number: [" + commandNumberStr + "]");
       sendMessage(COMPILATION_FINISHED);
       return;
@@ -141,47 +129,37 @@ public class FlexCompiler implements MessageSender {
 
     final String compilationCommand = command.substring(colonPos + 1);
 
-    final boolean mxmlc = compilationCommand.startsWith("mxmlc ");
-    if (!mxmlc && !compilationCommand.startsWith("compc")) {
+    final boolean isSwf = compilationCommand.startsWith("mxmlc ");
+    if (!isSwf && !compilationCommand.startsWith("compc")) {
       sendMessage("Error: Incorrect compilation command: [" + compilationCommand + "]");
       sendMessage(COMPILATION_FINISHED);
       return;
     }
 
-    final OutputLogger logger = new OutputLogger(this, commandNumberStr + ":");
-    final SdkSpecificHandler sdkSpecificHandler = getSdkSpecificHandler(mxmlc);
+    final String logMessagePrefix = commandNumberStr + ":";
+    final OutputLogger logger = new OutputLogger(this, logMessagePrefix);
+    final SdkSpecificHandler sdkSpecificHandler = getSdkSpecificHandler();
     if (sdkSpecificHandler == null) {
       logger.log(
         "Error: Flex SDK " + SDK_MAJOR_VERSION + '.' + SDK_MINOR_VERSION + '.' + SDK_REVISION_VERSION
-        + " is not supported by built-in compiler shell. Please change compiler at File | Settings | Compiler | Flex Compiler.");
+          + " is not supported by built-in compiler shell. Please change compiler at File | Settings | Compiler | Flex Compiler.");
       logger.log(COMPILATION_FINISHED);
       return;
     }
 
     final CompilationThread compilationThread =
-      new CompilationThread(sdkSpecificHandler, getParams(compilationCommand), logger);
+      new CompilationThread(isSwf, sdkSpecificHandler, getParams(compilationCommand), logger);
     compilationThread.setPriority(Thread.MAX_PRIORITY);
     compilationThread.setDaemon(true);
     compilationThread.start();
   }
 
-  private SdkSpecificHandler getSdkSpecificHandler(final boolean mxmlc) {
+  private SdkSpecificHandler getSdkSpecificHandler() {
     if ("3".equals(SDK_MAJOR_VERSION)) {
-      return mxmlc ? new Flex3MxmlcHandler() : new Flex3CompcHandler();
+      return new Flex3Handler();
     }
     else if ("4".equals(SDK_MAJOR_VERSION)) {
-      int buildVersion = 0;
-      try {
-        buildVersion = Integer.parseInt(VersionInfo.getBuild());
-      }
-      catch (NumberFormatException e) {/*ignore*/}
-
-      if ("0".equals(SDK_MINOR_VERSION) || "1".equals(SDK_MINOR_VERSION) || ("5".equals(SDK_MINOR_VERSION) && buildVersion < 19786)) {
-        return mxmlc ? new Flex4MxmlcHandler() : new Flex4CompcHandler();
-      }
-      else if ("5".equals(SDK_MINOR_VERSION) || "6".equals(SDK_MINOR_VERSION) || "8".equals(SDK_MINOR_VERSION)) {
-        return mxmlc ? new Flex45MxmlcHandler() : new Flex45CompcHandler();
-      }
+      return new Flex4Handler();
     }
 
     return null;
@@ -204,8 +182,7 @@ public class FlexCompiler implements MessageSender {
     cancelAllCompilations();
     try {
       myDataInputStream.close();
-    }
-    catch (IOException ignored) {
+    } catch (IOException ignored) {
     }
   }
 

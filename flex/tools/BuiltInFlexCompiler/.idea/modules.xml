@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Common/Common.iml" filepath="$PROJECT_DIR$/Common/Common.iml" />
       <module fileurl="file://$PROJECT_DIR$/Flex3Compiler/Flex3Compiler.iml" filepath="$PROJECT_DIR$/Flex3Compiler/Flex3Compiler.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Flex45Compiler/Flex45Compiler.iml" filepath="$PROJECT_DIR$/Flex45Compiler/Flex45Compiler.iml" />
       <module fileurl="file://$PROJECT_DIR$/Flex4Compiler/Flex4Compiler.iml" filepath="$PROJECT_DIR$/Flex4Compiler/Flex4Compiler.iml" />
       <module fileurl="file://$PROJECT_DIR$/Main/Main.iml" filepath="$PROJECT_DIR$/Main/Main.iml" />
       <module fileurl="file://$PROJECT_DIR$/Tests/Tests.iml" filepath="$PROJECT_DIR$/Tests/Tests.iml" />
