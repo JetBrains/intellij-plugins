@@ -42,10 +42,12 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         final JavaRunConfigurationModule module = getConfigurationModule();
 
         final int classPathType = JavaParameters.JDK_AND_CLASSES_AND_TESTS;
-        final String jreHome = CucumberJavaRunConfiguration.this.ALTERNATIVE_JRE_PATH_ENABLED ? ALTERNATIVE_JRE_PATH
-                                                                            : null;
+        final String jreHome = CucumberJavaRunConfiguration.this.ALTERNATIVE_JRE_PATH_ENABLED ? ALTERNATIVE_JRE_PATH : null;
         JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
         JavaParametersUtil.configureConfiguration(params, CucumberJavaRunConfiguration.this);
+
+        String path = CucumberJavaRunConfiguration.class.getResource("/SMFormatter.jar").getPath();
+        params.getClassPath().add(path);
 
         params.setMainClass(MAIN_CLASS_NAME);
         for(RunConfigurationExtension ext: Extensions.getExtensions(RunConfigurationExtension.EP_NAME)) {
