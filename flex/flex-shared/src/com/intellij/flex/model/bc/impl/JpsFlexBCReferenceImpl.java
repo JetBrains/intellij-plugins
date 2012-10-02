@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsCompositeElement;
 import org.jetbrains.jps.model.JpsElementChildRole;
+import org.jetbrains.jps.model.JpsElementCollection;
 import org.jetbrains.jps.model.impl.JpsElementChildRoleBase;
-import org.jetbrains.jps.model.impl.JpsElementCollectionImpl;
 import org.jetbrains.jps.model.impl.JpsNamedElementReferenceBase;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleReference;
@@ -34,7 +34,7 @@ class JpsFlexBCReferenceImpl
 
   @Nullable
   @Override
-  protected JpsElementCollectionImpl<? extends JpsFlexBuildConfiguration> getCollection(@NotNull JpsCompositeElement parent) {
+  protected JpsElementCollection<? extends JpsFlexBuildConfiguration> getCollection(@NotNull JpsCompositeElement parent) {
     if (!(parent instanceof JpsModule)) return null;
     JpsFlexBuildConfigurationManager manager = JpsFlexBuildConfigurationManagerImpl.getManager((JpsModule)parent);
     return manager != null ? manager.getContainer().getChild(JpsFlexBuildConfigurationImpl.COLLECTION_ROLE) : null;

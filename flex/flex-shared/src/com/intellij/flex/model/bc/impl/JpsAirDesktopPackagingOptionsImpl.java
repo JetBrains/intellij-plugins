@@ -7,9 +7,9 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.model.JpsElementCollection;
 import org.jetbrains.jps.model.JpsElementCreator;
 import org.jetbrains.jps.model.impl.JpsElementChildRoleBase;
-import org.jetbrains.jps.model.impl.JpsElementCollectionImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ class JpsAirDesktopPackagingOptionsImpl extends JpsAirPackagingOptionsBase<JpsAi
     setCustomDescriptorPath(state.CUSTOM_DESCRIPTOR_PATH);
     setPackageFileName(state.PACKAGE_FILE_NAME);
 
-    final JpsElementCollectionImpl<JpsAirPackageEntry> packageEntries = myContainer.getChild(JpsAirPackageEntryImpl.COLLECTION_ROLE);
+    final JpsElementCollection<JpsAirPackageEntry> packageEntries = myContainer.getChild(JpsAirPackageEntryImpl.COLLECTION_ROLE);
     assert packageEntries.getElements().isEmpty();
     for (JpsAirPackageEntryImpl.State f : state.FILES_TO_PACKAGE) {
       final JpsAirPackageEntry entry = ((JpsElementCreator<JpsAirPackageEntry>)JpsAirPackageEntryImpl.ROLE).create();

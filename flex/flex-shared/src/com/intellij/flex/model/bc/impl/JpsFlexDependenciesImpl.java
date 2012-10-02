@@ -14,13 +14,9 @@ import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.model.JpsDummyElement;
-import org.jetbrains.jps.model.JpsElementCreator;
-import org.jetbrains.jps.model.JpsElementFactory;
-import org.jetbrains.jps.model.JpsSimpleElement;
+import org.jetbrains.jps.model.*;
 import org.jetbrains.jps.model.impl.JpsCompositeElementBase;
 import org.jetbrains.jps.model.impl.JpsElementChildRoleBase;
-import org.jetbrains.jps.model.impl.JpsElementCollectionImpl;
 import org.jetbrains.jps.model.impl.JpsElementCollectionRole;
 import org.jetbrains.jps.model.library.JpsTypedLibrary;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
@@ -194,7 +190,7 @@ class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependencie
     myComponentSet = state.COMPONENT_SET;
     myFrameworkLinkage = JpsLinkageType.valueOf(state.FRAMEWORK_LINKAGE, DEFAULT_FRAMEWORK_LINKAGE);
 
-    final JpsElementCollectionImpl<JpsFlexDependencyEntry> entries = myContainer.getChild(ENTRIES_ROLE);
+    final JpsElementCollection<JpsFlexDependencyEntry> entries = myContainer.getChild(ENTRIES_ROLE);
     assert entries.getElements().size() == 0;
 
     for (State.EntryState entryState : state.ENTRIES) {

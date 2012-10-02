@@ -12,8 +12,8 @@ import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.JpsElementCollection;
 import org.jetbrains.jps.model.impl.JpsCompositeElementBase;
-import org.jetbrains.jps.model.impl.JpsElementCollectionImpl;
 import org.jetbrains.jps.model.module.JpsModule;
 
 import java.util.ArrayList;
@@ -105,7 +105,7 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
     //if (myModule == null) {
     //  throw new IllegalStateException("Cannot load state of a dummy config manager instance");
     //}
-    final JpsElementCollectionImpl<JpsFlexBuildConfiguration> bcs = myContainer.getChild(JpsFlexBuildConfigurationImpl.COLLECTION_ROLE);
+    final JpsElementCollection<JpsFlexBuildConfiguration> bcs = myContainer.getChild(JpsFlexBuildConfigurationImpl.COLLECTION_ROLE);
     LOG.assertTrue(bcs.getElements().size() == 0);
 
     for (JpsFlexBCState configurationState : state.CONFIGURATIONS) {
