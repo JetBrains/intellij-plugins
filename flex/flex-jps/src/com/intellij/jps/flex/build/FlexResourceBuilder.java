@@ -11,8 +11,11 @@ import com.intellij.util.PathUtilRt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.jps.JpsPathUtil;
 import org.jetbrains.jps.ModuleChunk;
+import org.jetbrains.jps.builders.DirtyFilesHolder;
+import org.jetbrains.jps.builders.FileProcessor;
 import org.jetbrains.jps.builders.storage.SourceToOutputMapping;
 import org.jetbrains.jps.incremental.*;
+import org.jetbrains.jps.incremental.fs.RootDescriptor;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
@@ -41,19 +44,21 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
     return "Flex Resource Builder";
   }
 
-  public ExitCode build(final CompileContext context, final ModuleChunk chunk) throws ProjectBuildException {
+  public ExitCode build(final CompileContext context,
+                        final ModuleChunk chunk,
+                        DirtyFilesHolder<RootDescriptor, ModuleBuildTarget> dirtyFilesHolder) throws ProjectBuildException {
     final ResourcePatterns patterns = ResourcePatterns.KEY.get(context);
     assert patterns != null;
 
     final Ref<Boolean> doneSomething = new Ref<Boolean>(false);
 
     try {
-      FSOperations.processFilesToRecompile(context, chunk, JpsFlexModuleType.INSTANCE, new FileProcessor() {
-        public boolean apply(final ModuleBuildTarget target, final File file, final String sourceRoot) throws IOException {
+      dirtyFilesHolder.processDirtyFiles(new FileProcessor<RootDescriptor, ModuleBuildTarget>() {
+        public boolean apply(final ModuleBuildTarget target, final File file, final RootDescriptor sourceRoot) throws IOException {
           final JpsTypedModule<JpsFlexBuildConfigurationManager> flexModule = target.getModule().asTyped(JpsFlexModuleType.INSTANCE);
-          assert flexModule != null; // filtered by moduleTypeFilter
+          if (flexModule == null) return true;
 
-          final String relativePath = FileUtil.getRelativePath(sourceRoot, FileUtil.toSystemIndependentName(file.getPath()), '/');
+          final String relativePath = FileUtil.toSystemIndependentName(FileUtil.getRelativePath(sourceRoot.root, file));
 
           final SourceToOutputMapping sourceToOutputMap = context.getProjectDescriptor().dataManager.getSourceToOutputMap(target);
 
@@ -80,7 +85,7 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
 
               final JpsFlexCompilerOptions.ResourceFilesMode mode = bc.getCompilerOptions().getResourceFilesMode();
               if (mode == JpsFlexCompilerOptions.ResourceFilesMode.All && !FlexCommonUtils.isSourceFile(file.getName()) ||
-                  mode == JpsFlexCompilerOptions.ResourceFilesMode.ResourcePatterns && patterns.isResourceFile(file, sourceRoot)) {
+                  mode == JpsFlexCompilerOptions.ResourceFilesMode.ResourcePatterns && patterns.isResourceFile(file, sourceRoot.root)) {
                 final String outputFolder = PathUtilRt.getParentPath(bc.getActualOutputFilePath());
                 targetPaths.add(outputFolder + "/" + relativePath);
               }
