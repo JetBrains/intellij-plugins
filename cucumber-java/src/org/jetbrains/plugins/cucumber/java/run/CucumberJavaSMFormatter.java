@@ -1,13 +1,16 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
-import gherkin.formatter.*;
 import gherkin.formatter.Formatter;
+import gherkin.formatter.Reporter;
 import gherkin.formatter.model.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Date;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * User: Andrey.Vokin
@@ -19,7 +22,7 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
   private static final String TEMPLATE_TEST_STARTED =
     "##teamcity[testStarted timestamp = '%s' locationHint = 'file:///%s' captureStandardOutput = 'true' name = '%s']";
   private static final String TEMPLATE_TEST_FAILED =
-    "##teamcity[testFailed timestamp = '%s' details = '%s' message = '%s' name = '%s']";
+    "##teamcity[testFailed timestamp = '%s' details = '%s' message = '%s' name = '%s' %s]";
   private static final String TEMPLATE_TEST_PENDING =
     "##teamcity[testIgnored name = '%s' message = 'Skipped step' timestamp = '%s']";
 
@@ -66,6 +69,9 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
   @Override
   public void scenario(Scenario scenario) {
     closeScenario();
+    if (scenario.getKeyword().equals("Scenario")) {
+      closeScenarioOutline();
+    }
     currentScenario = scenario;
     outCommand(String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), uri + ":" + scenario.getLine(), getName(currentScenario)));
 
@@ -117,9 +123,13 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
         details = "";
       }
 
-      outCommand(String.format(TEMPLATE_TEST_FAILED, getCurrentTime(), escape(details), escape(message), stepFullName), true);
+      outCommand(String.format(TEMPLATE_TEST_FAILED, getCurrentTime(), escape(details), escape(message), stepFullName, ""), true);
     } else if (result.getStatus().equals(RESULT_STATUS_PENDING)) {
       outCommand(String.format(TEMPLATE_TEST_PENDING, stepFullName, getCurrentTime()), true);
+    } else if (result.equals(Result.UNDEFINED)) {
+      String message = "Undefined step: " + getName(currentStep);
+      String details = "";
+      outCommand(String.format(TEMPLATE_TEST_FAILED, getCurrentTime(), escape(details), escape(message), stepFullName, "error = 'true'"), true);
     }
 
     String currentTime = getCurrentTime();
@@ -179,7 +189,6 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
 
   @Override
   public void match(Match match) {
-    int a = 10;
   }
 
   @Override
