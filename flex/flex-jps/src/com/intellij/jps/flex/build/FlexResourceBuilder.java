@@ -13,9 +13,9 @@ import org.jetbrains.jps.JpsPathUtil;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.FileProcessor;
+import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.builders.storage.SourceToOutputMapping;
 import org.jetbrains.jps.incremental.*;
-import org.jetbrains.jps.incremental.fs.RootDescriptor;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
@@ -46,15 +46,15 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
 
   public ExitCode build(final CompileContext context,
                         final ModuleChunk chunk,
-                        DirtyFilesHolder<RootDescriptor, ModuleBuildTarget> dirtyFilesHolder) throws ProjectBuildException {
+                        DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder) throws ProjectBuildException {
     final ResourcePatterns patterns = ResourcePatterns.KEY.get(context);
     assert patterns != null;
 
     final Ref<Boolean> doneSomething = new Ref<Boolean>(false);
 
     try {
-      dirtyFilesHolder.processDirtyFiles(new FileProcessor<RootDescriptor, ModuleBuildTarget>() {
-        public boolean apply(final ModuleBuildTarget target, final File file, final RootDescriptor sourceRoot) throws IOException {
+      dirtyFilesHolder.processDirtyFiles(new FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>() {
+        public boolean apply(final ModuleBuildTarget target, final File file, final JavaSourceRootDescriptor sourceRoot) throws IOException {
           final JpsTypedModule<JpsFlexBuildConfigurationManager> flexModule = target.getModule().asTyped(JpsFlexModuleType.INSTANCE);
           if (flexModule == null) return true;
 
