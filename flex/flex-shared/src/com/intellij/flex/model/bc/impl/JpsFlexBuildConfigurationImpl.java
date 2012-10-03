@@ -6,9 +6,9 @@ import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.model.impl.JpsElementChildRoleBase;
-import org.jetbrains.jps.model.impl.JpsElementCollectionRole;
-import org.jetbrains.jps.model.impl.JpsNamedCompositeElementBase;
+import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
+import org.jetbrains.jps.model.ex.JpsElementCollectionRole;
+import org.jetbrains.jps.model.ex.JpsNamedCompositeElementBase;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsModule;
 

@@ -5,7 +5,7 @@ import com.intellij.flex.model.bc.JpsLinkageType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsElementFactory;
-import org.jetbrains.jps.model.impl.JpsElementChildRoleBase;
+import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.JpsLibraryReference;
 import org.jetbrains.jps.model.serialization.library.JpsLibraryTableSerializer;

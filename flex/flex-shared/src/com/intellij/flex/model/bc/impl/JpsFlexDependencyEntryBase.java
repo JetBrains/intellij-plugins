@@ -3,7 +3,7 @@ package com.intellij.flex.model.bc.impl;
 import com.intellij.flex.model.bc.JpsFlexDependencyEntry;
 import com.intellij.flex.model.bc.JpsLinkageType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.model.impl.JpsCompositeElementBase;
+import org.jetbrains.jps.model.ex.JpsCompositeElementBase;
 
 abstract class JpsFlexDependencyEntryBase<Self extends JpsFlexDependencyEntryBase<Self>> extends JpsCompositeElementBase<Self>
   implements JpsFlexDependencyEntry {

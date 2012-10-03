@@ -13,7 +13,7 @@ import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsElementCollection;
-import org.jetbrains.jps.model.impl.JpsCompositeElementBase;
+import org.jetbrains.jps.model.ex.JpsCompositeElementBase;
 import org.jetbrains.jps.model.module.JpsModule;
 
 import java.util.ArrayList;

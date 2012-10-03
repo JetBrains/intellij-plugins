@@ -4,8 +4,8 @@ import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.JpsProject;
-import org.jetbrains.jps.model.impl.JpsElementBase;
-import org.jetbrains.jps.model.impl.JpsElementChildRoleBase;
+import org.jetbrains.jps.model.ex.JpsElementBase;
+import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
 
 public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompilerProjectExtension> {

@@ -6,8 +6,8 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.JpsElementCreator;
-import org.jetbrains.jps.model.impl.JpsElementBase;
-import org.jetbrains.jps.model.impl.JpsElementChildRoleBase;
+import org.jetbrains.jps.model.ex.JpsElementBase;
+import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 
 public class JpsAirSigningOptionsImpl extends JpsElementBase<JpsAirSigningOptionsImpl> implements JpsAirSigningOptions {
 

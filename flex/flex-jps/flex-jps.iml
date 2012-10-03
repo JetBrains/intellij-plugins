@@ -10,7 +10,6 @@
     <orderEntry type="module" module-name="flex-shared" />
     <orderEntry type="module" module-name="jps-builders" />
     <orderEntry type="module" module-name="jps-model-api" />
-    <orderEntry type="module" module-name="jps-model-impl" />
     <orderEntry type="module" module-name="jps-model-serialization" />
   </component>
 </module>

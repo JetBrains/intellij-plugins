@@ -8,7 +8,7 @@ import com.intellij.util.xmlb.annotations.Tag;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.model.impl.JpsElementBase;
+import org.jetbrains.jps.model.ex.JpsElementBase;
 
 import java.util.Collection;
 import java.util.Collections;

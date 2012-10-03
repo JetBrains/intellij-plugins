@@ -5,9 +5,9 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.JpsElementCreator;
-import org.jetbrains.jps.model.impl.JpsElementBase;
-import org.jetbrains.jps.model.impl.JpsElementChildRoleBase;
-import org.jetbrains.jps.model.impl.JpsElementCollectionRole;
+import org.jetbrains.jps.model.ex.JpsElementBase;
+import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
+import org.jetbrains.jps.model.ex.JpsElementCollectionRole;
 
 public class JpsAirPackageEntryImpl extends JpsElementBase<JpsAirPackageEntryImpl> implements JpsAirPackageEntry {
 

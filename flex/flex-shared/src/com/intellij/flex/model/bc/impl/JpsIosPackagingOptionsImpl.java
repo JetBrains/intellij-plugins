@@ -9,7 +9,7 @@ import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.JpsElementCollection;
 import org.jetbrains.jps.model.JpsElementCreator;
-import org.jetbrains.jps.model.impl.JpsElementChildRoleBase;
+import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 
 import java.util.ArrayList;
 import java.util.List;

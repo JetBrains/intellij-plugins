@@ -3,7 +3,7 @@ package com.intellij.flex.model.bc.impl;
 import com.intellij.flex.model.bc.JpsAirPackageEntry;
 import com.intellij.flex.model.bc.JpsAirSigningOptions;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.model.impl.JpsCompositeElementBase;
+import org.jetbrains.jps.model.ex.JpsCompositeElementBase;
 
 import java.util.List;
 

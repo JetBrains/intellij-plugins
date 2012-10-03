@@ -8,8 +8,8 @@ import com.intellij.util.xmlb.annotations.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.JpsProject;
-import org.jetbrains.jps.model.impl.JpsCompositeElementBase;
-import org.jetbrains.jps.model.impl.JpsElementChildRoleBase;
+import org.jetbrains.jps.model.ex.JpsCompositeElementBase;
+import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
 
 public class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompositeElementBase<JpsFlexProjectLevelCompilerOptionsExtension> {
