@@ -110,6 +110,6 @@ public class CucumberJavaRunConfigurationProducer extends JavaRuntimeConfigurati
   }
 
   protected boolean isApplicable(PsiElement locationElement, final Module module) {
-    return locationElement instanceof GherkinFile;
+    return locationElement != null && locationElement.getContainingFile() instanceof GherkinFile;
   }
 }
