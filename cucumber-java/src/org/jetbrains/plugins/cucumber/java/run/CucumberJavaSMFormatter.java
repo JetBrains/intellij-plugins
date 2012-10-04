@@ -35,8 +35,6 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
     "##teamcity[testSuiteStarted timestamp = '%s' locationHint = 'file://%s' name = '%s']";
   private static final String TEMPLATE_TEST_SUITE_FINISHED = "##teamcity[testSuiteFinished timestamp = '%s' name = '%s']";
 
-  private static final String TEMPLATE_CUSTOM_PROGRESS_STATUS =
-    "##teamcity[customProgressStatus type = '%s' timestamp = '']";
   public static final String RESULT_STATUS_PENDING = "pending";
 
   private Appendable appendable;
@@ -52,11 +50,13 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
 
   private Scenario currentScenario;
 
-  private Step currentStep;
+  private Queue<Step> currentSteps;
 
+  @SuppressWarnings("UnusedDeclaration")
   public CucumberJavaSMFormatter(Appendable appendable) {
     this.appendable = appendable;
     queue = new ArrayDeque<String>();
+    currentSteps = new ArrayDeque<Step>();
   }
 
   @Override
@@ -71,6 +71,7 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
     closeScenario();
     if (scenario.getKeyword().equals("Scenario")) {
       closeScenarioOutline();
+      currentSteps.clear();
     }
     currentScenario = scenario;
     outCommand(String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), uri + ":" + scenario.getLine(), getName(currentScenario)));
@@ -84,12 +85,14 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
   @Override
   public void scenarioOutline(ScenarioOutline outline) {
     queue.clear();
+    currentSteps.clear();
 
     closePreviousScenarios();
     currentScenarioOutline = outline;
     currentScenario = null;
     beforeExampleSection = true;
-    outCommand(String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), uri + ":" + outline.getLine(), getName(currentScenarioOutline)));
+    outCommand(
+      String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), uri + ":" + outline.getLine(), getName(currentScenarioOutline)));
   }
 
   @Override
@@ -103,12 +106,13 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
     if (beforeExampleSection) {
       return;
     }
-    currentStep = step;
-    outCommand(String.format(TEMPLATE_TEST_STARTED, getCurrentTime(), uri + ":" + step.getLine(), getName(currentStep)), true);
+    currentSteps.add(step);
+    outCommand(String.format(TEMPLATE_TEST_STARTED, getCurrentTime(), uri + ":" + step.getLine(), getName(step)), true);
   }
 
   @Override
   public void result(Result result) {
+    Step currentStep = currentSteps.poll();
     String stepFullName = getName(currentStep);
     if (result.getStatus().equals(Result.FAILED)) {
       String fullMessage = result.getErrorMessage().replace("\r", "").replace("\t", "  ");
@@ -118,18 +122,22 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
       if (messageInfo.length == 2) {
         message = messageInfo[0].trim();
         details = messageInfo[1].trim();
-      } else {
+      }
+      else {
         message = fullMessage;
         details = "";
       }
 
       outCommand(String.format(TEMPLATE_TEST_FAILED, getCurrentTime(), escape(details), escape(message), stepFullName, ""), true);
-    } else if (result.getStatus().equals(RESULT_STATUS_PENDING)) {
+    }
+    else if (result.getStatus().equals(RESULT_STATUS_PENDING)) {
       outCommand(String.format(TEMPLATE_TEST_PENDING, stepFullName, getCurrentTime()), true);
-    } else if (result.equals(Result.UNDEFINED)) {
+    }
+    else if (result.equals(Result.UNDEFINED)) {
       String message = "Undefined step: " + getName(currentStep);
       String details = "";
-      outCommand(String.format(TEMPLATE_TEST_FAILED, getCurrentTime(), escape(details), escape(message), stepFullName, "error = 'true'"), true);
+      outCommand(String.format(TEMPLATE_TEST_FAILED, getCurrentTime(), escape(details), escape(message), stepFullName, "error = 'true'"),
+                 true);
     }
 
     String currentTime = getCurrentTime();
@@ -222,28 +230,35 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
   private void outCommand(String s) {
     outCommand(s, false);
   }
+
   private void outCommand(String s, boolean waitForScenario) {
     if (currentScenario == null && waitForScenario) {
       queue.add(s);
-    } else {
+    }
+    else {
       try {
         appendable.append("\n");
         appendable.append(s);
         appendable.append("\n");
-      } catch (IOException ignored) {}
+      }
+      catch (IOException ignored) {
+      }
     }
   }
 
   private void out(String s) {
     try {
       appendable.append(s);
-    } catch (IOException ignored) {}
+    }
+    catch (IOException ignored) {
+    }
   }
 
   private String getName(Scenario scenario) {
     if (scenario.getKeyword().equals("Scenario Outline")) {
       return "Scenario: Line: " + scenario.getLine();
-    } else {
+    }
+    else {
       return "Scenario: " + scenario.getName();
     }
   }
