@@ -14,6 +14,8 @@ import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotatio
  * Date: 7/25/12
  */
 public class CucumberJavaUtil {
+  public static final String CUCUMBER_ANNOTATION_PREFIX = "cucumber.annotation.";
+
   public static boolean isCucumberAnnotation(@NotNull final PsiAnnotation annotation) {
     final Ref<String> qualifiedAnnotationName = new Ref<String>();
     ApplicationManager.getApplication().runReadAction(new Runnable() {
@@ -27,7 +29,8 @@ public class CucumberJavaUtil {
     if (qualifiedAnnotationName.get() == null) {
       return false;
     }
-    if (qualifiedAnnotationName.get().startsWith("cucumber.annotation.en")) {
+    String name = qualifiedAnnotationName.get();
+    if (name.startsWith(CUCUMBER_ANNOTATION_PREFIX) && name.substring(CUCUMBER_ANNOTATION_PREFIX.length()).contains(".")) {
       return true;
     } else {
       for (String providedAnnotations : CucumberJavaAnnotationProvider.getCucumberAnnotations()) {
