@@ -5,7 +5,6 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.FileContentUtil;
@@ -59,17 +58,10 @@ public class AddAdapterSupportIntentionAction implements IntentionAction {
           myAdapterSourceFilesProvider.get(),
           myAdapterHomePageUrl
         );
-        final AsyncResult<Boolean> result = dialog.showAndGetOk();
+        final boolean result = dialog.showAndGet();
         final VirtualFile virtualFile = file.getVirtualFile();
-        if (virtualFile != null) {
-          result.doWhenDone(new AsyncResult.Handler<Boolean>() {
-            @Override
-            public void run(Boolean ok) {
-              if (ok) {
-                FileContentUtil.reparseFiles(project, Arrays.<VirtualFile>asList(virtualFile), true);
-              }
-            }
-          });
+        if (virtualFile != null && result) {
+          FileContentUtil.reparseFiles(project, Arrays.<VirtualFile>asList(virtualFile), true);
         }
       }
     });
