@@ -12,6 +12,7 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
@@ -99,11 +100,17 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
         return debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
       }
     });
-    PrintWriter writer = new PrintWriter(executionResult.getProcessHandler().getProcessInput());
-    writer.println(TestRunner.DEBUG_SESSION_STARTED + "\n");
-    writer.flush();
+    resumeJstdClientRunning(executionResult.getProcessHandler());
 
     return xDebugSession.getRunContentDescriptor();
+  }
+
+  private static void resumeJstdClientRunning(@NotNull ProcessHandler processHandler) {
+    // process's input stream will be closed on process termination
+    @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+    PrintWriter writer = new PrintWriter(processHandler.getProcessInput());
+    writer.println(TestRunner.DEBUG_SESSION_STARTED);
+    writer.flush();
   }
 
 }
