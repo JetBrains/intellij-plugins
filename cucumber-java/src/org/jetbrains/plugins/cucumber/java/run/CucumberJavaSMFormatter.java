@@ -5,7 +5,6 @@ import gherkin.formatter.Reporter;
 import gherkin.formatter.model.*;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.Date;
@@ -200,7 +199,7 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
   }
 
   @Override
-  public void embedding(String s, InputStream inputStream) {
+  public void embedding(String mimeType, byte[] data) {
     outCommand("embedding\n");
   }
 
