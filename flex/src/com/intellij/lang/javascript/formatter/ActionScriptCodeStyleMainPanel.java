@@ -18,6 +18,7 @@ public class ActionScriptCodeStyleMainPanel extends TabbedLanguageCodeStylePanel
   protected void initTabs(CodeStyleSettings settings) {
     super.initTabs(settings);
     addTab(new ActionScriptCodeStylePanel(settings));
+    addTab(new ActionScriptArrangementPanel(settings));
   }
 
 }

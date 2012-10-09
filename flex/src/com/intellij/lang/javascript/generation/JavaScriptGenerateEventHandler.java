@@ -48,7 +48,7 @@ import java.util.List;
 
 public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
 
-  private static final String EVENT_BASE_CLASS_FQN = "flash.events.Event";
+  public static final String EVENT_BASE_CLASS_FQN = "flash.events.Event";
 
   protected String getTitleKey() {
     return ""; // not used in this action
