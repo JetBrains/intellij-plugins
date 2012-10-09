@@ -7,6 +7,7 @@ import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.junit.JavaRuntimeConfigurationProducerBase;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +51,10 @@ public class CucumberJavaRunConfigurationProducer extends JavaRuntimeConfigurati
         PsiElement refElement = ref.resolve();
         if (refElement != null && refElement instanceof PsiMethod) {
           PsiJavaFile javaFile = (PsiJavaFile)refElement.getContainingFile();
-          return " --glue " + javaFile.getPackageName();
+          final String packageName = javaFile.getPackageName();
+          if (StringUtil.isNotEmpty(packageName)) {
+            return " --glue " + packageName;
+          }
         }
       }
     }
@@ -91,11 +95,11 @@ public class CucumberJavaRunConfigurationProducer extends JavaRuntimeConfigurati
     String glue = getGlue(mySourceElement);
     configuration.setProgramParameters(file.getPath() + glue + " --format org.jetbrains.plugins.cucumber.java.run.CucumberJavaSMFormatter --monochrome");
     configuration.MAIN_CLASS_NAME = "cucumber.cli.Main";
-    if (mySourceElement instanceof PsiNamedElement) {
-      if (mySourceElement instanceof GherkinFile) {
-        configuration.setName(((GherkinFile)mySourceElement).getVirtualFile().getNameWithoutExtension());
-      } else {
-        configuration.setName(((PsiNamedElement)mySourceElement).getName());
+    final PsiFile fileToRun = mySourceElement.getContainingFile();
+    if (fileToRun != null) {
+      final VirtualFile virtualFeatureFile = fileToRun.getVirtualFile();
+      if (virtualFeatureFile != null) {
+        configuration.setName(virtualFeatureFile.getNameWithoutExtension());
       }
     }
 
