@@ -170,6 +170,7 @@ public abstract class LoggerAdapter implements Logger {
   }
 
   private static String appendSource(final String message, final String source) {
-    return message + ", source" + source;
+//    return message + ", source" + source;
+    return message; // source code in compiler output gives only noise and no useful information
   }
 }
