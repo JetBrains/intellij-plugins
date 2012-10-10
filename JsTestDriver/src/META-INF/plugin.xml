@@ -61,7 +61,7 @@
 
   <change-notes>
     <![CDATA[
-Plugin version: ${version}, JsTestDriver-1.3.4.b
+Plugin version: ${version}, <a href="http://confluence.jetbrains.com/display/WI/Patched+JsTestDriver-1.3.5">patched JsTestDriver-1.3.5</a>
   ]]>
   </change-notes>
 </idea-plugin>
