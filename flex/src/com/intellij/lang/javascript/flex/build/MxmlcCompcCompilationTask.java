@@ -30,6 +30,7 @@ public class MxmlcCompcCompilationTask extends FlexCompilationTask {
   protected void doStart(final FlexCompilationManager compilationManager) throws IOException {
     final boolean app = myBC.getOutputType() != OutputType.Library;
     final Sdk sdk = myBC.getSdk();
+    assert sdk != null;
 
     final List<String> compilerCommand = FlexCompilationUtils.getMxmlcCompcCommand(myModule.getProject(), sdk, app);
     final List<String> command = FlexCompilationUtils.buildCommand(compilerCommand, getConfigFiles(), myModule, myBC);

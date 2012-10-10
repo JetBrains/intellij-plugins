@@ -18,6 +18,7 @@ public class FlexCompilerProjectConfiguration implements PersistentStateComponen
   public boolean USE_BUILT_IN_COMPILER = true;
   public boolean USE_FCSH = false;
   public boolean USE_MXMLC_COMPC = false;
+  public boolean PREFER_ASC_20 = false;
   public int MAX_PARALLEL_COMPILATIONS = 4;
   public int HEAP_SIZE_MB = 512;
   public String VM_OPTIONS = "";

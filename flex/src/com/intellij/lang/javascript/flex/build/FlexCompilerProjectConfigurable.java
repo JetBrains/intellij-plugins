@@ -23,6 +23,8 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
   private JRadioButton myBuiltInCompilerRadioButton;
   private JRadioButton myFcshRadioButton;
   private JRadioButton myMxmlcCompcRadioButton;
+  private JCheckBox myPreferASC20CheckBox;
+
   private JSpinner myParallelCompilationsAmountSpinner;
   private JTextField myHeapSizeTextField;
   private RawCommandLineEditor myVMOptionsEditor;
@@ -95,6 +97,7 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     return myConfig.USE_FCSH != myFcshRadioButton.isSelected() ||
            myConfig.USE_MXMLC_COMPC != myMxmlcCompcRadioButton.isSelected() ||
            myConfig.USE_BUILT_IN_COMPILER != myBuiltInCompilerRadioButton.isSelected() ||
+           myConfig.PREFER_ASC_20 != myPreferASC20CheckBox.isSelected() ||
            !myHeapSizeTextField.getText().trim().equals(String.valueOf(myConfig.HEAP_SIZE_MB)) ||
            !myVMOptionsEditor.getText().trim().equals(myConfig.VM_OPTIONS);
   }
@@ -110,6 +113,7 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     myConfig.USE_BUILT_IN_COMPILER = myBuiltInCompilerRadioButton.isSelected();
     myConfig.USE_FCSH = myFcshRadioButton.isSelected();
     myConfig.USE_MXMLC_COMPC = myMxmlcCompcRadioButton.isSelected();
+    myConfig.PREFER_ASC_20 = myPreferASC20CheckBox.isSelected();
     myConfig.MAX_PARALLEL_COMPILATIONS = (Integer)myParallelCompilationsAmountSpinner.getValue();
 
     try {
@@ -132,6 +136,7 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     myBuiltInCompilerRadioButton.setSelected(myConfig.USE_BUILT_IN_COMPILER);
     myFcshRadioButton.setSelected(myConfig.USE_FCSH);
     myMxmlcCompcRadioButton.setSelected(myConfig.USE_MXMLC_COMPC);
+    myPreferASC20CheckBox.setSelected(myConfig.PREFER_ASC_20);
     myParallelCompilationsAmountSpinner.setValue(myConfig.MAX_PARALLEL_COMPILATIONS);
     myHeapSizeTextField.setText(String.valueOf(myConfig.HEAP_SIZE_MB));
     myVMOptionsEditor.setText(myConfig.VM_OPTIONS);

@@ -142,19 +142,27 @@ public class FlexCompilationUtils {
   }
 
   static List<String> getMxmlcCompcCommand(final Project project, final Sdk flexSdk, final boolean isApp) {
-    final List<String> command = new ArrayList<String>();
-
-    final String className =
-      isApp ? (FlexSdkUtils.isFlex4Sdk(flexSdk) ? "flex2.tools.Mxmlc" : "flex2.tools.Compiler") : "flex2.tools.Compc";
+    final String mainClass = isApp
+                             ? (FlexSdkUtils.isFlex4Sdk(flexSdk) ? "flex2.tools.Mxmlc" : "flex2.tools.Compiler")
+                             : "flex2.tools.Compc";
 
     String additionalClasspath = FileUtil.toSystemDependentName(FlexUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
+
     if (!(flexSdk.getSdkType() instanceof FlexmojosSdkType)) {
       additionalClasspath += File.pathSeparator + FileUtil.toSystemDependentName(flexSdk.getHomePath() + "/lib/compc.jar");
     }
 
-    command.addAll(FlexSdkUtils.getCommandLineForSdkTool(project, flexSdk, additionalClasspath, className, null));
+    return FlexSdkUtils.getCommandLineForSdkTool(project, flexSdk, additionalClasspath, mainClass, null);
+  }
 
-    return command;
+  static List<String> getASC20Command(final Project project, final Sdk flexSdk, final boolean isApp) {
+    final String mainClass = isApp ? "com.adobe.flash.compiler.clients.MXMLC" : "com.adobe.flash.compiler.clients.COMPC";
+
+    final String additionalClasspath = flexSdk.getSdkType() instanceof FlexmojosSdkType
+                                       ? null
+                                       : FileUtil.toSystemDependentName(flexSdk.getHomePath() + "/lib/compiler.jar");
+
+    return FlexSdkUtils.getCommandLineForSdkTool(project, flexSdk, additionalClasspath, mainClass, null);
   }
 
   /**
@@ -168,39 +176,39 @@ public class FlexCompilationUtils {
 
     while (tokenizer.hasMoreElements()) {
       final String text = tokenizer.nextElement();
-      if (!StringUtil.isEmptyOrSpaces(text)) {
 
-        final Matcher matcher = FlexCompilerHandler.errorPattern.matcher(text);
+      if (StringUtil.isEmptyOrSpaces(text)) continue;
 
-        if (matcher.matches()) {
-          final String file = matcher.group(1);
-          final String additionalInfo = matcher.group(2);
-          final String line = matcher.group(3);
-          final String column = matcher.group(4);
-          final String type = matcher.group(5);
-          final String message = matcher.group(6);
+      final Matcher matcher = FlexCompilerHandler.errorPattern.matcher(text);
 
-          final CompilerMessageCategory messageCategory =
-            "Warning".equals(type) ? CompilerMessageCategory.WARNING : CompilerMessageCategory.ERROR;
-          final VirtualFile relativeFile = VfsUtil.findRelativeFile(file, null);
+      if (matcher.matches()) {
+        final String filePath = matcher.group(1);
+        final String additionalInfo = matcher.group(2);
+        final String line = matcher.group(3);
+        final String column = matcher.group(4);
+        final String type = matcher.group(5);
+        final String message = matcher.group(6);
 
-          final StringBuilder fullMessage = new StringBuilder();
-          if (relativeFile == null) fullMessage.append(file).append(": ");
-          if (additionalInfo != null) fullMessage.append(additionalInfo).append(' ');
-          fullMessage.append(message);
+        final CompilerMessageCategory messageCategory = "Warning".equals(type) ? CompilerMessageCategory.WARNING
+                                                                               : CompilerMessageCategory.ERROR;
+        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(filePath);
 
-          compilationManager.addMessage(task, messageCategory, fullMessage.toString(), relativeFile != null ? relativeFile.getUrl() : null,
-                                        line != null ? Integer.parseInt(line) : 0, column != null ? Integer.parseInt(column) : 0);
-          failureDetected |= messageCategory == CompilerMessageCategory.ERROR;
-        }
-        else if (text.startsWith("Error: ") || text.startsWith("Exception in thread \"main\" ")) {
-          final String updatedText = text.startsWith("Error: ") ? text.substring("Error: ".length()) : text;
-          compilationManager.addMessage(task, CompilerMessageCategory.ERROR, updatedText, null, -1, -1);
-          failureDetected = true;
-        }
-        else {
-          compilationManager.addMessage(task, CompilerMessageCategory.INFORMATION, text, null, -1, -1);
-        }
+        final StringBuilder fullMessage = new StringBuilder();
+        if (file == null) fullMessage.append(filePath).append(": ");
+        if (additionalInfo != null) fullMessage.append(additionalInfo).append(' ');
+        fullMessage.append(message);
+
+        compilationManager.addMessage(task, messageCategory, fullMessage.toString(), file != null ? file.getUrl() : null,
+                                      line != null ? Integer.parseInt(line) : 0, column != null ? Integer.parseInt(column) : 0);
+        failureDetected |= messageCategory == CompilerMessageCategory.ERROR;
+      }
+      else if (text.startsWith("Error: ") || text.startsWith("Exception in thread \"")) {
+        final String updatedText = text.startsWith("Error: ") ? text.substring("Error: ".length()) : text;
+        compilationManager.addMessage(task, CompilerMessageCategory.ERROR, updatedText, null, -1, -1);
+        failureDetected = true;
+      }
+      else {
+        compilationManager.addMessage(task, CompilerMessageCategory.INFORMATION, text, null, -1, -1);
       }
     }
 

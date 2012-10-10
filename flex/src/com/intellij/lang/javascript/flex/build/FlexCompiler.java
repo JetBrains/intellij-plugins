@@ -16,6 +16,8 @@ import com.intellij.lang.javascript.flex.projectStructure.ui.*;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
+import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.*;
@@ -26,6 +28,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
@@ -118,18 +121,23 @@ public class FlexCompiler implements SourceProcessingCompiler {
       return ProcessingItem.EMPTY_ARRAY;
     }
     else {
-      boolean builtIn = flexCompilerConfiguration.USE_BUILT_IN_COMPILER;
+      boolean builtInCompilerShell = flexCompilerConfiguration.USE_BUILT_IN_COMPILER;
       final Sdk commonSdk = getSdkIfSame(items);
 
-      if (builtIn && commonSdk == null) {
-        builtIn = false;
+      if (builtInCompilerShell && commonSdk == null) {
+        builtInCompilerShell = false;
         flexCompilerHandler.getBuiltInFlexCompilerHandler().stopCompilerProcess();
         context.addMessage(CompilerMessageCategory.INFORMATION, FlexBundle.message("can.not.use.built.in.compiler.shell"), null, -1, -1);
       }
 
-      context.addMessage(CompilerMessageCategory.INFORMATION,
-                         FlexBundle.message(builtIn ? "using.builtin.compiler" : "using.mxmlc.compc",
-                                            flexCompilerConfiguration.MAX_PARALLEL_COMPILATIONS), null, -1, -1);
+      final StringBuilder buf = new StringBuilder();
+      buf.append(FlexBundle.message(builtInCompilerShell ? "using.builtin.compiler" : "using.mxmlc.compc",
+                                    flexCompilerConfiguration.MAX_PARALLEL_COMPILATIONS));
+      if (flexCompilerConfiguration.PREFER_ASC_20) buf.append(FlexBundle.message("or.asc.2.0"));
+      buf.append("\n").append(FlexBundle.message("see.flex.compiler.page"));
+
+      context.addMessage(CompilerMessageCategory.INFORMATION, buf.toString(), null, -1, -1);
+
       final Collection<FlexCompilationTask> compilationTasks = new ArrayList<FlexCompilationTask>();
       for (final ProcessingItem item : items) {
         final Collection<FlexIdeBuildConfiguration> dependencies = new HashSet<FlexIdeBuildConfiguration>();
@@ -145,8 +153,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
           }
         }
 
-        compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies)
-                                     : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies));
+        compilationTasks.add(createCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies, builtInCompilerShell));
 
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
           for (FlexIdeBuildConfiguration.RLMInfo rlm : bc.getRLMs()) {
@@ -176,8 +183,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
             compilerOptions.setResourceFilesMode(ResourceFilesMode.None);
             compilerOptions.setAdditionalOptions(FlexUtils.removeOptions(compilerOptions.getAdditionalOptions(), "link-report"));
 
-            compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, rlmBC, dependencies)
-                                         : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, rlmBC, dependencies));
+            compilationTasks.add(createCompilationTask(((MyProcessingItem)item).myModule, rlmBC, dependencies, builtInCompilerShell));
           }
 
           for (String cssPath : bc.getCssFilesToCompile()) {
@@ -204,13 +210,12 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
             cssBC.getCompilerOptions().setResourceFilesMode(ResourceFilesMode.None);
 
-            compilationTasks.add(builtIn ? new BuiltInCompilationTask(((MyProcessingItem)item).myModule, cssBC, dependencies)
-                                         : new MxmlcCompcCompilationTask(((MyProcessingItem)item).myModule, cssBC, dependencies));
+            compilationTasks.add(createCompilationTask(((MyProcessingItem)item).myModule, cssBC, dependencies, builtInCompilerShell));
           }
         }
       }
 
-      if (builtIn) {
+      if (builtInCompilerShell) {
         try {
           flexCompilerHandler.getBuiltInFlexCompilerHandler().startCompilerIfNeeded(commonSdk, context);
         }
@@ -245,6 +250,35 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
       return items;
     }
+  }
+
+  private static FlexCompilationTask createCompilationTask(final Module module,
+                                                           final FlexIdeBuildConfiguration bc,
+                                                           final Collection<FlexIdeBuildConfiguration> dependencies,
+                                                           final boolean builtInCompilerShell) {
+    final boolean asc20 = bc.isPureAs() &&
+                          FlexCompilerProjectConfiguration.getInstance(module.getProject()).PREFER_ASC_20 &&
+                          containsASC20(bc.getSdk());
+    if (asc20) return new ASC20CompilationTask(module, bc, dependencies);
+    if (builtInCompilerShell) return new BuiltInCompilationTask(module, bc, dependencies);
+    return new MxmlcCompcCompilationTask(module, bc, dependencies);
+  }
+
+  private static boolean containsASC20(final Sdk sdk) {
+    if (sdk.getSdkType() == FlexmojosSdkType.getInstance()) {
+      final SdkAdditionalData data = sdk.getSdkAdditionalData();
+      if (data instanceof FlexmojosSdkAdditionalData) {
+        for (String path : ((FlexmojosSdkAdditionalData)data).getFlexCompilerClasspath()) {
+          final String fileName = PathUtil.getFileName(path);
+          if (fileName.startsWith("compiler-") && fileName.endsWith(".jar") && new File(path).isFile()) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    return new File(sdk.getHomePath() + "/lib/compiler.jar").isFile();
   }
 
   @SuppressWarnings("ConstantConditions") // already checked in validateConfiguration()
