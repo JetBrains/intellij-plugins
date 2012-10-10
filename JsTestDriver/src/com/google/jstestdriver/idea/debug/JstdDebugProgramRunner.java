@@ -78,7 +78,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     if (!debugEngine.prepareDebugger(project)) return null;
 
     final String url;
-    final Connection connection = debugEngine.openConnection();
+    final Connection connection = debugEngine.openConnection(false);
     if (debugEngine instanceof ChromeDebuggerEngine) {
       url = "http://localhost:" + JstdToolWindowPanel.serverPort + debugBrowserInfo.getCapturedBrowserUrl();
     }
