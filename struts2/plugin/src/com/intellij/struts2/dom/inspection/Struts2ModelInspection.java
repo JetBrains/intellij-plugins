@@ -27,6 +27,7 @@ import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.struts2.dom.struts.HasResultType;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
+import com.intellij.struts2.dom.struts.action.ActionMethodConverter;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.action.StrutsPathReferenceConverter;
 import com.intellij.struts2.dom.struts.impl.path.ResultTypeResolver;
@@ -103,6 +104,12 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
     }
 
     final String stringValue = value.getStringValue();
+
+    // suppress <action> "method" when using wildcards
+    if (converter instanceof ActionMethodConverter &&
+        ConverterUtil.hasWildcardReference(stringValue)) {
+      return false;
+    }
 
     // suppress <result> path
     if (converter instanceof StrutsPathReferenceConverter) {
