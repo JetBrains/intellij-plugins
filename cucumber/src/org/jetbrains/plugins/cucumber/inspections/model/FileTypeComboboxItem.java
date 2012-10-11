@@ -1,6 +1,7 @@
 package org.jetbrains.plugins.cucumber.inspections.model;
 
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,7 +21,7 @@ public class FileTypeComboboxItem {
 
   @Override
   public String toString() {
-    return myFileType.getName();
+    return StringUtil.capitalizeWords(myFileType.getName().toLowerCase(), true);
   }
 
   public FileType getFileType() {
