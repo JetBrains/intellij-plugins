@@ -25,7 +25,6 @@ import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -34,8 +33,11 @@ import java.util.Set;
  */
 public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
   @Override
-  public boolean isStepLikeFile(@NotNull PsiElement child, @NotNull PsiElement parent) {
-    return child instanceof PsiJavaFile && ((PsiJavaFile)child).getName().toLowerCase(Locale.ENGLISH).endsWith("stepdefs.java");
+  public boolean isStepLikeFile(@NotNull final PsiElement child, @NotNull final PsiElement parent) {
+    if (child instanceof PsiJavaFile) {
+      return CucumberJavaUtil.isUnderTestSources(child);
+    }
+    return false;
   }
 
   @NotNull
@@ -69,7 +71,7 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
   @NotNull
   @Override
   public String getDefaultStepFileName() {
-    return "StepDef";
+    return "MyStepdefs";
   }
 
   @Override

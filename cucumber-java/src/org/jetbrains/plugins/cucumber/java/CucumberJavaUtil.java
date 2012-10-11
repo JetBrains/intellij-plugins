@@ -1,7 +1,9 @@
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -15,6 +17,12 @@ import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotatio
  */
 public class CucumberJavaUtil {
   public static final String CUCUMBER_ANNOTATION_PREFIX = "cucumber.annotation.";
+
+  public static boolean isUnderTestSources(@NotNull final PsiElement element) {
+    final ProjectRootManager rootManager = ProjectRootManager.getInstance(element.getProject());
+    final VirtualFile file = element.getContainingFile().getVirtualFile();
+    return file != null && rootManager.getFileIndex().isInTestSourceContent(file);
+  }
 
   public static boolean isCucumberAnnotation(@NotNull final PsiAnnotation annotation) {
     final Ref<String> qualifiedAnnotationName = new Ref<String>();
@@ -58,7 +66,7 @@ public class CucumberJavaUtil {
     final PsiAnnotation[] annotations = method.getModifierList().getAnnotations();
 
     for (PsiAnnotation annotation : annotations) {
-      if (annotation != null && CucumberJavaUtil.isCucumberAnnotation(annotation)) {
+      if (annotation != null && isCucumberAnnotation(annotation)) {
         return annotation;
       }
     }
