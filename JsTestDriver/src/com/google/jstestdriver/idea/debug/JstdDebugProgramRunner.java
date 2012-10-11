@@ -5,8 +5,7 @@ import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.JstdRunConfigurationVerifier;
 import com.google.jstestdriver.idea.execution.JstdTestRunnerCommandLineState;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
-import com.intellij.chromeConnector.connection.ChromeConnectionManager;
-import com.intellij.chromeConnector.connection.impl.ExistentTabProviderFactory;
+import com.intellij.chromeConnector.connection.V8Connection;
 import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -23,10 +22,12 @@ import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
 import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.Consumer;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import org.chromium.sdk.JavascriptVm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +38,6 @@ import java.io.PrintWriter;
  * @author Sergey Simonchik
  */
 public class JstdDebugProgramRunner extends GenericProgramRunner {
-
   private static final String DEBUG_RUNNER_ID = JstdDebugProgramRunner.class.getSimpleName();
 
   @NotNull
@@ -78,19 +78,14 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     FileDocumentManager.getInstance().saveAllDocuments();
 
     final JSDebugEngine<Connection> debugEngine = debugBrowserInfo.getDebugEngine();
+    if (!debugEngine.prepareDebugger(project)) return null;
 
     final String url;
-    final Connection connection;
+    final Connection connection = debugEngine.openConnection(false);
     if (debugEngine instanceof ChromeDebuggerEngine) {
-      ChromeConnectionManager chromeConnectionManager = ChromeConnectionManager.getInstance();
-      ExistentTabProviderFactory tabProviderFactory = ExistentTabProviderFactory.getInstance();
-      //noinspection unchecked
-      connection = (Connection) chromeConnectionManager.createConnection(tabProviderFactory);
       url = "http://localhost:" + JstdToolWindowPanel.serverPort + debugBrowserInfo.getCapturedBrowserUrl();
     }
     else {
-      if (!debugEngine.prepareDebugger(project)) return null;
-      connection = debugEngine.openConnection();
       url = null;
     }
 
@@ -106,10 +101,15 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
         JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
+        ((V8Connection)debugProcess.getBrowserConnection()).queueRequest(new Consumer<JavascriptVm>() {
+          @Override
+          public void consume(JavascriptVm javascriptVm) {
+            resumeJstdClientRunning(executionResult.getProcessHandler());
+          }
+        });
         return debugProcess;
       }
     });
-    resumeJstdClientRunning(executionResult.getProcessHandler());
 
     return xDebugSession.getRunContentDescriptor();
   }
@@ -121,5 +121,4 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     writer.println(TestRunner.DEBUG_SESSION_STARTED);
     writer.flush();
   }
-
 }
