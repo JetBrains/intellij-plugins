@@ -47,7 +47,7 @@ public final class StrutsIcons {
   /**
    * Vertical offset for small overlay icons.
    */
-  static final int OVERLAY_Y_OFFSET = 6;
+  static final int OVERLAY_Y_OFFSET = 7;
 
   /**
    * Horizontal offset for small overlay icons.
