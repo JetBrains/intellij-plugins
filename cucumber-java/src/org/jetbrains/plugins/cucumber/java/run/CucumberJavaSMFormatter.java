@@ -255,18 +255,18 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
 
   private String getName(Scenario scenario) {
     if (scenario.getKeyword().equals("Scenario Outline")) {
-      return "Scenario: Line: " + scenario.getLine();
+      return escape("Scenario: Line: " + scenario.getLine());
     }
     else {
-      return "Scenario: " + scenario.getName();
+      return escape("Scenario: " + scenario.getName());
     }
   }
 
   private String getName(ScenarioOutline outline) {
-    return "Scenario Outline: " + outline.getName();
+    return escape("Scenario Outline: " + outline.getName());
   }
 
   private String getName(Step step) {
-    return step.getKeyword() + " " + step.getName();
+    return escape(step.getKeyword() + " " + step.getName());
   }
 }
