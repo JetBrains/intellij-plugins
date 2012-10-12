@@ -5,6 +5,7 @@ import gherkin.formatter.Reporter;
 import gherkin.formatter.model.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.Date;
@@ -60,7 +61,10 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
 
   @Override
   public void feature(Feature feature) {
-    currentFeatureName = "Feature: " + feature.getName();
+    if (currentFeatureName != null) {
+      done();
+    }
+    currentFeatureName = "Feature: " + getName(feature);
     outCommand(String.format(TEMPLATE_ENTER_THE_MATRIX, getCurrentTime()));
     outCommand(String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), uri + ":" + feature.getLine(), currentFeatureName));
   }
@@ -198,8 +202,11 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
   public void match(Match match) {
   }
 
-  @Override
   public void embedding(String mimeType, byte[] data) {
+    outCommand("embedding\n");
+  }
+
+  public void embedding(String s, InputStream inputStream) {
     outCommand("embedding\n");
   }
 
@@ -268,5 +275,9 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
 
   private String getName(Step step) {
     return escape(step.getKeyword() + " " + step.getName());
+  }
+
+  private String getName(Feature feature) {
+    return escape(feature.getName());
   }
 }
