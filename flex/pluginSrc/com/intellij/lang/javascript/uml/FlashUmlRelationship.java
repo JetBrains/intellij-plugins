@@ -16,7 +16,7 @@ import java.awt.*;
 /**
  * User: ksafonov
  */
-public interface FlashDiagramRelationship extends DiagramRelationshipInfo {
+public interface FlashUmlRelationship extends DiagramRelationshipInfo {
 
   @NotNull
   String getType();
@@ -39,27 +39,27 @@ public interface FlashDiagramRelationship extends DiagramRelationshipInfo {
 
   class Factory {
 
-    public static FlashDiagramRelationship dependency(@Nullable String label, @NotNull PsiElement element) {
+    public static FlashUmlRelationship dependency(@Nullable String label, @NotNull PsiElement element) {
       return new Impl(TYPE_DEPENDENCY, DiagramLineType.DASHED, StringUtil.notNullize(label), null, null, 1,
                       DiagramRelationships.getAngleArrow(), null, element, label != null);
     }
 
-    public static FlashDiagramRelationship create(@NotNull PsiElement element) {
+    public static FlashUmlRelationship create(@NotNull PsiElement element) {
       return new Impl(TYPE_CREATE, DiagramLineType.DASHED, DiagramRelationships.CREATE.getLabel(), null, null, 1,
                       DiagramRelationships.getAngleArrow(), null, element, false);
     }
 
-    public static FlashDiagramRelationship oneToOne(String label, @NotNull PsiElement element) {
+    public static FlashUmlRelationship oneToOne(String label, @NotNull PsiElement element) {
       return new Impl(TYPE_ONE_TO_ONE, DiagramLineType.SOLID, label, "1", "1", 1, DiagramRelationships.getAngleArrow(), DIAMOND, element,
                       true);
     }
 
-    public static FlashDiagramRelationship oneToMany(String label, @NotNull PsiElement element) {
+    public static FlashUmlRelationship oneToMany(String label, @NotNull PsiElement element) {
       return new Impl(TYPE_ONE_TO_MANY, DiagramLineType.SOLID, label, "1", "*", 1, DiagramRelationships.getAngleArrow(), DIAMOND, element,
                       true);
     }
 
-    private static class Impl extends DiagramRelationshipInfoAdapter implements FlashDiagramRelationship {
+    private static class Impl extends DiagramRelationshipInfoAdapter implements FlashUmlRelationship {
 
       private final String myType;
       private final Shape myStartArrow;

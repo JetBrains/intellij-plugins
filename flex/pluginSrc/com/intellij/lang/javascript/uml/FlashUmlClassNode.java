@@ -20,8 +20,8 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.diagram.DiagramProvider;
 import com.intellij.diagram.PsiDiagramNode;
 
-public class JSClassNode extends PsiDiagramNode {
-  public JSClassNode(final JSClass clazz, DiagramProvider provider) {
+public class FlashUmlClassNode extends PsiDiagramNode {
+  public FlashUmlClassNode(final JSClass clazz, DiagramProvider provider) {
     super(clazz, provider);
   }
 

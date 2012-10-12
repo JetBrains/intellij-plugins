@@ -31,7 +31,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.project.Project;
@@ -57,7 +56,7 @@ import java.util.concurrent.Callable;
  * @author Konstantin Bulenkov
  * @author Kirill Safonov
  */
-public class JSUmlDataModel extends DiagramDataModel<Object> {
+public class FlashUmlDataModel extends DiagramDataModel<Object> {
   private final Map<String, SmartPsiElementPointer<JSClass>> classesAddedByUser = new HashMap<String, SmartPsiElementPointer<JSClass>>();
   private final Map<String, SmartPsiElementPointer<JSClass>> classesRemovedByUser = new HashMap<String, SmartPsiElementPointer<JSClass>>();
   private final String initialPackage;
@@ -68,7 +67,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
   private final VirtualFile myEditorFile;
   private final SmartPointerManager spManager;
 
-  public JSUmlDataModel(final Project project, Object element, final VirtualFile file, DiagramProvider<Object> provider) {
+  public FlashUmlDataModel(final Project project, Object element, final VirtualFile file, DiagramProvider<Object> provider) {
     super(project, provider);
     myEditorFile = file;
     spManager = SmartPointerManager.getInstance(project);
@@ -280,13 +279,13 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
     for (String psiPackage : packages) {
 
-      if (JSElementManager.packageExists(getProject(), psiPackage, GlobalSearchScope.allScope(getProject()))) {
-        myNodes.add(new JSPackageNode(psiPackage, getProvider()));
+      if (FlashUmlElementManager.packageExists(getProject(), psiPackage, GlobalSearchScope.allScope(getProject()))) {
+        myNodes.add(new FlashUmlPackageNode(psiPackage, getProvider()));
       }
     }
     for (JSClass psiClass : classes) {
       if (isAllowedToShow(psiClass)) {
-        myNodes.add(new JSClassNode(psiClass, getProvider()));
+        myNodes.add(new FlashUmlClassNode(psiClass, getProvider()));
       }
 
       if (psiClass.isInterface()) {
@@ -309,7 +308,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
           if (!((JSClass)getIdentifyingElement(source)).isInterface() ||
               !JSResolveUtil.isObjectClass((JSClass)getIdentifyingElement(target))) {
             addEdge(source, target,
-                    psiClass.isInterface() ? FlashDiagramRelationship.INTERFACE_GENERALIZATION : FlashDiagramRelationship.GENERALIZATION);
+                    psiClass.isInterface() ? FlashUmlRelationship.INTERFACE_GENERALIZATION : FlashUmlRelationship.GENERALIZATION);
           }
         }
       }
@@ -319,7 +318,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
           DiagramNode<Object> source = findNode(psiClass);
           DiagramNode<Object> target = findNode(inter);
           if (source != null && target != null && source != target) {
-            addEdge(source, target, FlashDiagramRelationship.REALIZATION);
+            addEdge(source, target, FlashUmlRelationship.REALIZATION);
           }
         }
       }
@@ -332,7 +331,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
             DiagramNode<Object> source = findNode(psiClass);
             DiagramNode<Object> target = findNode(inter);
             if (source != null && target != null && source != target) {
-              addEdge(source, target, FlashDiagramRelationship.INTERFACE_GENERALIZATION);
+              addEdge(source, target, FlashUmlRelationship.INTERFACE_GENERALIZATION);
             }
           }
         }
@@ -361,7 +360,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
             DiagramNode<Object> source = findNode(psiClass);
             DiagramNode<Object> target = findNode(inter);
             if (source != null && target != null && source != target) {
-              addEdge(source, target, FlashDiagramRelationship.REALIZATION);
+              addEdge(source, target, FlashUmlRelationship.REALIZATION);
             }
             faces.remove(inter);
           }
@@ -374,7 +373,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     }
 
     if (isShowDependencies()) {
-      final EnumSet<JSDependenciesSettingsOption> options = JSDependenciesSettingsOption.getEnabled();
+      final EnumSet<FlashUmlDependenciesSettingsOption> options = FlashUmlDependenciesSettingsOption.getEnabled();
       for (JSClass psiClass : classes) {
         showDependenciesFor(psiClass, options);
       }
@@ -385,14 +384,14 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     mergeWithBackup(myDependencyEdges, myDependencyEdgesOld);
   }
 
-  private void showDependenciesFor(final JSClass clazz, final EnumSet<JSDependenciesSettingsOption> options) {
+  private void showDependenciesFor(final JSClass clazz, final EnumSet<FlashUmlDependenciesSettingsOption> options) {
     DiagramNode<Object> mainNode = findNode(clazz);
     if (mainNode == null) return;
 
-    JSUmlDependencyProvider provider = new JSUmlDependencyProvider(clazz);
+    FlashUmlDependencyProvider provider = new FlashUmlDependencyProvider(clazz);
 
-    Collection<Pair<JSClass, FlashDiagramRelationship>> list = provider.computeUsedClasses();
-    for (Pair<JSClass, FlashDiagramRelationship> pair : list) {
+    Collection<Pair<JSClass, FlashUmlRelationship>> list = provider.computeUsedClasses();
+    for (Pair<JSClass, FlashUmlRelationship> pair : list) {
       if (shouldShow(options, clazz, pair.first, pair.second)) {
         DiagramNode<Object> node = findNode(pair.first);
         if (node != null) {
@@ -402,26 +401,26 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     }
   }
 
-  private static boolean shouldShow(EnumSet<JSDependenciesSettingsOption> options,
+  private static boolean shouldShow(EnumSet<FlashUmlDependenciesSettingsOption> options,
                                     final JSClass from,
                                     final JSClass to,
-                                    final FlashDiagramRelationship relShip) {
+                                    final FlashUmlRelationship relShip) {
     if (JSResolveUtil.isObjectClass(from) && JSResolveUtil.isObjectClass(to)) {
       return false;
     }
-    if (!options.contains(JSDependenciesSettingsOption.SELF) && JSPsiImplUtils.isTheSameClass(from, to)) {
+    if (!options.contains(FlashUmlDependenciesSettingsOption.SELF) && JSPsiImplUtils.isTheSameClass(from, to)) {
       return false;
     }
-    if (!options.contains(JSDependenciesSettingsOption.ONE_TO_ONE) && relShip.getType() == FlashDiagramRelationship.TYPE_ONE_TO_ONE) {
+    if (!options.contains(FlashUmlDependenciesSettingsOption.ONE_TO_ONE) && relShip.getType() == FlashUmlRelationship.TYPE_ONE_TO_ONE) {
       return false;
     }
-    if (!options.contains(JSDependenciesSettingsOption.ONE_TO_MANY) && relShip.getType() == FlashDiagramRelationship.TYPE_ONE_TO_MANY) {
+    if (!options.contains(FlashUmlDependenciesSettingsOption.ONE_TO_MANY) && relShip.getType() == FlashUmlRelationship.TYPE_ONE_TO_MANY) {
       return false;
     }
-    if (!options.contains(JSDependenciesSettingsOption.USAGES) && relShip.getType() == FlashDiagramRelationship.TYPE_DEPENDENCY) {
+    if (!options.contains(FlashUmlDependenciesSettingsOption.USAGES) && relShip.getType() == FlashUmlRelationship.TYPE_DEPENDENCY) {
       return false;
     }
-    if (!options.contains(JSDependenciesSettingsOption.CREATE) && relShip.getType() == FlashDiagramRelationship.TYPE_CREATE) {
+    if (!options.contains(FlashUmlDependenciesSettingsOption.CREATE) && relShip.getType() == FlashUmlRelationship.TYPE_CREATE) {
       return false;
     }
     return true;
@@ -456,7 +455,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
   private void syncPackages() {
     final GlobalSearchScope searchScope = GlobalSearchScope.allScope(getProject());
-    if (initialPackage == null || JSElementManager.packageExists(getProject(), initialPackage, searchScope)) return;
+    if (initialPackage == null || FlashUmlElementManager.packageExists(getProject(), initialPackage, searchScope)) return;
 
     final Set<String> psiPackages = new HashSet<String>();
     for (String sub : getSubPackages(initialPackage, searchScope)) {
@@ -488,22 +487,22 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     return packages.contains(StringUtil.getPackageName(psiClass.getQualifiedName()));
   }
 
-  public JSUmlEdge addEdge(DiagramNode<Object> from, DiagramNode<Object> to, DiagramRelationshipInfo relationship) {
+  public FlashUmlEdge addEdge(DiagramNode<Object> from, DiagramNode<Object> to, DiagramRelationshipInfo relationship) {
     return addEdge(from, to, relationship, myEdges);
   }
 
-  public JSUmlEdge addDependencyEdge(DiagramNode<Object> from, DiagramNode<Object> to, DiagramRelationshipInfo relationship) {
+  public FlashUmlEdge addDependencyEdge(DiagramNode<Object> from, DiagramNode<Object> to, DiagramRelationshipInfo relationship) {
     return addEdge(from, to, relationship, myDependencyEdges);
   }
 
-  private static JSUmlEdge addEdge(DiagramNode<Object> from,
+  private static FlashUmlEdge addEdge(DiagramNode<Object> from,
                                    DiagramNode<Object> to,
                                    DiagramRelationshipInfo relationship,
                                    Collection<DiagramEdge<Object>> storage) {
     for (DiagramEdge edge : storage) {
       if (edge.getSource() == from && edge.getTarget() == to && relationship.equals(edge.getRelationship())) return null;
     }
-    JSUmlEdge result = new JSUmlEdge(from, to, relationship);
+    FlashUmlEdge result = new FlashUmlEdge(from, to, relationship);
     storage.add(result);
     return result;
   }
@@ -514,11 +513,11 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
       classes.add(pointer.getElement());
     }
     final GlobalSearchScope searchScope = GlobalSearchScope.allScope(getProject());
-    if (initialPackage != null && JSElementManager.packageExists(getProject(), initialPackage, searchScope)) {
+    if (initialPackage != null && FlashUmlElementManager.packageExists(getProject(), initialPackage, searchScope)) {
       classes.addAll(getClasses(initialPackage, searchScope));
     }
     for (String psiPackage : packages) {
-      if (JSElementManager.packageExists(getProject(), psiPackage, searchScope)) {
+      if (FlashUmlElementManager.packageExists(getProject(), psiPackage, searchScope)) {
         classes.addAll(getClasses(psiPackage, searchScope));
       }
     }
@@ -542,8 +541,8 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
     for (DiagramNode<Object> node : getNodes()) {
       final String fqn = getFqn(getIdentifyingElement(node));
       if (fqn != null && fqn.equals(objectFqn)) {
-        if (object instanceof JSClass && !(node instanceof JSClassNode)) continue;
-        if (object instanceof String && !(node instanceof JSPackageNode)) continue;
+        if (object instanceof JSClass && !(node instanceof FlashUmlClassNode)) continue;
+        if (object instanceof String && !(node instanceof FlashUmlPackageNode)) continue;
         return node;
       }
     }
@@ -555,7 +554,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
   private static String getFqn(Object element) {
     if (element instanceof JSQualifiedNamedElement) {
       String qName = ((JSQualifiedNamedElement)element).getQualifiedName();
-      return qName != null ? JSVfsResolver.fixVectorTypeName(qName) : null;
+      return qName != null ? FlashUmlVfsResolver.fixVectorTypeName(qName) : null;
     }
     if (element instanceof String) {
       return (String)element;
@@ -637,13 +636,13 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
       setupScopeManager(psiClass, true);
 
-      return new JSClassNode((JSClass)element, getProvider());
+      return new FlashUmlClassNode((JSClass)element, getProvider());
     }
     else if (element instanceof String) {
       String aPackage = (String)element;
       packages.add(aPackage);
       packagesRemovedByUser.remove(aPackage);
-      return new JSPackageNode(aPackage, getProvider());
+      return new FlashUmlPackageNode(aPackage, getProvider());
     }
     return null;
   }
@@ -752,7 +751,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
   }
 
   public static String getMessage(final JSClass source, final JSClass target, final DiagramRelationshipInfo relationship) {
-    if (relationship == FlashDiagramRelationship.ANNOTATION) {
+    if (relationship == FlashUmlRelationship.ANNOTATION) {
       return "Remove annotation from class"; //TODO: return UmlBundle.message("remove.annotation.from.class", target.getName(), source.getName());
     }
     else {
@@ -776,7 +775,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
 
   @Nullable
   public static Object getIdentifyingElement(DiagramNode node) {
-    if (node instanceof JSClassNode || node instanceof JSPackageNode) {
+    if (node instanceof FlashUmlClassNode || node instanceof FlashUmlPackageNode) {
       return node.getIdentifyingElement();
     }
     if (node instanceof DiagramNoteNode) {
@@ -816,8 +815,8 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
             FormatFixer.fixAll(formatters);
           }
           return addEdgeAndRefresh(from, to, fromClass.isInterface()
-                                             ? FlashDiagramRelationship.GENERALIZATION
-                                             : FlashDiagramRelationship.INTERFACE_GENERALIZATION);
+                                             ? FlashUmlRelationship.GENERALIZATION
+                                             : FlashUmlRelationship.INTERFACE_GENERALIZATION);
         }
       };
       String commandName =
@@ -905,7 +904,7 @@ public class JSUmlDataModel extends DiagramDataModel<Object> {
   }
 
   private DiagramEdge<Object> addEdgeAndRefresh(DiagramNode<Object> from, DiagramNode<Object> to, DiagramRelationshipInfo type) {
-    JSUmlEdge result = addEdge(from, to, type);
+    FlashUmlEdge result = addEdge(from, to, type);
     final DiagramBuilder builder = getBuilder();
     if (builder != null) {
       builder.update(true, false);

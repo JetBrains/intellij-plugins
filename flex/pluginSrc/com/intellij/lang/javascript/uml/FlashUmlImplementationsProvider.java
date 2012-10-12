@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Collection;
 
-public class JSImplementationsProvider extends ImplementationsProvider<Object> {
+public class FlashUmlImplementationsProvider extends ImplementationsProvider<Object> {
 
   public Object[] getElements(Object element, Project project) {
     JSClass clazz = (JSClass)element;

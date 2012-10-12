@@ -60,11 +60,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class JSElementManager extends AbstractDiagramElementManager<Object> {
-  private final JSUmlProvider myUmlProvider;
-  private static final Logger LOG = Logger.getInstance("#com.intellij.lang.javascript.uml.JSElementManager");
+public class FlashUmlElementManager extends AbstractDiagramElementManager<Object> {
+  private final FlashUmlProvider myUmlProvider;
+  private static final Logger LOG = Logger.getInstance("#com.intellij.lang.javascript.uml.FlashUmlElementManager");
 
-  public JSElementManager(JSUmlProvider umlProvider) {
+  public FlashUmlElementManager(FlashUmlProvider umlProvider) {
     myUmlProvider = umlProvider;
   }
 
@@ -261,7 +261,7 @@ public class JSElementManager extends AbstractDiagramElementManager<Object> {
 
     final SimpleColoredText text = new SimpleColoredText();
     String name = StringUtil.notNullize(clazz.getName());
-    text.append(JSVfsResolver.fixVectorTypeName(name), new SimpleTextAttributes(style, getFGColor()));
+    text.append(FlashUmlVfsResolver.fixVectorTypeName(name), new SimpleTextAttributes(style, getFGColor()));
     return text;
   }
 

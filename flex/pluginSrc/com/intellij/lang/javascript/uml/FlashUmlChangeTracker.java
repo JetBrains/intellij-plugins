@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JSChangeTracker extends ChangeTracker<JSClass, JSNamedElement, JSReferenceExpression> {
+public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement, JSReferenceExpression> {
 
   private static class NameFilter<T extends PsiNamedElement> extends PsiFilter<T> {
     private NameFilter(@NotNull Class<T> filter) {
@@ -108,7 +108,7 @@ public class JSChangeTracker extends ChangeTracker<JSClass, JSNamedElement, JSRe
 
   private Map<JSClass, FileStatus> myNodeElements;
 
-  public JSChangeTracker(Project project, @Nullable PsiFile before, @Nullable PsiFile after) {
+  public FlashUmlChangeTracker(Project project, @Nullable PsiFile before, @Nullable PsiFile after) {
     super(project, before, after);
   }
 
@@ -130,10 +130,10 @@ public class JSChangeTracker extends ChangeTracker<JSClass, JSNamedElement, JSRe
   @Override
   public String getPresentableName(PsiNamedElement e) {
     if (e instanceof JSVariable) {
-      return JSElementManager.getFieldText((JSVariable)e);
+      return FlashUmlElementManager.getFieldText((JSVariable)e);
     }
     else if (e instanceof JSFunction) {
-      return JSElementManager.getMethodText((JSFunction)e);
+      return FlashUmlElementManager.getMethodText((JSFunction)e);
     }
     else {
       return super.getPresentableName(e);
@@ -142,12 +142,12 @@ public class JSChangeTracker extends ChangeTracker<JSClass, JSNamedElement, JSRe
 
   @Override
   public String getType(JSNamedElement jsNamedElement) {
-    return JSElementManager.getPresentableTypeStatic(jsNamedElement);
+    return FlashUmlElementManager.getPresentableTypeStatic(jsNamedElement);
   }
 
   @Override
   public Icon getIcon(PsiNamedElement e) {
-    return JSElementManager.getNodeElementIconStatic(e);
+    return FlashUmlElementManager.getNodeElementIconStatic(e);
   }
 
   @Override
@@ -227,7 +227,7 @@ public class JSChangeTracker extends ChangeTracker<JSClass, JSNamedElement, JSRe
 
   @Override
   public PsiNamedElement findElementByFQN(Project project, String fqn) {
-    Object o = JSVfsResolver.resolveElementByFqnStatic(fqn, project);
+    Object o = FlashUmlVfsResolver.resolveElementByFqnStatic(fqn, project);
     return o instanceof JSClass ? (PsiNamedElement)o : null;
   }
 

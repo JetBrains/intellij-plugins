@@ -6,6 +6,6 @@ import org.jetbrains.annotations.PropertyKey;
 /**
  * User: ksafonov
  */
-public class JSDependenciesOption {
+public class FlashUmlDependenciesOption {
 
 }

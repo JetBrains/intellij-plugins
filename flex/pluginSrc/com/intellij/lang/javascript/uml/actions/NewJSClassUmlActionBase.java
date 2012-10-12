@@ -6,7 +6,7 @@ import com.intellij.diagram.DiagramNode;
 import com.intellij.diagram.actions.DiagramCreateNewElementAction;
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.uml.JSUmlDataModel;
+import com.intellij.lang.javascript.uml.FlashUmlDataModel;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
@@ -46,7 +46,7 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
 
   @Override
   public boolean isEnabled(AnActionEvent e, DiagramBuilder b) {
-    return b != null && b.getDataModel() instanceof JSUmlDataModel;
+    return b != null && b.getDataModel() instanceof FlashUmlDataModel;
   }
 
   @Override
@@ -55,7 +55,7 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
     if (diagramBuilder == null) return null;
 
     Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
-    return showDialog(project, getPackageToCreateIn((JSUmlDataModel)diagramBuilder.getDataModel()));
+    return showDialog(project, getPackageToCreateIn((FlashUmlDataModel)diagramBuilder.getDataModel()));
   }
 
   @Nullable
@@ -77,7 +77,7 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
     }
   }
 
-  private static Pair<PsiDirectory, String> getPackageToCreateIn(JSUmlDataModel model) {
+  private static Pair<PsiDirectory, String> getPackageToCreateIn(FlashUmlDataModel model) {
     final DiagramBuilder builder = model.getBuilder();
 
     String aPackage = null;

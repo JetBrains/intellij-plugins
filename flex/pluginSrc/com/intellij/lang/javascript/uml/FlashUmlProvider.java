@@ -24,16 +24,16 @@ import org.jetbrains.annotations.Nullable;
  * @author Kirill Safonov
  * @author Konstantin Bulenkov
  */
-public class JSUmlProvider extends DiagramProvider<Object> {
-  public static final String ID = "JS";
+public class FlashUmlProvider extends DiagramProvider<Object> {
+  public static final String ID = "Flash";
 
-  private final JSUmlVisibilityManager myVisibilityManager = new JSUmlVisibilityManager();
-  private final JSNodeContentManager myNodeContentManager = new JSNodeContentManager();
-  private final JSElementManager myElementManager = new JSElementManager(this);
-  private final JSVfsResolver myVfsResolver = new JSVfsResolver();
-  private final JSUmlRelationshipManager myRelationshipManager = new JSUmlRelationshipManager();
-  private final JSUmlColorManager myColorManager = new JSUmlColorManager();
-  private final JSUmlExtras myExtras = new JSUmlExtras();
+  private final FlashUmlVisibilityManager myVisibilityManager = new FlashUmlVisibilityManager();
+  private final FlashUmlNodeContentManager myNodeContentManager = new FlashUmlNodeContentManager();
+  private final FlashUmlElementManager myElementManager = new FlashUmlElementManager(this);
+  private final FlashUmlVfsResolver myVfsResolver = new FlashUmlVfsResolver();
+  private final FlashUmlRelationshipManager myRelationshipManager = new FlashUmlRelationshipManager();
+  private final FlashUmlColorManager myColorManager = new FlashUmlColorManager();
+  private final FlashUmlExtras myExtras = new FlashUmlExtras();
 
   @Pattern("[a-zA-Z0-9_-]*")
   @Override
@@ -41,27 +41,27 @@ public class JSUmlProvider extends DiagramProvider<Object> {
     return ID;
   }
 
-  public JSUmlVisibilityManager createVisibilityManager() {
+  public FlashUmlVisibilityManager createVisibilityManager() {
     return myVisibilityManager;
   }
 
-  public JSNodeContentManager getNodeContentManager() {
+  public FlashUmlNodeContentManager getNodeContentManager() {
     return myNodeContentManager;
   }
 
-  public JSElementManager getElementManager() {
+  public FlashUmlElementManager getElementManager() {
     return myElementManager;
   }
 
-  public JSVfsResolver getVfsResolver() {
+  public FlashUmlVfsResolver getVfsResolver() {
     return myVfsResolver;
   }
 
-  public JSUmlRelationshipManager getRelationshipManager() {
+  public FlashUmlRelationshipManager getRelationshipManager() {
     return myRelationshipManager;
   }
 
-  public JSUmlDataModel createDataModel(@NotNull Project project,
+  public FlashUmlDataModel createDataModel(@NotNull Project project,
                                         @Nullable Object element,
                                         @Nullable VirtualFile file,
                                         DiagramPresentationModel presentationModel) {
@@ -75,7 +75,7 @@ public class JSUmlProvider extends DiagramProvider<Object> {
       PsiDirectory directory = (PsiDirectory)element;
       element = JSResolveUtil.getExpectedPackageNameFromFile(directory.getVirtualFile(), directory.getProject());
     }
-    return new JSUmlDataModel(project, element, file, this);
+    return new FlashUmlDataModel(project, element, file, this);
   }
 
   @Override
@@ -90,7 +90,7 @@ public class JSUmlProvider extends DiagramProvider<Object> {
 
   @NotNull
   @Override
-  public JSUmlExtras getExtras() {
+  public FlashUmlExtras getExtras() {
     return myExtras;
   }
 
@@ -124,6 +124,6 @@ public class JSUmlProvider extends DiagramProvider<Object> {
 
   @Override
   public DiagramEdgeCreationPolicy<Object> getEdgeCreationPolicy() {
-    return new JSUmlEdgeCreationPolicy();
+    return new FlashUmlEdgeCreationPolicy();
   }
 }

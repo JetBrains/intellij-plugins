@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class JSUmlVisibilityManager extends AbstractUmlVisibilityManager {
+public class FlashUmlVisibilityManager extends AbstractUmlVisibilityManager {
 
   private static final List<VisibilityLevel> predefinedLevels = new ArrayList<VisibilityLevel>();
 

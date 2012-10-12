@@ -10,7 +10,7 @@ import java.util.EnumSet;
 /**
  * User: ksafonov
  */
-public enum JSDependenciesSettingsOption {
+public enum FlashUmlDependenciesSettingsOption {
 
   ONE_TO_ONE("uml.dependencies.one.to.one"),
   ONE_TO_MANY("uml.dependencies.one.to.many"),
@@ -20,7 +20,7 @@ public enum JSDependenciesSettingsOption {
 
   private final String myResourceBundleKey;
 
-  JSDependenciesSettingsOption(@PropertyKey(resourceBundle = FlexBundle.BUNDLE) final String resourceBundleKey) {
+  FlashUmlDependenciesSettingsOption(@PropertyKey(resourceBundle = FlexBundle.BUNDLE) final String resourceBundleKey) {
     myResourceBundleKey = resourceBundleKey;
   }
 
@@ -28,12 +28,12 @@ public enum JSDependenciesSettingsOption {
     return FlexBundle.message(myResourceBundleKey);
   }
 
-  public static EnumSet<JSDependenciesSettingsOption> getEnabled() {
-    EnumSet<JSDependenciesSettingsOption> result = EnumSet.noneOf(JSDependenciesSettingsOption.class);
+  public static EnumSet<FlashUmlDependenciesSettingsOption> getEnabled() {
+    EnumSet<FlashUmlDependenciesSettingsOption> result = EnumSet.noneOf(FlashUmlDependenciesSettingsOption.class);
 
-    final DiagramProvider provider = DiagramProvider.findByID(JSUmlProvider.ID);
+    final DiagramProvider provider = DiagramProvider.findByID(FlashUmlProvider.ID);
     DiagramConfiguration configuration = DiagramConfiguration.getConfiguration();
-    for (JSDependenciesSettingsOption option : values()) {
+    for (FlashUmlDependenciesSettingsOption option : values()) {
       if (configuration.isEnabledByDefault(provider, option.getDisplayName())) {
         result.add(option);
       }

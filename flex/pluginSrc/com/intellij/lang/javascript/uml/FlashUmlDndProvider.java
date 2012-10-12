@@ -9,11 +9,11 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.diagram.extras.providers.DiagramDnDProvider;
 
-public class JSUmlDndProvider implements DiagramDnDProvider<Object> {
+public class FlashUmlDndProvider implements DiagramDnDProvider<Object> {
 
   public boolean isAcceptedForDnD(Object o, Project project) {
     if (o instanceof PsiFile || o instanceof PsiDirectory) {
-      return com.intellij.lang.javascript.uml.JSElementManager.isAcceptableAsNodeStatic(o);
+      return FlashUmlElementManager.isAcceptableAsNodeStatic(o);
     }
     return false;
   }
@@ -21,7 +21,7 @@ public class JSUmlDndProvider implements DiagramDnDProvider<Object> {
   public Object[] wrapToModelObject(Object o, Project project) {
     Object result = null;
     if (o instanceof PsiDirectory) {
-      result = com.intellij.lang.javascript.uml.JSVfsResolver.getQualifiedNameStatic(o);
+      result = FlashUmlVfsResolver.getQualifiedNameStatic(o);
     }
     else if (o instanceof JSFile) {
       result = JSPsiImplUtils.findQualifiedElement((JSFile)o);

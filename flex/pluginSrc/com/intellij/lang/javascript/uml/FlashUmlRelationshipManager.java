@@ -21,7 +21,7 @@ import com.intellij.diagram.DiagramRelationshipInfo;
 import com.intellij.diagram.DiagramRelationshipManager;
 import org.jetbrains.annotations.Nullable;
 
-public class JSUmlRelationshipManager implements DiagramRelationshipManager<Object> {
+public class FlashUmlRelationshipManager implements DiagramRelationshipManager<Object> {
   private static final DiagramCategory[] CATEGORIES = {new DiagramCategory("Dependencies", null)};
 
   @Nullable

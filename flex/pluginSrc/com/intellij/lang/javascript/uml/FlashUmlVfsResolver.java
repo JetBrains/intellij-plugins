@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -24,9 +23,9 @@ import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JSVfsResolver implements DiagramVfsResolver<Object> {
+public class FlashUmlVfsResolver implements DiagramVfsResolver<Object> {
 
-  private static final Logger LOG = Logger.getInstance(JSVfsResolver.class.getName());
+  private static final Logger LOG = Logger.getInstance(FlashUmlVfsResolver.class.getName());
   public static final String SEPARATOR = ":";
 
   public String getQualifiedName(Object element) {
@@ -101,7 +100,7 @@ public class JSVfsResolver implements DiagramVfsResolver<Object> {
     }
     final PsiElement clazz = JSResolveUtil.findClassByQName(fqn, searchScope);
     if (clazz instanceof JSClass) return clazz;
-    if (JSElementManager.packageExists(project, fqn, searchScope)) return fqn;
+    if (FlashUmlElementManager.packageExists(project, fqn, searchScope)) return fqn;
     return null;
   }
 

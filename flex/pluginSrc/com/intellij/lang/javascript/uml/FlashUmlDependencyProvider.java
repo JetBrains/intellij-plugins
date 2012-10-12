@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSGenericSignature;
 import com.intellij.lang.javascript.psi.ecmal4.JSImportStatement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.uml.FlashDiagramRelationship.Factory;
+import com.intellij.lang.javascript.uml.FlashUmlRelationship.Factory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -35,17 +35,17 @@ import java.util.List;
 /**
  * User: ksafonov
  */
-public class JSUmlDependencyProvider {
+public class FlashUmlDependencyProvider {
   private static final Language CSS = Language.findLanguageByID("CSS");
 
   private final JSClass myClazz;
 
-  public JSUmlDependencyProvider(final JSClass clazz) {
+  public FlashUmlDependencyProvider(final JSClass clazz) {
     myClazz = clazz;
   }
 
-  public Collection<Pair<JSClass, FlashDiagramRelationship>> computeUsedClasses() {
-    final Collection<Pair<JSClass, FlashDiagramRelationship>> result = new ArrayList<Pair<JSClass, FlashDiagramRelationship>>();
+  public Collection<Pair<JSClass, FlashUmlRelationship>> computeUsedClasses() {
+    final Collection<Pair<JSClass, FlashUmlRelationship>> result = new ArrayList<Pair<JSClass, FlashUmlRelationship>>();
     final JSElementVisitor visitor = new JSElementVisitor() {
       JSVariable myVariable;
       JSNewExpression myNewExpression;
@@ -70,7 +70,7 @@ public class JSUmlDependencyProvider {
         }
 
         if (resolved instanceof JSClass) {
-          FlashDiagramRelationship relType;
+          FlashUmlRelationship relType;
           if (node.getParent() instanceof JSReferenceExpression) {
             relType = Factory.dependency(myInField ? myVariable.getName() : null, myVariable != null ? myVariable : node);
           }
@@ -85,7 +85,7 @@ public class JSUmlDependencyProvider {
           else if (myInField && node.getParent() instanceof JSGenericSignature) {
             assert myVariable != null;
             String qName = ((JSClass)resolved).getQualifiedName();
-            if (JSVfsResolver.isVectorType(qName)) {
+            if (FlashUmlVfsResolver.isVectorType(qName)) {
               relType = Factory.dependency(myVariable.getName(), myVariable);
             }
             else {
@@ -95,7 +95,7 @@ public class JSUmlDependencyProvider {
           else if (myInField) {
             assert myVariable != null;
             String qName = ((JSClass)resolved).getQualifiedName();
-            if (JSVfsResolver.isVectorType(qName)) {
+            if (FlashUmlVfsResolver.isVectorType(qName)) {
               relType = Factory.dependency(myVariable.getName(), myVariable);
             }
             else {
@@ -171,7 +171,7 @@ public class JSUmlDependencyProvider {
             }
             if (declaration instanceof JSClass) {
               XmlAttribute id = tag.getAttribute("id");
-              FlashDiagramRelationship type = id != null && StringUtil.isNotEmpty(id.getValue()) ?
+              FlashUmlRelationship type = id != null && StringUtil.isNotEmpty(id.getValue()) ?
                                               Factory.oneToOne(id.getValue(), id) : Factory.dependency(null, tag);
               result.add(Pair.create((JSClass)declaration, type));
             }
@@ -271,8 +271,8 @@ public class JSUmlDependencyProvider {
   }
 
   private static void processReferenceSet(final PsiReference[] references,
-                                          final Collection<Pair<JSClass, FlashDiagramRelationship>> result,
-                                          final FlashDiagramRelationship relType) {
+                                          final Collection<Pair<JSClass, FlashUmlRelationship>> result,
+                                          final FlashUmlRelationship relType) {
     if (references.length > 0) {
       PsiElement element = references[references.length - 1].resolve();
       if (element instanceof JSClass) {

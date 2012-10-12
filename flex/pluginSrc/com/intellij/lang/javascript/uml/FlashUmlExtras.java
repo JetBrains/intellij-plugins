@@ -16,17 +16,17 @@ import java.util.List;
  * @author Kirill Safonov
  * @author Konstantin Bulenkov
  */
-public class JSUmlExtras extends DiagramExtras<Object> {
-  private static final DiagramElementsProvider[] PROVIDERS = {new JSSupersProvider(), new JSImplementationsProvider()};
+public class FlashUmlExtras extends DiagramExtras<Object> {
+  private static final DiagramElementsProvider[] PROVIDERS = {new FlashUmlSupersProvider(), new FlashUmlImplementationsProvider()};
 
-  private static final JSUmlDndProvider DND_PROVIDER = new JSUmlDndProvider();
+  private static final FlashUmlDndProvider DND_PROVIDER = new FlashUmlDndProvider();
 
 
   private static final DiagramConfigGroup[] ADDITIONAL_SETTINGS_GROUPS;
 
   static {
     DiagramConfigGroup dependenciesGroup = new DiagramConfigGroup(FlexBundle.message("uml.dependencies.settings.group.title"));
-    for (JSDependenciesSettingsOption option : JSDependenciesSettingsOption.values()) {
+    for (FlashUmlDependenciesSettingsOption option : FlashUmlDependenciesSettingsOption.values()) {
       dependenciesGroup.addElement(new DiagramConfigElement(option.getDisplayName(), true));
     }
     ADDITIONAL_SETTINGS_GROUPS = new DiagramConfigGroup[]{dependenciesGroup};
@@ -39,7 +39,7 @@ public class JSUmlExtras extends DiagramExtras<Object> {
   }
 
   @Override
-  public JSUmlDndProvider getDnDProvider() {
+  public FlashUmlDndProvider getDnDProvider() {
     return DND_PROVIDER;
   }
 
@@ -66,9 +66,9 @@ public class JSUmlExtras extends DiagramExtras<Object> {
     }
 
     final DiagramEdge edge = edges.get(0);
-    if (edge instanceof JSUmlEdge) {
+    if (edge instanceof FlashUmlEdge) {
       DiagramRelationshipInfo relationship = edge.getRelationship();
-      return relationship instanceof FlashDiagramRelationship ? ((FlashDiagramRelationship)relationship).getElement() : null;
+      return relationship instanceof FlashUmlRelationship ? ((FlashUmlRelationship)relationship).getElement() : null;
     }
     return null;
   }

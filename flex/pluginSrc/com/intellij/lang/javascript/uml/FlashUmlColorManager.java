@@ -24,12 +24,12 @@ import com.intellij.diagram.DiagramColorManagerBase;
 
 import java.awt.*;
 
-public class JSUmlColorManager extends DiagramColorManagerBase {
+public class FlashUmlColorManager extends DiagramColorManagerBase {
   @Override
   public Color getEdgeColor(DiagramEdge edge) {
     return edge == null
-        || !isInterface(JSUmlDataModel.getIdentifyingElement(edge.getSource()))
-        || !isInterface(JSUmlDataModel.getIdentifyingElement(edge.getTarget()))
+        || !isInterface(FlashUmlDataModel.getIdentifyingElement(edge.getSource()))
+        || !isInterface(FlashUmlDataModel.getIdentifyingElement(edge.getTarget()))
         || edge.getRelationship().getStartArrow() != DiagramRelationshipInfo.DELTA
         || edge.getRelationship().getLineType() != DiagramLineType.SOLID ?
     super.getEdgeColor(edge) : REALIZATION;

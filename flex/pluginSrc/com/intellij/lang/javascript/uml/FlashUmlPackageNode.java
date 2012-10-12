@@ -24,11 +24,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class JSPackageNode extends DiagramNodeBase<Object> {
+public class FlashUmlPackageNode extends DiagramNodeBase<Object> {
 
   @NotNull private final String myPackage;
 
-  public JSPackageNode(@NotNull String aPackage, @NotNull DiagramProvider provider) {
+  public FlashUmlPackageNode(@NotNull String aPackage, @NotNull DiagramProvider provider) {
     super(provider);
     myPackage = aPackage;
   }
@@ -51,7 +51,7 @@ public class JSPackageNode extends DiagramNodeBase<Object> {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
 
-    JSPackageNode that = (JSPackageNode)o;
+    FlashUmlPackageNode that = (FlashUmlPackageNode)o;
 
     if (!myPackage.equals(that.myPackage)) return false;
 

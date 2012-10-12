@@ -10,7 +10,7 @@ import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.PlatformIcons;
 
-public class JSNodeContentManager extends AbstractDiagramNodeContentManager {
+public class FlashUmlNodeContentManager extends AbstractDiagramNodeContentManager {
 
   private static final DiagramCategory FIELDS = new DiagramCategory("Fields", PlatformIcons.FIELD_ICON);
   private static final DiagramCategory CONSTRUCTORS = new DiagramCategory("Constructors", JSFunctionImpl.CONSTRUCTOR_ICON);

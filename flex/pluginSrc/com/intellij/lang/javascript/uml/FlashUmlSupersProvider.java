@@ -10,7 +10,7 @@ import com.intellij.psi.PsiElement;
 import java.util.Comparator;
 import java.util.Collection;
 
-public class JSSupersProvider extends SupersProvider<Object> {
+public class FlashUmlSupersProvider extends SupersProvider<Object> {
 
   @Override
   public boolean showProgress() {

@@ -24,8 +24,8 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Konstantin Bulenkov
  */
-public class JSUmlEdge extends DiagramEdgeBase<Object> {
-  public JSUmlEdge(DiagramNode<Object> source, DiagramNode<Object> target, @NotNull DiagramRelationshipInfo relationship) {
+public class FlashUmlEdge extends DiagramEdgeBase<Object> {
+  public FlashUmlEdge(DiagramNode<Object> source, DiagramNode<Object> target, @NotNull DiagramRelationshipInfo relationship) {
     super(source, target, relationship);
   }
 }
