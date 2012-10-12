@@ -3,13 +3,18 @@ package org.jetbrains.plugins.cucumber.java;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotationProvider;
+import org.jetbrains.plugins.cucumber.psi.*;
+
+import java.util.List;
+
+import static com.intellij.psi.util.PsiTreeUtil.getChildOfType;
+import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
 
 /**
  * User: Andrey.Vokin
@@ -87,5 +92,48 @@ public class CucumberJavaUtil {
       }
     }
     return result;
+  }
+
+  @Nullable
+  private static String getPackageOfStepDef(GherkinStep[] steps) {
+    for (GherkinStep step : steps) {
+      for (PsiReference ref : step.getReferences()) {
+        PsiElement refElement = ref.resolve();
+        if (refElement != null && refElement instanceof PsiMethod) {
+          PsiJavaFile javaFile = (PsiJavaFile)refElement.getContainingFile();
+          final String packageName = javaFile.getPackageName();
+          if (StringUtil.isNotEmpty(packageName)) {
+            return packageName;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  public static String getPackageOfStepDef(final PsiElement element) {
+    PsiFile file = element.getContainingFile();
+    if (file instanceof GherkinFile) {
+      GherkinFeature feature = getChildOfType(file, GherkinFeature.class);
+      if (feature != null) {
+        List<GherkinScenario> scenarioList = getChildrenOfTypeAsList(feature, GherkinScenario.class);
+        for(GherkinScenario scenario : scenarioList) {
+          String result = getPackageOfStepDef(scenario.getSteps());
+          if (result != null) {
+            return result;
+          }
+        }
+
+        List<GherkinScenarioOutline> scenarioOutlineList = getChildrenOfTypeAsList(feature, GherkinScenarioOutline.class);
+        for(GherkinScenarioOutline scenario : scenarioOutlineList) {
+          String result = getPackageOfStepDef(scenario.getSteps());
+          if (result != null) {
+            return result;
+          }
+        }
+      }
+    }
+    return null;
   }
 }
