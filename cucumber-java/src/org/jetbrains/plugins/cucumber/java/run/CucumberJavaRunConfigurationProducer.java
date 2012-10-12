@@ -43,7 +43,7 @@ public class CucumberJavaRunConfigurationProducer extends JavaRuntimeConfigurati
   private static String getGlue(@NotNull final PsiElement step) {
     final String packageName = CucumberJavaUtil.getPackageOfStepDef(step);
     if (packageName != null) {
-      return "--glue " + packageName;
+      return " --glue " + packageName;
     } else {
       return "";
     }
