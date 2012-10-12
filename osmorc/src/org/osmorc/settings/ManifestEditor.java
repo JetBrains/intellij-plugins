@@ -32,6 +32,7 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorTextField;
 import com.intellij.util.ui.UIUtil;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.ManifestFileTypeFactory;
 
 /**
@@ -54,7 +55,7 @@ public class ManifestEditor extends EditorTextField implements Disposable {
     });
   }
 
-  public void setText(String text) {
+  public void setText(@NotNull String text) {
     if (text == null) {
       text = "";
     }
