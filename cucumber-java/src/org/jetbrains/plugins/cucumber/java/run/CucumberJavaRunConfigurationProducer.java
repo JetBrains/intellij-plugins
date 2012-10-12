@@ -9,21 +9,28 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 
 /**
  * @author Andrey.Vokin
  * @since 8/6/12
  */
-public class CucumberJavaRunConfigurationProducer extends JavaRuntimeConfigurationProducerBase implements Cloneable {
-  private PsiElement mySourceElement;
+public abstract class CucumberJavaRunConfigurationProducer extends JavaRuntimeConfigurationProducerBase implements Cloneable {
+  public static final String FORMATTER_OPTIONS = " --format org.jetbrains.plugins.cucumber.java.run.CucumberJavaSMFormatter --monochrome";
+  public static final String CUCUMBER_MAIN_CLASS = "cucumber.cli.Main";
+  protected PsiElement mySourceElement;
 
   protected CucumberJavaRunConfigurationProducer() {
     super(CucumberJavaRunConfigurationType.getInstance());
   }
+
+  protected abstract String getGlue();
+
+  protected abstract String getName();
+
+  @NotNull
+  protected abstract VirtualFile getFileToRun();
 
   @Override
   public PsiElement getSourceElement() {
@@ -40,37 +47,6 @@ public class CucumberJavaRunConfigurationProducer extends JavaRuntimeConfigurati
     return createConfiguration(location, context);
   }
 
-  private static String getGlue(@NotNull final PsiElement step) {
-    final String packageName = CucumberJavaUtil.getPackageOfStepDef(step);
-    if (packageName != null) {
-      return " --glue " + packageName;
-    } else {
-      return "";
-    }
-  }
-
-  private RunnerAndConfigurationSettings createConfiguration(final Location location, final ConfigurationContext context) {
-    final Project project = context.getProject();
-    final RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(project, context);
-    final CucumberJavaRunConfiguration configuration = (CucumberJavaRunConfiguration)settings.getConfiguration();
-    final VirtualFile file = mySourceElement.getContainingFile().getVirtualFile();
-    assert file != null : mySourceElement.getContainingFile();
-    String glue = getGlue(mySourceElement);
-    configuration.setProgramParameters(file.getPath() + glue + " --format org.jetbrains.plugins.cucumber.java.run.CucumberJavaSMFormatter --monochrome");
-    configuration.MAIN_CLASS_NAME = "cucumber.cli.Main";
-    final PsiFile fileToRun = mySourceElement.getContainingFile();
-    if (fileToRun != null) {
-      final VirtualFile virtualFeatureFile = fileToRun.getVirtualFile();
-      if (virtualFeatureFile != null) {
-        configuration.setName(virtualFeatureFile.getNameWithoutExtension());
-      }
-    }
-
-    setupConfigurationModule(context, configuration);
-    JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
-    return settings;
-  }
-
   @Override
   public int compareTo(Object o) {
     return PREFERED;
@@ -79,4 +55,21 @@ public class CucumberJavaRunConfigurationProducer extends JavaRuntimeConfigurati
   protected boolean isApplicable(PsiElement locationElement, final Module module) {
     return locationElement != null && locationElement.getContainingFile() instanceof GherkinFile;
   }
+
+  protected RunnerAndConfigurationSettings createConfiguration(Location location, ConfigurationContext context) {
+    final Project project = context.getProject();
+    final RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(project, context);
+    final CucumberJavaRunConfiguration configuration = (CucumberJavaRunConfiguration)settings.getConfiguration();
+
+    final VirtualFile file = getFileToRun();
+    final String glue = getGlue();
+    configuration.setProgramParameters(file.getPath() + glue + FORMATTER_OPTIONS);
+    configuration.MAIN_CLASS_NAME = CUCUMBER_MAIN_CLASS;
+    configuration.setName(getName());
+
+    setupConfigurationModule(context, configuration);
+    JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
+    return settings;
+  }
+
 }
