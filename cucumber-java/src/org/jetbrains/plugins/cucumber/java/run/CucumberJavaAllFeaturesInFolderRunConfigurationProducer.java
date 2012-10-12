@@ -1,5 +1,8 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
+import com.intellij.execution.Location;
+import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -30,5 +33,13 @@ public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends Cuc
 
   protected boolean isApplicable(PsiElement locationElement, final Module module) {
     return locationElement != null && locationElement instanceof PsiDirectory;
+  }
+
+  @Override
+  protected RunnerAndConfigurationSettings createConfiguration(Location location, ConfigurationContext context) {
+    RunnerAndConfigurationSettings result = super.createConfiguration(location, context);
+    CucumberJavaRunConfiguration runConfiguration = (CucumberJavaRunConfiguration)result.getConfiguration();
+    runConfiguration.getEnvs().put("current_dir", getFileToRun().getPath());
+    return result;
   }
 }

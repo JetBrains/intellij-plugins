@@ -4,6 +4,7 @@ import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
 import gherkin.formatter.model.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -181,7 +182,12 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
 
   @Override
   public void uri(String s) {
-    uri = s;
+      String currentDir = System.getenv().get("current_dir");
+      if (currentDir != null) {
+          uri = currentDir + File.separator + s;
+      } else {
+          uri = s;
+      }
   }
 
   @Override
