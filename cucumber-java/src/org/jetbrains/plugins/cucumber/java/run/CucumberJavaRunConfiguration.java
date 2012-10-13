@@ -15,6 +15,9 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberBundle;
+
+import java.io.File;
 
 /**
  * User: Andrey.Vokin
@@ -83,5 +86,20 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     };
     state.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
     return state;
+  }
+
+  @Override
+  public void checkConfiguration() throws RuntimeConfigurationException {
+    final String[] parameters = getProgramParameters().split(" ");
+    if (parameters.length > 0) {
+      final String fileToRun = parameters[0];
+      if (!(new File(fileToRun)).exists()) {
+        throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.file.doesnt.exist"));
+      }
+    } else {
+      throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.specify.file"));
+    }
+
+    super.checkConfiguration();
   }
 }
