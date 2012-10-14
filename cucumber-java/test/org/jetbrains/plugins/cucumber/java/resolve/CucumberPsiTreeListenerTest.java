@@ -8,6 +8,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
+import java.io.IOException;
+
 /**
  * User: Andrey.Vokin
  * Date: 8/9/12
@@ -77,7 +79,8 @@ public class CucumberPsiTreeListenerTest extends BaseCucumberJavaResolveTest {
     checkReference(step, stepDefinitionName);
   }
 
-  private void doTestDeletion(@NotNull final String folder, @NotNull final String step, @NotNull final String stepDefinitionName) {
+  private void doTestDeletion(@NotNull final String folder, @NotNull final String step, @NotNull final String stepDefinitionName)
+    throws IOException {
     init(folder);
 
     checkReference(step, stepDefinitionName);
