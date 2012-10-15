@@ -42,6 +42,7 @@ public class AngularJSCustomAttributeDescriptorsProvider implements XmlAttribute
                 "controller",
                 "form",
                 "hide",
+                "href",
                 "include",
                 "init",
                 "non-bindable",
