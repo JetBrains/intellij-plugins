@@ -40,6 +40,7 @@ public class AngularJSCustomAttributeDescriptorsProvider implements XmlAttribute
                 "class-odd",
                 "cloak",
                 "controller",
+                "disabled",
                 "form",
                 "hide",
                 "href",
