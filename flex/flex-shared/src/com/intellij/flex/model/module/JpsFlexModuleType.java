@@ -10,10 +10,11 @@ import org.jetbrains.jps.model.module.JpsModuleType;
 import org.jetbrains.jps.model.serialization.module.JpsModulePropertiesSerializer;
 
 public class JpsFlexModuleType extends JpsModuleType<JpsFlexBuildConfigurationManager> {
-
+  public static final JpsFlexModuleType INSTANCE = new JpsFlexModuleType();
   private static final String ID = "Flex";
 
-  public static final JpsFlexModuleType INSTANCE = new JpsFlexModuleType();
+  private JpsFlexModuleType() {
+  }
 
   public static JpsModulePropertiesSerializer<JpsFlexBuildConfigurationManager> createModulePropertiesSerializer() {
     return new JpsModulePropertiesSerializer<JpsFlexBuildConfigurationManager>(INSTANCE, ID, "FlexBuildConfigurationManager") {
@@ -25,9 +26,9 @@ public class JpsFlexModuleType extends JpsModuleType<JpsFlexBuildConfigurationMa
       }
 
       @Override
-      public void saveProperties(@NotNull final JpsFlexBuildConfigurationManager manager, @NotNull final Element moduleRootElement) {
+      public void saveProperties(@NotNull final JpsFlexBuildConfigurationManager manager, @NotNull final Element componentElement) {
         final JpsFlexBuildConfigurationManagerImpl.State state = ((JpsFlexBuildConfigurationManagerImpl)manager).getState();
-        XmlSerializer.serializeInto(state, moduleRootElement);
+        XmlSerializer.serializeInto(state, componentElement);
       }
     };
   }
