@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
+import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -14,6 +15,7 @@ import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -26,6 +28,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+
+import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDescriptorForEmulator;
 
 public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
 
@@ -59,6 +63,9 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
   private @Nullable OutputLogLevel myOutputLogLevel = null;
   private @NotNull LauncherParameters myLauncherParameters = new LauncherParameters();
   private boolean myTrusted = true;
+
+  private String myEmulatorAdlOptions = "";
+  private @NotNull AppDescriptorForEmulator myAppDescriptorForEmulator = AppDescriptorForEmulator.Android;
 
   private int myPort;
   private int mySocketPolicyPort;
@@ -183,6 +190,24 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     myTrusted = trusted;
   }
 
+  @NotNull
+  public String getEmulatorAdlOptions() {
+    return myEmulatorAdlOptions;
+  }
+
+  public void setEmulatorAdlOptions(final String emulatorAdlOptions) {
+    myEmulatorAdlOptions = emulatorAdlOptions;
+  }
+
+  @NotNull
+  public AppDescriptorForEmulator getAppDescriptorForEmulator() {
+    return myAppDescriptorForEmulator;
+  }
+
+  public void setAppDescriptorForEmulator(@NotNull final AppDescriptorForEmulator appDescriptorForEmulator) {
+    myAppDescriptorForEmulator = appDescriptorForEmulator;
+  }
+
   public void check(final Project project) throws RuntimeConfigurationError {
     doCheck(project, super.checkAndGetModuleAndBC(project));
   }
@@ -213,7 +238,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
       }
     }
 
-    overriddenBC.getAirDesktopPackagingOptions().setUseGeneratedDescriptor(true);
+    //overriddenBC.getAirDesktopPackagingOptions().setUseGeneratedDescriptor(true);
 
     /*
     overriddenBC.getAndroidPackagingOptions().setPackageFileName("_flexunit.apk");
@@ -234,9 +259,33 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     if (DumbService.getInstance(project).isDumb()) return;
 
     final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+    final Sdk sdk = bc.getSdk();
+    if (sdk == null) {
+      throw new RuntimeConfigurationError(
+        FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleAndBC.first.getName()));
+    }
 
-    if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
-      throw new RuntimeConfigurationError("FlexUnit tests are not supported on mobile devices");
+    switch (bc.getTargetPlatform()) {
+      case Web:
+        break;
+
+      case Desktop:
+        FlashRunnerParameters.checkAdlAndAirRuntime(sdk);
+        FlashRunnerParameters.checkCustomDescriptor(bc.getAirDesktopPackagingOptions(), getBCName(), getModuleName());
+        break;
+
+      case Mobile:
+        FlashRunnerParameters.checkAdlAndAirRuntime(sdk);
+
+        switch (myAppDescriptorForEmulator) {
+          case Android:
+            FlashRunnerParameters.checkCustomDescriptor(bc.getAndroidPackagingOptions(), getBCName(), getModuleName());
+            break;
+          case IOS:
+            FlashRunnerParameters.checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
+            break;
+        }
+        break;
     }
 
     final FlexUnitSupport support = FlexUnitSupport.getSupport(bc, moduleAndBC.first);

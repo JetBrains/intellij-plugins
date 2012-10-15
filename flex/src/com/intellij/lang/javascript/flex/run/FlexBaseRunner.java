@@ -516,23 +516,32 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       }
     }
     else {
-      assert params instanceof FlashRunnerParameters;
-      final FlashRunnerParameters flashParams = (FlashRunnerParameters)params;
+      assert params instanceof FlashRunnerParameters || params instanceof FlexUnitRunnerParameters : params;
       assert bc.getNature().isMobilePlatform() : bc.getTargetPlatform();
-      assert flashParams.getMobileRunTarget() == FlashRunnerParameters.AirMobileRunTarget.Emulator : flashParams.getMobileRunTarget();
 
-      final String adlOptions = flashParams.getEmulatorAdlOptions();
+      if (params instanceof FlashRunnerParameters) {
+        final FlashRunnerParameters.AirMobileRunTarget mobileRunTarget = ((FlashRunnerParameters)params).getMobileRunTarget();
+        assert mobileRunTarget == FlashRunnerParameters.AirMobileRunTarget.Emulator : mobileRunTarget;
+      }
+
+      final String adlOptions = params instanceof FlashRunnerParameters
+                                ? ((FlashRunnerParameters)params).getEmulatorAdlOptions()
+                                : ((FlexUnitRunnerParameters)params).getEmulatorAdlOptions();
 
       if (FlexUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
         commandLine.addParameter("-profile");
         commandLine.addParameter("extendedMobileDevice");
       }
 
-      final FlashRunnerParameters.Emulator emulator = flashParams.getEmulator();
+      final FlashRunnerParameters.Emulator emulator = params instanceof FlashRunnerParameters
+                                                      ? ((FlashRunnerParameters)params).getEmulator()
+                                                      : FlashRunnerParameters.Emulator.NexusOne;
       final boolean customSize = emulator.adlAlias == null;
 
       commandLine.addParameter("-screensize");
       if (customSize) {
+        assert params instanceof FlashRunnerParameters;
+        final FlashRunnerParameters flashParams = (FlashRunnerParameters)params;
         commandLine.addParameter(flashParams.getScreenWidth() + "x" + flashParams.getScreenHeight() +
                                  ":" + flashParams.getFullScreenWidth() + "x" + flashParams.getFullScreenHeight());
       }
@@ -541,9 +550,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       }
 
       if (FlexUtils.getOptionValues(adlOptions, "XscreenDPI").isEmpty()) {
-        if (customSize && flashParams.getScreenDpi() > 0) {
+        if (customSize && ((FlashRunnerParameters)params).getScreenDpi() > 0) {
           commandLine.addParameter("-XscreenDPI");
-          commandLine.addParameter(String.valueOf(flashParams.getScreenDpi()));
+          commandLine.addParameter(String.valueOf(((FlashRunnerParameters)params).getScreenDpi()));
         }
         else if (!customSize && emulator.screenDPI > 0) {
           commandLine.addParameter("-XscreenDPI");
@@ -567,7 +576,10 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         commandLine.addParameter(FlexCompilationUtils.getPathToUnzipANE());
       }
 
-      final String airDescriptorPath = getDescriptorForEmulatorPath(module, bc, flashParams.getAppDescriptorForEmulator());
+      final AppDescriptorForEmulator descriptorForEmulator = params instanceof FlashRunnerParameters
+                                                             ? ((FlashRunnerParameters)params).getAppDescriptorForEmulator()
+                                                             : ((FlexUnitRunnerParameters)params).getAppDescriptorForEmulator();
+      final String airDescriptorPath = getDescriptorForEmulatorPath(module, bc, descriptorForEmulator);
       commandLine.addParameter(FileUtil.toSystemDependentName(airDescriptorPath));
       commandLine.addParameter(FileUtil.toSystemDependentName(PathUtil.getParentPath(bc.getActualOutputFilePath())));
     }

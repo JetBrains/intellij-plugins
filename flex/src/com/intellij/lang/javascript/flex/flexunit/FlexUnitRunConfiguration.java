@@ -122,7 +122,7 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
     }
 
     final BuildConfigurationNature nature = bc.getNature();
-    if (nature.isDesktopPlatform()) {
+    if (nature.isDesktopPlatform() || nature.isMobilePlatform()) {
 
       final FlashRunConfiguration.AirRunState airRunState =
         new FlashRunConfiguration.AirRunState(getProject(), env, myRunnerParameters) {

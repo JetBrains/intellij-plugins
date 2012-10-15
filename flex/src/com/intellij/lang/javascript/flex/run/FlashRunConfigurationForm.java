@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
+import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -238,12 +239,23 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myDebugOverNetworkRadioButton.addActionListener(debugTransportListener);
     myDebugOverUSBRadioButton.addActionListener(debugTransportListener);
 
-    myAppDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel(AppDescriptorForEmulator.values()));
-    myAppDescriptorForEmulatorCombo
+    initAppDescriptorForEmulatorCombo(myAppDescriptorForEmulatorCombo,
+                                      new NullableComputable<FlexIdeBuildConfiguration>() {
+                                        @Nullable
+                                        public FlexIdeBuildConfiguration compute() {
+                                          return myBCCombo.getBC();
+                                        }
+                                      });
+  }
+
+  public static void initAppDescriptorForEmulatorCombo(final JComboBox appDescriptorForEmulatorCombo,
+                                                       final NullableComputable<FlexIdeBuildConfiguration> bcComputable) {
+    appDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel(AppDescriptorForEmulator.values()));
+    appDescriptorForEmulatorCombo
       .setRenderer(new ListCellRendererWrapper<AppDescriptorForEmulator>() {
         @Override
         public void customize(JList list, AppDescriptorForEmulator value, int index, boolean selected, boolean hasFocus) {
-          final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+          final FlexIdeBuildConfiguration bc = bcComputable.compute();
 
           switch (value) {
             case Android:

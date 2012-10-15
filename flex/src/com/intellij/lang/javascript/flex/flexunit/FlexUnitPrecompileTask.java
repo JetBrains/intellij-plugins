@@ -402,7 +402,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     if (bc.isPureAs()) {
       templateName = "LauncherTemplateAs.as";
     }
-    else if (bc.getDependencies().getComponentSet() == ComponentSet.SparkOnly) {
+    else if (bc.getNature().isMobilePlatform() || bc.getDependencies().getComponentSet() == ComponentSet.SparkOnly) {
       templateName = "LauncherTemplateSpark.mxml";
     }
     else {
@@ -416,7 +416,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     if (bc.isPureAs()) {
       return "unittestingsupport_as.swc";
     }
-    else if (bc.getDependencies().getComponentSet() == ComponentSet.SparkOnly) {
+    else if (bc.getNature().isMobilePlatform() || bc.getDependencies().getComponentSet() == ComponentSet.SparkOnly) {
       return "unittestingsupport_spark.swc";
     }
     else {

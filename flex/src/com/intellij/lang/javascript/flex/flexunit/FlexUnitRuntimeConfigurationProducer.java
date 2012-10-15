@@ -11,6 +11,8 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -124,6 +126,15 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
 
     params.setModuleName(module.getName());
     params.setBCName(bc.getName());
+
+    if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
+      if (bc.getAndroidPackagingOptions().isEnabled()) {
+        params.setAppDescriptorForEmulator(FlashRunnerParameters.AppDescriptorForEmulator.Android);
+      }
+      else if (bc.getIosPackagingOptions().isEnabled()) {
+        params.setAppDescriptorForEmulator(FlashRunnerParameters.AppDescriptorForEmulator.IOS);
+      }
+    }
 
     if (element instanceof JSClass) {
       final JSClass clazz = (JSClass)element;

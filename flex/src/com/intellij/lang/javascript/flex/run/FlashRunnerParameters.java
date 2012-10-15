@@ -454,7 +454,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
       case Desktop:
         checkAdlAndAirRuntime(sdk);
-        checkCustomDescriptor(bc.getAirDesktopPackagingOptions());
+        checkCustomDescriptor(bc.getAirDesktopPackagingOptions(), getBCName(), getModuleName());
         break;
 
       case Mobile:
@@ -464,21 +464,21 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
             switch (myAppDescriptorForEmulator) {
               case Android:
-                checkCustomDescriptor(bc.getAndroidPackagingOptions());
+                checkCustomDescriptor(bc.getAndroidPackagingOptions(), getBCName(), getModuleName());
                 break;
               case IOS:
-                checkCustomDescriptor(bc.getIosPackagingOptions());
+                checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
                 break;
             }
             break;
           case AndroidDevice:
             if (bc.getOutputType() == OutputType.Application) {
-              checkCustomDescriptor(bc.getAndroidPackagingOptions());
+              checkCustomDescriptor(bc.getAndroidPackagingOptions(), getBCName(), getModuleName());
             }
             break;
           case iOSSimulator:
             if (bc.getOutputType() == OutputType.Application) {
-              checkCustomDescriptor(bc.getIosPackagingOptions());
+              checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
             }
 
             if (!SystemInfo.isMac) {
@@ -495,7 +495,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
             break;
           case iOSDevice:
             if (bc.getOutputType() == OutputType.Application) {
-              checkCustomDescriptor(bc.getIosPackagingOptions());
+              checkCustomDescriptor(bc.getIosPackagingOptions(), getBCName(), getModuleName());
             }
             break;
         }
@@ -512,15 +512,15 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     }
   }
 
-  private void checkCustomDescriptor(final AirPackagingOptions packagingOptions) throws RuntimeConfigurationError {
+  public static void checkCustomDescriptor(final AirPackagingOptions packagingOptions, final String bcName, final String moduleName) throws RuntimeConfigurationError {
     final boolean android = packagingOptions instanceof AndroidPackagingOptions;
     final boolean ios = packagingOptions instanceof IosPackagingOptions;
 
     if (android && !((AndroidPackagingOptions)packagingOptions).isEnabled()) {
-      throw new RuntimeConfigurationError(FlexBundle.message("android.disabled.in.bc", getBCName(), getModuleName()));
+      throw new RuntimeConfigurationError(FlexBundle.message("android.disabled.in.bc", bcName, moduleName));
     }
     if (ios && !((IosPackagingOptions)packagingOptions).isEnabled()) {
-      throw new RuntimeConfigurationError(FlexBundle.message("ios.disabled.in.bc", getBCName(), getModuleName()));
+      throw new RuntimeConfigurationError(FlexBundle.message("ios.disabled.in.bc", bcName, moduleName));
     }
 
     if (!packagingOptions.isUseGeneratedDescriptor()) {
@@ -529,7 +529,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
           android
           ? "bc.0.module.1.android.custom.descriptor.not.set"
           : ios ? "bc.0.module.1.ios.custom.descriptor.not.set" : "bc.0.module.1.custom.descriptor.not.set";
-        throw new RuntimeConfigurationError(FlexBundle.message(key, getBCName(), getModuleName()));
+        throw new RuntimeConfigurationError(FlexBundle.message(key, bcName, moduleName));
       }
       else {
         final VirtualFile descriptorFile = LocalFileSystem.getInstance().findFileByPath(packagingOptions.getCustomDescriptorPath());
@@ -539,14 +539,14 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
                              : ios ? "bc.0.module.1.ios.custom.descriptor.not.found"
                                    : "bc.0.module.1.custom.descriptor.not.found";
           throw new RuntimeConfigurationError(
-            FlexBundle.message(key, getBCName(), getModuleName(),
+            FlexBundle.message(key, bcName, moduleName,
                                FileUtil.toSystemDependentName(packagingOptions.getCustomDescriptorPath())));
         }
       }
     }
   }
 
-  private static void checkAdlAndAirRuntime(final @NotNull Sdk sdk) throws RuntimeConfigurationError {
+  public static void checkAdlAndAirRuntime(final @NotNull Sdk sdk) throws RuntimeConfigurationError {
     final String adlPath = FlexSdkUtils.getAdlPath(sdk);
     if (StringUtil.isEmpty(adlPath)) {
       throw new RuntimeConfigurationError(FlexBundle.message("adl.not.set.check.sdk.settings", sdk.getName()));
