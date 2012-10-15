@@ -1,20 +1,24 @@
 package com.intellij.lang.javascript.arrangement;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.psi.JSBlockStatement;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.arrangement.*;
 import com.intellij.psi.codeStyle.arrangement.group.ArrangementGroupingRule;
@@ -89,6 +93,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
 
     final List<ActionScriptArrangementEntry> result = new SortedList<ActionScriptArrangementEntry>(ActionScriptArrangementEntry.COMPARATOR);
 
+    // static init blocks
     final JSBlockStatement[] blockStatements = PsiTreeUtil.getChildrenOfType(jsClass, JSBlockStatement.class);
     if (blockStatements != null) {
       for (JSBlockStatement blockStatement : blockStatements) {
@@ -96,10 +101,20 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
       }
     }
 
+    // vars and consts
+    final Map<JSVariable, ActionScriptArrangementEntry> varToEntry = new THashMap<JSVariable, ActionScriptArrangementEntry>();
+
     for (final JSVariable field : jsClass.getFields()) {
-      ContainerUtil.addIfNotNull(result, ActionScriptArrangementEntry.create(field, ranges, document));
+      final ActionScriptArrangementEntry entry = ActionScriptArrangementEntry.create(field, ranges, document);
+      if (entry != null) {
+        if (entry.getType() == VAR) {
+          varToEntry.put(field, entry);
+        }
+        result.add(entry);
+      }
     }
 
+    // methods, getters/setters and event handlers
     final Map<JSFunction, ActionScriptArrangementEntry> functionToEntry = new THashMap<JSFunction, ActionScriptArrangementEntry>();
 
     for (final JSFunction function : jsClass.getFunctions()) {
@@ -111,12 +126,12 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     }
 
     // group getters and setters, getters first
-    for (Map.Entry<JSFunction, ActionScriptArrangementEntry> entry : functionToEntry.entrySet()) {
-      final JSFunction function = entry.getKey();
+    for (Map.Entry<JSFunction, ActionScriptArrangementEntry> mapEntry : functionToEntry.entrySet()) {
+      final JSFunction function = mapEntry.getKey();
 
       final String name = function.getName();
       if (function.isSetProperty() && name != null) {
-        final ActionScriptArrangementEntry setterEntry = entry.getValue();
+        final ActionScriptArrangementEntry setterEntry = mapEntry.getValue();
 
         final JSFunction getter = jsClass.findFunctionByNameAndKind(name, JSFunction.FunctionKind.GETTER);
         final ActionScriptArrangementEntry getterEntry = functionToEntry.get(getter);
@@ -127,7 +142,43 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
       }
     }
 
+    // group property fields with getters/setters
+    if (settings != null && groupPropertyFieldWithGetterSetter(settings)) {
+      final JSCodeStyleSettings codeStyleSettings =
+        CodeStyleSettingsManager.getSettings(jsClass.getProject()).getCustomSettings(JSCodeStyleSettings.class);
+
+      for (Map.Entry<JSVariable, ActionScriptArrangementEntry> mapEntry : varToEntry.entrySet()) {
+        final JSVariable jsVar = mapEntry.getKey();
+        final ActionScriptArrangementEntry varEntry = mapEntry.getValue();
+
+        if (StringUtil.startsWith(jsVar.getName(), codeStyleSettings.FIELD_PREFIX)) {
+          final String propertyName = JSResolveUtil.transformVarNameToAccessorName(jsVar.getName(), jsClass.getProject());
+
+          JSFunction getterOrSetter = jsClass.findFunctionByNameAndKind(propertyName, JSFunction.FunctionKind.GETTER);
+          if (getterOrSetter == null) getterOrSetter = jsClass.findFunctionByNameAndKind(propertyName, JSFunction.FunctionKind.SETTER);
+
+          final ActionScriptArrangementEntry propertyEntry = getterOrSetter == null ? null : functionToEntry.get(getterOrSetter);
+          if (propertyEntry != null) {
+            // arrangement engine sorts group according to the first entry, so we pretend that var is a property
+            varEntry.setType(propertyEntry.getType());
+            varEntry.setModifiers(propertyEntry.getModifiers());
+
+            propertyEntry.addDependency(varEntry);
+          }
+        }
+      }
+    }
+
     return result;
+  }
+
+  private static boolean groupPropertyFieldWithGetterSetter(final @NotNull ArrangementSettings settings) {
+    for (ArrangementGroupingRule rule : settings.getGroupings()) {
+      if (rule.getRule() == ArrangementGroupingType.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
@@ -161,7 +212,8 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
   @Nullable
   @Override
   public StdArrangementSettings getDefaultSettings() {
-    final List<ArrangementGroupingRule> groupingRules = Collections.emptyList();
+    final List<ArrangementGroupingRule> groupingRules =
+      Collections.singletonList(new ArrangementGroupingRule(ArrangementGroupingType.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER));
     final List<StdArrangementMatchRule> matchRules = getDefaultMatchRules();
 
     return new StdArrangementSettings(groupingRules, matchRules);
@@ -316,7 +368,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
 
   @Override
   public boolean isEnabled(@NotNull ArrangementGroupingType groupingType, @Nullable ArrangementEntryOrderType orderType) {
-    return false;
+    return groupingType == ArrangementGroupingType.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER && orderType == null;
   }
 
   @NotNull

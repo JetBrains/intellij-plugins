@@ -33,14 +33,14 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
   };
 
 
-  private String myName;
+  private final String myName;
   private ArrangementEntryType myType;
   private Set<ArrangementModifier> myModifiers;
 
   private ActionScriptArrangementEntry(final @Nullable String name,
-                                       final ArrangementEntryType type,
-                                       final Set<ArrangementModifier> modifiers,
-                                       final TextRange range) {
+                                       final @NotNull ArrangementEntryType type,
+                                       final @NotNull Set<ArrangementModifier> modifiers,
+                                       final @NotNull TextRange range) {
     super(null, range.getStartOffset(), range.getEndOffset(), true);
 
     myName = name;
@@ -170,6 +170,11 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
     return myName;
   }
 
+  public void setType(final @NotNull ArrangementEntryType type) {
+    myType = type;
+  }
+
+  @NotNull
   public ArrangementEntryType getType() {
     return myType;
   }
@@ -177,6 +182,10 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
   @NotNull
   public Set<ArrangementEntryType> getTypes() {
     return EnumSet.of(myType);
+  }
+
+  public void setModifiers(final @NotNull Set<ArrangementModifier> modifiers) {
+    myModifiers = modifiers;
   }
 
   @NotNull
