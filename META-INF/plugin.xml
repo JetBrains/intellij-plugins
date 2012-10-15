@@ -1,11 +1,13 @@
 <idea-plugin version="2" url="http://github.com/johnlindquist/angularjs-plugin">
     <name>AngularJS</name>
     <description>Support for AngularJS</description>
-    <version>0.1.4</version>
+    <version>0.1.5</version>
     <vendor url="http://johnlindquist.com" email="johnlindquist@gmail.com">johnlindquist</vendor>
     <change-notes><![CDATA[
         <html>
         <dl>
+            <dt>0.1.5</dt>
+            <dd>Adding "href" and "disabled" to the descriptors list</dd>
             <dt>0.1.4</dt>
             <dd>Bundling live templates thanks to Powel Kozlowski</dd>
             <dt>0.1.3</dt>
