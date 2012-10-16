@@ -135,7 +135,7 @@ class ViewFilesPanel extends JPanel implements DataProvider {
   }
 
   private void addRefreshAction(DefaultActionGroup actionGroup) {
-    actionGroup.add(new AnAction(StringUtil.getMsg("refresh.file.list"), "", IdetalkCoreIcons.Refresh) {
+    actionGroup.add(new AnAction(StringUtil.getMsg("refresh.file.list"), "", AllIcons.Actions.Refresh) {
       public void actionPerformed(AnActionEvent e) {
         refreshData(myUser, myUser.getProjectsData(myIdeFacade));
       }

@@ -22,7 +22,6 @@ public class IdetalkCoreIcons {
     public static final Icon Jabber_dnd = load("/ideTalk/jabber_dnd.png"); // 16x16
     public static final Icon Notavailable = load("/ideTalk/notavailable.png"); // 16x16
     public static final Icon Offline = load("/ideTalk/offline.png"); // 16x16
-    public static final Icon Settings = load("/ideTalk/settings.png"); // 16x16
     public static final Icon User = load("/ideTalk/user.png"); // 16x16
     public static final Icon User_dnd = load("/ideTalk/user_dnd.png"); // 16x16
 
@@ -35,6 +34,5 @@ public class IdetalkCoreIcons {
     public static final Icon Unknown = load("/nodes/unknown.png"); // 18x18
 
   }
-  public static final Icon Refresh = load("/refresh.png"); // 18x18
   public static final Icon Stacktrace = load("/stacktrace.png"); // 17x18
 }
