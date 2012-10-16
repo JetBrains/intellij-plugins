@@ -1,5 +1,6 @@
 package com.intellij.tapestry.intellij.toolwindow;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -11,12 +12,6 @@ import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import icons.TapestryIcons;
 import org.apache.log4j.Logger;
-//import org.lobobrowser.html.UserAgentContext;
-//import org.lobobrowser.html.gui.HtmlPanel;
-//import org.lobobrowser.html.parser.DocumentBuilderImpl;
-//import org.lobobrowser.html.parser.InputSourceImpl;
-//import org.lobobrowser.html.test.SimpleHtmlRendererContext;
-//import org.lobobrowser.html.test.SimpleUserAgentContext;
 import org.w3c.dom.Document;
 
 import javax.swing.*;
@@ -24,6 +19,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+
+//import org.lobobrowser.html.UserAgentContext;
+//import org.lobobrowser.html.gui.HtmlPanel;
+//import org.lobobrowser.html.parser.DocumentBuilderImpl;
+//import org.lobobrowser.html.parser.InputSourceImpl;
+//import org.lobobrowser.html.test.SimpleHtmlRendererContext;
+//import org.lobobrowser.html.test.SimpleUserAgentContext;
 
 /**
  * Description Class
@@ -54,7 +56,7 @@ public class DocumentationTab {
         _homeButton.setIcon(TapestryIcons.House);
         _backButton.setIcon(TapestryIcons.Arrow_left);
         _forwardButton.setIcon(TapestryIcons.Arrow_right);
-        _reloadButton.setIcon(TapestryIcons.Arrow_refresh);
+        _reloadButton.setIcon(AllIcons.Actions.Refresh);
         _goButton.setIcon(TapestryIcons.Bullet_go);
 
         _backButton.setVisible(false);

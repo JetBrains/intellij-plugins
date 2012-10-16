@@ -14,7 +14,6 @@ public class TapestryIcons {
   }
 
   public static final Icon Arrow_left = load("/com/intellij/tapestry/core/icons/arrow_left.png"); // 16x16
-  public static final Icon Arrow_refresh = load("/com/intellij/tapestry/core/icons/arrow_refresh.png"); // 16x16
   public static final Icon Arrow_right = load("/com/intellij/tapestry/core/icons/arrow_right.png"); // 16x16
   public static final Icon Bullet_go = load("/com/intellij/tapestry/core/icons/bullet_go.png"); // 16x16
   public static final Icon CompactBasePackage = load("/com/intellij/tapestry/core/icons/compactBasePackage.png"); // 16x16
