@@ -16,16 +16,20 @@
 package com.intellij.struts2.reference.web;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.javaee.model.xml.ParamValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiPackage;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReference;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.model.constant.StrutsConstantKey;
 import com.intellij.struts2.model.constant.StrutsConstantManager;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Consumer;
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -129,6 +133,20 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
                            myElement,
                            convertContext);
       for (final PsiReference customReference : references) {
+        if (customReference instanceof JavaClassReference) {
+          JavaClassReference javaClassReference = (JavaClassReference)customReference;
+          String[] names = javaClassReference.getExtendClassNames();
+          PsiElement context = javaClassReference.getCompletionContext();
+          if (names != null && context instanceof PsiPackage) {
+            javaClassReference.processSubclassVariants((PsiPackage)context, names, new Consumer<LookupElement>() {
+              @Override
+              public void consume(LookupElement element) {
+                variants.add(element);
+              }
+            });
+            continue;
+          }
+        }
         Collections.addAll(variants, customReference.getVariants());
       }
     }
