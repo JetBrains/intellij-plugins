@@ -18,7 +18,6 @@ package com.intellij.struts2.dom.struts;
 import com.intellij.facet.FacetManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.spring.facet.SpringFacet;
 import com.intellij.spring.facet.SpringFacetConfiguration;
@@ -99,25 +98,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     createSpringFileSet(SPRING_XML);
 
     final List<String> variants = myFixture.getCompletionVariants(strutsXml);
-
-    final List<String> springCompletionVariants = filterSpringBeanCompletionVariants(variants);
-
-    assertSameElements(springCompletionVariants, "springInterceptor");
-  }
-
-  /**
-   * Returns all completions variants without '.', i.e. all Spring bean names.
-   *
-   * @param variants Original variants.
-   * @return Remaining (Spring Bean) variants.
-   */
-  private static List<String> filterSpringBeanCompletionVariants(final List<String> variants) {
-    return ContainerUtil.findAll(variants, new Condition<String>() {
-      @Override
-      public boolean value(final String s) {
-        return !s.contains(".");
-      }
-    });
+    assertTrue(variants.contains("springInterceptor"));
   }
 
   // stuff below is Spring related ===============================================
