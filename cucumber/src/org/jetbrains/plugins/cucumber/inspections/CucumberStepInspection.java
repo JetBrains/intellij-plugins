@@ -18,6 +18,7 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.psi.*;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinScenarioOutlineImpl;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
 import java.util.ArrayList;
@@ -61,9 +62,12 @@ public class CucumberStepInspection extends GherkinInspection {
           CucumberStepReference reference = (CucumberStepReference)references[0];
           final AbstractStepDefinition definition = reference.resolveToDefinition();
           if (definition == null) {
+            CucumberCreateStepFix fix = null;
+            if (CucumberStepsIndex.getInstance(step.getProject()).getExtensionCount() > 0) {
+              fix = new CucumberCreateStepFix();
+            }
             holder.registerProblem(reference.getElement(), reference.getRangeInElement(), CucumberBundle.message(
-              "cucumber.inspection.undefined.step.msg.name") + " #loc #ref",
-                                   new CucumberCreateStepFix());
+              "cucumber.inspection.undefined.step.msg.name") + " #loc #ref", fix);
           }
           else if (isOnTheFly) {
             // highlighting for regexp params

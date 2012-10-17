@@ -139,6 +139,10 @@ public class CucumberStepsIndex {
     Disposer.register(project, connection);
   }
 
+  public int getExtensionCount() {
+    return myExtensionList.length;
+  }
+
   /**
    * Creates file that will contain step definitions
    *
