@@ -51,10 +51,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     }
   }
 
-  private static final Scope DEFAULT_SCOPE = Scope.Class;
-  private static final OutputLogLevel DEFAULT_LEVEL = null;
-
-  private @NotNull Scope myScope = DEFAULT_SCOPE;
+  private @NotNull Scope myScope = Scope.Class;
 
   private @NotNull String myPackageName = "";
   private @NotNull String myClassName = "";
@@ -73,22 +70,8 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
   public FlexUnitRunnerParameters() {
   }
 
-  @Attribute("scope")
-  public String getScopeRaw() {
-    return myScope.name();
-  }
-
-  public void setScopeRaw(String scopeRaw) {
-    try {
-      myScope = Scope.valueOf(scopeRaw);
-    }
-    catch (IllegalArgumentException e) {
-      myScope = DEFAULT_SCOPE;
-    }
-  }
-
   @NotNull
-  @Transient
+  @Attribute("scope")
   public Scope getScope() {
     return myScope;
   }
@@ -145,26 +128,8 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     mySocketPolicyPort = port;
   }
 
-  @Attribute("output_log_level")
-  public String getOutputLogLevelRaw() {
-    return myOutputLogLevel != null ? myOutputLogLevel.name() : "";
-  }
-
-  public void setOutputLogLevelRaw(String outputLogLevel) {
-    if (StringUtil.isNotEmpty(outputLogLevel)) {
-      try {
-        myOutputLogLevel = OutputLogLevel.valueOf(outputLogLevel);
-        return;
-      }
-      catch (IllegalArgumentException e) {
-        // ignore
-      }
-    }
-    myOutputLogLevel = DEFAULT_LEVEL;
-  }
-
   @Nullable
-  @Transient
+  @Attribute("output_log_level")
   public OutputLogLevel getOutputLogLevel() {
     return myOutputLogLevel;
   }
@@ -191,6 +156,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
   }
 
   @NotNull
+  @Attribute("emulatorAdlOptions")
   public String getEmulatorAdlOptions() {
     return myEmulatorAdlOptions;
   }
@@ -200,6 +166,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
   }
 
   @NotNull
+  @Attribute("appDescriptorForEmulator")
   public AppDescriptorForEmulator getAppDescriptorForEmulator() {
     return myAppDescriptorForEmulator;
   }
