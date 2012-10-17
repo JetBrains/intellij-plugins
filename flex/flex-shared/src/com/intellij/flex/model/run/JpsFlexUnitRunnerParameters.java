@@ -1,0 +1,141 @@
+package com.intellij.flex.model.run;
+
+import com.intellij.util.xmlb.annotations.Attribute;
+import com.intellij.util.xmlb.annotations.Transient;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public class JpsFlexUnitRunnerParameters extends JpsBCBasedRunnerParameters<JpsFlexUnitRunnerParameters> {
+
+  public enum Scope {
+    Method, Class, Package
+  }
+
+  public enum OutputLogLevel {
+    Fatal("1000"), Error("8"), Warn("6"), Info("4"), Debug("2"), All("0");
+
+    private final String myFlexConstant;
+
+    OutputLogLevel(String flexConstant) {
+      myFlexConstant = flexConstant;
+    }
+
+    public String getFlexConstant() {
+      return myFlexConstant;
+    }
+  }
+
+  private @NotNull Scope myScope = Scope.Class;
+
+  private @NotNull String myPackageName = "";
+  private @NotNull String myClassName = "";
+  private @NotNull String myMethodName = "";
+
+  private @Nullable OutputLogLevel myOutputLogLevel = null;
+  //private @NotNull LauncherParameters myLauncherParameters = new LauncherParameters();
+  //private boolean myTrusted = true;
+
+  //private String myEmulatorAdlOptions = "";
+  //private @NotNull AppDescriptorForEmulator myAppDescriptorForEmulator = AppDescriptorForEmulator.Android;
+
+  private int myPort;
+  private int mySocketPolicyPort;
+
+  public JpsFlexUnitRunnerParameters() {
+  }
+
+  private JpsFlexUnitRunnerParameters(final JpsFlexUnitRunnerParameters original) {
+    super(original);
+
+    myScope = original.myScope;
+    myPackageName = original.myPackageName;
+    myClassName = original.myClassName;
+    myMethodName = original.myMethodName;
+    myOutputLogLevel = original.myOutputLogLevel;
+  }
+
+  @NotNull
+  public JpsFlexUnitRunnerParameters createCopy() {
+    return new JpsFlexUnitRunnerParameters(this);
+  }
+
+  public void applyChanges(@NotNull final JpsFlexUnitRunnerParameters modified) {
+    super.applyChanges(modified);
+
+    myScope = modified.myScope;
+    myPackageName = modified.myPackageName;
+    myClassName = modified.myClassName;
+    myMethodName = modified.myMethodName;
+    myOutputLogLevel = modified.myOutputLogLevel;
+  }
+
+  // ------------------
+
+  @NotNull
+  @Attribute("scope")
+  public Scope getScope() {
+    return myScope;
+  }
+
+  public void setScope(@NotNull Scope scope) {
+    myScope = scope;
+  }
+
+  @NotNull
+  @Attribute("package_name")
+  public String getPackageName() {
+    return myPackageName;
+  }
+
+  public void setPackageName(@NotNull String packageName) {
+    myPackageName = packageName;
+  }
+
+  @NotNull
+  @Attribute("class_name")
+  public String getClassName() {
+    return myClassName;
+  }
+
+  public void setClassName(@NotNull String className) {
+    myClassName = className;
+  }
+
+  @NotNull
+  @Attribute("method_name")
+  public String getMethodName() {
+    return myMethodName;
+  }
+
+  public void setMethodName(@NotNull String methodName) {
+    myMethodName = methodName;
+  }
+
+  @Nullable
+  @Attribute("output_log_level")
+  public OutputLogLevel getOutputLogLevel() {
+    return myOutputLogLevel;
+  }
+
+  public void setOutputLogLevel(@Nullable OutputLogLevel outputLogLevel) {
+    myOutputLogLevel = outputLogLevel;
+  }
+
+  @Transient
+  public int getPort() {
+    return myPort;
+  }
+
+  public void setPort(int port) {
+    myPort = port;
+  }
+
+  @Transient
+  public int getSocketPolicyPort() {
+    return mySocketPolicyPort;
+  }
+
+  public void setSocketPolicyPort(int port) {
+    mySocketPolicyPort = port;
+  }
+}
