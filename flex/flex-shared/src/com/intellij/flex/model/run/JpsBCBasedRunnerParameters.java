@@ -5,8 +5,8 @@ import org.jetbrains.jps.model.ex.JpsElementBase;
 
 public abstract class JpsBCBasedRunnerParameters<Self extends JpsBCBasedRunnerParameters<Self>> extends JpsElementBase<Self> {
 
-  @NotNull private String myModuleName = "";
-  @NotNull private String myBCName = "";
+  @NotNull protected String myModuleName = "";
+  @NotNull protected String myBCName = "";
 
   protected JpsBCBasedRunnerParameters() {
   }
