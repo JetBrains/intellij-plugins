@@ -55,9 +55,10 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
 
   @SuppressWarnings("UnusedDeclaration")
   public CucumberJavaSMFormatter(Appendable appendable) {
-    this.appendable = appendable;
+    this.appendable = System.err;
     queue = new ArrayDeque<String>();
     currentSteps = new ArrayDeque<Step>();
+    outCommand(String.format(TEMPLATE_ENTER_THE_MATRIX, getCurrentTime()));
   }
 
   @Override
@@ -66,7 +67,6 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
       done();
     }
     currentFeatureName = "Feature: " + getName(feature);
-    outCommand(String.format(TEMPLATE_ENTER_THE_MATRIX, getCurrentTime()));
     outCommand(String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), uri + ":" + feature.getLine(), currentFeatureName));
   }
 
