@@ -22,8 +22,10 @@ public class SelectFlashBuilderImportedProjectsStep extends SelectImportedProjec
   }
 
   public boolean isStepVisible() {
+    final FlashBuilderImporter builder = (FlashBuilderImporter)getBuilder();
+    if (builder == null) return false;
     // no need in this step if one archive file or one FB project was explicitly selected
-    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(((FlashBuilderImporter)getBuilder()).getInitiallySelectedPath());
+    final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(builder.getInitiallySelectedPath());
 
     if (file != null) {
       if (file.isDirectory()) {
