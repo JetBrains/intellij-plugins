@@ -13,6 +13,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
@@ -49,7 +50,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
         JavaParametersUtil.configureConfiguration(params, CucumberJavaRunConfiguration.this);
 
-        String path = CucumberJavaRunConfiguration.class.getResource("/SMFormatter.jar").getPath();
+        String path = PathUtil.getJarPathForClass(this.getClass()).replace("cucumber-java.jar", "SMFormatter.jar");
         params.getClassPath().add(path);
 
         params.setMainClass(MAIN_CLASS_NAME);
