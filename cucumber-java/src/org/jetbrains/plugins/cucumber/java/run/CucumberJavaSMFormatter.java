@@ -236,7 +236,7 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
   }
 
   private String escape(String source) {
-    return source.replace("\n", "|n").replace("\r", "|r").replace("'", "|'").replace("[", "|[").replace("]", "|]");
+    return source.replace("|", "||").replace("\n", "|n").replace("\r", "|r").replace("'", "|'").replace("[", "|[").replace("]", "|]");
   }
 
   private void outCommand(String s) {
