@@ -304,9 +304,9 @@ module Test
               end
             end
             # Shoulda
-            if Rake::TeamCity.is_framework_used(:shoulda)
+            if Rake::TeamCity.is_framework_used(:shoulda) || Rake::TeamCity.is_framework_used(:test_unit)
               if test_name =~ /\Atest: /
-                # is 'should' test
+                # is 'should' test or 'test' test
                 return shoulda_unmangle(test_name)
               end
             end
@@ -352,6 +352,13 @@ module Test
 
             if test_name =~ /\Atest: (.*)?\. \(([\w:]*)\)/
               # p [$1, $2]
+              example_full_name = $1
+              class_name = $2
+              return convert_test_unit_to_qualified(class_name, example_full_name)
+            end
+
+            # almost the same as shoulda test name just do not add period at the end of name
+            if test_name =~ /\Atest: (.*)?\(([\w:]*)\)/
               example_full_name = $1
               class_name = $2
               return convert_test_unit_to_qualified(class_name, example_full_name)
