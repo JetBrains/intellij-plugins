@@ -1,7 +1,13 @@
 package com.intellij.flex.model.run;
 
+import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
+import com.intellij.flex.model.bc.JpsFlexBuildConfigurationManager;
+import com.intellij.flex.model.module.JpsFlexModuleType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.ex.JpsElementBase;
+import org.jetbrains.jps.model.module.JpsTypedModule;
 
 public abstract class JpsBCBasedRunnerParameters<Self extends JpsBCBasedRunnerParameters<Self>> extends JpsElementBase<Self> {
 
@@ -37,5 +43,18 @@ public abstract class JpsBCBasedRunnerParameters<Self extends JpsBCBasedRunnerPa
   public void applyChanges(@NotNull final Self modified) {
     myModuleName = modified.myModuleName;
     myBCName = modified.myBCName;
+  }
+
+  @Nullable
+  public JpsFlexBuildConfiguration getBC(final JpsProject project) {
+    if (!myModuleName.isEmpty() && !myBCName.isEmpty()) {
+      for (JpsTypedModule<JpsFlexBuildConfigurationManager> module : project.getModules(JpsFlexModuleType.INSTANCE)) {
+        if (module.getName().equals(myModuleName)) {
+          return module.getProperties().findConfigurationByName(myBCName);
+        }
+      }
+    }
+
+    return null;
   }
 }

@@ -63,6 +63,18 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
     return myActiveConfiguration;
   }
 
+  @Override
+  @Nullable
+  public JpsFlexBuildConfiguration findConfigurationByName(final String name) {
+    for (JpsFlexBuildConfiguration configuration : getBuildConfigurations()) {
+      if (configuration.getName().equals(name)) {
+        return configuration;
+      }
+    }
+
+    return null;
+  }
+
   public JpsFlexModuleOrProjectCompilerOptions getModuleLevelCompilerOptions() {
     return myContainer.getChild(JpsFlexCompilerOptionsRole.INSTANCE);
   }

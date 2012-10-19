@@ -8,7 +8,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="flex-shared" />
+    <orderEntry type="module" module-name="flex-shared" exported="" />
     <orderEntry type="module" module-name="compiler-openapi" />
     <orderEntry type="module" module-name="lang-api" />
     <orderEntry type="module" module-name="JavaScriptLanguage" />
@@ -29,6 +29,7 @@
     <orderEntry type="module" module-name="maven" />
     <orderEntry type="module" module-name="ant" />
     <orderEntry type="module" module-name="copyright" />
+    <orderEntry type="module" module-name="jps-builders" />
   </component>
 </module>
 

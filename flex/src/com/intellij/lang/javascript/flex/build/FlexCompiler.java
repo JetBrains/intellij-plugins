@@ -58,7 +58,7 @@ import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMob
 
 public class FlexCompiler implements SourceProcessingCompiler {
   private static final Logger LOG = Logger.getInstance(FlexCompiler.class.getName());
-  public static final Key<Collection<Pair<Module, FlexIdeBuildConfiguration>>> MODULES_AND_BCS_TO_COMPILE =
+  private static final Key<Collection<Pair<Module, FlexIdeBuildConfiguration>>> MODULES_AND_BCS_TO_COMPILE =
     Key.create("modules.and.bcs.to.compile");
 
   @NotNull
@@ -401,7 +401,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     throws ConfigurationException {
 
     final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new HashSet<Pair<Module, FlexIdeBuildConfiguration>>();
-    final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile = scope.getUserData(MODULES_AND_BCS_TO_COMPILE);
+    final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile = getBCsToCompileForPackaging(scope);
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(scope);
 
     if (modulesAndBCsToCompile != null) {
@@ -455,7 +455,27 @@ public class FlexCompiler implements SourceProcessingCompiler {
     return result;
   }
 
+  public static void setBCsToCompileForPackaging(final CompileScope scope, final Collection<Pair<Module, FlexIdeBuildConfiguration>> bcs) {
+    scope.putUserData(MODULES_AND_BCS_TO_COMPILE, bcs);
+  }
+
+  @Nullable
+  public static Collection<Pair<Module, FlexIdeBuildConfiguration>> getBCsToCompileForPackaging(final CompileScope scope) {
+    return scope.getUserData(MODULES_AND_BCS_TO_COMPILE);
+  }
+
   private static FlexIdeBuildConfiguration forceDebugStatus(final Project project, final FlexIdeBuildConfiguration bc) {
+    final boolean debug = getForcedDebugStatus(project, bc);
+
+    // must not use getTemporaryCopyForCompilation() here because additional config file must not be merged with the generated one when compiling swf for release or AIR package
+    final ModifiableFlexIdeBuildConfiguration result = Factory.getCopy(bc);
+    final String additionalOptions = FlexUtils.removeOptions(bc.getCompilerOptions().getAdditionalOptions(), "debug", "compiler.debug");
+    result.getCompilerOptions().setAdditionalOptions(additionalOptions + " -debug=" + String.valueOf(debug));
+
+    return result;
+  }
+
+  public static boolean getForcedDebugStatus(final Project project, final FlexIdeBuildConfiguration bc) {
     final boolean debug;
 
     if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
@@ -471,12 +491,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
       debug = false;
     }
 
-    // must not use getTemporaryCopyForCompilation() here because additional config file must not be merged with the generated one when compiling swf for release or AIR package
-    final ModifiableFlexIdeBuildConfiguration result = Factory.getCopy(bc);
-    final String additionalOptions = FlexUtils.removeOptions(bc.getCompilerOptions().getAdditionalOptions(), "debug", "compiler.debug");
-    result.getCompilerOptions().setAdditionalOptions(additionalOptions + " -debug=" + String.valueOf(debug));
-
-    return result;
+    return debug;
   }
 
   private static void appendBCDependencies(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs,
@@ -559,17 +574,18 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                 .createGeneralOptionProblem(bc.getName(), FlexBundle.message("output.file.name.not.set"),
                                                             FlexIdeBCConfigurable.Location.OutputFileName));
       }
+      else {
+        if (!nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swf")) {
+          errorConsumer.consume(
+            FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message("output.file.wrong.extension", "swf"),
+                                                                    FlexIdeBCConfigurable.Location.OutputFileName));
+        }
 
-      if (!nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swf")) {
-        errorConsumer.consume(
-          FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message("output.file.wrong.extension", "swf"),
-                                                                  FlexIdeBCConfigurable.Location.OutputFileName));
-      }
-
-      if (nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swc")) {
-        errorConsumer.consume(
-          FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message("output.file.wrong.extension", "swc"),
-                                                                  FlexIdeBCConfigurable.Location.OutputFileName));
+        if (nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swc")) {
+          errorConsumer.consume(
+            FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message("output.file.wrong.extension", "swc"),
+                                                                    FlexIdeBCConfigurable.Location.OutputFileName));
+        }
       }
 
       if (bc.getOutputFolder().isEmpty()) {

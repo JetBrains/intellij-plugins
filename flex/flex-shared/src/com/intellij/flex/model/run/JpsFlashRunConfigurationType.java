@@ -9,7 +9,7 @@ import org.jetbrains.jps.model.serialization.runConfigurations.JpsRunConfigurati
 public class JpsFlashRunConfigurationType extends JpsRunConfigurationType<JpsFlashRunnerParameters> {
 
   public static final JpsFlashRunConfigurationType INSTANCE = new JpsFlashRunConfigurationType();
-  private static final String ID = "FlashRunConfigurationType";
+  public static final String ID = "FlashRunConfigurationType";
 
   private JpsFlashRunConfigurationType() {
   }

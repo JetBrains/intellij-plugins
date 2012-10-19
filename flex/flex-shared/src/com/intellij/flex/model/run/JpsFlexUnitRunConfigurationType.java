@@ -9,7 +9,7 @@ import org.jetbrains.jps.model.serialization.runConfigurations.JpsRunConfigurati
 public class JpsFlexUnitRunConfigurationType extends JpsRunConfigurationType<JpsFlexUnitRunnerParameters> {
 
   public static final JpsFlexUnitRunConfigurationType INSTANCE = new JpsFlexUnitRunConfigurationType();
-  private static final String ID = "FlexUnitRunConfigurationType";
+  public static final String ID = "FlexUnitRunConfigurationType";
 
   private JpsFlexUnitRunConfigurationType() {
   }

@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.flex.FlexCommonBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.build.FlashProjectStructureProblem;
 import com.intellij.lang.javascript.flex.build.FlexCompiler;
@@ -48,7 +49,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
 
   @Override
   public String getPresentableName() {
-    return FlexBundle.message("bc.structure.element.presentable.name", myBc.getName(), myModule.getName());
+    return FlexCommonBundle.message("bc.0.module.1", myBc.getName(), myModule.getName());
   }
 
   @Override
