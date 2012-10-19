@@ -1,5 +1,6 @@
 package org.osmorc;
 
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -19,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * A project component that watches changes to the bundle structure (e.g. libraries / modules added) displays a notification bar offering to resynchronize dependencies.
  */
-public class BundleIndexModificationWatcher implements EditorNotifications.Provider<BundleChangeNotificationPanel> {
+public class BundleIndexModificationWatcher extends EditorNotifications.Provider<BundleChangeNotificationPanel> {
 
   private static final Key<BundleChangeNotificationPanel> KEY = Key.create("BundleChangeNotificationPanelKey");
   private Project myProject;
@@ -72,7 +73,7 @@ public class BundleIndexModificationWatcher implements EditorNotifications.Provi
   }
 
   @Override
-  public BundleChangeNotificationPanel createNotificationPanel(VirtualFile file) {
+  public BundleChangeNotificationPanel createNotificationPanel(VirtualFile file, FileEditor fileEditor) {
     if (!myNeedsResync.get()) {
       return null;
     }

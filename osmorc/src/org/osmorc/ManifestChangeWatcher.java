@@ -1,5 +1,6 @@
 package org.osmorc;
 
+import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -23,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * A project component that watches changes to a manifest file and displays a notification bar offering to resynchronize dependencies.
  */
-public class ManifestChangeWatcher implements EditorNotifications.Provider<ManifestChangeNotificationPanel> {
+public class ManifestChangeWatcher extends EditorNotifications.Provider<ManifestChangeNotificationPanel> {
 
   private static final Key<ManifestChangeNotificationPanel> KEY = Key.create("ManifestChangeNotificationPanelKey");
   private Project myProject;
@@ -86,7 +87,7 @@ public class ManifestChangeWatcher implements EditorNotifications.Provider<Manif
 
 
   @Override
-  public ManifestChangeNotificationPanel createNotificationPanel(VirtualFile file) {
+  public ManifestChangeNotificationPanel createNotificationPanel(VirtualFile file, FileEditor fileEditor) {
     if (!myNeedsResync.get()) {
       return null;
     }
