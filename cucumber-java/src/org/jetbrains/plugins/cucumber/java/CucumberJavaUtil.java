@@ -55,14 +55,15 @@ public class CucumberJavaUtil {
     return false;
   }
 
-  public static boolean isStepDefinition(@NotNull final PsiElement element) {
-    if (!(element instanceof PsiMethod)) {
-      return false;
+  public static boolean isStepDefinition(@NotNull final PsiMethod method) {
+    return getCucumberAnnotation(method) != null;
+  }
+
+  public static boolean isStepDefinitionClass(@NotNull final PsiClass clazz) {
+    PsiMethod[] methods = clazz.getAllMethods();
+    for (PsiMethod method : methods) {
+      if (getCucumberAnnotation(method) != null) return true;
     }
-
-    PsiMethod method = (PsiMethod)element;
-    if (getCucumberAnnotation(method) != null) return true;
-
     return false;
   }
 

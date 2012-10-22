@@ -15,7 +15,7 @@
     <orderEntry type="module" module-name="lang-api" />
     <orderEntry type="module" module-name="java-impl" />
     <orderEntry type="module" module-name="testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="testFramework-java" />
+    <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
     <orderEntry type="library" name="cucumber-jvm" level="project" />
     <orderEntry type="module" module-name="execution-impl" />
     <orderEntry type="module" module-name="execution-openapi" />

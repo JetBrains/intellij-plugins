@@ -29,11 +29,12 @@ public class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiRefere
     if (!(myElement instanceof PsiMethod)){
       return true;
     }
-    if (!CucumberJavaUtil.isStepDefinition(myElement)) {
+    final PsiMethod method = (PsiMethod) myElement;
+    if (!CucumberJavaUtil.isStepDefinition(method)) {
       return true;
     }
 
-    final PsiMethod method = (PsiMethod)myElement;
+
     final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberAnnotation(method);
     assert stepAnnotation != null;
     final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
