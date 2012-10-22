@@ -20,7 +20,7 @@ public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRun
 
   @Override
   protected String getName() {
-    return getFileToRun().getNameWithoutExtension();
+    return "Feature: " + getFileToRun().getNameWithoutExtension();
   }
 
   @NotNull

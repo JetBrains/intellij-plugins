@@ -56,6 +56,8 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRuntimeCo
     return locationElement != null && locationElement.getContainingFile() instanceof GherkinFile;
   }
 
+  protected void processConfiguration(@NotNull final CucumberJavaRunConfiguration configuration) {}
+
   protected RunnerAndConfigurationSettings createConfiguration(Location location, ConfigurationContext context) {
     final Project project = context.getProject();
     final RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(project, context);
@@ -66,6 +68,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRuntimeCo
     configuration.setProgramParameters(file.getPath() + glue + FORMATTER_OPTIONS);
     configuration.MAIN_CLASS_NAME = CUCUMBER_MAIN_CLASS;
     configuration.setName(getName());
+    processConfiguration(configuration);
 
     setupConfigurationModule(context, configuration);
     JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
