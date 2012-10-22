@@ -5,11 +5,14 @@ import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.JpsFlexBCDependencyEntry;
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.flex.model.bc.JpsFlexDependencyEntry;
+import com.intellij.flex.model.bc.impl.JpsFlexBCState;
 import com.intellij.flex.model.run.JpsBCBasedRunnerParameters;
 import com.intellij.flex.model.run.JpsFlashRunConfigurationType;
 import com.intellij.flex.model.run.JpsFlexUnitRunConfigurationType;
+import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.PathUtilRt;
+import com.intellij.util.xmlb.XmlSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.BuildRootDescriptor;
@@ -24,19 +27,25 @@ import org.jetbrains.jps.model.java.JavaSourceRootProperties;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.jetbrains.jps.model.module.JpsTypedModuleSourceRoot;
 import org.jetbrains.jps.model.runConfiguration.JpsRunConfigurationType;
+import org.jetbrains.jps.model.runConfiguration.JpsTypedRunConfiguration;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   private final @NotNull JpsFlexBuildConfiguration myBC;
-  private final @NotNull String myId;
+
+  private final @Nullable Boolean myForcedDebugStatus;
+
   private final @Nullable JpsRunConfigurationType<? extends JpsBCBasedRunnerParameters<?>> myRunConfigType;
   private final @Nullable String myRunConfigName;
+
+  private final @NotNull String myId;
 
   /**
    * @param forcedDebugStatus <code>true</code> or <code>false</code> means that this bc is compiled for further packaging and we need swf to have corresponding debug status;
@@ -46,8 +55,12 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     super(FlexBuildTargetType.INSTANCE);
 
     myBC = bc;
+
+    myForcedDebugStatus = forcedDebugStatus;
+
     myRunConfigType = null;
     myRunConfigName = null;
+
     myId = FlexCommonUtils.getBuildTargetId(myBC.getModule().getName(), myBC.getName(), forcedDebugStatus);
   }
 
@@ -57,6 +70,9 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     super(FlexBuildTargetType.INSTANCE);
 
     myBC = bc;
+
+    myForcedDebugStatus = null;
+
     myRunConfigType = runConfigType;
     myRunConfigName = runConfigName;
 
@@ -126,6 +142,21 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     return new File(PathUtilRt.getParentPath(myBC.getActualOutputFilePath()));
   }
 
+  public void writeConfiguration(final PrintWriter out, final BuildRootIndex buildRootIndex) {
+    if (myForcedDebugStatus != null) {
+      out.println("forced debug status: " + myForcedDebugStatus.booleanValue());
+    }
+
+    if (myRunConfigType != null && myRunConfigName != null) {
+      final JpsTypedRunConfiguration<? extends JpsBCBasedRunnerParameters<?>> runConfig =
+        FlexCommonUtils.findRunConfiguration(myBC.getModule().getProject(), myRunConfigType, myRunConfigName);
+      if (runConfig != null) {
+        out.println(JDOMUtil.writeElement(XmlSerializer.serialize(runConfig.getProperties()), "\n"));
+      }
+    }
+
+    out.println(JDOMUtil.writeElement(XmlSerializer.serialize(JpsFlexBCState.getState(myBC)), "\n"));
+  }
 
   public String toString() {
     return myId;

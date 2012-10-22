@@ -62,4 +62,8 @@ public class JpsFlexBCState {
 
   @Property(surroundWithTag = false)
   public JpsIosPackagingOptionsImpl.State IOS_PACKAGING_OPTIONS;
+
+  public static JpsFlexBCState getState(final JpsFlexBuildConfiguration bc) {
+    return ((JpsFlexBuildConfigurationImpl)bc).getState();
+  }
 }

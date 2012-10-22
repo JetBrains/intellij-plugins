@@ -5,7 +5,12 @@ import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.JpsElement;
+import org.jetbrains.jps.model.JpsProject;
+import org.jetbrains.jps.model.runConfiguration.JpsRunConfigurationType;
+import org.jetbrains.jps.model.runConfiguration.JpsTypedRunConfiguration;
 
 public class FlexCommonUtils {
 
@@ -77,6 +82,20 @@ public class FlexCommonUtils {
                                           : null;
       return Trinity.create(moduleName, bcName, forcedDebugStatus);
     }
+    return null;
+  }
+
+
+  @Nullable
+  public static <P extends JpsElement> JpsTypedRunConfiguration<P> findRunConfiguration(final @NotNull JpsProject project,
+                                                                                        final @NotNull JpsRunConfigurationType<P> runConfigType,
+                                                                                        final @NotNull String runConfigName) {
+    for (JpsTypedRunConfiguration<P> runConfig : project.getRunConfigurations(runConfigType)) {
+      if (runConfigName.equals(runConfig.getName())) {
+        return runConfig;
+      }
+    }
+
     return null;
   }
 }
