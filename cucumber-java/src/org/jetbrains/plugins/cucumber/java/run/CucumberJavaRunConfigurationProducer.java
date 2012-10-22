@@ -7,6 +7,7 @@ import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.junit.JavaRuntimeConfigurationProducerBase;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +67,10 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRuntimeCo
     final VirtualFile file = getFileToRun();
     final String glue = getGlue();
     configuration.setProgramParameters(file.getPath() + glue + FORMATTER_OPTIONS);
-    configuration.MAIN_CLASS_NAME = CUCUMBER_MAIN_CLASS;
+    if (StringUtil.isEmpty(configuration.MAIN_CLASS_NAME)) {
+      configuration.MAIN_CLASS_NAME = CUCUMBER_MAIN_CLASS;
+    }
+
     configuration.setName(getName());
     processConfiguration(configuration);
 
