@@ -20,8 +20,8 @@ import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -61,23 +61,28 @@ public class Struts2ProblemFileHighlightFilter implements Condition<VirtualFile>
       return false;
     }
 
-    final PsiFile file = ApplicationManager.getApplication().runReadAction(new NullableComputable<PsiFile>() {
+    final boolean isStrutsXml = ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
       @Override
-      public PsiFile compute() {
-        return PsiManager.getInstance(project).findFile(virtualFile);
+      public Boolean compute() {
+        final StrutsManager strutsManager = StrutsManager.getInstance(project);
+
+        final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+        return psiFile instanceof XmlFile &&
+               strutsManager.isStruts2ConfigFile((XmlFile)psiFile) &&
+               strutsManager.getModelByFile((XmlFile)psiFile) != null;
       }
     });
-    if (file == null) {
-      return false;
-    }
-
-    final StrutsManager strutsManager = StrutsManager.getInstance(project);
-    if (strutsManager.isStruts2ConfigFile((XmlFile) file) &&
-        strutsManager.getModelByFile((XmlFile) file) != null) {
+    if (isStrutsXml) {
       return true;
     }
 
-    return ValidatorManager.getInstance(project).isValidatorsFile((XmlFile) file);
+    return ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
+      @Override
+      public Boolean compute() {
+        final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+        return psiFile instanceof XmlFile
+               && ValidatorManager.getInstance(project).isValidatorsFile((XmlFile)psiFile);
+      }
+    });
   }
-
 }
