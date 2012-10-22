@@ -209,7 +209,11 @@ public class CompilerConfigGenerator {
     return null;
   }
 
-  private static String getSwfVersionForTargetPlayer(final String targetPlayer) {
+  public static String getSwfVersionForTargetPlayer(final String targetPlayer) {
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.5") >= 0) return "18";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.4") >= 0) return "17";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.3") >= 0) return "16";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.2") >= 0) return "15";
     if (StringUtil.compareVersionNumbers(targetPlayer, "11.1") >= 0) return "14";
     if (StringUtil.compareVersionNumbers(targetPlayer, "11") >= 0) return "13";
     if (StringUtil.compareVersionNumbers(targetPlayer, "10.3") >= 0) return "12";
@@ -218,7 +222,7 @@ public class CompilerConfigGenerator {
     return "9";
   }
 
-  private static String getSwfVersionForSdk(final String sdkVersion) {
+  public static String getSwfVersionForSdk(final String sdkVersion) {
     if (StringUtil.compareVersionNumbers(sdkVersion, "4.6") >= 0) return "14";
     if (StringUtil.compareVersionNumbers(sdkVersion, "4.5") >= 0) return "11";
     assert false : sdkVersion;
