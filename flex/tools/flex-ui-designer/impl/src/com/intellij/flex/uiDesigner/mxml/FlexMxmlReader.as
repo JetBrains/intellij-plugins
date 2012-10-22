@@ -13,7 +13,7 @@ public class FlexMxmlReader extends MxmlReader {
   }
 
   override protected function beforeReadRootObjectProperties(object:Object, isDocumentLevel:Boolean):void {
-    // perfomance, early set document, avoid recursive set later (see UIComponent.document setter)
+    // performance, early set document, avoid recursive set later (see UIComponent.document setter)
     if (isDocumentLevel) {
       // may be spark.primitives.supportClasses.GraphicElement
       if ("document" in object) {
