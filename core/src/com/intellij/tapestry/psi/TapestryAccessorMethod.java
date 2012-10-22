@@ -138,10 +138,6 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     return PsiSuperMethodImplUtil.getHierarchicalMethodSignature(this);
   }
 
-  public PsiMethodReceiver getMethodReceiver() {
-    return null;
-  }
-
   public PsiType getReturnTypeNoResolve() {
     return getReturnType();
   }
