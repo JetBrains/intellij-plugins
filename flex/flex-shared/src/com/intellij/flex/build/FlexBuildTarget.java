@@ -35,6 +35,7 @@ import java.io.FileFilter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
@@ -137,9 +138,9 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     return FlexCommonBundle.message("bc.0.module.1", myBC.getName(), myBC.getModule().getName());
   }
 
-  @Nullable
-  public File getOutputDir(final BuildDataPaths paths) {
-    return new File(PathUtilRt.getParentPath(myBC.getActualOutputFilePath()));
+  @NotNull
+  public Collection<File> getOutputDirs(final BuildDataPaths paths) {
+    return Collections.singleton(new File(PathUtilRt.getParentPath(myBC.getActualOutputFilePath())));
   }
 
   public void writeConfiguration(final PrintWriter out, final BuildRootIndex buildRootIndex) {
