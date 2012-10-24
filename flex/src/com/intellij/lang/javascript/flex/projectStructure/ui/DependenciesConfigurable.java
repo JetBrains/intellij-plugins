@@ -1493,18 +1493,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   private void createUIComponents() {
-    mySdkCombo = new JdkComboBox(mySkdsModel, new Condition<Sdk>() {
-      @Override
-      public boolean value(final Sdk sdk) {
-        final SdkTypeId sdkType = sdk.getSdkType();
-        return sdkType == FlexSdkType2.getInstance() || sdkType == FlexmojosSdkType.getInstance();
-      }
-    }, new Condition<SdkType>() {
-      public boolean value(final SdkType type) {
-        return type == FlexSdkType2.getInstance();
-      }
-    }
-    );
+    mySdkCombo = new JdkComboBox(mySkdsModel,
+                                 Conditions.oneOf(FlexSdkType2.getInstance(), FlexmojosSdkType.getInstance()),
+                                 Conditions.<SdkType>is(FlexSdkType2.getInstance()));
   }
 
   private void initPopupActions() {
