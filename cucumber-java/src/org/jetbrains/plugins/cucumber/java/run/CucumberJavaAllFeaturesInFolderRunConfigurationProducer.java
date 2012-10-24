@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.java.run;
 import com.intellij.execution.Location;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.junit2.info.LocationUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -37,6 +38,7 @@ public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends Cuc
 
   @Override
   protected RunnerAndConfigurationSettings createConfiguration(Location location, ConfigurationContext context) {
+    if (!LocationUtil.isJarAttached(location, CUCUMBER_MAIN_CLASS, new PsiDirectory[] {(PsiDirectory)mySourceElement})) return null;
     RunnerAndConfigurationSettings result = super.createConfiguration(location, context);
     CucumberJavaRunConfiguration runConfiguration = (CucumberJavaRunConfiguration)result.getConfiguration();
     runConfiguration.getEnvs().put("current_dir", getFileToRun().getPath());
