@@ -8,6 +8,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -18,7 +19,7 @@ public class FlexIdeIconProvider implements FileIconProvider, DumbAware {
 
   @Nullable
   @Override
-  public Icon getIcon(VirtualFile file, int flags, @Nullable Project project) {
+  public Icon getIcon(@NotNull VirtualFile file, int flags, @Nullable Project project) {
     FileType fileType = file.getFileType();
     if (fileType instanceof InternalFileType) {
       return ICON;
