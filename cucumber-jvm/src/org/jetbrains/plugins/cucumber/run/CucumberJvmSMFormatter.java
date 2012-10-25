@@ -18,6 +18,17 @@ import java.util.Queue;
  * Date: 8/10/12
  */
 public class CucumberJvmSMFormatter implements Formatter, Reporter {
+  private int scenarioCount;
+  private int passedScenarioCount;
+  private boolean scenarioPassed = true;
+
+  private int stepCount;
+  private int passedStepCount;
+  private int skippedStepCount;
+  private int pendingStepCount;
+  private int failedStepCount;
+  private int undefinedStepCount;
+
   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
 
   private static final String TEMPLATE_TEST_STARTED =
@@ -35,6 +46,10 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
   private static final String TEMPLATE_TEST_SUITE_STARTED =
     "##teamcity[testSuiteStarted timestamp = '%s' locationHint = 'file://%s' name = '%s']";
   private static final String TEMPLATE_TEST_SUITE_FINISHED = "##teamcity[testSuiteFinished timestamp = '%s' name = '%s']";
+
+  private static final String TEMPLATE_SCENARIO_COUNTING_STARTED = "##teamcity[customProgressStatus testsCategory = 'Scenarios' count = '0' timestamp = '%s']";
+  private static final String TEMPLATE_SCENARIO_COUNTING_FINISHED = "##teamcity[customProgressStatus testsCategory = '' count = '0' timestamp = '%s']";
+  private static final String TEMPLATE_SCENARIO_STARTED = "##teamcity[customProgressStatus type = 'testStarted' timestamp = '%s']";
 
   public static final String RESULT_STATUS_PENDING = "pending";
 
@@ -59,6 +74,7 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
     queue = new ArrayDeque<String>();
     currentSteps = new ArrayDeque<Step>();
     outCommand(String.format(TEMPLATE_ENTER_THE_MATRIX, getCurrentTime()));
+    outCommand(String.format(TEMPLATE_SCENARIO_COUNTING_STARTED, getCurrentTime()));
   }
 
   @Override
@@ -70,10 +86,16 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
     outCommand(String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), uri + ":" + feature.getLine(), currentFeatureName));
   }
 
+  private boolean isRealScenario(final Scenario scenario) {
+    return scenario.getKeyword().equals("Scenario");
+  }
+
   @Override
   public void scenario(Scenario scenario) {
     closeScenario();
-    if (scenario.getKeyword().equals("Scenario")) {
+    if (isRealScenario(scenario)) {
+      scenarioCount++;
+      outCommand(String.format(TEMPLATE_SCENARIO_STARTED, getCurrentTime()));
       closeScenarioOutline();
       currentSteps.clear();
     }
@@ -88,6 +110,8 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
 
   @Override
   public void scenarioOutline(ScenarioOutline outline) {
+    scenarioCount++;
+    outCommand(String.format(TEMPLATE_SCENARIO_STARTED, getCurrentTime()));
     queue.clear();
     currentSteps.clear();
 
@@ -116,9 +140,12 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
 
   @Override
   public void result(Result result) {
+    stepCount++;
     Step currentStep = currentSteps.poll();
     String stepFullName = getName(currentStep);
     if (result.getStatus().equals(Result.FAILED)) {
+      failedStepCount++;
+      scenarioPassed = false;
       String fullMessage = result.getErrorMessage().replace("\r", "").replace("\t", "  ");
       String[] messageInfo = fullMessage.split("\n", 2);
       final String message;
@@ -135,13 +162,23 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
       outCommand(String.format(TEMPLATE_TEST_FAILED, getCurrentTime(), escape(details), escape(message), stepFullName, ""), true);
     }
     else if (result.getStatus().equals(RESULT_STATUS_PENDING)) {
+      pendingStepCount++;
+      scenarioPassed = false;
       outCommand(String.format(TEMPLATE_TEST_PENDING, stepFullName, getCurrentTime()), true);
     }
     else if (result.equals(Result.UNDEFINED)) {
+      undefinedStepCount++;
+      scenarioPassed = false;
       String message = "Undefined step: " + getName(currentStep);
       String details = "";
       outCommand(String.format(TEMPLATE_TEST_FAILED, getCurrentTime(), escape(details), escape(message), stepFullName, "error = 'true'"),
                  true);
+    } else if (result.equals(Result.SKIPPED)) {
+      skippedStepCount++;
+      scenarioPassed = false;
+      outCommand(String.format(TEMPLATE_TEST_PENDING, stepFullName, getCurrentTime()), true);
+    } else {
+      passedStepCount++;
     }
 
     String currentTime = getCurrentTime();
@@ -150,17 +187,27 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
 
   private void closeScenario() {
     if (currentScenario != null) {
+      if (isRealScenario(currentScenario)) {
+        if (scenarioPassed) {
+          passedScenarioCount++;
+        }
+      }
       outCommand(String.format(TEMPLATE_TEST_SUITE_FINISHED, getCurrentTime(), getName(currentScenario)));
     }
+    currentScenario = null;
   }
 
   private void closeScenarioOutline() {
     if (currentScenarioOutline != null) {
+      if (scenarioPassed) {
+        passedScenarioCount++;
+      }
       if (!beforeExampleSection) {
         outCommand(String.format(TEMPLATE_TEST_SUITE_FINISHED, getCurrentTime(), "Examples:"));
       }
       outCommand(String.format(TEMPLATE_TEST_SUITE_FINISHED, getCurrentTime(), getName(currentScenarioOutline)));
     }
+    currentScenarioOutline = null;
   }
 
   private void closePreviousScenarios() {
@@ -178,16 +225,20 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
   public void done() {
     closePreviousScenarios();
     outCommand(String.format(TEMPLATE_TEST_SUITE_FINISHED, getCurrentTime(), currentFeatureName));
+    outCommand(String.format(TEMPLATE_SCENARIO_COUNTING_FINISHED, getCurrentTime()));
+
+    outCommand(scenarioCount + " scenario (" + passedScenarioCount + " passed)\n");
+    outCommand(stepCount + " steps (" + passedStepCount + " passed)\n");
   }
 
   @Override
   public void uri(String s) {
-      String currentDir = System.getenv().get("current_dir");
-      if (currentDir != null) {
-          uri = currentDir + File.separator + s;
-      } else {
-          uri = s;
-      }
+    String currentDir = System.getenv().get("current_dir");
+    if (currentDir != null) {
+      uri = currentDir + File.separator + s;
+    } else {
+      uri = s;
+    }
   }
 
   @Override
@@ -208,10 +259,12 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
   public void match(Match match) {
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public void embedding(String mimeType, byte[] data) {
     outCommand("embedding\n");
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public void embedding(String s, InputStream inputStream) {
     outCommand("embedding\n");
   }
