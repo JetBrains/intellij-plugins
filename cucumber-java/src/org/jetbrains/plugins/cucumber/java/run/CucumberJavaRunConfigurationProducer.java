@@ -10,8 +10,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 
@@ -42,8 +42,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRuntimeCo
 
   @Override
   protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
-    final PsiPackage myPackage = JavaRuntimeConfigurationProducerBase.checkPackage(mySourceElement);
-    if (!LocationUtil.isJarAttached(location, myPackage, "cucumber.cli.Main")) return null;
+    if (!LocationUtil.isJarAttached(location, "cucumber.cli.Main", new PsiDirectory[0])) return null;
     mySourceElement = location.getPsiElement();
     if (!isApplicable(location.getPsiElement(), context.getModule())) {
       return null;
