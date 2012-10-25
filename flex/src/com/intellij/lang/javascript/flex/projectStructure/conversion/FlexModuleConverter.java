@@ -4,6 +4,8 @@ import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.ConversionProcessor;
 import com.intellij.conversion.ModuleSettings;
 import com.intellij.facet.FacetManagerImpl;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
@@ -109,8 +111,8 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
     Set<String> usedSdksNames = new HashSet<String>();
     final Set<Element> usedModuleLibrariesEntries = new HashSet<Element>();
     if (isFlexModule(moduleSettings)) {
-      ModifiableFlexIdeBuildConfiguration newConfiguration =
-        (ModifiableFlexIdeBuildConfiguration)configurationManager.getBuildConfigurations()[0];
+      ModifiableFlexBuildConfiguration newConfiguration =
+        (ModifiableFlexBuildConfiguration)configurationManager.getBuildConfigurations()[0];
       newConfiguration.setName(generateModuleBcName(moduleSettings));
 
       Element oldConfigurationElement = moduleSettings.getComponentElement(FlexBuildConfiguration.COMPONENT_NAME);
@@ -126,9 +128,9 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
       List<Element> flexFacets = getFlexFacets(moduleSettings);
       for (int i = 0; i < flexFacets.size(); i++) {
         Element facet = flexFacets.get(i);
-        ModifiableFlexIdeBuildConfiguration newConfiguration;
+        ModifiableFlexBuildConfiguration newConfiguration;
         if (i == 0) {
-          newConfiguration = (ModifiableFlexIdeBuildConfiguration)configurationManager.getBuildConfigurations()[0];
+          newConfiguration = (ModifiableFlexBuildConfiguration)configurationManager.getBuildConfigurations()[0];
         }
         else {
           newConfiguration = ConversionHelper.createBuildConfiguration(configurationManager);
@@ -200,7 +202,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
   }
 
   private void processConfiguration(@Nullable FlexBuildConfiguration oldConfiguration,
-                                    ModifiableFlexIdeBuildConfiguration newBuildConfiguration,
+                                    ModifiableFlexBuildConfiguration newBuildConfiguration,
                                     final ModuleSettings module,
                                     boolean facet,
                                     @Nullable String facetSdkName,
@@ -519,7 +521,7 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
    * @return SDK name if found
    */
   @Nullable
-  private static String processSdkEntry(ModifiableFlexIdeBuildConfiguration bc,
+  private static String processSdkEntry(ModifiableFlexBuildConfiguration bc,
                                         @Nullable FlexBuildConfiguration oldConfiguration,
                                         String ideaSdkName) {
     if (ideaSdkName == null) {

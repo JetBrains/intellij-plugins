@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.flex.model.bc.TargetPlatform;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

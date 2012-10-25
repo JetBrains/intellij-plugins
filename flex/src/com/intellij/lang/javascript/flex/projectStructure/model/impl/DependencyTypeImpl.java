@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.lang.javascript.flex.projectStructure.model.DependencyType;
-import com.intellij.lang.javascript.flex.projectStructure.model.LinkageType;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyType;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Tag;

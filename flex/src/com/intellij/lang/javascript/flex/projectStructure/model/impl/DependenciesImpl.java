@@ -1,12 +1,20 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.flex.model.bc.ComponentSet;
+import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.lang.javascript.flex.projectStructure.model.DependencyEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencies;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.openapi.components.StateStorageException;
 import com.intellij.openapi.module.ModulePointerManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xmlb.annotations.*;
+import com.intellij.util.xmlb.annotations.AbstractCollection;
+import com.intellij.util.xmlb.annotations.Attribute;
+import com.intellij.util.xmlb.annotations.Property;
+import com.intellij.util.xmlb.annotations.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

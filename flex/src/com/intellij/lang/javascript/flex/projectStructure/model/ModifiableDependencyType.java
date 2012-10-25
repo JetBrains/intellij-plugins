@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
-import com.intellij.lang.javascript.flex.projectStructure.model.DependencyType;
-import com.intellij.lang.javascript.flex.projectStructure.model.LinkageType;
+import com.intellij.flex.model.bc.LinkageType;
 import org.jetbrains.annotations.NotNull;
 
 /**

@@ -60,9 +60,9 @@ public class FlexProjectStructureValidator extends ProjectStructureValidator {
 
     ChooseBuildConfigurationDialog d = ChooseBuildConfigurationDialog
       .createForApplicableBCs(FlexBundle.message("choose.bc.dialog.title"), FlexBundle.message("choose.bc.dialog.label", library.getName()),
-                              project, allowEmptySelection, new Condition<FlexIdeBCConfigurable>() {
+                              project, allowEmptySelection, new Condition<FlexBCConfigurable>() {
         @Override
-        public boolean value(final FlexIdeBCConfigurable configurable) {
+        public boolean value(final FlexBCConfigurable configurable) {
           for (DependencyEntry entry : configurable.getEditableObject().getDependencies().getEntries()) {
             if (entry instanceof SharedLibraryEntry) {
               if (((SharedLibraryEntry)entry).getLibraryName().equals(library.getName()) &&
@@ -83,7 +83,7 @@ public class FlexProjectStructureValidator extends ProjectStructureValidator {
       return true;
     }
 
-    for (FlexIdeBCConfigurable c : d.getSelectedConfigurables()) {
+    for (FlexBCConfigurable c : d.getSelectedConfigurables()) {
       c.addSharedLibrary(library);
     }
     return true;

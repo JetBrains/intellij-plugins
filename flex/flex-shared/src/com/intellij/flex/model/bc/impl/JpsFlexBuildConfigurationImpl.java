@@ -28,9 +28,9 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   static final String LIST_ENTRY_PARTS_SEPARATOR = "\t";
 
   //private @NotNull String myName = UNNAMED;
-  private @NotNull JpsTargetPlatform myTargetPlatform = JpsBuildConfigurationNature.DEFAULT.targetPlatform;
-  private boolean myPureAs = JpsBuildConfigurationNature.DEFAULT.pureAS;
-  private @NotNull JpsOutputType myOutputType = JpsBuildConfigurationNature.DEFAULT.outputType;
+  private @NotNull TargetPlatform myTargetPlatform = BuildConfigurationNature.DEFAULT.targetPlatform;
+  private boolean myPureAs = BuildConfigurationNature.DEFAULT.pureAS;
+  private @NotNull OutputType myOutputType = BuildConfigurationNature.DEFAULT.outputType;
   private @NotNull String myOptimizeFor = "";
   private @NotNull String myMainClass = "";
   private @NotNull String myOutputFileName = "";
@@ -105,7 +105,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
 
   @Override
   @NotNull
-  public JpsTargetPlatform getTargetPlatform() {
+  public TargetPlatform getTargetPlatform() {
     return myTargetPlatform;
   }
 
@@ -116,7 +116,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
 
   @Override
   @NotNull
-  public JpsOutputType getOutputType() {
+  public OutputType getOutputType() {
     return myOutputType;
   }
 
@@ -261,8 +261,8 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   */
 
   @Override
-  public JpsBuildConfigurationNature getNature() {
-    return new JpsBuildConfigurationNature(myTargetPlatform, myPureAs, myOutputType);
+  public BuildConfigurationNature getNature() {
+    return new BuildConfigurationNature(myTargetPlatform, myPureAs, myOutputType);
   }
 
   @Nullable
@@ -280,14 +280,14 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
 
     /*
   @Override
-  public void setNature(JpsBuildConfigurationNature nature) {
+  public void setNature(BuildConfigurationNature nature) {
     myTargetPlatform = nature.targetPlatform;
     myPureAs = nature.pureAS;
     myOutputType = nature.outputType;
   }
 
   @Override
-  public void setTargetPlatform(@NotNull JpsTargetPlatform targetPlatform) {
+  public void setTargetPlatform(@NotNull TargetPlatform targetPlatform) {
     myTargetPlatform = targetPlatform;
   }
 
@@ -297,7 +297,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   }
 
   @Override
-  public void setOutputType(@NotNull JpsOutputType outputType) {
+  public void setOutputType(@NotNull OutputType outputType) {
     myOutputType = outputType;
   }
 

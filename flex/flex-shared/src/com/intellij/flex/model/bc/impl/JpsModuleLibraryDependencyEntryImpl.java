@@ -2,7 +2,7 @@ package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.flex.model.bc.JpsLibraryDependencyEntry;
-import com.intellij.flex.model.bc.JpsLinkageType;
+import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.lib.JpsFlexLibraryProperties;
 import com.intellij.flex.model.lib.JpsFlexLibraryType;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ class JpsModuleLibraryDependencyEntryImpl extends JpsFlexDependencyEntryBase<Jps
 
   private String myLibraryId;
 
-  JpsModuleLibraryDependencyEntryImpl(final String libraryId, final JpsLinkageType linkageType) {
+  JpsModuleLibraryDependencyEntryImpl(final String libraryId, final LinkageType linkageType) {
     super(linkageType);
     myLibraryId = libraryId;
   }

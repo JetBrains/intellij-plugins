@@ -241,7 +241,7 @@ public class AirPackageUtil {
   }
 
   public static boolean packageApk(final Module module,
-                                   final FlexIdeBuildConfiguration bc,
+                                   final FlexBuildConfiguration bc,
                                    final FlashRunnerParameters runnerParameters,
                                    final boolean isDebug) {
     final AndroidPackagingOptions packagingOptions = bc.getAndroidPackagingOptions();
@@ -265,7 +265,7 @@ public class AirPackageUtil {
   }
 
   public static boolean packageIpaForSimulator(final Module module,
-                                               final FlexIdeBuildConfiguration bc,
+                                               final FlexBuildConfiguration bc,
                                                final FlashRunnerParameters runnerParameters,
                                                final boolean isDebug) {
     FileDocumentManager.getInstance().saveAllDocuments();
@@ -276,7 +276,7 @@ public class AirPackageUtil {
   }
 
   public static boolean packageIpaForDevice(final Module module,
-                                            final FlexIdeBuildConfiguration bc,
+                                            final FlexBuildConfiguration bc,
                                             final FlashRunnerParameters runnerParameters,
                                             final String adtVersion,
                                             final boolean isDebug) {
@@ -319,7 +319,7 @@ public class AirPackageUtil {
   }
 
   public static ExternalTask createAirDesktopTask(final Module module,
-                                                  final FlexIdeBuildConfiguration bc,
+                                                  final FlexBuildConfiguration bc,
                                                   final DesktopPackageType packageType,
                                                   final PasswordStore passwords) {
     final AirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
@@ -362,7 +362,7 @@ public class AirPackageUtil {
   }
 
   public static ExternalTask createAndroidPackageTask(final Module module,
-                                                      final FlexIdeBuildConfiguration bc,
+                                                      final FlexBuildConfiguration bc,
                                                       final AndroidPackageType packageType,
                                                       final boolean captiveRuntime,
                                                       final int debugPort,
@@ -411,7 +411,7 @@ public class AirPackageUtil {
   }
 
   public static ExternalTask createIOSPackageTask(final Module module,
-                                                  final FlexIdeBuildConfiguration bc,
+                                                  final FlexBuildConfiguration bc,
                                                   final IOSPackageType packageType,
                                                   final boolean fastPackaging,
                                                   final String iosSDKPath,

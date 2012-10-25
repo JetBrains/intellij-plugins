@@ -5,9 +5,9 @@ import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
@@ -61,7 +61,7 @@ public class FlexSdkStep extends ModuleWizardStep {
         if (ModuleType.get(module) != FlexModuleType.getInstance()) {
           continue;
         }
-        for (ModifiableFlexIdeBuildConfiguration c : currentEditor.getConfigurations(module)) {
+        for (ModifiableFlexBuildConfiguration c : currentEditor.getConfigurations(module)) {
           SdkEntry sdkEntry = c.getDependencies().getSdkEntry();
           Sdk sdk;
           if (sdkEntry != null &&
@@ -76,7 +76,7 @@ public class FlexSdkStep extends ModuleWizardStep {
     else {
       for (final Module module : ModuleManager.getInstance(project).getModules()) {
         if (ModuleType.get(module) == FlexModuleType.getInstance()) {
-          for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+          for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
             Sdk sdk = bc.getSdk();
             if (sdk != null) {
               combo.setSelectedSdkRaw(sdk.getName());

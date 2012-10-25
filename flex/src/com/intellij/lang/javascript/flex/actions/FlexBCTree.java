@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.flex.actions;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -37,7 +37,7 @@ public class FlexBCTree extends CheckboxTree {
     this(project, Condition.TRUE);
   }
 
-  public FlexBCTree(final Project project, final Condition<FlexIdeBuildConfiguration> bcFilter) {
+  public FlexBCTree(final Project project, final Condition<FlexBuildConfiguration> bcFilter) {
     super(createRenderer(), new CheckedTreeNode(project), new CheckPolicy(true, true, true, true));
     myProject = project;
 
@@ -60,17 +60,17 @@ public class FlexBCTree extends CheckboxTree {
     myDispatcher.getMulticaster().stateChanged(new ChangeEvent(node));
   }
 
-  public Collection<Pair<Module, FlexIdeBuildConfiguration>> getSelectedBCs() {
+  public Collection<Pair<Module, FlexBuildConfiguration>> getSelectedBCs() {
     return getBCs(true);
   }
 
-  public Collection<Pair<Module, FlexIdeBuildConfiguration>> getDeselectedBCs() {
+  public Collection<Pair<Module, FlexBuildConfiguration>> getDeselectedBCs() {
     return getBCs(false);
   }
 
-  private Collection<Pair<Module, FlexIdeBuildConfiguration>> getBCs(final boolean checked) {
-    final CollectConsumer<Pair<Module, FlexIdeBuildConfiguration>> consumer =
-      new CollectConsumer<Pair<Module, FlexIdeBuildConfiguration>>();
+  private Collection<Pair<Module, FlexBuildConfiguration>> getBCs(final boolean checked) {
+    final CollectConsumer<Pair<Module, FlexBuildConfiguration>> consumer =
+      new CollectConsumer<Pair<Module, FlexBuildConfiguration>>();
     iterateRecursively((CheckedTreeNode)getModel().getRoot(), checked, consumer);
     return consumer.getResult();
   }
@@ -86,7 +86,7 @@ public class FlexBCTree extends CheckboxTree {
         while (bcNodes.hasMoreElements()) {
           final CheckedTreeNode bcNode = (CheckedTreeNode)bcNodes.nextElement();
           final Object bcUserObject = bcNode.getUserObject();
-          if (bcUserObject instanceof FlexIdeBuildConfiguration && ((FlexIdeBuildConfiguration)bcUserObject).getName().equals(bcName)) {
+          if (bcUserObject instanceof FlexBuildConfiguration && ((FlexBuildConfiguration)bcUserObject).getName().equals(bcName)) {
             bcNode.setChecked(checked);
             break;
           }
@@ -98,13 +98,13 @@ public class FlexBCTree extends CheckboxTree {
 
   private static void iterateRecursively(final CheckedTreeNode node,
                                          final boolean iterateChecked,
-                                         final Consumer<Pair<Module, FlexIdeBuildConfiguration>> consumer) {
+                                         final Consumer<Pair<Module, FlexBuildConfiguration>> consumer) {
     if (node.isLeaf()) {
       if (node.isChecked() == iterateChecked && node.getParent() instanceof CheckedTreeNode) {
         final Object userObject = node.getUserObject();
         final Object parentUserObject = ((CheckedTreeNode)node.getParent()).getUserObject();
-        if (userObject instanceof FlexIdeBuildConfiguration && parentUserObject instanceof Module) {
-          consumer.consume(Pair.create((Module)parentUserObject, (FlexIdeBuildConfiguration)userObject));
+        if (userObject instanceof FlexBuildConfiguration && parentUserObject instanceof Module) {
+          consumer.consume(Pair.create((Module)parentUserObject, (FlexBuildConfiguration)userObject));
         }
       }
     }
@@ -132,22 +132,22 @@ public class FlexBCTree extends CheckboxTree {
           getTextRenderer().setIcon(ModuleType.get((Module)userObject).getIcon());
           getTextRenderer().append(((Module)userObject).getName());
         }
-        else if (userObject instanceof FlexIdeBuildConfiguration) {
-          BCUtils.renderBuildConfiguration((FlexIdeBuildConfiguration)userObject, null, false).appendToComponent(getTextRenderer());
-          getTextRenderer().setIcon(((FlexIdeBuildConfiguration)userObject).getIcon());
+        else if (userObject instanceof FlexBuildConfiguration) {
+          BCUtils.renderBuildConfiguration((FlexBuildConfiguration)userObject, null, false).appendToComponent(getTextRenderer());
+          getTextRenderer().setIcon(((FlexBuildConfiguration)userObject).getIcon());
         }
       }
     };
   }
 
-  private void addNodes(final CheckedTreeNode rootNode, final Condition<FlexIdeBuildConfiguration> bcFilter) {
+  private void addNodes(final CheckedTreeNode rootNode, final Condition<FlexBuildConfiguration> bcFilter) {
     final FlexModuleType flexModuleType = FlexModuleType.getInstance();
 
     for (Module module : ModuleManager.getInstance(myProject).getModules()) {
       if (ModuleType.get(module) != flexModuleType) continue;
 
       final CheckedTreeNode moduleNode = new CheckedTreeNode(module);
-      for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+      for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
         if (bcFilter.value(bc)) {
           moduleNode.add(new CheckedTreeNode(bc));
         }
@@ -170,8 +170,8 @@ public class FlexBCTree extends CheckboxTree {
         else if (userObject instanceof Module) {
           return ((Module)userObject).getName();
         }
-        else if (userObject instanceof FlexIdeBuildConfiguration) {
-          return ((FlexIdeBuildConfiguration)userObject).getName();
+        else if (userObject instanceof FlexBuildConfiguration) {
+          return ((FlexBuildConfiguration)userObject).getName();
         }
         return null;
       }

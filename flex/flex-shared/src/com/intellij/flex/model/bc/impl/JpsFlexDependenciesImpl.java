@@ -1,9 +1,9 @@
 package com.intellij.flex.model.bc.impl;
 
-import com.intellij.flex.model.bc.JpsComponentSet;
+import com.intellij.flex.model.bc.ComponentSet;
 import com.intellij.flex.model.bc.JpsFlexDependencies;
 import com.intellij.flex.model.bc.JpsFlexDependencyEntry;
-import com.intellij.flex.model.bc.JpsLinkageType;
+import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.sdk.JpsFlexSdkType;
 import com.intellij.flex.model.sdk.JpsFlexmojosSdkProperties;
 import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
@@ -39,11 +39,11 @@ class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependencie
   private static final JpsElementCollectionRole<JpsFlexDependencyEntry> ENTRIES_ROLE = JpsElementCollectionRole.create(ENTRY_ROLE);
 
 
-  private static final JpsLinkageType DEFAULT_FRAMEWORK_LINKAGE = JpsLinkageType.Default;
+  private static final LinkageType DEFAULT_FRAMEWORK_LINKAGE = LinkageType.Default;
 
   private @NotNull String myTargetPlayer = "";
-  private @NotNull JpsComponentSet myComponentSet = JpsComponentSet.SparkAndMx;
-  private @NotNull JpsLinkageType myFrameworkLinkage = DEFAULT_FRAMEWORK_LINKAGE;
+  private @NotNull ComponentSet myComponentSet = ComponentSet.SparkAndMx;
+  private @NotNull LinkageType myFrameworkLinkage = DEFAULT_FRAMEWORK_LINKAGE;
 
   private JpsFlexDependenciesImpl() {
     myContainer.setChild(ENTRIES_ROLE);
@@ -102,21 +102,21 @@ class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependencie
   }
 
   @NotNull
-  public JpsComponentSet getComponentSet() {
+  public ComponentSet getComponentSet() {
     return myComponentSet;
   }
 
-  public void setComponentSet(@NotNull final JpsComponentSet componentSet) {
+  public void setComponentSet(@NotNull final ComponentSet componentSet) {
     myComponentSet = componentSet;
   }
 
   @Override
   @NotNull
-  public JpsLinkageType getFrameworkLinkage() {
+  public LinkageType getFrameworkLinkage() {
     return myFrameworkLinkage;
   }
 
-  public void setFrameworkLinkage(@NotNull final JpsLinkageType frameworkLinkage) {
+  public void setFrameworkLinkage(@NotNull final LinkageType frameworkLinkage) {
     myFrameworkLinkage = frameworkLinkage;
   }
 
@@ -188,13 +188,13 @@ class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependencie
 
     myTargetPlayer = state.TARGET_PLAYER;
     myComponentSet = state.COMPONENT_SET;
-    myFrameworkLinkage = JpsLinkageType.valueOf(state.FRAMEWORK_LINKAGE, DEFAULT_FRAMEWORK_LINKAGE);
+    myFrameworkLinkage = LinkageType.valueOf(state.FRAMEWORK_LINKAGE, DEFAULT_FRAMEWORK_LINKAGE);
 
     final JpsElementCollection<JpsFlexDependencyEntry> entries = myContainer.getChild(ENTRIES_ROLE);
     assert entries.getElements().size() == 0;
 
     for (State.EntryState entryState : state.ENTRIES) {
-      final JpsLinkageType linkageType = JpsLinkageType.valueOf(entryState.DEPENDENCY_TYPE.LINKAGE_TYPE, DEFAULT_FRAMEWORK_LINKAGE);
+      final LinkageType linkageType = LinkageType.valueOf(entryState.DEPENDENCY_TYPE.LINKAGE_TYPE, DEFAULT_FRAMEWORK_LINKAGE);
 
       if (entryState.LIBRARY_ID != null) {
         entries.addChild(new JpsModuleLibraryDependencyEntryImpl(entryState.LIBRARY_ID, linkageType));
@@ -231,7 +231,7 @@ class JpsFlexDependenciesImpl extends JpsCompositeElementBase<JpsFlexDependencie
     @Attribute("target-player")
     public String TARGET_PLAYER = "";
     @Attribute("component-set")
-    public JpsComponentSet COMPONENT_SET = JpsComponentSet.SparkAndMx;
+    public ComponentSet COMPONENT_SET = ComponentSet.SparkAndMx;
     @Attribute("framework-linkage")
     public String FRAMEWORK_LINKAGE = DEFAULT_FRAMEWORK_LINKAGE.getSerializedText();
     @Tag("entries")

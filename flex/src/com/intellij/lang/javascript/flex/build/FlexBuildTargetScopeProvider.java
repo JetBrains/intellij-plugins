@@ -6,7 +6,7 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.build.FlexBuildTargetType;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.openapi.compiler.CompileScope;
@@ -38,13 +38,13 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
     final TargetTypeBuildScope.Builder builder = TargetTypeBuildScope.newBuilder().setTypeId(FlexBuildTargetType.INSTANCE.getTypeId());
 
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(baseScope);
-    final Collection<Pair<Module, FlexIdeBuildConfiguration>> bcsToCompileForPackaging =
+    final Collection<Pair<Module, FlexBuildConfiguration>> bcsToCompileForPackaging =
       FlexCompiler.getBCsToCompileForPackaging(baseScope);
 
     try {
-      for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : FlexCompiler.getModulesAndBCsToCompile(baseScope)) {
+      for (Pair<Module, FlexBuildConfiguration> moduleAndBC : FlexCompiler.getModulesAndBCsToCompile(baseScope)) {
         final Module module = moduleAndBC.first;
-        final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+        final FlexBuildConfiguration bc = moduleAndBC.second;
 
         if (bcsToCompileForPackaging != null && contains(bcsToCompileForPackaging, module, bc)) {
           final boolean forcedDebugStatus = FlexCompiler.getForcedDebugStatus(project, bc);
@@ -75,10 +75,10 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
     return Collections.singletonList(builder.build());
   }
 
-  private static boolean contains(final Collection<Pair<Module, FlexIdeBuildConfiguration>> bcs,
+  private static boolean contains(final Collection<Pair<Module, FlexBuildConfiguration>> bcs,
                                   final Module module,
-                                  final FlexIdeBuildConfiguration bc) {
-    for (Pair<Module, FlexIdeBuildConfiguration> pair : bcs) {
+                                  final FlexBuildConfiguration bc) {
+    for (Pair<Module, FlexBuildConfiguration> pair : bcs) {
       if (pair.first.getName().equals(module.getName()) && pair.second.getName().equals(bc.getName())) {
         return true;
       }

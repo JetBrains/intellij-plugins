@@ -3,10 +3,10 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurable;
-import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexBCConfigurable;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -41,14 +41,14 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
   private final Project myProject;
 
   public FlashProjectStructureErrorsDialog(final Project project,
-                                           final Collection<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> problems) {
+                                           final Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> problems) {
     super(project);
     myProject = project;
 
     myTree.setRootVisible(false);
     myTree.setModel(new DefaultTreeModel(new DefaultMutableTreeNode()));
 
-    for (Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem> problem : problems) {
+    for (Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem> problem : problems) {
       addProblem(problem.first, problem.second, problem.third);
     }
 
@@ -61,9 +61,9 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
           setIcon(ModuleType.get((Module)userObject).getIcon());
           append(((Module)userObject).getName());
         }
-        else if (userObject instanceof FlexIdeBuildConfiguration) {
-          setIcon(((FlexIdeBuildConfiguration)userObject).getIcon());
-          BCUtils.renderBuildConfiguration((FlexIdeBuildConfiguration)userObject, null).appendToComponent(this);
+        else if (userObject instanceof FlexBuildConfiguration) {
+          setIcon(((FlexBuildConfiguration)userObject).getIcon());
+          BCUtils.renderBuildConfiguration((FlexBuildConfiguration)userObject, null).appendToComponent(this);
         }
         else if (userObject instanceof FlashProjectStructureProblem) {
           setIcon(AllIcons.Ide.ErrorSign);
@@ -103,7 +103,7 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
     return myTree;
   }
 
-  private void addProblem(final Module module, final FlexIdeBuildConfiguration bc, final FlashProjectStructureProblem problem) {
+  private void addProblem(final Module module, final FlexBuildConfiguration bc, final FlashProjectStructureProblem problem) {
     final DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode)myTree.getModel().getRoot();
     final DefaultMutableTreeNode moduleNode = getOrCreateChildNode(rootNode, module);
     final DefaultMutableTreeNode bcNode = getOrCreateChildNode(moduleNode, bc);
@@ -132,7 +132,7 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
     if (userObject == null) return;
 
     final Ref<Module> moduleRef = new Ref<Module>();
-    final Ref<FlexIdeBuildConfiguration> bcRef = new Ref<FlexIdeBuildConfiguration>();
+    final Ref<FlexBuildConfiguration> bcRef = new Ref<FlexBuildConfiguration>();
     final Ref<FlashProjectStructureProblem> problemRef = new Ref<FlashProjectStructureProblem>();
 
     if (userObject instanceof FlashProjectStructureProblem) {
@@ -141,8 +141,8 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
       userObject = node.getUserObject();
     }
 
-    if (userObject instanceof FlexIdeBuildConfiguration) {
-      bcRef.set((FlexIdeBuildConfiguration)userObject);
+    if (userObject instanceof FlexBuildConfiguration) {
+      bcRef.set((FlexBuildConfiguration)userObject);
       node = (DefaultMutableTreeNode)node.getParent();
       userObject = node.getUserObject();
     }
@@ -170,7 +170,7 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
           place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(moduleRef.get(), bcRef.get().getName());
           if (!problemRef.isNull()) {
             place.putPath(CompositeConfigurable.TAB_NAME, problemRef.get().tabName);
-            place.putPath(FlexIdeBCConfigurable.LOCATION_ON_TAB, problemRef.get().locationOnTab);
+            place.putPath(FlexBCConfigurable.LOCATION_ON_TAB, problemRef.get().locationOnTab);
           }
         }
 

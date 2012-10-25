@@ -150,7 +150,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
     State state = new State();
     putOptionsCollapsingPaths(myOptions, state.options, componentManager);
     state.resourceFilesMode = myResourceFilesMode;
-    state.filesToIncludeInSWC = FlexIdeBuildConfigurationImpl.collapsePaths(componentManager, myFilesToIncludeInSWC);
+    state.filesToIncludeInSWC = FlexBuildConfigurationImpl.collapsePaths(componentManager, myFilesToIncludeInSWC);
     state.additionalConfigFilePath = myAdditionalConfigFilePath;
     state.additionalOptions = myAdditionalOptions;
     return state;
@@ -160,7 +160,7 @@ class CompilerOptionsImpl implements ModifiableCompilerOptions, ModuleOrProjectC
                                                 final Map<String, String> toMap,
                                                 final @Nullable ComponentManager componentManager) {
     for (Map.Entry<String, String> entry : fromMap.entrySet()) {
-      toMap.put(entry.getKey(), FlexIdeBuildConfigurationImpl.collapsePaths(componentManager, entry.getValue()));
+      toMap.put(entry.getKey(), FlexBuildConfigurationImpl.collapsePaths(componentManager, entry.getValue()));
     }
   }
 

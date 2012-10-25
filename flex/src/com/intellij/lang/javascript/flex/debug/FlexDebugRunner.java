@@ -8,11 +8,11 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
@@ -55,7 +55,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                    final FlexUnitRunnerParameters params,
                                                    final String swfFilePath) throws ExecutionException {
     try {
-      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
+      final Pair<Module, FlexBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
       return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, executor, contentToReuse, env);
     }
     catch (RuntimeConfigurationError e) {
@@ -70,7 +70,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
                                                    final ExecutionEnvironment env,
                                                    final FlexUnitRunnerParameters params) throws ExecutionException {
     try {
-      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
+      final Pair<Module, FlexBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
       return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, executor, contentToReuse, env);
     }
     catch (RuntimeConfigurationError e) {
@@ -78,13 +78,13 @@ public class FlexDebugRunner extends FlexBaseRunner {
     }
   }
 
-  protected RunContentDescriptor launchFlexIdeConfig(final Module module,
-                                                     final FlexIdeBuildConfiguration bc,
-                                                     final FlashRunnerParameters runnerParameters,
-                                                     final Executor executor,
-                                                     final RunProfileState state,
-                                                     final RunContentDescriptor contentToReuse,
-                                                     final ExecutionEnvironment env) throws ExecutionException {
+  protected RunContentDescriptor launchFlexConfig(final Module module,
+                                                  final FlexBuildConfiguration bc,
+                                                  final FlashRunnerParameters runnerParameters,
+                                                  final Executor executor,
+                                                  final RunProfileState state,
+                                                  final RunContentDescriptor contentToReuse,
+                                                  final ExecutionEnvironment env) throws ExecutionException {
     final Project project = module.getProject();
 
     if (bc.getTargetPlatform() == TargetPlatform.Mobile) {

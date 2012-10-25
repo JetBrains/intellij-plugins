@@ -1,5 +1,8 @@
 package com.intellij.javascript.flex.maven;
 
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
@@ -8,7 +11,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -95,25 +97,25 @@ public class Flexmojos3Configurator {
   }
 
   public void configureAndAppendTasks(final List<MavenProjectsProcessorTask> postTasks) {
-    final ModifiableFlexIdeBuildConfiguration[] oldBCs = myFlexEditor.getConfigurations(myModule);
-    if (oldBCs.length == 1 && oldBCs[0].getName().equals(FlexIdeBuildConfiguration.UNNAMED)) {
+    final ModifiableFlexBuildConfiguration[] oldBCs = myFlexEditor.getConfigurations(myModule);
+    if (oldBCs.length == 1 && oldBCs[0].getName().equals(FlexBuildConfiguration.UNNAMED)) {
       myFlexEditor.configurationRemoved(oldBCs[0]);
     }
 
     final String mainBCName = myModule.getName();
-    final ModifiableFlexIdeBuildConfiguration existingBC = ContainerUtil.find(oldBCs, new Condition<ModifiableFlexIdeBuildConfiguration>() {
-      public boolean value(final ModifiableFlexIdeBuildConfiguration bc) {
+    final ModifiableFlexBuildConfiguration existingBC = ContainerUtil.find(oldBCs, new Condition<ModifiableFlexBuildConfiguration>() {
+      public boolean value(final ModifiableFlexBuildConfiguration bc) {
         return mainBCName.equals(bc.getName());
       }
     });
 
-    final ModifiableFlexIdeBuildConfiguration mainBC = setupMainBuildConfiguration(existingBC);
+    final ModifiableFlexBuildConfiguration mainBC = setupMainBuildConfiguration(existingBC);
 
     final Collection<RLMInfo> rlmInfos = FlexmojosImporter.isFlexApp(myMavenProject) ? getRLMInfos() : Collections.<RLMInfo>emptyList();
     for (final RLMInfo info : rlmInfos) {
-      final ModifiableFlexIdeBuildConfiguration existingRlmBC =
-        ContainerUtil.find(oldBCs, new Condition<ModifiableFlexIdeBuildConfiguration>() {
-          public boolean value(final ModifiableFlexIdeBuildConfiguration bc) {
+      final ModifiableFlexBuildConfiguration existingRlmBC =
+        ContainerUtil.find(oldBCs, new Condition<ModifiableFlexBuildConfiguration>() {
+          public boolean value(final ModifiableFlexBuildConfiguration bc) {
             return bc.getName().equals(info.myRLMName);
           }
         });
@@ -135,9 +137,9 @@ public class Flexmojos3Configurator {
     }
   }
 
-  private ModifiableFlexIdeBuildConfiguration setupMainBuildConfiguration(final @Nullable ModifiableFlexIdeBuildConfiguration existingBC) {
+  private ModifiableFlexBuildConfiguration setupMainBuildConfiguration(final @Nullable ModifiableFlexBuildConfiguration existingBC) {
     final boolean isNewBC = existingBC == null;
-    final ModifiableFlexIdeBuildConfiguration mainBC = isNewBC ? myFlexEditor.createConfiguration(myModule) : existingBC;
+    final ModifiableFlexBuildConfiguration mainBC = isNewBC ? myFlexEditor.createConfiguration(myModule) : existingBC;
 
     mainBC.setName(myModule.getName());
 
@@ -245,7 +247,7 @@ public class Flexmojos3Configurator {
     return path;
   }
 
-  private TargetPlatform handleDependencies(final ModifiableFlexIdeBuildConfiguration bc) {
+  private TargetPlatform handleDependencies(final ModifiableFlexBuildConfiguration bc) {
     bc.getDependencies().getModifiableEntries().clear();
 
     boolean playerglobal = false;
@@ -373,7 +375,7 @@ public class Flexmojos3Configurator {
     return result;
   }
 
-  private void setupSdk(final ModifiableFlexIdeBuildConfiguration bc) {
+  private void setupSdk(final ModifiableFlexBuildConfiguration bc) {
     final MavenId flexCompilerId = new MavenId(FLEX_COMPILER_GROUP_ID, FLEX_COMPILER_ARTIFACT_ID, getFlexCompilerPomVersion());
 
     final String path = getArtifactFilePath(myMavenProject, flexCompilerId, MavenConstants.TYPE_POM);
@@ -458,13 +460,13 @@ public class Flexmojos3Configurator {
     postTasks.add(new Flexmojos3GenerateConfigTask(myModule, myMavenProject, myMavenTree, configFilePath, myInformer));
   }
 
-  private void configureRuntimeLoadedModule(final ModifiableFlexIdeBuildConfiguration mainBC,
+  private void configureRuntimeLoadedModule(final ModifiableFlexBuildConfiguration mainBC,
                                             final RLMInfo info,
-                                            final @Nullable ModifiableFlexIdeBuildConfiguration existingRlmBC) {
+                                            final @Nullable ModifiableFlexBuildConfiguration existingRlmBC) {
     final BuildConfigurationNature nature = new BuildConfigurationNature(mainBC.getTargetPlatform(), mainBC.isPureAs(),
                                                                          OutputType.RuntimeLoadedModule);
     final boolean isNewBC = existingRlmBC == null;
-    final ModifiableFlexIdeBuildConfiguration rlmBC = isNewBC ? myFlexEditor.copyConfiguration(mainBC, nature) : existingRlmBC;
+    final ModifiableFlexBuildConfiguration rlmBC = isNewBC ? myFlexEditor.copyConfiguration(mainBC, nature) : existingRlmBC;
 
     rlmBC.setName(info.myRLMName);
     rlmBC.setMainClass(info.myMainClass);

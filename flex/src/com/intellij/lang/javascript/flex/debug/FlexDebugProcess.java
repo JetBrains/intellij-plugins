@@ -6,6 +6,7 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.ShowFilePathAction;
 import com.intellij.idea.LoggerFactory;
@@ -15,8 +16,7 @@ import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
@@ -103,7 +103,7 @@ public class FlexDebugProcess extends XDebugProcess {
   private Alarm myOutputAlarm;
 
   private final Module myModule;
-  private final FlexIdeBuildConfiguration myBC;
+  private final FlexBuildConfiguration myBC;
   private final boolean myFlexUnit;
   protected final String myAppSdkHome;
   private final String myDebuggerSdkHome;
@@ -182,7 +182,7 @@ public class FlexDebugProcess extends XDebugProcess {
   private SwfPolicyFileConnection myPolicyFileConnection;
 
   public FlexDebugProcess(final XDebugSession session,
-                          final FlexIdeBuildConfiguration bc,
+                          final FlexBuildConfiguration bc,
                           final BCBasedRunnerParameters params) throws IOException {
     super(session);
     myModule = ModuleManager.getInstance(session.getProject()).findModuleByName(params.getModuleName());
@@ -280,7 +280,7 @@ public class FlexDebugProcess extends XDebugProcess {
     return myModule;
   }
 
-  public FlexIdeBuildConfiguration getBC() {
+  public FlexBuildConfiguration getBC() {
     return myBC;
   }
 
@@ -416,7 +416,7 @@ public class FlexDebugProcess extends XDebugProcess {
     });
   }
 
-  private void sendAdlStartingCommand(final FlexIdeBuildConfiguration bc, final BCBasedRunnerParameters params) throws IOException {
+  private void sendAdlStartingCommand(final FlexBuildConfiguration bc, final BCBasedRunnerParameters params) throws IOException {
     try {
       final Sdk sdk = bc.getSdk();
       LOG.assertTrue(sdk != null);

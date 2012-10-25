@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -209,7 +209,7 @@ public class FlexCompilationManager {
 
   private void appendAndCancelNotStartedRLMTasks(final Collection<FlexCompilationTask> tasks,
                                                  final Module module,
-                                                 final FlexIdeBuildConfiguration bc) {
+                                                 final FlexBuildConfiguration bc) {
     final Iterator<FlexCompilationTask> iterator = myNotStartedTasks.iterator();
     while (iterator.hasNext()) {
       final FlexCompilationTask task = iterator.next();
@@ -276,9 +276,9 @@ public class FlexCompilationManager {
     }
   }
 
-  private boolean isMainAppCompiledForRLM(final Module module, final FlexIdeBuildConfiguration rlmBC) {
+  private boolean isMainAppCompiledForRLM(final Module module, final FlexBuildConfiguration rlmBC) {
     for (FlexCompilationTask task : myFinishedTasks) {
-      final FlexIdeBuildConfiguration bc = task.getBC();
+      final FlexBuildConfiguration bc = task.getBC();
       if (task.getModule() == module &&
           bc.getName().equals(rlmBC.getName()) &&
           !BCUtils.isRLMTemporaryBC(bc) &&

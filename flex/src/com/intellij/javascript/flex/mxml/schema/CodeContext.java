@@ -1,5 +1,7 @@
 package com.intellij.javascript.flex.mxml.schema;
 
+import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.flex.model.bc.OutputType;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexReferenceContributor;
@@ -129,7 +131,7 @@ public class CodeContext {
       return CodeContextHolder.EMPTY;
     }
 
-    final FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+    final FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
     if (bc == null) return CodeContextHolder.EMPTY;
 
     CodeContext codeContext;
@@ -162,7 +164,7 @@ public class CodeContext {
     return namespace.equals("*") || namespace.endsWith(".*");
   }
 
-  private static CodeContext createCodeContext(final String namespace, final Module module, final FlexIdeBuildConfiguration bc) {
+  private static CodeContext createCodeContext(final String namespace, final Module module, final FlexBuildConfiguration bc) {
     if (!isPackageBackedNamespace(namespace)) {
       return createCodeContextFromLibraries(namespace, module, bc);
     }
@@ -198,7 +200,7 @@ public class CodeContext {
     return codeContext;
   }
 
-  private static void handleSwcFromSdk(final Module module, @NotNull final FlexIdeBuildConfiguration bc) {
+  private static void handleSwcFromSdk(final Module module, @NotNull final FlexBuildConfiguration bc) {
     final Sdk sdk = bc.getSdk();
     if (sdk == null) return;
 
@@ -217,7 +219,7 @@ public class CodeContext {
 
   private static CodeContext createCodeContextFromLibraries(final String namespace,
                                                             final Module module,
-                                                            final FlexIdeBuildConfiguration bc) {
+                                                            final FlexBuildConfiguration bc) {
     final Map<String, CodeContext> contextsOfModule = new THashMap<String, CodeContext>();
     final ModuleRootManager rootManager = ModuleRootManager.getInstance(module);
 
@@ -227,7 +229,7 @@ public class CodeContext {
       if (entry.getDependencyType().getLinkageType() == LinkageType.LoadInRuntime) continue;
 
       if (entry instanceof BuildConfigurationEntry) {
-        final FlexIdeBuildConfiguration bcDependency = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+        final FlexBuildConfiguration bcDependency = ((BuildConfigurationEntry)entry).findBuildConfiguration();
         if (bcDependency != null && bcDependency.getOutputType() == OutputType.Library) {
           addComponentsFromManifests(module, contextsOfModule, bcDependency, true);
         }
@@ -265,7 +267,7 @@ public class CodeContext {
   }
 
   private static void addComponentsFromManifests(final Module module, final Map<String, CodeContext> contextsOfModule,
-                                                 final FlexIdeBuildConfiguration bc, boolean onlyIncludedInSwc) {
+                                                 final FlexBuildConfiguration bc, boolean onlyIncludedInSwc) {
     final String configFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
     final VirtualFile configFile = StringUtil.isEmptyOrSpaces(configFilePath)
                                    ? null
@@ -380,7 +382,7 @@ public class CodeContext {
       JSPackageIndex.buildQualifiedName(packageName, file.getNameWithoutExtension()), codeContext, project, file), true);
   }
 
-  private static CodeContext getStdCodeContext(final String namespace, final Module module, final FlexIdeBuildConfiguration bc) {
+  private static CodeContext getStdCodeContext(final String namespace, final Module module, final FlexBuildConfiguration bc) {
     final CodeContextHolder contextHolder = CodeContextHolder.getInstance(module.getProject());
 
     if (!contextHolder.areSdkComponentsHandledForModule(module)) { // handleAllStandardManifests only once per module
@@ -450,7 +452,7 @@ public class CodeContext {
     return descriptor;
   }
 
-  private static void handleAllStandardManifests(final Module module, @NotNull final FlexIdeBuildConfiguration bc) {
+  private static void handleAllStandardManifests(final Module module, @NotNull final FlexBuildConfiguration bc) {
     final Sdk sdk = bc.getSdk();
     final String homePath = sdk == null ? null : sdk.getHomePath();
     final VirtualFile sdkHome = homePath == null ? null : LocalFileSystem.getInstance().findFileByPath(homePath);

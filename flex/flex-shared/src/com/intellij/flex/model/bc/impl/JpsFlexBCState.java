@@ -1,8 +1,8 @@
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
-import com.intellij.flex.model.bc.JpsOutputType;
-import com.intellij.flex.model.bc.JpsTargetPlatform;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
@@ -13,13 +13,13 @@ public class JpsFlexBCState {
   public String NAME = JpsFlexBuildConfiguration.UNNAMED;
 
   @Attribute(value = "target-platform")
-  public JpsTargetPlatform TARGET_PLATFORM = JpsTargetPlatform.Web;
+  public TargetPlatform TARGET_PLATFORM = TargetPlatform.Web;
 
   @Attribute(value = "pure-as")
   public boolean PURE_ACTION_SCRIPT = false;
 
   @Attribute(value = "output-type")
-  public JpsOutputType OUTPUT_TYPE = JpsOutputType.Application;
+  public OutputType OUTPUT_TYPE = OutputType.Application;
 
   //@Attribute(value = "optimize-for")
   //public String OPTIMIZE_FOR = "";

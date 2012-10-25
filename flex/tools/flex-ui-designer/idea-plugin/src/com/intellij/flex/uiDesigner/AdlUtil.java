@@ -14,8 +14,8 @@ import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.uiDesigner.debug.FlexRunner;
 import com.intellij.flex.uiDesigner.io.IOUtil;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.RemoteFlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.RemoteFlashRunConfigurationType;
 import com.intellij.openapi.Disposable;
@@ -113,7 +113,7 @@ final class AdlUtil {
       }
     };
 
-    FlexIdeBuildConfiguration buildConfiguration = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+    FlexBuildConfiguration buildConfiguration = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
     configuration.getRunnerParameters().setModuleName(module.getName());
     configuration.getRunnerParameters().setBCName(buildConfiguration.getName());
 

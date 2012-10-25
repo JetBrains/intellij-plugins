@@ -11,7 +11,7 @@ import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.RemoteFlashRunConfiguration;
 import com.intellij.openapi.project.Project;
@@ -38,9 +38,9 @@ public class FlexRunner extends GenericProgramRunner {
   private static final String SKIP_MARKER = "^";
   
   private final Callback callback;
-  private FlexIdeBuildConfiguration buildConfiguration;
+  private FlexBuildConfiguration buildConfiguration;
 
-  public FlexRunner(Callback callback, FlexIdeBuildConfiguration buildConfiguration) {
+  public FlexRunner(Callback callback, FlexBuildConfiguration buildConfiguration) {
     this.callback = callback;
 
     this.buildConfiguration = buildConfiguration;
@@ -94,7 +94,7 @@ public class FlexRunner extends GenericProgramRunner {
   private static class MyFlexDebugProcess extends FlexDebugProcess {
     private final Callback callback;
 
-    public MyFlexDebugProcess(Callback callback, XDebugSession session, FlexIdeBuildConfiguration buildConfiguration,
+    public MyFlexDebugProcess(Callback callback, XDebugSession session, FlexBuildConfiguration buildConfiguration,
                               BCBasedRunnerParameters parameters) throws IOException, RuntimeConfigurationError {
       super(session, buildConfiguration, parameters);
       this.callback = callback;
@@ -114,7 +114,7 @@ public class FlexRunner extends GenericProgramRunner {
   }
 
   private static class MyFlexDebugProcessAbleToResolveFileDebugId extends MyFlexDebugProcess {
-    public MyFlexDebugProcessAbleToResolveFileDebugId(Callback callback, XDebugSession session, FlexIdeBuildConfiguration buildConfiguration, BCBasedRunnerParameters parameters)
+    public MyFlexDebugProcessAbleToResolveFileDebugId(Callback callback, XDebugSession session, FlexBuildConfiguration buildConfiguration, BCBasedRunnerParameters parameters)
       throws IOException, RuntimeConfigurationError {
       super(callback, session, buildConfiguration, parameters);
     }

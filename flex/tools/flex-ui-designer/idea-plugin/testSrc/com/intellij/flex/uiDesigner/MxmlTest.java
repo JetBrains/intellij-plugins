@@ -1,9 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
-import com.intellij.lang.properties.PropertiesReferenceManager;
-import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Pair;

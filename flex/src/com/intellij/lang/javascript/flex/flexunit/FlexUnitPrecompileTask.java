@@ -5,11 +5,11 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.flex.FlexCommonUtils;
+import com.intellij.flex.model.bc.ComponentSet;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -121,7 +121,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     params.setSocketPolicyPort(socketPolicyPort);
 
     final Ref<Module> moduleRef = new Ref<Module>();
-    final Ref<FlexIdeBuildConfiguration> bcRef = new Ref<FlexIdeBuildConfiguration>();
+    final Ref<FlexBuildConfiguration> bcRef = new Ref<FlexBuildConfiguration>();
     final Ref<FlexUnitSupport> supportRef = new Ref<FlexUnitSupport>();
 
     ApplicationManager.getApplication().runReadAction(new Runnable() {
@@ -129,7 +129,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
         if (DumbService.getInstance(myProject).isDumb()) return;
 
         try {
-          final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(myProject);
+          final Pair<Module, FlexBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(myProject);
           moduleRef.set(moduleAndBC.first);
           bcRef.set(moduleAndBC.second);
           supportRef.set(FlexUnitSupport.getSupport(moduleAndBC.second, moduleAndBC.first));
@@ -142,7 +142,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     });
 
     final Module module = moduleRef.get();
-    final FlexIdeBuildConfiguration bc = bcRef.get();
+    final FlexBuildConfiguration bc = bcRef.get();
     final FlexUnitSupport support = supportRef.get();
 
     if (bc == null || support == null) {
@@ -341,7 +341,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     return text.replace(pattern, replacement);
   }
 
-  public static String getFlexUnitLauncherExtension(FlexIdeBuildConfiguration bc) {
+  public static String getFlexUnitLauncherExtension(FlexBuildConfiguration bc) {
     return bc.getNature().pureAS ? ".as" : ".mxml";
   }
 
@@ -397,7 +397,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     }
   }
 
-  private static String getLauncherTemplate(FlexIdeBuildConfiguration bc) throws IOException {
+  private static String getLauncherTemplate(FlexBuildConfiguration bc) throws IOException {
     String templateName;
     if (bc.isPureAs()) {
       templateName = "LauncherTemplateAs.as";
@@ -412,7 +412,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     return ResourceUtil.loadText(resource);
   }
 
-  public static String getSupportLibraryName(final FlexIdeBuildConfiguration bc) {
+  public static String getSupportLibraryName(final FlexBuildConfiguration bc) {
     if (bc.isPureAs()) {
       return "unittestingsupport_as.swc";
     }

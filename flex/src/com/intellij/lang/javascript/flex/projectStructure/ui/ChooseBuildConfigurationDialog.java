@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -35,7 +35,7 @@ import java.util.*;
  * @author ksafonov
  */
 public class ChooseBuildConfigurationDialog extends DialogWrapper {
-  private final Map<Module, List<FlexIdeBCConfigurable>> myTreeItems;
+  private final Map<Module, List<FlexBCConfigurable>> myTreeItems;
   private Tree myTree;
   private DefaultMutableTreeNode[] mySelection;
   private JLabel myLabel;
@@ -52,25 +52,25 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
                                                                       @Nullable String labelText,
                                                                       Project project,
                                                                       boolean allowEmptySelection,
-                                                                      Condition<FlexIdeBCConfigurable> filter) {
-    Map<Module, List<FlexIdeBCConfigurable>> treeItems = new HashMap<Module, List<FlexIdeBCConfigurable>>();
-    FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
+                                                                      Condition<FlexBCConfigurable> filter) {
+    Map<Module, List<FlexBCConfigurable>> treeItems = new HashMap<Module, List<FlexBCConfigurable>>();
+    FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
     for (Module module : ModuleStructureConfigurable.getInstance(project).getModules()) {
       if (ModuleType.get(module) != FlexModuleType.getInstance()) {
         continue;
       }
       for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
-        FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrap(configurable);
-        if (!filter.value(flexIdeBCConfigurable)) {
+        FlexBCConfigurable flexBCConfigurable = FlexBCConfigurable.unwrap(configurable);
+        if (!filter.value(flexBCConfigurable)) {
           continue;
         }
 
-        List<FlexIdeBCConfigurable> list = treeItems.get(module);
+        List<FlexBCConfigurable> list = treeItems.get(module);
         if (list == null) {
-          list = new ArrayList<FlexIdeBCConfigurable>();
+          list = new ArrayList<FlexBCConfigurable>();
           treeItems.put(module, list);
         }
-        list.add(flexIdeBCConfigurable);
+        list.add(flexBCConfigurable);
       }
     }
 
@@ -85,7 +85,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
                                          @Nullable final String labelText,
                                          Project project,
                                          final boolean allowEmptySelection,
-                                         Map<Module, List<FlexIdeBCConfigurable>> treeItems) {
+                                         Map<Module, List<FlexBCConfigurable>> treeItems) {
     super(project, true);
     myAllowEmptySelection = allowEmptySelection;
     if (labelText != null) {
@@ -123,14 +123,14 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
     for (Module module : modules) {
       DefaultMutableTreeNode moduleNode = new DefaultMutableTreeNode(module, true);
       root.add(moduleNode);
-      List<FlexIdeBCConfigurable> bcs = myTreeItems.get(module);
-      Collections.sort(bcs, new Comparator<FlexIdeBCConfigurable>() {
+      List<FlexBCConfigurable> bcs = myTreeItems.get(module);
+      Collections.sort(bcs, new Comparator<FlexBCConfigurable>() {
         @Override
-        public int compare(final FlexIdeBCConfigurable o1, final FlexIdeBCConfigurable o2) {
+        public int compare(final FlexBCConfigurable o1, final FlexBCConfigurable o2) {
           return o1.getDisplayName().compareToIgnoreCase(o2.getDisplayName());
         }
       });
-      for (FlexIdeBCConfigurable bc : bcs) {
+      for (FlexBCConfigurable bc : bcs) {
         DefaultMutableTreeNode bcNode = new DefaultMutableTreeNode(bc, false);
         moduleNode.add(bcNode);
       }
@@ -168,8 +168,8 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
           setIcon(ModuleType.get(module).getIcon());
           append(module.getName());
         }
-        else if (object instanceof FlexIdeBCConfigurable) {
-          FlexIdeBCConfigurable configurable = (FlexIdeBCConfigurable)object;
+        else if (object instanceof FlexBCConfigurable) {
+          FlexBCConfigurable configurable = (FlexBCConfigurable)object;
           setIcon(configurable.getIcon());
           BCUtils.renderBuildConfiguration(configurable.getEditableObject(), null).appendToComponent(this);
         }
@@ -205,7 +205,7 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
     mySelection = myTree.getSelectedNodes(DefaultMutableTreeNode.class, new Tree.NodeFilter<DefaultMutableTreeNode>() {
       @Override
       public boolean accept(DefaultMutableTreeNode node) {
-        return node.getUserObject() instanceof FlexIdeBCConfigurable;
+        return node.getUserObject() instanceof FlexBCConfigurable;
       }
     });
     setOKActionEnabled(myAllowEmptySelection || mySelection.length > 0);
@@ -218,20 +218,20 @@ public class ChooseBuildConfigurationDialog extends DialogWrapper {
       return module.getName();
     }
     else {
-      FlexIdeBCConfigurable configurable = (FlexIdeBCConfigurable)object;
+      FlexBCConfigurable configurable = (FlexBCConfigurable)object;
       return configurable.getTreeNodeText();
     }
   }
 
-  public FlexIdeBCConfigurable[] getSelectedConfigurables() {
+  public FlexBCConfigurable[] getSelectedConfigurables() {
     if (mySelection == null) {
-      return new FlexIdeBCConfigurable[0];
+      return new FlexBCConfigurable[0];
     }
 
-    return ContainerUtil.map2Array(mySelection, FlexIdeBCConfigurable.class, new Function<DefaultMutableTreeNode, FlexIdeBCConfigurable>() {
+    return ContainerUtil.map2Array(mySelection, FlexBCConfigurable.class, new Function<DefaultMutableTreeNode, FlexBCConfigurable>() {
       @Override
-      public FlexIdeBCConfigurable fun(DefaultMutableTreeNode node) {
-        return (FlexIdeBCConfigurable)node.getUserObject();
+      public FlexBCConfigurable fun(DefaultMutableTreeNode node) {
+        return (FlexBCConfigurable)node.getUserObject();
       }
     });
   }

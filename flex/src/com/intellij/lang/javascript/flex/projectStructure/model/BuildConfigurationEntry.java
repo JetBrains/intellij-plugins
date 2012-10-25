@@ -19,5 +19,5 @@ public interface BuildConfigurationEntry extends DependencyEntry {
   Module findModule();
 
   @Nullable
-  FlexIdeBuildConfiguration findBuildConfiguration();
+  FlexBuildConfiguration findBuildConfiguration();
 }

@@ -1,7 +1,7 @@
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsLibraryDependencyEntry;
-import com.intellij.flex.model.bc.JpsLinkageType;
+import com.intellij.flex.model.bc.LinkageType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsElementFactory;
@@ -16,7 +16,7 @@ class JpsSharedLibraryDependencyEntryImpl extends JpsFlexDependencyEntryBase<Jps
   private static final JpsElementChildRoleBase<JpsLibraryReference> LIB_REF_ROLE =
     JpsElementChildRoleBase.create("shared library reference");
 
-  JpsSharedLibraryDependencyEntryImpl(final String libraryName, final String libraryLevel, final JpsLinkageType linkageType) {
+  JpsSharedLibraryDependencyEntryImpl(final String libraryName, final String libraryLevel, final LinkageType linkageType) {
     super(linkageType);
 
     final JpsLibraryReference libraryRef = JpsElementFactory.getInstance()

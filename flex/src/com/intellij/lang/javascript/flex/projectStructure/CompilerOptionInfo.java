@@ -1,10 +1,10 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.ComponentSet;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -311,7 +311,7 @@ public class CompilerOptionInfo {
     return ourOptionsWithSpecialValues;
   }
 
-  public static List<String> getThemes(final Module module, final FlexIdeBuildConfiguration bc) {
+  public static List<String> getThemes(final Module module, final FlexBuildConfiguration bc) {
     final Sdk sdk = bc.getSdk();
     if (sdk == null) return Collections.emptyList();
 

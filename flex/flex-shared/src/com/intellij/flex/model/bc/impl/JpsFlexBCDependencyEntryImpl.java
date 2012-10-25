@@ -3,7 +3,7 @@ package com.intellij.flex.model.bc.impl;
 import com.intellij.flex.model.bc.JpsFlexBCDependencyEntry;
 import com.intellij.flex.model.bc.JpsFlexBCReference;
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
-import com.intellij.flex.model.bc.JpsLinkageType;
+import com.intellij.flex.model.bc.LinkageType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.JpsElementFactory;
@@ -11,7 +11,7 @@ import org.jetbrains.jps.model.module.JpsModuleReference;
 
 class JpsFlexBCDependencyEntryImpl extends JpsFlexDependencyEntryBase<JpsFlexBCDependencyEntryImpl> implements JpsFlexBCDependencyEntry {
 
-  JpsFlexBCDependencyEntryImpl(final String moduleName, final String bcName, final JpsLinkageType linkageType) {
+  JpsFlexBCDependencyEntryImpl(final String moduleName, final String bcName, final LinkageType linkageType) {
     super(linkageType);
 
     final JpsModuleReference moduleRef = JpsElementFactory.getInstance().createModuleReference(moduleName);

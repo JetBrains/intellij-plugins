@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.flex.model.bc.OutputType;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -28,8 +28,8 @@ public class ASC20CompilationTask extends FlexCompilationTask {
   private @Nullable String myPreviousUnreportedMessage;
 
   public ASC20CompilationTask(final @NotNull Module module,
-                              final @NotNull FlexIdeBuildConfiguration bc,
-                              final @NotNull Collection<FlexIdeBuildConfiguration> dependencies) {
+                              final @NotNull FlexBuildConfiguration bc,
+                              final @NotNull Collection<FlexBuildConfiguration> dependencies) {
     super(module, bc, dependencies);
   }
 

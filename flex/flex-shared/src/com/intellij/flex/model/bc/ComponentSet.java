@@ -1,6 +1,6 @@
 package com.intellij.flex.model.bc;
 
-public enum JpsComponentSet {
+public enum ComponentSet {
   SparkAndMx("Spark + MX"),
   SparkOnly("Spark only"),
   MxOnly("MX only");
@@ -11,7 +11,7 @@ public enum JpsComponentSet {
     return myPresentableText;
   }
 
-  JpsComponentSet(final String presentableText) {
+  ComponentSet(final String presentableText) {
     myPresentableText = presentableText;
   }
 }

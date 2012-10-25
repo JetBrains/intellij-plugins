@@ -3,15 +3,19 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.ui.*;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
@@ -58,7 +62,7 @@ import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMob
 
 public class FlexCompiler implements SourceProcessingCompiler {
   private static final Logger LOG = Logger.getInstance(FlexCompiler.class.getName());
-  private static final Key<Collection<Pair<Module, FlexIdeBuildConfiguration>>> MODULES_AND_BCS_TO_COMPILE =
+  private static final Key<Collection<Pair<Module, FlexBuildConfiguration>>> MODULES_AND_BCS_TO_COMPILE =
     Key.create("modules.and.bcs.to.compile");
 
   @NotNull
@@ -74,7 +78,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     final List<ProcessingItem> itemList = new ArrayList<ProcessingItem>();
 
     try {
-      for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : getModulesAndBCsToCompile(context.getCompileScope())) {
+      for (final Pair<Module, FlexBuildConfiguration> moduleAndBC : getModulesAndBCsToCompile(context.getCompileScope())) {
         itemList.add(new MyProcessingItem(moduleAndBC.first, moduleAndBC.second));
       }
     }
@@ -140,12 +144,12 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
       final Collection<FlexCompilationTask> compilationTasks = new ArrayList<FlexCompilationTask>();
       for (final ProcessingItem item : items) {
-        final Collection<FlexIdeBuildConfiguration> dependencies = new HashSet<FlexIdeBuildConfiguration>();
-        final FlexIdeBuildConfiguration bc = ((MyProcessingItem)item).myBC;
+        final Collection<FlexBuildConfiguration> dependencies = new HashSet<FlexBuildConfiguration>();
+        final FlexBuildConfiguration bc = ((MyProcessingItem)item).myBC;
 
         for (final DependencyEntry entry : bc.getDependencies().getEntries()) {
           if (entry instanceof BuildConfigurationEntry) {
-            final FlexIdeBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+            final FlexBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
             if (dependencyBC != null && !dependencyBC.isSkipCompile() &&
                 entry.getDependencyType().getLinkageType() != LinkageType.LoadInRuntime) {
               dependencies.add(dependencyBC);
@@ -156,8 +160,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
         compilationTasks.add(createCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies, builtInCompilerShell));
 
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
-          for (FlexIdeBuildConfiguration.RLMInfo rlm : bc.getRLMs()) {
-            final ModifiableFlexIdeBuildConfiguration rlmBC = Factory.getTemporaryCopyForCompilation(bc);
+          for (FlexBuildConfiguration.RLMInfo rlm : bc.getRLMs()) {
+            final ModifiableFlexBuildConfiguration rlmBC = Factory.getTemporaryCopyForCompilation(bc);
 
             rlmBC.setOutputType(OutputType.RuntimeLoadedModule);
             rlmBC.setOptimizeFor(rlm.OPTIMIZE ? bc.getName() : ""); // any not empty string means that need to optimize
@@ -176,7 +180,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
             rlmBC.setUseHtmlWrapper(false);
 
-            rlmBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
+            rlmBC.setRLMs(Collections.<FlexBuildConfiguration.RLMInfo>emptyList());
             rlmBC.setCssFilesToCompile(Collections.<String>emptyList());
 
             final ModifiableCompilerOptions compilerOptions = rlmBC.getCompilerOptions();
@@ -190,7 +194,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
             final VirtualFile cssFile = LocalFileSystem.getInstance().findFileByPath(cssPath);
             if (cssFile == null) continue;
 
-            final ModifiableFlexIdeBuildConfiguration cssBC = Factory.getTemporaryCopyForCompilation(bc);
+            final ModifiableFlexBuildConfiguration cssBC = Factory.getTemporaryCopyForCompilation(bc);
             cssBC.setOutputType(OutputType.Application);
 
             cssBC.setMainClass(cssPath);
@@ -205,7 +209,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
             }
 
             cssBC.setUseHtmlWrapper(false);
-            cssBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
+            cssBC.setRLMs(Collections.<FlexBuildConfiguration.RLMInfo>emptyList());
             cssBC.setCssFilesToCompile(Collections.<String>emptyList());
 
             cssBC.getCompilerOptions().setResourceFilesMode(ResourceFilesMode.None);
@@ -253,8 +257,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   private static FlexCompilationTask createCompilationTask(final Module module,
-                                                           final FlexIdeBuildConfiguration bc,
-                                                           final Collection<FlexIdeBuildConfiguration> dependencies,
+                                                           final FlexBuildConfiguration bc,
+                                                           final Collection<FlexBuildConfiguration> dependencies,
                                                            final boolean builtInCompilerShell) {
     final boolean asc20 = bc.isPureAs() &&
                           FlexCompilerProjectConfiguration.getInstance(module.getProject()).PREFER_ASC_20 &&
@@ -305,7 +309,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     final Project project = modules.length > 0 ? modules[0].getProject() : null;
     if (project == null) return true;
 
-    final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile;
+    final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCsToCompile;
     try {
       modulesAndBCsToCompile = getModulesAndBCsToCompile(scope);
     }
@@ -315,7 +319,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
       return false;
     }
 
-    final Collection<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> problems =
+    final Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> problems =
       getProblems(scope, modulesAndBCsToCompile);
 
     if (!problems.isEmpty()) {
@@ -330,12 +334,12 @@ public class FlexCompiler implements SourceProcessingCompiler {
     return true;
   }
 
-  static Collection<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> getProblems(final CompileScope scope,
-                                                                                                          final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile) {
-    final Collection<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> problems =
-      new ArrayList<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>>();
+  static Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> getProblems(final CompileScope scope,
+                                                                                                          final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCsToCompile) {
+    final Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> problems =
+      new ArrayList<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>>();
 
-    for (final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
+    for (final Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
       final Consumer<FlashProjectStructureProblem> errorConsumer = new Consumer<FlashProjectStructureProblem>() {
         public void consume(final FlashProjectStructureProblem problem) {
           problems.add(Trinity.create(moduleAndBC.first, moduleAndBC.second, problem));
@@ -361,21 +365,21 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
     }
     checkSimilarOutputFiles(modulesAndBCsToCompile,
-                            new Consumer<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>>() {
-                              public void consume(final Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem> trinity) {
+                            new Consumer<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>>() {
+                              public void consume(final Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem> trinity) {
                                 problems.add(trinity);
                               }
                             });
     return problems;
   }
 
-  private static boolean checkSimilarOutputFiles(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile,
-                                                 final Consumer<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> errorConsumer) {
+  private static boolean checkSimilarOutputFiles(final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCsToCompile,
+                                                 final Consumer<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> errorConsumer) {
 
-    final Map<String, Pair<Module, FlexIdeBuildConfiguration>> outputPathToModuleAndBC =
-      new THashMap<String, Pair<Module, FlexIdeBuildConfiguration>>();
-    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
-      final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+    final Map<String, Pair<Module, FlexBuildConfiguration>> outputPathToModuleAndBC =
+      new THashMap<String, Pair<Module, FlexBuildConfiguration>>();
+    for (Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
+      final FlexBuildConfiguration bc = moduleAndBC.second;
       final String outputFilePath = bc.getActualOutputFilePath();
       checkOutputPathUnique(outputFilePath, moduleAndBC, outputPathToModuleAndBC, errorConsumer);
     }
@@ -383,31 +387,31 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   private static void checkOutputPathUnique(final String outputPath,
-                                            final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC,
-                                            final Map<String, Pair<Module, FlexIdeBuildConfiguration>> outputPathToModuleAndBC,
-                                            final Consumer<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> errorConsumer) {
+                                            final Pair<Module, FlexBuildConfiguration> moduleAndBC,
+                                            final Map<String, Pair<Module, FlexBuildConfiguration>> outputPathToModuleAndBC,
+                                            final Consumer<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> errorConsumer) {
     final String caseAwarePath = SystemInfo.isFileSystemCaseSensitive ? outputPath : outputPath.toLowerCase();
 
-    final Pair<Module, FlexIdeBuildConfiguration> existing = outputPathToModuleAndBC.put(caseAwarePath, moduleAndBC);
+    final Pair<Module, FlexBuildConfiguration> existing = outputPathToModuleAndBC.put(caseAwarePath, moduleAndBC);
     if (existing != null) {
       final String message = FlexBundle.message("same.output.files", existing.second.getName(), existing.first.getName(),
                                                 FileUtil.toSystemDependentName(outputPath));
       errorConsumer.consume(Trinity.create(moduleAndBC.first, moduleAndBC.second, FlashProjectStructureProblem
-        .createGeneralOptionProblem(moduleAndBC.second.getName(), message, FlexIdeBCConfigurable.Location.OutputFileName)));
+        .createGeneralOptionProblem(moduleAndBC.second.getName(), message, FlexBCConfigurable.Location.OutputFileName)));
     }
   }
 
-  static Collection<Pair<Module, FlexIdeBuildConfiguration>> getModulesAndBCsToCompile(final CompileScope scope)
+  static Collection<Pair<Module, FlexBuildConfiguration>> getModulesAndBCsToCompile(final CompileScope scope)
     throws ConfigurationException {
 
-    final Collection<Pair<Module, FlexIdeBuildConfiguration>> result = new HashSet<Pair<Module, FlexIdeBuildConfiguration>>();
-    final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile = getBCsToCompileForPackaging(scope);
+    final Collection<Pair<Module, FlexBuildConfiguration>> result = new HashSet<Pair<Module, FlexBuildConfiguration>>();
+    final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCsToCompile = getBCsToCompileForPackaging(scope);
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(scope);
 
     if (modulesAndBCsToCompile != null) {
-      for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
+      for (Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
         if (!moduleAndBC.second.isSkipCompile()) {
-          final FlexIdeBuildConfiguration bcWithForcedDebugStatus = forceDebugStatus(moduleAndBC.first.getProject(), moduleAndBC.second);
+          final FlexBuildConfiguration bcWithForcedDebugStatus = forceDebugStatus(moduleAndBC.first.getProject(), moduleAndBC.second);
           result.add(Pair.create(moduleAndBC.first, bcWithForcedDebugStatus));
           appendBCDependencies(result, moduleAndBC.first, moduleAndBC.second);
         }
@@ -417,11 +421,11 @@ public class FlexCompiler implements SourceProcessingCompiler {
       final BCBasedRunnerParameters params = runConfiguration instanceof FlashRunConfiguration
                                              ? ((FlashRunConfiguration)runConfiguration).getRunnerParameters()
                                              : ((FlexUnitRunConfiguration)runConfiguration).getRunnerParameters();
-      final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC;
+      final Pair<Module, FlexBuildConfiguration> moduleAndBC;
 
       final Ref<RuntimeConfigurationError> exceptionRef = new Ref<RuntimeConfigurationError>();
-      moduleAndBC = ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexIdeBuildConfiguration>>() {
-        public Pair<Module, FlexIdeBuildConfiguration> compute() {
+      moduleAndBC = ApplicationManager.getApplication().runReadAction(new NullableComputable<Pair<Module, FlexBuildConfiguration>>() {
+        public Pair<Module, FlexBuildConfiguration> compute() {
           try {
             return params.checkAndGetModuleAndBC(runConfiguration.getProject());
           }
@@ -444,7 +448,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     else {
       for (final Module module : scope.getAffectedModules()) {
         if (ModuleType.get(module) != FlexModuleType.getInstance()) continue;
-        for (final FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+        for (final FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
           if (!bc.isSkipCompile()) {
             result.add(Pair.create(module, bc));
           }
@@ -455,27 +459,27 @@ public class FlexCompiler implements SourceProcessingCompiler {
     return result;
   }
 
-  public static void setBCsToCompileForPackaging(final CompileScope scope, final Collection<Pair<Module, FlexIdeBuildConfiguration>> bcs) {
+  public static void setBCsToCompileForPackaging(final CompileScope scope, final Collection<Pair<Module, FlexBuildConfiguration>> bcs) {
     scope.putUserData(MODULES_AND_BCS_TO_COMPILE, bcs);
   }
 
   @Nullable
-  public static Collection<Pair<Module, FlexIdeBuildConfiguration>> getBCsToCompileForPackaging(final CompileScope scope) {
+  public static Collection<Pair<Module, FlexBuildConfiguration>> getBCsToCompileForPackaging(final CompileScope scope) {
     return scope.getUserData(MODULES_AND_BCS_TO_COMPILE);
   }
 
-  private static FlexIdeBuildConfiguration forceDebugStatus(final Project project, final FlexIdeBuildConfiguration bc) {
+  private static FlexBuildConfiguration forceDebugStatus(final Project project, final FlexBuildConfiguration bc) {
     final boolean debug = getForcedDebugStatus(project, bc);
 
     // must not use getTemporaryCopyForCompilation() here because additional config file must not be merged with the generated one when compiling swf for release or AIR package
-    final ModifiableFlexIdeBuildConfiguration result = Factory.getCopy(bc);
+    final ModifiableFlexBuildConfiguration result = Factory.getCopy(bc);
     final String additionalOptions = FlexUtils.removeOptions(bc.getCompilerOptions().getAdditionalOptions(), "debug", "compiler.debug");
     result.getCompilerOptions().setAdditionalOptions(additionalOptions + " -debug=" + String.valueOf(debug));
 
     return result;
   }
 
-  public static boolean getForcedDebugStatus(final Project project, final FlexIdeBuildConfiguration bc) {
+  public static boolean getForcedDebugStatus(final Project project, final FlexBuildConfiguration bc) {
     final boolean debug;
 
     if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
@@ -494,22 +498,22 @@ public class FlexCompiler implements SourceProcessingCompiler {
     return debug;
   }
 
-  private static void appendBCDependencies(final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs,
+  private static void appendBCDependencies(final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs,
                                            final Module module,
-                                           final FlexIdeBuildConfiguration bc) throws ConfigurationException {
+                                           final FlexBuildConfiguration bc) throws ConfigurationException {
     for (final DependencyEntry entry : bc.getDependencies().getEntries()) {
       if (entry instanceof BuildConfigurationEntry) {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
 
         final Module dependencyModule = bcEntry.findModule();
-        final FlexIdeBuildConfiguration dependencyBC = dependencyModule == null ? null : bcEntry.findBuildConfiguration();
+        final FlexBuildConfiguration dependencyBC = dependencyModule == null ? null : bcEntry.findBuildConfiguration();
 
         if (dependencyModule == null || dependencyBC == null) {
           throw new ConfigurationException(FlexBundle.message("bc.dependency.does.not.exist", bcEntry.getBcName(), bcEntry.getModuleName(),
                                                               bc.getName(), module.getName()));
         }
 
-        final Pair<Module, FlexIdeBuildConfiguration> dependencyModuleAndBC = Pair.create(dependencyModule, dependencyBC);
+        final Pair<Module, FlexBuildConfiguration> dependencyModuleAndBC = Pair.create(dependencyModule, dependencyBC);
         if (!dependencyBC.isSkipCompile()) {
           if (modulesAndBCs.add(dependencyModuleAndBC)) {
             appendBCDependencies(modulesAndBCs, dependencyModule, dependencyBC);
@@ -520,7 +524,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   public static void checkConfiguration(final Module module,
-                                        final FlexIdeBuildConfiguration bc,
+                                        final FlexBuildConfiguration bc,
                                         final boolean checkPackaging,
                                         final Consumer<FlashProjectStructureProblem> errorConsumer) {
     final Sdk sdk = bc.getSdk();
@@ -557,13 +561,13 @@ public class FlexCompiler implements SourceProcessingCompiler {
       if (bc.getMainClass().isEmpty()) {
         errorConsumer
           .consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message("main.class.not.set"),
-                                                                           FlexIdeBCConfigurable.Location.MainClass));
+                                                                           FlexBCConfigurable.Location.MainClass));
       }
       else {
         if (FlexUtils.getPathToMainClassFile(bc.getMainClass(), module).isEmpty()) {
           errorConsumer.consume(FlashProjectStructureProblem
                                   .createGeneralOptionProblem(bc.getName(), FlexBundle.message("main.class.not.found", bc.getMainClass()),
-                                                              FlexIdeBCConfigurable.Location.MainClass));
+                                                              FlexBCConfigurable.Location.MainClass));
         }
       }
     }
@@ -572,31 +576,31 @@ public class FlexCompiler implements SourceProcessingCompiler {
       if (bc.getOutputFileName().isEmpty()) {
         errorConsumer.consume(FlashProjectStructureProblem
                                 .createGeneralOptionProblem(bc.getName(), FlexBundle.message("output.file.name.not.set"),
-                                                            FlexIdeBCConfigurable.Location.OutputFileName));
+                                                            FlexBCConfigurable.Location.OutputFileName));
       }
       else {
         if (!nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swf")) {
           errorConsumer.consume(
             FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message("output.file.wrong.extension", "swf"),
-                                                                    FlexIdeBCConfigurable.Location.OutputFileName));
+                                                                    FlexBCConfigurable.Location.OutputFileName));
         }
 
         if (nature.isLib() && !bc.getOutputFileName().toLowerCase().endsWith(".swc")) {
           errorConsumer.consume(
             FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message("output.file.wrong.extension", "swc"),
-                                                                    FlexIdeBCConfigurable.Location.OutputFileName));
+                                                                    FlexBCConfigurable.Location.OutputFileName));
         }
       }
 
       if (bc.getOutputFolder().isEmpty()) {
         errorConsumer.consume(FlashProjectStructureProblem
                                 .createGeneralOptionProblem(bc.getName(), FlexBundle.message("output.folder.not.set"),
-                                                            FlexIdeBCConfigurable.Location.OutputFolder));
+                                                            FlexBCConfigurable.Location.OutputFolder));
       }
       else if (!FileUtil.isAbsolute(bc.getOutputFolder())) {
         errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
           .message("output.folder.not.absolute", FileUtil.toSystemDependentName(bc.getOutputFolder())),
-                                                                                      FlexIdeBCConfigurable.Location.OutputFolder));
+                                                                                      FlexBCConfigurable.Location.OutputFolder));
       }
     }
 
@@ -604,20 +608,20 @@ public class FlexCompiler implements SourceProcessingCompiler {
       if (bc.getWrapperTemplatePath().isEmpty()) {
         errorConsumer
           .consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message("html.template.folder.not.set"),
-                                                                           FlexIdeBCConfigurable.Location.HtmlTemplatePath));
+                                                                           FlexBCConfigurable.Location.HtmlTemplatePath));
       }
       else {
         final VirtualFile templateDir = LocalFileSystem.getInstance().findFileByPath(bc.getWrapperTemplatePath());
         if (templateDir == null || !templateDir.isDirectory()) {
           errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
             .message("html.template.folder.not.found", FileUtil.toSystemDependentName(bc.getWrapperTemplatePath())),
-                                                                                        FlexIdeBCConfigurable.Location.HtmlTemplatePath));
+                                                                                        FlexBCConfigurable.Location.HtmlTemplatePath));
         }
         else {
           final VirtualFile templateFile = templateDir.findChild(CreateHtmlWrapperTemplateDialog.HTML_WRAPPER_TEMPLATE_FILE_NAME);
           if (templateFile == null) {
             errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
-              .message("no.index.template.html.file", templateDir.getPresentableUrl()), FlexIdeBCConfigurable.Location.HtmlTemplatePath));
+              .message("no.index.template.html.file", templateDir.getPresentableUrl()), FlexBCConfigurable.Location.HtmlTemplatePath));
           }
           else {
             // Probably heavy calculation. Will be checked only when real html template handling is performed
@@ -660,38 +664,38 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
 
     if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
-      for (FlexIdeBuildConfiguration.RLMInfo rlm : bc.getRLMs()) {
+      for (FlexBuildConfiguration.RLMInfo rlm : bc.getRLMs()) {
         if (rlm.MAIN_CLASS.isEmpty()) {
           errorConsumer
             .consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message("rlm.main.class.not.set"),
-                                                                             FlexIdeBCConfigurable.Location.RLMs));
+                                                                             FlexBCConfigurable.Location.RLMs));
         }
         else {
           if (FlexUtils.getPathToMainClassFile(rlm.MAIN_CLASS, module).isEmpty()) {
             errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
-              .message("rlm.main.class.not.found", rlm.MAIN_CLASS), FlexIdeBCConfigurable.Location.RLMs));
+              .message("rlm.main.class.not.found", rlm.MAIN_CLASS), FlexBCConfigurable.Location.RLMs));
           }
         }
 
         if (bc.getMainClass().equals(rlm.MAIN_CLASS)) {
           errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
-            .message("rlm.main.class.equal.to.bc.main.class", rlm.MAIN_CLASS), FlexIdeBCConfigurable.Location.RLMs));
+            .message("rlm.main.class.equal.to.bc.main.class", rlm.MAIN_CLASS), FlexBCConfigurable.Location.RLMs));
         }
 
         if (bc.getOutputFileName().equals(rlm.OUTPUT_FILE)) {
           errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
-            .message("rlm.output.equal.to.bc.output", rlm.OUTPUT_FILE), FlexIdeBCConfigurable.Location.RLMs));
+            .message("rlm.output.equal.to.bc.output", rlm.OUTPUT_FILE), FlexBCConfigurable.Location.RLMs));
         }
 
         if (rlm.OUTPUT_FILE.isEmpty()) {
           errorConsumer.consume(FlashProjectStructureProblem
                                   .createGeneralOptionProblem(bc.getName(), FlexBundle.message("rlm.output.file.name.not.specified"),
-                                                              FlexIdeBCConfigurable.Location.RLMs));
+                                                              FlexBCConfigurable.Location.RLMs));
         }
         else {
           if (!rlm.OUTPUT_FILE.toLowerCase().endsWith(".swf")) {
             errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message(
-              "rlm.output.file.must.have.swf.extension"), FlexIdeBCConfigurable.Location.RLMs));
+              "rlm.output.file.must.have.swf.extension"), FlexBCConfigurable.Location.RLMs));
           }
         }
       }
@@ -700,11 +704,11 @@ public class FlexCompiler implements SourceProcessingCompiler {
         if (!cssPath.toLowerCase().endsWith(".css")) {
           errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
             .message("not.a.css.runtime.stylesheet", FileUtil.toSystemDependentName(cssPath)),
-                                                                                        FlexIdeBCConfigurable.Location.RuntimeStyleSheets));
+                                                                                        FlexBCConfigurable.Location.RuntimeStyleSheets));
         }
         else if (LocalFileSystem.getInstance().findFileByPath(cssPath) == null) {
           errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
-            .message("css.not.found", FileUtil.toSystemDependentName(cssPath)), FlexIdeBCConfigurable.Location.RuntimeStyleSheets));
+            .message("css.not.found", FileUtil.toSystemDependentName(cssPath)), FlexBCConfigurable.Location.RuntimeStyleSheets));
         }
       }
     }
@@ -728,11 +732,11 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
   /* This verification is disabled because Vladimir Krivosheev has app on app dependency because he needs predictable compilation order.
    So we do not check dependencies and ignore incompatible ones when doing highlighting and compilation. */
-  private static void checkDependencies(final String moduleName, final FlexIdeBuildConfiguration bc) throws ConfigurationException {
+  private static void checkDependencies(final String moduleName, final FlexBuildConfiguration bc) throws ConfigurationException {
     for (final DependencyEntry entry : bc.getDependencies().getEntries()) {
       if (entry instanceof BuildConfigurationEntry) {
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)entry;
-        final FlexIdeBuildConfiguration dependencyBC = bcEntry.findBuildConfiguration();
+        final FlexBuildConfiguration dependencyBC = bcEntry.findBuildConfiguration();
         final LinkageType linkageType = bcEntry.getDependencyType().getLinkageType();
 
         if (dependencyBC == null) {
@@ -751,7 +755,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
   }
 
-  private static boolean checkWrapperFolderClash(final FlexIdeBuildConfiguration bc,
+  private static boolean checkWrapperFolderClash(final FlexBuildConfiguration bc,
                                                  final String templateFolderPath,
                                                  final String otherFolderPath,
                                                  final String otherFolderDescription,
@@ -759,13 +763,13 @@ public class FlexCompiler implements SourceProcessingCompiler {
     if (FileUtil.isAncestor(templateFolderPath, otherFolderPath, false)) {
       errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle.message(
         "html.wrapper.folder.clash", otherFolderDescription, FileUtil.toSystemDependentName(templateFolderPath)),
-                                                                                    FlexIdeBCConfigurable.Location.HtmlTemplatePath));
+                                                                                    FlexBCConfigurable.Location.HtmlTemplatePath));
       return false;
     }
     return true;
   }
 
-  public static void checkPackagingOptions(final FlexIdeBuildConfiguration bc, final Consumer<FlashProjectStructureProblem> errorConsumer) {
+  public static void checkPackagingOptions(final FlexBuildConfiguration bc, final Consumer<FlashProjectStructureProblem> errorConsumer) {
     if (bc.getOutputType() != OutputType.Application) return;
 
     if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
@@ -893,8 +897,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
   }
 
-  public static boolean checkDependencyType(final FlexIdeBuildConfiguration bc,
-                                            final FlexIdeBuildConfiguration dependencyBC,
+  public static boolean checkDependencyType(final FlexBuildConfiguration bc,
+                                            final FlexBuildConfiguration dependencyBC,
                                             final LinkageType linkageType) {
     final boolean ok;
 
@@ -922,9 +926,9 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
   private static class MyProcessingItem implements ProcessingItem {
     private final Module myModule;
-    private final FlexIdeBuildConfiguration myBC;
+    private final FlexBuildConfiguration myBC;
 
-    private MyProcessingItem(final Module module, final FlexIdeBuildConfiguration bc) {
+    private MyProcessingItem(final Module module, final FlexBuildConfiguration bc) {
       myModule = module;
       myBC = bc;
     }

@@ -13,15 +13,6 @@ public class FlexIcons {
     return IconLoader.getIcon(path, FlexIcons.class);
   }
 
-  public static final Icon Bc_desktop_as = load("/images/bc-desktop-as.png"); // 16x16
-  public static final Icon Bc_desktop_flex = load("/images/bc-desktop-flex.png"); // 16x16
-  public static final Icon Bc_desktop = load("/images/bc-desktop.png"); // 16x16
-  public static final Icon Bc_mobile_as = load("/images/bc-mobile-as.png"); // 16x16
-  public static final Icon Bc_mobile_flex = load("/images/bc-mobile-flex.png"); // 16x16
-  public static final Icon Bc_mobile = load("/images/bc-mobile.png"); // 16x16
-  public static final Icon Bc_web_as = load("/images/bc-web-as.png"); // 16x16
-  public static final Icon Bc_web_flex = load("/images/bc-web-flex.png"); // 16x16
-  public static final Icon Bc_web = load("/images/bc-web.png"); // 16x16
   public static final Icon Flash_remote_debug = load("/images/flash_remote_debug.png"); // 16x16
   public static final Icon Flash_run_config = load("/images/flash_run_config.png"); // 16x16
   
@@ -35,7 +26,6 @@ public class FlexIcons {
     
     public static class Sdk {
       public static final Icon Air = load("/images/flex/sdk/air.png"); // 16x16
-      public static final Icon Airmobile = load("/images/flex/sdk/airmobile.png"); // 16x16
       public static final Icon Flex_sdk = load("/images/flex/sdk/flex_sdk.png"); // 16x16
       public static final Icon MavenFlex = load("/images/flex/sdk/mavenFlex.png"); // 16x16
 

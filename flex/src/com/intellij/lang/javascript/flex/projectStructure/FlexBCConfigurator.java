@@ -1,16 +1,16 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.OutputType;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.SdkEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.ui.AddBuildConfigurationDialog;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurable;
-import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexBCConfigurable;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
@@ -42,25 +42,25 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class FlexIdeBCConfigurator {
+public class FlexBCConfigurator {
 
-  private static final Logger LOG = Logger.getInstance(FlexIdeBCConfigurator.class.getName());
+  private static final Logger LOG = Logger.getInstance(FlexBCConfigurator.class.getName());
 
   public interface Listener extends EventListener {
     void moduleRemoved(Module module);
 
-    void buildConfigurationRemoved(FlexIdeBCConfigurable configurable);
+    void buildConfigurationRemoved(FlexBCConfigurable configurable);
 
-    void natureChanged(FlexIdeBCConfigurable configurable);
+    void natureChanged(FlexBCConfigurable configurable);
 
-    void buildConfigurationRenamed(FlexIdeBCConfigurable configurable);
+    void buildConfigurationRenamed(FlexBCConfigurable configurable);
   }
 
-  private final BidirectionalMap<ModifiableFlexIdeBuildConfiguration, CompositeConfigurable> myConfigurablesMap =
-    new BidirectionalMap<ModifiableFlexIdeBuildConfiguration, CompositeConfigurable>();
+  private final BidirectionalMap<ModifiableFlexBuildConfiguration, CompositeConfigurable> myConfigurablesMap =
+    new BidirectionalMap<ModifiableFlexBuildConfiguration, CompositeConfigurable>();
 
-  private final BidirectionalMap<ModifiableFlexIdeBuildConfiguration, String> myBCToOutputPathMap =
-    new BidirectionalMap<ModifiableFlexIdeBuildConfiguration, String>();
+  private final BidirectionalMap<ModifiableFlexBuildConfiguration, String> myBCToOutputPathMap =
+    new BidirectionalMap<ModifiableFlexBuildConfiguration, String>();
 
   private final EventDispatcher<Listener> myEventDispatcher = EventDispatcher.create(Listener.class);
 
@@ -84,7 +84,7 @@ public class FlexIdeBCConfigurator {
 
         @Override
         public void addListener(Listener listener, Disposable parentDisposable) {
-          FlexIdeBCConfigurator.this.addListener(listener, parentDisposable);
+          FlexBCConfigurator.this.addListener(listener, parentDisposable);
         }
 
         @Override
@@ -144,11 +144,11 @@ public class FlexIdeBCConfigurator {
   public List<CompositeConfigurable> getOrCreateConfigurables(final Module module, final Runnable treeNodeNameUpdater) {
     myModifiableModelInitializer.ensureInitialized(module.getProject());
 
-    final ModifiableFlexIdeBuildConfiguration[] configurations = myConfigEditor.getConfigurations(module);
+    final ModifiableFlexBuildConfiguration[] configurations = myConfigEditor.getConfigurations(module);
 
     List<CompositeConfigurable> configurables = new ArrayList<CompositeConfigurable>(configurations.length);
 
-    for (final ModifiableFlexIdeBuildConfiguration bc : configurations) {
+    for (final ModifiableFlexBuildConfiguration bc : configurations) {
       CompositeConfigurable configurable = myConfigurablesMap.get(bc);
       if (configurable == null) {
         myConfigurablesMap.put(bc, configurable = createBcConfigurable(module, bc, treeNodeNameUpdater));
@@ -159,11 +159,11 @@ public class FlexIdeBCConfigurator {
   }
 
   private CompositeConfigurable createBcConfigurable(final Module module,
-                                                     final ModifiableFlexIdeBuildConfiguration bc,
+                                                     final ModifiableFlexBuildConfiguration bc,
                                                      final Runnable treeNodeNameUpdater) {
     final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(module.getProject());
     final Runnable bcNatureModifier = createBCNatureModifier(bc);
-    return new FlexIdeBCConfigurable(module, bc, bcNatureModifier, myConfigEditor, c.getProjectJdksModel(), c.getContext()) {
+    return new FlexBCConfigurable(module, bc, bcNatureModifier, myConfigEditor, c.getProjectJdksModel(), c.getContext()) {
       public void apply() throws ConfigurationException {
         super.apply();
         myBCToOutputPathMap.put(bc, bc.getActualOutputFilePath());
@@ -178,7 +178,7 @@ public class FlexIdeBCConfigurator {
     }.wrapInTabs();
   }
 
-  private Runnable createBCNatureModifier(final ModifiableFlexIdeBuildConfiguration bc) {
+  private Runnable createBCNatureModifier(final ModifiableFlexBuildConfiguration bc) {
     return new Runnable() {
       public void run() {
         final CompositeConfigurable compositeConfigurable = myConfigurablesMap.get(bc);
@@ -215,7 +215,7 @@ public class FlexIdeBCConfigurator {
 
         FlexProjectConfigurationEditor.resetNonApplicableValuesToDefaults(bc);
 
-        final FlexIdeBCConfigurable bcConfigurable = FlexIdeBCConfigurable.unwrap(compositeConfigurable);
+        final FlexBCConfigurable bcConfigurable = FlexBCConfigurable.unwrap(compositeConfigurable);
         bcConfigurable.createChildConfigurables();
         bcConfigurable.updateTabs(compositeConfigurable);
         compositeConfigurable.reset();
@@ -225,7 +225,7 @@ public class FlexIdeBCConfigurator {
     };
   }
 
-  private static void fixOutputFileExtension(final ModifiableFlexIdeBuildConfiguration bc) {
+  private static void fixOutputFileExtension(final ModifiableFlexBuildConfiguration bc) {
     final String outputFileName = bc.getOutputFileName();
     final String lowercase = outputFileName.toLowerCase();
     final String extension = bc.getOutputType() == OutputType.Library ? ".swc" : ".swf";
@@ -243,10 +243,10 @@ public class FlexIdeBCConfigurator {
     }
 
     // config editor will handle event and update modifiable model on its own, we just need to update configurables
-    Collection<ModifiableFlexIdeBuildConfiguration> configsToRemove =
-      ContainerUtil.findAll(myConfigurablesMap.keySet(), new Condition<ModifiableFlexIdeBuildConfiguration>() {
+    Collection<ModifiableFlexBuildConfiguration> configsToRemove =
+      ContainerUtil.findAll(myConfigurablesMap.keySet(), new Condition<ModifiableFlexBuildConfiguration>() {
         @Override
-        public boolean value(ModifiableFlexIdeBuildConfiguration bc) {
+        public boolean value(ModifiableFlexBuildConfiguration bc) {
           return myConfigEditor.getModule(bc) == module;
         }
       });
@@ -254,7 +254,7 @@ public class FlexIdeBCConfigurator {
     final ProjectStructureDaemonAnalyzer daemonAnalyzer =
       ProjectStructureConfigurable.getInstance(myConfigEditor.getProject()).getContext().getDaemonAnalyzer();
 
-    for (ModifiableFlexIdeBuildConfiguration bc : configsToRemove) {
+    for (ModifiableFlexBuildConfiguration bc : configsToRemove) {
       CompositeConfigurable configurable = myConfigurablesMap.remove(bc);
       myBCToOutputPathMap.remove(bc);
       daemonAnalyzer.removeElement(configurable.getProjectStructureElement());
@@ -304,7 +304,7 @@ public class FlexIdeBCConfigurator {
     myBCToOutputPathMap.clear();
   }
 
-  public void removeConfiguration(final ModifiableFlexIdeBuildConfiguration bc) {
+  public void removeConfiguration(final ModifiableFlexBuildConfiguration bc) {
     CompositeConfigurable configurable = myConfigurablesMap.remove(bc);
     myBCToOutputPathMap.remove(bc);
     final ProjectStructureDaemonAnalyzer daemonAnalyzer =
@@ -312,7 +312,7 @@ public class FlexIdeBCConfigurator {
     daemonAnalyzer.removeElement(configurable.getProjectStructureElement());
     daemonAnalyzer.queueUpdateForAllElementsWithErrors();
 
-    myEventDispatcher.getMulticaster().buildConfigurationRemoved(FlexIdeBCConfigurable.unwrap(configurable));
+    myEventDispatcher.getMulticaster().buildConfigurationRemoved(FlexBCConfigurable.unwrap(configurable));
   }
 
   public void addConfiguration(final Module module, final Runnable treeNodeNameUpdater) {
@@ -326,7 +326,7 @@ public class FlexIdeBCConfigurator {
     dialog.show();
     if (!dialog.isOK()) return;
 
-    final ModifiableFlexIdeBuildConfiguration bc = myConfigEditor.createConfiguration(module);
+    final ModifiableFlexBuildConfiguration bc = myConfigEditor.createConfiguration(module);
     final String bcName = dialog.getBCName();
     final String fileName = PathUtil.suggestFileName(bcName);
     final BuildConfigurationNature nature = dialog.getNature();
@@ -334,7 +334,7 @@ public class FlexIdeBCConfigurator {
     bc.setName(bcName);
     bc.setNature(nature);
 
-    final ModifiableFlexIdeBuildConfiguration someExistingConfig = myConfigEditor.getConfigurations(module)[0];
+    final ModifiableFlexBuildConfiguration someExistingConfig = myConfigEditor.getConfigurations(module)[0];
     bc.setOutputFileName(fileName + (bc.getOutputType() == OutputType.Library ? ".swc" : ".swf"));
     bc.setOutputFolder(someExistingConfig.getOutputFolder());
     updatePackageFileName(bc, fileName);
@@ -369,9 +369,9 @@ public class FlexIdeBCConfigurator {
     }
     catch (ConfigurationException ignored) {/**/}
 
-    ModifiableFlexIdeBuildConfiguration existingBC = myConfigurablesMap.getKeysByValue(configurable).get(0);
+    ModifiableFlexBuildConfiguration existingBC = myConfigurablesMap.getKeysByValue(configurable).get(0);
 
-    FlexIdeBCConfigurable unwrapped = FlexIdeBCConfigurable.unwrap(configurable);
+    FlexBCConfigurable unwrapped = FlexBCConfigurable.unwrap(configurable);
     final String title = FlexBundle.message("copy.build.configuration", existingBC.getName(), unwrapped.getModule().getName());
     Module module = unwrapped.getModule();
     AddBuildConfigurationDialog dialog =
@@ -384,7 +384,7 @@ public class FlexIdeBCConfigurator {
     final String fileName = PathUtil.suggestFileName(newBCName);
     final BuildConfigurationNature newNature = dialog.getNature();
 
-    ModifiableFlexIdeBuildConfiguration newBC = myConfigEditor.copyConfiguration(existingBC, newNature);
+    ModifiableFlexBuildConfiguration newBC = myConfigEditor.copyConfiguration(existingBC, newNature);
     newBC.setName(newBCName);
 
     newBC.setOutputFileName(fileName + (newBC.getOutputType() == OutputType.Library ? ".swc" : ".swf"));
@@ -398,7 +398,7 @@ public class FlexIdeBCConfigurator {
     createConfigurableNode(newBC, unwrapped.getModule(), treeNodeNameUpdater);
   }
 
-  private static void updatePackageFileName(final ModifiableFlexIdeBuildConfiguration bc, final String packageFileName) {
+  private static void updatePackageFileName(final ModifiableFlexBuildConfiguration bc, final String packageFileName) {
     final BuildConfigurationNature nature = bc.getNature();
     if (nature.isApp()) {
       if (nature.isDesktopPlatform()) {
@@ -412,7 +412,7 @@ public class FlexIdeBCConfigurator {
   }
 
 
-  private void createConfigurableNode(ModifiableFlexIdeBuildConfiguration bc, Module module, Runnable treeNodeNameUpdater) {
+  private void createConfigurableNode(ModifiableFlexBuildConfiguration bc, Module module, Runnable treeNodeNameUpdater) {
     CompositeConfigurable wrapped = createBcConfigurable(module, bc, treeNodeNameUpdater);
     myConfigurablesMap.put(bc, wrapped);
     final MasterDetailsComponent.MyNode node = new BuildConfigurationNode(wrapped);
@@ -427,7 +427,7 @@ public class FlexIdeBCConfigurator {
 
   private Collection<String> getUsedNames(final Module module) {
     final Collection<String> result = new LinkedList<String>();
-    for (final ModifiableFlexIdeBuildConfiguration configuration : myConfigEditor.getConfigurations(module)) {
+    for (final ModifiableFlexBuildConfiguration configuration : myConfigEditor.getConfigurations(module)) {
       result.add(myConfigurablesMap.get(configuration).getDisplayName());
     }
     return result;
@@ -435,20 +435,20 @@ public class FlexIdeBCConfigurator {
 
   public List<CompositeConfigurable> getBCConfigurables(@NotNull Module module) {
     return ContainerUtil.map(myConfigEditor.getConfigurations(module),
-                             new Function<ModifiableFlexIdeBuildConfiguration, CompositeConfigurable>() {
+                             new Function<ModifiableFlexBuildConfiguration, CompositeConfigurable>() {
                                @Override
-                               public CompositeConfigurable fun(ModifiableFlexIdeBuildConfiguration configuration) {
+                               public CompositeConfigurable fun(ModifiableFlexBuildConfiguration configuration) {
                                  return myConfigurablesMap.get(configuration);
                                }
                              });
   }
 
-  public FlexIdeBCConfigurable getBCConfigurable(@NotNull ModifiableFlexIdeBuildConfiguration bc) {
-    return FlexIdeBCConfigurable.unwrap(myConfigurablesMap.get(bc));
+  public FlexBCConfigurable getBCConfigurable(@NotNull ModifiableFlexBuildConfiguration bc) {
+    return FlexBCConfigurable.unwrap(myConfigurablesMap.get(bc));
   }
 
   @Nullable
-  public List<ModifiableFlexIdeBuildConfiguration> getBCsByOutputPath(final String outputPath) {
+  public List<ModifiableFlexBuildConfiguration> getBCsByOutputPath(final String outputPath) {
     return myBCToOutputPathMap.getKeysByValue(outputPath);
   }
 
@@ -459,9 +459,9 @@ public class FlexIdeBCConfigurator {
     return p;
   }
 
-  public boolean canBeRemoved(ModifiableFlexIdeBuildConfiguration[] configurations) {
+  public boolean canBeRemoved(ModifiableFlexBuildConfiguration[] configurations) {
     Map<Module, Integer> module2ConfigCount = new HashMap<Module, Integer>();
-    for (ModifiableFlexIdeBuildConfiguration bc : configurations) {
+    for (ModifiableFlexBuildConfiguration bc : configurations) {
       Module module = myConfigEditor.getModule(bc);
       Integer count = module2ConfigCount.get(module);
       module2ConfigCount.put(module, count != null ? count + 1 : 1);

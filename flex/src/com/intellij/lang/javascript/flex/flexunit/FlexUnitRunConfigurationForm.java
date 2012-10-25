@@ -1,10 +1,10 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -59,9 +59,9 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
     initLaunchWithTextWithBrowse();
 
     FlashRunConfigurationForm.initAppDescriptorForEmulatorCombo(myAppDescriptorForEmulatorCombo,
-                                                                new NullableComputable<FlexIdeBuildConfiguration>() {
+                                                                new NullableComputable<FlexBuildConfiguration>() {
                                                                   @Nullable
-                                                                  public FlexIdeBuildConfiguration compute() {
+                                                                  public FlexBuildConfiguration compute() {
                                                                     return myBCCombo.getBC();
                                                                   }
                                                                 });
@@ -105,7 +105,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
       myLogLevelCombo.setEnabled(false);
     }
 
-    final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+    final FlexBuildConfiguration bc = myBCCombo.getBC();
     final boolean webPlatform = bc != null && bc.getTargetPlatform() == TargetPlatform.Web;
     final boolean mobilePlatform = bc != null && bc.getTargetPlatform() == TargetPlatform.Mobile;
     final boolean app = bc != null && bc.getOutputType() == OutputType.Application;
@@ -180,7 +180,7 @@ public class FlexUnitRunConfigurationForm extends SettingsEditor<FlexUnitRunConf
                                           },
                                           new ThrowableComputable<FlexUnitSupport, RuntimeConfigurationError>() {
                                             public FlexUnitSupport compute() throws RuntimeConfigurationError {
-                                              final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+                                              final FlexBuildConfiguration bc = myBCCombo.getBC();
                                               if (bc == null) throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
                                               final FlexUnitSupport support = FlexUnitSupport.getSupport(bc, myBCCombo.getModule());
                                               if (support != null) return support;

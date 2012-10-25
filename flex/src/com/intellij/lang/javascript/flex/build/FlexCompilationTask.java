@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
@@ -17,8 +17,8 @@ public abstract class FlexCompilationTask {
 
   protected final Module myModule;
   private final String myPresentableName;
-  protected final FlexIdeBuildConfiguration myBC;
-  protected final Collection<FlexIdeBuildConfiguration> myDependencies;
+  protected final FlexBuildConfiguration myBC;
+  protected final Collection<FlexBuildConfiguration> myDependencies;
 
   private List<VirtualFile> myConfigFiles;
 
@@ -26,8 +26,8 @@ public abstract class FlexCompilationTask {
   protected boolean myCompilationFailed;
 
   protected FlexCompilationTask(final Module module,
-                                final FlexIdeBuildConfiguration bc,
-                                final Collection<FlexIdeBuildConfiguration> dependencies) {
+                                final FlexBuildConfiguration bc,
+                                final Collection<FlexBuildConfiguration> dependencies) {
     myModule = module;
     myBC = bc;
     myDependencies = dependencies;
@@ -103,11 +103,11 @@ public abstract class FlexCompilationTask {
     return myConfigFiles;
   }
 
-  public FlexIdeBuildConfiguration getBC() {
+  public FlexBuildConfiguration getBC() {
     return myBC;
   }
 
-  public Collection<FlexIdeBuildConfiguration> getDependencies() {
+  public Collection<FlexBuildConfiguration> getDependencies() {
     return myDependencies;
   }
 }

@@ -1,12 +1,13 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.flex.FlexCommonBundle;
+import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.build.FlashProjectStructureProblem;
 import com.intellij.lang.javascript.flex.build.FlexCompiler;
 import com.intellij.lang.javascript.flex.build.FlexCompilerHandler;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
@@ -36,10 +37,10 @@ import java.util.List;
  */
 public class BuildConfigurationProjectStructureElement extends ProjectStructureElement {
 
-  private final ModifiableFlexIdeBuildConfiguration myBc;
+  private final ModifiableFlexBuildConfiguration myBc;
   private final Module myModule;
 
-  public BuildConfigurationProjectStructureElement(final ModifiableFlexIdeBuildConfiguration bc,
+  public BuildConfigurationProjectStructureElement(final ModifiableFlexBuildConfiguration bc,
                                                    final Module module,
                                                    final @NotNull StructureConfigurableContext context) {
     super(context);
@@ -64,7 +65,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
 
   @Override
   public void check(final ProjectStructureProblemsHolder problemsHolder) {
-    final FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
+    final FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
     final FlexProjectConfigurationEditor editor = configurator.getConfigEditor();
     assert editor != null;
 
@@ -72,7 +73,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
     final SdkEntry sdkEntry = myBc.getDependencies().getSdkEntry();
     if (sdkEntry == null) {
       Pair<String, Object> location =
-        Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB, DependenciesConfigurable.Location.SDK);
+        Pair.<String, Object>create(FlexBCConfigurable.LOCATION_ON_TAB, DependenciesConfigurable.Location.SDK);
 
       PlaceInProjectStructure place = new PlaceInBuildConfiguration(this, DependenciesConfigurable.TAB_NAME, location);
       problemsHolder.registerProblem(FlexBundle.message("bc.problem.no.sdk"), null, ProjectStructureProblemType.error("sdk"),
@@ -81,7 +82,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
     else {
       if (FlexSdkUtils.findFlexOrFlexmojosSdk(sdkEntry.getName()) == null) {
         Pair<String, Object> location =
-          Pair.<String, Object>create(FlexIdeBCConfigurable.LOCATION_ON_TAB, DependenciesConfigurable.Location.SDK);
+          Pair.<String, Object>create(FlexBCConfigurable.LOCATION_ON_TAB, DependenciesConfigurable.Location.SDK);
 
         PlaceInProjectStructure place = new PlaceInBuildConfiguration(this, DependenciesConfigurable.TAB_NAME, location);
         problemsHolder.registerProblem(FlexBundle.message("bc.problem.sdk.not.found", sdkEntry.getName()), null,
@@ -117,9 +118,9 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
         if (module == null) {
           errorMessage = FlexBundle.message("bc.problem.dependency.module.not.found", moduleName);
         }
-        else if (ContainerUtil.find(editor.getConfigurations(module), new Condition<ModifiableFlexIdeBuildConfiguration>() {
+        else if (ContainerUtil.find(editor.getConfigurations(module), new Condition<ModifiableFlexBuildConfiguration>() {
           @Override
-          public boolean value(final ModifiableFlexIdeBuildConfiguration configuration) {
+          public boolean value(final ModifiableFlexBuildConfiguration configuration) {
             return bcName.equals(configuration.getName());
           }
         }) == null) {
@@ -136,13 +137,13 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
   }
 
   private void checkSameOutputPaths(final ProjectStructureProblemsHolder problemsHolder,
-                                    final FlexIdeBCConfigurator configurator,
+                                    final FlexBCConfigurator configurator,
                                     final FlexProjectConfigurationEditor editor) {
     final String outputPath = myBc.getActualOutputFilePath();
-    final List<ModifiableFlexIdeBuildConfiguration> bcs = configurator.getBCsByOutputPath(outputPath);
+    final List<ModifiableFlexBuildConfiguration> bcs = configurator.getBCsByOutputPath(outputPath);
     if (bcs != null && bcs.size() > 1) {
       final StringBuilder buf = new StringBuilder();
-      for (ModifiableFlexIdeBuildConfiguration bc : bcs) {
+      for (ModifiableFlexBuildConfiguration bc : bcs) {
         if (bc != myBc) {
           if (buf.length() > 0) buf.append(", ");
           buf.append(FlexBundle.message("0.module.1", bc.getName(), editor.getModule(bc).getName()));
@@ -152,14 +153,14 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
       final String message =
         FlexBundle.message("same.output.files.as.in.bcs", bcs.size() - 1, buf.toString(), FileUtil.toSystemDependentName(outputPath));
 
-      final FlexIdeBCConfigurable.Location location = FlexIdeBCConfigurable.Location.OutputFileName;
+      final FlexBCConfigurable.Location location = FlexBCConfigurable.Location.OutputFileName;
       final PlaceInProjectStructure placeInPS = new PlaceInBuildConfiguration(this, myBc.getName(), location);
       problemsHolder.registerProblem(message, null, ProjectStructureProblemType.warning(location.errorId), placeInPS, null);
     }
   }
 
   private void checkIfBCOutputUsedAs3rdPartyLib(final ProjectStructureProblemsHolder problemsHolder,
-                                                final FlexIdeBCConfigurator configurator,
+                                                final FlexBCConfigurator configurator,
                                                 final FlexProjectConfigurationEditor editor) {
     for (final DependencyEntry entry : myBc.getDependencies().getEntries()) {
       if (entry instanceof ModuleLibraryEntry) {
@@ -179,15 +180,15 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
   }
 
   private void checkIfBCOutputUsedAs3rdPartyLib(final ProjectStructureProblemsHolder problemsHolder,
-                                                final FlexIdeBCConfigurator configurator,
+                                                final FlexBCConfigurator configurator,
                                                 final DependencyEntry entry,
                                                 final VirtualFile[] classesRoots) {
     for (VirtualFile libFile : classesRoots) {
       final VirtualFile realFile = FlexCompilerHandler.getRealFile(libFile);
       if (realFile != null && !realFile.isDirectory() && "swc".equalsIgnoreCase(realFile.getExtension())) {
-        final List<ModifiableFlexIdeBuildConfiguration> bcs = configurator.getBCsByOutputPath(realFile.getPath());
+        final List<ModifiableFlexBuildConfiguration> bcs = configurator.getBCsByOutputPath(realFile.getPath());
         if (bcs != null && !bcs.isEmpty()) {
-          final ModifiableFlexIdeBuildConfiguration otherLibBC = bcs.get(0);
+          final ModifiableFlexBuildConfiguration otherLibBC = bcs.get(0);
           final FlexProjectConfigurationEditor editor = configurator.getConfigEditor();
           assert editor != null;
           final Module otherLibModule = editor.getModule(otherLibBC);
@@ -204,9 +205,9 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
           final String quickFixName = FlexBundle.message("instead.setup.dependency.on.bc", otherLibBC.getName(), otherLibModule.getName());
           final ConfigurationErrorQuickFix quickFix = new ConfigurationErrorQuickFix(quickFixName) {
             public void performFix() {
-              final FlexIdeBCConfigurable configurable = configurator.getBCConfigurable(myBc);
+              final FlexBCConfigurable configurable = configurator.getBCConfigurable(myBc);
               final DependenciesConfigurable dependenciesConfigurable = configurable.getDependenciesConfigurable();
-              final FlexIdeBCConfigurable otherLibConfigurable = configurator.getBCConfigurable(otherLibBC);
+              final FlexBCConfigurable otherLibConfigurable = configurator.getBCConfigurable(otherLibBC);
 
               final LinkageType linkageType = entry.getDependencyType().getLinkageType();
               dependenciesConfigurable.addBCDependency(otherLibConfigurable, linkageType);
@@ -221,7 +222,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
 
               final Place place = configurator.getPlaceFor(myModule, myBc.getName());
               place.putPath(CompositeConfigurable.TAB_NAME, DependenciesConfigurable.TAB_NAME);
-              place.putPath(FlexIdeBCConfigurable.LOCATION_ON_TAB,
+              place.putPath(FlexBCConfigurable.LOCATION_ON_TAB,
                             DependenciesConfigurable.Location.TableEntry.forBc(otherLibConfigurable));
               ProjectStructureConfigurable.getInstance(myModule.getProject()).navigateTo(place, true);
             }
@@ -237,7 +238,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
 
   @Override
   public List<ProjectStructureElementUsage> getUsagesInElement() {
-    FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
+    FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
     final FlexProjectConfigurationEditor editor = configurator.getConfigEditor();
     assert editor != null;
     final ModulesConfigurator modulesConfigurator = myContext.getModulesConfigurator();
@@ -266,10 +267,10 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
         final BuildConfigurationEntry bcEntry = (BuildConfigurationEntry)dependencyEntry;
         Module module = modulesConfigurator.getModule(bcEntry.getModuleName());
         if (module != null) {
-          final ModifiableFlexIdeBuildConfiguration bc =
-            ContainerUtil.find(editor.getConfigurations(module), new Condition<ModifiableFlexIdeBuildConfiguration>() {
+          final ModifiableFlexBuildConfiguration bc =
+            ContainerUtil.find(editor.getConfigurations(module), new Condition<ModifiableFlexBuildConfiguration>() {
               @Override
-              public boolean value(final ModifiableFlexIdeBuildConfiguration configuration) {
+              public boolean value(final ModifiableFlexBuildConfiguration configuration) {
                 return bcEntry.getBcName().equals(configuration.getName());
               }
             });
@@ -331,7 +332,7 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
     return myModule;
   }
 
-  public FlexIdeBuildConfiguration getBc() {
+  public FlexBuildConfiguration getBC() {
     return myBc;
   }
 

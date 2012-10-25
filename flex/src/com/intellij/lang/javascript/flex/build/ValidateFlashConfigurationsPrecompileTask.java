@@ -3,10 +3,10 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.compiler.CompilerWorkspaceConfiguration;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurable;
-import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexBCConfigurable;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -34,10 +34,10 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
 
   static boolean validateConfiguration(final CompileContext context) {
     try {
-      final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCsToCompile =
+      final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCsToCompile =
         FlexCompiler.getModulesAndBCsToCompile(context.getCompileScope());
 
-      final Collection<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> problems =
+      final Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> problems =
         FlexCompiler.getProblems(context.getCompileScope(), modulesAndBCsToCompile);
 
       if (!problems.isEmpty()) {
@@ -54,13 +54,13 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
   }
 
   private static void reportProblems(final CompileContext context,
-                                     final Collection<Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem>> problems) {
+                                     final Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> problems) {
     // todo remove this senseless error message when 'show first error in editor' functionality respect canNavigateToSource()
     context.addMessage(CompilerMessageCategory.ERROR, "Flash build configurations contain errors. See details below.", null, -1, -1);
 
-    for (Trinity<Module, FlexIdeBuildConfiguration, FlashProjectStructureProblem> trinity : problems) {
+    for (Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem> trinity : problems) {
       final Module module = trinity.getFirst();
-      final FlexIdeBuildConfiguration bc = trinity.getSecond();
+      final FlexBuildConfiguration bc = trinity.getSecond();
       final FlashProjectStructureProblem problem = trinity.getThird();
 
       final String message = FlexBundle.message("bc.0.module.1.problem.2", bc.getName(), module.getName(), problem.errorMessage);
@@ -96,7 +96,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
         public void run() {
           final Place place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, myBCNme);
           place.putPath(CompositeConfigurable.TAB_NAME, myProblem.tabName);
-          place.putPath(FlexIdeBCConfigurable.LOCATION_ON_TAB, myProblem.locationOnTab);
+          place.putPath(FlexBCConfigurable.LOCATION_ON_TAB, myProblem.locationOnTab);
 
           configurable.navigateTo(place, true);
         }

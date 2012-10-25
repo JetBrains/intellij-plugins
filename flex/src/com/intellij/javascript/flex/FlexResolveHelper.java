@@ -1,12 +1,12 @@
 package com.intellij.javascript.flex;
 
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.JSResolveHelper;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -136,7 +136,7 @@ public class FlexResolveHelper implements JSResolveHelper {
   }
 
   public boolean isDesktopOrMobileTargetPlatformActive(final Module module) {
-    final FlexIdeBuildConfiguration bc = ModuleType.get(module) instanceof FlexModuleType
+    final FlexBuildConfiguration bc = ModuleType.get(module) instanceof FlexModuleType
                                          ? FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration()
                                          : null;
     return bc != null && (bc.getTargetPlatform() == TargetPlatform.Desktop || bc.getTargetPlatform() == TargetPlatform.Mobile);

@@ -1,6 +1,9 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.execution.ExecutionBundle;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
@@ -8,14 +11,11 @@ import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBCConfigurator;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -64,7 +64,7 @@ import java.util.*;
 
 import static com.intellij.lang.javascript.flex.projectStructure.ui.AirPackagingConfigurableBase.AirDescriptorInfoProvider;
 
-public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<ModifiableFlexIdeBuildConfiguration>
+public class FlexBCConfigurable extends ProjectStructureElementConfigurable<ModifiableFlexBuildConfiguration>
   implements CompositeConfigurable.Item, Place.Navigator {
 
   public static final String TAB_NAME = FlexBundle.message("bc.tab.general.display.name");
@@ -111,7 +111,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
 
   private JLabel myRLMLabel;
   private TextFieldWithBrowseButton.NoPathCompletion myRLMTextWithBrowse;
-  private Collection<FlexIdeBuildConfiguration.RLMInfo> myRLMs;
+  private Collection<FlexBuildConfiguration.RLMInfo> myRLMs;
 
   private JLabel myCssFilesLabel;
   private TextFieldWithBrowseButton.NoPathCompletion myCssFilesTextWithBrowse;
@@ -121,7 +121,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   private JLabel myWarning;
 
   private final Module myModule;
-  private final ModifiableFlexIdeBuildConfiguration myConfiguration;
+  private final ModifiableFlexBuildConfiguration myConfiguration;
   private @NotNull final FlexProjectConfigurationEditor myConfigEditor;
   private final ProjectSdksModel mySdksModel;
   private final StructureConfigurableContext myContext;
@@ -142,12 +142,12 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
 
   private JSClassChooserDialog.PublicInheritor myMainClassFilter;
 
-  public FlexIdeBCConfigurable(final Module module,
-                               final ModifiableFlexIdeBuildConfiguration bc,
-                               final Runnable bcNatureModifier,
-                               final @NotNull FlexProjectConfigurationEditor configEditor,
-                               final ProjectSdksModel sdksModel,
-                               final StructureConfigurableContext context) {
+  public FlexBCConfigurable(final Module module,
+                            final ModifiableFlexBuildConfiguration bc,
+                            final Runnable bcNatureModifier,
+                            final @NotNull FlexProjectConfigurationEditor configEditor,
+                            final ProjectSdksModel sdksModel,
+                            final StructureConfigurableContext context) {
     super(false, null);
     myModule = module;
     myConfiguration = bc;
@@ -184,10 +184,10 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
         myContext.getDaemonAnalyzer().queueUpdate(myStructureElement);
         myContext.getDaemonAnalyzer().queueUpdateForAllElementsWithErrors();
 
-        final FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
-        final List<ModifiableFlexIdeBuildConfiguration> bcs = configurator.getBCsByOutputPath(myConfiguration.getActualOutputFilePath());
+        final FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
+        final List<ModifiableFlexBuildConfiguration> bcs = configurator.getBCsByOutputPath(myConfiguration.getActualOutputFilePath());
         if (bcs != null) {
-          for (ModifiableFlexIdeBuildConfiguration bc : bcs) {
+          for (ModifiableFlexBuildConfiguration bc : bcs) {
             if (bc == myConfiguration) continue;
             myContext.getDaemonAnalyzer().queueUpdate(configurator.getBCConfigurable(bc).myStructureElement);
           }
@@ -497,7 +497,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     return myConfiguration.getIcon();
   }
 
-  public ModifiableFlexIdeBuildConfiguration getEditableObject() {
+  public ModifiableFlexBuildConfiguration getEditableObject() {
     return myConfiguration;
   }
 
@@ -536,8 +536,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
   }
 
   private void updateRLMsText() {
-    final String s = StringUtil.join(myRLMs, new Function<FlexIdeBuildConfiguration.RLMInfo, String>() {
-      public String fun(final FlexIdeBuildConfiguration.RLMInfo info) {
+    final String s = StringUtil.join(myRLMs, new Function<FlexBuildConfiguration.RLMInfo, String>() {
+      public String fun(final FlexBuildConfiguration.RLMInfo info) {
         return info.MAIN_CLASS;
       }
     }, ", ");
@@ -603,7 +603,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     myMainClassFilter = BCUtils.getMainClassFilter(myModule, myConfiguration, rlm, false, true);
   }
 
-  private void applyOwnTo(ModifiableFlexIdeBuildConfiguration configuration, boolean validate) throws ConfigurationException {
+  private void applyOwnTo(ModifiableFlexBuildConfiguration configuration, boolean validate) throws ConfigurationException {
     if (validate && StringUtil.isEmptyOrSpaces(myName)) {
       throw new ConfigurationException("Module '" + getModuleName() + "': build configuration name is empty");
     }
@@ -631,7 +631,7 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
       myOutputFolderField.setText(FileUtil.toSystemDependentName(myConfiguration.getOutputFolder()));
       myUseHTMLWrapperCheckBox.setSelected(myConfiguration.isUseHtmlWrapper());
       myWrapperTemplateTextWithBrowse.setText(FileUtil.toSystemDependentName(myConfiguration.getWrapperTemplatePath()));
-      myRLMs = new ArrayList<FlexIdeBuildConfiguration.RLMInfo>(myConfiguration.getRLMs());
+      myRLMs = new ArrayList<FlexBuildConfiguration.RLMInfo>(myConfiguration.getRLMs());
       myCssFilesToCompile = new ArrayList<String>(myConfiguration.getCssFilesToCompile());
       mySkipCompilationCheckBox.setSelected(myConfiguration.isSkipCompile());
 
@@ -660,8 +660,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     Disposer.dispose(myDisposable);
   }
 
-  //public ModifiableFlexIdeBuildConfiguration getCurrentConfiguration() {
-  //  final ModifiableFlexIdeBuildConfiguration configuration = Factory.createBuildConfiguration();
+  //public ModifiableFlexBuildConfiguration getCurrentConfiguration() {
+  //  final ModifiableFlexBuildConfiguration configuration = Factory.createBuildConfiguration();
   //  try {
   //    applyTo(configuration, false);
   //  }
@@ -725,8 +725,8 @@ public class FlexIdeBCConfigurable extends ProjectStructureElementConfigurable<M
     myDependenciesConfigurable.addSharedLibraries(Collections.singletonList(library));
   }
 
-  public static FlexIdeBCConfigurable unwrap(CompositeConfigurable c) {
-    return (FlexIdeBCConfigurable)c.getMainChild();
+  public static FlexBCConfigurable unwrap(CompositeConfigurable c) {
+    return (FlexBCConfigurable)c.getMainChild();
   }
 
   @Override

@@ -7,11 +7,11 @@ import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.configurations.LocatableConfiguration;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -96,7 +96,7 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
   private static boolean configureRunnerParameters(final FlexUnitRunnerParameters params, final Module module, final PsiElement element) {
     final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
     FlexUnitSupport support = null;
-    FlexIdeBuildConfiguration bc = null;
+    FlexBuildConfiguration bc = null;
 
     if (module.getName().equals(params.getModuleName()) && !params.getBCName().isEmpty()) {
       bc = manager.findConfigurationByName(params.getBCName());
@@ -111,7 +111,7 @@ public class FlexUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
     }
 
     if (support == null) {
-      for (FlexIdeBuildConfiguration anyBC : manager.getBuildConfigurations()) {
+      for (FlexBuildConfiguration anyBC : manager.getBuildConfigurations()) {
         bc = anyBC;
         support = FlexUnitSupport.getSupport(bc, module);
         if (support != null) {

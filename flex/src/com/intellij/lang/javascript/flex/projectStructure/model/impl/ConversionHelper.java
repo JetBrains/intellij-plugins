@@ -52,7 +52,7 @@ public class ConversionHelper {
     }
 
     @Override
-    public FlexIdeBuildConfiguration findBuildConfiguration() {
+    public FlexBuildConfiguration findBuildConfiguration() {
       throw new UnsupportedOperationException();
     }
 
@@ -91,9 +91,9 @@ public class ConversionHelper {
     return m;
   }
 
-  public static ModifiableFlexIdeBuildConfiguration createBuildConfiguration(FlexBuildConfigurationManagerImpl m) {
-    FlexIdeBuildConfigurationImpl[] configurations = m.doGetBuildConfigurations();
-    FlexIdeBuildConfigurationImpl result = new FlexIdeBuildConfigurationImpl();
+  public static ModifiableFlexBuildConfiguration createBuildConfiguration(FlexBuildConfigurationManagerImpl m) {
+    FlexBuildConfigurationImpl[] configurations = m.doGetBuildConfigurations();
+    FlexBuildConfigurationImpl result = new FlexBuildConfigurationImpl();
     m.doSetBuildConfigurations(ArrayUtil.append(configurations, result));
     return result;
   }
@@ -106,8 +106,8 @@ public class ConversionHelper {
     return new SharedLibraryEntryImpl(libraryName, libraryLevel);
   }
 
-  //public static ModifiableFlexIdeBuildConfiguration createConfigInstance(String name) {
-  //  FlexIdeBuildConfigurationImpl c = new FlexIdeBuildConfigurationImpl();
+  //public static ModifiableFlexBuildConfiguration createConfigInstance(String name) {
+  //  FlexBuildConfigurationImpl c = new FlexBuildConfigurationImpl();
   //  c.setName(name);
   //  return c;
   //}

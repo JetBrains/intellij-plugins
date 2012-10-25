@@ -10,11 +10,11 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -86,7 +86,7 @@ public class FlashRunConfiguration extends RunConfigurationBase
   }
 
   public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
-    final FlexIdeBuildConfiguration config;
+    final FlexBuildConfiguration config;
     try {
       config = myRunnerParameters.checkAndGetModuleAndBC(getProject()).second;
     }
@@ -185,7 +185,7 @@ public class FlashRunConfiguration extends RunConfigurationBase
 
     @NotNull
     protected OSProcessHandler startProcess() throws ExecutionException {
-      final FlexIdeBuildConfiguration bc;
+      final FlexBuildConfiguration bc;
       try {
         bc = myRunnerParameters.checkAndGetModuleAndBC(myProject).second;
       }

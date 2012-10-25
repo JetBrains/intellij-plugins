@@ -1,10 +1,11 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.ui.UISettings;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CustomShortcutSet;
@@ -114,8 +115,8 @@ public class AddBuildConfigurationDialog extends DialogWrapper {
   }
 
   private void initCombos() {
-    TargetPlatform.initCombo(myTargetPlatformCombo);
-    OutputType.initCombo(myOutputTypeCombo);
+    BCUtils.initTargetPlatformCombo(myTargetPlatformCombo);
+    BCUtils.initOutputTypeCombo(myOutputTypeCombo);
 
     final ActionListener actionListener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {

@@ -1,16 +1,18 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexCompositeSdk;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
-import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexBCConfigurable;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -48,20 +50,20 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
   private static final Logger LOG = Logger.getInstance(FlexProjectConfigurationEditor.class.getName());
 
-  private static class Editor extends FlexIdeBuildConfigurationImpl {
+  private static class Editor extends FlexBuildConfigurationImpl {
     private final Module myModule;
-    private final FlexIdeBuildConfigurationImpl myOrigin;
+    private final FlexBuildConfigurationImpl myOrigin;
     @Nullable
     private final String myOriginalName;
 
-    Editor(Module module, @Nullable FlexIdeBuildConfigurationImpl origin, boolean storeOriginalName) {
-      myOrigin = origin != null ? origin : new FlexIdeBuildConfigurationImpl();
+    Editor(Module module, @Nullable FlexBuildConfigurationImpl origin, boolean storeOriginalName) {
+      myOrigin = origin != null ? origin : new FlexBuildConfigurationImpl();
       myOriginalName = storeOriginalName && origin != null ? origin.getName() : null;
       myModule = module;
       myOrigin.applyTo(this);
     }
 
-    public FlexIdeBuildConfigurationImpl commit() {
+    public FlexBuildConfigurationImpl commit() {
       applyTo(myOrigin);
       return myOrigin;
     }
@@ -81,7 +83,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
 
     ModifiableRootModel getModuleModifiableModel(Module module);
 
-    void addListener(FlexIdeBCConfigurator.Listener listener, Disposable parentDisposable);
+    void addListener(FlexBCConfigurator.Listener listener, Disposable parentDisposable);
 
     void commitModifiableModels() throws ConfigurationException;
 
@@ -112,7 +114,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     myProvider = provider;
     //mySdksEditor = new FlexSdksEditor(this);
 
-    provider.addListener(new FlexIdeBCConfigurator.Listener() {
+    provider.addListener(new FlexBCConfigurator.Listener() {
       @Override
       public void moduleRemoved(final Module module) {
         if (!isFlex(module)) {
@@ -137,16 +139,16 @@ public class FlexProjectConfigurationEditor implements Disposable {
       }
 
       @Override
-      public void buildConfigurationRemoved(FlexIdeBCConfigurable configurable) {
+      public void buildConfigurationRemoved(FlexBCConfigurable configurable) {
         configurationRemoved(configurable.getEditableObject());
       }
 
       @Override
-      public void natureChanged(final FlexIdeBCConfigurable configurable) {
+      public void natureChanged(final FlexBCConfigurable configurable) {
       }
 
       @Override
-      public void buildConfigurationRenamed(final FlexIdeBCConfigurable configurable) {
+      public void buildConfigurationRenamed(final FlexBCConfigurable configurable) {
       }
     }, this);
 
@@ -168,7 +170,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
                                                             final @Nullable LibraryTableBase.ModifiableModelEx projectLibrariesModel,
                                                             final @Nullable LibraryTableBase.ModifiableModelEx globalLibrariesModel) {
     LOG.assertTrue(FlexBuildConfigurationsExtension.getInstance().getConfigurator().getConfigEditor() == null,
-                   "Don't create FlexProjectConfigurationEditor when Project Structure dialog is open. Use FlexIdeBCConfigurator.getConfigEditor()");
+                   "Don't create FlexProjectConfigurationEditor when Project Structure dialog is open. Use FlexBCConfigurator.getConfigEditor()");
 
     final ProjectModifiableModelProvider provider =
       createModelProvider(moduleToModifiableModel, projectLibrariesModel, globalLibrariesModel);
@@ -191,7 +193,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
         return model;
       }
 
-      public void addListener(final FlexIdeBCConfigurator.Listener listener,
+      public void addListener(final FlexBCConfigurator.Listener listener,
                               final Disposable parentDisposable) {
         // modules and BCs must not be removed
       }
@@ -219,7 +221,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     };
   }
 
-  public void configurationRemoved(@NotNull final ModifiableFlexIdeBuildConfiguration configuration) {
+  public void configurationRemoved(@NotNull final ModifiableFlexBuildConfiguration configuration) {
     assertAlive();
     Editor editor = (Editor)configuration;
     List<Editor> editors = myModule2Editors.get(editor.myModule);
@@ -232,10 +234,10 @@ public class FlexProjectConfigurationEditor implements Disposable {
   }
 
   private void addEditorsForModule(Module module) {
-    FlexIdeBuildConfiguration[] buildConfigurations = FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations();
+    FlexBuildConfiguration[] buildConfigurations = FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations();
     List<Editor> configEditors = new ArrayList<Editor>(buildConfigurations.length);
-    for (FlexIdeBuildConfiguration buildConfiguration : buildConfigurations) {
-      configEditors.add(new Editor(module, (FlexIdeBuildConfigurationImpl)buildConfiguration, true));
+    for (FlexBuildConfiguration buildConfiguration : buildConfigurations) {
+      configEditors.add(new Editor(module, (FlexBuildConfigurationImpl)buildConfiguration, true));
     }
     myModule2Editors.put(module, configEditors);
   }
@@ -246,7 +248,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     myModule2Editors.clear();
   }
 
-  public ModifiableFlexIdeBuildConfiguration[] getConfigurations(Module module) {
+  public ModifiableFlexBuildConfiguration[] getConfigurations(Module module) {
     assertAlive();
     List<Editor> editors = myModule2Editors.get(module);
     if (editors == null) {
@@ -254,14 +256,14 @@ public class FlexProjectConfigurationEditor implements Disposable {
       addEditorsForModule(module);
       editors = myModule2Editors.get(module);
     }
-    return editors.toArray(new ModifiableFlexIdeBuildConfiguration[editors.size()]);
+    return editors.toArray(new ModifiableFlexBuildConfiguration[editors.size()]);
   }
 
   private void assertAlive() {
     LOG.assertTrue(!myDisposed, "Already disposed");
   }
 
-  public ModifiableFlexIdeBuildConfiguration createConfiguration(Module module) {
+  public ModifiableFlexBuildConfiguration createConfiguration(Module module) {
     assertAlive();
     List<Editor> editors = myModule2Editors.get(module);
     Editor newConfig = new Editor(module, null, false);
@@ -269,12 +271,12 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return newConfig;
   }
 
-  public ModifiableFlexIdeBuildConfiguration copyConfiguration(ModifiableFlexIdeBuildConfiguration configuration,
+  public ModifiableFlexBuildConfiguration copyConfiguration(ModifiableFlexBuildConfiguration configuration,
                                                                BuildConfigurationNature newNature) {
     assertAlive();
     Module module = ((Editor)configuration).myModule;
     List<Editor> editors = myModule2Editors.get(module);
-    FlexIdeBuildConfigurationImpl copy = ((Editor)configuration).getCopy();
+    FlexBuildConfigurationImpl copy = ((Editor)configuration).getCopy();
     DependencyEntry[] entries = copy.getDependencies().getEntries();
     ModifiableRootModel modifiableModel = myProvider.getModuleModifiableModel(module);
     for (int i = 0; i < entries.length; i++) {
@@ -307,8 +309,8 @@ public class FlexProjectConfigurationEditor implements Disposable {
     return libraryCopy;
   }
 
-  public static void resetNonApplicableValuesToDefaults(final ModifiableFlexIdeBuildConfiguration bc) {
-    final FlexIdeBuildConfiguration defaultConfiguration = new FlexIdeBuildConfigurationImpl();
+  public static void resetNonApplicableValuesToDefaults(final ModifiableFlexBuildConfiguration bc) {
+    final FlexBuildConfiguration defaultConfiguration = new FlexBuildConfigurationImpl();
     final BuildConfigurationNature nature = bc.getNature();
 
     if (bc.getOutputType() != OutputType.RuntimeLoadedModule) {
@@ -344,7 +346,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     for (Iterator<ModifiableDependencyEntry> i = bc.getDependencies().getModifiableEntries().iterator(); i.hasNext(); ) {
       final ModifiableDependencyEntry entry = i.next();
       if (entry instanceof BuildConfigurationEntry) {
-        final FlexIdeBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+        final FlexBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
         if (dependencyBC == null || !BCUtils.isApplicable(nature, dependencyBC.getNature(), entry.getDependencyType().getLinkageType())) {
           i.remove();
         }
@@ -368,7 +370,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
     }
   }
 
-  public Module getModule(ModifiableFlexIdeBuildConfiguration configuration) {
+  public Module getModule(ModifiableFlexBuildConfiguration configuration) {
     assertAlive();
     return ((Editor)configuration).myModule;
   }
@@ -522,14 +524,14 @@ public class FlexProjectConfigurationEditor implements Disposable {
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       public void run() {
         for (Module module : myModule2Editors.keySet()) {
-          Function<Editor, FlexIdeBuildConfigurationImpl> f = new Function<Editor, FlexIdeBuildConfigurationImpl>() {
+          Function<Editor, FlexBuildConfigurationImpl> f = new Function<Editor, FlexBuildConfigurationImpl>() {
             @Override
-            public FlexIdeBuildConfigurationImpl fun(Editor editor) {
+            public FlexBuildConfigurationImpl fun(Editor editor) {
               return editor.commit();
             }
           };
-          FlexIdeBuildConfigurationImpl[] current =
-            ContainerUtil.map2Array(myModule2Editors.get(module), FlexIdeBuildConfigurationImpl.class, f);
+          FlexBuildConfigurationImpl[] current =
+            ContainerUtil.map2Array(myModule2Editors.get(module), FlexBuildConfigurationImpl.class, f);
           ((FlexBuildConfigurationManagerImpl)FlexBuildConfigurationManager.getInstance(module)).setBuildConfigurations(current);
         }
 
@@ -557,7 +559,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
         return true;
       }
 
-      FlexIdeBuildConfiguration[] originalConfigurations = FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations();
+      FlexBuildConfiguration[] originalConfigurations = FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations();
       List<Editor> currentConfigurations = myModule2Editors.get(module);
       if (originalConfigurations.length != currentConfigurations.size()) {
         return true;
@@ -580,7 +582,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
   }
 
   public ModifiableBuildConfigurationEntry createBcEntry(ModifiableDependencies dependant,
-                                                         ModifiableFlexIdeBuildConfiguration dependency,
+                                                         ModifiableFlexBuildConfiguration dependency,
                                                          @Nullable String dependencyCurrentName) {
     assertAlive();
     Module dependencyModule = ((Editor)dependency).myModule;
@@ -791,7 +793,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
   }
 
   @Nullable
-  public FlexIdeBuildConfiguration findCurrentConfiguration(final Module module, final String originalBCName) {
+  public FlexBuildConfiguration findCurrentConfiguration(final Module module, final String originalBCName) {
     return ContainerUtil.find(myModule2Editors.get(module), new Condition<Editor>() {
       @Override
       public boolean value(Editor editor) {
@@ -800,9 +802,9 @@ public class FlexProjectConfigurationEditor implements Disposable {
     });
   }
 
-  public static void makeNonStructuralModification(final FlexIdeBuildConfiguration bc,
+  public static void makeNonStructuralModification(final FlexBuildConfiguration bc,
                                                    final Consumer<NonStructuralModifiableBuildConfiguration> consumer) {
-    consumer.consume(new NonStructuralModifiableBuildConfiguration((FlexIdeBuildConfigurationImpl)bc));
+    consumer.consume(new NonStructuralModifiableBuildConfiguration((FlexBuildConfigurationImpl)bc));
   }
 }
 

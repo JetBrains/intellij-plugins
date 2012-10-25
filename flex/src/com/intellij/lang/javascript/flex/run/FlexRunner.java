@@ -22,7 +22,7 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -50,13 +50,13 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class FlexRunner extends FlexBaseRunner {
 
-  protected RunContentDescriptor launchFlexIdeConfig(final Module module,
-                                                     final FlexIdeBuildConfiguration bc,
-                                                     final FlashRunnerParameters runnerParameters,
-                                                     final Executor executor,
-                                                     final RunProfileState state,
-                                                     final RunContentDescriptor contentToReuse,
-                                                     final ExecutionEnvironment environment) throws ExecutionException {
+  protected RunContentDescriptor launchFlexConfig(final Module module,
+                                                  final FlexBuildConfiguration bc,
+                                                  final FlashRunnerParameters runnerParameters,
+                                                  final Executor executor,
+                                                  final RunProfileState state,
+                                                  final RunContentDescriptor contentToReuse,
+                                                  final ExecutionEnvironment environment) throws ExecutionException {
     switch (bc.getTargetPlatform()) {
       case Web:
         final String urlOrPath = runnerParameters.isLaunchUrl()

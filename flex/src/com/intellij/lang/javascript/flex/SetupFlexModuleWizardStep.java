@@ -1,9 +1,7 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
-import com.intellij.ide.util.projectWizard.WizardContext;
-import com.intellij.lang.javascript.flex.wizard.FlexIdeModuleWizardForm;
-import com.intellij.openapi.roots.ui.configuration.projectRoot.ProjectSdksModel;
+import com.intellij.lang.javascript.flex.wizard.FlexModuleWizardForm;
 
 import javax.swing.*;
 
@@ -12,12 +10,12 @@ import javax.swing.*;
  */
 public class SetupFlexModuleWizardStep extends ModuleWizardStep {
 
-  private final FlexIdeModuleWizardForm myForm;
+  private final FlexModuleWizardForm myForm;
   private final FlexModuleBuilder myModuleBuilder;
 
   public SetupFlexModuleWizardStep(final FlexModuleBuilder moduleBuilder) {
     myModuleBuilder = moduleBuilder;
-    myForm = new FlexIdeModuleWizardForm();
+    myForm = new FlexModuleWizardForm();
   }
 
   public JComponent getComponent() {

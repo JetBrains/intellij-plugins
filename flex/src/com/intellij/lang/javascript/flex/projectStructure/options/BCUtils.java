@@ -1,9 +1,13 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
+import com.intellij.flex.model.bc.*;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirDesktopPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -21,6 +25,7 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.ArrayUtil;
@@ -49,11 +54,11 @@ public class BCUtils {
     return linkageType == LinkageType.Include;
   }
 
-  public static String getWrapperFileName(final FlexIdeBuildConfiguration bc) {
+  public static String getWrapperFileName(final FlexBuildConfiguration bc) {
     return FileUtil.getNameWithoutExtension(PathUtil.getFileName(bc.getActualOutputFilePath())) + ".html";
   }
 
-  public static String getGeneratedAirDescriptorName(final FlexIdeBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
+  public static String getGeneratedAirDescriptorName(final FlexBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
     final String suffix = packagingOptions instanceof AirDesktopPackagingOptions
                           ? "-descriptor.xml"
                           : packagingOptions instanceof AndroidPackagingOptions ? "-android-descriptor.xml"
@@ -62,7 +67,7 @@ public class BCUtils {
   }
 
   @Nullable
-  public static String getBCSpecifier(final FlexIdeBuildConfiguration bc) {
+  public static String getBCSpecifier(final FlexBuildConfiguration bc) {
     if (!bc.isTempBCForCompilation()) return null;
     if (isFlexUnitBC(bc)) return "flexunit";
     if (isRLMTemporaryBC(bc)) return "module " + StringUtil.getShortName(bc.getMainClass());
@@ -70,11 +75,11 @@ public class BCUtils {
     return StringUtil.getShortName(bc.getMainClass());
   }
 
-  public static boolean isFlexUnitBC(final FlexIdeBuildConfiguration bc) {
+  public static boolean isFlexUnitBC(final FlexBuildConfiguration bc) {
     return bc.isTempBCForCompilation() && bc.getMainClass().endsWith(FlexUnitPrecompileTask.FLEX_UNIT_LAUNCHER);
   }
 
-  public static boolean canHaveRLMsAndRuntimeStylesheets(final FlexIdeBuildConfiguration bc) {
+  public static boolean canHaveRLMsAndRuntimeStylesheets(final FlexBuildConfiguration bc) {
     return canHaveRLMsAndRuntimeStylesheets(bc.getOutputType(), bc.getTargetPlatform());
   }
 
@@ -82,11 +87,11 @@ public class BCUtils {
     return outputType == OutputType.Application && targetPlatform != TargetPlatform.Mobile;
   }
 
-  public static boolean isRLMTemporaryBC(final FlexIdeBuildConfiguration bc) {
+  public static boolean isRLMTemporaryBC(final FlexBuildConfiguration bc) {
     return bc.isTempBCForCompilation() && bc.getOutputType() == OutputType.RuntimeLoadedModule;
   }
 
-  public static boolean isRuntimeStyleSheetBC(final FlexIdeBuildConfiguration bc) {
+  public static boolean isRuntimeStyleSheetBC(final FlexBuildConfiguration bc) {
     return bc.isTempBCForCompilation() && bc.getMainClass().toLowerCase().endsWith(".css");
   }
 
@@ -121,7 +126,7 @@ public class BCUtils {
    * @return <code>null</code> if entry should not be included at all
    */
   @Nullable
-  public static LinkageType getSdkEntryLinkageType(String swcPath, FlexIdeBuildConfiguration bc) {
+  public static LinkageType getSdkEntryLinkageType(String swcPath, FlexBuildConfiguration bc) {
     return getSdkEntryLinkageType(bc.getSdk(), swcPath, bc.getNature(), bc.getDependencies().getTargetPlayer(),
                                   bc.getDependencies().getComponentSet());
   }
@@ -372,7 +377,7 @@ public class BCUtils {
   }
 
   public static JSClassChooserDialog.PublicInheritor getMainClassFilter(@NotNull Module module,
-                                                                        @Nullable FlexIdeBuildConfiguration bc,
+                                                                        @Nullable FlexBuildConfiguration bc,
                                                                         final boolean rlm,
                                                                         final boolean includeTests,
                                                                         boolean caching) {
@@ -385,18 +390,18 @@ public class BCUtils {
   }
 
   public static boolean isValidMainClass(final Module module,
-                                         @Nullable final FlexIdeBuildConfiguration buildConfiguration,
+                                         @Nullable final FlexBuildConfiguration buildConfiguration,
                                          final JSClass clazz,
                                          final boolean includeTests) {
     return getMainClassFilter(module, buildConfiguration, false, includeTests, false).value(clazz);
   }
 
-  public static SimpleColoredText renderBuildConfiguration(@NotNull FlexIdeBuildConfiguration bc,
+  public static SimpleColoredText renderBuildConfiguration(@NotNull FlexBuildConfiguration bc,
                                                            @Nullable String moduleName) {
     return renderBuildConfiguration(bc, moduleName, false);
   }
 
-  public static SimpleColoredText renderBuildConfiguration(@NotNull FlexIdeBuildConfiguration bc,
+  public static SimpleColoredText renderBuildConfiguration(@NotNull FlexBuildConfiguration bc,
                                                            @Nullable String moduleName,
                                                            boolean bold) {
     SimpleColoredText text = new SimpleColoredText();
@@ -416,5 +421,24 @@ public class BCUtils {
 
   public static String suggestRLMOutputPath(final String mainClass) {
     return StringUtil.replaceChar(mainClass, '.', '/') + ".swf";
+  }
+
+  public static void initTargetPlatformCombo(final JComboBox targetPlatformCombo) {
+    targetPlatformCombo.setModel(new DefaultComboBoxModel(TargetPlatform.values()));
+    targetPlatformCombo.setRenderer(new ListCellRendererWrapper<TargetPlatform>() {
+      public void customize(JList list, TargetPlatform value, int index, boolean selected, boolean hasFocus) {
+        setText(value.getPresentableText());
+        setIcon(value.getIcon());
+      }
+    });
+  }
+
+  public static void initOutputTypeCombo(final JComboBox outputTypeCombo) {
+    outputTypeCombo.setModel(new DefaultComboBoxModel(OutputType.values()));
+    outputTypeCombo.setRenderer(new ListCellRendererWrapper<OutputType>() {
+      public void customize(JList list, OutputType value, int index, boolean selected, boolean hasFocus) {
+        setText(value.getPresentableText());
+      }
+    });
   }
 }

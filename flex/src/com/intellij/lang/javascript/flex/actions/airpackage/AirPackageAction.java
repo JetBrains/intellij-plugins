@@ -1,12 +1,13 @@
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.actions.ShowFilePathAction;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.build.FlexCompiler;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationListener;
@@ -54,7 +55,7 @@ public class AirPackageAction extends DumbAwareAction {
         if (ModuleType.get(module) == flexModuleType) {
           flexModulePresent = true;
 
-          for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+          for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
             final BuildConfigurationNature nature = bc.getNature();
             if (nature.isApp() && !nature.isWebPlatform()) {
               airAppPresent = true;
@@ -80,9 +81,9 @@ public class AirPackageAction extends DumbAwareAction {
 
     if (!dialog.isOK()) return;
 
-    final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs = dialog.getSelectedBCs();
+    final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs = dialog.getSelectedBCs();
     final Set<Module> modules = new THashSet<Module>();
-    for (Pair<Module, FlexIdeBuildConfiguration> bc : modulesAndBCs) {
+    for (Pair<Module, FlexBuildConfiguration> bc : modulesAndBCs) {
       modules.add(bc.first);
     }
 
@@ -100,14 +101,14 @@ public class AirPackageAction extends DumbAwareAction {
   }
 
   private static void createPackages(final Project project,
-                                     final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs,
+                                     final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs,
                                      final PasswordStore passwords) {
     final Collection<Pair<ExternalTask, String>> tasksAndPackagePaths = new ArrayList<Pair<ExternalTask, String>>();
 
     final AirPackageProjectParameters params = AirPackageProjectParameters.getInstance(project);
 
-    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCs) {
-      final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+    for (Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCs) {
+      final FlexBuildConfiguration bc = moduleAndBC.second;
       final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
 
       if (bc.getTargetPlatform() == TargetPlatform.Desktop) {

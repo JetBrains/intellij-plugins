@@ -4,8 +4,8 @@
     <elementDescriptionProvider implementation="com.intellij.javascript.flex.refactoring.FlexPackageImpl$DescriptionProvider"/>
 
     <configuration.ModuleStructureExtension
-        implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeSharedLibrariesExtension" order="before FlexBuildConfigurations"/>
-    <moduleConfigurationEditorProvider implementation="com.intellij.lang.javascript.flex.projectStructure.FlexIdeModuleConfigurationEditorProvider"/>
+        implementation="com.intellij.flexIde.FlexIdeSharedLibrariesExtension" order="before FlexBuildConfigurations"/>
+    <moduleConfigurationEditorProvider implementation="com.intellij.flexIde.FlexIdeModuleConfigurationEditorProvider"/>
     <projectService serviceInterface="com.intellij.openapi.roots.ui.configuration.ProjectSettingsService"
                     serviceImplementation="com.intellij.flexIde.FlexIdeProjectSettingsService"/>
   </extensions>

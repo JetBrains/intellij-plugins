@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -27,9 +27,9 @@ public class BCCombo extends JComboBox {
 
   private final Project myProject;
 
-  private FlexIdeBuildConfiguration[] myAllConfigs;
+  private FlexBuildConfiguration[] myAllConfigs;
   private boolean mySingleModuleProject;
-  private Map<FlexIdeBuildConfiguration, Module> myBCToModuleMap = new THashMap<FlexIdeBuildConfiguration, Module>();
+  private Map<FlexBuildConfiguration, Module> myBCToModuleMap = new THashMap<FlexBuildConfiguration, Module>();
 
   public BCCombo(final Project project) {
     myProject = project;
@@ -39,19 +39,19 @@ public class BCCombo extends JComboBox {
   private void initCombo() {
     setMinimumSize(new Dimension(150, getMinimumSize().height));
 
-    final Collection<FlexIdeBuildConfiguration> allConfigs = new ArrayList<FlexIdeBuildConfiguration>();
+    final Collection<FlexBuildConfiguration> allConfigs = new ArrayList<FlexBuildConfiguration>();
 
     final Module[] modules = ModuleManager.getInstance(myProject).getModules();
     mySingleModuleProject = modules.length == 1;
     for (final Module module : modules) {
       if (ModuleType.get(module) instanceof FlexModuleType) {
-        for (final FlexIdeBuildConfiguration config : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+        for (final FlexBuildConfiguration config : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
           allConfigs.add(config);
           myBCToModuleMap.put(config, module);
         }
       }
     }
-    myAllConfigs = allConfigs.toArray(new FlexIdeBuildConfiguration[allConfigs.size()]);
+    myAllConfigs = allConfigs.toArray(new FlexBuildConfiguration[allConfigs.size()]);
 
     setRenderer(new ColoredListCellRendererWrapper() {
       @Override
@@ -68,8 +68,8 @@ public class BCCombo extends JComboBox {
           }
         }
         else {
-          assert value instanceof FlexIdeBuildConfiguration : value;
-          final FlexIdeBuildConfiguration bc = (FlexIdeBuildConfiguration)value;
+          assert value instanceof FlexBuildConfiguration : value;
+          final FlexBuildConfiguration bc = (FlexBuildConfiguration)value;
           setIcon(bc.getIcon());
           append(BCUtils.renderBuildConfiguration(bc, mySingleModuleProject ? null : myBCToModuleMap.get(bc).getName()));
         }
@@ -81,7 +81,7 @@ public class BCCombo extends JComboBox {
         // remove invalid entry
         final Object selectedItem = getSelectedItem();
         final Object firstItem = getItemAt(0);
-        if (selectedItem instanceof FlexIdeBuildConfiguration && !(firstItem instanceof FlexIdeBuildConfiguration)) {
+        if (selectedItem instanceof FlexBuildConfiguration && !(firstItem instanceof FlexBuildConfiguration)) {
           setModel(new DefaultComboBoxModel(myAllConfigs));
           setSelectedItem(selectedItem);
         }
@@ -91,7 +91,7 @@ public class BCCombo extends JComboBox {
 
   public void resetFrom(final BCBasedRunnerParameters params) {
     final Module module = ModuleManager.getInstance(myProject).findModuleByName(params.getModuleName());
-    final FlexIdeBuildConfiguration config = module != null && (ModuleType.get(module) instanceof FlexModuleType)
+    final FlexBuildConfiguration config = module != null && (ModuleType.get(module) instanceof FlexModuleType)
                                              ? FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(params.getBCName())
                                              : null;
 
@@ -116,9 +116,9 @@ public class BCCombo extends JComboBox {
       params.setBCName((String)((Pair)selectedItem).second);
     }
     else {
-      assert selectedItem instanceof FlexIdeBuildConfiguration : selectedItem;
-      params.setModuleName(myBCToModuleMap.get(((FlexIdeBuildConfiguration)selectedItem)).getName());
-      params.setBCName(((FlexIdeBuildConfiguration)selectedItem).getName());
+      assert selectedItem instanceof FlexBuildConfiguration : selectedItem;
+      params.setModuleName(myBCToModuleMap.get(((FlexBuildConfiguration)selectedItem)).getName());
+      params.setBCName(((FlexBuildConfiguration)selectedItem).getName());
     }
   }
 
@@ -128,15 +128,15 @@ public class BCCombo extends JComboBox {
   }
 
   @Nullable
-  public FlexIdeBuildConfiguration getBC() {
+  public FlexBuildConfiguration getBC() {
     final Object selectedItem = getSelectedItem();
-    return selectedItem instanceof FlexIdeBuildConfiguration ? (FlexIdeBuildConfiguration)selectedItem : null;
+    return selectedItem instanceof FlexBuildConfiguration ? (FlexBuildConfiguration)selectedItem : null;
   }
 
   @Nullable
   public Module getModule() {
     final Object selectedItem = getSelectedItem();
-    return selectedItem instanceof FlexIdeBuildConfiguration ? myBCToModuleMap.get((FlexIdeBuildConfiguration)selectedItem) : null;
+    return selectedItem instanceof FlexBuildConfiguration ? myBCToModuleMap.get((FlexBuildConfiguration)selectedItem) : null;
   }
 
   private static String getPresentableText(final String moduleName, final String configName, final boolean singleModuleProject) {

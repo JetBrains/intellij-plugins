@@ -1,8 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.ModuleStructureConfigurable;
@@ -17,7 +16,7 @@ import java.util.List;
  */
 public class FlexProjectStructureUtil {
 
-  public static Place createPlace(FlexIdeBCConfigurable configurable, @Nullable String tabName) {
+  public static Place createPlace(FlexBCConfigurable configurable, @Nullable String tabName) {
     Place place = new Place()
       .putPath(ProjectStructureConfigurable.CATEGORY, ModuleStructureConfigurable.getInstance(configurable.getModule().getProject()))
       .putPath(MasterDetailsComponent.TREE_OBJECT, configurable.getEditableObject());
@@ -28,23 +27,23 @@ public class FlexProjectStructureUtil {
   }
 
   public static Place createPlace(Module module, DependenciesConfigurable configurable) {
-    final FlexIdeBCConfigurable bcConfigurable = findBcConfigurable(module, configurable);
+    final FlexBCConfigurable bcConfigurable = findBcConfigurable(module, configurable);
     return createPlace(bcConfigurable, DependenciesConfigurable.TAB_NAME);
   }
 
-  public static Place createPlace(final Module module, final FlexIdeBuildConfiguration bc, @Nullable final String tabName) {
-    final FlexIdeBCConfigurable bcConfigurable = findBcConfigurable(module, bc);
+  public static Place createPlace(final Module module, final FlexBuildConfiguration bc, @Nullable final String tabName) {
+    final FlexBCConfigurable bcConfigurable = findBcConfigurable(module, bc);
     return createPlace(bcConfigurable, tabName);
 
   }
 
   @Nullable
-  private static FlexIdeBCConfigurable findBcConfigurable(Module module, final DependenciesConfigurable configurable) {
+  private static FlexBCConfigurable findBcConfigurable(Module module, final DependenciesConfigurable configurable) {
     final List<CompositeConfigurable> configurables =
       FlexBuildConfigurationsExtension.getInstance().getConfigurator().getBCConfigurables(module);
 
     for (CompositeConfigurable compositeConfigurable : configurables) {
-      final FlexIdeBCConfigurable bcConfigurable = FlexIdeBCConfigurable.unwrap(compositeConfigurable);
+      final FlexBCConfigurable bcConfigurable = FlexBCConfigurable.unwrap(compositeConfigurable);
       if (bcConfigurable.getEditableObject().getDependencies() == configurable.getEditableObject()) {
         return bcConfigurable;
       }
@@ -53,12 +52,12 @@ public class FlexProjectStructureUtil {
   }
 
   @Nullable
-  private static FlexIdeBCConfigurable findBcConfigurable(Module module, final FlexIdeBuildConfiguration bc) {
+  private static FlexBCConfigurable findBcConfigurable(Module module, final FlexBuildConfiguration bc) {
     final List<CompositeConfigurable> configurables =
       FlexBuildConfigurationsExtension.getInstance().getConfigurator().getBCConfigurables(module);
 
     for (CompositeConfigurable compositeConfigurable : configurables) {
-      final FlexIdeBCConfigurable bcConfigurable = FlexIdeBCConfigurable.unwrap(compositeConfigurable);
+      final FlexBCConfigurable bcConfigurable = FlexBCConfigurable.unwrap(compositeConfigurable);
       if (bcConfigurable.getEditableObject() == bc) {
         return bcConfigurable;
       }

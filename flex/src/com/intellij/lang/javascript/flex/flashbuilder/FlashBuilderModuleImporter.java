@@ -1,12 +1,18 @@
 package com.intellij.lang.javascript.flex.flashbuilder;
 
+import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableBuildConfigurationEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableModuleLibraryEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -73,9 +79,9 @@ public class FlashBuilderModuleImporter {
   private void setupBuildConfigs(final ModuleRootModel rootModel, final FlashBuilderProject fbProject) {
     final Sdk sdk = fbProject.isSdkUsed() ? mySdkFinder.findSdk(fbProject) : null;
 
-    final ModifiableFlexIdeBuildConfiguration[] configurations = myFlexConfigEditor.getConfigurations(rootModel.getModule());
+    final ModifiableFlexBuildConfiguration[] configurations = myFlexConfigEditor.getConfigurations(rootModel.getModule());
     assert configurations.length == 1;
-    final ModifiableFlexIdeBuildConfiguration mainBC = configurations[0];
+    final ModifiableFlexBuildConfiguration mainBC = configurations[0];
 
     final String bcName = suggestMainBCName(fbProject);
     mainBC.setName(bcName);
@@ -207,7 +213,7 @@ public class FlashBuilderModuleImporter {
     setupOtherAppsAndModules(rootModel, mainBC, fbProject);
   }
 
-  private static void setupAirDescriptor(final ModifiableFlexIdeBuildConfiguration bc, final ModuleRootModel rootModel) {
+  private static void setupAirDescriptor(final ModifiableFlexBuildConfiguration bc, final ModuleRootModel rootModel) {
     if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
       bc.getAirDesktopPackagingOptions().setUseGeneratedDescriptor(true);
     }
@@ -236,13 +242,13 @@ public class FlashBuilderModuleImporter {
   }
 
   private void setupOtherAppsAndModules(final ModuleRootModel rootModel,
-                                        final ModifiableFlexIdeBuildConfiguration mainBC,
+                                        final ModifiableFlexBuildConfiguration mainBC,
                                         final FlashBuilderProject fbProject) {
-    final Collection<ModifiableFlexIdeBuildConfiguration> allApps = new ArrayList<ModifiableFlexIdeBuildConfiguration>();
+    final Collection<ModifiableFlexBuildConfiguration> allApps = new ArrayList<ModifiableFlexBuildConfiguration>();
     allApps.add(mainBC);
 
     for (String mainClass : fbProject.getApplicationClassNames()) {
-      final ModifiableFlexIdeBuildConfiguration bc = myFlexConfigEditor.copyConfiguration(mainBC, mainBC.getNature());
+      final ModifiableFlexBuildConfiguration bc = myFlexConfigEditor.copyConfiguration(mainBC, mainBC.getNature());
       final String shortClassName = StringUtil.getShortName(mainClass);
       bc.setName(shortClassName);
       bc.setMainClass(mainClass);
@@ -271,13 +277,13 @@ public class FlashBuilderModuleImporter {
   }
 
   private void setupModules(final ModuleRootModel rootModel,
-                            final Collection<ModifiableFlexIdeBuildConfiguration> apps,
+                            final Collection<ModifiableFlexBuildConfiguration> apps,
                             final FlashBuilderProject fbProject) {
     for (final FlashBuilderProject.FBRLMInfo rlm : fbProject.getModules()) {
-      ModifiableFlexIdeBuildConfiguration hostApp = apps.iterator().next();
+      ModifiableFlexBuildConfiguration hostApp = apps.iterator().next();
       if (rlm.OPTIMIZE) {
         final String hostAppMainClass = getMainClassFqn(fbProject, rlm.OPTIMIZE_FOR, rootModel.getSourceRootUrls());
-        for (ModifiableFlexIdeBuildConfiguration appBC : apps) {
+        for (ModifiableFlexBuildConfiguration appBC : apps) {
           if (hostAppMainClass.equals(appBC.getMainClass())) {
             hostApp = appBC;
             break;
@@ -285,9 +291,9 @@ public class FlashBuilderModuleImporter {
         }
       }
 
-      final Collection<FlexIdeBuildConfiguration.RLMInfo> rlms = new ArrayList<FlexIdeBuildConfiguration.RLMInfo>(hostApp.getRLMs());
+      final Collection<FlexBuildConfiguration.RLMInfo> rlms = new ArrayList<FlexBuildConfiguration.RLMInfo>(hostApp.getRLMs());
       final String rlmMainClass = getMainClassFqn(fbProject, rlm.MAIN_CLASS_PATH, rootModel.getSourceRootUrls());
-      rlms.add(new FlexIdeBuildConfiguration.RLMInfo(rlmMainClass, rlm.OUTPUT_PATH, rlm.OPTIMIZE));
+      rlms.add(new FlexBuildConfiguration.RLMInfo(rlmMainClass, rlm.OUTPUT_PATH, rlm.OPTIMIZE));
       hostApp.setRLMs(rlms);
     }
   }
@@ -408,7 +414,7 @@ public class FlashBuilderModuleImporter {
     }
   }
 
-  private void setupDependencies(final ModifiableFlexIdeBuildConfiguration bc, final FlashBuilderProject fbProject) {
+  private void setupDependencies(final ModifiableFlexBuildConfiguration bc, final FlashBuilderProject fbProject) {
     OUTER:
     for (final String libraryPathOrig : fbProject.getLibraryPaths()) {
       for (FlashBuilderProject otherProject : myAllFBProjects) {

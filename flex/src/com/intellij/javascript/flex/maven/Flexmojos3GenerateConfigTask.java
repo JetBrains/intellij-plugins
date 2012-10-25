@@ -1,11 +1,11 @@
 package com.intellij.javascript.flex.maven;
 
+import com.intellij.flex.model.bc.OutputType;
 import com.intellij.ide.IdeBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
@@ -205,9 +205,9 @@ public class Flexmojos3GenerateConfigTask extends MavenProjectsProcessorBasicTas
       final FlexProjectConfigurationEditor flexEditor = FlexProjectConfigurationEditor
         .createEditor(module.getProject(), Collections.singletonMap(module, modifiableModel), librariesModel, null);
 
-      final ModifiableFlexIdeBuildConfiguration[] bcs = flexEditor.getConfigurations(module);
-      final ModifiableFlexIdeBuildConfiguration mainBC = ContainerUtil.find(bcs, new Condition<ModifiableFlexIdeBuildConfiguration>() {
-        public boolean value(final ModifiableFlexIdeBuildConfiguration bc) {
+      final ModifiableFlexBuildConfiguration[] bcs = flexEditor.getConfigurations(module);
+      final ModifiableFlexBuildConfiguration mainBC = ContainerUtil.find(bcs, new Condition<ModifiableFlexBuildConfiguration>() {
+        public boolean value(final ModifiableFlexBuildConfiguration bc) {
           return bc.getOutputType() == OutputType.Application && module.getName().equals(bc.getName());
         }
       });

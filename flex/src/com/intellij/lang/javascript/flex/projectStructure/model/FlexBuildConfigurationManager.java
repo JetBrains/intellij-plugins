@@ -11,17 +11,17 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class FlexBuildConfigurationManager {
 
-  public abstract FlexIdeBuildConfiguration[] getBuildConfigurations();
+  public abstract FlexBuildConfiguration[] getBuildConfigurations();
 
-  public abstract FlexIdeBuildConfiguration getActiveConfiguration();
+  public abstract FlexBuildConfiguration getActiveConfiguration();
 
-  public abstract void setActiveBuildConfiguration(FlexIdeBuildConfiguration buildConfiguration);
+  public abstract void setActiveBuildConfiguration(FlexBuildConfiguration buildConfiguration);
 
   // TODO should be getModifiableModel()!
   public abstract ModuleOrProjectCompilerOptions getModuleLevelCompilerOptions();
 
   @Nullable
-  public abstract FlexIdeBuildConfiguration findConfigurationByName(String name);
+  public abstract FlexBuildConfiguration findConfigurationByName(String name);
 
   public static FlexBuildConfigurationManager getInstance(final @NotNull Module module) {
     assert ModuleType.get(module) == FlexModuleType.getInstance() : ModuleType.get(module).getName() + ", " + module.toString();

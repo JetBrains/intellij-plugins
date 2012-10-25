@@ -82,7 +82,7 @@ public abstract class AdtTask extends ExternalTask {
 
   public static void appendPaths(final List<String> command,
                                  final Module module,
-                                 final FlexIdeBuildConfiguration bc,
+                                 final FlexBuildConfiguration bc,
                                  final AirPackagingOptions packagingOptions,
                                  final @Nullable String platformSdkPath,
                                  final String packageFileExtension) {
@@ -124,7 +124,7 @@ public abstract class AdtTask extends ExternalTask {
     }
   }
 
-  private static void appendANEPaths(final List<String> command, final Module module, final FlexIdeBuildConfiguration bc) {
+  private static void appendANEPaths(final List<String> command, final Module module, final FlexBuildConfiguration bc) {
     final Set<VirtualFile> extDirPaths = new THashSet<VirtualFile>();
     for (VirtualFile aneFile : FlexCompilationUtils.getANEFiles(ModuleRootManager.getInstance(module), bc.getDependencies())) {
       if (extDirPaths.add(aneFile.getParent())) {

@@ -39,10 +39,10 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
 
   @Nullable
   private final Module myModule;
-  private FlexIdeBuildConfigurationImpl[] myConfigurations = new FlexIdeBuildConfigurationImpl[]{new FlexIdeBuildConfigurationImpl()};
+  private FlexBuildConfigurationImpl[] myConfigurations = new FlexBuildConfigurationImpl[]{new FlexBuildConfigurationImpl()};
 
   private final CompilerOptionsImpl myModuleLevelCompilerOptions;
-  private FlexIdeBuildConfigurationImpl myActiveConfiguration = myConfigurations[0];
+  private FlexBuildConfigurationImpl myActiveConfiguration = myConfigurations[0];
 
   public FlexBuildConfigurationManagerImpl(@Nullable final Module module) {
     myModule = module;
@@ -61,7 +61,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
   }
 
   private void removeDependenciesOn(Module module) {
-    for (ModifiableFlexIdeBuildConfiguration configuration : myConfigurations) {
+    for (ModifiableFlexBuildConfiguration configuration : myConfigurations) {
       // TODO remove 'optimize for' links
       for (Iterator<ModifiableDependencyEntry> i = configuration.getDependencies().getModifiableEntries().iterator(); i.hasNext(); ) {
         DependencyEntry entry = i.next();
@@ -74,8 +74,8 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
 
   @Override
   @Nullable
-  public FlexIdeBuildConfiguration findConfigurationByName(final String name) {
-    for (ModifiableFlexIdeBuildConfiguration configuration : myConfigurations) {
+  public FlexBuildConfiguration findConfigurationByName(final String name) {
+    for (ModifiableFlexBuildConfiguration configuration : myConfigurations) {
       if (configuration.getName().equals(name)) {
         return configuration;
       }
@@ -84,12 +84,12 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
   }
 
   @Override
-  public FlexIdeBuildConfiguration getActiveConfiguration() {
+  public FlexBuildConfiguration getActiveConfiguration() {
     return myActiveConfiguration;
   }
 
   @Override
-  public void setActiveBuildConfiguration(final FlexIdeBuildConfiguration buildConfiguration) {
+  public void setActiveBuildConfiguration(final FlexBuildConfiguration buildConfiguration) {
     if (myActiveConfiguration == buildConfiguration) {
       return;
     }
@@ -104,21 +104,21 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
       ApplicationManager.getApplication().runWriteAction(new Runnable() {
         @Override
         public void run() {
-          myActiveConfiguration = (FlexIdeBuildConfigurationImpl)buildConfiguration;
+          myActiveConfiguration = (FlexBuildConfigurationImpl)buildConfiguration;
           resetHighlighting(myModule.getProject());
         }
       });
     }
     else {
-      myActiveConfiguration = (FlexIdeBuildConfigurationImpl)buildConfiguration;
+      myActiveConfiguration = (FlexBuildConfigurationImpl)buildConfiguration;
     }
   }
 
-  public FlexIdeBuildConfiguration[] getBuildConfigurations() {
+  public FlexBuildConfiguration[] getBuildConfigurations() {
     return Arrays.copyOf(myConfigurations, myConfigurations.length);
   }
 
-  FlexIdeBuildConfigurationImpl[] doGetBuildConfigurations() {
+  FlexBuildConfigurationImpl[] doGetBuildConfigurations() {
     return myConfigurations;
   }
 
@@ -128,25 +128,25 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     return myModuleLevelCompilerOptions;
   }
 
-  void setBuildConfigurations(FlexIdeBuildConfigurationImpl[] configurations) {
+  void setBuildConfigurations(FlexBuildConfigurationImpl[] configurations) {
     final String activeName = myActiveConfiguration != null ? myActiveConfiguration.getName() : null;
     ApplicationManager.getApplication().assertWriteAccessAllowed();
-    FlexIdeBuildConfigurationImpl[] validatedConfigurations = getValidatedConfigurations(Arrays.asList(configurations));
+    FlexBuildConfigurationImpl[] validatedConfigurations = getValidatedConfigurations(Arrays.asList(configurations));
     doSetBuildConfigurations(validatedConfigurations);
     updateActiveConfiguration(activeName);
   }
 
-  void doSetBuildConfigurations(FlexIdeBuildConfigurationImpl[] configurations) {
+  void doSetBuildConfigurations(FlexBuildConfigurationImpl[] configurations) {
     myConfigurations = configurations;
   }
 
   private void updateActiveConfiguration(@Nullable final String activeName) {
     if (myConfigurations.length > 0) {
       myActiveConfiguration =
-        activeName != null ? ContainerUtil.find(myConfigurations, new Condition<FlexIdeBuildConfigurationImpl>() {
+        activeName != null ? ContainerUtil.find(myConfigurations, new Condition<FlexBuildConfigurationImpl>() {
           @Override
-          public boolean value(FlexIdeBuildConfigurationImpl flexIdeBuildConfiguration) {
-            return flexIdeBuildConfiguration.getName().equals(activeName);
+          public boolean value(FlexBuildConfigurationImpl bc) {
+            return bc.getName().equals(activeName);
           }
         }) : null;
       if (myActiveConfiguration == null) {
@@ -160,7 +160,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
 
   public State getState() {
     final State state = new State();
-    for (FlexIdeBuildConfigurationImpl configuration : myConfigurations) {
+    for (FlexBuildConfigurationImpl configuration : myConfigurations) {
       state.CONFIGURATIONS.add(configuration.getState(myModule));
     }
     state.myModuleLevelCompilerOptions = myModuleLevelCompilerOptions.getState(myModule);
@@ -172,9 +172,9 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     if (myModule == null) {
       throw new IllegalStateException("Cannot load state of a dummy config manager instance");
     }
-    Collection<FlexIdeBuildConfigurationImpl> configurations = new ArrayList<FlexIdeBuildConfigurationImpl>(state.CONFIGURATIONS.size());
+    Collection<FlexBuildConfigurationImpl> configurations = new ArrayList<FlexBuildConfigurationImpl>(state.CONFIGURATIONS.size());
     for (FlexBuildConfigurationState configurationState : state.CONFIGURATIONS) {
-      FlexIdeBuildConfigurationImpl configuration = new FlexIdeBuildConfigurationImpl();
+      FlexBuildConfigurationImpl configuration = new FlexBuildConfigurationImpl();
       configuration.loadState(configurationState, myModule.getProject());
       configurations.add(configuration);
     }
@@ -189,14 +189,14 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     DaemonCodeAnalyzer.getInstance(project).restart();
   }
 
-  private FlexIdeBuildConfigurationImpl[] getValidatedConfigurations(Collection<? extends FlexIdeBuildConfigurationImpl> configurations) {
+  private FlexBuildConfigurationImpl[] getValidatedConfigurations(Collection<? extends FlexBuildConfigurationImpl> configurations) {
     if (configurations.isEmpty()) {
       LOG.warn("No Flash build configurations found");
-      return new FlexIdeBuildConfigurationImpl[]{new FlexIdeBuildConfigurationImpl()};
+      return new FlexBuildConfigurationImpl[]{new FlexBuildConfigurationImpl()};
     }
 
-    List<FlexIdeBuildConfigurationImpl> configList = new ArrayList<FlexIdeBuildConfigurationImpl>(configurations);
-    for (FlexIdeBuildConfigurationImpl configuration : configList) {
+    List<FlexBuildConfigurationImpl> configList = new ArrayList<FlexBuildConfigurationImpl>(configurations);
+    for (FlexBuildConfigurationImpl configuration : configList) {
       if (StringUtil.isEmpty(configuration.getName())) {
         LOG.warn("Empty build configuration name");
         configuration.setName(myModule.getName());
@@ -205,7 +205,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
 
     Set<String> names = new HashSet<String>();
     String duplicateName = null;
-    for (FlexIdeBuildConfiguration c : configList) {
+    for (FlexBuildConfiguration c : configList) {
       if (StringUtil.isEmpty(c.getName())) {
         LOG.warn("Empty build configuration name");
         continue;
@@ -219,10 +219,10 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
     if (duplicateName != null) {
       LOG.warn("Duplicate build configuration name: " + duplicateName);
       List<String> uniqueNames =
-        generateUniqueNames(ContainerUtil.map2List(configList, new Function<FlexIdeBuildConfigurationImpl, String>() {
+        generateUniqueNames(ContainerUtil.map2List(configList, new Function<FlexBuildConfigurationImpl, String>() {
           @Override
-          public String fun(FlexIdeBuildConfigurationImpl flexIdeBuildConfiguration) {
-            return flexIdeBuildConfiguration.getName();
+          public String fun(FlexBuildConfigurationImpl bc) {
+            return bc.getName();
           }
         }));
       for (int i = 0; i < configList.size(); i++) {
@@ -230,7 +230,7 @@ public class FlexBuildConfigurationManagerImpl extends FlexBuildConfigurationMan
       }
     }
     
-    return configList.toArray(new FlexIdeBuildConfigurationImpl[configList.size()]);
+    return configList.toArray(new FlexBuildConfigurationImpl[configList.size()]);
   }
 
   public static List<String> generateUniqueNames(List<String> names) {

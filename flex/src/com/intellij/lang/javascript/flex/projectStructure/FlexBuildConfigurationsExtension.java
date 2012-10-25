@@ -5,12 +5,12 @@ import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.Dependencies;
 import com.intellij.lang.javascript.flex.projectStructure.model.DependencyEntry;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModuleLibraryEntry;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.DependenciesConfigurable;
-import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexBCConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexProjectStructureUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -43,17 +43,17 @@ import java.util.List;
 
 public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
 
-  final FlexIdeBCConfigurator myConfigurator;
+  final FlexBCConfigurator myConfigurator;
 
   public FlexBuildConfigurationsExtension() {
-    myConfigurator = new FlexIdeBCConfigurator();
+    myConfigurator = new FlexBCConfigurator();
   }
 
   public static FlexBuildConfigurationsExtension getInstance() {
     return ModuleStructureExtension.EP_NAME.findExtension(FlexBuildConfigurationsExtension.class);
   }
 
-  public FlexIdeBCConfigurator getConfigurator() {
+  public FlexBCConfigurator getConfigurator() {
     return myConfigurator;
   }
 
@@ -100,20 +100,20 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
   }
 
   public boolean canBeRemoved(final Object[] editableObjects) {
-    ModifiableFlexIdeBuildConfiguration[] configurations =
-      ContainerUtil.mapNotNull(editableObjects, new Function<Object, ModifiableFlexIdeBuildConfiguration>() {
+    ModifiableFlexBuildConfiguration[] configurations =
+      ContainerUtil.mapNotNull(editableObjects, new Function<Object, ModifiableFlexBuildConfiguration>() {
         @Nullable
         @Override
-        public ModifiableFlexIdeBuildConfiguration fun(Object o) {
-          return o instanceof ModifiableFlexIdeBuildConfiguration ? (ModifiableFlexIdeBuildConfiguration)o : null;
+        public ModifiableFlexBuildConfiguration fun(Object o) {
+          return o instanceof ModifiableFlexBuildConfiguration ? (ModifiableFlexBuildConfiguration)o : null;
         }
-      }, new ModifiableFlexIdeBuildConfiguration[0]);
+      }, new ModifiableFlexBuildConfiguration[0]);
     return configurations.length == editableObjects.length && myConfigurator.canBeRemoved(configurations);
   }
 
   public boolean removeObject(final Object editableObject) {
-    if (editableObject instanceof ModifiableFlexIdeBuildConfiguration) {
-      myConfigurator.removeConfiguration(((ModifiableFlexIdeBuildConfiguration)editableObject));
+    if (editableObject instanceof ModifiableFlexBuildConfiguration) {
+      myConfigurator.removeConfiguration(((ModifiableFlexBuildConfiguration)editableObject));
       return true;
     }
     return false;
@@ -174,7 +174,7 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
         final List<CompositeConfigurable> configurables = myConfigurator.getBCConfigurables(module);
         // several build configurations may depend on the same library, here we select the first one we find
         for (CompositeConfigurable configurable : configurables) {
-          final FlexIdeBCConfigurable bcConfigurable = FlexIdeBCConfigurable.unwrap(configurable);
+          final FlexBCConfigurable bcConfigurable = FlexBCConfigurable.unwrap(configurable);
           final Dependencies dependencies = bcConfigurable.getDependenciesConfigurable().getEditableObject();
           for (DependencyEntry e : dependencies.getEntries()) {
             if (!(e instanceof ModuleLibraryEntry) || !((ModuleLibraryEntry)e).getLibraryId().equals(libraryId)) {
@@ -184,7 +184,7 @@ public class FlexBuildConfigurationsExtension extends ModuleStructureExtension {
             final Place p = FlexProjectStructureUtil.createPlace(bcConfigurable, DependenciesConfigurable.TAB_NAME);
             final DependenciesConfigurable.Location.TableEntry tableEntry =
               DependenciesConfigurable.Location.TableEntry.forModuleLibrary(libraryId);
-            p.putPath(FlexIdeBCConfigurable.LOCATION_ON_TAB, tableEntry);
+            p.putPath(FlexBCConfigurable.LOCATION_ON_TAB, tableEntry);
             return ProjectStructureConfigurable.getInstance(module.getProject()).navigateTo(p, true);
           }
         }

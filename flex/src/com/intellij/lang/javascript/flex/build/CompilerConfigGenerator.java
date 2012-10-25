@@ -2,6 +2,9 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.flex.FlexCommonUtils;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.flex.model.bc.OutputType;
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -12,8 +15,8 @@ import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.ValueSource;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -57,7 +60,7 @@ public class CompilerConfigGenerator {
     {"framework", "textLayout", "osmf", "spark", "sparkskins", "rpc", "charts", "spark_dmv", "mx", "advancedgrids"};
 
   private final Module myModule;
-  private final FlexIdeBuildConfiguration myBC;
+  private final FlexBuildConfiguration myBC;
   private final boolean myFlexUnit;
   private final boolean myCSS;
   private final Sdk mySdk;
@@ -66,7 +69,7 @@ public class CompilerConfigGenerator {
   private final CompilerOptions myProjectLevelCompilerOptions;
 
   private CompilerConfigGenerator(final @NotNull Module module,
-                                  final @NotNull FlexIdeBuildConfiguration bc,
+                                  final @NotNull FlexBuildConfiguration bc,
                                   final @NotNull CompilerOptions moduleLevelCompilerOptions,
                                   final @NotNull CompilerOptions projectLevelCompilerOptions) throws IOException {
     myModule = module;
@@ -82,7 +85,7 @@ public class CompilerConfigGenerator {
     myProjectLevelCompilerOptions = projectLevelCompilerOptions;
   }
 
-  public static VirtualFile getOrCreateConfigFile(final Module module, final FlexIdeBuildConfiguration bc) throws IOException {
+  public static VirtualFile getOrCreateConfigFile(final Module module, final FlexBuildConfiguration bc) throws IOException {
     final CompilerConfigGenerator generator =
       new CompilerConfigGenerator(module, bc,
                                   FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions(),
@@ -90,7 +93,7 @@ public class CompilerConfigGenerator {
     String text = generator.generateConfigFileText();
 
     if (bc.isTempBCForCompilation()) {
-      final FlexIdeBuildConfiguration originalBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(bc.getName());
+      final FlexBuildConfiguration originalBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(bc.getName());
       final boolean makeExternalLibsMerged =
         BCUtils.isFlexUnitBC(bc) || (originalBC != null && originalBC.getOutputType() == OutputType.Library);
       final boolean makeIncludedLibsMerged = BCUtils.isRuntimeStyleSheetBC(bc);
@@ -173,8 +176,8 @@ public class CompilerConfigGenerator {
   }
 
   @Nullable
-  private static String getCustomLinkReportPath(final Module module, final FlexIdeBuildConfiguration rlmBC) {
-    final FlexIdeBuildConfiguration appBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(rlmBC.getName());
+  private static String getCustomLinkReportPath(final Module module, final FlexBuildConfiguration rlmBC) {
+    final FlexBuildConfiguration appBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(rlmBC.getName());
     if (appBC != null) {
       final List<String> linkReports = FlexUtils.getOptionValues(appBC.getCompilerOptions().getAdditionalOptions(), "link-report");
       if (!linkReports.isEmpty()) {
@@ -369,7 +372,7 @@ public class CompilerConfigGenerator {
       if (entry instanceof BuildConfigurationEntry) {
         if (linkageType == LinkageType.LoadInRuntime) continue;
 
-        final FlexIdeBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+        final FlexBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
         if (dependencyBC != null && FlexCompiler.checkDependencyType(myBC, dependencyBC, linkageType)) {
           addLib(rootElement, dependencyBC.getActualOutputFilePath(), linkageType);
         }

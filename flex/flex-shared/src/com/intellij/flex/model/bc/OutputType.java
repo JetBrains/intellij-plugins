@@ -1,9 +1,7 @@
-package com.intellij.lang.javascript.flex.projectStructure.model;
+package com.intellij.flex.model.bc;
+
 
 import com.intellij.flex.FlexCommonBundle;
-import com.intellij.ui.ListCellRendererWrapper;
-
-import javax.swing.*;
 
 public enum OutputType {
   Application(FlexCommonBundle.message("bc.app.long.text"), FlexCommonBundle.message("bc.app.short.text")),
@@ -24,14 +22,5 @@ public enum OutputType {
   OutputType(final String presentableText, final String shortText) {
     myPresentableText = presentableText;
     myShortText = shortText;
-  }
-
-  public static void initCombo(final JComboBox outputTypeCombo) {
-    outputTypeCombo.setModel(new DefaultComboBoxModel(values()));
-    outputTypeCombo.setRenderer(new ListCellRendererWrapper<OutputType>() {
-      public void customize(JList list, OutputType value, int index, boolean selected, boolean hasFocus) {
-        setText(value.getPresentableText());
-      }
-    });
   }
 }

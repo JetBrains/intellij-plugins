@@ -18,14 +18,14 @@ public interface JpsFlexDependencies extends JpsElement {
   void setTargetPlayer(@NotNull String targetPlayer);
 
   @NotNull
-  JpsComponentSet getComponentSet();
+  ComponentSet getComponentSet();
 
-  void setComponentSet(@NotNull JpsComponentSet componentSet);
+  void setComponentSet(@NotNull ComponentSet componentSet);
 
   @NotNull
-  JpsLinkageType getFrameworkLinkage();
+  LinkageType getFrameworkLinkage();
 
-  void setFrameworkLinkage(@NotNull JpsLinkageType frameworkLinkage);
+  void setFrameworkLinkage(@NotNull LinkageType frameworkLinkage);
 
   @NotNull
   List<JpsFlexDependencyEntry> getEntries();

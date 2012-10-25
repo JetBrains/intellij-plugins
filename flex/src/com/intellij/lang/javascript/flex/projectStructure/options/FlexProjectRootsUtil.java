@@ -1,8 +1,12 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
+import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.DependencyEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModuleLibraryEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.SharedLibraryEntry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootModel;
@@ -24,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class FlexProjectRootsUtil {
 
-  public static boolean dependsOnLibrary(@NotNull FlexIdeBuildConfiguration bc, @NotNull final Library library, final boolean transitive,
+  public static boolean dependsOnLibrary(@NotNull FlexBuildConfiguration bc, @NotNull final Library library, final boolean transitive,
                                          final boolean productionOnly) {
     final String libraryLevel = library.getTable() != null ? library.getTable().getTableLevel() : null;
     if (LibraryTablesRegistrar.APPLICATION_LEVEL.equals(libraryLevel) || LibraryTablesRegistrar.PROJECT_LEVEL.equals(libraryLevel)) {
@@ -66,12 +70,12 @@ public class FlexProjectRootsUtil {
     return !transitive || dependencyEntry.getDependencyType().getLinkageType() == LinkageType.Include;
   }
 
-  public static boolean dependOnLibrary(Iterable<FlexIdeBuildConfiguration> bcs,
+  public static boolean dependOnLibrary(Iterable<FlexBuildConfiguration> bcs,
                                         @NotNull final Library library,
                                         final boolean transitive, final boolean productionOnly) {
-    return !ContainerUtil.process(bcs, new Processor<FlexIdeBuildConfiguration>() {
+    return !ContainerUtil.process(bcs, new Processor<FlexBuildConfiguration>() {
       @Override
-      public boolean process(FlexIdeBuildConfiguration configuration) {
+      public boolean process(FlexBuildConfiguration configuration) {
         return !dependsOnLibrary(configuration, library, transitive, productionOnly);
       }
     });

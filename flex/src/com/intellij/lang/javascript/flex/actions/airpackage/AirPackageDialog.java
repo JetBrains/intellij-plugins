@@ -1,13 +1,13 @@
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.FlexBCTree;
 import com.intellij.lang.javascript.flex.build.FlashProjectStructureProblem;
 import com.intellij.lang.javascript.flex.build.FlexCompiler;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -105,8 +105,8 @@ public class AirPackageDialog extends DialogWrapper {
     boolean androidPresent = false;
     boolean iosPresent = false;
 
-    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : getSelectedBCs()) {
-      final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+    for (Pair<Module, FlexBuildConfiguration> moduleAndBC : getSelectedBCs()) {
+      final FlexBuildConfiguration bc = moduleAndBC.second;
       final BuildConfigurationNature nature = bc.getNature();
 
       if (nature.isDesktopPlatform()) desktopPresent = true;
@@ -134,8 +134,8 @@ public class AirPackageDialog extends DialogWrapper {
   }
 
   private void createUIComponents() {
-    myTree = new FlexBCTree(myProject, new Condition<FlexIdeBuildConfiguration>() {
-      public boolean value(final FlexIdeBuildConfiguration bc) {
+    myTree = new FlexBCTree(myProject, new Condition<FlexBuildConfiguration>() {
+      public boolean value(final FlexBuildConfiguration bc) {
         final BuildConfigurationNature nature = bc.getNature();
         return nature.isApp() && !nature.isWebPlatform();
       }
@@ -157,7 +157,7 @@ public class AirPackageDialog extends DialogWrapper {
   }
 
   protected ValidationInfo doValidate() {
-    final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs = getSelectedBCs();
+    final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs = getSelectedBCs();
 
     if (modulesAndBCs.isEmpty()) return new ValidationInfo("Please select one or more build configurations");
 
@@ -172,8 +172,8 @@ public class AirPackageDialog extends DialogWrapper {
       }
     }
 
-    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : modulesAndBCs) {
-      final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+    for (Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCs) {
+      final FlexBuildConfiguration bc = moduleAndBC.second;
 
       if (bc.isSkipCompile() && LocalFileSystem.getInstance().findFileByPath(bc.getActualOutputFilePath()) == null) {
         return new ValidationInfo(
@@ -218,7 +218,7 @@ public class AirPackageDialog extends DialogWrapper {
   }
 
   protected void doOKAction() {
-    final Collection<Pair<Module, FlexIdeBuildConfiguration>> selectedBCs = getSelectedBCs();
+    final Collection<Pair<Module, FlexBuildConfiguration>> selectedBCs = getSelectedBCs();
     if (!checkDisabledCompilation(myProject, selectedBCs)) return;
     if (!checkPasswords(selectedBCs)) return;
 
@@ -227,10 +227,10 @@ public class AirPackageDialog extends DialogWrapper {
   }
 
   private static boolean checkDisabledCompilation(final Project project,
-                                                  final Collection<Pair<Module, FlexIdeBuildConfiguration>> selectedBCs) {
-    final Collection<FlexIdeBuildConfiguration> bcsWithDisabledCompilation = new ArrayList<FlexIdeBuildConfiguration>();
+                                                  final Collection<Pair<Module, FlexBuildConfiguration>> selectedBCs) {
+    final Collection<FlexBuildConfiguration> bcsWithDisabledCompilation = new ArrayList<FlexBuildConfiguration>();
 
-    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : selectedBCs) {
+    for (Pair<Module, FlexBuildConfiguration> moduleAndBC : selectedBCs) {
       if (moduleAndBC.second.isSkipCompile()) {
         bcsWithDisabledCompilation.add(moduleAndBC.second);
       }
@@ -238,7 +238,7 @@ public class AirPackageDialog extends DialogWrapper {
 
     if (!bcsWithDisabledCompilation.isEmpty()) {
       final StringBuilder bcs = new StringBuilder();
-      for (FlexIdeBuildConfiguration bc : bcsWithDisabledCompilation) {
+      for (FlexBuildConfiguration bc : bcsWithDisabledCompilation) {
         bcs.append("<b>").append(StringUtil.escapeXml(bc.getName())).append("</b><br>");
       }
       final String message = FlexBundle.message("package.bc.with.disabled.compilation", bcsWithDisabledCompilation.size(), bcs.toString());
@@ -251,11 +251,11 @@ public class AirPackageDialog extends DialogWrapper {
     return true;
   }
 
-  private boolean checkPasswords(final Collection<Pair<Module, FlexIdeBuildConfiguration>> selectedBCs) {
+  private boolean checkPasswords(final Collection<Pair<Module, FlexBuildConfiguration>> selectedBCs) {
     final Collection<AirPackagingOptions> allPackagingOptions = new ArrayList<AirPackagingOptions>();
 
-    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : selectedBCs) {
-      final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+    for (Pair<Module, FlexBuildConfiguration> moduleAndBC : selectedBCs) {
+      final FlexBuildConfiguration bc = moduleAndBC.second;
       if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
         allPackagingOptions.add(bc.getAirDesktopPackagingOptions());
       }
@@ -317,16 +317,16 @@ public class AirPackageDialog extends DialogWrapper {
     params.iosPackageType = (IOSPackageType)myIOSTypeCombo.getSelectedItem();
     params.iosFastPackaging = myIosFastPackagingCheckBox.isSelected();
 
-    final Collection<Pair<Module, FlexIdeBuildConfiguration>> deselectedBCs = myTree.getDeselectedBCs();
+    final Collection<Pair<Module, FlexBuildConfiguration>> deselectedBCs = myTree.getDeselectedBCs();
     final StringBuilder buf = new StringBuilder();
-    for (Pair<Module, FlexIdeBuildConfiguration> moduleAndBC : deselectedBCs) {
+    for (Pair<Module, FlexBuildConfiguration> moduleAndBC : deselectedBCs) {
       if (buf.length() > 0) buf.append('\n');
       buf.append(moduleAndBC.first.getName()).append('\t').append(moduleAndBC.second.getName());
     }
     params.deselectedBCs = buf.toString();
   }
 
-  public Collection<Pair<Module, FlexIdeBuildConfiguration>> getSelectedBCs() {
+  public Collection<Pair<Module, FlexBuildConfiguration>> getSelectedBCs() {
     return myTree.getSelectedBCs();
   }
 

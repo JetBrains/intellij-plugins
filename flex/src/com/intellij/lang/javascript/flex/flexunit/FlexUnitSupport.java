@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.flex.flexunit;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.JSVariable;
@@ -70,7 +70,7 @@ public class FlexUnitSupport {
   }
 
   @Nullable
-  public static FlexUnitSupport getSupport(@Nullable FlexIdeBuildConfiguration bc, final Module module) {
+  public static FlexUnitSupport getSupport(@Nullable FlexBuildConfiguration bc, final Module module) {
     if (bc == null) return null;
 
     return getSupport(FlexUtils.getModuleWithDependenciesAndLibrariesScope(module, bc, true));

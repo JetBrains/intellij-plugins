@@ -23,7 +23,7 @@ public class FlashProjectStructureProblem {
 
   public static FlashProjectStructureProblem createGeneralOptionProblem(final String bcName,
                                                                         final String errorMessage,
-                                                                        final FlexIdeBCConfigurable.Location location) {
+                                                                        final FlexBCConfigurable.Location location) {
     return new FlashProjectStructureProblem(errorMessage, location.errorId, bcName, location);
   }
 

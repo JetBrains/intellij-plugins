@@ -4,7 +4,6 @@ import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.PlaceInProjectStructure;
 import com.intellij.openapi.roots.ui.configuration.projectRoot.daemon.ProjectStructureElement;
 import com.intellij.openapi.util.ActionCallback;
-import com.intellij.openapi.util.Pair;
 import com.intellij.ui.navigation.Place;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,9 +39,9 @@ public class PlaceInBuildConfiguration extends PlaceInProjectStructure {
   @NotNull
   @Override
   public ActionCallback navigate() {
-    Place place = FlexProjectStructureUtil.createPlace(myStructureElement.getModule(), myStructureElement.getBc(), myTabName);
+    Place place = FlexProjectStructureUtil.createPlace(myStructureElement.getModule(), myStructureElement.getBC(), myTabName);
     if (myLocationOnTab != null) {
-      place.putPath(FlexIdeBCConfigurable.LOCATION_ON_TAB, myLocationOnTab);
+      place.putPath(FlexBCConfigurable.LOCATION_ON_TAB, myLocationOnTab);
     }
     return ProjectStructureConfigurable.getInstance(myStructureElement.getModule().getProject()).navigateTo(place, true);
   }

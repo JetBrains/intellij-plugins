@@ -1,16 +1,16 @@
 package com.intellij.flex.model.bc.impl;
 
 import com.intellij.flex.model.bc.JpsFlexDependencyEntry;
-import com.intellij.flex.model.bc.JpsLinkageType;
+import com.intellij.flex.model.bc.LinkageType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.ex.JpsCompositeElementBase;
 
 abstract class JpsFlexDependencyEntryBase<Self extends JpsFlexDependencyEntryBase<Self>> extends JpsCompositeElementBase<Self>
   implements JpsFlexDependencyEntry {
 
-  JpsLinkageType myLinkageType;
+  LinkageType myLinkageType;
 
-  protected JpsFlexDependencyEntryBase(final JpsLinkageType linkageType) {
+  protected JpsFlexDependencyEntryBase(final LinkageType linkageType) {
     myLinkageType = linkageType;
   }
 
@@ -26,7 +26,7 @@ abstract class JpsFlexDependencyEntryBase<Self extends JpsFlexDependencyEntryBas
 // ------------------------------------
 
   @NotNull
-  public JpsLinkageType getLinkageType() {
+  public LinkageType getLinkageType() {
     return myLinkageType;
   }
 }

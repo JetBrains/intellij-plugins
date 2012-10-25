@@ -32,7 +32,7 @@ public abstract class UsageInBcDependencies extends ProjectStructureElementUsage
 
   @Override
   public String getPresentableName() {
-    return myContainingElement.getBc().getName();
+    return myContainingElement.getBC().getName();
   }
 
   @Override
@@ -51,7 +51,7 @@ public abstract class UsageInBcDependencies extends ProjectStructureElementUsage
     else if (mySourceElement instanceof BuildConfigurationProjectStructureElement) {
       BuildConfigurationProjectStructureElement bcElement = (BuildConfigurationProjectStructureElement)mySourceElement;
       String moduleName = bcElement.getModule().getName();
-      String bcName = bcElement.getBc().getName();
+      String bcName = bcElement.getBC().getName();
       DependenciesConfigurable.Location.TableEntry tableEntry = DependenciesConfigurable.Location.TableEntry.forBc(moduleName, bcName);
       return new PlaceInBuildConfiguration(myContainingElement, DependenciesConfigurable.TAB_NAME, tableEntry);
     }
@@ -77,6 +77,6 @@ public abstract class UsageInBcDependencies extends ProjectStructureElementUsage
 
   @Override
   public Icon getIcon() {
-    return myContainingElement.getBc().getIcon();
+    return myContainingElement.getBC().getIcon();
   }
 }

@@ -1,11 +1,16 @@
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.ExecutionBundle;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.IosPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -128,7 +133,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
         updateMainClassField();
         myAppDescriptorForEmulatorCombo.repaint();
 
-        final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+        final FlexBuildConfiguration bc = myBCCombo.getBC();
         mySdkForDebuggingCombo.setBCSdk(bc == null ? null : bc.getSdk());
 
         updateControls();
@@ -176,7 +181,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     myOutputFileNameTextField.getDocument().addDocumentListener(new com.intellij.ui.DocumentAdapter() {
       protected void textChanged(final javax.swing.event.DocumentEvent e) {
-        final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+        final FlexBuildConfiguration bc = myBCCombo.getBC();
         if (bc != null && bc.getTargetPlatform() == TargetPlatform.Web) {
           updateBCOutputLabel(bc);
         }
@@ -240,22 +245,22 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     myDebugOverUSBRadioButton.addActionListener(debugTransportListener);
 
     initAppDescriptorForEmulatorCombo(myAppDescriptorForEmulatorCombo,
-                                      new NullableComputable<FlexIdeBuildConfiguration>() {
+                                      new NullableComputable<FlexBuildConfiguration>() {
                                         @Nullable
-                                        public FlexIdeBuildConfiguration compute() {
+                                        public FlexBuildConfiguration compute() {
                                           return myBCCombo.getBC();
                                         }
                                       });
   }
 
   public static void initAppDescriptorForEmulatorCombo(final JComboBox appDescriptorForEmulatorCombo,
-                                                       final NullableComputable<FlexIdeBuildConfiguration> bcComputable) {
+                                                       final NullableComputable<FlexBuildConfiguration> bcComputable) {
     appDescriptorForEmulatorCombo.setModel(new DefaultComboBoxModel(AppDescriptorForEmulator.values()));
     appDescriptorForEmulatorCombo
       .setRenderer(new ListCellRendererWrapper<AppDescriptorForEmulator>() {
         @Override
         public void customize(JList list, AppDescriptorForEmulator value, int index, boolean selected, boolean hasFocus) {
-          final FlexIdeBuildConfiguration bc = bcComputable.compute();
+          final FlexBuildConfiguration bc = bcComputable.compute();
 
           switch (value) {
             case Android:
@@ -331,7 +336,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   private void updateControls() {
-    final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+    final FlexBuildConfiguration bc = myBCCombo.getBC();
     final Module module = myBCCombo.getModule();
 
     final boolean overrideMainClass = myOverrideMainClassCheckBox.isSelected();
@@ -395,7 +400,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     }
   }
 
-  private void updateBCOutputLabel(final FlexIdeBuildConfiguration bc) {
+  private void updateBCOutputLabel(final FlexBuildConfiguration bc) {
     if (bc.getOutputType() == OutputType.Application || myOverrideMainClassCheckBox.isSelected()) {
       String outputFileName = myOverrideMainClassCheckBox.isSelected()
                               ? myOutputFileNameTextField.getText().trim()
@@ -520,7 +525,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
     myAppDescriptorForEmulatorCombo.setSelectedItem(params.getAppDescriptorForEmulator());
 
-    final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+    final FlexBuildConfiguration bc = myBCCombo.getBC();
     mySdkForDebuggingCombo.setBCSdk(bc == null ? null : bc.getSdk());
     mySdkForDebuggingCombo.setSelectedSdkRaw(params.getDebuggerSdkRaw());
 
@@ -606,7 +611,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
       }
     }
 
-    final FlexIdeBuildConfiguration bc = myBCCombo.getBC();
+    final FlexBuildConfiguration bc = myBCCombo.getBC();
     if (SystemInfo.isMac && bc != null && bc.getTargetPlatform() == TargetPlatform.Mobile && myOnIOSSimulatorRadioButton.isSelected()) {
       final String path = FileUtil.toSystemIndependentName(myIOSSimulatorSdkTextWithBrowse.getText().trim());
       if (!path.isEmpty()) {

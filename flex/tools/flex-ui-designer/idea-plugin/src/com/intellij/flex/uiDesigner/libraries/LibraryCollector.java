@@ -1,5 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.uiDesigner.LogMessageUtil;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
@@ -25,7 +26,6 @@ import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -106,7 +106,7 @@ class LibraryCollector {
     return null;
   }
 
-  private void collectSdkLibraries(final FlexIdeBuildConfiguration bc, Sdk sdk) {
+  private void collectSdkLibraries(final FlexBuildConfiguration bc, Sdk sdk) {
     for (VirtualFile jarFile : sdk.getRootProvider().getFiles(OrderRootType.CLASSES)) {
       String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(jarFile.getUrl(), JarFileSystem.JAR_SEPARATOR));
       if (BCUtils.getSdkEntryLinkageType(swcPath, bc) != null) {
@@ -122,7 +122,7 @@ class LibraryCollector {
    * We don't use BuildConfigurationEntry as source of libraries. If reference to component declared in such build configuration is resolved, so, we register such bc's module
    */
   public void collect(Module module) {
-    final FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+    final FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
     final Sdk sdk = bc.getSdk();
     assert sdk != null;
 
@@ -184,7 +184,7 @@ class LibraryCollector {
     }
   }
 
-  private void globalCatalogForTests(FlexIdeBuildConfiguration bc) {
+  private void globalCatalogForTests(FlexBuildConfiguration bc) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       assert globalLibrary == null;
       //noinspection TestOnlyProblems

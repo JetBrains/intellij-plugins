@@ -1,9 +1,9 @@
 package com.intellij.lang.javascript.flex;
 
+import com.intellij.flex.model.bc.OutputType;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.NonStructuralModifiableBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -135,7 +135,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     private static void packageNameChanged(final @NotNull Module module, final String oldPackageName, final String newPackageName) {
       final String oldPackageWithDot = oldPackageName + ".";
 
-      for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+      for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
         if (bc.getOutputType() == OutputType.Application && bc.getMainClass().startsWith(oldPackageWithDot)) {
           final String mainClass = (newPackageName.isEmpty() ? "" : (newPackageName + ".")) +
                                    bc.getMainClass().substring(oldPackageWithDot.length());
@@ -148,11 +148,11 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
         }
 
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
-          final Collection<FlexIdeBuildConfiguration.RLMInfo> oldRLMs = bc.getRLMs();
-          final Collection<FlexIdeBuildConfiguration.RLMInfo> newRLMs = new ArrayList<FlexIdeBuildConfiguration.RLMInfo>();
+          final Collection<FlexBuildConfiguration.RLMInfo> oldRLMs = bc.getRLMs();
+          final Collection<FlexBuildConfiguration.RLMInfo> newRLMs = new ArrayList<FlexBuildConfiguration.RLMInfo>();
           boolean changed = false;
 
-          for (FlexIdeBuildConfiguration.RLMInfo rlm : oldRLMs) {
+          for (FlexBuildConfiguration.RLMInfo rlm : oldRLMs) {
             if (rlm.MAIN_CLASS.startsWith(oldPackageWithDot)) {
               changed = true;
               final String mainClass = (newPackageName.isEmpty() ? "" : (newPackageName + ".")) +
@@ -160,7 +160,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
               final String outputFileName = rlm.OUTPUT_FILE.equals(BCUtils.suggestRLMOutputPath(rlm.MAIN_CLASS))
                                             ? BCUtils.suggestRLMOutputPath(mainClass)
                                             : rlm.OUTPUT_FILE;
-              newRLMs.add(new FlexIdeBuildConfiguration.RLMInfo(mainClass, outputFileName, rlm.OPTIMIZE));
+              newRLMs.add(new FlexBuildConfiguration.RLMInfo(mainClass, outputFileName, rlm.OPTIMIZE));
             }
             else {
               newRLMs.add(rlm);
@@ -205,7 +205,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     }
 
     private void classNameChanged(final String oldClassName, final String newClassName) {
-      for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
+      for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
         if (bc.getOutputType() == OutputType.Application && bc.getMainClass().equals(oldClassName)) {
           FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
             @Override
@@ -216,17 +216,17 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
         }
 
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
-          final Collection<FlexIdeBuildConfiguration.RLMInfo> oldRLMs = bc.getRLMs();
-          final Collection<FlexIdeBuildConfiguration.RLMInfo> newRLMs = new ArrayList<FlexIdeBuildConfiguration.RLMInfo>();
+          final Collection<FlexBuildConfiguration.RLMInfo> oldRLMs = bc.getRLMs();
+          final Collection<FlexBuildConfiguration.RLMInfo> newRLMs = new ArrayList<FlexBuildConfiguration.RLMInfo>();
           boolean changed = false;
 
-          for (FlexIdeBuildConfiguration.RLMInfo rlm : oldRLMs) {
+          for (FlexBuildConfiguration.RLMInfo rlm : oldRLMs) {
             if (rlm.MAIN_CLASS.equals(oldClassName)) {
               changed = true;
               final String outputFileName = rlm.OUTPUT_FILE.equals(BCUtils.suggestRLMOutputPath(rlm.MAIN_CLASS))
                                             ? BCUtils.suggestRLMOutputPath(newClassName)
                                             : rlm.OUTPUT_FILE;
-              newRLMs.add(new FlexIdeBuildConfiguration.RLMInfo(newClassName, outputFileName, rlm.OPTIMIZE));
+              newRLMs.add(new FlexBuildConfiguration.RLMInfo(newClassName, outputFileName, rlm.OPTIMIZE));
             }
             else {
               newRLMs.add(rlm);
@@ -279,7 +279,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     }
 
     protected void filePathChanged(final String oldFilePath, final String newFilePath) {
-      for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
+      for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
           final Collection<String> cssFiles = bc.getCssFilesToCompile();
           if (cssFiles.isEmpty()) continue;
@@ -315,7 +315,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     }
 
     protected void filePathChanged(final String oldFilePath, final String newFilePath) {
-      for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
+      for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
         if (bc.getCompilerOptions().getAdditionalConfigFilePath().equals(oldFilePath)) {
           FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
             @Override

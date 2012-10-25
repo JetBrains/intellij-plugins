@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableBuildConfigurationEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyEntry;
 import com.intellij.openapi.module.Module;
@@ -56,7 +56,7 @@ class BuildConfigurationEntryImpl implements ModifiableBuildConfigurationEntry, 
 
   @Override
   @Nullable
-  public FlexIdeBuildConfiguration findBuildConfiguration() {
+  public FlexBuildConfiguration findBuildConfiguration() {
     Module module = findModule();
     return module != null ? FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(myBcName) : null;
   }

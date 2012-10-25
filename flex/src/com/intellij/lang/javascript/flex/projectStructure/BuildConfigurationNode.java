@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
 import com.intellij.lang.javascript.flex.projectStructure.ui.CompositeConfigurable;
-import com.intellij.lang.javascript.flex.projectStructure.ui.FlexIdeBCConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexBCConfigurable;
 import com.intellij.openapi.ui.MasterDetailsComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class BuildConfigurationNode extends MasterDetailsComponent.MyNode {
   @NotNull
   @Override
   public String getDisplayName() {
-    final FlexIdeBCConfigurable configurable = FlexIdeBCConfigurable.unwrap((CompositeConfigurable)getUserObject());
+    final FlexBCConfigurable configurable = FlexBCConfigurable.unwrap((CompositeConfigurable)getUserObject());
     return configurable.getTreeNodeText();
   }
 }

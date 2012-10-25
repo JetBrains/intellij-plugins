@@ -1,10 +1,10 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.ProjectTopics;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessage;
@@ -72,7 +72,7 @@ public class FlexCompilerDependenciesCache {
     myCache.remove(module);
   }
 
-  public void markBCDirty(final Module module, final FlexIdeBuildConfiguration bc) {
+  public void markBCDirty(final Module module, final FlexBuildConfiguration bc) {
     final Collection<BCInfo> infosForModule = myCache.get(module);
     final BCInfo existingInfo = infosForModule == null ? null : findCacheForBC(infosForModule, bc);
     if (existingInfo != null) {
@@ -93,7 +93,7 @@ public class FlexCompilerDependenciesCache {
     }
   }
 
-  public boolean isNothingChangedSincePreviousCompilation(final Module module, final FlexIdeBuildConfiguration bc) {
+  public boolean isNothingChangedSincePreviousCompilation(final Module module, final FlexBuildConfiguration bc) {
     final Collection<BCInfo> infosForModule = myCache.get(module);
     final BCInfo existingInfo = infosForModule == null ? null : findCacheForBC(infosForModule, bc);
     if (existingInfo == null) {
@@ -112,7 +112,7 @@ public class FlexCompilerDependenciesCache {
     return true;
   }
 
-  public void cacheBC(final CompileContext context, final Module module, final FlexIdeBuildConfiguration bc,
+  public void cacheBC(final CompileContext context, final Module module, final FlexBuildConfiguration bc,
                       final List<VirtualFile> configFiles) {
     Collection<BCInfo> infosForModule = myCache.get(module);
     if (infosForModule == null) {
@@ -162,7 +162,7 @@ public class FlexCompilerDependenciesCache {
   }
 
   @Nullable
-  private static BCInfo findCacheForBC(final @NotNull Collection<BCInfo> bcInfos, @NotNull final FlexIdeBuildConfiguration bc) {
+  private static BCInfo findCacheForBC(final @NotNull Collection<BCInfo> bcInfos, @NotNull final FlexBuildConfiguration bc) {
     return ContainerUtil.find(bcInfos, new Condition<BCInfo>() {
       public boolean value(final BCInfo info) {
         return info.myBC.isEqual(bc);
@@ -235,11 +235,11 @@ public class FlexCompilerDependenciesCache {
   }
 
   private static class BCInfo {
-    private final FlexIdeBuildConfiguration myBC;
+    private final FlexBuildConfiguration myBC;
     private final String[] mySourceRootUrls;
     private final Collection<Pair<File, Long>> myFileToTimestamp = new ArrayList<Pair<File, Long>>();
 
-    private BCInfo(final FlexIdeBuildConfiguration bc, final String[] sourceRootUrls) {
+    private BCInfo(final FlexBuildConfiguration bc, final String[] sourceRootUrls) {
       myBC = bc;
       mySourceRootUrls = sourceRootUrls;
     }

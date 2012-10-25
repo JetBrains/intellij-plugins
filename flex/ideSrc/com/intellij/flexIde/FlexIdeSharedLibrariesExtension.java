@@ -1,6 +1,7 @@
-package com.intellij.lang.javascript.flex.projectStructure;
+package com.intellij.flexIde;
 
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
+import com.intellij.lang.javascript.flex.projectStructure.FlexLibraryConfigurable;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;

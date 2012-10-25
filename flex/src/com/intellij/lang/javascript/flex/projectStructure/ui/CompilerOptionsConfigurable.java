@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.compiler.options.CompilerUIConfigurable;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
@@ -11,7 +12,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptionsL
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.Disposable;
@@ -998,7 +998,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
 
   public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
     if (place != null) {
-      final Object location = place.getPath(FlexIdeBCConfigurable.LOCATION_ON_TAB);
+      final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);
       if (location instanceof Location) {
         switch ((Location)location) {
           case AdditonalConfigFile:

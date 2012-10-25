@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.openapi.projectRoots.Sdk;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,7 +13,7 @@ import java.util.Collection;
 /**
  * User: ksafonov
  */
-public interface FlexIdeBuildConfiguration {
+public interface FlexBuildConfiguration {
 
   class RLMInfo {
     public final @NotNull String MAIN_CLASS;
@@ -133,7 +135,7 @@ public interface FlexIdeBuildConfiguration {
    */
   boolean isTempBCForCompilation();
 
-  boolean isEqual(FlexIdeBuildConfiguration other);
+  boolean isEqual(FlexBuildConfiguration other);
 
   String getShortText();
 

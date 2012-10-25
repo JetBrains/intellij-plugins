@@ -1,4 +1,4 @@
-package com.intellij.lang.javascript.flex.projectStructure;
+package com.intellij.flexIde;
 
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.ui.FlexModuleEditor;

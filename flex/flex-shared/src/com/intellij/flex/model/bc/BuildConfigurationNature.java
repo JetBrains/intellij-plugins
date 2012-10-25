@@ -1,23 +1,17 @@
-package com.intellij.lang.javascript.flex.projectStructure.options;
+package com.intellij.flex.model.bc;
 
 import com.intellij.flex.FlexCommonBundle;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
-import icons.FlexIcons;
+import icons.FlexSharedIcons;
 
 import javax.swing.*;
 
-/**
- * @author ksafonov
- */
 public class BuildConfigurationNature {
+
   public final TargetPlatform targetPlatform;
   public final boolean pureAS;
   public final OutputType outputType;
 
-  public BuildConfigurationNature(TargetPlatform targetPlatform,
-                                  boolean pureAS,
-                                  OutputType outputType) {
+  public BuildConfigurationNature(final TargetPlatform targetPlatform, final boolean pureAS, final OutputType outputType) {
     this.targetPlatform = targetPlatform;
     this.pureAS = pureAS;
     this.outputType = outputType;
@@ -43,7 +37,8 @@ public class BuildConfigurationNature {
     return outputType == OutputType.Library;
   }
 
-  public static final BuildConfigurationNature DEFAULT = new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application);
+  public static final BuildConfigurationNature
+    DEFAULT = new BuildConfigurationNature(TargetPlatform.Web, false, OutputType.Application);
 
   public String toString() {
     return targetPlatform.getPresentableText() + " " + outputType.getPresentableText() + (pureAS ? " (pure ActionScript)" : "");
@@ -72,14 +67,14 @@ public class BuildConfigurationNature {
   public Icon getIcon() {
     switch (targetPlatform) {
       case Web:
-        return pureAS ? FlexIcons.Bc_web_as : FlexIcons.Bc_web_flex;
+        return pureAS ? FlexSharedIcons.Bc_web_as : FlexSharedIcons.Bc_web_flex;
       case Desktop:
-        return pureAS ? FlexIcons.Bc_desktop_as : FlexIcons.Bc_desktop_flex;
+        return pureAS ? FlexSharedIcons.Bc_desktop_as : FlexSharedIcons.Bc_desktop_flex;
       case Mobile:
-        return pureAS ? FlexIcons.Bc_mobile_as : FlexIcons.Bc_mobile_flex;
+        return pureAS ? FlexSharedIcons.Bc_mobile_as : FlexSharedIcons.Bc_mobile_flex;
       default:
         assert false : targetPlatform;
-        return FlexIcons.Bc_web_flex;
+        return FlexSharedIcons.Bc_web_flex;
     }
   }
 

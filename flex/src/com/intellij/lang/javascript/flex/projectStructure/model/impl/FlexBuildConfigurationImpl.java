@@ -1,11 +1,13 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.components.ComponentManager;
@@ -22,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.*;
 
-class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfiguration {
+class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
 
   @NotNull
   private String myName = UNNAMED;
@@ -135,7 +137,7 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     for (String entry : entries) {
       final List<String> parts = StringUtil.split(entry, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false);
       assert parts.size() == 3 : entry;
-      result.add(new FlexIdeBuildConfiguration.RLMInfo(parts.get(0), parts.get(1), Boolean.valueOf(parts.get(2))));
+      result.add(new FlexBuildConfiguration.RLMInfo(parts.get(0), parts.get(1), Boolean.valueOf(parts.get(2))));
     }
     return result;
   }
@@ -288,13 +290,13 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     return outputFolderPath + (outputFolderPath.isEmpty() ? "" : "/") + outputFileName;
   }
 
-  public FlexIdeBuildConfigurationImpl getCopy() {
-    FlexIdeBuildConfigurationImpl copy = new FlexIdeBuildConfigurationImpl();
+  public FlexBuildConfigurationImpl getCopy() {
+    FlexBuildConfigurationImpl copy = new FlexBuildConfigurationImpl();
     applyTo(copy);
     return copy;
   }
 
-  void applyTo(FlexIdeBuildConfigurationImpl copy) {
+  void applyTo(FlexBuildConfigurationImpl copy) {
     myAirDesktopPackagingOptions.applyTo(copy.myAirDesktopPackagingOptions);
     myAndroidPackagingOptions.applyTo(copy.myAndroidPackagingOptions);
     myCompilerOptions.applyTo(copy.myCompilerOptions);
@@ -315,8 +317,8 @@ class FlexIdeBuildConfigurationImpl implements ModifiableFlexIdeBuildConfigurati
     copy.myWrapperTemplatePath = myWrapperTemplatePath;
   }
 
-  public boolean isEqual(FlexIdeBuildConfiguration bc) {
-    final FlexIdeBuildConfigurationImpl other = (FlexIdeBuildConfigurationImpl)bc;
+  public boolean isEqual(FlexBuildConfiguration bc) {
+    final FlexBuildConfigurationImpl other = (FlexBuildConfigurationImpl)bc;
     if (!myAirDesktopPackagingOptions.isEqual(other.myAirDesktopPackagingOptions)) return false;
     if (!myAndroidPackagingOptions.isEqual(other.myAndroidPackagingOptions)) return false;
     if (!myCompilerOptions.isEqual(other.myCompilerOptions)) return false;

@@ -1,16 +1,19 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.ComponentSet;
+import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.flex.model.bc.OutputType;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.FlexIdeBCConfigurator;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBCConfigurator;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -25,7 +28,6 @@ import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModel;
 import com.intellij.openapi.projectRoots.SdkType;
-import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
@@ -127,7 +129,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         return new TableEntry("modulelib\t" + libraryId);
       }
 
-      public static TableEntry forBc(FlexIdeBCConfigurable configurable) {
+      public static TableEntry forBc(FlexBCConfigurable configurable) {
         return new TableEntry("bc\t" + configurable.getModuleName() + "\t" + configurable.getDisplayName());
       }
 
@@ -230,7 +232,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   private class BCItem extends MyTableItem {
     public final ModifiableDependencyType dependencyType = Factory.createDependencyTypeInstance();
-    public final FlexIdeBCConfigurable configurable;
+    public final FlexBCConfigurable configurable;
     public final String moduleName;
     public final String bcName;
 
@@ -240,7 +242,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       this.configurable = null;
     }
 
-    public BCItem(@NotNull FlexIdeBCConfigurable configurable) {
+    public BCItem(@NotNull FlexBCConfigurable configurable) {
       this.moduleName = null;
       this.bcName = null;
       this.configurable = configurable;
@@ -710,7 +712,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     }
   };
 
-  public DependenciesConfigurable(final ModifiableFlexIdeBuildConfiguration bc,
+  public DependenciesConfigurable(final ModifiableFlexBuildConfiguration bc,
                                   Project project,
                                   @NotNull FlexProjectConfigurationEditor configEditor,
                                   final ProjectSdksModel sdksModel) {
@@ -880,7 +882,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
     }.installOn(myTable);
 
-    FlexBuildConfigurationsExtension.getInstance().getConfigurator().addListener(new FlexIdeBCConfigurator.Listener() {
+    FlexBuildConfigurationsExtension.getInstance().getConfigurator().addListener(new FlexBCConfigurator.Listener() {
       @Override
       public void moduleRemoved(Module module) {
         // TODO return if module == this module
@@ -890,7 +892,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         for (int row = 0; row < myTable.getRowCount(); row++) {
           MyTableItem item = myTable.getItemAt(row);
           if (item instanceof BCItem) {
-            FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
+            FlexBCConfigurable configurable = ((BCItem)item).configurable;
             if (configurable != null && configurable.getModule() == module) {
               itemsToRemove.add(item);
             }
@@ -901,7 +903,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
 
       @Override
-      public void buildConfigurationRemoved(FlexIdeBCConfigurable configurable) {
+      public void buildConfigurationRemoved(FlexBCConfigurable configurable) {
         Pair<BCItem, Integer> item = findDependencyItem(configurable);
         if (item != null) {
           removeItems(Collections.singleton(item.first), true);
@@ -909,14 +911,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
 
       @Override
-      public void buildConfigurationRenamed(final FlexIdeBCConfigurable configurable) {
+      public void buildConfigurationRenamed(final FlexBCConfigurable configurable) {
         Pair<BCItem, Integer> item = findDependencyItem(configurable);
         if (item != null) {
           myTable.refreshItemAt(item.second);
         }
       }
 
-      public void natureChanged(final FlexIdeBCConfigurable configurable) {
+      public void natureChanged(final FlexBCConfigurable configurable) {
         Pair<BCItem, Integer> item = findDependencyItem(configurable);
         if (item != null) {
           final BuildConfigurationNature dependencyNature = item.first.configurable.getEditableObject().getNature();
@@ -927,7 +929,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       }
 
       @Nullable
-      private Pair<BCItem, Integer> findDependencyItem(FlexIdeBCConfigurable configurable) {
+      private Pair<BCItem, Integer> findDependencyItem(FlexBCConfigurable configurable) {
         if (configurable.isParentFor(DependenciesConfigurable.this)) {
           return null;
         }
@@ -949,11 +951,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     myConfigEditor.addModulesModelChangeListener(new FlexProjectConfigurationEditor.ModulesModelChangeListener() {
       @Override
       public void modulesModelsChanged(Collection<Module> modules) {
-        FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
+        FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
         for (Module module : modules) {
           for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
-            FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrap(configurable);
-            if (flexIdeBCConfigurable.isParentFor(DependenciesConfigurable.this)) {
+            FlexBCConfigurable flexBCConfigurable = FlexBCConfigurable.unwrap(configurable);
+            if (flexBCConfigurable.isParentFor(DependenciesConfigurable.this)) {
               resetTable(myDependencies.getSdkEntry(), true);
             }
           }
@@ -1370,7 +1372,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         updateSdkEntries(sdkNode, flexSdk);
       }
     }
-    FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
+    FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
     for (DependencyEntry entry : myDependencies.getEntries()) {
       MyTableItem item = null;
       if (entry instanceof BuildConfigurationEntry) {
@@ -1387,7 +1389,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
           item = new BCItem(bcEntry.getModuleName(), bcEntry.getBcName());
         }
         else {
-          item = new BCItem(FlexIdeBCConfigurable.unwrap(configurable));
+          item = new BCItem(FlexBCConfigurable.unwrap(configurable));
         }
         ((BCItem)item).dependencyType.copyFrom(entry.getDependencyType());
       }
@@ -1516,11 +1518,11 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @Override
     public void run() {
-      final Collection<FlexIdeBCConfigurable> dependencies = new ArrayList<FlexIdeBCConfigurable>();
+      final Collection<FlexBCConfigurable> dependencies = new ArrayList<FlexBCConfigurable>();
       List<MyTableItem> items = myTable.getItems();
       for (MyTableItem item : items) {
         if (item instanceof BCItem) {
-          FlexIdeBCConfigurable configurable = ((BCItem)item).configurable;
+          FlexBCConfigurable configurable = ((BCItem)item).configurable;
           if (configurable != null) {
             dependencies.add(configurable);
           }
@@ -1529,9 +1531,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
       ChooseBuildConfigurationDialog d = ChooseBuildConfigurationDialog.createForApplicableBCs(
         FlexBundle.message("add.bc.dependency.dialog.title"), FlexBundle.message("add.dependency.bc.dialog.label"), myProject, false,
-        new Condition<FlexIdeBCConfigurable>() {
+        new Condition<FlexBCConfigurable>() {
           @Override
-          public boolean value(final FlexIdeBCConfigurable configurable) {
+          public boolean value(final FlexBCConfigurable configurable) {
             if (dependencies.contains(configurable) || configurable.isParentFor(DependenciesConfigurable.this)) {
               return false;
             }
@@ -1553,9 +1555,9 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         return;
       }
 
-      FlexIdeBCConfigurable[] configurables = d.getSelectedConfigurables();
+      FlexBCConfigurable[] configurables = d.getSelectedConfigurables();
       DefaultMutableTreeNode root = myTable.getRoot();
-      for (FlexIdeBCConfigurable configurable : configurables) {
+      for (FlexBCConfigurable configurable : configurables) {
         root.add(new DefaultMutableTreeNode(new BCItem(configurable), false));
       }
       myTable.refresh();
@@ -1658,7 +1660,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     updateTableOnItemsAdded(libraries.size());
   }
 
-  public void addBCDependency(final FlexIdeBCConfigurable dependencyConfigurable, final LinkageType linkageType) {
+  public void addBCDependency(final FlexBCConfigurable dependencyConfigurable, final LinkageType linkageType) {
     final DefaultMutableTreeNode rootNode = myTable.getRoot();
 
     final Enumeration children = rootNode.children();
@@ -1735,7 +1737,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   @Override
   public ActionCallback navigateTo(@Nullable final Place place, final boolean requestFocus) {
     if (place != null) {
-      final Object location = place.getPath(FlexIdeBCConfigurable.LOCATION_ON_TAB);
+      final Object location = place.getPath(FlexBCConfigurable.LOCATION_ON_TAB);
       if (location == Location.SDK) {
         if (requestFocus) {
           return IdeFocusManager.findInstance().requestFocus(mySdkCombo, true);
@@ -1884,12 +1886,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
   }
 
   private Pair<String, String> getModuleAndBcName() {
-    FlexIdeBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
+    FlexBCConfigurator configurator = FlexBuildConfigurationsExtension.getInstance().getConfigurator();
     for (Module module : ProjectStructureConfigurable.getInstance(myProject).getModulesConfig().getModules()) {
       for (CompositeConfigurable configurable : configurator.getBCConfigurables(module)) {
-        FlexIdeBCConfigurable flexIdeBCConfigurable = FlexIdeBCConfigurable.unwrap(configurable);
-        if (flexIdeBCConfigurable.isParentFor(this)) {
-          return Pair.create(module.getName(), flexIdeBCConfigurable.getDisplayName());
+        FlexBCConfigurable flexBCConfigurable = FlexBCConfigurable.unwrap(configurable);
+        if (flexBCConfigurable.isParentFor(this)) {
+          return Pair.create(module.getName(), flexBCConfigurable.getDisplayName());
         }
       }
     }

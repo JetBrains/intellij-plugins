@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript.flex.projectStructure.model;
 
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -8,7 +10,7 @@ import java.util.Collection;
 /**
  * User: ksafonov
  */
-public interface ModifiableFlexIdeBuildConfiguration extends FlexIdeBuildConfiguration {
+public interface ModifiableFlexBuildConfiguration extends FlexBuildConfiguration {
 
   @NotNull
   @Override

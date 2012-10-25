@@ -3,7 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
@@ -23,7 +23,7 @@ import java.util.List;
 public class RLMsDialog extends RepeatableValueDialog {
   private final Module myModule;
 
-  public RLMsDialog(final Module module, final Collection<FlexIdeBuildConfiguration.RLMInfo> rlms) {
+  public RLMsDialog(final Module module, final Collection<FlexBuildConfiguration.RLMInfo> rlms) {
     super(module.getProject(), FlexBundle.message("rlms.dialog.title"), toStringBuilderList(rlms), CompilerOptionInfo.RLMS_INFO_FOR_UI);
     myModule = module;
 
@@ -32,9 +32,9 @@ public class RLMsDialog extends RepeatableValueDialog {
     myTable.getColumnModel().getColumn(0).setCellEditor(createMainClassEditor(module));
   }
 
-  private static List<StringBuilder> toStringBuilderList(final Collection<FlexIdeBuildConfiguration.RLMInfo> rlms) {
+  private static List<StringBuilder> toStringBuilderList(final Collection<FlexBuildConfiguration.RLMInfo> rlms) {
     final List<StringBuilder> result = new ArrayList<StringBuilder>();
-    for (FlexIdeBuildConfiguration.RLMInfo rlm : rlms) {
+    for (FlexBuildConfiguration.RLMInfo rlm : rlms) {
       result.add(new StringBuilder()
                    .append(rlm.MAIN_CLASS)
                    .append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)
@@ -108,14 +108,14 @@ public class RLMsDialog extends RepeatableValueDialog {
     }
   }
 
-  public Collection<FlexIdeBuildConfiguration.RLMInfo> getRLMs() {
+  public Collection<FlexBuildConfiguration.RLMInfo> getRLMs() {
     final List<StringBuilder> currentList = getCurrentList();
-    final Collection<FlexIdeBuildConfiguration.RLMInfo> result = new ArrayList<FlexIdeBuildConfiguration.RLMInfo>(currentList.size());
+    final Collection<FlexBuildConfiguration.RLMInfo> result = new ArrayList<FlexBuildConfiguration.RLMInfo>(currentList.size());
 
     for (StringBuilder listEntry : currentList) {
       final List<String> parts = StringUtil.split(listEntry.toString(), CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false);
       assert parts.size() == 3 : listEntry;
-      result.add(new FlexIdeBuildConfiguration.RLMInfo(parts.get(0), parts.get(1), Boolean.valueOf(parts.get(2))));
+      result.add(new FlexBuildConfiguration.RLMInfo(parts.get(0), parts.get(1), Boolean.valueOf(parts.get(2))));
     }
 
     return result;

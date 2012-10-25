@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.build;
 
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
@@ -18,8 +18,8 @@ public class BuiltInCompilationTask extends FlexCompilationTask {
   private BuiltInFlexCompilerHandler.Listener myListener;
 
   public BuiltInCompilationTask(final @NotNull Module module,
-                                final @NotNull FlexIdeBuildConfiguration bc,
-                                final @NotNull Collection<FlexIdeBuildConfiguration> dependencies) {
+                                final @NotNull FlexBuildConfiguration bc,
+                                final @NotNull Collection<FlexBuildConfiguration> dependencies) {
     super(module, bc, dependencies);
     myBuiltInFlexCompilerHandler = FlexCompilerHandler.getInstance(module.getProject()).getBuiltInFlexCompilerHandler();
   }

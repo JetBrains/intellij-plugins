@@ -2,11 +2,14 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.application.options.PathMacrosImpl;
 import com.intellij.execution.configurations.CommandLineTokenizer;
+import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.lang.javascript.flex.projectStructure.model.DependencyType;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -560,7 +563,7 @@ public class FlexUtils {
     return folder;
   }
 
-  public static boolean processCompilerOption(final Module module, final FlexIdeBuildConfiguration bc, final String option,
+  public static boolean processCompilerOption(final Module module, final FlexBuildConfiguration bc, final String option,
                                               final Processor<Pair<String, String>> processor) {
     String rawValue = bc.getCompilerOptions().getOption(option);
     if (rawValue == null) rawValue = FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions().getOption(option);
@@ -606,7 +609,7 @@ public class FlexUtils {
   }
 
   public static ModuleWithDependenciesScope getModuleWithDependenciesAndLibrariesScope(@NotNull Module module,
-                                                                                       @NotNull FlexIdeBuildConfiguration bc,
+                                                                                       @NotNull FlexBuildConfiguration bc,
                                                                                        boolean includeTests) {
     // we cannot assert this since build configuration may be not yet persisted
     //if (!ArrayUtil.contains(bc, FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations())) {

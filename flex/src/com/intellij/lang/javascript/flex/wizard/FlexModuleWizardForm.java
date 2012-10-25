@@ -1,9 +1,9 @@
 package com.intellij.lang.javascript.flex.wizard;
 
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.openapi.options.ConfigurationException;
@@ -19,7 +19,7 @@ import javax.swing.event.DocumentEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class FlexIdeModuleWizardForm {
+public class FlexModuleWizardForm {
 
   private JPanel myMainPanel;
   private JComboBox myTargetPlatformCombo;
@@ -47,10 +47,10 @@ public class FlexIdeModuleWizardForm {
   private boolean mySampleAppNameNameChangedByUser;
   private boolean mySettingSampleAppNameFromCode;
 
-  public FlexIdeModuleWizardForm() {
+  public FlexModuleWizardForm() {
     mySdkLabel.setLabelFor(mySdkCombo.getChildComponent());
-    TargetPlatform.initCombo(myTargetPlatformCombo);
-    OutputType.initCombo(myOutputTypeCombo);
+    BCUtils.initTargetPlatformCombo(myTargetPlatformCombo);
+    BCUtils.initOutputTypeCombo(myOutputTypeCombo);
 
     final ActionListener listener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {

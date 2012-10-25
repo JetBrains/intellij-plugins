@@ -100,7 +100,7 @@ public class CompositeConfigurable extends ProjectStructureElementConfigurable i
 
   @Override
   public Icon getIcon(boolean expanded) {
-    return FlexIdeBCConfigurable.unwrap(this).getIcon();
+    return FlexBCConfigurable.unwrap(this).getIcon();
   }
 
   @Override

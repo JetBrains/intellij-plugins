@@ -5,7 +5,7 @@ import com.intellij.execution.configuration.BrowseModuleValueActionListener;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexMethodChooserDialog;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -107,7 +107,7 @@ public class WhatToTestForm {
     label.setDisplayedMnemonic(mnemonic);
   }
 
-  public void updateOnBCChange(final @Nullable FlexIdeBuildConfiguration bc, final Module module) {
+  public void updateOnBCChange(final @Nullable FlexBuildConfiguration bc, final Module module) {
     if (bc == null) {
       updateOnError(FlexBundle.message("bc.not.specified"));
       return;
@@ -138,7 +138,7 @@ public class WhatToTestForm {
   }
 
   public void resetFrom(final @Nullable Module module,
-                        final @Nullable FlexIdeBuildConfiguration bc,
+                        final @Nullable FlexBuildConfiguration bc,
                         final FlexUnitRunnerParameters params) {
     switch (params.getScope()) {
       case Class:

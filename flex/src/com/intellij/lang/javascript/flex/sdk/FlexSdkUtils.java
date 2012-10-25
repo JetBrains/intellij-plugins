@@ -6,12 +6,12 @@ import com.intellij.execution.configurations.JavaCommandLineStateUtil;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
+import com.intellij.flex.model.bc.ComponentSet;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.model.ComponentSet;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -500,7 +500,7 @@ public class FlexSdkUtils {
   /**
    * @param processor (namespace, relative path with no leading slash)
    */
-  public static void processStandardNamespaces(FlexIdeBuildConfiguration bc, PairConsumer<String, String> processor) {
+  public static void processStandardNamespaces(FlexBuildConfiguration bc, PairConsumer<String, String> processor) {
     final Sdk sdk = bc.getSdk();
     if (bc.isPureAs() || sdk == null || sdk.getSdkType() == FlexmojosSdkType.getInstance()) return;
 

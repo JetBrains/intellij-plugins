@@ -2,6 +2,8 @@ package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.flex.model.bc.OutputType;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
@@ -338,20 +340,20 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     doCheck(super.checkAndGetModuleAndBC(project));
   }
 
-  public Pair<Module, FlexIdeBuildConfiguration> checkAndGetModuleAndBC(final Project project) throws RuntimeConfigurationError {
-    final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = super.checkAndGetModuleAndBC(project);
+  public Pair<Module, FlexBuildConfiguration> checkAndGetModuleAndBC(final Project project) throws RuntimeConfigurationError {
+    final Pair<Module, FlexBuildConfiguration> moduleAndBC = super.checkAndGetModuleAndBC(project);
     doCheck(moduleAndBC);
 
     if (myOverrideMainClass) {
-      final FlexIdeBuildConfiguration origBC = moduleAndBC.second;
-      final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(origBC);
+      final FlexBuildConfiguration origBC = moduleAndBC.second;
+      final ModifiableFlexBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(origBC);
 
       overriddenBC.setOutputType(OutputType.Application);
 
       overriddenBC.setMainClass(myOverriddenMainClass);
       overriddenBC.setOutputFileName(myOverriddenOutputFileName);
 
-      overriddenBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
+      overriddenBC.setRLMs(Collections.<FlexBuildConfiguration.RLMInfo>emptyList());
 
       if (origBC.getOutputType() != OutputType.Application) {
         overriddenBC.setUseHtmlWrapper(false);
@@ -383,14 +385,14 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       overriddenBC.getAndroidPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
       overriddenBC.getIosPackagingOptions().setPackageFileName(FileUtil.getNameWithoutExtension(myOverriddenOutputFileName));
 
-      return Pair.create(moduleAndBC.first, ((FlexIdeBuildConfiguration)overriddenBC));
+      return Pair.create(moduleAndBC.first, ((FlexBuildConfiguration)overriddenBC));
     }
 
     return moduleAndBC;
   }
 
-  private void doCheck(final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC) throws RuntimeConfigurationError {
-    final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+  private void doCheck(final Pair<Module, FlexBuildConfiguration> moduleAndBC) throws RuntimeConfigurationError {
+    final FlexBuildConfiguration bc = moduleAndBC.second;
     final Sdk sdk = bc.getSdk();
     if (sdk == null) {
       throw new RuntimeConfigurationError(

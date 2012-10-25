@@ -22,12 +22,12 @@ public interface JpsFlexBuildConfiguration
   String getName();
 
   @NotNull
-  JpsTargetPlatform getTargetPlatform();
+  TargetPlatform getTargetPlatform();
 
   boolean isPureAs();
 
   @NotNull
-  JpsOutputType getOutputType();
+  OutputType getOutputType();
 
   @NotNull
   String getOptimizeFor();
@@ -84,7 +84,7 @@ public interface JpsFlexBuildConfiguration
 
   Icon getIcon();
 
-  JpsBuildConfigurationNature getNature();
+  BuildConfigurationNature getNature();
 
   @Nullable
   JpsSdk<?> getSdk();

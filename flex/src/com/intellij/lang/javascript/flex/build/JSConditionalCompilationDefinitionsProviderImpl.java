@@ -6,8 +6,8 @@ import com.intellij.lang.javascript.JSConditionalCompilationDefinitionsProvider;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectCompilerOptions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
@@ -99,7 +99,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
 
   private void processConditionalCompilationDefinitions(final Module module, final Processor<Pair<String, String>> processor) {
     final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
-    final FlexIdeBuildConfiguration bc = manager.getActiveConfiguration();
+    final FlexBuildConfiguration bc = manager.getActiveConfiguration();
 
     final ModuleOrProjectCompilerOptions moduleLevelOptions = manager.getModuleLevelCompilerOptions();
     final ModuleOrProjectCompilerOptions projectLevelOptions =

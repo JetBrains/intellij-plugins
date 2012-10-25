@@ -1,11 +1,8 @@
-package com.intellij.lang.javascript.flex.projectStructure.model;
+package com.intellij.flex.model.bc;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * @author ksafonov
- */
 public class LinkageType {
   private static final Collection<LinkageType> all = new ArrayList<LinkageType>();
 
@@ -35,7 +32,7 @@ public class LinkageType {
     return myShortText;
   }
 
-  private LinkageType(String serializedText, String longText, String shortText) {
+  private LinkageType(final String serializedText, final String longText, final String shortText) {
     myLongText = longText;
     mySerializedText = serializedText;
     myShortText = shortText;
@@ -47,7 +44,7 @@ public class LinkageType {
     return getShortText();
   }
 
-  public static LinkageType valueOf(String linkageType, LinkageType defaultValue) {
+  public static LinkageType valueOf(final String linkageType, final LinkageType defaultValue) {
     for (LinkageType type : all) {
       if (type.getSerializedText().equals(linkageType)) {
         return type;

@@ -6,5 +6,5 @@ import org.jetbrains.jps.model.JpsElement;
 public interface JpsFlexDependencyEntry extends JpsElement {
 
   @NotNull
-  JpsLinkageType getLinkageType();
+  LinkageType getLinkageType();
 }

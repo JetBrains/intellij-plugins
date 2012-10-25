@@ -5,8 +5,8 @@ import com.intellij.compiler.impl.CompilerUtil;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.*;
@@ -53,9 +53,9 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
   public boolean validateConfiguration(final CompileScope scope) {
     if (CompilerPathsEx.CLEAR_ALL_OUTPUTS_KEY.get(scope) == Boolean.TRUE) {
       try {
-        final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs = FlexCompiler.getModulesAndBCsToCompile(scope);
+        final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs = FlexCompiler.getModulesAndBCsToCompile(scope);
         Set<VirtualFile> outputs = new HashSet<VirtualFile>();
-        for (Pair<Module, FlexIdeBuildConfiguration> pair : modulesAndBCs) {
+        for (Pair<Module, FlexBuildConfiguration> pair : modulesAndBCs) {
           String outputFilePath = pair.second.getActualOutputFilePath();
           VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(PathUtil.getParentPath(outputFilePath));
           ContainerUtil.addIfNotNull(outputs, outputFolder);
@@ -86,13 +86,13 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
     ProcessingItem[] items = ApplicationManager.getApplication().runReadAction(new Computable<ProcessingItem[]>() {
       public ProcessingItem[] compute() {
         try {
-          final Collection<Pair<Module, FlexIdeBuildConfiguration>> modulesAndBCs =
+          final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCs =
             FlexCompiler.getModulesAndBCsToCompile(context.getCompileScope());
 
           final Collection<FlexResourceProcessingItem> result = new ArrayList<FlexResourceProcessingItem>();
           final Collection<Module> modules = new THashSet<Module>();
 
-          for (Pair<Module, FlexIdeBuildConfiguration> bc : modulesAndBCs) {
+          for (Pair<Module, FlexBuildConfiguration> bc : modulesAndBCs) {
             final Module module = bc.first;
             if (modules.add(module)) {
               appendItemsForModule(result, module);
@@ -139,7 +139,7 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
             }
           }
           else {
-            for (FlexIdeBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
+            for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(module).getBuildConfigurations()) {
               if (bc.isSkipCompile() || !BCUtils.canHaveResourceFiles(bc.getNature()) ||
                   bc.getCompilerOptions().getResourceFilesMode() == CompilerOptions.ResourceFilesMode.None) {
                 continue;
@@ -170,8 +170,8 @@ public class FlexResourceCompiler implements SourceProcessingCompiler {
       context.getProgressIndicator().setText(CompilerBundle.message("progress.clearing.output"));
       Collection<File> outputDirectories = new HashSet<File>();
       try {
-        Collection<Pair<Module, FlexIdeBuildConfiguration>> toCompile = FlexCompiler.getModulesAndBCsToCompile(context.getCompileScope());
-        for (Pair<Module, FlexIdeBuildConfiguration> pair : toCompile) {
+        Collection<Pair<Module, FlexBuildConfiguration>> toCompile = FlexCompiler.getModulesAndBCsToCompile(context.getCompileScope());
+        for (Pair<Module, FlexBuildConfiguration> pair : toCompile) {
           outputDirectories.add(new File(PathUtil.getParentPath(pair.second.getActualOutputFilePath())));
         }
       }

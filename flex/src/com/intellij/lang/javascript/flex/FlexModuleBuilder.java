@@ -3,15 +3,15 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.util.projectWizard.ModuleBuilder;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
-import com.intellij.lang.javascript.flex.projectStructure.options.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationType;
@@ -123,9 +123,9 @@ public class FlexModuleBuilder extends ModuleBuilder {
                        : FlexProjectConfigurationEditor
                          .createEditor(module.getProject(), Collections.singletonMap(module, modifiableRootModel), null, null);
 
-    final ModifiableFlexIdeBuildConfiguration[] configurations = flexConfigEditor.getConfigurations(module);
+    final ModifiableFlexBuildConfiguration[] configurations = flexConfigEditor.getConfigurations(module);
     assert configurations.length == 1;
-    final ModifiableFlexIdeBuildConfiguration bc = configurations[0];
+    final ModifiableFlexBuildConfiguration bc = configurations[0];
 
     setupBC(modifiableRootModel, bc);
 
@@ -157,7 +157,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
     }
   }
 
-  private void setupBC(final ModifiableRootModel modifiableRootModel, final ModifiableFlexIdeBuildConfiguration bc) {
+  private void setupBC(final ModifiableRootModel modifiableRootModel, final ModifiableFlexBuildConfiguration bc) {
     final Module module = modifiableRootModel.getModule();
     bc.setName(module.getName());
     bc.setTargetPlatform(myTargetPlatform);
@@ -210,7 +210,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
     }
   }
 
-  public static void createRunConfiguration(final Module module, final FlexIdeBuildConfiguration bc) {
+  public static void createRunConfiguration(final Module module, final FlexBuildConfiguration bc) {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
 
     final RunConfiguration[] existingConfigurations = runManager.getConfigurations(FlashRunConfigurationType.getInstance());

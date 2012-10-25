@@ -13,6 +13,7 @@ import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -28,8 +29,7 @@ import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirDesktopPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.notification.*;
@@ -119,15 +119,15 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       if (runProfile instanceof RemoteFlashRunConfiguration) {
         final BCBasedRunnerParameters params = ((RemoteFlashRunConfiguration)runProfile).getRunnerParameters();
-        final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
+        final Pair<Module, FlexBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
         return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, executor, contentToReuse, env);
       }
 
       if (runProfile instanceof FlexUnitRunConfiguration) {
         final FlexUnitRunnerParameters params = ((FlexUnitRunConfiguration)runProfile).getRunnerParameters();
-        final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(project);
+        final Pair<Module, FlexBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(project);
         final Module module = moduleAndConfig.first;
-        final FlexIdeBuildConfiguration bc = moduleAndConfig.second;
+        final FlexBuildConfiguration bc = moduleAndConfig.second;
 
         if (bc.getTargetPlatform() == TargetPlatform.Web) {
           final String outputFilePath = bc.getActualOutputFilePath();
@@ -146,9 +146,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       if (runProfile instanceof FlashRunConfiguration) {
         final FlashRunnerParameters params = ((FlashRunConfiguration)runProfile).getRunnerParameters();
-        final Pair<Module, FlexIdeBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(project);
+        final Pair<Module, FlexBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(project);
         final Module module = moduleAndConfig.first;
-        final FlexIdeBuildConfiguration bc = moduleAndConfig.second;
+        final FlexBuildConfiguration bc = moduleAndConfig.second;
         if (bc.isSkipCompile()) {
           showBCCompilationSkippedWarning(module, bc, isDebug);
         }
@@ -165,7 +165,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
           catch (IOException e) {/**/}
         }
 
-        return launchFlexIdeConfig(module, bc, params, executor, state, contentToReuse, env);
+        return launchFlexConfig(module, bc, params, executor, state, contentToReuse, env);
       }
     }
     catch (RuntimeConfigurationError e) {
@@ -176,7 +176,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   protected RunContentDescriptor launchDebugProcess(final Module module,
-                                                    final FlexIdeBuildConfiguration bc,
+                                                    final FlexBuildConfiguration bc,
                                                     final BCBasedRunnerParameters params,
                                                     final Executor executor,
                                                     final RunContentDescriptor contentToReuse,
@@ -219,7 +219,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return debugSession.getRunContentDescriptor();
   }
 
-  private static void iosStopForwardTcpPortIfNeeded(final FlexIdeBuildConfiguration bc, final BCBasedRunnerParameters params) {
+  private static void iosStopForwardTcpPortIfNeeded(final FlexBuildConfiguration bc, final BCBasedRunnerParameters params) {
     if (bc.getTargetPlatform() == TargetPlatform.Mobile &&
         params instanceof FlashRunnerParameters &&
         ((FlashRunnerParameters)params).getMobileRunTarget() == FlashRunnerParameters.AirMobileRunTarget.iOSDevice &&
@@ -245,13 +245,13 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                             final String swfFilePath) throws ExecutionException;
 
   @Nullable
-  protected abstract RunContentDescriptor launchFlexIdeConfig(final Module module,
-                                                              final FlexIdeBuildConfiguration config,
-                                                              final FlashRunnerParameters params,
-                                                              final Executor executor,
-                                                              final RunProfileState state,
-                                                              final RunContentDescriptor contentToReuse,
-                                                              final ExecutionEnvironment environment) throws ExecutionException;
+  protected abstract RunContentDescriptor launchFlexConfig(final Module module,
+                                                           final FlexBuildConfiguration config,
+                                                           final FlashRunnerParameters params,
+                                                           final Executor executor,
+                                                           final RunProfileState state,
+                                                           final RunContentDescriptor contentToReuse,
+                                                           final ExecutionEnvironment environment) throws ExecutionException;
 
   public static ExecutionConsole createFlexUnitRunnerConsole(Project project,
                                                              ExecutionEnvironment env,
@@ -356,7 +356,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   public static boolean packAndInstallToAndroidDevice(final Module module,
-                                                      final FlexIdeBuildConfiguration bc,
+                                                      final FlexBuildConfiguration bc,
                                                       final FlashRunnerParameters runnerParameters,
                                                       final String applicationId,
                                                       final boolean isDebug) {
@@ -374,7 +374,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   public static boolean packAndInstallToIOSSimulator(final Module module,
-                                                     final FlexIdeBuildConfiguration bc,
+                                                     final FlexBuildConfiguration bc,
                                                      final FlashRunnerParameters runnerParameters,
                                                      final String adtVersion,
                                                      final String applicationId,
@@ -395,7 +395,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   public static boolean packAndInstallToIOSDevice(final Module module,
-                                                  final FlexIdeBuildConfiguration bc,
+                                                  final FlexBuildConfiguration bc,
                                                   final FlashRunnerParameters runnerParameters,
                                                   final String adtVersion,
                                                   final boolean isDebug) {
@@ -450,7 +450,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   public static GeneralCommandLine createAdlCommandLine(final Project project,
                                                         final BCBasedRunnerParameters params,
-                                                        final FlexIdeBuildConfiguration bc,
+                                                        final FlexBuildConfiguration bc,
                                                         final @Nullable String airRuntimePath) throws CantRunException {
     final Module module = ModuleManager.getInstance(project).findModuleByName(params.getModuleName());
     final Sdk sdk = bc.getSdk();
@@ -587,7 +587,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return commandLine;
   }
 
-  private static String getDescriptorForEmulatorPath(final Module module, final FlexIdeBuildConfiguration bc,
+  private static String getDescriptorForEmulatorPath(final Module module, final FlexBuildConfiguration bc,
                                                      final AppDescriptorForEmulator appDescriptorForEmulator) throws CantRunException {
     final String airDescriptorPath;
     switch (appDescriptorForEmulator) {
@@ -604,11 +604,11 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return airDescriptorPath;
   }
 
-  public static String getAirDescriptorPath(final FlexIdeBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
+  public static String getAirDescriptorPath(final FlexBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
     return PathUtil.getParentPath(bc.getActualOutputFilePath()) + "/" + getAirDescriptorFileName(bc, packagingOptions);
   }
 
-  private static String getAirDescriptorFileName(final FlexIdeBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
+  private static String getAirDescriptorFileName(final FlexBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
     return packagingOptions.isUseGeneratedDescriptor() ? BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions)
                                                        : PathUtil.getFileName(packagingOptions.getCustomDescriptorPath());
   }
@@ -647,7 +647,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     }).notify(project);
   }
 
-  private static void showBCCompilationSkippedWarning(final Module module, final FlexIdeBuildConfiguration bc, final boolean isDebug) {
+  private static void showBCCompilationSkippedWarning(final Module module, final FlexBuildConfiguration bc, final boolean isDebug) {
     final String message = FlexBundle.message("run.when.ide.builder.turned.off", bc.getName(), module.getName());
     COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener() {
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
@@ -681,7 +681,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   private static void checkDebuggerFromSdk4(final Project project,
                                             final RunProfile runProfile,
                                             final FlashRunnerParameters params,
-                                            final FlexIdeBuildConfiguration bc) {
+                                            final FlexBuildConfiguration bc) {
     final Sdk sdk = bc.getSdk();
     assert sdk != null;
 

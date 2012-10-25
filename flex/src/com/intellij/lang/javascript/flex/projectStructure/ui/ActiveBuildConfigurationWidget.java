@@ -4,8 +4,8 @@ import com.intellij.ProjectTopics;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.module.Module;
@@ -193,7 +193,7 @@ public class ActiveBuildConfigurationWidget {
         return;
       }
 
-      FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+      FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
       myEnabledLabel.setText(BCUtils.renderBuildConfiguration(bc, null, false).toString());
       myEnabledLabel.setToolTipText(FlexBundle.message("active.bc.widget.tooltip", bc.getName(), module.getName()));
       myPanel.setToolTipText(myEnabledLabel.getToolTipText());

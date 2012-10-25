@@ -12,8 +12,8 @@ public class Factory {
     return new CompilerOptionsImpl();
   }
 
-  public static ModifiableFlexIdeBuildConfiguration createBuildConfiguration() {
-    return new FlexIdeBuildConfigurationImpl();
+  public static ModifiableFlexBuildConfiguration createBuildConfiguration() {
+    return new FlexBuildConfigurationImpl();
   }
 
   public static ModifiableDependencyType createDependencyTypeInstance() {
@@ -24,12 +24,12 @@ public class Factory {
     return new SdkEntryImpl(name);
   }
 
-  public static ModifiableFlexIdeBuildConfiguration getCopy(@NotNull FlexIdeBuildConfiguration bc) {
-    return ((FlexIdeBuildConfigurationImpl)bc).getCopy();
+  public static ModifiableFlexBuildConfiguration getCopy(@NotNull FlexBuildConfiguration bc) {
+    return ((FlexBuildConfigurationImpl)bc).getCopy();
   }
 
-  public static ModifiableFlexIdeBuildConfiguration getTemporaryCopyForCompilation(@NotNull FlexIdeBuildConfiguration bc) {
-    final FlexIdeBuildConfigurationImpl copy = ((FlexIdeBuildConfigurationImpl)bc).getCopy();
+  public static ModifiableFlexBuildConfiguration getTemporaryCopyForCompilation(@NotNull FlexBuildConfiguration bc) {
+    final FlexBuildConfigurationImpl copy = ((FlexBuildConfigurationImpl)bc).getCopy();
     copy.setTempBCForCompilation(true);
     return copy;
   }

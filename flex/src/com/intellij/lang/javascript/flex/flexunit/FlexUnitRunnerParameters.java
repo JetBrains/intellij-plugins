@@ -1,9 +1,13 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.flex.model.bc.OutputType;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableDependencyEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
@@ -179,11 +183,11 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     doCheck(project, super.checkAndGetModuleAndBC(project));
   }
 
-  public Pair<Module, FlexIdeBuildConfiguration> checkAndGetModuleAndBC(final Project project) throws RuntimeConfigurationError {
-    final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC = super.checkAndGetModuleAndBC(project);
+  public Pair<Module, FlexBuildConfiguration> checkAndGetModuleAndBC(final Project project) throws RuntimeConfigurationError {
+    final Pair<Module, FlexBuildConfiguration> moduleAndBC = super.checkAndGetModuleAndBC(project);
     doCheck(project, moduleAndBC);
 
-    final ModifiableFlexIdeBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(moduleAndBC.second);
+    final ModifiableFlexBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(moduleAndBC.second);
     overriddenBC.setOutputType(OutputType.Application);
 
     overriddenBC.setMainClass(FlexUnitPrecompileTask.FLEX_UNIT_LAUNCHER);
@@ -193,7 +197,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
 
     overriddenBC.setUseHtmlWrapper(false);
 
-    overriddenBC.setRLMs(Collections.<FlexIdeBuildConfiguration.RLMInfo>emptyList());
+    overriddenBC.setRLMs(Collections.<FlexBuildConfiguration.RLMInfo>emptyList());
     overriddenBC.setCssFilesToCompile(Collections.<String>emptyList());
     overriddenBC.setSkipCompile(false);
 
@@ -219,13 +223,13 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     overriddenBC.getIosPackagingOptions().setPackageFileName("_flexunit.ipa");
     */
 
-    return Pair.create(moduleAndBC.first, ((FlexIdeBuildConfiguration)overriddenBC));
+    return Pair.create(moduleAndBC.first, ((FlexBuildConfiguration)overriddenBC));
   }
 
-  private void doCheck(final Project project, final Pair<Module, FlexIdeBuildConfiguration> moduleAndBC) throws RuntimeConfigurationError {
+  private void doCheck(final Project project, final Pair<Module, FlexBuildConfiguration> moduleAndBC) throws RuntimeConfigurationError {
     if (DumbService.getInstance(project).isDumb()) return;
 
-    final FlexIdeBuildConfiguration bc = moduleAndBC.second;
+    final FlexBuildConfiguration bc = moduleAndBC.second;
     final Sdk sdk = bc.getSdk();
     if (sdk == null) {
       throw new RuntimeConfigurationError(

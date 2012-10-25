@@ -1,6 +1,6 @@
 package com.intellij.flex;
 
-import com.intellij.flex.model.bc.JpsBuildConfigurationNature;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Trinity;
@@ -27,7 +27,7 @@ public class FlexCommonUtils {
     return ext.equalsIgnoreCase("as") || ext.equalsIgnoreCase("mxml") || ext.equalsIgnoreCase("fxg");
   }
 
-  public static boolean canHaveResourceFiles(final JpsBuildConfigurationNature nature) {
+  public static boolean canHaveResourceFiles(final BuildConfigurationNature nature) {
     return nature.isApp();
   }
 

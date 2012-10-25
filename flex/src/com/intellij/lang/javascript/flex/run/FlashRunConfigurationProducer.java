@@ -6,12 +6,12 @@ import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.OutputType;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -56,7 +56,7 @@ public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer 
 
       params.setModuleName(module.getName());
 
-      final FlexIdeBuildConfiguration bc = getBCToBaseOn(module, jsClass.getQualifiedName());
+      final FlexBuildConfiguration bc = getBCToBaseOn(module, jsClass.getQualifiedName());
       params.setBCName(bc.getName());
 
       if (bc.getOutputType() == OutputType.Application && jsClass.getQualifiedName().equals(bc.getMainClass())) {
@@ -92,12 +92,12 @@ public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer 
     return null;
   }
 
-  private static FlexIdeBuildConfiguration getBCToBaseOn(final Module module, final String fqn) {
+  private static FlexBuildConfiguration getBCToBaseOn(final Module module, final String fqn) {
     final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
 
-    FlexIdeBuildConfiguration appWithSuitableMainClass = null;
+    FlexBuildConfiguration appWithSuitableMainClass = null;
 
-    for (FlexIdeBuildConfiguration bc : manager.getBuildConfigurations()) {
+    for (FlexBuildConfiguration bc : manager.getBuildConfigurations()) {
       if (bc.getOutputType() == OutputType.Application && fqn.equals(bc.getMainClass())) {
         if (manager.getActiveConfiguration() == bc) {
           return bc; // the best choice
@@ -144,7 +144,7 @@ public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer 
     for (final RunnerAndConfigurationSettings runConfig : existing) {
       final FlashRunnerParameters params = ((FlashRunConfiguration)runConfig.getConfiguration()).getRunnerParameters();
       if (module.getName().equals(params.getModuleName())) {
-        final FlexIdeBuildConfiguration bc = manager.findConfigurationByName(params.getBCName());
+        final FlexBuildConfiguration bc = manager.findConfigurationByName(params.getBCName());
         if (bc == null) continue;
 
         if (params.isOverrideMainClass()) {

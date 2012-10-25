@@ -1,12 +1,14 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.impl.CompilerUtil;
+import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.projectStructure.ui.CreateAirDescriptorTemplateDialog;
@@ -110,7 +112,7 @@ public class FlexCompilationUtils {
   static List<String> buildCommand(final List<String> compilerCommand,
                                    final List<VirtualFile> configFiles,
                                    final Module module,
-                                   final FlexIdeBuildConfiguration bc) {
+                                   final FlexBuildConfiguration bc) {
     final List<String> command = new ArrayList<String>(compilerCommand);
     for (VirtualFile configFile : configFiles) {
       command.add("-load-config=" + configFile.getPath());
@@ -227,7 +229,7 @@ public class FlexCompilationUtils {
   }
 
   public static void performPostCompileActions(final Module module,
-                                               final @NotNull FlexIdeBuildConfiguration bc,
+                                               final @NotNull FlexBuildConfiguration bc,
                                                final List<String> compileInfoMessages) throws FlexCompilerException {
     final Sdk sdk = bc.getSdk();
     assert sdk != null;
@@ -263,7 +265,7 @@ public class FlexCompilationUtils {
     }
   }
 
-  private static void handleFrameworkRsls(final FlexIdeBuildConfiguration bc,
+  private static void handleFrameworkRsls(final FlexBuildConfiguration bc,
                                           final List<String> compileInfoMessages) throws FlexCompilerException {
     final Sdk sdk = bc.getSdk();
     assert sdk != null;
@@ -317,7 +319,7 @@ public class FlexCompilationUtils {
     return rsls;
   }
 
-  private static void handleHtmlWrapper(final Module module, final FlexIdeBuildConfiguration bc) throws FlexCompilerException {
+  private static void handleHtmlWrapper(final Module module, final FlexBuildConfiguration bc) throws FlexCompilerException {
     final VirtualFile templateDir = LocalFileSystem.getInstance().findFileByPath(bc.getWrapperTemplatePath());
     if (templateDir == null || !templateDir.isDirectory()) {
       throw new FlexCompilerException(FlexBundle.message("html.wrapper.dir.not.found", bc.getWrapperTemplatePath()));
@@ -453,7 +455,7 @@ public class FlexCompilationUtils {
     return StringUtil.replace(wrapperText, MACROS_TO_REPLACE, replacement);
   }
 
-  private static void handleAirDescriptor(final Module module, final FlexIdeBuildConfiguration bc,
+  private static void handleAirDescriptor(final Module module, final FlexBuildConfiguration bc,
                                           final AirPackagingOptions packagingOptions) throws FlexCompilerException {
     if (packagingOptions.isUseGeneratedDescriptor()) {
       final boolean android = packagingOptions instanceof AndroidPackagingOptions;
@@ -465,7 +467,7 @@ public class FlexCompilationUtils {
     }
   }
 
-  public static void generateAirDescriptor(final Module module, final FlexIdeBuildConfiguration bc, final String descriptorFileName,
+  public static void generateAirDescriptor(final Module module, final FlexBuildConfiguration bc, final String descriptorFileName,
                                            final boolean android, final boolean ios) throws FlexCompilerException {
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
@@ -626,7 +628,7 @@ public class FlexCompilationUtils {
     return builder.toString();
   }
 
-  private static void copyAndFixCustomAirDescriptor(final FlexIdeBuildConfiguration bc,
+  private static void copyAndFixCustomAirDescriptor(final FlexBuildConfiguration bc,
                                                     final String customDescriptorPath) throws FlexCompilerException {
     final VirtualFile descriptorTemplateFile = LocalFileSystem.getInstance().findFileByPath(customDescriptorPath);
     if (descriptorTemplateFile == null) {

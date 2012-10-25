@@ -5,10 +5,10 @@ import com.intellij.execution.configurations.*;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.icons.AllIcons;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.TargetPlatform;
 import com.intellij.lang.javascript.flex.run.FlashPlayerTrustUtil;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlexRunner;
@@ -223,7 +223,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<JDOMExternalizab
   }
 
   private static String detectSuitableAgentNameForSdkUsedToLaunch(Module module) {
-    FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+    FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
     boolean isPlayer9 = bc.getTargetPlatform() == TargetPlatform.Web && bc.getDependencies().getTargetPlayer().startsWith("9");
     return "profiler_agent" + (isPlayer9 ? "_9" : "_10") + ".swf";
   }

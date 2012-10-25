@@ -3,8 +3,8 @@ package com.intellij.lang.javascript.flex.run;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -37,7 +37,7 @@ public class BCBasedRunnerParameters implements Cloneable {
     myBCName = BCName;
   }
 
-  public Pair<Module, FlexIdeBuildConfiguration> checkAndGetModuleAndBC(final Project project) throws RuntimeConfigurationError {
+  public Pair<Module, FlexBuildConfiguration> checkAndGetModuleAndBC(final Project project) throws RuntimeConfigurationError {
     if (myModuleName.isEmpty() || myBCName.isEmpty()) {
       throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
     }
@@ -47,7 +47,7 @@ public class BCBasedRunnerParameters implements Cloneable {
       throw new RuntimeConfigurationError(FlexBundle.message("bc.not.specified"));
     }
 
-    final FlexIdeBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(myBCName);
+    final FlexBuildConfiguration bc = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(myBCName);
     if (bc == null) {
       throw new RuntimeConfigurationError(FlexBundle.message("module.does.not.contain.bc", myModuleName, myBCName));
     }

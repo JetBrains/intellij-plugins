@@ -1,9 +1,13 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
+import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.build.FlexCompiler;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.BuildConfigurationEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.DependencyEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
@@ -29,7 +33,7 @@ import java.util.*;
  */
 public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
 
-  public static Key<FlexIdeBuildConfiguration> FORCE_BC = Key.create(FlexOrderEnumerationHandler.class.getName() + ".forceBc");
+  public static Key<FlexBuildConfiguration> FORCE_BC = Key.create(FlexOrderEnumerationHandler.class.getName() + ".forceBc");
 
   public static class FactoryImpl extends Factory {
     @Override
@@ -51,10 +55,10 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
   // TODO our special handling for myWithoutJdk, myWithoutLibraries
 
   private static class ModuleData {
-    private Set<FlexIdeBuildConfiguration> bcs = new HashSet<FlexIdeBuildConfiguration>();
+    private Set<FlexBuildConfiguration> bcs = new HashSet<FlexBuildConfiguration>();
     private boolean accessibleInProduction = false; // true if this module accessible by non-test dependency types
 
-    public void addBc(FlexIdeBuildConfiguration bc, boolean production) {
+    public void addBc(FlexBuildConfiguration bc, boolean production) {
       bcs.add(bc);
       accessibleInProduction |= production;
     }
@@ -74,13 +78,13 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
 
     myActiveConfigurations = new HashMap<Module, ModuleData>();
     // last argument can be whatever
-    processModuleWithBuildConfiguration(module, null, myActiveConfigurations, new HashSet<FlexIdeBuildConfiguration>(), true);
+    processModuleWithBuildConfiguration(module, null, myActiveConfigurations, new HashSet<FlexBuildConfiguration>(), true);
   }
 
   // configuration is null for root module (one for which scope is being computed)
-  private static void processModuleWithBuildConfiguration(@NotNull Module module, @Nullable FlexIdeBuildConfiguration configuration,
+  private static void processModuleWithBuildConfiguration(@NotNull Module module, @Nullable FlexBuildConfiguration configuration,
                                                           Map<Module, ModuleData> modules2activeConfigurations,
-                                                          Set<FlexIdeBuildConfiguration> processedConfigurations,
+                                                          Set<FlexBuildConfiguration> processedConfigurations,
                                                           boolean productionDependency) {
     if (ModuleType.get(module) != FlexModuleType.getInstance()) {
       return;
@@ -111,7 +115,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
         continue;
       }
 
-      FlexIdeBuildConfiguration dependencyBc = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+      FlexBuildConfiguration dependencyBc = ((BuildConfigurationEntry)entry).findBuildConfiguration();
       if (dependencyBc == null || !FlexCompiler.checkDependencyType(configuration, dependencyBc, linkageType)) {
         continue;
       }
@@ -128,8 +132,8 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     }
   }
 
-  private static FlexIdeBuildConfiguration getActiveConfiguration(final Module module) {
-    final FlexIdeBuildConfiguration forced = FORCE_BC.get(module);
+  private static FlexBuildConfiguration getActiveConfiguration(final Module module) {
+    final FlexBuildConfiguration forced = FORCE_BC.get(module);
     return forced != null ? forced : FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
   }
 
@@ -157,7 +161,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       }
 
       ModuleData moduleData = myActiveConfigurations.get(module);
-      for (FlexIdeBuildConfiguration bc : moduleData.bcs) {
+      for (FlexBuildConfiguration bc : moduleData.bcs) {
         if (bc.getSdk() != null) {
           return AddDependencyType.DEFAULT;
         }
@@ -165,10 +169,10 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       return AddDependencyType.DO_NOT_ADD;
     }
 
-    Collection<FlexIdeBuildConfiguration> accessibleConfigurations;
+    Collection<FlexBuildConfiguration> accessibleConfigurations;
     if (myActiveConfigurations != null) {
       ModuleData moduleData = myActiveConfigurations.get(module);
-      accessibleConfigurations = moduleData != null ? moduleData.bcs : Collections.<FlexIdeBuildConfiguration>emptyList();
+      accessibleConfigurations = moduleData != null ? moduleData.bcs : Collections.<FlexBuildConfiguration>emptyList();
     }
     else {
       // let all configurations be accessible in ProjectOrderEnumerator
@@ -224,7 +228,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     }
 
     final Module forModule = forOrderEntry.getOwnerModule();
-    final FlexIdeBuildConfiguration bc = getActiveConfiguration(forModule);
+    final FlexBuildConfiguration bc = getActiveConfiguration(forModule);
     final Sdk sdk = bc.getSdk();
     if (sdk == null || sdk.getSdkType() != FlexSdkType2.getInstance()) {
       return false;

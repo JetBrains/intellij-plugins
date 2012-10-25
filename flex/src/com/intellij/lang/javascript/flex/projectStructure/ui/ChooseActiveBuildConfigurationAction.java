@@ -3,8 +3,8 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexIdeBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
@@ -69,15 +69,15 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   public static ListPopup createPopup(@NotNull Module module) {
     final DefaultActionGroup actionGroup = new DefaultActionGroup();
     final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
-    final FlexIdeBuildConfiguration activeBc = manager.getActiveConfiguration();
-    FlexIdeBuildConfiguration[] bcs = manager.getBuildConfigurations();
-    Arrays.sort(bcs, new Comparator<FlexIdeBuildConfiguration>() {
+    final FlexBuildConfiguration activeBc = manager.getActiveConfiguration();
+    final FlexBuildConfiguration[] bcs = manager.getBuildConfigurations();
+    Arrays.sort(bcs, new Comparator<FlexBuildConfiguration>() {
       @Override
-      public int compare(final FlexIdeBuildConfiguration o1, final FlexIdeBuildConfiguration o2) {
+      public int compare(final FlexBuildConfiguration o1, final FlexBuildConfiguration o2) {
         return o1.getName().compareToIgnoreCase(o2.getName());
       }
     });
-    for (final FlexIdeBuildConfiguration bc : bcs) {
+    for (final FlexBuildConfiguration bc : bcs) {
       actionGroup.add(new SelectBcAction(bc, manager));
     }
     actionGroup.addSeparator();
@@ -88,7 +88,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
                                                  actionGroup, dataContext, false, false, false, true, null, -1, new Condition<AnAction>() {
       @Override
       public boolean value(final AnAction anAction) {
-        return anAction instanceof SelectBcAction && ((SelectBcAction)anAction).getBc() == activeBc;
+        return anAction instanceof SelectBcAction && ((SelectBcAction)anAction).getBC() == activeBc;
       }
     }, null) {
       @Override
@@ -118,7 +118,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
             Icon icon;
             boolean isActive;
             if (anAction instanceof SelectBcAction) {
-              FlexIdeBuildConfiguration bc = ((SelectBcAction)anAction).getBc();
+              FlexBuildConfiguration bc = ((SelectBcAction)anAction).getBC();
               isActive = bc == activeBc;
               text = BCUtils.renderBuildConfiguration(bc, null, isActive);
               icon = bc.getIcon();
@@ -152,17 +152,17 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
   }
 
   private static class SelectBcAction extends DumbAwareAction {
-    private final FlexIdeBuildConfiguration myBc;
+    private final FlexBuildConfiguration myBc;
 
     private final FlexBuildConfigurationManager myManager;
 
-    public SelectBcAction(final FlexIdeBuildConfiguration bc, final FlexBuildConfigurationManager manager) {
+    public SelectBcAction(final FlexBuildConfiguration bc, final FlexBuildConfigurationManager manager) {
       super(bc.getName(), getDescription(bc), bc.getIcon());
       myBc = bc;
       myManager = manager;
     }
 
-    private static String getDescription(final FlexIdeBuildConfiguration bc) {
+    private static String getDescription(final FlexBuildConfiguration bc) {
       return bc.getNature().getPresentableText();
     }
 
@@ -170,7 +170,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
       myManager.setActiveBuildConfiguration(myBc);
     }
 
-    public FlexIdeBuildConfiguration getBc() {
+    public FlexBuildConfiguration getBC() {
       return myBc;
     }
   }
@@ -188,7 +188,7 @@ public class ChooseActiveBuildConfigurationAction extends DumbAwareAction {
 
     @Override
     public void actionPerformed(AnActionEvent e) {
-      final FlexIdeBuildConfiguration activeConfiguration = FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration();
+      final FlexBuildConfiguration activeConfiguration = FlexBuildConfigurationManager.getInstance(myModule).getActiveConfiguration();
       final ProjectStructureConfigurable c = ProjectStructureConfigurable.getInstance(myModule.getProject());
       ShowSettingsUtil.getInstance().editConfigurable(myModule.getProject(), c, new Runnable() {
         @Override

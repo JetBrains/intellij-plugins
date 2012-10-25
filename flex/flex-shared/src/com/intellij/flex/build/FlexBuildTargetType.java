@@ -1,7 +1,7 @@
 package com.intellij.flex.build;
 
 import com.intellij.flex.FlexCommonUtils;
-import com.intellij.flex.model.bc.JpsBuildConfigurationNature;
+import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.flex.model.bc.JpsFlexBuildConfigurationManager;
 import com.intellij.flex.model.module.JpsFlexModuleType;
@@ -56,7 +56,7 @@ public class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> {
       for (JpsFlexBuildConfiguration bc : module.getProperties().getBuildConfigurations()) {
         result.add(new FlexBuildTarget(bc, null));
 
-        final JpsBuildConfigurationNature nature = bc.getNature();
+        final BuildConfigurationNature nature = bc.getNature();
         if (nature.isApp() && (nature.isDesktopPlatform() || nature.isMobilePlatform())) {
           result.add(new FlexBuildTarget(bc, Boolean.TRUE));
           result.add(new FlexBuildTarget(bc, Boolean.FALSE));
