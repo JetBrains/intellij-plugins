@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
 import com.intellij.lang.javascript.flex.build.FlexCompilerHandler;
-import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
+import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptionsListener;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableCompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModuleOrProjectCompilerOptions;

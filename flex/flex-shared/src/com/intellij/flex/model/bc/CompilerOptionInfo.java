@@ -1,13 +1,6 @@
-package com.intellij.lang.javascript.flex.projectStructure;
+package com.intellij.flex.model.bc;
 
-import com.intellij.flex.model.bc.BuildConfigurationNature;
-import com.intellij.flex.model.bc.ComponentSet;
-import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import gnu.trove.THashMap;
@@ -309,24 +302,6 @@ public class CompilerOptionInfo {
   public static Collection<CompilerOptionInfo> getOptionsWithSpecialValues() {
     ensureLoaded();
     return ourOptionsWithSpecialValues;
-  }
-
-  public static List<String> getThemes(final Module module, final FlexBuildConfiguration bc) {
-    final Sdk sdk = bc.getSdk();
-    if (sdk == null) return Collections.emptyList();
-
-    final CompilerOptionInfo info = getOptionInfo("compiler.theme");
-
-    String value = bc.getCompilerOptions().getOption(info.ID);
-    if (value == null) value = FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions().getOption(info.ID);
-    if (value == null) {
-      value = FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions().getOption(info.ID);
-    }
-    if (value == null) value = info.getDefaultValue(sdk.getVersionString(), bc.getNature(), bc.getDependencies().getComponentSet());
-
-    return value == null
-           ? Collections.<String>emptyList()
-           : StringUtil.split(FlexUtils.replacePathMacros(value, module, sdk.getHomePath()), LIST_ENTRIES_SEPARATOR);
   }
 
   private static void ensureLoaded() {

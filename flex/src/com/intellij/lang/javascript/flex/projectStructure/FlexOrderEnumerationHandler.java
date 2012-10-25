@@ -240,7 +240,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       return true;
     }
 
-    final List<String> themePaths = CompilerOptionInfo.getThemes(forModule, bc);
+    final List<String> themePaths = BCUtils.getThemes(forModule, bc);
     final List<String> allAccessibleUrls = ContainerUtil.filter(allUrls, new Condition<String>() {
       @Override
       public boolean value(String s) {

@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.uiDesigner.LogMessageUtil;
-import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
@@ -170,7 +169,7 @@ class LibraryCollector {
 
     // IDEA-71055
     // todo css-based themes
-    final List<String> themes = CompilerOptionInfo.getThemes(module, bc);
+    final List<String> themes = BCUtils.getThemes(module, bc);
     for (String theme : themes) {
       if (theme.endsWith(DOT_SWC)) {
         final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(theme);

@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.AddRemoveTableRowsDialog;
-import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
+import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
@@ -18,7 +18,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-import static com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo.ListElementType;
+import static com.intellij.flex.model.bc.CompilerOptionInfo.ListElementType;
 import static com.intellij.lang.javascript.flex.projectStructure.ui.CompilerOptionsConfigurable.ExtensionAwareFileChooserDescriptor;
 
 public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilder> {

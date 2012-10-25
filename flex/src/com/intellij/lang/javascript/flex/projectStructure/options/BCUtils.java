@@ -4,10 +4,9 @@ import com.intellij.flex.model.bc.*;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
-import com.intellij.lang.javascript.flex.projectStructure.model.AirDesktopPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.*;
+import com.intellij.flex.model.bc.CompilerOptionInfo;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -37,6 +36,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author ksafonov
@@ -440,5 +441,23 @@ public class BCUtils {
         setText(value.getPresentableText());
       }
     });
+  }
+
+  public static List<String> getThemes(final Module module, final FlexBuildConfiguration bc) {
+    final Sdk sdk = bc.getSdk();
+    if (sdk == null) return Collections.emptyList();
+
+    final CompilerOptionInfo info = CompilerOptionInfo.getOptionInfo("compiler.theme");
+
+    String value = bc.getCompilerOptions().getOption(info.ID);
+    if (value == null) value = FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions().getOption(info.ID);
+    if (value == null) {
+      value = FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions().getOption(info.ID);
+    }
+    if (value == null) value = info.getDefaultValue(sdk.getVersionString(), bc.getNature(), bc.getDependencies().getComponentSet());
+
+    return value == null
+           ? Collections.<String>emptyList()
+           : StringUtil.split(FlexUtils.replacePathMacros(value, module, sdk.getHomePath()), CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 }

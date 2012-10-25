@@ -4,7 +4,7 @@ import com.intellij.application.options.PathMacrosImpl;
 import com.intellij.execution.configurations.CommandLineTokenizer;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.TargetPlatform;
-import com.intellij.lang.javascript.flex.projectStructure.CompilerOptionInfo;
+import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.DependencyType;
