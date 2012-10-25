@@ -5,7 +5,6 @@ import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.JstdRunConfigurationVerifier;
 import com.google.jstestdriver.idea.execution.JstdTestRunnerCommandLineState;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
-import com.intellij.chromeConnector.connection.V8Connection;
 import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -27,7 +26,6 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-import org.chromium.sdk.JavascriptVm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,16 +99,15 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
         JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
-        ((V8Connection)debugProcess.getBrowserConnection()).queueRequest(new Consumer<JavascriptVm>() {
+        debugProcess.getBrowserConnection().queueRequest(new Consumer() {
           @Override
-          public void consume(JavascriptVm javascriptVm) {
+          public void consume(Object javascriptVm) {
             resumeJstdClientRunning(executionResult.getProcessHandler());
           }
         });
         return debugProcess;
       }
     });
-
 
     return xDebugSession.getRunContentDescriptor();
   }
