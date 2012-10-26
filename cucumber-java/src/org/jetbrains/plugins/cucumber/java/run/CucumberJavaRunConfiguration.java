@@ -17,6 +17,7 @@ import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
+import org.jetbrains.plugins.cucumber.run.CucumberJvmSMFormatter;
 
 import java.io.File;
 
@@ -50,7 +51,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
         JavaParametersUtil.configureConfiguration(params, CucumberJavaRunConfiguration.this);
 
-        String path = PathUtil.getJarPathForClass(this.getClass()).replace("cucumber-java.jar", "SMFormatter.jar");
+        String path = getSMRunnerPath();
         params.getClassPath().add(path);
 
         params.setMainClass(MAIN_CLASS_NAME);
@@ -87,6 +88,13 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     };
     state.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
     return state;
+  }
+
+  private static String getSMRunnerPath() {
+    final Class<?> aClass = new File(PathUtil.getJarPathForClass(CucumberJavaRunConfiguration.class)).isDirectory()
+                            ? CucumberJvmSMFormatter.class
+                            : CucumberJavaRunConfiguration.class;
+    return PathUtil.getJarPathForClass(aClass).replace("cucumber-java.jar", "SMFormatter.jar");
   }
 
   @Override

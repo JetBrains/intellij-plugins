@@ -1,4 +1,4 @@
-package org.jetbrains.plugins.cucumber.java.run;
+package org.jetbrains.plugins.cucumber.run;
 
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -17,7 +17,7 @@ import java.util.Queue;
  * User: Andrey.Vokin
  * Date: 8/10/12
  */
-public class CucumberJavaSMFormatter implements Formatter, Reporter {
+public class CucumberJvmSMFormatter implements Formatter, Reporter {
   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
 
   private static final String TEMPLATE_TEST_STARTED =
@@ -54,7 +54,7 @@ public class CucumberJavaSMFormatter implements Formatter, Reporter {
   private Queue<Step> currentSteps;
 
   @SuppressWarnings("UnusedDeclaration")
-  public CucumberJavaSMFormatter(Appendable appendable) {
+  public CucumberJvmSMFormatter(Appendable appendable) {
     this.appendable = System.err;
     queue = new ArrayDeque<String>();
     currentSteps = new ArrayDeque<Step>();

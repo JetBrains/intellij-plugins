@@ -5,9 +5,8 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="IDEA jdk" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="cucumber" />
     <orderEntry type="module" module-name="core-api" />
@@ -20,9 +19,7 @@
     <orderEntry type="module" module-name="execution-impl" />
     <orderEntry type="module" module-name="execution-openapi" />
     <orderEntry type="module" module-name="smRunner" />
-    <orderEntry type="library" name="cucumber-java" level="project" />
     <orderEntry type="module" module-name="java-indexing-api" />
-    <orderEntry type="module" module-name="cucumber-jvm" />
   </component>
 </module>
 
