@@ -16,6 +16,7 @@
 package com.jetbrains.flask.codeInsight;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.jetbrains.python.psi.*;
 import com.jetbrains.python.psi.types.PyType;
 import com.jetbrains.python.psi.types.PyTypeProviderBase;
@@ -31,7 +32,8 @@ public class FlaskTypeProvider extends PyTypeProviderBase {
   public PyType getReferenceType(@NotNull PsiElement referenceTarget, TypeEvalContext context, @Nullable PsiElement anchor) {
     if (referenceTarget instanceof PyTargetExpression) {
       PyTargetExpression target = (PyTargetExpression)referenceTarget;
-      if (target.getContainingFile().getName().equals(FlaskNames.GLOBALS_PY)) {
+      final PsiFile containingFile = target.getContainingFile();
+      if (containingFile != null && containingFile.getName().equals(FlaskNames.GLOBALS_PY)) {
         if (FlaskNames.REQUEST.equals(target.getName())) {
           return getClassType(referenceTarget, FlaskNames.REQUEST_CLASS);
         }
