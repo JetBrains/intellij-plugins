@@ -144,7 +144,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     return Collections.singleton(new File(PathUtilRt.getParentPath(myBC.getActualOutputFilePath())));
   }
 
-  public void writeConfiguration(final PrintWriter out, final BuildRootIndex buildRootIndex) {
+  public void writeConfiguration(final PrintWriter out, BuildDataPaths dataPaths, final BuildRootIndex buildRootIndex) {
     if (myForcedDebugStatus != null) {
       out.println("forced debug status: " + myForcedDebugStatus.booleanValue());
     }
