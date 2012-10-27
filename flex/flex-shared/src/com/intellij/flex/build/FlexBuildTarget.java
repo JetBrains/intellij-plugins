@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.BuildRootDescriptor;
 import org.jetbrains.jps.builders.BuildRootIndex;
 import org.jetbrains.jps.builders.BuildTarget;
+import org.jetbrains.jps.builders.BuildTargetRegistry;
 import org.jetbrains.jps.builders.storage.BuildDataPaths;
 import org.jetbrains.jps.indices.IgnoredFileIndex;
 import org.jetbrains.jps.indices.ModuleExcludeIndex;
@@ -90,7 +91,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     return myId;
   }
 
-  public Collection<BuildTarget<?>> computeDependencies() {
+  public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry) {
     final Collection<BuildTarget<?>> result = new ArrayList<BuildTarget<?>>();
 
     for (JpsFlexDependencyEntry entry : myBC.getDependencies().getEntries()) {
