@@ -20,6 +20,7 @@ import org.jetbrains.jps.builders.BuildRootIndex;
 import org.jetbrains.jps.builders.BuildTarget;
 import org.jetbrains.jps.builders.BuildTargetRegistry;
 import org.jetbrains.jps.builders.storage.BuildDataPaths;
+import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.indices.IgnoredFileIndex;
 import org.jetbrains.jps.indices.ModuleExcludeIndex;
 import org.jetbrains.jps.model.JpsModel;
@@ -140,7 +141,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   }
 
   @NotNull
-  public Collection<File> getOutputDirs(final BuildDataPaths paths) {
+  public Collection<File> getOutputDirs(CompileContext ccontext) {
     return Collections.singleton(new File(PathUtilRt.getParentPath(myBC.getActualOutputFilePath())));
   }
 
