@@ -17,7 +17,8 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
-import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
+import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
+import com.intellij.javascript.debugger.impl.BrowserConnection;
 import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -92,14 +93,17 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     debugBrowserInfo.fixIfChrome(executionResult.getProcessHandler());
 
     File configFile = new File(runConfiguration.getRunSettings().getConfigFile());
-    final DebuggableFileFinder fileFinder = JstdDebuggableFileFinderProvider.createFileFinder(project, configFile);
+    JstdDebuggableFileFinderProvider fileFinderProvider = new JstdDebuggableFileFinderProvider(project, configFile);
+    final RemoteDebuggingFileFinder fileFinder = fileFinderProvider.provideFileFinder();
 
     XDebuggerManager xDebuggerManager = XDebuggerManager.getInstance(project);
     XDebugSession xDebugSession = xDebuggerManager.startSession(this, env, contentToReuse, new XDebugProcessStarter() {
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
         JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
-        debugProcess.getBrowserConnection().queueRequest(new Consumer() {
+        @SuppressWarnings("unchecked")
+        BrowserConnection<Object> browserConnection = debugProcess.getBrowserConnection();
+        browserConnection.queueRequest(new Consumer<Object>() {
           @Override
           public void consume(Object javascriptVm) {
             resumeJstdClientRunning(executionResult.getProcessHandler());
