@@ -7,8 +7,8 @@ import com.intellij.flex.model.bc.OutputType;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
-import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBCConfigurator;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
@@ -28,6 +28,7 @@ import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModel;
 import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
@@ -1496,8 +1497,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
   private void createUIComponents() {
     mySdkCombo = new JdkComboBox(mySkdsModel,
-                                 Conditions.oneOf(FlexSdkType2.getInstance(), FlexmojosSdkType.getInstance()),
-                                 Conditions.<SdkType>is(FlexSdkType2.getInstance()));
+                                 Conditions.<SdkTypeId>oneOf(FlexSdkType2.getInstance(), FlexmojosSdkType.getInstance()),
+                                 Conditions.<SdkTypeId>is(FlexSdkType2.getInstance()));
   }
 
   private void initPopupActions() {
