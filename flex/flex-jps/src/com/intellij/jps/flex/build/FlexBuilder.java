@@ -1,10 +1,7 @@
 package com.intellij.jps.flex.build;
 
-import com.intellij.flex.FlexCommonBundle;
-import com.intellij.flex.build.CompilerConfigGeneratorRt;
 import com.intellij.flex.build.FlexBuildTarget;
 import com.intellij.flex.build.FlexBuildTargetType;
-import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.builders.BuildOutputConsumer;
@@ -14,11 +11,8 @@ import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ProjectBuildException;
 import org.jetbrains.jps.incremental.TargetBuilder;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTarget> {
 
@@ -77,5 +71,5 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     }
 
     return configFiles;
-  }
+  }*/
 }
