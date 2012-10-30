@@ -20,8 +20,10 @@ import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.ide.structureView.xml.XmlStructureViewBuilderProvider;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.xml.DomFileElement;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +72,15 @@ abstract class BaseStructureViewBuilderProvider implements XmlStructureViewBuild
 
       @NotNull
       public StructureView createStructureView(final FileEditor fileEditor, final Project project) {
-        return new StructureViewComponent(fileEditor, createStructureViewModel(), project);
+        final StructureViewModel model = createStructureViewModel();
+        StructureViewComponent view = new StructureViewComponent(fileEditor, model, project);
+        Disposer.register(view, new Disposable() {
+          @Override
+          public void dispose() {
+            model.dispose();
+          }
+        });
+        return view;
       }
 
       @NotNull
