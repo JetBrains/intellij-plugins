@@ -146,7 +146,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   }
 
   @NotNull
-  public Collection<File> getOutputDirs(CompileContext ccontext) {
+  public Collection<File> getOutputRoots(CompileContext ccontext) {
     return Collections.singleton(new File(PathUtilRt.getParentPath(myBC.getActualOutputFilePath())));
   }
 
