@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2012 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,8 @@
 package com.intellij.struts2.freemarker;
 
 import com.intellij.freemarker.psi.files.FtlFileType;
+import com.intellij.javaee.web.WebUtil;
+import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
@@ -23,11 +25,11 @@ import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.struts2.dom.struts.impl.path.FileReferenceSetHelper;
 import com.intellij.struts2.dom.struts.impl.path.StrutsResultContributor;
-import com.intellij.util.containers.ContainerUtil;
 import icons.FreemarkerIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,17 +50,25 @@ public class FreeMarkerStrutsResultContributor extends StrutsResultContributor {
   public boolean createReferences(@NotNull final PsiElement psiElement,
                                   @NotNull final List<PsiReference> references,
                                   final boolean soft) {
-    if (getNamespace(psiElement) == null) {
+    final String namespace = getNamespace(psiElement);
+    if (namespace == null) {
       return false;
     }
 
+
     final FileReferenceSet set = FileReferenceSetHelper.createRestrictedByFileType(psiElement, FtlFileType.INSTANCE);
-    ContainerUtil.addAll(references, set.getAllReferences());
+
+    final WebFacet webFacet = WebUtil.getWebFacet(psiElement);
+    if (webFacet != null) {
+      FileReferenceSetHelper.addWebDirectoryAndCurrentNamespaceAsRoots(psiElement, namespace, webFacet, set);
+    }
+
+    set.setEmptyPathAllowed(false);
+    Collections.addAll(references, set.getAllReferences());
     return true;
   }
 
   public PathReference getPathReference(@NotNull final String path, @NotNull final PsiElement element) {
     return createDefaultPathReference(path, element, FreemarkerIcons.Freemarker_icon);
   }
-
 }
