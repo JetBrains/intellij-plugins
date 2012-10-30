@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
@@ -79,9 +80,9 @@ public class BuiltInFlexCompilerHandler {
   private void startCompilerProcess(final Sdk sdk, final int port, final CompileContext context) throws IOException {
     final StringBuilder classpath = new StringBuilder();
 
-    classpath.append(FlexUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
+    classpath.append(FlexCommonUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
     classpath.append(File.pathSeparatorChar);
-    classpath.append(FlexUtils.getPathToBundledJar("flex-compiler.jar"));
+    classpath.append(FlexCommonUtils.getPathToBundledJar("flex-compiler.jar"));
 
     if (sdk.getSdkType() == FlexSdkType2.getInstance()) {
       classpath.append(File.pathSeparator).append(FileUtil.toSystemDependentName(sdk.getHomePath() + "/lib/flex-compiler-oem.jar"));

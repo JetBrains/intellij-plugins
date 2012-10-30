@@ -13,6 +13,8 @@ import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.flex.FlexCommonBundle;
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.browsers.BrowsersConfiguration;
@@ -459,7 +461,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       throw new CantRunException(FlexBundle.message("module.not.found", params.getModuleName()));
     }
     if (sdk == null) {
-      throw new CantRunException(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), params.getModuleName()));
+      throw new CantRunException(FlexCommonBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), params.getModuleName()));
     }
 
     final GeneralCommandLine commandLine = new GeneralCommandLine();
@@ -487,7 +489,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         params instanceof FlashRunnerParameters ? ((FlashRunnerParameters)params).getAdlOptions() : "";
 
       if (StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") >= 0 &&
-          FlexUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
+          FlexCommonUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
         commandLine.addParameter("-profile");
         commandLine.addParameter("extendedDesktop");
       }
@@ -528,7 +530,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                 ? ((FlashRunnerParameters)params).getEmulatorAdlOptions()
                                 : ((FlexUnitRunnerParameters)params).getEmulatorAdlOptions();
 
-      if (FlexUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
+      if (FlexCommonUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
         commandLine.addParameter("-profile");
         commandLine.addParameter("extendedMobileDevice");
       }
@@ -549,7 +551,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         commandLine.addParameter(emulator.adlAlias);
       }
 
-      if (FlexUtils.getOptionValues(adlOptions, "XscreenDPI").isEmpty()) {
+      if (FlexCommonUtils.getOptionValues(adlOptions, "XscreenDPI").isEmpty()) {
         if (customSize && ((FlashRunnerParameters)params).getScreenDpi() > 0) {
           commandLine.addParameter("-XscreenDPI");
           commandLine.addParameter(String.valueOf(((FlashRunnerParameters)params).getScreenDpi()));
@@ -560,7 +562,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         }
       }
 
-      if (FlexUtils.getOptionValues(adlOptions, "XversionPlatform").isEmpty() && emulator.versionPlatform != null) {
+      if (FlexCommonUtils.getOptionValues(adlOptions, "XversionPlatform").isEmpty() && emulator.versionPlatform != null) {
         commandLine.addParameter("-XversionPlatform");
         commandLine.addParameter(emulator.versionPlatform);
       }

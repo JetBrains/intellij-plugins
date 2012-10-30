@@ -1,13 +1,10 @@
 package com.intellij.lang.javascript.flex;
 
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.io.FilenameFilter;
 
 public class TargetPlayerUtils {
 
@@ -34,7 +31,7 @@ public class TargetPlayerUtils {
    */
   public static String getTargetPlayer(final @Nullable String playerVersionInAnyForm, final String sdkHome) {
     String targetPlayer = null;
-    final String[] targetPlayers = getTargetPlayers(sdkHome);
+    final String[] targetPlayers = FlexCommonUtils.getTargetPlayers(sdkHome);
     if (playerVersionInAnyForm != null) {
       final Pair<String, String> majorMinor = getPlayerMajorMinorVersion(playerVersionInAnyForm);
       if (ArrayUtil.contains(majorMinor.first, targetPlayers)) {
@@ -45,34 +42,6 @@ public class TargetPlayerUtils {
       }
     }
 
-    return targetPlayer != null ? targetPlayer : getMaximumVersion(targetPlayers);
-  }
-
-  public static String getMaximumTargetPlayer(final String sdkHome) {
-    return getMaximumVersion(getTargetPlayers(sdkHome));
-  }
-
-  @NotNull
-  public static String getMaximumVersion(final String[] versions) {
-    String version = versions.length > 0 ? versions[0] : "";
-    for (int i = 1; i < versions.length; i++) {
-      if (StringUtil.compareVersionNumbers(versions[i], version) > 0) {
-        version = versions[i];
-      }
-    }
-    return version;
-  }
-
-  private static String[] getTargetPlayers(final String sdkHome) {
-    final File playerFolder = new File(sdkHome + "/frameworks/libs/player");
-    if (playerFolder.isDirectory()) {
-      return playerFolder.list(new FilenameFilter() {
-        public boolean accept(final File dir, final String name) {
-          return new File(playerFolder, name + "/playerglobal.swc").isFile();
-        }
-      });
-    }
-
-    return ArrayUtil.EMPTY_STRING_ARRAY;
+    return targetPlayer != null ? targetPlayer : FlexCommonUtils.getMaximumVersion(targetPlayers);
   }
 }

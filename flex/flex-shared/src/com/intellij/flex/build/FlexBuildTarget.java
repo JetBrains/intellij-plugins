@@ -92,6 +92,11 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     return myId;
   }
 
+  @NotNull
+  public JpsFlexBuildConfiguration getBC() {
+    return myBC;
+  }
+
   public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry) {
     final Collection<BuildTarget<?>> result = new ArrayList<BuildTarget<?>>();
 

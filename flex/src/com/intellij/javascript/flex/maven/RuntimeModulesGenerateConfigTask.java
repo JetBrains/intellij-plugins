@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.util.Collection;
 
 import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.FILE_SPECS;
-import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.FLEX_CONFIG;
+import static com.intellij.flex.build.FlexCompilerConfigFileUtilBase.FLEX_CONFIG;
 import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.OUTPUT;
-import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.PATH_ELEMENT;
+import static com.intellij.flex.build.FlexCompilerConfigFileUtilBase.PATH_ELEMENT;
 
 public class RuntimeModulesGenerateConfigTask extends MavenProjectsProcessorBasicTask {
 

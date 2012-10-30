@@ -1,11 +1,10 @@
-package com.intellij.lang.javascript.flex.sdk;
+package com.intellij.flex.model.sdk;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.util.PathUtil;
+import com.intellij.util.PathUtilRt;
 import gnu.trove.THashMap;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -24,25 +23,25 @@ public class RslUtil {
   private static final Map<String, Pair<Long, Map<String, List<String>>>> ourConfigFilePathToTimestampAndSwcPathToRslUrls =
     new THashMap<String, Pair<Long, Map<String, List<String>>>>();
 
-  public static boolean canBeRsl(final Sdk sdk, final String swcPath) {
-    final List<String> rslUrls = getRslUrls(sdk, swcPath);
+  public static boolean canBeRsl(final String sdkHome, final String swcPath) {
+    final List<String> rslUrls = getRslUrls(sdkHome, swcPath);
     for (String url : rslUrls) {
       if (url.startsWith("http://") ||
-          new File(sdk.getHomePath() + "/frameworks/rsls/" + url).isFile()) {
+          new File(sdkHome + "/frameworks/rsls/" + url).isFile()) {
         return true;
       }
     }
     return false;
   }
 
-  public static List<String> getRslUrls(final Sdk sdk, final String swcPath) {
-    final Map<String, List<String>> swcPathToRslUrlMap = getSwcPathToRslUrlsMap(sdk);
+  public static List<String> getRslUrls(final String sdkHome, final String swcPath) {
+    final Map<String, List<String>> swcPathToRslUrlMap = getSwcPathToRslUrlsMap(sdkHome);
     final List<String> rslUrls = swcPathToRslUrlMap.get(SystemInfo.isFileSystemCaseSensitive ? swcPath : swcPath.toLowerCase());
     return rslUrls == null ? Collections.<String>emptyList() : rslUrls;
   }
 
-  private synchronized static Map<String, List<String>> getSwcPathToRslUrlsMap(final Sdk sdk) {
-    final String configFilePath = sdk.getHomePath() + "/frameworks/flex-config.xml";
+  private synchronized static Map<String, List<String>> getSwcPathToRslUrlsMap(final String sdkHome) {
+    final String configFilePath = sdkHome + "/frameworks/flex-config.xml";
     final File configFile = new File(configFilePath);
     if (!configFile.isFile()) {
       LOG.warn("File not found: " + configFilePath);
@@ -74,7 +73,7 @@ public class RslUtil {
                 final String rslUrl = rslUrlElement.getTextNormalize();
                 rslUrls.add(rslUrl);
               }
-              final String swcPath = PathUtil.getParentPath(configFilePath) + "/" + swcPathElement.getTextNormalize();
+              final String swcPath = PathUtilRt.getParentPath(configFilePath) + "/" + swcPathElement.getTextNormalize();
               swcPathToRslMap.put(SystemInfo.isFileSystemCaseSensitive ? swcPath : swcPath.toLowerCase(), rslUrls);
             }
           }

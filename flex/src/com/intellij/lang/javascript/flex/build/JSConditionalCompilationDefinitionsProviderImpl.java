@@ -2,6 +2,8 @@ package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.execution.configurations.CommandLineTokenizer;
+import com.intellij.flex.FlexCommonUtils;
+import com.intellij.flex.build.FlexCompilerConfigFileUtilBase;
 import com.intellij.lang.javascript.JSConditionalCompilationDefinitionsProvider;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -30,7 +32,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.*;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.DEFINE;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.NAME;
+import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.VALUE;
 
 public class JSConditionalCompilationDefinitionsProviderImpl implements JSConditionalCompilationDefinitionsProvider {
 
@@ -138,9 +142,9 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
         final Collection<Pair<String, String>> result = new ArrayList<Pair<String, String>>();
 
         final Element rootElement = document.getRootElement();
-        if (rootElement.getName().equals(FLEX_CONFIG)) {
+        if (rootElement.getName().equals(FlexCompilerConfigFileUtilBase.FLEX_CONFIG)) {
           // noinspection unchecked
-          for (Element compilerElement : ((Iterable<Element>)rootElement.getChildren(COMPILER, rootElement.getNamespace()))) {
+          for (Element compilerElement : ((Iterable<Element>)rootElement.getChildren(FlexCompilerConfigFileUtilBase.COMPILER, rootElement.getNamespace()))) {
             // noinspection unchecked
             for (Element defineElement : ((Iterable<Element>)compilerElement.getChildren(DEFINE, rootElement.getNamespace()))) {
               final String name = defineElement.getChildText(NAME, rootElement.getNamespace());
@@ -185,7 +189,7 @@ public class JSConditionalCompilationDefinitionsProviderImpl implements JSCondit
           final String name = stringTokenizer.peekNextToken();
           stringTokenizer.nextToken(); // advance tokenizer position
           final String value = stringTokenizer.peekNextToken();
-          if (FlexUtils.canBeCompilerOptionValue(value)) {
+          if (FlexCommonUtils.canBeCompilerOptionValue(value)) {
             stringTokenizer.nextToken(); // advance tokenizer position
             if (!processor.process(Pair.create(name, value))) return false;
           }

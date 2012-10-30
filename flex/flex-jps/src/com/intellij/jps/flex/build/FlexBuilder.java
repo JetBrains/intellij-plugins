@@ -1,7 +1,10 @@
 package com.intellij.jps.flex.build;
 
+import com.intellij.flex.FlexCommonBundle;
+import com.intellij.flex.build.CompilerConfigGeneratorRt;
 import com.intellij.flex.build.FlexBuildTarget;
 import com.intellij.flex.build.FlexBuildTargetType;
+import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.builders.BuildOutputConsumer;
@@ -11,8 +14,11 @@ import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ProjectBuildException;
 import org.jetbrains.jps.incremental.TargetBuilder;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTarget> {
 
@@ -57,19 +63,19 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
 
   private static List<File> createConfigFiles(final JpsFlexBuildConfiguration bc) throws IOException {
     final ArrayList<File> configFiles = new ArrayList<File>(2);
-    //configFiles.add(CompilerConfigGenerator.getOrCreateConfigFile(bc));
+    configFiles.add(CompilerConfigGeneratorRt.getOrCreateConfigFile(bc));
 
     final String additionalConfigFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
     if (!bc.isTempBCForCompilation() && !additionalConfigFilePath.isEmpty()) {
-      final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
-      if (additionalConfigFile == null) {
+      final File additionalConfigFile = new File(additionalConfigFilePath);
+      if (!additionalConfigFile.isFile()) {
         throw new IOException(
-          FlexBundle.message("additional.config.file.not.found.for.bc.0.of.module.1", additionalConfigFilePath, bc.getName(),
-                             myModule.getName()));
+          FlexCommonBundle.message("additional.config.file.not.found.for.bc.0.of.module.1", additionalConfigFilePath, bc.getName(),
+                                   bc.getModule().getName()));
       }
       configFiles.add(additionalConfigFile);
     }
 
     return configFiles;
-  }*/
+  }
 }

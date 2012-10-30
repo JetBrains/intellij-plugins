@@ -4,6 +4,7 @@ import com.intellij.ProjectTopics;
 import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -70,7 +71,6 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
   private boolean mySavingConfigOurselves;
   private boolean myRequestedQuit;
 
-  static final String LOCALE_TOKEN = "{locale}";
   public static Key<FlexBuildConfiguration> OVERRIDE_BUILD_CONFIG = Key.create("OVERRIDE_FLEX_BUILD_CONFIG");
   private ActiveBuildConfigurationWidget myWidget;
 
@@ -541,9 +541,9 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     if (!processIsAlive() || myRequestedQuit) {
       final StringBuilder classpath = new StringBuilder();
 
-      classpath.append(FlexUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
+      classpath.append(FlexCommonUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
       classpath.append(File.pathSeparatorChar);
-      classpath.append(FlexUtils.getPathToBundledJar("idea-fcsh-fix.jar"));
+      classpath.append(FlexCommonUtils.getPathToBundledJar("idea-fcsh-fix.jar"));
 
       if (!(flexSdk.getSdkType() instanceof FlexmojosSdkType)) {
         classpath.append(File.pathSeparator).append(FileUtil.toSystemDependentName(flexSdk.getHomePath() + "/lib/fcsh.jar"));

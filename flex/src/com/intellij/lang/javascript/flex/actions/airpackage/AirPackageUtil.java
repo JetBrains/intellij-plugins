@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
@@ -45,7 +46,7 @@ public class AirPackageUtil {
   }
 
   public static String getTempKeystorePath() {
-    return FlexUtils.getPathToBundledJar("temp_keystore.p12");
+    return FlexCommonUtils.getPathToBundledJar("temp_keystore.p12");
   }
 
   @Nullable
@@ -471,7 +472,7 @@ public class AirPackageUtil {
           command.add("-sampler");
         }
 
-        final List<String> optionValues = FlexUtils.getOptionValues(adtOptions, "hideAneLibSymbols");
+        final List<String> optionValues = FlexCommonUtils.getOptionValues(adtOptions, "hideAneLibSymbols");
         if (!optionValues.isEmpty()) {
           command.add("-hideAneLibSymbols");
           command.add(optionValues.get(0)); // has one parameter: "yes" or "no"

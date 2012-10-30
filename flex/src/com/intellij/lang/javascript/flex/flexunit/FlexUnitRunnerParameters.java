@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -233,7 +234,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     final Sdk sdk = bc.getSdk();
     if (sdk == null) {
       throw new RuntimeConfigurationError(
-        FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleAndBC.first.getName()));
+        FlexCommonBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleAndBC.first.getName()));
     }
 
     switch (bc.getTargetPlatform()) {

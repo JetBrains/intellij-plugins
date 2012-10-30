@@ -65,7 +65,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil.PATH_ELEMENT;
+import static com.intellij.flex.build.FlexCompilerConfigFileUtilBase.PATH_ELEMENT;
 import static com.intellij.patterns.XmlPatterns.*;
 
 /**

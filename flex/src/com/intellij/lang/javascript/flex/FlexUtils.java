@@ -1,10 +1,10 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.application.options.PathMacrosImpl;
-import com.intellij.execution.configurations.CommandLineTokenizer;
+import com.intellij.flex.FlexCommonUtils;
+import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.TargetPlatform;
-import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.DependencyType;
@@ -16,7 +16,6 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.PathMacros;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.Module;
@@ -280,10 +279,6 @@ public class FlexUtils {
            : (baseDir == null ? "" : baseDir.getPath());
   }
 
-  public static VirtualFile getFlexCompilerWorkDir(final Project project, final @Nullable Sdk flexSdk) {
-    return LocalFileSystem.getInstance().findFileByPath(getFlexCompilerWorkDirPath(project, flexSdk));
-  }
-
   public static String getTempFlexConfigsDirPath() {
     return FileUtil.toSystemIndependentName(FileUtil.getTempDirectory()) + "/" +
            ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_');
@@ -417,48 +412,6 @@ public class FlexUtils {
     return builder.toString();
   }
 
-  public static String getPathToBundledJar(String filename) {
-    final URL url = FlexUtils.class.getResource("");
-    String folder;
-    if ("jar".equals(url.getProtocol())) {
-      // running from build
-      folder = "/plugins/flex/lib/";
-    }
-    else {
-      // running from sources
-      folder = "/flex/lib/";
-    }
-    return FileUtil.toSystemDependentName(PathManager.getHomePath() + folder + filename);
-  }
-
-  public static List<String> getOptionValues(final String commandLine, final String... optionAndAliases) {
-    if (StringUtil.isEmpty(commandLine)) {
-      return Collections.emptyList();
-    }
-
-    final List<String> result = new LinkedList<String>();
-
-    for (CommandLineTokenizer tokenizer = new CommandLineTokenizer(commandLine); tokenizer.hasMoreTokens(); ) {
-      final String token = tokenizer.nextToken();
-      for (String option : optionAndAliases) {
-        if (token.startsWith("-" + option + "=") || token.startsWith("-" + option + "+=")) {
-          result.addAll(StringUtil.split(token.substring(token.indexOf("=") + 1), ","));
-        }
-        else if (token.equals("-" + option) && tokenizer.countTokens() > 0) {
-          if (tokenizer.countTokens() > 0) {
-            String nextToken;
-            while (tokenizer.hasMoreTokens() && canBeCompilerOptionValue(nextToken = tokenizer.peekNextToken())) {
-              tokenizer.nextToken(); // advance tokenizer position
-              result.add(nextToken);
-            }
-          }
-        }
-      }
-    }
-
-    return result;
-  }
-
   public static String removeOptions(final String commandLine, final String... optionsToRemove) {
     if (commandLine.isEmpty()) return commandLine;
 
@@ -479,7 +432,7 @@ public class FlexUtils {
 
         WHILE: while (tokenizer.hasMoreElements()) {
           nextToken = tokenizer.nextToken();
-          if (StringUtil.isEmptyOrSpaces(nextToken) || canBeCompilerOptionValue(nextToken)) {
+          if (StringUtil.isEmptyOrSpaces(nextToken) || FlexCommonUtils.canBeCompilerOptionValue(nextToken)) {
             continue;
           }
 
@@ -492,7 +445,7 @@ public class FlexUtils {
           break;
         }
 
-        if (nextToken != null && !canBeCompilerOptionValue(nextToken)) {
+        if (nextToken != null && !FlexCommonUtils.canBeCompilerOptionValue(nextToken)) {
           buf.append(nextToken);
         }
       }
@@ -502,13 +455,6 @@ public class FlexUtils {
     }
 
     return buf.toString();
-  }
-
-  public static boolean canBeCompilerOptionValue(final String text) {
-    if (text.startsWith("-")) {  // option or negative number
-      return text.length() > 1 && Character.isDigit(text.charAt(1));
-    }
-    return !text.startsWith("+");
   }
 
   public static <T> boolean equalLists(final List<T> list1, final List<T> list2) {

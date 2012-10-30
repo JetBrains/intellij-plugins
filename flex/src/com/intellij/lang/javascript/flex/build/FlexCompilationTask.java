@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
-import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.flex.FlexCommonBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -65,8 +65,8 @@ public abstract class FlexCompilationTask {
       final VirtualFile additionalConfigFile = LocalFileSystem.getInstance().findFileByPath(additionalConfigFilePath);
       if (additionalConfigFile == null) {
         throw new IOException(
-          FlexBundle.message("additional.config.file.not.found.for.bc.0.of.module.1", additionalConfigFilePath, myBC.getName(),
-                             myModule.getName()));
+          FlexCommonBundle.message("additional.config.file.not.found.for.bc.0.of.module.1", additionalConfigFilePath, myBC.getName(),
+                                   myModule.getName()));
       }
       configFiles.add(additionalConfigFile);
     }

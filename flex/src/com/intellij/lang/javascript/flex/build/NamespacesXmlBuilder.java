@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.flex.build.FlexCompilerConfigFileUtilBase;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.xml.NanoXmlUtil;
 
@@ -11,10 +12,10 @@ import static com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil
 
 public class NamespacesXmlBuilder extends NanoXmlUtil.BaseXmlBuilder {
 
-  private static final String INCLUDE_NAMESPACES_URI_LOCATION = NanoXmlUtil.createLocation(FLEX_CONFIG, INCLUDE_NAMESPACES, URI);
-  private static final String NAMESPACE_LOCATION = NanoXmlUtil.createLocation(FLEX_CONFIG, COMPILER, NAMESPACES, NAMESPACE);
-  private static final String NAMESPACE_URI_LOCATION = NanoXmlUtil.createLocation(FLEX_CONFIG, COMPILER, NAMESPACES, NAMESPACE, URI);
-  private static final String MANIFEST_LOCATION = NanoXmlUtil.createLocation(FLEX_CONFIG, COMPILER, NAMESPACES, NAMESPACE, MANIFEST);
+  private static final String INCLUDE_NAMESPACES_URI_LOCATION = NanoXmlUtil.createLocation(FlexCompilerConfigFileUtilBase.FLEX_CONFIG, INCLUDE_NAMESPACES, URI);
+  private static final String NAMESPACE_LOCATION = NanoXmlUtil.createLocation(FlexCompilerConfigFileUtilBase.FLEX_CONFIG, FlexCompilerConfigFileUtilBase.COMPILER, NAMESPACES, NAMESPACE);
+  private static final String NAMESPACE_URI_LOCATION = NanoXmlUtil.createLocation(FlexCompilerConfigFileUtilBase.FLEX_CONFIG, FlexCompilerConfigFileUtilBase.COMPILER, NAMESPACES, NAMESPACE, URI);
+  private static final String MANIFEST_LOCATION = NanoXmlUtil.createLocation(FlexCompilerConfigFileUtilBase.FLEX_CONFIG, FlexCompilerConfigFileUtilBase.COMPILER, NAMESPACES, NAMESPACE, MANIFEST);
 
   private Collection<String> myIncludedNamespaces = new ArrayList<String>();
   private Collection<Pair<String, String>> myNamespacesAndManifests = new ArrayList<Pair<String, String>>();

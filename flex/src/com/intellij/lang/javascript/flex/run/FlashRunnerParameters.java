@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.ide.BrowserUtil;
@@ -396,7 +397,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     final Sdk sdk = bc.getSdk();
     if (sdk == null) {
       throw new RuntimeConfigurationError(
-        FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleAndBC.first.getName()));
+        FlexCommonBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), moduleAndBC.first.getName()));
     }
 
     if (myOverrideMainClass) {

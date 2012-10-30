@@ -6,6 +6,7 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.ShowFilePathAction;
@@ -303,12 +304,12 @@ public class FlexDebugProcess extends XDebugProcess {
     String classpath = myDebuggerSdkHome + "/lib/fdb.jar";
 
     if (isDebuggerFromSdk3()) {
-      classpath = FlexUtils.getPathToBundledJar("idea-fdb-3-fix.jar") + File.pathSeparator + classpath;
+      classpath = FlexCommonUtils.getPathToBundledJar("idea-fdb-3-fix.jar") + File.pathSeparator + classpath;
     }
     else if (isDebuggerFromSdk4()) {
       if (StringUtil.compareVersionNumbers(myDebuggerVersion, "4.0") >= 0 &&
           StringUtil.compareVersionNumbers(myDebuggerVersion, "4.1.1") < 0) {
-        classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.0.0.14159-fix.jar") + File.pathSeparator + classpath;
+        classpath = FlexCommonUtils.getPathToBundledJar("idea-fdb-4.0.0.14159-fix.jar") + File.pathSeparator + classpath;
       }
       else if (myDebuggerVersion.startsWith("4.6.b")
                ||
@@ -317,7 +318,7 @@ public class FlexDebugProcess extends XDebugProcess {
                ||
                (StringUtil.compareVersionNumbers(myDebuggerVersion, "4.8") >= 0 &&
                 StringUtil.compareVersionNumbers(myDebuggerVersion, "4.8.1") < 0)) {
-        classpath = FlexUtils.getPathToBundledJar("idea-fdb-4.5.0.20967-fix.jar") + File.pathSeparator + classpath;
+        classpath = FlexCommonUtils.getPathToBundledJar("idea-fdb-4.5.0.20967-fix.jar") + File.pathSeparator + classpath;
       }
     }
     return classpath;

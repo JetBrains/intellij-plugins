@@ -30,7 +30,12 @@ public class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompositeEle
     return new JpsFlexProjectLevelCompilerOptionsExtension(this);
   }
 
-  public JpsFlexModuleOrProjectCompilerOptions getProjectLevelCompilerOptions() {
+  public static JpsFlexModuleOrProjectCompilerOptions getProjectLevelCompilerOptions(final JpsProject project) {
+    final JpsFlexProjectLevelCompilerOptionsExtension flexProjectLevelCompilerOptionsExtension = project.getContainer().getChild(ROLE);
+    return flexProjectLevelCompilerOptionsExtension.getProjectLevelCompilerOptions();
+  }
+
+  private JpsFlexModuleOrProjectCompilerOptions getProjectLevelCompilerOptions() {
     return myContainer.getChild(JpsFlexCompilerOptionsRole.INSTANCE);
   }
 

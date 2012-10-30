@@ -10,7 +10,7 @@ import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
 import org.jetbrains.jps.model.ex.JpsElementCollectionRole;
 import org.jetbrains.jps.model.ex.JpsNamedCompositeElementBase;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
-import org.jetbrains.jps.model.module.JpsModule;
+import org.jetbrains.jps.model.module.JpsTypedModule;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -23,9 +23,6 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
 
   private static final JpsElementChildRoleBase<JpsFlexBuildConfiguration> ROLE = JpsElementChildRoleBase.create("flex build configuration");
   static final JpsElementCollectionRole<JpsFlexBuildConfiguration> COLLECTION_ROLE = JpsElementCollectionRole.create(ROLE);
-
-  static final String LIST_ENTRIES_SEPARATOR = "\n";
-  static final String LIST_ENTRY_PARTS_SEPARATOR = "\t";
 
   //private @NotNull String myName = UNNAMED;
   private @NotNull TargetPlatform myTargetPlatform = BuildConfigurationNature.DEFAULT.targetPlatform;
@@ -93,8 +90,9 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
 
 // -----------------------------------------
 
-  public JpsModule getModule() {
-    return (JpsModule)myParent.getParent().getParent();
+  public JpsTypedModule<JpsFlexBuildConfigurationManager> getModule() {
+    assert !myTempBCForCompilation : getName();
+    return (JpsTypedModule<JpsFlexBuildConfigurationManager>)myParent.getParent().getParent();
   }
 
   @NotNull
@@ -160,10 +158,10 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   public Collection<RLMInfo> getRLMs() {
     if (myRLMs.isEmpty()) return Collections.emptyList();
 
-    final List<String> entries = StringUtil.split(myRLMs, /*CompilerOptionInfo.*/LIST_ENTRIES_SEPARATOR);
+    final List<String> entries = StringUtil.split(myRLMs, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
     final ArrayList<RLMInfo> result = new ArrayList<RLMInfo>(entries.size());
     for (String entry : entries) {
-      final List<String> parts = StringUtil.split(entry, /*CompilerOptionInfo.*/LIST_ENTRY_PARTS_SEPARATOR, true, false);
+      final List<String> parts = StringUtil.split(entry, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false);
       assert parts.size() == 3 : entry;
       result.add(new RLMInfo(parts.get(0), parts.get(1), Boolean.valueOf(parts.get(2))));
     }
@@ -174,7 +172,7 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   @NotNull
   public Collection<String> getCssFilesToCompile() {
     if (myCssFilesToCompile.isEmpty()) return Collections.emptyList();
-    return StringUtil.split(myCssFilesToCompile, /*CompilerOptionInfo.*/LIST_ENTRIES_SEPARATOR);
+    return StringUtil.split(myCssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 
   @Override
@@ -337,17 +335,17 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     myRLMs = StringUtil.join(rlms, new Function<RLMInfo, String>() {
       public String fun(final RLMInfo info) {
         return info.MAIN_CLASS +
-               CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
+               JpsCompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
                info.OUTPUT_FILE +
-               CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
+               JpsCompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
                info.OPTIMIZE;
       }
-    }, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+    }, JpsCompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 
   @Override
   public void setCssFilesToCompile(@NotNull Collection<String> cssFilesToCompile) {
-    myCssFilesToCompile = cssFilesToCompile.isEmpty() ? "" : StringUtil.join(cssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+    myCssFilesToCompile = cssFilesToCompile.isEmpty() ? "" : StringUtil.join(cssFilesToCompile, JpsCompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 
   @Override
@@ -465,13 +463,13 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
   /*
   static String collapsePaths(final @Nullable ComponentManager componentManager, final String value) {
     if (componentManager == null) return value;
-    if (!value.contains(CompilerOptionInfo.LIST_ENTRIES_SEPARATOR) && !value.contains(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)) {
+    if (!value.contains(JpsCompilerOptionInfo.LIST_ENTRIES_SEPARATOR) && !value.contains(JpsCompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR)) {
       return value;
     }
 
     final StringBuilder result = new StringBuilder();
     final PathMacroManager pathMacroManager = PathMacroManager.getInstance(componentManager);
-    final String delimiters = CompilerOptionInfo.LIST_ENTRIES_SEPARATOR + CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR;
+    final String delimiters = JpsCompilerOptionInfo.LIST_ENTRIES_SEPARATOR + JpsCompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR;
     for (StringTokenizer tokenizer = new StringTokenizer(value, delimiters, true); tokenizer.hasMoreTokens(); ) {
       String token = tokenizer.nextToken();
       if (token.length() > 1) {

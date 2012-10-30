@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
@@ -43,7 +44,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
@@ -744,7 +744,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
             FlexBundle.message("bc.dependency.does.not.exist", bcEntry.getBcName(), bcEntry.getModuleName(), bc.getName(), moduleName));
         }
 
-        if (!checkDependencyType(bc, dependencyBC, linkageType)) {
+        if (!FlexCommonUtils.checkDependencyType(bc.getOutputType(), dependencyBC.getOutputType(), linkageType)) {
           throw new ConfigurationException(
             FlexBundle.message("bc.dependency.problem",
                                bc.getName(), moduleName, bc.getOutputType().getPresentableText(),
@@ -895,29 +895,6 @@ public class FlexCompiler implements SourceProcessingCompiler {
         }
       }
     }
-  }
-
-  public static boolean checkDependencyType(final FlexBuildConfiguration bc,
-                                            final FlexBuildConfiguration dependencyBC,
-                                            final LinkageType linkageType) {
-    final boolean ok;
-
-    switch (dependencyBC.getOutputType()) {
-      case Application:
-        ok = false;
-        break;
-      case RuntimeLoadedModule:
-        ok = bc.getOutputType() == OutputType.Application && linkageType == LinkageType.LoadInRuntime;
-        break;
-      case Library:
-        ok = ArrayUtil.contains(linkageType, LinkageType.getSwcLinkageValues());
-        break;
-      default:
-        assert false;
-        ok = false;
-    }
-
-    return ok;
   }
 
   public ValidityState createValidityState(final DataInput in) throws IOException {

@@ -1,16 +1,15 @@
 package com.intellij.lang.javascript.flex.projectStructure.options;
 
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.*;
+import com.intellij.flex.model.sdk.RslUtil;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
-import com.intellij.lang.javascript.flex.projectStructure.*;
-import com.intellij.flex.model.bc.CompilerOptionInfo;
+import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
-import com.intellij.lang.javascript.flex.sdk.RslUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.application.ApplicationManager;
@@ -110,203 +109,17 @@ public class BCUtils {
                : FLEX_WEB_OR_DESKTOP_APP_LINKAGES;
   }
 
-  public static LinkageType getDefaultFrameworkLinkage(final String sdkVersion,
-                                                       final BuildConfigurationNature nature) {
-    return nature.isLib()
-           ? LinkageType.External
-           : nature.pureAS || !nature.isWebPlatform()
-             ? LinkageType.Merged
-             : StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 && StringUtil.compareVersionNumbers(sdkVersion, "4.8") < 0
-               ? LinkageType.RSL
-               : LinkageType.Merged; // Flex 3 or Apache Flex
-  }
-
   /**
-   * If <code>LinkageType.Default</code> is returned then use {@link #getDefaultFrameworkLinkage(String, BuildConfigurationNature)} to get real value.
+   * If <code>LinkageType.Default</code> is returned then use {@link FlexCommonUtils#getDefaultFrameworkLinkage(String, BuildConfigurationNature)} to get real value.
    *
    * @return <code>null</code> if entry should not be included at all
    */
   @Nullable
   public static LinkageType getSdkEntryLinkageType(String swcPath, FlexBuildConfiguration bc) {
-    return getSdkEntryLinkageType(bc.getSdk(), swcPath, bc.getNature(), bc.getDependencies().getTargetPlayer(),
-                                  bc.getDependencies().getComponentSet());
-  }
-
-  /**
-   * If <code>LinkageType.Default</code> is returned then use {@link #getDefaultFrameworkLinkage(String, BuildConfigurationNature)} to get real value.
-   *
-   * @return <code>null</code> if entry should not be included at all
-   */
-  @Nullable
-  public static LinkageType getSdkEntryLinkageType(final Sdk sdk,
-                                                   final String swcPath,
-                                                   final BuildConfigurationNature bcNature,
-                                                   final String targetPlayer,
-                                                   final ComponentSet componentSet) {
-    LOG.assertTrue(!swcPath.endsWith(JarFileSystem.JAR_SEPARATOR), "plain local filesystem path is expected");
-
-    if (swcPath.endsWith("/frameworks/libs/air/airglobal.swc")) {
-      return bcNature.isWebPlatform() ? null : LinkageType.External;
-    }
-
-    if (swcPath.endsWith("/playerglobal.swc") && swcPath.contains("/frameworks/libs/player/")) {
-      if (swcPath.endsWith("/frameworks/libs/player/" + targetPlayer + "/playerglobal.swc")) {
-        return bcNature.isWebPlatform() ? LinkageType.External : null;
-      }
-      return null;
-    }
-
-    final boolean swcIncluded;
-
-    final int lastSlashIndex = swcPath.lastIndexOf('/');
-    if (lastSlashIndex <= 0 || lastSlashIndex == swcPath.length() - 1) {
-      LOG.error("Unexpected Flex SDK root: " + swcPath);
-    }
-    final String swcName = swcPath.substring(lastSlashIndex + 1);
-    final String folderPath = swcPath.substring(0, lastSlashIndex);
-
-    if (folderPath.endsWith("/frameworks/libs")) {
-      swcIncluded = isSwcFromLibsFolderIncluded(bcNature, componentSet, swcName);
-    }
-    else if (folderPath.endsWith("/frameworks/libs/air")) {
-      swcIncluded = isSwcFromAirFolderIncluded(bcNature, componentSet, swcName);
-    }
-    else if (folderPath.endsWith("/frameworks/libs/mobile")) {
-      swcIncluded = isSwcFromMobileFolderIncluded(bcNature, swcName);
-    }
-    else if (folderPath.endsWith("/frameworks/libs/mx")) {
-      swcIncluded = isSwcFromMxFolderIncluded(bcNature, componentSet, swcName);
-    }
-    else if (folderPath.contains("/frameworks/themes/")) {
-      swcIncluded = false;
-    }
-    else {
-      if (!ApplicationManager.getApplication().isUnitTestMode()) {
-        LOG.warn("Unknown Flex SDK root: " + swcPath);
-      }
-      swcIncluded = true;
-    }
-
-    if (!swcIncluded) return null;
-
-    // our difference from FB is that in case of library _ALL_ SWCs from SDK are external by default (except *global.swc)
-    if (bcNature.isLib()) return LinkageType.Default;
-
-    return RslUtil.canBeRsl(sdk, swcPath) ? LinkageType.Default : LinkageType.Merged;
-  }
-
-  private static boolean isSwcFromLibsFolderIncluded(final BuildConfigurationNature bcNature,
-                                                     final ComponentSet componentSet,
-                                                     final String swcName) {
-    if (swcName.equals("advancedgrids.swc")) {
-      return !(bcNature.isMobilePlatform() || bcNature.pureAS || componentSet == ComponentSet.SparkOnly);
-    }
-
-    if (swcName.equals("authoringsupport.swc")) {
-      return true;
-    }
-
-    if (swcName.equals("charts.swc")) {
-      return !bcNature.pureAS;
-    }
-
-    if (swcName.equals("core.swc")) {
-      return bcNature.pureAS;
-    }
-
-    if (swcName.equals("datavisualization.swc")) {
-      return !bcNature.pureAS;
-    }
-
-    if (swcName.endsWith("flash-integration.swc")) {
-      return !bcNature.pureAS;
-    }
-
-    if (swcName.equals("flex.swc")) {
-      return bcNature.pureAS;
-    }
-
-    if (swcName.endsWith("framework.swc")) {
-      return !bcNature.pureAS;
-    }
-
-    if (swcName.endsWith("osmf.swc")) {
-      return true;
-    }
-
-    if (swcName.endsWith("rpc.swc")) {
-      return !bcNature.pureAS;
-    }
-
-    if (swcName.endsWith("spark.swc")) {
-      return !bcNature.pureAS && (bcNature.isMobilePlatform() || componentSet != ComponentSet.MxOnly);
-    }
-
-    if (swcName.endsWith("spark_dmv.swc")) {
-      return !bcNature.pureAS && !bcNature.isMobilePlatform() && componentSet == ComponentSet.SparkAndMx;
-    }
-
-    if (swcName.endsWith("sparkskins.swc")) {
-      return !bcNature.pureAS && !bcNature.isMobilePlatform() && componentSet != ComponentSet.MxOnly;
-    }
-
-    if (swcName.endsWith("textLayout.swc")) {
-      return true;
-    }
-
-    if (swcName.endsWith("utilities.swc")) {
-      return true;
-    }
-
-    if (swcName.equals("automation.swc") ||
-        swcName.equals("automation_agent.swc") ||
-        swcName.equals("automation_dmv.swc") ||
-        swcName.equals("automation_flashflexkit.swc") ||
-        swcName.equals("qtp.swc")) {
-      // additionally installed on top of Flex SDK 3.x
-      return true;
-    }
-
-    LOG.warn("Unknown SWC in '<Flex SDK>/frameworks/libs' folder: " + swcName);
-    return true;
-  }
-
-  private static boolean isSwcFromAirFolderIncluded(final BuildConfigurationNature bcNature,
-                                                    final ComponentSet componentSet,
-                                                    final String swcName) {
-    if (bcNature.isMobilePlatform()) {
-      return swcName.equals("servicemonitor.swc");
-    }
-
-    if (bcNature.isDesktopPlatform()) {
-      if (swcName.equals("airframework.swc")) {
-        return !bcNature.pureAS;
-      }
-
-      if (swcName.equals("airspark.swc")) {
-        return !bcNature.pureAS && componentSet != ComponentSet.MxOnly;
-      }
-
-      return true;
-    }
-
-    return false;
-  }
-
-  private static boolean isSwcFromMobileFolderIncluded(final BuildConfigurationNature bcNature, final String swcName) {
-    if (!swcName.equals("mobilecomponents.swc")) {
-      LOG.warn("Unknown SWC in '<Flex SDK>/frameworks/libs/mobile' folder: " + swcName);
-    }
-    return !bcNature.pureAS && bcNature.isMobilePlatform();
-  }
-
-  private static boolean isSwcFromMxFolderIncluded(final BuildConfigurationNature bcNature,
-                                                   final ComponentSet componentSet,
-                                                   final String swcName) {
-    if (!swcName.equals("mx.swc")) {
-      LOG.warn("Unknown SWC in '<Flex SDK>/frameworks/libs/mx' folder: " + swcName);
-    }
-    return !bcNature.isMobilePlatform() && !bcNature.pureAS && componentSet != ComponentSet.SparkOnly;
+    final Sdk sdk = bc.getSdk();
+    LOG.assertTrue(sdk != null);
+    return FlexCommonUtils.getSdkEntryLinkageType(sdk.getHomePath(), swcPath, bc.getNature(), bc.getDependencies().getTargetPlayer(),
+                                                  bc.getDependencies().getComponentSet());
   }
 
   public static boolean isApplicable(final BuildConfigurationNature dependantNature,
@@ -368,7 +181,7 @@ public class BCUtils {
           targetPlayerCombo.setSelectedItem(selectedItem);
         }
         else {
-          targetPlayerCombo.setSelectedItem(TargetPlayerUtils.getMaximumVersion(availablePlayersArray));
+          targetPlayerCombo.setSelectedItem(FlexCommonUtils.getMaximumVersion(availablePlayersArray));
         }
       }
     }

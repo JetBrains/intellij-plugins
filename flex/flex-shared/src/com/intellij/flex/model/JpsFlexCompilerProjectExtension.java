@@ -53,7 +53,7 @@ public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompi
     VM_OPTIONS = modified.VM_OPTIONS;
   }
 
-  public static JpsProjectExtensionSerializer createProjectExtensionSerializer() {
+  static JpsProjectExtensionSerializer createProjectExtensionSerializer() {
     return new JpsProjectExtensionSerializer("flexCompiler.xml", "FlexCompilerConfiguration") {
       public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         final JpsFlexCompilerProjectExtension deserialized = XmlSerializer.deserialize(componentTag, JpsFlexCompilerProjectExtension.class);

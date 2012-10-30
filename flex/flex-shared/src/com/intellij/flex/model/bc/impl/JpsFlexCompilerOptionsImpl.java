@@ -1,5 +1,6 @@
 package com.intellij.flex.model.bc.impl;
 
+import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
@@ -69,7 +70,7 @@ public class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOp
   @NotNull
   public Collection<String> getFilesToIncludeInSWC() {
     if (myFilesToIncludeInSWC.isEmpty()) return Collections.emptyList();
-    return StringUtil.split(myFilesToIncludeInSWC, JpsFlexBuildConfigurationImpl.LIST_ENTRIES_SEPARATOR);
+    return StringUtil.split(myFilesToIncludeInSWC, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 
   @NotNull

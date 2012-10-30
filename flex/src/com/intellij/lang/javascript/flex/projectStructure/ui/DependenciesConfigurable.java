@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.ComponentSet;
 import com.intellij.flex.model.bc.LinkageType;
@@ -785,7 +786,8 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
             final String sdkVersion = sdk != null ? sdk.getVersionString() : null;
             setText(sdkVersion == null
                     ? "Default"
-                    : MessageFormat.format("Default ({0})", BCUtils.getDefaultFrameworkLinkage(sdkVersion, myNature).getLongText()));
+                    : MessageFormat
+                      .format("Default ({0})", FlexCommonUtils.getDefaultFrameworkLinkage(sdkVersion, myNature).getLongText()));
           }
           else {
             setText(value.getLongText());
@@ -1473,7 +1475,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     for (String url : sdk.getRootProvider().getUrls(OrderRootType.CLASSES)) {
       final String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(url, JarFileSystem.JAR_SEPARATOR));
-      LinkageType linkageType = BCUtils.getSdkEntryLinkageType(sdk, swcPath, myNature, targetPlayer, componentSet);
+      LinkageType linkageType = FlexCommonUtils.getSdkEntryLinkageType(sdk.getHomePath(), swcPath, myNature, targetPlayer, componentSet);
       if (linkageType == null) {
         // this swc is not applicable
         continue;
@@ -1482,7 +1484,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       if (linkageType == LinkageType.Default) {
         linkageType = (LinkageType)myFrameworkLinkageCombo.getSelectedItem();
         if (linkageType == LinkageType.Default) {
-          linkageType = BCUtils.getDefaultFrameworkLinkage(sdk.getVersionString(), myNature);
+          linkageType = FlexCommonUtils.getDefaultFrameworkLinkage(sdk.getVersionString(), myNature);
         }
       }
 

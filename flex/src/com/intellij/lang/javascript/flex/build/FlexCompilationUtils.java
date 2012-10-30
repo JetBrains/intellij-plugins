@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.impl.CompilerUtil;
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -148,7 +149,7 @@ public class FlexCompilationUtils {
                              ? (FlexSdkUtils.isFlex4Sdk(flexSdk) ? "flex2.tools.Mxmlc" : "flex2.tools.Compiler")
                              : "flex2.tools.Compc";
 
-    String additionalClasspath = FileUtil.toSystemDependentName(FlexUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
+    String additionalClasspath = FileUtil.toSystemDependentName(FlexCommonUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
 
     if (!(flexSdk.getSdkType() instanceof FlexmojosSdkType)) {
       additionalClasspath += File.pathSeparator + FileUtil.toSystemDependentName(flexSdk.getHomePath() + "/lib/compc.jar");
@@ -236,7 +237,7 @@ public class FlexCompilationUtils {
 
     LinkageType linkage = bc.getDependencies().getFrameworkLinkage();
     if (linkage == LinkageType.Default) {
-      linkage = BCUtils.getDefaultFrameworkLinkage(sdk.getVersionString(), bc.getNature());
+      linkage = FlexCommonUtils.getDefaultFrameworkLinkage(sdk.getVersionString(), bc.getNature());
     }
 
     if (linkage == LinkageType.RSL) {

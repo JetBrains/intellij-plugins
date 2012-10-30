@@ -5,8 +5,8 @@ import com.intellij.execution.configurations.CommandLineBuilder;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.ParametersList;
 import com.intellij.execution.configurations.SimpleJavaParameters;
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
@@ -197,7 +197,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     writeExplicitProfiles(mavenProjectsManager.getExplicitProfiles());
     writeWorkspaceMap(myTree.getProjects());
 
-    out.writeUTF(FlexUtils.getPathToBundledJar("flexmojos-idea-configurator.jar"));
+    out.writeUTF(FlexCommonUtils.getPathToBundledJar("flexmojos-idea-configurator.jar"));
     out.writeUTF(getIdeaConfiguratorClassName());
   }
 
@@ -380,7 +380,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   }
 
   private static void configureMavenClassPath(MavenGeneralSettings mavenGeneralSettings, PathsList classPath) throws ExecutionException {
-    String pathToBundledJar = FlexUtils.getPathToBundledJar("flexmojos-flex-configs-generator-server.jar");
+    String pathToBundledJar = FlexCommonUtils.getPathToBundledJar("flexmojos-flex-configs-generator-server.jar");
     LOG.info("Generating flex configs pathToBundledJar: " + pathToBundledJar);
     LOG.assertTrue(!StringUtil.isEmpty(pathToBundledJar));
     classPath.add(pathToBundledJar);

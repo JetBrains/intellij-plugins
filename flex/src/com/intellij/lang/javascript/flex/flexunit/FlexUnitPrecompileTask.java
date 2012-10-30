@@ -305,7 +305,8 @@ public class FlexUnitPrecompileTask implements CompileTask {
           public void run() {
             try {
               final VirtualFile tempDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(tmpDir);
-              launcherFile.set(FlexUtils.addFileWithContent(FLEX_UNIT_LAUNCHER + getFlexUnitLauncherExtension(bc), launcherText1, tempDir));
+              launcherFile.set(
+                FlexUtils.addFileWithContent(FLEX_UNIT_LAUNCHER + FlexCommonUtils.getFlexUnitLauncherExtension(bc.getNature()), launcherText1, tempDir));
 
               filesToDelete.add(launcherFile.get().getPath());
             }
@@ -339,10 +340,6 @@ public class FlexUnitPrecompileTask implements CompileTask {
       throw new RuntimeException("Pattern '" + pattern + "' not found in launcher text");
     }
     return text.replace(pattern, replacement);
-  }
-
-  public static String getFlexUnitLauncherExtension(FlexBuildConfiguration bc) {
-    return bc.getNature().pureAS ? ".as" : ".mxml";
   }
 
   private static void collectCustomRunners(Set<String> result,
@@ -410,17 +407,5 @@ public class FlexUnitPrecompileTask implements CompileTask {
     }
     final URL resource = FlexUnitPrecompileTask.class.getResource("/unittestingsupport/" + templateName);
     return ResourceUtil.loadText(resource);
-  }
-
-  public static String getSupportLibraryName(final FlexBuildConfiguration bc) {
-    if (bc.isPureAs()) {
-      return "unittestingsupport_as.swc";
-    }
-    else if (bc.getNature().isMobilePlatform() || bc.getDependencies().getComponentSet() == ComponentSet.SparkOnly) {
-      return "unittestingsupport_spark.swc";
-    }
-    else {
-      return "unittestingsupport_mx.swc";
-    }
   }
 }

@@ -1,8 +1,8 @@
 package com.intellij.lang.javascript.flex.projectStructure;
 
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.build.FlexCompiler;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.BuildConfigurationEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.DependencyEntry;
@@ -82,7 +82,8 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
   }
 
   // configuration is null for root module (one for which scope is being computed)
-  private static void processModuleWithBuildConfiguration(@NotNull Module module, @Nullable FlexBuildConfiguration configuration,
+  private static void processModuleWithBuildConfiguration(@NotNull Module module,
+                                                          @Nullable FlexBuildConfiguration bc,
                                                           Map<Module, ModuleData> modules2activeConfigurations,
                                                           Set<FlexBuildConfiguration> processedConfigurations,
                                                           boolean productionDependency) {
@@ -91,12 +92,12 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     }
 
 
-    final boolean isRootModule = configuration == null;
+    final boolean isRootModule = bc == null;
     if (isRootModule) {
-      configuration = getActiveConfiguration(module);
+      bc = getActiveConfiguration(module);
     }
 
-    if (configuration == null || !processedConfigurations.add(configuration)) {
+    if (bc == null || !processedConfigurations.add(bc)) {
       return;
     }
 
@@ -104,8 +105,8 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
     if (moduleData == null) {
       modules2activeConfigurations.put(module, moduleData = new ModuleData());
     }
-    moduleData.addBc(configuration, productionDependency);
-    for (DependencyEntry entry : configuration.getDependencies().getEntries()) {
+    moduleData.addBc(bc, productionDependency);
+    for (DependencyEntry entry : bc.getDependencies().getEntries()) {
       if (!(entry instanceof BuildConfigurationEntry)) {
         continue;
       }
@@ -116,7 +117,7 @@ public class FlexOrderEnumerationHandler extends OrderEnumerationHandler {
       }
 
       FlexBuildConfiguration dependencyBc = ((BuildConfigurationEntry)entry).findBuildConfiguration();
-      if (dependencyBc == null || !FlexCompiler.checkDependencyType(configuration, dependencyBc, linkageType)) {
+      if (dependencyBc == null || !FlexCommonUtils.checkDependencyType(bc.getOutputType(), dependencyBc.getOutputType(), linkageType)) {
         continue;
       }
       if (!isRootModule && !BCUtils.isTransitiveDependency(linkageType)) {

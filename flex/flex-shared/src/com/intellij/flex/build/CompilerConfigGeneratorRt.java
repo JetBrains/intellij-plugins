@@ -1,111 +1,117 @@
-package com.intellij.lang.javascript.flex.build;
+package com.intellij.flex.build;
 
-import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
-import com.intellij.flex.build.CompilerConfigGeneratorRt;
-import com.intellij.flex.build.FlexCompilerConfigFileUtilBase;
+import com.intellij.flex.model.JpsFlexProjectLevelCompilerOptionsExtension;
 import com.intellij.flex.model.bc.*;
-import com.intellij.javascript.flex.FlexApplicationComponent;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
+import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import com.intellij.flex.model.sdk.RslUtil;
-import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
-import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.*;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.*;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.stubs.StubIndex;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PairConsumer;
-import com.intellij.util.PathUtil;
-import com.intellij.util.PlatformUtils;
+import com.intellij.util.PathUtilRt;
+import com.intellij.util.Processor;
 import com.intellij.util.SystemProperties;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.incremental.Utils;
+import org.jetbrains.jps.model.java.JavaSourceRootType;
+import org.jetbrains.jps.model.java.JpsJavaExtensionService;
+import org.jetbrains.jps.model.java.compiler.JpsCompilerExcludes;
+import org.jetbrains.jps.model.library.JpsLibrary;
+import org.jetbrains.jps.model.library.JpsOrderRootType;
+import org.jetbrains.jps.model.library.sdk.JpsSdk;
+import org.jetbrains.jps.model.module.JpsModule;
+import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
+import org.jetbrains.jps.model.module.JpsTypedModuleSourceRoot;
+import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class CompilerConfigGenerator {
+public class CompilerConfigGeneratorRt {
 
   private static final String[] LIB_ORDER =
     {"framework", "textLayout", "osmf", "spark", "sparkskins", "rpc", "charts", "spark_dmv", "mx", "advancedgrids"};
 
-  private final Module myModule;
-  private final FlexBuildConfiguration myBC;
+  private final JpsModule myModule;
+  private final JpsFlexBuildConfiguration myBC;
   private final boolean myFlexUnit;
   private final boolean myCSS;
-  private final Sdk mySdk;
+  private final JpsSdk<?> mySdk;
   private final boolean myFlexmojos;
-  private final CompilerOptions myModuleLevelCompilerOptions;
-  private final CompilerOptions myProjectLevelCompilerOptions;
+  private final JpsFlexModuleOrProjectCompilerOptions myModuleLevelCompilerOptions;
+  private final JpsFlexModuleOrProjectCompilerOptions myProjectLevelCompilerOptions;
 
-  private CompilerConfigGenerator(final @NotNull Module module,
-                                  final @NotNull FlexBuildConfiguration bc,
-                                  final @NotNull CompilerOptions moduleLevelCompilerOptions,
-                                  final @NotNull CompilerOptions projectLevelCompilerOptions) throws IOException {
-    myModule = module;
+  private CompilerConfigGeneratorRt(final @NotNull JpsFlexBuildConfiguration bc,
+                                    final @NotNull JpsFlexModuleOrProjectCompilerOptions moduleLevelCompilerOptions,
+                                    final @NotNull JpsFlexModuleOrProjectCompilerOptions projectLevelCompilerOptions) throws IOException {
+    myModule = bc.getModule();
     myBC = bc;
-    myFlexUnit = BCUtils.isFlexUnitBC(myBC);
-    myCSS = BCUtils.isRuntimeStyleSheetBC(bc);
+    myFlexUnit = FlexCommonUtils.isFlexUnitBC(myBC);
+    myCSS = FlexCommonUtils.isRuntimeStyleSheetBC(bc);
     mySdk = bc.getSdk();
     if (mySdk == null) {
-      throw new IOException(FlexCommonBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), module.getName()));
+      throw new IOException(FlexCommonBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), bc.getModule().getName()));
     }
-    myFlexmojos = mySdk.getSdkType() == FlexmojosSdkType.getInstance();
+    myFlexmojos = mySdk.getSdkType() == JpsFlexmojosSdkType.INSTANCE;
     myModuleLevelCompilerOptions = moduleLevelCompilerOptions;
     myProjectLevelCompilerOptions = projectLevelCompilerOptions;
   }
 
-  public static VirtualFile getOrCreateConfigFile(final Module module, final FlexBuildConfiguration bc) throws IOException {
-    final CompilerConfigGenerator generator =
-      new CompilerConfigGenerator(module, bc,
-                                  FlexBuildConfigurationManager.getInstance(module).getModuleLevelCompilerOptions(),
-                                  FlexProjectLevelCompilerOptionsHolder.getInstance(module.getProject()).getProjectLevelCompilerOptions());
+  public static File getOrCreateConfigFile(final JpsFlexBuildConfiguration bc) throws IOException {
+    final CompilerConfigGeneratorRt generator =
+      new CompilerConfigGeneratorRt(bc,
+                                    bc.getModule().getProperties().getModuleLevelCompilerOptions(),
+                                    JpsFlexProjectLevelCompilerOptionsExtension
+                                      .getProjectLevelCompilerOptions(bc.getModule().getProject()));
     String text = generator.generateConfigFileText();
 
     if (bc.isTempBCForCompilation()) {
-      final FlexBuildConfiguration originalBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(bc.getName());
+      final JpsFlexBuildConfiguration originalBC = bc.getModule().getProperties().findConfigurationByName(bc.getName());
       final boolean makeExternalLibsMerged =
-        BCUtils.isFlexUnitBC(bc) || (originalBC != null && originalBC.getOutputType() == OutputType.Library);
-      final boolean makeIncludedLibsMerged = BCUtils.isRuntimeStyleSheetBC(bc);
+        FlexCommonUtils.isFlexUnitBC(bc) || (originalBC != null && originalBC.getOutputType() == OutputType.Library);
+      final boolean makeIncludedLibsMerged = FlexCommonUtils.isRuntimeStyleSheetBC(bc);
       text = FlexCompilerConfigFileUtilBase.mergeWithCustomConfigFile(text, bc.getCompilerOptions().getAdditionalConfigFilePath(),
                                                                       makeExternalLibsMerged, makeIncludedLibsMerged);
     }
 
-    final String name =
-      getConfigFileName(module, bc.getName(), PlatformUtils.getPlatformPrefix().toLowerCase(), BCUtils.getBCSpecifier(bc));
+    final String name = getConfigFileName(bc, FlexCommonUtils.getBCSpecifier(bc));
     return getOrCreateConfigFile(name, text);
+  }
+
+  public static String getSwfVersionForTargetPlayer(final String targetPlayer) {
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.5") >= 0) return "18";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.4") >= 0) return "17";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.3") >= 0) return "16";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.2") >= 0) return "15";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.1") >= 0) return "14";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11") >= 0) return "13";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "10.3") >= 0) return "12";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "10.2") >= 0) return "11";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "10.1") >= 0) return "10";
+    return "9";
+  }
+
+  public static String getSwfVersionForSdk(final String sdkVersion) {
+    if (StringUtil.compareVersionNumbers(sdkVersion, "4.6") >= 0) return "14";
+    if (StringUtil.compareVersionNumbers(sdkVersion, "4.5") >= 0) return "11";
+    assert false : sdkVersion;
+    return null;
   }
 
   private String generateConfigFileText() throws IOException {
     final Element rootElement =
-      new Element(FlexCompilerConfigFileUtilBase.FLEX_CONFIG, FlexApplicationComponent.HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG);
+      new Element(FlexCompilerConfigFileUtilBase.FLEX_CONFIG, "http://www.adobe.com/2006/flex-config");
 
     addMandatoryOptions(rootElement);
     addSourcePaths(rootElement);
@@ -122,14 +128,14 @@ public class CompilerConfigGenerator {
   }
 
   private void addMandatoryOptions(final Element rootElement) {
-    if (!BCUtils.isRLMTemporaryBC(myBC) && !BCUtils.isRuntimeStyleSheetBC(myBC) &&
-        BCUtils.canHaveRLMsAndRuntimeStylesheets(myBC) && myBC.getRLMs().size() > 0) {
-      addOption(rootElement, CompilerOptionInfo.LINK_REPORT_INFO, getLinkReportFilePath(myModule, myBC.getName()));
+    if (!FlexCommonUtils.isRLMTemporaryBC(myBC) && !FlexCommonUtils.isRuntimeStyleSheetBC(myBC) &&
+        FlexCommonUtils.canHaveRLMsAndRuntimeStylesheets(myBC) && myBC.getRLMs().size() > 0) {
+      addOption(rootElement, CompilerOptionInfo.LINK_REPORT_INFO, getLinkReportFilePath(myBC));
     }
 
-    if (BCUtils.isRLMTemporaryBC(myBC) && !myBC.getOptimizeFor().isEmpty()) {
-      final String customLinkReportPath = getCustomLinkReportPath(myModule, myBC);
-      final String linkReportPath = StringUtil.notNullize(customLinkReportPath, getLinkReportFilePath(myModule, myBC.getName()));
+    if (FlexCommonUtils.isRLMTemporaryBC(myBC) && !myBC.getOptimizeFor().isEmpty()) {
+      final String customLinkReportPath = getCustomLinkReportPath(myBC);
+      final String linkReportPath = StringUtil.notNullize(customLinkReportPath, getLinkReportFilePath(myBC));
       addOption(rootElement, CompilerOptionInfo.LOAD_EXTERNS_INFO, linkReportPath);
     }
 
@@ -143,8 +149,8 @@ public class CompilerConfigGenerator {
     addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
 
     if (StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4.5") >= 0) {
-      final String swfVersion = nature.isWebPlatform() ? CompilerConfigGeneratorRt.getSwfVersionForTargetPlayer(targetPlayer)
-                                                       : CompilerConfigGeneratorRt.getSwfVersionForSdk(mySdk.getVersionString());
+      final String swfVersion = nature.isWebPlatform() ? getSwfVersionForTargetPlayer(targetPlayer)
+                                                       : getSwfVersionForSdk(mySdk.getVersionString());
       addOption(rootElement, CompilerOptionInfo.SWF_VERSION_INFO, swfVersion);
     }
 
@@ -173,34 +179,30 @@ public class CompilerConfigGenerator {
   }
 
   @Nullable
-  private static String getCustomLinkReportPath(final Module module, final FlexBuildConfiguration rlmBC) {
-    final FlexBuildConfiguration appBC = FlexBuildConfigurationManager.getInstance(module).findConfigurationByName(rlmBC.getName());
+  private static String getCustomLinkReportPath(final JpsFlexBuildConfiguration rlmBC) {
+    final JpsFlexBuildConfiguration appBC = rlmBC.getModule().getProperties().findConfigurationByName(rlmBC.getName());
     if (appBC != null) {
       final List<String> linkReports = FlexCommonUtils.getOptionValues(appBC.getCompilerOptions().getAdditionalOptions(), "link-report");
       if (!linkReports.isEmpty()) {
         final String path = linkReports.get(0);
         if (new File(path).isFile()) return path;
-        final String absPath = FlexUtils.getFlexCompilerWorkDirPath(module.getProject(), null) + "/" + path;
+        final String absPath = FlexCommonUtils.getFlexCompilerWorkDirPath(appBC.getModule().getProject()) + "/" + path;
         if (new File(absPath).isFile()) return absPath;
       }
       else {
         final String configFilePath = appBC.getCompilerOptions().getAdditionalConfigFilePath();
         if (!configFilePath.isEmpty()) {
-          final VirtualFile configFile = LocalFileSystem.getInstance().findFileByPath(configFilePath);
-          if (configFile != null) {
-            try {
-              String path = FlexUtils.findXMLElement(configFile.getInputStream(), "<flex-config><link-report>");
-              if (path != null) {
-                path = path.trim();
-                if (new File(path).isFile()) return path;
-                // I have no idea why Flex compiler treats path relative to source root for "link-report" option
-                for (VirtualFile srcRoot : ModuleRootManager.getInstance(module).getSourceRoots()) {
-                  final String absPath = srcRoot.getPath() + "/" + path;
-                  if (new File(absPath).isFile()) return absPath;
-                }
+          final File configFile = new File(configFilePath);
+          if (configFile.isFile()) {
+            final String path = FlexCommonUtils.findXMLElement(configFile, "<flex-config><link-report>");
+            if (path != null) {
+              if (new File(path).isFile()) return path;
+              // I have no idea why Flex compiler treats path relative to source root for "link-report" option
+              for (JpsModuleSourceRoot srcRoot : appBC.getModule().getSourceRoots(JavaSourceRootType.SOURCE)) {
+                final String absPath = srcRoot.getFile().getPath() + "/" + path;
+                if (new File(absPath).isFile()) return absPath;
               }
             }
-            catch (IOException ignore) {/*ignore*/}
           }
         }
       }
@@ -225,7 +227,7 @@ public class CompilerConfigGenerator {
 
   private void addNamespaces(final Element rootElement) {
     final StringBuilder namespaceBuilder = new StringBuilder();
-    FlexSdkUtils.processStandardNamespaces(myBC, new PairConsumer<String, String>() {
+    FlexCommonUtils.processStandardNamespaces(myBC, new PairConsumer<String, String>() {
       @Override
       public void consume(final String namespace, final String relativePath) {
         if (namespaceBuilder.length() > 0) {
@@ -249,20 +251,22 @@ public class CompilerConfigGenerator {
 
     final Map<String, String> libNameToRslInfo = new THashMap<String, String>();
 
-    for (final String swcUrl : mySdk.getRootProvider().getUrls(OrderRootType.CLASSES)) {
-      final String swcPath = VirtualFileManager.extractPath(StringUtil.trimEnd(swcUrl, JarFileSystem.JAR_SEPARATOR));
+    for (final String swcUrl : mySdk.getParent().getRootUrls(JpsOrderRootType.COMPILED)) {
+      final String swcPath = JpsPathUtil.urlToPath(swcUrl);
       if (!swcPath.toLowerCase().endsWith(".swc")) {
-        Logger.getInstance(CompilerConfigGenerator.class.getName()).warn("Unexpected URL in Flex SDK classes: " + swcUrl);
+        Logger.getInstance(CompilerConfigGeneratorRt.class.getName()).warn("Unexpected URL in Flex SDK classes: " + swcUrl);
         continue;
       }
 
-      LinkageType linkageType = BCUtils.getSdkEntryLinkageType(swcPath, myBC);
+      LinkageType linkageType = FlexCommonUtils.getSdkEntryLinkageType(swcPath, myBC);
 
       // check applicability
       if (linkageType == null) continue;
       // resolve default
       if (linkageType == LinkageType.Default) linkageType = myBC.getDependencies().getFrameworkLinkage();
-      if (linkageType == LinkageType.Default) linkageType = FlexCommonUtils.getDefaultFrameworkLinkage(mySdk.getVersionString(), myBC.getNature());
+      if (linkageType == LinkageType.Default) {
+        linkageType = FlexCommonUtils.getDefaultFrameworkLinkage(mySdk.getVersionString(), myBC.getNature());
+      }
       if (myCSS && linkageType == LinkageType.Include) linkageType = LinkageType.Merged;
 
       final CompilerOptionInfo info = linkageType == LinkageType.Merged ? CompilerOptionInfo.LIBRARY_PATH_INFO :
@@ -301,7 +305,7 @@ public class CompilerConfigGenerator {
           }
         }
 
-        final String swcName = PathUtil.getFileName(swcPath);
+        final String swcName = PathUtilRt.getFileName(swcPath);
         final String libName = swcName.substring(0, swcName.length() - ".swc".length());
         libNameToRslInfo.put(libName, rslBuilder.toString());
       }
@@ -317,25 +321,27 @@ public class CompilerConfigGenerator {
     for (final String libName : LIB_ORDER) {
       final String rslInfo = libNameToRslInfo.remove(libName);
       if (rslInfo != null) {
-        final CompilerOptionInfo option = StringUtil.split(rslInfo, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).size() == 3
-                                          ? CompilerOptionInfo.RSL_ONE_URL_PATH_INFO
-                                          : CompilerOptionInfo.RSL_TWO_URLS_PATH_INFO;
+        final CompilerOptionInfo option =
+          StringUtil.split(rslInfo, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).size() == 3
+          ? CompilerOptionInfo.RSL_ONE_URL_PATH_INFO
+          : CompilerOptionInfo.RSL_TWO_URLS_PATH_INFO;
         addOption(rootElement, option, rslInfo);
       }
     }
 
     // now add other in random order, though up to Flex SDK 4.5.1 the map should be empty at this stage
     for (final String rslInfo : libNameToRslInfo.values()) {
-      final CompilerOptionInfo option = StringUtil.split(rslInfo, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).size() == 3
-                                        ? CompilerOptionInfo.RSL_ONE_URL_PATH_INFO
-                                        : CompilerOptionInfo.RSL_TWO_URLS_PATH_INFO;
+      final CompilerOptionInfo option =
+        StringUtil.split(rslInfo, CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false).size() == 3
+        ? CompilerOptionInfo.RSL_ONE_URL_PATH_INFO
+        : CompilerOptionInfo.RSL_TWO_URLS_PATH_INFO;
       addOption(rootElement, option, rslInfo);
     }
   }
 
   private void addLibs(final Element rootElement) {
-    for (final DependencyEntry entry : myBC.getDependencies().getEntries()) {
-      LinkageType linkageType = entry.getDependencyType().getLinkageType();
+    for (final JpsFlexDependencyEntry entry : myBC.getDependencies().getEntries()) {
+      LinkageType linkageType = entry.getLinkageType();
       if (linkageType == LinkageType.Test) {
         if (myFlexUnit) {
           linkageType = LinkageType.Merged;
@@ -346,25 +352,18 @@ public class CompilerConfigGenerator {
       }
       if (myCSS && linkageType == LinkageType.Include) linkageType = LinkageType.Merged;
 
-      if (entry instanceof BuildConfigurationEntry) {
+      if (entry instanceof JpsFlexBCDependencyEntry) {
         if (linkageType == LinkageType.LoadInRuntime) continue;
 
-        final FlexBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+        final JpsFlexBuildConfiguration dependencyBC = ((JpsFlexBCDependencyEntry)entry).getBC();
         if (dependencyBC != null && FlexCommonUtils.checkDependencyType(myBC.getOutputType(), dependencyBC.getOutputType(), linkageType)) {
           addLib(rootElement, dependencyBC.getActualOutputFilePath(), linkageType);
         }
       }
-      else if (entry instanceof ModuleLibraryEntry) {
-        final LibraryOrderEntry orderEntry =
-          FlexProjectRootsUtil.findOrderEntry((ModuleLibraryEntry)entry, ModuleRootManager.getInstance(myModule));
-        if (orderEntry != null) {
-          addLibraryRoots(rootElement, orderEntry.getRootFiles(OrderRootType.CLASSES), linkageType);
-        }
-      }
-      else if (entry instanceof SharedLibraryEntry) {
-        final Library library = FlexProjectRootsUtil.findOrderEntry(myModule.getProject(), (SharedLibraryEntry)entry);
+      else if (entry instanceof JpsLibraryDependencyEntry) {
+        final JpsLibrary library = ((JpsLibraryDependencyEntry)entry).getLibrary();
         if (library != null) {
-          addLibraryRoots(rootElement, library.getFiles((OrderRootType.CLASSES)), linkageType);
+          addLibraryRoots(rootElement, library.getRootUrls(JpsOrderRootType.COMPILED), linkageType);
         }
       }
     }
@@ -372,25 +371,23 @@ public class CompilerConfigGenerator {
     if (myFlexUnit) {
       final String unitTestingSupportSwc = FlexCommonUtils
         .getPathToBundledJar(FlexCommonUtils.getFlexUnitSupportLibName(myBC.getNature(), myBC.getDependencies().getComponentSet()));
-      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(unitTestingSupportSwc);
-      assert file != null;
-      addLibraryRoots(rootElement, new VirtualFile[]{file}, LinkageType.Merged);
+      addLibraryRoots(rootElement, Collections.singletonList(JpsPathUtil.pathToUrl(unitTestingSupportSwc)), LinkageType.Merged);
     }
   }
 
-  private void addLibraryRoots(final Element rootElement, final VirtualFile[] libClassRoots, final LinkageType linkageType) {
-    for (VirtualFile libFile : libClassRoots) {
-      libFile = FlexCompilerHandler.getRealFile(libFile);
-      if (libFile == null) continue;
+  private void addLibraryRoots(final Element rootElement, final List<String> libRootUrls, final LinkageType linkageType) {
+    for (String libRootUrl : libRootUrls) {
+      final String libFilePath = JpsPathUtil.urlToPath(libRootUrl);
+      final File libFile = new File(libFilePath);
 
       if (libFile.isDirectory()) {
         addOption(rootElement, CompilerOptionInfo.SOURCE_PATH_INFO, libFile.getPath());
       }
-      else {
-        if ("ane".equalsIgnoreCase(libFile.getExtension())) {
-          addLib(rootElement, libFile.getPath(), LinkageType.External);
+      else if (libFile.isFile()) {
+        if (libFilePath.toLowerCase().endsWith(".ane")) {
+          addLib(rootElement, libFilePath, LinkageType.External);
         }
-        else if ("swc".equalsIgnoreCase(libFile.getExtension())) {
+        else if (libFilePath.toLowerCase().endsWith(".swc")) {
           // "airglobal.swc" and "playerglobal.swc" file names are hardcoded in Flex compiler
           // including libraries like "playerglobal-3.5.0.12683-9.swc" may lead to error at runtime like "VerifyError Error #1079: Native methods are not allowed in loaded code."
           // so here we just skip including such libraries in config file.
@@ -401,7 +398,7 @@ public class CompilerConfigGenerator {
             continue;
           }
 
-          addLib(rootElement, libFile.getPath(), linkageType);
+          addLib(rootElement, libFilePath, linkageType);
         }
       }
     }
@@ -435,19 +432,32 @@ public class CompilerConfigGenerator {
     final Set<String> sourcePathsWithLocaleToken = new THashSet<String>(); // Set - to avoid duplication of paths like "locale/{locale}"
     final List<String> sourcePathsWithoutLocaleToken = new LinkedList<String>();
 
-    for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(myModule).getSourceRoots(includeTestRoots())) {
-      if (locales.contains(sourceRoot.getName())) {
-        sourcePathsWithLocaleToken.add(sourceRoot.getParent().getPath() + "/" + FlexCommonUtils.LOCALE_TOKEN);
+    for (JpsModuleSourceRoot srcRoot : myModule.getSourceRoots(JavaSourceRootType.SOURCE)) {
+      final String srcRootPath = JpsPathUtil.urlToPath(srcRoot.getUrl());
+      if (locales.contains(PathUtilRt.getFileName(srcRootPath))) {
+        sourcePathsWithLocaleToken.add(PathUtilRt.getParentPath(srcRootPath) + "/" + FlexCommonUtils.LOCALE_TOKEN);
       }
       else {
-        sourcePathsWithoutLocaleToken.add(sourceRoot.getPath());
+        sourcePathsWithoutLocaleToken.add(srcRootPath);
+      }
+    }
+
+    if (includeTestRoots()) {
+      for (JpsModuleSourceRoot srcRoot : myModule.getSourceRoots(JavaSourceRootType.TEST_SOURCE)) {
+        final File srcRootFile = srcRoot.getFile();
+        if (locales.contains(srcRootFile.getName())) {
+          sourcePathsWithLocaleToken.add(srcRootFile.getParentFile().getPath() + "/" + FlexCommonUtils.LOCALE_TOKEN);
+        }
+        else {
+          sourcePathsWithoutLocaleToken.add(srcRootFile.getPath());
+        }
       }
     }
 
     final StringBuilder sourcePathBuilder = new StringBuilder();
 
     if (myCSS) {
-      final String cssFolderPath = PathUtil.getParentPath(myBC.getMainClass());
+      final String cssFolderPath = PathUtilRt.getParentPath(myBC.getMainClass());
       if (!sourcePathsWithoutLocaleToken.contains(cssFolderPath)) {
         sourcePathBuilder.append(cssFolderPath);
       }
@@ -475,9 +485,16 @@ public class CompilerConfigGenerator {
     if (myCSS) return false;
     if (myBC.getOutputType() != OutputType.Application) return false;
 
-    final String path = FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
-    final VirtualFile file = path.isEmpty() ? null : LocalFileSystem.getInstance().findFileByPath(path);
-    return file != null && ModuleRootManager.getInstance(myModule).getFileIndex().isInTestSourceContent(file);
+    final String path = FlexCommonUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
+    return isInTestSourceRoot(myModule, path);
+  }
+
+  private static boolean isInTestSourceRoot(final JpsModule module, final String path) {
+    for (JpsModuleSourceRoot testSrcRoot : module.getSourceRoots(JavaSourceRootType.TEST_SOURCE)) {
+      final String testSrcRootPath = JpsPathUtil.urlToPath(testSrcRoot.getUrl());
+      if (path.startsWith(testSrcRootPath + "/")) return true;
+    }
+    return false;
   }
 
   private void addOtherOptions(final Element rootElement) {
@@ -503,8 +520,7 @@ public class CompilerConfigGenerator {
 
     final String namespacesRaw = options.get("compiler.namespaces.namespace");
     if (namespacesRaw != null && myBC.getOutputType() == OutputType.Library) {
-      final String namespaces = FlexUtils.replacePathMacros(namespacesRaw, myModule,
-                                                            myFlexmojos ? "" : mySdk.getHomePath());
+      final String namespaces = FlexCommonUtils.replacePathMacros(namespacesRaw, myModule, myFlexmojos ? "" : mySdk.getHomePath());
       final StringBuilder buf = new StringBuilder();
       for (final String listEntry : StringUtil.split(namespaces, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR)) {
         final int tabIndex = listEntry.indexOf(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR);
@@ -529,16 +545,16 @@ public class CompilerConfigGenerator {
       }
     }
     else {
-      final InfoFromConfigFile info =
-        FlexCompilerConfigFileUtil.getInfoFromConfigFile(myBC.getCompilerOptions().getAdditionalConfigFilePath());
+      final InfoFromConfigFile info = InfoFromConfigFile.getInfoFromConfigFile(myBC.getCompilerOptions().getAdditionalConfigFilePath());
 
       final String pathToMainClassFile = myCSS ? myBC.getMainClass()
-                                               : myFlexUnit ? FlexUtils.getPathToFlexUnitTempDirectory(myModule.getProject().getName())
-                                                              + "/" + myBC.getMainClass()
-                                                              + FlexCommonUtils.getFlexUnitLauncherExtension(myBC.getNature())
-                                                            : FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
+                                               : myFlexUnit
+                                                 ? FlexCommonUtils.getPathToFlexUnitTempDirectory(myModule.getProject().getName())
+                                                   + "/" + myBC.getMainClass()
+                                                   + FlexCommonUtils.getFlexUnitLauncherExtension(myBC.getNature())
+                                                 : FlexCommonUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
 
-      if (pathToMainClassFile.isEmpty() && info.getMainClass(myModule) == null && !ApplicationManager.getApplication().isUnitTestMode()) {
+      if (pathToMainClassFile.isEmpty() && info.getMainClass(myModule) == null && !Utils.IS_TEST_MODE) {
         throw new IOException(FlexCommonBundle.message("bc.incorrect.main.class", myBC.getMainClass(), myBC.getName(), myModule.getName()));
       }
 
@@ -551,27 +567,24 @@ public class CompilerConfigGenerator {
   }
 
   private void addFilesIncludedInSwc(final Element rootElement) {
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
-    final CompilerConfiguration compilerConfiguration = CompilerConfiguration.getInstance(myModule.getProject());
+    final JpsCompilerExcludes excludes =
+      JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(myModule.getProject()).getCompilerExcludes();
 
     final Map<String, String> filePathToPathInSwc = new THashMap<String, String>();
 
     for (String path : myBC.getCompilerOptions().getFilesToIncludeInSWC()) {
-      final VirtualFile fileOrDir = LocalFileSystem.getInstance().findFileByPath(path);
-      if (fileOrDir == null || compilerConfiguration.isExcludedFromCompilation(fileOrDir)) continue;
+      final File fileOrDir = new File(path);
+      if (excludes.isExcluded(fileOrDir)) continue;
 
       if (fileOrDir.isDirectory()) {
-        final VirtualFile srcRoot = fileIndex.getSourceRootForFile(fileOrDir);
-        final String baseRelativePath = srcRoot == null ? fileOrDir.getName() : VfsUtilCore.getRelativePath(fileOrDir, srcRoot, '/');
-        assert baseRelativePath != null;
-
-        VfsUtilCore.visitChildrenRecursively(fileOrDir, new VirtualFileVisitor() {
-          @Override
-          public boolean visitFile(@NotNull final VirtualFile file) {
+        final String baseRelativePath = StringUtil.notNullize(getPathRelativeToSourceRoot(myModule, fileOrDir.getPath()),
+                                                              fileOrDir.getName());
+        FileUtil.processFilesRecursively(fileOrDir, new Processor<File>() {
+          public boolean process(final File file) {
             if (!file.isDirectory() &&
                 !FlexCommonUtils.isSourceFile(file.getName()) &&
-                !compilerConfiguration.isExcludedFromCompilation(file)) {
-              final String relativePath = VfsUtilCore.getRelativePath(file, fileOrDir, '/');
+                !excludes.isExcluded(file)) {
+              final String relativePath = FileUtil.getRelativePath(fileOrDir, file);
               final String pathInSwc = baseRelativePath.isEmpty() ? relativePath : baseRelativePath + "/" + relativePath;
               filePathToPathInSwc.put(file.getPath(), pathInSwc);
             }
@@ -579,10 +592,8 @@ public class CompilerConfigGenerator {
           }
         });
       }
-      else {
-        final VirtualFile srcRoot = fileIndex.getSourceRootForFile(fileOrDir);
-        final String relativePath = srcRoot == null ? null : VfsUtilCore.getRelativePath(fileOrDir, srcRoot, '/');
-        final String pathInSwc = StringUtil.notNullize(relativePath, fileOrDir.getName());
+      else if (fileOrDir.isFile()) {
+        final String pathInSwc = StringUtil.notNullize(getPathRelativeToSourceRoot(myModule, fileOrDir.getPath()), fileOrDir.getName());
         filePathToPathInSwc.put(fileOrDir.getPath(), pathInSwc);
       }
     }
@@ -593,36 +604,14 @@ public class CompilerConfigGenerator {
     }
   }
 
-  private void addLibClasses(final Element rootElement) throws IOException {
-    final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(myModule.getProject()).getFileIndex();
-    final CompilerConfiguration compilerConfiguration = CompilerConfiguration.getInstance(myModule.getProject());
-    final Ref<Boolean> noClasses = new Ref<Boolean>(true);
-
-    for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(myModule).getSourceRoots(false)) {
-      fileIndex.iterateContentUnderDirectory(sourceRoot, new ContentIterator() {
-        @Override
-        public boolean processFile(final VirtualFile file) {
-          if (file.isDirectory()) return true;
-          if (!FlexCommonUtils.isSourceFile(file.getName())) return true;
-          if (compilerConfiguration.isExcludedFromCompilation(file)) return true;
-
-          final String packageText = VfsUtilCore.getRelativePath(file.getParent(), sourceRoot, '.');
-          assert packageText != null : sourceRoot.getPath() + ": " + file.getPath();
-          final String qName = (packageText.length() > 0 ? packageText + "." : "") + file.getNameWithoutExtension();
-
-          if (isSourceFileWithPublicDeclaration(myModule, file, qName)) {
-            addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);
-            noClasses.set(false);
-          }
-
-          return true;
-        }
-      });
+  @Nullable
+  private static String getPathRelativeToSourceRoot(final JpsModule module, final String path) {
+    for (JpsModuleSourceRoot srcRoot : module.getSourceRoots()) {
+      final String srcRootPath = JpsPathUtil.urlToPath(srcRoot.getUrl());
+      if (path.equals(srcRootPath)) return "";
+      if (path.startsWith(srcRootPath + "/")) return path.substring(srcRootPath.length() + 1);
     }
-
-    if (noClasses.get() && !ApplicationManager.getApplication().isUnitTestMode()) {
-      throw new IOException(FlexCommonBundle.message("nothing.to.compile.in.library", myModule.getName(), myBC.getName()));
-    }
+    return null;
   }
 
   private void addOption(final Element rootElement, final CompilerOptionInfo info, final String rawValue) {
@@ -630,7 +619,7 @@ public class CompilerConfigGenerator {
       return;
     }
 
-    final String value = FlexUtils.replacePathMacros(rawValue, myModule, myFlexmojos ? "" : mySdk.getHomePath());
+    final String value = FlexCommonUtils.replacePathMacros(rawValue, myModule, myFlexmojos ? "" : mySdk.getHomePath());
 
     final String pathInFlexConfig = info.ID.startsWith("compiler.debug") ? "compiler.debug" : info.ID;
     final List<String> elementNames = StringUtil.split(pathInFlexConfig, ".");
@@ -707,88 +696,98 @@ public class CompilerConfigGenerator {
                        ValueSource.GlobalDefault);
   }
 
-  private static VirtualFile getOrCreateConfigFile(final String fileName, final String text) throws IOException {
+  private static File getOrCreateConfigFile(final String fileName, final String text) throws IOException {
+    final File configFile = new File(FlexCommonUtils.getTempFlexConfigsDirPath() + "/" + fileName);
+    final byte[] textBytes = text.getBytes();
 
-    final VirtualFile existingConfigFile = FlexCompilationManager.refreshAndFindFileInWriteAction(
-      FlexUtils.getTempFlexConfigsDirPath() + "/" + fileName);
-
-    if (existingConfigFile != null && existingConfigFile.isValid() &&
-        Arrays.equals(text.getBytes(), existingConfigFile.contentsToByteArray())) {
-      return existingConfigFile;
-    }
-
-    final Ref<VirtualFile> fileRef = new Ref<VirtualFile>();
-    final Ref<IOException> error = new Ref<IOException>();
-    final Runnable runnable = new Runnable() {
-      @Override
-      public void run() {
-        fileRef.set(ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
-          @Override
-          public VirtualFile compute() {
-            try {
-              final String baseDirPath = FlexUtils.getTempFlexConfigsDirPath();
-              final VirtualFile baseDir = VfsUtil.createDirectories(baseDirPath);
-
-              VirtualFile configFile = baseDir.findChild(fileName);
-              if (configFile == null) {
-                configFile = baseDir.createChildData(this, fileName);
-              }
-              VfsUtil.saveText(configFile, text);
-              return configFile;
-            }
-            catch (IOException ex) {
-              error.set(ex);
-            }
-            return null;
-          }
-        }));
+    try {
+      if (configFile.isFile() && Arrays.equals(textBytes, FileUtil.loadFileBytes(configFile))) {
+        return configFile;
       }
-    };
-
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      runnable.run();
     }
-    else {
-      ApplicationManager.getApplication()
-        .invokeAndWait(runnable, ProgressManager.getInstance().getProgressIndicator().getModalityState());
+    catch (IOException ignore) {/**/}
+
+    if (!FileUtil.createParentDirs(configFile)) {
+      throw new IOException("Failed to create folder " + configFile.getParent());
     }
 
-    if (!error.isNull()) {
-      throw error.get();
+    final FileOutputStream outputStream = new FileOutputStream(configFile);
+    try {
+      outputStream.write(textBytes);
     }
-    return fileRef.get();
+    finally {
+      outputStream.close();
+    }
+
+    return configFile;
   }
 
-  private static String getConfigFileName(final Module module, final @Nullable String bcName,
-                                          final String prefix, final @Nullable String postfix) {
-    final String hash1 = Integer.toHexString((SystemProperties.getUserName() + module.getProject().getName()).hashCode()).toUpperCase();
-    final String hash2 = Integer.toHexString((module.getName() + StringUtil.notNullize(bcName)).hashCode()).toUpperCase();
+  private static String getConfigFileName(final JpsFlexBuildConfiguration bc, final @Nullable String postfix) {
+    final String prefix = "idea"; // PlatformUtils.getPlatformPrefix().toLowerCase()
+    final String hash1 =
+      Integer.toHexString((SystemProperties.getUserName() + bc.getModule().getProject().getName()).hashCode()).toUpperCase();
+    final String hash2 = Integer.toHexString((bc.getModule().getName() + StringUtil.notNullize(bc.getName())).hashCode()).toUpperCase();
     return prefix + "-" + hash1 + "-" + hash2 + (postfix == null ? ".xml" : ("-" + StringUtil.replaceChar(postfix, ' ', '-') + ".xml"));
   }
 
-  private static String getLinkReportFilePath(final Module module, final String bcName) {
-    final String fileName = getConfigFileName(module, bcName, PlatformUtils.getPlatformPrefix().toLowerCase(), "link-report");
-    return FlexUtils.getTempFlexConfigsDirPath() + "/" + fileName;
+  private static String getLinkReportFilePath(final JpsFlexBuildConfiguration bc) {
+    final String fileName = getConfigFileName(bc, "link-report");
+    return FlexCommonUtils.getTempFlexConfigsDirPath() + "/" + fileName;
   }
 
-  private static boolean isSourceFileWithPublicDeclaration(final Module module, final VirtualFile file, final String qName) {
-    return JavaScriptSupportLoader.isMxmlOrFxgFile(file) ||
-           ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
-             @Override
-             public Boolean compute() {
-               // we include file in compilation if it has (or intended to have) some public declaration (class, namespace, function) which is equivalent to having JSPackageStatement declaration.
-               // But first we try to find it in JSQualifiedElementIndex because it is faster.
-               final Collection<JSQualifiedNamedElement> elements = StubIndex.getInstance()
-                 .get(JSQualifiedElementIndex.KEY, qName.hashCode(), module.getProject(), GlobalSearchScope.moduleScope(module));
-               if (elements.isEmpty()) {
-                 // If SomeClass.as contains IncorrectClass definition - we want to include this class into compilation so that compilation fails.
-                 final PsiFile psiFile = PsiManager.getInstance(module.getProject()).findFile(file);
-                 return psiFile != null && PsiTreeUtil.getChildOfType(psiFile, JSPackageStatement.class) != null;
-               }
-               else {
-                 return true;
-               }
-             }
-           });
+  private void addLibClasses(final Element rootElement) throws IOException {
+    final JpsCompilerExcludes excludes =
+      JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(myModule.getProject()).getCompilerExcludes();
+    final Ref<Boolean> noClasses = new Ref<Boolean>(true);
+
+    for (JpsTypedModuleSourceRoot srcRoot : myModule.getSourceRoots(JavaSourceRootType.SOURCE)) {
+      final File srcFolder = JpsPathUtil.urlToFile(srcRoot.getUrl());
+      if (srcFolder.isDirectory()) {
+        FileUtil.processFilesRecursively(srcFolder, new Processor<File>() {
+          public boolean process(final File file) {
+            if (file.isDirectory()) return true;
+            if (!FlexCommonUtils.isSourceFile(file.getName())) return true;
+            if (excludes.isExcluded(file)) return true;
+
+            String packageRelativePath = FileUtil.getRelativePath(srcFolder, file.getParentFile());
+            assert packageRelativePath != null : srcFolder.getPath() + ": " + file.getPath();
+            if (packageRelativePath.equals(".")) packageRelativePath = "";
+
+            final String packageName = packageRelativePath.replace(File.separatorChar, '.');
+            final String qName = StringUtil.getQualifiedName(packageName, FileUtil.getNameWithoutExtension(file));
+
+            if (isSourceFileWithPublicDeclaration(file)) {
+              addOption(rootElement, CompilerOptionInfo.INCLUDE_CLASSES_INFO, qName);
+              noClasses.set(false);
+            }
+
+            return true;
+          }
+        });
+      }
+    }
+
+    if (noClasses.get() && !Utils.IS_TEST_MODE) {
+      throw new IOException(FlexCommonBundle.message("nothing.to.compile.in.library", myModule.getName(), myBC.getName()));
+    }
+  }
+
+  private static boolean isSourceFileWithPublicDeclaration(final File file) {
+    final String fileNameLowercased = file.getName().toLowerCase();
+    if (fileNameLowercased.endsWith(".mxml") || fileNameLowercased.endsWith(".fxg")) {
+      return true;
+    }
+    else if (fileNameLowercased.endsWith(".as")) {
+      try {
+        final String content = FileUtil.loadFile(file);
+        // todo correct implementation requires lexer
+        return content.contains("package");
+      }
+      catch (IOException e) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }

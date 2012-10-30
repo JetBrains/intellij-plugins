@@ -6,7 +6,7 @@ import org.jetbrains.jps.model.JpsCompositeElement;
 import org.jetbrains.jps.model.JpsNamedElement;
 import org.jetbrains.jps.model.JpsReferenceableElement;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
-import org.jetbrains.jps.model.module.JpsModule;
+import org.jetbrains.jps.model.module.JpsTypedModule;
 
 import javax.swing.*;
 import java.util.Collection;
@@ -16,7 +16,7 @@ public interface JpsFlexBuildConfiguration
 
   String UNNAMED = "Unnamed";
 
-  JpsModule getModule();
+  JpsTypedModule<JpsFlexBuildConfigurationManager> getModule();
 
   @NotNull
   String getName();

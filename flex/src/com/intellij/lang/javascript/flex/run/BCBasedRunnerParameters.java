@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.flex.FlexCommonBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
@@ -54,7 +55,7 @@ public class BCBasedRunnerParameters implements Cloneable {
 
     final Sdk sdk = bc.getSdk();
     if (sdk == null) {
-      throw new RuntimeConfigurationError(FlexBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), module.getName()));
+      throw new RuntimeConfigurationError(FlexCommonBundle.message("sdk.not.set.for.bc.0.of.module.1", bc.getName(), module.getName()));
     }
 
     return Pair.create(module, bc);

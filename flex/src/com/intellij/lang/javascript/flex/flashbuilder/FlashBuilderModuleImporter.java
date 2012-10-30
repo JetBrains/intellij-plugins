@@ -1,5 +1,7 @@
 package com.intellij.lang.javascript.flex.flashbuilder;
 
+import com.intellij.flex.FlexCommonUtils;
+import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -8,7 +10,6 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
-import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableBuildConfigurationEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
@@ -47,7 +48,6 @@ public class FlashBuilderModuleImporter {
   private static final String CORE_RESOURCES_PREFS_REL_PATH =
     "/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.core.resources.prefs";
   private static final String PATHVARIABLE_DOT = "pathvariable.";
-  private static final String LOCALE_TOKEN = "{locale}";
 
   private final Project myIdeaProject;
   private FlexProjectConfigurationEditor myFlexConfigEditor;
@@ -167,7 +167,7 @@ public class FlashBuilderModuleImporter {
 
     // todo parse options, replace "-a b" to "-a=b", move some to dedicated fields
     final String fbOptions = fbProject.getAdditionalCompilerOptions();
-    final List<String> locales = FlexUtils.getOptionValues(fbOptions, "locale", "compiler.locale");
+    final List<String> locales = FlexCommonUtils.getOptionValues(fbOptions, "locale", "compiler.locale");
     final String ideaOptions = FlexUtils.removeOptions(fbOptions, "locale", "compiler.locale", "source-path", "compiler.source-path");
     mainBC.getCompilerOptions().setAdditionalOptions(ideaOptions);
 
@@ -333,15 +333,15 @@ public class FlashBuilderModuleImporter {
       }
     }
     else {
-      final List<String> locales = FlexUtils.getOptionValues(fbProject.getAdditionalCompilerOptions(), "locale", "compiler.locale");
+      final List<String> locales = FlexCommonUtils.getOptionValues(fbProject.getAdditionalCompilerOptions(), "locale", "compiler.locale");
       final List<String> moreSourcePaths =
-        FlexUtils.getOptionValues(fbProject.getAdditionalCompilerOptions(), "source-path", "compiler.source-path");
+        FlexCommonUtils.getOptionValues(fbProject.getAdditionalCompilerOptions(), "source-path", "compiler.source-path");
 
       for (final String rawSourcePath : sourcePaths) {
-        if (rawSourcePath.contains(LOCALE_TOKEN)) {
+        if (rawSourcePath.contains(FlexCommonUtils.LOCALE_TOKEN)) {
           for (String locale : locales) {
             handleRawSourcePath(rootModel, fbProject, mainContentEntryUrl, mainContentEntry, otherContentEntries,
-                                rawSourcePath.replace(LOCALE_TOKEN, locale));
+                                rawSourcePath.replace(FlexCommonUtils.LOCALE_TOKEN, locale));
           }
         }
         else {
@@ -350,9 +350,9 @@ public class FlashBuilderModuleImporter {
       }
 
       for (String sourcePath : moreSourcePaths) {
-        if (sourcePath.contains(LOCALE_TOKEN)) {
+        if (sourcePath.contains(FlexCommonUtils.LOCALE_TOKEN)) {
           for (String locale : locales) {
-            final String path = getPathToSourceRootSetInAdditionalOptions(sourcePath.replace(LOCALE_TOKEN, locale),
+            final String path = getPathToSourceRootSetInAdditionalOptions(sourcePath.replace(FlexCommonUtils.LOCALE_TOKEN, locale),
                                                                           mainContentEntryUrl, mainContentEntry);
 
             if (path != null) {
