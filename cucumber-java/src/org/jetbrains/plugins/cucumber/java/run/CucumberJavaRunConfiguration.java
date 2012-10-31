@@ -17,7 +17,6 @@ import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
-import org.jetbrains.plugins.cucumber.run.CucumberJvmSMFormatter;
 
 import java.io.File;
 
@@ -55,7 +54,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         params.getClassPath().add(path);
 
         params.setMainClass(MAIN_CLASS_NAME);
-        for(RunConfigurationExtension ext: Extensions.getExtensions(RunConfigurationExtension.EP_NAME)) {
+        for (RunConfigurationExtension ext : Extensions.getExtensions(RunConfigurationExtension.EP_NAME)) {
           ext.updateJavaParameters(CucumberJavaRunConfiguration.this, params, getRunnerSettings());
         }
 
@@ -83,7 +82,6 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         final ProcessHandler processHandler = startProcess();
         final ConsoleView console = createConsole(executor, processHandler);
         return new DefaultExecutionResult(console, processHandler, createActions(console, processHandler, executor));
-
       }
     };
     state.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
@@ -92,7 +90,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   private static String getSMRunnerPath() {
     final Class<?> aClass = new File(PathUtil.getJarPathForClass(CucumberJavaRunConfiguration.class)).isDirectory()
-                            ? CucumberJvmSMFormatter.class
+                            ? CucumberJavaSMFormatter.class
                             : CucumberJavaRunConfiguration.class;
     return PathUtil.getJarPathForClass(aClass).replace("cucumber-java.jar", "SMFormatter.jar");
   }
@@ -105,7 +103,8 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       if (!(new File(fileToRun)).exists()) {
         throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.file.doesnt.exist"));
       }
-    } else {
+    }
+    else {
       throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.specify.file"));
     }
 

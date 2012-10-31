@@ -20,7 +20,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFile;
  * @since 8/6/12
  */
 public abstract class CucumberJavaRunConfigurationProducer extends JavaRuntimeConfigurationProducerBase implements Cloneable {
-  public static final String FORMATTER_OPTIONS = " --format org.jetbrains.plugins.cucumber.run.CucumberJvmSMFormatter --monochrome";
+  public static final String FORMATTER_OPTIONS = " --format org.jetbrains.plugins.cucumber.java.run.CucumberJavaSMFormatter --monochrome";
   public static final String CUCUMBER_MAIN_CLASS = "cucumber.cli.Main";
   protected PsiElement mySourceElement;
 
@@ -60,7 +60,8 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRuntimeCo
     return locationElement != null && locationElement.getContainingFile() instanceof GherkinFile;
   }
 
-  protected void processConfiguration(@NotNull final CucumberJavaRunConfiguration configuration) {}
+  protected void processConfiguration(@NotNull final CucumberJavaRunConfiguration configuration) {
+  }
 
   protected RunnerAndConfigurationSettings createConfiguration(Location location, ConfigurationContext context) {
     final Project project = context.getProject();
@@ -81,5 +82,4 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRuntimeCo
     JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
     return settings;
   }
-
 }
