@@ -1,4 +1,4 @@
-package org.jetbrains.plugins.cucumber.run;
+package org.jetbrains.plugins.cucumber.java.run;
 
 import gherkin.formatter.Formatter;
 import gherkin.formatter.Reporter;
@@ -47,8 +47,10 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
     "##teamcity[testSuiteStarted timestamp = '%s' locationHint = 'file://%s' name = '%s']";
   private static final String TEMPLATE_TEST_SUITE_FINISHED = "##teamcity[testSuiteFinished timestamp = '%s' name = '%s']";
 
-  private static final String TEMPLATE_SCENARIO_COUNTING_STARTED = "##teamcity[customProgressStatus testsCategory = 'Scenarios' count = '0' timestamp = '%s']";
-  private static final String TEMPLATE_SCENARIO_COUNTING_FINISHED = "##teamcity[customProgressStatus testsCategory = '' count = '0' timestamp = '%s']";
+  private static final String TEMPLATE_SCENARIO_COUNTING_STARTED =
+    "##teamcity[customProgressStatus testsCategory = 'Scenarios' count = '0' timestamp = '%s']";
+  private static final String TEMPLATE_SCENARIO_COUNTING_FINISHED =
+    "##teamcity[customProgressStatus testsCategory = '' count = '0' timestamp = '%s']";
   private static final String TEMPLATE_SCENARIO_STARTED = "##teamcity[customProgressStatus type = 'testStarted' timestamp = '%s']";
 
   public static final String RESULT_STATUS_PENDING = "pending";
@@ -173,11 +175,13 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
       String details = "";
       outCommand(String.format(TEMPLATE_TEST_FAILED, getCurrentTime(), escape(details), escape(message), stepFullName, "error = 'true'"),
                  true);
-    } else if (result.equals(Result.SKIPPED)) {
+    }
+    else if (result.equals(Result.SKIPPED)) {
       skippedStepCount++;
       scenarioPassed = false;
       outCommand(String.format(TEMPLATE_TEST_PENDING, stepFullName, getCurrentTime()), true);
-    } else {
+    }
+    else {
       passedStepCount++;
     }
 
@@ -236,7 +240,8 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
     String currentDir = System.getenv().get("current_dir");
     if (currentDir != null) {
       uri = currentDir + File.separator + s;
-    } else {
+    }
+    else {
       uri = s;
     }
   }

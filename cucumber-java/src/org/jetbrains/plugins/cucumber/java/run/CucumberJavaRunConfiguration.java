@@ -90,7 +90,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   private static String getSMRunnerPath() {
     final Class<?> aClass = new File(PathUtil.getJarPathForClass(CucumberJavaRunConfiguration.class)).isDirectory()
-                            ? CucumberJavaSMFormatter.class
+                            ? CucumberJvmSMFormatter.class
                             : CucumberJavaRunConfiguration.class;
     return PathUtil.getJarPathForClass(aClass).replace("cucumber-java.jar", "SMFormatter.jar");
   }
