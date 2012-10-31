@@ -17,10 +17,7 @@ package com.intellij.struts2.velocity;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.psi.CommonClassNames;
-import com.intellij.psi.JavaPsiFacade;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.FakePsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
@@ -32,6 +29,7 @@ import com.intellij.velocity.psi.VtlVariable;
 import com.intellij.velocity.psi.files.VtlFile;
 import com.intellij.velocity.psi.files.VtlFileType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -120,6 +118,12 @@ public class Struts2GlobalVariableProvider extends VtlGlobalVariableProvider {
     @Override
     public PsiType getPsiType() {
       return myType;
+    }
+
+    @Nullable
+    @Override
+    public PsiComment getDocComment() {
+      return null;
     }
 
     @Override
