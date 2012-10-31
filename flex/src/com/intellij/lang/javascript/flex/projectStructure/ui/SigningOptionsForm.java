@@ -8,16 +8,15 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.RawCommandLineEditor;
+import com.intellij.util.ui.PlatformColors;
 import com.intellij.util.ui.UIUtil;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -129,7 +128,7 @@ public class SigningOptionsForm {
   private void updateControls() {
     UIUtil.setEnabled(myOptionsPanel, !myUseTempCertificateCheckBox.isVisible() || !myUseTempCertificateCheckBox.isSelected(), true);
     if (myMoreOptionsHyperlinkLabel.isEnabled()) {
-      myMoreOptionsHyperlinkLabel.setForeground(Color.BLUE); // workaround of JLabel-related workaround at UIUtil.setEnabled(..)
+      myMoreOptionsHyperlinkLabel.setForeground(PlatformColors.BLUE); // workaround of JLabel-related workaround at UIUtil.setEnabled(..)
     }
   }
 
