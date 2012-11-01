@@ -1,3 +1,40 @@
+Index: src/com/google/jstestdriver/javascript/TestRunner.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/com/google/jstestdriver/javascript/TestRunner.js	(date 1349494137000)
++++ src/com/google/jstestdriver/javascript/TestRunner.js	(revision )
+@@ -80,19 +80,22 @@
+ jstestdriver.TestRunner.prototype.runConfiguration = function(config,
+                                                               onTestDone,
+                                                               onComplete) {
+-  if (this.captureConsole_) {
+-    this.overrideConsole_();
++  var self = this;
++  if (self.captureConsole_) {
++    self.overrideConsole_();
+   }
+ 
+   jstestdriver.log("running configuration " + config);
+   this.pluginRegistrar_.runTestConfiguration(
+       config,
+       onTestDone,
+-      onComplete);
+-
+-  if (this.captureConsole_) {
+-    this.resetConsole_();
++      function() {
++        if (self.captureConsole_) {
++          self.resetConsole_();
+-  }
++        }
++        onComplete.apply(this, arguments);
++      }
++  );
+ };
+ 
+ 
 Index: src/com/google/jstestdriver/server/handlers/TestResourceHandler.java
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
@@ -28,42 +65,6 @@ Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
        writer.write(fileContent);
        writer.flush();
      } catch (FilesCache.MissingFileException e) {
-Index: src/com/google/jstestdriver/javascript/TestRunner.js
-IDEA additional info:
-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
-<+>UTF-8
-===================================================================
---- src/com/google/jstestdriver/javascript/TestRunner.js	(date 1349494137000)
-+++ src/com/google/jstestdriver/javascript/TestRunner.js	(revision )
-@@ -80,19 +80,21 @@
- jstestdriver.TestRunner.prototype.runConfiguration = function(config,
-                                                               onTestDone,
-                                                               onComplete) {
--  if (this.captureConsole_) {
--    this.overrideConsole_();
-+  var testRunner = this;
-+  if (testRunner.captureConsole_) {
-+    testRunner.overrideConsole_();
-   }
- 
-   jstestdriver.log("running configuration " + config);
-   this.pluginRegistrar_.runTestConfiguration(
-       config,
-       onTestDone,
--      onComplete);
--
--  if (this.captureConsole_) {
--    this.resetConsole_();
-+      function() {
-+        onComplete();
-+        if (testRunner.captureConsole_) {
-+          testRunner.resetConsole_();
--  }
-+        }
-+      });
- };
- 
- 
 Index: src/com/google/jstestdriver/html/InlineHtmlProcessor.java
 IDEA additional info:
 Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
