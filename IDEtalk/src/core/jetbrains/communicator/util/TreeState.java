@@ -32,6 +32,10 @@ public class TreeState {
   private final Set mySelectedNodes = new HashSet();
   private final Set myExpandedNodes = new HashSet();
 
+  @SuppressWarnings("UnusedDeclaration")
+  public TreeState() {
+  }
+
   public TreeState(JTree tree) {
     saveTreeSelection(tree);
     saveExpandedNodes(tree);
