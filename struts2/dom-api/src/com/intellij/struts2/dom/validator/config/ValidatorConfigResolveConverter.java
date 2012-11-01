@@ -31,7 +31,7 @@ public abstract class ValidatorConfigResolveConverter extends ResolvingConverter
   }
 
   public String getErrorMessage(@Nullable final String s, final ConvertContext context) {
-    return "Cannot resolve validator ''" + s + "''";
+    return "Cannot resolve validator '" + s + "'";
   }
 
 }

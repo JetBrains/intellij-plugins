@@ -143,7 +143,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
 
     @Override
     public String getUnresolvedMessagePattern() {
-      return "Cannot resolve Action ''" + getValue() + "''";
+      return "Cannot resolve Action '" + getValue() + "'";
     }
 
   }

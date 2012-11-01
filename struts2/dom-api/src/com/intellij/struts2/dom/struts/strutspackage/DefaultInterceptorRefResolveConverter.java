@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class DefaultInterceptorRefResolveConverter extends ResolvingConverter<InterceptorStack> {
 
   public String getErrorMessage(@Nullable final String s, final ConvertContext context) {
-    return "Cannot resolve interceptor-stack ''" + s + "''";
+    return "Cannot resolve interceptor-stack '" + s + "'";
   }
 
   public String toString(@Nullable final InterceptorStack interceptorStack, final ConvertContext context) {

@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class StrutsPackageExtendsResolveConverter extends FilterCurrentElementInVariantsResolvingConverter<StrutsPackage> {
 
   public String getErrorMessage(@Nullable final String s, final ConvertContext convertContext) {
-    return "Cannot resolve package ''" + s + "''";
+    return "Cannot resolve package '" + s + "'";
   }
 
   @Nullable

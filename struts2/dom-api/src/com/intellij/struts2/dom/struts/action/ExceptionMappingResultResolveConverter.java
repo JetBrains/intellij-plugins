@@ -77,7 +77,7 @@ public class ExceptionMappingResultResolveConverter extends ResolvingConverter<H
   }
 
   public String getErrorMessage(@Nullable final String value, final ConvertContext context) {
-    return "Cannot resolve action-result ''" + value + "''";
+    return "Cannot resolve action-result '" + value + "'";
   }
 
 }

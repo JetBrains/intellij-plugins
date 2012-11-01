@@ -174,7 +174,7 @@ TODO not needed so far ?!
     }
 
     public String getUnresolvedMessagePattern() {
-      return "Cannot resolve action ''" + getValue() + "''";
+      return "Cannot resolve action '" + getValue() + "'";
     }
 
     @NotNull

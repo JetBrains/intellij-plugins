@@ -74,7 +74,7 @@ public class AllowedMethodsConverter extends DelimitedListConverter<String> {
 
   @Override
   protected String getUnresolvedMessage(final String s) {
-    return "Cannot resolve action-method ''" + s + "''";
+    return "Cannot resolve action-method '" + s + "'";
   }
 
   // TODO workaround to fix TextRange in tag value

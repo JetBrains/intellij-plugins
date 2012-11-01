@@ -64,7 +64,7 @@ class StrutsPackageConverter extends ResolvingConverter<StrutsPackage> {
 
   @Override
   public String getErrorMessage(@Nullable final String s, final ConvertContext convertContext) {
-    return "Cannot resolve Struts package ''" + s + "''";
+    return "Cannot resolve Struts package '" + s + "'";
   }
 
   private static List<StrutsPackage> getStrutsPackages(final ConvertContext convertContext) {

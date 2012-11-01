@@ -99,7 +99,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
   }
 
   public String getUnresolvedMessagePattern() {
-    return "Cannot resolve property ''" + getValue() + "''";
+    return "Cannot resolve property '" + getValue() + "'";
   }
 
   public PsiElement handleElementRename(final String newElementName) throws IncorrectOperationException {

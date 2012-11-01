@@ -150,8 +150,8 @@ public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConv
 
     @Override
     public String getUnresolvedMessagePattern() {
-      return "Cannot resolve interceptor ''" + getValue() + "'' " +
-             "in interceptor-stack ''" + interceptorStack.getName().getStringValue() + "''";
+      return "Cannot resolve interceptor '" + getValue() + "' " +
+             "in interceptor-stack '" + interceptorStack.getName().getStringValue() + "'";
     }
   }
 

@@ -143,7 +143,7 @@ public class TilesResultContributor extends StrutsResultContributor {
     }
 
     public String getUnresolvedMessagePattern() {
-      return "Cannot resolve Tiles definition ''" + getValue() + "''";
+      return "Cannot resolve Tiles definition '" + getValue() + "'";
     }
   }
 

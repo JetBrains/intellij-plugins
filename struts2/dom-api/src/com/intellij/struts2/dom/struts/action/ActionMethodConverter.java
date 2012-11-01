@@ -55,7 +55,7 @@ public class ActionMethodConverter extends ResolvingConverter<PsiMethod> {
   }
 
   public String getErrorMessage(@Nullable final String s, final ConvertContext context) {
-    return "Cannot resolve action-method ''" + s + "''";
+    return "Cannot resolve action-method '" + s + "'";
   }
 
   public LocalQuickFix[] getQuickFixes(final ConvertContext context) {

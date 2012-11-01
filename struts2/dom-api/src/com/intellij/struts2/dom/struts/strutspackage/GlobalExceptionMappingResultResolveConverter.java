@@ -67,7 +67,7 @@ public class GlobalExceptionMappingResultResolveConverter extends ResolvingConve
   }
 
   public String getErrorMessage(@Nullable final String value, final ConvertContext context) {
-    return "Cannot resolve global result ''" + value + "''";
+    return "Cannot resolve global result '" + value + "'";
   }
 
 }

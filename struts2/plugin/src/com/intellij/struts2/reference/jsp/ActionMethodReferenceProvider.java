@@ -120,7 +120,7 @@ public class ActionMethodReferenceProvider extends PsiReferenceProvider {
 
     @Override
     public String getUnresolvedMessagePattern() {
-      return "Cannot resolve action-method ''" + methodName + "''";
+      return "Cannot resolve action-method '" + methodName + "'";
     }
 
     // TODO not called

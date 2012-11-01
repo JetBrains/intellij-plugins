@@ -98,7 +98,7 @@ class ResultTypeConverter extends DelimitedListConverter<ResultType> {
 
   @Override
   protected String getUnresolvedMessage(final String s) {
-    return "Cannot resolve result-type ''" + s + "''";
+    return "Cannot resolve result-type '" + s + "'";
   }
 
 }

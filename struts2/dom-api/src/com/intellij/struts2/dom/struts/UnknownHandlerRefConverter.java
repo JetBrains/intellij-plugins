@@ -38,7 +38,7 @@ public abstract class UnknownHandlerRefConverter extends ResolvingConverter<Bean
 
   @Override
   public String getErrorMessage(@Nullable final String value, final ConvertContext convertContext) {
-    return "Cannot resolve bean of type " + UNKNOWN_HANDLER_CLASS + " with name ''" + value + "''";
+    return "Cannot resolve bean of type " + UNKNOWN_HANDLER_CLASS + " with name '" + value + "'";
   }
 
 }

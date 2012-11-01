@@ -33,7 +33,7 @@ public abstract class ResultTypeResolvingConverter extends ResolvingConverter<Re
   }
 
   public String getErrorMessage(@Nullable final String value, final ConvertContext context) {
-    return "Cannot resolve result-type ''" + value + "''";
+    return "Cannot resolve result-type '" + value + "'";
   }
 
 }

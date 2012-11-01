@@ -97,7 +97,7 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
     }
 
     public String getUnresolvedMessagePattern() {
-      return "Cannot resolve namespace ''" + getCanonicalText() + "''";
+      return "Cannot resolve namespace '" + getCanonicalText() + "'";
     }
   }
 
