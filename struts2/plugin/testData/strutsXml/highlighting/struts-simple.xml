@@ -38,15 +38,15 @@
   <bean class="MyClass" scope="request"/>
   <bean class="MyClass" scope="session"/>
   <bean class="MyClass" scope="thread"/>
-  <bean class="MyClass" scope="<error descr="Unknown enum value INVALID_VALUE">INVALID_VALUE</error>"/>
+  <bean class="MyClass" scope="<error descr="Unknown enum value 'INVALID_VALUE'">INVALID_VALUE</error>"/>
 
   <bean class="MyClass" static="false"/>
   <bean class="MyClass" static="true"/>
-  <bean class="MyClass" static="<error descr="Cannot resolve symbol INVALID_VALUE">INVALID_VALUE</error>"/>
+  <bean class="MyClass" static="<error descr="Cannot resolve symbol 'INVALID_VALUE'">INVALID_VALUE</error>"/>
 
   <bean class="MyClass" optional="false"/>
   <bean class="MyClass" optional="true"/>
-  <bean class="MyClass" optional="<error descr="Cannot resolve symbol INVALID_VALUE">INVALID_VALUE</error>"/>
+  <bean class="MyClass" optional="<error descr="Cannot resolve symbol 'INVALID_VALUE'">INVALID_VALUE</error>"/>
 
   <bean class="MyClass" name="myBean"/>
   <bean class="MyClass" name=<error descr="Value must not be empty">""</error>/>
@@ -67,14 +67,14 @@
   <package name="<error descr="Struts Package with such name already exists">DUPLICATED_NAME</error>"/>
 
   <!-- "namespace" -->
-  <package name="emptyName" namespace=<error descr="Value must not be empty"><error descr="Namespace must start with '/'">""</error></error>/>
-  <package name="emptyName2" namespace="<error descr="Value must not be empty"><error descr="Namespace must start with '/'"> </error></error>"/>
+  <package name="emptyName" namespace=<error descr="Namespace must start with '/'"><error descr="Value must not be empty">""</error></error>/>
+  <package name="emptyName2" namespace="<error descr="Namespace must start with '/'"><error descr="Value must not be empty"> </error></error>"/>
   <package name="doesNotStartWithSlash" namespace="<error descr="Namespace must start with '/'">INVALID_VALUE</error>"/>
 
   <!-- "abstract" -->
   <package name="validName3" abstract="true"/>
   <package name="validName3_1" abstract="false"/>
-  <package name="validName3_2" abstract="<error descr="Cannot resolve symbol INVALID_VALUE">INVALID_VALUE</error>"/>
+  <package name="validName3_2" abstract="<error descr="Cannot resolve symbol 'INVALID_VALUE'">INVALID_VALUE</error>"/>
 
   <!-- "extends" -->
   <package name="extendingPackage" extends="validName3"/>
@@ -89,7 +89,7 @@
   </package>
 
   <package name="defaultActionRefInvalid">
-    <default-action-ref name="<error descr="Cannot resolve Struts Action INVALID_VALUE">INVALID_VALUE</error>"/>
+    <default-action-ref name="<error descr="Cannot resolve Struts Action 'INVALID_VALUE'">INVALID_VALUE</error>"/>
   </package>
 
 

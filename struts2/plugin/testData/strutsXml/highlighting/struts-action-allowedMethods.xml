@@ -19,7 +19,7 @@
   </package>
 
 
-  <package name="nonValid" strict-method-invocation="<error>INVALID_VALUE</error>">
+  <package name="nonValid" strict-method-invocation="<error descr="Cannot resolve symbol 'INVALID_VALUE'">INVALID_VALUE</error>">
   </package>
 
 
