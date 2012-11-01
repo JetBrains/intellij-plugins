@@ -4,6 +4,7 @@ import com.intellij.ProjectTopics;
 import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -51,7 +52,6 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Maxim.Mossienko
@@ -533,7 +533,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       context.addMessage(CompilerMessageCategory.WARNING, FlexBundle.message("fcsh.out.of.memory.and.restarted"), null, -1, -1);
     }
     else {
-      context.addMessage(CompilerMessageCategory.ERROR, FlexBundle.message("increase.flex.compiler.heap"), null, -1, -1);
+      context.addMessage(CompilerMessageCategory.ERROR, FlexCommonBundle.message("increase.flex.compiler.heap"), null, -1, -1);
     }
   }
 
@@ -627,10 +627,6 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     return libFile;
   }
 
-  //keep in sync with OutputLogger.ERROR_PATTERN from BuiltInFlexCompiler project !!!
-  static final Pattern errorPattern =
-    Pattern.compile("(.*?)(\\(\\D.*\\))?(?:\\((-?\\d+)\\))?: ?(?:col: (-?\\d+):?)? (Warning|Error): (.*)");
-
   private Result sendCommand(@NonNls final String command, final CompilerMessagesBuffer messagesBuffer) throws IOException {
     trace(TraceType.IN, command);
     messagesBuffer.addMessage(CompilerMessageCategory.INFORMATION, command, null, -1, -1);
@@ -679,7 +675,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
   }
 
   private static void dispatchError(final String errLine, final CompilerMessagesBuffer messagesBuffer) {
-    final Matcher matcher = errorPattern.matcher(errLine);
+    final Matcher matcher = FlexCommonUtils.ERROR_PATTERN.matcher(errLine);
 
     if (matcher.matches()) {
       final String file = matcher.group(1);

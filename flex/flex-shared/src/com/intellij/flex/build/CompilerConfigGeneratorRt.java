@@ -700,12 +700,15 @@ public class CompilerConfigGeneratorRt {
     final File configFile = new File(FlexCommonUtils.getTempFlexConfigsDirPath() + "/" + fileName);
     final byte[] textBytes = text.getBytes();
 
+    /*
     try {
       if (configFile.isFile() && Arrays.equals(textBytes, FileUtil.loadFileBytes(configFile))) {
         return configFile;
       }
     }
-    catch (IOException ignore) {/**/}
+    catch (IOException ignore) {
+    }
+    */
 
     if (!FileUtil.createParentDirs(configFile)) {
       throw new IOException("Failed to create folder " + configFile.getParent());

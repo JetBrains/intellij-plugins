@@ -19,7 +19,7 @@ public class FlexBuilderService extends BuilderService {
 
   @NotNull
   public List<? extends TargetBuilder<?, ?>> createBuilders() {
-    return Arrays.asList(new FlexBuilder());
+    return Arrays.asList(/*new FlexBuilder()*/);
   }
 
   @NotNull

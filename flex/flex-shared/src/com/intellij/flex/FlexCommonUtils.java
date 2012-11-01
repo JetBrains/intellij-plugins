@@ -1,14 +1,19 @@
 package com.intellij.flex;
 
 import com.intellij.execution.configurations.CommandLineTokenizer;
+import com.intellij.execution.process.BaseOSProcessHandler;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.flex.model.JpsFlexCompilerProjectExtension;
 import com.intellij.flex.model.bc.*;
 import com.intellij.flex.model.sdk.JpsFlexSdkType;
+import com.intellij.flex.model.sdk.JpsFlexmojosSdkProperties;
+import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import com.intellij.flex.model.sdk.RslUtil;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.JDOMUtil;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Trinity;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
@@ -32,16 +37,26 @@ import org.jetbrains.jps.model.serialization.JpsModelSerializationDataService;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FlexCommonUtils {
 
+  //keep in sync with OutputLogger.ERROR_PATTERN from BuiltInFlexCompiler project !!!
+  public static final Pattern ERROR_PATTERN =
+    Pattern.compile("(.*?)(\\(\\D.*\\))?(?:\\((-?\\d+)\\))?: ?(?:col: (-?\\d+):?)? (Warning|Error): (.*)");
+
+  public static final String LOCALE_TOKEN = "{locale}";
+  public static final Pattern XMX_PATTERN = Pattern.compile("(.* )?-Xmx([0-9]+)[mM]( .*)?");
+
   public static final String FLEX_UNIT_LAUNCHER = "____FlexUnitLauncher";
+  public static final String SDK_TOOLS_ENCODING = "UTF-8";
 
   private static final String MODULE_PREFIX = "Module: ";
   private static final String BC_PREFIX = "\tBC: ";
@@ -50,7 +65,9 @@ public class FlexCommonUtils {
   private static final String FORCED_DEBUG_STATUS = "\tForced debug status: ";
 
   private static final Logger LOG = Logger.getInstance(FlexCommonUtils.class.getName());
-  public static final String LOCALE_TOKEN = "{locale}";
+  public static final String OUT_OF_MEMORY = "java.lang.OutOfMemoryError";
+  public static final String JAVA_HEAP_SPACE = "Java heap space";
+  public static final String COULD_NOT_CREATE_JVM = "Could not create the Java virtual machine";
 
   public static boolean isSourceFile(final String fileName) {
     final String ext = FileUtil.getExtension(fileName);
@@ -586,5 +603,133 @@ public class FlexCommonUtils {
 
   public static String getFlexUnitLauncherExtension(final BuildConfigurationNature nature) {
     return nature.pureAS ? ".as" : ".mxml";
+  }
+
+  public static boolean is64BitJava(final String javaExecutablePath) {
+    try {
+      final Ref<Boolean> is64Bit = new Ref<Boolean>(false);
+
+      final Process process = Runtime.getRuntime().exec(new String[]{javaExecutablePath, "-version"});
+      final BaseOSProcessHandler handler = new BaseOSProcessHandler(process, "doesn't matter", Charset.defaultCharset());
+
+      handler.addProcessListener(new ProcessAdapter() {
+        public void onTextAvailable(ProcessEvent event, Key outputType) {
+          if (outputType != ProcessOutputTypes.SYSTEM && event.getText().contains("64-Bit")) {
+            is64Bit.set(true);
+          }
+        }
+      });
+
+      handler.startNotify();
+      handler.waitFor(3000);
+
+      if (!handler.isProcessTerminated()) {
+        handler.destroyProcess();
+      }
+
+      return is64Bit.get();
+    }
+    catch (IOException e) {/*ignore*/}
+
+    return false;
+  }
+
+  public static List<String> getCommandLineForSdkTool(final @NotNull JpsProject project,
+                                                      final @NotNull JpsSdk<?> sdk,
+                                                      final @Nullable String additionalClasspath,
+                                                      final @NotNull String mainClass) {
+    String javaHome = SystemProperties.getJavaHome();
+    boolean customJavaHomeSet = false;
+    String additionalJavaArgs = null;
+    int heapSizeMbFromJvmConfig = 0;
+    String classpath = additionalClasspath;
+
+    final boolean isFlexmojos = sdk.getSdkType() == JpsFlexmojosSdkType.INSTANCE;
+    final JpsFlexmojosSdkProperties flexmojosSdkData = isFlexmojos ? (JpsFlexmojosSdkProperties)sdk.getSdkProperties() : null;
+
+    if (isFlexmojos) {
+      classpath = (StringUtil.isEmpty(classpath) ? "" : (classpath + File.pathSeparator)) +
+                  FileUtil.toSystemDependentName(StringUtil.join(flexmojosSdkData.getFlexCompilerClasspath(), File.pathSeparator));
+    }
+    else {
+      FileInputStream inputStream = null;
+
+      try {
+        inputStream = new FileInputStream(FileUtil.toSystemDependentName(sdk.getHomePath() + "/bin/jvm.config"));
+
+        final Properties properties = new Properties();
+        properties.load(inputStream);
+
+        final String configuredJavaHome = properties.getProperty("java.home");
+        if (configuredJavaHome != null && configuredJavaHome.trim().length() > 0) {
+          javaHome = configuredJavaHome;
+          customJavaHomeSet = true;
+        }
+
+        final String javaArgs = properties.getProperty("java.args");
+        if (javaArgs != null && javaArgs.trim().length() > 0) {
+          additionalJavaArgs = javaArgs;
+          final Matcher matcher = XMX_PATTERN.matcher(javaArgs);
+          if (matcher.matches()) {
+            try {
+              heapSizeMbFromJvmConfig = Integer.parseInt(matcher.group(2));
+            }
+            catch (NumberFormatException e) {/*ignore*/}
+          }
+        }
+
+        final String classpathFromJvmConfig = properties.getProperty("java.class.path");
+        if (classpathFromJvmConfig != null && classpathFromJvmConfig.trim().length() > 0) {
+          classpath = (StringUtil.isEmpty(classpath) ? "" : (classpath + File.pathSeparator)) + classpathFromJvmConfig;
+        }
+        //jvm.config also has properties which are not handled here: 'env' and 'java.library.path'; though not sure that there's any sense in them
+      }
+      catch (IOException e) {
+        // not a big problem, will use default settings
+        if (inputStream != null) {
+          try {
+            inputStream.close();
+          }
+          catch (IOException e1) {/*ignore*/}
+        }
+      }
+    }
+    final String javaExecutable = FileUtil.toSystemDependentName((javaHome + "/bin/java" + (SystemInfo.isWindows ? ".exe" : "")));
+    final String applicationHomeParam =
+      isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
+
+    final String d32 = (!customJavaHomeSet && SystemInfo.isMac && FlexCommonUtils.is64BitJava(javaExecutable)) ? "-d32" : null;
+
+    final List<String> result = new ArrayList<String>();
+
+    result.add(javaExecutable);
+    if (StringUtil.isNotEmpty(d32)) result.add(d32);
+    if (StringUtil.isNotEmpty(applicationHomeParam)) result.add(applicationHomeParam);
+    if (StringUtil.isNotEmpty(additionalJavaArgs)) result.addAll(StringUtil.split(additionalJavaArgs, " "));
+
+    final String vmOptions = JpsFlexCompilerProjectExtension.getInstance(project).VM_OPTIONS;
+    if (StringUtil.isNotEmpty(vmOptions)) result.addAll(StringUtil.split(vmOptions, " "));
+
+    if (additionalJavaArgs == null || !additionalJavaArgs.contains("file.encoding")) {
+      result.add("-Dfile.encoding=" + SDK_TOOLS_ENCODING);
+    }
+
+    result.add("-Djava.awt.headless=true");
+    result.add("-Duser.language=en");
+    result.add("-Duser.region=en");
+
+    final int heapSizeMb = JpsFlexCompilerProjectExtension.getInstance(project).HEAP_SIZE_MB;
+    if (heapSizeMb > heapSizeMbFromJvmConfig) {
+      result.add("-Xmx" + heapSizeMb + "m");
+    }
+
+    if (StringUtil.isNotEmpty(classpath)) {
+      result.add("-classpath");
+      result.add(classpath);
+    }
+
+    result.add(mainClass);
+
+    return result;
   }
 }

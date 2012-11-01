@@ -1,5 +1,7 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.flex.FlexCommonBundle;
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -33,9 +35,6 @@ public class FlexCompilationManager {
   private boolean myCompilationFinished;
   private final FlexCompilerDependenciesCache myCompilerDependenciesCache;
 
-  private static final String OUT_OF_MEMORY = "java.lang.OutOfMemoryError";
-  private static final String JAVA_HEAP_SPACE = "Java heap space";
-  private static final String COULD_NOT_CREATE_JVM = "Could not create the Java virtual machine";
   static final Pattern OUTPUT_FILE_CREATED_PATTERN = Pattern.compile("(\\[.*\\] )?(.+) \\(([0-9]+) bytes\\)");
 
   public FlexCompilationManager(final CompileContext context, final Collection<FlexCompilationTask> compilationTasks) {
@@ -89,7 +88,7 @@ public class FlexCompilationManager {
                                       final int columnNum) {
     if (!myCompilationFinished) {
 
-      if (message.contains(COULD_NOT_CREATE_JVM)) {
+      if (message.contains(FlexCommonUtils.COULD_NOT_CREATE_JVM)) {
         category = CompilerMessageCategory.ERROR;
       }
 
@@ -107,9 +106,9 @@ public class FlexCompilationManager {
       final String prefix = getMessagePrefix(task);
       myCompileContext.addMessage(category, prefix + message, url, lineNum, columnNum);
 
-      if (message.contains(OUT_OF_MEMORY) || message.contains(JAVA_HEAP_SPACE)) {
+      if (message.contains(FlexCommonUtils.OUT_OF_MEMORY) || message.contains(FlexCommonUtils.JAVA_HEAP_SPACE)) {
         myCompileContext
-          .addMessage(CompilerMessageCategory.ERROR, prefix + FlexBundle.message("increase.flex.compiler.heap"), null, -1, -1);
+          .addMessage(CompilerMessageCategory.ERROR, prefix + FlexCommonBundle.message("increase.flex.compiler.heap"), null, -1, -1);
       }
     }
   }
@@ -129,18 +128,18 @@ public class FlexCompilationManager {
         if (task.isCompilationFailed()) {
           final Collection<FlexCompilationTask> cancelledTasks = cancelNotStartedDependentTasks(task);
           if (cancelledTasks.isEmpty()) {
-            addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.failed"), null, -1, -1);
+            addMessage(task, CompilerMessageCategory.INFORMATION, FlexCommonBundle.message("compilation.failed"), null, -1, -1);
           }
           else {
-            addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.failed.dependent.will.be.skipped"), null,
-                       -1, -1);
+            addMessage(task, CompilerMessageCategory.INFORMATION, FlexCommonBundle.message("compilation.failed.dependent.will.be.skipped"),
+                       null, -1, -1);
             for (final FlexCompilationTask cancelledTask : cancelledTasks) {
               addMessage(cancelledTask, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.skipped"), null, -1, -1);
             }
           }
         }
         else {
-          addMessage(task, CompilerMessageCategory.INFORMATION, FlexBundle.message("compilation.successful"), null, -1, -1);
+          addMessage(task, CompilerMessageCategory.INFORMATION, FlexCommonBundle.message("compilation.successful"), null, -1, -1);
 
           final String prefix = getMessagePrefix(task);
           final List<String> taskMessages = new ArrayList<String>();

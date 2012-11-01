@@ -1,11 +1,6 @@
 package com.intellij.lang.javascript.flex.sdk;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.configurations.JavaCommandLineStateUtil;
-import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.ComponentSet;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -47,7 +42,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FlexSdkUtils {
-  public static final String SDK_TOOLS_ENCODING = "UTF-8";
 
   public static final String ADL_RELATIVE_PATH =
     File.separatorChar + "bin" + File.separatorChar + "adl" + (SystemInfo.isWindows ? ".exe" : "");
@@ -56,7 +50,6 @@ public class FlexSdkUtils {
     File.separatorChar + "runtimes" + File.separatorChar + "air" + File.separatorChar +
     (SystemInfo.isWindows ? "win" : (SystemInfo.isLinux ? "linux" : "mac"));
 
-  private static final Pattern XMX_PATTERN = Pattern.compile("(.* )?-Xmx([0-9]+)[mM]( .*)?");
   private static final Pattern PLAYER_FOLDER_PATTERN = Pattern.compile("\\d{1,2}(\\.\\d{1,2})?");
 
   private FlexSdkUtils() {
@@ -358,9 +351,8 @@ public class FlexSdkUtils {
     final FlexmojosSdkAdditionalData flexmojosSdkData = isFlexmojos ? (FlexmojosSdkAdditionalData)sdk.getSdkAdditionalData() : null;
 
     if (isFlexmojos) {
-      classpath =
-        (StringUtil.isEmpty(classpath) ? "" : (classpath + File.pathSeparator)) +
-        FileUtil.toSystemDependentName(StringUtil.join(flexmojosSdkData.getFlexCompilerClasspath(), File.pathSeparator));
+      classpath = (StringUtil.isEmpty(classpath) ? "" : (classpath + File.pathSeparator)) +
+                  FileUtil.toSystemDependentName(StringUtil.join(flexmojosSdkData.getFlexCompilerClasspath(), File.pathSeparator));
     }
     else {
       FileInputStream inputStream = null;
@@ -380,7 +372,7 @@ public class FlexSdkUtils {
         final String javaArgs = properties.getProperty("java.args");
         if (javaArgs != null && javaArgs.trim().length() > 0) {
           additionalJavaArgs = javaArgs;
-          final Matcher matcher = XMX_PATTERN.matcher(javaArgs);
+          final Matcher matcher = FlexCommonUtils.XMX_PATTERN.matcher(javaArgs);
           if (matcher.matches()) {
             try {
               heapSizeMbFromJvmConfig = Integer.parseInt(matcher.group(2));
@@ -410,7 +402,7 @@ public class FlexSdkUtils {
     final String applicationHomeParam =
       isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 
-    final String d32 = (!customJavaHomeSet && SystemInfo.isMac && is64BitJava(javaExecutable)) ? "-d32" : null;
+    final String d32 = (!customJavaHomeSet && /*SystemInfo.isMac &&*/ FlexCommonUtils.is64BitJava(javaExecutable)) ? "-d32" : null;
 
     final List<String> result = new ArrayList<String>();
 
@@ -423,7 +415,7 @@ public class FlexSdkUtils {
     if (StringUtil.isNotEmpty(vmOptions)) result.addAll(StringUtil.split(vmOptions, " "));
 
     if (additionalJavaArgs == null || !additionalJavaArgs.contains("file.encoding")) {
-      result.add("-Dfile.encoding=" + SDK_TOOLS_ENCODING);
+      result.add("-Dfile.encoding=" + FlexCommonUtils.SDK_TOOLS_ENCODING);
     }
 
     result.add("-Djava.awt.headless=true");
@@ -451,37 +443,9 @@ public class FlexSdkUtils {
     return result;
   }
 
-  private static boolean is64BitJava(final String javaExecutable) {
-    final GeneralCommandLine commandLine = new GeneralCommandLine();
-    commandLine.setExePath(javaExecutable);
-    commandLine.addParameter("-version");
-    try {
-      final Ref<Boolean> is64Bit = new Ref<Boolean>(false);
-      final OSProcessHandler handler = JavaCommandLineStateUtil.startProcess(commandLine);
-      handler.addProcessListener(new ProcessAdapter() {
-        public void onTextAvailable(ProcessEvent event, Key outputType) {
-          final String text = event.getText();
-          if (!text.contains(javaExecutable) &&
-              text.contains("64-Bit")) { // first condition is to make sure that "64-Bit" is not in java[.exe] path which is also printed
-            is64Bit.set(true);
-          }
-        }
-      });
-      handler.startNotify();
-      handler.waitFor(3000);
-      if (!handler.isProcessTerminated()) {
-        handler.destroyProcess();
-      }
-      return is64Bit.get();
-    }
-    catch (ExecutionException e) {/*ignore*/}
-
-    return false;
-  }
-
   public static InputStreamReader createInputStreamReader(final InputStream inputStream) {
     try {
-      return new InputStreamReader(inputStream, SDK_TOOLS_ENCODING);
+      return new InputStreamReader(inputStream, FlexCommonUtils.SDK_TOOLS_ENCODING);
     }
     catch (UnsupportedEncodingException e) {
       return new InputStreamReader(inputStream);

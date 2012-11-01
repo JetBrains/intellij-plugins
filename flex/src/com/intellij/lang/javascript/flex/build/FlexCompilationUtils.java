@@ -49,7 +49,6 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
-import com.intellij.util.text.StringTokenizer;
 import gnu.trove.THashSet;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -175,14 +174,23 @@ public class FlexCompilationUtils {
                                       final FlexCompilationTask task,
                                       final String output) {
     boolean failureDetected = false;
-    final StringTokenizer tokenizer = new StringTokenizer(output, "\r\n");
 
-    while (tokenizer.hasMoreElements()) {
-      final String text = tokenizer.nextElement();
+    final List<String> lines = StringUtil.split(StringUtil.replace(output, "\r", "\n"), "\n");
 
-      if (StringUtil.isEmptyOrSpaces(text)) continue;
+    for (int i = 0; i < lines.size(); i++) {
+      final String text = lines.get(i);
 
-      final Matcher matcher = FlexCompilerHandler.errorPattern.matcher(text);
+      if (StringUtil.isEmptyOrSpaces(text) || "^".equals(text.trim())) {
+        continue;
+      }
+
+      final String nextLine = i + 1 < lines.size() ? lines.get(i + 1) : null;
+      if (nextLine != null && nextLine.trim().equals("^")) {
+        // do not print line of code with error/warning
+        continue;
+      }
+
+      final Matcher matcher = FlexCommonUtils.ERROR_PATTERN.matcher(text);
 
       if (matcher.matches()) {
         final String filePath = matcher.group(1);

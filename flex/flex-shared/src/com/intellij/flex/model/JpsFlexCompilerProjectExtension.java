@@ -3,6 +3,7 @@ package com.intellij.flex.model;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.model.JpsElementCreator;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.ex.JpsElementBase;
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
@@ -10,8 +11,7 @@ import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
 
 public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompilerProjectExtension> {
 
-  private static final JpsElementChildRoleBase<JpsFlexCompilerProjectExtension> ROLE =
-    JpsElementChildRoleBase.create("flex compiler project extension");
+  private static final JpsFlexCompilerProjectExtensionRole ROLE = new JpsFlexCompilerProjectExtensionRole();
 
   public boolean GENERATE_FLEXMOJOS_CONFIGS = true;
 
@@ -22,7 +22,6 @@ public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompi
   public int HEAP_SIZE_MB = 512;
   public String VM_OPTIONS = "";
 
-  @SuppressWarnings("UnusedDeclaration")
   public JpsFlexCompilerProjectExtension() {
   }
 
@@ -67,5 +66,23 @@ public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompi
         }
       }
     };
+  }
+
+  @NotNull
+  public static JpsFlexCompilerProjectExtension getInstance(final JpsProject project) {
+    return project.getContainer().getOrSetChild(ROLE);
+  }
+
+  private static class JpsFlexCompilerProjectExtensionRole
+    extends JpsElementChildRoleBase<JpsFlexCompilerProjectExtension> implements JpsElementCreator<JpsFlexCompilerProjectExtension> {
+
+    private JpsFlexCompilerProjectExtensionRole() {
+      super("flex compiler project extension");
+    }
+
+    @NotNull
+    public JpsFlexCompilerProjectExtension create() {
+      return new JpsFlexCompilerProjectExtension();
+    }
   }
 }
