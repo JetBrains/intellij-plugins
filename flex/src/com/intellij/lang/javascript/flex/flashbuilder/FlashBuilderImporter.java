@@ -28,6 +28,7 @@ import com.intellij.util.io.ZipUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import icons.FlexIcons;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.io.File;
@@ -68,6 +69,7 @@ public class FlashBuilderImporter extends ProjectImportBuilder<String> {
     myParameters = null;
   }
 
+  @NotNull
   public String getName() {
     return FlexBundle.message("flash.builder");
   }
