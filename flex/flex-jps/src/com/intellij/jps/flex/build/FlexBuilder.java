@@ -2,7 +2,6 @@ package com.intellij.jps.flex.build;
 
 import com.intellij.flex.build.FlexBuildTarget;
 import com.intellij.flex.build.FlexBuildTargetType;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.builders.BuildOutputConsumer;
 import org.jetbrains.jps.builders.BuildRootDescriptor;
@@ -15,18 +14,12 @@ import java.io.IOException;
 import java.util.Collections;
 
 public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTarget> {
-
-  private static final @NonNls String BUILDER_NAME = "flex";
-
   protected FlexBuilder() {
     super(Collections.singletonList(FlexBuildTargetType.INSTANCE));
   }
 
-  public String getName() {
-    return BUILDER_NAME;
-  }
-
-  public String getDescription() {
+  @NotNull
+  public String getPresentableName() {
     return "Flash Compiler";
   }
 

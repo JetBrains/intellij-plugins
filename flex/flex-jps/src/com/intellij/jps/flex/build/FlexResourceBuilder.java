@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.PathUtilRt;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.util.JpsPathUtil;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
@@ -29,19 +30,15 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class FlexResourceBuilder extends ModuleLevelBuilder {
-
-  private static final @NonNls String BUILDER_NAME = "flex-resource";
+  private static final @NonNls String BUILDER_NAME = "Flex Resource Builder";
 
   protected FlexResourceBuilder() {
     super(BuilderCategory.SOURCE_PROCESSOR);
   }
 
-  public String getName() {
+  @NotNull
+  public String getPresentableName() {
     return BUILDER_NAME;
-  }
-
-  public String getDescription() {
-    return "Flex Resource Builder";
   }
 
   public ExitCode build(final CompileContext context,
