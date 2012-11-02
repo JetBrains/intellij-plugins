@@ -126,6 +126,15 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
       roots.add(new FlexSourceRootDescriptor(root));
     }
 
+    for (final JpsFlexDependencyEntry entry : myBC.getDependencies().getEntries()) {
+      if (entry instanceof JpsFlexBCDependencyEntry) {
+        final JpsFlexBuildConfiguration dependencyBC = ((JpsFlexBCDependencyEntry)entry).getBC();
+        if (dependencyBC != null) {
+          roots.add(new FlexSourceRootDescriptor(new File(dependencyBC.getActualOutputFilePath())));
+        }
+      }
+    }
+
     return roots;
   }
 
@@ -189,7 +198,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   private class FlexSourceRootDescriptor extends BuildRootDescriptor {
     private final File myRoot;
 
-    public FlexSourceRootDescriptor(File root) {
+    public FlexSourceRootDescriptor(final File root) {
       myRoot = root;
     }
 
