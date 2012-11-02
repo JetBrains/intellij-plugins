@@ -63,18 +63,33 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
   }
 
   @Nullable
-  public static ActionScriptArrangementEntry create(final @NotNull JSAttributeListOwner fieldOrMethod,
+  public static ActionScriptArrangementEntry create(final @NotNull JSVarStatement varStatement,
                                                     final @NotNull Collection<TextRange> allowedRanges,
                                                     final @Nullable Document document) {
-    final TextRange textRange = fieldOrMethod.getTextRange();
+    final TextRange textRange = varStatement.getTextRange();
 
     if (isWithinBounds(textRange, allowedRanges)) {
-      LOG.assertTrue(fieldOrMethod instanceof JSVariable ||
-                     (fieldOrMethod instanceof JSFunction && !(fieldOrMethod instanceof JSFunctionExpression)),
-                     fieldOrMethod);
-
       final TextRange range = document == null ? textRange : ArrangementUtil.expandToLine(textRange, document);
-      return new ActionScriptArrangementEntry(fieldOrMethod.getName(), getType(fieldOrMethod), getModifiers(fieldOrMethod), range);
+      final JSVariable[] variables = varStatement.getVariables();
+
+      if (variables.length > 0) {
+        final JSVariable variable = variables[0];
+        return new ActionScriptArrangementEntry(variable.getName(), getType(variable), getModifiers(variable), range);
+      }
+    }
+
+    return null;
+  }
+
+  @Nullable
+  public static ActionScriptArrangementEntry create(final @NotNull JSFunction function,
+                                                    final @NotNull Collection<TextRange> allowedRanges,
+                                                    final @Nullable Document document) {
+    final TextRange textRange = function.getTextRange();
+
+    if (isWithinBounds(textRange, allowedRanges)) {
+      final TextRange range = document == null ? textRange : ArrangementUtil.expandToLine(textRange, document);
+      return new ActionScriptArrangementEntry(function.getName(), getType(function), getModifiers(function), range);
     }
 
     return null;

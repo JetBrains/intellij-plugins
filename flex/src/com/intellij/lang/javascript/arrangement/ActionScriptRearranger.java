@@ -2,10 +2,7 @@ package com.intellij.lang.javascript.arrangement;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
-import com.intellij.lang.javascript.psi.JSBlockStatement;
-import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -20,7 +17,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.psi.codeStyle.arrangement.*;
+import com.intellij.psi.codeStyle.arrangement.ArrangementSettings;
+import com.intellij.psi.codeStyle.arrangement.ArrangementUtil;
+import com.intellij.psi.codeStyle.arrangement.Rearranger;
+import com.intellij.psi.codeStyle.arrangement.StdArrangementSettings;
 import com.intellij.psi.codeStyle.arrangement.group.ArrangementGroupingRule;
 import com.intellij.psi.codeStyle.arrangement.group.ArrangementGroupingType;
 import com.intellij.psi.codeStyle.arrangement.match.ArrangementEntryType;
@@ -101,16 +101,22 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
       }
     }
 
-    // vars and consts
+    // vars and consts. Added to map only if there's only one var in JSVarStatement
     final Map<JSVariable, ActionScriptArrangementEntry> varToEntry = new THashMap<JSVariable, ActionScriptArrangementEntry>();
 
-    for (final JSVariable field : jsClass.getFields()) {
-      final ActionScriptArrangementEntry entry = ActionScriptArrangementEntry.create(field, ranges, document);
-      if (entry != null) {
-        if (entry.getType() == VAR) {
-          varToEntry.put(field, entry);
+    final JSVarStatement[] varStatements = PsiTreeUtil.getChildrenOfType(jsClass, JSVarStatement.class);
+    if (varStatements != null) {
+      for (final JSVarStatement varStatement : varStatements) {
+        final ActionScriptArrangementEntry entry = ActionScriptArrangementEntry.create(varStatement, ranges, document);
+
+        if (entry != null) {
+          result.add(entry);
+
+          final JSVariable[] variables = varStatement.getVariables();
+          if (entry.getType() == VAR && variables.length == 1) {
+            varToEntry.put(variables[0], entry);
+          }
         }
-        result.add(entry);
       }
     }
 
@@ -120,8 +126,8 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     for (final JSFunction function : jsClass.getFunctions()) {
       final ActionScriptArrangementEntry entry = ActionScriptArrangementEntry.create(function, ranges, document);
       if (entry != null) {
-        functionToEntry.put(function, entry);
         result.add(entry);
+        functionToEntry.put(function, entry);
       }
     }
 
