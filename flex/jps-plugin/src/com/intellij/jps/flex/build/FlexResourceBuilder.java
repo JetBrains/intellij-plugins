@@ -9,7 +9,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.PathUtilRt;
 import org.jetbrains.annotations.NonNls;
-import org.jetbrains.jps.util.JpsPathUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.FileProcessor;
@@ -21,6 +21,7 @@ import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.module.JpsTypedModule;
+import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,18 +31,15 @@ import java.util.Collections;
 
 public class FlexResourceBuilder extends ModuleLevelBuilder {
 
-  private static final @NonNls String BUILDER_NAME = "flex-resource";
+  private static final @NonNls String BUILDER_NAME = "Flash Resource Builder";
 
   protected FlexResourceBuilder() {
     super(BuilderCategory.SOURCE_PROCESSOR);
   }
 
-  public String getName() {
+  @NotNull
+  public String getPresentableName() {
     return BUILDER_NAME;
-  }
-
-  public String getDescription() {
-    return "Flex Resource Builder";
   }
 
   public ExitCode build(final CompileContext context,
@@ -54,7 +52,8 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
 
     try {
       dirtyFilesHolder.processDirtyFiles(new FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>() {
-        public boolean apply(final ModuleBuildTarget target, final File file, final JavaSourceRootDescriptor sourceRoot) throws IOException {
+        public boolean apply(final ModuleBuildTarget target, final File file, final JavaSourceRootDescriptor sourceRoot)
+          throws IOException {
           final JpsTypedModule<JpsFlexBuildConfigurationManager> flexModule = target.getModule().asTyped(JpsFlexModuleType.INSTANCE);
           if (flexModule == null) return true;
 

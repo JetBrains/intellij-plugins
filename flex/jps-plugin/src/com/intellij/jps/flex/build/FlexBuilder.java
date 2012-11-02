@@ -37,17 +37,12 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
 
   private enum Status {Ok, Failed, Cancelled}
 
-  private static final @NonNls String BUILDER_NAME = "flex";
-
   protected FlexBuilder() {
     super(Collections.singletonList(FlexBuildTargetType.INSTANCE));
   }
 
-  public String getName() {
-    return BUILDER_NAME;
-  }
-
-  public String getDescription() {
+  @NotNull
+  public String getPresentableName() {
     return "Flash Compiler";
   }
 
