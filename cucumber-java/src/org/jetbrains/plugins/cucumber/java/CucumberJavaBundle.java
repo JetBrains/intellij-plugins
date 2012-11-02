@@ -1,4 +1,4 @@
-package org.jetbrains.plugins.cucumber;
+package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.CommonBundle;
 import org.jetbrains.annotations.NonNls;
@@ -10,14 +10,14 @@ import java.util.ResourceBundle;
 
 /**
  * User: Andrey.Vokin
- * Date: 2/20/12
+ * Date: 10/30/12
  */
-public class CucumberBundle {
-  @NonNls public static final String BUNDLE = "org.jetbrains.plugins.cucumber.CucumberBundle";
+public class CucumberJavaBundle {
+  @NonNls public static final String BUNDLE = "org.jetbrains.plugins.cucumber.java.CucumberJavaBundle";
 
   private static Reference<ResourceBundle> ourBundle;
 
-  private CucumberBundle() {
+  private CucumberJavaBundle() {
   }
 
   public static String message(@NonNls @PropertyKey(resourceBundle = BUNDLE)String key, Object... params) {

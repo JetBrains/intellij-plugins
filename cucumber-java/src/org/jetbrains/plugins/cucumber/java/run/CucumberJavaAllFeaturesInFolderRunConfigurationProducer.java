@@ -18,7 +18,7 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override
   protected String getGlue() {
-    return " --glue org.test";
+    return null;
   }
 
   @Override

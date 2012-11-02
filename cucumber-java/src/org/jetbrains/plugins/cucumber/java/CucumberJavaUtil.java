@@ -141,9 +141,9 @@ public class CucumberJavaUtil {
   public static String getGlue(@NotNull final PsiElement step) {
     final String packageName = getPackageOfStepDef(step);
     if (packageName != null) {
-      return " --glue " + packageName;
+      return packageName;
     } else {
-      return "";
+      return null;
     }
   }
 }

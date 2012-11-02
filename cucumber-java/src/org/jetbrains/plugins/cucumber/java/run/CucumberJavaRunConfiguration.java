@@ -1,5 +1,6 @@
 package org.jetbrains.plugins.cucumber.java.run;
 
+import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
 import com.intellij.execution.application.ApplicationConfiguration;
 import com.intellij.execution.configurations.*;
@@ -12,11 +13,15 @@ import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.options.SettingsEditor;
+import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
+import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 
 import java.io.File;
 
@@ -26,6 +31,8 @@ import java.io.File;
  */
 
 public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
+  public String GLUE;
+
   public CucumberJavaRunConfiguration(String name, Project project, CucumberJavaRunConfigurationType applicationConfigurationType) {
     super(name, project, applicationConfigurationType);
   }
@@ -36,6 +43,15 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   protected ModuleBasedConfiguration createInstance() {
     return new CucumberJavaRunConfiguration(getName(), getProject(), CucumberJavaRunConfigurationType.getInstance());
+  }
+
+  @Override
+  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+    SettingsEditorGroup<CucumberJavaRunConfiguration> group = new SettingsEditorGroup<CucumberJavaRunConfiguration>();
+    group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new CucumberJavaApplicationConfigurable(getProject()));
+    JavaRunConfigurationExtensionManager.getInstance().appendEditors(this, group);
+    group.addEditor(ExecutionBundle.message("logs.tab.title"), new LogConfigurationPanel<CucumberJavaRunConfiguration>());
+    return group;
   }
 
   @Override
@@ -58,6 +74,9 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
           ext.updateJavaParameters(CucumberJavaRunConfiguration.this, params, getRunnerSettings());
         }
 
+        if (!StringUtil.isEmpty(GLUE)) {
+          params.getProgramParametersList().addParametersString("--glue " + GLUE);
+        }
         return params;
       }
 
@@ -108,6 +127,22 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.specify.file"));
     }
 
+    if (StringUtil.isEmpty(getGlue())) {
+      throw new RuntimeConfigurationException(CucumberJavaBundle.message("cucumber.java.run.configuration.glue.mustnt.be.empty"));
+    }
+
+    if (getProgramParameters().contains("--glue")) {
+      throw new RuntimeConfigurationException(CucumberJavaBundle.message("cucumber.java.run.configuration.glue.in.program.parameters"));
+    }
+
     super.checkConfiguration();
+  }
+
+  public String getGlue() {
+    return GLUE;
+  }
+
+  public void setGlue(String value) {
+    GLUE = value;
   }
 }
