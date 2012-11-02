@@ -88,8 +88,8 @@ public class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOp
   public State getState(/*final @Nullable ComponentManager componentManager*/) {
     State state = new State();
     /*putOptionsCollapsingPaths(myOptions, state.options, componentManager);*/
-    for (Map.Entry<String, String> entry : state.options.entrySet()) {
-      myOptions.put(entry.getKey(), entry.getValue());
+    for (Map.Entry<String, String> entry : myOptions.entrySet()) {
+      state.options.put(entry.getKey(), entry.getValue());
     }
 
     state.resourceFilesMode = myResourceFilesMode;
