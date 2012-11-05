@@ -51,6 +51,7 @@
                              implementationClass="com.intellij.tapestry.intellij.editorActions.TmlFindUsagesProvider"/>
     <methodReferencesSearch implementation="com.intellij.tapestry.intellij.editorActions.TapestryMethodReferenceSearcher"/>
     <referencesSearch implementation="com.intellij.tapestry.intellij.editorActions.TapestryPropertyReferenceSearcher"/>
+    <implicitUsageProvider implementation="com.intellij.tapestry.intellij.TapestryImplicitUsageProvider"/>
 
     <lang.commenter language="TML" implementationClass="com.intellij.lang.xml.XmlCommenter"/>
     <lang.foldingBuilder language="TML" implementationClass="com.intellij.lang.xml.XmlFoldingBuilder"/>
