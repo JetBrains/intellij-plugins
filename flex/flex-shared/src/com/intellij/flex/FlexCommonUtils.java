@@ -216,6 +216,52 @@ public class FlexCommonUtils {
     return !text.startsWith("+");
   }
 
+  public static String removeOptions(final String commandLine, final String... optionsToRemove) {
+    if (commandLine.isEmpty()) return commandLine;
+
+    final StringBuilder buf = new StringBuilder();
+    for (StringTokenizer tokenizer = new StringTokenizer(commandLine, " ", true); tokenizer.hasMoreTokens(); ) {
+      final String token = tokenizer.nextToken();
+
+      boolean remove = false;
+      for (String option : optionsToRemove) {
+        if (token.startsWith("-" + option)) {
+          remove = true;
+          break;
+        }
+      }
+
+      if (remove) {
+        String nextToken = null;
+
+        WHILE:
+        while (tokenizer.hasMoreElements()) {
+          nextToken = tokenizer.nextToken();
+          if (StringUtil.isEmptyOrSpaces(nextToken) || canBeCompilerOptionValue(nextToken)) {
+            continue;
+          }
+
+          for (String option : optionsToRemove) {
+            if (nextToken.startsWith("-" + option)) {
+              continue WHILE;
+            }
+          }
+
+          break;
+        }
+
+        if (nextToken != null && !canBeCompilerOptionValue(nextToken)) {
+          buf.append(nextToken);
+        }
+      }
+      else {
+        buf.append(token);
+      }
+    }
+
+    return buf.toString();
+  }
+
   public static String getFlexCompilerWorkDirPath(final JpsProject project) {
     final File dir = JpsModelSerializationDataService.getBaseDirectory(project);
     return dir == null ? "" : dir.getPath();
@@ -698,7 +744,7 @@ public class FlexCommonUtils {
     final String applicationHomeParam =
       isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 
-    final String d32 = (!customJavaHomeSet && SystemInfo.isMac && FlexCommonUtils.is64BitJava(javaExecutable)) ? "-d32" : null;
+    final String d32 = (!customJavaHomeSet && SystemInfo.isMac && is64BitJava(javaExecutable)) ? "-d32" : null;
 
     final List<String> result = new ArrayList<String>();
 
@@ -731,5 +777,25 @@ public class FlexCommonUtils {
     result.add(mainClass);
 
     return result;
+  }
+
+  @Nullable
+  public static String getPathRelativeToSourceRoot(final JpsModule module, final String path) {
+    for (JpsModuleSourceRoot srcRoot : module.getSourceRoots()) {
+      final String rootPath = JpsPathUtil.urlToPath(srcRoot.getUrl());
+      if (path.equals(rootPath)) return "";
+      if (path.startsWith(rootPath + "/")) return path.substring(rootPath.length() + 1);
+    }
+    return null;
+  }
+
+  @Nullable
+  public static String getPathRelativeToContentRoot(final JpsModule module, final String path) {
+    for (String rootUrl : module.getContentRootsList().getUrls()) {
+      final String rootPath = JpsPathUtil.urlToPath(rootUrl);
+      if (path.equals(rootPath)) return "";
+      if (path.startsWith(rootPath + "/")) return path.substring(rootPath.length() + 1);
+    }
+    return null;
   }
 }

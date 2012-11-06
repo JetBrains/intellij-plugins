@@ -7,11 +7,12 @@ import com.intellij.flex.build.FlexBuildTarget;
 import com.intellij.flex.build.FlexBuildTargetType;
 import com.intellij.flex.model.JpsFlexProjectLevelCompilerOptionsExtension;
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
+import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.sdk.JpsFlexSdkType;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.util.PathUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.builders.BuildOutputConsumer;
 import org.jetbrains.jps.builders.BuildRootDescriptor;
@@ -60,40 +61,139 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
       }
     });
 
-    final JpsFlexBuildConfiguration bc = buildTarget.getBC();
+    final JpsFlexBuildConfiguration mainBC = buildTarget.getBC();
 
-    if (dirtyFilePaths.isEmpty() && new File(bc.getActualOutputFilePath()).isFile()) {
-      return;
+    final List<JpsFlexBuildConfiguration> bcsToCompile = getAllBCsToCompile(mainBC);
+
+    if (dirtyFilePaths.isEmpty()) {
+      boolean outputFilesExist = true;
+
+      for (JpsFlexBuildConfiguration bc : bcsToCompile) {
+        if (!new File(bc.getActualOutputFilePath()).isFile()) {
+          outputFilesExist = false;
+          break;
+        }
+      }
+
+      if (outputFilesExist) {
+        return;
+      }
     }
 
-    String postfix = bc.isTempBCForCompilation() ? " - " + FlexCommonUtils.getBCSpecifier(bc) : "";
-    if (!bc.getName().equals(bc.getModule().getName())) postfix += " (module " + bc.getModule().getName() + ")";
-    final String compilerName = "[" + bc.getName() + postfix + "]";
+    for (JpsFlexBuildConfiguration bc : bcsToCompile) {
+      final Status status = compileBuildConfiguration(context, bc);
 
-    switch (compileBuildConfiguration(context, bc, compilerName)) {
-      case Ok:
-        context
-          .processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.INFO, FlexCommonBundle.message("compilation.successful")));
+      switch (status) {
+        case Ok:
+          context.processMessage(
+            new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.INFO, FlexCommonBundle.message("compilation.successful")));
 
-        outputConsumer.registerOutputFile(bc.getActualOutputFilePath(), dirtyFilePaths);
-        break;
-      case Failed:
-        final String message = bc.getOutputType() == OutputType.Application
-                               ? FlexCommonBundle.message("compilation.failed")
-                               : FlexCommonBundle.message("compilation.failed.dependent.will.be.skipped");
-        context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.INFO, message));
+          break;
 
-        throw new ProjectBuildException();
-      case Cancelled:
-        context
-          .processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.INFO, FlexCommonBundle.message("compilation.cancelled")));
-        break;
+        case Failed:
+          final String message = bc.getOutputType() == OutputType.Application
+                                 ? FlexCommonBundle.message("compilation.failed")
+                                 : FlexCommonBundle.message("compilation.failed.dependent.will.be.skipped");
+          context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.INFO, message));
+
+          throw new ProjectBuildException();
+
+        case Cancelled:
+          context.processMessage(
+            new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.INFO, FlexCommonBundle.message("compilation.cancelled")));
+          return;
+      }
     }
+
+    outputConsumer.registerOutputFile(mainBC.getActualOutputFilePath(), dirtyFilePaths);
   }
 
-  public static Status compileBuildConfiguration(final CompileContext context,
-                                                 final JpsFlexBuildConfiguration bc,
-                                                 final String compilerName) {
+  private static String getCompilerName(final JpsFlexBuildConfiguration bc) {
+    String postfix = bc.isTempBCForCompilation() ? " - " + FlexCommonUtils.getBCSpecifier(bc) : "";
+    if (!bc.getName().equals(bc.getModule().getName())) postfix += " (module " + bc.getModule().getName() + ")";
+    return "[" + bc.getName() + postfix + "]";
+  }
+
+
+  private static List<JpsFlexBuildConfiguration> getAllBCsToCompile(final JpsFlexBuildConfiguration bc) {
+    final List<JpsFlexBuildConfiguration> result =
+      new ArrayList<JpsFlexBuildConfiguration>(1 + bc.getRLMs().size() + bc.getCssFilesToCompile().size());
+
+    result.add(bc);
+
+    if (FlexCommonUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
+      for (JpsFlexBuildConfiguration.RLMInfo rlm : bc.getRLMs()) {
+        result.add(createRlmBC(bc, rlm));
+      }
+
+      for (String cssPath : bc.getCssFilesToCompile()) {
+        if (new File(cssPath).isFile()) {
+          result.add(createCssBC(bc, cssPath));
+        }
+      }
+    }
+
+    return result;
+  }
+
+  private static JpsFlexBuildConfiguration createRlmBC(final JpsFlexBuildConfiguration mainBC, final JpsFlexBuildConfiguration.RLMInfo rlm) {
+    final JpsFlexBuildConfiguration rlmBC = mainBC.getModule().getProperties().createTemporaryCopyForCompilation(mainBC);
+
+    rlmBC.setOutputType(OutputType.RuntimeLoadedModule);
+    rlmBC.setOptimizeFor(rlm.OPTIMIZE ? mainBC.getName() : ""); // any not empty string means that need to optimize
+
+    final String subdir = PathUtilRt.getParentPath(rlm.OUTPUT_FILE);
+    final String outputFileName = PathUtilRt.getFileName(rlm.OUTPUT_FILE);
+
+    rlmBC.setMainClass(rlm.MAIN_CLASS);
+    rlmBC.setOutputFileName(outputFileName);
+
+    if (!subdir.isEmpty()) {
+      final String outputFolder = PathUtilRt.getParentPath(mainBC.getActualOutputFilePath());
+      rlmBC.setOutputFolder(outputFolder + "/" + subdir);
+    }
+
+    rlmBC.setUseHtmlWrapper(false);
+
+    rlmBC.setRLMs(Collections.<JpsFlexBuildConfiguration.RLMInfo>emptyList());
+    rlmBC.setCssFilesToCompile(Collections.<String>emptyList());
+
+    final JpsFlexCompilerOptions compilerOptions = rlmBC.getCompilerOptions();
+    compilerOptions.setResourceFilesMode(JpsFlexCompilerOptions.ResourceFilesMode.None);
+    compilerOptions.setAdditionalOptions(FlexCommonUtils.removeOptions(compilerOptions.getAdditionalOptions(), "link-report"));
+
+    return rlmBC;
+  }
+
+  private static JpsFlexBuildConfiguration createCssBC(final JpsFlexBuildConfiguration mainBC, final String cssPath) {
+    final JpsFlexBuildConfiguration cssBC = mainBC.getModule().getProperties().createTemporaryCopyForCompilation(mainBC);
+    cssBC.setOutputType(OutputType.Application);
+
+    cssBC.setMainClass(cssPath);
+    cssBC.setOutputFileName(FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(cssPath)) + ".swf");
+
+    final String cssDirPath = PathUtilRt.getParentPath(cssPath);
+    String relativeToRoot = FlexCommonUtils.getPathRelativeToSourceRoot(mainBC.getModule(), cssDirPath);
+    if (relativeToRoot == null) {
+      relativeToRoot = FlexCommonUtils.getPathRelativeToContentRoot(mainBC.getModule(), cssDirPath);
+    }
+
+    if (!StringUtil.isEmpty(relativeToRoot)) {
+      final String outputFolder = PathUtilRt.getParentPath(mainBC.getActualOutputFilePath());
+      cssBC.setOutputFolder(outputFolder + "/" + relativeToRoot);
+    }
+
+    cssBC.setUseHtmlWrapper(false);
+    cssBC.setRLMs(Collections.<JpsFlexBuildConfiguration.RLMInfo>emptyList());
+    cssBC.setCssFilesToCompile(Collections.<String>emptyList());
+
+    cssBC.getCompilerOptions().setResourceFilesMode(JpsFlexCompilerOptions.ResourceFilesMode.None);
+    return cssBC;
+  }
+
+  private static Status compileBuildConfiguration(final CompileContext context, final JpsFlexBuildConfiguration bc) {
+    final String compilerName = getCompilerName(bc);
+
     try {
       final List<File> configFiles = createConfigFiles(bc);
       final String outputFilePath = bc.getActualOutputFilePath();
@@ -199,10 +299,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     return command;
   }
 
-  private static void addAdditionalOptions(final List<String> command,
-                                           final JpsModule module,
-                                           final String sdkHome,
-                                           final String additionalOptions) {
+  private static void addAdditionalOptions(List<String> command, JpsModule module, String sdkHome, String additionalOptions) {
     if (!StringUtil.isEmpty(additionalOptions)) {
       // TODO handle -option="path with spaces"
       for (final String s : StringUtil.split(additionalOptions, " ")) {

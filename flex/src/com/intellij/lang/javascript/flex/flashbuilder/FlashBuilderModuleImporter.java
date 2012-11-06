@@ -6,7 +6,6 @@ import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
@@ -168,7 +167,7 @@ public class FlashBuilderModuleImporter {
     // todo parse options, replace "-a b" to "-a=b", move some to dedicated fields
     final String fbOptions = fbProject.getAdditionalCompilerOptions();
     final List<String> locales = FlexCommonUtils.getOptionValues(fbOptions, "locale", "compiler.locale");
-    final String ideaOptions = FlexUtils.removeOptions(fbOptions, "locale", "compiler.locale", "source-path", "compiler.source-path");
+    final String ideaOptions = FlexCommonUtils.removeOptions(fbOptions, "locale", "compiler.locale", "source-path", "compiler.source-path");
     mainBC.getCompilerOptions().setAdditionalOptions(ideaOptions);
 
     final StringBuilder localesBuf = new StringBuilder();

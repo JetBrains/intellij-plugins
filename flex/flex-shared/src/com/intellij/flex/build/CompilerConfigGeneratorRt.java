@@ -577,7 +577,7 @@ public class CompilerConfigGeneratorRt {
       if (excludes.isExcluded(fileOrDir)) continue;
 
       if (fileOrDir.isDirectory()) {
-        final String baseRelativePath = StringUtil.notNullize(getPathRelativeToSourceRoot(myModule, fileOrDir.getPath()),
+        final String baseRelativePath = StringUtil.notNullize(FlexCommonUtils.getPathRelativeToSourceRoot(myModule, fileOrDir.getPath()),
                                                               fileOrDir.getName());
         FileUtil.processFilesRecursively(fileOrDir, new Processor<File>() {
           public boolean process(final File file) {
@@ -593,7 +593,7 @@ public class CompilerConfigGeneratorRt {
         });
       }
       else if (fileOrDir.isFile()) {
-        final String pathInSwc = StringUtil.notNullize(getPathRelativeToSourceRoot(myModule, fileOrDir.getPath()), fileOrDir.getName());
+        final String pathInSwc = StringUtil.notNullize(FlexCommonUtils.getPathRelativeToSourceRoot(myModule, fileOrDir.getPath()), fileOrDir.getName());
         filePathToPathInSwc.put(fileOrDir.getPath(), pathInSwc);
       }
     }
@@ -602,16 +602,6 @@ public class CompilerConfigGeneratorRt {
       final String value = entry.getValue() + CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR + entry.getKey();
       addOption(rootElement, CompilerOptionInfo.INCLUDE_FILE_INFO, value);
     }
-  }
-
-  @Nullable
-  private static String getPathRelativeToSourceRoot(final JpsModule module, final String path) {
-    for (JpsModuleSourceRoot srcRoot : module.getSourceRoots()) {
-      final String srcRootPath = JpsPathUtil.urlToPath(srcRoot.getUrl());
-      if (path.equals(srcRootPath)) return "";
-      if (path.startsWith(srcRootPath + "/")) return path.substring(srcRootPath.length() + 1);
-    }
-    return null;
   }
 
   private void addOption(final Element rootElement, final CompilerOptionInfo info, final String rawValue) {

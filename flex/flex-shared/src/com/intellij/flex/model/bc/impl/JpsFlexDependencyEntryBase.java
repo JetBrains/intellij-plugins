@@ -15,6 +15,7 @@ abstract class JpsFlexDependencyEntryBase<Self extends JpsFlexDependencyEntryBas
   }
 
   protected JpsFlexDependencyEntryBase(final JpsFlexDependencyEntryBase<Self> original) {
+    super(original);
     myLinkageType = original.myLinkageType;
   }
 

@@ -67,6 +67,10 @@ public class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOp
     return myResourceFilesMode;
   }
 
+  public void setResourceFilesMode(@NotNull final ResourceFilesMode resourceFilesMode) {
+    myResourceFilesMode = resourceFilesMode;
+  }
+
   @NotNull
   public Collection<String> getFilesToIncludeInSWC() {
     if (myFilesToIncludeInSWC.isEmpty()) return Collections.emptyList();
@@ -81,6 +85,10 @@ public class JpsFlexCompilerOptionsImpl extends JpsElementBase<JpsFlexCompilerOp
   @NotNull
   public String getAdditionalOptions() {
     return myAdditionalOptions;
+  }
+
+  public void setAdditionalOptions(@NotNull final String additionalOptions) {
+    myAdditionalOptions = additionalOptions;
   }
 
 // ------------------------------------

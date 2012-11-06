@@ -185,7 +185,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
             final ModifiableCompilerOptions compilerOptions = rlmBC.getCompilerOptions();
             compilerOptions.setResourceFilesMode(ResourceFilesMode.None);
-            compilerOptions.setAdditionalOptions(FlexUtils.removeOptions(compilerOptions.getAdditionalOptions(), "link-report"));
+            compilerOptions.setAdditionalOptions(FlexCommonUtils.removeOptions(compilerOptions.getAdditionalOptions(), "link-report"));
 
             compilationTasks.add(createCompilationTask(((MyProcessingItem)item).myModule, rlmBC, dependencies, builtInCompilerShell));
           }
@@ -473,7 +473,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
     // must not use getTemporaryCopyForCompilation() here because additional config file must not be merged with the generated one when compiling swf for release or AIR package
     final ModifiableFlexBuildConfiguration result = Factory.getCopy(bc);
-    final String additionalOptions = FlexUtils.removeOptions(bc.getCompilerOptions().getAdditionalOptions(), "debug", "compiler.debug");
+    final String additionalOptions = FlexCommonUtils
+      .removeOptions(bc.getCompilerOptions().getAdditionalOptions(), "debug", "compiler.debug");
     result.getCompilerOptions().setAdditionalOptions(additionalOptions + " -debug=" + String.valueOf(debug));
 
     return result;

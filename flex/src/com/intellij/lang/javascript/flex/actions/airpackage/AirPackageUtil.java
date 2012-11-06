@@ -432,7 +432,7 @@ public class AirPackageUtil {
 
         final String adtOptions = packagingOptions.getSigningOptions().getADTOptions();
         if (!adtOptions.isEmpty()) {
-          final String undocumentedOptions = FlexUtils.removeOptions(adtOptions, "sampler", "hideAneLibSymbols");
+          final String undocumentedOptions = FlexCommonUtils.removeOptions(adtOptions, "sampler", "hideAneLibSymbols");
           command.addAll(StringUtil.split(undocumentedOptions, " "));
         }
 

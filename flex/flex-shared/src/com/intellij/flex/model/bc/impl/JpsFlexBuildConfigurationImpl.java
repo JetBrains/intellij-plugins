@@ -4,6 +4,7 @@ import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.*;
 import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
@@ -91,7 +92,6 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
 // -----------------------------------------
 
   public JpsTypedModule<JpsFlexBuildConfigurationManager> getModule() {
-    assert !myTempBCForCompilation : getName();
     return (JpsTypedModule<JpsFlexBuildConfigurationManager>)myParent.getParent().getParent();
   }
 
@@ -118,10 +118,18 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return myOutputType;
   }
 
+  public void setOutputType(@NotNull final OutputType outputType) {
+    myOutputType = outputType;
+  }
+
   @Override
   @NotNull
   public String getOptimizeFor() {
     return myOptimizeFor;
+  }
+
+  public void setOptimizeFor(@NotNull final String optimizeFor) {
+    myOptimizeFor = optimizeFor;
   }
 
   @Override
@@ -130,10 +138,18 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return myMainClass;
   }
 
+  public void setMainClass(@NotNull final String mainClass) {
+    myMainClass = mainClass;
+  }
+
   @Override
   @NotNull
   public String getOutputFileName() {
     return myOutputFileName;
+  }
+
+  public void setOutputFileName(@NotNull final String outputFileName) {
+    myOutputFileName = outputFileName;
   }
 
   @Override
@@ -142,9 +158,17 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return myOutputFolder;
   }
 
+  public void setOutputFolder(@NotNull final String outputFolder) {
+    myOutputFolder = outputFolder;
+  }
+
   @Override
   public boolean isUseHtmlWrapper() {
     return myUseHtmlWrapper;
+  }
+
+  public void setUseHtmlWrapper(final boolean useHtmlWrapper) {
+    myUseHtmlWrapper = useHtmlWrapper;
   }
 
   @Override
@@ -168,6 +192,19 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return result;
   }
 
+  public void setRLMs(@NotNull Collection<RLMInfo> rlms) {
+    if (rlms.isEmpty()) myRLMs = "";
+    myRLMs = StringUtil.join(rlms, new Function<RLMInfo, String>() {
+      public String fun(final RLMInfo info) {
+        return info.MAIN_CLASS +
+               CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
+               info.OUTPUT_FILE +
+               CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
+               info.OPTIMIZE;
+      }
+    }, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+  }
+
   @Override
   @NotNull
   public Collection<String> getCssFilesToCompile() {
@@ -175,9 +212,17 @@ class JpsFlexBuildConfigurationImpl extends JpsNamedCompositeElementBase<JpsFlex
     return StringUtil.split(myCssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
   }
 
+  public void setCssFilesToCompile(@NotNull Collection<String> cssFilesToCompile) {
+    myCssFilesToCompile = cssFilesToCompile.isEmpty() ? "" : StringUtil.join(cssFilesToCompile, CompilerOptionInfo.LIST_ENTRIES_SEPARATOR);
+  }
+
   @Override
   public boolean isSkipCompile() {
     return mySkipCompile;
+  }
+
+  public void setSkipCompile(final boolean skipCompile) {
+    mySkipCompile = skipCompile;
   }
 
   @NotNull

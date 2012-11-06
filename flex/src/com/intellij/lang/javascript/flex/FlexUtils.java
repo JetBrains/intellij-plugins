@@ -412,51 +412,6 @@ public class FlexUtils {
     return builder.toString();
   }
 
-  public static String removeOptions(final String commandLine, final String... optionsToRemove) {
-    if (commandLine.isEmpty()) return commandLine;
-
-    final StringBuilder buf = new StringBuilder();
-    for (StringTokenizer tokenizer = new StringTokenizer(commandLine, " ", true); tokenizer.hasMoreTokens(); ) {
-      final String token = tokenizer.nextToken();
-
-      boolean remove = false;
-      for (String option : optionsToRemove) {
-        if (token.startsWith("-" + option)) {
-          remove = true;
-          break;
-        }
-      }
-
-      if (remove) {
-        String nextToken = null;
-
-        WHILE: while (tokenizer.hasMoreElements()) {
-          nextToken = tokenizer.nextToken();
-          if (StringUtil.isEmptyOrSpaces(nextToken) || FlexCommonUtils.canBeCompilerOptionValue(nextToken)) {
-            continue;
-          }
-
-          for (String option : optionsToRemove) {
-            if (nextToken.startsWith("-" + option)) {
-              continue WHILE;
-            }
-          }
-
-          break;
-        }
-
-        if (nextToken != null && !FlexCommonUtils.canBeCompilerOptionValue(nextToken)) {
-          buf.append(nextToken);
-        }
-      }
-      else {
-        buf.append(token);
-      }
-    }
-
-    return buf.toString();
-  }
-
   public static <T> boolean equalLists(final List<T> list1, final List<T> list2) {
     if (list1.size() != list2.size()) return false;
 

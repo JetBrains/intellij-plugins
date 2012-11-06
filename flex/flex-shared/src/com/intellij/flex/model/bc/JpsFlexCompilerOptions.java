@@ -6,6 +6,10 @@ import java.util.Collection;
 
 public interface JpsFlexCompilerOptions extends JpsFlexModuleOrProjectCompilerOptions {
 
+  void setResourceFilesMode(@NotNull ResourceFilesMode resourceFilesMode);
+
+  void setAdditionalOptions(@NotNull String additionalOptions);
+
   enum ResourceFilesMode {None, All, ResourcePatterns}
 
   @NotNull

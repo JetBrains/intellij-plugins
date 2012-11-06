@@ -29,11 +29,17 @@ public interface JpsFlexBuildConfiguration
   @NotNull
   OutputType getOutputType();
 
+  void setOutputType(@NotNull OutputType outputType);
+
   @NotNull
   String getOptimizeFor();
 
+  void setOptimizeFor(@NotNull String optimizeFor);
+
   @NotNull
   String getMainClass();
+
+  void setMainClass(@NotNull String mainClass);
 
   /**
    * Returns output file name as set in UI. Note that actual output file name may be different if additional compiler config file is used: see {@link #getActualOutputFilePath()}
@@ -41,11 +47,7 @@ public interface JpsFlexBuildConfiguration
   @NotNull
   String getOutputFileName();
 
-  /**
-   * Returns output folder path as set in UI. Note that actual output folder path may be different if additional compiler config file is used: see {@link #getActualOutputFilePath()}
-   */
-  @NotNull
-  String getOutputFolder();
+  void setOutputFileName(@NotNull String outputFileName);
 
   /**
    * Returns output file path as set in additional compiler config file if it exists
@@ -54,7 +56,17 @@ public interface JpsFlexBuildConfiguration
    */
   String getActualOutputFilePath();
 
+  /**
+   * Returns output folder path as set in UI. Note that actual output folder path may be different if additional compiler config file is used: see {@link #getActualOutputFilePath()}
+   */
+  @NotNull
+  String getOutputFolder();
+
+  void setOutputFolder(@NotNull String outputFolder);
+
   boolean isUseHtmlWrapper();
+
+  void setUseHtmlWrapper(boolean useHtmlWrapper);
 
   @NotNull
   String getWrapperTemplatePath();
@@ -62,10 +74,16 @@ public interface JpsFlexBuildConfiguration
   @NotNull
   Collection<RLMInfo> getRLMs();
 
+  void setRLMs(@NotNull Collection<RLMInfo> rlms);
+
   @NotNull
   Collection<String> getCssFilesToCompile();
 
+  void setCssFilesToCompile(@NotNull Collection<String> cssFilesToCompile);
+
   boolean isSkipCompile();
+
+  void setSkipCompile(boolean skipCompile);
 
   @NotNull
   JpsFlexDependencies getDependencies();
