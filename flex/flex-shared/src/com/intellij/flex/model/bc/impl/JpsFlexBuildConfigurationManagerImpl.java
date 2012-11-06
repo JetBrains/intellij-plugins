@@ -79,6 +79,12 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
     return myContainer.getChild(JpsFlexCompilerOptionsRole.INSTANCE);
   }
 
+  public JpsFlexBuildConfiguration createCopy(@NotNull final JpsFlexBuildConfiguration bc) {
+    final JpsFlexBuildConfigurationImpl copy = ((JpsFlexBuildConfigurationImpl)bc).createCopy();
+    copy.setParent(((JpsFlexBuildConfigurationImpl)bc).getParent());
+    return copy;
+  }
+
   public JpsFlexBuildConfiguration createTemporaryCopyForCompilation(@NotNull final JpsFlexBuildConfiguration bc) {
     final JpsFlexBuildConfigurationImpl copy = ((JpsFlexBuildConfigurationImpl)bc).createCopy();
     copy.setParent(((JpsFlexBuildConfigurationImpl)bc).getParent());

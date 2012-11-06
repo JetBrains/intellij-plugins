@@ -93,7 +93,16 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   }
 
   @NotNull
-  public JpsFlexBuildConfiguration getBC() {
+  public JpsFlexBuildConfiguration getMainBCToCompile() {
+    if (myForcedDebugStatus != null) {
+      // must not use getTemporaryCopyForCompilation() here because additional config file must not be merged with the generated one when compiling swf for release or AIR package
+      final JpsFlexBuildConfiguration bcCopy = myBC.getModule().getProperties().createCopy(myBC);
+      final String additionalOptions = FlexCommonUtils
+        .removeOptions(myBC.getCompilerOptions().getAdditionalOptions(), "debug", "compiler.debug");
+      bcCopy.getCompilerOptions().setAdditionalOptions(additionalOptions + " -debug=" + myForcedDebugStatus.toString());
+      return bcCopy;
+    }
+
     return myBC;
   }
 

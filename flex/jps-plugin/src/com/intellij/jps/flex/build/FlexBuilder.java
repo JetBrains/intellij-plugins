@@ -61,7 +61,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
       }
     });
 
-    final JpsFlexBuildConfiguration mainBC = buildTarget.getBC();
+    final JpsFlexBuildConfiguration mainBC = buildTarget.getMainBCToCompile();
 
     final List<JpsFlexBuildConfiguration> bcsToCompile = getAllBCsToCompile(mainBC);
 

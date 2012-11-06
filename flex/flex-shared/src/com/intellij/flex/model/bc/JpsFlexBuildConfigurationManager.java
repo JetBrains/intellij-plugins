@@ -19,5 +19,7 @@ public interface JpsFlexBuildConfigurationManager extends JpsCompositeElement {
 
   JpsFlexModuleOrProjectCompilerOptions getModuleLevelCompilerOptions();
 
+  JpsFlexBuildConfiguration createCopy(@NotNull JpsFlexBuildConfiguration bc);
+
   JpsFlexBuildConfiguration createTemporaryCopyForCompilation(@NotNull JpsFlexBuildConfiguration bc);
 }
