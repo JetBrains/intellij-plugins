@@ -1,9 +1,20 @@
 package com.intellij.flex.model.run;
 
+import com.intellij.flex.FlexCommonUtils;
+import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
+import com.intellij.flex.model.bc.JpsFlexDependencyEntry;
+import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.flex.model.bc.OutputType;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.JpsProject;
+import org.jetbrains.jps.model.java.JpsJavaExtensionService;
+import org.jetbrains.jps.util.JpsPathUtil;
+
+import java.util.Collections;
 
 public class JpsFlexUnitRunnerParameters extends JpsBCBasedRunnerParameters<JpsFlexUnitRunnerParameters> {
 
@@ -137,5 +148,34 @@ public class JpsFlexUnitRunnerParameters extends JpsBCBasedRunnerParameters<JpsF
 
   public void setSocketPolicyPort(int port) {
     mySocketPolicyPort = port;
+  }
+
+  @Nullable
+  public JpsFlexBuildConfiguration getBC(final JpsProject project) {
+    final JpsFlexBuildConfiguration bc = super.getBC(project);
+    if (bc == null) return null;
+
+    final JpsFlexBuildConfiguration overriddenBC = bc.getModule().getProperties().createTemporaryCopyForCompilation(bc);
+    overriddenBC.setOutputType(OutputType.Application);
+
+    overriddenBC.setMainClass(FlexCommonUtils.FLEX_UNIT_LAUNCHER);
+    overriddenBC.setOutputFileName("_flexunit.swf");
+    final String testOutputUrl = StringUtil.notNullize(JpsJavaExtensionService.getInstance().getOutputUrl(bc.getModule(), true));
+    overriddenBC.setOutputFolder(JpsPathUtil.urlToPath(testOutputUrl));
+
+    overriddenBC.setUseHtmlWrapper(false);
+    overriddenBC.setRLMs(Collections.<JpsFlexBuildConfiguration.RLMInfo>emptyList());
+    overriddenBC.setCssFilesToCompile(Collections.<String>emptyList());
+    overriddenBC.setSkipCompile(false);
+
+    overriddenBC.getDependencies().setFrameworkLinkage(LinkageType.Merged);
+
+    for (JpsFlexDependencyEntry entry : overriddenBC.getDependencies().getEntries()) {
+      if (entry.getLinkageType() == LinkageType.External) {
+        entry.setLinkageType(LinkageType.Merged);
+      }
+    }
+
+    return overriddenBC;
   }
 }

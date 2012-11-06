@@ -46,8 +46,6 @@ import java.util.Set;
 
 public class FlexUnitPrecompileTask implements CompileTask {
 
-  public static final String FLEX_UNIT_LAUNCHER = FlexCommonUtils.FLEX_UNIT_LAUNCHER;
-
   public static final Key<Collection<String>> FILES_TO_DELETE = Key.create("FlexUnitPrecompileTask.filesToRemove");
 
   private final Project myProject;
@@ -305,8 +303,8 @@ public class FlexUnitPrecompileTask implements CompileTask {
           public void run() {
             try {
               final VirtualFile tempDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(tmpDir);
-              launcherFile.set(
-                FlexUtils.addFileWithContent(FLEX_UNIT_LAUNCHER + FlexCommonUtils.getFlexUnitLauncherExtension(bc.getNature()), launcherText1, tempDir));
+              launcherFile.set(FlexUtils.addFileWithContent(
+                FlexCommonUtils.FLEX_UNIT_LAUNCHER + FlexCommonUtils.getFlexUnitLauncherExtension(bc.getNature()), launcherText1, tempDir));
 
               filesToDelete.add(launcherFile.get().getPath());
             }

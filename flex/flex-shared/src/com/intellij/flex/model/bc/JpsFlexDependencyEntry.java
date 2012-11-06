@@ -7,4 +7,6 @@ public interface JpsFlexDependencyEntry extends JpsElement {
 
   @NotNull
   LinkageType getLinkageType();
+
+  void setLinkageType(LinkageType linkageType);
 }

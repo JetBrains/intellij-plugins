@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.flex.FlexCommonBundle;
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -191,7 +192,7 @@ public class FlexUnitRunnerParameters extends BCBasedRunnerParameters {
     final ModifiableFlexBuildConfiguration overriddenBC = Factory.getTemporaryCopyForCompilation(moduleAndBC.second);
     overriddenBC.setOutputType(OutputType.Application);
 
-    overriddenBC.setMainClass(FlexUnitPrecompileTask.FLEX_UNIT_LAUNCHER);
+    overriddenBC.setMainClass(FlexCommonUtils.FLEX_UNIT_LAUNCHER);
     overriddenBC.setOutputFileName("_flexunit.swf");
     overriddenBC
       .setOutputFolder(VfsUtilCore.urlToPath(CompilerModuleExtension.getInstance(moduleAndBC.first).getCompilerOutputUrlForTests()));

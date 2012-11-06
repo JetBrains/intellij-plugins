@@ -2,9 +2,7 @@ package com.intellij.lang.javascript.flex.projectStructure.options;
 
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.*;
-import com.intellij.flex.model.sdk.RslUtil;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
@@ -19,7 +17,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -76,7 +73,7 @@ public class BCUtils {
   }
 
   public static boolean isFlexUnitBC(final FlexBuildConfiguration bc) {
-    return bc.isTempBCForCompilation() && bc.getMainClass().endsWith(FlexUnitPrecompileTask.FLEX_UNIT_LAUNCHER);
+    return bc.isTempBCForCompilation() && bc.getMainClass().endsWith(FlexCommonUtils.FLEX_UNIT_LAUNCHER);
   }
 
   public static boolean canHaveRLMsAndRuntimeStylesheets(final FlexBuildConfiguration bc) {

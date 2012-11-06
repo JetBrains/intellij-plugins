@@ -11,6 +11,7 @@ import com.intellij.flex.model.run.JpsFlexUnitRunConfigurationType;
 import com.intellij.flex.model.run.JpsFlexUnitRunnerParameters;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Trinity;
+import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.BuildTargetLoader;
@@ -38,28 +39,22 @@ public class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> {
 
     for (JpsTypedRunConfiguration<JpsFlashRunnerParameters> runConfig : project.getRunConfigurations(JpsFlashRunConfigurationType
                                                                                                        .INSTANCE)) {
-      final JpsFlexBuildConfiguration bc = runConfig.getProperties().getBC(project);
-      if (bc != null) {
-        result.add(new FlexBuildTarget(bc, runConfig.getType(), runConfig.getName()));
-      }
+      ContainerUtilRt.addIfNotNull(result, FlexBuildTarget.create(project, runConfig.getType(), runConfig.getName()));
     }
 
     for (JpsTypedRunConfiguration<JpsFlexUnitRunnerParameters> runConfig : project.getRunConfigurations(JpsFlexUnitRunConfigurationType
                                                                                                           .INSTANCE)) {
-      final JpsFlexBuildConfiguration bc = runConfig.getProperties().getBC(project);
-      if (bc != null) {
-        result.add(new FlexBuildTarget(bc, runConfig.getType(), runConfig.getName()));
-      }
+      ContainerUtilRt.addIfNotNull(result, FlexBuildTarget.create(project, runConfig.getType(), runConfig.getName()));
     }
 
     for (JpsTypedModule<JpsFlexBuildConfigurationManager> module : project.getModules(JpsFlexModuleType.INSTANCE)) {
       for (JpsFlexBuildConfiguration bc : module.getProperties().getBuildConfigurations()) {
-        result.add(new FlexBuildTarget(bc, null));
+        result.add(FlexBuildTarget.create(bc, null));
 
         final BuildConfigurationNature nature = bc.getNature();
         if (nature.isApp() && (nature.isDesktopPlatform() || nature.isMobilePlatform())) {
-          result.add(new FlexBuildTarget(bc, Boolean.TRUE));
-          result.add(new FlexBuildTarget(bc, Boolean.FALSE));
+          result.add(FlexBuildTarget.create(bc, Boolean.TRUE));
+          result.add(FlexBuildTarget.create(bc, Boolean.FALSE));
         }
       }
     }
@@ -90,22 +85,10 @@ public class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> {
         final String runConfigName = runConfigTypeIdAndName.second;
 
         if (JpsFlashRunConfigurationType.ID.equals(runConfigTypeId)) {
-          final JpsTypedRunConfiguration<JpsFlashRunnerParameters> runConfig =
-            FlexCommonUtils.findRunConfiguration(project, JpsFlashRunConfigurationType.INSTANCE, runConfigName);
-          if (runConfig != null) {
-            final JpsFlexBuildConfiguration bc = runConfig.getProperties().getBC(project);
-            return bc != null ? new FlexBuildTarget(bc, runConfig.getType(), runConfig.getName())
-                              : null;
-          }
+          return FlexBuildTarget.create(project, JpsFlashRunConfigurationType.INSTANCE, runConfigName);
         }
         else if (JpsFlexUnitRunConfigurationType.ID.equals(runConfigTypeId)) {
-          final JpsTypedRunConfiguration<JpsFlashRunnerParameters> runConfig =
-            FlexCommonUtils.findRunConfiguration(project, JpsFlashRunConfigurationType.INSTANCE, runConfigName);
-          if (runConfig != null) {
-            final JpsFlexBuildConfiguration bc = runConfig.getProperties().getBC(project);
-            return bc != null ? new FlexBuildTarget(bc, runConfig.getType(), runConfig.getName())
-                              : null;
-          }
+          return FlexBuildTarget.create(project, JpsFlexUnitRunConfigurationType.INSTANCE, runConfigName);
         }
       }
       else {
@@ -119,8 +102,7 @@ public class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> {
           for (JpsTypedModule<JpsFlexBuildConfigurationManager> module : project.getModules(JpsFlexModuleType.INSTANCE)) {
             if (module.getName().equals(moduleName)) {
               final JpsFlexBuildConfiguration bc = module.getProperties().findConfigurationByName(bcName);
-              return bc != null ? new FlexBuildTarget(bc, forcedDebugStatus)
-                                : null;
+              return bc != null ? FlexBuildTarget.create(bc, forcedDebugStatus) : null;
             }
           }
         }

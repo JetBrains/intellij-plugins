@@ -30,4 +30,8 @@ abstract class JpsFlexDependencyEntryBase<Self extends JpsFlexDependencyEntryBas
   public LinkageType getLinkageType() {
     return myLinkageType;
   }
+
+  public void setLinkageType(final LinkageType linkageType) {
+    myLinkageType = linkageType;
+  }
 }

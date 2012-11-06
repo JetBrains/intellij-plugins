@@ -61,11 +61,11 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
       }
     });
 
-    final JpsFlexBuildConfiguration mainBC = buildTarget.getMainBCToCompile();
+    final JpsFlexBuildConfiguration mainBC = buildTarget.getBC();
 
     final List<JpsFlexBuildConfiguration> bcsToCompile = getAllBCsToCompile(mainBC);
 
-    if (dirtyFilePaths.isEmpty()) {
+    if (dirtyFilePaths.isEmpty() && !FlexCommonUtils.isFlexUnitBC(mainBC)) {
       boolean outputFilesExist = true;
 
       for (JpsFlexBuildConfiguration bc : bcsToCompile) {

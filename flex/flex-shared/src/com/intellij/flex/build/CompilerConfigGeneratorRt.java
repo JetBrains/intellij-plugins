@@ -371,7 +371,8 @@ public class CompilerConfigGeneratorRt {
     if (myFlexUnit) {
       final String unitTestingSupportSwc = FlexCommonUtils
         .getPathToBundledJar(FlexCommonUtils.getFlexUnitSupportLibName(myBC.getNature(), myBC.getDependencies().getComponentSet()));
-      addLibraryRoots(rootElement, Collections.singletonList(JpsPathUtil.pathToUrl(unitTestingSupportSwc)), LinkageType.Merged);
+      final String flexUnitSwcUrl = JpsPathUtil.pathToUrl(FileUtil.toSystemIndependentName(unitTestingSupportSwc));
+      addLibraryRoots(rootElement, Collections.singletonList(flexUnitSwcUrl), LinkageType.Merged);
     }
   }
 
@@ -444,12 +445,12 @@ public class CompilerConfigGeneratorRt {
 
     if (includeTestRoots()) {
       for (JpsModuleSourceRoot srcRoot : myModule.getSourceRoots(JavaSourceRootType.TEST_SOURCE)) {
-        final File srcRootFile = srcRoot.getFile();
-        if (locales.contains(srcRootFile.getName())) {
-          sourcePathsWithLocaleToken.add(srcRootFile.getParentFile().getPath() + "/" + FlexCommonUtils.LOCALE_TOKEN);
+        final String srcRootPath = JpsPathUtil.urlToPath(srcRoot.getUrl());
+        if (locales.contains(PathUtilRt.getFileName(srcRootPath))) {
+          sourcePathsWithLocaleToken.add(PathUtilRt.getParentPath(srcRootPath) + "/" + FlexCommonUtils.LOCALE_TOKEN);
         }
         else {
-          sourcePathsWithoutLocaleToken.add(srcRootFile.getPath());
+          sourcePathsWithoutLocaleToken.add(srcRootPath);
         }
       }
     }
@@ -593,7 +594,8 @@ public class CompilerConfigGeneratorRt {
         });
       }
       else if (fileOrDir.isFile()) {
-        final String pathInSwc = StringUtil.notNullize(FlexCommonUtils.getPathRelativeToSourceRoot(myModule, fileOrDir.getPath()), fileOrDir.getName());
+        final String pathInSwc =
+          StringUtil.notNullize(FlexCommonUtils.getPathRelativeToSourceRoot(myModule, fileOrDir.getPath()), fileOrDir.getName());
         filePathToPathInSwc.put(fileOrDir.getPath(), pathInSwc);
       }
     }
