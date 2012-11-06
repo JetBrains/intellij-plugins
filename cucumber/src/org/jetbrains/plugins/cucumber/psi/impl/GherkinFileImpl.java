@@ -67,6 +67,11 @@ public class GherkinFileImpl extends PsiFileBase implements GherkinFile {
     return getDefaultLocale();
   }
 
+  @Override
+  public GherkinFeature[] getFeatures() {
+    return findChildrenByClass(GherkinFeature.class);
+  }
+
   public static String getDefaultLocale() {
     return "en";
   }
