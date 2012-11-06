@@ -6,16 +6,14 @@ import javax.swing.*;
 
 public enum TargetPlatform {
 
-  Web("Web", FlexSharedIcons.Bc_web),
-  Desktop("Desktop", FlexSharedIcons.Bc_desktop),
-  Mobile("Mobile", FlexSharedIcons.Bc_mobile);
+  Web("Web"),
+  Desktop("Desktop"),
+  Mobile("Mobile");
 
   private final String myPresentableText;
-  private final Icon myIcon;
 
-  TargetPlatform(final String presentableText, final Icon icon) {
+  TargetPlatform(final String presentableText) {
     myPresentableText = presentableText;
-    myIcon = icon;
   }
 
   public String getPresentableText() {
@@ -23,6 +21,17 @@ public enum TargetPlatform {
   }
 
   public Icon getIcon() {
-    return myIcon;
+    // do not keep icon in a field that is initialized at instantiation, because it will lead to runtime error in external compiler process on Mac (IDEA-90997)
+    switch (this) {
+      case Web:
+        return FlexSharedIcons.Bc_web;
+      case Desktop:
+        return FlexSharedIcons.Bc_desktop;
+      case Mobile:
+        return FlexSharedIcons.Bc_mobile;
+      default:
+        assert false : this;
+        return null;
+    }
   }
 }
