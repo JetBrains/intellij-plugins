@@ -41,7 +41,7 @@ public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRun
       if (!glues.isEmpty()) {
         StringBuilder buffer = new StringBuilder();
         for (String glue : glues) {
-          buffer.append(" --glue ").append(glue);
+          buffer.append(" ").append(glue);
         }
         return buffer.toString();
       }

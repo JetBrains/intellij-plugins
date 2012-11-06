@@ -75,7 +75,11 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         }
 
         if (!StringUtil.isEmpty(GLUE)) {
-          params.getProgramParametersList().addParametersString(GLUE);
+          final String[] glues = GLUE.split(" ");
+          for (String glue : glues) {
+            params.getProgramParametersList().addParametersString(" --glue " + glue);
+          }
+
         }
         return params;
       }

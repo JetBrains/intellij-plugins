@@ -43,7 +43,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
   private LabeledComponent<EditorTextFieldWithBrowseButton> myMainClass;
   private JPanel myWholePanel;
   private LabeledComponent<JComboBox> myModule;
-  private LabeledComponent<JTextField> myGlue;
+  private LabeledComponent<RawCommandLineEditor> myGlue;
   private LabeledComponent<RawCommandLineEditor> myVmOptions;
   private LabeledComponent<RawCommandLineEditor> myProgramArguments;
   private LabeledComponent<TextFieldWithBrowseButton> myWorkingDirectory;
@@ -81,6 +81,7 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
 
     myProgramArguments.getComponent().setDialogCaption(CucumberJavaBundle.message("run.configuration.form.program.parameters.title"));
     myVmOptions.getComponent().setDialogCaption(CucumberJavaBundle.message("run.configuration.form.vm.options.title"));
+    myGlue.getComponent().setDialogCaption(CucumberJavaBundle.message("run.configuration.form.glue.title"));
   }
 
   public void setWorkingDirectory(String dir) {
