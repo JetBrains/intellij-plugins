@@ -28,7 +28,6 @@ import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.groovy.GroovyFileType;
 import org.jetbrains.plugins.groovy.actions.GroovyTemplatesFactory;
-import org.jetbrains.plugins.groovy.actions.NewScriptAction;
 import org.jetbrains.plugins.groovy.annotator.intentions.QuickfixUtil;
 import org.jetbrains.plugins.groovy.lang.GrReferenceAdjuster;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
@@ -45,11 +44,14 @@ import java.util.ArrayList;
  * @author Max Medvedev
  */
 public class GrStepDefinitionCreator implements StepDefinitionCreator {
+
+  public static final String GROOVY_STEP_DEFINITION_FILE_TMPL = "GroovyStepDefinitionFile.groovy";
+
   @NotNull
   @Override
   public PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
     String fileName = name + '.' + GroovyFileType.DEFAULT_EXTENSION;
-    return GroovyTemplatesFactory.createFromTemplate(dir, name, fileName, NewScriptAction.GROOVY_SCRIPT_TMPL);
+    return GroovyTemplatesFactory.createFromTemplate(dir, name, fileName, GROOVY_STEP_DEFINITION_FILE_TMPL);
   }
 
   @Override
