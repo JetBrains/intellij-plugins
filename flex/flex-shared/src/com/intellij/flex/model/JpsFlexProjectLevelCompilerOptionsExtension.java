@@ -38,7 +38,7 @@ public class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompositeEle
     return myContainer.getChild(JpsFlexCompilerOptionsRole.INSTANCE);
   }
 
-  public static JpsProjectExtensionSerializer createProjectExtensionSerializer() {
+  static JpsProjectExtensionSerializer createProjectExtensionSerializer() {
     return new JpsProjectExtensionSerializer("flexCompiler.xml", "FlexIdeProjectLevelCompilerOptionsHolder") {
       public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
         final JpsFlexProjectLevelCompilerOptionsExtension extension = new JpsFlexProjectLevelCompilerOptionsExtension();

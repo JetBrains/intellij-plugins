@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.incremental.Utils;
 import org.jetbrains.jps.model.JpsElement;
 import org.jetbrains.jps.model.JpsProject;
+import org.jetbrains.jps.model.JpsSimpleElement;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
@@ -691,7 +692,9 @@ public class FlexCommonUtils {
     String classpath = additionalClasspath;
 
     final boolean isFlexmojos = sdk.getSdkType() == JpsFlexmojosSdkType.INSTANCE;
-    final JpsFlexmojosSdkProperties flexmojosSdkData = isFlexmojos ? (JpsFlexmojosSdkProperties)sdk.getSdkProperties() : null;
+    final JpsFlexmojosSdkProperties flexmojosSdkData = isFlexmojos
+                                                       ? ((JpsSimpleElement<JpsFlexmojosSdkProperties>)sdk.getSdkProperties()).getData()
+                                                       : null;
 
     if (isFlexmojos) {
       classpath = (StringUtil.isEmpty(classpath) ? "" : (classpath + File.pathSeparator)) +
