@@ -17,6 +17,9 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.openapi.roots.impl.DirectoryInfo;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -46,6 +49,9 @@ import java.util.Locale;
  */
 public class JavaStepDefinitionCreator implements StepDefinitionCreator {
   private static final Logger LOG = Logger.getInstance(JavaStepDefinitionCreator.class.getName());
+  public static final String CUCUMBER_JAVA_JAR_NAME = "cucumber-java";
+  public static final String CUCUMBER_1_1_ANNOTATION_PACKAGE = "@cucumber.api.java.en.";
+  public static final String CUCUMBER_1_0_ANNOTATION_PACKAGE = "@cucumber.annotation.en.";
 
   @NotNull
   @Override
@@ -185,11 +191,23 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
   }
 
   private static PsiMethod buildStepDefinitionByStep(@NotNull final GherkinStep step) {
+    String annotationPackage = CUCUMBER_1_1_ANNOTATION_PACKAGE;
+    final LibraryTable libraryTable = ProjectLibraryTable.getInstance(step.getProject());
+    for (Library library : libraryTable.getLibraries()) {
+      final String libraryName = library.getName();
+      if (libraryName != null && libraryName.contains(CUCUMBER_JAVA_JAR_NAME)) {
+        String version = libraryName.substring(libraryName.indexOf(CUCUMBER_JAVA_JAR_NAME) + CUCUMBER_JAVA_JAR_NAME.length() + 1);
+        if (version.startsWith("1.0")) {
+          annotationPackage = CUCUMBER_1_0_ANNOTATION_PACKAGE;
+        }
+      }
+    }
+
     final PsiElementFactory factory = JavaPsiFacade.getInstance(step.getProject()).getElementFactory();
     final Step cucumberStep = new Step(new ArrayList<Comment>(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
     final String snippet = new SnippetGenerator(new JavaSnippet()).getSnippet(cucumberStep)
       .replace("PendingException", "cucumber.runtime.PendingException")
-      .replaceFirst("@", "@cucumber.annotation.en.")
+      .replaceFirst("@", annotationPackage)
       .replaceAll("\\\\\\\\", "\\\\");
 
     return factory.createMethodFromText(snippet, step);
