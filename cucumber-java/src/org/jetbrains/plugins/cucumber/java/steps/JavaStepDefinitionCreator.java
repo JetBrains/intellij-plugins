@@ -128,12 +128,12 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
         DirectoryIndex directoryIndex = DirectoryIndex.getInstance(manager.getProject());
         DirectoryInfo info = directoryIndex.getInfoForDirectory(directory.getVirtualFile());
         if (info != null) {
-          VirtualFile sourceRoot = info.sourceRoot;
-          if (info.sourceRoot.getName().equals("resources")) {
-            final Module module = ProjectRootManager.getInstance(step.getProject()).getFileIndex().getModuleForFile(info.sourceRoot);
+          VirtualFile sourceRoot = info.getSourceRoot();
+          if (sourceRoot.getName().equals("resources")) {
+            final Module module = ProjectRootManager.getInstance(step.getProject()).getFileIndex().getModuleForFile(sourceRoot);
             if (module != null) {
               final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-              final VirtualFile resourceParent = info.sourceRoot.getParent();
+              final VirtualFile resourceParent = sourceRoot.getParent();
 
               for (VirtualFile vFile : moduleRootManager.getSourceRoots()) {
                 if (vFile.getPath().startsWith(resourceParent.getPath()) && vFile.getName().equals("java")) {
