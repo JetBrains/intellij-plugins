@@ -77,7 +77,9 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         if (!StringUtil.isEmpty(GLUE)) {
           final String[] glues = GLUE.split(" ");
           for (String glue : glues) {
-            params.getProgramParametersList().addParametersString(" --glue " + glue);
+            if (!StringUtil.isEmpty(glue)) {
+              params.getProgramParametersList().addParametersString(" --glue " + glue);
+            }
           }
 
         }
@@ -85,7 +87,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
       }
 
       @Nullable
-      protected ConsoleView createConsole(@NotNull final Executor executor, ProcessHandler processHandler) throws ExecutionException {
+      private ConsoleView createConsole(@NotNull final Executor executor, ProcessHandler processHandler) throws ExecutionException {
         // console view
         final ConsoleView testRunnerConsole;
 
@@ -100,6 +102,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         return testRunnerConsole;
       }
 
+      @NotNull
       @Override
       public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
         final ProcessHandler processHandler = startProcess();

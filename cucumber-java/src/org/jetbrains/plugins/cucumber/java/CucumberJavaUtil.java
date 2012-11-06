@@ -21,7 +21,8 @@ import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
  * Date: 7/25/12
  */
 public class CucumberJavaUtil {
-  public static final String CUCUMBER_ANNOTATION_PREFIX = "cucumber.annotation.";
+  public static final String CUCUMBER_ANNOTATION_PREFIX_1_0 = "cucumber.annotation.";
+  public static final String CUCUMBER_ANNOTATION_PREFIX_1_1 = "cucumber.api.java.";
 
   public static boolean isUnderTestSources(@NotNull final PsiElement element) {
     final ProjectRootManager rootManager = ProjectRootManager.getInstance(element.getProject());
@@ -43,7 +44,9 @@ public class CucumberJavaUtil {
       return false;
     }
     String name = qualifiedAnnotationName.get();
-    if (name.startsWith(CUCUMBER_ANNOTATION_PREFIX) && name.substring(CUCUMBER_ANNOTATION_PREFIX.length()).contains(".")) {
+    if (name.startsWith(CUCUMBER_ANNOTATION_PREFIX_1_0) && name.substring(CUCUMBER_ANNOTATION_PREFIX_1_0.length()).contains(".")) {
+      return true;
+    } else if (name.startsWith(CUCUMBER_ANNOTATION_PREFIX_1_1) && name.substring(CUCUMBER_ANNOTATION_PREFIX_1_1.length()).contains(".")) {
       return true;
     } else {
       for (String providedAnnotations : CucumberJavaAnnotationProvider.getCucumberAnnotations()) {
@@ -128,15 +131,6 @@ public class CucumberJavaUtil {
       }
     }
     return null;
-  }
-
-  public static String getGlue(@NotNull final PsiElement step) {
-    final String packageName = getPackageOfStepDef(step);
-    if (packageName != null) {
-      return packageName;
-    } else {
-      return null;
-    }
   }
 
   public static String getPackageOfStep(GherkinStep step) {
