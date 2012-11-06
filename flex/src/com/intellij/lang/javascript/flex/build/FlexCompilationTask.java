@@ -32,9 +32,13 @@ public abstract class FlexCompilationTask {
     myBC = bc;
     myDependencies = dependencies;
 
+    myPresentableName = getPresentableName(module, bc);
+  }
+
+  public static String getPresentableName(final Module module, final FlexBuildConfiguration bc) {
     String postfix = bc.isTempBCForCompilation() ? " - " + BCUtils.getBCSpecifier(bc) : "";
     if (!bc.getName().equals(module.getName())) postfix += " (module " + module.getName() + ")";
-    myPresentableName = bc.getName() + postfix;
+    return bc.getName() + postfix;
   }
 
   public void start(final FlexCompilationManager compilationManager) {

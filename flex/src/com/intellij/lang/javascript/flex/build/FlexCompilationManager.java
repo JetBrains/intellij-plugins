@@ -311,7 +311,7 @@ public class FlexCompilationManager {
         if (builder.length() > 0) builder.append(", ");
         builder.append(inProgressTask.getPresentableName());
       }
-      progressIndicator.setText(FlexBundle.message("compiling", builder.toString()));
+      progressIndicator.setText(FlexCommonBundle.message("compiling", builder.toString()));
     }
   }
 

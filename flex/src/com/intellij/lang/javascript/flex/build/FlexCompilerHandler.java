@@ -179,8 +179,8 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
       compilerManager.addBeforeTask(new ValidateFlashConfigurationsPrecompileTask());
       compilerManager.addBeforeTask(new FlexUnitPrecompileTask(myProject));
 
-      // todo remove this temporary workaround when jps flex compiler gets implemented
-      compilerManager.addAfterTask(new FlexCompileTask());
+      // todo move this logic to external compiler
+      compilerManager.addAfterTask(new FlexPostCompileTask());
 
       compilerManager.setValidationEnabled(FlexModuleType.getInstance(), false);
       if (PlatformUtils.isFlexIde()) {

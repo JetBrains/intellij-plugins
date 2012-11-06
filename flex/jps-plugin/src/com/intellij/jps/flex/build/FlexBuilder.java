@@ -23,6 +23,7 @@ import org.jetbrains.jps.incremental.ProjectBuildException;
 import org.jetbrains.jps.incremental.TargetBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
+import org.jetbrains.jps.incremental.messages.ProgressMessage;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsModule;
@@ -192,6 +193,8 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
   }
 
   private static Status compileBuildConfiguration(final CompileContext context, final JpsFlexBuildConfiguration bc) {
+    setProgressMessage(context, bc);
+
     final String compilerName = getCompilerName(bc);
 
     try {
@@ -210,6 +213,12 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
       context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.ERROR, e.getMessage()));
       return Status.Failed;
     }
+  }
+
+  private static void setProgressMessage(final CompileContext context, final JpsFlexBuildConfiguration bc) {
+    String postfix = bc.isTempBCForCompilation() ? " - " + FlexCommonUtils.getBCSpecifier(bc) : "";
+    if (!bc.getName().equals(bc.getModule().getName())) postfix += " (module " + bc.getModule().getName() + ")";
+    context.processMessage(new ProgressMessage(FlexCommonBundle.message("compiling", bc.getName() + postfix)));
   }
 
   private static List<File> createConfigFiles(final JpsFlexBuildConfiguration bc) throws IOException {
