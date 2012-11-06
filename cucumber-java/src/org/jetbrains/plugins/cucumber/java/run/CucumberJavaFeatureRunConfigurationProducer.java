@@ -11,7 +11,9 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinRecursiveElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author Andrey.Vokin
@@ -24,14 +26,31 @@ public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRun
     if (file instanceof GherkinFile) {
       final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
 
-      final LinkedHashSet<String> glues = new LinkedHashSet<String>();
+      final Set<String> glues = new LinkedHashSet<String>();
       file.accept(new GherkinRecursiveElementVisitor() {
         @Override
         public void visitStep(GherkinStep step) {
           for (CucumberJvmExtensionPoint e : extensions) {
-            String glue = e.getGlue(step);
+            boolean covered = false;
+            final String glue = e.getGlue(step);
             if (glue != null) {
-              glues.add(glue);
+              final Set<String> toRemove = new HashSet<String>();
+              for (String existedGlue : glues) {
+                if (glue.startsWith(existedGlue + ".")) {
+                  covered = true;
+                  break;
+                } else if (existedGlue.startsWith(glue + ".")) {
+                  toRemove.add(existedGlue);
+                }
+              }
+
+              for (String removing : toRemove) {
+                glues.remove(removing);
+              }
+
+              if (!covered) {
+                glues.add(glue);
+              }
               break;
             }
           }
@@ -41,7 +60,10 @@ public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRun
       if (!glues.isEmpty()) {
         StringBuilder buffer = new StringBuilder();
         for (String glue : glues) {
-          buffer.append(" ").append(glue);
+          if (buffer.length() > 0) {
+            buffer.append(" ");
+          }
+          buffer.append(glue);
         }
         return buffer.toString();
       }
