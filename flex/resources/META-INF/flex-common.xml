@@ -21,6 +21,7 @@
     <compiler id="FlexCompiler" implementation="com.intellij.lang.javascript.flex.build.FlexCompiler"/>
     <compiler.resourceCompilerExtension implementation="com.intellij.lang.javascript.flex.build.FlexResourceCompilerExtension"/>
     <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexBuildTargetScopeProvider"/>
+    <compiler.buildTargetScopeProvider implementation="com.intellij.lang.javascript.flex.build.FlexResourceBuildTargetScopeProvider"/>
     <compileServer.plugin classpath="flex-jps-plugin.jar;flex-shared.jar"/>
     <programRunner implementation="com.intellij.lang.javascript.flex.debug.FlexDebugRunner"/>
     <programRunner implementation="com.intellij.lang.javascript.flex.run.FlexRunner"/>

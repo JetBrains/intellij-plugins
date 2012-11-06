@@ -1,40 +1,41 @@
 package com.intellij.jps.flex.build;
 
 import com.intellij.flex.FlexCommonUtils;
+import com.intellij.flex.build.FlexResourceBuildTarget;
+import com.intellij.flex.build.FlexResourceBuildTargetType;
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
-import com.intellij.flex.model.bc.JpsFlexBuildConfigurationManager;
 import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
-import com.intellij.flex.model.module.JpsFlexModuleType;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.PathUtilRt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.ModuleChunk;
-import org.jetbrains.jps.builders.ChunkBuildOutputConsumer;
+import org.jetbrains.jps.builders.BuildOutputConsumer;
+import org.jetbrains.jps.builders.BuildRootDescriptor;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.FileProcessor;
-import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
-import org.jetbrains.jps.incremental.*;
+import org.jetbrains.jps.incremental.CompileContext;
+import org.jetbrains.jps.incremental.ProjectBuildException;
+import org.jetbrains.jps.incremental.ResourcePatterns;
+import org.jetbrains.jps.incremental.TargetBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
-import org.jetbrains.jps.model.module.JpsTypedModule;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-public class FlexResourceBuilder extends ModuleLevelBuilder {
+public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, FlexResourceBuildTarget> {
 
   private static final @NonNls String BUILDER_NAME = "Flash Resource Builder";
 
   protected FlexResourceBuilder() {
-    super(BuilderCategory.SOURCE_PROCESSOR);
+    super(Arrays.asList(FlexResourceBuildTargetType.PRODUCTION, FlexResourceBuildTargetType.TEST));
   }
 
   @NotNull
@@ -42,23 +43,17 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
     return BUILDER_NAME;
   }
 
-  public ExitCode build(final CompileContext context,
-                        final ModuleChunk chunk,
-                        DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder,
-                        final ChunkBuildOutputConsumer outputConsumer) throws ProjectBuildException {
+  public void build(@NotNull final FlexResourceBuildTarget target,
+                    @NotNull final DirtyFilesHolder<BuildRootDescriptor, FlexResourceBuildTarget> holder,
+                    @NotNull final BuildOutputConsumer outputConsumer,
+                    @NotNull final CompileContext context) throws ProjectBuildException, IOException {
     final ResourcePatterns patterns = ResourcePatterns.KEY.get(context);
     assert patterns != null;
 
-    final Ref<Boolean> doneSomething = new Ref<Boolean>(false);
-
     try {
-      dirtyFilesHolder.processDirtyFiles(new FileProcessor<JavaSourceRootDescriptor, ModuleBuildTarget>() {
-        public boolean apply(final ModuleBuildTarget target, final File file, final JavaSourceRootDescriptor sourceRoot)
-          throws IOException {
-          final JpsTypedModule<JpsFlexBuildConfigurationManager> flexModule = target.getModule().asTyped(JpsFlexModuleType.INSTANCE);
-          if (flexModule == null) return true;
-
-          final String relativePath = FileUtil.toSystemIndependentName(FileUtil.getRelativePath(sourceRoot.root, file));
+      holder.processDirtyFiles(new FileProcessor<BuildRootDescriptor, FlexResourceBuildTarget>() {
+        public boolean apply(final FlexResourceBuildTarget target, final File file, final BuildRootDescriptor root) throws IOException {
+          final String relativePath = FileUtil.toSystemIndependentName(FileUtil.getRelativePath(root.getRootFile(), file));
 
           if (target.isTests()) {
             if (!FlexCommonUtils.isSourceFile(file.getName())) {
@@ -68,14 +63,13 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
               final String targetPath = JpsPathUtil.urlToPath(outputRootUrl) + '/' + relativePath;
 
               context.processMessage(new ProgressMessage("Copying " + file.getPath()));
-              doneSomething.set(true);
-              copyResource(context, file, Collections.singleton(targetPath), target, outputConsumer);
+              copyResource(context, file, Collections.singleton(targetPath), outputConsumer);
             }
           }
           else {
             final Collection<String> targetPaths = new ArrayList<String>();
 
-            for (JpsFlexBuildConfiguration bc : flexModule.getProperties().getBuildConfigurations()) {
+            for (JpsFlexBuildConfiguration bc : target.getModule().getProperties().getBuildConfigurations()) {
               if (bc.isSkipCompile() || !FlexCommonUtils.canHaveResourceFiles(bc.getNature()) ||
                   bc.getCompilerOptions().getResourceFilesMode() == JpsFlexCompilerOptions.ResourceFilesMode.None) {
                 continue;
@@ -83,7 +77,7 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
 
               final JpsFlexCompilerOptions.ResourceFilesMode mode = bc.getCompilerOptions().getResourceFilesMode();
               if (mode == JpsFlexCompilerOptions.ResourceFilesMode.All && !FlexCommonUtils.isSourceFile(file.getName()) ||
-                  mode == JpsFlexCompilerOptions.ResourceFilesMode.ResourcePatterns && patterns.isResourceFile(file, sourceRoot.root)) {
+                  mode == JpsFlexCompilerOptions.ResourceFilesMode.ResourcePatterns && patterns.isResourceFile(file, root.getRootFile())) {
                 final String outputFolder = PathUtilRt.getParentPath(bc.getActualOutputFilePath());
                 targetPaths.add(outputFolder + "/" + relativePath);
               }
@@ -91,16 +85,13 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
 
             if (!targetPaths.isEmpty()) {
               context.processMessage(new ProgressMessage("Copying " + file.getPath()));
-              doneSomething.set(true);
-              copyResource(context, file, targetPaths, target, outputConsumer);
+              copyResource(context, file, targetPaths, outputConsumer);
             }
           }
 
           return true;
         }
       });
-
-      return doneSomething.get() ? ExitCode.OK : ExitCode.NOTHING_DONE;
     }
     catch (Exception e) {
       throw new ProjectBuildException(e.getMessage(), e);
@@ -110,15 +101,15 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
   private static void copyResource(final CompileContext context,
                                    final File file,
                                    final Collection<String> targetPaths,
-                                   ModuleBuildTarget target, final ChunkBuildOutputConsumer outputConsumer) {
+                                   final BuildOutputConsumer outputConsumer) {
     try {
       for (String targetPath : targetPaths) {
         FileUtil.copyContent(file, new File(targetPath));
-        outputConsumer.registerOutputFile(target, targetPath, Collections.singletonList(file.getPath()));
+        outputConsumer.registerOutputFile(targetPath, Collections.singletonList(file.getPath()));
       }
     }
     catch (IOException e) {
-      context.processMessage(new CompilerMessage("Flex Resource Compiler", BuildMessage.Kind.ERROR, e.getMessage(),
+      context.processMessage(new CompilerMessage(BUILDER_NAME, BuildMessage.Kind.ERROR, e.getMessage(),
                                                  FileUtil.toSystemIndependentName(file.getPath())));
     }
   }

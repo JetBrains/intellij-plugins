@@ -64,13 +64,13 @@ public class FlexBuildTargetType extends BuildTargetType<FlexBuildTarget> {
 
   @NotNull
   public BuildTargetLoader<FlexBuildTarget> createLoader(@NotNull final JpsModel model) {
-    return new FlexBuildTargetBuildTargetLoader(model);
+    return new FlexBuildTargetLoader(model);
   }
 
-  private static class FlexBuildTargetBuildTargetLoader extends BuildTargetLoader<FlexBuildTarget> {
+  private static class FlexBuildTargetLoader extends BuildTargetLoader<FlexBuildTarget> {
     private final JpsModel myModel;
 
-    public FlexBuildTargetBuildTargetLoader(final JpsModel model) {
+    public FlexBuildTargetLoader(final JpsModel model) {
       myModel = model;
     }
 

@@ -10,7 +10,6 @@ import com.intellij.flex.model.run.JpsBCBasedRunnerParameters;
 import com.intellij.flex.model.run.JpsFlashRunConfigurationType;
 import com.intellij.flex.model.run.JpsFlexUnitRunConfigurationType;
 import com.intellij.openapi.util.JDOMUtil;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +33,6 @@ import org.jetbrains.jps.model.runConfiguration.JpsTypedRunConfiguration;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -120,13 +118,13 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
                                                           final ModuleExcludeIndex index,
                                                           final IgnoredFileIndex ignoredFileIndex,
                                                           final BuildDataPaths dataPaths) {
-    final List<BuildRootDescriptor> roots = new ArrayList<BuildRootDescriptor>();
+    final List<BuildRootDescriptor> result = new ArrayList<BuildRootDescriptor>();
 
     for (JpsTypedModuleSourceRoot<JpsSimpleElement<JavaSourceRootProperties>> sourceRoot
       : myBC.getModule().getSourceRoots(JavaSourceRootType.SOURCE)) {
 
       final File root = JpsPathUtil.urlToFile(sourceRoot.getUrl());
-      roots.add(new FlexSourceRootDescriptor(root));
+      result.add(new FlexSourceRootDescriptor(this, root));
     }
 
     if (FlexCommonUtils.isFlexUnitBC(myBC)) {
@@ -134,7 +132,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
         : myBC.getModule().getSourceRoots(JavaSourceRootType.TEST_SOURCE)) {
 
         final File root = JpsPathUtil.urlToFile(sourceRoot.getUrl());
-        roots.add(new FlexSourceRootDescriptor(root));
+        result.add(new FlexSourceRootDescriptor(this, root));
       }
     }
 
@@ -142,12 +140,12 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
       if (entry instanceof JpsFlexBCDependencyEntry) {
         final JpsFlexBuildConfiguration dependencyBC = ((JpsFlexBCDependencyEntry)entry).getBC();
         if (dependencyBC != null) {
-          roots.add(new FlexSourceRootDescriptor(new File(dependencyBC.getActualOutputFilePath())));
+          result.add(new FlexSourceRootDescriptor(this, new File(dependencyBC.getActualOutputFilePath())));
         }
       }
     }
 
-    return roots;
+    return result;
   }
 
   @Nullable
@@ -193,39 +191,5 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
 
   public int hashCode() {
     return myId.hashCode();
-  }
-
-
-  private class FlexSourceRootDescriptor extends BuildRootDescriptor {
-    private final File myRoot;
-
-    public FlexSourceRootDescriptor(final File root) {
-      myRoot = root;
-    }
-
-    @Override
-    public String getRootId() {
-      return FileUtil.toSystemIndependentName(myRoot.getAbsolutePath());
-    }
-
-    @Override
-    public File getRootFile() {
-      return myRoot;
-    }
-
-    @Override
-    public BuildTarget<?> getTarget() {
-      return FlexBuildTarget.this;
-    }
-
-    @Override
-    public FileFilter createFileFilter() {
-      return new FileFilter() {
-        @Override
-        public boolean accept(File pathname) {
-          return true;
-        }
-      };
-    }
   }
 }
