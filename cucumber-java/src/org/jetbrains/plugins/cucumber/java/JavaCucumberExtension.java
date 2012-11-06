@@ -15,6 +15,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinition;
@@ -133,5 +134,11 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
         }
       }
     }
+  }
+
+  @Nullable
+  @Override
+  public String getGlue(@NotNull GherkinStep step) {
+    return CucumberJavaUtil.getPackageOfStep(step);
   }
 }

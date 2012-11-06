@@ -9,6 +9,8 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
 import java.util.List;
@@ -62,6 +64,14 @@ public interface CucumberJvmExtensionPoint {
 
   List<PsiElement> resolveStep(@NotNull final PsiElement step);
 
-  public void findRelatedStepDefsRoots(Module module, final PsiFile featureFile, final List<PsiDirectory> newAbstractStepDefinitionsRoots,
-                                       final Set<String> processedStepDirectories);
+  void findRelatedStepDefsRoots(Module module,
+                                final PsiFile featureFile,
+                                final List<PsiDirectory> newAbstractStepDefinitionsRoots,
+                                final Set<String> processedStepDirectories);
+
+  /**
+   * @return '--glue' parameter for run configuration declaring step definition for the step
+   */
+  @Nullable
+  String getGlue(@NotNull GherkinStep step);
 }

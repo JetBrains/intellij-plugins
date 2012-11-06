@@ -13,9 +13,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinition;
@@ -135,5 +138,22 @@ public class GrCucumberExtension implements CucumberJvmExtensionPoint {
         }
       }
     }
+  }
+
+  @Nullable
+  @Override
+  public String getGlue(@NotNull GherkinStep step) {
+    for (PsiReference ref : step.getReferences()) {
+      PsiElement refElement = ref.resolve();
+      if (refElement != null && refElement instanceof GrMethodCall) {
+        GroovyFile groovyFile = (GroovyFile)refElement.getContainingFile();
+        VirtualFile vfile = groovyFile.getVirtualFile();
+        if (vfile != null) {
+          VirtualFile parentDir = vfile.getParent();
+          return PathUtil.getLocalPath(parentDir);
+        }
+      }
+    }
+    return null;
   }
 }

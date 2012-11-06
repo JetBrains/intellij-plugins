@@ -98,16 +98,8 @@ public class CucumberJavaUtil {
   @Nullable
   private static String getPackageOfStepDef(GherkinStep[] steps) {
     for (GherkinStep step : steps) {
-      for (PsiReference ref : step.getReferences()) {
-        PsiElement refElement = ref.resolve();
-        if (refElement != null && refElement instanceof PsiMethod) {
-          PsiJavaFile javaFile = (PsiJavaFile)refElement.getContainingFile();
-          final String packageName = javaFile.getPackageName();
-          if (StringUtil.isNotEmpty(packageName)) {
-            return packageName;
-          }
-        }
-      }
+      final String pack = getPackageOfStep(step);
+      if (pack != null) return pack;
     }
     return null;
   }
@@ -145,5 +137,19 @@ public class CucumberJavaUtil {
     } else {
       return null;
     }
+  }
+
+  public static String getPackageOfStep(GherkinStep step) {
+    for (PsiReference ref : step.getReferences()) {
+      PsiElement refElement = ref.resolve();
+      if (refElement != null && refElement instanceof PsiMethod) {
+        PsiJavaFile javaFile = (PsiJavaFile)refElement.getContainingFile();
+        final String packageName = javaFile.getPackageName();
+        if (StringUtil.isNotEmpty(packageName)) {
+          return packageName;
+        }
+      }
+    }
+    return null;
   }
 }
