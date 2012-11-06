@@ -48,10 +48,8 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
   @NotNull
   @Override
   public PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
-    String fileName = name + GroovyFileType.DEFAULT_EXTENSION;
-    PsiFile file = GroovyTemplatesFactory.createFromTemplate(dir, name, fileName, NewScriptAction.GROOVY_SCRIPT_TMPL);
-    assert file != null;
-    return file;
+    String fileName = name + '.' + GroovyFileType.DEFAULT_EXTENSION;
+    return GroovyTemplatesFactory.createFromTemplate(dir, name, fileName, NewScriptAction.GROOVY_SCRIPT_TMPL);
   }
 
   @Override
