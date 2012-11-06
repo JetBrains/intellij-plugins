@@ -11,10 +11,10 @@ import com.intellij.util.PathUtilRt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.ModuleChunk;
+import org.jetbrains.jps.builders.ChunkBuildOutputConsumer;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.FileProcessor;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
-import org.jetbrains.jps.builders.storage.SourceToOutputMapping;
 import org.jetbrains.jps.incremental.*;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
@@ -44,7 +44,8 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
 
   public ExitCode build(final CompileContext context,
                         final ModuleChunk chunk,
-                        DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder) throws ProjectBuildException {
+                        DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget> dirtyFilesHolder,
+                        final ChunkBuildOutputConsumer outputConsumer) throws ProjectBuildException {
     final ResourcePatterns patterns = ResourcePatterns.KEY.get(context);
     assert patterns != null;
 
@@ -59,8 +60,6 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
 
           final String relativePath = FileUtil.toSystemIndependentName(FileUtil.getRelativePath(sourceRoot.root, file));
 
-          final SourceToOutputMapping sourceToOutputMap = context.getProjectDescriptor().dataManager.getSourceToOutputMap(target);
-
           if (target.isTests()) {
             if (!FlexCommonUtils.isSourceFile(file.getName())) {
               final String outputRootUrl = JpsJavaExtensionService.getInstance().getOutputUrl(target.getModule(), target.isTests());
@@ -70,7 +69,7 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
 
               context.processMessage(new ProgressMessage("Copying " + file.getPath()));
               doneSomething.set(true);
-              copyResource(context, file, Collections.singleton(targetPath), sourceToOutputMap);
+              copyResource(context, file, Collections.singleton(targetPath), target, outputConsumer);
             }
           }
           else {
@@ -93,7 +92,7 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
             if (!targetPaths.isEmpty()) {
               context.processMessage(new ProgressMessage("Copying " + file.getPath()));
               doneSomething.set(true);
-              copyResource(context, file, targetPaths, sourceToOutputMap);
+              copyResource(context, file, targetPaths, target, outputConsumer);
             }
           }
 
@@ -111,17 +110,11 @@ public class FlexResourceBuilder extends ModuleLevelBuilder {
   private static void copyResource(final CompileContext context,
                                    final File file,
                                    final Collection<String> targetPaths,
-                                   final SourceToOutputMapping sourceToOutputMapping) {
+                                   ModuleBuildTarget target, final ChunkBuildOutputConsumer outputConsumer) {
     try {
       for (String targetPath : targetPaths) {
         FileUtil.copyContent(file, new File(targetPath));
-      }
-
-      try {
-        sourceToOutputMapping.setOutputs(file.getPath(), targetPaths);
-      }
-      catch (Exception e) {
-        context.processMessage(new CompilerMessage(BUILDER_NAME, e));
+        outputConsumer.registerOutputFile(target, targetPath, Collections.singletonList(file.getPath()));
       }
     }
     catch (IOException e) {
