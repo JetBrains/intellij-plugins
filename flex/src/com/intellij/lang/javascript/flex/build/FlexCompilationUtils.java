@@ -240,6 +240,9 @@ public class FlexCompilationUtils {
   public static void performPostCompileActions(final Module module,
                                                final @NotNull FlexBuildConfiguration bc,
                                                final List<String> compileInfoMessages) throws FlexCompilerException {
+    // could be created by external build
+    FlexCompilationManager.refreshAndFindFileInWriteAction(bc.getActualOutputFilePath());
+
     final Sdk sdk = bc.getSdk();
     assert sdk != null;
 
@@ -487,10 +490,6 @@ public class FlexCompilationUtils {
 
         final String outputFilePath = bc.getActualOutputFilePath();
         final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-          // hack: we were not able to do refresh after SWF creation, but we can do it now
-          FlexCompilationManager.refreshAndFindFileInWriteAction(outputFilePath);
-        }
         final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
         if (outputFolder == null) {
           exceptionRef.set(new FlexCompilerException(
