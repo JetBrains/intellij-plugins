@@ -165,11 +165,6 @@ public class TapestryAccessorMethod extends LightElement implements PsiMethod {
     return false;
   }
 
-  @Override
-  public boolean isExtensionMethod() {
-    return false;
-  }
-
   @NotNull
   public MethodSignature getSignature(@NotNull PsiSubstitutor substitutor) {
     return MethodSignatureBackedByPsiMethod.create(this, substitutor);
