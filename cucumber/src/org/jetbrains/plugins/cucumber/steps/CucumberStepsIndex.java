@@ -7,7 +7,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootEvent;
@@ -150,8 +150,7 @@ public class CucumberStepsIndex {
    * @param fileNameWithoutExtension name of the file with out "." and extension
    * @param fileType                 type of file to create
    */
-  public PsiFile createStepDefinitionFile(@NotNull final PsiDirectory dir, @NotNull final String fileNameWithoutExtension,
-                                          @NotNull final FileType fileType) {
+  public PsiFile createStepDefinitionFile(@NotNull final PsiDirectory dir, @NotNull final String fileNameWithoutExtension, @NotNull final FileType fileType) {
     CucumberJvmExtensionPoint extension = myExtensionMap.get(fileType);
     if (extension == null) {
       LOG.error(String.format("Unsupported step definition file type %s", fileType.getName()));
@@ -162,8 +161,7 @@ public class CucumberStepsIndex {
   }
 
   // ToDo: move to q-fix
-  public boolean validateNewStepDefinitionFileName(@NotNull final PsiDirectory directory, @NotNull final String fileName,
-                                                   @NotNull final FileType fileType) {
+  public boolean validateNewStepDefinitionFileName(@NotNull final PsiDirectory directory, @NotNull final String fileName, @NotNull final FileType fileType) {
     CucumberJvmExtensionPoint ep = myExtensionMap.get(fileType);
     assert ep != null;
     return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(directory.getProject(), fileName);
@@ -189,8 +187,9 @@ public class CucumberStepsIndex {
 
   @Nullable
   public AbstractStepDefinition findStepDefinition(final @NotNull PsiFile featureFile, final String stepName) {
-    final Module module = ModuleUtil.findModuleForPsiElement(featureFile);
-    assert module != null;
+    final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
+    if (module == null) return null;
+
     loadStepsFor(featureFile, module);
     synchronized (myStepDefinitions) {
       for (AbstractStepDefinition stepDefinition : myStepDefinitions) {
@@ -238,8 +237,8 @@ public class CucumberStepsIndex {
   }
 
   public List<AbstractStepDefinition> getAllStepDefinitions(@NotNull final PsiFile featureFile) {
-    final Module module = ModuleUtil.findModuleForPsiElement(featureFile);
-    assert module != null;
+    final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
+    if (module == null) return Collections.emptyList();
     loadStepsFor(featureFile, module);
     synchronized (myStepDefinitions) {
       return new ArrayList<AbstractStepDefinition>(myStepDefinitions);
@@ -252,8 +251,7 @@ public class CucumberStepsIndex {
     return result;
   }
 
-  private void addAllStepsFiles(@NotNull final PsiDirectory dir,
-                                final List<PsiFile> result) {
+  private void addAllStepsFiles(@NotNull final PsiDirectory dir, final List<PsiFile> result) {
     // find step definitions in current folder
     for (PsiFile file : dir.getFiles()) {
       final VirtualFile virtualFile = file.getVirtualFile();
