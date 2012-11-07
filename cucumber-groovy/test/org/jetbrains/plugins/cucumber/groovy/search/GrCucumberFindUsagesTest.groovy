@@ -83,11 +83,11 @@ Feature: Division
     And I move the mow1
     Then the mower should be in 5,0 facing east
 '''],
-            groovy: $/
+            groovy: '''
 this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
 this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
-Given(~'^a mower in (\\d+),(\\d+) facing north$') { int arg1, int arg2 ->
+Given(~'^a mower in (\\\\d+),(\\\\d+) facing north$') { int arg1, int arg2 ->
     // Express the Regexp above with the code you wish you had
     throw new PendingException()
 }
@@ -95,7 +95,7 @@ When(~'^I pivot the mower to the right$') {->
     // Express the Regexp above with the code you wish you had
     throw new PendingException()
 }
-/$,
+''',
             count: 1)
   }
 
