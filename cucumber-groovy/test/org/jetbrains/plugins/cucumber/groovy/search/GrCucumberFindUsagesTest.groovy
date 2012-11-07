@@ -117,14 +117,14 @@ Scenario Outline: eating
     | 12    | 5   | 7    |
     | 20    | 5   | 15   |
 '''],
-            groovy: $/
+            groovy: '''
 this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
 this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
-Given(~'^there are (\\d+) cucumbers$') {int number ->
+Given(~'^there are (\\\\d+) cucumbers$') {int number ->
     throw new PendingException()
 }
-/$,
+''',
             count: 1)
   }
 
