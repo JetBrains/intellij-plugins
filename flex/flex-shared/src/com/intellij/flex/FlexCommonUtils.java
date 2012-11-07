@@ -34,6 +34,7 @@ import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.jps.model.runConfiguration.JpsRunConfigurationType;
 import org.jetbrains.jps.model.runConfiguration.JpsTypedRunConfiguration;
+import org.jetbrains.jps.model.serialization.JpsGlobalLoader;
 import org.jetbrains.jps.model.serialization.JpsModelSerializationDataService;
 import org.jetbrains.jps.util.JpsPathUtil;
 
@@ -629,23 +630,42 @@ public class FlexCommonUtils {
   }
 
   public static String replacePathMacros(final @NotNull String text, final @NotNull JpsModule module, final @NotNull String sdkRootPath) {
-    String result = StringUtil.replace(text, CompilerOptionInfo.FLEX_SDK_MACRO, sdkRootPath);
+    String preResult = StringUtil.replace(text, CompilerOptionInfo.FLEX_SDK_MACRO, sdkRootPath);
 
     final File moduleDir = JpsModelSerializationDataService.getBaseDirectory(module);
     if (moduleDir != null) {
-      result = StringUtil.replace(result, "${MODULE_DIR}", moduleDir.getPath());
+      preResult = StringUtil.replace(preResult, "${MODULE_DIR}", moduleDir.getPath());
     }
 
     final File projectDir = JpsModelSerializationDataService.getBaseDirectory(module.getProject());
     if (projectDir != null) {
-      result = StringUtil.replace(result, "${PROJECT_DIR}", projectDir.getPath());
+      preResult = StringUtil.replace(preResult, "${PROJECT_DIR}", projectDir.getPath());
     }
 
-    result = StringUtil.replace(result, "${USER_HOME}", SystemProperties.getUserHome());
+    preResult = StringUtil.replace(preResult, "${USER_HOME}", SystemProperties.getUserHome());
 
-    // todo expand path variables
+    final StringBuilder builder = new StringBuilder(preResult);
+    int startIndex;
+    int endIndex = 0;
 
-    return result;
+    while ((startIndex = builder.indexOf("${", endIndex)) >= 0) {
+      endIndex = builder.indexOf("}", startIndex);
+
+      if (endIndex > startIndex) {
+        final String macroName = builder.substring(startIndex + 2, endIndex);
+        final String macroValue = JpsGlobalLoader.getPathVariable(module.getProject().getModel().getGlobal(), macroName);
+
+        if (macroValue != null && !StringUtil.isEmptyOrSpaces(macroValue)) {
+          builder.replace(startIndex, endIndex + 1, macroValue);
+          endIndex = endIndex + macroValue.length() - (macroName.length() + 3);
+        }
+      }
+      else {
+        break;
+      }
+    }
+
+    return builder.toString();
   }
 
   public static String getFlexUnitLauncherExtension(final BuildConfigurationNature nature) {
