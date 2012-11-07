@@ -137,7 +137,8 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     return result;
   }
 
-  private static JpsFlexBuildConfiguration createRlmBC(final JpsFlexBuildConfiguration mainBC, final JpsFlexBuildConfiguration.RLMInfo rlm) {
+  private static JpsFlexBuildConfiguration createRlmBC(final JpsFlexBuildConfiguration mainBC,
+                                                       final JpsFlexBuildConfiguration.RLMInfo rlm) {
     final JpsFlexBuildConfiguration rlmBC = mainBC.getModule().getProperties().createTemporaryCopyForCompilation(mainBC);
 
     rlmBC.setOutputType(OutputType.RuntimeLoadedModule);
@@ -201,7 +202,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
       final List<File> configFiles = createConfigFiles(bc);
       final String outputFilePath = bc.getActualOutputFilePath();
 
-      if (!FileUtil.ensureCanCreateFile(new File(outputFilePath))) {
+      if (!ensureCanCreateFile(new File(outputFilePath))) {
         context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.ERROR,
                                                    FlexCommonBundle.message("failed.to.create.file", bc.getActualOutputFilePath())));
         return Status.Failed;
@@ -213,6 +214,22 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
       context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.ERROR, e.getMessage()));
       return Status.Failed;
     }
+  }
+
+  private static boolean ensureCanCreateFile(@NotNull File file) {
+    final int maxAttempts = 3; // FileUtil.ensureCanCreateFile() may return false because of race conditions
+
+    for (int i = 0; i < maxAttempts; i++) {
+      if (FileUtil.ensureCanCreateFile(file)) return true;
+
+      try {
+        //noinspection BusyWait
+        Thread.sleep(10);
+      }
+      catch (InterruptedException ignore) {/**/}
+    }
+
+    return false;
   }
 
   private static void setProgressMessage(final CompileContext context, final JpsFlexBuildConfiguration bc) {
