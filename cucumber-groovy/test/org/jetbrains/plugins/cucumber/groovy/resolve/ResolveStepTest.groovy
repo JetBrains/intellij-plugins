@@ -1,13 +1,13 @@
 package org.jetbrains.plugins.cucumber.groovy.resolve
 
-import org.jetbrains.plugins.cucumber.groovy.GrCucumberTestUtil
+import org.jetbrains.plugins.cucumber.groovy.TestUtils
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex
 import org.jetbrains.plugins.groovy.LightGroovyTestCase
 /**
  * @author Max Medvedev
  */
 class ResolveStepTest extends LightGroovyTestCase {
-  final String basePath = GrCucumberTestUtil.testDataPath + 'resolve'
+  final String basePath = TestUtils.absoluteTestDataPath + 'resolve'
 
   void testTable() {
     doTest('''\

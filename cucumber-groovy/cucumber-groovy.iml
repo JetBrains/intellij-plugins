@@ -25,6 +25,7 @@
     <orderEntry type="library" name="Groovy" level="project" />
     <orderEntry type="module" module-name="java-impl" />
     <orderEntry type="library" name="cucumber-jvm" level="project" />
+    <orderEntry type="module" module-name="cucumber-java" />
   </component>
 </module>
 
