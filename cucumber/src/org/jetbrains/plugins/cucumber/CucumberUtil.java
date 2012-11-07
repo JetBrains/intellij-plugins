@@ -39,7 +39,7 @@ public class CucumberUtil {
     return keyWord.equals(word);
   }
 
-  public static String getTheBiggestWordToSearchByIndex(String regexp) {
+  public static String getTheBiggestWordToSearchByIndex(@NotNull String regexp) {
     String result = "";
     if (regexp.startsWith(PREFIX_CHAR)) {
       regexp = regexp.substring(1);
