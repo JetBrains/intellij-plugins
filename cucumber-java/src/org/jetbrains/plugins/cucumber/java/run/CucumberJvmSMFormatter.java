@@ -35,6 +35,7 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
     "##teamcity[testStarted timestamp = '%s' locationHint = 'file:///%s' captureStandardOutput = 'true' name = '%s']";
   private static final String TEMPLATE_TEST_FAILED =
     "##teamcity[testFailed timestamp = '%s' details = '%s' message = '%s' name = '%s' %s]";
+  private static final String TEMPLATE_SCENARIO_FAILED = "##teamcity[customProgressStatus timestamp='%s' type='testFailed']";
   private static final String TEMPLATE_TEST_PENDING =
     "##teamcity[testIgnored name = '%s' message = 'Skipped step' timestamp = '%s']";
 
@@ -102,6 +103,7 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
       currentSteps.clear();
     }
     currentScenario = scenario;
+    beforeExampleSection = false;
     outCommand(String.format(TEMPLATE_TEST_SUITE_STARTED, getCurrentTime(), uri + ":" + scenario.getLine(), getName(currentScenario)));
 
     while (queue.size() > 0) {
@@ -162,6 +164,7 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
       }
 
       outCommand(String.format(TEMPLATE_TEST_FAILED, getCurrentTime(), escape(details), escape(message), stepFullName, ""), true);
+      outCommand(String.format(TEMPLATE_SCENARIO_FAILED, getCurrentTime()), true);
     }
     else if (result.getStatus().equals(RESULT_STATUS_PENDING)) {
       pendingStepCount++;
@@ -173,8 +176,8 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
       scenarioPassed = false;
       String message = "Undefined step: " + getName(currentStep);
       String details = "";
-      outCommand(String.format(TEMPLATE_TEST_FAILED, getCurrentTime(), escape(details), escape(message), stepFullName, "error = 'true'"),
-                 true);
+      outCommand(String.format(TEMPLATE_TEST_FAILED, getCurrentTime(), escape(details), escape(message), stepFullName, "error = 'true'"), true);
+      outCommand(String.format(TEMPLATE_SCENARIO_FAILED, getCurrentTime()), true);
     }
     else if (result.equals(Result.SKIPPED)) {
       skippedStepCount++;
@@ -229,10 +232,6 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
   public void done() {
     closePreviousScenarios();
     outCommand(String.format(TEMPLATE_TEST_SUITE_FINISHED, getCurrentTime(), currentFeatureName));
-    outCommand(String.format(TEMPLATE_SCENARIO_COUNTING_FINISHED, getCurrentTime()));
-
-    outCommand(scenarioCount + " scenario (" + passedScenarioCount + " passed)\n");
-    outCommand(stepCount + " steps (" + passedStepCount + " passed)\n");
   }
 
   @Override
@@ -281,7 +280,10 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
 
   @Override
   public void close() {
-    out("Close\n");
+    outCommand(String.format(TEMPLATE_SCENARIO_COUNTING_FINISHED, getCurrentTime()));
+
+    outCommand(scenarioCount + " scenario (" + passedScenarioCount + " passed)\n");
+    outCommand(stepCount + " steps (" + passedStepCount + " passed)\n");
   }
 
   @Override
