@@ -35,7 +35,7 @@ import java.util.Set;
  * User: Andrey.Vokin
  * Date: 7/16/12
  */
-public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
+public class CucumberJavaExtension implements CucumberJvmExtensionPoint {
   @Override
   public boolean isStepLikeFile(@NotNull final PsiElement child, @NotNull final PsiElement parent) {
     if (child instanceof PsiJavaFile) {
@@ -93,7 +93,6 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
   public void loadStepDefinitionRootsFromLibraries(@NotNull Module module,
                                                    List<PsiDirectory> newAbstractStepDefinitionsRoots,
                                                    @NotNull Set<String> processedStepDirectories) {
-    //To change body of implemented methods use File | Settings | File Templates.
   }
 
   @Override
