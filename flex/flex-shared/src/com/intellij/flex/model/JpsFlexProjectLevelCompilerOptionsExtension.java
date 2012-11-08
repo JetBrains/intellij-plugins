@@ -7,7 +7,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jps.model.JpsElementCreator;
+import org.jetbrains.jps.model.JpsElementChildRole;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.ex.JpsCompositeElementBase;
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase;
@@ -15,7 +15,8 @@ import org.jetbrains.jps.model.serialization.JpsProjectExtensionSerializer;
 
 public class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompositeElementBase<JpsFlexProjectLevelCompilerOptionsExtension> {
 
-  private static final JpsFlexProjectLevelCompilerOptionsRole ROLE = new JpsFlexProjectLevelCompilerOptionsRole();
+  private static final JpsElementChildRole<JpsFlexProjectLevelCompilerOptionsExtension> ROLE =
+    JpsElementChildRoleBase.create("flex project level compiler options holder");
 
   private JpsFlexProjectLevelCompilerOptionsExtension() {
     myContainer.setChild(JpsFlexCompilerOptionsRole.INSTANCE);
@@ -31,7 +32,9 @@ public class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompositeEle
   }
 
   public static JpsFlexModuleOrProjectCompilerOptions getProjectLevelCompilerOptions(final JpsProject project) {
-    return project.getContainer().getOrSetChild(ROLE).getProjectLevelCompilerOptions();
+    final JpsFlexProjectLevelCompilerOptionsExtension child = project.getContainer().getChild(ROLE);
+    return child != null ? child.getProjectLevelCompilerOptions()
+                         : JpsFlexCompilerOptionsRole.INSTANCE.create();
   }
 
   private JpsFlexModuleOrProjectCompilerOptions getProjectLevelCompilerOptions() {
@@ -59,18 +62,5 @@ public class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompositeEle
         XmlSerializer.serializeInto(compilerOptions.getState(), componentTag);
       }
     };
-  }
-
-  private static class JpsFlexProjectLevelCompilerOptionsRole extends JpsElementChildRoleBase<JpsFlexProjectLevelCompilerOptionsExtension>
-    implements JpsElementCreator<JpsFlexProjectLevelCompilerOptionsExtension> {
-
-    private JpsFlexProjectLevelCompilerOptionsRole() {
-      super("flex project level compiler options holder");
-    }
-
-    @NotNull
-    public JpsFlexProjectLevelCompilerOptionsExtension create() {
-      return new JpsFlexProjectLevelCompilerOptionsExtension();
-    }
   }
 }
