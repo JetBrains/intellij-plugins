@@ -2,10 +2,13 @@ package com.intellij.flex.build;
 
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
+import com.intellij.flex.model.JpsFlexProjectLevelCompilerOptionsExtension;
 import com.intellij.flex.model.bc.JpsFlexBCDependencyEntry;
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.flex.model.bc.JpsFlexDependencyEntry;
+import com.intellij.flex.model.bc.JpsFlexModuleOrProjectCompilerOptions;
 import com.intellij.flex.model.bc.impl.JpsFlexBCState;
+import com.intellij.flex.model.bc.impl.JpsFlexCompilerOptionsImpl;
 import com.intellij.flex.model.run.JpsBCBasedRunnerParameters;
 import com.intellij.flex.model.run.JpsFlashRunConfigurationType;
 import com.intellij.flex.model.run.JpsFlexUnitRunConfigurationType;
@@ -175,7 +178,15 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
 
   public void writeConfiguration(final PrintWriter out, BuildDataPaths dataPaths, final BuildRootIndex buildRootIndex) {
     out.println("id: " + myId);
+
     out.println(JDOMUtil.writeElement(XmlSerializer.serialize(JpsFlexBCState.getState(myBC)), "\n"));
+
+    final JpsFlexModuleOrProjectCompilerOptions moduleOptions = myBC.getModule().getProperties().getModuleLevelCompilerOptions();
+    out.println(JDOMUtil.writeElement(XmlSerializer.serialize(((JpsFlexCompilerOptionsImpl)moduleOptions).getState()), "\n"));
+
+    final JpsFlexModuleOrProjectCompilerOptions projectOptions =
+      JpsFlexProjectLevelCompilerOptionsExtension.getProjectLevelCompilerOptions(myBC.getModule().getProject());
+    out.println(JDOMUtil.writeElement(XmlSerializer.serialize(((JpsFlexCompilerOptionsImpl)projectOptions).getState()), "\n"));
   }
 
   public String toString() {
