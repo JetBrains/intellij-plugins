@@ -101,6 +101,10 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry) {
     final Collection<BuildTarget<?>> result = new ArrayList<BuildTarget<?>>();
 
+    final FlexResourceBuildTargetType type = FlexCommonUtils.isFlexUnitBC(myBC) ? FlexResourceBuildTargetType.TEST
+                                                                                : FlexResourceBuildTargetType.PRODUCTION;
+    result.add(new FlexResourceBuildTarget(type, myBC.getModule()));
+
     for (JpsFlexDependencyEntry entry : myBC.getDependencies().getEntries()) {
       if (entry instanceof JpsFlexBCDependencyEntry) {
         final JpsFlexBuildConfiguration dependencyBC = ((JpsFlexBCDependencyEntry)entry).getBC();
