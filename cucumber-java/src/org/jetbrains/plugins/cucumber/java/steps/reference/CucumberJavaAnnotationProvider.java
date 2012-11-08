@@ -8,8 +8,9 @@ import java.util.List;
  * Date: 7/23/12
  */
 public class CucumberJavaAnnotationProvider {
+  public static final String[] STEP_MARKERS = {"Given", "Then", "And", "But", "When"};
+
   public static List<String> getCucumberAnnotations() {
-    String[] result = {"Given", "Then", "And", "But", "When"};
-    return Arrays.asList(result);
+    return Arrays.asList(STEP_MARKERS);
   }
 }
