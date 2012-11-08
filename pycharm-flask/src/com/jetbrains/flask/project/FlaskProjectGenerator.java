@@ -71,6 +71,11 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
   }
 
   @Override
+  public boolean acceptsRemoteSdk() {
+    return true;
+  }
+
+  @Override
   public PyNewProjectSettings showGenerationSettings(VirtualFile baseDir) throws ProcessCanceledException {
     return new PyNewProjectSettings();
   }
