@@ -274,7 +274,7 @@ module Spec
                     end
 
           # Backtrace
-          backtrace = failure.exception.nil? ? "" : format_backtrace(failure.exception.backtrace)
+          backtrace = calc_backtrace(failure.exception, example)
 
           #if ::Rake::TeamCity.is_in_buildserver_mode
           #  # failure description
@@ -291,6 +291,15 @@ module Spec
             log(@message_factory.create_test_error(running_example_full_name, message, backtrace))
           end
           close_test_block(example)
+        end
+
+        def calc_backtrace(exception, example)
+          return "" if exception.nil?
+          if rspec_2? && respond_to?(:format_backtrace) && self.class.instance_method(:format_backtrace).arity == 2
+            format_backtrace(exception.backtrace, example).join("\n")
+          else
+            ::Rake::TeamCity::RunnerCommon.format_backtrace(exception.backtrace)
+          end
         end
 
         def example_pending(*args)

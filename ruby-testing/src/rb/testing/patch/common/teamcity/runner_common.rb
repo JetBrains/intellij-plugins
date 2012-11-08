@@ -49,11 +49,11 @@ module Rake
       end
 
       # Is from base_text_formatter.rb of rspec 1.1.4
-      def backtrace_line(line)
+      def self.backtrace_line(line)
         line.sub(/\A([^:]+:\d+)$/, '\\1:')
       end
 
-      def format_backtrace(backtrace)
+      def self.format_backtrace(backtrace)
         return "" if backtrace.nil?
         backtrace.map { |line| backtrace_line(line) }.join("\n")
       end

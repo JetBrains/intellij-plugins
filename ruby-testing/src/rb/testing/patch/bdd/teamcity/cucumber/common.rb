@@ -410,7 +410,7 @@ module Teamcity
       def log_status_and_test_finished(status, name, duration_ms,
           exception = nil, multiline_arg = nil, keyword = nil, diagnostic_info=nil)
         msg = exception.nil? ? "" : "#{exception.class.name}: #{exception.message}"
-        backtrace = exception.nil? ? "" : format_backtrace(exception.backtrace)
+        backtrace = exception.nil? ? "" : ::Rake::TeamCity::RunnerCommon.format_backtrace(exception.backtrace)
 
         case status
           when :pending
