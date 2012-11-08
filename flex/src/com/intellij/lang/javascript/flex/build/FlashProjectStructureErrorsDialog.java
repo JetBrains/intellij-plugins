@@ -66,7 +66,7 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
           BCUtils.renderBuildConfiguration((FlexBuildConfiguration)userObject, null).appendToComponent(this);
         }
         else if (userObject instanceof FlashProjectStructureProblem) {
-          setIcon(AllIcons.Ide.ErrorSign);
+          setIcon(AllIcons.General.Error);
           append(((FlashProjectStructureProblem)userObject).errorMessage);
         }
       }

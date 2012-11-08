@@ -156,7 +156,7 @@ public class LiveObjectsView extends ProfileView implements Disposable {
     liveObjectsTreeTable.getTree().setCellRenderer(new SizeInfoCellRenderer() {
       @Override
       public void customizeCellRenderer(Object value, boolean selected) {
-        Icon icon = AllIcons.Compiler.Information;
+        Icon icon = AllIcons.General.Information;
         if (value instanceof SizeInfoNode) {
           icon = ((SizeInfoNode)value).isMethod() ? AllIcons.Nodes.Method : AllIcons.Nodes.Class;
         }
