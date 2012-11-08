@@ -1,10 +1,6 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.codeInsight.CodeInsightUtilBase;
-import com.intellij.codeInsight.template.Template;
-import com.intellij.codeInsight.template.TemplateManager;
-import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
-import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -70,14 +66,6 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
     final Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
 
     assert editor != null;
-    // ToDo: duplication of code with Ruby analog
-    final TemplateManager templateManager = TemplateManager.getInstance(file.getProject());
-    final TemplateState templateState = TemplateManagerImpl.getTemplateState(editor);
-    final Template template = templateManager.getActiveTemplate(editor);
-    if (templateState != null && template != null) {
-      templateState.gotoEnd(false);
-    }
-
     // snippet text
     final PsiMethod element = buildStepDefinitionByStep(step);
 
