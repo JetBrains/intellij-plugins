@@ -10,6 +10,7 @@ import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.sdk.JpsFlexSdkType;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
@@ -37,6 +38,8 @@ import java.util.List;
 
 public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTarget> {
 
+  private static Logger LOG = Logger.getInstance(FlexBuilder.class.getName());
+
   private enum Status {Ok, Failed, Cancelled}
 
   protected FlexBuilder() {
@@ -62,6 +65,19 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
       }
     });
 
+    if (LOG.isDebugEnabled()) {
+      final StringBuilder b = new StringBuilder();
+      b.append(buildTarget.getId()).append(", ").append("dirty files: ").append(dirtyFilePaths.size());
+
+      if (dirtyFilePaths.size() < 10) {
+        for (String path : dirtyFilePaths) {
+          b.append('\n').append(path);
+        }
+      }
+
+      LOG.debug(b.toString());
+    }
+
     final JpsFlexBuildConfiguration mainBC = buildTarget.getBC();
 
     final List<JpsFlexBuildConfiguration> bcsToCompile = getAllBCsToCompile(mainBC);
@@ -72,6 +88,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
       for (JpsFlexBuildConfiguration bc : bcsToCompile) {
         if (!new File(bc.getActualOutputFilePath()).isFile()) {
           outputFilesExist = false;
+          LOG.debug("recompile because output file doesn't exist: " + bc.getActualOutputFilePath());
           break;
         }
       }
@@ -114,7 +131,6 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     if (!bc.getName().equals(bc.getModule().getName())) postfix += " (module " + bc.getModule().getName() + ")";
     return "[" + bc.getName() + postfix + "]";
   }
-
 
   private static List<JpsFlexBuildConfiguration> getAllBCsToCompile(final JpsFlexBuildConfiguration bc) {
     final List<JpsFlexBuildConfiguration> result =
