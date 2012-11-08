@@ -3,7 +3,9 @@ package com.intellij.flex.build;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.flex.model.bc.JpsFlexBuildConfigurationManager;
+import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +19,8 @@ import org.jetbrains.jps.model.JpsModel;
 import org.jetbrains.jps.model.JpsSimpleElement;
 import org.jetbrains.jps.model.java.JavaSourceRootProperties;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
+import org.jetbrains.jps.model.java.JpsJavaExtensionService;
+import org.jetbrains.jps.model.java.compiler.JpsJavaCompilerConfiguration;
 import org.jetbrains.jps.model.module.JpsTypedModule;
 import org.jetbrains.jps.model.module.JpsTypedModuleSourceRoot;
 import org.jetbrains.jps.util.JpsPathUtil;
@@ -110,8 +114,22 @@ public class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescript
   public void writeConfiguration(final PrintWriter out, final BuildDataPaths dataPaths, final BuildRootIndex buildRootIndex) {
     out.println("Module: " + getModule().getName());
     for (JpsFlexBuildConfiguration bc : getModule().getProperties().getBuildConfigurations()) {
-      if (FlexCommonUtils.canHaveResourceFiles(bc.getNature())) {
-        out.println("BC " + bc.getName() + ": " + bc.getCompilerOptions().getResourceFilesMode());
+      if (!bc.isSkipCompile() &&
+          FlexCommonUtils.canHaveResourceFiles(bc.getNature()) &&
+          bc.getCompilerOptions().getResourceFilesMode() != JpsFlexCompilerOptions.ResourceFilesMode.None) {
+
+        out.print("BC: " + bc.getName());
+        out.print(", output folder: " + PathUtilRt.getParentPath(bc.getActualOutputFilePath()));
+        out.print(", mode: " + bc.getCompilerOptions().getResourceFilesMode());
+
+        if (bc.getCompilerOptions().getResourceFilesMode() == JpsFlexCompilerOptions.ResourceFilesMode.ResourcePatterns) {
+          final JpsJavaCompilerConfiguration c = JpsJavaExtensionService.getInstance().getCompilerConfiguration(getModule().getProject());
+          if (c != null) {
+            out.print(", patterns: " + StringUtil.join(c.getResourcePatterns(), " "));
+          }
+        }
+
+        out.println();
       }
     }
   }
