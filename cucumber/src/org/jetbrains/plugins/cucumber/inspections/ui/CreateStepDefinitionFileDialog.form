@@ -4,15 +4,15 @@
     <rowspec value="center:25px:noGrow"/>
     <rowspec value="top:4dlu:noGrow"/>
     <rowspec value="center:max(d;4px):noGrow"/>
-    <colspec value="fill:68px:noGrow"/>
+    <colspec value="fill:87px:noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="fill:max(p;100px):grow"/>
     <colspec value="left:4dlu:noGrow"/>
     <colspec value="fill:57px:noGrow"/>
     <colspec value="left:4dlu:noGrow"/>
-    <colspec value="fill:max(d;4px):noGrow"/>
+    <colspec value="fill:81px:noGrow"/>
     <constraints>
-      <xy x="20" y="20" width="317" height="53"/>
+      <xy x="20" y="20" width="358" height="60"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -67,7 +67,7 @@
         </constraints>
         <properties/>
       </component>
-      <component id="64c39" class="javax.swing.JLabel" binding="myDirectoryLabel">
+      <component id="64c39" class="javax.swing.JLabel">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
             <preferred-size width="44" height="14"/>
@@ -75,6 +75,7 @@
           <forms/>
         </constraints>
         <properties>
+          <labelFor value="e76a8"/>
           <text resource-bundle="org/jetbrains/plugins/cucumber/CucumberBundle" key="cucumber.quick.fix.create.step.choose.new.file.dialog.label.file.location"/>
         </properties>
       </component>

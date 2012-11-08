@@ -77,7 +77,6 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
 
     myDirectoryTextField.addBrowseFolderListener(folderChooserTitle, null, project, folderChooserDescriptor);
     myDirectoryTextField.setText(FileUtil.toSystemDependentName(model.getDirectory().getVirtualFile().getPath()));
-    myDirectoryLabel.setLabelFor(myDirectoryTextField);
 
     validateFileName();
   }
