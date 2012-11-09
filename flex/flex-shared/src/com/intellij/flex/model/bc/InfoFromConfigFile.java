@@ -136,6 +136,16 @@ public class InfoFromConfigFile {
           mainClassPath = fileSpecsElement == null ? null
                                                    : fileSpecsElement.getChildTextNormalize("path-element", rootElement.getNamespace());
           outputPath = rootElement.getChildTextNormalize("output", rootElement.getNamespace());
+
+          if (!FileUtil.isAbsolute(outputPath)) {
+            try {
+              outputPath = new File(configFile.getParent(), outputPath).getCanonicalPath();
+            }
+            catch (IOException e) {
+              outputPath = new File(configFile.getParent(), outputPath).getAbsolutePath();
+            }
+          }
+
           targetPlayer = rootElement.getChildTextNormalize("target-player", rootElement.getNamespace());
         }
       }

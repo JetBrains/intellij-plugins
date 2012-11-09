@@ -14,6 +14,7 @@ import com.intellij.util.xml.NanoXmlUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -138,7 +139,12 @@ public class FlexCompilerConfigFileUtil {
         if (!outputList.isEmpty()) {
           outputPath = outputList.get(0);
           if (!FileUtil.isAbsolute(outputPath)) {
-            outputPath = configFile.getParent().getPath() + "/" + outputPath;
+            try {
+              outputPath = new File(configFile.getParent().getPath() + "/" + outputPath).getCanonicalPath();
+            }
+            catch (IOException e) {
+              outputPath = new File(configFile.getParent().getPath() + "/" + outputPath).getAbsolutePath();
+            }
           }
         }
 
