@@ -92,7 +92,7 @@ public class ModuleChangeHandler implements ProjectComponent {
             if (oldName != null) {
               fireModuleRenamed(module, oldName);
             }
-            else {
+            else if (project.isInitialized()) {
               throw new RuntimeException("Unknown module renamed " + module.getName());
             }
             moduleNames.put(module, module.getName());
