@@ -140,10 +140,12 @@ public class FlexCompilerConfigFileUtil {
           outputPath = outputList.get(0);
           if (!FileUtil.isAbsolute(outputPath)) {
             try {
-              outputPath = new File(configFile.getParent().getPath() + "/" + outputPath).getCanonicalPath();
+              outputPath =
+                FileUtil.toSystemIndependentName(new File(configFile.getParent().getPath() + "/" + outputPath).getCanonicalPath());
             }
             catch (IOException e) {
-              outputPath = new File(configFile.getParent().getPath() + "/" + outputPath).getAbsolutePath();
+              outputPath =
+                FileUtil.toSystemIndependentName(new File(configFile.getParent().getPath() + "/" + outputPath).getAbsolutePath());
             }
           }
         }

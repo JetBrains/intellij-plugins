@@ -139,10 +139,10 @@ public class InfoFromConfigFile {
 
           if (!FileUtil.isAbsolute(outputPath)) {
             try {
-              outputPath = new File(configFile.getParent(), outputPath).getCanonicalPath();
+              outputPath = FileUtil.toSystemIndependentName(new File(configFile.getParent(), outputPath).getCanonicalPath());
             }
             catch (IOException e) {
-              outputPath = new File(configFile.getParent(), outputPath).getAbsolutePath();
+              outputPath = FileUtil.toSystemIndependentName(new File(configFile.getParent(), outputPath).getAbsolutePath());
             }
           }
 
