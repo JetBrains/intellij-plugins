@@ -53,8 +53,8 @@ public class FacetEditor extends FacetEditorTab {
   }
 
   public boolean isModified() {
-        return _configuration.getFilterName() != _filterName.getText() ||
-                _configuration.getApplicationPackage() != _applicationPackage.getText();
+        return !_configuration.getFilterName().equals(_filterName.getText()) ||
+               !_configuration.getApplicationPackage().equals(_applicationPackage.getText());
     }
 
     public void apply() {
