@@ -47,7 +47,7 @@ public class SwfProjectViewStructureProvider implements SelectableTreeStructureP
     public int compare(JSQualifiedNamedElement o1, JSQualifiedNamedElement o2) {
       final String qName = o1.getQualifiedName();
       final String qName2 = o2.getQualifiedName();
-      if (qName == null || qName2 == null) return qName == qName2 ? 0: qName != null ? 1:-1;
+      if (qName == null || qName2 == null) return qName == null && qName2 == null ? 0: qName != null ? 1:-1;
       String[] tokens1 = qName.split("\\.");
       String[] tokens2 = qName2.split("\\.");
 
