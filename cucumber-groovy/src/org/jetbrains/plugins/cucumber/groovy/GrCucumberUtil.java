@@ -2,7 +2,10 @@ package org.jetbrains.plugins.cucumber.groovy;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.NullableComputable;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.groovy.lang.lexer.GroovyTokenTypes;
@@ -19,7 +22,7 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals
  */
 public class GrCucumberUtil {
 
-  public static final String[] STEPS = new String[]{"Given", "Then", "And", "But", "When"};
+  public static final String[] HOOKS = new String[]{"Before", "After"};
 
   public static boolean isStepDefinition(PsiElement element) {
     return element instanceof GrMethodCall &&
@@ -32,13 +35,23 @@ public class GrCucumberUtil {
     return ApplicationManager.getApplication().runReadAction(new NullableComputable<GrReferenceExpression>() {
       @Override
       public GrReferenceExpression compute() {
-        GrExpression invoked = stepDefinition.getInvokedExpression();
-        if (!(invoked instanceof GrReferenceExpression) || ((GrReferenceExpression)invoked).isQualified()) return null;
+        final GrExpression ref = stepDefinition.getInvokedExpression();
+        if (!(ref instanceof GrReferenceExpression)) return null;
 
-        String name = ((GrReferenceExpression)invoked).getName();
-        if (!ArrayUtil.contains(name, STEPS)) return null;
+        final PsiMethod method = stepDefinition.resolveMethod();
+        if (method == null) return null;
 
-        return (GrReferenceExpression)invoked;
+        final PsiClass containingClass = method.getContainingClass();
+        if (containingClass == null) return null;
+
+        final String qName = containingClass.getQualifiedName();
+        if (qName == null) return null;
+
+        final String packageName = StringUtil.getPackageName(qName);
+
+        if (!GrCucumberCommonClassNames.CUCUMBER_RUNTIME_GROOVY.equals(packageName)) return null;
+
+        return (GrReferenceExpression)ref;
       }
     });
   }
@@ -79,5 +92,17 @@ public class GrCucumberUtil {
         return value instanceof String ? ((GrLiteral)operand) : null;
       }
     });
+  }
+
+  public static boolean isHook(GrMethodCall methodCall) {
+    PsiMethod method = methodCall.resolveMethod();
+    if (method == null) return false;
+
+    if (!ArrayUtil.contains(method.getName(), HOOKS)) return false;
+
+    PsiClass containingClass = method.getContainingClass();
+    if (containingClass == null) return false;
+
+    return GrCucumberCommonClassNames.CUCUMBER_RUNTIME_GROOVY_HOOKS.equals(containingClass.getQualifiedName());
   }
 }

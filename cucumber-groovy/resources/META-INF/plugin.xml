@@ -22,4 +22,8 @@
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">
     <cucumberJvmExtensionPoint implementation="org.jetbrains.plugins.cucumber.groovy.GrCucumberExtension"/>
   </extensions>
+
+  <extensions defaultExtensionNs="org.intellij.groovy">
+    <membersContributor implementation="org.jetbrains.plugins.cucumber.groovy.resolve.noncode.CustomWorldContributor"/>
+  </extensions>
 </idea-plugin>

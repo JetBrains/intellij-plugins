@@ -1,12 +1,11 @@
 package org.jetbrains.plugins.cucumber.groovy.resolve
-
+import org.jetbrains.plugins.cucumber.groovy.GrCucumberLightTestCase
 import org.jetbrains.plugins.cucumber.groovy.TestUtils
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex
-import org.jetbrains.plugins.groovy.LightGroovyTestCase
 /**
  * @author Max Medvedev
  */
-class ResolveStepTest extends LightGroovyTestCase {
+class ResolveStepTest extends GrCucumberLightTestCase {
   final String basePath = TestUtils.absoluteTestDataPath + 'resolve'
 
   void testTable() {
@@ -23,6 +22,9 @@ Feature: Shopping
     Then my change should be 4
 ''', '''\
 import static org.junit.Assert.assertEquals;
+
+this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
+this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
 Given(~'^the following groceries:$') {List<Grocery> groceries ->
   for (Grocery grocery : groceries) {
