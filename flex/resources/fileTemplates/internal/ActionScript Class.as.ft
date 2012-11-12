@@ -1,8 +1,8 @@
 #parse("ActionScript File Header.as")
 package ${PACKAGE_NAME}#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "") #end{
-${Access_modifier} class ${NAME} #if (${Super_class_name} && ${Super_class_name} != "")extends ${Super_class_name}#end #if (${Implemented_interface_name} && ${Implemented_interface_name} != "")implements ${Implemented_interface_name}#end{
+${Access_modifier} class ${NAME} #if (${Superclass} && ${Superclass} != "")extends ${Superclass}#end #if (${SuperInterfaces} && ${SuperInterfaces} != "")implements #foreach( $i in ${SuperInterfaces} ) #if ($foreach.count > 1),#end $i #end#end{
     public function ${NAME}() {
-        #if (${Super_class_name} && ${Super_class_name} != "")super();#end
+        #if (${Superclass} && ${Superclass} != "")super();#end
     }
 }
 }

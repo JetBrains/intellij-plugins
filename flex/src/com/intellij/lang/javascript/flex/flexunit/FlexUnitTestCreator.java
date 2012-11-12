@@ -22,6 +22,8 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.testIntegration.TestCreator;
 import com.intellij.util.Consumer;
 
+import java.util.Collections;
+
 import static com.intellij.lang.javascript.psi.JSFunction.FunctionKind;
 
 public class FlexUnitTestCreator implements TestCreator {
@@ -90,7 +92,7 @@ public class FlexUnitTestCreator implements TestCreator {
     };
 
     CreateClassOrInterfaceAction.createClass(JavaScriptSupportLoader.ACTION_SCRIPT_CLASS_TEMPLATE_NAME, testClassName,
-                                             packageName, superClass, targetDirectory,
+                                             packageName, superClass, Collections.<String>emptyList(), targetDirectory,
                                              CodeInsightBundle.message("intention.create.test"), true, postProcessRunnable);
   }
 

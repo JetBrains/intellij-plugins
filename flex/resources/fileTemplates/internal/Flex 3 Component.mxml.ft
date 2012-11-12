@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<${Superclass} xmlns:mx="http://www.adobe.com/2006/mxml"#if(${SuperInterfaces} && ${SuperInterfaces} != "") implements="#foreach($i in ${SuperInterfaces})#if ($foreach.count > 1), #end$i#end"#end>
+<!-- To change this template use File | Settings | File Templates. -->
+</${Superclass}>

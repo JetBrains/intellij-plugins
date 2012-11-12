@@ -1,132 +1,205 @@
 package com.intellij.lang.javascript.flex.actions.newfile;
 
-import com.intellij.codeInsight.template.TemplateBuilderImpl;
-import com.intellij.codeInsight.template.impl.MacroCallNode;
-import com.intellij.codeInsight.template.macro.CompleteMacro;
+import com.intellij.flex.model.bc.ComponentSet;
+import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.ide.fileTemplates.FileTemplate;
+import com.intellij.ide.fileTemplates.FileTemplateManager;
+import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.javascript.flex.mxml.schema.CodeContextHolder;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.util.JSUtils;
+import com.intellij.lang.javascript.validation.fixes.CreateClassDialog;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.module.ModuleUtilCore;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.impl.DirectoryIndex;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.psi.xml.XmlToken;
 import com.intellij.util.ArrayUtil;
-import com.intellij.xml.util.XmlTagUtil;
-import icons.JavaScriptLanguageIcons;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.util.containers.ContainerUtil;
+import org.apache.velocity.runtime.parser.ParseException;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.Collection;
-import java.util.Map;
+import java.util.List;
+import java.util.Properties;
 
-public class NewFlexComponentAction extends NewJSClassActionBase {
+public class NewFlexComponentAction extends NewActionScriptClassAction {
 
-  public NewFlexComponentAction() {
-    super(JSBundle.message("new.flex.component.action.title"), JSBundle.message("new.flex.component.action.description"),
-          JavaScriptLanguageIcons.Flex.XmlBackedClass, CreateClassOrInterfaceAction.FLEX_TEMPLATES_EXTENSIONS);
+  @NonNls private static final String FLEX3_COMPONENT_TEMPLATE_NAME = "Flex 3 Component";
+  @NonNls private static final String MX_COMPONENT_TEMPLATE_NAME = "MX Component";
+  @NonNls private static final String SPARK_COMPONENT_TEMPLATE_NAME = "Spark Component";
+  @NonNls private static final String SPARK_MX_COMPONENT_TEMPLATE_NAME = "Spark+MX Component";
+
+  private static final String[] FLEX_CLASSIFIER_TEMPLATES =
+    new String[]{FLEX3_COMPONENT_TEMPLATE_NAME, MX_COMPONENT_TEMPLATE_NAME,
+      SPARK_COMPONENT_TEMPLATE_NAME, SPARK_MX_COMPONENT_TEMPLATE_NAME};
+
+  public static boolean isClassifierTemplate(String templateName) {
+    return ArrayUtil.contains(templateName, FLEX_CLASSIFIER_TEMPLATES);
   }
 
   @Override
-  protected String getActionName(PsiDirectory directory, String newName, String templateName) {
-    return JSBundle.message("new.flex.component.command.name");
-  }
-
-  @Override
-  protected String getDialogTitle() {
-    return JSBundle.message("new.flex.component.dialog.title");
-  }
-
-  @Override
-  protected void postProcess(final PsiFile file,
-                             final String templateName,
-                             @Nullable final Map<String, String> customProperties) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+  protected CreateClassOrInterfaceAction createAction(final PsiDirectory dir) {
+    final Ref<String> parentComponentToSet = new Ref<String>();
+    return new CreateClassOrInterfaceAction(dir) {
       @Override
-      public void run() {
-        fillParentComponent(file, templateName, customProperties);
+      protected CreateClassDialog createDialog(final String templateName) {
+        CreateClassDialog d = new CreateClassDialog(
+          dir.getProject(),
+          null,
+          true,
+          DirectoryIndex.getInstance(dir.getProject()).getPackageName(dir.getVirtualFile()),
+          false,
+          null,
+          true,
+          templateName,
+          dir,
+          true,
+          JSBundle.message("choose.base.component.title")) {
+
+          @Override
+          protected List<FileTemplate> getApplicableTemplates() {
+            Module module = ModuleUtilCore.findModuleForPsiElement(dir);
+            final String[] allowedBuiltin = getAllowedBuiltInTemplates(module);
+            return ContainerUtil
+              .filter(CreateClassOrInterfaceAction.getApplicableTemplates(FLEX_TEMPLATES_EXTENSIONS), new Condition<FileTemplate>() {
+                @Override
+                public boolean value(final FileTemplate fileTemplate) {
+                  String name = fileTemplate.getName();
+                  return ArrayUtil.contains(name, allowedBuiltin) || !isClassifierTemplate(name);
+                }
+              });
+          }
+
+          @Override
+          protected boolean canFinish() {
+            if (!super.canFinish()) {
+              return false;
+            }
+
+            if (isSuperclassFieldEnabled()) {
+              if (!JSUtils.isValidClassName(getSuperClassFqn(), true)) {
+                return false;
+              }
+              if (!(JSResolveUtil.findClassByQName(getSuperClassFqn(), getSuperclassScope()) instanceof JSClass)) {
+                return false;
+              }
+            }
+            return true;
+          }
+
+          @Override
+          protected boolean canBeSuperClass(final JSClass jsClass) {
+            // hiding classes with no default constructor can be confusing: "where is my class?"
+            return super.canBeSuperClass(jsClass)/* &&
+                   (jsClass.getConstructor() == null || jsClass.getConstructor().getParameterList().getParameters().length == 0)*/;
+          }
+
+          @Override
+          protected void doOKAction() {
+            // let's replace parent component only if template contains 'Superclass' macro
+            final FileTemplate template;
+            try {
+              template = ClassLoaderUtil
+                .runWithClassLoader(CreateClassOrInterfaceAction.class.getClassLoader(),
+                                    new ThrowableComputable<FileTemplate, IOException>() {
+                                      @Override
+                                      public FileTemplate compute() throws IOException {
+                                        return FileTemplateManager.getInstance().getInternalTemplate(getTemplateName());
+                                      }
+                                    });
+              String[] attributes = FileTemplateUtil.calculateAttributes(template.getText(), new Properties(), true);
+              if (ArrayUtil.contains(CreateClassOrInterfaceAction.SUPERCLASS, attributes)) {
+                parentComponentToSet.set(getSuperClassFqn());
+              }
+            }
+            catch (IOException e) {
+              // ignore as the action will not succeed
+            }
+            catch (ParseException e) {
+              // ignore as the action will not succeed
+            }
+
+
+            super.doOKAction();
+          }
+        };
+        d.setSuperclassLabelText(JSBundle.message("parent.component.label.text"));
+        d.setTitle(JSBundle.message("new.flex.component.dialog.title"));
+        return d;
       }
-    });
+
+      @Override
+      protected void postProcess(@NotNull final JSClass jsClass) {
+        final XmlTag tag = (XmlTag)jsClass.getParent();
+        if (!parentComponentToSet.isNull() && parentComponentToSet.get().equals(tag.getName())) {
+          // raw fqn have likely been inserted by template (that equals to what user have entered)
+          ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+              setParentComponent((XmlBackedJSClassImpl)jsClass, parentComponentToSet.get());
+            }
+          });
+        }
+        jsClass.navigate(true);
+      }
+    };
   }
 
-  public static void fillParentComponent(final PsiFile file, String templateName, final Map<String, String> customProperties) {
-    if (!CreateClassOrInterfaceAction.FLEX_CLASSIFIER_TEMPLATES.contains(templateName)) {
-      return;
+  private static String[] getAllowedBuiltInTemplates(final Module module) {
+    FlexBuildConfiguration c = FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration();
+    if (c.isPureAs()) {
+      return ArrayUtil.EMPTY_STRING_ARRAY;
     }
 
-    if (!(file instanceof XmlFile) || ((XmlFile)file).getDocument() == null) {
-      return;
+    Sdk sdk = c.getSdk();
+    if (sdk != null && StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") < 0) {
+      return new String[]{FLEX3_COMPONENT_TEMPLATE_NAME};
     }
-    String parentComponent = customProperties != null ? customProperties.get(NewFlexComponentDialog.PARENT_COMPONENT) : null;
-    if (StringUtil.isNotEmpty(parentComponent)) {
-      final XmlTag rootTag = ((XmlFile)file).getDocument().getRootTag();
-      if (rootTag == null) {
-        return;
-      }
 
-      Pair<String, String> requiredPrefixAndNamespace = getPrefixAndNamespace(rootTag, parentComponent);
-      XmlBackedJSClassImpl.setBaseComponent(rootTag, parentComponent, requiredPrefixAndNamespace.first, requiredPrefixAndNamespace.second);
+    if (c.getTargetPlatform() == TargetPlatform.Mobile) {
+      return new String[]{MX_COMPONENT_TEMPLATE_NAME, SPARK_COMPONENT_TEMPLATE_NAME};
     }
-    else {
-      Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
-      if (document == null) {
-        return;
-      }
 
-      final Runnable runnable = new Runnable() {
-        public void run() {
-          XmlTag rootTag = ((XmlFile)file).getDocument().getRootTag();
-          if (rootTag == null) {
-            return;
-          }
-
-          XmlToken openingNode = XmlTagUtil.getStartTagNameElement(rootTag);
-          if (openingNode == null) {
-            return;
-          }
-          XmlToken closingNode = XmlTagUtil.getEndTagNameElement(rootTag);
-          if (closingNode == null) {
-            return;
-          }
-
-          // invoke completion for parent component
-          TemplateBuilderImpl builder = new TemplateBuilderImpl(rootTag);
-          builder.replaceElement(openingNode, "openingNode", new MacroCallNode(new CompleteMacro()), true);
-
-          // closing tag text should follow opening tag text
-          builder.replaceElement(closingNode, "closingNode", "openingNode", false);
-          builder.run();
-        }
-      };
-
-      if (ModalityState.current().equals(ModalityState.NON_MODAL)) {
-        runnable.run();
-      }
-      else {
-        // otherwise code highlighting will be disabled forever (IDEA-61708)
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            ApplicationManager.getApplication().runWriteAction(runnable);
-          }
-        }, ModalityState.NON_MODAL);
-      }
+    ComponentSet componentSet = c.getDependencies().getComponentSet();
+    if (componentSet == ComponentSet.SparkOnly) {
+      return new String[]{SPARK_COMPONENT_TEMPLATE_NAME};
     }
+
+    if (componentSet == ComponentSet.MxOnly) {
+      return new String[]{MX_COMPONENT_TEMPLATE_NAME};
+    }
+    return FLEX_CLASSIFIER_TEMPLATES;
+  }
+
+  @Override
+  protected String getCommandName() {
+    return FlexBundle.message("new.flex.component.command.name");
+  }
+
+  public static void setParentComponent(final XmlBackedJSClassImpl clazz, final String newParentQname) {
+    Pair<String, String> prefixAndNamespace = getPrefixAndNamespace(clazz.getParent(), newParentQname);
+    clazz.setBaseComponent(newParentQname, prefixAndNamespace.first, prefixAndNamespace.second);
   }
 
   public static Pair<String, String> getPrefixAndNamespace(XmlTag tag, String qName) {
-    Module module = ModuleUtil.findModuleForPsiElement(tag);
+    Module module = ModuleUtilCore.findModuleForPsiElement(tag);
     boolean isFlex4Template = ArrayUtil.contains(JavaScriptSupportLoader.MXML_URI3, tag.knownNamespaces());
 
     CodeContextHolder holder = CodeContextHolder.getInstance(module.getProject());
@@ -149,5 +222,4 @@ public class NewFlexComponentAction extends NewJSClassActionBase {
     String packageName = StringUtil.getPackageName(qName);
     return Pair.create("local", StringUtil.isEmpty(packageName) ? "*" : packageName + ".*");
   }
-
 }

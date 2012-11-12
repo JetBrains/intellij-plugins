@@ -4,6 +4,7 @@ import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
+import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -33,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
   private @NonNls static final String IMPL_SUFFIX = "Impl";
@@ -136,6 +138,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     final String packageName;
     final String templateName;
     final PsiDirectory targetDirectory;
+    final Collection<String> interfaces;
 
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       className = suggestSubclassName(jsClass.getName());
@@ -147,11 +150,14 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
           return CreateClassOrInterfaceAction.findOrCreateDirectory(packageName, jsPackageStatement);
         }
       });
+      interfaces = jsClass.isInterface() ? Collections.singletonList(jsClass.getQualifiedName()) : Collections.<String>emptyList();
     }
     else {
       final CreateClassDialog dialog =
         new CreateClassDialog(project, suggestSubclassName(jsClass.getName()), true,
-                              jsPackageStatement.getQualifiedName(), false, null, defaultTemplateName, jsClass, false);
+                              jsPackageStatement.getQualifiedName(), false, jsClass, false,
+                              defaultTemplateName, jsClass, false,
+                              JSBundle.message("choose.super.class.title"));
       dialog.show();
 
       if (!dialog.isOK()) {
@@ -161,13 +167,15 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
       packageName = dialog.getPackageName();
       templateName = dialog.getTemplateName();
       targetDirectory = dialog.getTargetDirectory();
+      interfaces = dialog.getInterfacesFqns();
     }
 
     JSClass createdClass = CreateClassOrInterfaceAction
-      .createClass(templateName, className, packageName, jsClass, targetDirectory, getTitle(jsClass), true, new Consumer<JSClass>() {
+      .createClass(templateName, className, packageName, jsClass.isInterface() ? null : jsClass, interfaces, targetDirectory, getTitle(jsClass),
+                   true, new Consumer<JSClass>() {
         @Override
         public void consume(final JSClass aClass) {
-          if (!aClass.isInterface() && jsClass.isInterface()) {
+          if (aClass != null && !aClass.isInterface() && (jsClass.isInterface() || !interfaces.isEmpty())) {
             new MyImplementMethodsHandler(aClass).execute();
           }
         }

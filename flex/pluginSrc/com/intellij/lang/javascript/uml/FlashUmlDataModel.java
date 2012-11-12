@@ -847,11 +847,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
         Callable<DiagramEdge<Object>> callable = new Callable<DiagramEdge<Object>>() {
           @Override
           public DiagramEdge<Object> call() throws Exception {
-            Pair<String, String> prefixAndNamespace =
-              NewFlexComponentAction.getPrefixAndNamespace(((XmlBackedJSClassImpl)fromClass).getParent(),
-                                                           toClass.getQualifiedName());
-            ((XmlBackedJSClassImpl)fromClass)
-              .setBaseComponent(toClass.getQualifiedName(), prefixAndNamespace.first, prefixAndNamespace.second);
+            NewFlexComponentAction.setParentComponent((XmlBackedJSClassImpl)fromClass, toClass.getQualifiedName());
             return addEdgeAndRefresh(from, to, DiagramRelationships.GENERALIZATION);
           }
         };

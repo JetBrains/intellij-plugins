@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<${Superclass} xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"#if(${SuperInterfaces} && ${SuperInterfaces} != "") implements="#foreach($i in ${SuperInterfaces})#if ($foreach.count > 1), #end$i#end"#end>
+<!-- To change this template use File | Settings | File Templates. -->
+</${Superclass}>

@@ -110,8 +110,10 @@
 
     <internalFileTemplate name="ActionScript Class"/>
     <internalFileTemplate name="ActionScript Interface"/>
-    <internalFileTemplate name="Mxml Component (Flex 3)"/>
-    <internalFileTemplate name="Mxml Component (Flex 4)"/>
+    <internalFileTemplate name="Flex 3 Component"/>
+    <internalFileTemplate name="MX Component"/>
+    <internalFileTemplate name="Spark Component"/>
+    <internalFileTemplate name="Spark+MX Component"/>
     <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptCodeContextType"/>
     <liveTemplateContext implementation="com.intellij.lang.javascript.flex.MxmlTemplateContextType"/>
     <defaultLiveTemplatesProvider implementation="com.intellij.lang.javascript.ActionScriptLiveTemplatesProvider"/>
@@ -305,11 +307,11 @@
       <add-to-group anchor="after" relative-to-action="Generate.Delegate.Actionscript" group-id="GenerateGroup"/>
     </action>
     <action id="Flex.NewActionScriptClass" class="com.intellij.lang.javascript.flex.actions.newfile.NewActionScriptClassAction"
-            text="ActionScript Class" description="Create new ActionScript class">
+            text="ActionScript Class" description="Create new ActionScript class" icon="JavaScriptLanguageIcons.Psi.Ecmal4.Impl.ActionScriptClass">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
     </action>
     <action id="Flex.NewFlexComponent" class="com.intellij.lang.javascript.flex.actions.newfile.NewFlexComponentAction"
-            text="Flex Component" description="Create new Flex component">
+            text="Flex Component" description="Create new Flex component" icon="JavaScriptLanguageIcons.Flex.XmlBackedClass">
       <add-to-group group-id="NewGroup" anchor="after" relative-to-action="Flex.NewActionScriptClass"/>
     </action>
     <action id="Flex.Debugger.FilterSwfLoadUnloadMessages" class="com.intellij.lang.javascript.flex.debug.FilterSwfLoadUnloadMessagesAction"

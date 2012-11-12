@@ -8,7 +8,6 @@ import com.intellij.lang.javascript.flex.actions.newfile.NewFlexComponentDialog;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
@@ -51,7 +50,6 @@ public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
   @Nullable
   @Override
   protected JSClass getClass(PsiFile file, PreparationData data) {
-    NewFlexComponentAction.fillParentComponent(file, data.templateName, data.customProperties);
     return XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)file);
   }
 
@@ -84,7 +82,7 @@ public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
     @Override
     protected void doOKAction() {
       String qName = getQualifiedName();
-      if (CreateClassOrInterfaceAction.isClassifierTemplate(getSelectedTemplate()) && !JSUtils.isValidClassName(qName, true)) {
+      if (NewFlexComponentAction.isClassifierTemplate(getSelectedTemplate()) && !JSUtils.isValidClassName(qName, true)) {
         Messages.showErrorDialog(getContentPane(), JSBundle.message("0.is.not.a.legal.name", qName), CommonBundle.getErrorTitle());
         return;
       }

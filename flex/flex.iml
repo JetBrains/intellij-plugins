@@ -30,6 +30,7 @@
     <orderEntry type="module" module-name="ant" />
     <orderEntry type="module" module-name="copyright" />
     <orderEntry type="module" module-name="jps-builders" />
+    <orderEntry type="library" name="Velocity" level="project" />
   </component>
 </module>
 

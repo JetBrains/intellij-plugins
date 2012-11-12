@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -67,7 +68,7 @@ public class NewFlexComponentDialog extends CreateFileFromTemplateDialog {
     myKindCombo.getChildComponent().addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
-        myParentComponentField.setEnabled(CreateClassOrInterfaceAction.FLEX_CLASSIFIER_TEMPLATES.contains(myKindCombo.getSelectedName()));
+        myParentComponentField.setEnabled(NewFlexComponentAction.isClassifierTemplate(myKindCombo.getSelectedName()));
       }
     });
     init();
@@ -79,7 +80,7 @@ public class NewFlexComponentDialog extends CreateFileFromTemplateDialog {
       .getApplicableTemplates(CreateClassOrInterfaceAction.FLEX_TEMPLATES_EXTENSIONS)) {
       String templateName = fileTemplate.getName();
       String shortName = CreateClassOrInterfaceAction.getTemplateShortName(templateName);
-      Icon icon = CreateClassOrInterfaceAction.getTemplateIcon(templateName);
+      Icon icon = FileTypeManager.getInstance().getFileTypeByExtension(fileTemplate.getExtension()).getIcon();
       myKindCombo.addItem(shortName, icon, templateName);
     }
     myKindCombo.setSelectedName(toSelect);

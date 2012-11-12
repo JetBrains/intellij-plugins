@@ -4,6 +4,7 @@ import com.intellij.CommonBundle;
 import com.intellij.ide.actions.CreateFileFromTemplateDialog;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.flex.actions.newfile.NewFlexComponentAction;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSIconProvider;
@@ -49,7 +50,7 @@ public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
       .getApplicableTemplates(CreateClassOrInterfaceAction.ACTIONSCRIPT_TEMPLATES_EXTENSIONS)) {
       String templateName = fileTemplate.getName();
       String shortName = CreateClassOrInterfaceAction.getTemplateShortName(templateName);
-      Icon icon = CreateClassOrInterfaceAction.getTemplateIcon(templateName);
+      Icon icon = CreateClassOrInterfaceAction.getTemplateIcon(fileTemplate);
       dialog.addItem(shortName, icon, templateName);
     }
 
@@ -86,7 +87,7 @@ public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
     @Override
     protected void doOKAction() {
       String qName = getQualifiedName();
-      if (CreateClassOrInterfaceAction.isClassifierTemplate(getSelectedTemplate()) && !JSUtils.isValidClassName(qName, true)) {
+      if (NewFlexComponentAction.isClassifierTemplate(getSelectedTemplate()) && !JSUtils.isValidClassName(qName, true)) {
         Messages.showErrorDialog(getContentPane(), JSBundle.message("0.is.not.a.legal.name", qName), CommonBundle.getErrorTitle());
         return;
       }
