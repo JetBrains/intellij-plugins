@@ -220,7 +220,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
 
     public VirtualFile getVirtualFile() {
       final Object value = getValue();
-      return value instanceof PsiElement ? ((PsiElement)value).getContainingFile().getVirtualFile() : null;
+      return value instanceof PsiElement && ((PsiElement)value).isValid() ? ((PsiElement)value).getContainingFile().getVirtualFile() : null;
     }
 
     public boolean canNavigate() {

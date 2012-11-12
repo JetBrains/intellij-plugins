@@ -1,14 +1,15 @@
 package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.ide.structureView.*;
+import com.intellij.ide.structureView.impl.xml.XmlStructureViewTreeModel;
 import com.intellij.ide.structureView.xml.XmlStructureViewBuilderProvider;
+import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.structureView.JSStructureViewElement;
-import com.intellij.lang.javascript.structureView.JSStructureViewModel;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
@@ -35,22 +36,12 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     return new TreeBasedStructureViewBuilder() {
       @NotNull
       public StructureViewModel createStructureViewModel() {
-        return new JSStructureViewModel(file) {
-          @Override
-          protected JSStructureViewElement createRoot(PsiElement root) {
-            return new JSStructureViewElement(root) {
-              @Override
-              public StructureViewTreeElement[] getChildren() {
-                return new StructureViewTreeElement[] { new FlexStructureViewElement(XmlBackedJSClassImpl.getXmlBackedClass(file), file)};
-              }
-            };
+        return new XmlStructureViewTreeModel(file) {
+          @NotNull
+          public Sorter[] getSorters() {
+            return Sorter.EMPTY_ARRAY;
           }
         };
-      }
-
-      @Override
-      public boolean isRootNodeShown() {
-        return false;
       }
     };
   }
