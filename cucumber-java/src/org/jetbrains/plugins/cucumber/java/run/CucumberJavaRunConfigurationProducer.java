@@ -8,11 +8,13 @@ import com.intellij.execution.junit.JavaRuntimeConfigurationProducerBase;
 import com.intellij.execution.junit2.info.LocationUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 
 /**
@@ -29,7 +31,8 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRuntimeCo
     super(CucumberJavaRunConfigurationType.getInstance());
   }
 
-  protected abstract String getGlue();
+  @Nullable
+  protected abstract NullableComputable<String> getGlue();
 
   protected abstract String getName();
 
@@ -79,7 +82,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRuntimeCo
     final CucumberJavaRunConfiguration configuration = (CucumberJavaRunConfiguration)settings.getConfiguration();
 
     final VirtualFile file = getFileToRun();
-    final String glue = getGlue();
+    final NullableComputable<String> glue = getGlue();
     configuration.setGlue(glue);
     configuration.setProgramParameters(file.getPath() + FORMATTER_OPTIONS);
     if (StringUtil.isEmpty(configuration.MAIN_CLASS_NAME)) {

@@ -16,6 +16,7 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,8 @@ import java.io.File;
  */
 
 public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
+  private NullableComputable<String> glueInitializer = null;
+
   public String GLUE;
 
   public CucumberJavaRunConfiguration(String name, Project project, CucumberJavaRunConfigurationType applicationConfigurationType) {
@@ -74,8 +77,9 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
           ext.updateJavaParameters(CucumberJavaRunConfiguration.this, params, getRunnerSettings());
         }
 
-        if (!StringUtil.isEmpty(GLUE)) {
-          final String[] glues = GLUE.split(" ");
+        final String glueValue = getGlue();
+        if (glueValue != null && !StringUtil.isEmpty(glueValue)) {
+          final String[] glues = glueValue.split(" ");
           for (String glue : glues) {
             if (!StringUtil.isEmpty(glue)) {
               params.getProgramParametersList().addParametersString(" --glue " + glue);
@@ -145,11 +149,22 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     super.checkConfiguration();
   }
 
+  @Nullable
   public String getGlue() {
+    if (glueInitializer != null) {
+      GLUE = glueInitializer.compute();
+      glueInitializer = null;
+    }
+
     return GLUE;
   }
 
   public void setGlue(String value) {
     GLUE = value;
+    glueInitializer = null;
+  }
+
+  public void setGlue(NullableComputable<String> value) {
+    glueInitializer = value;
   }
 }

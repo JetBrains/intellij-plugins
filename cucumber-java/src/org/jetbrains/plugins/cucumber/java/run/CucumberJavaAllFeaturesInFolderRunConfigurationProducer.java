@@ -4,6 +4,7 @@ import com.intellij.execution.Location;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -16,7 +17,7 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
  */
 public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override
-  protected String getGlue() {
+  protected NullableComputable<String> getGlue() {
     return null;
   }
 
