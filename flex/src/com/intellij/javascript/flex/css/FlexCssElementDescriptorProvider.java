@@ -569,6 +569,11 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return LocalQuickFix.EMPTY_ARRAY;
   }
 
+  @Override
+  public boolean supportColorTerms() {
+    return false;
+  }
+
   @Nullable
   private static VirtualFile checkForQuickFixAndGetVFile(@NotNull PsiElement context) {
     final PsiFile file = InjectedLanguageUtil.getTopLevelFile(context);
