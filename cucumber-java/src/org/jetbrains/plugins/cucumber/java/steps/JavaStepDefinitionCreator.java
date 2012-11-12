@@ -1,6 +1,12 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.template.Template;
+import com.intellij.codeInsight.template.TemplateBuilder;
+import com.intellij.codeInsight.template.TemplateBuilderFactory;
+import com.intellij.codeInsight.template.TemplateManager;
+import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
+import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -14,6 +20,7 @@ import com.intellij.openapi.roots.impl.DirectoryInfo;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -66,6 +73,14 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
     final Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
 
     assert editor != null;
+    // ToDo: duplication of code with Ruby analog
+    final TemplateManager templateManager = TemplateManager.getInstance(file.getProject());
+    final TemplateState templateState = TemplateManagerImpl.getTemplateState(editor);
+    final Template template = templateManager.getActiveTemplate(editor);
+    if (templateState != null && template != null) {
+      templateState.gotoEnd(false);
+    }
+
     // snippet text
     final PsiMethod element = buildStepDefinitionByStep(step);
 
@@ -74,9 +89,30 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
       PsiMethod addedElement = (PsiMethod)clazz.add(element);
       addedElement = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(addedElement);
       JavaCodeStyleManager.getInstance(project).shortenClassReferences(addedElement);
+      final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(addedElement);
 
-      //noinspection ConstantConditions
-      editor.getCaretModel().moveToOffset(addedElement.getBody().getLastBodyElement().getTextOffset());
+      final PsiAnnotation annotation = addedElement.getModifierList().getAnnotations()[0];
+      final PsiNameValuePair regexpElement = annotation.getParameterList().getAttributes()[0];
+      final TextRange range = new TextRange(1, regexpElement.getTextLength() - 1);
+      builder.replaceElement(regexpElement, range, regexpElement.getText().substring(range.getStartOffset(), range.getEndOffset()));
+
+      final PsiParameterList blockVars = addedElement.getParameterList();
+      for (PsiParameter var : blockVars.getParameters()) {
+        final PsiElement nameIdentifier = var.getNameIdentifier();
+        if (nameIdentifier != null) {
+          builder.replaceElement(nameIdentifier, nameIdentifier.getText());
+        }
+      }
+
+      final PsiCodeBlock body = addedElement.getBody();
+      if (body!= null && body.getStatements().length > 0) {
+        final PsiElement firstStatement = body.getStatements()[0];
+        final TextRange pendingRange = new TextRange(0, firstStatement.getTextLength() - 1);
+        builder.replaceElement(firstStatement, pendingRange, firstStatement.getText().substring(pendingRange.getStartOffset(), pendingRange.getEndOffset()));
+      }
+
+      PsiDocumentManager.getInstance(project).commitAllDocuments();
+      builder.run(editor, false);
     }
 
     return true;

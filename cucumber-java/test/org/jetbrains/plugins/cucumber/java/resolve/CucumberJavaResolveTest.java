@@ -14,4 +14,16 @@ public class CucumberJavaResolveTest extends BaseCucumberJavaResolveTest {
   public void testNavigationFromStepToStepDef03() throws Exception {
     doTest("stepResolve_01", "my change sh<caret>ould be 4", "my_change_should_be_");
   }
+
+  public void testNavigationWithQuotes01() throws Exception {
+    doTest("stepResolve_02", "I subtract 5 fr<caret>om 9", "I_subtract_from");
+  }
+
+  public void testNavigationWithQuotes02() throws Exception {
+    doTest("stepResolve_02", "the resu<caret>lt is 4", "the_result_is");
+  }
+
+  public void testNavigationWithQuotes03() throws Exception {
+    doTest("stepResolve_02", "tes<caret>t \"test\"", "test");
+  }
 }
