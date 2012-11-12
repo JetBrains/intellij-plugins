@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.library.JSLibraryManager;
 import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Computable;
@@ -71,8 +72,18 @@ public class JstdLibraryUtil {
           }
           JSLibraryManager libraryManager = JSLibraryManager.getInstance(project);
           for (ScriptingLibraryModel libraryModel : libraryManager.getAllLibraries()) {
-            String libraryName = libraryModel != null ? libraryModel.getName() : null;
+            if (libraryModel == null) {
+              continue;
+            }
+            String libraryName = libraryModel.getName();
             if (libraryName != null && libraryName.startsWith(LIBRARY_NAME)) {
+              Library library = libraryModel.getOriginalLibrary();
+              if (library instanceof LibraryEx) {
+                LibraryEx libraryEx = (LibraryEx) library;
+                if (libraryEx.isDisposed()) {
+                  continue;
+                }
+              }
               if (libraryModel.containsFile(libVirtualFile)) {
                 return true;
               }
