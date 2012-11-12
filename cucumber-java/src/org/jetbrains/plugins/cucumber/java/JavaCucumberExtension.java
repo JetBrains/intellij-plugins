@@ -20,11 +20,14 @@ import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinition;
 import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinitionCreator;
+import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+import org.jetbrains.plugins.cucumber.psi.GherkinRecursiveElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -140,5 +143,41 @@ public class JavaCucumberExtension implements CucumberJvmExtensionPoint {
   @Override
   public String getGlue(@NotNull GherkinStep step) {
     return CucumberJavaUtil.getPackageOfStep(step);
+  }
+
+  @NotNull
+  @Override
+  public Collection<String> getGlues(@NotNull GherkinFile file) {
+    final Set<String> glues = ContainerUtil.newHashSet();
+
+    file.accept(new GherkinRecursiveElementVisitor() {
+      @Override
+      public void visitStep(GherkinStep step) {
+        boolean covered = false;
+        final String glue = getGlue(step);
+        if (glue != null) {
+          final Set<String> toRemove = ContainerUtil.newHashSet();
+          for (String existedGlue : glues) {
+            if (glue.startsWith(existedGlue + ".")) {
+              covered = true;
+              break;
+            }
+            else if (existedGlue.startsWith(glue + ".")) {
+              toRemove.add(existedGlue);
+            }
+          }
+
+          for (String removing : toRemove) {
+            glues.remove(removing);
+          }
+
+          if (!covered) {
+            glues.add(glue);
+          }
+        }
+      }
+    });
+
+    return glues;
   }
 }

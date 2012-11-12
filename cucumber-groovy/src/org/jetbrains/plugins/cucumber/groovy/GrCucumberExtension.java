@@ -23,6 +23,8 @@ import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinition;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinitionCreator;
+import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+import org.jetbrains.plugins.cucumber.psi.GherkinRecursiveElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
@@ -31,10 +33,7 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Max Medvedev
@@ -155,5 +154,23 @@ public class GrCucumberExtension implements CucumberJvmExtensionPoint {
       }
     }
     return null;
+  }
+
+  @NotNull
+  @Override
+  public Collection<String> getGlues(@NotNull GherkinFile file) {
+    final Set<String> glues = ContainerUtil.newHashSet();
+
+    file.accept(new GherkinRecursiveElementVisitor() {
+      @Override
+      public void visitStep(GherkinStep step) {
+        final String glue = getGlue(step);
+        if (glue != null) {
+          glues.add(glue);
+        }
+      }
+    });
+
+    return glues;
   }
 }
