@@ -2,9 +2,13 @@ package com.intellij.lang.javascript.flex.actions.newfile;
 
 import com.intellij.ide.IdeView;
 import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -24,7 +28,6 @@ public class NewActionScriptClassAction extends AnAction {
   }
 
   private static boolean isAvailable(DataContext dataContext) {
-    // TODO check module type?
     final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
     final IdeView view = LangDataKeys.IDE_VIEW.getData(dataContext);
     if (project == null || view == null) return false;
@@ -33,9 +36,13 @@ public class NewActionScriptClassAction extends AnAction {
     for (PsiDirectory dir : view.getDirectories()) {
       if (projectFileIndex.isInSourceContent(dir.getVirtualFile()) &&
           DirectoryIndex.getInstance(dir.getProject()).getPackageName(dir.getVirtualFile()) != null) {
+        Module module = ModuleUtilCore.findModuleForPsiElement(dir);
+        if (module != null && ModuleType.get(module) == FlexModuleType.getInstance()) {
         return true;
+        }
       }
     }
+
     return false;
   }
 
