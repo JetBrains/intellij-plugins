@@ -102,7 +102,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
   }
 
   public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry) {
-    final Collection<BuildTarget<?>> result = new ArrayList<BuildTarget<?>>();
+    final ArrayList<BuildTarget<?>> result = new ArrayList<BuildTarget<?>>();
 
     final FlexResourceBuildTargetType type = FlexCommonUtils.isFlexUnitBC(myBC) ? FlexResourceBuildTargetType.TEST
                                                                                 : FlexResourceBuildTargetType.PRODUCTION;
@@ -116,7 +116,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
         }
       }
     }
-
+    result.trimToSize();
     return result;
   }
 
