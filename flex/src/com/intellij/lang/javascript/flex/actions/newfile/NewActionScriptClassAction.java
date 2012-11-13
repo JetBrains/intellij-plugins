@@ -27,7 +27,7 @@ public class NewActionScriptClassAction extends AnAction {
     presentation.setEnabled(enabled);
   }
 
-  private static boolean isAvailable(DataContext dataContext) {
+  private boolean isAvailable(DataContext dataContext) {
     final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
     final IdeView view = LangDataKeys.IDE_VIEW.getData(dataContext);
     if (project == null || view == null) return false;
@@ -37,13 +37,17 @@ public class NewActionScriptClassAction extends AnAction {
       if (projectFileIndex.isInSourceContent(dir.getVirtualFile()) &&
           DirectoryIndex.getInstance(dir.getProject()).getPackageName(dir.getVirtualFile()) != null) {
         Module module = ModuleUtilCore.findModuleForPsiElement(dir);
-        if (module != null && ModuleType.get(module) == FlexModuleType.getInstance()) {
-        return true;
+        if (module != null && isAvailableIn(module)) {
+          return true;
         }
       }
     }
 
     return false;
+  }
+
+  protected boolean isAvailableIn(final Module module) {
+    return ModuleType.get(module) == FlexModuleType.getInstance();
   }
 
   public void actionPerformed(final AnActionEvent e) {

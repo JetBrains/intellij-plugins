@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.validation.fixes.CreateClassDialog;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
@@ -52,6 +53,11 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
 
   public static boolean isClassifierTemplate(String templateName) {
     return ArrayUtil.contains(templateName, FLEX_CLASSIFIER_TEMPLATES);
+  }
+
+  @Override
+  protected boolean isAvailableIn(final Module module) {
+    return super.isAvailableIn(module) && !FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().isPureAs();
   }
 
   @Override
