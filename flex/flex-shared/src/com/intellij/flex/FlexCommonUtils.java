@@ -60,6 +60,27 @@ public class FlexCommonUtils {
   public static final String FLEX_UNIT_LAUNCHER = "____FlexUnitLauncher";
   public static final String SDK_TOOLS_ENCODING = "UTF-8";
 
+  public static final String OUT_OF_MEMORY = "java.lang.OutOfMemoryError";
+  public static final String JAVA_HEAP_SPACE = "Java heap space";
+  public static final String COULD_NOT_CREATE_JVM = "Could not create the Java virtual machine";
+
+  public static final String HTML_WRAPPER_TEMPLATE_FILE_NAME = "index.template.html";
+
+  public static final String SWF_MACRO = "${swf}";
+  public static final String TITLE_MACRO = "${title}";
+  public static final String APPLICATION_MACRO = "${application}";
+  public static final String BG_COLOR_MACRO = "${bgcolor}";
+  public static final String WIDTH_MACRO = "${width}";
+  public static final String HEIGHT_MACRO = "${height}";
+  public static final String VERSION_MAJOR_MACRO = "${version_major}";
+  public static final String VERSION_MINOR_MACRO = "${version_minor}";
+  public static final String VERSION_REVISION_MACRO = "${version_revision}";
+
+  public static final String TITLE_ATTR = "pageTitle";
+  public static final String BG_COLOR_ATTR = "backgroundColor";
+  public static final String WIDTH_ATTR = "width";
+  public static final String HEIGHT_ATTR = "height";
+
   private static final String MODULE_PREFIX = "Module: ";
   private static final String BC_PREFIX = "\tBC: ";
   private static final String RUN_CONFIG_TYPE_PREFIX = "Run config type: ";
@@ -67,9 +88,6 @@ public class FlexCommonUtils {
   private static final String FORCED_DEBUG_STATUS = "\tForced debug status: ";
 
   private static final Logger LOG = Logger.getInstance(FlexCommonUtils.class.getName());
-  public static final String OUT_OF_MEMORY = "java.lang.OutOfMemoryError";
-  public static final String JAVA_HEAP_SPACE = "Java heap space";
-  public static final String COULD_NOT_CREATE_JVM = "Could not create the Java virtual machine";
 
   public static boolean isSourceFile(final String fileName) {
     final String ext = FileUtil.getExtension(fileName);
@@ -820,5 +838,23 @@ public class FlexCommonUtils {
       if (path.startsWith(rootPath + "/")) return path.substring(rootPath.length() + 1);
     }
     return null;
+  }
+
+  public static String getWrapperFileName(final JpsFlexBuildConfiguration bc) {
+    return FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + ".html";
+  }
+
+  public static String replace(final String text, final Map<String, String> replacementMap) {
+    final String[] from = new String[replacementMap.size()];
+    final String[] to = new String[replacementMap.size()];
+
+    int i = 0;
+    for (Map.Entry<String, String> entry : replacementMap.entrySet()) {
+      from[i] = entry.getKey();
+      to[i] = entry.getValue();
+      i++;
+    }
+
+    return StringUtil.replace(text, from, to);
   }
 }

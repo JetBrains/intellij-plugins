@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
+import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.LinkageType;
@@ -619,9 +620,9 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                                                                         FlexBCConfigurable.Location.HtmlTemplatePath));
         }
         else {
-          final VirtualFile templateFile = templateDir.findChild(CreateHtmlWrapperTemplateDialog.HTML_WRAPPER_TEMPLATE_FILE_NAME);
+          final VirtualFile templateFile = templateDir.findChild(FlexCommonUtils.HTML_WRAPPER_TEMPLATE_FILE_NAME);
           if (templateFile == null) {
-            errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle
+            errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexCommonBundle
               .message("no.index.template.html.file", templateDir.getPresentableUrl()), FlexBCConfigurable.Location.HtmlTemplatePath));
           }
           else {

@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.openapi.application.ApplicationManager;
@@ -29,12 +30,9 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
 
   public static final String HTML_TEMPLATE_FOLDER_NAME = "html-template";
   public static final String TITLE = FlexBundle.message("create.html.wrapper.template.title");
-  public static final String PLAYER_PRODUCT_INSTALL_SWF = "playerProductInstall.swf";
-  public static final String USE_BROWSER_HISTORY_MACRO = "${useBrowserHistory}";
-  public static final String VERSION_MAJOR_MACRO = "${version_major}";
-  public static final String VERSION_MINOR_MACRO = "${version_minor}";
-  public static final String VERSION_REVISION_MACRO = "${version_revision}";
-  public static final String HTML_WRAPPER_TEMPLATE_FILE_NAME = "index.template.html";
+  private static final String PLAYER_PRODUCT_INSTALL_SWF = "playerProductInstall.swf";
+  private static final String USE_BROWSER_HISTORY_MACRO = "${useBrowserHistory}";
+  private static final String EXPRESS_INSTALL_SWF_MACRO = "${expressInstallSwf}";
 
   private JPanel myMainPanel;
   private LabeledComponent<TextFieldWithBrowseButton> myWrapperFolderComponent;
@@ -220,7 +218,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
         try {
           for (VirtualFile file : sdkTemplateFolder.getChildren()) {
             if (swfObjectWrapper) {
-              if (HTML_WRAPPER_TEMPLATE_FILE_NAME.equals(file.getName())) {
+              if (FlexCommonUtils.HTML_WRAPPER_TEMPLATE_FILE_NAME.equals(file.getName())) {
                 fixAndCopyIndexTemplateHtml(file, folder, enableHistory, checkPlayerVersion, expressInstall);
                 continue;
               }
@@ -267,14 +265,18 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
                                                   final boolean expressInstall) throws IOException {
     final String text = VfsUtilCore.loadText(file);
     final String useBrowserHistory = enableHistory ? "--" : USE_BROWSER_HISTORY_MACRO;
-    final String major = checkPlayerVersion ? VERSION_MAJOR_MACRO : "0";
-    final String minor = checkPlayerVersion ? VERSION_MINOR_MACRO : "0";
-    final String revision = checkPlayerVersion ? VERSION_REVISION_MACRO : "0";
+    final String major = checkPlayerVersion ? FlexCommonUtils.VERSION_MAJOR_MACRO : "0";
+    final String minor = checkPlayerVersion ? FlexCommonUtils.VERSION_MINOR_MACRO : "0";
+    final String revision = checkPlayerVersion ? FlexCommonUtils.VERSION_REVISION_MACRO : "0";
     final String expressInstallSwf = checkPlayerVersion && expressInstall ? PLAYER_PRODUCT_INSTALL_SWF : "";
 
     final String fixedText = StringUtil.replace(text,
-                                                new String[]{USE_BROWSER_HISTORY_MACRO, VERSION_MAJOR_MACRO, VERSION_MINOR_MACRO,
-                                                  VERSION_REVISION_MACRO, "${expressInstallSwf}"},
+                                                new String[]{
+                                                  USE_BROWSER_HISTORY_MACRO,
+                                                  FlexCommonUtils.VERSION_MAJOR_MACRO,
+                                                  FlexCommonUtils.VERSION_MINOR_MACRO,
+                                                  FlexCommonUtils.VERSION_REVISION_MACRO,
+                                                  EXPRESS_INSTALL_SWF_MACRO},
                                                 new String[]{useBrowserHistory, major, minor, revision, expressInstallSwf});
 
     FlexUtils.addFileWithContent(file.getName(), fixedText, folder);

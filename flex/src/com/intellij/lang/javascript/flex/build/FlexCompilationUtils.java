@@ -1,11 +1,12 @@
 package com.intellij.lang.javascript.flex.build;
 
 import com.intellij.compiler.impl.CompilerUtil;
+import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.LinkageType;
+import com.intellij.flex.model.bc.OutputType;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
@@ -49,6 +50,7 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
+import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -61,22 +63,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateAirDescriptorTemplateDialog.AirDescriptorOptions;
-import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog.HTML_WRAPPER_TEMPLATE_FILE_NAME;
-import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog.VERSION_MAJOR_MACRO;
-import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog.VERSION_MINOR_MACRO;
-import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTemplateDialog.VERSION_REVISION_MACRO;
 
 public class FlexCompilationUtils {
-
-  public static final String SWF_MACRO = "${swf}";
-
-  private static final String[] MACROS_TO_REPLACE =
-    {SWF_MACRO, "${title}", "${application}", "${bgcolor}", "${width}", "${height}", VERSION_MAJOR_MACRO, VERSION_MINOR_MACRO,
-      VERSION_REVISION_MACRO};
 
   private FlexCompilationUtils() {
   }
@@ -255,7 +248,7 @@ public class FlexCompilationUtils {
       handleFrameworkRsls(bc, compileInfoMessages);
     }
 
-    if (BCUtils.isRLMTemporaryBC(bc) || BCUtils.isRuntimeStyleSheetBC(bc)) return;
+    if (bc.getOutputType() != OutputType.Application || BCUtils.isRLMTemporaryBC(bc) || BCUtils.isRuntimeStyleSheetBC(bc)) return;
 
     switch (bc.getTargetPlatform()) {
       case Web:
@@ -298,7 +291,7 @@ public class FlexCompilationUtils {
             filesToRefresh.add(toFile);
           }
           catch (IOException e) {
-            throw new FlexCompilerException(FlexBundle.message("failed.to.copy.file", rsl, rslBaseDir, outputPath, e.getMessage()));
+            throw new FlexCompilerException(FlexCommonBundle.message("failed.to.copy.file", rsl, rslBaseDir, outputPath, e.getMessage()));
           }
         }
       }
@@ -334,11 +327,11 @@ public class FlexCompilationUtils {
   private static void handleHtmlWrapper(final Module module, final FlexBuildConfiguration bc) throws FlexCompilerException {
     final VirtualFile templateDir = LocalFileSystem.getInstance().findFileByPath(bc.getWrapperTemplatePath());
     if (templateDir == null || !templateDir.isDirectory()) {
-      throw new FlexCompilerException(FlexBundle.message("html.wrapper.dir.not.found", bc.getWrapperTemplatePath()));
+      throw new FlexCompilerException(FlexCommonBundle.message("html.wrapper.dir.not.found", bc.getWrapperTemplatePath()));
     }
-    final VirtualFile templateFile = templateDir.findChild(HTML_WRAPPER_TEMPLATE_FILE_NAME);
+    final VirtualFile templateFile = templateDir.findChild(FlexCommonUtils.HTML_WRAPPER_TEMPLATE_FILE_NAME);
     if (templateFile == null) {
-      throw new FlexCompilerException(FlexBundle.message("no.index.template.html.file", bc.getWrapperTemplatePath()));
+      throw new FlexCompilerException(FlexCommonBundle.message("no.index.template.html.file", bc.getWrapperTemplatePath()));
     }
 
     final InfoFromConfigFile info = FlexCompilerConfigFileUtil.getInfoFromConfigFile(bc.getCompilerOptions().getAdditionalConfigFilePath());
@@ -350,7 +343,7 @@ public class FlexCompilationUtils {
 
     final VirtualFile outputDir = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
     if (outputDir == null || !outputDir.isDirectory()) {
-      throw new FlexCompilerException(FlexBundle.message("output.folder.does.not.exist", outputFolderPath));
+      throw new FlexCompilerException(FlexCommonBundle.message("output.folder.does.not.exist", outputFolderPath));
     }
 
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
@@ -366,15 +359,14 @@ public class FlexCompilationUtils {
                 }
                 catch (IOException e) {
                   return new FlexCompilerException(
-                    FlexBundle.message("failed.to.load.template.file", file.getPresentableUrl(), e.getMessage()));
+                    FlexCommonBundle.message("failed.to.load.template.file", file.getPresentableUrl(), e.getMessage()));
                 }
 
-                if (!wrapperText.contains(SWF_MACRO)) {
-                  return new FlexCompilerException(FlexBundle.message("no.swf.macro", FileUtil.toSystemDependentName(file.getPath())));
+                if (!wrapperText.contains(FlexCommonUtils.SWF_MACRO)) {
+                  return new FlexCompilerException(
+                    FlexCommonBundle.message("no.swf.macro", FileUtil.toSystemDependentName(file.getPath())));
                 }
 
-                final InfoFromConfigFile info =
-                  FlexCompilerConfigFileUtil.getInfoFromConfigFile(bc.getCompilerOptions().getAdditionalConfigFilePath());
                 final String mainClass = StringUtil.notNullize(info.getMainClass(module), bc.getMainClass());
                 final PsiElement jsClass = JSResolveUtil.findClassByQName(mainClass, module.getModuleScope());
 
@@ -386,7 +378,7 @@ public class FlexCompilationUtils {
                 }
                 catch (IOException e) {
                   return new FlexCompilerException(
-                    FlexBundle.message("failed.to.create.file", wrapperFileName, outputDir.getPresentableUrl(), e.getMessage()));
+                    FlexCommonBundle.message("failed.to.create.file.in", wrapperFileName, outputDir.getPresentableUrl(), e.getMessage()));
                 }
               }
               else {
@@ -394,8 +386,8 @@ public class FlexCompilationUtils {
                   file.copy(this, outputDir, file.getName());
                 }
                 catch (IOException e) {
-                  return new FlexCompilerException(FlexBundle.message("failed.to.copy.file", file.getName(), templateDir.getPath(),
-                                                                      outputDir.getPath(), e.getMessage()));
+                  return new FlexCompilerException(FlexCommonBundle.message("failed.to.copy.file", file.getName(), templateDir.getPath(),
+                                                                            outputDir.getPath(), e.getMessage()));
                 }
               }
             }
@@ -412,10 +404,19 @@ public class FlexCompilationUtils {
 
   private static String replaceMacros(final String wrapperText, final String outputFileName, final String targetPlayer,
                                       final @Nullable JSClass mainClass) {
+    final Map<String, String> replacementMap = new THashMap<String, String>();
+
+    replacementMap.put(FlexCommonUtils.SWF_MACRO, outputFileName);
+    replacementMap.put(FlexCommonUtils.TITLE_MACRO, outputFileName);
+    replacementMap.put(FlexCommonUtils.APPLICATION_MACRO, outputFileName);
+    replacementMap.put(FlexCommonUtils.BG_COLOR_MACRO, "#ffffff");
+    replacementMap.put(FlexCommonUtils.WIDTH_MACRO, "100%");
+    replacementMap.put(FlexCommonUtils.HEIGHT_MACRO, "100%");
+
     final List<String> versionParts = StringUtil.split(targetPlayer, ".");
-    final String major = versionParts.size() >= 1 ? versionParts.get(0) : "0";
-    final String minor = versionParts.size() >= 2 ? versionParts.get(1) : "0";
-    final String revision = versionParts.size() >= 3 ? versionParts.get(2) : "0";
+    replacementMap.put(FlexCommonUtils.VERSION_MAJOR_MACRO, versionParts.size() >= 1 ? versionParts.get(0) : "0");
+    replacementMap.put(FlexCommonUtils.VERSION_MINOR_MACRO, versionParts.size() >= 2 ? versionParts.get(1) : "0");
+    replacementMap.put(FlexCommonUtils.VERSION_REVISION_MACRO, versionParts.size() >= 3 ? versionParts.get(2) : "0");
 
     final Ref<JSAttribute> swfMetadataRef = new Ref<JSAttribute>();
 
@@ -449,22 +450,24 @@ public class FlexCompilationUtils {
       swfMetadataRef.set(attributeList == null ? null : attributeList.findAttributeByName("SWF"));
     }
 
-    final JSAttribute swfMetadata = swfMetadataRef.isNull() ? null : swfMetadataRef.get();
 
-    final JSAttributeNameValuePair titleAttr = swfMetadata == null ? null : swfMetadata.getValueByName("pageTitle");
-    final String title = titleAttr != null ? StringUtil.notNullize(titleAttr.getSimpleValue(), outputFileName) : outputFileName;
+    if (!swfMetadataRef.isNull()) {
+      final JSAttribute swfMetadata = swfMetadataRef.get();
 
-    final JSAttributeNameValuePair bgColorAttr = swfMetadata == null ? null : swfMetadata.getValueByName("backgroundColor");
-    final String bgColor = bgColorAttr != null ? StringUtil.notNullize(bgColorAttr.getSimpleValue(), "#ffffff") : "#ffffff";
+      final JSAttributeNameValuePair titleAttr = swfMetadata.getValueByName(FlexCommonUtils.TITLE_ATTR);
+      ContainerUtil.putIfNotNull(FlexCommonUtils.TITLE_MACRO, titleAttr == null ? null : titleAttr.getSimpleValue(), replacementMap);
 
-    final JSAttributeNameValuePair widthAttr = swfMetadata == null ? null : swfMetadata.getValueByName("width");
-    final String width = widthAttr != null ? StringUtil.notNullize(widthAttr.getSimpleValue(), "100%") : "100%";
+      final JSAttributeNameValuePair bgColorAttr = swfMetadata.getValueByName(FlexCommonUtils.BG_COLOR_ATTR);
+      ContainerUtil.putIfNotNull(FlexCommonUtils.BG_COLOR_MACRO, bgColorAttr == null ? null : bgColorAttr.getSimpleValue(), replacementMap);
 
-    final JSAttributeNameValuePair heightAttr = swfMetadata == null ? null : swfMetadata.getValueByName("height");
-    final String height = heightAttr != null ? StringUtil.notNullize(heightAttr.getSimpleValue(), "100%") : "100%";
+      final JSAttributeNameValuePair widthAttr = swfMetadata.getValueByName(FlexCommonUtils.WIDTH_ATTR);
+      ContainerUtil.putIfNotNull(FlexCommonUtils.WIDTH_MACRO, widthAttr == null ? null : widthAttr.getSimpleValue(), replacementMap);
 
-    final String[] replacement = {outputFileName, title, outputFileName, bgColor, width, height, major, minor, revision};
-    return StringUtil.replace(wrapperText, MACROS_TO_REPLACE, replacement);
+      final JSAttributeNameValuePair heightAttr = swfMetadata.getValueByName(FlexCommonUtils.HEIGHT_ATTR);
+      ContainerUtil.putIfNotNull(FlexCommonUtils.HEIGHT_MACRO, heightAttr == null ? null : heightAttr.getSimpleValue(), replacementMap);
+    }
+
+    return FlexCommonUtils.replace(wrapperText, replacementMap);
   }
 
   private static void handleAirDescriptor(final Module module, final FlexBuildConfiguration bc,

@@ -6,15 +6,21 @@ import com.intellij.flex.build.CompilerConfigGeneratorRt;
 import com.intellij.flex.build.FlexBuildTarget;
 import com.intellij.flex.build.FlexBuildTargetType;
 import com.intellij.flex.model.JpsFlexProjectLevelCompilerOptionsExtension;
-import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
-import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
-import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.*;
 import com.intellij.flex.model.sdk.JpsFlexSdkType;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
+import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.THashMap;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.Namespace;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.BuildOutputConsumer;
 import org.jetbrains.jps.builders.BuildRootDescriptor;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
@@ -31,10 +37,7 @@ import org.jetbrains.jps.model.module.JpsModule;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTarget> {
 
@@ -103,9 +106,10 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
 
       switch (status) {
         case Ok:
+          outputConsumer.registerOutputFile(mainBC.getActualOutputFilePath(), dirtyFilePaths);
+          //performPostCompileActions(context, bc, dirtyFilePaths, outputConsumer);
           context.processMessage(
             new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.INFO, FlexCommonBundle.message("compilation.successful")));
-
           break;
 
         case Failed:
@@ -122,8 +126,6 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
           return;
       }
     }
-
-    outputConsumer.registerOutputFile(mainBC.getActualOutputFilePath(), dirtyFilePaths);
   }
 
   private static String getCompilerName(final JpsFlexBuildConfiguration bc) {
@@ -348,5 +350,215 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
         command.add(FlexCommonUtils.replacePathMacros(s, module, sdkHome));
       }
     }
+  }
+
+  public static void performPostCompileActions(final CompileContext context,
+                                               final @NotNull JpsFlexBuildConfiguration bc,
+                                               final Collection<String> dirtyFilePaths,
+                                               final BuildOutputConsumer outputConsumer) throws ProjectBuildException {
+    final JpsSdk<?> sdk = bc.getSdk();
+    assert sdk != null;
+
+    LinkageType linkage = bc.getDependencies().getFrameworkLinkage();
+    if (linkage == LinkageType.Default) {
+      linkage = FlexCommonUtils.getDefaultFrameworkLinkage(sdk.getVersionString(), bc.getNature());
+    }
+
+    if (linkage == LinkageType.RSL) {
+      //handleFrameworkRsls(bc, compileInfoMessages);
+    }
+
+    if (bc.getOutputType() != OutputType.Application || FlexCommonUtils.isRLMTemporaryBC(bc) || FlexCommonUtils.isRuntimeStyleSheetBC(bc)) {
+      return;
+    }
+
+    switch (bc.getTargetPlatform()) {
+      case Web:
+        if (bc.isUseHtmlWrapper()) {
+          handleHtmlWrapper(context, bc, outputConsumer);
+        }
+        break;
+      /*
+      case Desktop:
+        handleAirDescriptor(module, bc, bc.getAirDesktopPackagingOptions());
+        break;
+      case Mobile:
+        if (bc.getAndroidPackagingOptions().isEnabled()) {
+          handleAirDescriptor(module, bc, bc.getAndroidPackagingOptions());
+        }
+        if (bc.getIosPackagingOptions().isEnabled()) {
+          handleAirDescriptor(module, bc, bc.getIosPackagingOptions());
+        }
+        break;
+      */
+    }
+  }
+
+  private static void handleHtmlWrapper(final CompileContext context,
+                                        final JpsFlexBuildConfiguration bc,
+                                        final BuildOutputConsumer outputConsumer) {
+    final File templateDir = new File(bc.getWrapperTemplatePath());
+    if (!templateDir.isDirectory()) {
+      context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR,
+                                                 FlexCommonBundle.message("html.wrapper.dir.not.found", bc.getWrapperTemplatePath())));
+      return;
+    }
+    final File templateFile = new File(templateDir, FlexCommonUtils.HTML_WRAPPER_TEMPLATE_FILE_NAME);
+    if (!templateFile.isFile()) {
+      context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR,
+                                                 FlexCommonBundle.message("no.index.template.html.file", bc.getWrapperTemplatePath())));
+      return;
+    }
+
+    final InfoFromConfigFile info = InfoFromConfigFile.getInfoFromConfigFile(bc.getCompilerOptions().getAdditionalConfigFilePath());
+    final String outputFolderPath = StringUtil.notNullize(info.getOutputFolderPath(), bc.getOutputFolder());
+    final String outputFileName = bc.isTempBCForCompilation()
+                                  ? bc.getOutputFileName()
+                                  : StringUtil.notNullize(info.getOutputFileName(), bc.getOutputFileName());
+    final String targetPlayer = StringUtil.notNullize(info.getTargetPlayer(), bc.getDependencies().getTargetPlayer());
+
+    final File outputDir = new File(outputFolderPath);
+    if (!outputDir.isDirectory()) {
+      context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR,
+                                                 FlexCommonBundle.message("output.folder.does.not.exist", outputFolderPath)));
+      return;
+    }
+
+    for (File file : templateDir.listFiles()) {
+      if (FlexCommonUtils.HTML_WRAPPER_TEMPLATE_FILE_NAME.equals(file.getName())) {
+        final String wrapperText;
+        try {
+          wrapperText = FileUtil.loadFile(file);
+        }
+        catch (IOException e) {
+          context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR, FlexCommonBundle
+            .message("failed.to.load.template.file", file.getPath(), e.getMessage())));
+          return;
+        }
+
+        if (!wrapperText.contains(FlexCommonUtils.SWF_MACRO)) {
+          context.processMessage(
+            new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR, FlexCommonBundle.message("no.swf.macro", file.getPath())));
+          return;
+        }
+
+        final String mainClass = StringUtil.notNullize(info.getMainClass(bc.getModule()), bc.getMainClass());
+        final String fixedText = replaceMacros(wrapperText, FileUtil.getNameWithoutExtension(outputFileName), targetPlayer,
+                                               FlexCommonUtils.getPathToMainClassFile(mainClass, bc.getModule()));
+        final String wrapperFileName = FlexCommonUtils.getWrapperFileName(bc);
+        try {
+          FileUtil.writeToFile(new File(outputDir, wrapperFileName), fixedText);
+        }
+        catch (IOException e) {
+          context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR, FlexCommonBundle
+            .message("failed.to.create.file.in", wrapperFileName, outputDir.getPath(), e.getMessage())));
+        }
+      }
+      else {
+        try {
+          final File outputFile = new File(outputDir, file.getName());
+          if (file.isDirectory()) {
+            FileUtil.createDirectory(outputFile);
+            FileUtil.copyDir(file, outputFile);
+          }
+          else {
+            FileUtil.copy(file, outputFile);
+          }
+          outputConsumer.registerOutputFile(outputFile.getPath(), Collections.singletonList(file.getPath()));
+        }
+        catch (IOException e) {
+          context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR, FlexCommonBundle
+            .message("failed.to.copy.file", file.getName(), templateDir.getPath(), outputDir.getPath(), e.getMessage())));
+        }
+      }
+    }
+  }
+
+  private static String replaceMacros(final String wrapperText, final String outputFileName, final String targetPlayer,
+                                      final String mainClassPath) {
+    final Map<String, String> replacementMap = new THashMap<String, String>();
+
+    replacementMap.put(FlexCommonUtils.SWF_MACRO, outputFileName);
+    replacementMap.put(FlexCommonUtils.TITLE_MACRO, outputFileName);
+    replacementMap.put(FlexCommonUtils.APPLICATION_MACRO, outputFileName);
+    replacementMap.put(FlexCommonUtils.BG_COLOR_MACRO, "#ffffff");
+    replacementMap.put(FlexCommonUtils.WIDTH_MACRO, "100%");
+    replacementMap.put(FlexCommonUtils.HEIGHT_MACRO, "100%");
+
+    final List<String> versionParts = StringUtil.split(targetPlayer, ".");
+    replacementMap.put(FlexCommonUtils.VERSION_MAJOR_MACRO, versionParts.size() >= 1 ? versionParts.get(0) : "0");
+    replacementMap.put(FlexCommonUtils.VERSION_MINOR_MACRO, versionParts.size() >= 2 ? versionParts.get(1) : "0");
+    replacementMap.put(FlexCommonUtils.VERSION_REVISION_MACRO, versionParts.size() >= 3 ? versionParts.get(2) : "0");
+
+    String swfMetadata = null;
+
+    final File mainClassFile = new File(mainClassPath);
+    if (mainClassFile.isFile()) {
+      try {
+        if ("mxml".equals(FileUtil.getExtension(mainClassPath))) {
+          final Document document = JDOMUtil.loadDocument(mainClassFile);
+          final Element rootElement = document.getRootElement();
+          Element metadataElement = rootElement.getChild("Metadata", Namespace.getNamespace("http://www.adobe.com/2006/mxml"));
+          if (metadataElement == null) {
+            metadataElement = rootElement.getChild("Metadata", Namespace.getNamespace("http://ns.adobe.com/mxml/2009"));
+          }
+          if (metadataElement != null) {
+            swfMetadata = getSwfMetadata(metadataElement.getTextNormalize());
+          }
+        }
+        else if ("as".equals(FileUtil.getExtension(mainClassPath))) {
+          swfMetadata = getSwfMetadata(FileUtil.loadFile(mainClassFile));
+        }
+      }
+      catch (JDOMException ignore) {/*unlucky*/}
+      catch (IOException ignore) {/*unlucky*/}
+    }
+
+    final Map<String, String> attributesMap = getAttributesMap(swfMetadata);
+
+    ContainerUtil.putIfNotNull(FlexCommonUtils.TITLE_MACRO, attributesMap.get(FlexCommonUtils.TITLE_ATTR), replacementMap);
+    ContainerUtil.putIfNotNull(FlexCommonUtils.BG_COLOR_MACRO, attributesMap.get(FlexCommonUtils.BG_COLOR_ATTR), replacementMap);
+    ContainerUtil.putIfNotNull(FlexCommonUtils.WIDTH_MACRO, attributesMap.get(FlexCommonUtils.WIDTH_ATTR), replacementMap);
+    ContainerUtil.putIfNotNull(FlexCommonUtils.HEIGHT_MACRO, attributesMap.get(FlexCommonUtils.HEIGHT_ATTR), replacementMap);
+
+    return FlexCommonUtils.replace(wrapperText, replacementMap);
+  }
+
+  @Nullable
+  private static String getSwfMetadata(final String text) {
+    // todo use lexer
+    int swfIndex = -1;
+    while ((swfIndex = text.indexOf("[SWF", swfIndex + 1)) > -1) {
+      final String textBefore = text.substring(0, swfIndex);
+      final int lfIndex = Math.max(textBefore.lastIndexOf('\n'), textBefore.lastIndexOf('\r'));
+      final int lineCommentIndex = textBefore.lastIndexOf("//");
+      if (lineCommentIndex <= lfIndex) {
+        final int endIndex = text.indexOf(']', swfIndex);
+        return endIndex > swfIndex ? text.substring(swfIndex, endIndex + 1) : null;
+      }
+    }
+    return null;
+  }
+
+  private static Map<String, String> getAttributesMap(final String metadata) {
+    if (metadata == null) return Collections.emptyMap();
+
+    final THashMap<String, String> result = new THashMap<String, String>();
+
+    final int beginIndex = metadata.indexOf('(');
+    final int endIndex = metadata.lastIndexOf(')');
+
+    if (endIndex > beginIndex) {
+      for (String attribute : StringUtil.split(metadata.substring(beginIndex + 1, endIndex), ",")) {
+        final int eqIndex = attribute.indexOf('=');
+        if (eqIndex > 0) {
+          final String name = attribute.substring(0, eqIndex).trim();
+          final String value = StringUtil.stripQuotesAroundValue(attribute.substring(eqIndex+1).trim());
+          result.put(name, value);
+        }
+      }
+    }
+
+    return result;
   }
 }
