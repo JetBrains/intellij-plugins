@@ -7,7 +7,8 @@ import com.intellij.codeInsight.template.TemplateBuilderFactory;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
-import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.application.Result;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -20,6 +21,7 @@ import com.intellij.openapi.roots.impl.DirectoryInfo;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -39,16 +41,13 @@ import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * User: Andrey.Vokin
  * Date: 8/1/12
  */
 public class JavaStepDefinitionCreator implements StepDefinitionCreator {
-  private static final Logger LOG = Logger.getInstance(JavaStepDefinitionCreator.class.getName());
   public static final String CUCUMBER_JAVA_JAR_NAME = "cucumber-java";
   public static final String CUCUMBER_1_1_ANNOTATION_PACKAGE = "@cucumber.api.java.en.";
   public static final String CUCUMBER_1_0_ANNOTATION_PACKAGE = "@cucumber.annotation.en.";
@@ -106,10 +105,11 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
       }
 
       final PsiCodeBlock body = addedElement.getBody();
-      if (body!= null && body.getStatements().length > 0) {
+      if (body != null && body.getStatements().length > 0) {
         final PsiElement firstStatement = body.getStatements()[0];
         final TextRange pendingRange = new TextRange(0, firstStatement.getTextLength() - 1);
-        builder.replaceElement(firstStatement, pendingRange, firstStatement.getText().substring(pendingRange.getStartOffset(), pendingRange.getEndOffset()));
+        builder.replaceElement(firstStatement, pendingRange,
+                               firstStatement.getText().substring(pendingRange.getStartOffset(), pendingRange.getEndOffset()));
       }
 
       final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
@@ -121,13 +121,18 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
   }
 
   @Override
-  public boolean validateNewStepDefinitionFileName(@NotNull Project project, @NotNull String fileName) {
-    return fileName.toLowerCase(Locale.ENGLISH).endsWith("stepdefs");
+  public boolean validateNewStepDefinitionFileName(@NotNull Project project, @NotNull String name) {
+    if(name.length() == 0) return false;
+    if (! Character.isJavaIdentifierStart(name.charAt(0))) return false;
+    for (int i = 1; i < name.length(); i++) {
+      if (! Character.isJavaIdentifierPart(name.charAt(i))) return false;
+    }
+    return true;
   }
 
   @NotNull
   @Override
-  public PsiDirectory getDefaultStepDefinitionFolder(@NotNull GherkinStep step) {
+  public PsiDirectory getDefaultStepDefinitionFolder(@NotNull final GherkinStep step) {
     PsiFile featureFile = step.getContainingFile();
     if (featureFile != null) {
       PsiDirectory directory = featureFile.getContainingDirectory();
@@ -137,37 +142,44 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
         DirectoryInfo info = directoryIndex.getInfoForDirectory(directory.getVirtualFile());
         if (info != null) {
           VirtualFile sourceRoot = info.getSourceRoot();
-          if (sourceRoot.getName().equals("resources")) {
-            final Module module = ProjectRootManager.getInstance(step.getProject()).getFileIndex().getModuleForFile(sourceRoot);
-            if (module != null) {
-              final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
+          //noinspection ConstantConditions
+          final Module module = ProjectRootManager.getInstance(step.getProject()).getFileIndex().getModuleForFile(featureFile.getVirtualFile());
+          if (module != null) {
+            final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
+            final VirtualFile[] sourceRoots = moduleRootManager.getSourceRoots();
+            if (sourceRoot != null && sourceRoot.getName().equals("resources")) {
               final VirtualFile resourceParent = sourceRoot.getParent();
-
-              for (VirtualFile vFile : moduleRootManager.getSourceRoots()) {
+              for (VirtualFile vFile : sourceRoots) {
                 if (vFile.getPath().startsWith(resourceParent.getPath()) && vFile.getName().equals("java")) {
                   sourceRoot = vFile;
                   break;
                 }
               }
             }
-          }
-
-          String packageName = CucumberJavaUtil.getPackageOfStepDef(step);
-          if (packageName == null) {
-            packageName = "";
-          }
-
-          packageName = packageName.replace('.', '/');
-          try {
-            // ToDo: I shouldn't create directories, only create VirtualFile object.
-            final VirtualFile packageFile = VfsUtil.createDirectoryIfMissing(sourceRoot.getPath() + '/' + packageName);
-            if (packageFile != null) {
-              return PsiDirectoryFactory.getInstance(step.getProject()).createDirectory(packageFile);
+            else {
+              if (sourceRoots.length > 0) {
+                sourceRoot = sourceRoots[sourceRoots.length - 1];
+              }
             }
           }
-          catch (IOException e) {
-            LOG.error(e);
+          String packageName = "";
+          if (sourceRoot != null) {
+            packageName = CucumberJavaUtil.getPackageOfStepDef(step);
           }
+
+          final String packagePath = packageName.replace('.', '/');
+          final String path = sourceRoot != null ? sourceRoot.getPath() : directory.getVirtualFile().getPath();
+          // ToDo: I shouldn't create directories, only create VirtualFile object.
+          final Ref<PsiDirectory> resultRef = new Ref<PsiDirectory>();
+          new WriteAction() {
+            protected void run(Result result) throws Throwable {
+              final VirtualFile packageFile = VfsUtil.createDirectoryIfMissing(path + '/' + packagePath);
+              if (packageFile != null) {
+                resultRef.set(PsiDirectoryFactory.getInstance(step.getProject()).createDirectory(packageFile));
+              }
+            }
+          }.execute();
+          return resultRef.get();
         }
       }
     }

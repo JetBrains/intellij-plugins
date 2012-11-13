@@ -1,6 +1,8 @@
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -11,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotationProvider;
 import org.jetbrains.plugins.cucumber.psi.*;
 
-import java.util.List;
+import java.util.*;
 
 import static com.intellij.psi.util.PsiTreeUtil.getChildOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
@@ -107,7 +109,7 @@ public class CucumberJavaUtil {
     return null;
   }
 
-  @Nullable
+  @NotNull
   public static String getPackageOfStepDef(final PsiElement element) {
     PsiFile file = element.getContainingFile();
     if (file instanceof GherkinFile) {
@@ -130,7 +132,7 @@ public class CucumberJavaUtil {
         }
       }
     }
-    return null;
+    return "";
   }
 
   public static String getPackageOfStep(GherkinStep step) {
@@ -145,5 +147,13 @@ public class CucumberJavaUtil {
       }
     }
     return null;
+  }
+
+  @NotNull
+  public static Collection<VirtualFile> getSourceRoots(@NotNull Module module) {
+    final Set<VirtualFile> result = new LinkedHashSet<VirtualFile>();
+    final ModuleRootManager manager = ModuleRootManager.getInstance(module);
+    result.addAll(Arrays.asList(manager.getContentRoots()));
+    return result;
   }
 }
