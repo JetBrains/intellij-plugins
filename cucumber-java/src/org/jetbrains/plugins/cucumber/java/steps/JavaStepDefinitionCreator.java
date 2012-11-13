@@ -86,6 +86,7 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
 
     final PsiClass clazz = PsiTreeUtil.getChildOfType(file, PsiClass.class);
     if (clazz != null) {
+      PsiDocumentManager.getInstance(project).commitAllDocuments();
       PsiMethod addedElement = (PsiMethod)clazz.add(element);
       addedElement = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(addedElement);
       JavaCodeStyleManager.getInstance(project).shortenClassReferences(addedElement);
@@ -111,7 +112,8 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
         builder.replaceElement(firstStatement, pendingRange, firstStatement.getText().substring(pendingRange.getStartOffset(), pendingRange.getEndOffset()));
       }
 
-      PsiDocumentManager.getInstance(project).commitAllDocuments();
+      final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+      documentManager.doPostponedOperationsAndUnblockDocument(editor.getDocument());
       builder.run(editor, false);
     }
 
