@@ -47,7 +47,12 @@ public class ActionScriptCodeStylePanel extends JSCodeStylePanel {
     @NonNls String varName = (myFieldPrefixTextField != null ? myFieldPrefixTextField.getText() : jsCodeStyleSettings.FIELD_PREFIX) + baseName;
     @NonNls String semiColon = (myUseSemicolon != null ? myUseSemicolon.isSelected() : jsCodeStyleSettings.USE_SEMICOLON_AFTER_STATEMENT) ? ";":"";
 
-    return "package aaa {\nclass XXX {\n" +
+    return "/*\n" +
+           "    Multiline\n" +
+           "        C-style\n" +
+           "            Comment\n" +
+           "*/\n" +
+           "package aaa {\nclass XXX {\n" +
            "private var " + varName + ":int" + semiColon + "\n" +
            "function get " +  propertyName + "():int {\nreturn " + varName +  semiColon + "}\n" +
            "function set " +  propertyName + "(val:int):void {\n" +
