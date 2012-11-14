@@ -65,7 +65,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
 
     final Set<PsiFile> stepDefs = ContainerUtil.newHashSet();
     for (PsiDirectory root : stepDefsRoots) {
-      stepDefs.addAll(CucumberStepsIndex.getInstance(featureFile.getProject()).gatherStepDefinitionsFilesFromDirectory(root));
+      stepDefs.addAll(CucumberStepsIndex.getInstance(featureFile.getProject()).gatherStepDefinitionsFilesFromDirectory(root, true));
     }
     return stepDefs.isEmpty() ? Collections.<PsiFile>emptySet() : stepDefs;
   }

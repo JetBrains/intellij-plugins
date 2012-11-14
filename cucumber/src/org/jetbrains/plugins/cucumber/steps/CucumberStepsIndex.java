@@ -167,9 +167,19 @@ public class CucumberStepsIndex {
     return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(directory.getProject(), fileName);
   }
 
-  private boolean isStepLikeFile(PsiElement child, PsiElement parent) {
+  public boolean isStepLikeFile(PsiElement child, PsiElement parent) {
     for (CucumberJvmExtensionPoint ep : myExtensionList) {
       if (ep.isStepLikeFile(child, parent)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private boolean isWritableStepLikeFile(PsiElement child, PsiElement parent) {
+    for (CucumberJvmExtensionPoint ep : myExtensionList) {
+      if (ep.isWritableStepLikeFile(child, parent)) {
         return true;
       }
     }
@@ -245,17 +255,17 @@ public class CucumberStepsIndex {
     }
   }
 
-  public List<PsiFile> gatherStepDefinitionsFilesFromDirectory(@NotNull final PsiDirectory dir) {
+  public List<PsiFile> gatherStepDefinitionsFilesFromDirectory(@NotNull final PsiDirectory dir, final boolean writableOnly) {
     List<PsiFile> result = new ArrayList<PsiFile>();
-    addAllStepsFiles(dir, result);
+    addAllStepsFiles(dir, result, writableOnly);
     return result;
   }
 
-  private void addAllStepsFiles(@NotNull final PsiDirectory dir, final List<PsiFile> result) {
+  private void addAllStepsFiles(@NotNull final PsiDirectory dir, final List<PsiFile> result, final boolean writableOnly) {
     // find step definitions in current folder
     for (PsiFile file : dir.getFiles()) {
       final VirtualFile virtualFile = file.getVirtualFile();
-      boolean isStepFile = isStepLikeFile(file, file.getParent());
+      boolean isStepFile = writableOnly ? isWritableStepLikeFile(file, file.getParent()) : isStepLikeFile(file, file.getParent());
       if (isStepFile && virtualFile != null) {
         result.add(file);
       }
@@ -263,7 +273,7 @@ public class CucumberStepsIndex {
 
     // process subfolders
     for (PsiDirectory subDir : dir.getSubdirectories()) {
-      addAllStepsFiles(subDir, result);
+      addAllStepsFiles(subDir, result, writableOnly);
     }
   }
 
@@ -286,7 +296,7 @@ public class CucumberStepsIndex {
         // let's process each folder separately
         try {
           myProcessedStepDirectories.add(root.getVirtualFile().getPath());
-          List<PsiFile> files = gatherStepDefinitionsFilesFromDirectory(root);
+          List<PsiFile> files = gatherStepDefinitionsFilesFromDirectory(root, false);
           for (final PsiFile file : files) {
             removeAbstractStepDefinitionsRelatedTo(file);
             stepDefinitions.addAll(getStepDefinitions(file));

@@ -44,6 +44,11 @@ public class GrCucumberExtension implements CucumberJvmExtensionPoint {
     return child instanceof GroovyFile && ((GroovyFile)child).getName().endsWith(".groovy");
   }
 
+  @Override
+  public boolean isWritableStepLikeFile(@NotNull PsiElement child, @NotNull PsiElement parent) {
+    return isStepLikeFile(child, parent);
+  }
+
   @NotNull
   @Override
   public List<AbstractStepDefinition> getStepDefinitions(@NotNull PsiFile psiFile) {

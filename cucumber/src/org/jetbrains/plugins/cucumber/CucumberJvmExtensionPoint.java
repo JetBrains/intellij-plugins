@@ -33,6 +33,8 @@ public interface CucumberJvmExtensionPoint {
    */
   boolean isStepLikeFile(@NotNull final PsiElement child, @NotNull final PsiElement parent);
 
+  boolean isWritableStepLikeFile(@NotNull final PsiElement child, @NotNull final PsiElement parent);
+
   /**
    * Parses psiFile and creates list of step definition
    * @param psiFile file to parse

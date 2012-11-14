@@ -44,6 +44,11 @@ public class CucumberJavaExtension implements CucumberJvmExtensionPoint {
     return false;
   }
 
+  @Override
+  public boolean isWritableStepLikeFile(@NotNull PsiElement child, @NotNull PsiElement parent) {
+    return isStepLikeFile(child, parent);
+  }
+
   @NotNull
   @Override
   public List<AbstractStepDefinition> getStepDefinitions(@NotNull PsiFile psiFile) {
