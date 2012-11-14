@@ -180,7 +180,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
 
   private static boolean groupPropertyFieldWithGetterSetter(final @NotNull ArrangementSettings settings) {
     for (ArrangementGroupingRule rule : settings.getGroupings()) {
-      if (rule.getRule() == ArrangementGroupingType.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER) {
+      if (rule.getGroupingType() == ArrangementGroupingType.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER) {
         return true;
       }
     }
