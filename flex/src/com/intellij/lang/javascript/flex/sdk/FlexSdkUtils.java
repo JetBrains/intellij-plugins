@@ -149,46 +149,6 @@ public class FlexSdkUtils {
     });
   }
 
-  public static String getAirVersion(final String flexVersion) {
-    // todo store adt -version
-
-    if (flexVersion.startsWith("4.")) {
-      if (flexVersion.startsWith("4.0")) {
-        return "1.5.3";
-      }
-      if (flexVersion.startsWith("4.1")) {
-        return "2.0";
-      }
-      if (flexVersion.startsWith("4.5")) {
-        return "2.6";
-      }
-
-      return "3.1";
-    }
-
-    if (flexVersion.startsWith("3.")) {
-      if (flexVersion.startsWith("3.0")) {
-        return "1.0";
-      }
-      if (flexVersion.startsWith("3.1")) {
-        return "1.1";
-      }
-      if (flexVersion.startsWith("3.2")) {
-        return "1.5";
-      }
-      if (flexVersion.startsWith("3.3")) {
-        return "1.5";
-      }
-      if (flexVersion.startsWith("3.4")) {
-        return "1.5.2";
-      }
-
-      return "1.5.3";
-    }
-
-    return "3.1";
-  }
-
   public static int getFlexSdkRevision(final String sdkVersion) {
     // "4.5.0.17689"
     // "4.5.0 build 17689"

@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.compiler.impl.CompilerUtil;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
+import com.intellij.flex.build.AirDescriptorOptions;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
@@ -13,7 +14,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
-import com.intellij.lang.javascript.flex.projectStructure.ui.CreateAirDescriptorTemplateDialog;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -66,8 +66,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
-
-import static com.intellij.lang.javascript.flex.projectStructure.ui.CreateAirDescriptorTemplateDialog.AirDescriptorOptions;
 
 public class FlexCompilationUtils {
 
@@ -482,8 +480,8 @@ public class FlexCompilationUtils {
     }
   }
 
-  public static void generateAirDescriptor(final Module module, final FlexBuildConfiguration bc, final String descriptorFileName,
-                                           final boolean android, final boolean ios) throws FlexCompilerException {
+  private static void generateAirDescriptor(final Module module, final FlexBuildConfiguration bc, final String descriptorFileName,
+                                            final boolean android, final boolean ios) throws FlexCompilerException {
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
 
     final Runnable runnable = new Runnable() {
@@ -495,13 +493,13 @@ public class FlexCompilationUtils {
         final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
         final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
         if (outputFolder == null) {
-          exceptionRef.set(new FlexCompilerException(
-            "Failed to generate AIR descriptor. Folder does not exist: " + FileUtil.toSystemDependentName(outputFolderPath)));
+          exceptionRef.set(new FlexCompilerException(FlexCommonBundle.message("output.folder.does.not.exist",
+                                                                              FileUtil.toSystemDependentName(outputFolderPath))));
           return;
         }
 
-        final String airVersion = FlexSdkUtils.getAirVersion(StringUtil.notNullize(sdk.getVersionString()));
-        final String appId = fixApplicationId(bc.getMainClass());
+        final String airVersion = FlexCommonUtils.getAirVersion(StringUtil.notNullize(sdk.getVersionString()));
+        final String appId = FlexCommonUtils.fixApplicationId(bc.getMainClass());
         final String appName = StringUtil.getShortName(bc.getMainClass());
         final String swfName = PathUtil.getFileName(outputFilePath);
         final String[] extensions = getAirExtensionIDs(ModuleRootManager.getInstance(module), bc.getDependencies());
@@ -511,12 +509,12 @@ public class FlexCompilationUtils {
             try {
               final AirDescriptorOptions descriptorOptions =
                 new AirDescriptorOptions(airVersion, appId, appName, swfName, extensions, android, ios);
-              final String descriptorText = CreateAirDescriptorTemplateDialog.getAirDescriptorText(descriptorOptions);
+              final String descriptorText = descriptorOptions.getAirDescriptorText();
 
               FlexUtils.addFileWithContent(descriptorFileName, descriptorText, outputFolder);
             }
             catch (IOException e) {
-              exceptionRef.set(new FlexCompilerException("Failed to generate AIR descriptor: " + e.getMessage()));
+              exceptionRef.set(new FlexCompilerException(FlexCommonBundle.message("failed.to.generate.air.descriptor", e.getMessage())));
             }
           }
         });
@@ -628,29 +626,18 @@ public class FlexCompilationUtils {
     return FileUtil.getTempDirectory() + File.separator + "IntelliJ_ANE_unzipped";
   }
 
-  public static String fixApplicationId(final String appId) {
-    StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < appId.length(); i++) {
-      final char ch = appId.charAt(i);
-      if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9' || ch == '-' || ch == '.') {
-        builder.append(ch);
-      }
-    }
-    return builder.toString();
-  }
-
   private static void copyAndFixCustomAirDescriptor(final FlexBuildConfiguration bc,
                                                     final String customDescriptorPath) throws FlexCompilerException {
     final VirtualFile descriptorTemplateFile = LocalFileSystem.getInstance().findFileByPath(customDescriptorPath);
     if (descriptorTemplateFile == null) {
-      throw new FlexCompilerException("Custom AIR descriptor file not found: " + customDescriptorPath);
+      throw new FlexCompilerException(FlexCommonBundle.message("air.descriptor.not.found", customDescriptorPath));
     }
 
     final String outputFilePath = bc.getActualOutputFilePath();
     final String outputFolderPath = PathUtil.getParentPath(outputFilePath);
     final VirtualFile outputFolder = LocalFileSystem.getInstance().findFileByPath(outputFolderPath);
     if (outputFolder == null) {
-      throw new FlexCompilerException("Failed to copy AIR descriptor. Folder does not exist: " + outputFolderPath);
+      throw new FlexCompilerException(FlexCommonBundle.message("output.folder.does.not.exist", outputFolderPath));
     }
 
     final Ref<FlexCompilerException> exceptionRef = new Ref<FlexCompilerException>();
@@ -667,7 +654,7 @@ public class FlexCompilationUtils {
               exceptionRef.set(e);
             }
             catch (IOException e) {
-              exceptionRef.set(new FlexCompilerException("Failed to copy AIR descriptor to output folder", null, -1, -1));
+              exceptionRef.set(new FlexCompilerException(FlexCommonBundle.message("failed.to.copy.air.descriptor", e.getMessage())));
             }
           }
         });

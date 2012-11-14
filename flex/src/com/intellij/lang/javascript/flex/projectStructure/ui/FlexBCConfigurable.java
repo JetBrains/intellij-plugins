@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.execution.ExecutionBundle;
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -16,7 +17,6 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
@@ -373,7 +373,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
       public String getAirVersion() {
         final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
-        return sdk == null || sdk.getVersionString() == null ? "" : FlexSdkUtils.getAirVersion(sdk.getVersionString());
+        return sdk == null || sdk.getVersionString() == null ? "" : FlexCommonUtils.getAirVersion(sdk.getVersionString());
       }
 
       public String[] getExtensionIDs() {

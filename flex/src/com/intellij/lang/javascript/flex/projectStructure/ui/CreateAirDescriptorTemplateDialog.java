@@ -1,9 +1,10 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.flex.FlexCommonUtils;
+import com.intellij.flex.build.AirDescriptorOptions;
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
@@ -26,79 +27,16 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
+
+import static com.intellij.flex.build.AirDescriptorOptions.ANDROID_PERMISSION_ACCESS_FINE_LOCATION;
+import static com.intellij.flex.build.AirDescriptorOptions.ANDROID_PERMISSION_CAMERA;
+import static com.intellij.flex.build.AirDescriptorOptions.ANDROID_PERMISSION_INTERNET;
+import static com.intellij.flex.build.AirDescriptorOptions.ANDROID_PERMISSION_WRITE_EXTERNAL_STORAGE;
 
 public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
 
   public static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]{1,3}(\\.[0-9]{1,3}){0,2}");
-
-  public static final int ANDROID_PERMISSION_INTERNET = 1;
-  public static final int ANDROID_PERMISSION_WRITE_EXTERNAL_STORAGE = 2;
-  public static final int ANDROID_PERMISSION_ACCESS_FINE_LOCATION = 4;
-  public static final int ANDROID_PERMISSION_CAMERA = 8;
-
-  public static class AirDescriptorOptions {
-    private final String AIR_VERSION;
-    private final String APP_ID;
-    private final String APP_NAME;
-    private final String APP_VERSION;
-    private final String SWF_NAME;
-    private final String[] EXTENSIONS;
-    private final boolean MOBILE;
-    private final boolean AUTO_ORIENTS;
-    private final boolean FULL_SCREEN;
-    private final boolean ANDROID;
-    private final int ANDROID_PERMISSIONS;
-    private final boolean IOS;
-    private final boolean IPHONE;
-    private final boolean IPAD;
-    private final boolean IOS_HIGH_RESOLUTION;
-
-    public AirDescriptorOptions(final String airVersion,
-                                final String appId,
-                                final String appName,
-                                final String swfName,
-                                final String[] extensions,
-                                final boolean android,
-                                final boolean ios) {
-      this(airVersion, appId, appName, "0.0.0", swfName, extensions, android || ios, android || ios, android || ios,
-           android, ANDROID_PERMISSION_INTERNET, ios, ios, ios, ios);
-    }
-
-    public AirDescriptorOptions(final String airVersion,
-                                final String appId,
-                                final String appName,
-                                final String appVersion,
-                                final String swfName,
-                                final String[] extensions,
-                                final boolean mobile,
-                                final boolean autoOrients,
-                                final boolean fullScreen,
-                                final boolean android,
-                                final int androidPermissions,
-                                final boolean ios,
-                                final boolean iPhone,
-                                final boolean iPad,
-                                final boolean iosHighResolution) {
-      AIR_VERSION = airVersion;
-      APP_ID = appId;
-      APP_NAME = appName;
-      APP_VERSION = appVersion;
-      SWF_NAME = swfName;
-      EXTENSIONS = extensions;
-      MOBILE = mobile;
-      AUTO_ORIENTS = autoOrients;
-      FULL_SCREEN = fullScreen;
-      ANDROID = android;
-      ANDROID_PERMISSIONS = androidPermissions;
-      IOS = ios;
-      IPHONE = iPhone;
-      IPAD = iPad;
-      IOS_HIGH_RESOLUTION = iosHighResolution;
-    }
-  }
 
   private JPanel myMainPanel;
 
@@ -224,7 +162,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     if (appId.isEmpty()) {
       return new ValidationInfo("Application ID is required", myAppIdTextField);
     }
-    if (!appId.equals(FlexCompilationUtils.fixApplicationId(appId))) {
+    if (!appId.equals(FlexCommonUtils.fixApplicationId(appId))) {
       return new ValidationInfo("Application ID must contain only following symbols: 0-9, a-z, A-Z, '.', '-'", myAppIdTextField);
     }
 
@@ -315,7 +253,7 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
       final IOException exception = ApplicationManager.getApplication().runWriteAction(new NullableComputable<IOException>() {
         public IOException compute() {
           try {
-            fileRef.set(FlexUtils.addFileWithContent(fileName, getAirDescriptorText(options), dir));
+            fileRef.set(FlexUtils.addFileWithContent(fileName, options.getAirDescriptorText(), dir));
           }
           catch (IOException e) {
             return e;
@@ -336,102 +274,6 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
       }
       return null;
     }
-  }
-
-  public static String getAirDescriptorText(final AirDescriptorOptions options) throws IOException {
-    // noinspection IOResourceOpenedButNotSafelyClosed
-    final String rawText =
-      FileUtil.loadTextAndClose(CreateAirDescriptorTemplateDialog.class.getResourceAsStream("air_descriptor_template.ft"));
-    return replaceMacros(rawText, options);
-  }
-
-  private static String replaceMacros(final String descriptorText, final AirDescriptorOptions options) {
-    final List<String> macros = new ArrayList<String>();
-    final List<String> values = new ArrayList<String>();
-
-    addToLists(macros, values, "${air_version}", options.AIR_VERSION);
-    addToLists(macros, values, "${app_id}", options.APP_ID);
-    addToLists(macros, values, "${app_name}", options.APP_NAME);
-
-    final boolean air25OrLater = StringUtil.compareVersionNumbers(options.AIR_VERSION, "2.5") >= 0;
-    addToLists(macros, values, "${app_version}", options.APP_VERSION);
-    addToLists(macros, values, "${version_number_comment_start}", air25OrLater ? "" : "<!--");
-    addToLists(macros, values, "${version_number_comment_end}", air25OrLater ? "" : "-->");
-    addToLists(macros, values, "${version_comment_start}", air25OrLater ? "<!--" : "");
-    addToLists(macros, values, "${version_comment_end}", air25OrLater ? "-->" : "");
-
-    addToLists(macros, values, "${swf_name}", options.SWF_NAME);
-
-    if (options.EXTENSIONS.length == 0) {
-      addToLists(macros, values, "${extensions_comment_start}", "<!--");
-      addToLists(macros, values, "${extensions_comment_end}", "-->");
-      addToLists(macros, values, "${extensions_list}", "<extensionID></extensionID>");
-    }
-    else {
-      final StringBuilder buf = new StringBuilder();
-      for (String extensionId : options.EXTENSIONS) {
-        if (buf.length() > 0) buf.append("\n        ");
-        buf.append("<extensionID>").append(extensionId).append("</extensionID>");
-      }
-
-      addToLists(macros, values, "${extensions_comment_start}", "");
-      addToLists(macros, values, "${extensions_comment_end}", "");
-      addToLists(macros, values, "${extensions_list}", buf.toString());
-    }
-
-    addToLists(macros, values, "${auto_orients}", options.MOBILE ? String.valueOf(options.AUTO_ORIENTS) : "");
-    addToLists(macros, values, "${auto_orients_comment_start}", options.MOBILE ? "" : "<!--");
-    addToLists(macros, values, "${auto_orients_comment_end}", options.MOBILE ? "" : "-->");
-
-    addToLists(macros, values, "${full_screen}", options.MOBILE ? String.valueOf(options.FULL_SCREEN) : "");
-    addToLists(macros, values, "${full_screen_comment_start}", options.MOBILE ? "" : "<!--");
-    addToLists(macros, values, "${full_screen_comment_end}", options.MOBILE ? "" : "-->");
-
-    addToLists(macros, values, "${iOS_comment_start}", options.MOBILE && options.IOS ? "" : "<!--");
-    addToLists(macros, values, "${iOS_comment_end}", options.MOBILE && options.IOS ? "" : "-->");
-
-    addToLists(macros, values, "${iPhone_comment_start}", options.MOBILE && options.IOS && options.IPHONE ? "" : "<!--");
-    addToLists(macros, values, "${iPhone_comment_end}", options.MOBILE && options.IOS && options.IPHONE ? "" : "-->");
-    addToLists(macros, values, "${iPad_comment_start}", options.MOBILE && options.IOS && options.IPAD ? "" : "<!--");
-    addToLists(macros, values, "${iPad_comment_end}", options.MOBILE && options.IOS && options.IPAD ? "" : "-->");
-    addToLists(macros, values, "${iOS_high_resolution_comment_start}",
-               options.MOBILE && options.IOS && options.IOS_HIGH_RESOLUTION ? "" : "<!--");
-    addToLists(macros, values, "${iOS_high_resolution_comment_end}",
-               options.MOBILE && options.IOS && options.IOS_HIGH_RESOLUTION ? "" : "-->");
-
-    addToLists(macros, values, "${android_comment_start}", options.MOBILE && options.ANDROID ? "" : "<!--");
-    addToLists(macros, values, "${android_comment_end}", options.MOBILE && options.ANDROID ? "" : "-->");
-
-    addToLists(macros, values, "${android_internet_comment_start}",
-               options.MOBILE && options.ANDROID && (options.ANDROID_PERMISSIONS & ANDROID_PERMISSION_INTERNET) != 0 ? "" : "<!--");
-    addToLists(macros, values, "${android_internet_comment_end}",
-               options.MOBILE && options.ANDROID && (options.ANDROID_PERMISSIONS & ANDROID_PERMISSION_INTERNET) != 0 ? "" : "-->");
-
-    addToLists(macros, values, "${android_write_external_storage_comment_start}",
-               options.MOBILE && options.ANDROID && (options.ANDROID_PERMISSIONS & ANDROID_PERMISSION_WRITE_EXTERNAL_STORAGE) != 0
-               ? "" : "<!--");
-    addToLists(macros, values, "${android_write_external_storage_comment_end}",
-               options.MOBILE && options.ANDROID && (options.ANDROID_PERMISSIONS & ANDROID_PERMISSION_WRITE_EXTERNAL_STORAGE) != 0
-               ? "" : "-->");
-
-    addToLists(macros, values, "${android_access_fine_location_comment_start}",
-               options.MOBILE && options.ANDROID && (options.ANDROID_PERMISSIONS & ANDROID_PERMISSION_ACCESS_FINE_LOCATION) != 0
-               ? "" : "<!--");
-    addToLists(macros, values, "${android_access_fine_location_comment_end}",
-               options.MOBILE && options.ANDROID && (options.ANDROID_PERMISSIONS & ANDROID_PERMISSION_ACCESS_FINE_LOCATION) != 0
-               ? "" : "-->");
-
-    addToLists(macros, values, "${android_camera_comment_start}",
-               options.MOBILE && options.ANDROID && (options.ANDROID_PERMISSIONS & ANDROID_PERMISSION_CAMERA) != 0 ? "" : "<!--");
-    addToLists(macros, values, "${android_camera_comment_end}",
-               options.MOBILE && options.ANDROID && (options.ANDROID_PERMISSIONS & ANDROID_PERMISSION_CAMERA) != 0 ? "" : "-->");
-
-    return StringUtil.replace(descriptorText, macros.toArray(new String[macros.size()]), values.toArray(new String[values.size()]));
-  }
-
-  private static void addToLists(final List<String> list1, final List<String> list2, final String entry1, final String entry2) {
-    list1.add(entry1);
-    list2.add(entry2);
   }
 
   public String getDescriptorPath() {

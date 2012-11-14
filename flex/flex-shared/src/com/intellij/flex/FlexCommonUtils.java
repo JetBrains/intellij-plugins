@@ -38,10 +38,7 @@ import org.jetbrains.jps.model.serialization.JpsGlobalLoader;
 import org.jetbrains.jps.model.serialization.JpsModelSerializationDataService;
 import org.jetbrains.jps.util.JpsPathUtil;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -289,12 +286,28 @@ public class FlexCommonUtils {
 
   @Nullable
   public static String findXMLElement(final File file, final String xmlElement) {
+    try {
+      final BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+      try {
+        return findXMLElement(inputStream, xmlElement);
+      }
+      finally {
+        inputStream.close();
+      }
+    }
+    catch (IOException e) {
+      return null;
+    }
+  }
+
+  @Nullable
+  public static String findXMLElement(final InputStream is, final String xmlElement) {
     // xmlElement has format "<root_tag><child_tag>"
     final List<String> elementNames = StringUtil.split(StringUtil.replace(xmlElement, ">", ""), "<");
     if (elementNames.isEmpty()) return null;
 
     try {
-      final Document document = JDOMUtil.loadDocument(file);
+      final Document document = JDOMUtil.loadDocument(is);
       final Element root = document.getRootElement();
 
       if (!root.getName().equals(elementNames.get(0))) {
@@ -844,6 +857,15 @@ public class FlexCommonUtils {
     return FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + ".html";
   }
 
+
+  public static String getGeneratedAirDescriptorName(final JpsFlexBuildConfiguration bc, final JpsAirPackagingOptions packagingOptions) {
+    final String suffix = packagingOptions instanceof JpsAirDesktopPackagingOptions
+                          ? "-descriptor.xml"
+                          : packagingOptions instanceof JpsAndroidPackagingOptions ? "-android-descriptor.xml"
+                                                                                   : "-ios-descriptor.xml";
+    return FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(bc.getActualOutputFilePath())) + suffix;
+  }
+
   public static String replace(final String text, final Map<String, String> replacementMap) {
     final String[] from = new String[replacementMap.size()];
     final String[] to = new String[replacementMap.size()];
@@ -856,5 +878,56 @@ public class FlexCommonUtils {
     }
 
     return StringUtil.replace(text, from, to);
+  }
+
+  public static String getAirVersion(final String flexVersion) {
+    // todo store adt -version
+
+    if (flexVersion.startsWith("4.")) {
+      if (flexVersion.startsWith("4.0")) {
+        return "1.5.3";
+      }
+      if (flexVersion.startsWith("4.1")) {
+        return "2.0";
+      }
+      if (flexVersion.startsWith("4.5")) {
+        return "2.6";
+      }
+
+      return "3.1";
+    }
+
+    if (flexVersion.startsWith("3.")) {
+      if (flexVersion.startsWith("3.0")) {
+        return "1.0";
+      }
+      if (flexVersion.startsWith("3.1")) {
+        return "1.1";
+      }
+      if (flexVersion.startsWith("3.2")) {
+        return "1.5";
+      }
+      if (flexVersion.startsWith("3.3")) {
+        return "1.5";
+      }
+      if (flexVersion.startsWith("3.4")) {
+        return "1.5.2";
+      }
+
+      return "1.5.3";
+    }
+
+    return "3.1";
+  }
+
+  public static String fixApplicationId(final String appId) {
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < appId.length(); i++) {
+      final char ch = appId.charAt(i);
+      if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9' || ch == '-' || ch == '.') {
+        builder.append(ch);
+      }
+    }
+    return builder.toString();
   }
 }
