@@ -5,6 +5,7 @@ import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
+import com.intellij.ide.wizard.CommitStepException;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.javascript.flex.mxml.schema.CodeContextHolder;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
@@ -17,14 +18,18 @@ import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigu
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
-import com.intellij.lang.javascript.validation.fixes.CreateClassDialog;
+import com.intellij.lang.javascript.ui.newclass.CreateFlashClassWizard;
+import com.intellij.lang.javascript.ui.newclass.CustomVariablesStep;
+import com.intellij.lang.javascript.ui.newclass.MainStep;
+import com.intellij.lang.javascript.ui.newclass.WizardModel;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
-import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
@@ -65,19 +70,17 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
     final Ref<String> parentComponentToSet = new Ref<String>();
     return new CreateClassOrInterfaceAction(dir) {
       @Override
-      protected CreateClassDialog createDialog(final String templateName) {
-        CreateClassDialog d = new CreateClassDialog(
-          dir.getProject(),
-          null,
-          true,
-          DirectoryIndex.getInstance(dir.getProject()).getPackageName(dir.getVirtualFile()),
-          false,
-          null,
-          true,
-          templateName,
-          dir,
-          true,
-          JSBundle.message("choose.base.component.title")) {
+      protected CreateClassParameters createDialog(final String templateName) {
+        final WizardModel model = new WizardModel(dir, true);
+        MainStep mainStep = new MainStep(model, dir.getProject(),
+                                         null,
+                                         true,
+                                         DirectoryIndex.getInstance(dir.getProject()).getPackageName(dir.getVirtualFile()),
+                                         null,
+                                         true,
+                                         templateName,
+                                         dir,
+                                         JSBundle.message("choose.base.component.title")) {
 
           @Override
           protected List<FileTemplate> getApplicableTemplates() {
@@ -100,10 +103,10 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
             }
 
             if (isSuperclassFieldEnabled()) {
-              if (!JSUtils.isValidClassName(getSuperClassFqn(), true)) {
+              if (!JSUtils.isValidClassName(getSuperclassFqn(), true)) {
                 return false;
               }
-              if (!(JSResolveUtil.findClassByQName(getSuperClassFqn(), getSuperclassScope()) instanceof JSClass)) {
+              if (!(JSResolveUtil.findClassByQName(getSuperclassFqn(), getSuperclassScope()) instanceof JSClass)) {
                 return false;
               }
             }
@@ -118,7 +121,8 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
           }
 
           @Override
-          protected void doOKAction() {
+          public void commit(final CommitType commitType) throws CommitStepException {
+            super.commit(commitType);
             // let's replace parent component only if template contains 'Superclass' macro
             final FileTemplate template;
             try {
@@ -127,12 +131,12 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
                                     new ThrowableComputable<FileTemplate, IOException>() {
                                       @Override
                                       public FileTemplate compute() throws IOException {
-                                        return FileTemplateManager.getInstance().getInternalTemplate(getTemplateName());
+                                        return FileTemplateManager.getInstance().getInternalTemplate(model.getTemplateName());
                                       }
                                     });
               String[] attributes = FileTemplateUtil.calculateAttributes(template.getText(), new Properties(), true);
               if (ArrayUtil.contains(CreateClassOrInterfaceAction.SUPERCLASS, attributes)) {
-                parentComponentToSet.set(getSuperClassFqn());
+                parentComponentToSet.set(getSuperclassFqn());
               }
             }
             catch (IOException e) {
@@ -141,14 +145,15 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
             catch (ParseException e) {
               // ignore as the action will not succeed
             }
-
-
-            super.doOKAction();
           }
         };
-        d.setSuperclassLabelText(JSBundle.message("parent.component.label.text"));
-        d.setTitle(JSBundle.message("new.flex.component.dialog.title"));
-        return d;
+        mainStep.setSuperclassLabelText(JSBundle.message("parent.component.label.text"));
+        CustomVariablesStep customVariablesStep = new CustomVariablesStep(model);
+        CreateFlashClassWizard w = new CreateFlashClassWizard(
+          JSBundle.message("new.flex.component.dialog.title"), dir.getProject(), model, mainStep, customVariablesStep);
+        w.show();
+        if (w.getExitCode() != DialogWrapper.OK_EXIT_CODE) return null;
+        return model;
       }
 
       @Override

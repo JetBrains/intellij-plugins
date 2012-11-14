@@ -15,12 +15,16 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
-import com.intellij.lang.javascript.validation.fixes.CreateClassDialog;
+import com.intellij.lang.javascript.ui.newclass.CreateFlashClassWizard;
+import com.intellij.lang.javascript.ui.newclass.CustomVariablesStep;
+import com.intellij.lang.javascript.ui.newclass.MainStep;
+import com.intellij.lang.javascript.ui.newclass.WizardModel;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
 import com.intellij.lang.javascript.validation.fixes.ImplementMethodsFix;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDirectory;
@@ -35,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
   private @NonNls static final String IMPL_SUFFIX = "Impl";
@@ -139,6 +144,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     final String templateName;
     final PsiDirectory targetDirectory;
     final Collection<String> interfaces;
+    final Map<String, String> templateAttributes;
 
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       className = suggestSubclassName(jsClass.getName());
@@ -151,28 +157,38 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
         }
       });
       interfaces = jsClass.isInterface() ? Collections.singletonList(jsClass.getQualifiedName()) : Collections.<String>emptyList();
+      templateAttributes = Collections.emptyMap();
     }
     else {
-      final CreateClassDialog dialog =
-        new CreateClassDialog(project, suggestSubclassName(jsClass.getName()), true,
-                              jsPackageStatement.getQualifiedName(), false, jsClass, false,
-                              defaultTemplateName, jsClass, false,
-                              JSBundle.message("choose.super.class.title"));
-      dialog.show();
-
-      if (!dialog.isOK()) {
+      final WizardModel model = new WizardModel(jsClass, true);
+      MainStep mainStep = new MainStep(model, project,
+                                       suggestSubclassName(jsClass.getName()),
+                                       true,
+                                       jsPackageStatement.getQualifiedName(),
+                                       jsClass,
+                                       false,
+                                       defaultTemplateName,
+                                       jsClass,
+                                       JSBundle.message("choose.super.class.title"));
+      CustomVariablesStep customVariablesStep = new CustomVariablesStep(model);
+      CreateFlashClassWizard w = new CreateFlashClassWizard(JSBundle.message("new.actionscript.class.dialog.title"),
+                                                            project, model, mainStep, customVariablesStep);
+      w.show();
+      if (w.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
         return;
       }
-      className = dialog.getClassName();
-      packageName = dialog.getPackageName();
-      templateName = dialog.getTemplateName();
-      targetDirectory = dialog.getTargetDirectory();
-      interfaces = dialog.getInterfacesFqns();
+
+      className = model.getClassName();
+      packageName = model.getPackageName();
+      templateName = model.getTemplateName();
+      targetDirectory = model.getTargetDirectory();
+      interfaces = model.getInterfacesFqns();
+      templateAttributes = model.getTemplateAttributes();
     }
 
     JSClass createdClass = CreateClassOrInterfaceAction
       .createClass(templateName, className, packageName, jsClass.isInterface() ? null : jsClass, interfaces, targetDirectory, getTitle(jsClass),
-                   true, new Consumer<JSClass>() {
+                   true, templateAttributes, new Consumer<JSClass>() {
         @Override
         public void consume(final JSClass aClass) {
           if (aClass != null && !aClass.isInterface() && (jsClass.isInterface() || !interfaces.isEmpty())) {

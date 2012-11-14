@@ -93,7 +93,7 @@ public class FlexUnitTestCreator implements TestCreator {
 
     CreateClassOrInterfaceAction.createClass(JavaScriptSupportLoader.ACTION_SCRIPT_CLASS_TEMPLATE_NAME, testClassName,
                                              packageName, superClass, Collections.<String>emptyList(), targetDirectory,
-                                             CodeInsightBundle.message("intention.create.test"), true, postProcessRunnable);
+                                             CodeInsightBundle.message("intention.create.test"), true, Collections.<String, String>emptyMap(), postProcessRunnable);
   }
 
   private static String getMethodsText(final JSClass createdClass,
