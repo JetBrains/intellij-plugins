@@ -225,6 +225,11 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     return new StdArrangementSettings(groupingRules, matchRules);
   }
 
+  @Override
+  public boolean isNameFilterSupported() {
+    return true;
+  }
+
   public static List<StdArrangementMatchRule> getDefaultMatchRules() {
     // more or less close to Coding Conventions at http://sourceforge.net/adobe/flexsdk/wiki/Coding%20Conventions/
     final List<StdArrangementMatchRule> matchRules = new ArrayList<StdArrangementMatchRule>();
