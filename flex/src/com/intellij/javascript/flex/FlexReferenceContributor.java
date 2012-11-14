@@ -4,6 +4,8 @@ import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.daemon.QuickFixProvider;
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInsight.daemon.impl.quickfix.QuickFixAction;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.javascript.flex.css.CssClassValueReference;
 import com.intellij.javascript.flex.css.CssPropertyValueReference;
 import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
@@ -22,6 +24,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
 import com.intellij.lang.javascript.psi.impl.ReferenceSupport;
+import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.validation.fixes.CreateClassIntentionWithCallback;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
 import com.intellij.lang.javascript.validation.fixes.CreateFlexMobileViewIntentionAndFix;
@@ -101,7 +104,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
     })), new PsiReferenceProvider() {
       @NotNull
       @Override
-      public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
+      public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull ProcessingContext context) {
         CssFunction fun = PsiTreeUtil.getParentOfType(element, CssFunction.class);
         if (fun != null && "Embed".equals(fun.getName())) {
           // TODO: remove this stuff once css function will have proper psi
@@ -115,8 +118,29 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
           }
           return ReferenceSupport.getFileRefs(element, element, 1, ReferenceSupport.LookupOptions.EMBEDDED_ASSET);
         }
-        JSReferenceSet refSet = new JSReferenceSet(element, StringUtil.stripQuotesAroundValue(element.getText()), 1, false, false, true);
+        final String value = StringUtil.stripQuotesAroundValue(element.getText());
+        JSReferenceSet refSet = new JSReferenceSet(element, value, 1, false, false, true);
+        if (fun != null && element instanceof CssString) {
+          assert CLASS_REFERENCE.equals(fun.getName());
+          refSet.setLocalQuickFixProvider(new LocalQuickFixProvider() {
+            @Nullable
+            @Override
+            public LocalQuickFix[] getQuickFixes() {
+              if (!JSUtils.isValidClassName(value, true)) {
+                return LocalQuickFix.EMPTY_ARRAY;
+              }
 
+              CreateClassOrInterfaceAction action = new CreateClassOrInterfaceAction(value, null, element);
+              action.setCreatedClassFqnConsumer(new Consumer<String>() {
+                @Override
+                public void consume(final String newFqn) {
+                  ElementManipulators.getManipulator(element).handleContentChange(element, newFqn);
+                }
+              });
+              return new LocalQuickFix[]{action};
+            }
+          });
+        }
         return refSet.getReferences();
       }
     });
@@ -586,7 +610,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
             }
 
             if (TRANSITION_TAG_NAME.equals(tagName)) {
-              if ((element.textContains('*') && 
+              if ((element.textContains('*') &&
                    "*".equals(StringUtil.stripQuotesAroundValue(element.getText()))) ||
                   element.getTextLength() == 2 // empty value for attr, current state
                  ) {
