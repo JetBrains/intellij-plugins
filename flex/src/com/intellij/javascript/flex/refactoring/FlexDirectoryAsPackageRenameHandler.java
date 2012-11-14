@@ -8,7 +8,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveDirectoryWithClassesProcessor;
@@ -43,7 +42,7 @@ public class FlexDirectoryAsPackageRenameHandler extends DirectoryAsPackageRenam
     if (packageName == null) return null;
     Query<VirtualFile> dirs = index.getDirectoriesByPackageName(packageName, false);
     if (dirs.findFirst() == null) return null;
-    return new FlexPackageImpl((PsiManagerEx)PsiManager.getInstance(project), packageName);
+    return new FlexPackageImpl(PsiManager.getInstance(project), packageName);
   }
 
   @Override
