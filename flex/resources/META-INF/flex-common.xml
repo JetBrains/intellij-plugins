@@ -111,9 +111,7 @@
     <internalFileTemplate name="ActionScript Class"/>
     <internalFileTemplate name="ActionScript Interface"/>
     <internalFileTemplate name="Flex 3 Component"/>
-    <internalFileTemplate name="MX Component"/>
-    <internalFileTemplate name="Spark Component"/>
-    <internalFileTemplate name="Spark+MX Component"/>
+    <internalFileTemplate name="Flex 4 Component"/>
     <liveTemplateContext implementation="com.intellij.lang.javascript.ActionScriptCodeContextType"/>
     <liveTemplateContext implementation="com.intellij.lang.javascript.flex.MxmlTemplateContextType"/>
     <defaultLiveTemplatesProvider implementation="com.intellij.lang.javascript.ActionScriptLiveTemplatesProvider"/>

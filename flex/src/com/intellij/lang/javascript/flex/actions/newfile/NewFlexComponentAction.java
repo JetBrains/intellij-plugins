@@ -1,7 +1,5 @@
 package com.intellij.lang.javascript.flex.actions.newfile;
 
-import com.intellij.flex.model.bc.ComponentSet;
-import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
@@ -48,13 +46,10 @@ import java.util.Properties;
 public class NewFlexComponentAction extends NewActionScriptClassAction {
 
   @NonNls private static final String FLEX3_COMPONENT_TEMPLATE_NAME = "Flex 3 Component";
-  @NonNls private static final String MX_COMPONENT_TEMPLATE_NAME = "MX Component";
-  @NonNls private static final String SPARK_COMPONENT_TEMPLATE_NAME = "Spark Component";
-  @NonNls private static final String SPARK_MX_COMPONENT_TEMPLATE_NAME = "Spark+MX Component";
+  @NonNls private static final String FLEX4_COMPONENT_TEMPLATE_NAME = "Flex 4 Component";
 
   private static final String[] FLEX_CLASSIFIER_TEMPLATES =
-    new String[]{FLEX3_COMPONENT_TEMPLATE_NAME, MX_COMPONENT_TEMPLATE_NAME,
-      SPARK_COMPONENT_TEMPLATE_NAME, SPARK_MX_COMPONENT_TEMPLATE_NAME};
+    new String[]{FLEX3_COMPONENT_TEMPLATE_NAME, FLEX4_COMPONENT_TEMPLATE_NAME};
 
   public static boolean isClassifierTemplate(String templateName) {
     return ArrayUtil.contains(templateName, FLEX_CLASSIFIER_TEMPLATES);
@@ -184,19 +179,7 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
       return new String[]{FLEX3_COMPONENT_TEMPLATE_NAME};
     }
 
-    if (c.getTargetPlatform() == TargetPlatform.Mobile) {
-      return new String[]{MX_COMPONENT_TEMPLATE_NAME, SPARK_COMPONENT_TEMPLATE_NAME};
-    }
-
-    ComponentSet componentSet = c.getDependencies().getComponentSet();
-    if (componentSet == ComponentSet.SparkOnly) {
-      return new String[]{SPARK_COMPONENT_TEMPLATE_NAME};
-    }
-
-    if (componentSet == ComponentSet.MxOnly) {
-      return new String[]{MX_COMPONENT_TEMPLATE_NAME};
-    }
-    return FLEX_CLASSIFIER_TEMPLATES;
+    return new String[]{FLEX4_COMPONENT_TEMPLATE_NAME};
   }
 
   @Override
@@ -214,6 +197,8 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
     boolean isFlex4Template = ArrayUtil.contains(JavaScriptSupportLoader.MXML_URI3, tag.knownNamespaces());
 
     CodeContextHolder holder = CodeContextHolder.getInstance(module.getProject());
+    // ensure namespace is loaded into code context (including all the namespaces from all the libraries)
+    CodeContext.getContext(JavaScriptSupportLoader.MXML_URI4, module);
     Collection<String> namespaces = holder.getNamespaces(module);
     String[] illegalNamespaces =
       isFlex4Template ? new String[]{JavaScriptSupportLoader.MXML_URI} : JavaScriptSupportLoader.FLEX_4_NAMESPACES;
