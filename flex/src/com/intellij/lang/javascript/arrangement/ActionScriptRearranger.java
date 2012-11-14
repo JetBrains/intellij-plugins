@@ -338,10 +338,6 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
           n.invite(this);
         }
       }
-
-      @Override
-      public void visit(@NotNull ArrangementNameMatchCondition condition) {
-      }
     });
 
 
