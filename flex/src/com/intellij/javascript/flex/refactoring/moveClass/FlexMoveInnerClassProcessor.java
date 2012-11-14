@@ -17,7 +17,7 @@ import com.intellij.lang.javascript.refactoring.FormatFixer;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringConflictsUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
+import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.ui.Messages;
@@ -110,7 +110,7 @@ public class FlexMoveInnerClassProcessor extends BaseRefactoringProcessor {
   @Override
   protected void performRefactoring(UsageInfo[] usages) {
     try {
-      CreateClassOrInterfaceAction.createClass(myClassName, myPackageName, myTargetDirectory, false);
+      CreateClassOrInterfaceFix.createClass(myClassName, myPackageName, myTargetDirectory, false);
     }
     catch (Exception e) {
       Messages.showErrorDialog(myProject, e.getMessage(), getCommandName());

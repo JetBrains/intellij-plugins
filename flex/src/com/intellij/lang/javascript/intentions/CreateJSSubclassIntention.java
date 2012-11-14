@@ -19,7 +19,7 @@ import com.intellij.lang.javascript.ui.newclass.CreateFlashClassWizard;
 import com.intellij.lang.javascript.ui.newclass.CustomVariablesStep;
 import com.intellij.lang.javascript.ui.newclass.MainStep;
 import com.intellij.lang.javascript.ui.newclass.WizardModel;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
+import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.ImplementMethodsFix;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
@@ -153,7 +153,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
       targetDirectory = ApplicationManager.getApplication().runWriteAction(new Computable<PsiDirectory>() {
         @Override
         public PsiDirectory compute() {
-          return CreateClassOrInterfaceAction.findOrCreateDirectory(packageName, jsPackageStatement);
+          return CreateClassOrInterfaceFix.findOrCreateDirectory(packageName, jsPackageStatement);
         }
       });
       interfaces = jsClass.isInterface() ? Collections.singletonList(jsClass.getQualifiedName()) : Collections.<String>emptyList();
@@ -186,8 +186,9 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
       templateAttributes = model.getTemplateAttributes();
     }
 
-    JSClass createdClass = CreateClassOrInterfaceAction
-      .createClass(templateName, className, packageName, jsClass.isInterface() ? null : jsClass, interfaces, targetDirectory, getTitle(jsClass),
+    JSClass createdClass = CreateClassOrInterfaceFix
+      .createClass(templateName, className, packageName, jsClass.isInterface() ? null : jsClass, interfaces, targetDirectory,
+                   getTitle(jsClass),
                    true, templateAttributes, new Consumer<JSClass>() {
         @Override
         public void consume(final JSClass aClass) {

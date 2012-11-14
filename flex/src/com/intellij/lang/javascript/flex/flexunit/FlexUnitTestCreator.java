@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
+import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.ModuleUtil;
@@ -91,9 +91,10 @@ public class FlexUnitTestCreator implements TestCreator {
       }
     };
 
-    CreateClassOrInterfaceAction.createClass(JavaScriptSupportLoader.ACTION_SCRIPT_CLASS_TEMPLATE_NAME, testClassName,
-                                             packageName, superClass, Collections.<String>emptyList(), targetDirectory,
-                                             CodeInsightBundle.message("intention.create.test"), true, Collections.<String, String>emptyMap(), postProcessRunnable);
+    CreateClassOrInterfaceFix.createClass(JavaScriptSupportLoader.ACTION_SCRIPT_CLASS_TEMPLATE_NAME, testClassName,
+                                          packageName, superClass, Collections.<String>emptyList(), targetDirectory,
+                                          CodeInsightBundle.message("intention.create.test"), true, Collections.<String, String>emptyMap(),
+                                          postProcessRunnable);
   }
 
   private static String getMethodsText(final JSClass createdClass,

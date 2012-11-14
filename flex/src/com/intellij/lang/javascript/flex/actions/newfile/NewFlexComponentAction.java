@@ -20,7 +20,7 @@ import com.intellij.lang.javascript.ui.newclass.CreateFlashClassWizard;
 import com.intellij.lang.javascript.ui.newclass.CustomVariablesStep;
 import com.intellij.lang.javascript.ui.newclass.MainStep;
 import com.intellij.lang.javascript.ui.newclass.WizardModel;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
+import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -61,9 +61,9 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
   }
 
   @Override
-  protected CreateClassOrInterfaceAction createAction(final PsiDirectory dir) {
+  protected CreateClassOrInterfaceFix createAction(final PsiDirectory dir) {
     final Ref<String> parentComponentToSet = new Ref<String>();
-    return new CreateClassOrInterfaceAction(dir) {
+    return new CreateClassOrInterfaceFix(dir) {
       @Override
       protected CreateClassParameters createDialog(final String templateName) {
         final WizardModel model = new WizardModel(dir, true);
@@ -82,7 +82,7 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
             Module module = ModuleUtilCore.findModuleForPsiElement(dir);
             final String[] allowedBuiltin = getAllowedBuiltInTemplates(module);
             return ContainerUtil
-              .filter(CreateClassOrInterfaceAction.getApplicableTemplates(FLEX_TEMPLATES_EXTENSIONS), new Condition<FileTemplate>() {
+              .filter(CreateClassOrInterfaceFix.getApplicableTemplates(FLEX_TEMPLATES_EXTENSIONS), new Condition<FileTemplate>() {
                 @Override
                 public boolean value(final FileTemplate fileTemplate) {
                   String name = fileTemplate.getName();
@@ -122,7 +122,7 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
             final FileTemplate template;
             try {
               template = ClassLoaderUtil
-                .runWithClassLoader(CreateClassOrInterfaceAction.class.getClassLoader(),
+                .runWithClassLoader(CreateClassOrInterfaceFix.class.getClassLoader(),
                                     new ThrowableComputable<FileTemplate, IOException>() {
                                       @Override
                                       public FileTemplate compute() throws IOException {
@@ -130,7 +130,7 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
                                       }
                                     });
               String[] attributes = FileTemplateUtil.calculateAttributes(template.getText(), new Properties(), true);
-              if (ArrayUtil.contains(CreateClassOrInterfaceAction.SUPERCLASS, attributes)) {
+              if (ArrayUtil.contains(CreateClassOrInterfaceFix.SUPERCLASS, attributes)) {
                 parentComponentToSet.set(getSuperclassFqn());
               }
             }

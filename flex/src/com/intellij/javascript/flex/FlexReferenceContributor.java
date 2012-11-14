@@ -26,7 +26,7 @@ import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
 import com.intellij.lang.javascript.psi.impl.ReferenceSupport;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.validation.fixes.CreateClassIntentionWithCallback;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
+import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateFlexMobileViewIntentionAndFix;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -130,7 +130,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
                 return LocalQuickFix.EMPTY_ARRAY;
               }
 
-              CreateClassOrInterfaceAction action = new CreateClassOrInterfaceAction(value, null, element);
+              CreateClassOrInterfaceFix action = new CreateClassOrInterfaceFix(value, null, element);
               action.setCreatedClassFqnConsumer(new Consumer<String>() {
                 @Override
                 public void consume(final String newFqn) {
@@ -493,7 +493,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
           intention = new CreateFlexMobileViewIntentionAndFix(classFqn, element, false);
         }
         else {
-          intention = new CreateClassOrInterfaceAction(classFqn, null, element);
+          intention = new CreateClassOrInterfaceFix(classFqn, null, element);
         }
 
         intention.setCreatedClassFqnConsumer(new Consumer<String>() {

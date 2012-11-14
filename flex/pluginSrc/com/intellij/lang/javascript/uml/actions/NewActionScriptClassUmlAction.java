@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSIconProvider;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
+import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
@@ -46,11 +46,11 @@ public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
     final MyDialog dialog = new MyDialog(project, dirAndPackage.first, dirAndPackage.second);
     dialog.setTitle(JSBundle.message("new.actionscript.class.dialog.title"));
 
-    for (FileTemplate fileTemplate : CreateClassOrInterfaceAction
-      .getApplicableTemplates(CreateClassOrInterfaceAction.ACTIONSCRIPT_TEMPLATES_EXTENSIONS)) {
+    for (FileTemplate fileTemplate : CreateClassOrInterfaceFix
+      .getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS)) {
       String templateName = fileTemplate.getName();
-      String shortName = CreateClassOrInterfaceAction.getTemplateShortName(templateName);
-      Icon icon = CreateClassOrInterfaceAction.getTemplateIcon(fileTemplate);
+      String shortName = CreateClassOrInterfaceFix.getTemplateShortName(templateName);
+      Icon icon = CreateClassOrInterfaceFix.getTemplateIcon(fileTemplate);
       dialog.addItem(shortName, icon, templateName);
     }
 

@@ -7,7 +7,7 @@ import com.intellij.diagram.actions.DiagramCreateNewElementAction;
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.uml.FlashUmlDataModel;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
+import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.graph.base.Node;
@@ -67,9 +67,9 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
   @Override
   public Object createElement(DiagramDataModel<Object> objectUmlDataModel, PreparationData data, AnActionEvent event) {
     try {
-      PsiFile file = (PsiFile)CreateClassOrInterfaceAction.createClass(StringUtil.getShortName(data.classQName),
-                                                                       StringUtil.getPackageName(data.classQName),
-                                                                       data.targetDirectory, data.templateName);
+      PsiFile file = (PsiFile)CreateClassOrInterfaceFix.createClass(StringUtil.getShortName(data.classQName),
+                                                                    StringUtil.getPackageName(data.classQName),
+                                                                    data.targetDirectory, data.templateName);
       return getClass(file, data);
     }
     catch (Exception e) {

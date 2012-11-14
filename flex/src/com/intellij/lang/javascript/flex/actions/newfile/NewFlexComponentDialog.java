@@ -8,7 +8,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
-import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceAction;
+import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
@@ -76,10 +76,10 @@ public class NewFlexComponentDialog extends CreateFileFromTemplateDialog {
 
   private void fillTemplates(String toSelect) {
     myKindCombo.clear();
-    for (FileTemplate fileTemplate : CreateClassOrInterfaceAction
-      .getApplicableTemplates(CreateClassOrInterfaceAction.FLEX_TEMPLATES_EXTENSIONS)) {
+    for (FileTemplate fileTemplate : CreateClassOrInterfaceFix
+      .getApplicableTemplates(CreateClassOrInterfaceFix.FLEX_TEMPLATES_EXTENSIONS)) {
       String templateName = fileTemplate.getName();
-      String shortName = CreateClassOrInterfaceAction.getTemplateShortName(templateName);
+      String shortName = CreateClassOrInterfaceFix.getTemplateShortName(templateName);
       Icon icon = FileTypeManager.getInstance().getFileTypeByExtension(fileTemplate.getExtension()).getIcon();
       myKindCombo.addItem(shortName, icon, templateName);
     }
