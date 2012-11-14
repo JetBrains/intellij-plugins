@@ -139,7 +139,6 @@ public class CucumberJavaExtension implements CucumberJvmExtensionPoint {
   }
 
   @Nullable
-  @Override
   public String getGlue(@NotNull GherkinStep step) {
     return CucumberJavaUtil.getPackageOfStep(step);
   }

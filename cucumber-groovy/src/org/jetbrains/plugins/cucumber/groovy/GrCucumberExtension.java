@@ -140,7 +140,6 @@ public class GrCucumberExtension implements CucumberJvmExtensionPoint {
   }
 
   @Nullable
-  @Override
   public String getGlue(@NotNull GherkinStep step) {
     for (PsiReference ref : step.getReferences()) {
       PsiElement refElement = ref.resolve();
