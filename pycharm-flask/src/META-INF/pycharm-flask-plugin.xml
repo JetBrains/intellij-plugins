@@ -1,0 +1,22 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <directoryProjectGenerator implementation="com.jetbrains.flask.project.FlaskProjectGenerator"/>
+    <directoryProjectConfigurator implementation="com.jetbrains.flask.project.FlaskProjectConfigurator"/>
+    <internalFileTemplate name="Flask Main"/>
+    <psi.referenceContributor implementation="com.jetbrains.flask.codeInsight.references.FlaskReferenceContributor"/>
+    <codeInsight.lineMarkerProvider language="Python" implementationClass="com.jetbrains.flask.codeInsight.FlaskLineMarkerProvider"/>
+    <codeInsight.lineMarkerProvider language="Jinja2" implementationClass="com.jetbrains.flask.codeInsight.FlaskLineMarkerProvider"/>
+    <defaultLiveTemplatesProvider implementation="com.jetbrains.flask.FlaskDefaultLiveTemplatesProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="Pythonid">
+    <unresolvedReferenceQuickFixProvider implementation="com.jetbrains.flask.codeInsight.references.FlaskTemplateQuickFixProvider"/>
+    <importResolver implementation="com.jetbrains.flask.codeInsight.FlaskImportResolver"/>
+    <pyModuleMembersProvider implementation="com.jetbrains.flask.codeInsight.FlaskModuleMembersProvider"/>
+    <pyClassMembersProvider implementation="com.jetbrains.flask.codeInsight.FlaskSQLAlchemyMembersProvider"/>
+    <keywordArgumentProvider implementation="com.jetbrains.flask.codeInsight.FlaskKeywordArgumentProvider"/>
+    <typeProvider implementation="com.jetbrains.flask.codeInsight.FlaskTypeProvider"/>
+    <canonicalPathProvider implementation="com.jetbrains.flask.codeInsight.FlaskCanonicalPathProvider"/>
+    <templateContextProvider implementation="com.jetbrains.flask.codeInsight.FlaskTemplateContextProvider"/>
+  </extensions>
+</idea-plugin>

@@ -1,0 +1,6 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="Pythonid">
+    <pyModuleMembersProvider implementation="com.jetbrains.numpy.codeInsight.NumpyModuleMembersProvider"/>
+    <typeProvider implementation="com.jetbrains.numpy.codeInsight.NumpyDocStringTypeProvider"/>
+  </extensions>
+</idea-plugin>

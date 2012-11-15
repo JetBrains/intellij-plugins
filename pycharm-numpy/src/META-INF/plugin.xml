@@ -1,16 +1,15 @@
-<idea-plugin version="2">
+<idea-plugin version="2" xmlns:xi="http://www.w3.org/2001/XInclude">
   <name>NumPy Scientific Computing Library Support</name>
   <id>org.jetbrains.plugins.numpy</id>
   <description>Provides code insight and inspections for code that uses NumPy. This is an open-source plugin that serves as an example for
     developing library support plugins in PyCharm.</description>
   <vendor>JetBrains</vendor>
   <depends>com.intellij.modules.ultimate</depends>
+  <depends>com.intellij.modules.python</depends>
+
+  <xi:include href="/META-INF/pycharm-numpy-plugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
-  </extensions>
-  <extensions defaultExtensionNs="Pythonid">
-    <pyModuleMembersProvider implementation="com.jetbrains.numpy.codeInsight.NumpyModuleMembersProvider"/>
-    <typeProvider implementation="com.jetbrains.numpy.codeInsight.NumpyDocStringTypeProvider"/>
   </extensions>
 </idea-plugin>
