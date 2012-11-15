@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.CommonBundle;
 import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.actions.newfile.NewFlexComponentAction;
 import com.intellij.lang.javascript.flex.actions.newfile.NewFlexComponentDialog;
@@ -9,7 +10,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -29,19 +30,19 @@ import java.util.Map;
 public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
 
   public NewFlexComponentUmlAction() {
-    super(JSBundle.message("new.flex.component.uml.action.text"), JSBundle.message("new.flex.component.action.description"),
+    super(FlexBundle.message("new.flex.component.uml.action.text"), FlexBundle.message("new.flex.component.action.description"),
           JavaScriptLanguageIcons.Flex.XmlBackedClass);
   }
 
   @Override
   public String getActionName() {
-    return JSBundle.message("new.flex.component.command.name");
+    return FlexBundle.message("new.flex.component.command.name");
   }
 
   @Override
   protected PreparationData showDialog(Project project, Pair<PsiDirectory, String> dirAndPackage) {
     MyDialog dialog = new MyDialog(project, dirAndPackage.first, dirAndPackage.second);
-    dialog.setTitle(JSBundle.message("new.flex.component.dialog.title"));
+    dialog.setTitle(FlexBundle.message("new.flex.component.dialog.title"));
     dialog.show();
     if (!dialog.isOK()) return null;
     return new PreparationData(dialog.getQualifiedName(), dialog.getSelectedTemplate(), dialog.getCustomProperties(), dialog.myDirectory);
@@ -87,7 +88,7 @@ public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
         return;
       }
 
-      Module module = myDirectory != null ? ModuleUtil.findModuleForPsiElement(myDirectory) : null;
+      Module module = myDirectory != null ? ModuleUtilCore.findModuleForPsiElement(myDirectory) : null;
       GlobalSearchScope scope = GlobalSearchScope.projectScope(myProject);
       myDirectory =
         JSRefactoringUtil.chooseOrCreateDirectoryForClass(myProject, module, scope, StringUtil.getPackageName(qName),

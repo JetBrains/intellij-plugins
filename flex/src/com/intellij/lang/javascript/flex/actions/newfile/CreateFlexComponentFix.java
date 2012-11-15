@@ -164,7 +164,7 @@ public class CreateFlexComponentFix extends CreateClassOrInterfaceFix {
     mainStep.setSuperclassLabelText(JSBundle.message("parent.component.label.text"));
     CustomVariablesStep customVariablesStep = new CustomVariablesStep(model);
     CreateFlashClassWizard w = new CreateFlashClassWizard(
-      JSBundle.message("new.flex.component.dialog.title"), myContext.getProject(), model, mainStep, customVariablesStep);
+      FlexBundle.message("new.flex.component.dialog.title"), myContext.getProject(), model, mainStep, customVariablesStep);
     w.show();
     if (w.getExitCode() != DialogWrapper.OK_EXIT_CODE) return null;
     return model;
