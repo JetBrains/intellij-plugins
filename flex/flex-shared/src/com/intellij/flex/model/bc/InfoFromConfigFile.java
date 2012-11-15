@@ -137,7 +137,7 @@ public class InfoFromConfigFile {
                                                    : fileSpecsElement.getChildTextNormalize("path-element", rootElement.getNamespace());
           outputPath = rootElement.getChildTextNormalize("output", rootElement.getNamespace());
 
-          if (!FileUtil.isAbsolute(outputPath)) {
+          if (outputPath != null && !FileUtil.isAbsolute(outputPath)) {
             try {
               outputPath = FileUtil.toSystemIndependentName(new File(configFile.getParent(), outputPath).getCanonicalPath());
             }
