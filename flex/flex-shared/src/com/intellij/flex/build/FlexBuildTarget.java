@@ -3,16 +3,14 @@ package com.intellij.flex.build;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.JpsFlexProjectLevelCompilerOptionsExtension;
-import com.intellij.flex.model.bc.JpsFlexBCDependencyEntry;
-import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
-import com.intellij.flex.model.bc.JpsFlexDependencyEntry;
-import com.intellij.flex.model.bc.JpsFlexModuleOrProjectCompilerOptions;
+import com.intellij.flex.model.bc.*;
 import com.intellij.flex.model.bc.impl.JpsFlexBCState;
 import com.intellij.flex.model.bc.impl.JpsFlexCompilerOptionsImpl;
 import com.intellij.flex.model.run.JpsBCBasedRunnerParameters;
 import com.intellij.flex.model.run.JpsFlashRunConfigurationType;
 import com.intellij.flex.model.run.JpsFlexUnitRunConfigurationType;
 import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jetbrains.annotations.NotNull;
@@ -127,11 +125,14 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
                                                           final BuildDataPaths dataPaths) {
     final List<BuildRootDescriptor> result = new ArrayList<BuildRootDescriptor>();
 
+    final Collection<File> srcRoots = new ArrayList<File>();
+
     for (JpsTypedModuleSourceRoot<JpsSimpleElement<JavaSourceRootProperties>> sourceRoot
       : myBC.getModule().getSourceRoots(JavaSourceRootType.SOURCE)) {
 
       final File root = JpsPathUtil.urlToFile(sourceRoot.getUrl());
       result.add(new FlexSourceRootDescriptor(this, root));
+      srcRoots.add(root);
     }
 
     if (FlexCommonUtils.isFlexUnitBC(myBC)) {
@@ -140,6 +141,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
 
         final File root = JpsPathUtil.urlToFile(sourceRoot.getUrl());
         result.add(new FlexSourceRootDescriptor(this, root));
+        srcRoots.add(root);
       }
     }
 
@@ -152,7 +154,57 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
       }
     }
 
+    final BuildConfigurationNature nature = myBC.getNature();
+
+    if (nature.isWebPlatform() && nature.isApp() && myBC.isUseHtmlWrapper() && !myBC.getWrapperTemplatePath().isEmpty()) {
+      addIfNotUnderRoot(result, new File(myBC.getWrapperTemplatePath()), srcRoots);
+    }
+
+    if (FlexCommonUtils.canHaveRLMsAndRuntimeStylesheets(myBC)) {
+      for (String cssPath : myBC.getCssFilesToCompile()) {
+        if (!cssPath.isEmpty()) {
+          addIfNotUnderRoot(result, new File(cssPath), srcRoots);
+        }
+      }
+    }
+
+    if (!myBC.getCompilerOptions().getAdditionalConfigFilePath().isEmpty()) {
+      addIfNotUnderRoot(result, new File(myBC.getCompilerOptions().getAdditionalConfigFilePath()), srcRoots);
+    }
+
+    if (nature.isApp()) {
+      if (nature.isDesktopPlatform()) {
+        addIfAirDescriptorPathIfCustom(result, myBC.getAirDesktopPackagingOptions(), srcRoots);
+      }
+      else if (nature.isMobilePlatform()) {
+        if (myBC.getAndroidPackagingOptions().isEnabled()) {
+          addIfAirDescriptorPathIfCustom(result, myBC.getAndroidPackagingOptions(), srcRoots);
+        }
+        if (myBC.getIosPackagingOptions().isEnabled()) {
+          addIfAirDescriptorPathIfCustom(result, myBC.getIosPackagingOptions(), srcRoots);
+        }
+      }
+    }
+
     return result;
+  }
+
+  private void addIfNotUnderRoot(final List<BuildRootDescriptor> descriptors, final File file, final Collection<File> roots) {
+    for (File root : roots) {
+      if (FileUtil.isAncestor(root, file, false)) {
+        return;
+      }
+    }
+
+    descriptors.add(new FlexSourceRootDescriptor(this, file));
+  }
+
+  private void addIfAirDescriptorPathIfCustom(final List<BuildRootDescriptor> descriptors,
+                                              final JpsAirPackagingOptions packagingOptions,
+                                              final Collection<File> srcRoots) {
+    if (!packagingOptions.isUseGeneratedDescriptor() && !packagingOptions.getCustomDescriptorPath().isEmpty()) {
+      addIfNotUnderRoot(descriptors, new File(packagingOptions.getCustomDescriptorPath()), srcRoots);
+    }
   }
 
   @Nullable
