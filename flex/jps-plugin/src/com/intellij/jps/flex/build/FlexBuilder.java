@@ -82,7 +82,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
 
     final List<JpsFlexBuildConfiguration> bcsToCompile = getAllBCsToCompile(mainBC);
 
-    if (!FlexCommonUtils.isFlexUnitBC(mainBC)) {
+    if (!FlexCommonUtils.isFlexUnitBC(mainBC) && !isFlexmojosBCWithUpdatedConfigFile(mainBC)) {
       if (dirtyFilePaths.isEmpty()) {
         boolean outputFilesExist = true;
 
@@ -132,6 +132,20 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
           return;
       }
     }
+  }
+
+  /**
+   * This is a hacky workaround, needed because IDEA doesn't report files changed under .idea folder as dirty
+   */
+  private static boolean isFlexmojosBCWithUpdatedConfigFile(final JpsFlexBuildConfiguration bc) {
+    final String configFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
+    if (configFilePath.isEmpty() || !configFilePath.contains("/.idea/flexmojos/")) {
+      return false;
+    }
+
+    final File configFile = new File(configFilePath);
+    final File outputFile = new File(bc.getActualOutputFilePath());
+    return configFile.lastModified() > outputFile.lastModified();
   }
 
   private static boolean isOnlyWrapperOrDescriptorFilesDirty(final JpsFlexBuildConfiguration bc, final Collection<String> dirtyFilePaths) {
