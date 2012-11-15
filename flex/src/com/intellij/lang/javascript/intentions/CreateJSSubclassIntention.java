@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.intentions;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
+import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSBundle;
@@ -36,10 +37,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
   private @NonNls static final String IMPL_SUFFIX = "Impl";
@@ -144,7 +142,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     final String templateName;
     final PsiDirectory targetDirectory;
     final Collection<String> interfaces;
-    final Map<String, String> templateAttributes;
+    final Map<String, Object> templateAttributes;
 
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       className = suggestSubclassName(jsClass.getName());
@@ -169,7 +167,12 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
                                        false,
                                        defaultTemplateName,
                                        jsClass,
-                                       JSBundle.message("choose.super.class.title"));
+                                       JSBundle.message("choose.super.class.title"), new Computable<List<FileTemplate>>() {
+        @Override
+        public List<FileTemplate> compute() {
+          return CreateClassOrInterfaceFix.getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS);
+        }
+      });
       CustomVariablesStep customVariablesStep = new CustomVariablesStep(model);
       CreateFlashClassWizard w = new CreateFlashClassWizard(JSBundle.message("new.actionscript.class.dialog.title"),
                                                             project, model, mainStep, customVariablesStep);
@@ -183,7 +186,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
       templateName = model.getTemplateName();
       targetDirectory = model.getTargetDirectory();
       interfaces = model.getInterfacesFqns();
-      templateAttributes = model.getTemplateAttributes();
+      templateAttributes = new HashMap<String, Object>(model.getTemplateAttributes());
     }
 
     JSClass createdClass = CreateClassOrInterfaceFix

@@ -77,7 +77,7 @@ public class NewFlexComponentDialog extends CreateFileFromTemplateDialog {
   private void fillTemplates(String toSelect) {
     myKindCombo.clear();
     for (FileTemplate fileTemplate : CreateClassOrInterfaceFix
-      .getApplicableTemplates(CreateClassOrInterfaceFix.FLEX_TEMPLATES_EXTENSIONS)) {
+      .getApplicableTemplates(CreateFlexComponentFix.FLEX_TEMPLATES_EXTENSIONS)) {
       String templateName = fileTemplate.getName();
       String shortName = CreateClassOrInterfaceFix.getTemplateShortName(templateName);
       Icon icon = FileTypeManager.getInstance().getFileTypeByExtension(fileTemplate.getExtension()).getIcon();

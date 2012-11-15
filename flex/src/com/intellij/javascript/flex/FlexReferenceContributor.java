@@ -18,6 +18,7 @@ import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinIntention;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
@@ -130,14 +131,19 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
                 return LocalQuickFix.EMPTY_ARRAY;
               }
 
-              CreateClassOrInterfaceFix action = new CreateClassOrInterfaceFix(value, null, element);
-              action.setCreatedClassFqnConsumer(new Consumer<String>() {
-                @Override
-                public void consume(final String newFqn) {
-                  ElementManipulators.getManipulator(element).handleContentChange(element, newFqn);
-                }
-              });
-              return new LocalQuickFix[]{action};
+              CreateClassOrInterfaceFix[] fixes = new CreateClassOrInterfaceFix[]{
+                new CreateClassOrInterfaceFix(value, null, element),
+                new CreateFlexComponentFix(value, element)
+              };
+              for (CreateClassOrInterfaceFix fix : fixes) {
+                fix.setCreatedClassFqnConsumer(new Consumer<String>() {
+                  @Override
+                  public void consume(final String newFqn) {
+                    ElementManipulators.getManipulator(element).handleContentChange(element, newFqn);
+                  }
+                });
+              }
+              return fixes;
             }
           });
         }
@@ -485,32 +491,37 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
                                      : ((XmlTag)element).getLocalName();
 
 
-        final CreateClassIntentionWithCallback intention;
+        final CreateClassIntentionWithCallback[] intentions;
         if (SKIN_CLASS_ATTR_NAME.equals(tagOrAttrName)) {
-          intention = new CreateFlexSkinIntention(classFqn, element);
+          intentions = new CreateClassIntentionWithCallback[] {new CreateFlexSkinIntention(classFqn, element)};
         }
         else if ("firstView".equals(tagOrAttrName)) {
-          intention = new CreateFlexMobileViewIntentionAndFix(classFqn, element, false);
+          intentions = new CreateClassIntentionWithCallback[] {new CreateFlexMobileViewIntentionAndFix(classFqn, element, false)};
         }
         else {
-          intention = new CreateClassOrInterfaceFix(classFqn, null, element);
+          intentions = new CreateClassIntentionWithCallback[]{
+            new CreateClassOrInterfaceFix(classFqn, null, element),
+            new CreateFlexComponentFix(classFqn, element)
+          };
         }
 
-        intention.setCreatedClassFqnConsumer(new Consumer<String>() {
-          @Override
-          public void consume(final String fqn) {
-            if (!element.isValid()) return;
+        for (CreateClassIntentionWithCallback intention : intentions) {
+          intention.setCreatedClassFqnConsumer(new Consumer<String>() {
+            @Override
+            public void consume(final String fqn) {
+              if (!element.isValid()) return;
 
-            if (element instanceof XmlAttributeValue) {
-              ((XmlAttribute)element.getParent()).setValue(fqn);
+              if (element instanceof XmlAttributeValue) {
+                ((XmlAttribute)element.getParent()).setValue(fqn);
+              }
+              else {
+                ((XmlTag)element).getValue().setText(fqn);
+              }
             }
-            else {
-              ((XmlTag)element).getValue().setText(fqn);
-            }
-          }
-        });
+          });
 
-        QuickFixAction.registerQuickFixAction(info, intention);
+          QuickFixAction.registerQuickFixAction(info, intention);
+        }
       }
     };
 
