@@ -110,7 +110,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
 
       switch (status) {
         case Ok:
-          outputConsumer.registerOutputFile(mainBC.getActualOutputFilePath(), dirtyFilePaths);
+          outputConsumer.registerOutputFile(new File(mainBC.getActualOutputFilePath()), dirtyFilePaths);
           FlexBuilderUtils.performPostCompileActions(context, bc, dirtyFilePaths, outputConsumer);
           context.processMessage(
             new CompilerMessage(FlexBuilderUtils.getCompilerName(bc), BuildMessage.Kind.INFO,

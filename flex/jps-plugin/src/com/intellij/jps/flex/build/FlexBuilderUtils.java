@@ -136,7 +136,7 @@ public class FlexBuilderUtils {
         try {
           final File outputFile = new File(outputDir, wrapperFileName);
           FileUtil.writeToFile(outputFile, fixedText);
-          outputConsumer.registerOutputFile(outputFile.getPath(), Collections.singletonList(file.getPath()));
+          outputConsumer.registerOutputFile(outputFile, Collections.singletonList(file.getPath()));
         }
         catch (IOException e) {
           context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR, FlexCommonBundle
@@ -153,7 +153,7 @@ public class FlexBuilderUtils {
           else {
             FileUtil.copy(file, outputFile);
           }
-          outputConsumer.registerOutputFile(outputFile.getPath(), Collections.singletonList(file.getPath()));
+          outputConsumer.registerOutputFile(outputFile, Collections.singletonList(file.getPath()));
         }
         catch (IOException e) {
           context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR, FlexCommonBundle
@@ -300,7 +300,7 @@ public class FlexBuilderUtils {
 
       final File outputFile = new File(outputFolder, descriptorFileName);
       FileUtil.writeToFile(outputFile, descriptorText);
-      outputConsumer.registerOutputFile(outputFile.getPath(), dirtyFilePaths);
+      outputConsumer.registerOutputFile(outputFile, dirtyFilePaths);
     }
     catch (IOException e) {
       context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR,
@@ -397,7 +397,7 @@ public class FlexBuilderUtils {
     try {
       final File outputFile = new File(outputFolder, descriptorTemplateFile.getName());
       FileUtil.writeToFile(outputFile, content);
-      outputConsumer.registerOutputFile(outputFile.getPath(), Collections.singletonList(descriptorTemplateFile.getPath()));
+      outputConsumer.registerOutputFile(outputFile, Collections.singletonList(descriptorTemplateFile.getPath()));
     }
     catch (IOException e) {
       context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR,

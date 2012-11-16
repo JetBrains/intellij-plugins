@@ -104,8 +104,9 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
                                    final BuildOutputConsumer outputConsumer) {
     try {
       for (String targetPath : targetPaths) {
-        FileUtil.copyContent(file, new File(targetPath));
-        outputConsumer.registerOutputFile(targetPath, Collections.singletonList(file.getPath()));
+        final File targetFile = new File(targetPath);
+        FileUtil.copyContent(file, targetFile);
+        outputConsumer.registerOutputFile(targetFile, Collections.singletonList(file.getPath()));
       }
     }
     catch (IOException e) {
