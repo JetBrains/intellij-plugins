@@ -42,22 +42,15 @@ public class NewActionScriptClassUmlAction extends NewJSClassUmlActionBase {
   @Nullable
   @Override
   protected CreateClassParameters showDialog(Project project, Pair<PsiDirectory, String> dirAndPackage) {
-    final WizardModel model = new WizardModel(dirAndPackage.first, true);
-    MainStep mainStep = new MainStep(model, project, null, true, dirAndPackage.second, null, true, null, dirAndPackage.first,
-                                     JSBundle.message("choose.super.class.title"),
-                                     new Computable<List<FileTemplate>>() {
-                                       @Override
-                                       public List<FileTemplate> compute() {
-                                         return CreateClassOrInterfaceFix
-                                           .getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS);
-                                       }
-                                     });
-    CustomVariablesStep customVariablesStep = new CustomVariablesStep(model);
-    CreateFlashClassWizard w = new CreateFlashClassWizard(JSBundle.message("new.actionscript.class.dialog.title"),
-                                                          project, model, mainStep, customVariablesStep);
-    w.show();
-    if (w.getExitCode() != DialogWrapper.OK_EXIT_CODE) return null;
-    return model;
+    return CreateClassOrInterfaceFix
+      .createAndShow(null, dirAndPackage.first, null, true, dirAndPackage.second, null, JSBundle.message("new.actionscript.class.dialog.title"),
+                     new Computable<List<FileTemplate>>() {
+                       @Override
+                       public List<FileTemplate> compute() {
+                         return CreateClassOrInterfaceFix
+                           .getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS);
+                       }
+                     });
   }
 
   @Nullable

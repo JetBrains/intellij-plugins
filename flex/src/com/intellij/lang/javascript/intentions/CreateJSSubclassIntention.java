@@ -21,6 +21,7 @@ import com.intellij.lang.javascript.ui.newclass.CustomVariablesStep;
 import com.intellij.lang.javascript.ui.newclass.MainStep;
 import com.intellij.lang.javascript.ui.newclass.WizardModel;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
+import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.lang.javascript.validation.fixes.ImplementMethodsFix;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
@@ -158,35 +159,23 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
       templateAttributes = Collections.emptyMap();
     }
     else {
-      final WizardModel model = new WizardModel(jsClass, true);
-      MainStep mainStep = new MainStep(model, project,
-                                       suggestSubclassName(jsClass.getName()),
-                                       true,
-                                       jsPackageStatement.getQualifiedName(),
-                                       jsClass,
-                                       false,
-                                       defaultTemplateName,
-                                       jsClass,
-                                       JSBundle.message("choose.super.class.title"), new Computable<List<FileTemplate>>() {
-        @Override
-        public List<FileTemplate> compute() {
-          return CreateClassOrInterfaceFix.getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS);
-        }
-      });
-      CustomVariablesStep customVariablesStep = new CustomVariablesStep(model);
-      CreateFlashClassWizard w = new CreateFlashClassWizard(JSBundle.message("new.actionscript.class.dialog.title"),
-                                                            project, model, mainStep, customVariablesStep);
-      w.show();
-      if (w.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
-        return;
-      }
+      CreateClassParameters p = CreateClassOrInterfaceFix
+        .createAndShow(defaultTemplateName, jsClass, suggestSubclassName(jsClass.getName()), true, jsPackageStatement.getQualifiedName(),
+                       jsClass, JSBundle.message("new.actionscript.class.dialog.title"), new Computable<List<FileTemplate>>() {
+          @Override
+          public List<FileTemplate> compute() {
+            return CreateClassOrInterfaceFix.getApplicableTemplates(CreateClassOrInterfaceFix.ACTIONSCRIPT_TEMPLATES_EXTENSIONS);
+          }
+        });
 
-      className = model.getClassName();
-      packageName = model.getPackageName();
-      templateName = model.getTemplateName();
-      targetDirectory = model.getTargetDirectory();
-      interfaces = model.getInterfacesFqns();
-      templateAttributes = new HashMap<String, Object>(model.getTemplateAttributes());
+      if (p == null) return;
+
+      className = p.getClassName();
+      packageName = p.getPackageName();
+      templateName = p.getTemplateName();
+      targetDirectory = p.getTargetDirectory();
+      interfaces = p.getInterfacesFqns();
+      templateAttributes = new HashMap<String, Object>(p.getTemplateAttributes());
     }
 
     JSClass createdClass = CreateClassOrInterfaceFix

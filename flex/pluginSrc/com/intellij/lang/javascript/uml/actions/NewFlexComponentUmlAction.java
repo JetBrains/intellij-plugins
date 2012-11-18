@@ -39,15 +39,7 @@ public class NewFlexComponentUmlAction extends NewJSClassUmlActionBase {
 
   @Override
   protected CreateClassParameters showDialog(Project project, Pair<PsiDirectory, String> dirAndPackage) {
-    final WizardModel model = new WizardModel(dirAndPackage.first, true);
-
-    MainStep mainStep = new FlexMainStep(model, dirAndPackage.first, null, dirAndPackage.second, null);
-    CustomVariablesStep customVariablesStep = new CustomVariablesStep(model);
-    CreateFlashClassWizard w = new CreateFlashClassWizard(
-      FlexBundle.message("new.flex.component.dialog.title"), project, model, mainStep, customVariablesStep);
-    w.show();
-    if (w.getExitCode() != DialogWrapper.OK_EXIT_CODE) return null;
-    return model;
+    return CreateFlexComponentFix.createAndShow(null, dirAndPackage.first, null, dirAndPackage.second);
   }
 
   @Nullable

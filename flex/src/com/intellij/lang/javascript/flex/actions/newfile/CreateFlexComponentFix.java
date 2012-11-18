@@ -81,12 +81,19 @@ public class CreateFlexComponentFix extends CreateClassOrInterfaceFix {
 
   @Override
   protected CreateClassParameters createDialog(final String templateName) {
-    final WizardModel model = new WizardModel(myContext, true);
+    return createAndShow(templateName, myContext, myClassNameToCreate, myPackageName);
+  }
 
-    MainStep mainStep = new FlexMainStep(model, myContext, myClassNameToCreate, myPackageName, templateName);
+  public static CreateClassParameters createAndShow(final String templateName,
+                                                     final PsiElement context,
+                                                     final String classNameToCreate,
+                                                     final String packageName) {
+    final WizardModel model = new WizardModel(context, true);
+
+    MainStep mainStep = new FlexMainStep(model, context, classNameToCreate, packageName, templateName);
     CustomVariablesStep customVariablesStep = new CustomVariablesStep(model);
     CreateFlashClassWizard w = new CreateFlashClassWizard(
-      FlexBundle.message("new.flex.component.dialog.title"), myContext.getProject(), model, mainStep, customVariablesStep);
+      FlexBundle.message("new.flex.component.dialog.title"), context.getProject(), model, mainStep, customVariablesStep);
     w.show();
     if (w.getExitCode() != DialogWrapper.OK_EXIT_CODE) return null;
     return model;
