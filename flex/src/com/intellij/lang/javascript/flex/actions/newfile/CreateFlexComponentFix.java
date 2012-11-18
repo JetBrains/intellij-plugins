@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -33,6 +34,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -85,17 +87,24 @@ public class CreateFlexComponentFix extends CreateClassOrInterfaceFix {
   }
 
   public static CreateClassParameters createAndShow(final String templateName,
-                                                     final PsiElement context,
-                                                     final String classNameToCreate,
-                                                     final String packageName) {
+                                                    final PsiElement context,
+                                                    final String classNameToCreate,
+                                                    final String packageName) {
     final WizardModel model = new WizardModel(context, true);
-
-    MainStep mainStep = new FlexMainStep(model, context, classNameToCreate, packageName, templateName);
+    final Ref<CreateFlashClassWizard> w = new Ref<CreateFlashClassWizard>();
+    MainStep mainStep = new FlexMainStep(model, context, classNameToCreate, packageName, templateName) {
+      @Override
+      protected void adjustDialogHeight(final Integer integer) {
+        Dimension dialogSize = w.get().getSize();
+        w.get().setSize(dialogSize.width, dialogSize.height + integer);
+        w.get().repaint();
+      }
+    };
     CustomVariablesStep customVariablesStep = new CustomVariablesStep(model);
-    CreateFlashClassWizard w = new CreateFlashClassWizard(
-      FlexBundle.message("new.flex.component.dialog.title"), context.getProject(), model, mainStep, customVariablesStep);
-    w.show();
-    if (w.getExitCode() != DialogWrapper.OK_EXIT_CODE) return null;
+    w.set(new CreateFlashClassWizard(
+      FlexBundle.message("new.flex.component.dialog.title"), context.getProject(), model, mainStep, customVariablesStep));
+    w.get().show();
+    if (w.get().getExitCode() != DialogWrapper.OK_EXIT_CODE) return null;
     return model;
   }
 
