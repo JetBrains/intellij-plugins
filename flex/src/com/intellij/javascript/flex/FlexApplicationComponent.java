@@ -69,7 +69,7 @@ public class FlexApplicationComponent extends FileTypeFactory implements Applica
   @NonNls public static final String HTTP_WWW_ADOBE_COM_2006_FLEX_CONFIG = "http://www.adobe.com/2006/flex-config";
 
   public static final String[] AIR_VERSIONS =
-    {"1.0", "1.1", "1.5", "1.5.1", "1.5.2", "1.5.3", "2.0", "2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4"};
+    {"1.0", "1.1", "1.5", "1.5.1", "1.5.2", "1.5.3", "2.0", "2.5", "2.6", "2.7", "3.0", "3.1", "3.2", "3.3", "3.4", "3.5"};
 
   @NotNull
   public String getComponentName() {
