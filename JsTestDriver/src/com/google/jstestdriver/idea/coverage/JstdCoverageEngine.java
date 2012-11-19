@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.coverage;
 
 import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
+import com.intellij.codeEditor.printing.ExportToHTMLSettings;
 import com.intellij.coverage.*;
 import com.intellij.coverage.view.CoverageViewExtension;
 import com.intellij.coverage.view.CoverageViewManager;
@@ -10,18 +11,25 @@ import com.intellij.execution.configurations.coverage.CoverageEnabledConfigurati
 import com.intellij.execution.testframework.AbstractTestProxy;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.rt.coverage.data.ClassData;
+import com.intellij.rt.coverage.data.LineData;
+import com.intellij.rt.coverage.data.ProjectData;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mortbay.log.Log;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author Sergey Simonchik
@@ -142,6 +150,76 @@ public class JstdCoverageEngine extends CoverageEngine {
                                                 @NotNull PsiFile sourceFile,
                                                 @NotNull CoverageSuitesBundle suite) {
     return false;
+  }
+
+  @Override
+  public boolean isReportGenerationAvailable(@NotNull Project project,
+                                             @NotNull DataContext dataContext,
+                                             @NotNull CoverageSuitesBundle currentSuite) {
+    return true;
+  }
+
+  @Override
+  public void generateReport(@NotNull Project project,
+                             @NotNull DataContext dataContext,
+                             @NotNull CoverageSuitesBundle currentSuiteBundle) {
+    CoverageReport coverageReport = new CoverageReport();
+    for (CoverageSuite suite : currentSuiteBundle.getSuites()) {
+      ProjectData projectData = suite.getCoverageData(CoverageDataManager.getInstance(project));
+      if (projectData != null) {
+        @SuppressWarnings("unchecked")
+        Map<String, ClassData> classDataMap = projectData.getClasses();
+        for (Map.Entry<String, ClassData> classDataEntry : classDataMap.entrySet()) {
+          String fileName = classDataEntry.getKey();
+          ClassData classData = classDataEntry.getValue();
+          List<CoverageReport.LineHits> lineHitsList = convertClassDataToLineHits(classData);
+          coverageReport.mergeFileReport(fileName, lineHitsList);
+        }
+      }
+    }
+    final ExportToHTMLSettings settings = ExportToHTMLSettings.getInstance(project);
+    final File outputDir = new File(settings.OUTPUT_DIRECTORY);
+    FileUtil.createDirectory(outputDir);
+    String outputFileName = getOutputFileName(currentSuiteBundle);
+    String title = "Coverage Report Generation";
+    try {
+      CoverageSerializationUtils.writeLCOV(coverageReport, new File(outputDir, outputFileName));
+      String url = "http://ltp.sourceforge.net/coverage/lcov.php";
+      Messages.showInfoMessage("<html>Coverage report has been successfully saved as '" + outputFileName +
+                               "' file.<br>Use <a href='" + url + "'>" + url + "</a>" +
+                               " to generate HTML output." +
+                               "</html>", title);
+    }
+    catch (IOException e) {
+      Log.warn("Can not export coverage data", e);
+      Messages.showErrorDialog("Can not generate coverage report: " + e.getMessage(), title);
+    }
+  }
+
+  private static String getOutputFileName(@NotNull CoverageSuitesBundle currentSuitesBundle) {
+    StringBuilder name = new StringBuilder();
+    for (CoverageSuite suite : currentSuitesBundle.getSuites()) {
+      String presentableName = suite.getPresentableName();
+      name.append(presentableName);
+    }
+    name.append(".lcov");
+    return name.toString();
+  }
+
+  private static List<CoverageReport.LineHits> convertClassDataToLineHits(@NotNull ClassData classData) {
+    int lineCount = classData.getLines().length;
+    List<CoverageReport.LineHits> lineHitsList = ContainerUtil.newArrayListWithExpectedSize(lineCount);
+    for (int lineInd = 0; lineInd < lineCount; lineInd++) {
+      LineData lineData = classData.getLineData(lineInd);
+      if (lineData != null) {
+        CoverageReport.LineHits lineHits = new CoverageReport.LineHits(
+          lineData.getLineNumber(),
+          lineData.getHits()
+        );
+        lineHitsList.add(lineHits);
+      }
+    }
+    return lineHitsList;
   }
 
   @Override
