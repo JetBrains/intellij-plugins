@@ -26,8 +26,8 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
+import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -146,36 +146,51 @@ public class AirPackageAction extends DumbAwareAction {
     final Pair<ExternalTask, String> taskAndPackagePath = iterator.next();
     final ExternalTask task = taskAndPackagePath.first;
     final String packagePath = taskAndPackagePath.second;
-    final Runnable onSuccessRunnable = createOnSuccessRunnable(project, iterator, packagePath, new ArrayList<String>());
+    final Consumer<List<String>> onSuccessRunnable =
+      createSuccessConsumer(project, iterator, packagePath, new THashMap<String, List<String>>());
     ExternalTask
       .runInBackground(task, FlexBundle.message("packaging.air.application", PathUtil.getFileName(packagePath)),
                        onSuccessRunnable, createFailureConsumer(project, packagePath, task));
   }
 
-  private static Runnable createOnSuccessRunnable(final Project project,
-                                                  final Iterator<Pair<ExternalTask, String>> iterator,
-                                                  final String createdPackagePath,
-                                                  final Collection<String> allCreatedPackages) {
-    return new Runnable() {
-      public void run() {
-        allCreatedPackages.add(createdPackagePath);
+  private static Consumer<List<String>> createSuccessConsumer(final Project project,
+                                                              final Iterator<Pair<ExternalTask, String>> iterator,
+                                                              final String createdPackagePath,
+                                                              final Map<String, List<String>> packagePathsToWarnings) {
+    return new Consumer<List<String>>() {
+      public void consume(final List<String> messages) {
+        packagePathsToWarnings.put(createdPackagePath, messages);
 
         if (iterator.hasNext()) {
           final Pair<ExternalTask, String> taskAndPackagePath = iterator.next();
           final ExternalTask task = taskAndPackagePath.first;
           final String packagePath = taskAndPackagePath.second;
-          final Runnable onSuccessRunnable = createOnSuccessRunnable(project, iterator, packagePath, allCreatedPackages);
+          final Consumer<List<String>> onSuccessRunnable = createSuccessConsumer(project, iterator, packagePath, packagePathsToWarnings);
           ExternalTask
             .runInBackground(task, FlexBundle.message("packaging.air.application", PathUtil.getFileName(packagePath)),
                              onSuccessRunnable, createFailureConsumer(project, packagePath, task));
         }
         else {
-          final String hrefs = StringUtil.join(allCreatedPackages, new Function<String, String>() {
-            public String fun(final String packagePath) {
-              return "<a href='" + packagePath + "'>" + PathUtil.getFileName(packagePath) + "</a>";
+          final StringBuilder hrefs = new StringBuilder();
+          for (Map.Entry<String, List<String>> entry : packagePathsToWarnings.entrySet()) {
+            final String packagePath = entry.getKey();
+            final List<String> warnings = entry.getValue();
+
+            if (hrefs.length() > 0) {
+              hrefs.append("<br>");
             }
-          }, "<br>");
-          final String message = FlexBundle.message("air.application.created", allCreatedPackages.size(), hrefs);
+
+            hrefs.append("<a href='").append(packagePath).append("'>").append(PathUtil.getFileName(packagePath)).append("</a>");
+
+            if (!warnings.isEmpty()) {
+              hrefs.append("<br>");
+              for (String warning : warnings) {
+                hrefs.append(warning).append("<br>");
+              }
+            }
+          }
+
+          final String message = FlexBundle.message("air.application.created", packagePathsToWarnings.size(), hrefs);
 
           final NotificationListener listener = new NotificationListener() {
             public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {

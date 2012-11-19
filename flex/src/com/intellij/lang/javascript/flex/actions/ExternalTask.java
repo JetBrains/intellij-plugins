@@ -160,7 +160,7 @@ public abstract class ExternalTask {
 
   public static void runInBackground(final ExternalTask task,
                                      final String progressTitle,
-                                     final @Nullable Runnable onSuccess,
+                                     final @Nullable Consumer<List<String>> onSuccess,
                                      final @Nullable Consumer<List<String>> onFailure) {
     ProgressManager.getInstance().run(new Task.Backgroundable(task.myProject, progressTitle, true) {
       public void run(@NotNull final ProgressIndicator indicator) {
@@ -172,7 +172,7 @@ public abstract class ExternalTask {
           if (onSuccess != null) {
             ApplicationManager.getApplication().invokeLater(new Runnable() {
               public void run() {
-                onSuccess.run();
+                onSuccess.consume(task.getMessages());
               }
             });
           }

@@ -17,6 +17,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -333,7 +334,10 @@ public class AirPackageUtil {
                                ? ""
                                : passwords.getKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias());
 
-    return new AdtTask(module.getProject(), bc.getSdk()) {
+    final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
+    final String packageFilePath = outputFolder + "/" + packagingOptions.getPackageFileName() + packageType.getFileExtension();
+
+    return new AdtPackageTask(module.getProject(), bc.getSdk(), packageFilePath) {
       protected void appendAdtOptions(List<String> command) {
         switch (packageType) {
           case AirInstaller:
@@ -378,7 +382,10 @@ public class AirPackageUtil {
                                ? ""
                                : passwords.getKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias());
 
-    return new AdtTask(module.getProject(), bc.getSdk()) {
+    final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
+    final String packageFilePath = outputFolder + "/" + packagingOptions.getPackageFileName() + ".apk";
+
+    return new AdtPackageTask(module.getProject(), bc.getSdk(), packageFilePath) {
       protected void appendAdtOptions(List<String> command) {
         command.add("-package");
         command.add("-target");
@@ -426,7 +433,10 @@ public class AirPackageUtil {
     final String keystorePassword = simulator ? TEMP_KEYSTORE_PASSWORD : passwords.getKeystorePassword(signingOptions.getKeystorePath());
     final String keyPassword = simulator ? null : passwords.getKeyPassword(signingOptions.getKeystorePath(), signingOptions.getKeyAlias());
 
-    return new AdtTask(module.getProject(), bc.getSdk()) {
+    final String outputFolder = PathUtil.getParentPath(bc.getActualOutputFilePath());
+    final String packageFilePath = outputFolder + "/" + packagingOptions.getPackageFileName() + ".ipa";
+
+    return new AdtPackageTask(module.getProject(), bc.getSdk(), packageFilePath) {
       protected void appendAdtOptions(List<String> command) {
         command.add("-package");
 
