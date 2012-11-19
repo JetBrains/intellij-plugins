@@ -12,7 +12,6 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkType;
 import com.intellij.openapi.projectRoots.SdkTypeId;
-import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.ui.ProjectJdksEditor;
 import com.intellij.openapi.roots.ui.configuration.ProjectJdksConfigurable;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
@@ -365,15 +364,15 @@ public class FlexSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton {
       myOriginal.createAddActions(group, parent, updateTree, filter);
     }
 
-    public void doAdd(final SdkType type, final Consumer<Sdk> updateTree) {
-      myOriginal.doAdd(type, updateTree);
+    public void doAdd(JComponent parent, final SdkType type, final Consumer<Sdk> updateTree) {
+      myOriginal.doAdd(parent, type, updateTree);
     }
 
     public void addSdk(final Sdk sdk) {
       myOriginal.addSdk(sdk);
     }
 
-    public void doAdd(final ProjectJdkImpl newSdk, @Nullable final Consumer<Sdk> updateTree) {
+    public void doAdd(final Sdk newSdk, @Nullable final Consumer<Sdk> updateTree) {
       myOriginal.doAdd(newSdk, updateTree);
     }
 
