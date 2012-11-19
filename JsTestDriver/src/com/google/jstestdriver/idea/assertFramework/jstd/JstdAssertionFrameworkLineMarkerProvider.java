@@ -13,6 +13,7 @@ import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
+import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -218,7 +219,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
                                                               executor,
                                                               activeTarget,
                                                               configuration,
-                                                              null);
+                                                              (RunContentDescriptor)null);
     }
     else {
       ProgramRunnerUtil.executeConfiguration(project, configuration, executor);
