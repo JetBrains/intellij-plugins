@@ -38,6 +38,8 @@ public class FlexCompilerProjectConfiguration implements PersistentStateComponen
     USE_FCSH = state.USE_FCSH;
     USE_MXMLC_COMPC = state.USE_MXMLC_COMPC;
 
+    PREFER_ASC_20 = state.PREFER_ASC_20;
+
     //compatibility
     if (USE_FCSH /*&& USE_BUILT_IN_COMPILER*/) {
       USE_FCSH = false;
