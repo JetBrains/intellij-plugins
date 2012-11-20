@@ -23,6 +23,7 @@ import com.intellij.util.SystemProperties;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
+import org.jdom.Namespace;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.incremental.Utils;
@@ -46,6 +47,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FlexCommonUtils {
+
+  public static final String AIR_NAMESPACE_BASE = "http://ns.adobe.com/air/application/";
 
   //keep in sync with OutputLogger.ERROR_PATTERN from BuiltInFlexCompiler project !!!
   public static final Pattern ERROR_PATTERN =
@@ -929,5 +932,59 @@ public class FlexCommonUtils {
       }
     }
     return builder.toString();
+  }
+
+  @Nullable
+  public static String parseAirVersion(final String descriptorFilePath) {
+    if (StringUtil.isEmpty(descriptorFilePath)) return null;
+
+    try {
+      final Document document = JDOMUtil.loadDocument(new File(descriptorFilePath));
+      final Element rootElement = document.getRootElement();
+      if (rootElement != null) {
+        final String localName = rootElement.getName();
+        final Namespace namespace = rootElement.getNamespace();
+        if ("application".equals(localName) && namespace != null && namespace.getURI().startsWith(AIR_NAMESPACE_BASE)) {
+          return namespace.getURI().substring(AIR_NAMESPACE_BASE.length());
+        }
+      }
+    }
+    catch (JDOMException e) {/*unlucky*/}
+    catch (IOException e) {/*unlucky*/}
+
+    return null;
+  }
+
+  public static String getSwfVersionForTargetPlayer(final String targetPlayer) {
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.5") >= 0) return "18";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.4") >= 0) return "17";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.3") >= 0) return "16";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.2") >= 0) return "15";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.1") >= 0) return "14";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11") >= 0) return "13";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "10.3") >= 0) return "12";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "10.2") >= 0) return "11";
+    if (StringUtil.compareVersionNumbers(targetPlayer, "10.1") >= 0) return "10";
+    return "9";
+  }
+
+  public static String getSwfVersionForAirVersion(final String airVersion) {
+    if (StringUtil.compareVersionNumbers(airVersion, "3.5") >= 0) return "18";
+    if (StringUtil.compareVersionNumbers(airVersion, "3.4") >= 0) return "17";
+    if (StringUtil.compareVersionNumbers(airVersion, "3.3") >= 0) return "16";
+    if (StringUtil.compareVersionNumbers(airVersion, "3.2") >= 0) return "15";
+    if (StringUtil.compareVersionNumbers(airVersion, "3.1") >= 0) return "14";
+    if (StringUtil.compareVersionNumbers(airVersion, "3") >= 0) return "13";
+    if (StringUtil.compareVersionNumbers(airVersion, "2.7") >= 0) return "12";
+    if (StringUtil.compareVersionNumbers(airVersion, "2.6") >= 0) return "11";
+    if (StringUtil.compareVersionNumbers(airVersion, "1.5") >= 0) return "10";
+    return "9";
+  }
+
+  public static String getSwfVersionForSdk(final String sdkVersion) {
+    if (StringUtil.compareVersionNumbers(sdkVersion, "4.6") >= 0) return "14";
+    if (StringUtil.compareVersionNumbers(sdkVersion, "4.5") >= 0) return "11";
+    assert false : sdkVersion;
+    return null;
   }
 }

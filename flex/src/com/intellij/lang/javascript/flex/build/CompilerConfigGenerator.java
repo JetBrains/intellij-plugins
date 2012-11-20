@@ -3,12 +3,11 @@ package com.intellij.lang.javascript.flex.build;
 import com.intellij.compiler.CompilerConfiguration;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
-import com.intellij.flex.build.CompilerConfigGeneratorRt;
 import com.intellij.flex.build.FlexCompilerConfigFileUtilBase;
 import com.intellij.flex.model.bc.*;
+import com.intellij.flex.model.sdk.RslUtil;
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
@@ -17,7 +16,6 @@ import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
-import com.intellij.flex.model.sdk.RslUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
@@ -47,8 +45,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class CompilerConfigGenerator {
@@ -143,8 +140,17 @@ public class CompilerConfigGenerator {
     addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
 
     if (StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4.5") >= 0) {
-      final String swfVersion = nature.isWebPlatform() ? CompilerConfigGeneratorRt.getSwfVersionForTargetPlayer(targetPlayer)
-                                                       : CompilerConfigGeneratorRt.getSwfVersionForSdk(mySdk.getVersionString());
+      final String swfVersion;
+      if (nature.isWebPlatform()) {
+        swfVersion = FlexCommonUtils.getSwfVersionForTargetPlayer(targetPlayer);
+      }
+      else {
+        final String airVersion = getAirVersionIfCustomDescriptor(myBC);
+        swfVersion = airVersion != null
+                     ? FlexCommonUtils.getSwfVersionForAirVersion(airVersion)
+                     : FlexCommonUtils.getSwfVersionForSdk(mySdk.getVersionString());
+      }
+
       addOption(rootElement, CompilerOptionInfo.SWF_VERSION_INFO, swfVersion);
     }
 
@@ -170,6 +176,44 @@ public class CompilerConfigGenerator {
     addOption(rootElement, CompilerOptionInfo.FONT_MANAGERS_INFO, fontManagers);
 
     addOption(rootElement, CompilerOptionInfo.STATIC_RSLS_INFO, "false");
+  }
+
+  @Nullable
+  private static String getAirVersionIfCustomDescriptor(final FlexBuildConfiguration bc) {
+    if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
+      final AirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
+      if (!packagingOptions.isUseGeneratedDescriptor()) {
+        return FlexCommonUtils.parseAirVersion(packagingOptions.getCustomDescriptorPath());
+      }
+    }
+    else if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
+      final AndroidPackagingOptions androidOptions = bc.getAndroidPackagingOptions();
+      final IosPackagingOptions iosPackagingOptions = bc.getIosPackagingOptions();
+
+      // if at least one of descriptors is generated - return null
+      if (androidOptions.isEnabled() && androidOptions.isUseGeneratedDescriptor() ||
+        iosPackagingOptions.isEnabled() && iosPackagingOptions.isUseGeneratedDescriptor()) {
+        return null;
+      }
+
+      String androidAirVersion = null;
+      String iosAirVersion = null;
+
+      if (androidOptions.isEnabled() && !androidOptions.isUseGeneratedDescriptor()) {
+        androidAirVersion = FlexCommonUtils.parseAirVersion(androidOptions.getCustomDescriptorPath());
+      }
+
+      if (iosPackagingOptions.isEnabled() && !iosPackagingOptions.isUseGeneratedDescriptor()) {
+        iosAirVersion = FlexCommonUtils.parseAirVersion(iosPackagingOptions.getCustomDescriptorPath());
+      }
+
+      if (androidAirVersion == null) return iosAirVersion;
+      if (iosAirVersion == null) return androidAirVersion;
+
+      // return minimal
+      return StringUtil.compareVersionNumbers(androidAirVersion, iosAirVersion) > 0 ? iosAirVersion : androidAirVersion;
+    }
+    return null;
   }
 
   @Nullable

@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex;
 
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.icons.AllIcons;
 import com.intellij.javaee.ResourceRegistrar;
 import com.intellij.javaee.StandardResourceProvider;
@@ -105,7 +106,7 @@ public class FlexApplicationComponent extends FileTypeFactory implements Applica
   }
 
   private static void registerAirDescriptorSchema(final ResourceRegistrar registrar, final String version) {
-    registrar.addStdResource("http://ns.adobe.com/air/application/" + version,
+    registrar.addStdResource(FlexCommonUtils.AIR_NAMESPACE_BASE + version,
                              "/schemas/AIR_Descriptor." + version + ".xsd",
                              FlexApplicationComponent.class);
   }

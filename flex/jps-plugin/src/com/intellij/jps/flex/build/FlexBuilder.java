@@ -9,6 +9,7 @@ import com.intellij.flex.model.JpsFlexProjectLevelCompilerOptionsExtension;
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
 import com.intellij.flex.model.bc.OutputType;
+import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.model.sdk.JpsFlexSdkType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
@@ -98,8 +99,8 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
           return;
         }
       }
-      else if (mainBC.getNature().isApp() && isOnlyWrapperOrDescriptorFilesDirty(mainBC, dirtyFilePaths)) {
-        LOG.debug("only wrapper or descriptor files dirty");
+      else if (mainBC.getNature().isApp() && isOnlyWrapperFilesDirty(mainBC, dirtyFilePaths)) {
+        LOG.debug("only wrapper files dirty");
         FlexBuilderUtils.performPostCompileActions(context, mainBC, dirtyFilePaths, outputConsumer);
         return;
       }
@@ -148,51 +149,18 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     return configFile.lastModified() > outputFile.lastModified();
   }
 
-  private static boolean isOnlyWrapperOrDescriptorFilesDirty(final JpsFlexBuildConfiguration bc, final Collection<String> dirtyFilePaths) {
-    for (String dirtyFilePath : dirtyFilePaths) {
-      switch (bc.getTargetPlatform()) {
-
-        case Web:
-          if (bc.isUseHtmlWrapper() && !bc.getWrapperTemplatePath().isEmpty()) {
-            if (FileUtil.isAncestor(bc.getWrapperTemplatePath(), dirtyFilePath, true)) {
-              continue;
-            }
-          }
-          break;
-
-        case Desktop:
-          if (!bc.getAirDesktopPackagingOptions().isUseGeneratedDescriptor() &&
-              !bc.getAirDesktopPackagingOptions().getCustomDescriptorPath().isEmpty()) {
-            if (FileUtil.pathsEqual(dirtyFilePath, bc.getAirDesktopPackagingOptions().getCustomDescriptorPath())) {
-              continue;
-            }
-          }
-          break;
-
-        case Mobile:
-          if (bc.getAndroidPackagingOptions().isEnabled() &&
-              !bc.getAndroidPackagingOptions().isUseGeneratedDescriptor() &&
-              !bc.getAndroidPackagingOptions().getCustomDescriptorPath().isEmpty()) {
-            if (FileUtil.pathsEqual(dirtyFilePath, bc.getAndroidPackagingOptions().getCustomDescriptorPath())) {
-              continue;
-            }
-          }
-
-          if (bc.getIosPackagingOptions().isEnabled() &&
-              !bc.getIosPackagingOptions().isUseGeneratedDescriptor() &&
-              !bc.getIosPackagingOptions().getCustomDescriptorPath().isEmpty()) {
-            if (FileUtil.pathsEqual(dirtyFilePath, bc.getIosPackagingOptions().getCustomDescriptorPath())) {
-              continue;
-            }
-          }
-
-          break;
+  private static boolean isOnlyWrapperFilesDirty(final JpsFlexBuildConfiguration bc, final Collection<String> dirtyFilePaths) {
+    if (bc.getTargetPlatform() == TargetPlatform.Web && bc.isUseHtmlWrapper() && !bc.getWrapperTemplatePath().isEmpty()) {
+      for (String dirtyFilePath : dirtyFilePaths) {
+        if (FileUtil.isAncestor(bc.getWrapperTemplatePath(), dirtyFilePath, true)) {
+          continue;
+        }
+        return false;
       }
-
-      return false;
+      return true;
     }
 
-    return true;
+    return false;
   }
 
   private static List<JpsFlexBuildConfiguration> getAllBCsToCompile(final JpsFlexBuildConfiguration bc) {

@@ -89,26 +89,6 @@ public class CompilerConfigGeneratorRt {
     return getOrCreateConfigFile(name, text);
   }
 
-  public static String getSwfVersionForTargetPlayer(final String targetPlayer) {
-    if (StringUtil.compareVersionNumbers(targetPlayer, "11.5") >= 0) return "18";
-    if (StringUtil.compareVersionNumbers(targetPlayer, "11.4") >= 0) return "17";
-    if (StringUtil.compareVersionNumbers(targetPlayer, "11.3") >= 0) return "16";
-    if (StringUtil.compareVersionNumbers(targetPlayer, "11.2") >= 0) return "15";
-    if (StringUtil.compareVersionNumbers(targetPlayer, "11.1") >= 0) return "14";
-    if (StringUtil.compareVersionNumbers(targetPlayer, "11") >= 0) return "13";
-    if (StringUtil.compareVersionNumbers(targetPlayer, "10.3") >= 0) return "12";
-    if (StringUtil.compareVersionNumbers(targetPlayer, "10.2") >= 0) return "11";
-    if (StringUtil.compareVersionNumbers(targetPlayer, "10.1") >= 0) return "10";
-    return "9";
-  }
-
-  public static String getSwfVersionForSdk(final String sdkVersion) {
-    if (StringUtil.compareVersionNumbers(sdkVersion, "4.6") >= 0) return "14";
-    if (StringUtil.compareVersionNumbers(sdkVersion, "4.5") >= 0) return "11";
-    assert false : sdkVersion;
-    return null;
-  }
-
   private String generateConfigFileText() throws IOException {
     final Element rootElement =
       new Element(FlexCompilerConfigFileUtilBase.FLEX_CONFIG, "http://www.adobe.com/2006/flex-config");
@@ -149,8 +129,17 @@ public class CompilerConfigGeneratorRt {
     addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
 
     if (StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4.5") >= 0) {
-      final String swfVersion = nature.isWebPlatform() ? getSwfVersionForTargetPlayer(targetPlayer)
-                                                       : getSwfVersionForSdk(mySdk.getVersionString());
+      final String swfVersion;
+      if (nature.isWebPlatform()) {
+        swfVersion = FlexCommonUtils.getSwfVersionForTargetPlayer(targetPlayer);
+      }
+      else {
+        final String airVersion = getAirVersionIfCustomDescriptor(myBC);
+        swfVersion = airVersion != null
+                     ? FlexCommonUtils.getSwfVersionForAirVersion(airVersion)
+                     : FlexCommonUtils.getSwfVersionForSdk(mySdk.getVersionString());
+      }
+
       addOption(rootElement, CompilerOptionInfo.SWF_VERSION_INFO, swfVersion);
     }
 
@@ -176,6 +165,44 @@ public class CompilerConfigGeneratorRt {
     addOption(rootElement, CompilerOptionInfo.FONT_MANAGERS_INFO, fontManagers);
 
     addOption(rootElement, CompilerOptionInfo.STATIC_RSLS_INFO, "false");
+  }
+
+  @Nullable
+  private static String getAirVersionIfCustomDescriptor(final JpsFlexBuildConfiguration bc) {
+    if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
+      final JpsAirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
+      if (!packagingOptions.isUseGeneratedDescriptor()) {
+        return FlexCommonUtils.parseAirVersion(packagingOptions.getCustomDescriptorPath());
+      }
+    }
+    else if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
+      final JpsAndroidPackagingOptions androidOptions = bc.getAndroidPackagingOptions();
+      final JpsIosPackagingOptions iosPackagingOptions = bc.getIosPackagingOptions();
+
+      // if at least one of descriptors is generated - return null
+      if (androidOptions.isEnabled() && androidOptions.isUseGeneratedDescriptor() ||
+          iosPackagingOptions.isEnabled() && iosPackagingOptions.isUseGeneratedDescriptor()) {
+        return null;
+      }
+
+      String androidAirVersion = null;
+      String iosAirVersion = null;
+
+      if (androidOptions.isEnabled() && !androidOptions.isUseGeneratedDescriptor()) {
+        androidAirVersion = FlexCommonUtils.parseAirVersion(androidOptions.getCustomDescriptorPath());
+      }
+
+      if (iosPackagingOptions.isEnabled() && !iosPackagingOptions.isUseGeneratedDescriptor()) {
+        iosAirVersion = FlexCommonUtils.parseAirVersion(iosPackagingOptions.getCustomDescriptorPath());
+      }
+
+      if (androidAirVersion == null) return iosAirVersion;
+      if (iosAirVersion == null) return androidAirVersion;
+
+      // return minimal
+      return StringUtil.compareVersionNumbers(androidAirVersion, iosAirVersion) > 0 ? iosAirVersion : androidAirVersion;
+    }
+    return null;
   }
 
   @Nullable
