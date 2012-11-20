@@ -13,15 +13,10 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
-* @author Dmitry Avdeev
-*         Date: 9/21/12
-*/
 public class FlexCompilerProjectConfigurable implements SearchableConfigurable, Configurable.NoScroll {
 
   private JPanel myMainPanel;
   private JRadioButton myBuiltInCompilerRadioButton;
-  private JRadioButton myFcshRadioButton;
   private JRadioButton myMxmlcCompcRadioButton;
   private JCheckBox myPreferASC20CheckBox;
 
@@ -44,7 +39,6 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
       }
     };
     myBuiltInCompilerRadioButton.addActionListener(actionListener);
-    myFcshRadioButton.addActionListener(actionListener);
     myMxmlcCompcRadioButton.addActionListener(actionListener);
 
     myParallelCompilationsAmountSpinner
@@ -94,8 +88,7 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
   }
 
   private boolean isImportantModified() {
-    return myConfig.USE_FCSH != myFcshRadioButton.isSelected() ||
-           myConfig.USE_MXMLC_COMPC != myMxmlcCompcRadioButton.isSelected() ||
+    return myConfig.USE_MXMLC_COMPC != myMxmlcCompcRadioButton.isSelected() ||
            myConfig.USE_BUILT_IN_COMPILER != myBuiltInCompilerRadioButton.isSelected() ||
            myConfig.PREFER_ASC_20 != myPreferASC20CheckBox.isSelected() ||
            !myHeapSizeTextField.getText().trim().equals(String.valueOf(myConfig.HEAP_SIZE_MB)) ||
@@ -111,7 +104,6 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
     }
 
     myConfig.USE_BUILT_IN_COMPILER = myBuiltInCompilerRadioButton.isSelected();
-    myConfig.USE_FCSH = myFcshRadioButton.isSelected();
     myConfig.USE_MXMLC_COMPC = myMxmlcCompcRadioButton.isSelected();
     myConfig.PREFER_ASC_20 = myPreferASC20CheckBox.isSelected();
     myConfig.MAX_PARALLEL_COMPILATIONS = (Integer)myParallelCompilationsAmountSpinner.getValue();
@@ -134,7 +126,6 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
 
   public void reset() {
     myBuiltInCompilerRadioButton.setSelected(myConfig.USE_BUILT_IN_COMPILER);
-    myFcshRadioButton.setSelected(myConfig.USE_FCSH);
     myMxmlcCompcRadioButton.setSelected(myConfig.USE_MXMLC_COMPC);
     myPreferASC20CheckBox.setSelected(myConfig.PREFER_ASC_20);
     myParallelCompilationsAmountSpinner.setValue(myConfig.MAX_PARALLEL_COMPILATIONS);

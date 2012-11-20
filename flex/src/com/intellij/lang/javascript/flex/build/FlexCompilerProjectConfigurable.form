@@ -1,162 +1,159 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfigurable">
-  <grid id="27dc6" binding="myMainPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="myMainPanel" layout-manager="GridLayoutManager" row-count="12" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="524" height="317"/>
+      <xy x="20" y="20" width="422" height="372"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
       <vspacer id="7552c">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
-      <grid id="93eba" layout-manager="GridLayoutManager" row-count="6" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
-        <margin top="0" left="0" bottom="0" right="0"/>
+      <component id="1dc59" class="javax.swing.JRadioButton" binding="myMxmlcCompcRadioButton" default-binding="true">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <margin top="2" left="3" bottom="2" right="0"/>
+          <text value="&amp;Mxmlc/compc"/>
+        </properties>
+      </component>
+      <component id="6a821" class="javax.swing.JCheckBox" binding="myPreferASC20CheckBox">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Prefer ActionScript Compiler 2.0 for pure ActionScript build configurations"/>
+        </properties>
+      </component>
+      <vspacer id="f5ae1">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="15"/>
+            <preferred-size width="-1" height="15"/>
+            <maximum-size width="-1" height="15"/>
+          </grid>
+        </constraints>
+      </vspacer>
+      <vspacer id="a39e9">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="15"/>
+            <preferred-size width="-1" height="15"/>
+            <maximum-size width="-1" height="15"/>
+          </grid>
+        </constraints>
+      </vspacer>
+      <component id="441bc" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Compile with:"/>
+        </properties>
+      </component>
+      <component id="b08f4" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="cb1e7"/>
+          <text value="&amp;Compiler heap size:"/>
+        </properties>
+      </component>
+      <component id="cb1e7" class="javax.swing.JTextField" binding="myHeapSizeTextField">
+        <constraints>
+          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="40" height="-1"/>
+          </grid>
+        </constraints>
+        <properties>
+          <horizontalAlignment value="4"/>
+          <text value="512"/>
+        </properties>
+      </component>
+      <component id="7ecc6" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="9" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value=" Mb"/>
+        </properties>
+      </component>
+      <component id="b2632" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="60f64"/>
+          <text value="&amp;VM options:"/>
+        </properties>
+      </component>
+      <component id="60f64" class="com.intellij.ui.RawCommandLineEditor" binding="myVMOptionsEditor">
+        <constraints>
+          <grid row="10" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
-        <clientProperties>
-          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent"/>
-        </clientProperties>
-        <border type="etched" title="Compile with"/>
-        <children>
-          <component id="7a6f2" class="javax.swing.JRadioButton" binding="myFcshRadioButton">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="&amp;Flex Compiler Shell (fcsh)"/>
-              <visible value="false"/>
-            </properties>
-          </component>
-          <component id="1dc59" class="javax.swing.JRadioButton" binding="myMxmlcCompcRadioButton" default-binding="true">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <margin top="2" left="3" bottom="2" right="0"/>
-              <text value="&amp;Mxmlc/compc"/>
-            </properties>
-          </component>
-          <component id="24118" class="javax.swing.JRadioButton" binding="myBuiltInCompilerRadioButton">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="&amp;Built-in compiler shell"/>
-            </properties>
-          </component>
-          <component id="6a821" class="javax.swing.JCheckBox" binding="myPreferASC20CheckBox">
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value="Prefer ActionScript Compiler 2.0 for pure ActionScript build configurations"/>
-            </properties>
-          </component>
-          <vspacer id="f5ae1">
-            <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                <preferred-size width="-1" height="10"/>
-              </grid>
-            </constraints>
-          </vspacer>
-          <vspacer id="a39e9">
-            <constraints>
-              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                <preferred-size width="-1" height="10"/>
-              </grid>
-            </constraints>
-          </vspacer>
-        </children>
-      </grid>
-      <grid id="953b7" layout-manager="GridLayoutManager" row-count="3" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="10" left="6" bottom="0" right="0"/>
+      </component>
+      <component id="e9277" class="javax.swing.JLabel" binding="myParallelCompilationLabel">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <labelFor value="3c7a0"/>
+          <text value="&amp;Parallel compilation with up to "/>
+        </properties>
+      </component>
+      <component id="3c7a0" class="javax.swing.JSpinner" binding="myParallelCompilationsAmountSpinner">
+        <constraints>
+          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="40" height="-1"/>
+          </grid>
         </constraints>
         <properties/>
-        <border type="none"/>
-        <children>
-          <component id="b08f4" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="cb1e7"/>
-              <text value="&amp;Compiler heap size:"/>
-            </properties>
-          </component>
-          <component id="cb1e7" class="javax.swing.JTextField" binding="myHeapSizeTextField">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="40" height="-1"/>
-              </grid>
-            </constraints>
-            <properties>
-              <horizontalAlignment value="4"/>
-              <text value="512"/>
-            </properties>
-          </component>
-          <component id="7ecc6" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value=" Mb"/>
-            </properties>
-          </component>
-          <component id="b2632" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="60f64"/>
-              <text value="&amp;VM options:"/>
-            </properties>
-          </component>
-          <component id="60f64" class="com.intellij.ui.RawCommandLineEditor" binding="myVMOptionsEditor">
-            <constraints>
-              <grid row="2" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties/>
-          </component>
-          <component id="e9277" class="javax.swing.JLabel" binding="myParallelCompilationLabel">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <labelFor value="3c7a0"/>
-              <text value="&amp;Parallel compilation with up to "/>
-            </properties>
-          </component>
-          <component id="3c7a0" class="javax.swing.JSpinner" binding="myParallelCompilationsAmountSpinner">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                <preferred-size width="40" height="-1"/>
-              </grid>
-            </constraints>
-            <properties/>
-          </component>
-          <component id="f8176" class="javax.swing.JLabel" binding="myThreadsOrProcessesLabel">
-            <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-            </constraints>
-            <properties>
-              <text value=" threads"/>
-            </properties>
-          </component>
-          <hspacer id="c8098">
-            <constraints>
-              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-            </constraints>
-          </hspacer>
-        </children>
-      </grid>
+      </component>
+      <component id="f8176" class="javax.swing.JLabel" binding="myThreadsOrProcessesLabel">
+        <constraints>
+          <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value=" threads"/>
+        </properties>
+      </component>
+      <hspacer id="c8098">
+        <constraints>
+          <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </hspacer>
+      <component id="c227c" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Note: mxmlc/compc is used regardless of the selection if external build is enabled."/>
+        </properties>
+      </component>
+      <vspacer id="c3fdf">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+            <minimum-size width="-1" height="10"/>
+            <preferred-size width="-1" height="10"/>
+            <maximum-size width="-1" height="10"/>
+          </grid>
+        </constraints>
+      </vspacer>
+      <component id="24118" class="javax.swing.JRadioButton" binding="myBuiltInCompilerRadioButton">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="2" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="&amp;Built-in compiler shell"/>
+        </properties>
+      </component>
     </children>
   </grid>
   <buttonGroups>
