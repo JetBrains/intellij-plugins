@@ -25,7 +25,7 @@ import java.util.Properties;
 /**
 * User: ksafonov
 */
-public abstract class FlexMainStep extends MainStep {
+public class FlexMainStep extends MainStep {
   private final WizardModel myModel;
 
   public FlexMainStep(final WizardModel model,
@@ -50,11 +50,11 @@ public abstract class FlexMainStep extends MainStep {
       return false;
     }
 
-    if (myDataPanel.isSuperclassFieldEnabled()) {
-      if (!JSUtils.isValidClassName(myDataPanel.getSuperclassFqn(), true)) {
+    if (isSuperclassFieldEnabled()) {
+      if (!JSUtils.isValidClassName(getSuperclassFqn(), true)) {
         return false;
       }
-      if (!(JSResolveUtil.findClassByQName(myDataPanel.getSuperclassFqn(), getSuperclassScope()) instanceof JSClass)) {
+      if (!(JSResolveUtil.findClassByQName(getSuperclassFqn(), getSuperclassScope()) instanceof JSClass)) {
         return false;
       }
     }
@@ -84,7 +84,7 @@ public abstract class FlexMainStep extends MainStep {
                             });
       String[] attributes = FileTemplateUtil.calculateAttributes(template.getText(), new Properties(), true);
       if (ArrayUtil.contains(CreateClassOrInterfaceFix.SUPERCLASS, attributes)) {
-        myModel.setSuperclassFqn(myDataPanel.getSuperclassFqn());
+        myModel.setSuperclassFqn(getSuperclassFqn());
       }
     }
     catch (IOException e) {
