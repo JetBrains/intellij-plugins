@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirDesktopPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.AirPackagingOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.AndroidPackagingOptions;
@@ -49,5 +50,14 @@ public class FlashProjectStructureProblem {
                                null;
     assert tabName != null : packagingOptions;
     return new FlashProjectStructureProblem(errorMessage, location.errorId, tabName, location);
+  }
+
+  public static class FlexUnitOutputFolderProblem extends FlashProjectStructureProblem {
+
+    public static final FlexUnitOutputFolderProblem INSTANCE = new FlexUnitOutputFolderProblem();
+
+    private FlexUnitOutputFolderProblem() {
+      super(FlexBundle.message("flexunit.output.folder.not.set"), "project-output", "", null);
+    }
   }
 }

@@ -157,7 +157,12 @@ public class FlashProjectStructureErrorsDialog extends DialogWrapper {
     ShowSettingsUtil.getInstance().editConfigurable(myProject, configurable, new Runnable() {
       public void run() {
         final Place place;
-        if (moduleRef.isNull()) {
+
+        if (problemRef.get() instanceof FlashProjectStructureProblem.FlexUnitOutputFolderProblem) {
+          place = new Place()
+            .putPath(ProjectStructureConfigurable.CATEGORY, configurable.getProjectConfig());
+        }
+        else if (moduleRef.isNull()) {
           place = new Place()
             .putPath(ProjectStructureConfigurable.CATEGORY, configurable.getModulesConfig());
         }

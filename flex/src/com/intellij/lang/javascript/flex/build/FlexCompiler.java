@@ -601,9 +601,14 @@ public class FlexCompiler implements SourceProcessingCompiler {
       }
 
       if (bc.getOutputFolder().isEmpty()) {
-        errorConsumer.consume(FlashProjectStructureProblem
-                                .createGeneralOptionProblem(bc.getName(), FlexBundle.message("output.folder.not.set"),
-                                                            FlexBCConfigurable.Location.OutputFolder));
+        if (BCUtils.isFlexUnitBC(bc)) {
+          errorConsumer.consume(FlashProjectStructureProblem.FlexUnitOutputFolderProblem.INSTANCE);
+        }
+        else {
+          errorConsumer.consume(FlashProjectStructureProblem
+                                  .createGeneralOptionProblem(bc.getName(), FlexBundle.message("output.folder.not.set"),
+                                                              FlexBCConfigurable.Location.OutputFolder));
+        }
       }
       else if (!FileUtil.isAbsolute(bc.getOutputFolder())) {
         errorConsumer.consume(FlashProjectStructureProblem.createGeneralOptionProblem(bc.getName(), FlexBundle

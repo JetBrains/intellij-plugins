@@ -99,9 +99,12 @@ public class BuildConfigurationProjectStructureElement extends ProjectStructureE
 
     FlexCompiler.checkConfiguration(myModule, myBc, true, new Consumer<FlashProjectStructureProblem>() {
       public void consume(final FlashProjectStructureProblem problem) {
-        PlaceInProjectStructure place =
-          new PlaceInBuildConfiguration(BuildConfigurationProjectStructureElement.this, problem.tabName, problem.locationOnTab);
-        problemsHolder.registerProblem(problem.errorMessage, null, ProjectStructureProblemType.error(problem.errorId), place, null);
+        // actually this if-condition is always true because real model doesn't report FlexUnitOutputFolderProblem
+        if (!(problem instanceof FlashProjectStructureProblem.FlexUnitOutputFolderProblem)) {
+          PlaceInProjectStructure place =
+            new PlaceInBuildConfiguration(BuildConfigurationProjectStructureElement.this, problem.tabName, problem.locationOnTab);
+          problemsHolder.registerProblem(problem.errorMessage, null, ProjectStructureProblemType.error(problem.errorId), place, null);
+        }
       }
     });
   }

@@ -94,9 +94,17 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
 
       ShowSettingsUtil.getInstance().editConfigurable(myModule.getProject(), configurable, new Runnable() {
         public void run() {
-          final Place place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, myBCNme);
-          place.putPath(CompositeConfigurable.TAB_NAME, myProblem.tabName);
-          place.putPath(FlexBCConfigurable.LOCATION_ON_TAB, myProblem.locationOnTab);
+          final Place place;
+
+          if (myProblem instanceof FlashProjectStructureProblem.FlexUnitOutputFolderProblem) {
+            place = new Place()
+              .putPath(ProjectStructureConfigurable.CATEGORY, configurable.getProjectConfig());
+          }
+          else {
+            place = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(myModule, myBCNme)
+              .putPath(CompositeConfigurable.TAB_NAME, myProblem.tabName)
+              .putPath(FlexBCConfigurable.LOCATION_ON_TAB, myProblem.locationOnTab);
+          }
 
           configurable.navigateTo(place, true);
         }
