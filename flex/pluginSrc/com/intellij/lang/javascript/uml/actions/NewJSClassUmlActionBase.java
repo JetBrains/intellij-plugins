@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.uml.actions;
 import com.intellij.diagram.DiagramBuilder;
 import com.intellij.diagram.DiagramNode;
 import com.intellij.diagram.actions.DiagramCreateNewElementAction;
+import com.intellij.ide.util.DirectoryChooserUtil;
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -15,14 +16,20 @@ import com.intellij.openapi.graph.builder.util.GraphViewUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Collection;
 import java.util.List;
 
 public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAction<Object, CreateClassParameters> {
@@ -53,18 +60,39 @@ public abstract class NewJSClassUmlActionBase extends DiagramCreateNewElementAct
   }
 
   @Override
+  @Nullable
   public CreateClassParameters prepare(AnActionEvent e) {
     DiagramBuilder diagramBuilder = getBuilder(e);
     if (diagramBuilder == null) return null;
 
-    Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
-    return showDialog(project, getPackageToCreateIn((FlashUmlDataModel)diagramBuilder.getDataModel()));
+    final Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
+    if (project == null) {
+      return null;
+    }
+
+    Pair<PsiDirectory, String> dirAndPackage = getPackageToCreateIn((FlashUmlDataModel)diagramBuilder.getDataModel());
+    if (dirAndPackage.first == null) {
+      Collection<VirtualFile> dirs =
+        DirectoryIndex.getInstance(project).getDirectoriesByPackageName(dirAndPackage.second, false).findAll();
+      final PsiManager psiManager = PsiManager.getInstance(project);
+      PsiDirectory[] psiDirs = ContainerUtil.map2Array(dirs, PsiDirectory.class, new Function<VirtualFile, PsiDirectory>() {
+        @Override
+        public PsiDirectory fun(final VirtualFile virtualFile) {
+          return psiManager.findDirectory(virtualFile);
+        }
+      });
+      PsiDirectory dir = DirectoryChooserUtil.selectDirectory(project, psiDirs, null, null);
+      if (dir == null) {
+        return null;
+      }
+      dirAndPackage = Pair.create(dir, dirAndPackage.second);
+    }
+    return showDialog(project, dirAndPackage);
   }
 
   @Nullable
   protected abstract CreateClassParameters showDialog(Project project, Pair<PsiDirectory, String> dirAndPackage);
 
-  @Nullable
   private static Pair<PsiDirectory, String> getPackageToCreateIn(FlashUmlDataModel model) {
     final DiagramBuilder builder = model.getBuilder();
 
