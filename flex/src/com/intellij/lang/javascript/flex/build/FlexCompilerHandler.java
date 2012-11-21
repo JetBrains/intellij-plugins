@@ -9,6 +9,7 @@ import com.intellij.flex.FlexCommonUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitAfterCompileTask;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationChangeListener;
@@ -178,6 +179,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     if (compilerManager != null) {
       compilerManager.addBeforeTask(new ValidateFlashConfigurationsPrecompileTask());
       compilerManager.addBeforeTask(new FlexUnitPrecompileTask(myProject));
+      compilerManager.addAfterTask(new FlexUnitAfterCompileTask());
 
       compilerManager.setValidationEnabled(FlexModuleType.getInstance(), false);
       if (PlatformUtils.isFlexIde()) {
@@ -281,7 +283,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     }
   }
 
-  static void deleteTempFlexUnitFiles(final CompileContext context) {
+  public static void deleteTempFlexUnitFiles(final CompileContext context) {
     if (!KEEP_TEMP_FILES) {
       final Collection<String> filesToDelete = context.getUserData(FlexUnitPrecompileTask.FILES_TO_DELETE);
       if (filesToDelete != null) {
@@ -311,13 +313,13 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
   private static void deleteTempFlexConfigFiles(final String projectName) {
     if (KEEP_TEMP_FILES) return;
 
-    final File flexunitDir = new File(FlexUtils.getPathToFlexUnitTempDirectory(projectName));
+    final File flexunitDir = new File(FlexCommonUtils.getPathToFlexUnitTempDirectory(projectName));
     if (flexunitDir.isDirectory() && flexunitDir.list().length == 0) {
       FileUtil.delete(flexunitDir);
     }
 
     final String hash1 = Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()).toUpperCase();
-    final File dir = new File(FlexUtils.getTempFlexConfigsDirPath());
+    final File dir = new File(FlexCommonUtils.getTempFlexConfigsDirPath());
 
     if (!dir.isDirectory()) return;
 

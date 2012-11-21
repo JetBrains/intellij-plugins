@@ -282,7 +282,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
                                                            : FlexUnitRunnerParameters.OutputLogLevel.All.getFlexConstant());
     }
 
-    final File tmpDir = new File(FlexUtils.getPathToFlexUnitTempDirectory(myProject.getName()));
+    final File tmpDir = new File(FlexCommonUtils.getPathToFlexUnitTempDirectory(myProject.getName()));
     boolean ok = true;
     if (tmpDir.isFile()) ok &= FileUtil.delete(tmpDir);
     if (!tmpDir.isDirectory()) ok &= tmpDir.mkdirs();

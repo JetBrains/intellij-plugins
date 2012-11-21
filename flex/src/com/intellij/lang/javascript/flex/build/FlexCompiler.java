@@ -240,8 +240,6 @@ public class FlexCompiler implements SourceProcessingCompiler {
         LOG.error(activeCompilationsNumber + " Flex compilation(s) are not finished!");
       }
 
-      FlexCompilerHandler.deleteTempFlexUnitFiles(context);
-
       if (ApplicationManager.getApplication().isUnitTestMode()) {
         Function<CompilerMessage, String> toString = new Function<CompilerMessage, String>() {
           @Override

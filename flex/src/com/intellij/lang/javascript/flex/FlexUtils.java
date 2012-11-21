@@ -275,13 +275,8 @@ public class FlexUtils {
   public static String getFlexCompilerWorkDirPath(final Project project, final @Nullable Sdk flexSdk) {
     final VirtualFile baseDir = project.getBaseDir();
     return FlexSdkUtils.isFlex2Sdk(flexSdk) || FlexSdkUtils.isFlex3_0Sdk(flexSdk)
-           ? getTempFlexConfigsDirPath() // avoid problems with spaces in temp dir path (fcsh from Flex SDK 2 is not patched)
+           ? FlexCommonUtils.getTempFlexConfigsDirPath() //avoid problems with spaces in temp dir path (fcsh from Flex SDK 2 is not patched)
            : (baseDir == null ? "" : baseDir.getPath());
-  }
-
-  public static String getTempFlexConfigsDirPath() {
-    return FileUtil.toSystemIndependentName(FileUtil.getTempDirectory()) + "/" +
-           ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_');
   }
 
   public static String getPathToMainClassFile(final String mainClassFqn, final Module module) {
@@ -300,11 +295,6 @@ public class FlexUtils {
     }
 
     return "";
-  }
-
-  public static String getPathToFlexUnitTempDirectory(String projectName) {
-    return getTempFlexConfigsDirPath() + "/flexunit-" +
-           Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()).toUpperCase();
   }
 
   public static void removeFileLater(final @NotNull VirtualFile file) {

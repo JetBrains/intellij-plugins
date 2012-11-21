@@ -576,11 +576,12 @@ public class CompilerConfigGenerator {
       final InfoFromConfigFile info =
         FlexCompilerConfigFileUtil.getInfoFromConfigFile(myBC.getCompilerOptions().getAdditionalConfigFilePath());
 
-      final String pathToMainClassFile = myCSS ? myBC.getMainClass()
-                                               : myFlexUnit ? FlexUtils.getPathToFlexUnitTempDirectory(myModule.getProject().getName())
-                                                              + "/" + myBC.getMainClass()
-                                                              + FlexCommonUtils.getFlexUnitLauncherExtension(myBC.getNature())
-                                                            : FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
+      final String pathToMainClassFile = myCSS
+                                         ? myBC.getMainClass()
+                                         : myFlexUnit
+                                           ? FlexCommonUtils.getPathToFlexUnitTempDirectory(myModule.getProject().getName())
+                                             + "/" + myBC.getMainClass() + FlexCommonUtils.getFlexUnitLauncherExtension(myBC.getNature())
+                                           : FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
 
       if (pathToMainClassFile.isEmpty() && info.getMainClass(myModule) == null && !ApplicationManager.getApplication().isUnitTestMode()) {
         throw new IOException(FlexCommonBundle.message("bc.incorrect.main.class", myBC.getMainClass(), myBC.getName(), myModule.getName()));
@@ -754,7 +755,7 @@ public class CompilerConfigGenerator {
   private static VirtualFile getOrCreateConfigFile(final String fileName, final String text) throws IOException {
 
     final VirtualFile existingConfigFile = FlexCompilationManager.refreshAndFindFileInWriteAction(
-      FlexUtils.getTempFlexConfigsDirPath() + "/" + fileName);
+      FlexCommonUtils.getTempFlexConfigsDirPath() + "/" + fileName);
 
     if (existingConfigFile != null && existingConfigFile.isValid() &&
         Arrays.equals(text.getBytes(), existingConfigFile.contentsToByteArray())) {
@@ -770,7 +771,7 @@ public class CompilerConfigGenerator {
           @Override
           public VirtualFile compute() {
             try {
-              final String baseDirPath = FlexUtils.getTempFlexConfigsDirPath();
+              final String baseDirPath = FlexCommonUtils.getTempFlexConfigsDirPath();
               final VirtualFile baseDir = VfsUtil.createDirectories(baseDirPath);
 
               VirtualFile configFile = baseDir.findChild(fileName);
@@ -812,7 +813,7 @@ public class CompilerConfigGenerator {
 
   private static String getLinkReportFilePath(final Module module, final String bcName) {
     final String fileName = getConfigFileName(module, bcName, PlatformUtils.getPlatformPrefix().toLowerCase(), "link-report");
-    return FlexUtils.getTempFlexConfigsDirPath() + "/" + fileName;
+    return FlexCommonUtils.getTempFlexConfigsDirPath() + "/" + fileName;
   }
 
   private static boolean isSourceFileWithPublicDeclaration(final Module module, final VirtualFile file, final String qName) {
