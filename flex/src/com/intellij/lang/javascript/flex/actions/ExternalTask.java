@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.actions;
 
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.actions.airpackage.AdtPackageTask;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageProjectParameters;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
@@ -194,7 +195,10 @@ public abstract class ExternalTask {
       return true;
     }
     else {
-      final String message = messages.isEmpty() ? FlexBundle.message("unexpected.empty.adt.output") : StringUtil.join(messages, "\n");
+      String message = messages.isEmpty() ? FlexBundle.message("unexpected.empty.adt.output") : StringUtil.join(messages, "\n");
+      if (task instanceof AdtPackageTask) {
+        message += "\n\nADT command line:\n" + task.getCommandLine();
+      }
       Messages.showErrorDialog(task.myProject, message, frameTitle);
     }
     return false;
