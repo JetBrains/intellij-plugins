@@ -18,7 +18,10 @@ import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
-import com.intellij.lang.javascript.flex.projectStructure.ui.*;
+import com.intellij.lang.javascript.flex.projectStructure.ui.AirPackagingConfigurableBase;
+import com.intellij.lang.javascript.flex.projectStructure.ui.CompilerOptionsConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.DependenciesConfigurable;
+import com.intellij.lang.javascript.flex.projectStructure.ui.FlexBCConfigurable;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
@@ -336,30 +339,33 @@ public class FlexCompiler implements SourceProcessingCompiler {
   }
 
   static Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> getProblems(final CompileScope scope,
-                                                                                                          final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCsToCompile) {
+                                                                                                       final Collection<Pair<Module, FlexBuildConfiguration>> modulesAndBCsToCompile) {
     final Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> problems =
       new ArrayList<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>>();
 
     for (final Pair<Module, FlexBuildConfiguration> moduleAndBC : modulesAndBCsToCompile) {
+      final Module module = moduleAndBC.first;
+      final FlexBuildConfiguration bc = moduleAndBC.second;
+
       final Consumer<FlashProjectStructureProblem> errorConsumer = new Consumer<FlashProjectStructureProblem>() {
         public void consume(final FlashProjectStructureProblem problem) {
-          problems.add(Trinity.create(moduleAndBC.first, moduleAndBC.second, problem));
+          problems.add(Trinity.create(module, bc, problem));
         }
       };
 
-      checkConfiguration(moduleAndBC.first, moduleAndBC.second, false, errorConsumer);
+      checkConfiguration(module, bc, false, errorConsumer);
 
-      if (moduleAndBC.second.getNature().isMobilePlatform() && moduleAndBC.second.getNature().isApp()) {
+      if (bc.getNature().isMobilePlatform() && bc.getNature().isApp()) {
         final RunConfiguration runConfig = CompileStepBeforeRun.getRunConfiguration(scope);
         if (runConfig instanceof FlashRunConfiguration) {
           final FlashRunnerParameters params = ((FlashRunConfiguration)runConfig).getRunnerParameters();
-          if (moduleAndBC.first.getName().equals(params.getModuleName()) &&
-              moduleAndBC.second.getName().equals(params.getBCName())) {
+          if (module.getName().equals(params.getModuleName()) &&
+              bc.getName().equals(params.getBCName())) {
             if (params.getMobileRunTarget() == AirMobileRunTarget.AndroidDevice) {
-              checkPackagingOptions(moduleAndBC.second.getAndroidPackagingOptions(), errorConsumer);
+              checkPackagingOptions(bc.getAndroidPackagingOptions(), PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
             }
             else if (params.getMobileRunTarget() == AirMobileRunTarget.iOSDevice) {
-              checkPackagingOptions(moduleAndBC.second.getIosPackagingOptions(), errorConsumer);
+              checkPackagingOptions(bc.getIosPackagingOptions(), PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
             }
           }
         }
@@ -775,19 +781,20 @@ public class FlexCompiler implements SourceProcessingCompiler {
     if (bc.getOutputType() != OutputType.Application) return;
 
     if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
-      checkPackagingOptions(bc.getAirDesktopPackagingOptions(), errorConsumer);
+      checkPackagingOptions(bc.getAirDesktopPackagingOptions(), PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
     }
     else if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
       if (bc.getAndroidPackagingOptions().isEnabled()) {
-        checkPackagingOptions(bc.getAndroidPackagingOptions(), errorConsumer);
+        checkPackagingOptions(bc.getAndroidPackagingOptions(), PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
       }
       if (bc.getIosPackagingOptions().isEnabled()) {
-        checkPackagingOptions(bc.getIosPackagingOptions(), errorConsumer);
+        checkPackagingOptions(bc.getIosPackagingOptions(), PathUtil.getParentPath(bc.getActualOutputFilePath()), errorConsumer);
       }
     }
   }
 
   private static void checkPackagingOptions(final AirPackagingOptions packagingOptions,
+                                            final String outputFolderPath,
                                             final Consumer<FlashProjectStructureProblem> errorConsumer) {
     final String device = packagingOptions instanceof AndroidPackagingOptions
                           ? "Android"
@@ -837,17 +844,24 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                                                  AirPackagingConfigurableBase.Location.FilesToPackage));
         }
 
-        if (relPathInPackage.length() == 0) {
+        if (relPathInPackage.isEmpty()) {
           errorConsumer.consume(FlashProjectStructureProblem.createPackagingOptionsProblem(packagingOptions, FlexBundle
             .message("packaging.options.empty.relative.path", device), AirPackagingConfigurableBase.Location.FilesToPackage));
         }
 
-        if (file != null && file.isDirectory() && !fullPath.endsWith("/" + relPathInPackage)) {
-          errorConsumer.consume(FlashProjectStructureProblem
-                                  .createPackagingOptionsProblem(packagingOptions, FlexBundle
-                                    .message("packaging.options.relative.path.not.matches", device,
-                                             FileUtil.toSystemDependentName(relPathInPackage)),
-                                                                 AirPackagingConfigurableBase.Location.FilesToPackage));
+        if (file != null && file.isDirectory()) {
+          if (FileUtil.isAncestor(file.getPath(), outputFolderPath, false)) {
+            errorConsumer.consume(FlashProjectStructureProblem
+                                    .createPackagingOptionsProblem(packagingOptions, FlexBundle
+                                      .message("folder.to.package.includes.output", device, file.getPresentableUrl()),
+                                                                   AirPackagingConfigurableBase.Location.FilesToPackage));
+          }
+          else if (!relPathInPackage.isEmpty() && !fullPath.endsWith("/" + relPathInPackage)) {
+            errorConsumer.consume(
+              FlashProjectStructureProblem.createPackagingOptionsProblem(packagingOptions, FlexBundle
+                .message("packaging.options.relative.path.not.matches", device, FileUtil.toSystemDependentName(relPathInPackage)),
+                                                                         AirPackagingConfigurableBase.Location.FilesToPackage));
+          }
         }
       }
     }
