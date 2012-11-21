@@ -198,7 +198,7 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
 
   @Override
   public void setOutputFolder(@NotNull String outputFolder) {
-    myOutputFolder = outputFolder;
+    myOutputFolder = StringUtil.trimEnd(outputFolder, "/");
   }
 
   @Override
@@ -452,7 +452,7 @@ class FlexBuildConfigurationImpl implements ModifiableFlexBuildConfiguration {
     myName = state.NAME;
     myOptimizeFor = state.OPTIMIZE_FOR;
     myOutputFileName = state.OUTPUT_FILE_NAME;
-    myOutputFolder = state.OUTPUT_FOLDER;
+    myOutputFolder = StringUtil.trimEnd(state.OUTPUT_FOLDER, "/");
     myOutputType = state.OUTPUT_TYPE;
     myPureAs = state.PURE_ACTION_SCRIPT;
     myRLMs = state.RLMS;
