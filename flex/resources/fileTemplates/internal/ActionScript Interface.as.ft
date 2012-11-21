@@ -1,5 +1,5 @@
 #parse("ActionScript File Header.as")
 package ${PACKAGE_NAME}#if (${PACKAGE_NAME} && ${PACKAGE_NAME} != "") #end{
-${Access_modifier} interface ${NAME} #if (${SuperInterfaces} && ${SuperInterfaces} != "")extends #foreach($i in ${SuperInterfaces}) #if ($foreach.count > 1),#end $i #end#end{
+${Access_modifier} interface ${NAME} {
 }
 }

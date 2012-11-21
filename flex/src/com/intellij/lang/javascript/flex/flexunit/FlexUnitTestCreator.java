@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -56,7 +56,7 @@ public class FlexUnitTestCreator implements TestCreator {
       selectedMemberInfos = new JSMemberInfo[0];
     }
     else {
-      final CreateFlexUnitTestDialog dialog = new CreateFlexUnitTestDialog(ModuleUtil.findModuleForPsiElement(jsClass), jsClass);
+      final CreateFlexUnitTestDialog dialog = new CreateFlexUnitTestDialog(ModuleUtilCore.findModuleForPsiElement(jsClass), jsClass);
       dialog.show();
 
       if (dialog.getExitCode() != DialogWrapper.OK_EXIT_CODE) {
@@ -91,7 +91,7 @@ public class FlexUnitTestCreator implements TestCreator {
       }
     };
 
-    CreateClassOrInterfaceFix.createClass(JavaScriptSupportLoader.ACTION_SCRIPT_CLASS_TEMPLATE_NAME, testClassName,
+    CreateClassOrInterfaceFix.createClass(JavaScriptSupportLoader.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, testClassName,
                                           packageName, superClass, Collections.<String>emptyList(), targetDirectory,
                                           CodeInsightBundle.message("intention.create.test"), true, Collections.<String, Object>emptyMap(),
                                           postProcessRunnable);

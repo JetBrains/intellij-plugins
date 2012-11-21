@@ -5,6 +5,7 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ide.wizard.CommitStepException;
 import com.intellij.lang.javascript.JSBundle;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.util.JSUtils;
@@ -41,7 +42,7 @@ public class FlexMainStep extends MainStep {
       }
     });
     myModel = model;
-    setSuperclassLabelText(JSBundle.message("parent.component.label.text"));
+    setSuperclassLabelText(FlexBundle.message("parent.component.label.text"));
   }
 
   @Override

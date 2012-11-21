@@ -16,17 +16,12 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
-import com.intellij.lang.javascript.ui.newclass.CreateFlashClassWizard;
-import com.intellij.lang.javascript.ui.newclass.CustomVariablesStep;
-import com.intellij.lang.javascript.ui.newclass.MainStep;
-import com.intellij.lang.javascript.ui.newclass.WizardModel;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateClassParameters;
 import com.intellij.lang.javascript.validation.fixes.ImplementMethodsFix;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiDirectory;
@@ -136,7 +131,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     if (!(parent instanceof JSPackageStatement)) return;
     final JSPackageStatement jsPackageStatement = (JSPackageStatement)parent;
 
-    final String defaultTemplateName = JavaScriptSupportLoader.ACTION_SCRIPT_CLASS_TEMPLATE_NAME;
+    final String defaultTemplateName = JavaScriptSupportLoader.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME;
 
     final String className;
     final String packageName;

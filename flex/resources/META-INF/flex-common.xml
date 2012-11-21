@@ -109,6 +109,7 @@
     <annotator language="Mxml" implementationClass="com.intellij.javascript.flex.mxml.FlexMxmlColorAnnotator"/>
 
     <internalFileTemplate name="ActionScript Class"/>
+    <internalFileTemplate name="ActionScript Class with Supers"/>
     <internalFileTemplate name="ActionScript Interface"/>
     <internalFileTemplate name="Flex 3 Component"/>
     <internalFileTemplate name="Flex 4 Component"/>
