@@ -38,6 +38,25 @@
       <option name="OTHER" value="false" />
     </context>
   </template>
+  <template name="routeg" value="@app.route('/$ROUTE_NAME$', methods=['GET'])&#10;def $METHOD_NAME$():&#10;    pass" description="Flask route with  'GET' method" toReformat="false" toShortenFQNames="true">
+    <variable name="METHOD_NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="ROUTE_NAME" expression="" defaultValue="METHOD_NAME" alwaysStopAt="true" />
+    <context>
+      <option name="HTML_TEXT" value="false" />
+      <option name="HTML" value="false" />
+      <option name="XSL_TEXT" value="false" />
+      <option name="XML" value="false" />
+      <option name="Python" value="true" />
+      <option name="Django" value="false" />
+      <option name="CSS_PROPERTY_VALUE" value="false" />
+      <option name="CSS_DECLARATION_BLOCK" value="false" />
+      <option name="CSS_RULESET_LIST" value="false" />
+      <option name="CSS" value="false" />
+      <option name="JAVA_SCRIPT" value="false" />
+      <option name="SQL" value="false" />
+      <option name="OTHER" value="false" />
+    </context>
+  </template>
   <template name="routep" value="@app.route('/$ROUTE_NAME$', methods=['POST'])&#10;def $METHOD_NAME$():&#10;    pass" description="Flask route with  'POST' method" toReformat="false" toShortenFQNames="true">
     <variable name="METHOD_NAME" expression="" defaultValue="" alwaysStopAt="true" />
     <variable name="ROUTE_NAME" expression="" defaultValue="METHOD_NAME" alwaysStopAt="true" />
