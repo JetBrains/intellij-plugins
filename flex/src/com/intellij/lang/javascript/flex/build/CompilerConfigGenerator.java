@@ -21,6 +21,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.stubs.JSQualifiedElementIndex;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -45,7 +46,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class CompilerConfigGenerator {
@@ -192,7 +194,7 @@ public class CompilerConfigGenerator {
 
       // if at least one of descriptors is generated - return null
       if (androidOptions.isEnabled() && androidOptions.isUseGeneratedDescriptor() ||
-        iosPackagingOptions.isEnabled() && iosPackagingOptions.isUseGeneratedDescriptor()) {
+          iosPackagingOptions.isEnabled() && iosPackagingOptions.isUseGeneratedDescriptor()) {
         return null;
       }
 
@@ -306,7 +308,9 @@ public class CompilerConfigGenerator {
       if (linkageType == null) continue;
       // resolve default
       if (linkageType == LinkageType.Default) linkageType = myBC.getDependencies().getFrameworkLinkage();
-      if (linkageType == LinkageType.Default) linkageType = FlexCommonUtils.getDefaultFrameworkLinkage(mySdk.getVersionString(), myBC.getNature());
+      if (linkageType == LinkageType.Default) {
+        linkageType = FlexCommonUtils.getDefaultFrameworkLinkage(mySdk.getVersionString(), myBC.getNature());
+      }
       if (myCSS && linkageType == LinkageType.Include) linkageType = LinkageType.Merged;
 
       final CompilerOptionInfo info = linkageType == LinkageType.Merged ? CompilerOptionInfo.LIBRARY_PATH_INFO :
@@ -603,16 +607,22 @@ public class CompilerConfigGenerator {
 
     for (String path : myBC.getCompilerOptions().getFilesToIncludeInSWC()) {
       final VirtualFile fileOrDir = LocalFileSystem.getInstance().findFileByPath(path);
-      if (fileOrDir == null || compilerConfiguration.isExcludedFromCompilation(fileOrDir)) continue;
+      if (fileOrDir == null ||
+          compilerConfiguration.isExcludedFromCompilation(fileOrDir) ||
+          FileTypeManager.getInstance().isFileIgnored(fileOrDir)) {
+        continue;
+      }
 
       if (fileOrDir.isDirectory()) {
-        final VirtualFile srcRoot = fileIndex.getSourceRootForFile(fileOrDir);
+        final VirtualFile srcRoot = fileIndex.getModuleForFile(fileOrDir) == myModule ? fileIndex.getSourceRootForFile(fileOrDir) : null;
         final String baseRelativePath = srcRoot == null ? fileOrDir.getName() : VfsUtilCore.getRelativePath(fileOrDir, srcRoot, '/');
         assert baseRelativePath != null;
 
         VfsUtilCore.visitChildrenRecursively(fileOrDir, new VirtualFileVisitor() {
           @Override
           public boolean visitFile(@NotNull final VirtualFile file) {
+            if (FileTypeManager.getInstance().isFileIgnored(file)) return false;
+
             if (!file.isDirectory() &&
                 !FlexCommonUtils.isSourceFile(file.getName()) &&
                 !compilerConfiguration.isExcludedFromCompilation(file)) {

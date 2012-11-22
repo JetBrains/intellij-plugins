@@ -837,7 +837,8 @@ public class FlexCommonUtils {
   }
 
   @Nullable
-  public static String getPathRelativeToSourceRoot(final JpsModule module, final String path) {
+  public static String getPathRelativeToSourceRoot(final JpsModule module, final String _path) {
+    final String path = FileUtil.toSystemIndependentName(_path);
     for (JpsModuleSourceRoot srcRoot : module.getSourceRoots()) {
       final String rootPath = JpsPathUtil.urlToPath(srcRoot.getUrl());
       if (path.equals(rootPath)) return "";

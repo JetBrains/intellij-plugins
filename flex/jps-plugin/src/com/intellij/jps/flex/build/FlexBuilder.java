@@ -26,6 +26,7 @@ import org.jetbrains.jps.incremental.TargetBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
+import org.jetbrains.jps.indices.IgnoredFileIndex;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsModule;
@@ -246,7 +247,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     final String compilerName = FlexBuilderUtils.getCompilerName(bc);
 
     try {
-      final List<File> configFiles = createConfigFiles(bc);
+      final List<File> configFiles = createConfigFiles(bc, context.getProjectDescriptor().getIgnoredFileIndex());
       final String outputFilePath = bc.getActualOutputFilePath();
 
       if (!ensureCanCreateFile(new File(outputFilePath))) {
@@ -285,9 +286,10 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     context.processMessage(new ProgressMessage(FlexCommonBundle.message("compiling", bc.getName() + postfix)));
   }
 
-  private static List<File> createConfigFiles(final JpsFlexBuildConfiguration bc) throws IOException {
+  private static List<File> createConfigFiles(final JpsFlexBuildConfiguration bc,
+                                              final IgnoredFileIndex ignoredFileIndex) throws IOException {
     final ArrayList<File> configFiles = new ArrayList<File>(2);
-    configFiles.add(CompilerConfigGeneratorRt.getOrCreateConfigFile(bc));
+    configFiles.add(CompilerConfigGeneratorRt.getOrCreateConfigFile(bc, ignoredFileIndex));
 
     final String additionalConfigFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
     if (!bc.isTempBCForCompilation() && !additionalConfigFilePath.isEmpty()) {

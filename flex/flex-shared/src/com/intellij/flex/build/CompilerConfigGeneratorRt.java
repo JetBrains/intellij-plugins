@@ -16,12 +16,14 @@ import com.intellij.util.PairConsumer;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.Processor;
 import com.intellij.util.SystemProperties;
+import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.incremental.Utils;
+import org.jetbrains.jps.indices.IgnoredFileIndex;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.java.compiler.JpsCompilerExcludes;
@@ -51,10 +53,13 @@ public class CompilerConfigGeneratorRt {
   private final boolean myFlexmojos;
   private final JpsFlexModuleOrProjectCompilerOptions myModuleLevelCompilerOptions;
   private final JpsFlexModuleOrProjectCompilerOptions myProjectLevelCompilerOptions;
+  private final IgnoredFileIndex myIgnoredFileIndex;
 
   private CompilerConfigGeneratorRt(final @NotNull JpsFlexBuildConfiguration bc,
                                     final @NotNull JpsFlexModuleOrProjectCompilerOptions moduleLevelCompilerOptions,
-                                    final @NotNull JpsFlexModuleOrProjectCompilerOptions projectLevelCompilerOptions) throws IOException {
+                                    final @NotNull JpsFlexModuleOrProjectCompilerOptions projectLevelCompilerOptions,
+                                    final IgnoredFileIndex ignoredFileIndex) throws IOException {
+    myIgnoredFileIndex = ignoredFileIndex;
     myModule = bc.getModule();
     myBC = bc;
     myFlexUnit = FlexCommonUtils.isFlexUnitBC(myBC);
@@ -68,12 +73,13 @@ public class CompilerConfigGeneratorRt {
     myProjectLevelCompilerOptions = projectLevelCompilerOptions;
   }
 
-  public static File getOrCreateConfigFile(final JpsFlexBuildConfiguration bc) throws IOException {
+  public static File getOrCreateConfigFile(final JpsFlexBuildConfiguration bc, final IgnoredFileIndex ignoredFileIndex) throws IOException {
     final CompilerConfigGeneratorRt generator =
       new CompilerConfigGeneratorRt(bc,
                                     bc.getModule().getProperties().getModuleLevelCompilerOptions(),
                                     JpsFlexProjectLevelCompilerOptionsExtension
-                                      .getProjectLevelCompilerOptions(bc.getModule().getProject()));
+                                      .getProjectLevelCompilerOptions(bc.getModule().getProject()),
+                                    ignoredFileIndex);
     String text = generator.generateConfigFileText();
 
     if (bc.isTempBCForCompilation()) {
@@ -603,17 +609,23 @@ public class CompilerConfigGeneratorRt {
     for (String path : myBC.getCompilerOptions().getFilesToIncludeInSWC()) {
       final File fileOrDir = new File(path);
       if (excludes.isExcluded(fileOrDir)) continue;
+      if (myIgnoredFileIndex.isIgnored(fileOrDir.getName())) continue;
+
+      final String baseRelativePath =
+        StringUtil.notNullize(FlexCommonUtils.getPathRelativeToSourceRoot(myModule, fileOrDir.getPath()), fileOrDir.getName());
 
       if (fileOrDir.isDirectory()) {
-        final String baseRelativePath = StringUtil.notNullize(FlexCommonUtils.getPathRelativeToSourceRoot(myModule, fileOrDir.getPath()),
-                                                              fileOrDir.getName());
-        FileUtil.processFilesRecursively(fileOrDir, new Processor<File>() {
+        processFilesRecursively(fileOrDir, new Processor<File>() {
           public boolean process(final File file) {
+            if (myIgnoredFileIndex.isIgnored(file.getName())) return false;
+
             if (!file.isDirectory() &&
                 !FlexCommonUtils.isSourceFile(file.getName()) &&
                 !excludes.isExcluded(file)) {
               final String relativePath = FileUtil.getRelativePath(fileOrDir, file);
-              final String pathInSwc = baseRelativePath.isEmpty() ? relativePath : baseRelativePath + "/" + relativePath;
+              assert relativePath != null;
+              final String pathInSwc = baseRelativePath.isEmpty() ? relativePath
+                                                                  : baseRelativePath + "/" + relativePath;
               filePathToPathInSwc.put(file.getPath(), pathInSwc);
             }
             return true;
@@ -621,14 +633,14 @@ public class CompilerConfigGeneratorRt {
         });
       }
       else if (fileOrDir.isFile()) {
-        final String pathInSwc =
-          StringUtil.notNullize(FlexCommonUtils.getPathRelativeToSourceRoot(myModule, fileOrDir.getPath()), fileOrDir.getName());
-        filePathToPathInSwc.put(fileOrDir.getPath(), pathInSwc);
+        filePathToPathInSwc.put(fileOrDir.getPath(), baseRelativePath);
       }
     }
 
     for (Map.Entry<String, String> entry : filePathToPathInSwc.entrySet()) {
-      final String value = entry.getValue() + CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR + entry.getKey();
+      final String value = FileUtil.toSystemIndependentName(entry.getValue()) +
+                           CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR +
+                           FileUtil.toSystemIndependentName(entry.getKey());
       addOption(rootElement, CompilerOptionInfo.INCLUDE_FILE_INFO, value);
     }
   }
@@ -765,8 +777,9 @@ public class CompilerConfigGeneratorRt {
     for (JpsTypedModuleSourceRoot srcRoot : myModule.getSourceRoots(JavaSourceRootType.SOURCE)) {
       final File srcFolder = JpsPathUtil.urlToFile(srcRoot.getUrl());
       if (srcFolder.isDirectory()) {
-        FileUtil.processFilesRecursively(srcFolder, new Processor<File>() {
+        processFilesRecursively(srcFolder, new Processor<File>() {
           public boolean process(final File file) {
+            if (myIgnoredFileIndex.isIgnored(file.getName())) return false;
             if (file.isDirectory()) return true;
             if (!FlexCommonUtils.isSourceFile(file.getName())) return true;
             if (excludes.isExcluded(file)) return true;
@@ -811,5 +824,23 @@ public class CompilerConfigGeneratorRt {
     }
 
     return false;
+  }
+
+  /**
+   * The difference from FileUtil.processFilesRecursively() is that if processor returns false children processing is cancelled, but overall processing doesn't stop
+   */
+  private static boolean processFilesRecursively(@NotNull File root, @NotNull Processor<File> processor) {
+    final LinkedList<File> queue = new LinkedList<File>();
+    queue.add(root);
+    while (!queue.isEmpty()) {
+      final File file = queue.removeFirst();
+      if (processor.process(file) && file.isDirectory()) {
+        final File[] children = file.listFiles();
+        if (children != null) {
+          ContainerUtil.addAll(queue, children);
+        }
+      }
+    }
+    return true;
   }
 }
