@@ -21,6 +21,7 @@ import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
+import org.jetbrains.jps.model.java.compiler.JpsCompilerExcludes;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
@@ -47,12 +48,16 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
                     @NotNull final DirtyFilesHolder<BuildRootDescriptor, FlexResourceBuildTarget> holder,
                     @NotNull final BuildOutputConsumer outputConsumer,
                     @NotNull final CompileContext context) throws ProjectBuildException, IOException {
+    final JpsCompilerExcludes excludes =
+      JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(target.getModule().getProject()).getCompilerExcludes();
     final ResourcePatterns patterns = ResourcePatterns.KEY.get(context);
     assert patterns != null;
 
     try {
       holder.processDirtyFiles(new FileProcessor<BuildRootDescriptor, FlexResourceBuildTarget>() {
         public boolean apply(final FlexResourceBuildTarget target, final File file, final BuildRootDescriptor root) throws IOException {
+          if (excludes.isExcluded(file)) return true;
+
           final String relativePath = FileUtil.toSystemIndependentName(FileUtil.getRelativePath(root.getRootFile(), file));
 
           if (target.isTests()) {
