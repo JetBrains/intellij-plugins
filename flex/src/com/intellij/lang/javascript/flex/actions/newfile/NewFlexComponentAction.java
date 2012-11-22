@@ -74,7 +74,9 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
         return Pair.create(FlexSchemaHandler.getDefaultPrefix(namespace), namespace);
       }
     }
+
     String packageName = StringUtil.getPackageName(qName);
-    return Pair.create("local", StringUtil.isEmpty(packageName) ? "*" : packageName + ".*");
+    String namespace = StringUtil.isEmpty(packageName) ? "*" : packageName + ".*";
+    return Pair.create(FlexSchemaHandler.getDefaultPrefix(namespace), namespace);
   }
 }
