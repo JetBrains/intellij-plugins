@@ -139,6 +139,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     final PsiDirectory targetDirectory;
     final Collection<String> interfaces;
     final Map<String, Object> templateAttributes;
+    final JSClass superClass;
 
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       className = suggestSubclassName(jsClass.getName());
@@ -152,6 +153,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
       });
       interfaces = jsClass.isInterface() ? Collections.singletonList(jsClass.getQualifiedName()) : Collections.<String>emptyList();
       templateAttributes = Collections.emptyMap();
+      superClass = jsClass.isInterface() ? null : jsClass;
     }
     else {
       CreateClassParameters p = CreateClassOrInterfaceFix
@@ -169,12 +171,13 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
       packageName = p.getPackageName();
       templateName = p.getTemplateName();
       targetDirectory = p.getTargetDirectory();
+      superClass = CreateClassOrInterfaceFix.calcClass(p.getSuperclassFqn(), element);
       interfaces = p.getInterfacesFqns();
       templateAttributes = new HashMap<String, Object>(p.getTemplateAttributes());
     }
 
     JSClass createdClass = CreateClassOrInterfaceFix
-      .createClass(templateName, className, packageName, jsClass.isInterface() ? null : jsClass, interfaces, targetDirectory,
+      .createClass(templateName, className, packageName, superClass, interfaces, targetDirectory,
                    getTitle(jsClass),
                    true, templateAttributes, new Consumer<JSClass>() {
         @Override
