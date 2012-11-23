@@ -25,8 +25,6 @@ import com.intellij.lang.javascript.flex.projectStructure.ui.FlexBCConfigurable;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
-import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkAdditionalData;
-import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.*;
@@ -37,7 +35,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
@@ -264,27 +261,10 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                                            final boolean builtInCompilerShell) {
     final boolean asc20 = bc.isPureAs() &&
                           FlexCompilerProjectConfiguration.getInstance(module.getProject()).PREFER_ASC_20 &&
-                          containsASC20(bc.getSdk());
+                          FlexCommonUtils.containsASC20(bc.getSdk().getHomePath());
     if (asc20) return new ASC20CompilationTask(module, bc, dependencies);
     if (builtInCompilerShell) return new BuiltInCompilationTask(module, bc, dependencies);
     return new MxmlcCompcCompilationTask(module, bc, dependencies);
-  }
-
-  private static boolean containsASC20(final Sdk sdk) {
-    if (sdk.getSdkType() == FlexmojosSdkType.getInstance()) {
-      final SdkAdditionalData data = sdk.getSdkAdditionalData();
-      if (data instanceof FlexmojosSdkAdditionalData) {
-        for (String path : ((FlexmojosSdkAdditionalData)data).getFlexCompilerClasspath()) {
-          final String fileName = PathUtil.getFileName(path);
-          if (fileName.startsWith("compiler-") && fileName.endsWith(".jar") && new File(path).isFile()) {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
-
-    return new File(sdk.getHomePath() + "/lib/compiler.jar").isFile();
   }
 
   @SuppressWarnings("ConstantConditions") // already checked in validateConfiguration()

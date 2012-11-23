@@ -5,12 +5,14 @@ import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.build.CompilerConfigGeneratorRt;
 import com.intellij.flex.build.FlexBuildTarget;
 import com.intellij.flex.build.FlexBuildTargetType;
+import com.intellij.flex.model.JpsFlexCompilerProjectExtension;
 import com.intellij.flex.model.JpsFlexProjectLevelCompilerOptionsExtension;
 import com.intellij.flex.model.bc.JpsFlexBuildConfiguration;
 import com.intellij.flex.model.bc.JpsFlexCompilerOptions;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.flex.model.sdk.JpsFlexSdkType;
+import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -313,7 +315,12 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     final JpsSdk<?> sdk = bc.getSdk();
     assert sdk != null;
 
-    final List<String> compilerCommand = getMxmlcCompcCommand(bc.getModule().getProject(), sdk, app);
+    final boolean asc20 = bc.isPureAs() &&
+                          JpsFlexCompilerProjectExtension.getInstance(bc.getModule().getProject()).PREFER_ASC_20 &&
+                          FlexCommonUtils.containsASC20(sdk.getHomePath());
+
+    final List<String> compilerCommand = asc20 ? getASC20Command(bc.getModule().getProject(), sdk, app)
+                                               : getMxmlcCompcCommand(bc.getModule().getProject(), sdk, app);
     final List<String> command = buildCommand(compilerCommand, configFiles, bc);
 
     final ProcessBuilder processBuilder = new ProcessBuilder(command);
@@ -324,7 +331,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
       final Process process = processBuilder.start();
 
       final FlexCompilerProcessHandler processHandler =
-        new FlexCompilerProcessHandler(context, process, compilerName, StringUtil.join(command, " "));
+        new FlexCompilerProcessHandler(context, process, asc20, compilerName, StringUtil.join(command, " "));
       processHandler.startNotify();
       processHandler.waitFor();
 
@@ -337,6 +344,16 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
       context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.ERROR, e.getMessage()));
       return Status.Failed;
     }
+  }
+
+  private static List<String> getASC20Command(final JpsProject project, final JpsSdk<?> flexSdk, final boolean isApp) {
+    final String mainClass = isApp ? "com.adobe.flash.compiler.clients.MXMLC" : "com.adobe.flash.compiler.clients.COMPC";
+
+    final String additionalClasspath = flexSdk.getSdkType() == JpsFlexmojosSdkType.INSTANCE
+                                       ? null
+                                       : FileUtil.toSystemDependentName(flexSdk.getHomePath() + "/lib/compiler.jar");
+
+    return FlexCommonUtils.getCommandLineForSdkTool(project, flexSdk, additionalClasspath, mainClass);
   }
 
   private static List<String> getMxmlcCompcCommand(final JpsProject project, final JpsSdk<?> flexSdk, final boolean isApp) {

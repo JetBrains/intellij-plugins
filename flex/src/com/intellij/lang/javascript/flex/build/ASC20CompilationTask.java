@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
@@ -9,7 +10,6 @@ import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.text.StringTokenizer;
@@ -132,13 +132,14 @@ public class ASC20CompilationTask extends FlexCompilationTask {
       final int index = message.indexOf(": ");
       final String usefulMessage = message.substring(index);
 
-      final Pair<String, Integer> urlAndLine = getUrlAndLine(myPreviousUnreportedMessage);
-      if (urlAndLine == null) {
+      final Pair<String, Integer> sourcePathAndLine = FlexCommonUtils.getSourcePathAndLineFromASC20Message(myPreviousUnreportedMessage);
+      if (sourcePathAndLine == null) {
         printPreviousLine(compilationManager);
         compilationManager.addMessage(this, category, usefulMessage, null, -1, -1);
       }
       else {
-        compilationManager.addMessage(this, category, usefulMessage, urlAndLine.first, urlAndLine.second, -1);
+        compilationManager
+          .addMessage(this, category, usefulMessage, VfsUtilCore.pathToUrl(sourcePathAndLine.first), sourcePathAndLine.second, -1);
       }
 
       myPreviousUnreportedMessage = null;
@@ -149,27 +150,6 @@ public class ASC20CompilationTask extends FlexCompilationTask {
     myPreviousUnreportedMessage = message;
 
     return true;
-  }
-
-  @Nullable
-  private static Pair<String, Integer> getUrlAndLine(final @Nullable String message) {
-    if (message == null) return null;
-
-    final int index = message.lastIndexOf(':');
-    if (index <= 0) return null;
-
-    final String filePath = message.substring(0, index);
-    final String lineNumber = message.substring(index + 1);
-
-    try {
-      final int line = Integer.parseInt(lineNumber);
-      if (new File(filePath).isFile()) {
-        return Pair.create(VfsUtilCore.pathToUrl(FileUtil.toSystemIndependentName(filePath)), line);
-      }
-    }
-    catch (NumberFormatException e) {/*unlucky*/}
-
-    return null;
   }
 
   private void printPreviousLine(final FlexCompilationManager compilationManager) {

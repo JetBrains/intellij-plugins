@@ -988,4 +988,28 @@ public class FlexCommonUtils {
     assert false : sdkVersion;
     return null;
   }
+
+  public static boolean containsASC20(final String sdkHome) {
+    return new File(sdkHome + "/lib/compiler.jar").isFile();
+  }
+
+  public static Pair<String, Integer> getSourcePathAndLineFromASC20Message(final String message) {
+    if (message == null) return null;
+
+    final int index = message.lastIndexOf(':');
+    if (index <= 0) return null;
+
+    final String filePath = message.substring(0, index);
+    final String lineNumber = message.substring(index + 1);
+
+    try {
+      final int line = Integer.parseInt(lineNumber);
+      if (new File(filePath).isFile()) {
+        return Pair.create(FileUtil.toSystemIndependentName(filePath), line);
+      }
+    }
+    catch (NumberFormatException e) {/*unlucky*/}
+
+    return null;
+  }
 }
