@@ -28,6 +28,8 @@ import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.JpsSimpleElement;
 import org.jetbrains.jps.model.java.JavaSourceRootProperties;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
+import org.jetbrains.jps.model.library.JpsLibrary;
+import org.jetbrains.jps.model.library.JpsOrderRootType;
 import org.jetbrains.jps.model.module.JpsTypedModuleSourceRoot;
 import org.jetbrains.jps.model.runConfiguration.JpsRunConfigurationType;
 import org.jetbrains.jps.model.runConfiguration.JpsTypedRunConfiguration;
@@ -152,6 +154,14 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
           result.add(new FlexSourceRootDescriptor(this, new File(dependencyBC.getActualOutputFilePath())));
         }
       }
+      else if (entry instanceof JpsLibraryDependencyEntry) {
+        final JpsLibrary library = ((JpsLibraryDependencyEntry)entry).getLibrary();
+        if (library != null) {
+          for (String rootUrl : library.getRootUrls(JpsOrderRootType.COMPILED)) {
+            result.add(new FlexSourceRootDescriptor(this, JpsPathUtil.urlToFile(rootUrl)));
+          }
+        }
+      }
     }
 
     final BuildConfigurationNature nature = myBC.getNature();
@@ -174,14 +184,14 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
 
     if (nature.isApp()) {
       if (nature.isDesktopPlatform()) {
-        addIfAirDescriptorPathIfCustom(result, myBC.getAirDesktopPackagingOptions(), srcRoots);
+        addAirDescriptorPathIfCustom(result, myBC.getAirDesktopPackagingOptions(), srcRoots);
       }
       else if (nature.isMobilePlatform()) {
         if (myBC.getAndroidPackagingOptions().isEnabled()) {
-          addIfAirDescriptorPathIfCustom(result, myBC.getAndroidPackagingOptions(), srcRoots);
+          addAirDescriptorPathIfCustom(result, myBC.getAndroidPackagingOptions(), srcRoots);
         }
         if (myBC.getIosPackagingOptions().isEnabled()) {
-          addIfAirDescriptorPathIfCustom(result, myBC.getIosPackagingOptions(), srcRoots);
+          addAirDescriptorPathIfCustom(result, myBC.getIosPackagingOptions(), srcRoots);
         }
       }
     }
@@ -199,9 +209,9 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     descriptors.add(new FlexSourceRootDescriptor(this, file));
   }
 
-  private void addIfAirDescriptorPathIfCustom(final List<BuildRootDescriptor> descriptors,
-                                              final JpsAirPackagingOptions packagingOptions,
-                                              final Collection<File> srcRoots) {
+  private void addAirDescriptorPathIfCustom(final List<BuildRootDescriptor> descriptors,
+                                            final JpsAirPackagingOptions packagingOptions,
+                                            final Collection<File> srcRoots) {
     if (!packagingOptions.isUseGeneratedDescriptor() && !packagingOptions.getCustomDescriptorPath().isEmpty()) {
       addIfNotUnderRoot(descriptors, new File(packagingOptions.getCustomDescriptorPath()), srcRoots);
     }
