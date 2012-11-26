@@ -6,8 +6,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import com.intellij.ui.BalloonLayout;
 import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.util.StringBuilderSpinAllocator;
 import org.jetbrains.annotations.Nullable;
@@ -74,8 +75,11 @@ public class DocumentProblemManager {
         if (window == null) {
           window = JOptionPane.getRootFrame();
         }
-        if (window instanceof IdeFrameImpl) {
-          ((IdeFrameImpl)window).getBalloonLayout().add(balloon);
+        if (window instanceof IdeFrame) {
+          BalloonLayout layout = ((IdeFrame)window).getBalloonLayout();
+          if (layout != null) {
+            layout.add(balloon);
+          }
         }
       }
     });
