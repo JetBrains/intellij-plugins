@@ -17,6 +17,7 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class FlexRenameHandler extends RenamePsiElementProcessor {
   @Override
   public void renameElement(final PsiElement element,
                             final String newName,
-                            final UsageInfo[] usages, final RefactoringElementListener listener) throws IncorrectOperationException {
+                            final UsageInfo[] usages, @Nullable RefactoringElementListener listener) throws IncorrectOperationException {
     super.renameElement(element, newName, usages, listener);
     if (element instanceof JSFile) {
       // rename invalidates file, so we need to get actual one
