@@ -4,7 +4,6 @@ import com.intellij.ui.PanelWithAnchor;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -57,7 +56,7 @@ public class SwingUtils {
         return (BufferedImage) image;
       }
     }
-    BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+    BufferedImage image = UIUtil.createImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
     Graphics2D graphics = image.createGraphics();
     graphics.setColor(UIUtil.TRANSPARENT_COLOR);
     graphics.fillRect(0, 0, icon.getIconWidth(), icon.getIconHeight());
