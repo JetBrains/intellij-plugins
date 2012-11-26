@@ -5,10 +5,6 @@ import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.compiler.CompilerMessage;
-import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
@@ -18,7 +14,6 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashMap;
@@ -28,18 +23,11 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FlexCompilerDependenciesCache {
 
   private final Project myProject;
   private final Map<Module, Collection<BCInfo>> myCache = new THashMap<Module, Collection<BCInfo>>();
-
-  private static final Pattern OUTPUT_FILE_IS_UP_TO_DATE =
-    Pattern.compile("(\\[.*\\] )?(.+) is up-to-date and does not have to be rebuilt.");
-
-  private static final String OUTPUT_FILE_TAG = "<flex-config><output>";
 
   private static final String[] TAGS_FOR_FILE_PATHS_IN_CONFIG_FILE =
     {"<flex-config><compiler><external-library-path><path-element>", "<flex-config><compiler><local-font-paths><path-element>",
@@ -112,8 +100,7 @@ public class FlexCompilerDependenciesCache {
     return true;
   }
 
-  public void cacheBC(final CompileContext context, final Module module, final FlexBuildConfiguration bc,
-                      final List<VirtualFile> configFiles) {
+  public void cacheBC(final Module module, final FlexBuildConfiguration bc, final List<VirtualFile> configFiles) {
     Collection<BCInfo> infosForModule = myCache.get(module);
     if (infosForModule == null) {
       infosForModule = new ArrayList<BCInfo>();
@@ -126,7 +113,7 @@ public class FlexCompilerDependenciesCache {
       }
     }
 
-    final VirtualFile outputFile = getOutputFile(context.getMessages(CompilerMessageCategory.INFORMATION), configFiles);
+    final VirtualFile outputFile = FlexCompilationManager.refreshAndFindFileInWriteAction(bc.getActualOutputFilePath());
     if (outputFile == null) return;
 
     final BCInfo bcInfo = new BCInfo(Factory.getCopy(bc), ModuleRootManager.getInstance(module).getSourceRootUrls());
@@ -168,55 +155,6 @@ public class FlexCompilerDependenciesCache {
         return info.myBC.isEqual(bc);
       }
     });
-  }
-
-  @Nullable
-  private static VirtualFile getOutputFile(final CompilerMessage[] messages, final List<VirtualFile> configFiles) {
-    try {
-      VirtualFile configFile = null;
-      String outputFilePath = null;
-
-      for (int i = configFiles.size() - 1; i >= 0; i--) {
-        configFile = configFiles.get(i);
-        outputFilePath = FlexUtils.findXMLElement(configFile.getInputStream(), OUTPUT_FILE_TAG);
-        if (outputFilePath != null) break;
-      }
-
-      if (outputFilePath == null) return null;
-      final VirtualFile outputFile;
-      if (ApplicationManager.getApplication().isUnitTestMode()) {
-        outputFile = LocalFileSystem.getInstance().findFileByPath(outputFilePath);
-      }
-      else {
-        outputFile = FlexCompilationManager.refreshAndFindFileInWriteAction(outputFilePath, configFile.getParent().getPath());
-      }
-      if (outputFile == null) return null;
-
-      for (final CompilerMessage message : messages) {
-        final String text = message.getMessage();
-        final Matcher matcher1 = FlexCompilationManager.OUTPUT_FILE_CREATED_PATTERN.matcher(text);
-        if (matcher1.matches()) {
-          final String outputFilePath1 = matcher1.group(2);
-          final int size;
-          size = Integer.parseInt(matcher1.group(3));
-          if (outputFile.equals(LocalFileSystem.getInstance().findFileByPath(outputFilePath1)) && size == outputFile.getLength()) {
-            return outputFile;
-          }
-        }
-        else {
-          final Matcher matcher2 = OUTPUT_FILE_IS_UP_TO_DATE.matcher(text);
-          if (matcher2.matches()) {
-            final String outputFilePath2 = matcher2.group(2);
-            if (outputFile.equals(LocalFileSystem.getInstance().findFileByPath(outputFilePath2))) {
-              return outputFile;
-            }
-          }
-        }
-      }
-    }
-    catch (NumberFormatException e) {/*ignore*/}
-    catch (IOException e) {/*ignore*/}
-    return null;
   }
 
   private static void addFileDependencies(final BCInfo bcInfo, final VirtualFile configFile, final String workDirPath) {

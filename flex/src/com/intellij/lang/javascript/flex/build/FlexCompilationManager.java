@@ -36,6 +36,7 @@ public class FlexCompilationManager {
   private final FlexCompilerDependenciesCache myCompilerDependenciesCache;
 
   static final Pattern OUTPUT_FILE_CREATED_PATTERN = Pattern.compile("(\\[.*\\] )?(.+) \\(([0-9]+) bytes\\)");
+  private static final String BYTES_WRITTEN_TO = " bytes written to ";
 
   public FlexCompilationManager(final CompileContext context, final Collection<FlexCompilationTask> compilationTasks) {
     myCompileContext = context;
@@ -93,12 +94,28 @@ public class FlexCompilationManager {
       }
 
       if (category == CompilerMessageCategory.INFORMATION) {
-        final Matcher matcher = OUTPUT_FILE_CREATED_PATTERN.matcher(message);
-        if (matcher.matches()) {
-          final String outputFilePath = matcher.group(2);
-          // need to refresh FS in order to notify artifact compiler that Flex output has changed
-          if (!ApplicationManager.getApplication().isUnitTestMode()) {
-            refreshAndFindFileInWriteAction(outputFilePath);
+        final int bytesWrittenIndex = message.indexOf(BYTES_WRITTEN_TO);
+
+        if (bytesWrittenIndex > 0) {
+          // ASC 2.0 sources: MXMLC.bytes_written_to_file_in_seconds_format=${byteCount} bytes written to ${path} in ${seconds} seconds
+          final int inIndex = message.lastIndexOf(" in ");
+          if (inIndex > bytesWrittenIndex) {
+            final String outputFilePath = message.substring(bytesWrittenIndex + BYTES_WRITTEN_TO.length(), inIndex);
+            // need to refresh FS in order to notify artifact compiler that Flex output has changed
+            if (!ApplicationManager.getApplication().isUnitTestMode()) {
+              refreshAndFindFileInWriteAction(outputFilePath);
+            }
+          }
+        }
+        else {
+
+          final Matcher matcher = OUTPUT_FILE_CREATED_PATTERN.matcher(message);
+          if (matcher.matches()) {
+            final String outputFilePath = matcher.group(2);
+            // need to refresh FS in order to notify artifact compiler that Flex output has changed
+            if (!ApplicationManager.getApplication().isUnitTestMode()) {
+              refreshAndFindFileInWriteAction(outputFilePath);
+            }
           }
         }
       }
@@ -163,7 +180,7 @@ public class FlexCompilationManager {
         else {
           //noinspection SynchronizeOnThis
           synchronized (this) {
-            myCompilerDependenciesCache.cacheBC(myCompileContext, task.getModule(), task.getBC(), task.getConfigFiles());
+            myCompilerDependenciesCache.cacheBC(task.getModule(), task.getBC(), task.getConfigFiles());
           }
         }
       }
