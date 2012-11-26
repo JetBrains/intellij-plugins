@@ -132,12 +132,12 @@ public class FlexCompilerConfigFileUtil {
 
         final List<String> fileSpecList = map.get(FILE_SPEC_ELEMENT);
         if (!fileSpecList.isEmpty()) {
-          mainClassPath = fileSpecList.get(0);
+          mainClassPath = fileSpecList.get(0).trim();
         }
 
         final List<String> outputList = map.get(OUTPUT_ELEMENT);
         if (!outputList.isEmpty()) {
-          outputPath = outputList.get(0);
+          outputPath = outputList.get(0).trim();
           if (!FileUtil.isAbsolute(outputPath)) {
             try {
               outputPath =
@@ -152,7 +152,7 @@ public class FlexCompilerConfigFileUtil {
 
         final List<String> targetPlayerList = map.get(TARGET_PLAYER_ELEMENT);
         if (!targetPlayerList.isEmpty()) {
-          targetPlayer = targetPlayerList.get(0);
+          targetPlayer = targetPlayerList.get(0).trim();
         }
       }
       catch (IOException ignore) {/*ignore*/ }
