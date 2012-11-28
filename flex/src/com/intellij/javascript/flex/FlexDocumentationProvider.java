@@ -369,7 +369,8 @@ public class FlexDocumentationProvider extends JSDocumentationProvider {
 
     if (element instanceof JSNamedElementProxy) element = ((JSNamedElementProxy)element).getElement();
     final PsiElement elementToShowDoc = findElementToShowDoc(element);
-    return findUrls(elementToShowDoc);
+    final List<String> urls = findUrls(elementToShowDoc);
+    return urls != null && !urls.isEmpty() ? urls : null;
   }
 
   private static String makeLink(String input) {
