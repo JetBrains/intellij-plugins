@@ -71,6 +71,7 @@ import flash.tools.debugger.VersionException;
 import flash.tools.debugger.Watch;
 import flash.tools.debugger.WatchKind;
 import flash.tools.debugger.concrete.DProtocol;
+import flash.tools.debugger.concrete.DSwfInfo;
 import flash.tools.debugger.events.BreakEvent;
 import flash.tools.debugger.events.ConsoleErrorFault;
 import flash.tools.debugger.events.DebugEvent;
@@ -3385,7 +3386,11 @@ public class DebugCLI implements Runnable, SourceLocator
 
   private List<SourceFile> getSimilarSourceFilesInSwf(final SwfInfo info, final SourceFile file) throws InProgressException {
     if (!info.isProcessingComplete()) {
-      throw new InProgressException();
+      // IDEA-94128. For unknown reason m_fileInfo.getSwfs() may contain "unknown" swf which is marked as not fully loaded,
+      // but in fact containing full list of correct sources. At the same time correct swf doesn't contain sources.
+      if (!(info instanceof DSwfInfo) || !((DSwfInfo) info).hasAllSource()) {
+        throw new InProgressException();
+      }
     }
 
     final List<SourceFile> result = new LinkedList<SourceFile>();
