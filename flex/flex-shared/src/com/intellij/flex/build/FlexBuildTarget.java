@@ -15,10 +15,7 @@ import com.intellij.util.PathUtilRt;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.builders.BuildRootDescriptor;
-import org.jetbrains.jps.builders.BuildRootIndex;
-import org.jetbrains.jps.builders.BuildTarget;
-import org.jetbrains.jps.builders.BuildTargetRegistry;
+import org.jetbrains.jps.builders.*;
 import org.jetbrains.jps.builders.storage.BuildDataPaths;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.indices.IgnoredFileIndex;
@@ -101,7 +98,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     return myBC;
   }
 
-  public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry) {
+  public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry, TargetOutputIndex outputIndex) {
     final ArrayList<BuildTarget<?>> result = new ArrayList<BuildTarget<?>>();
 
     final FlexResourceBuildTargetType type = FlexCommonUtils.isFlexUnitBC(myBC) ? FlexResourceBuildTargetType.TEST

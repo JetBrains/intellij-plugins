@@ -47,7 +47,7 @@ public class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescript
   }
 
   @Override
-  public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry) {
+  public Collection<BuildTarget<?>> computeDependencies(BuildTargetRegistry targetRegistry, TargetOutputIndex outputIndex) {
     return Collections.emptyList();
   }
 
