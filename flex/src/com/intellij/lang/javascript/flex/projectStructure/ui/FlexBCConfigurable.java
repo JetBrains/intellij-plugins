@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
@@ -10,9 +11,8 @@ import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerConfigFileUtil;
 import com.intellij.lang.javascript.flex.build.InfoFromConfigFile;
-import com.intellij.flex.model.bc.CompilerOptionInfo;
-import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.FlexBCConfigurator;
+import com.intellij.lang.javascript.flex.projectStructure.FlexBuildConfigurationsExtension;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -103,7 +103,6 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   private TextFieldWithBrowseButton myOutputFolderField;
   private JLabel myOutputFolderWarning;
 
-  private JPanel myHtmlWrapperPanel;
   private JCheckBox myUseHTMLWrapperCheckBox;
   private JLabel myWrapperFolderLabel;
   private TextFieldWithBrowseButton myWrapperTemplateTextWithBrowse;
@@ -519,10 +518,18 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
     myMainClassLabel.setVisible(showMainClass);
     myMainClassComponent.setVisible(showMainClass);
 
-    myHtmlWrapperPanel.setVisible(targetPlatform == TargetPlatform.Web && outputType == OutputType.Application);
-    myWrapperFolderLabel.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
-    myWrapperTemplateTextWithBrowse.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
-    myCreateHtmlWrapperTemplateButton.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
+    final boolean wrapperApplicable = targetPlatform == TargetPlatform.Web && outputType == OutputType.Application;
+
+    myUseHTMLWrapperCheckBox.setVisible(wrapperApplicable);
+    myWrapperFolderLabel.setVisible(wrapperApplicable);
+    myWrapperTemplateTextWithBrowse.setVisible(wrapperApplicable);
+    myCreateHtmlWrapperTemplateButton.setVisible(wrapperApplicable);
+
+    if (wrapperApplicable) {
+      myWrapperFolderLabel.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
+      myWrapperTemplateTextWithBrowse.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
+      myCreateHtmlWrapperTemplateButton.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
+    }
 
     final boolean canHaveRLMsAndRuntimeStylesheets = BCUtils.canHaveRLMsAndRuntimeStylesheets(outputType, targetPlatform);
 
