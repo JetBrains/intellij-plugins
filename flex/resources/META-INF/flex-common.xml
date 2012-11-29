@@ -242,10 +242,6 @@
         implementation="com.intellij.lang.javascript.flex.build.JSConditionalCompilationDefinitionsProviderImpl"/>
   </extensions>
 
-  <extensions defaultExtensionNs="com.intellij.css">
-    <embeddedCssProvider implementation="com.intellij.javascript.flex.codeinsight.FlexEmbeddedCssProvider"/>
-  </extensions>
-
   <application-components>
     <component>
       <implementation-class>com.intellij.javascript.flex.FlexApplicationComponent</implementation-class>
