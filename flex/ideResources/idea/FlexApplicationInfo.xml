@@ -9,7 +9,9 @@
   <package code="__PACKAGE_CODE__"/>
   <names product="Astella" fullname="JetBrains Astella" script="astella"/>
 
-  <welcome-screen caption-url="/artwork/flexideWelcomeCaption.png" slogan-url="/artwork/flexideDevelopSlogan.png"/>
+  <welcome-screen logo-url="/Logo_welcomeScreen.png"
+                  caption-url="/artwork/flexideWelcomeCaption.png" 
+                  slogan-url="/artwork/flexideDevelopSlogan.png"/>
  
   <update-urls check="http://www.jetbrains.com/updates/updates.xml" patches="http://download.jetbrains.com/astella/"/>
 
