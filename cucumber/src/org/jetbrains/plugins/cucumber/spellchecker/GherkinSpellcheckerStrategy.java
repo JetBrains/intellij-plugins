@@ -31,12 +31,12 @@ public class GherkinSpellcheckerStrategy extends SuppressibleSpellcheckingStrate
   }
 
   @Override
-  public boolean isSuppressedFor(PsiElement element, String name) {
+  public boolean isSuppressedFor(@NotNull PsiElement element, @NotNull String name) {
     return GherkinSuppressionUtil.isSuppressedFor(element, name);
   }
 
   @Override
-  public SuppressIntentionAction[] getSuppressActions(final PsiElement element, final String name) {
+  public SuppressIntentionAction[] getSuppressActions(@NotNull final PsiElement element, @NotNull final String name) {
     return GherkinSuppressionUtil.getDefaultSuppressActions(element, name);
   }
 

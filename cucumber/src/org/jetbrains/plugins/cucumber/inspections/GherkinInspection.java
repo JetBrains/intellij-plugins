@@ -22,7 +22,7 @@ public abstract class GherkinInspection extends LocalInspectionTool implements C
     return GherkinSuppressionUtil.getDefaultSuppressActions(element, getShortName());
   }
 
-  public boolean isSuppressedFor(final PsiElement element) {
+  public boolean isSuppressedFor(@NotNull final PsiElement element) {
     return GherkinSuppressionUtil.isSuppressedFor(element, getID());
   }
 }
