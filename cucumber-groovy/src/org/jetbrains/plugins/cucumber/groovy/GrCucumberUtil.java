@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiMirrorElement;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.groovy.lang.lexer.GroovyTokenTypes;
@@ -96,6 +97,13 @@ public class GrCucumberUtil {
 
   public static boolean isHook(GrMethodCall methodCall) {
     PsiMethod method = methodCall.resolveMethod();
+    if (method instanceof PsiMirrorElement) {
+      final PsiElement prototype = ((PsiMirrorElement)method).getPrototype();
+      if (!(prototype instanceof PsiMethod)) return false;
+
+      method = (PsiMethod)prototype;
+    }
+
     if (method == null) return false;
 
     if (!ArrayUtil.contains(method.getName(), HOOKS)) return false;
