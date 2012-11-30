@@ -1,11 +1,10 @@
 package org.jetbrains.plugins.cucumber.groovy.search
 
+import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.psi.PsiElement
-import org.jetbrains.annotations.Nullable
+import com.intellij.usageView.UsageInfo
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberLightTestCase
-import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 /**
  * @author Max Medvedev
  */
@@ -36,31 +35,12 @@ class GrCucumberFindUsagesTest extends GrCucumberLightTestCase {
 
     myFixture.configureByText("current.${current.ext}", current.text)
 
-    def ref = myFixture.getReferenceAtCaretPosition()
+    def flags = TargetElementUtilBase.ELEMENT_NAME_ACCEPTED | TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED
+    final PsiElement targetElement = TargetElementUtilBase.findTargetElement(myFixture.editor, flags)
+    assert targetElement != null : "Cannot find referenced element";
 
-    PsiElement toSearchFor
-    if (ref != null) {
-      def resolved = ref.resolve()
-      assertNotNull(resolved)
-      toSearchFor = resolved
-    }
-    else {
-      def element = myFixture.elementAtCaret
-      def stepDef = findStepDef(element)
-      assertNotNull(stepDef)
-      toSearchFor = stepDef
-    }
-
-    def usages = myFixture.findUsages(toSearchFor)
+    Collection<UsageInfo> usages = myFixture.findUsages(targetElement)
     assertEquals(count, usages.size())
-
-  }
-
-  @Nullable
-  static GrMethodCall findStepDef(PsiElement atCaret) {
-    PsiElement e
-    for (e = atCaret; e != null && !GrCucumberUtil.isStepDefinition(e); e = e.parent);
-    return e as GrMethodCall
   }
 
   void testStep() {
@@ -127,5 +107,36 @@ Given(~'^there are (\\\\d+) cucumbers$') {int number ->
 ''',
             count: 1)
   }
+
+  void testStepDefinition() {
+    doTest(
+            current: [ext: 'groovy', text: '''\
+this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
+this.metaClass.mixin(cucumber.runtime.groovy.EN)
+
+Given(~'^there a<caret>re (\\\\d+) cucumbers$') {int number ->
+    throw new PendingException()
+}
+'''],
+            feature: '''\
+# language: en
+Feature: Division
+  In order to avoid silly mistakes
+  Cashiers must be able to calculate a fraction
+
+Scenario Outline: eating
+    Given there are <start> cucumbers
+    When I eat <eat> cucumbers
+    Then I should have <left> cucumbers
+
+  Examples:
+    | start | eat | left |
+    | 12    | 5   | 7    |
+    | 20    | 5   | 15   |
+''',
+            count: 1
+    )
+  }
+
 
 }

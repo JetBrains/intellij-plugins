@@ -16,6 +16,7 @@
     <itemPresentationProvider forClass="org.jetbrains.plugins.groovy.lang.psi.impl.statements.expressions.GrMethodCallImpl"
                               implementationClass="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepDefinitionPresentationProvider"/>
     <elementDescriptionProvider implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepDefinitionDescriptionProvider"/>
+    <pom.declarationSearcher implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrCucumberStepDeclarationSearcher"/>
 
   </extensions>
 

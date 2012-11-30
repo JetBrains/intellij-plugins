@@ -5,6 +5,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.pom.PomTarget;
+import com.intellij.pom.PomTargetPsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.PsiSearchHelper;
@@ -18,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
+import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.search.CucumberStepSearchUtil;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 
@@ -27,8 +30,13 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethod
 public class GrCucumberStepDefinitionSearcher implements QueryExecutor<PsiReference, ReferencesSearch.SearchParameters> {
   @Override
   public boolean execute(@NotNull final ReferencesSearch.SearchParameters queryParameters, @NotNull final Processor<PsiReference> consumer) {
-    final PsiElement element = queryParameters.getElementToSearch();
-    if (!GrCucumberUtil.isStepDefinition(element)) return true;
+    final PsiElement element = ApplicationManager.getApplication().runReadAction(new NullableComputable<PsiElement>() {
+      @Override
+      public PsiElement compute() {
+        return getStepDefinition(queryParameters.getElementToSearch());
+      }
+    });
+    if (element == null) return true;
 
     @Nullable
     final String regexp = ApplicationManager.getApplication().runReadAction(new NullableComputable<String>() {
@@ -73,6 +81,21 @@ public class GrCucumberStepDefinitionSearcher implements QueryExecutor<PsiRefere
     short context = UsageSearchContext.IN_STRINGS | UsageSearchContext.IN_CODE;
     PsiSearchHelper instance = PsiSearchHelper.SERVICE.getInstance(element.getProject());
     return instance.processElementsWithWord(processor, searchScope, word, context, true);
+  }
+
+  public static PsiElement getStepDefinition(final PsiElement element) {
+    if (GrCucumberUtil.isStepDefinition(element)) {
+      return element;
+    }
+
+    if (element instanceof PomTargetPsiElement) {
+      final PomTarget target = ((PomTargetPsiElement)element).getTarget();
+      if (target instanceof GrStepDefinition) {
+        return ((GrStepDefinition)target).getElement();
+      }
+    }
+
+    return null;
   }
 
   private static boolean processRefs(PsiElement refOwner, PsiElement toSearchFor, Processor<PsiReference> consumer) {
