@@ -26,6 +26,7 @@
     <orderEntry type="module" module-name="java-impl" />
     <orderEntry type="library" name="cucumber-jvm" level="project" />
     <orderEntry type="module" module-name="cucumber-java" />
+    <orderEntry type="module" module-name="java-indexing-api" />
   </component>
 </module>
 
