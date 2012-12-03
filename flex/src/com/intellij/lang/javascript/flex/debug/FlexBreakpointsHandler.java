@@ -81,8 +81,10 @@ class FlexBreakpointsHandler {
 
           for (OrderEntry entry : fileIndex.getOrderEntriesForFile(file)) {
             final VirtualFile[] classesRoots = entry.getFiles(OrderRootType.CLASSES);
-            if (classesRoots.length > 0 && scope.contains(classesRoots[0])) {
-              return true;
+            for (VirtualFile root : classesRoots) {
+              if (scope.contains(root)) {
+                return true;
+              }
             }
           }
 
