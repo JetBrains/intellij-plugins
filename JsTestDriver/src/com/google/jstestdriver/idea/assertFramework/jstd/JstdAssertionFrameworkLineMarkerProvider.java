@@ -18,7 +18,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -194,14 +193,7 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
 
   @Nullable
   private static JstdRuntimeConfigurationProducer getJstdRuntimeConfigurationProducer() {
-    RuntimeConfigurationProducer[] configurationProducers =
-      ApplicationManager.getApplication().getExtensions(RuntimeConfigurationProducer.RUNTIME_CONFIGURATION_PRODUCER);
-    for (RuntimeConfigurationProducer producer : configurationProducers) {
-      if (producer instanceof JstdRuntimeConfigurationProducer) {
-        return (JstdRuntimeConfigurationProducer) producer;
-      }
-    }
-    return null;
+    return RuntimeConfigurationProducer.getInstance(JstdRuntimeConfigurationProducer.class);
   }
 
   private static void execute(@NotNull Project project,
