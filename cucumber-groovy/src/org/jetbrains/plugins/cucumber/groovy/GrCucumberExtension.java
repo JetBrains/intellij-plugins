@@ -57,7 +57,7 @@ public class GrCucumberExtension implements CucumberJvmExtensionPoint {
       GrStatement[] statements = ((GroovyFile)psiFile).getStatements();
       for (GrStatement statement : statements) {
         if (GrCucumberUtil.isStepDefinition(statement)) {
-          newDefs.add(new GrStepDefinition((GrMethodCall)statement));
+          newDefs.add(GrStepDefinition.getStepDefinition((GrMethodCall)statement));
         }
       }
     }

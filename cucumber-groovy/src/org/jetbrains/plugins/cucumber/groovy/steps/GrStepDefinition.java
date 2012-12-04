@@ -1,6 +1,14 @@
 package org.jetbrains.plugins.cucumber.groovy.steps;
 
+import com.intellij.ide.util.EditSourceUtil;
+import com.intellij.openapi.editor.Document;
+import com.intellij.pom.Navigatable;
+import com.intellij.pom.PomNamedTarget;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock;
@@ -14,13 +22,24 @@ import java.util.List;
 /**
  * @author Max Medvedev
  */
-public class GrStepDefinition extends AbstractStepDefinition {
+public class GrStepDefinition extends AbstractStepDefinition implements PomNamedTarget {
   private String myText;
 
   public GrStepDefinition(GrMethodCall stepDefinition) {
     super(stepDefinition);
 
     myText = GrCucumberUtil.getStepDefinitionPatternText(stepDefinition);
+  }
+
+  public static GrStepDefinition getStepDefinition(final GrMethodCall statement) {
+    return CachedValuesManager.getManager(statement.getProject()).getCachedValue(statement, new CachedValueProvider<GrStepDefinition>() {
+      @Nullable
+      @Override
+      public Result<GrStepDefinition> compute() {
+        final Document document = PsiDocumentManager.getInstance(statement.getProject()).getDocument(statement.getContainingFile());
+        return Result.create(new GrStepDefinition(statement), document);
+      }
+    });
   }
 
   @Override
@@ -43,5 +62,32 @@ public class GrStepDefinition extends AbstractStepDefinition {
   @Override
   public String getElementText() {
     return myText;
+  }
+
+  @Override
+  public String getName() {
+    return myText;
+  }
+
+  @Override
+  public boolean isValid() {
+    final PsiElement element = getElement();
+    return element != null && element.isValid();
+  }
+
+  @Override
+  public void navigate(boolean requestFocus) {
+    Navigatable descr = EditSourceUtil.getDescriptor(getElement());
+    if (descr != null) descr.navigate(requestFocus);
+  }
+
+  @Override
+  public boolean canNavigate() {
+    return EditSourceUtil.canNavigate(getElement());
+  }
+
+  @Override
+  public boolean canNavigateToSource() {
+    return canNavigate();
   }
 }

@@ -20,8 +20,6 @@ import com.intellij.find.findUsages.FindUsagesHandlerFactory;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrReferenceExpression;
 
 /**
  * @author Max Medvedev
@@ -29,14 +27,12 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrRefere
 public class GrStepFindUsageHandlerFactory extends FindUsagesHandlerFactory {
   @Override
   public boolean canFindUsages(@NotNull PsiElement element) {
-    return GrCucumberUtil.isStepDefinition(element) ||
-           element instanceof GrReferenceExpression && GrCucumberUtil.isStepDefinition(element.getParent());
+    return GrCucumberStepDefinitionSearcher.getStepDefinition(element) != null;
   }
 
   @Nullable
   @Override
   public FindUsagesHandler createFindUsagesHandler(@NotNull PsiElement element, boolean forHighlightUsages) {
-    if (element instanceof GrReferenceExpression) element = element.getParent();
     return new FindUsagesHandler(element) {};
   }
 }
