@@ -72,10 +72,7 @@ public class JsErrorMessage {
       return null;
     }
     String pathAndOther = text.substring(prefix.length());
-    int filePathEndInd = pathAndOther.indexOf(':');
-    if (filePathEndInd < 0) {
-      return null;
-    }
+    int filePathEndInd = findFilePathEndColonIndex(pathAndOther, basePath);
     String filePath = pathAndOther.substring(0, filePathEndInd);
     File file = resolveFile(filePath, basePath);
     if (file == null) {
@@ -117,6 +114,22 @@ public class JsErrorMessage {
                               prefix.length(), prefix.length() + textMessageStartInd - 1);
   }
 
+  private static int findFilePathEndColonIndex(@NotNull String str, @NotNull File basePath) {
+    int index = 0;
+    int lastValidIndex = -1;
+    while (true) {
+      index = str.indexOf(':', index + 1);
+      if (index < 0) {
+        break;
+      }
+      File resolvedFile = resolveFile(str.substring(0, index), basePath);
+      if (resolvedFile != null) {
+        lastValidIndex = index;
+      }
+    }
+    return lastValidIndex;
+  }
+
   @Nullable
   private static Integer toInteger(String s) {
     try {
@@ -127,17 +140,23 @@ public class JsErrorMessage {
   }
 
   @Nullable
-  private static File resolveFile(@NotNull String filePath, @NotNull File basePath) {
+  private static File resolveFile(@NotNull String testAndFilePath, @NotNull File basePath) {
     String prefix = "/test/";
-    if (filePath.startsWith(prefix)) {
-      String refinedPath = filePath.substring(prefix.length());
-      File file = new File(basePath, refinedPath);
+    if (testAndFilePath.startsWith(prefix)) {
+      String filePath = testAndFilePath.substring(prefix.length());
+      if (filePath.isEmpty()) {
+        return null;
+      }
+      File absoluteFile = new File(filePath);
+      if (absoluteFile.isAbsolute() && absoluteFile.isFile()) {
+        return absoluteFile;
+      }
+      File file = new File(basePath, filePath);
       if (file.isFile()) {
         return file;
       }
     }
     return null;
   }
-
 
 }

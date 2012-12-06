@@ -58,7 +58,7 @@ public class JsErrorPrinter extends TestsOutputConsolePrinter {
                                                               virtualFile,
                                                               message.getLineNumber() - 1,
                                                               column);
-      defaultPrint(errorText.substring(0, message.getHyperlinkStartInclusiveInd() - 1), ConsoleViewContentType.ERROR_OUTPUT);
+      defaultPrint(errorText.substring(0, message.getHyperlinkStartInclusiveInd()), ConsoleViewContentType.ERROR_OUTPUT);
       printHyperlink(errorText.substring(message.getHyperlinkStartInclusiveInd(), message.getHyperlinkEndExclusiveInd()), hyperlinkInfo);
       defaultPrint(errorText.substring(message.getHyperlinkEndExclusiveInd()), ConsoleViewContentType.ERROR_OUTPUT);
       return true;
