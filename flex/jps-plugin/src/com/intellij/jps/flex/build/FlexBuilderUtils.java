@@ -22,6 +22,8 @@ import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ProjectBuildException;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
+import org.jetbrains.jps.model.JpsEncodingConfigurationService;
+import org.jetbrains.jps.model.JpsEncodingProjectConfiguration;
 import org.jetbrains.jps.model.library.JpsLibrary;
 import org.jetbrains.jps.model.library.JpsOrderRootType;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
@@ -29,6 +31,7 @@ import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -113,9 +116,18 @@ public class FlexBuilderUtils {
 
     for (File file : templateDir.listFiles()) {
       if (FlexCommonUtils.HTML_WRAPPER_TEMPLATE_FILE_NAME.equals(file.getName())) {
-        final String wrapperText;
+        final JpsEncodingProjectConfiguration encodingConfiguration =
+          JpsEncodingConfigurationService.getInstance().getEncodingConfiguration(bc.getModule().getProject());
+        final String encoding = encodingConfiguration == null ? null : encodingConfiguration.getEncoding(file);
+
+        String wrapperText;
         try {
-          wrapperText = FileUtil.loadFile(file);
+          try {
+            wrapperText = FileUtil.loadFile(file, encoding);
+          }
+          catch (UnsupportedEncodingException e) {
+            wrapperText = FileUtil.loadFile(file);
+          }
         }
         catch (IOException e) {
           context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR, FlexCommonBundle
@@ -134,8 +146,16 @@ public class FlexBuilderUtils {
                                                FlexCommonUtils.getPathToMainClassFile(mainClass, bc.getModule()));
         final String wrapperFileName = FlexCommonUtils.getWrapperFileName(bc);
         try {
+          byte[] bytes;
+          try {
+            bytes = encoding == null ? fixedText.getBytes() : fixedText.getBytes(encoding);
+          }
+          catch (UnsupportedEncodingException e) {
+            bytes = fixedText.getBytes();
+          }
+
           final File outputFile = new File(outputDir, wrapperFileName);
-          FileUtil.writeToFile(outputFile, fixedText);
+          FileUtil.writeToFile(outputFile, bytes);
           outputConsumer.registerOutputFile(outputFile, Collections.singletonList(file.getPath()));
         }
         catch (IOException e) {
