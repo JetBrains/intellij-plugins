@@ -49,6 +49,8 @@ import java.util.ArrayList;
  */
 public class JavaStepDefinitionCreator implements StepDefinitionCreator {
   public static final String CUCUMBER_JAVA_JAR_NAME = "cucumber-java";
+  public static final String CUCUMBER_JAVA_1_REGEXP = ".*" + CUCUMBER_JAVA_JAR_NAME + ".1\\.0.*";
+  public static final String CUCUMBER_JAVA_0_REGEXP = ".*" + CUCUMBER_JAVA_JAR_NAME + ".0.*";
   public static final String CUCUMBER_1_1_ANNOTATION_PACKAGE = "@cucumber.api.java.en.";
   public static final String CUCUMBER_1_0_ANNOTATION_PACKAGE = "@cucumber.annotation.en.";
 
@@ -209,9 +211,8 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
     final LibraryTable libraryTable = ProjectLibraryTable.getInstance(step.getProject());
     for (Library library : libraryTable.getLibraries()) {
       final String libraryName = library.getName();
-      if (libraryName != null && libraryName.contains(CUCUMBER_JAVA_JAR_NAME)) {
-        String version = libraryName.substring(libraryName.indexOf(CUCUMBER_JAVA_JAR_NAME) + CUCUMBER_JAVA_JAR_NAME.length() + 1);
-        if (version.startsWith("1.0")) {
+      if (libraryName != null) {
+        if (libraryName.matches(CUCUMBER_JAVA_0_REGEXP) || libraryName.matches(CUCUMBER_JAVA_1_REGEXP)) {
           annotationPackage = CUCUMBER_1_0_ANNOTATION_PACKAGE;
         }
       }
