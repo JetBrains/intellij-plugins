@@ -17,6 +17,7 @@
     <configurationType implementation="org.jetbrains.plugins.cucumber.java.run.CucumberJavaRunConfigurationType"/>
 
     <implicitUsageProvider implementation="org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaImplicitUsageProvider"/>
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">

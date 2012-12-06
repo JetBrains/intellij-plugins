@@ -18,7 +18,7 @@
                               implementationClass="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepDefinitionPresentationProvider"/>
     <elementDescriptionProvider implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepDefinitionDescriptionProvider"/>
     <pom.declarationSearcher implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrCucumberStepDeclarationSearcher"/>
-
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">

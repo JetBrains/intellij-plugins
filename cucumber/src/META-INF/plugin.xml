@@ -69,7 +69,7 @@
     <lang.refactoringSupport language="Gherkin"
                              implementationClass="org.jetbrains.plugins.cucumber.refactoring.GherkinRefactoringSupportProvider"/>
 
-
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
   </extensions>
 
   <extensionPoints>
