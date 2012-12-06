@@ -49,7 +49,7 @@ public class GrCucumberUtil {
 
         final String packageName = StringUtil.getPackageName(qName);
 
-        if (!GrCucumberCommonClassNames.CUCUMBER_RUNTIME_GROOVY.equals(packageName)) return null;
+        if (!GrCucumberCommonClassNames.isCucumberRuntimeGroovyPackage(packageName)) return null;
 
         return (GrReferenceExpression)ref;
       }
@@ -103,6 +103,6 @@ public class GrCucumberUtil {
     PsiClass containingClass = method.getContainingClass();
     if (containingClass == null) return false;
 
-    return GrCucumberCommonClassNames.CUCUMBER_RUNTIME_GROOVY_HOOKS.equals(containingClass.getQualifiedName());
+    return GrCucumberCommonClassNames.isHookClassName(containingClass.getQualifiedName());
   }
 }

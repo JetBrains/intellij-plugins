@@ -91,7 +91,7 @@ public class CustomWorldContributor extends NonCodeMembersContributor {
       final PsiMethod method = methodCall.resolveMethod();
       final PsiClass clazz = method == null ? null : method.getContainingClass();
       final String qname = clazz == null ? null : clazz.getQualifiedName();
-      return method!= null && "World".equals(method.getName()) && GrCucumberCommonClassNames.CUCUMBER_RUNTIME_GROOVY_HOOKS.equals(qname);
+      return method!= null && "World".equals(method.getName()) && GrCucumberCommonClassNames.isHookClassName(qname);
     }
 
     return false;
