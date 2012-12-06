@@ -1,0 +1,14 @@
+<html>
+<body>
+<script type="application/dart">
+  class Gts2 extends Resizable {
+  }
+  class Resizable implements IResizable {
+    resize() {}
+  }
+  interface IResizable {
+    <caret>resize();
+  }
+</script>
+</body>
+</html>

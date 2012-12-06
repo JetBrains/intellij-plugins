@@ -1,0 +1,15 @@
+<idea-plugin version="2">
+  <project-components>
+    <component>
+      <implementation-class>com.jetbrains.lang.dart.compilation.DartCompilerHandler</implementation-class>
+      <skipForDefaultProject/>
+    </component>
+  </project-components>
+  <extensions defaultExtensionNs="com.intellij">
+    <configurationType implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfigurationType"/>
+    <configurationProducer implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer"/>
+
+    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunner"/>
+    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugRunner"/>
+ </extensions>
+</idea-plugin>

@@ -1,0 +1,15 @@
+class Foo extends Bar<Baz> {
+
+  Baz find(boolean condition(Baz item)) {
+  }
+}
+
+class Bar<T extends Base> {
+  T find(boolean condition(T item)) {
+    return false;
+  }
+}
+
+class Baz extends Base{}
+
+class Base {}

@@ -1,0 +1,10 @@
+abstract class I {
+  get foo() => 239;
+  abstract set foo(x);
+}
+
+class Foo extends I {
+
+  set foo(x) {
+  }
+}

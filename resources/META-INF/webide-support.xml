@@ -1,0 +1,10 @@
+<idea-plugin version="2">
+  <actions>
+    <action class="com.jetbrains.lang.dart.ide.settings.ShowDartSettingsAction"
+            id="ShowDartSettingsAction"
+            description="Dart settings"
+            text="Dart settings">
+      <add-to-group group-id="MainToolBar"/>
+    </action>
+  </actions>
+</idea-plugin>

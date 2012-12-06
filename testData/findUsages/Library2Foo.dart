@@ -1,0 +1,3 @@
+foo(){
+  ba<caret>r();
+}

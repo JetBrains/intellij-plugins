@@ -1,0 +1,5 @@
+<idea-plugin version="2">
+  <extensions defaultExtensionNs="com.jetbrains.liveEdit">
+    <synchronizer implementation="com.jetbrains.lang.dart.liveEdit.DartSynchronizer"/>
+  </extensions>
+</idea-plugin>

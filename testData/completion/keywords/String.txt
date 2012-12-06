@@ -1,0 +1,11 @@
+BASIC 1 EXCLUDES
+class
+final
+get
+interface
+#library
+#import
+#source
+set
+static
+typedef

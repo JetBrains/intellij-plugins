@@ -1,0 +1,54 @@
+Dart File
+  FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('error1')
+    FORMAL_PARAMETER_LIST
+      PsiElement(()('(')
+      PsiElement())(')')
+    FUNCTION_BODY
+      BLOCK
+        PsiElement({)('{')
+        PsiComment(SINGLE_LINE_COMMENT)('// WI-14560')
+        STATEMENTS
+          VAR_DECLARATION_LIST
+            VAR_ACCESS_DECLARATION
+              PsiElement(var)('var')
+              COMPONENT_NAME
+                ID
+                  PsiElement(IDENTIFIER)('i')
+            VAR_INIT
+              PsiElement(=)('=')
+              LITERAL_EXPRESSION
+                PsiElement(NUMBER)('30')
+          PsiElement(;)(';')
+          RETURN_STATEMENT
+            PsiElement(return)('return')
+            LITERAL_EXPRESSION
+              PsiElement(NUMBER)('42')
+          PsiErrorElement:';' expected, got '}'
+            <empty list>
+        PsiElement(})('}')
+  FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('error2')
+    FORMAL_PARAMETER_LIST
+      PsiElement(()('(')
+      PsiElement())(')')
+    FUNCTION_BODY
+      BLOCK
+        PsiElement({)('{')
+        PsiComment(SINGLE_LINE_COMMENT)('// WI-14572')
+        STATEMENTS
+          THROW_STATEMENT
+            PsiElement(throw)('throw')
+            NEW_EXPRESSION
+              PsiElement(new)('new')
+              TYPE
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('F')
+            PsiErrorElement:'(', '.' or < expected, got '}'
+              <empty list>
+        PsiElement(})('}')

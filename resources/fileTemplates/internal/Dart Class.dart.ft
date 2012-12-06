@@ -1,0 +1,4 @@
+class ${NAME} {
+    ${NAME}() {
+    }
+}

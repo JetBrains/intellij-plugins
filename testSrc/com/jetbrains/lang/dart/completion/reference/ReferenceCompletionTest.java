@@ -1,0 +1,20 @@
+package com.jetbrains.lang.dart.completion.reference;
+
+import com.jetbrains.lang.dart.completion.base.DartCompletionTestBase;
+
+/**
+ * @author: Fedor.Korotkov
+ */
+public class ReferenceCompletionTest extends DartCompletionTestBase {
+  public ReferenceCompletionTest() {
+    super("completion", "references");
+  }
+
+  public void testTest7() throws Throwable {
+    doTest("Test7.dart", "Test7Library.dart");
+  }
+
+  public void testTest8() throws Throwable {
+    doTest("Test8Bar.dart", "Test8.dart", "Test8Foo.dart");
+  }
+}

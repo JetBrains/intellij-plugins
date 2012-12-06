@@ -1,0 +1,15 @@
+<html>
+<body>
+<script type="application/dart">
+  class TestMock implements Test {
+
+      get foo() {
+      }
+  }
+
+  class Test {
+    get foo() => 239;
+  }
+</script>
+</body>
+</html>

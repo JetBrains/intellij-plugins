@@ -1,0 +1,7 @@
+BASIC 1 INCLUDES
+final
+get
+operator
+set
+static
+var
