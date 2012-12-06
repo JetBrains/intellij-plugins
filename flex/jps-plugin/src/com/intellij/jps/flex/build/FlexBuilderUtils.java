@@ -416,7 +416,7 @@ public class FlexBuilderUtils {
 
     try {
       final File outputFile = new File(outputFolder, descriptorTemplateFile.getName());
-      FileUtil.writeToFile(outputFile, content);
+      FileUtil.writeToFile(outputFile, content.getBytes("UTF-8"));
       outputConsumer.registerOutputFile(outputFile, Collections.singletonList(descriptorTemplateFile.getPath()));
     }
     catch (IOException e) {
@@ -426,7 +426,9 @@ public class FlexBuilderUtils {
   }
 
   private static String fixInitialContent(final File descriptorFile, final String swfName) throws IOException, JDOMException {
-    final Document document = JDOMUtil.loadDocument(descriptorFile);
+    // hardcoded UTF-8 makes it work the same way as it worked in FlexCompilationUtils.fixInitialContent() for ages (UTF-8 is hardcoded in JDOMUtil)
+    final String descriptorContent = FileUtil.loadFile(descriptorFile, "UTF-8");
+    final Document document = JDOMUtil.loadDocument(StringUtil.trimStart(descriptorContent, "\uFEFF"));
     final Element rootElement = document.getRootElement();
     if (rootElement == null || !"application".equals(rootElement.getName())) {
       throw new JDOMException("incorrect root tag");
