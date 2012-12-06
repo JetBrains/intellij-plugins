@@ -25,6 +25,7 @@ import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.SeparatorComponent;
 import com.intellij.ui.SeparatorOrientation;
@@ -185,7 +186,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     topPanel.add(new JPanel() {
       {
         setOpaque(true);
-        setBackground(Color.red);
+        setBackground(JBColor.red);
       }
       public Dimension getPreferredSize() {
         return new Dimension(Short.MAX_VALUE, 10);
