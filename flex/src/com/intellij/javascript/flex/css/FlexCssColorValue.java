@@ -10,6 +10,10 @@ import org.jetbrains.annotations.Nullable;
  * @author Eugene.Kudelevsky
  */
 public class FlexCssColorValue extends CssColorValue {
+  public FlexCssColorValue() {
+    super(false);
+  }
+
   private static boolean containsOnlyLetters(String s) {
     for (int i = 0, n = s.length(); i < n; i++) {
       char c = s.charAt(i);
