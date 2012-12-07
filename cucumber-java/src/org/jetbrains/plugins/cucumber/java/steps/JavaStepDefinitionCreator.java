@@ -39,6 +39,7 @@ import gherkin.formatter.model.Step;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
+import org.jetbrains.plugins.cucumber.java.config.CucumberConfigUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.util.ArrayList;
@@ -49,8 +50,6 @@ import java.util.ArrayList;
  */
 public class JavaStepDefinitionCreator implements StepDefinitionCreator {
   public static final String CUCUMBER_JAVA_JAR_NAME = "cucumber-java";
-  public static final String CUCUMBER_JAVA_1_REGEXP = ".*" + CUCUMBER_JAVA_JAR_NAME + ".1\\.0.*";
-  public static final String CUCUMBER_JAVA_0_REGEXP = ".*" + CUCUMBER_JAVA_JAR_NAME + ".0.*";
   public static final String CUCUMBER_1_1_ANNOTATION_PACKAGE = "@cucumber.api.java.en.";
   public static final String CUCUMBER_1_0_ANNOTATION_PACKAGE = "@cucumber.annotation.en.";
 
@@ -208,14 +207,9 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
 
   private static PsiMethod buildStepDefinitionByStep(@NotNull final GherkinStep step) {
     String annotationPackage = CUCUMBER_1_1_ANNOTATION_PACKAGE;
-    final LibraryTable libraryTable = ProjectLibraryTable.getInstance(step.getProject());
-    for (Library library : libraryTable.getLibraries()) {
-      final String libraryName = library.getName();
-      if (libraryName != null) {
-        if (libraryName.matches(CUCUMBER_JAVA_0_REGEXP) || libraryName.matches(CUCUMBER_JAVA_1_REGEXP)) {
-          annotationPackage = CUCUMBER_1_0_ANNOTATION_PACKAGE;
-        }
-      }
+    final String version = CucumberConfigUtil.getCucumberCoreVersion(step);
+    if (version != null && version.compareTo(CucumberConfigUtil.CUCUMBER_VERSION_1_1) < 0) {
+      annotationPackage = CUCUMBER_1_0_ANNOTATION_PACKAGE;
     }
 
     final PsiElementFactory factory = JavaPsiFacade.getInstance(step.getProject()).getElementFactory();

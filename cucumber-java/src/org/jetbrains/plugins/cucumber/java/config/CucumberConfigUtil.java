@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
  * @author Max Medvedev
  */
 public class CucumberConfigUtil {
+  @NonNls
   private static final Pattern CUCUMBER_PATTERN = Pattern.compile("cucumber-core-(.*)\\.jar");
 
   @NonNls
@@ -28,6 +29,12 @@ public class CucumberConfigUtil {
 
   @NonNls
   private static final String CUCUMBER_API_CLI_MAIN_1_1 = "cucumber.api.cli.Main";
+
+  @NonNls
+  public static final String CUCUMBER_VERSION_1_0 = "1.0";
+
+  @NonNls
+  public static final String CUCUMBER_VERSION_1_1 = "1.1";
 
   @Nullable
   public static String getCucumberCoreVersion(@NotNull PsiElement place) {
@@ -68,10 +75,10 @@ public class CucumberConfigUtil {
     final JavaPsiFacade facade = JavaPsiFacade.getInstance(module.getProject());
 
     final PsiClass oldMain = facade.findClass(CUCUMBER_CLI_MAIN_1_0, module.getModuleWithLibrariesScope());
-    if (oldMain != null) return "1.0";
+    if (oldMain != null) return CUCUMBER_VERSION_1_0;
 
     final PsiClass newMain = facade.findClass(CUCUMBER_API_CLI_MAIN_1_1, module.getModuleWithLibrariesScope());
-    if (newMain != null) return "1.1";
+    if (newMain != null) return CUCUMBER_VERSION_1_0;
 
     return null;
   }
