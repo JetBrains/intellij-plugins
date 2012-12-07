@@ -16,6 +16,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -104,14 +105,6 @@ public class JstdCoverageEngine extends CoverageEngine {
     return true;
   }
 
-  @NotNull
-  @Override
-  public Set<VirtualFile> getCorrespondingOutputFiles(@NotNull PsiFile srcFile,
-                                                      @Nullable Module module,
-                                                      @NotNull CoverageSuitesBundle suite) {
-    return Collections.singleton(srcFile.getVirtualFile());
-  }
-
   @Override
   public boolean recompileProjectAndRerunAction(@NotNull Module module,
                                                 @NotNull CoverageSuitesBundle suite,
@@ -120,7 +113,7 @@ public class JstdCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public String getQualifiedName(@NotNull VirtualFile outputFile, @NotNull PsiFile sourceFile) {
+  public String getQualifiedName(@NotNull File outputFile, @NotNull PsiFile sourceFile) {
     return getQName(sourceFile);
   }
 
@@ -146,7 +139,7 @@ public class JstdCoverageEngine extends CoverageEngine {
 
   @Override
   public boolean includeUntouchedFileInCoverage(@NotNull String qualifiedName,
-                                                @NotNull VirtualFile outputFile,
+                                                @NotNull File outputFile,
                                                 @NotNull PsiFile sourceFile,
                                                 @NotNull CoverageSuitesBundle suite) {
     return false;
@@ -223,7 +216,7 @@ public class JstdCoverageEngine extends CoverageEngine {
   }
 
   @Override
-  public List<Integer> collectSrcLinesForUntouchedFile(@NotNull VirtualFile classFile, @NotNull CoverageSuitesBundle suite) {
+  public List<Integer> collectSrcLinesForUntouchedFile(@NotNull File classFile, @NotNull CoverageSuitesBundle suite) {
     return null;
   }
 
