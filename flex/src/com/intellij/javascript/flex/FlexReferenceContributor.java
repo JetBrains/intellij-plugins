@@ -14,10 +14,7 @@ import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
-import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinIntention;
 import com.intellij.lang.javascript.psi.*;
@@ -613,7 +610,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
             }
             else if (FlexStateElementNames.STATE_GROUPS.equals(attrName)) {
               if ("State".equals(tagName)) {
-                return buildStateRefs(element);
+                return buildStateRefs(element, true);
               }
               else {
                 return PsiReference.EMPTY_ARRAY;
@@ -654,7 +651,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
                                                          public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
                                                                                                       @NotNull final ProcessingContext context) {
 
-                                                           return buildStateRefs(element);
+                                                           return buildStateRefs(element, false);
                                                          }
                                                        });
 
@@ -784,28 +781,30 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
     }
   }
 
-  private static PsiReference[] buildStateRefs(PsiElement element) {
+  private static PsiReference[] buildStateRefs(PsiElement element, boolean stateGroupsOnly) {
     SmartList<PsiReference> refs = new SmartList<PsiReference>();
     StringTokenizer t = new StringTokenizer(StringUtil.stripQuotesAroundValue(element.getText()), DELIMS);
 
     while (t.hasMoreElements()) {
       String val = t.nextElement();
       int end = t.getCurrentPosition();
-      refs.add(new StateReference(element, new TextRange(1 + end - val.length(), 1 + end)));
+      refs.add(new StateReference(element, new TextRange(1 + end - val.length(), 1 + end), stateGroupsOnly));
     }
 
     return refs.toArray(new PsiReference[refs.size()]);
   }
 
   public static class StateReference extends BasicAttributeValueReference implements EmptyResolveMessageProvider, PsiPolyVariantReference {
-    static FileBasedUserDataCache<Map<String, XmlTag>> statesCache = new FileBasedUserDataCache<Map<String, XmlTag>>() {
+    private static final String DUMMY_STATE_GROUP_TAG = "DummyStateGroupTag";
+
+    private static FileBasedUserDataCache<Map<String, XmlTag>> statesCache = new FileBasedUserDataCache<Map<String, XmlTag>>() {
       public Key<CachedValue<Map<String, XmlTag>>> ourDataKey = Key.create("mx.states");
 
       @Override
       protected Map<String, XmlTag> doCompute(PsiFile file) {
         final Map<String, XmlTag> tags = new THashMap<String, XmlTag>();
 
-        file.accept(new XmlRecursiveElementVisitor() {
+        file.getOriginalFile().accept(new XmlRecursiveElementVisitor() {
           @Override
           public void visitXmlTag(XmlTag tag) {
             super.visitXmlTag(tag);
@@ -822,8 +821,9 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
 
                   XmlTag cachedTag = tags.get(s);
                   if (cachedTag == null) {
-                    PsiFile fromText =
-                      PsiFileFactory.getInstance(tag.getProject()).createFileFromText("dummy.mxml", "<mx:StateGroup name=\"" + s + "\" />");
+                    PsiFile fromText = PsiFileFactory.getInstance(tag.getProject())
+                      .createFileFromText("dummy.mxml", FlexApplicationComponent.MXML,
+                                          "<" + DUMMY_STATE_GROUP_TAG + " name=\"" + s + "\" />");
                     cachedTag = ((XmlFile)fromText).getDocument().getRootTag();
                     tags.put(s, cachedTag);
                   }
@@ -841,12 +841,21 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
       }
     };
 
+
+    private final boolean myStateGroupsOnly;
+
     public StateReference(PsiElement element) {
       super(element);
+      myStateGroupsOnly = false;
     }
 
     public StateReference(PsiElement element, TextRange range) {
+      this(element, range, false);
+    }
+
+    public StateReference(PsiElement element, TextRange range, boolean stateGroupsOnly) {
       super(element, range);
+      myStateGroupsOnly = stateGroupsOnly;
     }
 
     public PsiElement resolve() {
@@ -924,12 +933,14 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
       Map<String, XmlTag> map = statesCache.compute(getElement().getContainingFile());
       if (s == null) {
         for (Map.Entry<String, XmlTag> t : map.entrySet()) {
-          XmlTag value = t.getValue();
-          if (!processor.process(value, t.getKey())) return false;
+          XmlTag tag = t.getValue();
+          if (myStateGroupsOnly && !DUMMY_STATE_GROUP_TAG.equals(tag.getName())) continue;
+          if (!processor.process(tag, t.getKey())) return false;
         }
       }
       else {
         XmlTag tag = map.get(s);
+        if (myStateGroupsOnly && !DUMMY_STATE_GROUP_TAG.equals(tag.getName())) return true;
         if (tag != null) return processor.process(tag, s);
       }
       return true;
