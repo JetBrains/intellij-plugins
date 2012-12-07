@@ -7,10 +7,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+import org.jetbrains.plugins.cucumber.psi.GherkinScenario;
+import org.jetbrains.plugins.cucumber.psi.GherkinScenarioOutline;
+import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -59,6 +63,7 @@ public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRun
   }
 
   protected boolean isApplicable(PsiElement locationElement, final Module module) {
-    return locationElement != null && locationElement.getContainingFile() instanceof GherkinFile;
+    final GherkinStepsHolder scenario = PsiTreeUtil.getParentOfType(mySourceElement, GherkinScenario.class, GherkinScenarioOutline.class);
+    return locationElement != null && locationElement.getContainingFile() instanceof GherkinFile && scenario == null;
   }
 }
