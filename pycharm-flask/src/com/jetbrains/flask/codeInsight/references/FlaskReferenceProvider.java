@@ -26,7 +26,7 @@ import com.jetbrains.flask.codeInsight.WerkzeugRoutingRule;
 import com.jetbrains.python.psi.PyDecorator;
 import com.jetbrains.python.psi.PyExpression;
 import com.jetbrains.python.psi.PyStringLiteralExpression;
-import com.jetbrains.python.templateLanguages.TemplateFileReferenceSet;
+import com.jetbrains.python.templateLanguages.PyTemplateFileReferenceSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class FlaskReferenceProvider extends PsiReferenceProvider {
   public PsiReference[] getReferencesByElement(@NotNull PsiElement element, @NotNull ProcessingContext context) {
     PyStringLiteralExpression stringLiteral = (PyStringLiteralExpression)element;
     if (FlaskTemplateManager.isTemplateReference(stringLiteral)) {
-      return new TemplateFileReferenceSet(stringLiteral, null).getAllReferences();
+      return new PyTemplateFileReferenceSet(stringLiteral).getAllReferences();
     }
     else if (FlaskTemplateManager.isCallArgument(stringLiteral, 0, FlaskNames.URL_FOR, FlaskNames.HELPERS_PY)) {
       return new PsiReference[] { new FlaskViewMethodReference(stringLiteral) };
