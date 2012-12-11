@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ui.AbstractTableCellEditor;
 
 import javax.swing.*;
@@ -55,7 +56,7 @@ public class RLMsDialog extends RepeatableValueDialog {
         setForeground(isSelected
                       ? table.getSelectionForeground()
                       : FlexUtils.getPathToMainClassFile(fqn, module).isEmpty()
-                        ? Color.RED
+                        ? JBColor.RED
                         : table.getForeground());
         return component;
       }

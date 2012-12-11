@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner.preview;
 import com.intellij.flex.uiDesigner.FlashUIDesignerBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.ui.LoadingDecorator;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.util.ui.AbstractLayoutManager;
 import com.intellij.util.ui.AsyncProcessIcon;
@@ -41,9 +42,9 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
   };
 
   public MxmlPreviewPanel() {
-    setBackground(Color.WHITE);
+    setBackground(JBColor.WHITE);
     setOpaque(true);
-    imagePanel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.GRAY));
+    imagePanel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, JBColor.GRAY));
 
     JPanel imageWrapper = new JPanel(new MyLayout());
     imageWrapper.add(imagePanel);
@@ -54,7 +55,7 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
         final NonOpaquePanel panel = super.customizeLoadingLayer(parent, text, icon);
         final Font font = text.getFont();
         text.setFont(font.deriveFont(font.getStyle(), font.getSize() + 6));
-        text.setForeground(new Color(0, 0, 0, 150));
+        text.setForeground(new JBColor(new Color(0, 0, 0, 150), JBColor.foreground));
         return panel;
       }
     };
