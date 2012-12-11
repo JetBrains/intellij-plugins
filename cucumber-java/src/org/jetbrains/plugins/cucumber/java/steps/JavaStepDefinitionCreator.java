@@ -199,7 +199,7 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
         return vFile.getNameWithoutExtension();
       }
       else {
-        return packageName + "." + vFile.getNameWithoutExtension();
+        return vFile.getNameWithoutExtension() + " (" + packageName + ")";
       }
     }
     return file.getName();
