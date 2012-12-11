@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberCommonClassNames;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
-import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElement;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.arguments.GrArgumentList;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock;
@@ -25,7 +24,7 @@ public class CustomWorldContributor extends NonCodeMembersContributor {
   @Override
   public void processDynamicElements(@NotNull PsiType qualifierType,
                                      @NotNull PsiScopeProcessor processor,
-                                     @Nullable GroovyPsiElement place,
+                                     @Nullable PsiElement place,
                                      @NotNull ResolveState state) {
     if (place instanceof GrReferenceExpression &&
         ((GrReferenceExpression)place).getQualifier() == null &&
@@ -47,7 +46,7 @@ public class CustomWorldContributor extends NonCodeMembersContributor {
 
   private static void doProcessDynamicMethods(@NotNull PsiScopeProcessor processor,
                                               @NotNull GrMethodCall stepDef,
-                                              @NotNull GroovyPsiElement place,
+                                              @NotNull PsiElement place,
                                               @NotNull ResolveState state) {
     final PsiFile file = stepDef.getContainingFile();
     if (file instanceof GroovyFile) {
