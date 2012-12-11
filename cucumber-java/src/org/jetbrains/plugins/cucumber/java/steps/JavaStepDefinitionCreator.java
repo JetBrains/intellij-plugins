@@ -18,9 +18,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.openapi.roots.impl.DirectoryInfo;
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -49,7 +46,6 @@ import java.util.ArrayList;
  * Date: 8/1/12
  */
 public class JavaStepDefinitionCreator implements StepDefinitionCreator {
-  public static final String CUCUMBER_JAVA_JAR_NAME = "cucumber-java";
   public static final String CUCUMBER_1_1_ANNOTATION_PACKAGE = "@cucumber.api.java.en.";
   public static final String CUCUMBER_1_0_ANNOTATION_PACKAGE = "@cucumber.annotation.en.";
 
@@ -217,7 +213,8 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
     final String snippet = new SnippetGenerator(new JavaSnippet()).getSnippet(cucumberStep)
       .replace("PendingException", "cucumber.runtime.PendingException")
       .replaceFirst("@", annotationPackage)
-      .replaceAll("\\\\\\\\", "\\\\");
+      .replaceAll("\\\\\\\\", "\\\\")
+      .replaceAll("\\\\d", "\\\\\\\\d");
 
     return factory.createMethodFromText(snippet, step);
   }
