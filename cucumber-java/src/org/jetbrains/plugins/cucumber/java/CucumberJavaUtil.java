@@ -52,6 +52,8 @@ public class CucumberJavaUtil {
     }
     else if (name.startsWith(CUCUMBER_STEP_ANNOTATION_PREFIX_1_1)) {
       return name.substring(CUCUMBER_STEP_ANNOTATION_PREFIX_1_1.length());
+    } else {
+      name = "";
     }
 
     return name;
