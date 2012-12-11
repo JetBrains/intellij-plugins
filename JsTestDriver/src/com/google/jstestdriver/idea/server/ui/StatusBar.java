@@ -19,6 +19,7 @@ import com.google.jstestdriver.BrowserInfo;
 import com.google.jstestdriver.hooks.ServerListener;
 import com.google.jstestdriver.idea.MessageBundle;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.ui.JBColor;
 import com.intellij.util.containers.ConcurrentHashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +38,7 @@ public class StatusBar implements ServerListener {
 
   public StatusBar() {
     myComponent = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
-    myComponent.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+    myComponent.setBorder(BorderFactory.createLineBorder(JBColor.GRAY));
     myLabel = new JLabel();
     myComponent.add(myLabel);
     setStatusDeferred(Status.NOT_RUNNING);
