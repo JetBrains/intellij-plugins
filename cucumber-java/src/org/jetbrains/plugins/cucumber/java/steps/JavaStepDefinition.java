@@ -21,7 +21,7 @@ public class JavaStepDefinition extends AbstractStepDefinition {
   public JavaStepDefinition(PsiMethod method) {
     super(method);
 
-    PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberAnnotation(method);
+    PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation(method);
     assert stepAnnotation != null;
     if (stepAnnotation.getParameterList().getAttributes().length > 0) {
       final PsiElement annotationValue = stepAnnotation.getParameterList().getAttributes()[0].getValue();

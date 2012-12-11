@@ -23,8 +23,8 @@ import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
  * Date: 7/25/12
  */
 public class CucumberJavaUtil {
-  public static final String CUCUMBER_ANNOTATION_PREFIX_1_0 = "cucumber.annotation.";
-  public static final String CUCUMBER_ANNOTATION_PREFIX_1_1 = "cucumber.api.java.";
+  public static final String CUCUMBER_STEP_ANNOTATION_PREFIX_1_0 = "cucumber.annotation.";
+  public static final String CUCUMBER_STEP_ANNOTATION_PREFIX_1_1 = "cucumber.api.java.";
 
   public static boolean isUnderTestSources(@NotNull final PsiElement element) {
     final ProjectRootManager rootManager = ProjectRootManager.getInstance(element.getProject());
@@ -32,7 +32,7 @@ public class CucumberJavaUtil {
     return file != null && rootManager.getFileIndex().isInTestSourceContent(file);
   }
 
-  public static boolean isCucumberAnnotation(@NotNull final PsiAnnotation annotation) {
+  private static String getCucumberAnnotationSuffix(@NotNull final PsiAnnotation annotation) {
     final Ref<String> qualifiedAnnotationName = new Ref<String>();
     ApplicationManager.getApplication().runReadAction(new Runnable() {
       public void run() {
@@ -43,16 +43,28 @@ public class CucumberJavaUtil {
     );
 
     if (qualifiedAnnotationName.get() == null) {
-      return false;
+      return "";
     }
     String name = qualifiedAnnotationName.get();
-    if (name.startsWith(CUCUMBER_ANNOTATION_PREFIX_1_0) && name.substring(CUCUMBER_ANNOTATION_PREFIX_1_0.length()).contains(".")) {
+
+    if (name.startsWith(CUCUMBER_STEP_ANNOTATION_PREFIX_1_0)) {
+      return name.substring(CUCUMBER_STEP_ANNOTATION_PREFIX_1_0.length());
+    }
+    else if (name.startsWith(CUCUMBER_STEP_ANNOTATION_PREFIX_1_1)) {
+      return name.substring(CUCUMBER_STEP_ANNOTATION_PREFIX_1_1.length());
+    }
+
+    return name;
+  }
+
+  public static boolean isCucumberStepAnnotation(@NotNull final PsiAnnotation annotation) {
+    String annotationName = getCucumberAnnotationSuffix(annotation);
+    if (annotationName.contains(".")) {
       return true;
-    } else if (name.startsWith(CUCUMBER_ANNOTATION_PREFIX_1_1) && name.substring(CUCUMBER_ANNOTATION_PREFIX_1_1.length()).contains(".")) {
-      return true;
-    } else {
-      for (String providedAnnotations : CucumberJavaAnnotationProvider.getCucumberAnnotations()) {
-        if (providedAnnotations.equals(qualifiedAnnotationName.get())) {
+    }
+    else {
+      for (String providedAnnotations : CucumberJavaAnnotationProvider.getCucumberStepAnnotations()) {
+        if (providedAnnotations.equals(annotationName)) {
           return true;
         }
       }
@@ -60,24 +72,50 @@ public class CucumberJavaUtil {
     return false;
   }
 
+  public static boolean isCucumberHookAnnotation(@NotNull final PsiAnnotation annotation) {
+    String annotationName = getCucumberAnnotationSuffix(annotation);
+    for (String providedAnnotations : CucumberJavaAnnotationProvider.getCucumberHookAnnotations()) {
+      if (providedAnnotations.equals(annotationName)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public static boolean isStepDefinition(@NotNull final PsiMethod method) {
-    return getCucumberAnnotation(method) != null;
+    return getCucumberStepAnnotation(method) != null;
+  }
+
+  public static boolean isHook(@NotNull final PsiMethod method) {
+    return getCucumberHookAnnotation(method) != null;
   }
 
   public static boolean isStepDefinitionClass(@NotNull final PsiClass clazz) {
     PsiMethod[] methods = clazz.getAllMethods();
     for (PsiMethod method : methods) {
-      if (getCucumberAnnotation(method) != null) return true;
+      if (getCucumberStepAnnotation(method) != null || getCucumberHookAnnotation(method) != null) return true;
     }
     return false;
   }
 
   @Nullable
-  public static PsiAnnotation getCucumberAnnotation(PsiMethod method) {
+  public static PsiAnnotation getCucumberStepAnnotation(PsiMethod method) {
     final PsiAnnotation[] annotations = method.getModifierList().getAnnotations();
 
     for (PsiAnnotation annotation : annotations) {
-      if (annotation != null && isCucumberAnnotation(annotation)) {
+      if (annotation != null && isCucumberStepAnnotation(annotation)) {
+        return annotation;
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  public static PsiAnnotation getCucumberHookAnnotation(PsiMethod method) {
+    final PsiAnnotation[] annotations = method.getModifierList().getAnnotations();
+
+    for (PsiAnnotation annotation : annotations) {
+      if (annotation != null && isCucumberHookAnnotation(annotation)) {
         return annotation;
       }
     }
@@ -93,7 +131,7 @@ public class CucumberJavaUtil {
         final PsiElement patternLiteral = annotationValue.getFirstChild();
         if (patternLiteral != null) {
           final String patternContainer = patternLiteral.getText();
-          result =  patternContainer.substring(1, patternContainer.length() - 1).replace("\\\\", "\\");
+          result = patternContainer.substring(1, patternContainer.length() - 1).replace("\\\\", "\\");
         }
       }
     }
@@ -116,7 +154,7 @@ public class CucumberJavaUtil {
       GherkinFeature feature = getChildOfType(file, GherkinFeature.class);
       if (feature != null) {
         List<GherkinScenario> scenarioList = getChildrenOfTypeAsList(feature, GherkinScenario.class);
-        for(GherkinScenario scenario : scenarioList) {
+        for (GherkinScenario scenario : scenarioList) {
           String result = getPackageOfStepDef(scenario.getSteps());
           if (result != null) {
             return result;
@@ -124,7 +162,7 @@ public class CucumberJavaUtil {
         }
 
         List<GherkinScenarioOutline> scenarioOutlineList = getChildrenOfTypeAsList(feature, GherkinScenarioOutline.class);
-        for(GherkinScenarioOutline scenario : scenarioOutlineList) {
+        for (GherkinScenarioOutline scenario : scenarioOutlineList) {
           String result = getPackageOfStepDef(scenario.getSteps());
           if (result != null) {
             return result;

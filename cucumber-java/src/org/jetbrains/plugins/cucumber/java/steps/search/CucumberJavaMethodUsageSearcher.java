@@ -21,7 +21,7 @@ public class CucumberJavaMethodUsageSearcher extends QueryExecutorBase<PsiRefere
   @Override
   public void processQuery(@NotNull MethodReferencesSearch.SearchParameters p, @NotNull final Processor<PsiReference> consumer) {
     final PsiMethod method = p.getMethod();
-    final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberAnnotation(method);
+    final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation(method);
     if (stepAnnotation != null) {
       final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
       final String word = org.jetbrains.plugins.cucumber.CucumberUtil.getTheBiggestWordToSearchByIndex(regexp);
