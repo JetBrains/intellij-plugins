@@ -136,7 +136,7 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     }
 
     toolbarPanel.add(Box.createHorizontalStrut(10));
-    toolbarPanel.add(new SeparatorComponent(Color.lightGray, SeparatorOrientation.VERTICAL));
+    toolbarPanel.add(new SeparatorComponent(JBColor.LIGHT_GRAY, SeparatorOrientation.VERTICAL));
     toolbarPanel.add(Box.createHorizontalStrut(3));
     toolbarPanel.add(OptionsButton.wrap(new OptionsButton()));
     toolbarPanel.add(statusToolbar.createComponent());

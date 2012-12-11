@@ -1,10 +1,10 @@
 package org.osmorc.settings;
 
+import com.intellij.ui.JBColor;
 import com.intellij.ui.ListCellRendererWrapper;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
@@ -21,7 +21,7 @@ public abstract class FrameworkInstanceCellRenderer extends ListCellRendererWrap
     if (str != null) {
       if (!isInstanceDefined(((FrameworkInstanceDefinition)value))) {
         setText(str + " [invalid]");
-        setForeground(Color.RED);
+        setForeground(JBColor.RED);
       }
       else {
         setText(str);

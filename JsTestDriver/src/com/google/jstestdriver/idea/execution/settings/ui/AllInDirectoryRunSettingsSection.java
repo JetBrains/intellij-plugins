@@ -12,6 +12,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
@@ -104,7 +105,7 @@ public class AllInDirectoryRunSettingsSection extends AbstractRunSettingsSection
     panel.add(new JLabel("Matched configuration files (*.jstd and jsTestDriver.conf):"), BorderLayout.NORTH);
 
     final JBList fileList = new JBList(ArrayUtil.EMPTY_STRING_ARRAY);
-    fileList.setBorder(BorderFactory.createLineBorder(Color.gray));
+    fileList.setBorder(BorderFactory.createLineBorder(JBColor.GRAY));
     fileList.setCellRenderer(new ListCellRendererWrapper<String>() {
       @Override
       public void customize(JList list, String value, int index, boolean selected, boolean hasFocus) {

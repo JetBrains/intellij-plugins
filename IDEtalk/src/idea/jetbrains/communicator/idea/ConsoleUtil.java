@@ -20,6 +20,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.JBColor;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.util.StringUtil;
 
@@ -38,7 +39,7 @@ import java.util.regex.Pattern;
  */
 public class ConsoleUtil {
   private static final Color[] OUR_COLORS = new Color[]{
-    Color.blue, Color.green,
+    JBColor.BLUE, JBColor.GREEN,
     new Color(128, 0, 128),
     new Color(128, 100, 0),
     new Color(128, 0, 0),
