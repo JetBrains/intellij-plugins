@@ -5,6 +5,7 @@ import com.intellij.psi.PsiFile;
 import com.jetbrains.browserConnection.BrowserConnection;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.psi.DartFile;
+import com.jetbrains.liveEdit.Dom;
 import com.jetbrains.liveEdit.FileBasedSynchronizer;
 
 public class DartSynchronizer extends FileBasedSynchronizer<DartFile> {
@@ -19,7 +20,7 @@ public class DartSynchronizer extends FileBasedSynchronizer<DartFile> {
 
   @Override
   protected void sync(DartFile file) {
-    browserConnection.getDom().setScriptSource(file.getProject().getLocationHash(), file.getName(), file.getViewProvider().getContents());
+    Dom.getInstance().setScriptSource(file.getProject().getLocationHash(), file.getName(), file.getViewProvider().getContents());
   }
 
   @Override
@@ -29,7 +30,7 @@ public class DartSynchronizer extends FileBasedSynchronizer<DartFile> {
     saveFile(file, new Runnable() {
       @Override
       public void run() {
-        BrowserConnection.getInstance().getDom().reloadPagesContainingScript(projectId, filename);
+        Dom.getInstance().reloadPagesContainingScript(projectId, filename);
       }
     });
   }
