@@ -37,9 +37,10 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlo
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.literals.GrLiteral;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.params.GrParameter;
+import org.jetbrains.plugins.groovy.lang.psi.util.GrStringUtil;
 import org.jetbrains.plugins.groovy.lang.psi.util.PsiUtil;
 
-import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @author Max Medvedev
@@ -169,10 +170,12 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
 
   private static GrMethodCall buildStepDefinitionByStep(@NotNull final GherkinStep step) {
     final GroovyPsiElementFactory factory = GroovyPsiElementFactory.getInstance(step.getProject());
-    final Step cucumberStep = new Step(new ArrayList<Comment>(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
+
+    final String escaped = GrStringUtil.escapeSymbolsForString(step.getStepName(), true, false);
+    final Step cucumberStep = new Step(Collections.<Comment>emptyList(), step.getKeyword().getText(), escaped, 0, null, null);
+
     SnippetGenerator generator = new SnippetGenerator(new GroovySnippet());
-    String snippet =
-      generator.getSnippet(cucumberStep).replace("PendingException", "cucumber.runtime.PendingException").replace("\\", "\\\\");
+    String snippet = generator.getSnippet(cucumberStep).replace("PendingException", "cucumber.runtime.PendingException");
 
     return (GrMethodCall)factory.createStatementFromText(snippet, step);
   }
