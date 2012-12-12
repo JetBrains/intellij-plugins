@@ -99,7 +99,8 @@ public class JstdLibraryUtil {
 
   private static boolean isCorrectMapping(@NotNull Project project, @NotNull VirtualFile file) {
     JSLibraryMappings jsLibraryMappings = JSLibraryMappings.getInstance(project);
-    List<VirtualFile> usageScope = jsLibraryMappings.getMappingsByLibraryNamePrefix(LIBRARY_NAME);
+    // TODO search for all JsTD libraries
+    List<VirtualFile> usageScope = jsLibraryMappings.getMappingsByLibraryName(LIBRARY_NAME);
     String filePath = file.getPath();
     for (VirtualFile root : usageScope) {
       if (root == null) {
