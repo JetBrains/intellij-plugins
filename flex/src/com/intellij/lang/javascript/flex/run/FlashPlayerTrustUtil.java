@@ -23,7 +23,7 @@ public class FlashPlayerTrustUtil {
     "\\AppData\\Roaming\\Macromedia\\Flash Player\\#Security\\FlashPlayerTrust";
   private final static String WINDOWS_XP_TRUST_DIR_REL_PATH = "\\Application Data\\Macromedia\\Flash Player\\#Security\\FlashPlayerTrust";
   private final static String MAC_TRUST_DIR_REL_PATH = "/Library/Preferences/Macromedia/Flash Player/#Security/FlashPlayerTrust";
-  private final static String LINUX_TRUST_DIR_REL_PATH = "/.macromedia/Flash_Player/#Security/FlashPlayerTrust";
+  private final static String UNIX_TRUST_DIR_REL_PATH = "/.macromedia/Flash_Player/#Security/FlashPlayerTrust";
 
   private final static String INTELLIJ_IDEA_CFG = "intellij_idea.cfg";
 
@@ -112,8 +112,9 @@ public class FlashPlayerTrustUtil {
   @Nullable
   private static File getFlashPlayerTrustDir(final Project project, final boolean isDebug, final boolean runTrusted) {
     final String flashPlayerTrustDirRelPath =
-      isWindows ? (isWindowsVista || isWindows7 ? WINDOWS_VISTA_AND_7_TRUST_DIR_REL_PATH : WINDOWS_XP_TRUST_DIR_REL_PATH)
-                : isLinux ? LINUX_TRUST_DIR_REL_PATH : MAC_TRUST_DIR_REL_PATH;
+      isWindows ? (isWinVistaOrNewer ? WINDOWS_VISTA_AND_7_TRUST_DIR_REL_PATH : WINDOWS_XP_TRUST_DIR_REL_PATH) :
+      isMac ? MAC_TRUST_DIR_REL_PATH :
+      UNIX_TRUST_DIR_REL_PATH;
     final File flashPlayerTrustDir = new File(SystemProperties.getUserHome() + flashPlayerTrustDirRelPath);
 
     if (!flashPlayerTrustDir.isDirectory()) {
