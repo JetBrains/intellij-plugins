@@ -1,8 +1,6 @@
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -13,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaAnnotationProvider;
 import org.jetbrains.plugins.cucumber.psi.*;
 
-import java.util.*;
+import java.util.List;
 
 import static com.intellij.psi.util.PsiTreeUtil.getChildOfType;
 import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
@@ -32,21 +30,7 @@ public class CucumberJavaUtil {
     return file != null && rootManager.getFileIndex().isInTestSourceContent(file);
   }
 
-  private static String getCucumberAnnotationSuffix(@NotNull final PsiAnnotation annotation) {
-    final Ref<String> qualifiedAnnotationName = new Ref<String>();
-    ApplicationManager.getApplication().runReadAction(new Runnable() {
-      public void run() {
-        String qualifiedName = annotation.getQualifiedName();
-        qualifiedAnnotationName.set(qualifiedName);
-      }
-    }
-    );
-
-    if (qualifiedAnnotationName.get() == null) {
-      return "";
-    }
-    String name = qualifiedAnnotationName.get();
-
+  private static String getCucumberAnnotationSuffix(@NotNull String name) {
     if (name.startsWith(CUCUMBER_STEP_ANNOTATION_PREFIX_1_0)) {
       return name.substring(CUCUMBER_STEP_ANNOTATION_PREFIX_1_0.length());
     }
@@ -59,25 +43,38 @@ public class CucumberJavaUtil {
     return name;
   }
 
+  private static String getAnnotationName(@NotNull final PsiAnnotation annotation) {
+    final Ref<String> qualifiedAnnotationName = new Ref<String>();
+    ApplicationManager.getApplication().runReadAction(new Runnable() {
+      public void run() {
+        String qualifiedName = annotation.getQualifiedName();
+        qualifiedAnnotationName.set(qualifiedName);
+      }
+    }
+    );
+    return qualifiedAnnotationName.get();
+  }
+
   public static boolean isCucumberStepAnnotation(@NotNull final PsiAnnotation annotation) {
-    String annotationName = getCucumberAnnotationSuffix(annotation);
-    if (annotationName.contains(".")) {
+    final String annotationName = getAnnotationName(annotation);
+
+    final String annotationSuffix = getCucumberAnnotationSuffix(annotationName);
+    if (annotationSuffix.contains(".")) {
       return true;
     }
-    else {
-      for (String providedAnnotations : CucumberJavaAnnotationProvider.getCucumberStepAnnotations()) {
-        if (providedAnnotations.equals(annotationName)) {
-          return true;
-        }
+    for (String providedAnnotations : CucumberJavaAnnotationProvider.getCucumberStepAnnotations()) {
+      if (providedAnnotations.equals(annotationName)) {
+        return true;
       }
     }
     return false;
   }
 
   public static boolean isCucumberHookAnnotation(@NotNull final PsiAnnotation annotation) {
-    String annotationName = getCucumberAnnotationSuffix(annotation);
+    final String annotationName = getAnnotationName(annotation);
+    final String annotationSuffix = getCucumberAnnotationSuffix(annotationName);
     for (String providedAnnotations : CucumberJavaAnnotationProvider.getCucumberHookAnnotations()) {
-      if (providedAnnotations.equals(annotationName)) {
+      if (providedAnnotations.equals(annotationSuffix)) {
         return true;
       }
     }
@@ -187,13 +184,5 @@ public class CucumberJavaUtil {
       }
     }
     return null;
-  }
-
-  @NotNull
-  public static Collection<VirtualFile> getSourceRoots(@NotNull Module module) {
-    final Set<VirtualFile> result = new LinkedHashSet<VirtualFile>();
-    final ModuleRootManager manager = ModuleRootManager.getInstance(module);
-    result.addAll(Arrays.asList(manager.getContentRoots()));
-    return result;
   }
 }
