@@ -169,7 +169,7 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
     ScriptingLibraryModel libraryModel = myLibraryHelper.getOrCreateJsLibraryModel(libraryName);
     try {
       ScriptingLibraryMappings libraryMappings = ServiceManager.getService(myProject, JSLibraryMappings.class);
-      if (myModuleSelector.isProjectAssociationAllowed()) {
+      if (myModuleSelector.isProjectAssociationDialog()) {
         if (myModuleSelector.isProjectAssociationRequested()) {
           libraryMappings.associateWithProject(libraryModel.getName());
           LOG.info("Library '" + libraryModel.getName() + "' has been successfully associated with the project");
