@@ -49,8 +49,8 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
   static class FlexStructureViewElement extends JSStructureViewElement {
     private final XmlFile myFile;
 
-    public FlexStructureViewElement(final JSClass clazz, final XmlFile file) {
-      super(clazz);
+    public FlexStructureViewElement(final JSClass clazz, final XmlFile file, final boolean includeInherited) {
+      super(clazz, includeInherited);
       myFile = file;
     }
 
@@ -61,7 +61,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
       final ResolveProcessor processor = new ResolveProcessor(null) {
         @Override
         public boolean execute(@NotNull final PsiElement element, final ResolveState state) {
-          result.add(new JSStructureViewElement(element));
+          result.add(new JSStructureViewElement(element, true));
           return true;
         }
       };
@@ -90,7 +90,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     protected JSStructureViewElement createStructureViewElement(final PsiElement element, final JSNamedElementProxy proxy) {
       if (element instanceof XmlBackedJSClassImpl) {
         PsiFile file = element.getContainingFile();
-        return new FlexStructureViewElement((JSClass)element, (XmlFile)file);
+        return new FlexStructureViewElement((JSClass)element, (XmlFile)file, myIncludeInherited);
       } else {
         return super.createStructureViewElement(element, proxy);
       }

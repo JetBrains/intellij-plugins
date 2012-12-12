@@ -38,6 +38,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static com.intellij.lang.javascript.flex.presentation.FlexStructureViewProvider.FlexStructureViewElement;
+
 /**
  * User: Maxim
  * Date: 17.05.2010
@@ -51,10 +53,10 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
         JSQualifiedNamedElement parentElement = getElement(parent);
         if (parentElement != null) {
           JSStructureViewElement structureViewElement =
-            parentElement instanceof XmlBackedJSClassImpl ? new FlexStructureViewProvider.FlexStructureViewElement(
-              ((XmlBackedJSClassImpl)parentElement), (XmlFile)parentElement.getContainingFile())
-                                                          : new JSStructureViewElement(parentElement);
-          StructureViewTreeElement[] structureViewChildren = structureViewElement.getChildren(false);
+            parentElement instanceof XmlBackedJSClassImpl
+            ? new FlexStructureViewElement(((XmlBackedJSClassImpl)parentElement), (XmlFile)parentElement.getContainingFile(), false)
+            : new JSStructureViewElement(parentElement, false);
+          StructureViewTreeElement[] structureViewChildren = structureViewElement.getChildren();
           for (final StructureViewTreeElement structureViewChild : structureViewChildren) {
             if (structureViewChild instanceof JSStructureViewElement) {
               PsiElement childElement = ((JSStructureViewElement)structureViewChild).getUpToDateElement();
