@@ -63,7 +63,7 @@ public abstract class BaseToolWindow implements ProjectComponent {
 
   public void projectOpened() {
     myPanel.setOpaque(true);
-    myPanel.setBackground(Color.white);
+    myPanel.setBackground(com.intellij.util.ui.UIUtil.getListBackground());
 
     createToolWindowComponent();
     myToolWindow = myToolWindowManager.registerToolWindow(getToolWindowId(), myPanel, getAnchor(), myProject, true);

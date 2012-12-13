@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.jabber.register;
 
+import com.intellij.ui.JBColor;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.idea.IdeaDialog;
 import jetbrains.communicator.jabber.JabberFacade;
@@ -84,7 +85,7 @@ public class RegistrationDialog extends IdeaDialog implements TextAcceptor {
     myErrorLabel.setHorizontalAlignment(JLabel.CENTER);
     result.add(myErrorLabel, BorderLayout.NORTH);
     myErrorLabel.setMinimumSize(new Dimension(0, 20));
-    myErrorLabel.setForeground(Color.red);
+    myErrorLabel.setForeground(JBColor.red);
     Font font = myErrorLabel.getFont();
     myErrorLabel.setFont(new Font(font.getName(), Font.PLAIN, font.getSize() - 1));
     return result;

@@ -142,7 +142,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
   private void processMessagesOfVisibleTab() {
     MessagesTab selectedTab = getSelectedTab();
     if (selectedTab != null && selectedTab.getComponent().isShowing()) {
-      myTabsWrapper.setForegroundAt(myTabsWrapper.getSelectedIndex(), Color.black);
+      myTabsWrapper.setForegroundAt(myTabsWrapper.getSelectedIndex(), com.intellij.util.ui.UIUtil.getListForeground());
       myTabsWrapper.setToolTipTextAt(myTabsWrapper.getSelectedIndex(), null);
       selectedTab.showAllIncomingMessages();
     }
