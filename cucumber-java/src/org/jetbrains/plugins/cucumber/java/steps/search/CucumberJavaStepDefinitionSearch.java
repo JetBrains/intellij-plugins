@@ -38,6 +38,9 @@ public class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiRefere
     final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation(method);
     assert stepAnnotation != null;
     final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
+    if (regexp == null) {
+      return true;
+    }
 
     final String word = CucumberUtil.getTheBiggestWordToSearchByIndex(regexp);
     if (StringUtil.isEmpty(word)) {
