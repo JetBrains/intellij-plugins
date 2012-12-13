@@ -1,17 +1,17 @@
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
   <profiles>
     <profile>
-      <id>flyti</id>
+      <id>flash-mvn-repo</id>
       <repositories>
         <repository>
-          <id>flyti</id>
-          <url>http://repository.flyti.org/</url>
+          <id>flash-mvn-repo</id>
+          <url>http://develar.github.com/flash-mvn-repo/</url>
         </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id>flyti</id>
-          <url>http://repository.flyti.org/</url>
+          <id>flash-mvn-repo</id>
+          <url>http://develar.github.com/flash-mvn-repo/</url>
         </pluginRepository>
       </pluginRepositories>
     </profile>
@@ -46,7 +46,7 @@
   </profiles>
 
   <activeProfiles>
-    <activeProfile>flyti</activeProfile>
+    <activeProfile>flash-mvn-repo</activeProfile>
     <activeProfile>flex-mojos</activeProfile>
   </activeProfiles>
 </settings>
