@@ -25,7 +25,7 @@ import java.util.Collection;
  * @author Eugene.Kudelevsky
  */
 public class CssDialectsConfigurable extends LanguagePerFileConfigurable<CssDialect> {
-  public CssDialectsConfigurable(Project project) {
+  public CssDialectsConfigurable(@NotNull Project project) {
     super(project, CssDialect.class, CssDialectMappings.getInstance(project), FlexBundle.message("css.dialects.caption"),
           FlexBundle.message("css.dialects.column.title"), FlexBundle.message("css.dialects.override.warning.text"),
           FlexBundle.message("css.dialects.override.warning.title"));
@@ -44,7 +44,7 @@ public class CssDialectsConfigurable extends LanguagePerFileConfigurable<CssDial
 
     ((DefaultTreeModel)treeView.getTableModel()).setRoot(new AbstractFileTreeTable.ProjectRootNode(myProject) {
       @Override
-      protected void appendChildrenTo(final Collection<AbstractFileTreeTable.ConvenientNode> children) {
+      protected void appendChildrenTo(@NotNull final Collection<AbstractFileTreeTable.ConvenientNode> children) {
         final Module[] modules = ModuleManager.getInstance(myProject).getModules();
 
         for (Module module : modules) {
