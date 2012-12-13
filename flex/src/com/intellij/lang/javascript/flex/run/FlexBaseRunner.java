@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.run;
 
 import com.intellij.CommonBundle;
 import com.intellij.compiler.options.CompileStepBeforeRun;
+import com.intellij.compiler.options.CompileStepBeforeRunNoErrorCheck;
 import com.intellij.execution.*;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.impl.RunDialog;
@@ -74,7 +75,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDescriptorForEmulator;
@@ -617,9 +617,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   private static void checkMakeBeforeRunEnabled(final Project project, final RunProfile runProfile, final boolean debug) {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
-    final List<CompileStepBeforeRun.MakeBeforeRunTask> makeBeforeRunTasks =
-      runManager.getBeforeRunTasks((RunConfiguration)runProfile, CompileStepBeforeRun.ID);
-    if (makeBeforeRunTasks.isEmpty()) {
+    int count =
+      RunManagerEx.getTasksCount(project, (RunConfiguration)runProfile, CompileStepBeforeRun.ID, CompileStepBeforeRunNoErrorCheck.ID);
+    if (count == 0) {
       for (RunnerAndConfigurationSettings settings : runManager.getConfigurationSettings(((RunConfiguration)runProfile).getType())) {
         if (settings.getConfiguration() == runProfile) {
           showMakeBeforeRunTurnedOffWarning(project, settings, debug);

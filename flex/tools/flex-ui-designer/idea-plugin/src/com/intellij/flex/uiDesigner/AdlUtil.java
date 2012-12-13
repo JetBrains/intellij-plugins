@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.compiler.options.CompileStepBeforeRun;
+import com.intellij.compiler.options.CompileStepBeforeRunNoErrorCheck;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.RunManagerEx;
@@ -72,16 +73,13 @@ final class AdlUtil {
 
   // http://kb2.adobe.com/cps/407/kb407625.html
   public static void runDebugger(final Module module, final Runnable postTask) throws ExecutionException {
-    final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
+    final Project project = module.getProject();
+    final RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
     final RunnerAndConfigurationSettings settings =
       runManager.createConfiguration("FlashUIDesigner", RemoteFlashRunConfigurationType.getFactory());
 
     final RemoteFlashRunConfiguration configuration = (RemoteFlashRunConfiguration)settings.getConfiguration();
-    final List<CompileStepBeforeRun.MakeBeforeRunTask> runTask =
-      runManager.getBeforeRunTasks(settings.getConfiguration(), CompileStepBeforeRun.ID);
-    for (CompileStepBeforeRun.MakeBeforeRunTask task : runTask) {
-      task.setEnabled(false);
-    }
+    RunManagerEx.disableTasks(project, settings.getConfiguration(), CompileStepBeforeRun.ID, CompileStepBeforeRunNoErrorCheck.ID);
 
     final DefaultDebugExecutor executor = new DefaultDebugExecutor();
     ProgramRunner.Callback callback = new ProgramRunner.Callback() {
@@ -94,7 +92,6 @@ final class AdlUtil {
           Disposer.register(application, new Disposable() {
             @Override
             public void dispose() {
-              final Project project = module.getProject();
               if (!project.isDisposed()) {
                 ApplicationManager.getApplication().invokeLater(new Runnable() {
                   @Override
@@ -118,7 +115,7 @@ final class AdlUtil {
     configuration.getRunnerParameters().setBCName(buildConfiguration.getName());
 
     final FlexRunner runner = new FlexRunner(callback, buildConfiguration);
-    runner.execute(executor, new ExecutionEnvironment(runner, settings, module.getProject()));
+    runner.execute(executor, new ExecutionEnvironment(runner, settings, project));
   }
 
   public static AdlProcessHandler runAdl(AdlRunConfiguration runConfiguration,
