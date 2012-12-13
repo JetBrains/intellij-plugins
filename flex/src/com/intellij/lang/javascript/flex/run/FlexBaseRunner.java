@@ -277,7 +277,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         if (SystemInfo.isWindows) {
           // workaround of http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6457572
           try {
-            Runtime.getRuntime().exec(new String[]{"cmd.exe", "/c", "start", "\"\"", urlOrPath});
+            Runtime.getRuntime().exec(new String[]{"cmd.exe", "/c", "start", "\"\"", BrowserUtil.escapeUrl(urlOrPath)});
             break;
           }
           catch (IOException ignored) {/*ignored*/}
