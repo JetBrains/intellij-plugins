@@ -56,7 +56,10 @@
         <module name="base" />
         <module name="impl" />
         <module name="main" />
+        <module name="main-loader" />
+        <module name="shared" />
         <module name="test" />
+        <module name="test-data-helper" />
         <module name="ui" />
       </profile>
     </annotationProcessing>
