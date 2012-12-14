@@ -23,13 +23,13 @@
       <dependency>
         <groupId>org.jetbrains.miglayout</groupId>
         <artifactId>miglayout-core</artifactId>
-        <version>4.3.1-SNAPSHOT</version>
+        <version>4.3.1</version>
         <type>swc</type>
       </dependency>
       <dependency>
         <groupId>org.jetbrains.miglayout</groupId>
         <artifactId>miglayout-flex</artifactId>
-        <version>4.3.1-SNAPSHOT</version>
+        <version>4.3.1</version>
         <type>swc</type>
       </dependency>
 
@@ -105,10 +105,16 @@
     <repository>
       <id>project-repo</id>
       <url>file://${user.dir}/lib</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>
     <repository>
       <id>flash-mvn-repo</id>
       <url>http://develar.github.com/flash-mvn-repo/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>
   </repositories>
   <pluginRepositories>

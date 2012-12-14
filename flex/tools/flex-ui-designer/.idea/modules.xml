@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/abc-blank-maker/abc-blank-maker.iml" filepath="$PROJECT_DIR$/abc-blank-maker/abc-blank-maker.iml" />
       <module fileurl="file://$PROJECT_DIR$/plaf/aqua/aqua.iml" filepath="$PROJECT_DIR$/plaf/aqua/aqua.iml" group="plafAggregator and modules" />
       <module fileurl="file://$PROJECT_DIR$/plaf/base/base.iml" filepath="$PROJECT_DIR$/plaf/base/base.iml" group="plafAggregator and modules" />
-      <module fileurl="file://$PROJECT_DIR$/flex-injection/flex-injection.iml" filepath="$PROJECT_DIR$/flex-injection/flex-injection.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea-plugin/idea-plugin.iml" filepath="$PROJECT_DIR$/idea-plugin/idea-plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/impl/impl.iml" filepath="$PROJECT_DIR$/impl/impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/main/main.iml" filepath="$PROJECT_DIR$/main/main.iml" />

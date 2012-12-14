@@ -2,7 +2,7 @@
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="Flex" version="4">
   <component name="FlexBuildConfigurationManager" active="main-loader">
     <configurations>
-      <configuration name="main-loader" target-platform="Desktop" output-file="main-loader-1.0-SNAPSHOT.swf" output-folder="$MODULE_DIR$/target">
+      <configuration name="main-loader" target-platform="Desktop" main-class="com.intellij.flex.uiDesigner.MainLoader" output-file="main-loader-1.0-SNAPSHOT.swf" output-folder="$MODULE_DIR$/target">
         <dependencies>
           <entries>
             <entry module-name="impl" build-configuration-name="impl">
@@ -59,7 +59,7 @@
             <entry library-name="Maven: org.flyti:foundation:swc:1.2.7" library-level="project">
               <dependency linkage="Merged" />
             </entry>
-            <entry library-name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1-SNAPSHOT" library-level="project">
+            <entry library-name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1" library-level="project">
               <dependency linkage="Merged" />
             </entry>
             <entry library-name="Maven: org.flyti.cocoa:acocoa:swc:2.0" library-level="project">
@@ -109,9 +109,10 @@
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="jdk" jdkName="Flexmojos SDK 4.5.2.21576" jdkType="Flexmojos SDK Type" />
@@ -128,7 +129,7 @@
     <orderEntry type="library" exported="" name="Maven: org.flyti:plexus:swc:1.4.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.flyti:collections:swc:1.3.8" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.flyti:foundation:swc:1.2.7" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.flyti.cocoa:acocoa:swc:2.0" level="project" />
     <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" level="project" />
     <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:airspark:swc:4.5.2.21576" level="project" />
@@ -139,11 +140,11 @@
     <orderEntry type="library" exported="" name="Maven: org.tinytlf:fte-utils:swc:1.1.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.flyti.cocoa:cocoa:rb.swc:en_US:2.0" level="project" />
     <orderEntry type="module" module-name="aqua" exported="" />
+    <orderEntry type="module" module-name="base" exported="" />
+    <orderEntry type="module" module-name="shared" exported="" />
     <orderEntry type="module" module-name="ui" exported="" />
     <orderEntry type="module" module-name="impl" exported="" />
     <orderEntry type="module" module-name="main" exported="" />
-    <orderEntry type="module" module-name="shared" exported="" />
-    <orderEntry type="module" module-name="base" exported="" />
   </component>
 </module>
 

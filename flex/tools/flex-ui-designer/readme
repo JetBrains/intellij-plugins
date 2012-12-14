@@ -2,7 +2,7 @@ mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.4:generate -o
 mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.4:generate -DgenerateNonShareable=false -DgenerateShareable -Prelease -o
 mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.4:generate -DgenerateNonShareable=false -DgenerateShareable -PreleaseForTesters -o
 
-mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.4:generate -o -s build/maven-settings.xml
+mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.4:generate -o -s maven-settings.xml
 
 mvn com.intellij.flex.maven:idea-flexmojos-maven-plugin:1.5.4:replicate-repo -o -e
 

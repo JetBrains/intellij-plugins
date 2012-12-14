@@ -47,7 +47,7 @@
             <entry library-name="Maven: org.flyti:foundation:swc:1.2.7" library-level="project">
               <dependency linkage="Merged" />
             </entry>
-            <entry library-name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1-SNAPSHOT" library-level="project">
+            <entry library-name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1" library-level="project">
               <dependency linkage="Merged" />
             </entry>
             <entry library-name="Maven: org.flyti.cocoa:acocoa:swc:2.0" library-level="project">
@@ -113,7 +113,7 @@
     <orderEntry type="library" exported="" name="Maven: org.flyti:plexus:swc:1.4.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.flyti:collections:swc:1.3.8" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.flyti:foundation:swc:1.2.7" level="project" />
-    <orderEntry type="library" exported="" name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="Maven: org.jetbrains.miglayout:miglayout-core:swc:4.3.1" level="project" />
     <orderEntry type="library" exported="" name="Maven: org.flyti.cocoa:acocoa:swc:2.0" level="project" />
     <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:airframework:swc:4.5.2.21576" level="project" />
     <orderEntry type="library" exported="" name="Maven: com.adobe.flex.framework:airglobal:swc:3.1.0.4880" level="project" />
