@@ -10,6 +10,7 @@ import com.intellij.util.PathUtilRt;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.ProjectPaths;
 import org.jetbrains.jps.builders.*;
 import org.jetbrains.jps.builders.storage.BuildDataPaths;
 import org.jetbrains.jps.incremental.CompileContext;
@@ -95,7 +96,7 @@ public class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescript
   @Override
   public Collection<File> getOutputRoots(CompileContext context) {
     if (getTargetType() == FlexResourceBuildTargetType.TEST) {
-      final File outputDir = context.getProjectPaths().getModuleOutputDir(getModule(), true);
+      final File outputDir = ProjectPaths.getModuleOutputDir(getModule(), true);
       return outputDir == null ? Collections.<File>emptyList() : Collections.singletonList(outputDir);
     }
 
