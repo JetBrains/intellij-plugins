@@ -100,7 +100,7 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
             project,
             JstdLibraryUtil.LIBRARY_NAME,
             sources,
-            new ScriptingFrameworkDescriptor(JstdLibraryUtil.LIBRARY_NAME, "1.3.4.b"),
+            new ScriptingFrameworkDescriptor(JstdLibraryUtil.LIBRARY_NAME, "1.3.5"),
             fileRequestor,
             false
           );
