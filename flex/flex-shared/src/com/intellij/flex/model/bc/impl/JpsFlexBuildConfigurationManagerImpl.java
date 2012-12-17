@@ -94,7 +94,11 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
 
   private void updateActiveConfiguration(@Nullable final String activeBCName) {
     final List<JpsFlexBuildConfiguration> bcs = getBuildConfigurations();
-    if (!bcs.isEmpty()) {
+    if (bcs.isEmpty()) {
+      LOG.error("No Flex build configurations");
+      myActiveConfiguration = null;
+    }
+    else {
       myActiveConfiguration =
         activeBCName != null ? ContainerUtil.find(bcs, new Condition<JpsFlexBuildConfiguration>() {
           @Override
@@ -107,9 +111,6 @@ public class JpsFlexBuildConfigurationManagerImpl extends JpsCompositeElementBas
         myActiveConfiguration = bcs.get(0);
       }
     }
-
-    LOG.error("No Flex build configurations");
-    myActiveConfiguration = null;
   }
 
 // ------------------------------
