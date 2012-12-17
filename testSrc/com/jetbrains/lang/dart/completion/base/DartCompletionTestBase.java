@@ -40,7 +40,7 @@ abstract public class DartCompletionTestBase extends JavaCodeInsightFixtureTestC
 
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/") + myPath;
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/") + myPath;
   }
 
   protected void doTest() throws Throwable {

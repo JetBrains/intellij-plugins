@@ -6,7 +6,7 @@ import com.intellij.openapi.util.io.FileUtil;
 public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/analyzer/resolver");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/analyzer/resolver");
   }
 
   public void testCannotResolveMethod1() throws Throwable {

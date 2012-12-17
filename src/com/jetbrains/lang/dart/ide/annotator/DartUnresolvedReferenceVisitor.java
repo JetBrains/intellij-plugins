@@ -30,7 +30,7 @@ public class DartUnresolvedReferenceVisitor extends DartVisitor implements Annot
   @Override
   public void visitReferenceExpression(@NotNull DartReferenceExpression reference) {
     final String referenceText = reference.getText();
-    final boolean isSimpleReference = referenceText != null && !"void".equals(referenceText) && !referenceText.contains("");
+    final boolean isSimpleReference = referenceText != null && !"void".equals(referenceText) && !referenceText.contains(".");
     final boolean isPrefix = referenceText != null && DartResolveUtil.getFileByPrefix(reference.getContainingFile(), referenceText) != null;
     if (isSimpleReference && !isPrefix && reference.resolve() == null) {
       myHolder.createErrorAnnotation(reference, DartBundle.message("cannot.resolve.reference"));

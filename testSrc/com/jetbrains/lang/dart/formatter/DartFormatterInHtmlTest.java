@@ -24,7 +24,7 @@ public class DartFormatterInHtmlTest extends JavaCodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/formatter/html");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/formatter/html");
   }
 
   @Override

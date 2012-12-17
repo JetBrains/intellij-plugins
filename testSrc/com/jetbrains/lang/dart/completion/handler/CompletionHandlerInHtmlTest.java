@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtil;
 public class CompletionHandlerInHtmlTest extends CompletionHandlerTestBase {
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/completion/handler/html/");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/completion/handler/html/");
   }
 
   @Override

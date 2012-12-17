@@ -10,7 +10,7 @@ import java.util.Map;
 public class DartSettingsTest extends JavaCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/settings/");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/settings/");
   }
 
   public void testLibraries() throws Throwable {

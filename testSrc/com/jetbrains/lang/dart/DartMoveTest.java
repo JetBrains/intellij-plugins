@@ -22,7 +22,7 @@ import java.util.Collection;
 public class DartMoveTest extends MultiFileTestCase {
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/");
   }
 
   @Override

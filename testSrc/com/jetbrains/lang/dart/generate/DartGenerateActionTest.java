@@ -12,7 +12,7 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/generate/");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/generate/");
   }
 
   public void testImplement1() throws Throwable {

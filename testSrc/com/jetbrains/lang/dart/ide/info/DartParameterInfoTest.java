@@ -17,11 +17,11 @@ public class DartParameterInfoTest extends LightCodeInsightTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/paramInfo/");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/paramInfo/");
   }
 
   private void doTest(String infoText, int highlightedParameterIndex) throws Exception {
-    configureByFile(getTestName(false) + "" + DartFileType.DEFAULT_EXTENSION);
+    configureByFile(getTestName(false) + "." + DartFileType.DEFAULT_EXTENSION);
 
     final DartParameterInfoHandler parameterInfoHandler = new DartParameterInfoHandler();
     MockCreateParameterInfoContext createContext = new MockCreateParameterInfoContext(myEditor, myFile);

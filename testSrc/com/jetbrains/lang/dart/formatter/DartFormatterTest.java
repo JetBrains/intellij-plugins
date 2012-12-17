@@ -24,7 +24,7 @@ public class DartFormatterTest extends JavaCodeInsightFixtureTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/formatter/");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/formatter/");
   }
 
   @Override
@@ -58,7 +58,7 @@ public class DartFormatterTest extends JavaCodeInsightFixtureTestCase {
   }
 
   private void doTest() throws Exception {
-    myFixture.configureByFile(getTestName(false) + "" + DartFileType.DEFAULT_EXTENSION);
+    myFixture.configureByFile(getTestName(false) + "." + DartFileType.DEFAULT_EXTENSION);
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {

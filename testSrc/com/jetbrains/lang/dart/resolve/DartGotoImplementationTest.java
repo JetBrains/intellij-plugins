@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.util.DartHtmlUtil;
 public class DartGotoImplementationTest extends JavaCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/gotoImplementation/");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/gotoImplementation/");
   }
 
   protected void doTest(int expectedLength) throws Throwable {

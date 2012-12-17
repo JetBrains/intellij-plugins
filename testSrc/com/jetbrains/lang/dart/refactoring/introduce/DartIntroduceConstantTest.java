@@ -10,7 +10,7 @@ import com.jetbrains.lang.dart.ide.refactoring.introduce.DartIntroduceHandler;
 public class DartIntroduceConstantTest extends DartIntroduceTestBase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/refactoring/introduceConstant/");
+    return FileUtil.toSystemDependentName("/plugins/Dart/testData/refactoring/introduceConstant/");
   }
 
   @Override

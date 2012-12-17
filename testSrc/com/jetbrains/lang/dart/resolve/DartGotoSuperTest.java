@@ -13,7 +13,7 @@ import com.jetbrains.lang.dart.DartLanguage;
 public class DartGotoSuperTest extends JavaCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/gotoSuper/");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/gotoSuper/");
   }
 
   private void doTest() throws Throwable {

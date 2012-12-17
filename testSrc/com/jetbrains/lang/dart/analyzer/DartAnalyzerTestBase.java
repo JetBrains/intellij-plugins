@@ -32,7 +32,7 @@ abstract public class DartAnalyzerTestBase extends JavaCodeInsightFixtureTestCas
     super.setUp();
     System.setProperty(
       "com.google.dart.sdk",
-      PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/sdk")
+      PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/sdk")
     );
   }
 

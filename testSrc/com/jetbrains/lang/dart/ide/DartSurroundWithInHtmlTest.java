@@ -15,7 +15,7 @@ public class DartSurroundWithInHtmlTest extends LightCodeInsightTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/surroundWith/html/");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/surroundWith/html/");
   }
 
   private void doTest(final Surrounder handler) throws Exception {

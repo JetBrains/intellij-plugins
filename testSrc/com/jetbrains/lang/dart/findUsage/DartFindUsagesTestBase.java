@@ -16,7 +16,7 @@ import java.util.Collection;
 abstract public class DartFindUsagesTestBase extends JavaCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/findUsages/");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/findUsages/");
   }
 
   protected void doTest(int size) throws Throwable {

@@ -12,7 +12,7 @@ import com.jetbrains.lang.dart.util.DartSdkTestUtil;
 public class DartExtractMethodInHtmlTest extends JavaCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/refactoring/extractMethod/html/");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/refactoring/extractMethod/html/");
   }
 
   private void doTest() throws Throwable {

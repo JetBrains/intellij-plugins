@@ -13,7 +13,7 @@ import java.util.Collection;
 abstract public class DartGotoDeclarationActionTestBase extends JavaCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/goto/");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/goto/");
   }
 
   protected void doTest(int expectedSize) throws IOException {

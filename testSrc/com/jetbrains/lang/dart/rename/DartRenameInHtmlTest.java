@@ -10,7 +10,7 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
 public class DartRenameInHtmlTest extends JavaCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/rename/html");
+    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/rename/html");
   }
 
   public void doTest(String newName, String... additionalFiles) {

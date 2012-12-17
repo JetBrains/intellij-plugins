@@ -11,7 +11,7 @@ import com.jetbrains.lang.dart.psi.DartCallExpression;
 public class DartIntroduceVariableInHtmlTest extends DartIntroduceTestBase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/refactoring/introduceVariable/html/");
+    return FileUtil.toSystemDependentName("/plugins/Dart/testData/refactoring/introduceVariable/html/");
   }
 
   @Override

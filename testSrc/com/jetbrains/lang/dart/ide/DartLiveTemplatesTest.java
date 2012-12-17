@@ -17,7 +17,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 public class DartLiveTemplatesTest extends LightCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/web-ide/WebStorm/Dart/testData/liveTemplates/");
+    return FileUtil.toSystemDependentName("/plugins/Dart/testData/liveTemplates/");
   }
 
   public static void expandTemplate(final Editor editor) {
