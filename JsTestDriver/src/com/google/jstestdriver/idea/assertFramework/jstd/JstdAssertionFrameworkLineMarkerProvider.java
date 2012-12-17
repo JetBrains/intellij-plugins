@@ -3,6 +3,7 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 import com.google.jstestdriver.idea.assertFramework.library.JstdLibraryUtil;
 import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructure;
 import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructureBuilder;
+import com.google.jstestdriver.idea.debug.JstdDebugProgramRunner;
 import com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer;
 import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
@@ -25,6 +26,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.PopupChooserBuilder;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.ListCellRendererWrapper;
@@ -32,6 +34,7 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,10 +47,6 @@ import java.util.List;
  * @author Sergey Simonchik
  */
 public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvider {
-
-  private enum Type {
-    RUN, DEBUG
-  }
 
   @Override
   public LineMarkerInfo getLineMarkerInfo(@NotNull PsiElement element) {
@@ -125,18 +124,12 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
   }
 
   private static void showPopup(@NotNull MouseEvent e, @NotNull final PsiElement psiElement, final String displayName) {
-    final JBList list = new JBList(Type.values());
-    list.setCellRenderer(new ListCellRendererWrapper() {
+    final JBList list = new JBList(getAvailableTypes());
+    list.setCellRenderer(new ListCellRendererWrapper<Type>() {
       @Override
-      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        if (value == Type.RUN) {
-          setIcon(AllIcons.Toolwindows.ToolWindowRun);
-          setText("Run '" + displayName + "'");
-        }
-        else if (value == Type.DEBUG) {
-          setIcon(AllIcons.Toolwindows.ToolWindowDebugger);
-          setText("Debug '" + displayName + "'");
-        }
+      public void customize(JList list, Type value, int index, boolean selected, boolean hasFocus) {
+        setIcon(value.getIcon());
+        setText(value.getTitle(displayName));
       }
     });
     PopupChooserBuilder builder = new PopupChooserBuilder(list);
@@ -147,15 +140,10 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
         public void run() {
           int[] ids = list.getSelectedIndices();
           if (ids == null || ids.length == 0) return;
-          Object[] selectedElements = list.getSelectedValues();
-          for (Object element : selectedElements) {
+          Type type = ObjectUtils.tryCast(list.getSelectedValue(), Type.class);
+          if (type != null) {
             if (psiElement.isValid()) {
-              if (element == Type.RUN) {
-                execute(DefaultRunExecutor.getRunExecutorInstance(), psiElement);
-              }
-              else if (element == Type.DEBUG) {
-                execute(DefaultDebugExecutor.getDebugExecutorInstance(), psiElement);
-              }
+              execute(type.getExecutor(), psiElement);
             }
           }
         }
@@ -163,6 +151,17 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
       createPopup();
 
     popup.show(new RelativePoint(e));
+  }
+
+  @NotNull
+  private static Type[] getAvailableTypes() {
+    List<Type> types = ContainerUtil.filter(Type.values(), new Condition<Type>() {
+      @Override
+      public boolean value(Type type) {
+        return type.isAvailable();
+      }
+    });
+    return types.toArray(new Type[types.size()]);
   }
 
   private static void execute(@NotNull Executor executor, @NotNull PsiElement element) {
@@ -224,6 +223,65 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
     else {
       ProgramRunnerUtil.executeConfiguration(project, configuration, executor);
     }
+  }
+
+  private enum Type {
+    RUN {
+      @Override
+      boolean isAvailable() {
+        return true;
+      }
+
+      @NotNull
+      @Override
+      Icon getIcon() {
+        return AllIcons.Toolwindows.ToolWindowRun;
+      }
+
+      @Override
+      String getTitle(@NotNull String displayName) {
+        return "Run '" + displayName + "'";
+      }
+
+      @NotNull
+      @Override
+      Executor getExecutor() {
+        return DefaultRunExecutor.getRunExecutorInstance();
+      }
+    },
+    DEBUG {
+      @Override
+      boolean isAvailable() {
+        return JstdDebugProgramRunner.isAvailable();
+      }
+
+      @NotNull
+      @Override
+      Icon getIcon() {
+        return AllIcons.Toolwindows.ToolWindowDebugger;
+      }
+
+      @Override
+      String getTitle(@NotNull String displayName) {
+        return "Debug '" + displayName + "'";
+      }
+
+      @NotNull
+      @Override
+      Executor getExecutor() {
+        return DefaultDebugExecutor.getDebugExecutorInstance();
+      }
+    };
+
+    abstract boolean isAvailable();
+
+    @NotNull
+    abstract Icon getIcon();
+
+    abstract String getTitle(@NotNull String displayName);
+
+    @NotNull
+    abstract Executor getExecutor();
   }
 
 }

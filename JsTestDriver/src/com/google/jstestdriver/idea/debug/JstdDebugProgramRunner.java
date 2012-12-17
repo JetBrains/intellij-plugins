@@ -9,6 +9,7 @@ import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
+import com.intellij.execution.RunnerRegistry;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
@@ -38,6 +39,7 @@ import java.io.PrintWriter;
  */
 public class JstdDebugProgramRunner extends GenericProgramRunner {
   private static final String DEBUG_RUNNER_ID = JstdDebugProgramRunner.class.getSimpleName();
+  private static Boolean IS_AVAILABLE = null;
 
   @NotNull
   @Override
@@ -48,6 +50,17 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
   @Override
   public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
     return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) && profile instanceof JstdRunConfiguration;
+  }
+
+  public static boolean isAvailable() {
+    Boolean isAvailable = IS_AVAILABLE;
+    if (isAvailable != null) {
+      return isAvailable;
+    }
+    RunnerRegistry registry = RunnerRegistry.getInstance();
+    isAvailable = registry.findRunnerById(DEBUG_RUNNER_ID) != null;
+    IS_AVAILABLE = isAvailable;
+    return isAvailable;
   }
 
   @Override
