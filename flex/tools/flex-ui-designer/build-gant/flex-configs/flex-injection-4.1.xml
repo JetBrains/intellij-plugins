@@ -27,8 +27,8 @@
 			<path-element>@@repo@@/com/adobe/flex/framework/spark/4.5.2.21576/spark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airspark/4.5.2.21576/airspark-4.5.2.21576.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airframework/4.5.2.21576/airframework-4.5.2.21576.swc</path-element>
-			<path-element>@@repo@@/org/jetbrains/miglayout/miglayout-flex/4.3.1-SNAPSHOT/miglayout-flex-4.3.1.swc</path-element>
-			<path-element>@@repo@@/org/jetbrains/miglayout/miglayout-core/4.3.1/miglayout-core-4.3.1.swc</path-element>
+			<path-element>@@repo@@/org/jetbrains/miglayout/miglayout-flex/4.3.1-SNAPSHOT/miglayout-flex-4.3.1-SNAPSHOT.swc</path-element>
+			<path-element>@@repo@@/org/jetbrains/miglayout/miglayout-core/4.3.1-SNAPSHOT/miglayout-core-4.3.1-SNAPSHOT.swc</path-element>
 			<path-element>@@target@@/shared-1.0-SNAPSHOT.swc</path-element>
 			<path-element>@@repo@@/com/adobe/flex/framework/airglobal/3.1.0.4880/airglobal.swc</path-element>
 		</external-library-path>
