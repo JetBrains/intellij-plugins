@@ -4,10 +4,12 @@ import com.google.common.collect.Lists;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.FlagsImpl;
 import com.google.jstestdriver.PathResolver;
+import com.google.jstestdriver.Plugin;
 import com.google.jstestdriver.config.*;
 import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.model.BasePaths;
 import com.google.jstestdriver.util.DisplayPathSanitizer;
+import com.google.jstestdriver.util.ManifestLoader;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -20,8 +22,10 @@ import java.util.List;
  * @author Sergey Simonchik
  */
 public class JstdConfigParsingUtils {
-  private JstdConfigParsingUtils() {
-  }
+
+  private static final String COVERAGE_MODULE_NAME = "com.google.jstestdriver.coverage.CoverageModule";
+
+  private JstdConfigParsingUtils() {}
 
   public static ParsedConfiguration parseConfiguration(@NotNull File configFile) {
     BasePaths basePaths = new BasePaths(configFile.getParentFile());
@@ -63,4 +67,35 @@ public class JstdConfigParsingUtils {
     }
     return jstdConfigFile.getParentFile();
   }
+
+  /**
+   * Wiping coverage section in a configuration file makes sense because:
+   * <ul>
+   *   <li>running tests without coverage (via Shift+F10) doesn't handle coverage output</li>
+   *   <li>running tests with coverage has its own special configuration</li>
+   * </ul>
+   * @param configuration
+   */
+  public static void wipeCoveragePlugin(@NotNull ParsedConfiguration configuration) {
+    ManifestLoader manifestLoader = new ManifestLoader();
+    Iterator<Plugin> iterator = configuration.getPlugins().iterator();
+    while (iterator.hasNext()) {
+      Plugin plugin = iterator.next();
+      if (isCoveragePlugin(plugin, manifestLoader)) {
+        iterator.remove();
+      }
+    }
+  }
+
+  private static boolean isCoveragePlugin(@NotNull Plugin plugin, @NotNull ManifestLoader loader) {
+    try {
+      String moduleName = plugin.getModuleName(loader);
+      if (COVERAGE_MODULE_NAME.equals(moduleName)) {
+        return true;
+      }
+    } catch (Exception ignored) {
+    }
+    return false;
+  }
+
 }

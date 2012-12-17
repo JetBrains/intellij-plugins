@@ -71,6 +71,7 @@ public class JstdDebuggableFileFinderProvider {
     try {
       YamlParser yamlParser = new YamlParser();
       ParsedConfiguration parsedConfiguration = (ParsedConfiguration) yamlParser.parse(reader, dirBasePaths);
+      JstdConfigParsingUtils.wipeCoveragePlugin(parsedConfiguration);
       return JstdConfigParsingUtils.resolveConfiguration(parsedConfiguration);
     }
     catch (Exception e) {

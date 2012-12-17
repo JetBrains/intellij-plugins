@@ -38,13 +38,15 @@ import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.google.jstestdriver.idea.util.JstdConfigParsingUtils;
 import com.google.jstestdriver.output.TestResultHolder;
 import com.google.jstestdriver.runner.RunnerMode;
-import com.google.jstestdriver.util.ManifestLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
 import java.io.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Main class of JsTestDriver test runner, that runs tests in a separate process and streams messages
@@ -54,7 +56,6 @@ import java.util.*;
  */
 public class TestRunner {
 
-  private static final String COVERAGE_MODULE_NAME = "com.google.jstestdriver.coverage.CoverageModule";
   public static final String DEBUG_SESSION_STARTED = "debug session started";
 
   public enum ParameterKey {
@@ -125,7 +126,7 @@ public class TestRunner {
     }
     final File singleBasePath = JstdConfigParsingUtils.getSingleBasePath(parsedConfiguration.getBasePaths(), configFile);
     myTreeManager.setCurrentBasePath(singleBasePath.getAbsolutePath());
-    wipeCoveragePlugin(parsedConfiguration);
+    JstdConfigParsingUtils.wipeCoveragePlugin(parsedConfiguration);
     builder.setDefaultConfiguration(parsedConfiguration);
     builder.withPluginInitializer(new PluginInitializer() {
       @Override
@@ -195,36 +196,6 @@ public class TestRunner {
         }
       }
     }
-  }
-
-  /**
-   * Wiping coverage section in a configuration file makes sense because:
-   * <ul>
-   *   <li>running tests without coverage (via Shift+F10) doesn't handle coverage output</li>
-   *   <li>running tests with coverage has its own special configuration</li>
-   * </ul>
-   * @param configuration
-   */
-  private static void wipeCoveragePlugin(@NotNull ParsedConfiguration configuration) {
-    ManifestLoader manifestLoader = new ManifestLoader();
-    Iterator<Plugin> iterator = configuration.getPlugins().iterator();
-    while (iterator.hasNext()) {
-      Plugin plugin = iterator.next();
-      if (isCoveragePlugin(plugin, manifestLoader)) {
-        iterator.remove();
-      }
-    }
-  }
-
-  private static boolean isCoveragePlugin(@NotNull Plugin plugin, @NotNull ManifestLoader loader) {
-    try {
-      String moduleName = plugin.getModuleName(loader);
-      if (COVERAGE_MODULE_NAME.equals(moduleName)) {
-        return true;
-      }
-    } catch (Exception ignored) {
-    }
-    return false;
   }
 
   @NotNull
