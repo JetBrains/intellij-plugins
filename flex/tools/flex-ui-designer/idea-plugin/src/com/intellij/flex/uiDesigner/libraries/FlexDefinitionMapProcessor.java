@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner.libraries;
 import com.intellij.flex.uiDesigner.DebugPathManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xml.NanoXmlUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -57,7 +58,7 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
   }
 
   private static String generateInjectionName(String flexSdkVersion) {
-    return "flex-injection-" + flexSdkVersion + ".swc";
+    return "flex-injection-" + (StringUtil.compareVersionNumbers(flexSdkVersion, "4.6") < 0 ? flexSdkVersion : "4.6") + ".swc";
   }
 
   private void inject(THashMap<CharSequence, Definition> definitionMap, AbcMerger abcMerger) throws IOException {

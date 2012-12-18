@@ -217,8 +217,8 @@ public class DesignerApplicationLauncher extends DocumentTask {
 
   private boolean runAndWaitDebugger() {
     final AtomicBoolean result = new AtomicBoolean();
-    final Semaphore debuggerRunSemaphor = new Semaphore();
-    debuggerRunSemaphor.down();
+    final Semaphore debuggerRunSemaphore = new Semaphore();
+    debuggerRunSemaphore.down();
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -227,18 +227,18 @@ public class DesignerApplicationLauncher extends DocumentTask {
             @Override
             public void run() {
               result.set(true);
-              debuggerRunSemaphor.up();
+              debuggerRunSemaphore.up();
             }
           });
         }
         catch (ExecutionException e) {
           LOG.error(e);
-          debuggerRunSemaphor.up();
+          debuggerRunSemaphore.up();
         }
       }
     });
 
-    debuggerRunSemaphor.waitFor();
+    debuggerRunSemaphore.waitFor();
     return result.get();
   }
 
@@ -271,7 +271,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
 
     Collections.sort(sdks, new Comparator<Sdk>() {
       @Override
-      public int compare(Sdk o1, Sdk o2) {
+      public int compare(@NotNull Sdk o1, @NotNull Sdk o2) {
         return StringUtil.compareVersionNumbers(o2.getVersionString(), o1.getVersionString());
       }
     });
@@ -356,6 +356,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
           }
           indicator.setText(FlashUIDesignerBundle.message("collect.libraries"));
 
+          assert myProject != null;
           DumbService dumbService = DumbService.getInstance(myProject);
           if (dumbService.isDumb()) {
             dumbService.waitForSmartMode();
