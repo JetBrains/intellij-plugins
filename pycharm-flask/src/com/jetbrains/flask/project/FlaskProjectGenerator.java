@@ -76,6 +76,11 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
   }
 
   @Override
+  public boolean supportsPython3() {
+    return false;
+  }
+
+  @Override
   public PyNewProjectSettings showGenerationSettings(VirtualFile baseDir) throws ProcessCanceledException {
     return new PyNewProjectSettings();
   }
