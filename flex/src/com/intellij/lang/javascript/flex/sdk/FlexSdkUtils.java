@@ -17,6 +17,7 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkAdditionalData;
 import com.intellij.openapi.projectRoots.SdkType;
+import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.ui.configuration.ClasspathEditor;
 import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
@@ -25,7 +26,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.peer.PeerFactory;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PairConsumer;
 import com.intellij.util.Processor;
@@ -141,7 +141,7 @@ public class FlexSdkUtils {
       public Sdk compute() {
         final ProjectJdkTable projectJdkTable = ProjectJdkTable.getInstance();
         final String sdkName = SdkConfigurationUtil.createUniqueSdkName(sdkType, sdkHomePath, projectJdkTable.getSdksOfType(sdkType));
-        final Sdk sdk = PeerFactory.getInstance().createProjectJdk(sdkName, "", sdkHomePath, sdkType);
+        final Sdk sdk = new ProjectJdkImpl(sdkName, sdkType, sdkHomePath, "");
         sdkType.setupSdkPaths(sdk);
         projectJdkTable.addJdk(sdk);
         return sdk;

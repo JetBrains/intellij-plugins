@@ -19,12 +19,12 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
+import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.peer.PeerFactory;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Consumer;
 import junit.framework.AssertionFailedError;
@@ -80,7 +80,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
       final AccessToken token = WriteAction.start();
       try {
         FlexSdkType2 sdkType = FlexSdkType2.getInstance();
-        sdk = PeerFactory.getInstance().createProjectJdk(sdkName, "", flexSdkRootPath, sdkType);
+        sdk = new ProjectJdkImpl(sdkName, sdkType, flexSdkRootPath, "");
         ProjectJdkTable.getInstance().addJdk(sdk);
 
         Disposer.register(getSdkParentDisposable(), new Disposable() {

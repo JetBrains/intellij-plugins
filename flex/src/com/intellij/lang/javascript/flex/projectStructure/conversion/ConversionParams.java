@@ -18,6 +18,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil;
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
@@ -25,7 +26,6 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
-import com.intellij.peer.PeerFactory;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -133,7 +133,7 @@ public class ConversionParams {
       }
 
       String newSdkName = SdkConfigurationUtil.createUniqueSdkName(newSdkType, homePath, Arrays.asList(allSdks));
-      Sdk newSdk = PeerFactory.getInstance().createProjectJdk(newSdkName, "", homePath, newSdkType);
+      Sdk newSdk = new ProjectJdkImpl(newSdkName, newSdkType, homePath, "");
       newSdkType.setupSdkPaths(newSdk);
       sdksToAdd.add(newSdk);
       homePathToNewSdk.put(homePath, newSdk);
