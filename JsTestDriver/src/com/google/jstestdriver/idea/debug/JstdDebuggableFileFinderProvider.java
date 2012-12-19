@@ -41,7 +41,7 @@ public class JstdDebuggableFileFinderProvider {
   @NotNull
   public RemoteDebuggingFileFinder provideFileFinder() throws ExecutionException {
     List<RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean> mapping = extractMappings();
-    return new RemoteDebuggingFileFinder(myProject, mapping, false);
+    return new RemoteDebuggingFileFinder(mapping, false);
   }
 
   @NotNull
