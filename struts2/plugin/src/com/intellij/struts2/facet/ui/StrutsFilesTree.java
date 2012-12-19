@@ -21,13 +21,9 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
-import com.intellij.peer.PeerFactory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.ui.CheckboxTreeBase;
-import com.intellij.ui.CheckedTreeNode;
-import com.intellij.ui.ColoredTreeCellRenderer;
-import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.*;
 import com.intellij.util.containers.Convertor;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.ui.tree.TreeUtil;
@@ -98,7 +94,7 @@ public class StrutsFilesTree extends CheckboxTreeBase {
       }
     }, null);
 
-    PeerFactory.getInstance().getUIHelper().installTreeSpeedSearch(this, new Convertor<TreePath, String>() {
+    new TreeSpeedSearch(this, new Convertor<TreePath, String>() {
       public String convert(final TreePath treePath) {
         final Object object = ((CheckedTreeNode) treePath.getLastPathComponent()).getUserObject();
         if (object instanceof Module) {

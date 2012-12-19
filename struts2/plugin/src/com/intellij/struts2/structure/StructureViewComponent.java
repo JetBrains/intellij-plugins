@@ -18,7 +18,7 @@ package com.intellij.struts2.structure;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.peer.PeerFactory;
+import com.intellij.ui.TreeSpeedSearch;
 
 /**
  * Adds SpeedSearch (Alt+F3) to the structure view.
@@ -31,7 +31,7 @@ class StructureViewComponent extends com.intellij.ide.structureView.newStructure
                          final StructureViewModel structureViewModel,
                          final Project project) {
     super(fileEditor, structureViewModel, project);
-    PeerFactory.getInstance().getUIHelper().installTreeSpeedSearch(getTree());
+    new TreeSpeedSearch(getTree());
   }
 
 }
