@@ -50,7 +50,7 @@ public class DartiumDebugRunner extends DefaultProgramRunner {
 
     FileDocumentManager.getInstance().saveAllDocuments();
     final String url = configuration.getFileUrl();
-    final DebuggableFileFinder fileFinder = getFileFinder(project, configuration);
+    final DebuggableFileFinder fileFinder = getFileFinder(configuration);
     final XDebugSession debugSession =
       XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
         @NotNull
@@ -62,11 +62,11 @@ public class DartiumDebugRunner extends DefaultProgramRunner {
     return debugSession.getRunContentDescriptor();
   }
 
-  private static DebuggableFileFinder getFileFinder(Project project, DartDebugConfigurationBase configuration) {
+  private static DebuggableFileFinder getFileFinder(DartDebugConfigurationBase configuration) {
     if (configuration instanceof LocalDartDebugConfiguration) {
       return DefaultDebuggableFileFinder.INSTANCE;
     }
     final RemoteDartDebugConfiguration remoteDartDebugConfiguration = (RemoteDartDebugConfiguration)configuration;
-    return new RemoteDebuggingFileFinder(project, remoteDartDebugConfiguration.getMappings());
+    return new RemoteDebuggingFileFinder(remoteDartDebugConfiguration.getMappings());
   }
 }
