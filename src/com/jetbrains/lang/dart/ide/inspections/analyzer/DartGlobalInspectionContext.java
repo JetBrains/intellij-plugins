@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.inspections.analyzer;
 
+import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInspection.GlobalInspectionContext;
 import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.codeInspection.ex.Tools;
@@ -49,7 +50,8 @@ public class DartGlobalInspectionContext implements GlobalInspectionContextExten
   @Override
   public void performPreRunActivities(List<Tools> globalTools, List<Tools> localTools, GlobalInspectionContext context) {
     final Project project = context.getProject();
-    final SearchScope searchScope = context.getRefManager().getScope().toSearchScope();
+    AnalysisScope scope = context.getRefManager().getScope();
+    SearchScope searchScope = scope == null ? GlobalSearchScope.EMPTY_SCOPE : scope.toSearchScope();
     final GlobalSearchScope globalSearchScope = (GlobalSearchScope)searchScope.union(GlobalSearchScope.EMPTY_SCOPE);
     final Set<String> allLibraryNames = ApplicationManager.getApplication().runReadAction(new Computable<Set<String>>() {
       @Override
