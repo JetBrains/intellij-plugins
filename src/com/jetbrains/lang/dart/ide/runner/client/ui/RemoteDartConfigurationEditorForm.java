@@ -45,9 +45,9 @@ public class RemoteDartConfigurationEditorForm extends SettingsEditor<RemoteDart
       final LocalFileSystem fileSystem = LocalFileSystem.getInstance();
       VirtualFile toSelect = null;
       for (RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean bean : configuration.getMappings()) {
-        final VirtualFile file = fileSystem.findFileByPath(bean.getLocalFilePath());
+        final VirtualFile file = fileSystem.findFileByPath(bean.localFilePath);
         if (file != null) {
-          map.put(file, bean.getRemoteUrl());
+          map.put(file, bean.remoteUrl);
           if (toSelect == null || VfsUtilCore.isAncestor(file, toSelect, false)) {
             toSelect = file;
           }
