@@ -23,7 +23,6 @@ import com.intellij.javascript.debugger.impl.BrowserConnection;
 import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.Consumer;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
@@ -115,10 +114,10 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
       public XDebugProcess start(@NotNull final XDebugSession session) {
         JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
         @SuppressWarnings("unchecked")
-        BrowserConnection<Object> browserConnection = debugProcess.getBrowserConnection();
-        browserConnection.queueRequest(new Consumer<Object>() {
+        BrowserConnection browserConnection = debugProcess.getConnection();
+        browserConnection.queueRequest(new Runnable() {
           @Override
-          public void consume(Object javascriptVm) {
+          public void run() {
             resumeJstdClientRunning(executionResult.getProcessHandler());
           }
         });
@@ -131,7 +130,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
 
   private static void resumeJstdClientRunning(@NotNull ProcessHandler processHandler) {
     // process's input stream will be closed on process termination
-    @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+    @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "ConstantConditions"})
     PrintWriter writer = new PrintWriter(processHandler.getProcessInput());
     writer.println(TestRunner.DEBUG_SESSION_STARTED);
     writer.flush();
