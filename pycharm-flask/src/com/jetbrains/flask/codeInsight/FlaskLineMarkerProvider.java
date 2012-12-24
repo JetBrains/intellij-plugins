@@ -100,7 +100,10 @@ public class FlaskLineMarkerProvider extends RelatedItemLineMarkerProvider {
     if (!references.isEmpty()) {
       final Set<PyFunction> viewFunctions = new HashSet<PyFunction>();
       for (PyStringLiteralExpression literal : references) {
-        viewFunctions.add(PsiTreeUtil.getParentOfType(literal, PyFunction.class));
+        PyFunction containingFunction = PsiTreeUtil.getParentOfType(literal, PyFunction.class);
+        if (containingFunction != null) {
+          viewFunctions.add(containingFunction);
+        }
       }
       return createViewFunctionNavigationMarker(element, viewFunctions);
     }
