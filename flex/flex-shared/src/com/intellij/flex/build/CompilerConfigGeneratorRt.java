@@ -814,7 +814,7 @@ public class CompilerConfigGeneratorRt {
     }
     else if (fileNameLowercased.endsWith(".as")) {
       try {
-        final String content = FileUtil.loadFile(file);
+        final String content = FileUtil.loadFile(file, FlexCommonUtils.SDK_TOOLS_ENCODING);
         // todo correct implementation requires lexer
         return content.contains("package");
       }
