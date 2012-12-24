@@ -84,6 +84,11 @@ module IntelliJ
   # Parses string with launcher settings
   def self.parse_launcher_string(args_string, args_array)
     args_string.split("\n").each { |item|
+      ::Kernel.puts "item before -- #{item}"
+      if '\'$stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)\'' == item
+        item = '$stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)'
+      end
+      ::Kernel.puts "item after -- #{item}"
       (args_array << item) unless item.strip.empty?
     }
   end
