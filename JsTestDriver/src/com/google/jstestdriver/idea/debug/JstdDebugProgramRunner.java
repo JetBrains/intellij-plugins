@@ -5,7 +5,6 @@ import com.google.jstestdriver.idea.execution.JstdRunConfiguration;
 import com.google.jstestdriver.idea.execution.JstdRunConfigurationVerifier;
 import com.google.jstestdriver.idea.execution.JstdTestRunnerCommandLineState;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
-import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
@@ -17,6 +16,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.BrowserConnection;
@@ -93,7 +93,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
 
     final String url;
     final Connection connection = debugEngine.openConnection(false);
-    if (debugEngine instanceof ChromeDebuggerEngine) {
+    if (debugEngine.getBrowserFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME)) {
       url = "http://localhost:" + JstdToolWindowPanel.serverPort + debugBrowserInfo.getCapturedBrowserUrl();
     }
     else {
@@ -113,7 +113,6 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
         JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
-        @SuppressWarnings("unchecked")
         BrowserConnection browserConnection = debugProcess.getConnection();
         browserConnection.queueRequest(new Runnable() {
           @Override

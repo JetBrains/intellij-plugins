@@ -5,7 +5,6 @@ import com.google.jstestdriver.CapturedBrowsers;
 import com.google.jstestdriver.SlaveBrowser;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.server.JstdServerState;
-import com.intellij.chromeConnector.debugger.ChromeDebuggerEngine;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
@@ -46,7 +45,7 @@ public class JstdDebugBrowserInfo<Connection> {
   }
 
   public void fixIfChrome(@NotNull ProcessHandler processHandler) {
-    if (!(myDebugEngine instanceof ChromeDebuggerEngine)) {
+    if (!(myDebugEngine.getBrowserFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME))) {
       return;
     }
     final AtomicBoolean done = new AtomicBoolean(false);

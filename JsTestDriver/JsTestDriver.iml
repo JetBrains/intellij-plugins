@@ -21,7 +21,6 @@
     <orderEntry type="module" module-name="coverage-common" />
     <orderEntry type="module" module-name="JsTestDriver-rt" />
     <orderEntry type="module" module-name="JavaScriptDebugger" />
-    <orderEntry type="module" module-name="ChromeConnector" />
   </component>
 </module>
 
