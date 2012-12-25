@@ -1,7 +1,7 @@
 package com.jetbrains.lang.dart.ide.runner.client;
 
-import com.intellij.chromeConnector.connection.ChromeConnection;
 import com.intellij.chromeConnector.debugger.ChromeDebugProcess;
+import com.intellij.chromeConnector.extension.ExtBackedChromeConnection;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
@@ -19,7 +19,7 @@ public class DartiumDebugProcess extends ChromeDebugProcess {
 
   public DartiumDebugProcess(@NotNull XDebugSession session,
                              @NotNull DebuggableFileFinder finder,
-                             @NotNull ChromeConnection connection,
+                             @NotNull ExtBackedChromeConnection connection,
                              @Nullable String initialUrl) {
     super(session, finder, connection, initialUrl, null);
 

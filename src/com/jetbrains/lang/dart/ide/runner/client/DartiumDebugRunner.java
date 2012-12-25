@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.ide.runner.client;
 
-import com.intellij.chromeConnector.connection.ChromeConnection;
-import com.intellij.chromeConnector.connection.ChromeConnectionManager;
+import com.intellij.chromeConnector.extension.ExtBackedChromeConnection;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
@@ -46,7 +45,7 @@ public class DartiumDebugRunner extends DefaultProgramRunner {
                                            RunContentDescriptor contentToReuse,
                                            ExecutionEnvironment env) throws ExecutionException {
     final DartDebugConfigurationBase configuration = (DartDebugConfigurationBase)env.getRunProfile();
-    final ChromeConnection connection = ChromeConnectionManager.getInstance().createConnection(true);
+    final ExtBackedChromeConnection connection = new ExtBackedChromeConnection(true);
 
     FileDocumentManager.getInstance().saveAllDocuments();
     final String url = configuration.getFileUrl();
