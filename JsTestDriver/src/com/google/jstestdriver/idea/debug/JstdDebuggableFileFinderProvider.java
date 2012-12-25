@@ -1,5 +1,7 @@
 package com.google.jstestdriver.idea.debug;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.jstestdriver.FileInfo;
 import com.google.jstestdriver.config.ParsedConfiguration;
 import com.google.jstestdriver.config.ResolvedConfiguration;
@@ -8,56 +10,43 @@ import com.google.jstestdriver.idea.util.JstdConfigParsingUtils;
 import com.google.jstestdriver.model.BasePaths;
 import com.intellij.execution.ExecutionException;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
-import com.intellij.javascript.debugger.execution.RemoteJavaScriptDebugConfiguration;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Sergey Simonchik
  */
 public class JstdDebuggableFileFinderProvider {
-
   private static final Logger LOG = Logger.getInstance(JstdDebuggableFileFinderProvider.class);
 
-  private final Project myProject;
   private final File myConfigFile;
 
-  public JstdDebuggableFileFinderProvider(@NotNull Project project, @NotNull File configFile) {
-    myProject = project;
+  public JstdDebuggableFileFinderProvider(@NotNull File configFile) {
     myConfigFile = configFile;
   }
 
   @NotNull
   public RemoteDebuggingFileFinder provideFileFinder() throws ExecutionException {
-    List<RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean> mapping = extractMappings();
-    return new RemoteDebuggingFileFinder(mapping, false);
-  }
-
-  @NotNull
-  private List<RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean> extractMappings() throws ExecutionException {
     ResolvedConfiguration resolvedConfiguration = resolveConfiguration();
-    List<RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean> mappings = ContainerUtilRt.newArrayList();
+    BiMap<String, VirtualFile> mappings = HashBiMap.create();
     addAllRemoteUrlMappings(resolvedConfiguration.getTests(), mappings);
     addAllRemoteUrlMappings(resolvedConfiguration.getFilesList(), mappings);
-    return mappings;
+    return new RemoteDebuggingFileFinder(mappings, false);
   }
 
   @NotNull
   private ResolvedConfiguration resolveConfiguration() throws ExecutionException {
     VirtualFile configVirtualFile = VfsUtil.findFileByIoFile(myConfigFile, false);
     if (configVirtualFile == null) {
-      throw new ExecutionException("Can not find JsTestDriver configuration file " + myConfigFile.getAbsolutePath());
+      throw new ExecutionException("Cannot find JsTestDriver configuration file " + myConfigFile.getAbsolutePath());
     }
     BasePaths dirBasePaths = new BasePaths(myConfigFile.getParentFile());
     final byte[] content;
@@ -65,7 +54,7 @@ public class JstdDebuggableFileFinderProvider {
       content = configVirtualFile.contentsToByteArray();
     }
     catch (IOException e) {
-      throw new ExecutionException("Can not read JsTestDriver configuration file " + configVirtualFile.getPath());
+      throw new ExecutionException("Cannot read JsTestDriver configuration file " + configVirtualFile.getPath());
     }
     Reader reader = new InputStreamReader(new ByteArrayInputStream(content), Charset.defaultCharset());
     try {
@@ -88,28 +77,18 @@ public class JstdDebuggableFileFinderProvider {
     }
   }
 
-  private static void addAllRemoteUrlMappings(@NotNull Collection<FileInfo> fileInfos,
-                                              @NotNull List<RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean> mappings) {
-    for (FileInfo info : fileInfos) {
-      RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean mappingBean = createMappingBean(info);
-      if (mappingBean != null) {
-        mappings.add(mappingBean);
+  private static void addAllRemoteUrlMappings(@NotNull Collection<FileInfo> filesInfo, @NotNull BiMap<String, VirtualFile> mappings) {
+    LocalFileSystem fileSystem = LocalFileSystem.getInstance();
+    for (FileInfo fileInfo : filesInfo) {
+      String displayPath = fileInfo.getDisplayPath();
+      File file = fileInfo.toFile();
+      if (StringUtil.isNotEmpty(displayPath) && file.isFile()) {
+        VirtualFile virtualFile = fileSystem.findFileByIoFile(file);
+        if (virtualFile != null) {
+          String remotePath = "http://localhost:9876/test/" + displayPath;
+          mappings.put(remotePath, virtualFile);
+        }
       }
     }
   }
-
-  @Nullable
-  private static RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean createMappingBean(@NotNull FileInfo fileInfo) {
-    String displayPath = fileInfo.getDisplayPath();
-    File file = fileInfo.toFile();
-    if (StringUtil.isNotEmpty(displayPath) && file.isFile()) {
-      VirtualFile virtualFile = VfsUtil.findFileByIoFile(file, false);
-      if (virtualFile != null) {
-        String remotePath = "http://localhost:9876/test/" + displayPath;
-        return new RemoteJavaScriptDebugConfiguration.RemoteUrlMappingBean(virtualFile.getPath(), remotePath);
-      }
-    }
-    return null;
-  }
-
 }

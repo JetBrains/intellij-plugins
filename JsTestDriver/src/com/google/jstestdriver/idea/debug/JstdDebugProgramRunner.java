@@ -104,12 +104,8 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     final ExecutionResult executionResult = runState.execute(executor, this);
     debugBrowserInfo.fixIfChrome(executionResult.getProcessHandler());
 
-    File configFile = new File(runConfiguration.getRunSettings().getConfigFile());
-    JstdDebuggableFileFinderProvider fileFinderProvider = new JstdDebuggableFileFinderProvider(project, configFile);
-    final RemoteDebuggingFileFinder fileFinder = fileFinderProvider.provideFileFinder();
-
-    XDebuggerManager xDebuggerManager = XDebuggerManager.getInstance(project);
-    XDebugSession xDebugSession = xDebuggerManager.startSession(this, env, contentToReuse, new XDebugProcessStarter() {
+    final RemoteDebuggingFileFinder fileFinder = new JstdDebuggableFileFinderProvider(new File(runConfiguration.getRunSettings().getConfigFile())).provideFileFinder();
+    return XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
         JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
@@ -122,9 +118,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
         });
         return debugProcess;
       }
-    });
-
-    return xDebugSession.getRunContentDescriptor();
+    }).getRunContentDescriptor();
   }
 
   private static void resumeJstdClientRunning(@NotNull ProcessHandler processHandler) {
