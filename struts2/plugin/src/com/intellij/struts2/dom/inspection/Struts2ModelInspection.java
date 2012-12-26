@@ -34,6 +34,7 @@ import com.intellij.struts2.dom.struts.impl.path.ResultTypeResolver;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
+import com.intellij.util.io.URLUtil;
 import com.intellij.util.xml.*;
 import com.intellij.util.xml.highlighting.BasicDomElementsInspection;
 import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
@@ -145,7 +146,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
       }
 
       // global URLs
-      if (stringValue.contains("://")) {
+      if (URLUtil.containsScheme(stringValue)) {
         return false;
       }
     }
