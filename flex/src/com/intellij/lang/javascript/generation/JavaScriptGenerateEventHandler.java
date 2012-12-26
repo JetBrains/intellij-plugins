@@ -21,6 +21,7 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
+import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
@@ -360,6 +361,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
             created = handlerCallerAnchorInArgumentList.getParent().addAfter(element, handlerCallerAnchorInArgumentList);
           }
 
+          // comma in argument list
           if (handlerCallerAnchorInArgumentList.getNode().getElementType() != JSTokenTypes.COMMA) {
             final PsiElement psi = JSChangeUtil.createJSTreeFromText(psiFile.getProject(), "a,b").getPsi();
             final JSCommaExpression commaExpression = PsiTreeUtil.getChildOfType(psi, JSCommaExpression.class);
@@ -368,9 +370,12 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
               handlerCallerAnchorInArgumentList.getParent().addAfter(comma, handlerCallerAnchorInArgumentList);
             }
           }
+
+          ensureTrailingSemicolonPresent(psiFile, created);
           return created;
         }
         else if (myExistingUnresolvedReverence != null) {
+          ensureTrailingSemicolonPresent(psiFile, myExistingUnresolvedReverence);
           return myExistingUnresolvedReverence;
         }
       }
@@ -390,6 +395,23 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
       }
 
       return null;
+    }
+
+    private static void ensureTrailingSemicolonPresent(final PsiFile psiFile, final PsiElement element) {
+      final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(element, JSCallExpression.class);
+      if (callExpression != null && JSResolveUtil.isEventListenerCall(callExpression)) {
+        final PsiElement parent = callExpression.getParent();
+        if (parent instanceof JSExpressionStatement) {
+          final PsiElement lastChild = parent.getLastChild();
+          if (lastChild == callExpression) {
+            final PsiElement psi = JSChangeUtil.createJSTreeFromText(psiFile.getProject(), ";").getPsi();
+            final PsiElement semicolon = psi.getFirstChild();
+            if (semicolon != null && semicolon.getNode().getElementType() == JSTokenTypes.SEMICOLON) {
+              parent.addAfter(semicolon, callExpression);
+            }
+          }
+        }
+      }
     }
 
     @Nullable
@@ -480,10 +502,13 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
       if (handlerCallerAnchorInArgumentList != null) {
         final JSExpression qualifier =
           ((JSReferenceExpression)callExpression.getMethodExpression()).getQualifier();
-        if (qualifier != null &&
-            LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.JAVASCRIPT.getLanguage())
-              .isIdentifier(qualifier.getText(), null)) {
-          eventHandlerName = MessageFormat.format(METHOD_NAME_PATTERN, qualifier.getText(), eventName);
+        final NamesValidator validator = LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.JAVASCRIPT.getLanguage());
+        if (qualifier != null && validator.isIdentifier(qualifier.getText(), null)) {
+          String qualifierText = qualifier.getText();
+          if (qualifierText.length() > 1 && qualifierText.charAt(0) == '_' && validator.isIdentifier(qualifierText.substring(1), null)) {
+            qualifierText = qualifierText.substring(1);
+          }
+          eventHandlerName = MessageFormat.format(METHOD_NAME_PATTERN, qualifierText, eventName);
         }
         else {
           eventHandlerName = eventName + "Handler";
