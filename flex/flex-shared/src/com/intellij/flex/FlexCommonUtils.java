@@ -710,17 +710,23 @@ public class FlexCommonUtils {
     return nature.pureAS ? ".as" : ".mxml";
   }
 
-  public static boolean is64BitJava(final String javaExecutablePath) {
+  public static boolean is64BitJava6(final String javaExecutablePath) {
     try {
-      final Ref<Boolean> is64Bit = new Ref<Boolean>(false);
+      final Ref<Boolean> is64Bit = Ref.create(false);
+      final Ref<Boolean> isJava6 = Ref.create(false);
 
       final Process process = Runtime.getRuntime().exec(new String[]{javaExecutablePath, "-version"});
       final BaseOSProcessHandler handler = new BaseOSProcessHandler(process, "doesn't matter", Charset.defaultCharset());
 
       handler.addProcessListener(new ProcessAdapter() {
         public void onTextAvailable(ProcessEvent event, Key outputType) {
-          if (outputType != ProcessOutputTypes.SYSTEM && event.getText().contains("64-Bit")) {
-            is64Bit.set(true);
+          if (outputType != ProcessOutputTypes.SYSTEM) {
+            if (event.getText().contains("64-Bit")) {
+              is64Bit.set(true);
+            }
+            if (event.getText().contains("version \"1.6.")) {
+              isJava6.set(true);
+            }
           }
         }
       });
@@ -732,7 +738,7 @@ public class FlexCommonUtils {
         handler.destroyProcess();
       }
 
-      return is64Bit.get();
+      return is64Bit.get() && isJava6.get();
     }
     catch (IOException e) {/*ignore*/}
 
@@ -805,7 +811,7 @@ public class FlexCommonUtils {
     final String applicationHomeParam =
       isFlexmojos ? null : ("-Dapplication.home=" + FileUtil.toSystemDependentName(sdk.getHomePath()));
 
-    final String d32 = (!customJavaHomeSet && SystemInfo.isMac && is64BitJava(javaExecutable)) ? "-d32" : null;
+    final String d32 = getD32IfNeed(customJavaHomeSet, javaExecutable);
 
     final List<String> result = new ArrayList<String>();
 
@@ -838,6 +844,10 @@ public class FlexCommonUtils {
     result.add(mainClass);
 
     return result;
+  }
+
+  public static String getD32IfNeed(boolean customJavaHomeSet, String javaExecutable) {
+    return (!customJavaHomeSet && SystemInfo.isMac && is64BitJava6(javaExecutable)) ? "-d32" : null;
   }
 
   @Nullable
