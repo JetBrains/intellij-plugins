@@ -70,10 +70,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.StringTokenizer;
 
@@ -274,40 +272,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   public static void launchWithSelectedApplication(final String urlOrPath, final LauncherParameters launcherParams) {
     switch (launcherParams.getLauncherType()) {
       case OSDefault:
-        if (SystemInfo.isWindows) {
-          // workaround of http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6457572
-          try {
-            Runtime.getRuntime().exec(new String[]{"cmd.exe", "/c", "start", "\"\"", BrowserUtil.escapeUrl(urlOrPath)});
-            break;
-          }
-          catch (IOException ignored) {/*ignored*/}
-        }
-
-        if (Desktop.isDesktopSupported()) {
-          final Desktop desktop = Desktop.getDesktop();
-          if (BrowserUtil.isAbsoluteURL(urlOrPath)) {
-            if (desktop.isSupported(Desktop.Action.BROWSE)) {
-              try {
-                desktop.browse(BrowserUtil.getURL(urlOrPath).toURI());
-                break;
-              }
-              catch (IOException ignored) {/*ignored*/}
-              catch (URISyntaxException ignored) {/*ignored*/}
-            }
-          }
-          else {
-            if (desktop.isSupported(Desktop.Action.OPEN)) {
-              try {
-                desktop.open(new File(urlOrPath));
-                break;
-              }
-              catch (IOException ignored) {/*ignored*/}
-              catch (IllegalArgumentException ignored) {/*ignored*/}
-            }
-          }
-        }
-
-        BrowserUtil.launchBrowser(urlOrPath);
+        BrowserUtil.open(urlOrPath);
         break;
 
       case Browser:
