@@ -12,6 +12,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.WebModuleTypeBase;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.InputValidatorEx;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -55,6 +57,25 @@ public class CreateDartFileAction extends CreateFromTemplateAction<PsiFile> {
       final Icon icon = DartFileTemplateUtil.getTemplateIcon(templateName);
       builder.addKind(shortName, icon, templateName);
     }
+    builder.setValidator(new InputValidatorEx() {
+      @Override
+      public String getErrorText(String inputString) {
+        if (inputString.length() > 0 && !StringUtil.isJavaIdentifier(inputString)) {
+          return "This is not a valid Dart name";
+        }
+        return null;
+      }
+
+      @Override
+      public boolean checkInput(String inputString) {
+        return true;
+      }
+
+      @Override
+      public boolean canClose(String inputString) {
+        return !StringUtil.isEmptyOrSpaces(inputString) && getErrorText(inputString) == null;
+      }
+    });
   }
 
   @Nullable
