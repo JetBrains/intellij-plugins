@@ -490,7 +490,11 @@ public class DartResolveUtil {
          sibling != null;
          sibling = UsefulPsiTreeUtil.getPrevSiblingSkipWhiteSpaces(sibling, true)) {
       if (".".equals(sibling.getText())) continue;
-      return sibling instanceof DartReference && sibling != node ? (DartReference)sibling : null;
+      PsiElement candidate = sibling;
+      if (candidate instanceof DartType) {
+        candidate = ((DartType)sibling).getExpression();
+      }
+      return candidate instanceof DartReference && candidate != node ? (DartReference)candidate : null;
     }
     PsiElement parent = PsiTreeUtil.getParentOfType(node, DartCascadeReferenceExpression.class, DartVarInit.class);
     if (parent instanceof DartCascadeReferenceExpression) {
