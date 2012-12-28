@@ -180,6 +180,10 @@ public class ReferenceCompletionInLibraryRootTest extends DartCompletionTestBase
     doTest();
   }
 
+  public void testReference24() throws Throwable {
+    doTest();
+  }
+
   public void testTest1() throws Throwable {
     doTest();
   }

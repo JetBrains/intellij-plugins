@@ -6,6 +6,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
+import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
@@ -160,13 +161,10 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
     DartClass dartClass = null;
     // if do not contain references
     if (DartResolveUtil.aloneOrFirstInChain(this)) {
-      PsiTreeUtil.treeWalkUp(new ComponentNameScopeProcessor(suggestedVariants), this, null, new ResolveState());
+      final PsiElement context = this;
+      final PsiScopeProcessor processor = new ComponentNameScopeProcessor(suggestedVariants);
 
-      final List<VirtualFile> libraryFiles = new ArrayList<VirtualFile>();
-      libraryFiles.addAll(DartResolveUtil.findLibrary(getContainingFile()));
-      libraryFiles.addAll(DartLibraryIndex.findLibraryClass(this, "dart:core"));
-
-      DartResolveUtil.processTopLevelDeclarations(this, new ComponentNameScopeProcessor(suggestedVariants), libraryFiles, null);
+      DartResolveUtil.treeWalkUpAndTopLevelDeclarations(context, processor);
 
       dartClass = PsiTreeUtil.getParentOfType(this, DartClass.class);
     }

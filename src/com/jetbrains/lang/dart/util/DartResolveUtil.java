@@ -214,7 +214,7 @@ public class DartResolveUtil {
     DartLibraryStatement libraryStatement = null;
     for (PsiElement root : findDartRoots(psiFile)) {
       libraryStatement = PsiTreeUtil.getChildOfType(root, DartLibraryStatement.class);
-      if(libraryStatement != null) break;
+      if (libraryStatement != null) break;
     }
     final DartSourceStatement[] sources = PsiTreeUtil.getChildrenOfType(psiFile, DartSourceStatement.class);
     if (libraryStatement == null && sources == null) {
@@ -1088,5 +1088,15 @@ public class DartResolveUtil {
       }
     });
     return result.getValue();
+  }
+
+  public static void treeWalkUpAndTopLevelDeclarations(PsiElement context, PsiScopeProcessor processor) {
+    PsiTreeUtil.treeWalkUp(processor, context, null, new ResolveState());
+
+    final List<VirtualFile> libraryFiles = new ArrayList<VirtualFile>();
+    libraryFiles.addAll(findLibrary(context.getContainingFile()));
+    libraryFiles.addAll(DartLibraryIndex.findLibraryClass(context, "dart:core"));
+
+    processTopLevelDeclarations(context, processor, libraryFiles, null);
   }
 }
