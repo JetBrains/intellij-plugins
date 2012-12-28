@@ -2,10 +2,9 @@ package com.jetbrains.lang.dart.ide.runner.client;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,10 +56,7 @@ public class DartDebugConfigurationType implements ConfigurationType {
 
   @NotNull
   public static DartDebugConfigurationType getTypeInstance() {
-    final DartDebugConfigurationType type =
-      ContainerUtil.findInstance(Extensions.getExtensions(CONFIGURATION_TYPE_EP), DartDebugConfigurationType.class);
-    assert type != null;
-    return type;
+    return ConfigurationTypeUtil.findConfigurationType(DartDebugConfigurationType.class);
   }
 
   private static abstract class DartDebugConfigurationFactory extends ConfigurationFactory {
