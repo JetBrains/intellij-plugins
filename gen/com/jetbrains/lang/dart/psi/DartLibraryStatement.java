@@ -8,10 +8,10 @@ import com.intellij.psi.PsiElement;
 public interface DartLibraryStatement extends DartPsiCompositeElement {
 
   @Nullable
-  DartComponentName getComponentName();
+  DartPathOrLibraryReference getPathOrLibraryReference();
 
   @Nullable
-  DartPathOrLibraryReference getPathOrLibraryReference();
+  DartQualifiedComponentName getQualifiedComponentName();
 
   @NotNull
   String getLibraryName();

@@ -19,14 +19,14 @@ public class DartLibraryStatementImpl extends DartPsiCompositeElementImpl implem
 
   @Override
   @Nullable
-  public DartComponentName getComponentName() {
-    return findChildByClass(DartComponentName.class);
+  public DartPathOrLibraryReference getPathOrLibraryReference() {
+    return findChildByClass(DartPathOrLibraryReference.class);
   }
 
   @Override
   @Nullable
-  public DartPathOrLibraryReference getPathOrLibraryReference() {
-    return findChildByClass(DartPathOrLibraryReference.class);
+  public DartQualifiedComponentName getQualifiedComponentName() {
+    return findChildByClass(DartQualifiedComponentName.class);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

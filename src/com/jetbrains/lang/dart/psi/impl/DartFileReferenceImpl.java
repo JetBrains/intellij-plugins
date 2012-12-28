@@ -97,6 +97,7 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
   @NotNull
   @Override
   public Object[] getVariants() {
+    // DartLibraryNameCompletionContributor
     return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 

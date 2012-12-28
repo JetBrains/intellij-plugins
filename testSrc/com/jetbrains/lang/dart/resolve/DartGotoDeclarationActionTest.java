@@ -171,6 +171,11 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
     doTest(myFixture.configureByFiles("additional/bar.dart", "Library13.dart", "additional/foo.dart"), 1);
   }
 
+
+  public void testLibrary14() throws Throwable {
+    doTest(myFixture.configureByFiles("Library14Helper.dart", "Library14.dart"), 1);
+  }
+
   public void testLocalVarDeclaration1() throws Throwable {
     doTest(1);
   }

@@ -1,7 +1,7 @@
 Dart File
   LIBRARY_STATEMENT
     PsiElement(library)('library')
-    COMPONENT_NAME
+    QUALIFIED_COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('lib')
     PsiElement(;)(';')
@@ -10,7 +10,10 @@ Dart File
     PsiElement(of)('of')
     LIBRARY_ID
       ID
-        PsiElement(IDENTIFIER)('MegaLib')
+        PsiElement(IDENTIFIER)('Mega')
+      PsiElement(.)('.')
+      ID
+        PsiElement(IDENTIFIER)('Lib')
     PsiElement(;)(';')
   EXPORT_STATEMENT
     PsiElement(export)('export')

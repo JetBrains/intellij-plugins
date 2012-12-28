@@ -73,6 +73,13 @@ public class DartElementGenerator {
   }
 
   @Nullable
+  public static DartQualifiedComponentName createQIdentifierFromText(Project myProject, String name) {
+    final PsiFile dummyFile = createDummyFile(myProject, "library " + name + ";");
+    final DartLibraryStatement libraryStatement = PsiTreeUtil.getChildOfType(dummyFile, DartLibraryStatement.class);
+    return libraryStatement == null ? null : libraryStatement.getQualifiedComponentName();
+  }
+
+  @Nullable
   public static DartSourceStatement createSourceStatementFromPath(Project myProject, String path) {
     final PsiFile dummyFile = createDummyFile(myProject, "#source(" + path + ");");
     return PsiTreeUtil.getChildOfType(dummyFile, DartSourceStatement.class);

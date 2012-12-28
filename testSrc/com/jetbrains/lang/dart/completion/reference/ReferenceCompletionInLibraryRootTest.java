@@ -37,6 +37,13 @@ public class ReferenceCompletionInLibraryRootTest extends DartCompletionTestBase
     doTestVariantsInner(getTestName(false) + ".txt");
   }
 
+  public void testLibrary3() throws Throwable {
+    myFixture.configureByText("bar.dart", "library dart.bar;");
+    myFixture.configureByText("baz.dart", "library dart.baz;");
+    myFixture.configureByText("library3.dart", "part of da<caret>");
+    doTestVariantsInner(getTestName(false) + ".txt");
+  }
+
   public void testPackages1() throws Throwable {
     myFixture.addFileToProject("pubspec.yaml", "");
     myFixture.addFileToProject("packages/foo/foo.dart", "");

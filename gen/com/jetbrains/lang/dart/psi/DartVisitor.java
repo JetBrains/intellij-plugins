@@ -390,6 +390,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitQualifiedComponentName(@NotNull DartQualifiedComponentName o) {
+    visitQNamedElement(o);
+  }
+
   public void visitRedirection(@NotNull DartRedirection o) {
     visitPsiCompositeElement(o);
   }
@@ -569,6 +573,10 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitOperator(@NotNull DartOperator o) {
+    visitPsiCompositeElement(o);
+  }
+
+  public void visitQNamedElement(@NotNull DartQNamedElement o) {
     visitPsiCompositeElement(o);
   }
 

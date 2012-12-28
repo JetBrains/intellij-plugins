@@ -31,7 +31,7 @@ HtmlFile:Html1.html
             LIBRARY_STATEMENT
               PsiElement(library)('library')
               PsiWhiteSpace(' ')
-              COMPONENT_NAME
+              QUALIFIED_COMPONENT_NAME
                 ID
                   PsiElement(IDENTIFIER)('test')
               PsiElement(;)(';')

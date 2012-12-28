@@ -296,6 +296,9 @@ public class DartParser implements PsiParser {
     else if (root_ == PREFIX_OPERATOR) {
       result_ = prefixOperator(builder_, level_ + 1);
     }
+    else if (root_ == QUALIFIED_COMPONENT_NAME) {
+      result_ = qualifiedComponentName(builder_, level_ + 1);
+    }
     else if (root_ == REDIRECTION) {
       result_ = redirection(builder_, level_ + 1);
     }
@@ -4187,20 +4190,59 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // <<nonStrictID>>
+  // <<nonStrictID>> ('.' <<nonStrictID>>)*
   public static boolean libraryId(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "libraryId")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<library id>");
+    enterErrorRecordingSection(builder_, level_, _SECTION_RECOVER_, "<library id>");
     result_ = nonStrictID(builder_, level_ + 1);
+    result_ = result_ && libraryId_1(builder_, level_ + 1);
     if (result_) {
       marker_.done(LIBRARY_ID);
     }
     else {
       marker_.rollbackTo();
     }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_GENERAL_, null);
+    result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_RECOVER_, semicolon_recover_parser_);
+    return result_;
+  }
+
+  // ('.' <<nonStrictID>>)*
+  private static boolean libraryId_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "libraryId_1")) return false;
+    int offset_ = builder_.getCurrentOffset();
+    while (true) {
+      if (!libraryId_1_0(builder_, level_ + 1)) break;
+      int next_offset_ = builder_.getCurrentOffset();
+      if (offset_ == next_offset_) {
+        empty_element_parsed_guard_(builder_, offset_, "libraryId_1");
+        break;
+      }
+      offset_ = next_offset_;
+    }
+    return true;
+  }
+
+  // ('.' <<nonStrictID>>)
+  private static boolean libraryId_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "libraryId_1_0")) return false;
+    return libraryId_1_0_0(builder_, level_ + 1);
+  }
+
+  // '.' <<nonStrictID>>
+  private static boolean libraryId_1_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "libraryId_1_0_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = consumeToken(builder_, DOT);
+    result_ = result_ && nonStrictID(builder_, level_ + 1);
+    if (!result_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
+    }
     return result_;
   }
 
@@ -4263,7 +4305,7 @@ public class DartParser implements PsiParser {
 
   /* ********************************************************** */
   // '#' 'library' '(' pathOrLibraryReference ')' ';' |
-  //                      'library' componentName ';'
+  //                      'library' qualifiedComponentName ';'
   public static boolean libraryStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "libraryStatement")) return false;
     if (!nextTokenIs(builder_, HASH) && !nextTokenIs(builder_, LIBRARY)
@@ -4303,13 +4345,13 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // 'library' componentName ';'
+  // 'library' qualifiedComponentName ';'
   private static boolean libraryStatement_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "libraryStatement_1")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     result_ = consumeToken(builder_, LIBRARY);
-    result_ = result_ && componentName(builder_, level_ + 1);
+    result_ = result_ && qualifiedComponentName(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, SEMICOLON);
     if (!result_) {
       marker_.rollbackTo();
@@ -6013,6 +6055,63 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // << nonStrictID >> ('.' << nonStrictID >>)*
+  public static boolean qualifiedComponentName(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "qualifiedComponentName")) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<qualified component name>");
+    result_ = nonStrictID(builder_, level_ + 1);
+    result_ = result_ && qualifiedComponentName_1(builder_, level_ + 1);
+    if (result_) {
+      marker_.done(QUALIFIED_COMPONENT_NAME);
+    }
+    else {
+      marker_.rollbackTo();
+    }
+    result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_GENERAL_, null);
+    return result_;
+  }
+
+  // ('.' << nonStrictID >>)*
+  private static boolean qualifiedComponentName_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "qualifiedComponentName_1")) return false;
+    int offset_ = builder_.getCurrentOffset();
+    while (true) {
+      if (!qualifiedComponentName_1_0(builder_, level_ + 1)) break;
+      int next_offset_ = builder_.getCurrentOffset();
+      if (offset_ == next_offset_) {
+        empty_element_parsed_guard_(builder_, offset_, "qualifiedComponentName_1");
+        break;
+      }
+      offset_ = next_offset_;
+    }
+    return true;
+  }
+
+  // ('.' << nonStrictID >>)
+  private static boolean qualifiedComponentName_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "qualifiedComponentName_1_0")) return false;
+    return qualifiedComponentName_1_0_0(builder_, level_ + 1);
+  }
+
+  // '.' << nonStrictID >>
+  private static boolean qualifiedComponentName_1_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "qualifiedComponentName_1_0_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = consumeToken(builder_, DOT);
+    result_ = result_ && nonStrictID(builder_, level_ + 1);
+    if (!result_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
+    }
+    return result_;
+  }
+
+  /* ********************************************************** */
   // '.' referenceExpression
   public static boolean qualifiedReferenceExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "qualifiedReferenceExpression")) return false;
@@ -6262,6 +6361,34 @@ public class DartParser implements PsiParser {
       marker_.rollbackTo();
     }
     result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_GENERAL_, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // !(';')
+  static boolean semicolon_recover(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "semicolon_recover")) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    enterErrorRecordingSection(builder_, level_, _SECTION_NOT_, null);
+    result_ = !semicolon_recover_0(builder_, level_ + 1);
+    marker_.rollbackTo();
+    result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_NOT_, null);
+    return result_;
+  }
+
+  // (';')
+  private static boolean semicolon_recover_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "semicolon_recover_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = consumeToken(builder_, SEMICOLON);
+    if (!result_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
+    }
     return result_;
   }
 
@@ -8574,6 +8701,11 @@ public class DartParser implements PsiParser {
   final static Parser not_paren_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder builder_, int level_) {
       return not_paren_recover(builder_, level_ + 1);
+    }
+  };
+  final static Parser semicolon_recover_parser_ = new Parser() {
+    public boolean parse(PsiBuilder builder_, int level_) {
+      return semicolon_recover(builder_, level_ + 1);
     }
   };
   final static Parser simple_scope_recover_parser_ = new Parser() {

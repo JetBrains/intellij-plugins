@@ -1,6 +1,6 @@
 library lib;
 
-part of MegaLib;
+part of Mega.Lib;
 
 export 'a.dart' show A, B hide C, D;
 export 'a.dart';

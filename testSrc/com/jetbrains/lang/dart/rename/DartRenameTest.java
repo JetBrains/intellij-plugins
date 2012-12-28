@@ -38,6 +38,11 @@ public class DartRenameTest extends JavaCodeInsightFixtureTestCase {
     myFixture.checkResultByFile("additional/myLibPart.dart", "additional/myLibPartAfter.dart", true);
   }
 
+  public void testLibrary2() throws Throwable {
+    doTest("otherLib.bar", "additional/myQLibPart.dart");
+    myFixture.checkResultByFile("additional/myQLibPart.dart", "additional/myQLibPartAfter.dart", true);
+  }
+
   public void testMethod() throws Throwable {
     doTest("fooNew");
   }

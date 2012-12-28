@@ -9,10 +9,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
-import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.psi.DartId;
-import com.jetbrains.lang.dart.psi.DartLibraryStatement;
-import com.jetbrains.lang.dart.psi.DartReference;
+import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -53,10 +50,9 @@ public class DartLibraryReferenceImpl extends DartExpressionImpl implements Dart
 
   @Override
   public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-    final DartId identifier = PsiTreeUtil.getChildOfType(this, DartId.class);
-    final DartId identifierNew = DartElementGenerator.createIdentifierFromText(getProject(), newElementName);
-    if (identifier != null && identifierNew != null) {
-      getNode().replaceChild(identifier.getNode(), identifierNew.getNode());
+    final DartQualifiedComponentName identifierNew = DartElementGenerator.createQIdentifierFromText(getProject(), newElementName);
+    if (identifierNew != null) {
+      getNode().replaceAllChildrenToChildrenOf(identifierNew.getNode());
     }
     return this;
   }
@@ -110,7 +106,7 @@ public class DartLibraryReferenceImpl extends DartExpressionImpl implements Dart
         }
 
         for (DartLibraryStatement lib : libs) {
-          DartComponentName componentName = lib.getComponentName();
+          DartQualifiedComponentName componentName = lib.getQualifiedComponentName();
           if (componentName != null && libraryName.equals(componentName.getName())) {
             result.add(new PsiElementResolveResult(componentName));
           }

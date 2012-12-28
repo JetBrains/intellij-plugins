@@ -99,6 +99,7 @@ public interface DartTokenTypes {
   IElementType PATH_OR_LIBRARY_REFERENCE = new DartElementType("PATH_OR_LIBRARY_REFERENCE");
   IElementType PREFIX_EXPRESSION = new DartElementType("PREFIX_EXPRESSION");
   IElementType PREFIX_OPERATOR = new DartElementType("PREFIX_OPERATOR");
+  IElementType QUALIFIED_COMPONENT_NAME = new DartElementType("QUALIFIED_COMPONENT_NAME");
   IElementType REDIRECTION = new DartElementType("REDIRECTION");
   IElementType REFERENCE_EXPRESSION = new DartElementType("REFERENCE_EXPRESSION");
   IElementType RELATIONAL_OPERATOR = new DartElementType("RELATIONAL_OPERATOR");
@@ -529,6 +530,9 @@ public interface DartTokenTypes {
       }
       else if (type == PREFIX_OPERATOR) {
         return new DartPrefixOperatorImpl(node);
+      }
+      else if (type == QUALIFIED_COMPONENT_NAME) {
+        return new DartQualifiedComponentNameImpl(node);
       }
       else if (type == REDIRECTION) {
         return new DartRedirectionImpl(node);

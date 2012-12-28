@@ -154,7 +154,7 @@ private top_level_recover ::= !('#' | '@' | 'import' | 'library' | 'source' | 'n
 partOfStatement ::= 'part' 'of' libraryId ';' {pin=3}
 
 libraryStatement ::= '#' 'library' '(' pathOrLibraryReference ')' ';' |
-                     'library' componentName ';' {
+                     'library' qualifiedComponentName ';' {
   pin=2
   methods = [ getLibraryName ]
 }
@@ -197,8 +197,11 @@ metadata ::= '@' simpleQualifiedReferenceExpression arguments?
 pathOrLibraryReference ::= stringLiteralExpression
 {mixin="com.jetbrains.lang.dart.psi.impl.DartFileReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-libraryId ::= <<nonStrictID>>
-{mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+libraryId ::= <<nonStrictID>> ('.' <<nonStrictID>>)*
+{mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"
+recoverUntil="semicolon_recover"}
+
+private semicolon_recover ::= !(';')
 
 varAccessDeclaration ::= 'static'? (finalOrConst type componentName | finalOrConst componentName | type componentName | 'var' componentName)
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
@@ -336,6 +339,9 @@ normalFormalParameter ::= functionDeclaration
 returnType ::= type | 'var'
 
 finalVarOrType ::= 'final' type? | 'var' | type
+
+qualifiedComponentName ::= << nonStrictID >> ('.' << nonStrictID >>)*
+{mixin="com.jetbrains.lang.dart.psi.impl.DartQNamedElementImpl" implements="com.jetbrains.lang.dart.psi.DartQNamedElement"}
 
 componentName ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartNamedElementImpl" implements="com.jetbrains.lang.dart.psi.DartNamedElement"}

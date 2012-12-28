@@ -43,7 +43,7 @@ public class DartPsiImplUtil {
     if (expression != null) {
       return FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
     }
-    final DartComponentName componentName = resourceStatement.getComponentName();
+    final DartQualifiedComponentName componentName = resourceStatement.getQualifiedComponentName();
     if (componentName != null) {
       return StringUtil.notNullize(componentName.getName());
     }

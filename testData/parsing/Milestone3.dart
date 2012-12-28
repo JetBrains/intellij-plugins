@@ -1,3 +1,5 @@
+library foo.bar.baz;
+
 abstract class Foo {
   Element operator[](Node node);
 }
