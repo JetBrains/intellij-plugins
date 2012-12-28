@@ -86,7 +86,7 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
         final StringBuilder result = new StringBuilder();
         result.append(getComponentName());
         final DartComponentType type = DartComponentType.typeOf(AbstractDartComponentImpl.this);
-        if ((type == DartComponentType.METHOD || type == DartComponentType.FUNCTION) && !(isGetter() || isSetter())) {
+        if ((type == DartComponentType.METHOD || type == DartComponentType.FUNCTION || type == DartComponentType.CONSTRUCTOR) && !(isGetter() || isSetter())) {
           final String parameterList = DartPresentableUtil.getPresentableParameterList(AbstractDartComponentImpl.this);
           result.append("(").append(parameterList).append(")");
         }
