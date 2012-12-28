@@ -42,7 +42,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
       final DartClassBody body = ((DartClassDefinition)myDartClass).getClassBody();
       assert body != null;
       for (PsiElement child : body.getChildren()) {
-        if (child.getTextOffset() > caretOffset) return;
+        if (child.getTextOffset() > caretOffset) break;
         anchor = child;
       }
     }

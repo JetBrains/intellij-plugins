@@ -35,6 +35,10 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
     doImplementTest();
   }
 
+  public void testImplement_WEB_2479() throws Throwable {
+    doImplementTest();
+  }
+
   public void testOverride1() throws Throwable {
     doOverrideTest();
   }
