@@ -14,6 +14,7 @@ import com.jetbrains.lang.dart.psi.DartExecutionScope;
 import com.jetbrains.lang.dart.psi.DartReference;
 import gnu.trove.THashSet;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -123,7 +124,8 @@ public class DartControlFlow {
       final DartClassResolveResult resolveResult = DartResolveUtil.getDartClassResolveResult(componentName);
       final DartClass dartClass = resolveResult.getDartClass();
       if (declaration && dartClass != null) {
-        result.append(dartClass.getName()).append(" ");
+        final String typeText = DartPresentableUtil.buildClassText(dartClass, resolveResult.getSpecialization());
+        result.append(typeText).append(" ");
       }
       result.append(componentName.getName());
     }
@@ -132,9 +134,9 @@ public class DartControlFlow {
   }
 
   private static class DartReferenceVisitor extends PsiRecursiveElementVisitor {
-    private final Set<DartComponentName> myComponentNames = new THashSet<DartComponentName>();
+    private final List<DartComponentName> myComponentNames = new ArrayList<DartComponentName>();
 
-    public Set<DartComponentName> getComponentNames() {
+    public List<DartComponentName> getComponentNames() {
       return myComponentNames;
     }
 
@@ -143,7 +145,7 @@ public class DartControlFlow {
       if (element instanceof DartReference && DartResolveUtil.aloneOrFirstInChain((DartReference)element)) {
         final PsiReference at = element.getContainingFile().findReferenceAt(element.getTextOffset());
         final PsiElement resolve = at == null ? null : at.resolve();
-        if (resolve instanceof DartComponentName) {
+        if (resolve instanceof DartComponentName && !myComponentNames.contains((DartComponentName)resolve)) {
           myComponentNames.add((DartComponentName)resolve);
         }
       }
