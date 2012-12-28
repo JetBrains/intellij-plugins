@@ -2,14 +2,16 @@ package com.jetbrains.lang.dart.util;
 
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiRecursiveElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartClass;
+import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartExecutionScope;
+import com.jetbrains.lang.dart.psi.DartReference;
 import gnu.trove.THashSet;
 
 import java.util.List;
@@ -138,13 +140,12 @@ public class DartControlFlow {
 
     @Override
     public void visitElement(PsiElement element) {
-      if (element instanceof DartReference) {
+      if (element instanceof DartReference && DartResolveUtil.aloneOrFirstInChain((DartReference)element)) {
         final PsiReference at = element.getContainingFile().findReferenceAt(element.getTextOffset());
         final PsiElement resolve = at == null ? null : at.resolve();
         if (resolve instanceof DartComponentName) {
           myComponentNames.add((DartComponentName)resolve);
         }
-        return;
       }
       super.visitElement(element);
     }

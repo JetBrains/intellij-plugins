@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart.refactoring.extract;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.refactoring.extract.DartExtractMethodHandler;
 import com.jetbrains.lang.dart.util.DartSdkTestUtil;
 
@@ -46,6 +45,11 @@ public class DartExtractMethodTest extends JavaCodeInsightFixtureTestCase {
   }
 
   public void testExtract5() throws Throwable {
+    doTest();
+  }
+
+  public void testExtractWEB2334() throws Throwable {
+    DartSdkTestUtil.configFakeSdk(myFixture);
     doTest();
   }
 
