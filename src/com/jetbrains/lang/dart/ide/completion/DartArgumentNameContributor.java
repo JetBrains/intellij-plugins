@@ -30,8 +30,7 @@ public class DartArgumentNameContributor extends CompletionContributor {
              protected void addCompletions(@NotNull CompletionParameters parameters,
                                            ProcessingContext context,
                                            @NotNull CompletionResultSet result) {
-               DartCallExpression callExpression = PsiTreeUtil.getParentOfType(parameters.getPosition(), DartCallExpression.class);
-               DartExpression reference = callExpression != null ? callExpression.getExpression() : null;
+               DartExpression reference = findExpressionFromCallOrNew(parameters);
                PsiElement target = reference instanceof DartReference ? ((DartReference)reference).resolve() : null;
                PsiElement targetComponent = target != null ? target.getParent() : null;
                DartFormalParameterList parameterList = PsiTreeUtil.getChildOfType(targetComponent, DartFormalParameterList.class);
@@ -58,5 +57,23 @@ public class DartArgumentNameContributor extends CompletionContributor {
                }
              }
            });
+  }
+
+  @Nullable
+  private static DartExpression findExpressionFromCallOrNew(CompletionParameters parameters) {
+    DartCallExpression callExpression = PsiTreeUtil.getParentOfType(parameters.getPosition(), DartCallExpression.class);
+    if (callExpression != null) {
+      return callExpression.getExpression();
+    }
+    DartNewExpression newExpression = PsiTreeUtil.getParentOfType(parameters.getPosition(), DartNewExpression.class);
+    if (newExpression != null) {
+      final DartExpression expression = newExpression.getExpression();
+      if (expression != null) {
+        return expression;
+      }
+      final DartType type = newExpression.getType();
+      return type != null ? type.getExpression() : null;
+    }
+    return null;
   }
 }

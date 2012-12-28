@@ -45,7 +45,7 @@ public class DartExtractMethodHandler implements RefactoringActionHandler {
     final PsiElement[] elements =
       DartRefactoringUtil.findStatementsInRange(file, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd());
 
-    if (elements.length == 1 && elements[0] instanceof DartExpression) {
+    if (elements.length == 0 || (elements.length == 1 && elements[0] instanceof DartExpression)) {
       // todo
       CommonRefactoringUtil.showErrorHint(
         project,
