@@ -6,11 +6,8 @@ import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.psi.tree.IElementType;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAttributesKey;
 
@@ -81,17 +78,17 @@ public class DartSyntaxHighlighterColors {
   public static final TextAttributesKey STATIC_MEMBER_FUNCTION =
     createTextAttributesKey(DART_STATIC_MEMBER_FUNCTION, HighlightInfoType.STATIC_METHOD.getAttributesKey().getDefaultAttributes());
   public static final TextAttributesKey INSTANCE_MEMBER_FUNCTION =
-    createTextAttributesKey(DART_INSTANCE_MEMBER_FUNCTION, new TextAttributes(new Color(0x7a, 0x7a, 43), Color.white, null, null, 0));
+    createTextAttributesKey(DART_INSTANCE_MEMBER_FUNCTION, new TextAttributes(new Color(0x7a, 0x7a, 43), null, null, null, 0));
   public static final TextAttributesKey INSTANCE_MEMBER_VARIABLE =
     createTextAttributesKey(DART_INSTANCE_MEMBER_VARIABLE, HighlightInfoType.INSTANCE_FIELD.getAttributesKey().getDefaultAttributes());
   public static final TextAttributesKey STATIC_MEMBER_VARIABLE =
     createTextAttributesKey(DART_STATIC_MEMBER_VARIABLE, HighlightInfoType.STATIC_FIELD.getAttributesKey().getDefaultAttributes());
   public static final TextAttributesKey LOCAL_VARIABLE =
-    createTextAttributesKey(DART_LOCAL_VARIABLE, new TextAttributes(new Color(69, 131, 131), Color.white, null, null, 0));
+    createTextAttributesKey(DART_LOCAL_VARIABLE, new TextAttributes(new Color(69, 131, 131), null, null, null, 0));
   public static final TextAttributesKey FUNCTION =
-    createTextAttributesKey(DART_FUNCTION, new TextAttributes(new Color(69, 131, 131), Color.white, null, null, 0));
+    createTextAttributesKey(DART_FUNCTION, new TextAttributes(new Color(69, 131, 131), null, null, null, 0));
   public static final TextAttributesKey PARAMETER =
-    createTextAttributesKey(DART_PARAMETER, new TextAttributes(Color.black, Color.white, Color.black, EffectType.LINE_UNDERSCORE, 0));
+    createTextAttributesKey(DART_PARAMETER, new TextAttributes(Color.black, null, Color.black, EffectType.LINE_UNDERSCORE, 0));
   public static final TextAttributesKey LABEL =
     createTextAttributesKey(DART_LABEL, HighlightInfoType.LOCAL_VARIABLE.getAttributesKey().getDefaultAttributes());
 }
