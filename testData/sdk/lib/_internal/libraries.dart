@@ -21,7 +21,8 @@ const int VM_PLATFORM = 2;
  * while other tools can access via execution.
  */
 const Map<String, LibraryInfo> LIBRARIES = const <LibraryInfo> {
-  "core": const LibraryInfo("core/core.dart")
+  "core": const LibraryInfo("core/core.dart"),
+  "collection": const LibraryInfo("collection/collection.dart")
 };
 
 /**

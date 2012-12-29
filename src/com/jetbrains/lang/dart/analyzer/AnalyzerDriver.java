@@ -63,6 +63,7 @@ public class AnalyzerDriver {
 
     try {
       command.addParameter("--ignore-unrecognized-flags");
+      command.addParameter("--type-checks-for-inferred-types");
       command.addParameter("--error_format");
       command.addParameter("machine");
       command.addParameter("--resolve-on-parse-error");

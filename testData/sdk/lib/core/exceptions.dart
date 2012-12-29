@@ -5,63 +5,31 @@
 // Exceptions are thrown either by the VM or from Dart code.
 
 /**
- * Interface implemented by all core library exceptions.
- * Defaults to an implementation that only carries a simple message.
+ * A marker interface implemented by all core library exceptions.
+ *
+ * An [Exception] is intended to convey information to the user about a failure,
+ * so that the error can be addressed programmatically. It is intended to be
+ * caught, and it should contain useful data fields.
+ *
+ * Creating instances of [Exception] directly with [:new Exception("message"):]
+ * is discouraged, and only included as a temporary measure during development,
+ * until the actual exceptions used by a library are done.
  */
-interface Exception default ExceptionImplementation {
-  const Exception([var message]);
+abstract class Exception {
+  factory Exception([var message]) => new _ExceptionImplementation(message);
 }
 
 
-/**
- * Exception thrown because of an index outside of the valid range.
- */
-class IndexOutOfRangeException implements Exception {
-  const IndexOutOfRangeException(this._value);
+/** Default implementation of [Exception] which carries a message. */
+class _ExceptionImplementation implements Exception {
+  final message;
 
-  String toString() => "IndexOutOfRangeException: $_value";
+  _ExceptionImplementation([this.message]);
 
-  final _value;
-}
-
-
-/**
- * Exception thrown because of attempt to modify an immutable object.
- */
-class IllegalAccessException implements Exception {
-  const IllegalAccessException();
-  String toString() => "Attempt to modify an immutable object";
-}
-
-
-class ClosureArgumentMismatchException implements Exception {
-  const ClosureArgumentMismatchException();
-  String toString() => "Closure argument mismatch";
-}
-
-
-class ObjectNotClosureException implements Exception {
-  const ObjectNotClosureException();
-  String toString() => "Object is not closure";
-}
-
-
-class IllegalArgumentException implements Exception {
-  const IllegalArgumentException([arg = ""]) : _arg = arg;
-  String toString() => "Illegal argument(s): $_arg";
-  final _arg;
-}
-
-
-class OutOfMemoryException implements Exception {
-  const OutOfMemoryException();
-  String toString() => "Out of Memory";
-}
-
-
-class StackOverflowException implements Exception {
-  const StackOverflowException();
-  String toString() => "Stack Overflow";
+  String toString() {
+    if (message == null) return "Exception";
+    return "Exception: $message";
+  }
 }
 
 
@@ -84,59 +52,6 @@ class FormatException implements Exception {
 }
 
 
-class WrongArgumentCountException implements Exception {
-  const WrongArgumentCountException();
-  String toString() => "WrongArgumentCountException";
-}
-
-
-class NullPointerException implements Exception {
-  const NullPointerException([this.functionName, this.arguments = const []]);
-  String toString() {
-    if (functionName == null) {
-      return exceptionName;
-    } else {
-      return "$exceptionName : method: '$functionName'\n"
-          "Receiver: null\n"
-          "Arguments: $arguments";
-    }
-  }
-
-  String get exceptionName => "NullPointerException";
-
-  final String functionName;
-  final List arguments;
-}
-
-
-class NoMoreElementsException implements Exception {
-  const NoMoreElementsException();
-  String toString() => "NoMoreElementsException";
-}
-
-
-class EmptyQueueException implements Exception {
-  const EmptyQueueException();
-  String toString() => "EmptyQueueException";
-}
-
-
-class UnsupportedOperationException implements Exception {
-  const UnsupportedOperationException(String this._message);
-  String toString() => "UnsupportedOperationException: $_message";
-  final String _message;
-}
-
-
-class NotImplementedException implements Exception {
-  const NotImplementedException([String message]) : this._message = message;
-  String toString() => (this._message !== null
-                        ? "NotImplementedException: $_message"
-                        : "NotImplementedException");
-  final String _message;
-}
-
-
 class IllegalJSRegExpException implements Exception {
   const IllegalJSRegExpException(String this._pattern, String this._errmsg);
   String toString() => "IllegalJSRegExpException: '$_pattern' '$_errmsg'";
@@ -148,13 +63,4 @@ class IllegalJSRegExpException implements Exception {
 class IntegerDivisionByZeroException implements Exception {
   const IntegerDivisionByZeroException();
   String toString() => "IntegerDivisionByZeroException";
-}
-
-/**
- * Exception thrown when a runtime error occurs.
- */
-class RuntimeError implements Exception {
-  final message;
-  RuntimeError(this.message);
-  String toString() => "RuntimeError: $message";
 }

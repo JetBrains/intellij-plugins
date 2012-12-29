@@ -23,7 +23,7 @@ class Expect {
    * Checks whether the actual value is a bool and its value is true.
    */
   static void isTrue(var actual, [String reason = null]) {
-    if (actual === true) return;
+    if (_identical(actual, true)) return;
     String msg = _getMessage(reason);
     _fail("Expect.isTrue($actual$msg) fails.");
   }
@@ -32,7 +32,7 @@ class Expect {
    * Checks whether the actual value is a bool and its value is false.
    */
   static void isFalse(var actual, [String reason = null]) {
-    if (actual === false) return;
+    if (_identical(actual, false)) return;
     String msg = _getMessage(reason);
     _fail("Expect.isFalse($actual$msg) fails.");
   }
@@ -41,7 +41,7 @@ class Expect {
    * Checks whether [actual] is null.
    */
   static void isNull(actual, [String reason = null]) {
-    if (null === actual) return;
+    if (null == actual) return;
     String msg = _getMessage(reason);
     _fail("Expect.isNull(actual: <$actual>$msg) fails.");
   }
@@ -50,17 +50,17 @@ class Expect {
    * Checks whether [actual] is not null.
    */
   static void isNotNull(actual, [String reason = null]) {
-    if (null !== actual) return;
+    if (null != actual) return;
     String msg = _getMessage(reason);
     _fail("Expect.isNotNull(actual: <$actual>$msg) fails.");
   }
 
   /**
    * Checks whether the expected and actual values are identical
-   * (using `===`).
+   * (using `identical`).
    */
   static void identical(var expected, var actual, [String reason = null]) {
-    if (expected === actual) return;
+    if (_identical(expected, actual)) return;
     String msg = _getMessage(reason);
     _fail("Expect.identical(expected: <$expected>, actual: <$actual>$msg) "
           "fails.");
@@ -80,7 +80,7 @@ class Expect {
                            num actual,
                            [num tolerance = null,
                             String reason = null]) {
-    if (tolerance === null) {
+    if (tolerance == null) {
       tolerance = (expected / 1e4).abs();
     }
     // Note: use !( <= ) rather than > so we fail on NaNs
@@ -100,7 +100,7 @@ class Expect {
 
   /**
    * Checks that all elements in [expected] and [actual] are equal `==`.
-   * This is different than the typical check for identity equality `===`
+   * This is different than the typical check for identity equality `identical`
    * used by the standard list implementation.  It should also produce nicer
    * error messages than just calling `Expect.equals(expected, actual)`.
    */
@@ -131,7 +131,7 @@ class Expect {
     String msg = _getMessage(reason);
 
     // Make sure all of the values are present in both and match.
-    for (final key in expected.getKeys()) {
+    for (final key in expected.keys) {
       if (!actual.containsKey(key)) {
         _fail('Expect.mapEquals(missing expected key: <$key>$msg) fails');
       }
@@ -140,7 +140,7 @@ class Expect {
     }
 
     // Make sure the actual map doesn't have any extra keys.
-    for (final key in actual.getKeys()) {
+    for (final key in actual.keys) {
       if (!expected.containsKey(key)) {
         _fail('Expect.mapEquals(unexpected key: <$key>$msg) fails');
       }
@@ -159,7 +159,7 @@ class Expect {
         'Expect.stringEquals(expected: <$expected>", <$actual>$msg) fails';
 
     if (expected == actual) return;
-    if ((expected === null) || (actual === null)) {
+    if ((expected == null) || (actual == null)) {
       _fail('$defaultMessage');
     }
     // scan from the left until we find a mismatch
@@ -227,12 +227,12 @@ class Expect {
     final extraSet = new Set.from(actual);
     extraSet.removeAll(expected);
 
-    if (extraSet.isEmpty() && missingSet.isEmpty()) return;
+    if (extraSet.isEmpty && missingSet.isEmpty) return;
     String msg = _getMessage(reason);
 
     StringBuffer sb = new StringBuffer("Expect.setEquals($msg) fails");
     // Report any missing items.
-    if (!missingSet.isEmpty()) {
+    if (!missingSet.isEmpty) {
       sb.add('\nExpected collection does not contain: ');
     }
 
@@ -241,7 +241,7 @@ class Expect {
     }
 
     // Report any extra items.
-    if (!extraSet.isEmpty()) {
+    if (!extraSet.isEmpty) {
       sb.add('\nExpected collection should not contain: ');
     }
 
@@ -264,23 +264,28 @@ class Expect {
                       String reason = null]) {
     try {
       f();
-    } catch (e) {
-      if (check !== null) {
-        Expect.isTrue(check(e));
+    } catch (e, s) {
+      if (check != null) {
+        if (!check(e)) {
+          String msg = reason == null ? "" : reason;
+          _fail("Expect.throws($msg): Unexpected '$e'\n$s");
+        }
       }
       return;
     }
-    String msg = _getMessage(reason);
+    String msg = reason == null ? "" : reason;
     _fail('Expect.throws($msg) fails');
   }
 
   static String _getMessage(String reason)
-      => (reason === null) ? "" : ", '$reason'";
+      => (reason == null) ? "" : ", '$reason'";
 
   static void _fail(String message) {
     throw new ExpectException(message);
   }
 }
+
+bool _identical(a, b) => identical(a, b);
 
 typedef bool _CheckExceptionFn(exception);
 

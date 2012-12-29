@@ -29,7 +29,7 @@
  */
 abstract class Future<T> {
   /** A future whose value is immediately available. */
-  factory Future.immediate(T value) => new FutureImpl<T>.immediate(value);
+  factory Future.immediate(T value) => new _FutureImpl<T>.immediate(value);
 
   /** The value provided. Throws an exception if [hasValue] is false. */
   T get value;
@@ -161,7 +161,7 @@ abstract class Future<T> {
  */
 abstract class Completer<T> {
 
-  factory Completer() => new CompleterImpl<T>();
+  factory Completer() => new _CompleterImpl<T>();
 
   /** The future that will contain the value produced by this completer. */
   Future get future;
@@ -193,6 +193,28 @@ class FutureAlreadyCompleteException implements Exception {
   String toString() => "Exception: future already completed";
 }
 
+/**
+ * Wraps unhandled exceptions provided to [Completer.completeException]. It is
+ * used to show both the error message and the stack trace for unhandled
+ * exceptions.
+ */
+class FutureUnhandledException implements Exception {
+  /** Wrapped exception. */
+  var source;
+
+  /** Trace for the wrapped exception. */
+  Object stackTrace;
+
+  FutureUnhandledException(this.source, this.stackTrace);
+
+  String toString() {
+    return 'FutureUnhandledException: exception while executing Future\n  '
+        '${source.toString().replaceAll("\n", "\n  ")}\n'
+        'original stack trace:\n  '
+        '${stackTrace.toString().replaceAll("\n","\n  ")}';
+  }
+}
+
 
 /**
  * [Futures] holds additional utility functions that operate on [Future]s (for
@@ -206,7 +228,7 @@ class Futures {
    * returned future will be a list of all the values that were produced.)
    */
   static Future<List> wait(List<Future> futures) {
-    if (futures.isEmpty()) {
+    if (futures.isEmpty) {
       return new Future<List>.immediate(const []);
     }
 
@@ -236,5 +258,22 @@ class Futures {
       });
     }
     return result;
+  }
+
+  /**
+   * Runs [f] for each element in [input] in order, moving to the next element
+   * only when the [Future] returned by [f] completes. Returns a [Future] that
+   * completes when all elements have been processed.
+   *
+   * The return values of all [Future]s are discarded. Any errors will cause the
+   * iteration to stop and will be piped through the returned [Future].
+   */
+  static Future forEach(Iterable input, Future f(element)) {
+    var iterator = input.iterator();
+    Future nextElement(_) {
+      if (!iterator.hasNext) return new Future.immediate(null);
+      return f(iterator.next()).chain(nextElement);
+    }
+    return nextElement(null);
   }
 }

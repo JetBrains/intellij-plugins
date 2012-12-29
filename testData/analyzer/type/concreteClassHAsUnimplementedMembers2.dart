@@ -1,9 +1,9 @@
-interface I {
-  get foo();
+abstract class I {
+  get foo;
   set foo(x);
 }
 class A implements I {
-  get foo() => 0;
+  get foo => 0;
 }
 
 main() {

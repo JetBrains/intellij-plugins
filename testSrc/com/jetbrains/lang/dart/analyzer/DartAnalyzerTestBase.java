@@ -48,7 +48,7 @@ abstract public class DartAnalyzerTestBase extends JavaCodeInsightFixtureTestCas
     myFixture.configureByFiles(files);
 
     final Annotation annotation = doHighlightingAndFindIntention(message);
-    assertNotNull("Can't find intention", annotation);
+    assertNotNull("Can't find intention for message: " + message, annotation);
 
     final List<Annotation.QuickFixInfo> quickFixes = annotation.getQuickFixes();
     assertNotNull("Can't find fixes", quickFixes);
@@ -107,7 +107,17 @@ abstract public class DartAnalyzerTestBase extends JavaCodeInsightFixtureTestCas
         };
       }
     };
-    DefaultCompilerConfiguration config = new DefaultCompilerConfiguration();
+    DefaultCompilerConfiguration config = new DefaultCompilerConfiguration() {
+      @Override
+      public CommandLineOptions.CompilerOptions getCompilerOptions() {
+        return new CompilerOptionsWrapper(super.getCompilerOptions()) {
+          @Override
+          public boolean typeChecksForInferredTypes() {
+            return true;
+          }
+        };
+      }
+    };
     File libFile = new File(DartResolveUtil.getRealVirtualFile(myFixture.getFile()).getPath());
     final LibrarySource lib = new UrlLibrarySource(libFile);
     DartCompiler.compileLib(lib, config, provider, new DartCompilerListener() {

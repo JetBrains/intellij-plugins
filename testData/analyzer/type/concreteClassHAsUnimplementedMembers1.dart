@@ -1,9 +1,9 @@
-interface Foo {
+abstract class Foo {
   int fooA;
 
   void fooB();
 }
-interface Bar {
+abstract class Bar {
   void barA();
 }
 class A implements Foo, Bar {

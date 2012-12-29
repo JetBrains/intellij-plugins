@@ -7,7 +7,7 @@
 /**
  * All numbers in dart are instances of [num].
  */
-abstract class num implements Comparable, Hashable {
+abstract class num implements Comparable {
   /** Addition operator. */
   num operator +(num other);
 
@@ -49,11 +49,11 @@ abstract class num implements Comparable, Hashable {
   /** Relational greater than or equal operator. */
   bool operator >=(num other);
 
-  bool isNaN();
+  bool get isNaN;
 
-  bool isNegative();
+  bool get isNegative;
 
-  bool isInfinite();
+  bool get isInfinite;
 
   /** Returns the absolute value of this [num]. */
   num abs();

@@ -4,83 +4,13 @@
 
 class Error {
   const Error();
-}
-
-class AssertionError implements Error {
-}
-
-class TypeError implements AssertionError {
-}
-
-// TODO(lrn): Rename to CastError according to specification.
-class CastException implements Error {
-}
-
-class FallThroughError implements Error {
-  const FallThroughError();
-}
-
-class AbstractClassInstantiationError {
-}
-
-/**
- * Error thrown by the default implementation of [:noSuchMethod:] on [Object].
- */
-class NoSuchMethodError implements Error {
-  final Object _receiver;
-  final String _functionName;
-  final List _arguments;
-  final List _existingArgumentNames;
 
   /**
-   * Create a [NoSuchMethodError] corresponding to a failed method call.
+   * Safely convert a value to a [String] description.
    *
-   * The first parameter is the receiver of the method call.
-   * The second parameter is the name of the called method.
-   * The third parameter is the positional arguments that the method was
-   * called with.
-   * The optional [exisitingArgumentNames] is the expected parameters of a
-   * method with the same name on the receiver, if available. This is
-   * the method that would have been called if the parameters had matched.
-   *
-   * TODO(lrn): This will be rewritten to use mirrors when they are available.
+   * The conversion is guaranteed to not throw, so it won't use the object's
+   * toString method.
    */
-  const NoSuchMethodError(Object this._receiver,
-                          String this._functionName,
-                          List this._arguments,
-                          [List existingArgumentNames = null])
-      : this._existingArgumentNames = existingArgumentNames;
-
-  String toString() {
-    StringBuffer sb = new StringBuffer();
-    for (int i = 0; i < _arguments.length; i++) {
-      if (i > 0) {
-        sb.add(", ");
-      }
-      sb.add(safeToString(_arguments[i]));
-    }
-    if (_existingArgumentNames === null) {
-      return "NoSuchMethodError : method not found: '$_functionName'\n"
-          "Receiver: ${safeToString(_receiver)}\n"
-          "Arguments: [$sb]";
-    } else {
-      String actualParameters = sb.toString();
-      sb = new StringBuffer();
-      for (int i = 0; i < _existingArgumentNames.length; i++) {
-        if (i > 0) {
-          sb.add(", ");
-        }
-        sb.add(_existingArgumentNames[i]);
-      }
-      String formalParameters = sb.toString();
-      return "NoSuchMethodError: incorrect number of arguments passed to "
-          "method named '$_functionName'\n"
-          "Receiver: ${safeToString(_receiver)}\n"
-          "Tried calling: $_functionName($actualParameters)\n"
-          "Found: $_functionName($formalParameters)";
-    }
-  }
-
   static String safeToString(Object object) {
     if (object is int || object is double || object is bool || null == object) {
       return object.toString();
@@ -98,5 +28,229 @@ class NoSuchMethodError implements Error {
     return _objectToString(object);
   }
 
-  external static _objectToString(Object object);
+  external static String _objectToString(Object object);
+}
+
+/**
+ * Error thrown by the runtime system when an assert statement fails.
+ */
+class AssertionError implements Error {
+}
+
+/**
+ * Error thrown by the runtime system when a type assertion fails.
+ */
+class TypeError implements AssertionError {
+}
+
+/**
+ * Error thrown by the runtime system when a cast operation fails.
+ */
+class CastError implements Error {
+}
+
+/**
+ * Error thrown when attempting to throw [:null:].
+ */
+class NullThrownError implements Error {
+  const NullThrownError();
+  String toString() => "Throw of null.";
+}
+
+/**
+ * Error thrown when a function is passed an unacceptable argument.
+ */
+class ArgumentError implements Error {
+  final message;
+
+  /** The [message] describes the erroneous argument. */
+  ArgumentError([this.message]);
+
+  String toString() {
+    if (message != null) {
+      return "Illegal argument(s): $message";
+    }
+    return "Illegal argument(s)";
+  }
+}
+
+/**
+ * Exception thrown because of an index outside of the valid range.
+ *
+ */
+class RangeError extends ArgumentError {
+  // TODO(lrn): This constructor should be called only with string values.
+  // It currently isn't in all cases.
+  /**
+   * Create a new [RangeError] with the given [message].
+   *
+   * Temporarily made const for backwards compatibilty.
+   */
+  RangeError(var message) : super(message);
+
+  /** Create a new [RangeError] with a message for the given [value]. */
+  RangeError.value(num value) : super("value $value");
+
+  String toString() => "RangeError: $message";
+}
+
+
+/**
+ * Error thrown when control reaches the end of a switch case.
+ *
+ * The Dart specification requires this error to be thrown when
+ * control reaches the end of a switch case (except the last case
+ * of a switch) without meeting a break or similar end of the control
+ * flow.
+ */
+class FallThroughError implements Error {
+  const FallThroughError();
+}
+
+
+class AbstractClassInstantiationError implements Error {
+  final String _className;
+  const AbstractClassInstantiationError(String this._className);
+  String toString() => "Cannot instantiate abstract class: '$_className'";
+}
+
+/**
+ * Error thrown by the default implementation of [:noSuchMethod:] on [Object].
+ */
+class NoSuchMethodError implements Error {
+  final Object _receiver;
+  final String _memberName;
+  final List _arguments;
+  final Map<String,dynamic> _namedArguments;
+  final List _existingArgumentNames;
+
+  /**
+   * Create a [NoSuchMethodError] corresponding to a failed method call.
+   *
+   * The first parameter to this constructor is the receiver of the method call.
+   * That is, the object on which the method was attempted called.
+   * The second parameter is the name of the called method or accessor.
+   * The third parameter is a list of the positional arguments that the method
+   * was called with.
+   * The fourth parameter is a map from [String] names to the values of named
+   * arguments that the method was called with.
+   * The optional [exisitingArgumentNames] is the expected parameters of a
+   * method with the same name on the receiver, if available. This is
+   * the method that would have been called if the parameters had matched.
+   */
+  const NoSuchMethodError(Object this._receiver,
+                          String this._memberName,
+                          List this._arguments,
+                          Map<String,dynamic> this._namedArguments,
+                          [List existingArgumentNames = null])
+      : this._existingArgumentNames = existingArgumentNames;
+
+  String toString() {
+    StringBuffer sb = new StringBuffer();
+    int i = 0;
+    if (_arguments != null) {
+      for (; i < _arguments.length; i++) {
+        if (i > 0) {
+          sb.add(", ");
+        }
+        sb.add(Error.safeToString(_arguments[i]));
+      }
+    }
+    if (_namedArguments != null) {
+      _namedArguments.forEach((String key, var value) {
+        if (i > 0) {
+          sb.add(", ");
+        }
+        sb.add(key);
+        sb.add(": ");
+        sb.add(Error.safeToString(value));
+        i++;
+      });
+    }
+    if (_existingArgumentNames == null) {
+      return "NoSuchMethodError : method not found: '$_memberName'\n"
+          "Receiver: ${Error.safeToString(_receiver)}\n"
+          "Arguments: [$sb]";
+    } else {
+      String actualParameters = sb.toString();
+      sb = new StringBuffer();
+      for (int i = 0; i < _existingArgumentNames.length; i++) {
+        if (i > 0) {
+          sb.add(", ");
+        }
+        sb.add(_existingArgumentNames[i]);
+      }
+      String formalParameters = sb.toString();
+      return "NoSuchMethodError: incorrect number of arguments passed to "
+          "method named '$_memberName'\n"
+          "Receiver: ${Error.safeToString(_receiver)}\n"
+          "Tried calling: $_memberName($actualParameters)\n"
+          "Found: $_memberName($formalParameters)";
+    }
+  }
+}
+
+
+/**
+ * The operation was not allowed by the object.
+ *
+ * This [Error] is thrown when a class cannot implement
+ * one of the methods in its signature.
+ */
+class UnsupportedError implements Error {
+  final String message;
+  UnsupportedError(this.message);
+  String toString() => "Unsupported operation: $message";
+}
+
+
+/**
+ * Thrown by operations that have not been implemented yet.
+ *
+ * This [Error] is thrown by unfinished code that hasn't yet implemented
+ * all the features it needs.
+ *
+ * If a class is not intending to implement the feature, it should throw
+ * an [UnsupportedError] instead. This error is only intended for
+ * use during development.
+ */
+class UnimplementedError implements UnsupportedError {
+  final String message;
+  UnimplementedError([String this.message]);
+  String toString() => (this.message != null
+                        ? "UnimplementedError: $message"
+                        : "UnimplementedError");
+}
+
+
+/**
+ * The operation was not allowed by the current state of the object.
+ *
+ * This is a generic error used for a variety of different erroneous
+ * actions. The message should be descriptive.
+ */
+class StateError implements Error {
+  final String message;
+  StateError(this.message);
+  String toString() => "Bad state: $message";
+}
+
+
+class OutOfMemoryError implements Error {
+  const OutOfMemoryError();
+  String toString() => "Out of Memory";
+}
+
+class StackOverflowError implements Error {
+  const StackOverflowError();
+  String toString() => "Stack Overflow";
+}
+
+/**
+ * Error thrown when a runtime error occurs.
+ */
+class RuntimeError implements Error {
+  final message;
+  RuntimeError(this.message);
+  String toString() => "RuntimeError: $message";
 }

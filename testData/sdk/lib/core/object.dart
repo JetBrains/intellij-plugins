@@ -38,7 +38,7 @@ class Object {
    * If a subclass overrides [hashCode] it should override the
    * equality operator as well to maintain consistency.
    */
-  external int hashCode();
+  external int get hashCode;
 
   /**
    * Returns a string representation of this object.
@@ -48,27 +48,18 @@ class Object {
   /**
    * [noSuchMethod] is invoked when users invoke a non-existant method
    * on an object. The name of the method and the arguments of the
-   * invocation are passed to [noSuchMethod]. If [noSuchMethod]
-   * returns a value, that value becomes the result of the original
-   * invocation.
+   * invocation are passed to [noSuchMethod] in an [InvocationMirror].
+   * If [noSuchMethod] returns a value, that value becomes the result of
+   * the original invocation.
    *
    * The default behavior of [noSuchMethod] is to throw a
    * [noSuchMethodError].
    */
-  external Dynamic noSuchMethod(String name, List args);
+  external dynamic noSuchMethod(InvocationMirror invocation);
 
   /**
-   * Returns a representation of the runtime type of the object.
+   * A representation of the runtime type of the object.
    */
-  external Type runtimeType();
+  external Type get runtimeType;
 }
 
-/**
- * Representation of a type.
- */
-abstract class Type {}
-
-/**
- * Check whether two references are to the same object.
- */
-bool identical(Object a, Object b) => a === b;

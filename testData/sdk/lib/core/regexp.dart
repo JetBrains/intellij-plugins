@@ -10,7 +10,7 @@
  * The following example finds all matches of a [RegExp] in a [String]
  * and iterates through the returned iterable of [Match] objects.
  *
- *     RegExp exp = const RegExp(@"(\w+)");
+ *     RegExp exp = new RegExp(r"(\w+)");
  *     String str = "Parse my string";
  *     Iterable<Match> matches = exp.allMatches(str);
  *     for (Match m in matches) {
@@ -28,13 +28,13 @@ abstract class Match {
   /**
    * Returns the index in the string where the match starts.
    */
-  int start();
+  int get start;
 
   /**
    * Returns the index in the string after the last character of the
    * match.
    */
-  int end();
+  int get end;
 
   /**
    * Returns the string matched by the given [group]. If [group] is 0,
@@ -52,7 +52,7 @@ abstract class Match {
   /**
    * Returns the number of groups in the regular expression.
    */
-  int groupCount();
+  int get groupCount;
 
   /**
    * The string on which this matcher was computed.
@@ -84,17 +84,17 @@ abstract class Match {
  * The following example finds all matches of a regular expression in
  * a string.
  *
- *     RegExp exp = const RegExp(@"(\w+)");
+ *     RegExp exp = new RegExp(r"(\w+)");
  *     String str = "Parse my string";
  *     Iterable<Match> matches = exp.allMatches(str);
  */
-interface RegExp extends Pattern default JSSyntaxRegExp {
+abstract class RegExp implements Pattern {
   /**
    * Constructs a regular expression. The default implementation of a
    * [RegExp] sets [multiLine] and [ignoreCase] to false.
    */
-  const RegExp(String pattern, {bool multiLine: false,
-                                bool ignoreCase: false});
+  external factory RegExp(String pattern, {bool multiLine: false,
+                                           bool ignoreCase: false});
 
   /**
    * Searches for the first match of the regular expression
