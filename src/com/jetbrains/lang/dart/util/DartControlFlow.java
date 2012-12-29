@@ -8,15 +8,10 @@ import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.lang.dart.psi.DartClass;
-import com.jetbrains.lang.dart.psi.DartComponentName;
-import com.jetbrains.lang.dart.psi.DartExecutionScope;
-import com.jetbrains.lang.dart.psi.DartReference;
-import gnu.trove.THashSet;
+import com.jetbrains.lang.dart.psi.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author: Fedor.Korotkov
@@ -142,7 +137,12 @@ public class DartControlFlow {
 
     @Override
     public void visitElement(PsiElement element) {
-      if (element instanceof DartReference && DartResolveUtil.aloneOrFirstInChain((DartReference)element)) {
+      if(element instanceof DartType) {
+        // ignore types
+        return;
+      }
+      if (element instanceof DartReference &&
+          DartResolveUtil.aloneOrFirstInChain((DartReference)element)) {
         final PsiReference at = element.getContainingFile().findReferenceAt(element.getTextOffset());
         final PsiElement resolve = at == null ? null : at.resolve();
         if (resolve instanceof DartComponentName && !myComponentNames.contains((DartComponentName)resolve)) {
