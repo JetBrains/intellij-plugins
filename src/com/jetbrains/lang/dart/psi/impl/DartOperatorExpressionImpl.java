@@ -27,7 +27,7 @@ public class DartOperatorExpressionImpl extends DartExpressionImpl implements Da
 
   @Override
   public PsiReference getReference() {
-    return this;
+    return null;
   }
 
   @Override

@@ -41,6 +41,7 @@
     <orderEntry type="module" module-name="LiveEdit" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="xml-tests" scope="TEST" />
+    <orderEntry type="module" module-name="java-tests" scope="TEST" />
   </component>
 </module>
 
