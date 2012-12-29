@@ -43,6 +43,7 @@ public class CucumberJavaUtil {
     return name;
   }
 
+  @Nullable
   private static String getAnnotationName(@NotNull final PsiAnnotation annotation) {
     final Ref<String> qualifiedAnnotationName = new Ref<String>();
     ApplicationManager.getApplication().runReadAction(new Runnable() {
@@ -57,6 +58,7 @@ public class CucumberJavaUtil {
 
   public static boolean isCucumberStepAnnotation(@NotNull final PsiAnnotation annotation) {
     final String annotationName = getAnnotationName(annotation);
+    if (annotationName == null) return false;
 
     final String annotationSuffix = getCucumberAnnotationSuffix(annotationName);
     if (annotationSuffix.contains(".")) {
@@ -72,6 +74,8 @@ public class CucumberJavaUtil {
 
   public static boolean isCucumberHookAnnotation(@NotNull final PsiAnnotation annotation) {
     final String annotationName = getAnnotationName(annotation);
+    if (annotationName == null) return false;
+
     final String annotationSuffix = getCucumberAnnotationSuffix(annotationName);
     for (String providedAnnotations : CucumberJavaAnnotationProvider.getCucumberHookAnnotations()) {
       if (providedAnnotations.equals(annotationSuffix)) {
