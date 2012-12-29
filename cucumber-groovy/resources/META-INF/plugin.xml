@@ -18,6 +18,7 @@
     <elementDescriptionProvider implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrStepDefinitionDescriptionProvider"/>
     <pom.declarationSearcher implementation="org.jetbrains.plugins.cucumber.groovy.steps.search.GrCucumberStepDeclarationSearcher"/>
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+    <codeInsight.lineMarkerProvider implementationClass="org.jetbrains.plugins.cucumber.groovy.steps.GrCucumberLineMarkerProvider" language="Groovy"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">
