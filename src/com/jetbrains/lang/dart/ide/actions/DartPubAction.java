@@ -29,6 +29,7 @@ import com.jetbrains.lang.dart.ide.module.DartModuleType;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLFile;
@@ -43,7 +44,7 @@ public class DartPubAction extends AnAction {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.actions.DartPubAction");
 
   public DartPubAction() {
-    super(icons.DartIcons.Dart_16);
+    super(DartIcons.Dart_16);
   }
 
   @Override
@@ -68,6 +69,9 @@ public class DartPubAction extends AnAction {
     final PsiFile psiFile = LangDataKeys.PSI_FILE.getData(e.getDataContext());
     Module module = LangDataKeys.MODULE.getData(e.getDataContext());
     if (!(psiFile instanceof YAMLFile) || module == null) {
+      Messages.showOkCancelDialog(e.getProject(), DartBundle.message("dart.sdk.bad.dartpub.file"),
+                                  DartBundle.message("dart.warning"),
+                                  DartIcons.Dart_16);
       return;
     }
     final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(psiFile);
@@ -80,9 +84,10 @@ public class DartPubAction extends AnAction {
     final DartSettings settings = DartSettings.getSettingsForModule(module);
     final VirtualFile dartPub = settings == null ? null : settings.getPub();
     if (dartPub == null) {
-      Messages.showOkCancelDialog(e.getProject(), DartBundle.message("dart.sdk.bad.dartpub.path", settings.getPubPath()),
+      Messages.showOkCancelDialog(e.getProject(),
+                                  DartBundle.message("dart.sdk.bad.dartpub.path", settings != null ? settings.getPubPath() : ""),
                                   DartBundle.message("dart.warning"),
-                                  icons.DartIcons.Dart_16);
+                                  DartIcons.Dart_16);
       return;
     }
 
@@ -160,13 +165,14 @@ public class DartPubAction extends AnAction {
   }
 
   @Nullable
-  private DartSettings getSettings(PsiFile psiFile) {
+  private static DartSettings getSettings(PsiFile psiFile) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
     DartSettings settings = null;
     if (ModuleType.get(module) instanceof WebModuleTypeBase) {
       settings = DartSettingsUtil.getSettings();
     }
     else if (ModuleType.get(module) instanceof DartModuleType) {
+      assert module != null;
       final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
       final Sdk sdk = moduleRootManager.getSdk();
       settings = new DartSettings(StringUtil.notNullize(sdk == null ? null : sdk.getHomePath()));
