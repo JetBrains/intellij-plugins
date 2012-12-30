@@ -49,12 +49,10 @@ public class DartExtractMethodTest extends JavaCodeInsightFixtureTestCase {
   }
 
   public void testExtractWEB2333() throws Throwable {
-    DartSdkTestUtil.configFakeSdk(myFixture);
     doTest();
   }
 
   public void testExtractWEB2334() throws Throwable {
-    DartSdkTestUtil.configFakeSdk(myFixture);
     doTest();
   }
 
