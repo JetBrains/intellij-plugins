@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,6 +38,10 @@ import java.util.Set;
 public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvider {
 
   public boolean accept(@NotNull final Project project, @NotNull final VirtualFile file) {
+    if (!file.isValid()) {
+      return false;
+    }
+
     final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
 
     if (!(psiFile instanceof XmlFile)) {
