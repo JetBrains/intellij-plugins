@@ -19,6 +19,7 @@ import com.intellij.util.indexing.IndexableFileSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -158,7 +159,7 @@ public final class DesignerTests {
 
   public static String getTestDataPath() {
     if (testDataPath == null) {
-      testDataPath = getTestDataDir().getPath();
+      testDataPath = new File(DebugPathManager.getFudHome(), "idea-plugin/testData").getPath();
     }
     return testDataPath;
   }
