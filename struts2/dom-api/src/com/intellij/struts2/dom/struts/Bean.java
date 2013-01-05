@@ -26,7 +26,7 @@ import com.intellij.util.xml.*;
  * @author Yann C&eacute;bron
  */
 @SuppressWarnings({"UnusedDeclaration"})
-@Presentation(typeName = "Bean", icon = "Struts2Icons.Coffeebean")
+@Presentation(typeName = "Bean", icon = "AllIcons.Nodes.Ejb")
 public interface Bean extends DomElement {
 
   @NameValue(unique = false)

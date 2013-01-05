@@ -30,7 +30,7 @@ import com.intellij.util.xml.TagValue;
  */
 @Namespace(StrutsDomConstants.VALIDATOR_NAMESPACE_KEY)
 @Presentation(typeName = "Message",
-              icon = "Struts2Icons.Message",
+              icon = "AllIcons.General.Balloon",
               provider = Struts2ValidationPresentationProvider.class)
 public interface Message extends DomElement {
 

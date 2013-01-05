@@ -26,7 +26,7 @@ import com.intellij.util.xml.*;
  * @author Yann C&eacute;bron
  */
 @Namespace(StrutsDomConstants.VALIDATOR_CONFIG_NAMESPACE_KEY)
-@Presentation(typeName = "Validator", icon = "Struts2Icons.Validation")
+@Presentation(typeName = "Validator", icon = "AllIcons.Actions.EditSource")
 public interface ValidatorConfig extends DomElement {
 
   @NameValue

@@ -27,6 +27,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
+import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -254,7 +255,7 @@ TODO not needed so far ?!
         public Object fun(final StrutsPackage strutsPackage) {
           final String packageNamespace = strutsPackage.searchNamespace();
           return LookupElementBuilder.create(packageNamespace.length() != 1 ? packageNamespace + "/" : packageNamespace)
-            .withIcon(Struts2Icons.Folder_gear)
+            .withIcon(StrutsIcons.STRUTS_PACKAGE)
             .withTypeText(strutsPackage.getName().getStringValue());
         }
       });

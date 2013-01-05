@@ -30,7 +30,7 @@ import com.intellij.util.xml.Required;
  */
 @SuppressWarnings({"UnusedDeclaration"})
 @Presentation(typeName = "Include",
-              icon = "Struts2Icons.Import1",
+              icon = "AllIcons.ToolbarDecorator.Import",
               provider = Struts2PresentationProvider.class)
 public interface Include extends DomElement {
 

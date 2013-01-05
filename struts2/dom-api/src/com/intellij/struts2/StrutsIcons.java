@@ -44,6 +44,8 @@ public final class StrutsIcons {
 
   public static final LayeredIcon STRUTS_VARIABLE = new LayeredIcon(2);
 
+  public static final LayeredIcon STRUTS_PACKAGE = new LayeredIcon(2);
+
   /**
    * Vertical offset for small overlay icons.
    */
@@ -72,14 +74,14 @@ public final class StrutsIcons {
   public static final LayeredIcon DEFAULT_INTERCEPTOR_REF = new LayeredIcon(2);
 
   // generic reference providers
-  public static final Icon THEME = Struts2Icons.Transform;
+  public static final Icon THEME = AllIcons.Gutter.Colors;
 
   static {
     STRUTS_CONFIG_FILE.setIcon(StdFileTypes.XML.getIcon(), 0);
     STRUTS_CONFIG_FILE.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
 
     VALIDATION_CONFIG_FILE.setIcon(StdFileTypes.XML.getIcon(), 0);
-    VALIDATION_CONFIG_FILE.setIcon(Struts2Icons.Validation_small, 1, 0, OVERLAY_Y_OFFSET);
+    VALIDATION_CONFIG_FILE.setIcon(Struts2Icons.Edit_small, 1, 0, OVERLAY_Y_OFFSET);
 
     ACTION_CLASS.setIcon(PlatformIcons.CLASS_ICON, 0);
     ACTION_CLASS.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
@@ -87,13 +89,16 @@ public final class StrutsIcons {
     STRUTS_VARIABLE.setIcon(PlatformIcons.VARIABLE_ICON, 0);
     STRUTS_VARIABLE.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
 
-    createGlobalIcon(GLOBAL_RESULT, Struts2Icons.Arrow_right_blue);
+    STRUTS_PACKAGE.setIcon(AllIcons.Nodes.Folder, 0);
+    STRUTS_PACKAGE.setIcon(Struts2Icons.Action_small, 1, 0, OVERLAY_Y_OFFSET);
+
+    createGlobalIcon(GLOBAL_RESULT, AllIcons.Vcs.Arrow_right);
     createGlobalIcon(GLOBAL_EXCEPTION_MAPPING, PlatformIcons.EXCEPTION_CLASS_ICON);
 
     createDefaultIcon(DEFAULT_ACTION_REF, Struts2Icons.Action);
     createDefaultIcon(DEFAULT_CLASS_REF, PlatformIcons.CLASS_ICON);
-    createDefaultIcon(DEFAULT_INTERCEPTOR_REF, Struts2Icons.Funnel);
-    createDefaultIcon(RESULT_TYPE_DEFAULT, Struts2Icons.Presentation);
+    createDefaultIcon(DEFAULT_INTERCEPTOR_REF, AllIcons.Nodes.Plugin);
+    createDefaultIcon(RESULT_TYPE_DEFAULT, AllIcons.Debugger.Console);
   }
 
   private static void createGlobalIcon(final LayeredIcon icon, final Icon baseIcon) {

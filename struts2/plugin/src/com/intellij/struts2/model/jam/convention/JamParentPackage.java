@@ -29,12 +29,12 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiModifierListOwner;
+import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.model.jam.StrutsJamUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomUtil;
-import icons.Struts2Icons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,7 +96,7 @@ public abstract class JamParentPackage extends CommonModelElement.PsiBase implem
       @Override
       protected LookupElement createLookupElementFor(@NotNull final StrutsPackage target) {
         return LookupElementBuilder.create(StringUtil.notNullize(target.getName().getStringValue()))
-          .withIcon(Struts2Icons.Folder_gear)
+          .withIcon(StrutsIcons.STRUTS_PACKAGE)
           .withTailText(" (" + target.searchNamespace() + ")", true)
           .withTypeText(DomUtil.getFile(target).getName());
       }

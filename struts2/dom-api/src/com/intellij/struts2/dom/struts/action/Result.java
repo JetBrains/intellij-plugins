@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NonNls;
  */
 @SuppressWarnings({"UnusedDeclaration"})
 @Convert(StrutsPathReferenceConverter.class)
-@Presentation(typeName = "Result", icon = "Struts2Icons.Arrow_right_blue", provider = Struts2PresentationProvider.class)
+@Presentation(typeName = "Result", icon = "AllIcons.Vcs.Arrow_right", provider = Struts2PresentationProvider.class)
 public interface Result extends HasResultType, ParamsElement, GenericDomValue<PathReference> {
 
   /**

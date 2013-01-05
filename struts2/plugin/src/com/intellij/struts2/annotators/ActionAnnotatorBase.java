@@ -18,6 +18,7 @@ package com.intellij.struts2.annotators;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerInfo;
 import com.intellij.codeInsight.daemon.RelatedItemLineMarkerProvider;
 import com.intellij.codeInsight.navigation.NavigationGutterIconBuilder;
+import com.intellij.icons.AllIcons;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.module.Module;
@@ -198,7 +199,7 @@ abstract class ActionAnnotatorBase extends RelatedItemLineMarkerProvider {
 
     for (final Map.Entry<PsiMethod, Set<PathReference>> entries : pathReferenceMap.entrySet()) {
       final NavigationGutterIconBuilder<PathReference> gutterIconBuilder =
-          NavigationGutterIconBuilder.create(Struts2Icons.Arrow_right_blue, PATH_REFERENCE_CONVERTER,
+          NavigationGutterIconBuilder.create(AllIcons.Hierarchy.Base, PATH_REFERENCE_CONVERTER,
                                              PATH_REFERENCE_GOTO_RELATED_ITEM_PROVIDER)
                                      .setAlignment(GutterIconRenderer.Alignment.LEFT)
                                      .setPopupTitle(StrutsBundle.message("annotators.action.goto.result"))

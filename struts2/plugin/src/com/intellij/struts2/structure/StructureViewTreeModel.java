@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.structure;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.impl.xml.XmlStructureViewTreeModel;
 import com.intellij.ide.util.treeView.smartTree.*;
@@ -24,7 +25,6 @@ import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.params.Param;
 import com.intellij.util.ReflectionCache;
 import com.intellij.util.xml.DomElement;
-import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -88,7 +88,7 @@ class StructureViewTreeModel extends XmlStructureViewTreeModel implements Struct
       @NotNull
       public ActionPresentation getPresentation() {
         return new ActionPresentationData(StrutsBundle.message("structure.view.filter.params"),
-                                          StrutsBundle.message("structure.view.filter.params"), Struts2Icons.Preferences);
+                                          StrutsBundle.message("structure.view.filter.params"), AllIcons.Actions.Properties);
       }
 
       @NotNull
