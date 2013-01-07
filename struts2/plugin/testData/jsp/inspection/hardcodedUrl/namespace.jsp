@@ -1,0 +1,1 @@
+<a href="/package/t<caret>est.action">Link</a>

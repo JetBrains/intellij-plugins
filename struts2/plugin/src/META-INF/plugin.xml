@@ -92,6 +92,11 @@
                      groupKey="inspections.group.display.name" enabledByDefault="true" level="ERROR"
                      implementationClass="com.intellij.struts2.dom.inspection.ValidatorConfigModelInspection"/>
 
+    <localInspection language="XML" groupPath="Struts" shortName="HardcodedActionUrl"
+                     bundle="resources.Struts2Bundle" key="inspections.hardcoded.action.url.display.name"
+                     groupKey="inspections.group.display.name" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.intellij.struts2.jsp.inspection.HardcodedActionUrlInspection"/>
+
     <standardResourceProvider implementation="com.intellij.struts2.Struts2ResourceProvider"/>
 
     <fileTemplateGroup implementation="com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory"/>
