@@ -254,7 +254,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
           // so we now got the source path and can replace it
 
           String collapsedSource = macroManager.collapsePath(source);
-          value = value.replace(source, collapsedSource);
+          value = StringUtil.replace(value, source, collapsedSource);
         }
       }
       prop.setAttribute(VALUE, value);
@@ -569,7 +569,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     StringBuilder builder = new StringBuilder();
     for (String key : existing.keySet()) {
       String value = existing.get(key);
-      value = value.replace("\n", "\\\n");
+      value = StringUtil.replace(value, "\n", "\\\n");
       builder.append(key).append(": ").append(value).append("\n");
     }
     setAdditionalProperties(builder.toString());
