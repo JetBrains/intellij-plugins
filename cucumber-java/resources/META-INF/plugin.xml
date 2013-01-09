@@ -18,6 +18,10 @@
 
     <implicitUsageProvider implementation="org.jetbrains.plugins.cucumber.java.steps.reference.CucumberJavaImplicitUsageProvider"/>
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+
+    <localInspection language="JAVA" shortName="CucumberJavaStepDefClassIsPublic" displayName="Step definition class is not public"
+                     groupBundle="org.jetbrains.plugins.cucumber.java.CucumberJavaBundle" groupKey="cucumber.java.inspection.group.name" enabledByDefault="true"
+                     level="WARNING" implementationClass="org.jetbrains.plugins.cucumber.java.inspections.CucumberJavaStepDefClassIsPublicInspections"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">

@@ -22,6 +22,7 @@
     <orderEntry type="module" module-name="smRunner" />
     <orderEntry type="library" name="cucumber-java" level="project" />
     <orderEntry type="module" module-name="java-indexing-api" />
+    <orderEntry type="module" module-name="openapi" />
   </component>
 </module>
 
