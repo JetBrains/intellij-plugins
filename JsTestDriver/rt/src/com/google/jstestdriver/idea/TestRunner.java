@@ -99,7 +99,7 @@ public class TestRunner {
       System.setOut(nullSystemOut);
       myTreeManager.onJstdConfigRunningStarted(config);
       String runScope = mySettings.getTestFileScope().toJstdScope();
-      runTests(config, new String[]{"--reset", "--dryRunFor", runScope}, true);
+      runTests(config, new String[]{"--dryRunFor", runScope}, true);
       runTests(config, new String[]{"--tests", runScope}, false);
     } catch (ConfigurationException ce) {
       exception = ce;
