@@ -78,6 +78,21 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     if (files.size() > 0) {
       files.add(null);
 
+      Collections.sort(files, new Comparator<PsiFile>() {
+        @Override
+        public int compare(PsiFile file, PsiFile file2) {
+          if (file == null && file2 == null) {
+            return 0;
+          } else if (file == null && file2 != null) {
+            return -1;
+          } else if (file != null && file2 == null) {
+            return 1;
+          }
+
+          return file.getName().compareTo(file2.getName());
+        }
+      });
+
       final JBPopupFactory popupFactory = JBPopupFactory.getInstance();
 
       final ListPopup popupStep =
