@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.highlight;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -44,51 +45,51 @@ public class DartSyntaxHighlighterColors {
   private static final String DART_BAD_CHARACTER = "DART_BAD_CHARACTER";
 
   public static final TextAttributesKey LINE_COMMENT =
-    createTextAttributesKey(DART_LINE_COMMENT, SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes());
+    createTextAttributesKey(DART_LINE_COMMENT, DefaultLanguageHighlighterColors.LINE_COMMENT);
   public static final TextAttributesKey BLOCK_COMMENT =
-    createTextAttributesKey(DART_BLOCK_COMMENT, SyntaxHighlighterColors.JAVA_BLOCK_COMMENT.getDefaultAttributes());
+    createTextAttributesKey(DART_BLOCK_COMMENT, DefaultLanguageHighlighterColors.BLOCk_COMMENT);
   public static final TextAttributesKey DOC_COMMENT =
-    createTextAttributesKey(DART_DOC_COMMENT, SyntaxHighlighterColors.DOC_COMMENT.getDefaultAttributes());
+    createTextAttributesKey(DART_DOC_COMMENT, DefaultLanguageHighlighterColors.DOC_COMMENT);
   public static final TextAttributesKey KEYWORD =
-    createTextAttributesKey(DART_KEYWORD, SyntaxHighlighterColors.KEYWORD.getDefaultAttributes());
+    createTextAttributesKey(DART_KEYWORD, DefaultLanguageHighlighterColors.KEYWORD);
   public static final TextAttributesKey BUILTIN =
-    createTextAttributesKey(DART_BUILTIN, SyntaxHighlighterColors.KEYWORD.getDefaultAttributes());
+    createTextAttributesKey(DART_BUILTIN, DefaultLanguageHighlighterColors.KEYWORD);
   public static final TextAttributesKey NUMBER =
-    createTextAttributesKey(DART_NUMBER, SyntaxHighlighterColors.NUMBER.getDefaultAttributes());
+    createTextAttributesKey(DART_NUMBER, DefaultLanguageHighlighterColors.NUMBER);
   public static final TextAttributesKey STRING =
-    createTextAttributesKey(DART_STRING, SyntaxHighlighterColors.STRING.getDefaultAttributes());
+    createTextAttributesKey(DART_STRING, DefaultLanguageHighlighterColors.STRING);
   public static final TextAttributesKey OPERATION_SIGN =
-    createTextAttributesKey(DART_OPERATION_SIGN, SyntaxHighlighterColors.OPERATION_SIGN.getDefaultAttributes());
+    createTextAttributesKey(DART_OPERATION_SIGN, DefaultLanguageHighlighterColors.OPERATION_SIGN);
   public static final TextAttributesKey PARENTHS =
-    createTextAttributesKey(DART_PARENTH, SyntaxHighlighterColors.PARENTHS.getDefaultAttributes());
+    createTextAttributesKey(DART_PARENTH, DefaultLanguageHighlighterColors.PARENTHESES);
   public static final TextAttributesKey BRACKETS =
-    createTextAttributesKey(DART_BRACKETS, SyntaxHighlighterColors.BRACKETS.getDefaultAttributes());
+    createTextAttributesKey(DART_BRACKETS, DefaultLanguageHighlighterColors.BRACKETS);
   public static final TextAttributesKey BRACES =
-    createTextAttributesKey(DART_BRACES, SyntaxHighlighterColors.BRACES.getDefaultAttributes());
-  public static final TextAttributesKey COMMA = createTextAttributesKey(DART_COMMA, SyntaxHighlighterColors.COMMA.getDefaultAttributes());
-  public static final TextAttributesKey DOT = createTextAttributesKey(DART_DOT, SyntaxHighlighterColors.DOT.getDefaultAttributes());
+    createTextAttributesKey(DART_BRACES, DefaultLanguageHighlighterColors.BRACES);
+  public static final TextAttributesKey COMMA = createTextAttributesKey(DART_COMMA, DefaultLanguageHighlighterColors.COMMA);
+  public static final TextAttributesKey DOT = createTextAttributesKey(DART_DOT, DefaultLanguageHighlighterColors.DOT);
   public static final TextAttributesKey SEMICOLON =
-    createTextAttributesKey(DART_SEMICOLON, SyntaxHighlighterColors.JAVA_SEMICOLON.getDefaultAttributes());
+    createTextAttributesKey(DART_SEMICOLON, DefaultLanguageHighlighterColors.SEMICOLON);
   public static final TextAttributesKey BAD_CHARACTER =
-    createTextAttributesKey(DART_BAD_CHARACTER, HighlighterColors.BAD_CHARACTER.getDefaultAttributes());
+    createTextAttributesKey(DART_BAD_CHARACTER, HighlighterColors.BAD_CHARACTER);
   public static final TextAttributesKey CLASS =
-    createTextAttributesKey(DART_CLASS, HighlightInfoType.CLASS_NAME.getAttributesKey().getDefaultAttributes());
+    createTextAttributesKey(DART_CLASS, DefaultLanguageHighlighterColors.CLASS_NAME);
   public static final TextAttributesKey INTERFACE =
     createTextAttributesKey(DART_INTERFACE, HighlightInfoType.INTERFACE_NAME.getAttributesKey().getDefaultAttributes());
   public static final TextAttributesKey STATIC_MEMBER_FUNCTION =
-    createTextAttributesKey(DART_STATIC_MEMBER_FUNCTION, HighlightInfoType.STATIC_METHOD.getAttributesKey().getDefaultAttributes());
+    createTextAttributesKey(DART_STATIC_MEMBER_FUNCTION, DefaultLanguageHighlighterColors.INSTANCE_METHOD);
   public static final TextAttributesKey INSTANCE_MEMBER_FUNCTION =
-    createTextAttributesKey(DART_INSTANCE_MEMBER_FUNCTION, new TextAttributes(new Color(0x7a, 0x7a, 43), null, null, null, 0));
+    createTextAttributesKey(DART_INSTANCE_MEMBER_FUNCTION, DefaultLanguageHighlighterColors.INSTANCE_METHOD);
   public static final TextAttributesKey INSTANCE_MEMBER_VARIABLE =
-    createTextAttributesKey(DART_INSTANCE_MEMBER_VARIABLE, HighlightInfoType.INSTANCE_FIELD.getAttributesKey().getDefaultAttributes());
+    createTextAttributesKey(DART_INSTANCE_MEMBER_VARIABLE, DefaultLanguageHighlighterColors.INSTANCE_FIELD);
   public static final TextAttributesKey STATIC_MEMBER_VARIABLE =
-    createTextAttributesKey(DART_STATIC_MEMBER_VARIABLE, HighlightInfoType.STATIC_FIELD.getAttributesKey().getDefaultAttributes());
+    createTextAttributesKey(DART_STATIC_MEMBER_VARIABLE, DefaultLanguageHighlighterColors.STATIC_FIELD);
   public static final TextAttributesKey LOCAL_VARIABLE =
     createTextAttributesKey(DART_LOCAL_VARIABLE, new TextAttributes(new Color(69, 131, 131), null, null, null, 0));
   public static final TextAttributesKey FUNCTION =
-    createTextAttributesKey(DART_FUNCTION, new TextAttributes(new Color(69, 131, 131), null, null, null, 0));
+    createTextAttributesKey(DART_FUNCTION, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
   public static final TextAttributesKey PARAMETER =
-    createTextAttributesKey(DART_PARAMETER, new TextAttributes(Color.black, null, Color.black, EffectType.LINE_UNDERSCORE, 0));
+    createTextAttributesKey(DART_PARAMETER, DefaultLanguageHighlighterColors.PARAMETER);
   public static final TextAttributesKey LABEL =
     createTextAttributesKey(DART_LABEL, HighlightInfoType.LOCAL_VARIABLE.getAttributesKey().getDefaultAttributes());
 }
