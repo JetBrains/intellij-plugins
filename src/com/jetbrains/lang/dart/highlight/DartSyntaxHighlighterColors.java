@@ -1,12 +1,8 @@
 package com.jetbrains.lang.dart.highlight;
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfoType;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.HighlighterColors;
-import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.editor.markup.EffectType;
-import com.intellij.openapi.editor.markup.TextAttributes;
 
 import java.awt.*;
 
@@ -75,9 +71,9 @@ public class DartSyntaxHighlighterColors {
   public static final TextAttributesKey CLASS =
     createTextAttributesKey(DART_CLASS, DefaultLanguageHighlighterColors.CLASS_NAME);
   public static final TextAttributesKey INTERFACE =
-    createTextAttributesKey(DART_INTERFACE, HighlightInfoType.INTERFACE_NAME.getAttributesKey().getDefaultAttributes());
+    createTextAttributesKey(DART_INTERFACE, DefaultLanguageHighlighterColors.INTERFACE_NAME);
   public static final TextAttributesKey STATIC_MEMBER_FUNCTION =
-    createTextAttributesKey(DART_STATIC_MEMBER_FUNCTION, DefaultLanguageHighlighterColors.INSTANCE_METHOD);
+    createTextAttributesKey(DART_STATIC_MEMBER_FUNCTION, DefaultLanguageHighlighterColors.STATIC_METHOD);
   public static final TextAttributesKey INSTANCE_MEMBER_FUNCTION =
     createTextAttributesKey(DART_INSTANCE_MEMBER_FUNCTION, DefaultLanguageHighlighterColors.INSTANCE_METHOD);
   public static final TextAttributesKey INSTANCE_MEMBER_VARIABLE =
@@ -85,11 +81,11 @@ public class DartSyntaxHighlighterColors {
   public static final TextAttributesKey STATIC_MEMBER_VARIABLE =
     createTextAttributesKey(DART_STATIC_MEMBER_VARIABLE, DefaultLanguageHighlighterColors.STATIC_FIELD);
   public static final TextAttributesKey LOCAL_VARIABLE =
-    createTextAttributesKey(DART_LOCAL_VARIABLE, new TextAttributes(new Color(69, 131, 131), null, null, null, 0));
+    createTextAttributesKey(DART_LOCAL_VARIABLE, DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
   public static final TextAttributesKey FUNCTION =
     createTextAttributesKey(DART_FUNCTION, DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
   public static final TextAttributesKey PARAMETER =
     createTextAttributesKey(DART_PARAMETER, DefaultLanguageHighlighterColors.PARAMETER);
   public static final TextAttributesKey LABEL =
-    createTextAttributesKey(DART_LABEL, HighlightInfoType.LOCAL_VARIABLE.getAttributesKey().getDefaultAttributes());
+    createTextAttributesKey(DART_LABEL, DefaultLanguageHighlighterColors.LABEL);
 }
