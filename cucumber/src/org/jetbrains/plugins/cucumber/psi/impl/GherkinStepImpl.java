@@ -86,7 +86,9 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
 
   @Override
   protected String getPresentableText() {
-    return "Step: " + getStepName();
+    final ASTNode keywordNode = getKeyword();
+    final String prefix = keywordNode != null ? keywordNode.getText() + ": " : "Step: ";
+    return prefix + getStepName();
   }
 
   @NotNull
