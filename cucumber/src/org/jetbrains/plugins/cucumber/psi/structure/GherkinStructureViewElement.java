@@ -5,10 +5,7 @@ import com.intellij.ide.structureView.impl.common.PsiTreeElementBase;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
-import org.jetbrains.plugins.cucumber.psi.GherkinPsiElement;
-import org.jetbrains.plugins.cucumber.psi.GherkinStep;
-import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
+import org.jetbrains.plugins.cucumber.psi.*;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinFeatureHeaderImpl;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinTableImpl;
 import org.jetbrains.plugins.cucumber.psi.impl.GherkinTagImpl;
@@ -33,7 +30,8 @@ public class GherkinStructureViewElement extends PsiTreeElementBase<PsiElement> 
       if (element instanceof GherkinPsiElement &&
           !(element instanceof GherkinFeatureHeaderImpl) &&
           !(element instanceof GherkinTableImpl) &&
-          !(element instanceof GherkinTagImpl)) {
+          !(element instanceof GherkinTagImpl) &&
+          !(element instanceof GherkinPystring)) {
         result.add(new GherkinStructureViewElement(element));
       }
     }

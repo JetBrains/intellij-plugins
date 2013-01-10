@@ -3,9 +3,9 @@ package org.jetbrains.plugins.cucumber.resolve;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveResult;
-import com.intellij.testFramework.CodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.CucumberCodeInsightTestCase;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
 
@@ -13,7 +13,7 @@ import org.jetbrains.plugins.cucumber.steps.reference.CucumberStepReference;
  * User: Andrey.Vokin
  * Date: 7/20/12
  */
-public abstract class CucumberResolveTest extends CodeInsightTestCase {
+public abstract class CucumberResolveTest extends CucumberCodeInsightTestCase {
   @Override
   protected void setUp() throws Exception {
     super.setUp();
