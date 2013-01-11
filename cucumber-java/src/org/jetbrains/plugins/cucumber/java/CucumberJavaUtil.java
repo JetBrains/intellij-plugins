@@ -78,7 +78,22 @@ public class CucumberJavaUtil {
   }
 
   public static boolean isStepDefinition(@NotNull final PsiMethod method) {
-    return getCucumberStepAnnotation(method) != null;
+    PsiAnnotation stepAnnotation = getCucumberStepAnnotation(method);
+    if (stepAnnotation != null && stepAnnotation.getParameterList().getAttributes().length > 0) {
+      final PsiElement annotationValue = stepAnnotation.getParameterList().getAttributes()[0].getValue();
+      if (annotationValue != null) {
+        final PsiElement patternLiteral = annotationValue.getFirstChild();
+        if (patternLiteral != null) {
+          final String patternContainer = patternLiteral.getText();
+          if (patternContainer.length() > 2 &&
+              patternContainer.charAt(0) == '"' &&
+              patternContainer.charAt(patternContainer.length() - 1) == '"') {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 
   public static boolean isHook(@NotNull final PsiMethod method) {
