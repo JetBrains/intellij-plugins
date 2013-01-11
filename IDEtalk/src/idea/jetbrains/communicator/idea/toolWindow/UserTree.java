@@ -16,6 +16,7 @@
 package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.openapi.util.SystemInfo;
+import com.intellij.ui.ScreenUtil;
 import com.intellij.util.ui.tree.WideSelectionTreeUI;
 import jetbrains.communicator.commands.SendMessageCommand;
 import jetbrains.communicator.core.Pico;
@@ -102,7 +103,8 @@ public class UserTree extends KirTree {
     removeMouseListener(myDragListener);
     removeMouseMotionListener(myDragListener);
 
-    UIUtil.removeListenersToPreventMemoryLeak(myUi.getRendererPane());
+    if (ScreenUtil.isStandardAddRemoveNotify(this))
+      UIUtil.removeListenersToPreventMemoryLeak(myUi.getRendererPane());
     super.removeNotify();
   }
 
