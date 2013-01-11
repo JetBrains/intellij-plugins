@@ -31,6 +31,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -166,6 +167,7 @@ public class JstdConfigFileAnnotator implements Annotator {
           element,
           YAMLTokenTypes.EOL, YAMLTokenTypes.WHITESPACE, YAMLTokenTypes.COMMENT, YAMLTokenTypes.INDENT
         );
+        accepted = accepted || element instanceof PsiWhiteSpace;
         if (!accepted) {
           holder.createErrorAnnotation(element, "YAML sequence was expected here");
         }

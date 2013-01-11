@@ -75,6 +75,8 @@ public class JstdToolWindowManager {
       contentManager.addContent(content);
 
       contentManager.setSelectedContent(content, true);
+      toolWindow.setAutoHide(true);
+      toolWindow.setSplitMode(true, null);
     }
   }
 
