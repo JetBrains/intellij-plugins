@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -68,8 +69,31 @@ public class JstdSettings {
   }
 
   @NotNull
-  public ImmutableList<String> getFilesExcludedFromCoverage() {
-    return myFilesExcludedFromCoverage;
+  public List<String> getFilesExcludedFromCoverageRec() {
+    List<String> out = new ArrayList<String>();
+    for (String path : myFilesExcludedFromCoverage) {
+      File file = new File(path);
+      if (file.isDirectory()) {
+        collectFiles(file, out);
+      }
+      else {
+        out.add(path);
+      }
+    }
+    return out;
+  }
+
+  private static void collectFiles(@NotNull File dir, List<String> paths) {
+    File[] files = dir.listFiles();
+    if (files == null) return;
+    for (File file : files) {
+      if (file.isDirectory()) {
+        collectFiles(file, paths);
+      }
+      else {
+        paths.add(file.getAbsolutePath());
+      }
+    }
   }
 
   public boolean isDebug() {

@@ -163,7 +163,7 @@ public class TestRunner {
         flagArgs.add(emptyOutputDir.getAbsolutePath());
         List<String> testPaths = getTestFilePaths(parsedConfiguration);
         coverageExcludedFiles = Lists.newArrayList(testPaths);
-        coverageExcludedFiles.addAll(mySettings.getFilesExcludedFromCoverage());
+        coverageExcludedFiles.addAll(mySettings.getFilesExcludedFromCoverageRec());
         PluginInitializer coverageInitializer = getCoverageInitializer(coverageExcludedFiles);
         if (coverageInitializer != null) {
           builder.withPluginInitializer(coverageInitializer);

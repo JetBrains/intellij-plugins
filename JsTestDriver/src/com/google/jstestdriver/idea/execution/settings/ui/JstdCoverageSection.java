@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.table.JBTable;
 import org.jetbrains.annotations.NotNull;
 
@@ -50,7 +51,7 @@ public class JstdCoverageSection extends AbstractRunSettingsSection {
       (int) (tableHeader.getPreferredSize().height * 1.2)
     ));
 
-    JScrollPane scrollPane = new JScrollPane(
+    JScrollPane scrollPane = new JBScrollPane(
       table,
       ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
@@ -84,7 +85,7 @@ public class JstdCoverageSection extends AbstractRunSettingsSection {
       selectedIndex = tableModel.getRowCount();
     }
     int savedSelected = selectedIndex;
-    VirtualFile[] chosen = FileChooser.chooseFiles(FileChooserDescriptorFactory.createMultipleFilesNoJarsDescriptor(), project, null);
+    VirtualFile[] chosen = FileChooser.chooseFiles(FileChooserDescriptorFactory.createAllButJarContentsDescriptor(), project, null);
     for (final VirtualFile chosenFile : chosen) {
       String path = FileUtil.toSystemDependentName(chosenFile.getPath());
       if (tableModel.isFileExcluded(path)) {

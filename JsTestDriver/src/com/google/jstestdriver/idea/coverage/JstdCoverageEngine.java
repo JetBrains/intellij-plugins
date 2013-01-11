@@ -12,11 +12,12 @@ import com.intellij.execution.testframework.AbstractTestProxy;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -176,7 +177,9 @@ public class JstdCoverageEngine extends CoverageEngine {
     String outputFileName = getOutputFileName(currentSuiteBundle);
     String title = "Coverage Report Generation";
     try {
-      CoverageSerializationUtils.writeLCOV(coverageReport, new File(outputDir, outputFileName));
+      File output = new File(outputDir, outputFileName);
+      CoverageSerializationUtils.writeLCOV(coverageReport, output);
+      refresh(output);
       String url = "http://ltp.sourceforge.net/coverage/lcov.php";
       Messages.showInfoMessage("<html>Coverage report has been successfully saved as '" + outputFileName +
                                "' file.<br>Use <a href='" + url + "'>" + url + "</a>" +
@@ -186,6 +189,18 @@ public class JstdCoverageEngine extends CoverageEngine {
     catch (IOException e) {
       Log.warn("Can not export coverage data", e);
       Messages.showErrorDialog("Can not generate coverage report: " + e.getMessage(), title);
+    }
+  }
+
+  private static void refresh(@NotNull File file) {
+    final VirtualFile vFile = VfsUtil.findFileByIoFile(file, true);
+    if (vFile != null) {
+      ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        @Override
+        public void run() {
+          vFile.refresh(false, false);
+        }
+      });
     }
   }
 
