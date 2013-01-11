@@ -1,19 +1,30 @@
 package org.jetbrains.plugins.cucumber;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import org.jetbrains.plugins.cucumber.psi.structure.GherkinStructureViewElement;
+
+import java.io.File;
 
 /**
  * User: Andrey.Vokin
  * Date: 1/10/13
  */
-public class CucumberStructureViewTestCucumber extends CodeInsightTestCase {
+public class CucumberStructureViewTestCucumber extends CodeInsightFixtureTestCase {
   private static final String BASE_PATH = "/structureView/";
+
+  private VirtualFile myFile;
+
+  public void setUp() throws Exception {
+    PlatformTestCase.initPlatformPrefix(IDEA_MARKER_CLASS, "PlatformLangXml");
+    super.setUp();
+  }
 
   public void testStructureView() throws Exception {
     final Object[] objects = doSimpleTest();
@@ -30,17 +41,17 @@ public class CucumberStructureViewTestCucumber extends CodeInsightTestCase {
   }
 
   protected Object[] doSimpleTest() throws Exception {
-    configureByFile(BASE_PATH + getTestName(false) + ".feature");
+    final String relatedPath = BASE_PATH + getTestName(false) + ".feature";
+    myFile =  LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + relatedPath.replace(File.separatorChar, '/'));
+    myFixture.copyFileToProject(relatedPath);
     return getTopLevelItems();
   }
 
   private Object[] getTopLevelItems() {
-    VirtualFile virtualFile = myFile.getVirtualFile();
-
-    final FileType fileType = virtualFile.getFileType();
+    final FileType fileType = myFile.getFileType();
 
     TreeBasedStructureViewBuilder
-      builder = (TreeBasedStructureViewBuilder)StructureViewBuilder.PROVIDER.getStructureViewBuilder(fileType, virtualFile, getProject());
+      builder = (TreeBasedStructureViewBuilder)StructureViewBuilder.PROVIDER.getStructureViewBuilder(fileType, myFile, getProject());
     final StructureViewModel structureViewModel = builder.createStructureViewModel();
 
     Object[] children = structureViewModel.getRoot().getChildren();
@@ -49,7 +60,7 @@ public class CucumberStructureViewTestCucumber extends CodeInsightTestCase {
   }
 
   @Override
-  protected String getTestDataPath() {
-    return CucumberTestUtil.getTestDataPath();
+  protected String getBasePath() {
+    return CucumberTestUtil.getShortPluginPath() + CucumberTestUtil.getShortTestPath();
   }
 }
