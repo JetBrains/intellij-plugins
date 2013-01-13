@@ -14,21 +14,15 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.HyperlinkLabel;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.intellij.webcore.libraries.ui.ScriptingContextsConfigurable;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -36,11 +30,6 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author: Fedor.Korotkov
@@ -136,73 +125,7 @@ public class DartSettingsUI {
   }
 
   public void updateOrCreateDartLibrary() {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        JSLibraryManager libraryManager = ServiceManager.getService(myProject, JSLibraryManager.class);
-        final File rootDir = new File(FileUtil.toSystemDependentName(myPathChooser.getText()));
-        final List<File> dartFiles = findDartFiles(rootDir);
-        final List<VirtualFile> vFiles = new ArrayList<VirtualFile>();
-        for (File file : dartFiles) {
-          VirtualFile vf = LocalFileSystem.getInstance().findFileByIoFile(file);
-          if (vf == null) {
-            vf = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file);
-          }
-          if (vf != null) {
-            vFiles.add(vf);
-          }
-        }
-        ScriptingLibraryModel libraryModel = libraryManager.getLibraryByName(DartBundle.message("dart.sdk.name"));
-        if (libraryModel != null) {
-          libraryManager.removeLibrary(libraryModel);
-        }
-        libraryModel = libraryManager.createLibrary(
-          DartBundle.message("dart.sdk.name"),
-          VfsUtilCore.toVirtualFileArray(vFiles),
-          VirtualFile.EMPTY_ARRAY,
-          ArrayUtil.EMPTY_STRING_ARRAY,
-          ScriptingLibraryModel.LibraryLevel.GLOBAL,
-          false
-        );
-        libraryModel.setFrameworkDescriptor(new ScriptingFrameworkDescriptor(
-          DartBundle.message("dart.sdk.name"),
-          DartSdkUtil.getSdkVersion(FileUtil.toSystemDependentName(myPathChooser.getText())))
-        );
-        libraryManager.commitChanges();
-      }
-    });
-  }
-
-  private static List<File> findDartFiles(@NotNull File rootDir) {
-    final File libRoot = new File(rootDir, "lib");
-    if (!libRoot.exists()) {
-      return Collections.emptyList();
-    }
-    final List<File> result = new ArrayList<File>();
-    final Processor<File> fileProcessor = new Processor<File>() {
-      @Override
-      public boolean process(File file) {
-        if (file.isFile() && file.getName().endsWith("." + DartFileType.DEFAULT_EXTENSION)) {
-          result.add(file);
-        }
-        return true;
-      }
-    };
-    for (File child : libRoot.listFiles(new FileFilter() {
-      @Override
-      public boolean accept(File file) {
-        return !"html".equals(file.getName()) && !"_internal".equals(file.getName());
-      }
-    })) {
-      FileUtil.processFilesRecursively(child, fileProcessor);
-    }
-
-    File htmlDartium = new File(new File(libRoot, "html"), "dartium");
-    if (htmlDartium.exists()) {
-      FileUtil.processFilesRecursively(htmlDartium, fileProcessor);
-    }
-
-    return result;
+    DartSettings.updateOrCreateDartLibrary(myProject, myPathChooser.getText());
   }
 
   @Nullable

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <name>Dart</name>
   <description>Support for Dart programming language</description>
-  <version>0.4.6</version>
+  <version>0.4.7</version>
   <vendor>JetBrains</vendor>
   <idea-version since-build="124.1" until-build="125.1"/>
   <depends>com.intellij.modules.xml</depends>
@@ -12,6 +12,11 @@
   <!--<depends optional="true" config-file="liveedit-support.xml">com.intellij.plugins.html.instantEditing</depends>-->
   <change-notes>
     <![CDATA[
+        <p>0.4.7:</p>
+        <ul>
+          <li>Dart Project Template</li>
+          <li>Bug fixes</li>
+        </ul>
         <p>0.4.2-0.4.6:</p>
         <ul>
           <li>Bug fixes</li>

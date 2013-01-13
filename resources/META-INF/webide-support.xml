@@ -1,4 +1,8 @@
 <idea-plugin version="2">
+  <extensions defaultExtensionNs="com.intellij">
+    <projectTemplatesFactory implementation="com.jetbrains.lang.dart.ide.template.DartTemplatesFactory"/>
+    <directoryProjectGenerator implementation="com.jetbrains.lang.dart.ide.template.DartWebApplicationGenerator"/>
+  </extensions>
   <actions>
     <action class="com.jetbrains.lang.dart.ide.settings.ShowDartSettingsAction"
             id="ShowDartSettingsAction"
