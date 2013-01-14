@@ -34,7 +34,7 @@ public class ManifestChangeWatcher extends EditorNotifications.Provider<Manifest
   public ManifestChangeWatcher(@NotNull Project project, @NotNull MessageBus messageBus) {
     myProject = project;
     myMessageBus = messageBus;
-    final Alarm myAlarm = new Alarm(Alarm.ThreadToUse.OWN_THREAD, myProject);
+    final Alarm myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, myProject);
 
     // Subscribe to VFS-change events.
     myMessageBus.connect().subscribe(VirtualFileManager.VFS_CHANGES, new BulkFileListener.Adapter() {
