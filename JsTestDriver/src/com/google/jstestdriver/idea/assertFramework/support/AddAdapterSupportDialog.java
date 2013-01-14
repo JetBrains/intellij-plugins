@@ -92,13 +92,14 @@ public class AddAdapterSupportDialog extends DialogWrapper {
 
     JLabel label2 = new JLabel("for details.");
 
-    return SwingHelper.newHorizontalPanel(
+    JPanel panel = SwingHelper.newHorizontalPanel(
       Component.BOTTOM_ALIGNMENT,
       SwingHelper.newLeftAlignedVerticalPanel(label1, Box.createVerticalStrut(2)),
       hyperlink,
       Box.createHorizontalStrut(5),
       SwingHelper.newLeftAlignedVerticalPanel(label2, Box.createVerticalStrut(2))
     );
+    return SwingHelper.wrapWithoutStretch(panel);
   }
 
   @Nullable
@@ -166,7 +167,7 @@ public class AddAdapterSupportDialog extends DialogWrapper {
     JPanel panel = new JPanel(new BorderLayout(0, 2));
     panel.add(new JLabel("Copy these files to directory:"), BorderLayout.NORTH);
     panel.add(directoryTextFieldWithBrowseButton, BorderLayout.CENTER);
-    return panel;
+    return SwingHelper.wrapWithHorizontalStretch(panel);
   }
 
   private String getAssertFrameworkAdapterName() {

@@ -51,9 +51,9 @@ public class JstdDebugSection extends AbstractRunSettingsSection {
       Box.createVerticalStrut(4),
       new JLabel("captured by a local JsTestDriver server running in IDE."),
       Box.createVerticalStrut(15),
-      SwingHelper.wrapWithNoFilling(linePanel)
+      SwingHelper.wrapWithoutStretch(linePanel)
     );
-    return SwingHelper.wrapWithNoFilling(result);
+    return SwingHelper.wrapWithoutStretch(result);
   }
 
   @Override
