@@ -142,7 +142,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
         LocalFileSystem.getInstance().removeVirtualFileListener(myFileListener);
       }
     });
-    myReadErrStreamAlarm = new Alarm(Alarm.ThreadToUse.OWN_THREAD,project);
+    myReadErrStreamAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD,project);
   }
 
   public FlexCompilerDependenciesCache getCompilerDependenciesCache() {
