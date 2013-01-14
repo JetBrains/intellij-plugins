@@ -5,6 +5,7 @@ import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.codeInspection.ex.ProblemDescriptorImpl;
+import com.intellij.codeInspection.ex.UnfairLocalInspectionTool;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -29,7 +30,7 @@ import java.util.regex.Pattern;
 /**
  * @author yole
  */
-public class CucumberStepInspection extends GherkinInspection {
+public class CucumberStepInspection extends GherkinInspection implements UnfairLocalInspectionTool {
   @Override
   public boolean isEnabledByDefault() {
     return true;
