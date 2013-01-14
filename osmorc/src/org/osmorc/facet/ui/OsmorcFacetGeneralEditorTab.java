@@ -415,7 +415,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab implements Panel
           }
         }
       });
-      VirtualFileManager.getInstance().syncRefresh();
+      VirtualFileManager.getInstance().refresh(false);
     }
   }
 
