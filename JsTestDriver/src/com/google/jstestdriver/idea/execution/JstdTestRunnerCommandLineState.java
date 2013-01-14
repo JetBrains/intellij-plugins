@@ -2,9 +2,10 @@ package com.google.jstestdriver.idea.execution;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.inject.internal.ImmutableSet;
+import com.google.gson.Gson;
 import com.google.jstestdriver.JsTestDriverServer;
 import com.google.jstestdriver.idea.TestRunner;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
@@ -161,7 +162,12 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
   }
 
   private static String buildClasspath() {
-    List<File> classpathFiles = getClasspathRootFiles(TestRunner.class, JsTestDriverServer.class);
+    List<File> classpathFiles = getClasspathRootFiles(
+      TestRunner.class,
+      JsTestDriverServer.class,
+      Maps.class,
+      Gson.class
+    );
     Set<String> classpathPaths = ImmutableSet.copyOf(Lists.transform(classpathFiles, GET_ABSOLUTE_PATH));
     return Joiner.on(pathSeparator).join(classpathPaths);
   }

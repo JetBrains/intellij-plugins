@@ -9,7 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="JsTestDriver" level="project" />
-    <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="JavaScriptLanguage" />
     <orderEntry type="module" module-name="yaml" />
@@ -21,6 +20,8 @@
     <orderEntry type="module" module-name="coverage-common" />
     <orderEntry type="module" module-name="JsTestDriver-rt" />
     <orderEntry type="module" module-name="JavaScriptDebugger" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" name="gson" level="project" />
   </component>
 </module>
 
