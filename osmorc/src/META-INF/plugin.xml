@@ -33,6 +33,10 @@
     </description>
     <change-notes>
         <![CDATA[
+        <b>Version 1.4.3</b>
+        <ul>
+          <li>Compatible with IDEA 12</li>
+        </ul>
         <b>Version 1.4.2</b>
         <ul>
           <li>Compatible with IDEA 11.1</li>
