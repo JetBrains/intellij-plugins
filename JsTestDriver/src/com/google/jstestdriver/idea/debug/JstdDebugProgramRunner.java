@@ -19,7 +19,6 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
-import com.intellij.javascript.debugger.impl.BrowserConnection;
 import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -105,20 +104,21 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     debugBrowserInfo.fixIfChrome(executionResult.getProcessHandler());
 
     final RemoteDebuggingFileFinder fileFinder = new JstdDebuggableFileFinderProvider(new File(runConfiguration.getRunSettings().getConfigFile())).provideFileFinder();
-    return XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
+    XDebugSession session = XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
-        JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
-        BrowserConnection browserConnection = debugProcess.getConnection();
-        browserConnection.queueRequest(new Runnable() {
-          @Override
-          public void run() {
-            resumeJstdClientRunning(executionResult.getProcessHandler());
-          }
-        });
-        return debugProcess;
+        return debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
       }
-    }).getRunContentDescriptor();
+    });
+
+    // must be here, after all breakpoints were queued
+    ((JSDebugProcess)session.getDebugProcess()).getConnection().queueRequest(new Runnable() {
+      @Override
+      public void run() {
+        resumeJstdClientRunning(executionResult.getProcessHandler());
+      }
+    });
+    return session.getRunContentDescriptor();
   }
 
   private static void resumeJstdClientRunning(@NotNull ProcessHandler processHandler) {
