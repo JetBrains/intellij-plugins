@@ -12,6 +12,7 @@
   <vendor>JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <fileTypeFactory implementation="org.jetbrains.plugins.cucumber.psi.CucumberFileTypeFactory"/>
     <lang.syntaxHighlighterFactory key="Gherkin"
                                    implementationClass="org.jetbrains.plugins.cucumber.psi.GherkinSyntaxHighlighterFactory"/>
