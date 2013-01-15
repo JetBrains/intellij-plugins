@@ -1,12 +1,9 @@
 package com.intellij.javascript.flex.maven;
 
-import com.intellij.flex.model.bc.BuildConfigurationNature;
-import com.intellij.flex.model.bc.OutputType;
-import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.flex.model.bc.*;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
-import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
@@ -268,6 +265,23 @@ public class Flexmojos3Configurator {
         final MavenProject dependencyMavenProject = findMavenProjectByModuleName(dependencyModuleName);
         if (dependencyMavenProject == null ||
             !ArrayUtil.contains(dependencyMavenProject.getPackaging(), FlexmojosImporter.SUPPORTED_PACKAGINGS)) {
+          continue;
+        }
+
+        final ModifiableDependencyEntry existingEntry = ContainerUtil
+          .find(bc.getDependencies().getModifiableEntries(),
+                new Condition<ModifiableDependencyEntry>() {
+                  public boolean value(final ModifiableDependencyEntry entry) {
+                    return (entry instanceof BuildConfigurationEntry) &&
+                           ((BuildConfigurationEntry)entry).getModuleName().equals(dependencyModuleName) &&
+                           ((BuildConfigurationEntry)entry).getBcName().equals(dependencyModuleName);
+                  }
+                });
+
+        if (existingEntry != null) {
+          if (existingEntry.getDependencyType().getLinkageType() == LinkageType.Test) {
+            existingEntry.getDependencyType().setLinkageType(FlexUtils.convertLinkageType(scope, isExported));
+          }
           continue;
         }
 
