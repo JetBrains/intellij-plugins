@@ -971,6 +971,7 @@ public class FlexCommonUtils {
   }
 
   public static String getSwfVersionForTargetPlayer(final String targetPlayer) {
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.6") >= 0) return "19";
     if (StringUtil.compareVersionNumbers(targetPlayer, "11.5") >= 0) return "18";
     if (StringUtil.compareVersionNumbers(targetPlayer, "11.4") >= 0) return "17";
     if (StringUtil.compareVersionNumbers(targetPlayer, "11.3") >= 0) return "16";
@@ -984,6 +985,7 @@ public class FlexCommonUtils {
   }
 
   public static String getSwfVersionForAirVersion(final String airVersion) {
+    if (StringUtil.compareVersionNumbers(airVersion, "3.6") >= 0) return "19";
     if (StringUtil.compareVersionNumbers(airVersion, "3.5") >= 0) return "18";
     if (StringUtil.compareVersionNumbers(airVersion, "3.4") >= 0) return "17";
     if (StringUtil.compareVersionNumbers(airVersion, "3.3") >= 0) return "16";
