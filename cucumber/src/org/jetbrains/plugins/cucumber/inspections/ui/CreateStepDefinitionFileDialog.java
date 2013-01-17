@@ -10,6 +10,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
 import org.jetbrains.plugins.cucumber.inspections.model.CreateStepDefinitionFileModel;
 import org.jetbrains.plugins.cucumber.inspections.model.FileTypeComboboxItem;
@@ -101,6 +102,12 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
   @Override
   protected JComponent createCenterPanel() {
     return myContentPanel;
+  }
+
+  @Nullable
+  @Override
+  protected String getDimensionServiceKey() {
+    return CreateStepDefinitionFileDialog.class.getName();
   }
 
   protected void validateFileName() {
