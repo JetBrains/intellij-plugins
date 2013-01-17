@@ -93,6 +93,8 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
 
     PsiDocumentManager.getInstance(project).commitAllDocuments();
 
+    if (ApplicationManager.getApplication().isUnitTestMode()) return true;
+
     final TemplateBuilderImpl builder = (TemplateBuilderImpl)TemplateBuilderFactory.getInstance().createTemplateBuilder(methodCall);
 
     // regexp str
@@ -171,13 +173,26 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
   private static GrMethodCall buildStepDefinitionByStep(@NotNull final GherkinStep step) {
     final GroovyPsiElementFactory factory = GroovyPsiElementFactory.getInstance(step.getProject());
 
-    final String escaped = GrStringUtil.escapeSymbolsForString(step.getStepName(), true, false);
-    final Step cucumberStep = new Step(Collections.<Comment>emptyList(), step.getKeyword().getText(), escaped, 0, null, null);
+    final Step cucumberStep = new Step(Collections.<Comment>emptyList(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
 
     SnippetGenerator generator = new SnippetGenerator(new GroovySnippet());
-    String snippet = generator.getSnippet(cucumberStep).replace("PendingException", "cucumber.runtime.PendingException");
+    StringBuilder snippet = escapePattern( generator.getSnippet(cucumberStep).replace("PendingException", "cucumber.runtime.PendingException"));
 
     return (GrMethodCall)factory.createStatementFromText(snippet, step);
+  }
+
+  @NotNull
+  private static StringBuilder escapePattern(@NotNull String snippet) {
+    final int start = snippet.indexOf('\'') + 1;
+    final int end = snippet.lastIndexOf('\'');
+    String pattern = snippet.substring(start, end);
+
+    StringBuilder buffer = new StringBuilder();
+    buffer.append(snippet.substring(0, start));
+    GrStringUtil.escapeStringCharacters(pattern.length(), pattern, "'", true, true, buffer);
+    buffer.append(snippet.substring(end));
+
+    return buffer;
   }
 
   @Override

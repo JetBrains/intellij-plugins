@@ -31,6 +31,24 @@ Given(~'^a commit \\'fix\\'$') {->
 ''')
   }
 
+  void testEscapeSlashD() {
+    doTest('''\
+Feature: Git Cherry-Pick When Auto-Commit is selected
+  Scenario: Simple cherry-pick
+    Given a comm<caret>it 'fix' 5
+''', '''\
+import cucumber.runtime.PendingException
+
+this.metaClass.mixin(cucumber.api.groovy.Hooks)
+this.metaClass.mixin(cucumber.api.groovy.EN)
+
+Given(~'^a commit \\'fix\\' (\\\\d+)$') { int arg1 ->
+    // Express the Regexp above with the code you wish you had
+    throw new PendingException()
+}\
+''')
+  }
+
   protected void doTest(String feature, String expectedStepDef) {
     myFixture.enableInspections(CucumberStepInspection)
 
