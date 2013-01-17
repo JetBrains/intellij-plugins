@@ -11,9 +11,6 @@
             <entry library-name="FlexUnit1" library-level="project">
               <dependency linkage="External" />
             </entry>
-            <entry library-name="FlexUnit4-Flex" library-level="project">
-              <dependency linkage="External" />
-            </entry>
           </entries>
           <sdk name="flex_sdk_3.2.0.3958" />
         </dependencies>
@@ -34,7 +31,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="PureAs" exported="" />
     <orderEntry type="library" exported="" name="FlexUnit1" level="project" />
-    <orderEntry type="library" exported="" name="FlexUnit4-Flex" level="project" />
   </component>
 </module>
 

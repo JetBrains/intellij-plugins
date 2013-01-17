@@ -12,11 +12,11 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="flex_sdk_4.5.1.21328A" />
+          <sdk name="flex_sdk_4.5.1.21328" />
         </dependencies>
         <compiler-options>
           <map>
-            <entry key="compiler.theme" value="C:/Programs/flex_sdk_4.5.1.21328A/frameworks/themes/Halo/halo.swc" />
+            <entry key="compiler.theme" value="${FLEX_SDK}/frameworks/themes/Halo/halo.swc" />
           </map>
         </compiler-options>
         <packaging-air-desktop />
@@ -33,7 +33,7 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="flex_sdk_4.5.1.21328A" />
+          <sdk name="flex_sdk_4.5.1.21328" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -50,13 +50,9 @@
               <dependency linkage="Merged" />
             </entry>
           </entries>
-          <sdk name="flex_sdk_4.5.1.21328A" />
+          <sdk name="flex_sdk_4.5.1.21328" />
         </dependencies>
-        <compiler-options>
-          <map>
-            <entry key="compiler.theme" value="C:/Programs/flex_sdk_4.5.1.21328A/frameworks/themes/Halo/halo.swc" />
-          </map>
-        </compiler-options>
+        <compiler-options />
         <packaging-air-desktop />
         <packaging-android />
         <packaging-ios />
@@ -69,7 +65,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
     </content>
-    <orderEntry type="jdk" jdkName="flex_sdk_4.5.1.21328A" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="flex_sdk_4.5.1.21328" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="FlexUnit1" level="project" />
     <orderEntry type="library" exported="" name="FlexUnit4-AS3" level="project" />

@@ -5,9 +5,6 @@
       <configuration name="PureAs" pure-as="true" output-type="Library" output-file="unittestingsupport_as.swc" output-folder="$APPLICATION_HOME_DIR$/flex/lib">
         <dependencies target-player="9">
           <entries>
-            <entry library-name="FlexUnit4-AS3" library-level="project">
-              <dependency linkage="External" />
-            </entry>
             <entry library-name="MinimalComponents" library-level="project">
               <dependency linkage="Merged" />
             </entry>
@@ -29,7 +26,6 @@
     </content>
     <orderEntry type="jdk" jdkName="flex_sdk_3.2.0.3958" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="FlexUnit4-AS3" level="project" />
     <orderEntry type="library" exported="" name="MinimalComponents" level="project" />
   </component>
 </module>

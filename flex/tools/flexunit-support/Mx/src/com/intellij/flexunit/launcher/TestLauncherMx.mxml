@@ -9,8 +9,6 @@
         import com.intellij.flexunit.log.LogTarget;
         import com.intellij.flexunit.runner.UpdateTextEvent;
         import com.intellij.flexunit.runner.FailureEvent;
-        import com.intellij.flexunit.runner.TestRunner1;
-        import com.intellij.flexunit.runner.TestRunner4;
         import com.intellij.flexunit.runner.TestRunnerBase;
 
         import mx.controls.Alert;
@@ -24,9 +22,7 @@
                 Log.addTarget(logTarget);
             } : null;
 
-            var testRunner:TestRunnerBase = isFlexUnit4 ?
-                    new TestRunner4(dataPort, socketPolicyPort, moduleName, beforeRunTests) :
-                    new TestRunner1(dataPort, socketPolicyPort, moduleName, beforeRunTests);
+            var testRunner:TestRunnerBase = createTestRunner(dataPort, socketPolicyPort, moduleName, beforeRunTests);
 
             testRunner.addEventListener(TestRunnerBase.MAIN_MESSAGE, function (event:UpdateTextEvent):void {
                 mainLabel.htmlText = event.newText;
@@ -45,31 +41,31 @@
             testRunner.run();
         }
 
-        protected virtual function get isFlexUnit4():Boolean {
+        protected function createTestRunner(port:int, socketPolicyPort:int, moduleName:String, beforeRunTests:Function):TestRunnerBase {
             throw new Error("Not implemented");
         }
 
-        protected virtual function get dataPort():int {
+        protected function get dataPort():int {
             throw new Error("Not implemented");
         }
 
-        protected virtual function get socketPolicyPort():int {
+        protected function get socketPolicyPort():int {
             throw new Error("Not implemented");
         }
 
-        protected virtual function get moduleName():String {
+        protected function get moduleName():String {
             throw new Error("Not implemented");
         }
 
-        protected virtual function get isLogEnabled():Boolean {
+        protected function get isLogEnabled():Boolean {
             throw new Error("Not implemented");
         }
 
-        protected virtual function get logLevel():int {
+        protected function get logLevel():int {
             throw new Error("Not implemented");
         }
 
-        protected virtual function addTests(__testRunner:TestRunnerBase):void {
+        protected function addTests(__testRunner:TestRunnerBase):void {
             throw new Error("Not implemented");
         }
         ]]></mx:Script>

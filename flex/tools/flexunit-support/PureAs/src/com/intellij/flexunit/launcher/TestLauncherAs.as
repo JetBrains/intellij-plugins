@@ -4,7 +4,6 @@ import com.bit101.components.PushButton;
 import com.bit101.components.Style;
 import com.bit101.components.Window;
 import com.intellij.flexunit.runner.FailureEvent;
-import com.intellij.flexunit.runner.TestRunner4;
 import com.intellij.flexunit.runner.TestRunnerBase;
 import com.intellij.flexunit.runner.UpdateTextEvent;
 
@@ -48,7 +47,7 @@ public class TestLauncherAs extends Sprite {
         addChild(_statusText);
 
 
-        var testRunner:TestRunnerBase = new TestRunner4(dataPort, socketPolicyPort, moduleName, null);
+        var testRunner:TestRunnerBase = createTestRunner(dataPort, socketPolicyPort, moduleName, null);
         testRunner.addEventListener(TestRunnerBase.MAIN_MESSAGE, function (event:UpdateTextEvent):void {
             setMainText(event.newText);
         });
@@ -91,19 +90,23 @@ public class TestLauncherAs extends Sprite {
         _mainText.x = (stage.stageWidth - _mainText.textWidth) / 2;
     }
 
-    protected virtual function get dataPort():int {
+    protected function createTestRunner(port:int, socketPolicyPort:int, moduleName:String, beforeRunTests:Function):TestRunnerBase {
         throw new Error("Not implemented");
     }
 
-    protected virtual function get socketPolicyPort():int {
+    protected function get dataPort():int {
         throw new Error("Not implemented");
     }
 
-    protected virtual function get moduleName():String {
+    protected function get socketPolicyPort():int {
         throw new Error("Not implemented");
     }
 
-    protected virtual function addTests(__testRunner:TestRunnerBase):void {
+    protected function get moduleName():String {
+        throw new Error("Not implemented");
+    }
+
+    protected function addTests(__testRunner:TestRunnerBase):void {
         throw new Error("Not implemented");
     }
 }

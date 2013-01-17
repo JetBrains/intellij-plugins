@@ -70,19 +70,19 @@ public class TestRunnerBase extends EventDispatcher {
         dispatchEvent(new UpdateTextEvent(STATUS_MESSAGE, "Connecting to IDEA..."));
     }
 
-    public virtual function addTestClass(clazz:Class):void {
+    public function addTestClass(clazz:Class):void {
         throw new Error("not implemented");
     }
 
-    public virtual function addTestSuiteClass(clazz:Class):void {
+    public function addTestSuiteClass(clazz:Class):void {
         throw new Error("not implemented");
     }
 
-    public virtual function addTestMethod(clazz:Class, methodName:String):void {
+    public function addTestMethod(clazz:Class, methodName:String):void {
         throw new Error("not implemented");
     }
 
-    protected virtual function runTests():void {
+    protected function runTests():void {
         throw new Error("not implemented");
     }
 

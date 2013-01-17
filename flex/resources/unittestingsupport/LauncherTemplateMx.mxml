@@ -2,35 +2,35 @@
 <launcher:TestLauncherMx xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:launcher="com.intellij.flexunit.launcher.*">
 
     <mx:Script><![CDATA[
-        import com.intellij.flexunit.runner.TestRunnerBase;
+        import com.intellij.flexunit.runner.*;
 
         /*imports*/
 
-        override protected virtual function get isFlexUnit4():Boolean {
-            return 0/*isFlexUnit4*/ != 0;
+        override protected function createTestRunner(port:int, socketPolicyPort:int, moduleName:String, beforeRunTests:Function):TestRunnerBase {
+          return new /*test_runner*/(port, socketPolicyPort, moduleName, beforeRunTests);
         }
 
-        override protected virtual function get dataPort():int {
+        override protected function get dataPort():int {
             return 0/*port*/;
         }
 
-        override protected virtual function get socketPolicyPort():int {
+        override protected function get socketPolicyPort():int {
             return 0/*socketPolicyPort*/;
         }
 
-        override protected virtual function get moduleName():String {
+        override protected function get moduleName():String {
             return "/*module*/";
         }
 
-        override protected virtual function get isLogEnabled():Boolean {
+        override protected function get isLogEnabled():Boolean {
             return 0/*isLogEnabled*/ != 0;
         }
 
-        override protected virtual function get logLevel():int {
+        override protected function get logLevel():int {
             return 0/*logLevel*/;
         }
 
-        override protected virtual function addTests(__testRunner:com.intellij.flexunit.runner.TestRunnerBase):void {
+        override protected function addTests(__testRunner:com.intellij.flexunit.runner.TestRunnerBase):void {
             /*code*/
         }
         ]]></mx:Script>

@@ -21,19 +21,19 @@ public class TestRunner4 extends TestRunnerBase implements IRunListener {
         super(port, socketPolicyPort, moduleName, beforeRunTests);
     }
 
-    override public virtual function addTestClass(clazz:Class):void {
+    override public function addTestClass(clazz:Class):void {
         _suite.push(Request.aClass(clazz));
     }
 
-    override public virtual function addTestSuiteClass(clazz:Class):void {
+    override public function addTestSuiteClass(clazz:Class):void {
         addTestClass(clazz);
     }
 
-    override public virtual function addTestMethod(clazz:Class, methodName:String):void {
+    override public function addTestMethod(clazz:Class, methodName:String):void {
         _suite.push(Request.method(clazz, methodName));
     }
 
-    override protected virtual function runTests():void {
+    override protected function runTests():void {
         var core : FlexUnitCore = new FlexUnitCore();
         core.addListener(this);
         core.run(_suite);

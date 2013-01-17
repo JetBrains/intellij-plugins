@@ -269,12 +269,12 @@ public class FlexUnitPrecompileTask implements CompileTask {
     }
 
     launcherText = replace(launcherText, "/*imports*/", imports.toString());
+    launcherText = replace(launcherText, "/*test_runner*/", flexUnit4 ? FlexCommonUtils.FLEXUNIT_4_TEST_RUNNER : FlexCommonUtils.FLEXUNIT_1_TEST_RUNNER);
     launcherText = replace(launcherText, "/*code*/", code.toString());
     launcherText = replace(launcherText, "/*port*/", String.valueOf(flexUnitPort));
     launcherText = replace(launcherText, "/*socketPolicyPort*/", String.valueOf(socketPolicyPort));
     launcherText = replace(launcherText, "/*module*/", module.getName());
     if (!bc.isPureAs()) {
-      launcherText = replace(launcherText, "/*isFlexUnit4*/", flexUnit4 ? "1" : "0");
       final FlexUnitRunnerParameters.OutputLogLevel logLevel = params.getOutputLogLevel();
       launcherText = replace(launcherText, "/*isLogEnabled*/", logLevel != null ? "1" : "0");
       launcherText = replace(launcherText, "/*logLevel*/", logLevel != null

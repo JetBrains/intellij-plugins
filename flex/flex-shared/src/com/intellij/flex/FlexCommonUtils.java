@@ -81,6 +81,9 @@ public class FlexCommonUtils {
   public static final String WIDTH_ATTR = "width";
   public static final String HEIGHT_ATTR = "height";
 
+  public static final String FLEXUNIT_4_TEST_RUNNER = "com.intellij.flexunit.runner.TestRunner4";
+  public static final String FLEXUNIT_1_TEST_RUNNER = "com.intellij.flexunit.runner.TestRunner1";
+
   private static final String MODULE_PREFIX = "Module: ";
   private static final String BC_PREFIX = "\tBC: ";
   private static final String RUN_CONFIG_TYPE_PREFIX = "Run config type: ";
@@ -635,16 +638,39 @@ public class FlexCommonUtils {
     return FileUtil.toSystemDependentName(PathManager.getHomePath() + folder + filename);
   }
 
-  public static String getFlexUnitSupportLibName(final BuildConfigurationNature nature, final ComponentSet componentSet) {
+  public static String getPathToFlexUnitMainClass(final String projectName, final BuildConfigurationNature nature, final String mainClass) {
+    return getPathToFlexUnitTempDirectory(projectName) + "/" + mainClass + getFlexUnitLauncherExtension(nature);
+  }
+
+  public static Collection<String> getFlexUnitSupportLibNames(final BuildConfigurationNature nature,
+                                                              final ComponentSet componentSet,
+                                                              final String pathToFlexUnitMainClass) {
+    boolean flexUnit4 = true;
+    try {
+      final String content = FileUtil.loadFile(new File(pathToFlexUnitMainClass), SDK_TOOLS_ENCODING);
+      if (content.contains(FLEXUNIT_1_TEST_RUNNER)) {
+        flexUnit4 = false;
+      }
+    }
+    catch (IOException ignore) {/*unlucky*/}
+
+    final Collection<String> result = new ArrayList<String>(2);
+
+    if (flexUnit4) {
+      result.add("unittestingsupport_flexunit_4.swc");
+    }
+
     if (nature.pureAS) {
-      return "unittestingsupport_as.swc";
+      result.add("unittestingsupport_as.swc");
     }
     else if (nature.isMobilePlatform() || componentSet == ComponentSet.SparkOnly) {
-      return "unittestingsupport_spark.swc";
+      result.add("unittestingsupport_spark.swc");
     }
     else {
-      return "unittestingsupport_mx.swc";
+      result.add("unittestingsupport_mx.swc");
     }
+
+    return result;
   }
 
   public static String getPathToMainClassFile(final String mainClassFqn, final JpsModule module) {

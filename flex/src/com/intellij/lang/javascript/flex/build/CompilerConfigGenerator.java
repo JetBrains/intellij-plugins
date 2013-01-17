@@ -418,11 +418,16 @@ public class CompilerConfigGenerator {
     }
 
     if (myFlexUnit) {
-      final String unitTestingSupportSwc = FlexCommonUtils
-        .getPathToBundledJar(FlexCommonUtils.getFlexUnitSupportLibName(myBC.getNature(), myBC.getDependencies().getComponentSet()));
-      final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(unitTestingSupportSwc);
-      assert file != null;
-      addLibraryRoots(rootElement, new VirtualFile[]{file}, LinkageType.Merged);
+      final Collection<String> flexUnitLibNames = FlexCommonUtils
+        .getFlexUnitSupportLibNames(myBC.getNature(), myBC.getDependencies().getComponentSet(),
+                                    FlexCommonUtils
+                                      .getPathToFlexUnitMainClass(myModule.getProject().getName(), myBC.getNature(), myBC.getMainClass()));
+      for (String libName : flexUnitLibNames) {
+        final String libPath = FlexCommonUtils.getPathToBundledJar(libName);
+        final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(libPath);
+        assert file != null;
+        addLibraryRoots(rootElement, new VirtualFile[]{file}, LinkageType.Merged);
+      }
     }
   }
 
@@ -583,8 +588,8 @@ public class CompilerConfigGenerator {
       final String pathToMainClassFile = myCSS
                                          ? myBC.getMainClass()
                                          : myFlexUnit
-                                           ? FlexCommonUtils.getPathToFlexUnitTempDirectory(myModule.getProject().getName())
-                                             + "/" + myBC.getMainClass() + FlexCommonUtils.getFlexUnitLauncherExtension(myBC.getNature())
+                                           ? FlexCommonUtils.getPathToFlexUnitMainClass(myModule.getProject().getName(), myBC.getNature(),
+                                                                                        myBC.getMainClass())
                                            : FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
 
       if (pathToMainClassFile.isEmpty() && info.getMainClass(myModule) == null && !ApplicationManager.getApplication().isUnitTestMode()) {

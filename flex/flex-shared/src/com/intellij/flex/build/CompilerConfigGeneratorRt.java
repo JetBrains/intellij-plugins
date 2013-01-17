@@ -402,10 +402,17 @@ public class CompilerConfigGeneratorRt {
     }
 
     if (myFlexUnit) {
-      final String unitTestingSupportSwc = FlexCommonUtils
-        .getPathToBundledJar(FlexCommonUtils.getFlexUnitSupportLibName(myBC.getNature(), myBC.getDependencies().getComponentSet()));
-      final String flexUnitSwcUrl = JpsPathUtil.pathToUrl(FileUtil.toSystemIndependentName(unitTestingSupportSwc));
-      addLibraryRoots(rootElement, Collections.singletonList(flexUnitSwcUrl), LinkageType.Merged);
+
+      final Collection<String> flexUnitLibNames = FlexCommonUtils
+        .getFlexUnitSupportLibNames(myBC.getNature(), myBC.getDependencies().getComponentSet(),
+                                    FlexCommonUtils
+                                      .getPathToFlexUnitMainClass(myModule.getProject().getName(), myBC.getNature(), myBC.getMainClass()));
+      for (String libName : flexUnitLibNames) {
+        final String libPath = FlexCommonUtils.getPathToBundledJar(libName);
+        final String flexUnitSwcUrl = JpsPathUtil.pathToUrl(FileUtil.toSystemIndependentName(libPath));
+        addLibraryRoots(rootElement, Collections.singletonList(flexUnitSwcUrl), LinkageType.Merged);
+
+      }
     }
   }
 
@@ -583,9 +590,8 @@ public class CompilerConfigGeneratorRt {
 
       final String pathToMainClassFile = myCSS ? myBC.getMainClass()
                                                : myFlexUnit
-                                                 ? FlexCommonUtils.getPathToFlexUnitTempDirectory(myModule.getProject().getName())
-                                                   + "/" + myBC.getMainClass()
-                                                   + FlexCommonUtils.getFlexUnitLauncherExtension(myBC.getNature())
+                                                 ? FlexCommonUtils.getPathToFlexUnitMainClass(myModule.getProject().getName(),
+                                                                                              myBC.getNature(), myBC.getMainClass())
                                                  : FlexCommonUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
 
       if (pathToMainClassFile.isEmpty() && info.getMainClass(myModule) == null && !Utils.IS_TEST_MODE) {

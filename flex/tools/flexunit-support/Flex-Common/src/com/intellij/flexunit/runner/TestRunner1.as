@@ -24,21 +24,21 @@ public class TestRunner1 extends TestRunnerBase implements TestListener {
     }
 
 
-    override public virtual function addTestClass(clazz:Class):void {
+    override public function addTestClass(clazz:Class):void {
         _suite.addTestSuite(clazz);
     }
 
-    override public virtual function addTestSuiteClass(clazz:Class):void {
+    override public function addTestSuiteClass(clazz:Class):void {
         _suite.addTest(new clazz());
     }
 
-    override public virtual function addTestMethod(clazz:Class, methodName:String):void {
+    override public function addTestMethod(clazz:Class, methodName:String):void {
         var test:TestCase = new clazz();
         test.methodName = methodName;
         _suite.addTest(test);
     }
 
-    override protected virtual function runTests():void {
+    override protected function runTests():void {
         onRunStarted(_suite.countTestCases());
 
         var testResult:TestResult = new TestResult();

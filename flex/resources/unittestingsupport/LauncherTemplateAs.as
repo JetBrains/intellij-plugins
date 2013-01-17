@@ -1,25 +1,29 @@
 package {
 
 import com.intellij.flexunit.launcher.TestLauncherAs;
-import com.intellij.flexunit.runner.TestRunnerBase;
+import com.intellij.flexunit.runner.*;
 
 /*imports*/
 
 public class ____FlexUnitLauncher extends com.intellij.flexunit.launcher.TestLauncherAs {
 
-    override protected virtual function get dataPort():int {
+    override protected function createTestRunner(port:int, socketPolicyPort:int, moduleName:String, beforeRunTests:Function):TestRunnerBase {
+        return new /*test_runner*/(port, socketPolicyPort, moduleName, beforeRunTests);
+    }
+
+    override protected function get dataPort():int {
         return 0/*port*/;
     }
 
-    override protected virtual function get socketPolicyPort():int {
+    override protected function get socketPolicyPort():int {
         return 0/*socketPolicyPort*/;
     }
 
-    override protected virtual function get moduleName():String {
+    override protected function get moduleName():String {
         return "/*module*/";
     }
 
-    override protected virtual function addTests(__testRunner:com.intellij.flexunit.runner.TestRunnerBase):void {
+    override protected function addTests(__testRunner:com.intellij.flexunit.runner.TestRunnerBase):void {
         /*code*/
     }
 
