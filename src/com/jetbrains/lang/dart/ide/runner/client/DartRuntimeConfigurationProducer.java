@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 public class DartRuntimeConfigurationProducer extends RuntimeConfigurationProducer {
   private PsiElement mySourceElement;
 
-  protected DartRuntimeConfigurationProducer() {
+  public DartRuntimeConfigurationProducer() {
     super(DartDebugConfigurationType.getTypeInstance());
   }
 
