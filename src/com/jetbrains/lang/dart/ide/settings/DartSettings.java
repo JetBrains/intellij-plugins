@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.ide.settings;
 
 import com.intellij.lang.javascript.library.JSLibraryManager;
+import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
@@ -196,7 +197,7 @@ public class DartSettings {
     return settings;
   }
 
-  public static ScriptingLibraryModel updateOrCreateDartLibrary(final Project myProject, final String sdkPath) {
+  public static ScriptingLibraryModel setUpDartLibrary(final Project myProject, final String sdkPath) {
     return ApplicationManager.getApplication().runWriteAction(new Computable<ScriptingLibraryModel>() {
       @Override
       public ScriptingLibraryModel compute() {
@@ -229,6 +230,8 @@ public class DartSettings {
           DartBundle.message("dart.sdk.name"),
           DartSdkUtil.getSdkVersion(FileUtil.toSystemDependentName(sdkPath)))
         );
+        final JSLibraryMappings mappings = ServiceManager.getService(myProject, JSLibraryMappings.class);
+        mappings.associateWithProject(DartBundle.message("dart.sdk.name"));
         libraryManager.commitChanges();
         return libraryModel;
       }

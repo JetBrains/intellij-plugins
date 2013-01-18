@@ -1,15 +1,14 @@
 package com.jetbrains.lang.dart.ide.template;
 
 import com.intellij.ide.util.projectWizard.WebProjectTemplate;
-import com.intellij.lang.javascript.library.JSLibraryMappings;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.DartSdkData;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,9 +40,9 @@ public class DartWebApplicationGenerator extends WebProjectTemplate {
                               @NotNull Object settings,
                               @NotNull final Module module) {
     if (!(settings instanceof DartSdkData)) return;
-    DartSettings.updateOrCreateDartLibrary(project, ((DartSdkData)settings).getHomePath());
-    final JSLibraryMappings mappings = ServiceManager.getService(project, JSLibraryMappings.class);
-    mappings.associate(baseDir, DartBundle.message("dart.sdk.name"));
+    final String homePath = ((DartSdkData)settings).getHomePath();
+    DartSettingsUtil.setSettings(new DartSettings(homePath));
+    DartSettings.setUpDartLibrary(project, homePath);
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {

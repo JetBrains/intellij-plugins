@@ -125,7 +125,7 @@ public class DartSettingsUI {
   }
 
   public void updateOrCreateDartLibrary() {
-    DartSettings.updateOrCreateDartLibrary(myProject, myPathChooser.getText());
+    DartSettings.setUpDartLibrary(myProject, myPathChooser.getText());
   }
 
   @Nullable
