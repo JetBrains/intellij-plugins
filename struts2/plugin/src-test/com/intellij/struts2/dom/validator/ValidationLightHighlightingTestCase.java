@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,10 +16,9 @@
 package com.intellij.struts2.dom.validator;
 
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.struts2.BasicHighlightingTestCase;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.struts2.dom.inspection.ValidatorConfigModelInspection;
 import com.intellij.struts2.dom.inspection.ValidatorModelInspection;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NonNls;
 
 /**
@@ -27,8 +26,7 @@ import org.jetbrains.annotations.NonNls;
  *
  * @author Yann C&eacute;bron
  */
-abstract class BasicValidationHighlightingTestCase<T extends JavaModuleFixtureBuilder>
-    extends BasicHighlightingTestCase<T> {
+abstract class ValidationLightHighlightingTestCase extends BasicLightHighlightingTestCase {
 
   @Override
   protected LocalInspectionTool[] getHighlightingInspections() {
@@ -57,5 +55,4 @@ abstract class BasicValidationHighlightingTestCase<T extends JavaModuleFixtureBu
                                               @NonNls final String... expectedItems) {
     myFixture.testCompletionVariants(validationXmlFileName, expectedItems);
   }
-
 }

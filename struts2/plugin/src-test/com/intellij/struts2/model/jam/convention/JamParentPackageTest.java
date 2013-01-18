@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,6 @@
 package com.intellij.struts2.model.jam.convention;
 
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class JamParentPackageTest extends JamConventionTestBase<JavaModuleFixtureBuilder> {
+public class JamParentPackageTest extends JamConventionLightTestCase {
 
   @NotNull
   @Override
@@ -32,32 +31,24 @@ public class JamParentPackageTest extends JamConventionTestBase<JavaModuleFixtur
     return "parentPackage";
   }
 
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testCompletionAction() throws Exception {
     createStrutsFileSet(STRUTS_XML);
     myFixture.testCompletionVariants("/src/testcompletion/Action.java",
                                      "myPackage", "myPackage2");
   }
 
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testCompletionPackageInfo() throws Exception {
     createStrutsFileSet(STRUTS_XML);
     myFixture.testCompletionVariants("/src/testcompletion/package-info.java",
                                      "myPackage", "myPackage2");
   }
 
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testResolveAction() throws Exception {
     createStrutsFileSet(STRUTS_XML);
     final JamParentPackage jamParentPackage = getClassJam("jam.Action", JamParentPackage.META_CLASS);
     checkResolve(jamParentPackage);
   }
 
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testResolveJamPackageInfo() throws Exception {
     createStrutsFileSet(STRUTS_XML);
 
@@ -70,5 +61,4 @@ public class JamParentPackageTest extends JamConventionTestBase<JavaModuleFixtur
     assertNotNull(strutsPackage);
     assertEquals("myPackage", strutsPackage.getName().getStringValue());
   }
-
 }

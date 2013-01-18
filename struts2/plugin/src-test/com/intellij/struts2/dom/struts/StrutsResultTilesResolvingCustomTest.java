@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,8 @@
 
 package com.intellij.struts2.dom.struts;
 
-import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +25,13 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsResultTilesResolvingCustomTest extends BasicStrutsHighlightingTestCase<WebModuleFixtureBuilder> {
+public class StrutsResultTilesResolvingCustomTest extends StrutsLightHighlightingTestCase {
+
+  private final LightProjectDescriptor TILES = new Struts2ProjectDescriptorBuilder()
+    .withStrutsLibrary()
+    .withStrutsFacet()
+    .withWebModuleType(getTestDataPath())
+    .withLibrary("tiles", "struts2-tiles-plugin-" + STRUTS2_VERSION + ".jar");
 
   @Override
   @NotNull
@@ -32,23 +39,18 @@ public class StrutsResultTilesResolvingCustomTest extends BasicStrutsHighlightin
     return "strutsXml/resultTilesCustom";
   }
 
+  @NotNull
   @Override
-  protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
-    return WebModuleFixtureBuilder.class;
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return TILES;
   }
 
   @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
-    moduleBuilder.addSourceRoot(myFixture.getTempDirPath());
-    moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
-    moduleBuilder.addWebRoot(getTestDataPath(), "/");
-
-    addLibrary(moduleBuilder, "struts2-tiles-plugin", STRUTS2_TILES_PLUGIN_JAR);
+  protected void performSetUp() throws Exception {
+    myFixture.copyDirectoryToProject("WEB-INF", "WEB-INF");
   }
 
   public void testHighlighting() throws Throwable {
-    myFixture.copyFileToProject("/WEB-INF/web.xml");
     performHighlightingTest("struts-tiles.xml");
   }
-
 }

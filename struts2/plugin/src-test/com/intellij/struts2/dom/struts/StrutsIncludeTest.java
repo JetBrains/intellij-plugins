@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,17 +14,14 @@
  */
 package com.intellij.struts2.dom.struts;
 
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
 
 /**
  * Tests for &lt;include&gt;.
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsIncludeTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class StrutsIncludeTest extends StrutsLightHighlightingTestCase {
 
   @Override
   @NotNull
@@ -32,26 +29,15 @@ public class StrutsIncludeTest extends BasicStrutsHighlightingTestCase<JavaModul
     return "strutsXml/include";
   }
 
-  // TODO fix setup
-  @Override
-  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) {
-    final String path = myFixture.getTempDirPath();
-    moduleBuilder.addContentRoot(path);
-    new File(path + SOURCE_PATH).mkdir();
-    moduleBuilder.addSourceRoot(SOURCE_DIR);
-  }
-
-  @SkipStrutsLibrary
   public void testInclude() throws Throwable {
-    performHighlightingTest("src/struts.xml",
-                            "src/struts-include.xml",
-                            "src/com/test/struts-sub.xml");
+    performHighlightingTest(STRUTS_XML,
+                            "struts-include.xml",
+
+                            "com/test/struts-sub.xml");
   }
 
-  @SkipStrutsLibrary
   public void testIncludeNotInFileset() throws Throwable {
-    performHighlightingTest("src/struts-notinfileset.xml",
-                            "src/com/test/struts-sub.xml");
+    performHighlightingTest("struts-notinfileset.xml",
+                            "com/test/struts-sub.xml");
   }
-
 }

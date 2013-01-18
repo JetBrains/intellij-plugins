@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,11 @@
 
 package com.intellij.struts2.dom.struts;
 
-import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import com.intellij.javaee.web.facet.WebFacet;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
+import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,7 +27,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<WebModuleFixtureBuilder> {
+public class StrutsResultResolvingTest extends StrutsLightHighlightingTestCase {
+
+  private final LightProjectDescriptor WEB = new Struts2ProjectDescriptorBuilder()
+    .withStrutsLibrary()
+    .withStrutsFacet()
+    .withWebModuleType(getTestDataPath());
 
   @Override
   @NotNull
@@ -31,16 +40,18 @@ public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<W
     return "strutsXml/result";
   }
 
+  @NotNull
   @Override
-  protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
-    return WebModuleFixtureBuilder.class;
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return WEB;
   }
 
   @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
-    moduleBuilder.addWebRoot(getTestDataPath() + "/jsp/", "/");
-    moduleBuilder.addWebRoot(getTestDataPath() + "/jsp2/", "/2ndWebRoot/");
-    moduleBuilder.addSourceRoot(myFixture.getTempDirPath()); // TODO
+  protected void performSetUp() throws Exception {
+    final WebFacet webFacet = ContainerUtil.getFirstItem(WebFacet.getInstances(myModule));
+    assert webFacet != null;
+    webFacet.addWebRoot(VfsUtilCore.pathToUrl(getTestDataPath() + "/jsp"), "/");
+    webFacet.addWebRoot(VfsUtilCore.pathToUrl(getTestDataPath() + "/jsp2"), "2ndWebRoot");
   }
 
   /**
@@ -94,7 +105,8 @@ public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<W
                                  "2ndWebRoot",
                                  "actionPath1.action",
                                  "index.jsp",
-                                 "jsp2-index.jsp");
+                                 "jsp2-index.jsp",
+                                 "struts-completionvariants.xml");
   }
 
   public void testCompletionVariantsChain() throws Throwable {
@@ -102,5 +114,4 @@ public class StrutsResultResolvingTest extends BasicStrutsHighlightingTestCase<W
                                  "/anotherActionPathTest/anotherActionPath1",
                                  "actionPath1");
   }
-
 }

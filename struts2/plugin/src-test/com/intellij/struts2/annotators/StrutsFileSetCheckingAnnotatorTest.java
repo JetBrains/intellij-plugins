@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,8 +16,7 @@
 package com.intellij.struts2.annotators;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.struts2.BasicHighlightingTestCase;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsFileSetCheckingAnnotatorTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class StrutsFileSetCheckingAnnotatorTest extends BasicLightHighlightingTestCase {
 
   @Override
   @NotNull
@@ -33,19 +32,16 @@ public class StrutsFileSetCheckingAnnotatorTest extends BasicHighlightingTestCas
     return "strutsXml/highlighting";
   }
 
-  @SkipStrutsLibrary
   public void testStrutsXmlNoFacetSetup() throws Throwable {
     final IntentionAction intention = myFixture.getAvailableIntention("Edit Struts 2 facet settings",
                                                                       "struts-simple.xml");
     assertNotNull(intention);
   }
 
-  @SkipStrutsLibrary
   public void testStrutsXmlNotInFileSet() throws Throwable {
     createStrutsFileSet("struts-simple.xml");
     final IntentionAction intention = myFixture.getAvailableIntention("Add struts-default.xml to file set",
                                                                       "struts-default.xml");
     assertNotNull(intention);
   }
-
 }

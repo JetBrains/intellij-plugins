@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.struts;
 
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class StrutsHighlightingTest extends StrutsLightHighlightingTestCase {
 
   @Override
   @NotNull
@@ -31,22 +30,18 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
     return "strutsXml/highlighting";
   }
 
-  @HasJavaSources
   public void testSimpleStruts() throws Throwable {
     performHighlightingTest("struts-simple.xml");
   }
 
-  @HasJavaSources
   public void testParam() throws Throwable {
     performHighlightingTest("struts-param.xml");
   }
 
-  @SkipStrutsLibrary
   public void testConstants() throws Throwable {
     performHighlightingTest("struts-constants.xml");
   }
 
-  @HasJavaSources
   public void testExceptionMapping() throws Throwable {
     performHighlightingTest("struts-exceptionmapping.xml");
   }
@@ -67,21 +62,16 @@ public class StrutsHighlightingTest extends BasicStrutsHighlightingTestCase<Java
     performHighlightingTest("struts-default-2_3_1.xml");
   }
 
-  @HasJavaSources
   public void testUnknownHandlerStack() throws Throwable {
     performHighlightingTest("struts-unknownhandlerstack.xml");
   }
 
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testActionAllowedMethods() throws Throwable {
     performHighlightingTest("struts-action-allowedMethods.xml");
   }
 
-  @SkipStrutsLibrary
   public void testStrutsWithErrorsNotInFilesetNoHighlighting() throws Throwable {
     createStrutsFileSet("struts-default.xml");
     myFixture.testHighlighting(false, false, false, "struts-errors.xml");
   }
-
 }

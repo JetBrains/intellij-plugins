@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,8 +19,7 @@ import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.struts2.BasicHighlightingTestCase;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -30,12 +29,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class ActionJavaAnnotatorTest extends BasicLightHighlightingTestCase {
 
   private final Function<PsiElement, String> ACTION_NAME_RESOLVE = new Function<PsiElement, String>() {
     @Override
     public String fun(final PsiElement psiElement) {
-      return ((XmlTag) psiElement).getAttributeValue("name");
+      return ((XmlTag)psiElement).getAttributeValue("name");
     }
   };
 
@@ -43,11 +42,6 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase<JavaModul
   @NotNull
   protected String getTestDataLocation() {
     return "/gutterJava/actionClass";
-  }
-
-  @Override
-  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) {
-    installSrcHack();
   }
 
   /**
@@ -66,23 +60,17 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase<JavaModul
     AnnotatorTestUtils.checkGutterTargets(renderer, nameResolveFunction, expectedNames);
   }
 
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testGutterMyAction() {
     createStrutsFileSet("struts-actionClass.xml");
     checkGutterTargetElements("/src/MyAction.java", ACTION_NAME_RESOLVE, "myActionPath");
   }
 
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testGutterMyActionMultipleMappings() {
     createStrutsFileSet("struts-actionClass-multiple_mappings.xml");
     checkGutterTargetElements("/src/MyAction.java", ACTION_NAME_RESOLVE,
                               "myActionPath1", "myActionPath2", "myActionPath3");
   }
 
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testGutterValidationXml() {
     createStrutsFileSet("struts-validation.xml");
     myFixture.copyFileToProject("/src/com/MyValidationAction-validation.xml");
@@ -90,7 +78,7 @@ public class ActionJavaAnnotatorTest extends BasicHighlightingTestCase<JavaModul
     checkGutterTargetElements("/src/com/MyValidationAction.java", new Function<PsiElement, String>() {
       @Override
       public String fun(final PsiElement psiElement) {
-        return ((PsiFile) psiElement).getName();
+        return ((PsiFile)psiElement).getName();
       }
     }, "MyValidationAction-validation.xml");
   }

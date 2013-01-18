@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,12 +18,12 @@ package com.intellij.struts2.model.constant;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.struts2.BasicHighlightingTestCase;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
-import static org.hamcrest.core.Is.is;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -31,18 +31,17 @@ import static org.junit.Assert.assertThat;
  *
  * @author Yann C&eacute;bron
  */
-public abstract class StrutsConstantManagerTestCase<B extends JavaModuleFixtureBuilder> extends BasicHighlightingTestCase<B> {
+public abstract class StrutsConstantManagerTestCase extends BasicLightHighlightingTestCase {
 
   protected <T> void performResolveTest(@NotNull final VirtualFile invokingFile,
                                         @NotNull final StrutsConstantKey<T> strutsConstantKey,
                                         @Nullable @NonNls final T value) {
-    final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(myProject);
+    final StrutsConstantManager constantManager = StrutsConstantManager.getInstance(getProject());
 
-    final PsiFile invokingPsiFile = PsiManager.getInstance(myProject).findFile(invokingFile);
+    final PsiFile invokingPsiFile = PsiManager.getInstance(getProject()).findFile(invokingFile);
     assert invokingPsiFile != null : invokingFile.getPath();
 
     final T constantValue = constantManager.getConvertedValue(invokingPsiFile, strutsConstantKey);
     assertThat(constantValue, is(value));
   }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,8 +16,9 @@
 package com.intellij.struts2.model.constant;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;
-import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -28,7 +29,12 @@ import java.util.Arrays;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsConstantManagerWithWebXmlTest extends StrutsConstantManagerTestCase<WebModuleFixtureBuilder> {
+public class StrutsConstantManagerWithWebXmlTest extends StrutsConstantManagerTestCase {
+
+  private final LightProjectDescriptor WEB = new Struts2ProjectDescriptorBuilder()
+    .withStrutsLibrary()
+    .withStrutsFacet()
+    .withWebModuleType(getTestDataPath());
 
   @NotNull
   @Override
@@ -36,23 +42,16 @@ public class StrutsConstantManagerWithWebXmlTest extends StrutsConstantManagerTe
     return "model/constant/withWebXml";
   }
 
+  @NotNull
   @Override
-  protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
-    return WebModuleFixtureBuilder.class;
-  }
-
-  @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
-    moduleBuilder.addWebRoot(myFixture.getTempDirPath(), "/");
-    moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return WEB;
   }
 
   public void testWebXml() throws Throwable {
     createStrutsFileSet(STRUTS_XML);
-    myFixture.copyFileToProject("/WEB-INF/web.xml");
 
     final VirtualFile strutsXmlFile = myFixture.findFileInTempDir(STRUTS_XML);
     performResolveTest(strutsXmlFile, StrutsCoreConstantContributor.ACTION_EXTENSION, Arrays.asList("foo"));
   }
-
 }

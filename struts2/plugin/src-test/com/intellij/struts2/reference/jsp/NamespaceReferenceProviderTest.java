@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +15,9 @@
 
 package com.intellij.struts2.reference.jsp;
 
-import com.intellij.struts2.BasicHighlightingTestCase;
-import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
+import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +25,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class NamespaceReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
+public class NamespaceReferenceProviderTest extends BasicLightHighlightingTestCase {
+
+  private final LightProjectDescriptor WEB = new Struts2ProjectDescriptorBuilder()
+    .withStrutsLibrary()
+    .withStrutsFacet()
+    .withWebModuleType(getTestDataPath());
 
   @Override
   @NotNull
@@ -32,14 +38,10 @@ public class NamespaceReferenceProviderTest extends BasicHighlightingTestCase<We
     return "reference/jsp/namespace";
   }
 
+  @NotNull
   @Override
-  protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
-    return WebModuleFixtureBuilder.class;
-  }
-
-  @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
-    moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return WEB;
   }
 
   public void testNamespaceHighlighting() throws Throwable {
@@ -52,5 +54,4 @@ public class NamespaceReferenceProviderTest extends BasicHighlightingTestCase<We
     myFixture.testCompletionVariants("/jsp/namespace-completionvariants.jsp",
                                      "/namespace1", "/namespace2");
   }
-
 }

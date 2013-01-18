@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,10 +18,9 @@ package com.intellij.struts2.reference.web;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.j2ee.web.highlighting.WebWarningInspection;
 import com.intellij.j2ee.web.highlighting.WebXmlInspection;
-import com.intellij.struts2.BasicHighlightingTestCase;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.struts2.model.constant.StrutsConstant;
 import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;
-import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +32,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-public class WebXmlConstantTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
+public class WebXmlConstantTest extends BasicLightHighlightingTestCase {
 
   @Override
   protected LocalInspectionTool[] getHighlightingInspections() {
@@ -46,19 +45,7 @@ public class WebXmlConstantTest extends BasicHighlightingTestCase<WebModuleFixtu
     return "/reference/web/constant/";
   }
 
-  @Override
-  protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
-    return WebModuleFixtureBuilder.class;
-  }
-
-  @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
-    moduleBuilder.addWebRoot(myFixture.getTempDirPath(), "/");
-    moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
-  }
-
   public void testHighlighting() throws Throwable {
-    myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testHighlighting(true, false, false, "/WEB-INF/web.xml");
   }
 
@@ -66,8 +53,6 @@ public class WebXmlConstantTest extends BasicHighlightingTestCase<WebModuleFixtu
    * Completion for {@code <param-name>}.
    */
   public void testNameCompletion() throws Throwable {
-    myFixture.copyFileToProject("/WEB-INF/web_name_completion.xml");
-
     final StrutsCoreConstantContributor coreConstantContributor = new StrutsCoreConstantContributor();
     final List<StrutsConstant> constants = coreConstantContributor.getStrutsConstantDefinitions(myModule);
     final String[] variants = ContainerUtil.map2Array(constants, String.class, new Function<StrutsConstant, String>() {
@@ -83,7 +68,6 @@ public class WebXmlConstantTest extends BasicHighlightingTestCase<WebModuleFixtu
    * Completion for {@code <param-value>}.
    */
   public void testValueCompletion() throws Throwable {
-    myFixture.copyFileToProject("/WEB-INF/web_value_completion.xml");
     myFixture.testCompletionVariants("/WEB-INF/web_value_completion.xml",
                                      "none", "get", "all");
   }
@@ -92,7 +76,6 @@ public class WebXmlConstantTest extends BasicHighlightingTestCase<WebModuleFixtu
    * Completion for {@code <param-value>} with some additional variants.
    */
   public void testValueCompletion2() throws Throwable {
-    myFixture.copyFileToProject("/WEB-INF/web_value_completion_2.xml");
     myFixture.testCompletionVariants("/WEB-INF/web_value_completion_2.xml",
                                      "com.opensymphony.xwork2.ObjectFactory",
                                      "com.opensymphony.xwork2.spring.SpringObjectFactory",
@@ -101,5 +84,4 @@ public class WebXmlConstantTest extends BasicHighlightingTestCase<WebModuleFixtu
                                      "spring",
                                      "struts");
   }
-
 }

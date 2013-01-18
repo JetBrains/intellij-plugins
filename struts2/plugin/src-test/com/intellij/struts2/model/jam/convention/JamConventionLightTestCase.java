@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,8 +21,9 @@ import com.intellij.jam.reflect.JamPackageMeta;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
-import com.intellij.struts2.BasicHighlightingTestCase;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
+import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +32,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends BasicHighlightingTestCase<T> {
+abstract class JamConventionLightTestCase extends BasicLightHighlightingTestCase {
+
+  private static final LightProjectDescriptor CONVENTION = new Struts2ProjectDescriptorBuilder()
+    .withStrutsLibrary()
+    .withStrutsFacet()
+    .withLibrary("struts2-convention-plugin", "struts2-convention-plugin-" + STRUTS2_VERSION + ".jar");
 
   @Override
   @NotNull
@@ -48,9 +54,10 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
   @NotNull
   protected abstract String getTestDataFolder();
 
+  @NotNull
   @Override
-  protected void customizeSetup(final T moduleBuilder) {
-    addLibrary(moduleBuilder, "struts2-convention-plugin", "struts2-convention-plugin-" + STRUTS2_VERSION + ".jar");
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CONVENTION;
   }
 
   /**
@@ -64,7 +71,7 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
   @NotNull
   protected <Jam extends JamElement> Jam getClassJam(final String clazzName,
                                                      final JamClassMeta<Jam> meta) {
-    myFixture.configureByFile(SOURCE_DIR + "/" + StringUtil.replace(clazzName, ".", "/") + ".java");
+    myFixture.configureByFile(StringUtil.replace(clazzName, ".", "/") + ".java");
 
     final PsiClass myClass = myFixture.findClass(clazzName);
 
@@ -84,7 +91,7 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
   @NotNull
   protected <Jam extends JamElement> Jam getPackageJam(final String packageName,
                                                        final JamPackageMeta<Jam> meta) {
-    myFixture.configureByFile(SOURCE_DIR + "/" + StringUtil.replace(packageName, ".", "/") + "/package-info.java");
+    myFixture.configureByFile(StringUtil.replace(packageName, ".", "/") + "/package-info.java");
 
     final PsiPackage myPackage = myFixture.findPackage(packageName);
 
@@ -92,5 +99,4 @@ abstract class JamConventionTestBase<T extends JavaModuleFixtureBuilder> extends
     assertNotNull("JAM was null for " + meta + " in '" + packageName + "'", jam);
     return jam;
   }
-
 }
