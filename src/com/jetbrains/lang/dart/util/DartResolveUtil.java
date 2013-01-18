@@ -70,6 +70,7 @@ public class DartResolveUtil {
   }
 
   public static boolean isLValue(PsiElement element) {
+    if(element instanceof PsiFile) return false;
     PsiElement nextSibling = UsefulPsiTreeUtil.getNextSiblingSkippingWhiteSpacesAndComments(element);
     while (nextSibling == null && element != null) {
       element = element.getParent();

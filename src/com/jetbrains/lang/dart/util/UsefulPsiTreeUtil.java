@@ -145,8 +145,9 @@ public class UsefulPsiTreeUtil {
                                                        Condition<PsiElement> condition,
                                                        boolean strictly) {
     if (sibling == null) return null;
+    if (sibling instanceof PsiFile) return sibling;
     PsiElement result = strictly ? nextSibling.fun(sibling) : sibling;
-    while (result != null && condition.value(result)) {
+    while (result != null && !(result instanceof PsiFile) && condition.value(result)) {
       result = nextSibling.fun(result);
     }
     return result;
