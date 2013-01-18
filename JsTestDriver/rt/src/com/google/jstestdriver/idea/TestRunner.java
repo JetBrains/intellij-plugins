@@ -36,6 +36,7 @@ import com.google.jstestdriver.idea.server.JstdServerFetchResult;
 import com.google.jstestdriver.idea.server.JstdServerUtilsRt;
 import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.google.jstestdriver.idea.util.JstdConfigParsingUtils;
+import com.google.jstestdriver.idea.util.JstdUtils;
 import com.google.jstestdriver.output.TestResultHolder;
 import com.google.jstestdriver.runner.RunnerMode;
 import org.jetbrains.annotations.NotNull;
@@ -152,6 +153,10 @@ public class TestRunner {
     builder.setServer(mySettings.getServerUrl());
 
     List<String> flagArgs = Lists.newArrayList("--captureConsole", "--server", mySettings.getServerUrl());
+    if (dryRun && JstdUtils.isJasmineTests(parsedConfiguration)) {
+      // https://github.com/ibolmo/jasmine-jstd-adapter/pull/21
+      flagArgs.add("--reset");
+    }
     flagArgs.addAll(Arrays.asList(extraArgs));
     List<String> coverageExcludedFiles = null;
     File emptyOutputDir = null;
