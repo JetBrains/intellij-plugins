@@ -123,4 +123,8 @@ public class DartParsingTest extends ParsingTestCase {
   public void testHardCases2() throws Throwable {
     doTest(true);
   }
+
+  public void testHardCases3() throws Throwable {
+    doTest(true);
+  }
 }

@@ -30,7 +30,7 @@ public class DartReversedLibraryIndex extends FileBasedIndexExtension<String, St
 
   @Override
   public int getVersion() {
-    return INDEX_VERSION;
+    return DartIndexUtil.BASE_VERSION + INDEX_VERSION;
   }
 
   @NotNull

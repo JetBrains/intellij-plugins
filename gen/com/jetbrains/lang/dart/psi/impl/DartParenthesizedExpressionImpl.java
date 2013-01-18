@@ -78,9 +78,9 @@ public class DartParenthesizedExpressionImpl extends DartClassReferenceImpl impl
   }
 
   @Override
-  @Nullable
-  public DartMetadata getMetadata() {
-    return findChildByClass(DartMetadata.class);
+  @NotNull
+  public List<DartMetadata> getMetadataList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
   }
 
   @Override

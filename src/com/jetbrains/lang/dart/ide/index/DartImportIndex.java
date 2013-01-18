@@ -32,7 +32,7 @@ public class DartImportIndex extends FileBasedIndexExtension<String, List<DartPa
 
   @Override
   public int getVersion() {
-    return INDEX_VERSION;
+    return DartIndexUtil.BASE_VERSION + INDEX_VERSION;
   }
 
   @NotNull

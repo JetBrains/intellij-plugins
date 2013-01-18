@@ -37,8 +37,8 @@ public interface DartParenthesizedExpression extends DartReference, DartExpressi
   @NotNull
   List<DartLabel> getLabelList();
 
-  @Nullable
-  DartMetadata getMetadata();
+  @NotNull
+  List<DartMetadata> getMetadataList();
 
   @Nullable
   DartReturnStatement getReturnStatement();

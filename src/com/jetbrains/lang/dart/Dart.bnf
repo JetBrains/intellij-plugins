@@ -133,7 +133,7 @@
   extends(".*Expression")="expression"
 }
 
-dartUnit ::= (metadata? topLevelDefinition)*
+dartUnit ::= (metadata* topLevelDefinition)*
 private topLevelDefinition ::= libraryStatement
                              | partOfStatement
                              | importStatement
@@ -224,7 +224,7 @@ classDefinition ::= 'abstract'? 'class' componentName typeParameters? superclass
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
 private classBodyWithBracesPrivate ::= '{' classBody '}'
-classBody ::= (metadata? classMemberDefinition)* {recoverUntil="simple_scope_recover" implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
+classBody ::= (metadata* classMemberDefinition)* {recoverUntil="simple_scope_recover" implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
 private simple_scope_recover ::= !'}'
 
 private getterOrSetterDeclaration ::= getterDeclaration | setterDeclaration
@@ -287,7 +287,7 @@ factorySpecification ::= 'factory' type {pin=1}
 functionTypeAlias ::= 'typedef' functionPrefix typeParameters? formalParameterList ';'
 {pin=2 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
-interfaceBody ::= (metadata? interfaceMemberDefinition)* {recoverUntil="simple_scope_recover" implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
+interfaceBody ::= (metadata* interfaceMemberDefinition)* {recoverUntil="simple_scope_recover" implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
 private interfaceMemberDefinition ::= methodPrototypeDeclaration
                                     | varDeclarationListWithSemicolon
                                     | namedConstructorDeclaration
@@ -370,7 +370,7 @@ private statement_recover ::= !('!' | '(' | ')' | '+' | '++' | '-' | '--' | ';' 
                               | "is" | "@" | "library" | "native" | "negate" | "as" | "on" | "set" | "source" | "static" | "typedef" | "operator")
 
 private nonLabelledStatement ::= block // Guard to break tie with map literal.
-                               | metadata? functionDeclarationWithBody ';'?
+                               | metadata* functionDeclarationWithBody ';'?
                                | whileStatement ';'?
                                | doWhileStatement ';'?
                                | forStatement ';'?
@@ -384,7 +384,7 @@ private nonLabelledStatement ::= block // Guard to break tie with map literal.
                                | assertStatement
                                | statementFollowedBySemiColon
                                | ';'
-private statementFollowedBySemiColon ::= (metadata? varDeclarationList | expression) ';' {pin=1}
+private statementFollowedBySemiColon ::= (metadata* varDeclarationList | expression) ';' {pin=1}
 
 label::= componentName ':'
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}

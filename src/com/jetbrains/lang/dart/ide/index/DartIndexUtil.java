@@ -24,6 +24,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class DartIndexUtil {
+  // inc when change parser
+  public static int BASE_VERSION = 1;
+
   public static <K, V> Collection<VirtualFile> getContainingFiles(@NotNull ID<K, V> indexId,
                                                                   @NotNull K dataKey,
                                                                   @NotNull GlobalSearchScope filter) {

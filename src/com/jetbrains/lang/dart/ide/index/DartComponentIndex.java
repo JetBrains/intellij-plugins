@@ -58,7 +58,7 @@ public class DartComponentIndex extends FileBasedIndexExtension<String, DartComp
 
   @Override
   public int getVersion() {
-    return INDEX_VERSION;
+    return DartIndexUtil.BASE_VERSION + INDEX_VERSION;
   }
 
   public static List<VirtualFile> getAllFiles(@NotNull Project project, @Nullable String componentName) {

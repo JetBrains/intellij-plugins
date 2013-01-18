@@ -41,7 +41,7 @@ public class DartInheritanceIndex extends FileBasedIndexExtension<String, List<D
 
   @Override
   public int getVersion() {
-    return INDEX_VERSION;
+    return DartIndexUtil.BASE_VERSION + INDEX_VERSION;
   }
 
   @Override
