@@ -17,4 +17,9 @@ public class ReferenceCompletionTest extends DartCompletionTestBase {
   public void testTest8() throws Throwable {
     doTest("Test8Bar.dart", "Test8.dart", "Test8Foo.dart");
   }
+
+  public void testReferenceWEB6238() throws Throwable {
+    myFixture.copyFileToProject("packages/foo/Foo.dart");
+    doTest("ReferenceWEB6238.dart", "ReferenceWEB6238_root.dart");
+  }
 }

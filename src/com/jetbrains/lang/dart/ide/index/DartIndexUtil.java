@@ -132,6 +132,7 @@ public class DartIndexUtil {
     final String prefix = prefixName != null ? prefixName.getName() : null;
 
     result.addImport(new DartPathInfo(pathValue, prefix, showComponentNames, hideComponentNames));
+    result.addComponentInfo(prefix, new DartComponentInfo(importStatement.getContainingFile().getName(), DartComponentType.LABEL));
   }
 
   private static List<PsiElement> findDartRoots(PsiFile psiFile) {

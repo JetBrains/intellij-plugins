@@ -263,20 +263,21 @@ public class DartResolveUtil {
 
   @Nullable
   public static VirtualFile getFileByPrefix(@NotNull PsiElement context, @NotNull String prefix) {
-    final VirtualFile virtualFile = getRealVirtualFile(context.getContainingFile());
+    final List<VirtualFile> virtualFiles = findLibrary(context.getContainingFile());
+    for (VirtualFile virtualFile : virtualFiles) {
+      for (DartPathInfo pathInfo : DartImportIndex.getLibraryNames(context.getProject(), virtualFile)) {
+        final String importPrefix = pathInfo.getPrefix();
+        if (importPrefix == null || !prefix.equals(StringUtil.unquoteString(importPrefix))) {
+          continue;
+        }
 
-    for (DartPathInfo pathInfo : DartImportIndex.getLibraryNames(context.getProject(), virtualFile)) {
-      final String importPrefix = pathInfo.getPrefix();
-      if (importPrefix == null || !prefix.equals(StringUtil.unquoteString(importPrefix))) {
-        continue;
+        final String libraryNameOrPath = pathInfo.getPath();
+        List<VirtualFile> libraryRoots = DartLibraryIndex.findLibraryClass(context, libraryNameOrPath);
+        if (!libraryRoots.isEmpty()) {
+          return libraryRoots.iterator().next();
+        }
+        return findFileByPath(virtualFile, context, libraryNameOrPath);
       }
-
-      final String libraryNameOrPath = pathInfo.getPath();
-      List<VirtualFile> libraryRoots = DartLibraryIndex.findLibraryClass(context, libraryNameOrPath);
-      if (!libraryRoots.isEmpty()) {
-        return libraryRoots.iterator().next();
-      }
-      return findFileByPath(virtualFile, context, libraryNameOrPath);
     }
     return null;
   }

@@ -395,6 +395,11 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
     doTest(1);
   }
 
+  public void testReferenceWEB6238() throws Throwable {
+    myFixture.copyFileToProject("packages/foo/Foo.dart");
+    doTest(1, "ReferenceWEB6238.dart", "ReferenceWEB6238_root.dart");
+  }
+
   public void testType1() throws Throwable {
     doTest(1);
   }
