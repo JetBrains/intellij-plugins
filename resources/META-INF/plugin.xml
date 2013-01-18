@@ -9,6 +9,7 @@
   <depends optional="true" config-file="dartium-debugger-support.xml">JavaScriptDebugger</depends>
   <depends optional="true" config-file="pub-support.xml">org.jetbrains.plugins.yaml</depends>
   <depends optional="true" config-file="rich-platform.xml">com.intellij.modules.java</depends>
+  <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
   <!--<depends optional="true" config-file="liveedit-support.xml">com.intellij.plugins.html.instantEditing</depends>-->
   <change-notes>
     <![CDATA[

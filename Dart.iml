@@ -43,6 +43,7 @@
     <orderEntry type="module" module-name="xml-tests" scope="TEST" />
     <orderEntry type="module" module-name="java-tests" scope="TEST" />
     <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="module" module-name="copyright" />
   </component>
 </module>
 
