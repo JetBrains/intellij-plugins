@@ -71,7 +71,7 @@ abstract class JamConventionLightTestCase extends BasicLightHighlightingTestCase
   @NotNull
   protected <Jam extends JamElement> Jam getClassJam(final String clazzName,
                                                      final JamClassMeta<Jam> meta) {
-    myFixture.configureByFile(StringUtil.replace(clazzName, ".", "/") + ".java");
+    myFixture.configureByFile("src/" + StringUtil.replace(clazzName, ".", "/") + ".java");
 
     final PsiClass myClass = myFixture.findClass(clazzName);
 
@@ -91,7 +91,7 @@ abstract class JamConventionLightTestCase extends BasicLightHighlightingTestCase
   @NotNull
   protected <Jam extends JamElement> Jam getPackageJam(final String packageName,
                                                        final JamPackageMeta<Jam> meta) {
-    myFixture.configureByFile(StringUtil.replace(packageName, ".", "/") + "/package-info.java");
+    myFixture.configureByFile("src/" + StringUtil.replace(packageName, ".", "/") + "/package-info.java");
 
     final PsiPackage myPackage = myFixture.findPackage(packageName);
 
