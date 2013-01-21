@@ -22,7 +22,9 @@ public class JpsFlexModelSerializerExtension extends JpsModelSerializerExtension
 
   @NotNull
   public List<? extends JpsProjectExtensionSerializer> getProjectExtensionSerializers() {
-    return Arrays.asList(JpsFlexCompilerProjectExtension.createProjectExtensionSerializer(),
+    return Arrays.asList(JpsFlexCompilerProjectExtension.createProjectExtensionSerializerIws(),
+                         JpsFlexCompilerProjectExtension.createProjectExtensionSerializer(),
+                         JpsFlexProjectLevelCompilerOptionsExtension.createProjectExtensionSerializerIws(),
                          JpsFlexProjectLevelCompilerOptionsExtension.createProjectExtensionSerializer());
   }
 

@@ -56,25 +56,48 @@ public class JpsFlexCompilerProjectExtension extends JpsElementBase<JpsFlexCompi
     VM_OPTIONS = modified.VM_OPTIONS;
   }
 
-  static JpsProjectExtensionSerializer createProjectExtensionSerializer() {
-    return new JpsProjectExtensionSerializer("flexCompiler.xml", "FlexCompilerConfiguration") {
-      public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
-        final JpsFlexCompilerProjectExtension deserialized = XmlSerializer.deserialize(componentTag, JpsFlexCompilerProjectExtension.class);
-        project.getContainer().setChild(ROLE, deserialized);
-      }
-
-      public void saveExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
-        final JpsFlexCompilerProjectExtension extension = project.getContainer().getChild(ROLE);
-        if (extension != null) {
-          XmlSerializer.serializeInto(extension, componentTag);
-        }
-      }
-    };
-  }
-
   @NotNull
   public static JpsFlexCompilerProjectExtension getInstance(final JpsProject project) {
     final JpsFlexCompilerProjectExtension child = project.getContainer().getChild(ROLE);
     return child != null ? child : new JpsFlexCompilerProjectExtension();
+  }
+
+  static JpsProjectExtensionSerializer createProjectExtensionSerializer() {
+    return new JpsProjectExtensionSerializer("flexCompiler.xml", "FlexCompilerConfiguration") {
+      public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
+        JpsFlexCompilerProjectExtension.loadExtension(project, componentTag);
+      }
+
+      public void saveExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
+        JpsFlexCompilerProjectExtension.saveExtension(project, componentTag);
+      }
+    };
+  }
+
+  /**
+   * This is a workaround of the historical bug: in case of *.ipr-project "FlexCompilerConfiguration" component is stored in *.iws instead of *.ipr
+   */
+  static JpsProjectExtensionSerializer createProjectExtensionSerializerIws() {
+    return new JpsProjectExtensionSerializer("workspace.xml", "FlexCompilerConfiguration") {
+      public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
+        JpsFlexCompilerProjectExtension.loadExtension(project, componentTag);
+      }
+
+      public void saveExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
+        JpsFlexCompilerProjectExtension.saveExtension(project, componentTag);
+      }
+    };
+  }
+
+  private static void loadExtension(final JpsProject project, final Element componentTag) {
+    final JpsFlexCompilerProjectExtension deserialized = XmlSerializer.deserialize(componentTag, JpsFlexCompilerProjectExtension.class);
+    project.getContainer().setChild(ROLE, deserialized);
+  }
+
+  private static void saveExtension(final JpsProject project, final Element componentTag) {
+    final JpsFlexCompilerProjectExtension extension = project.getContainer().getChild(ROLE);
+    if (extension != null) {
+      XmlSerializer.serializeInto(extension, componentTag);
+    }
   }
 }

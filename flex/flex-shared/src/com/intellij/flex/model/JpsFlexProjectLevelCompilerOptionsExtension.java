@@ -44,23 +44,48 @@ public class JpsFlexProjectLevelCompilerOptionsExtension extends JpsCompositeEle
   static JpsProjectExtensionSerializer createProjectExtensionSerializer() {
     return new JpsProjectExtensionSerializer("flexCompiler.xml", "FlexIdeProjectLevelCompilerOptionsHolder") {
       public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
-        final JpsFlexProjectLevelCompilerOptionsExtension extension = new JpsFlexProjectLevelCompilerOptionsExtension();
-        final JpsFlexCompilerOptionsImpl options = (JpsFlexCompilerOptionsImpl)extension.getProjectLevelCompilerOptions();
-
-        final Attribute annotation = JpsFlexCompilerOptionsImpl.State.class.getAnnotation(Attribute.class);
-        final Element compilerOptionsTag = componentTag.getChild(annotation != null ? annotation.value() : "compiler-options");
-        if (compilerOptionsTag != null) {
-          options.loadState(XmlSerializer.deserialize(compilerOptionsTag, JpsFlexCompilerOptionsImpl.State.class));
-        }
-
-        project.getContainer().setChild(ROLE, extension);
+        JpsFlexProjectLevelCompilerOptionsExtension.loadExtension(project, componentTag);
       }
 
       public void saveExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
-        final JpsFlexCompilerOptionsImpl compilerOptions =
-          (JpsFlexCompilerOptionsImpl)project.getContainer().getChild(ROLE).getProjectLevelCompilerOptions();
-        XmlSerializer.serializeInto(compilerOptions.getState(), componentTag);
+        JpsFlexProjectLevelCompilerOptionsExtension.saveExtension(project, componentTag);
       }
     };
+  }
+
+  /**
+   * This is a workaround of the historical bug: in case of *.ipr-project "FlexIdeProjectLevelCompilerOptionsHolder" component is stored in *.iws instead of *.ipr
+   */
+  static JpsProjectExtensionSerializer createProjectExtensionSerializerIws() {
+    return new JpsProjectExtensionSerializer("workspace.xml", "FlexIdeProjectLevelCompilerOptionsHolder") {
+      public void loadExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
+        JpsFlexProjectLevelCompilerOptionsExtension.loadExtension(project, componentTag);
+      }
+
+      public void saveExtension(@NotNull final JpsProject project, @NotNull final Element componentTag) {
+        JpsFlexProjectLevelCompilerOptionsExtension.saveExtension(project, componentTag);
+      }
+    };
+  }
+
+  private static void loadExtension(final JpsProject project, final Element componentTag) {
+    final JpsFlexProjectLevelCompilerOptionsExtension extension = new JpsFlexProjectLevelCompilerOptionsExtension();
+    final JpsFlexCompilerOptionsImpl options = (JpsFlexCompilerOptionsImpl)extension.getProjectLevelCompilerOptions();
+
+    final Attribute annotation = JpsFlexCompilerOptionsImpl.State.class.getAnnotation(Attribute.class);
+    final Element compilerOptionsTag = componentTag.getChild(annotation != null ? annotation.value() : "compiler-options");
+    if (compilerOptionsTag != null) {
+      options.loadState(XmlSerializer.deserialize(compilerOptionsTag, JpsFlexCompilerOptionsImpl.State.class));
+    }
+
+    project.getContainer().setChild(ROLE, extension);
+  }
+
+  private static void saveExtension(final JpsProject project, final Element componentTag) {
+    final JpsFlexProjectLevelCompilerOptionsExtension extension = project.getContainer().getChild(ROLE);
+    if (extension != null) {
+      final JpsFlexCompilerOptionsImpl compilerOptions = (JpsFlexCompilerOptionsImpl)extension.getProjectLevelCompilerOptions();
+      XmlSerializer.serializeInto(compilerOptions.getState(), componentTag);
+    }
   }
 }
