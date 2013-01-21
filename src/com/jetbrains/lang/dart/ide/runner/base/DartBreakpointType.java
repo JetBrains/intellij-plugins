@@ -1,5 +1,8 @@
 package com.jetbrains.lang.dart.ide.runner.base;
 
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebuggerUtil;
@@ -10,6 +13,7 @@ import com.intellij.xdebugger.breakpoints.ui.XBreakpointGroupingRule;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
+import com.jetbrains.lang.dart.ide.module.DartModuleType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -26,7 +30,14 @@ public class DartBreakpointType extends XLineBreakpointType<XBreakpointPropertie
   }
 
   public boolean canPutAt(@NotNull final VirtualFile file, final int line, @NotNull Project project) {
-    return file.getFileType() == DartFileType.INSTANCE;
+    if (file.getFileType() == DartFileType.INSTANCE) {
+      Module module = ModuleUtilCore.findModuleForFile(file, project);
+      if (module != null) {
+        // only in dart module.
+        return ModuleType.get(module) == DartModuleType.getInstance();
+      }
+    }
+    return false;
   }
 
   public XBreakpointProperties createBreakpointProperties(@NotNull final VirtualFile file, final int line) {

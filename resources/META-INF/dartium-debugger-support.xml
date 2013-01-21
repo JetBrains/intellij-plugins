@@ -1,6 +1,5 @@
 <idea-plugin version="2">
-  <extensions defaultExtensionNs="com.intellij">
-    <configurationType implementation="com.jetbrains.lang.dart.ide.runner.client.DartDebugConfigurationType"/>
-    <!--<programRunner implementation="com.jetbrains.lang.dart.ide.runner.client.DartiumDebugRunner"/>-->
+  <extensions defaultExtensionNs="com.jetbrains">
+    <javaScriptBreakpointAware implementation="com.jetbrains.lang.dart.ide.runner.client.DartBreakpointAware"/>
   </extensions>
 </idea-plugin>
