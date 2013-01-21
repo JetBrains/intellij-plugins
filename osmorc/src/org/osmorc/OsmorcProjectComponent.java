@@ -67,7 +67,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
     this.myProjectSettings = projectSettings;
     this.myProject = project;
     this.myFrameworkInstanceLibraryManager = frameworkInstanceLibraryManager;
-    myAlarm = new Alarm(Alarm.ThreadToUse.OWN_THREAD, myProject);
+    myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, myProject);
   }
 
   @NotNull

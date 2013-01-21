@@ -28,7 +28,7 @@ public class BundleIndexModificationWatcher extends EditorNotifications.Provider
 
   public BundleIndexModificationWatcher(@NotNull Project project, @NotNull MessageBus messageBus) {
     myProject = project;
-    final Alarm myAlarm = new Alarm(Alarm.ThreadToUse.OWN_THREAD, myProject);
+    final Alarm myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, myProject);
 
     // Subscribe to VFS-change events.
     messageBus.connect().subscribe(MyBundleManager.BUNDLE_INDEX_CHANGE_TOPIC, new BundleModificationListener() {
