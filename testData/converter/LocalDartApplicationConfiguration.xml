@@ -1,0 +1,9 @@
+<configuration default="false" name="solar" type="DartConfigurationType" factoryName="Dart Application">
+  <module name=""/>
+  <option name="fileUrl" value="file://$PROJECT_DIR$/solar/solar.html"/>
+  <option name="name" value="solar"/>
+  <option name="saveOutputToFile" value="false"/>
+  <RunnerSettings RunnerId="DartDebugRunner"/>
+  <ConfigurationWrapper RunnerId="DartDebugRunner"/>
+  <method/>
+</configuration>

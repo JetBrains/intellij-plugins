@@ -1,0 +1,15 @@
+<configuration default="false" name="Dart" type="DartDebugSession" factoryName="Remote">
+  <module name=""/>
+  <option name="fileUrl" value="http://localhost:8500/test/index.html"/>
+  <option name="mappings">
+    <list>
+      <mapping local-file="$PROJECT_DIR$" url="http://localhost:8500/test1"/>
+      <mapping local-file="$PROJECT_DIR$" url="http://localhost:8500/test2"/>
+    </list>
+  </option>
+  <option name="name" value="Dart"/>
+  <option name="saveOutputToFile" value="false"/>
+  <option name="showConsoleOnStdErr" value="false"/>
+  <option name="showConsoleOnStdOut" value="false"/>
+  <method/>
+</configuration>
