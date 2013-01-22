@@ -139,13 +139,13 @@ public class CucumberJvmSMFormatter implements Formatter, Reporter {
       return;
     }
     currentSteps.add(step);
-    outCommand(String.format(TEMPLATE_TEST_STARTED, getCurrentTime(), uri + ":" + step.getLine(), getName(step)), true);
   }
 
   @Override
   public void result(Result result) {
     stepCount++;
     Step currentStep = currentSteps.poll();
+    outCommand(String.format(TEMPLATE_TEST_STARTED, getCurrentTime(), uri + ":" + currentStep.getLine(), getName(currentStep)), true);
     String stepFullName = getName(currentStep);
     if (result.getStatus().equals(Result.FAILED)) {
       failedStepCount++;
