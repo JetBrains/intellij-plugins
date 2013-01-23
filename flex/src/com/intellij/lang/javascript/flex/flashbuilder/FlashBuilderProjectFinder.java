@@ -6,6 +6,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
@@ -74,11 +75,7 @@ public class FlashBuilderProjectFinder {
     final File projectsCacheDir = new File(workspacePath, PROJECTS_CACHE_RELATIVE_PATH);
     if (!projectsCacheDir.isDirectory()) return;
 
-    final File[] subdirs = projectsCacheDir.listFiles(new FileFilter() {
-      public boolean accept(final File pathname) {
-        return pathname.isDirectory();
-      }
-    });
+    final File[] subdirs = projectsCacheDir.listFiles(FileUtilRt.ALL_DIRECTORIES);
 
     for (File dir : subdirs) {
       final String dotProjectFileLocation = getDotProjectFileLocation(workspacePath, dir);
@@ -150,11 +147,7 @@ public class FlashBuilderProjectFinder {
     }
     else {
       final File root = new File(dirPath);
-      final File[] subdirs = root.listFiles(new FileFilter() {
-        public boolean accept(final File pathname) {
-          return pathname.isDirectory();
-        }
-      });
+      final File[] subdirs = root.listFiles(FileUtilRt.ALL_DIRECTORIES);
       for (final File subdir : subdirs) {
         collectProjectPathsInDirectory(projectPaths, subdir.getPath());
       }
