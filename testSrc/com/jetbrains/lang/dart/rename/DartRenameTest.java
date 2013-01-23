@@ -25,6 +25,10 @@ public class DartRenameTest extends JavaCodeInsightFixtureTestCase {
     doTest("FooNew");
   }
 
+  public void testConstructor3() throws Throwable {
+    doTest("FooNew");
+  }
+
   public void testLocalVariable() throws Throwable {
     doTest("fooNew");
   }

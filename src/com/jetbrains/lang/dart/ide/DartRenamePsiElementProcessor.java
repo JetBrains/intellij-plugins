@@ -7,6 +7,7 @@ import com.intellij.refactoring.rename.RenamePsiElementProcessor;
 import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartNamedConstructorDeclaration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -27,7 +28,9 @@ public class DartRenamePsiElementProcessor extends RenamePsiElementProcessor {
       final PsiElement parent = elementToRename.getParent();
       if (parent instanceof DartClass) {
         for (DartComponent constructor : ((DartClass)parent).getConstructors()) {
-          allRenames.put(constructor.getComponentName(), newName);
+          if (!(constructor instanceof DartNamedConstructorDeclaration)) {
+            allRenames.put(constructor.getComponentName(), newName);
+          }
         }
       }
       else if (parent instanceof DartComponent) {
