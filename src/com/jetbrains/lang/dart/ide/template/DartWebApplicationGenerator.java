@@ -50,7 +50,7 @@ public class DartWebApplicationGenerator extends WebProjectTemplate {
           VirtualFile pubspec = baseDir.createChildData(this, "pubspec.yaml");
           pubspec.setBinaryContent(("name: " + module.getName() + "\n" +
                                     "dependencies:\n" +
-                                    "\tbrowser: any").getBytes());
+                                    "  browser: any").getBytes());
         }
         catch (IOException e) {
           // ignore
