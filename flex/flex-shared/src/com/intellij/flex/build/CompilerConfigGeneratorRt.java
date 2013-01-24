@@ -344,6 +344,13 @@ public class CompilerConfigGeneratorRt {
       }
     }
 
+    if (myBC.getNature().isLib()) {
+      final String theme = getValueAndSource(CompilerOptionInfo.getOptionInfo("compiler.theme")).first;
+      if (theme != null && theme.toLowerCase().endsWith(".swc")) {
+        addOption(rootElement, CompilerOptionInfo.LIBRARY_PATH_INFO, theme);
+      }
+    }
+
     addRslInfo(rootElement, libNameToRslInfo);
   }
 
