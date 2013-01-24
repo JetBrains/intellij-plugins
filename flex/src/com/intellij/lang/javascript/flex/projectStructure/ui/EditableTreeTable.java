@@ -50,7 +50,7 @@ abstract class EditableTreeTable<T> extends TreeTable {
       }
 
       @Override
-      protected boolean isFocused() {
+      protected boolean calcFocusedState() {
         return true;
       }
     };
