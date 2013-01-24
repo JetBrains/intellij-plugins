@@ -4,28 +4,18 @@ import com.intellij.formatting.Block;
 import com.intellij.formatting.FormattingDocumentModel;
 import com.intellij.formatting.FormattingModel;
 import com.intellij.formatting.FormattingModelProvider;
-import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.psi.formatter.DocumentBasedFormattingModel;
-import com.intellij.psi.formatter.FormattingDocumentModelImpl;
 import org.jetbrains.annotations.NotNull;
 
 public class DartFormattingModel implements FormattingModel {
   private final FormattingModel myModel;
 
   public DartFormattingModel(final PsiFile file,
-                           CodeStyleSettings settings,
-                           final Block rootBlock) {
-    Document document = FormattingDocumentModelImpl.getDocumentToBeUsedFor(file);
-    if (document != null && FormattingDocumentModelImpl.canUseDocumentModel(document, file) &&
-        file instanceof JSFile && file.getContext() == null) {
-      myModel = new DocumentBasedFormattingModel(rootBlock, file.getProject(), settings, file.getFileType(), file);
-    } else {
-      myModel = FormattingModelProvider.createFormattingModelForPsiFile(file, rootBlock, settings);
-    }
+                             CodeStyleSettings settings,
+                             final Block rootBlock) {
+    myModel = FormattingModelProvider.createFormattingModelForPsiFile(file, rootBlock, settings);
   }
 
   @NotNull
