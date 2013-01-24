@@ -15,13 +15,13 @@ import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.FileProcessor;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ProjectBuildException;
-import org.jetbrains.jps.incremental.ResourcePatterns;
 import org.jetbrains.jps.incremental.TargetBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.java.compiler.JpsCompilerExcludes;
+import org.jetbrains.jps.model.java.compiler.JpsJavaCompilerConfiguration;
 import org.jetbrains.jps.util.JpsPathUtil;
 
 import java.io.File;
@@ -48,10 +48,10 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
                     @NotNull final DirtyFilesHolder<BuildRootDescriptor, FlexResourceBuildTarget> holder,
                     @NotNull final BuildOutputConsumer outputConsumer,
                     @NotNull final CompileContext context) throws ProjectBuildException, IOException {
-    final JpsCompilerExcludes excludes =
-      JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(target.getModule().getProject()).getCompilerExcludes();
-    final ResourcePatterns patterns = ResourcePatterns.KEY.get(context);
-    assert patterns != null;
+
+    final JpsJavaCompilerConfiguration configuration =
+      JpsJavaExtensionService.getInstance().getOrCreateCompilerConfiguration(target.getModule().getProject());
+    final JpsCompilerExcludes excludes = configuration.getCompilerExcludes();
 
     try {
       holder.processDirtyFiles(new FileProcessor<BuildRootDescriptor, FlexResourceBuildTarget>() {
@@ -82,7 +82,7 @@ public class FlexResourceBuilder extends TargetBuilder<BuildRootDescriptor, Flex
 
               final JpsFlexCompilerOptions.ResourceFilesMode mode = bc.getCompilerOptions().getResourceFilesMode();
               if (mode == JpsFlexCompilerOptions.ResourceFilesMode.All && !FlexCommonUtils.isSourceFile(file.getName()) ||
-                  mode == JpsFlexCompilerOptions.ResourceFilesMode.ResourcePatterns && patterns.isResourceFile(file, root.getRootFile())) {
+                  mode == JpsFlexCompilerOptions.ResourceFilesMode.ResourcePatterns && configuration.isResourceFile(file, root.getRootFile())) {
                 final String outputFolder = PathUtilRt.getParentPath(bc.getActualOutputFilePath());
                 targetPaths.add(outputFolder + "/" + relativePath);
               }
