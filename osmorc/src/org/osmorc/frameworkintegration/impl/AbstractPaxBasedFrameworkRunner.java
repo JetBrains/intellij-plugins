@@ -160,7 +160,7 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
   }
 
   public void fillVmParameters(ParametersList vmParameters, @NotNull SelectedBundle[] bundlesToInstall) {
-    vmParameters.addAll(HttpConfigurable.getProxyCmdLineProperties());
+    vmParameters.addAll(HttpConfigurable.convertArguments(HttpConfigurable.getJvmPropertiesList(false, null)));
 
     String vmParamsFromConfig = getRunConfiguration().getVmParameters();
     vmParameters.addParametersString(vmParamsFromConfig);
