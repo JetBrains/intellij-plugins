@@ -60,17 +60,15 @@ public class GherkinStepImpl extends GherkinPsiElementBase implements GherkinSte
   }
 
   @Override
+  @NotNull
   protected String getElementText() {
-     ASTNode node = getNode();
-    if (node != null) {
-      final ASTNode[] children = node.getChildren(TEXT_FILTER);
-      return StringUtil.join(children, new Function<ASTNode, String>() {
-        public String fun(ASTNode astNode) {
-          return astNode.getText();
-        }
-      }, "").trim();
-    }
-    return null;
+    final ASTNode node = getNode();
+    final ASTNode[] children = node.getChildren(TEXT_FILTER);
+    return StringUtil.join(children, new Function<ASTNode, String>() {
+      public String fun(ASTNode astNode) {
+        return astNode.getText();
+      }
+    }, "").trim();
   }
 
   @Nullable
