@@ -48,11 +48,6 @@ abstract class EditableTreeTable<T> extends TreeTable {
         render(this, (T)userObject);
         setPaintFocusBorder(false);
       }
-
-      @Override
-      protected boolean calcFocusedState() {
-        return true;
-      }
     };
 
     setTreeCellRenderer(new TreeCellRenderer() {
