@@ -6,6 +6,7 @@ import com.intellij.flex.build.AirDescriptorOptions;
 import com.intellij.flex.model.bc.*;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.SystemProperties;
@@ -204,7 +205,7 @@ public class FlexBuilderUtils {
     final File mainClassFile = new File(mainClassPath);
     if (mainClassFile.isFile()) {
       try {
-        if ("mxml".equals(FileUtil.getExtension(mainClassPath))) {
+        if (FileUtilRt.extensionEquals(mainClassPath, "mxml")) {
           final Document document = JDOMUtil.loadDocument(mainClassFile);
           final Element rootElement = document.getRootElement();
           Element metadataElement = rootElement.getChild("Metadata", Namespace.getNamespace("http://www.adobe.com/2006/mxml"));
@@ -215,7 +216,7 @@ public class FlexBuilderUtils {
             swfMetadata = getSwfMetadata(metadataElement.getTextNormalize());
           }
         }
-        else if ("as".equals(FileUtil.getExtension(mainClassPath))) {
+        else if (FileUtilRt.extensionEquals(mainClassPath, "as")) {
           swfMetadata = getSwfMetadata(FileUtil.loadFile(mainClassFile));
         }
       }
@@ -336,7 +337,7 @@ public class FlexBuilderUtils {
         final JpsLibrary library = ((JpsLibraryDependencyEntry)entry).getLibrary();
         if (library != null) {
           for (File libFile : library.getFiles(JpsOrderRootType.COMPILED)) {
-            if (libFile.isFile() && "ane".equals(FileUtil.getExtension(libFile.getName()))) {
+            if (libFile.isFile() && FileUtilRt.extensionEquals(libFile.getName(), "ane")) {
               result.add(libFile);
             }
           }

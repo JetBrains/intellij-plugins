@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.NonFocusableCheckBox;
@@ -226,7 +227,7 @@ public class FlexModuleWizardForm {
         throw new ConfigurationException(FlexBundle.message("sample.app.name.empty"));
       }
 
-      final String extension = FileUtil.getExtension(fileName).toLowerCase();
+      final String extension = FileUtilRt.getExtension(fileName).toLowerCase();
       if (!"mxml".equals(extension) && !"as".equals(extension)) {
         throw new ConfigurationException(FlexBundle.message("sample.app.incorrect.extension"));
       }

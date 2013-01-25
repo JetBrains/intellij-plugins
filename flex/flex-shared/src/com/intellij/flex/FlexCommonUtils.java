@@ -15,6 +15,7 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PairConsumer;
@@ -93,7 +94,7 @@ public class FlexCommonUtils {
   private static final Logger LOG = Logger.getInstance(FlexCommonUtils.class.getName());
 
   public static boolean isSourceFile(final String fileName) {
-    final String ext = FileUtil.getExtension(fileName);
+    final String ext = FileUtilRt.getExtension(fileName);
     return ext.equalsIgnoreCase("as") || ext.equalsIgnoreCase("mxml") || ext.equalsIgnoreCase("fxg");
   }
 
