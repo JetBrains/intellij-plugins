@@ -21,6 +21,7 @@ import com.intellij.navigation.GotoRelatedProvider;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -43,9 +44,9 @@ import java.util.*;
 public class GotoRelatedActionProvider extends GotoRelatedProvider {
 
   // TODO restrict to "realistic" results
-  private static final String[] SUPPORTED_EXTENSIONS = new String[]{
+  private static final Set<String> SUPPORTED_EXTENSIONS = ContainerUtil.newTroveSet(FileUtil.PATH_HASHING_STRATEGY,
     "ftl", "htm", "html", "jsp", "jspx", "txt", "vm"
-  };
+  );
 
   @NotNull
   @Override
@@ -53,8 +54,8 @@ public class GotoRelatedActionProvider extends GotoRelatedProvider {
     final PsiFile containingFile = psiElement.getContainingFile().getOriginalFile();
     final String filename = containingFile.getName();
 
-    final String extension = FileUtil.getExtension(filename);
-    if (Arrays.binarySearch(SUPPORTED_EXTENSIONS, extension) < 0) {
+    final String extension = FileUtilRt.getExtension(filename);
+    if (!SUPPORTED_EXTENSIONS.contains(extension)) {
       return Collections.emptyList();
     }
 
