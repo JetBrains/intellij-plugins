@@ -15,7 +15,7 @@ import java.util.Scanner;
 /**
  * @author: Fedor.Korotkov
  */
-public class AnalyzerMessageParsingTest extends JavaCodeInsightFixtureTestCase {
+abstract public class AnalyzerMessageParsingTest extends JavaCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/analyzer/parsing");
