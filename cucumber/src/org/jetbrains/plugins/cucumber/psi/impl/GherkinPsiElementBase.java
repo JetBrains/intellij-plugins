@@ -27,28 +27,22 @@ public abstract class GherkinPsiElementBase extends ASTWrapperPsiElement impleme
     super(node);
   }
 
-  @Nullable
+  @NotNull
   protected String getElementText() {
-    ASTNode node = getNode();
-    if (node != null) {
-      final ASTNode[] children = node.getChildren(TEXT_FILTER);
-      return StringUtil.join(children, new Function<ASTNode, String>() {
-        public String fun(ASTNode astNode) {
-          return astNode.getText();
-        }
-      }, " ").trim();
-    }
-    return null;
+    final ASTNode node = getNode();
+    final ASTNode[] children = node.getChildren(TEXT_FILTER);
+    return StringUtil.join(children, new Function<ASTNode, String>() {
+      public String fun(ASTNode astNode) {
+        return astNode.getText();
+      }
+    }, " ").trim();
   }
 
   @Nullable
   public PsiElement getShortDescriptionText() {
     final ASTNode node = getNode();
-    if (node != null) {
-      final ASTNode[] children = node.getChildren(TEXT_FILTER);
-      return children.length > 0 ? children[0].getPsi() : null;
-    }
-    return null;
+    final ASTNode[] children = node.getChildren(TEXT_FILTER);
+    return children.length > 0 ? children[0].getPsi() : null;
   }
 
   @Override
@@ -73,8 +67,8 @@ public abstract class GherkinPsiElementBase extends ASTWrapperPsiElement impleme
   }
 
   protected String buildPresentableText(final String prefix) {
-    StringBuilder result = new StringBuilder(prefix);
-    String name = getElementText();
+    final StringBuilder result = new StringBuilder(prefix);
+    final String name = getElementText();
     if (!StringUtil.isEmpty(name)) {
       result.append(": ").append(name);
     }
