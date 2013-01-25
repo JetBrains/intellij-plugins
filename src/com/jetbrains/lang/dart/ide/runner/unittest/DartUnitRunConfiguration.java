@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -78,7 +78,7 @@ public class DartUnitRunConfiguration extends RunConfigurationBase implements Lo
     if (path == null || VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(path)) == null) {
       throw new RuntimeConfigurationException("Can't find file: " + path);
     }
-    if(!DartFileType.DEFAULT_EXTENSION.equalsIgnoreCase(FileUtil.getExtension(path))){
+    if(!FileUtilRt.extensionEquals(path, DartFileType.DEFAULT_EXTENSION)){
       throw new RuntimeConfigurationException("Not a Dart file");
     }
   }
