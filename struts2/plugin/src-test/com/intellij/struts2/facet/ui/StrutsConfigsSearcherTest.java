@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,8 +19,7 @@ package com.intellij.struts2.facet.ui;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.struts2.BasicHighlightingTestCase;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsConfigsSearcherTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class StrutsConfigsSearcherTest extends BasicLightHighlightingTestCase {
 
   @Override
   @NotNull
@@ -37,7 +36,6 @@ public class StrutsConfigsSearcherTest extends BasicHighlightingTestCase<JavaMod
     return "configsSearcher";
   }
 
-  @HasJavaSources
   public void testSearch() throws Exception {
     final StrutsConfigsSearcher configsSearcher = new StrutsConfigsSearcher(myModule);
     configsSearcher.search();
@@ -45,10 +43,9 @@ public class StrutsConfigsSearcherTest extends BasicHighlightingTestCase<JavaMod
     final MultiMap<Module, PsiFile> map = configsSearcher.getFilesByModules();
     assertEquals(1, map.size());
     assertEquals(1, map.get(myModule).size()); // /src/struts.xml
-    assertEquals(STRUTS_XML, map.get(myModule).iterator().next().getName());
+    assertEquals("struts.xml", map.get(myModule).iterator().next().getName());
 
     final MultiMap<VirtualFile, PsiFile> configsInJars = configsSearcher.getJars();
     assertEquals(1, configsInJars.size()); // default-xxx.xml in struts2-core.jar
   }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,14 +18,13 @@ package com.intellij.struts2.freemarker;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.freemarker.inspections.FtlInspectionToolProvider;
 import com.intellij.freemarker.inspections.FtlReferencesInspection;
-import com.intellij.struts2.BasicHighlightingTestCase;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author peter
  */
-public class FreemarkerIntegrationTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class FreemarkerIntegrationTest extends BasicLightHighlightingTestCase {
 
   @NotNull
   @Override
@@ -35,7 +34,7 @@ public class FreemarkerIntegrationTest extends BasicHighlightingTestCase<JavaMod
 
   @Override
   protected LocalInspectionTool[] getHighlightingInspections() {
-    return new LocalInspectionTool[] {new FtlReferencesInspection()};
+    return new LocalInspectionTool[]{new FtlReferencesInspection()};
   }
 
   public void testMacroParametersResolveOnlyToParameters() throws Throwable {
@@ -47,11 +46,8 @@ public class FreemarkerIntegrationTest extends BasicHighlightingTestCase<JavaMod
     myFixture.testHighlighting(true, false, false, "StrutsCommonVariables.ftl");
   }
 
-  @HasJavaSources
   public void testStrutsActionToplevel() throws Throwable {
-    myFixture.copyFileToProject("src/MyTestAction.java");
     createStrutsFileSet("StrutsActionToplevel-struts.xml");
     myFixture.testHighlighting(true, false, false, "StrutsActionToplevel.ftl");
   }
-
 }

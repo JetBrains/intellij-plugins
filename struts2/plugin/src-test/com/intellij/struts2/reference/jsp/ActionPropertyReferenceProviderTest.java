@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +15,7 @@
 
 package com.intellij.struts2.reference.jsp;
 
-import com.intellij.struts2.BasicHighlightingTestCase;
-import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class ActionPropertyReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
+public class ActionPropertyReferenceProviderTest extends BasicLightHighlightingTestCase {
 
   @Override
   @NotNull
@@ -32,31 +31,18 @@ public class ActionPropertyReferenceProviderTest extends BasicHighlightingTestCa
     return "reference/jsp/actionproperty";
   }
 
-  @Override
-  protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
-    return WebModuleFixtureBuilder.class;
-  }
-
-  @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
-    moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
-  }
-
-  @HasJavaSources
   public void testActionPropertyParamHighlighting() throws Throwable {
     myFixture.copyFileToProject("src/MyAction.java");
     createStrutsFileSet("struts-actionproperty.xml");
     myFixture.testHighlighting(true, false, false, "/jsp/actionproperty-param-highlighting.jsp");
   }
 
-  @HasJavaSources
   public void testActionPropertyFormInputHighlighting() throws Throwable {
     myFixture.copyFileToProject("src/MyAction.java");
     createStrutsFileSet("struts-actionproperty.xml");
     myFixture.testHighlighting(true, false, false, "/jsp/actionproperty-forminput-highlighting.jsp");
   }
 
-  @HasJavaSources
   public void testActionPropertyFormInputCompletionVariants() {
     myFixture.copyFileToProject("src/MyAction.java");
     createStrutsFileSet("struts-actionproperty.xml");
@@ -64,7 +50,6 @@ public class ActionPropertyReferenceProviderTest extends BasicHighlightingTestCa
                                      "myBooleanField", "myField", "mySetterOnlyField", "readonlyList", "user");
   }
 
-  @HasJavaSources
   public void testActionPropertyFormInputReadOnlyCompletionVariants() {
     myFixture.copyFileToProject("src/MyAction.java");
     createStrutsFileSet("struts-actionproperty.xml");

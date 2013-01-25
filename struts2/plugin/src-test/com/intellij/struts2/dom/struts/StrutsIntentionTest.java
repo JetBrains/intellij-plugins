@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,6 @@
 package com.intellij.struts2.dom.struts;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +25,7 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsIntentionTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class StrutsIntentionTest extends StrutsLightHighlightingTestCase {
 
   @Override
   @NotNull
@@ -39,18 +38,16 @@ public class StrutsIntentionTest extends BasicStrutsHighlightingTestCase<JavaMod
    *
    * @throws Throwable Any exceptions.
    */
-  @SkipStrutsLibrary
   public void testCreateActionMethodIntention() throws Throwable {
     createStrutsFileSet("struts-action-method.xml");
     final List<IntentionAction> list = myFixture.getAllQuickFixes("struts-action-method.xml");
 
     final IntentionAction action =
-            CodeInsightTestUtil.findIntentionByText(list,
-                                                    "Create action-method 'unknownMethod'");
+      CodeInsightTestUtil.findIntentionByText(list,
+                                              "Create action-method 'unknownMethod'");
     assertNotNull(action);
 
     // myFixture.launchAction(action);
     // myFixture.checkResultByFile("/src/MyClass.java", "/src/MyClassAfterCreateActionMethod.java", false);
   }
-
 }

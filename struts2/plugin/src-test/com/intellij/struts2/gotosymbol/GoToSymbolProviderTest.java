@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,17 +16,8 @@
 package com.intellij.struts2.gotosymbol;
 
 import com.intellij.ide.util.gotoByName.GotoSymbolModel2;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.psi.PsiFile;
-import com.intellij.struts2.BasicHighlightingTestCase;
-import com.intellij.struts2.facet.StrutsFacet;
-import com.intellij.struts2.facet.StrutsFacetConfiguration;
-import com.intellij.struts2.facet.ui.StrutsFileSet;
-import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.DefaultLightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,32 +26,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class GoToSymbolProviderTest extends LightCodeInsightFixtureTestCase {
-
-  private StrutsFacet myFacet;
-
-  protected void setUp() throws Exception {
-    super.setUp();
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    myFacet = null;
-    super.tearDown();
-  }
+public class GoToSymbolProviderTest extends BasicLightHighlightingTestCase {
 
   @NotNull
   @Override
-  protected LightProjectDescriptor getProjectDescriptor() {
-    return new DefaultLightProjectDescriptor() {
-      @Override
-      public void configureModule(final Module module,
-                                  final ModifiableRootModel model,
-                                  final ContentEntry contentEntry) {
-        super.configureModule(module, model, contentEntry);
-        myFacet = BasicHighlightingTestCase.createFacet(module);
-      }
-    };
+  protected String getTestDataLocation() {
+    return "";
   }
 
   public void testGotoAction() throws Exception {
@@ -103,11 +74,7 @@ public class GoToSymbolProviderTest extends LightCodeInsightFixtureTestCase {
   private void runGotoTest(final String strutsXmlContent,
                            final String... expectedSymbols) {
     final PsiFile file = myFixture.configureByText(getTestName(true) + "-struts.xml", strutsXmlContent);
-
-    final StrutsFacetConfiguration configuration = myFacet.getConfiguration();
-    final StrutsFileSet strutsFileSet = new StrutsFileSet("test", "test", configuration);
-    strutsFileSet.addFile(file.getVirtualFile());
-    configuration.getFileSets().add(strutsFileSet);
+    createStrutsFileSet(file.getName());
 
     final GotoSymbolModel2 model2 = new GotoSymbolModel2(getProject());
     final String[] names = model2.getNames(false);

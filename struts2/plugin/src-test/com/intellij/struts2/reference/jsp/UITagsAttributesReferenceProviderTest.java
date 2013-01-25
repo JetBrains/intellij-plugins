@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,8 +17,9 @@ package com.intellij.struts2.reference.jsp;
 
 import com.intellij.codeInsight.daemon.impl.analysis.XmlPathReferenceInspection;
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.struts2.BasicHighlightingTestCase;
-import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
+import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.xml.util.XmlDuplicatedIdInspection;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +28,11 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class UITagsAttributesReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
+public class UITagsAttributesReferenceProviderTest extends BasicLightHighlightingTestCase {
+
+  private final LightProjectDescriptor WEB = new Struts2ProjectDescriptorBuilder()
+    .withStrutsLibrary()
+    .withWebModuleType(getTestDataPath());
 
   @Override
   protected LocalInspectionTool[] getHighlightingInspections() {
@@ -40,14 +45,10 @@ public class UITagsAttributesReferenceProviderTest extends BasicHighlightingTest
     return "reference/jsp/uitags/";
   }
 
+  @NotNull
   @Override
-  protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
-    return WebModuleFixtureBuilder.class;
-  }
-
-  @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
-    moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return WEB;
   }
 
   public void testPathAttributes() throws Throwable {
@@ -61,5 +62,4 @@ public class UITagsAttributesReferenceProviderTest extends BasicHighlightingTest
   public void testSpecificAttributes() throws Throwable {
     myFixture.testHighlighting(true, false, false, "/jsp/specific.jsp");
   }
-
 }

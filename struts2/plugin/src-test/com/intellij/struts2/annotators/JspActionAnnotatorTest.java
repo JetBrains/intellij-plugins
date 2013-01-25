@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,8 +18,9 @@ package com.intellij.struts2.annotators;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.struts2.BasicHighlightingTestCase;
-import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
+import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +30,12 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class JspActionAnnotatorTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
+public class JspActionAnnotatorTest extends BasicLightHighlightingTestCase {
+
+  private final LightProjectDescriptor WEB = new Struts2ProjectDescriptorBuilder()
+    .withStrutsLibrary()
+    .withStrutsFacet()
+    .withWebModuleType(getTestDataPath());
 
   @Override
   @NotNull
@@ -37,14 +43,10 @@ public class JspActionAnnotatorTest extends BasicHighlightingTestCase<WebModuleF
     return "/gutterJsp/actionClass";
   }
 
+  @NotNull
   @Override
-  protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
-    return WebModuleFixtureBuilder.class;
-  }
-
-  @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
-    moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp/", "/");
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return WEB;
   }
 
   /**
@@ -60,23 +62,20 @@ public class JspActionAnnotatorTest extends BasicHighlightingTestCase<WebModuleF
     AnnotatorTestUtils.checkGutterTargets(gutterIconRenderer, new Function<PsiElement, String>() {
       @Override
       public String fun(final PsiElement psiElement) {
-        return ((PsiMethod) psiElement).getName();
+        return ((PsiMethod)psiElement).getName();
       }
     }, expectedActionNames);
   }
 
-  @HasJavaSources
   public void testGutterActionAttribute() throws Throwable {
     createStrutsFileSet("struts-actionClass.xml");
     checkGutterActionMethodTargetElements("/jsp/test_gutter_action_attribute.jsp",
                                           "validActionMethod");
   }
 
-  @HasJavaSources
   public void testGutterNameAttribute() throws Throwable {
     createStrutsFileSet("struts-actionClass.xml");
     checkGutterActionMethodTargetElements("/jsp/test_gutter_name_attribute.jsp",
                                           "validActionMethod");
   }
-
 }

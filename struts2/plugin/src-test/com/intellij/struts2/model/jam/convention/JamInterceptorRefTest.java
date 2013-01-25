@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,6 @@
 package com.intellij.struts2.model.jam.convention;
 
 import com.intellij.struts2.dom.struts.strutspackage.InterceptorOrStackBase;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class JamInterceptorRefTest extends JamConventionTestBase<JavaModuleFixtureBuilder> {
+public class JamInterceptorRefTest extends JamConventionLightTestCase {
 
   @NotNull
   @Override
@@ -32,16 +31,12 @@ public class JamInterceptorRefTest extends JamConventionTestBase<JavaModuleFixtu
     return "interceptorRef";
   }
 
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testCompletionActionSingle() throws Exception {
     createStrutsFileSet(STRUTS_XML);
     myFixture.testCompletionVariants("/src/completion/ActionSingle.java",
                                      "myCustomInterceptor", "myInterceptorStack");
   }
 
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testResolveActionSingle() throws Exception {
     createStrutsFileSet(STRUTS_XML);
     final JamInterceptorRef jamInterceptorRef = getClassJam("jam.ActionSingle", JamInterceptorRef.META_CLASS);
@@ -54,5 +49,4 @@ public class JamInterceptorRefTest extends JamConventionTestBase<JavaModuleFixtu
     assertNotNull(interceptorOrStackBase);
     assertEquals(interceptorName, interceptorOrStackBase.getName().getStringValue());
   }
-
 }

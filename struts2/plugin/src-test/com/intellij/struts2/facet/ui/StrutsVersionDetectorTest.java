@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +15,7 @@
 
 package com.intellij.struts2.facet.ui;
 
-import com.intellij.struts2.BasicHighlightingTestCase;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,17 +23,16 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class StrutsVersionDetectorTest extends BasicHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class StrutsVersionDetectorTest extends BasicLightHighlightingTestCase {
 
   @Override
   @NotNull
   protected String getTestDataLocation() {
-    return "strutsXmlResult"; // fake
+    return "";
   }
 
   public void testDetectStrutsVersion() throws Exception {
     final String version = StrutsVersionDetector.detectStrutsVersion(myModule);
     assertEquals(STRUTS2_VERSION, version);
   }
-
 }

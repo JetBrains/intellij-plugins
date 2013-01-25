@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,9 +16,8 @@
 package com.intellij.struts2.dom.struts;
 
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.struts2.BasicHighlightingTestCase;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.struts2.dom.inspection.Struts2ModelInspection;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import org.jetbrains.annotations.NonNls;
 
 /**
@@ -26,8 +25,7 @@ import org.jetbrains.annotations.NonNls;
  *
  * @author Yann C&eacute;bron
  */
-public abstract class BasicStrutsHighlightingTestCase<T extends JavaModuleFixtureBuilder>
-    extends BasicHighlightingTestCase<T> {
+public abstract class StrutsLightHighlightingTestCase extends BasicLightHighlightingTestCase {
 
   @Override
   protected LocalInspectionTool[] getHighlightingInspections() {
@@ -58,5 +56,4 @@ public abstract class BasicStrutsHighlightingTestCase<T extends JavaModuleFixtur
     createStrutsFileSet(strutsXmlFileName);
     myFixture.testCompletionVariants(strutsXmlFileName, expectedItems);
   }
-
 }

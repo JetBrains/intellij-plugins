@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,6 @@ package com.intellij.struts2.dom.struts;
 
 import com.intellij.struts2.model.constant.StrutsConstant;
 import com.intellij.struts2.model.constant.contributor.StrutsCoreConstantContributor;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +26,7 @@ import java.util.List;
 /**
  * @author Yann C&eacute;bron
  */
-public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class StrutsCompletionTest extends StrutsLightHighlightingTestCase {
 
   @Override
   @NotNull
@@ -35,7 +34,6 @@ public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaMo
     return "strutsXml/completion";
   }
 
-  @SkipStrutsLibrary
   public void testCompletionVariantsResultName() throws Throwable {
     performCompletionVariantTest("struts-completionvariants-result_name.xml",
                                  "error", "input", "login", "success");
@@ -51,7 +49,6 @@ public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaMo
                                  "chain", "dispatcher", "freemarker", "httpheader", "velocity");
   }
 
-  @SkipStrutsLibrary
   public void testCompletionVariantsPackageExtends() throws Throwable {
     performCompletionVariantTest("struts-completionvariants-package_extends.xml",
                                  "extendTest", "extendTest2");
@@ -77,8 +74,6 @@ public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaMo
    *
    * @throws Throwable On any errors.
    */
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testCompletionVariantsActionMethod() throws Throwable {
     performCompletionVariantTest("struts-completionvariants-action_method.xml",
                                  "validActionMethod",
@@ -102,5 +97,4 @@ public class StrutsCompletionTest extends BasicStrutsHighlightingTestCase<JavaMo
 
     performCompletionVariantTest("struts-completionvariants-constant_name.xml", variants);
   }
-
 }

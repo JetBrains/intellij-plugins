@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,9 +24,9 @@ import com.intellij.spring.facet.SpringFacetConfiguration;
 import com.intellij.spring.facet.SpringFacetType;
 import com.intellij.spring.facet.SpringFileSet;
 import com.intellij.spring.facet.appContextDescriptors.XmlContextDescriptor;
-import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
+import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.ContainerUtil;
-import junit.framework.Assert;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +37,12 @@ import java.util.Set;
 /**
  * Tests highlighting with Spring plugin.
  */
-public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCase<JavaModuleFixtureBuilder> {
+public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCase {
+
+  private static final LightProjectDescriptor SPRING = new Struts2ProjectDescriptorBuilder()
+    .withStrutsLibrary().withStrutsFacet()
+    .withLibrary("spring", "spring.jar")
+    .withLibrary("struts2-spring-plugin", "struts2-spring-plugin-" + STRUTS2_VERSION + ".jar");
 
   @NonNls
   private static final String SPRING_XML = "spring.xml";
@@ -48,30 +53,35 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     return "strutsXml/spring";
   }
 
+  @NotNull
   @Override
-  protected void customizeSetup(final JavaModuleFixtureBuilder moduleBuilder) {
-    addLibrary(moduleBuilder, "spring", "spring.jar");
-    addLibrary(moduleBuilder, "struts2-spring-plugin", STRUTS2_SPRING_PLUGIN_JAR);
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return SPRING;
   }
 
-  @HasJavaSources
+  @Override
+  protected void performTearDown() throws Exception {
+    final SpringFacet springFacet = SpringFacet.getInstance(myModule);
+    assertNotNull(springFacet);
+    final SpringFacetConfiguration configuration = springFacet.getConfiguration();
+    configuration.getFileSets().clear();
+  }
+
   public void testStrutsSpringHighlighting() throws Throwable {
     createSpringFileSet(SPRING_XML);
 
     performHighlightingTest("struts-spring.xml");
   }
 
-  @HasJavaSources
   public void testStrutsSpringCompletionVariantsNoSpringFacet() throws Throwable {
     @NonNls final String strutsXml = "struts-completionvariants-spring.xml";
     createStrutsFileSet(strutsXml);
 
     final List<String> variants = myFixture.getCompletionVariants(strutsXml);
     assertNotNull(variants);
-    Assert.assertTrue(variants.indexOf("MyClass") != -1);
+    assertTrue(variants.contains("MyClass"));
   }
 
-  @HasJavaSources
   public void testStrutsSpringCompletionVariants() throws Throwable {
     @NonNls final String strutsXml = "struts-completionvariants-spring.xml";
     createStrutsFileSet(strutsXml);
@@ -84,13 +94,12 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
 
     List<String> strings = Arrays.asList("MyClass", "bean1", "bean2", "springInterceptor",
                                          "springResultType");
-    for(String s:strings) {
-      Assert.assertTrue(variants.indexOf(s) != -1);
+    for (String s : strings) {
+      assertTrue(variants.contains(s));
     }
-    Assert.assertFalse(ContainerUtil.intersects(variants, Arrays.asList("abstractBean")));
+    assertFalse(ContainerUtil.intersects(variants, Arrays.asList("abstractBean")));
   }
 
-  @HasJavaSources
   public void testStrutsSpringCompletionVariantsSubclass() throws Throwable {
     @NonNls final String strutsXml = "struts-completionvariants-subclass-spring.xml";
     createStrutsFileSet(strutsXml);
@@ -98,6 +107,7 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
     createSpringFileSet(SPRING_XML);
 
     final List<String> variants = myFixture.getCompletionVariants(strutsXml);
+    assertNotNull(variants);
     assertTrue(variants.contains("springInterceptor"));
   }
 
@@ -122,6 +132,11 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
   }
 
   protected SpringFacet createSpringFacet() {
+    final SpringFacet springFacet = SpringFacet.getInstance(myModule);
+    if (springFacet != null) {
+      return springFacet;
+    }
+
     return new WriteCommandAction<SpringFacet>(myFixture.getProject()) {
       @Override
       protected void run(final Result<SpringFacet> result) throws Throwable {
@@ -131,5 +146,4 @@ public class StrutsHighlightingSpringTest extends BasicStrutsHighlightingTestCas
       }
     }.execute().throwException().getResultObject();
   }
-
 }

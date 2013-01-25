@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,15 +19,21 @@ import com.intellij.codeInsight.daemon.impl.analysis.HtmlUnknownTargetInspection
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.xml.XmlTag;
-import com.intellij.struts2.BasicHighlightingTestCase;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
+import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.struts2.dom.struts.action.Action;
-import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomManager;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
+public class ActionLinkReferenceProviderTest extends BasicLightHighlightingTestCase {
+
+  private final LightProjectDescriptor WEB = new Struts2ProjectDescriptorBuilder()
+    .withStrutsLibrary()
+    .withStrutsFacet()
+    .withWebModuleType(getTestDataPath());
 
   @Override
   @NotNull
@@ -35,26 +41,21 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     return "/reference/jsp/actionLink";
   }
 
+  @NotNull
   @Override
-  protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
-    return WebModuleFixtureBuilder.class;
-  }
-
-  @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
-    moduleBuilder.addWebRoot(myFixture.getTempDirPath() + "/jsp", "/");
-    moduleBuilder.setWebXml(myFixture.getTempDirPath() + "/WEB-INF/web.xml");
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return WEB;
   }
 
   public void testActionLinkHighlightingJsp() throws Throwable {
     myFixture.enableInspections(new HtmlUnknownTargetInspection());
     createStrutsFileSet("struts-actionLink.xml");
+
+    myFixture.copyFileToProject("jsp/index.jsp", "index.jsp");
     myFixture.testHighlighting(true,
                                false,
                                false,
-                               "/jsp/actionLink-highlighting.jsp",
-                               "/WEB-INF/web.xml",
-                               "jsp/index.jsp");
+                               "/jsp/actionLink-highlighting.jsp");
   }
 
   // TODO no reference, no highlighting..
@@ -69,7 +70,6 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
 
   public void testActionLinkCompletionVariantsNamespaceGiven() throws Throwable {
     createStrutsFileSet("struts-actionLink.xml");
-    myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-namespace_given.jsp",
                                      "actionLink1.action",
                                      "actionLink2.action");
@@ -77,15 +77,14 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
 
   public void testActionLinkCompletionVariantsNoNamespace() throws Throwable {
     createStrutsFileSet("struts-actionLink.xml");
-    myFixture.copyFileToProject("/WEB-INF/web.xml");
     myFixture.testCompletionVariants("/jsp/actionLink-completionvariants-no-namespace.jsp",
-                                     "actionLink-completionvariants-no-namespace.jsp",
-                                     "rootActionLink.action"
-                                    );
+                                     "jsp",
+                                     "rootActionLink.action",
+                                     "struts-actionLink.xml"
+    );
   }
 
   public void testActionLinkReferences() throws Throwable {
-    myFixture.copyFileToProject("/WEB-INF/web.xml");
     createStrutsFileSet("struts-actionLink.xml");
     checkActionReference("/jsp/actionLink-reference_1.jsp", "actionLink1");
     checkActionReference("/jsp/actionLink-reference_2.jsp", "rootActionLink");
@@ -104,11 +103,10 @@ public class ActionLinkReferenceProviderTest extends BasicHighlightingTestCase<W
     assertNotNull("no resolve element " + actionName, psiElement);
     assertTrue(psiElement instanceof XmlTag);
 
-    final DomElement actionElement = DomManager.getDomManager(myProject).getDomElement((XmlTag) psiElement);
+    final DomElement actionElement = DomManager.getDomManager(getProject()).getDomElement((XmlTag)psiElement);
     assertNotNull(actionElement);
     assertInstanceOf(actionElement, Action.class);
     assertEquals("Action name differs for " + actionName,
-                 actionName, ((Action) actionElement).getName().getStringValue());
+                 actionName, ((Action)actionElement).getName().getStringValue());
   }
-
 }

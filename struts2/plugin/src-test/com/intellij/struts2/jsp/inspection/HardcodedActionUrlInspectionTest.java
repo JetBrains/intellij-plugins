@@ -16,14 +16,13 @@ package com.intellij.struts2.jsp.inspection;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.struts2.BasicHighlightingTestCase;
-import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import com.intellij.struts2.BasicLightHighlightingTestCase;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Yann C&eacute;bron
  */
-public class HardcodedActionUrlInspectionTest extends BasicHighlightingTestCase<WebModuleFixtureBuilder> {
+public class HardcodedActionUrlInspectionTest extends BasicLightHighlightingTestCase {
 
   private static final String INTENTION_NAME = "Wrap with Struts <url> tag";
 
@@ -31,11 +30,6 @@ public class HardcodedActionUrlInspectionTest extends BasicHighlightingTestCase<
   @NotNull
   protected String getTestDataLocation() {
     return "/jsp/inspection/hardcodedUrl";
-  }
-
-  @Override
-  protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
-    return WebModuleFixtureBuilder.class;
   }
 
   @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,8 @@ package com.intellij.struts2.model.jam.convention;
 
 import com.intellij.lang.properties.IProperty;
 import com.intellij.psi.jsp.WebDirectoryElement;
-import com.intellij.testFramework.builders.WebModuleFixtureBuilder;
+import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
+import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -25,7 +26,13 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-public class JamResultPathTest extends JamConventionTestBase<WebModuleFixtureBuilder> {
+public class JamResultPathTest extends JamConventionLightTestCase {
+
+  private final LightProjectDescriptor CONVENTION_WEB = new Struts2ProjectDescriptorBuilder()
+    .withStrutsLibrary()
+    .withStrutsFacet()
+    .withLibrary("struts2-convention-plugin", "struts2-convention-plugin-" + STRUTS2_VERSION + ".jar")
+    .withWebModuleType(getTestDataPath());
 
   @NotNull
   @Override
@@ -33,22 +40,15 @@ public class JamResultPathTest extends JamConventionTestBase<WebModuleFixtureBui
     return "resultPath";
   }
 
+  @NotNull
   @Override
-  protected Class<WebModuleFixtureBuilder> getModuleFixtureBuilderClass() {
-    return WebModuleFixtureBuilder.class;
-  }
-
-  @Override
-  protected void customizeSetup(final WebModuleFixtureBuilder moduleBuilder) {
-    super.customizeSetup(moduleBuilder);
-    moduleBuilder.addWebRoot(myFixture.getTempDirPath(), "/");
+  protected LightProjectDescriptor getProjectDescriptor() {
+    return CONVENTION_WEB;
   }
 
   /**
    * "property" variants from struts.properties.
    */
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testCompletionActionProperty() throws Exception {
     myFixture.testCompletionVariants("/src/testcompletion/ActionProperty.java",
                                      "myProperty1", "myProperty2");
@@ -57,8 +57,6 @@ public class JamResultPathTest extends JamConventionTestBase<WebModuleFixtureBui
   /**
    * "property" resolving to key in struts.properties.
    */
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testResolveActionProperty() throws Exception {
     final JamResultPath jamResultPath = getClassJam("jam.ActionProperty", JamResultPath.META_CLASS);
     final IProperty property = jamResultPath.getProperty().getValue();
@@ -69,8 +67,6 @@ public class JamResultPathTest extends JamConventionTestBase<WebModuleFixtureBui
   /**
    * "value" resolving to web-dir.
    */
-  @HasJavaSources
-  @SkipStrutsLibrary
   public void testResolveActionValue() throws Exception {
     myFixture.configureByFile("/WEB-INF/customContent/test.jsp");
 
@@ -79,5 +75,4 @@ public class JamResultPathTest extends JamConventionTestBase<WebModuleFixtureBui
     assertNotNull(webDirectoryElement);
     assertEquals("/WEB-INF/customContent", webDirectoryElement.getPath());
   }
-
 }

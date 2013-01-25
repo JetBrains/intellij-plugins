@@ -33,7 +33,7 @@ public class JsTestFileIndexer extends JSElementVisitor {
           }
         }
       }
-      return JSElementVisitor.NOP_ELEMENT_VISITOR;
+      return null;
     }
   }
 

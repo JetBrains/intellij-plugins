@@ -143,8 +143,8 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     commandLine.setExePath(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
     // uncomment this if you want to debug jsTestDriver code in the test-runner process
-    //addParameter("-Xdebug");
-    //addParameter("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=y");
+    //commandLine.addParameter("-Xdebug");
+    //commandLine.addParameter("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=y");
 
     File file = new File(PathUtil.getJarPathForClass(JsTestDriverServer.class));
     commandLine.setWorkDirectory(file.getParentFile());
