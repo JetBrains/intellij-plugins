@@ -18,7 +18,6 @@ package com.intellij.struts2.model.jam.convention;
 import com.intellij.jam.JamElement;
 import com.intellij.jam.reflect.JamClassMeta;
 import com.intellij.jam.reflect.JamPackageMeta;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
 import com.intellij.struts2.BasicLightHighlightingTestCase;
@@ -71,9 +70,10 @@ abstract class JamConventionLightTestCase extends BasicLightHighlightingTestCase
   @NotNull
   protected <Jam extends JamElement> Jam getClassJam(final String clazzName,
                                                      final JamClassMeta<Jam> meta) {
-    myFixture.configureByFile("src/" + StringUtil.replace(clazzName, ".", "/") + ".java");
+    myFixture.copyDirectoryToProject("src", "src");
 
     final PsiClass myClass = myFixture.findClass(clazzName);
+    assertNotNull(clazzName, myClass);
 
     final Jam jam = meta.getJamElement(myClass);
     assertNotNull("JAM was null for " + meta + " in '" + clazzName + "'", jam);
@@ -91,9 +91,10 @@ abstract class JamConventionLightTestCase extends BasicLightHighlightingTestCase
   @NotNull
   protected <Jam extends JamElement> Jam getPackageJam(final String packageName,
                                                        final JamPackageMeta<Jam> meta) {
-    myFixture.configureByFile("src/" + StringUtil.replace(packageName, ".", "/") + "/package-info.java");
+    myFixture.copyDirectoryToProject("src", "src");
 
     final PsiPackage myPackage = myFixture.findPackage(packageName);
+    assertNotNull(packageName, myPackage);
 
     final Jam jam = meta.getJamElement(myPackage);
     assertNotNull("JAM was null for " + meta + " in '" + packageName + "'", jam);
