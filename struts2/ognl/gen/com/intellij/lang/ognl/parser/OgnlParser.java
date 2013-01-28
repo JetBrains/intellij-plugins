@@ -103,6 +103,40 @@ public class OgnlParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // '[' expression? ']' sequenceExpression?
+  static boolean arrayConstructorExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "arrayConstructorExpression")) return false;
+    if (!nextTokenIs(builder_, LBRACKET)) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = consumeToken(builder_, LBRACKET);
+    result_ = result_ && arrayConstructorExpression_1(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, RBRACKET);
+    result_ = result_ && arrayConstructorExpression_3(builder_, level_ + 1);
+    if (!result_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
+    }
+    return result_;
+  }
+
+  // expression?
+  private static boolean arrayConstructorExpression_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "arrayConstructorExpression_1")) return false;
+    expression(builder_, level_ + 1, -1);
+    return true;
+  }
+
+  // sequenceExpression?
+  private static boolean arrayConstructorExpression_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "arrayConstructorExpression_3")) return false;
+    sequenceExpression(builder_, level_ + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
   // plusMinusOperations |
   //                            divideMultiplyOperations |
   //                            bitwiseBooleanOperations |
@@ -213,6 +247,32 @@ public class OgnlParser implements PsiParser {
       marker_.drop();
     }
     return result_;
+  }
+
+  /* ********************************************************** */
+  // '(' methodCallParameters? ')'
+  static boolean constructorExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "constructorExpression")) return false;
+    if (!nextTokenIs(builder_, LPARENTH)) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = consumeToken(builder_, LPARENTH);
+    result_ = result_ && constructorExpression_1(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, RPARENTH);
+    if (!result_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
+    }
+    return result_;
+  }
+
+  // methodCallParameters?
+  private static boolean constructorExpression_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "constructorExpression_1")) return false;
+    methodCallParameters(builder_, level_ + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -714,7 +774,7 @@ public class OgnlParser implements PsiParser {
     return result_;
   }
 
-  // "new" referenceExpression ( '[' expression? ']' sequenceExpression? | '(' methodCallParameters? ')' )
+  // NEW_KEYWORD referenceExpression (arrayConstructorExpression | constructorExpression)
   public static boolean newExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "newExpression")) return false;
     if (!nextTokenIs(builder_, NEW_KEYWORD)) return false;
@@ -736,13 +796,13 @@ public class OgnlParser implements PsiParser {
     return result_ || pinned_;
   }
 
-  // '[' expression? ']' sequenceExpression? | '(' methodCallParameters? ')'
+  // arrayConstructorExpression | constructorExpression
   private static boolean newExpression_2(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "newExpression_2")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
-    result_ = newExpression_2_0(builder_, level_ + 1);
-    if (!result_) result_ = newExpression_2_1(builder_, level_ + 1);
+    result_ = arrayConstructorExpression(builder_, level_ + 1);
+    if (!result_) result_ = constructorExpression(builder_, level_ + 1);
     if (!result_) {
       marker_.rollbackTo();
     }
@@ -750,70 +810,6 @@ public class OgnlParser implements PsiParser {
       marker_.drop();
     }
     return result_;
-  }
-
-  // '[' expression? ']' sequenceExpression?
-  private static boolean newExpression_2_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "newExpression_2_0")) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
-    Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
-    result_ = consumeToken(builder_, LBRACKET);
-    pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, newExpression_2_0_1(builder_, level_ + 1));
-    result_ = pinned_ && report_error_(builder_, consumeToken(builder_, RBRACKET)) && result_;
-    result_ = pinned_ && newExpression_2_0_3(builder_, level_ + 1) && result_;
-    if (!result_ && !pinned_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
-    return result_ || pinned_;
-  }
-
-  // expression?
-  private static boolean newExpression_2_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "newExpression_2_0_1")) return false;
-    expression(builder_, level_ + 1, -1);
-    return true;
-  }
-
-  // sequenceExpression?
-  private static boolean newExpression_2_0_3(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "newExpression_2_0_3")) return false;
-    sequenceExpression(builder_, level_ + 1);
-    return true;
-  }
-
-  // '(' methodCallParameters? ')'
-  private static boolean newExpression_2_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "newExpression_2_1")) return false;
-    boolean result_ = false;
-    boolean pinned_ = false;
-    Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
-    result_ = consumeToken(builder_, LPARENTH);
-    pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, newExpression_2_1_1(builder_, level_ + 1));
-    result_ = pinned_ && consumeToken(builder_, RPARENTH) && result_;
-    if (!result_ && !pinned_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
-    return result_ || pinned_;
-  }
-
-  // methodCallParameters?
-  private static boolean newExpression_2_1_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "newExpression_2_1_1")) return false;
-    methodCallParameters(builder_, level_ + 1);
-    return true;
   }
 
   // referenceExpression '(' methodCallParameters ')'

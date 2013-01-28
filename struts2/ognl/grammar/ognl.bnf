@@ -202,7 +202,7 @@ private binaryOperations ::=
                            booleanOperations |
                            equalityOperations |
                            relationalOperations |
-                           setOperations  // TODO replace with own expr type?
+                           setOperations
                            { name="operator" }
 binaryExpression ::= expression binaryOperations expression {
   methods=[
@@ -211,10 +211,7 @@ binaryExpression ::= expression binaryOperations expression {
     getOperator
   ]
   pin=2
-
-
 }
-
 
 private unaryOperator ::= bitwiseOperations |
                           '+' | '-' |
@@ -235,7 +232,11 @@ conditionalExpression ::= expression QUESTION expression COLON expression {
   pin=2
 }
 
-newExpression ::= "new" referenceExpression ( '[' expression? ']' sequenceExpression? | '(' methodCallParameters? ')' ) { pin(".*")=1 }
+private arrayConstructorExpression ::= '[' expression? ']' sequenceExpression?
+private constructorExpression ::= '(' methodCallParameters? ')'
+newExpression ::= NEW_KEYWORD referenceExpression (arrayConstructorExpression | constructorExpression) {
+  pin(".*")=1
+}
 
 
 // TODO:
