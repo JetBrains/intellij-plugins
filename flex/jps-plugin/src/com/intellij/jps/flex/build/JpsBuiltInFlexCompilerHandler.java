@@ -1,22 +1,19 @@
-package com.intellij.lang.javascript.flex.build;
+package com.intellij.jps.flex.build;
 
 import com.intellij.flex.FlexCommonUtils;
-import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
-import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.compiler.CompilerMessageCategory;
+import com.intellij.flex.model.sdk.JpsFlexSdkType;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import gnu.trove.THashMap;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jps.incremental.CompileContext;
+import org.jetbrains.jps.incremental.messages.BuildMessage;
+import org.jetbrains.jps.incremental.messages.CompilerMessage;
+import org.jetbrains.jps.model.JpsProject;
+import org.jetbrains.jps.model.library.sdk.JpsSdk;
+import org.jetbrains.jps.service.SharedThreadPool;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -24,15 +21,16 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 
-public class BuiltInFlexCompilerHandler {
+public class JpsBuiltInFlexCompilerHandler {
 
-  private static final Logger LOG = Logger.getInstance(BuiltInFlexCompilerHandler.class.getName());
+  private static final Logger LOG = Logger.getInstance(JpsBuiltInFlexCompilerHandler.class.getName());
   private static final String CONNECTION_SUCCESSFUL = "Connection successful";
   public static final String COMPILATION_FINISHED = "Compilation finished";
 
-  private final Project myProject;
+  private final JpsProject myProject;
 
   private String mySdkHome;
+
   private ServerSocket myServerSocket;
   private DataInputStream myDataInputStream;
   private DataOutputStream myDataOutputStream;
@@ -40,29 +38,35 @@ public class BuiltInFlexCompilerHandler {
   private int commandNumber = 1;
   private Map<String, Listener> myActiveListeners = new THashMap<String, Listener>();
 
-  public BuiltInFlexCompilerHandler(final Project project) {
-    myProject = project;
-  }
-
   public interface Listener {
     void textAvailable(String text);
 
     void compilationFinished();
   }
 
-  public synchronized void startCompilerIfNeeded(final @NotNull Sdk sdk, final CompileContext context) throws IOException {
+  JpsBuiltInFlexCompilerHandler(final JpsProject project) {
+    myProject = project;
+  }
+
+  public synchronized boolean canBeUsedForSdk(final String sdkHome) {
+    return mySdkHome == null || mySdkHome.equals(sdkHome);
+  }
+
+  public synchronized void startCompilerIfNeeded(final JpsSdk<?> sdk,
+                                                 final CompileContext context,
+                                                 final String compilerName) throws IOException {
     if (!Comparing.equal(sdk.getHomePath(), mySdkHome)) {
       stopCompilerProcess();
     }
 
     if (myServerSocket == null) {
       try {
-        context.getProgressIndicator().setText("Starting Flex compiler");
+        //context.processMessage(new ProgressMessage("Starting Flex compiler"));
         myServerSocket = new ServerSocket(0);
         myServerSocket.setSoTimeout(10000);
         final int port = myServerSocket.getLocalPort();
 
-        startCompilerProcess(sdk, port, context);
+        startCompilerProcess(sdk, port, context, compilerName);
 
         final Socket socket = myServerSocket.accept();
         myDataInputStream = new DataInputStream(socket.getInputStream());
@@ -77,38 +81,41 @@ public class BuiltInFlexCompilerHandler {
     }
   }
 
-  private void startCompilerProcess(final Sdk sdk, final int port, final CompileContext context) throws IOException {
+  private void startCompilerProcess(final JpsSdk<?> sdk,
+                                    final int port,
+                                    final CompileContext context,
+                                    final String compilerName) throws IOException {
     final StringBuilder classpath = new StringBuilder();
 
     classpath.append(FlexCommonUtils.getPathToBundledJar("idea-flex-compiler-fix.jar"));
     classpath.append(File.pathSeparatorChar);
     classpath.append(FlexCommonUtils.getPathToBundledJar("flex-compiler.jar"));
 
-    if (sdk.getSdkType() == FlexSdkType2.getInstance()) {
+    if (sdk.getSdkType() == JpsFlexSdkType.INSTANCE) {
       classpath.append(File.pathSeparator).append(FileUtil.toSystemDependentName(sdk.getHomePath() + "/lib/flex-compiler-oem.jar"));
     }
 
     final List<String> commandLine =
-      FlexSdkUtils.getCommandLineForSdkTool(myProject, sdk, classpath.toString(), "com.intellij.flex.compiler.FlexCompiler", null);
+      FlexCommonUtils.getCommandLineForSdkTool(myProject, sdk, classpath.toString(), "com.intellij.flex.compiler.FlexCompiler");
     commandLine.add(String.valueOf(port));
 
     final ProcessBuilder processBuilder = new ProcessBuilder(commandLine);
     processBuilder.redirectErrorStream(true);
-    processBuilder.directory(new File(FlexUtils.getFlexCompilerWorkDirPath(myProject, null)));
+    processBuilder.directory(new File(FlexCommonUtils.getFlexCompilerWorkDirPath(myProject)));
 
     final String plainCommand = StringUtil.join(processBuilder.command(), new Function<String, String>() {
       public String fun(final String s) {
         return s.contains(" ") ? "\"" + s + "\"" : s;
       }
     }, " ");
-    context.addMessage(CompilerMessageCategory.INFORMATION, "Starting Flex compiler:\n" + plainCommand, null, -1, -1);
+    context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.INFO, "Starting Flex compiler:\n" + plainCommand));
 
     final Process process = processBuilder.start();
-    readInputStreamUntilConnected(process, context);
+    readInputStreamUntilConnected(process, context, compilerName);
   }
 
-  private void readInputStreamUntilConnected(final Process process, final CompileContext context) {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+  private void readInputStreamUntilConnected(final Process process, final CompileContext context, final String compilerName) {
+    SharedThreadPool.getInstance().executeOnPooledThread(new Runnable() {
       public void run() {
         final InputStreamReader reader = FlexCommonUtils.createInputStreamReader(process.getInputStream());
 
@@ -122,13 +129,14 @@ public class BuiltInFlexCompilerHandler {
             }
             else {
               closeSocket();
-              context.addMessage(CompilerMessageCategory.ERROR, output, null, -1, -1);
+              context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.ERROR, output));
             }
           }
         }
         catch (IOException e) {
           closeSocket();
-          context.addMessage(CompilerMessageCategory.ERROR, "Failed to start Flex compiler: " + e.toString(), null, -1, -1);
+          context.processMessage(
+            new CompilerMessage(compilerName, BuildMessage.Kind.ERROR, "Failed to start Flex compiler: " + e.toString()));
         }
         finally {
           try {
@@ -141,7 +149,7 @@ public class BuiltInFlexCompilerHandler {
   }
 
   private void scheduleInputReading() {
-    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+    SharedThreadPool.getInstance().executeOnPooledThread(new Runnable() {
       public void run() {
         final StringBuilder buffer = new StringBuilder();
         while (true) {
@@ -228,21 +236,9 @@ public class BuiltInFlexCompilerHandler {
     myActiveListeners.clear();
   }
 
-  public void stopCompilerProcess() {
-    final Runnable runnable = new Runnable() {
-      public void run() {
-        cancelAllCompilations(true);
-        closeSocket();
-      }
-    };
-
-    final Application application = ApplicationManager.getApplication();
-    if (application.isDispatchThread()) {
-      application.executeOnPooledThread(runnable);
-    }
-    else {
-      runnable.run();
-    }
+  public synchronized void stopCompilerProcess() {
+    cancelAllCompilations(true);
+    closeSocket();
   }
 
   private synchronized void closeSocket() {
@@ -292,3 +288,4 @@ public class BuiltInFlexCompilerHandler {
     return myActiveListeners.size();
   }
 }
+

@@ -1205,7 +1205,7 @@ public class FlexDebugProcess extends XDebugProcess {
     private final InputStream myInputStream;
 
     public MyFdbOutputReader(final InputStream _inputStream) {
-      myReader = FlexSdkUtils.createInputStreamReader(_inputStream);
+      myReader = FlexCommonUtils.createInputStreamReader(_inputStream);
       myInputStream = _inputStream;
     }
 

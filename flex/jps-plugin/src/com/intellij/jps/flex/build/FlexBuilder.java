@@ -16,7 +16,9 @@ import com.intellij.flex.model.sdk.JpsFlexmojosSdkType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.Function;
 import com.intellij.util.PathUtilRt;
+import com.intellij.util.concurrency.Semaphore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.builders.BuildOutputConsumer;
 import org.jetbrains.jps.builders.BuildRootDescriptor;
@@ -43,6 +45,7 @@ import java.util.List;
 public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTarget> {
 
   private static Logger LOG = Logger.getInstance(FlexBuilder.class.getName());
+  private JpsBuiltInFlexCompilerHandler myBuiltInCompilerHandler;
 
   private enum Status {Ok, Failed, Cancelled}
 
@@ -53,6 +56,19 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
   @NotNull
   public String getPresentableName() {
     return "Flash Compiler";
+  }
+
+  public void buildStarted(final CompileContext context) {
+    super.buildStarted(context);
+    myBuiltInCompilerHandler = new JpsBuiltInFlexCompilerHandler(context.getProjectDescriptor().getProject());
+  }
+
+  public void buildFinished(final CompileContext context) {
+    LOG.assertTrue(myBuiltInCompilerHandler.getActiveCompilationsNumber() == 0,
+                   myBuiltInCompilerHandler.getActiveCompilationsNumber() + " Flex compilation(s) are not finished!");
+    myBuiltInCompilerHandler.stopCompilerProcess();
+    myBuiltInCompilerHandler = null;
+    super.buildFinished(context);
   }
 
   public void build(@NotNull final FlexBuildTarget buildTarget,
@@ -110,7 +126,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     }
 
     for (JpsFlexBuildConfiguration bc : bcsToCompile) {
-      final Status status = compileBuildConfiguration(context, bc);
+      final Status status = compileBuildConfiguration(context, bc, myBuiltInCompilerHandler);
 
       switch (status) {
         case Ok:
@@ -243,7 +259,9 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     return cssBC;
   }
 
-  private static Status compileBuildConfiguration(final CompileContext context, final JpsFlexBuildConfiguration bc) {
+  private static Status compileBuildConfiguration(final CompileContext context,
+                                                  final JpsFlexBuildConfiguration bc,
+                                                  final JpsBuiltInFlexCompilerHandler builtInCompilerHandler) {
     setProgressMessage(context, bc);
 
     final String compilerName = FlexBuilderUtils.getCompilerName(bc);
@@ -258,7 +276,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
         return Status.Failed;
       }
 
-      return doCompile(context, bc, configFiles, compilerName);
+      return doCompile(context, bc, configFiles, compilerName, builtInCompilerHandler);
     }
     catch (IOException e) {
       context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.ERROR, e.getMessage()));
@@ -310,7 +328,8 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
   private static Status doCompile(final CompileContext context,
                                   final JpsFlexBuildConfiguration bc,
                                   final List<File> configFiles,
-                                  final String compilerName) {
+                                  final String compilerName,
+                                  final JpsBuiltInFlexCompilerHandler builtInCompilerHandler) {
     final boolean app = bc.getOutputType() != OutputType.Library;
     final JpsSdk<?> sdk = bc.getSdk();
     assert sdk != null;
@@ -318,6 +337,13 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     final boolean asc20 = bc.isPureAs() &&
                           JpsFlexCompilerProjectExtension.getInstance(bc.getModule().getProject()).PREFER_ASC_20 &&
                           FlexCommonUtils.containsASC20(sdk.getHomePath());
+    final boolean builtIn = !asc20 &&
+                            JpsFlexCompilerProjectExtension.getInstance(bc.getModule().getProject()).USE_BUILT_IN_COMPILER &&
+                            builtInCompilerHandler.canBeUsedForSdk(sdk.getHomePath());
+
+    if (builtIn) {
+      return doCompileWithBuiltInCompiler(context, bc, configFiles, compilerName, builtInCompilerHandler);
+    }
 
     final List<String> compilerCommand = asc20 ? getASC20Command(bc.getModule().getProject(), sdk, app)
                                                : getMxmlcCompcCommand(bc.getModule().getProject(), sdk, app);
@@ -344,6 +370,49 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
       context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.ERROR, e.getMessage()));
       return Status.Failed;
     }
+  }
+
+  private static Status doCompileWithBuiltInCompiler(final CompileContext context,
+                                                     final JpsFlexBuildConfiguration bc,
+                                                     final List<File> configFiles,
+                                                     final String compilerName,
+                                                     final JpsBuiltInFlexCompilerHandler builtInCompilerHandler) {
+    try {
+      builtInCompilerHandler.startCompilerIfNeeded(bc.getSdk(), context, compilerName);
+    }
+    catch (IOException e) {
+      context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.ERROR, e.toString()));
+      return Status.Failed;
+    }
+
+    final List<String> mxmlcOrCompc = Collections.singletonList(bc.getOutputType() == OutputType.Library ? "compc" : "mxmlc");
+    final List<String> command = buildCommand(mxmlcOrCompc, configFiles, bc);
+    final String plainCommand = StringUtil.join(command, new Function<String, String>() {
+      public String fun(final String s) {
+        return s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s;
+      }
+    }, " ");
+
+    final Semaphore semaphore = new Semaphore();
+    semaphore.down();
+
+    context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.INFO, plainCommand));
+
+    final BuiltInCompilerListener listener = new BuiltInCompilerListener(context, compilerName, new Runnable() {
+      public void run() {
+        semaphore.up();
+      }
+    });
+
+    builtInCompilerHandler.sendCompilationCommand(plainCommand, listener);
+
+    semaphore.waitFor();
+    builtInCompilerHandler.removeListener(listener);
+
+    return listener.isCompilationCancelled() ? Status.Cancelled
+                                             : listener.isCompilationFailed()
+                                               ? Status.Failed
+                                               : Status.Ok;
   }
 
   private static List<String> getASC20Command(final JpsProject project, final JpsSdk<?> flexSdk, final boolean isApp) {
@@ -397,6 +466,28 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
       for (final String s : StringUtil.split(additionalOptions, " ")) {
         command.add(FlexCommonUtils.replacePathMacros(s, module, sdkHome));
       }
+    }
+  }
+
+  private static class BuiltInCompilerListener extends CompilerMessageHandlerBase implements JpsBuiltInFlexCompilerHandler.Listener {
+    private final Runnable myOnCompilationFinishedRunnable;
+
+    public BuiltInCompilerListener(final CompileContext context, final String compilerName, final Runnable onCompilationFinishedRunnable) {
+      super(context, false, compilerName);
+      myOnCompilationFinishedRunnable = onCompilationFinishedRunnable;
+    }
+
+    public void textAvailable(final String text) {
+      handleText(text);
+    }
+
+    public void compilationFinished() {
+      registerCompilationFinished();
+      myOnCompilationFinishedRunnable.run();
+    }
+
+    protected void onCancelled() {
+      compilationFinished();
     }
   }
 }

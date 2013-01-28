@@ -1,15 +1,21 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.ide.DataManager;
 import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.options.newEditor.OptionsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.ui.HoverHyperlinkLabel;
+import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.RawCommandLineEditor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -25,6 +31,7 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
   private RawCommandLineEditor myVMOptionsEditor;
   private JLabel myParallelCompilationLabel;
   private JLabel myThreadsOrProcessesLabel;
+  private HoverHyperlinkLabel myCompilerPageLink;
 
   private final Project myProject;
   private final FlexCompilerProjectConfiguration myConfig;
@@ -135,5 +142,24 @@ public class FlexCompilerProjectConfigurable implements SearchableConfigurable, 
   }
 
   public void disposeUIResources() {
+  }
+
+  private void createUIComponents() {
+    myCompilerPageLink = new HoverHyperlinkLabel("parallel compilation");
+
+    final HyperlinkAdapter listener = new HyperlinkAdapter() {
+      protected void hyperlinkActivated(final HyperlinkEvent e) {
+        final DataContext dataContext = DataManager.getInstance().getDataContextFromFocus().getResult();
+        final OptionsEditor optionsEditor = OptionsEditor.KEY.getData(dataContext);
+        if (optionsEditor != null) {
+          final Configurable configurable = optionsEditor.findConfigurableById("project.propCompiler");
+          if (configurable != null) {
+            optionsEditor.clearSearchAndSelect(configurable);
+          }
+        }
+      }
+    };
+
+    myCompilerPageLink.addHyperlinkListener(listener);
   }
 }

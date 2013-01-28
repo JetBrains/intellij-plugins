@@ -403,15 +403,6 @@ public class FlexSdkUtils {
     return result;
   }
 
-  public static InputStreamReader createInputStreamReader(final InputStream inputStream) {
-    try {
-      return new InputStreamReader(inputStream, FlexCommonUtils.SDK_TOOLS_ENCODING);
-    }
-    catch (UnsupportedEncodingException e) {
-      return new InputStreamReader(inputStream);
-    }
-  }
-
   public static void openModuleConfigurable(final Module module) {
     final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
     ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {

@@ -26,6 +26,7 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
 
   public boolean execute(final CompileContext context) {
     if (CompilerWorkspaceConfiguration.getInstance(context.getProject()).useOutOfProcessBuild()) {
+      FlexCompilerHandler.getInstance(context.getProject()).getBuiltInFlexCompilerHandler().stopCompilerProcess();
       return validateConfiguration(context);
     }
 

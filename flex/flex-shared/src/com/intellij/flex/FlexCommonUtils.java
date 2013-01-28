@@ -1055,4 +1055,13 @@ public class FlexCommonUtils {
 
     return null;
   }
+
+  public static InputStreamReader createInputStreamReader(final InputStream inputStream) {
+    try {
+      return new InputStreamReader(inputStream, SDK_TOOLS_ENCODING);
+    }
+    catch (UnsupportedEncodingException e) {
+      return new InputStreamReader(inputStream);
+    }
+  }
 }
