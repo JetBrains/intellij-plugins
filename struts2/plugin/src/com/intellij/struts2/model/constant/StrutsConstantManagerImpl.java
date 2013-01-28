@@ -45,10 +45,10 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.FilteringProcessor;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.xml.AbstractConvertContext;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.Converter;
 import com.intellij.util.xml.DomFileElement;
+import com.intellij.util.xml.impl.ConvertContextFactory;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -138,7 +138,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
 
     final DomFileElement<StrutsRoot> first = strutsModel.getRoots().iterator().next();
 
-    final ConvertContext convertContext = AbstractConvertContext.createConvertContext(first);
+    final ConvertContext convertContext = ConvertContextFactory.createConvertContext(first);
     //noinspection unchecked
     return converter.fromString(stringValue, convertContext);
   }

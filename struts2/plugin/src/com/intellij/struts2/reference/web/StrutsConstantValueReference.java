@@ -31,6 +31,7 @@ import com.intellij.struts2.model.constant.StrutsConstantManager;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.xml.*;
+import com.intellij.util.xml.impl.ConvertContextFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,7 +59,7 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
     }
 
     final Converter converter = elementConverterPair.getSecond();
-    final ConvertContext convertContext = AbstractConvertContext.createConvertContext(elementConverterPair.first);
+    final ConvertContext convertContext = ConvertContextFactory.createConvertContext(elementConverterPair.first);
 
     // additional variants (String only)
     if (converter instanceof ResolvingConverter) {
@@ -92,7 +93,7 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
     assert elementConverterPair != null;
     
     return elementConverterPair.second
-        .getErrorMessage(getValue(), AbstractConvertContext.createConvertContext(elementConverterPair.first));
+        .getErrorMessage(getValue(), ConvertContextFactory.createConvertContext(elementConverterPair.first));
   }
 
   @NotNull
@@ -111,7 +112,7 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
 
     // merge "normal" + additional variants
     final DomElement paramValueElement = elementConverterPair.first;
-    final ConvertContext convertContext = AbstractConvertContext.createConvertContext(paramValueElement);
+    final ConvertContext convertContext = ConvertContextFactory.createConvertContext(paramValueElement);
 
     // wrap explicitly for empty list
     final Collection converterVariants = new ArrayList(resolvingConverter.getVariants(convertContext));
