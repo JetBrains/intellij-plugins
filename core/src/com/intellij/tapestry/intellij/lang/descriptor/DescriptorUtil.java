@@ -21,6 +21,7 @@ import com.intellij.xml.XmlAttributeDescriptor;
 import com.intellij.xml.XmlElementDescriptor;
 import com.intellij.xml.XmlNSDescriptor;
 import com.intellij.xml.XmlNSDescriptorEx;
+import com.intellij.xml.impl.schema.AnyXmlAttributeDescriptor;
 import com.intellij.xml.impl.schema.XmlNSDescriptorImpl;
 import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
@@ -127,6 +128,9 @@ class DescriptorUtil {
       XmlElementDescriptor container = getImplicitHtmlContainer(component, context);
       if (container != null) {
         descriptor = container.getAttributeDescriptor(attributeName, context);
+        if (descriptor == null && attributeName.indexOf(':') == -1) { // allow any unqualified attribute
+          descriptor = new AnyXmlAttributeDescriptor(attributeName);
+        }
       }
     }
     return descriptor;
