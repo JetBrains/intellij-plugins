@@ -13,30 +13,30 @@
  * limitations under the License.
  */
 {
-    classHeader="apache2.txt"
+  classHeader="apache2.txt"
 
-    psiImplUtilClass="com.intellij.lang.ognl.psi.OgnlPsiUtil"
+  psiImplUtilClass="com.intellij.lang.ognl.psi.OgnlPsiUtil"
 
-    parserClass="com.intellij.lang.ognl.parser.OgnlParser"
-    stubParserClass="com.intellij.lang.ognl.parser.GeneratedParserUtilBase"
-    // generateStubParser=true
+  parserClass="com.intellij.lang.ognl.parser.OgnlParser"
+  stubParserClass="com.intellij.lang.ognl.parser.GeneratedParserUtilBase"
+  // generateStubParser=true
 
-    implements="com.intellij.lang.ognl.psi.OgnlPsiCompositeElement"
-    extends="com.intellij.lang.ognl.psi.OgnlPsiCompositeElementImpl"
+  implements="com.intellij.lang.ognl.psi.OgnlPsiCompositeElement"
+  extends="com.intellij.lang.ognl.psi.OgnlPsiCompositeElementImpl"
 
-    psiClassPrefix="Ognl"
-    psiImplClassSuffix="Impl"
-    psiPackage="com.intellij.lang.ognl.psi"
-    psiImplPackage="com.intellij.lang.ognl.psi.impl"
+  psiClassPrefix="Ognl"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.intellij.lang.ognl.psi"
+  psiImplPackage="com.intellij.lang.ognl.psi.impl"
 
-    elementTypeHolderClass="com.intellij.lang.ognl.OgnlTypes"
-    elementTypePrefix=""
-    elementTypeClass="com.intellij.lang.ognl.psi.OgnlTokenType"
-    tokenTypeClass="com.intellij.lang.ognl.psi.OgnlTokenType"
+  elementTypeHolderClass="com.intellij.lang.ognl.OgnlTypes"
+  elementTypePrefix=""
+  elementTypeClass="com.intellij.lang.ognl.psi.OgnlTokenType"
+  tokenTypeClass="com.intellij.lang.ognl.psi.OgnlTokenType"
 
-    extends(".*(Expression|Literal)")="expression"
+  extends(".*(Expression|Literal)")="expression"
 
-    tokens = [
+  tokens = [
     EXPRESSION_START="%{"
     EXPRESSION_END="}"
 
@@ -110,7 +110,7 @@
     SHIFT_LEFT_KEYWORD="shl"
     SHIFT_RIGHT_KEYWORD="shr"
     SHIFT_RIGHT_LOGICAL_KEYWORD="ushr"
-    ]
+  ]
 }
 
 root ::= EXPRESSION_START rootElement EXPRESSION_END { pin=1 recoverUntil="rootRecover" }
