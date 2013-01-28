@@ -56,7 +56,7 @@ public class TapestryProject {
   private final IResourceFinder myResourceFinder;
   private Collection<Library> myCachedLibraries;
   private Map<String, String> myCachedLibraryMapping;
-  private String myLastApplicationPackage;
+  private volatile String myLastApplicationPackage;
   private String myLastApplicationFilterName;
 
   private final IJavaTypeFinder myJavaTypeFinder;
@@ -141,7 +141,8 @@ public class TapestryProject {
     String applicationFilterName = getApplicationFilterName();
     if (applicationRootPackage == null) return Collections.emptyList();
     final Map<String, String> libraryMapping = findLibraryMapping();
-    if (myCachedLibraries != null && isNotEmpty(myLastApplicationPackage) && isNotEmpty(myLastApplicationFilterName)) {
+    // volatile read
+    if (isNotEmpty(myLastApplicationPackage) && isNotEmpty(myLastApplicationFilterName) && myCachedLibraries != null) {
       if (myLastApplicationPackage.equals(applicationRootPackage)
           && myLastApplicationFilterName.equals(applicationFilterName)
           && libraryMapping.equals(myCachedLibraryMapping)) {
@@ -149,19 +150,22 @@ public class TapestryProject {
       }
     }
 
-    myCachedLibraries = new ArrayList<Library>();
-    myLastApplicationPackage = applicationRootPackage;
-    myLastApplicationFilterName = applicationFilterName;
+    List<Library> cachedLibraries = new ArrayList<Library>();
 
-    myCachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage, this));
-    myCachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage + "." + applicationFilterName, this));
-    myCachedLibraries.add(myCoreLibrary);
+    cachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage, this));
+    cachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, applicationRootPackage + "." + applicationFilterName, this));
+    cachedLibraries.add(myCoreLibrary);
 
     for (String libraryShortName : libraryMapping.keySet()) {
-      myCachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, libraryMapping.get(libraryShortName), this, libraryShortName));
+      cachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, libraryMapping.get(libraryShortName), this, libraryShortName));
     }
 
-    return myCachedLibraries;
+    myCachedLibraries = cachedLibraries;
+    myCachedLibraryMapping = libraryMapping;
+    myLastApplicationFilterName = applicationFilterName;
+    myLastApplicationPackage = applicationRootPackage; // volatile write
+
+    return cachedLibraries;
   }
 
   /**
