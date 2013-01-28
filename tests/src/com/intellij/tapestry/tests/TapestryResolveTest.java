@@ -231,6 +231,14 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
     Assert.assertEquals("StartPage.tml", ref.getName());
   }
 
+  public void testPageAttrValue2() throws Throwable {
+    addElementToProject(PAGES_PACKAGE_PATH, "StartPage2", Util.DOT_GROOVY);
+    addElementToProject(PAGES_PACKAGE_PATH, "StartPage2", getTemplateExtension());
+    initByComponent();
+    TmlFile ref = resolveReferenceAtCaretPosition(TmlFile.class);
+    Assert.assertEquals("StartPage2.tml", ref.getName());
+  }
+
   public void testPageAttrValueOfPagelinkTag() throws Throwable {
     addPageToProject("StartPage");
     initByComponent();

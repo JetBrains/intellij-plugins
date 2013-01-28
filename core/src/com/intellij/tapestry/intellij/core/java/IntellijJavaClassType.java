@@ -61,7 +61,7 @@ public class IntellijJavaClassType extends IntellijJavaType implements IJavaClas
    * {@inheritDoc}
    */
   public boolean isPublic() {
-    return getPsiClass().getModifierList().hasExplicitModifier(PsiModifier.PUBLIC);
+    return getPsiClass().getModifierList().hasModifierProperty(PsiModifier.PUBLIC);
   }
 
   /**
