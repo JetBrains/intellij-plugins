@@ -179,7 +179,7 @@ parenthesizedExpression ::= '(' expression ')' { pin=1 }
 
 // binary ----------------------------------------------------------------
 private plusMinusOperations ::= '+' | '-'
-private divideMultiplyOperations ::=  '*' | '/' | '%' // TODO check %
+private divideMultiplyOperations ::=  '*' | '/' | '%'
 private bitwiseOperations ::= NEGATE | NOT
 private booleanOperations ::= "&&" | "||" |
                               "and" | "or" |
