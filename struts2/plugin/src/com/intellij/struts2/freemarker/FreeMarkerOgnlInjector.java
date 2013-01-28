@@ -80,7 +80,7 @@ public class FreeMarkerOgnlInjector implements MultiHostInjector {
     }
 
     if (OGNL_LIST_ELEMENT_PATTERN.accepts(context)) {
-      OgnlLanguageInjector.injectElement(registrar, (PsiLanguageInjectionHost) context);
+      OgnlLanguageInjector.injectElementWithPrefixSuffix(registrar, (PsiLanguageInjectionHost) context);
     }
   }
 

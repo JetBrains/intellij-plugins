@@ -1,9 +1,11 @@
 OgnlFile:AfterVar.ognl
-  IndexedExpression
-    VariableExpression
-      PsiElement(HASH)('#')
+  PsiElement(%{)('%{')
+  INDEXED_EXPRESSION
+    VARIABLE_EXPRESSION
+      PsiElement(#)('#')
       PsiElement(IDENTIFIER)('var')
     PsiElement([)('[')
-    IntegerLiteral
+    LITERAL_EXPRESSION
       PsiElement(INTEGER_LITERAL)('5')
     PsiElement(])(']')
+  PsiElement(EXPRESSION_END)('}')

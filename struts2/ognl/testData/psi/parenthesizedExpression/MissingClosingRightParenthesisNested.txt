@@ -1,21 +1,23 @@
 OgnlFile:MissingClosingRightParenthesisNested.ognl
-  ParenthesizedExpression
+  PsiElement(%{)('%{')
+  PARENTHESIZED_EXPRESSION
     PsiElement(()('(')
-    BinaryExpression
-      IntegerLiteral
+    BINARY_EXPRESSION
+      LITERAL_EXPRESSION
         PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace(' ')
-      PsiElement(PLUS)('+')
+      PsiElement(+)('+')
       PsiWhiteSpace(' ')
-      ParenthesizedExpression
+      PARENTHESIZED_EXPRESSION
         PsiElement(()('(')
-        BinaryExpression
-          IntegerLiteral
+        BINARY_EXPRESSION
+          LITERAL_EXPRESSION
             PsiElement(INTEGER_LITERAL)('2')
           PsiWhiteSpace(' ')
-          PsiElement(PLUS)('+')
-          IntegerLiteral
+          PsiElement(+)('+')
+          LITERAL_EXPRESSION
             PsiElement(INTEGER_LITERAL)('3')
         PsiElement())(')')
-    PsiErrorElement:')' expected
-      <empty list>
+  PsiErrorElement:')', <operator> or '?' expected, got '}'
+    <empty list>
+  PsiElement(EXPRESSION_END)('}')

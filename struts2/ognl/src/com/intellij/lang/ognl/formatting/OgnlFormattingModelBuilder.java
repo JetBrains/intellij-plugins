@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,14 +20,14 @@ import com.intellij.formatting.FormattingModelBuilder;
 import com.intellij.formatting.FormattingModelProvider;
 import com.intellij.formatting.SpacingBuilder;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.ognl.psi.OgnlTokenGroups;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.lang.ognl.parsing.OgnlElementTypes.BINARY_EXPRESSION;
-import static com.intellij.lang.ognl.psi.OgnlTokenTypes.*;
+import static com.intellij.lang.ognl.OgnlTypes.*;
 
 /**
  * Provides basic (whitespace only) formatting for OGNL using (Java) default settings.
@@ -53,31 +53,30 @@ public class OgnlFormattingModelBuilder implements FormattingModelBuilder {
     return null;
   }
 
-  private SpacingBuilder createSpacingBuilder(final CodeStyleSettings settings) {
+  private static SpacingBuilder createSpacingBuilder(final CodeStyleSettings settings) {
     return new SpacingBuilder(settings)
-        .after(COMMA).spaceIf(settings.SPACE_AFTER_COMMA)
-        .before(COMMA).spaceIf(settings.SPACE_BEFORE_COMMA)
+      .after(COMMA).spaceIf(settings.SPACE_AFTER_COMMA)
+      .before(COMMA).spaceIf(settings.SPACE_BEFORE_COMMA)
 
-        .after(QUESTION).spaceIf(settings.SPACE_AFTER_QUEST)
-        .before(QUESTION).spaceIf(settings.SPACE_BEFORE_QUEST)
+      .after(QUESTION).spaceIf(settings.SPACE_AFTER_QUEST)
+      .before(QUESTION).spaceIf(settings.SPACE_BEFORE_QUEST)
 
-        .after(COLON).spaceIf(settings.SPACE_AFTER_COLON)
-        .before(COLON).spaceIf(settings.SPACE_BEFORE_COLON)
+      .after(COLON).spaceIf(settings.SPACE_AFTER_COLON)
+      .before(COLON).spaceIf(settings.SPACE_BEFORE_COLON)
 
-        .withinPair(LPARENTH, RPARENTH).spaceIf(settings.SPACE_WITHIN_PARENTHESES)
-        .withinPair(LBRACE, RBRACE).spaceIf(settings.SPACE_WITHIN_BRACES)
-        .withinPair(LBRACKET, RBRACKET).spaceIf(settings.SPACE_WITHIN_BRACKETS)
+      .withinPair(LPARENTH, RPARENTH).spaceIf(settings.SPACE_WITHIN_PARENTHESES)
+      .withinPair(LBRACE, RBRACE).spaceIf(settings.SPACE_WITHIN_BRACES)
+      .withinPair(LBRACKET, RBRACKET).spaceIf(settings.SPACE_WITHIN_BRACKETS)
 
-        .aroundInside(ADDITION_OPS, BINARY_EXPRESSION).spaceIf(settings.SPACE_AROUND_ADDITIVE_OPERATORS)
-        .aroundInside(MULTIPLICATION_OPS, BINARY_EXPRESSION).spaceIf(settings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS)
+      .aroundInside(OgnlTokenGroups.ADDITION_OPS, BINARY_EXPRESSION).spaceIf(settings.SPACE_AROUND_ADDITIVE_OPERATORS)
+      .aroundInside(OgnlTokenGroups.MULTIPLICATION_OPS, BINARY_EXPRESSION).spaceIf(settings.SPACE_AROUND_MULTIPLICATIVE_OPERATORS)
 
-        .around(UNARY_OPS).spaceIf(settings.SPACE_AROUND_UNARY_OPERATOR)
-        .around(EQUALITY_OPS).spaceIf(settings.SPACE_AROUND_EQUALITY_OPERATORS)
-        .around(RELATIONAL_OPS).spaceIf(settings.SPACE_AROUND_RELATIONAL_OPERATORS)
+      .around(OgnlTokenGroups.UNARY_OPS).spaceIf(settings.SPACE_AROUND_UNARY_OPERATOR)
+      .around(OgnlTokenGroups.EQUALITY_OPS).spaceIf(settings.SPACE_AROUND_EQUALITY_OPERATORS)
+      .around(OgnlTokenGroups.RELATIONAL_OPS).spaceIf(settings.SPACE_AROUND_RELATIONAL_OPERATORS)
 
-        .around(LOGICAL_OPS).spaceIf(settings.SPACE_AROUND_LOGICAL_OPERATORS)
-        .around(SHIFT_OPS).spaceIf(settings.SPACE_AROUND_SHIFT_OPERATORS)
-        .around(BITWISE_OPS).spaceIf(settings.SPACE_AROUND_BITWISE_OPERATORS);
+      .around(OgnlTokenGroups.LOGICAL_OPS).spaceIf(settings.SPACE_AROUND_LOGICAL_OPERATORS)
+      .around(OgnlTokenGroups.SHIFT_OPS).spaceIf(settings.SPACE_AROUND_SHIFT_OPERATORS)
+      .around(OgnlTokenGroups.BITWISE_OPS).spaceIf(settings.SPACE_AROUND_BITWISE_OPERATORS);
   }
-
 }

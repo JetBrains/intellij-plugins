@@ -42,11 +42,6 @@ public class OgnlLanguageInjector {
     return this;
   }
 
-  public static void injectElement(final MultiHostRegistrar registrar,
-                                   final PsiLanguageInjectionHost element) {
-    new OgnlLanguageInjector(registrar, element).injectWholeXmlAttributeValue();
-  }
-
   public static void injectElementWithPrefixSuffix(final MultiHostRegistrar registrar,
                                                    final PsiLanguageInjectionHost element) {
     new OgnlLanguageInjector(registrar, element)

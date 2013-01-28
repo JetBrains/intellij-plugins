@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,7 @@
 package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
-import com.intellij.lang.ognl.parsing.OgnlElementTypes;
+import com.intellij.psi.CommonClassNames;
 import com.intellij.psi.PsiType;
 import org.intellij.lang.annotations.Language;
 
@@ -31,37 +31,31 @@ import java.math.BigInteger;
 public class LiteralExpressionPsiTest extends PsiTestCase {
 
   public void testStringLiteral() {
-    final OgnlExpression expression = parse("\"stringValue\"");
-    assertInstanceOf(expression, OgnlStringLiteral.class);
+    final OgnlLiteralExpression expression = parse("\"stringValue\"");
+    assertEquals(CommonClassNames.JAVA_LANG_STRING, expression.getType().getCanonicalText());
     assertEquals("stringValue", expression.getConstantValue());
   }
 
   public void testStringLiteralSingleQuotes() {
-    final OgnlExpression expression = parse("'stringValue'");
-    assertInstanceOf(expression, OgnlStringLiteral.class);
+    final OgnlLiteralExpression expression = parse("'stringValue'");
+    assertEquals(PsiType.CHAR, expression.getType());
     assertEquals("stringValue", expression.getConstantValue());
-
-    final PsiType type = expression.getType();
-    assertNotNull(type);
-    assertEquals("java.lang.String", type.getCanonicalText());
   }
 
   public void testNullLiteral() {
-    final OgnlExpression expression = parse("null");
-    assertElementType(OgnlElementTypes.NULL_LITERAL, expression);
+    final OgnlLiteralExpression expression = parse("null");
     assertEquals(PsiType.NULL, expression.getType());
+    assertEquals(null, expression.getConstantValue());
   }
 
   public void testBooleanLiteral() {
-    final OgnlExpression expression = parse("true");
-    assertElementType(OgnlElementTypes.BOOLEAN_LITERAL, expression);
+    final OgnlLiteralExpression expression = parse("true");
     assertEquals(PsiType.BOOLEAN, expression.getType());
     assertEquals(true, expression.getConstantValue());
   }
 
   public void testIntegerLiteral() {
-    final OgnlExpression expression = parse("123");
-    assertElementType(OgnlElementTypes.INTEGER_LITERAL, expression);
+    final OgnlLiteralExpression expression = parse("123");
     assertEquals(PsiType.INT, expression.getType());
     assertEquals(123, expression.getConstantValue());
   }
@@ -78,8 +72,7 @@ public class LiteralExpressionPsiTest extends PsiTestCase {
   private void runBigIntegerLiteral(@Language(value = OgnlLanguage.ID,
                                               prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                               suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String bigIntegerExpression) {
-    final OgnlExpression expression = parse(bigIntegerExpression);
-    assertElementType(OgnlElementTypes.BIG_INTEGER_LITERAL, expression);
+    final OgnlLiteralExpression expression = parse(bigIntegerExpression);
 
     final PsiType type = expression.getType();
     assertNotNull(type);
@@ -104,8 +97,7 @@ public class LiteralExpressionPsiTest extends PsiTestCase {
   private void runDoubleLiteral(@Language(value = OgnlLanguage.ID,
                                           prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                           suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String doubleExpression) {
-    final OgnlExpression expression = parse(doubleExpression);
-    assertElementType(OgnlElementTypes.DOUBLE_LITERAL, expression);
+    final OgnlLiteralExpression expression = parse(doubleExpression);
     assertEquals(PsiType.DOUBLE, expression.getType());
     assertEquals(Double.parseDouble(doubleExpression), expression.getConstantValue());
   }
@@ -122,21 +114,18 @@ public class LiteralExpressionPsiTest extends PsiTestCase {
   private void runBigDecimalLiteral(@Language(value = OgnlLanguage.ID,
                                               prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                               suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String bigDecimalExpression) {
-    final OgnlExpression expression = parse(bigDecimalExpression);
-    assertElementType(OgnlElementTypes.BIG_DECIMAL_LITERAL, expression);
+    final OgnlLiteralExpression expression = parse(bigDecimalExpression);
 
     final PsiType type = expression.getType();
     assertNotNull(type);
     assertEquals("java.math.BigDecimal", type.getCanonicalText());
     assertEquals(new BigDecimal(bigDecimalExpression.substring(0, bigDecimalExpression.length() - 1)),
                  expression.getConstantValue());
-
   }
 
-  private OgnlExpression parse(@Language(value = OgnlLanguage.ID,
-                                         prefix = OgnlLanguage.EXPRESSION_PREFIX,
-                                         suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
-    return (OgnlExpression) parseSingleExpression(expression);
+  private OgnlLiteralExpression parse(@Language(value = OgnlLanguage.ID,
+                                                prefix = OgnlLanguage.EXPRESSION_PREFIX,
+                                                suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
+    return (OgnlLiteralExpression)parseSingleExpression(expression);
   }
-
 }

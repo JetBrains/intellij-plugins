@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,36 +15,25 @@
 
 package com.intellij.lang.ognl.psi;
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * (expr).
- *
  * @author Yann C&eacute;bron
  */
-public class OgnlParenthesizedExpression extends OgnlExpressionBase {
+public class OgnlPsiCompositeElementImpl extends ASTWrapperPsiElement implements OgnlPsiCompositeElement  {
 
-  public OgnlParenthesizedExpression(@NotNull final ASTNode node) {
+ public OgnlPsiCompositeElementImpl(@NotNull ASTNode node) {
     super(node);
   }
 
-  @Override
-  public PsiType getType() {
-    return getExpression().getType();
+  public IElementType getTokenType() {
+    return getNode().getElementType();
   }
 
-  /**
-   * Returns the expression within the parentheses.
-   *
-   * @return Expression.
-   */
-  @NotNull
-  public OgnlExpression getExpression() {
-    final OgnlExpression expression = getExpression(0);
-    assert expression != null : "no expression: " + getText();
-    return expression;
+  public String toString() {
+    return getTokenType().toString();
   }
-
 }

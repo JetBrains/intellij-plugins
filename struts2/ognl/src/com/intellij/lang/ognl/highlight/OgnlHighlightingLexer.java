@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +15,8 @@
 
 package com.intellij.lang.ognl.highlight;
 
+import com.intellij.lang.ognl.OgnlTypes;
 import com.intellij.lang.ognl.lexer.OgnlLexer;
-import com.intellij.lang.ognl.psi.OgnlTokenTypes;
 import com.intellij.lexer.LayeredLexer;
 import com.intellij.lexer.StringLiteralLexer;
 import com.intellij.psi.tree.IElementType;
@@ -35,15 +35,14 @@ public class OgnlHighlightingLexer extends LayeredLexer {
   public OgnlHighlightingLexer() {
     super(new OgnlLexer());
 
-    final StringLiteralLexer stringLiteralLexer = new StringLiteralLexer('\"', OgnlTokenTypes.STRING_LITERAL);
+    final StringLiteralLexer stringLiteralLexer = new StringLiteralLexer('\"', OgnlTypes.STRING_LITERAL);
     registerSelfStoppingLayer(stringLiteralLexer,
-                              new IElementType[]{OgnlTokenTypes.STRING_LITERAL},
+                              new IElementType[]{OgnlTypes.STRING_LITERAL},
                               IElementType.EMPTY_ARRAY);
 
-    final StringLiteralLexer characterLiteralLexer = new StringLiteralLexer('\'', OgnlTokenTypes.CHARACTER_LITERAL);
+    final StringLiteralLexer characterLiteralLexer = new StringLiteralLexer('\'', OgnlTypes.CHARACTER_LITERAL);
     registerSelfStoppingLayer(characterLiteralLexer,
-                              new IElementType[]{OgnlTokenTypes.CHARACTER_LITERAL},
+                              new IElementType[]{OgnlTypes.CHARACTER_LITERAL},
                               IElementType.EMPTY_ARRAY);
   }
-
 }

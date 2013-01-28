@@ -1,10 +1,11 @@
 OgnlFile:MissingClosingRightBrace.ognl
-  SequenceExpression
+  PsiElement(%{)('%{')
+  SEQUENCE_EXPRESSION
     PsiElement({)('{')
-    IntegerLiteral
+    LITERAL_EXPRESSION
       PsiElement(INTEGER_LITERAL)('1')
-    PsiElement(COMMA)(',')
-    IntegerLiteral
+    PsiElement(,)(',')
+    LITERAL_EXPRESSION
       PsiElement(INTEGER_LITERAL)('2')
-    PsiErrorElement:'}' expected
-      <empty list>
+  PsiErrorElement:',', <operator>, '?' or '}' expected, unexpected end of file
+    <empty list>

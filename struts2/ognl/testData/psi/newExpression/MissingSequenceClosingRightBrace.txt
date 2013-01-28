@@ -1,21 +1,21 @@
 OgnlFile:MissingSequenceClosingRightBrace.ognl
-  NewExpression
-    PsiElement(NEW_KEYWORD)('new')
+  PsiElement(%{)('%{')
+  NEW_EXPRESSION
+    PsiElement(new)('new')
     PsiWhiteSpace(' ')
-    ReferenceExpression
+    REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('int')
     PsiElement([)('[')
     PsiElement(])(']')
     PsiWhiteSpace(' ')
-    SequenceExpression
-      SequenceExpression
-        PsiElement({)('{')
-        PsiWhiteSpace(' ')
-        IntegerLiteral
-          PsiElement(INTEGER_LITERAL)('1')
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        IntegerLiteral
-          PsiElement(INTEGER_LITERAL)('2')
-        PsiErrorElement:'}' expected
-          <empty list>
+    SEQUENCE_EXPRESSION
+      PsiElement({)('{')
+      PsiWhiteSpace(' ')
+      LITERAL_EXPRESSION
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiElement(,)(',')
+      PsiWhiteSpace(' ')
+      LITERAL_EXPRESSION
+        PsiElement(INTEGER_LITERAL)('2')
+    PsiErrorElement:',', <operator>, '?' or '}' expected, unexpected end of file
+      <empty list>

@@ -3,8 +3,12 @@ package com.intellij.lang.ognl.lexer;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
+import java.util.*;
+import java.lang.reflect.Field;
+import org.jetbrains.annotations.NotNull;
 
-import com.intellij.lang.ognl.psi.OgnlTokenTypes;
+import com.intellij.psi.TokenType;
+import com.intellij.lang.ognl.OgnlTypes;
 
 %%
 
@@ -48,89 +52,90 @@ ESCAPE_SEQUENCE=\\[^\r\n]
 %state SEQUENCE_EXPRESSION
 
 %%
-<YYINITIAL> "%{"      { return OgnlTokenTypes.EXPRESSION_START; }
-<YYINITIAL> "}"       { return OgnlTokenTypes.EXPRESSION_END; }
 
-{WHITE_SPACE_CHAR}+   { return OgnlTokenTypes.WHITE_SPACE; }
+<YYINITIAL> "%{"      { return OgnlTypes.EXPRESSION_START; }
+<YYINITIAL> "}"       { return OgnlTypes.EXPRESSION_END; }
 
-"{"                   { yybegin(SEQUENCE_EXPRESSION); return OgnlTokenTypes.LBRACE; }
-<SEQUENCE_EXPRESSION> "}"   { yybegin(YYINITIAL); return OgnlTokenTypes.RBRACE; }
+"{"                   { yybegin(SEQUENCE_EXPRESSION); return OgnlTypes.LBRACE; }
+<SEQUENCE_EXPRESSION> "}"   { yybegin(YYINITIAL); return OgnlTypes.RBRACE; }
 
-{INTEGER_LITERAL}     { return OgnlTokenTypes.INTEGER_LITERAL; }
-{BIG_INTEGER_LITERAL} { return OgnlTokenTypes.BIG_INTEGER_LITERAL; }
-{DOUBLE_LITERAL}      { return OgnlTokenTypes.DOUBLE_LITERAL; }
-{BIG_DECIMAL_LITERAL} { return OgnlTokenTypes.BIG_DECIMAL_LITERAL; }
+{WHITE_SPACE_CHAR}+   { return TokenType.WHITE_SPACE; }
 
-{CHARACTER_LITERAL}   { return OgnlTokenTypes.CHARACTER_LITERAL; }
-{STRING_LITERAL}      { return OgnlTokenTypes.STRING_LITERAL; }
+{INTEGER_LITERAL}     { return OgnlTypes.INTEGER_LITERAL; }
+{BIG_INTEGER_LITERAL} { return OgnlTypes.BIG_INTEGER_LITERAL; }
+{DOUBLE_LITERAL}      { return OgnlTypes.DOUBLE_LITERAL; }
+{BIG_DECIMAL_LITERAL} { return OgnlTypes.BIG_DECIMAL_LITERAL; }
 
-"shl"    { return OgnlTokenTypes.SHIFT_LEFT_KEYWORD; }
-"shr"    { return OgnlTokenTypes.SHIFT_RIGHT_KEYWORD; }
-"ushr"   { return OgnlTokenTypes.SHIFT_RIGHT_LOGICAL_KEYWORD; }
+{CHARACTER_LITERAL}   { return OgnlTypes.CHARACTER_LITERAL; }
+{STRING_LITERAL}      { return OgnlTypes.STRING_LITERAL; }
 
-"and"    { return OgnlTokenTypes.AND_KEYWORD; }
-"band"   { return OgnlTokenTypes.BAND_KEYWORD; }
-"or"     { return OgnlTokenTypes.OR_KEYWORD; }
-"bor"    { return OgnlTokenTypes.BOR_KEYWORD; }
-"xor"    { return OgnlTokenTypes.XOR_KEYWORD; }
-"eq"     { return OgnlTokenTypes.EQ_KEYWORD; }
-"neq"    { return OgnlTokenTypes.NEQ_KEYWORD; }
-"lt"     { return OgnlTokenTypes.LT_KEYWORD; }
-"lte"    { return OgnlTokenTypes.LT_EQ_KEYWORD; }
-"gt"     { return OgnlTokenTypes.GT_KEYWORD; }
-"gte"    { return OgnlTokenTypes.GT_EQ_KEYWORD; }
-"not in" { return OgnlTokenTypes.NOT_IN_KEYWORD; }
-"not"    { return OgnlTokenTypes.NOT_KEYWORD; }
-"in"     { return OgnlTokenTypes.IN_KEYWORD; }
-"new"    { return OgnlTokenTypes.NEW_KEYWORD; }
+"shl"    { return OgnlTypes.SHIFT_LEFT_KEYWORD; }
+"shr"    { return OgnlTypes.SHIFT_RIGHT_KEYWORD; }
+"ushr"   { return OgnlTypes.SHIFT_RIGHT_LOGICAL_KEYWORD; }
 
-"true"   { return OgnlTokenTypes.TRUE_KEYWORD; }
-"false"  { return OgnlTokenTypes.FALSE_KEYWORD; }
-"null"   { return OgnlTokenTypes.NULL_KEYWORD; }
-"instanceof" { return OgnlTokenTypes.INSTANCEOF_KEYWORD; }
+"and"    { return OgnlTypes.AND_KEYWORD; }
+"band"   { return OgnlTypes.BAND_KEYWORD; }
+"or"     { return OgnlTypes.OR_KEYWORD; }
+"bor"    { return OgnlTypes.BOR_KEYWORD; }
+"xor"    { return OgnlTypes.XOR_KEYWORD; }
+"eq"     { return OgnlTypes.EQ_KEYWORD; }
+"neq"    { return OgnlTypes.NEQ_KEYWORD; }
+"lt"     { return OgnlTypes.LT_KEYWORD; }
+"lte"    { return OgnlTypes.LT_EQ_KEYWORD; }
+"gt"     { return OgnlTypes.GT_KEYWORD; }
+"gte"    { return OgnlTypes.GT_EQ_KEYWORD; }
+"not in" { return OgnlTypes.NOT_IN_KEYWORD; }
+"not"    { return OgnlTypes.NOT_KEYWORD; }
+"in"     { return OgnlTypes.IN_KEYWORD; }
 
-{IDENTIFIER} { return OgnlTokenTypes.IDENTIFIER; }
+"new"    { return OgnlTypes.NEW_KEYWORD; }
+"true"   { return OgnlTypes.TRUE_KEYWORD; }
+"false"  { return OgnlTypes.FALSE_KEYWORD; }
+"null"   { return OgnlTypes.NULL_KEYWORD; }
+"instanceof" { return OgnlTypes.INSTANCEOF_KEYWORD; }
 
-"("   { return OgnlTokenTypes.LPARENTH; }
-")"   { return OgnlTokenTypes.RPARENTH; }
-"["   { return OgnlTokenTypes.LBRACKET; }
-"]"   { return OgnlTokenTypes.RBRACKET; }
+{IDENTIFIER} { return OgnlTypes.IDENTIFIER; }
 
-"!="  { return OgnlTokenTypes.NOT_EQUAL; }
-"!"   { return OgnlTokenTypes.NEGATE; }
-"=="  { return OgnlTokenTypes.EQUAL; }
+"("   { return OgnlTypes.LPARENTH; }
+")"   { return OgnlTypes.RPARENTH; }
+"["   { return OgnlTypes.LBRACKET; }
+"]"   { return OgnlTypes.RBRACKET; }
 
-"<<"  { return OgnlTokenTypes.SHIFT_LEFT; }
-">>>" { return OgnlTokenTypes.SHIFT_RIGHT_LOGICAL; }
-">>"  { return OgnlTokenTypes.SHIFT_RIGHT; }
+"!="  { return OgnlTypes.NOT_EQUAL; }
+"!"   { return OgnlTypes.NEGATE; }
+"=="  { return OgnlTypes.EQUAL; }
 
-"<="  { return OgnlTokenTypes.LESS_EQUAL; }
-">="  { return OgnlTokenTypes.GREATER_EQUAL; }
-"<"   { return OgnlTokenTypes.LESS; }
-">"   { return OgnlTokenTypes.GREATER; }
+"<<"  { return OgnlTypes.SHIFT_LEFT; }
+">>>" { return OgnlTypes.SHIFT_RIGHT_LOGICAL; }
+">>"  { return OgnlTypes.SHIFT_RIGHT; }
+
+"<="  { return OgnlTypes.LESS_EQUAL; }
+">="  { return OgnlTypes.GREATER_EQUAL; }
+"<"   { return OgnlTypes.LESS; }
+">"   { return OgnlTypes.GREATER; }
 
 
-"."  { return OgnlTokenTypes.DOT; }
-","  { return OgnlTokenTypes.COMMA; }
-"?"  { return OgnlTokenTypes.QUESTION; }
-":"  { return OgnlTokenTypes.COLON; }
-"#"  { return OgnlTokenTypes.HASH; }
-"@"  { return OgnlTokenTypes.AT; }
-"$"  { return OgnlTokenTypes.DOLLAR; }
-"="  { return OgnlTokenTypes.EQ; }
+"."  { return OgnlTypes.DOT; }
+","  { return OgnlTypes.COMMA; }
+"?"  { return OgnlTypes.QUESTION; }
+":"  { return OgnlTypes.COLON; }
+"#"  { return OgnlTypes.HASH; }
+"@"  { return OgnlTypes.AT; }
+"$"  { return OgnlTypes.DOLLAR; }
+"="  { return OgnlTypes.EQ; }
 
-"/"  { return OgnlTokenTypes.DIVISION; }
-"*"  { return OgnlTokenTypes.MULTIPLY; }
-"-"  { return OgnlTokenTypes.MINUS; }
-"+"  { return OgnlTokenTypes.PLUS; }
-"%"  { return OgnlTokenTypes.MODULO; }
+"/"  { return OgnlTypes.DIVISION; }
+"*"  { return OgnlTypes.MULTIPLY; }
+"-"  { return OgnlTypes.MINUS; }
+"+"  { return OgnlTypes.PLUS; }
+"%"  { return OgnlTypes.MODULO; }
 
-"&&" { return OgnlTokenTypes.AND_AND; }
-"||" { return OgnlTokenTypes.OR_OR; }
+"&&" { return OgnlTypes.AND_AND; }
+"||" { return OgnlTypes.OR_OR; }
 
-"|"  { return OgnlTokenTypes.OR; }
-"^"  { return OgnlTokenTypes.XOR; }
-"&"  { return OgnlTokenTypes.AND; }
-"~"  { return OgnlTokenTypes.NOT; }
+"|"  { return OgnlTypes.OR; }
+"^"  { return OgnlTypes.XOR; }
+"&"  { return OgnlTypes.AND; }
+"~"  { return OgnlTypes.NOT; }
 
-[^] { return OgnlTokenTypes.BAD_CHARACTER; }
+.    {  yybegin(YYINITIAL); return TokenType.BAD_CHARACTER; }

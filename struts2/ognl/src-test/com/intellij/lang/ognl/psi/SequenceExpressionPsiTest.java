@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,8 +16,9 @@
 package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
-import com.intellij.lang.ognl.parsing.OgnlElementTypes;
+import com.intellij.lang.ognl.OgnlTypes;
 import com.intellij.psi.PsiType;
+import com.intellij.util.containers.ContainerUtil;
 import org.intellij.lang.annotations.Language;
 
 /**
@@ -29,31 +30,34 @@ public class SequenceExpressionPsiTest extends PsiTestCase {
 
   public void testSimpleIntegerLiteralSequence() {
     final OgnlSequenceExpression expression = parse("{1,2,3}");
-    assertSize(3, expression.getElements());
-    assertEquals(PsiType.INT, expression.getType());
-    
-    final OgnlExpression firstExpression = expression.getExpression(0);
-    assertElementType(OgnlElementTypes.INTEGER_LITERAL, firstExpression);
+    assertSize(3, expression.getExpressionList());
+
+    final OgnlExpression firstExpression = ContainerUtil.getFirstItem(expression.getExpressionList());
+    assertNotNull(firstExpression);
+    assertElementType(OgnlTypes.LITERAL_EXPRESSION, firstExpression);
+    assertEquals(PsiType.INT, firstExpression.getType());
   }
 
   public void testSimpleStringLiteralSequence() {
     final OgnlSequenceExpression expression = parse("{ 'A', \"B\"}");
-    assertSize(2, expression.getElements());
-    final OgnlExpression firstExpression = expression.getExpression(0);
-    assertElementType(OgnlElementTypes.STRING_LITERAL, firstExpression);
+    assertSize(2, expression.getExpressionList());
+
+    final OgnlExpression firstExpression = ContainerUtil.getFirstItem(expression.getExpressionList());
+    assertNotNull(firstExpression);
+    assertElementType(OgnlTypes.LITERAL_EXPRESSION, firstExpression);
+    assertEquals(PsiType.CHAR, firstExpression.getType());
   }
 
   public void testNestedSimpleIntegerLiteralSequence() {
     final OgnlConditionalExpression expression =
-        (OgnlConditionalExpression) parseSingleExpression("a == true ? { 1,2 } : { 2,3 }");
-    assertElementType(OgnlElementTypes.SEQUENCE_EXPRESSION, expression.getThen());
-    assertElementType(OgnlElementTypes.SEQUENCE_EXPRESSION, expression.getThen());
+      (OgnlConditionalExpression)parseSingleExpression("a == true ? { 1,2 } : { 2,3 }");
+    assertElementType(OgnlTypes.SEQUENCE_EXPRESSION, expression.getThen());
+    assertElementType(OgnlTypes.SEQUENCE_EXPRESSION, expression.getThen());
   }
 
   private OgnlSequenceExpression parse(@Language(value = OgnlLanguage.ID,
                                                  prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                  suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
-    return (OgnlSequenceExpression) parseSingleExpression(expression);
+    return (OgnlSequenceExpression)parseSingleExpression(expression);
   }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,7 @@
 
 package com.intellij.lang.ognl.psi.binaryexpression;
 
-import com.intellij.lang.ognl.psi.OgnlTokenTypes;
+import com.intellij.lang.ognl.OgnlTypes;
 
 /**
  * @author Yann C&eacute;bron
@@ -23,27 +23,26 @@ import com.intellij.lang.ognl.psi.OgnlTokenTypes;
 public class BitwiseBooleanBinaryExpressionPsiTest extends BinaryExpressionPsiTestCase {
 
   public void testBitwiseAnd() {
-    assertConstantBinaryExpression("true & false", true, OgnlTokenTypes.AND, false);
+    assertConstantBinaryExpression("true & false", true, OgnlTypes.AND, false);
   }
 
   public void testBitwiseAndKeyword() {
-    assertConstantBinaryExpression("true band false", true, OgnlTokenTypes.BAND_KEYWORD, false);
+    assertConstantBinaryExpression("true band false", true, OgnlTypes.BAND_KEYWORD, false);
   }
 
   public void testBitwiseOr() {
-    assertConstantBinaryExpression("true | false", true, OgnlTokenTypes.OR, false);
+    assertConstantBinaryExpression("true | false", true, OgnlTypes.OR, false);
   }
 
   public void testBitwiseOrKeyword() {
-    assertConstantBinaryExpression("true bor false", true, OgnlTokenTypes.BOR_KEYWORD, false);
+    assertConstantBinaryExpression("true bor false", true, OgnlTypes.BOR_KEYWORD, false);
   }
 
   public void testBitwiseXor() {
-    assertConstantBinaryExpression("true ^ false", true, OgnlTokenTypes.XOR, false);
+    assertConstantBinaryExpression("true ^ false", true, OgnlTypes.XOR, false);
   }
 
   public void testBitwiseXorKeyword() {
-    assertConstantBinaryExpression("true xor false", true, OgnlTokenTypes.XOR_KEYWORD, false);
+    assertConstantBinaryExpression("true xor false", true, OgnlTypes.XOR_KEYWORD, false);
   }
-
 }

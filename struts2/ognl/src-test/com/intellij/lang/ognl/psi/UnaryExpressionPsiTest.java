@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,8 +16,9 @@
 package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
-import com.intellij.lang.ognl.parsing.OgnlElementTypes;
+import com.intellij.lang.ognl.OgnlTypes;
 import com.intellij.psi.PsiType;
+import com.intellij.psi.tree.IElementType;
 import org.intellij.lang.annotations.Language;
 
 /**
@@ -29,46 +30,49 @@ public class UnaryExpressionPsiTest extends PsiTestCase {
 
   public void testMinusInteger() {
     final OgnlUnaryExpression expression = parse("-3");
-    assertEquals(OgnlTokenTypes.MINUS, expression.getOperation());
-    final OgnlExpression operand = expression.getOperand();
-    assertElementType(OgnlElementTypes.INTEGER_LITERAL, operand);
-    assertEquals(PsiType.INT, expression.getType());
+    assertEquals(OgnlTypes.MINUS, expression.getUnaryOperator());
+
+    final OgnlExpression operand = expression.getExpression();
+    assertElementType(OgnlTypes.LITERAL_EXPRESSION, operand);
+    final OgnlLiteralExpression literalExpression = assertInstanceOf(operand, OgnlLiteralExpression.class);
+    assertEquals(PsiType.INT, literalExpression.getType());
   }
 
   // not  ====================
 
   public void testNot() {
-    assertConstantUnaryExpression("!true", OgnlTokenTypes.NEGATE, true);
+    assertConstantUnaryExpression("!true", OgnlTypes.NEGATE, true);
   }
 
   public void testNotKeyword() {
-    assertConstantUnaryExpression("not true", OgnlTokenTypes.NOT_KEYWORD, true);
+    assertConstantUnaryExpression("not true", OgnlTypes.NOT_KEYWORD, true);
   }
 
   public void testBitwiseNot() {
-    assertConstantUnaryExpression("~true", OgnlTokenTypes.NOT, true);
+    assertConstantUnaryExpression("~true", OgnlTypes.NOT, true);
   }
 
 
   private void assertConstantUnaryExpression(@Language(value = OgnlLanguage.ID,
                                                        prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                        suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression,
-                                             final OgnlTokenType operationSign,
+                                             final IElementType operationSign,
                                              final Object constantValue) {
     final OgnlUnaryExpression unaryExpression = parse(expression);
     assertNotNull(unaryExpression);
 
-    final OgnlTokenType operation = unaryExpression.getOperation();
+    final OgnlTokenType operation = unaryExpression.getUnaryOperator();
     assertEquals(operationSign, operation);
 
-    final OgnlExpression operand = unaryExpression.getOperand();
-    assertEquals(constantValue, operand.getConstantValue());
+    final OgnlExpression operand = unaryExpression.getExpression();
+    if (operand instanceof OgnlLiteralExpression) {
+      assertEquals(constantValue, ((OgnlLiteralExpression)operand).getConstantValue());
+    }
   }
 
   private OgnlUnaryExpression parse(@Language(value = OgnlLanguage.ID,
                                               prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                               suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
-    return (OgnlUnaryExpression) parseSingleExpression(expression);
+    return (OgnlUnaryExpression)parseSingleExpression(expression);
   }
-
 }

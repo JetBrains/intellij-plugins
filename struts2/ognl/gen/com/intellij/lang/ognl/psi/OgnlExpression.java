@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,28 +13,18 @@
  * limitations under the License.
  */
 
+
+// Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.psi;
 
-import com.intellij.lang.ASTNode;
+import java.util.List;
+import org.jetbrains.annotations.*;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiType;
-import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Yann C&eacute;bron
- */
-public class OgnlSequenceExpression extends OgnlExpressionBase {
+public interface OgnlExpression extends OgnlPsiCompositeElement {
 
-  public OgnlSequenceExpression(@NotNull final ASTNode node) {
-    super(node);
-  }
-
-  public OgnlExpression[] getElements() {
-    return findChildrenByClass(OgnlExpression.class);
-  }
-
-  @Override
-  public PsiType getType() {
-    return getExpressionType(0);
-  }
+  @Nullable
+  PsiType getType();
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,11 +29,9 @@ public class NewExpressionPsiTest extends PsiTestCase {
     final OgnlNewExpression expression = parse("new Something()");
   }
 
-  /* TODO
-    public void testQualifiedClassnameWithNoParameters() {
-      final OgnlNewExpression expression = parse("new java.util.ArrayList()");
-    }
-  */
+  public void testQualifiedClassnameWithNoParameters() {
+    final OgnlNewExpression expression = parse("new java.util.ArrayList()");
+  }
 
   public void testClassnameWithOneParameter() {
     final OgnlNewExpression expression = parse("new Integer(1)");
@@ -54,7 +52,6 @@ public class NewExpressionPsiTest extends PsiTestCase {
   private OgnlNewExpression parse(@Language(value = OgnlLanguage.ID,
                                             prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                             suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
-    return (OgnlNewExpression) parseSingleExpression(expression);
+    return (OgnlNewExpression)parseSingleExpression(expression);
   }
-
 }

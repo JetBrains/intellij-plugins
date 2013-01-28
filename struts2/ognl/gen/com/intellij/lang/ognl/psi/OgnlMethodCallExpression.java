@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,30 +13,22 @@
  * limitations under the License.
  */
 
+
+// Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.psi;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiType;
-import org.jetbrains.annotations.NotNull;
+import java.util.List;
+import org.jetbrains.annotations.*;
+import com.intellij.psi.PsiElement;
 
-/**
- * @author Yann C&eacute;bron
- */
-public class OgnlStringLiteral extends OgnlExpressionBase {
+public interface OgnlMethodCallExpression extends OgnlExpression {
 
-  public OgnlStringLiteral(@NotNull final ASTNode node) {
-    super(node);
-  }
+  @NotNull
+  List<OgnlExpression> getExpressionList();
 
-  @Override
-  public PsiType getType() {
-    return PsiType.getJavaLangString(getManager(), getResolveScope());
-  }
+  @NotNull
+  OgnlExpression getMethod();
 
-  @Override
-  public Object getConstantValue() {
-    return StringUtil.stripQuotesAroundValue(getText());
-  }
+  int getParameterCount();
 
 }

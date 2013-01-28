@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,7 @@
 
 package com.intellij.lang.ognl.psi.binaryexpression;
 
-import com.intellij.lang.ognl.psi.OgnlTokenTypes;
+import com.intellij.lang.ognl.OgnlTypes;
 
 /**
  * @author Yann C&eacute;bron
@@ -23,19 +23,18 @@ import com.intellij.lang.ognl.psi.OgnlTokenTypes;
 public class EqualityBinaryExpressionPsiTest extends BinaryExpressionPsiTestCase {
 
   public void testEqual() {
-    assertConstantBinaryExpression("1 == 1", 1, OgnlTokenTypes.EQUAL, 1);
+    assertConstantBinaryExpression("1 == 1", 1, OgnlTypes.EQUAL, 1);
   }
 
   public void testEqualKeyword() {
-    assertConstantBinaryExpression("1 eq 1", 1, OgnlTokenTypes.EQ_KEYWORD, 1);
+    assertConstantBinaryExpression("1 eq 1", 1, OgnlTypes.EQ_KEYWORD, 1);
   }
 
   public void testNotEqual() {
-    assertConstantBinaryExpression("1 != 1", 1, OgnlTokenTypes.NOT_EQUAL, 1);
+    assertConstantBinaryExpression("1 != 1", 1, OgnlTypes.NOT_EQUAL, 1);
   }
 
   public void testNotEqualKeyword() {
-    assertConstantBinaryExpression("1 neq 1", 1, OgnlTokenTypes.NEQ_KEYWORD, 1);
+    assertConstantBinaryExpression("1 neq 1", 1, OgnlTypes.NEQ_KEYWORD, 1);
   }
-
 }

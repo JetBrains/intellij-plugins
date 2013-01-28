@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -90,8 +90,8 @@ public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
     }
 
     if (OGNL_LIST_ELEMENT_PATTERN.accepts(psiElement)) {
-      OgnlLanguageInjector.injectElement(multiHostRegistrar,
-                                         (PsiLanguageInjectionHost) psiElement);
+      OgnlLanguageInjector.injectElementWithPrefixSuffix(multiHostRegistrar,
+                                                         (PsiLanguageInjectionHost) psiElement);
     }
   }
 

@@ -1,9 +1,11 @@
 OgnlFile:MissingClosingRightBracket.ognl
-  IndexedExpression
-    ReferenceExpression
+  PsiElement(%{)('%{')
+  INDEXED_EXPRESSION
+    REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('abc')
     PsiElement([)('[')
-    IntegerLiteral
+    LITERAL_EXPRESSION
       PsiElement(INTEGER_LITERAL)('12')
-    PsiErrorElement:']' expected
-      <empty list>
+  PsiErrorElement:<operator>, '?' or ']' expected, got '}'
+    <empty list>
+  PsiElement(EXPRESSION_END)('}')

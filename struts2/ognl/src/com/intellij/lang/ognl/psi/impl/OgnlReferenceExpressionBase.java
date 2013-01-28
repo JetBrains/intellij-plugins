@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 
-package com.intellij.lang.ognl.psi;
+package com.intellij.lang.ognl.psi.impl;
 
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.ognl.OgnlTypes;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
-import com.intellij.psi.PsiType;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
@@ -30,9 +30,9 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlReferenceExpression extends OgnlExpressionBase {
+abstract class OgnlReferenceExpressionBase extends OgnlExpressionImpl {
 
-  public OgnlReferenceExpression(@NotNull final ASTNode node) {
+  protected OgnlReferenceExpressionBase(@NotNull ASTNode node) {
     super(node);
   }
 
@@ -45,12 +45,13 @@ public class OgnlReferenceExpression extends OgnlExpressionBase {
   }
 
   private PsiElement getIdentifier() {
-    return findNotNullChildByType(OgnlTokenTypes.IDENTIFIER);
+    return findNotNullChildByType(OgnlTypes.IDENTIFIER);
   }
 
   @Override
   public PsiReference getReference() {
-    return new PsiReferenceBase<OgnlExpressionBase>(this, TextRange.from(0, getTextLength())) {
+    return new PsiReferenceBase<PsiElement>(this, TextRange.from(0, getTextLength())) {
+
       @Override
       public PsiElement resolve() {
         return myElement;
@@ -73,10 +74,4 @@ public class OgnlReferenceExpression extends OgnlExpressionBase {
       }
     };
   }
-
-  @Override
-  public PsiType getType() {
-    return null;
-  }
-
 }

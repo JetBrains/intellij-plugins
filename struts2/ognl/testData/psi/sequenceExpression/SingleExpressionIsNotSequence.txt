@@ -1,8 +1,10 @@
 OgnlFile:SingleExpressionIsNotSequence.ognl
-  SequenceExpression
+  PsiElement(%{)('%{')
+  SEQUENCE_EXPRESSION
     PsiElement({)('{')
-    IntegerLiteral
+    LITERAL_EXPRESSION
       PsiElement(INTEGER_LITERAL)('1')
-    PsiErrorElement:Sequence expected
+    PsiErrorElement:',', <operator> or '?' expected, got '}'
       <empty list>
     PsiElement(})('}')
+  PsiElement(EXPRESSION_END)('}')

@@ -40,7 +40,7 @@ public class OgnlColorSettingsPage implements ColorSettingsPage {
       new AttributesDescriptor("Identifier", OgnlHighlighter.IDENTIFIER),
       new AttributesDescriptor("String", OgnlHighlighter.STRING),
       new AttributesDescriptor("Number", OgnlHighlighter.NUMBER),
-      new AttributesDescriptor("Parentheses", OgnlHighlighter.PARENTHS),
+      new AttributesDescriptor("Parentheses", OgnlHighlighter.PARENTHESES),
       new AttributesDescriptor("Brackets", OgnlHighlighter.BRACKETS),
       new AttributesDescriptor("Braces", OgnlHighlighter.BRACES)
   };
@@ -79,7 +79,7 @@ public class OgnlColorSettingsPage implements ColorSettingsPage {
   public String getDemoText() {
     return "%{booleanArray[3] == true ? this : 'nothing'}" +
         "\n" +
-        "%{\"valid escapes: My App\\nVersion 1.0 \\u00a9 2011 My Company\"}"+
+        "%{\"valid escapes: My App\\nVersion 1.0 \\u00a9 2013 My Company\"}"+
         "\n" +
         "%{\"invalid escape: \\uXXX \"}"+
         "\n" +

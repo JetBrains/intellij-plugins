@@ -1,8 +1,10 @@
 OgnlFile:AfterIdentifier.ognl
-  IndexedExpression
-    ReferenceExpression
+  PsiElement(%{)('%{')
+  INDEXED_EXPRESSION
+    REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('identifier')
     PsiElement([)('[')
-    IntegerLiteral
+    LITERAL_EXPRESSION
       PsiElement(INTEGER_LITERAL)('1')
     PsiElement(])(']')
+  PsiElement(EXPRESSION_END)('}')

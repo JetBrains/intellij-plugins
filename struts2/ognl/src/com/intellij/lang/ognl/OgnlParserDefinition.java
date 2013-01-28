@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,16 +20,14 @@ import com.intellij.lang.LanguageUtil;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.ognl.lexer.OgnlLexer;
-import com.intellij.lang.ognl.parsing.OgnlElementType;
-import com.intellij.lang.ognl.parsing.OgnlParser;
-import com.intellij.lang.ognl.psi.OgnlTokenTypes;
+import com.intellij.lang.ognl.parser.OgnlParser;
+import com.intellij.lang.ognl.psi.OgnlTokenGroups;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.TokenType;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -74,18 +72,13 @@ public class OgnlParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public TokenSet getStringLiteralElements() {
-    return OgnlTokenTypes.TEXT;
+    return OgnlTokenGroups.TEXT;
   }
 
   @NotNull
   @Override
   public PsiElement createElement(final ASTNode node) {
-    final IElementType type = node.getElementType();
-    if (type instanceof OgnlElementType) {
-      return ((OgnlElementType) type).createPsiElement(node);
-    }
-
-    throw new AssertionError("Unknown type: " + type);
+    return OgnlTypes.Factory.createElement(node);
   }
 
   @Override
@@ -98,5 +91,4 @@ public class OgnlParserDefinition implements ParserDefinition {
     final Lexer lexer = createLexer(left.getPsi().getProject());
     return LanguageUtil.canStickTokensTogetherByLexer(left, right, lexer);
   }
-
 }

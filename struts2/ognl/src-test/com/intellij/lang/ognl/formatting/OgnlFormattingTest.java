@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 package com.intellij.lang.ognl.formatting;
 
 import com.intellij.lang.ognl.OgnlFileType;
+import com.intellij.lang.ognl.OgnlTestUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
@@ -71,7 +72,7 @@ public class OgnlFormattingTest extends LightCodeInsightFixtureTestCase {
     doTest("{+ 1, - 2, ! 3, ~ 4}",
            "{+1, -2, !3, ~4}");
   }
-  
+
   public void testEqualityOperations() {
     doTest("1==2!=3",
            "1 == 2 != 3");
@@ -99,14 +100,13 @@ public class OgnlFormattingTest extends LightCodeInsightFixtureTestCase {
 
   private void doTest(final String before,
                       final String after) {
-    myFixture.configureByText(OgnlFileType.INSTANCE, before);
+    myFixture.configureByText(OgnlFileType.INSTANCE, OgnlTestUtils.createExpression(before));
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {
         CodeStyleManager.getInstance(myFixture.getProject()).reformat(myFixture.getFile());
       }
     });
-    myFixture.checkResult(after);
+    myFixture.checkResult(OgnlTestUtils.createExpression(after));
   }
-
 }

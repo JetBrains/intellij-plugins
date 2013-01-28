@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +15,7 @@
 
 package com.intellij.lang.ognl.psi.binaryexpression;
 
-import com.intellij.lang.ognl.parsing.OgnlElementTypes;
-import com.intellij.lang.ognl.psi.OgnlTokenTypes;
+import com.intellij.lang.ognl.OgnlTypes;
 
 /**
  * @author Yann C&eacute;bron
@@ -25,9 +24,8 @@ public class InstanceOfBinaryExpressionPsiTest extends BinaryExpressionPsiTestCa
 
   public void testSimpleInstanceOf() {
     assertBinaryExpression("a instanceof b",
-                           OgnlElementTypes.REFERENCE_EXPRESSION,
-                           OgnlTokenTypes.INSTANCEOF_KEYWORD,
-                           OgnlElementTypes.REFERENCE_EXPRESSION);
+                           OgnlTypes.REFERENCE_EXPRESSION,
+                           OgnlTypes.INSTANCEOF_KEYWORD,
+                           OgnlTypes.REFERENCE_EXPRESSION);
   }
-
 }

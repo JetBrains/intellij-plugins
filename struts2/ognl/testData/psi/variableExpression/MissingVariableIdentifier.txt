@@ -1,5 +1,7 @@
 OgnlFile:MissingVariableIdentifier.ognl
-  VariableExpression
-    PsiElement(HASH)('#')
-    PsiErrorElement:Variable identifier expected
-      <empty list>
+  PsiElement(%{)('%{')
+  VARIABLE_EXPRESSION
+    PsiElement(#)('#')
+  PsiErrorElement:IDENTIFIER or '[' expected, got '}'
+    <empty list>
+  PsiElement(EXPRESSION_END)('}')

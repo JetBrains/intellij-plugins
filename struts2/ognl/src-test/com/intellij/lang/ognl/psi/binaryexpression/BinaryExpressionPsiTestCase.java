@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,11 +16,11 @@
 package com.intellij.lang.ognl.psi.binaryexpression;
 
 import com.intellij.lang.ognl.OgnlLanguage;
-import com.intellij.lang.ognl.parsing.OgnlElementType;
 import com.intellij.lang.ognl.psi.OgnlBinaryExpression;
 import com.intellij.lang.ognl.psi.OgnlExpression;
-import com.intellij.lang.ognl.psi.OgnlTokenType;
+import com.intellij.lang.ognl.psi.OgnlLiteralExpression;
 import com.intellij.lang.ognl.psi.PsiTestCase;
+import com.intellij.psi.tree.IElementType;
 import org.intellij.lang.annotations.Language;
 
 abstract class BinaryExpressionPsiTestCase extends PsiTestCase {
@@ -28,25 +28,25 @@ abstract class BinaryExpressionPsiTestCase extends PsiTestCase {
   protected OgnlBinaryExpression parse(@Language(value = OgnlLanguage.ID,
                                                  prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                  suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
-    return (OgnlBinaryExpression) parseSingleExpression(expression);
+    return (OgnlBinaryExpression)parseSingleExpression(expression);
   }
 
   protected void assertBinaryExpression(@Language(value = OgnlLanguage.ID,
                                                   prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                   suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression,
-                                        final OgnlElementType leftType,
-                                        final OgnlTokenType operationSign,
-                                        final OgnlElementType rightType) {
+                                        final IElementType leftType,
+                                        final IElementType operationSign,
+                                        final IElementType rightType) {
     final OgnlBinaryExpression binaryExpression = parse(expression);
     assertNotNull(binaryExpression);
 
-    final OgnlExpression leftOperand = binaryExpression.getLeftOperand();
+    final OgnlExpression leftOperand = binaryExpression.getLeft();
     assertNotNull(leftOperand);
     assertElementType(leftType, leftOperand);
 
-    assertEquals(operationSign, binaryExpression.getOperationSign());
+    assertEquals(operationSign, binaryExpression.getOperator());
 
-    final OgnlExpression rightOperand = binaryExpression.getRightOperand();
+    final OgnlExpression rightOperand = binaryExpression.getRight();
     assertNotNull(rightOperand);
     assertElementType(rightType, rightOperand);
   }
@@ -55,20 +55,23 @@ abstract class BinaryExpressionPsiTestCase extends PsiTestCase {
                                                           prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                           suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression,
                                                 final Object leftConstantValue,
-                                                final OgnlTokenType operationSign,
+                                                final IElementType operationSign,
                                                 final Object rightConstantValue) {
     final OgnlBinaryExpression binaryExpression = parse(expression);
     assertNotNull(binaryExpression);
 
-    final OgnlExpression leftOperand = binaryExpression.getLeftOperand();
+    final OgnlExpression leftOperand = binaryExpression.getLeft();
     assertNotNull(leftOperand);
-    assertEquals(leftConstantValue, leftOperand.getConstantValue());
+    if (leftOperand instanceof OgnlLiteralExpression) {
+      assertEquals(leftConstantValue, ((OgnlLiteralExpression)leftOperand).getConstantValue());
+    }
 
-    assertEquals(operationSign, binaryExpression.getOperationSign());
+    assertEquals(operationSign, binaryExpression.getOperator());
 
-    final OgnlExpression rightOperand = binaryExpression.getRightOperand();
+    final OgnlExpression rightOperand = binaryExpression.getRight();
     assertNotNull(rightOperand);
-    assertEquals(rightConstantValue, rightOperand.getConstantValue());
+    if (rightOperand instanceof OgnlLiteralExpression) {
+      assertEquals(rightConstantValue, ((OgnlLiteralExpression)rightOperand).getConstantValue());
+    }
   }
-
 }

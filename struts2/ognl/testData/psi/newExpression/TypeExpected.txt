@@ -1,5 +1,7 @@
 OgnlFile:TypeExpected.ognl
-  PsiElement(NEW_KEYWORD)('new')
-  ReferenceExpression
-    PsiErrorElement:Type expected
+  PsiElement(%{)('%{')
+  NEW_EXPRESSION
+    PsiElement(new)('new')
+    PsiErrorElement:<reference expression> expected, got '}'
       <empty list>
+  PsiElement(EXPRESSION_END)('}')

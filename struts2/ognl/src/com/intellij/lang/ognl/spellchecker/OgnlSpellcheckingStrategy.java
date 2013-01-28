@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,8 @@
 
 package com.intellij.lang.ognl.spellchecker;
 
-import com.intellij.lang.ognl.psi.OgnlTokenTypes;
+import com.intellij.lang.ognl.OgnlTypes;
+import com.intellij.lang.ognl.psi.OgnlTokenGroups;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy;
@@ -33,12 +34,11 @@ public class OgnlSpellcheckingStrategy extends SpellcheckingStrategy {
   @Override
   public Tokenizer getTokenizer(final PsiElement element) {
     final IElementType elementType = element.getNode().getElementType();
-    if (elementType == OgnlTokenTypes.IDENTIFIER ||
-        OgnlTokenTypes.TEXT.contains(elementType)) {
+    if (elementType == OgnlTypes.IDENTIFIER ||
+        OgnlTokenGroups.TEXT.contains(elementType)) {
       return TEXT_TOKENIZER;
     }
 
     return EMPTY_TOKENIZER;
   }
-
 }

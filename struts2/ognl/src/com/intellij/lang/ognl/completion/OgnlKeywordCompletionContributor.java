@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,9 +19,10 @@ import com.intellij.codeInsight.TailType;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.TailTypeDecorator;
+import com.intellij.lang.ognl.OgnlTypes;
 import com.intellij.lang.ognl.psi.OgnlExpression;
 import com.intellij.lang.ognl.psi.OgnlReferenceExpression;
-import com.intellij.lang.ognl.psi.OgnlTokenTypes;
+import com.intellij.lang.ognl.psi.OgnlTokenGroups;
 import com.intellij.lang.ognl.psi.OgnlVariableExpression;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.patterns.PsiElementPattern;
@@ -41,18 +42,18 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
 public class OgnlKeywordCompletionContributor extends CompletionContributor implements DumbAware {
 
   private static final PsiElementPattern.Capture<PsiElement> VARIABLE_EXPRESSION =
-      psiElement().inside(OgnlVariableExpression.class);
+    psiElement().inside(OgnlVariableExpression.class);
 
   private static final PsiElementPattern.Capture<PsiElement> AFTER_OPERATIONS =
-      psiElement().afterLeaf(psiElement().withElementType(OgnlTokenTypes.OPERATIONS));
+    psiElement().afterLeaf(psiElement().withElementType(OgnlTokenGroups.OPERATIONS));
 
   private static final PsiElementPattern.Capture<PsiElement> AFTER_EXPRESSION =
-      psiElement().afterLeaf(psiElement().inside(OgnlExpression.class))
-          .andNot(AFTER_OPERATIONS)
-          .andNot(VARIABLE_EXPRESSION); // TODO
+    psiElement().afterLeaf(psiElement().inside(OgnlExpression.class))
+      .andNot(AFTER_OPERATIONS)
+      .andNot(VARIABLE_EXPRESSION); // TODO
 
   private static final PsiElementPattern.Capture<PsiElement> AFTER_IDENTIFIER =
-      psiElement().afterLeaf(psiElement().inside(OgnlReferenceExpression.class));
+    psiElement().afterLeaf(psiElement().inside(OgnlReferenceExpression.class));
 
   public OgnlKeywordCompletionContributor() {
     installBinaryOperations();
@@ -81,20 +82,20 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
 
   private void installBooleanNull() {
     final TokenSet precedingOperators =
-        TokenSet.create(OgnlTokenTypes.EQUAL,
-                        OgnlTokenTypes.EQ_KEYWORD,
-                        OgnlTokenTypes.NOT_EQUAL,
-                        OgnlTokenTypes.NEQ_KEYWORD,
-                        OgnlTokenTypes.QUESTION,
-                        OgnlTokenTypes.COLON,
-                        OgnlTokenTypes.AND_KEYWORD,
-                        OgnlTokenTypes.AND_AND,
-                        OgnlTokenTypes.OR_KEYWORD,
-                        OgnlTokenTypes.OR_OR,
-                        OgnlTokenTypes.NEGATE,
-                        OgnlTokenTypes.NOT_KEYWORD);
+      TokenSet.create(OgnlTypes.EQUAL,
+                      OgnlTypes.EQ_KEYWORD,
+                      OgnlTypes.NOT_EQUAL,
+                      OgnlTypes.NEQ_KEYWORD,
+                      OgnlTypes.QUESTION,
+                      OgnlTypes.COLON,
+                      OgnlTypes.AND_KEYWORD,
+                      OgnlTypes.AND_AND,
+                      OgnlTypes.OR_KEYWORD,
+                      OgnlTypes.OR_OR,
+                      OgnlTypes.NEGATE,
+                      OgnlTypes.NOT_KEYWORD);
     extendKeywordCompletion(psiElement().afterLeaf(psiElement().inside(OgnlExpression.class)
-                                                       .withElementType(precedingOperators)),
+                                                     .withElementType(precedingOperators)),
                             FALSE, TRUE, NULL);
   }
 
@@ -114,5 +115,4 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
              }
            });
   }
-
 }

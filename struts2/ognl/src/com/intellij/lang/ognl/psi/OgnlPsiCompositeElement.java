@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,27 +13,14 @@
  * limitations under the License.
  */
 
-package com.intellij.lang.ognl.parsing;
+package com.intellij.lang.ognl.psi;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.ognl.OgnlLanguage;
-import com.intellij.lang.ognl.psi.OgnlElement;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlElementType extends IElementType {
-
-  public OgnlElementType(@NotNull @NonNls final String debugName) {
-    super(debugName, OgnlLanguage.INSTANCE);
-  }
-
-  public PsiElement createPsiElement(final ASTNode node) {
-    return new OgnlElement(node);
-  }
-
+public interface OgnlPsiCompositeElement extends NavigatablePsiElement {
+  IElementType getTokenType();
 }

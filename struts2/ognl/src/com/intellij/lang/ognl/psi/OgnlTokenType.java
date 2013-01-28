@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,17 +16,14 @@
 package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
-import com.intellij.lang.pratt.PrattTokenType;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.tree.IElementType;
 
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlTokenType extends PrattTokenType {
+public class OgnlTokenType extends IElementType {
 
-  public OgnlTokenType(@NotNull @NonNls final String debugName) {
+  public OgnlTokenType(String debugName) {
     super(debugName, OgnlLanguage.INSTANCE);
   }
-
 }

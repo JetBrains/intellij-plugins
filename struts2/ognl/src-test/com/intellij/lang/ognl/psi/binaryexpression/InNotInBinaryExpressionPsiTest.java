@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +15,7 @@
 
 package com.intellij.lang.ognl.psi.binaryexpression;
 
-import com.intellij.lang.ognl.parsing.OgnlElementTypes;
-import com.intellij.lang.ognl.psi.OgnlTokenTypes;
+import com.intellij.lang.ognl.OgnlTypes;
 
 /**
  * @author Yann C&eacute;bron
@@ -25,16 +24,15 @@ public class InNotInBinaryExpressionPsiTest extends BinaryExpressionPsiTestCase 
 
   public void testSimpleIn() {
     assertBinaryExpression("a in {1,2}",
-                           OgnlElementTypes.REFERENCE_EXPRESSION,
-                           OgnlTokenTypes.IN_KEYWORD,
-                           OgnlElementTypes.SEQUENCE_EXPRESSION);
+                           OgnlTypes.REFERENCE_EXPRESSION,
+                           OgnlTypes.IN_KEYWORD,
+                           OgnlTypes.SEQUENCE_EXPRESSION);
   }
 
   public void testSimpleNotIn() {
     assertBinaryExpression("a not in {1,2}",
-                           OgnlElementTypes.REFERENCE_EXPRESSION,
-                           OgnlTokenTypes.NOT_IN_KEYWORD,
-                           OgnlElementTypes.SEQUENCE_EXPRESSION);
+                           OgnlTypes.REFERENCE_EXPRESSION,
+                           OgnlTypes.NOT_IN_KEYWORD,
+                           OgnlTypes.SEQUENCE_EXPRESSION);
   }
-
 }

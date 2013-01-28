@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,31 +13,17 @@
  * limitations under the License.
  */
 
+
+// Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.psi;
 
+import java.util.List;
+import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiType;
-import org.jetbrains.annotations.Nullable;
 
-/**
- * @author Yann C&eacute;bron
- */
-public interface OgnlExpression extends PsiElement {
+public interface OgnlNewExpression extends OgnlExpression {
 
-  /**
-   * (Result) type of expression.
-   *
-   * @return {@code null} if not determinable.
-   */
-  @Nullable
-  PsiType getType();
-
-  /**
-   * Constant value of expression (if any).
-   *
-   * @return {@code null} if non-constant or not determinable.
-   */
-  @Nullable
-  Object getConstantValue();
+  @NotNull
+  List<OgnlExpression> getExpressionList();
 
 }

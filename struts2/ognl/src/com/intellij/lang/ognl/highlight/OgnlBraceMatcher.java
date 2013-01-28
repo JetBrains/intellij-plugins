@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,7 +17,7 @@ package com.intellij.lang.ognl.highlight;
 
 import com.intellij.lang.BracePair;
 import com.intellij.lang.PairedBraceMatcher;
-import com.intellij.lang.ognl.psi.OgnlTokenTypes;
+import com.intellij.lang.ognl.OgnlTypes;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
@@ -31,9 +31,9 @@ import org.jetbrains.annotations.Nullable;
 public class OgnlBraceMatcher implements PairedBraceMatcher {
 
   private final BracePair[] pairs = new BracePair[]{
-      new BracePair(OgnlTokenTypes.LBRACE, OgnlTokenTypes.RBRACE, false),
-      new BracePair(OgnlTokenTypes.LBRACKET, OgnlTokenTypes.RBRACKET, false),
-      new BracePair(OgnlTokenTypes.LPARENTH, OgnlTokenTypes.RPARENTH, false),
+    new BracePair(OgnlTypes.LBRACE, OgnlTypes.RBRACE, false),
+    new BracePair(OgnlTypes.LBRACKET, OgnlTypes.RBRACKET, false),
+    new BracePair(OgnlTypes.LPARENTH, OgnlTypes.RPARENTH, false),
   };
 
   @Override
@@ -42,8 +42,7 @@ public class OgnlBraceMatcher implements PairedBraceMatcher {
   }
 
   @Override
-  public boolean isPairedBracesAllowedBeforeType(@NotNull final IElementType iElementType,
-                                                 @Nullable final IElementType iElementType1) {
+  public boolean isPairedBracesAllowedBeforeType(@NotNull IElementType lbraceType, @Nullable IElementType contextType) {
     return true;
   }
 
@@ -51,5 +50,4 @@ public class OgnlBraceMatcher implements PairedBraceMatcher {
   public int getCodeConstructStart(final PsiFile psiFile, final int openingBraceOffset) {
     return openingBraceOffset;
   }
-
 }

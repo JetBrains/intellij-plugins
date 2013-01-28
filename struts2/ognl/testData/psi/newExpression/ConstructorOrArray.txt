@@ -1,7 +1,10 @@
 OgnlFile:ConstructorOrArray.ognl
-  PsiElement(NEW_KEYWORD)('new')
-  PsiWhiteSpace(' ')
-  ReferenceExpression
-    PsiElement(IDENTIFIER)('Integer')
-  PsiErrorElement:Constructor or array expected
+  PsiElement(%{)('%{')
+  NEW_EXPRESSION
+    PsiElement(new)('new')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('Integer')
+  PsiErrorElement:'(', '.', '@' or '[' expected, got '}'
     <empty list>
+  PsiElement(EXPRESSION_END)('}')

@@ -1,9 +1,11 @@
 OgnlFile:MissingArrayExpression.ognl
-  NewExpression
-    PsiElement(NEW_KEYWORD)('new')
+  PsiElement(%{)('%{')
+  NEW_EXPRESSION
+    PsiElement(new)('new')
     PsiWhiteSpace(' ')
-    ReferenceExpression
+    REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('int')
     PsiElement([)('[')
-    PsiErrorElement:Expression expected
+    PsiErrorElement:<expression> or ']' expected, got '}'
       <empty list>
+  PsiElement(EXPRESSION_END)('}')
