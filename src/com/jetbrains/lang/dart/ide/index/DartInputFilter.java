@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.index;
 
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -10,6 +11,7 @@ public class DartInputFilter implements FileBasedIndex.InputFilter {
 
   @Override
   public boolean acceptInput(VirtualFile file) {
-    return file.getFileType() == DartFileType.INSTANCE || file.getFileType() == StdFileTypes.HTML;
+    FileType type = file.getFileType();
+    return type == DartFileType.INSTANCE || type == StdFileTypes.HTML;
   }
 }
