@@ -147,7 +147,6 @@ literalExpression ::= numberLiteralExpression |
 }
 
 referenceExpression ::= ('@')? IDENTIFIER ('.' IDENTIFIER) * ('@' IDENTIFIER)? {
-  pin(".*")=1
   mixin="com.intellij.lang.ognl.psi.impl.OgnlReferenceExpressionBase"
 }
 
@@ -156,7 +155,7 @@ variableExpression ::= '#' IDENTIFIER {
   mixin="com.intellij.lang.ognl.psi.impl.OgnlVariableExpressionBase"
 }
 
-private methodCallParameters ::= expression? (',' expression)*  { pin(".*")=1 }
+private methodCallParameters ::= [] expression (',' expression)*  { pin(".*")=1 }
 methodCallExpression ::= referenceExpression '(' methodCallParameters ')'  {
   methods=[
     method="expression[0]"

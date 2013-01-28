@@ -386,7 +386,7 @@ public class OgnlParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // expression? (',' expression)*
+  // [] expression (',' expression)*
   static boolean methodCallParameters(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "methodCallParameters")) return false;
     boolean result_ = false;
@@ -395,7 +395,8 @@ public class OgnlParser implements PsiParser {
     enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
     result_ = methodCallParameters_0(builder_, level_ + 1);
     pinned_ = result_; // pin = 1
-    result_ = result_ && methodCallParameters_1(builder_, level_ + 1);
+    result_ = result_ && report_error_(builder_, expression(builder_, level_ + 1, -1));
+    result_ = pinned_ && methodCallParameters_2(builder_, level_ + 1) && result_;
     if (!result_ && !pinned_) {
       marker_.rollbackTo();
     }
@@ -406,22 +407,26 @@ public class OgnlParser implements PsiParser {
     return result_ || pinned_;
   }
 
-  // expression?
+  // []
   private static boolean methodCallParameters_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "methodCallParameters_0")) return false;
-    expression(builder_, level_ + 1, -1);
+    methodCallParameters_0_0(builder_, level_ + 1);
+    return true;
+  }
+
+  private static boolean methodCallParameters_0_0(PsiBuilder builder_, int level_) {
     return true;
   }
 
   // (',' expression)*
-  private static boolean methodCallParameters_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "methodCallParameters_1")) return false;
+  private static boolean methodCallParameters_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "methodCallParameters_2")) return false;
     int offset_ = builder_.getCurrentOffset();
     while (true) {
-      if (!methodCallParameters_1_0(builder_, level_ + 1)) break;
+      if (!methodCallParameters_2_0(builder_, level_ + 1)) break;
       int next_offset_ = builder_.getCurrentOffset();
       if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "methodCallParameters_1");
+        empty_element_parsed_guard_(builder_, offset_, "methodCallParameters_2");
         break;
       }
       offset_ = next_offset_;
@@ -430,8 +435,8 @@ public class OgnlParser implements PsiParser {
   }
 
   // ',' expression
-  private static boolean methodCallParameters_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "methodCallParameters_1_0")) return false;
+  private static boolean methodCallParameters_2_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "methodCallParameters_2_0")) return false;
     boolean result_ = false;
     boolean pinned_ = false;
     Marker marker_ = builder_.mark();
@@ -901,27 +906,20 @@ public class OgnlParser implements PsiParser {
     if (!nextTokenIs(builder_, AT) && !nextTokenIs(builder_, IDENTIFIER)
         && replaceVariants(builder_, 2, "<reference expression>")) return false;
     boolean result_ = false;
-    boolean pinned_ = false;
-    int start_ = builder_.getCurrentOffset();
     Marker marker_ = builder_.mark();
     enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<reference expression>");
     result_ = referenceExpression_0(builder_, level_ + 1);
-    pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, consumeToken(builder_, IDENTIFIER));
-    result_ = pinned_ && report_error_(builder_, referenceExpression_2(builder_, level_ + 1)) && result_;
-    result_ = pinned_ && referenceExpression_3(builder_, level_ + 1) && result_;
-    LighterASTNode last_ = result_? builder_.getLatestDoneMarker() : null;
-    if (last_ != null && last_.getStartOffset() == start_ && type_extends_(last_.getTokenType(), REFERENCE_EXPRESSION)) {
-      marker_.drop();
-    }
-    else if (result_ || pinned_) {
+    result_ = result_ && consumeToken(builder_, IDENTIFIER);
+    result_ = result_ && referenceExpression_2(builder_, level_ + 1);
+    result_ = result_ && referenceExpression_3(builder_, level_ + 1);
+    if (result_) {
       marker_.done(REFERENCE_EXPRESSION);
     }
     else {
       marker_.rollbackTo();
     }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
-    return result_ || pinned_;
+    result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_GENERAL_, null);
+    return result_;
   }
 
   // ('@')?
@@ -935,19 +933,15 @@ public class OgnlParser implements PsiParser {
   private static boolean referenceExpression_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "referenceExpression_0_0")) return false;
     boolean result_ = false;
-    boolean pinned_ = false;
     Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
     result_ = consumeToken(builder_, AT);
-    pinned_ = result_; // pin = 1
-    if (!result_ && !pinned_) {
+    if (!result_) {
       marker_.rollbackTo();
     }
     else {
       marker_.drop();
     }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
-    return result_ || pinned_;
+    return result_;
   }
 
   // ('.' IDENTIFIER) *
@@ -970,20 +964,16 @@ public class OgnlParser implements PsiParser {
   private static boolean referenceExpression_2_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "referenceExpression_2_0")) return false;
     boolean result_ = false;
-    boolean pinned_ = false;
     Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
     result_ = consumeToken(builder_, DOT);
-    pinned_ = result_; // pin = 1
     result_ = result_ && consumeToken(builder_, IDENTIFIER);
-    if (!result_ && !pinned_) {
+    if (!result_) {
       marker_.rollbackTo();
     }
     else {
       marker_.drop();
     }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
-    return result_ || pinned_;
+    return result_;
   }
 
   // ('@' IDENTIFIER)?
@@ -997,20 +987,16 @@ public class OgnlParser implements PsiParser {
   private static boolean referenceExpression_3_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "referenceExpression_3_0")) return false;
     boolean result_ = false;
-    boolean pinned_ = false;
     Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
     result_ = consumeToken(builder_, AT);
-    pinned_ = result_; // pin = 1
     result_ = result_ && consumeToken(builder_, IDENTIFIER);
-    if (!result_ && !pinned_) {
+    if (!result_) {
       marker_.rollbackTo();
     }
     else {
       marker_.drop();
     }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
-    return result_ || pinned_;
+    return result_;
   }
 
   // unaryOperator expression

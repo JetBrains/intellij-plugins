@@ -1,0 +1,14 @@
+OgnlFile:MissingExpressionInParameters.ognl
+  PsiElement(%{)('%{')
+  METHOD_CALL_EXPRESSION
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('methodName')
+    PsiElement(()('(')
+    PsiErrorElement:<expression> expected, got ','
+      <empty list>
+    PsiElement(,)(',')
+    PsiWhiteSpace(' ')
+    LITERAL_EXPRESSION
+      PsiElement(INTEGER_LITERAL)('1')
+    PsiElement())(')')
+  PsiElement(EXPRESSION_END)('}')

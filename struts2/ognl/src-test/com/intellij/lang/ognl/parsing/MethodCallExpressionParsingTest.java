@@ -36,4 +36,7 @@ public class MethodCallExpressionParsingTest extends OgnlParsingTestCase {
     doTest(true);
   }
 
+  public void testMissingExpressionInParameters() {
+    doTest(true);
+  }
 }
