@@ -14,9 +14,9 @@
  */
 package com.intellij.struts2.jsp.inspection;
 
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.struts2.BasicLightHighlightingTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -90,9 +90,6 @@ public class HardcodedActionUrlInspectionTest extends BasicLightHighlightingTest
     createStrutsFileSet("struts.xml"); // dummy for action-extension
 
     final String fileName = getTestName(true);
-    final IntentionAction intention = myFixture.getAvailableIntention(INTENTION_NAME, fileName + ".jsp");
-    assertNotNull(intention);
-    myFixture.launchAction(intention);
-    myFixture.checkResultByFile(fileName + "_after.jsp");
+    CodeInsightTestUtil.doIntentionTest(myFixture, INTENTION_NAME, fileName + ".jsp", fileName + "_after.jsp");
   }
 }
