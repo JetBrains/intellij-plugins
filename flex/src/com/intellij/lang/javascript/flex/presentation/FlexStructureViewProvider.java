@@ -17,7 +17,7 @@ import com.intellij.psi.XmlRecursiveElementVisitor;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.ContainerUtil;
-import gnu.trove.TIntHashSet;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class FlexStructureViewProvider implements XmlStructureViewBuilderProvide
     }
 
     @Override
-    protected List<StructureViewTreeElement> collectMyElements(final TIntHashSet referencedNamedIds, final JSIndexEntry entry,
+    protected List<StructureViewTreeElement> collectMyElements(final THashSet<String> referencedNames, final JSIndexEntry entry,
                                                            final JSNamespace ns, final JavaScriptIndex index, PsiFile contextFile) {
       final List<StructureViewTreeElement> result = new ArrayList<StructureViewTreeElement>();
       final ResolveProcessor processor = new ResolveProcessor(null) {
