@@ -551,6 +551,11 @@ public class FlexCommonUtils {
       return false; // bundled with AIR SDK 3.4 with ASC 2.0, no idea what for is it
     }
 
+    if (swcName.equals("apache.swc") ||
+        swcName.equals("experimental.swc")) {
+      return true; // Apache Flex SDK 4.9
+    }
+
     if (swcName.equals("automation.swc") ||
         swcName.equals("automation_agent.swc") ||
         swcName.equals("automation_dmv.swc") ||
