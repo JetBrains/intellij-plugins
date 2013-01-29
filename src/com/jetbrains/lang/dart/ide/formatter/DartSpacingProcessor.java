@@ -39,6 +39,13 @@ public class DartSpacingProcessor {
     final ASTNode nodeNode2 = node2 == null ? null : node2.getFirstChildNode();
     final IElementType typeType2 = nodeNode2 == null ? null : nodeNode2.getElementType();
 
+    if (type1 == SEMICOLON && parentType == BLOCK) {
+      return addSingleSpaceIf(false, true);
+    }
+    if (type1 == STATEMENTS || type2 == STATEMENTS) {
+      return addSingleSpaceIf(false, true);
+    }
+
     if (type1 == LIBRARY_STATEMENT ||
         type1 == IMPORT_STATEMENT ||
         type1 == SOURCE_STATEMENT) {
@@ -278,6 +285,14 @@ public class DartSpacingProcessor {
 
     if (type1 == EXPRESSION_BODY_DEF || type2 == EXPRESSION_BODY_DEF) {
       return addSingleSpaceIf(true);
+    }
+
+    if (type1 == IF_STATEMENT ||
+        type1 == SWITCH_STATEMENT ||
+        type1 == TRY_STATEMENT ||
+        type1 == DO_WHILE_STATEMENT ||
+        type1 == WHILE_STATEMENT) {
+      return addSingleSpaceIf(false, true);
     }
 
     return Spacing.createSpacing(0, 1, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);

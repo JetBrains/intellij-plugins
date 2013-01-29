@@ -89,6 +89,7 @@ public class DartFormatterTest extends JavaCodeInsightFixtureTestCase {
     myTestStyleSettings.ALIGN_MULTILINE_BINARY_OPERATION = true;
     myTestStyleSettings.ALIGN_MULTILINE_TERNARY_OPERATION = true;
     myTestStyleSettings.ALIGN_MULTILINE_BINARY_OPERATION = true;
+    myTestStyleSettings.KEEP_LINE_BREAKS = true;
     doTest();
   }
 
@@ -107,6 +108,10 @@ public class DartFormatterTest extends JavaCodeInsightFixtureTestCase {
   }
 
   public void testDefault() throws Exception {
+    doTest();
+  }
+
+  public void testDefault2() throws Exception {
     doTest();
   }
 
@@ -197,6 +202,7 @@ public class DartFormatterTest extends JavaCodeInsightFixtureTestCase {
     myTestStyleSettings.TERNARY_OPERATION_WRAP = CommonCodeStyleSettings.WRAP_AS_NEEDED;
     myTestStyleSettings.TERNARY_OPERATION_SIGNS_ON_NEXT_LINE = true;
     myTestStyleSettings.BLOCK_COMMENT_AT_FIRST_COLUMN = true;
+    myTestStyleSettings.KEEP_LINE_BREAKS = true;
     doTest();
   }
 }

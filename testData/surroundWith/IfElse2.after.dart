@@ -5,8 +5,7 @@ main() {
     var p = new Processor();
     p.process(data);
     result += p.getResult();
-  }
-  else {
+  } else {
 
   }
 }
