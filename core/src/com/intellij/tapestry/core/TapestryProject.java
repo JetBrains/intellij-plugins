@@ -26,6 +26,7 @@ import com.intellij.tapestry.core.util.LocalizationUtils;
 import com.intellij.tapestry.intellij.facet.TapestryFacet;
 import com.intellij.tapestry.intellij.facet.TapestryFacetConfiguration;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.SmartList;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +56,7 @@ public class TapestryProject {
   private final Module myModule;
   private final IResourceFinder myResourceFinder;
   private Collection<Library> myCachedLibraries;
-  private Map<String, String> myCachedLibraryMapping;
+  private Map<String, List<String>> myCachedLibraryMapping;
   private volatile String myLastApplicationPackage;
   private String myLastApplicationFilterName;
 
@@ -140,7 +141,7 @@ public class TapestryProject {
     String applicationRootPackage = getApplicationRootPackage();
     String applicationFilterName = getApplicationFilterName();
     if (applicationRootPackage == null) return Collections.emptyList();
-    final Map<String, String> libraryMapping = findLibraryMapping();
+    final Map<String, List<String>> libraryMapping = findLibraryMapping();
     // volatile read
     if (isNotEmpty(myLastApplicationPackage) && isNotEmpty(myLastApplicationFilterName) && myCachedLibraries != null) {
       if (myLastApplicationPackage.equals(applicationRootPackage)
@@ -157,7 +158,8 @@ public class TapestryProject {
     cachedLibraries.add(myCoreLibrary);
 
     for (String libraryShortName : libraryMapping.keySet()) {
-      cachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, libraryMapping.get(libraryShortName), this, libraryShortName));
+      for(String baseProject:libraryMapping.get(libraryShortName))
+        cachedLibraries.add(new Library(APPLICATION_LIBRARY_ID, baseProject, this, libraryShortName));
     }
 
     myCachedLibraries = cachedLibraries;
@@ -243,19 +245,21 @@ public class TapestryProject {
   }
 
   @NotNull
-  public Map<String, String> findLibraryMapping() {
+  private Map<String, List<String>> findLibraryMapping() {
     final Collection<PsiMethod> psiMethods = JavaMethodNameIndex.getInstance().get(
       "contributeComponentClassResolver",
       myModule.getProject(),
       GlobalSearchScope.moduleScope(myModule)
     );
 
-    Map<String, String> result = new THashMap<String, String>();
+    Map<String, List<String>> result = new THashMap<String, List<String>>();
 
     for (PsiMethod psiMethod : psiMethods) {
       final Map<String, String> computedMap = mappingData.compute(psiMethod.getContainingFile());
       for (String key : computedMap.keySet()) {
-        result.put(key, computedMap.get(key));
+        List<String> strings = result.get(key);
+        if (strings == null) result.put(key, strings = new ArrayList<String>(2));
+        strings.add(computedMap.get(key));
       }
     }
 
