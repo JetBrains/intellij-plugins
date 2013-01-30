@@ -3,7 +3,7 @@
   <description><![CDATA[The plugin allows you to profile your Flash and Flex applications.<br>
   CPU profiling: self and cumulative execution time, caller and callee hierarchy, sorting, navigation to source code and scope filtering.<br/>
   Memory profiling<br/>
-  Please find more details on <a href="http://confluence.jetbrains.net/display/IDEADEV/Profiling+Flash+and+Flex+Applications">plugin wiki page</a>.]]></description>
+  Please find more details on <a href="http://confluence.jetbrains.com/display/IDEADEV/Profiling+Flash+and+Flex+Applications">plugin wiki page</a>.]]></description>
   <version>0.2.9</version>
   <vendor>JetBrains</vendor>
   <idea-version since-build="122.666"/>
