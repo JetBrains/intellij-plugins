@@ -1,4 +1,4 @@
-package com.jetbrains.lang.dart.completion.tab;
+package com.jetbrains.lang.dart.completion.editor;
 
 import com.intellij.codeInsight.completion.LightFixtureCompletionTestCase;
 import com.intellij.openapi.application.PathManager;

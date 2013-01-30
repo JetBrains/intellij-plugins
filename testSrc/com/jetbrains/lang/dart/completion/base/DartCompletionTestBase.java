@@ -23,6 +23,7 @@ abstract public class DartCompletionTestBase extends JavaCodeInsightFixtureTestC
 
   private final String myPath;
 
+  @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
   public DartCompletionTestBase(String... path) {
     myPath = getPath(path);
   }
@@ -45,6 +46,12 @@ abstract public class DartCompletionTestBase extends JavaCodeInsightFixtureTestC
 
   protected void doTest() throws Throwable {
     doTest(getTestName(false) + ".dart");
+  }
+
+  protected void doTest(char charToType) throws Throwable {
+    configure(getTestName(false) + ".dart");
+    myFixture.type(charToType);
+    myFixture.checkResultByFile(getTestName(false) + ".txt");
   }
 
   protected void doTest(String... files) throws Throwable {
