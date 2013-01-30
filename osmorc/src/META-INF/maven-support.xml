@@ -22,9 +22,8 @@
   ~ TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
   ~ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
-<!DOCTYPE idea-plugin PUBLIC "Plugin/DTD" "http://plugins.intellij.net/plugin.dtd">
 <idea-plugin url="http://www.jetbrains.com/idea">
-    <extensions xmlns="org.jetbrains.idea.maven">
+    <extensions defaultExtensionNs="org.jetbrains.idea.maven">
         <importer implementation="org.osmorc.facet.maven.OsmorcFacetImporter"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij">

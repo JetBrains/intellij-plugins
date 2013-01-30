@@ -107,7 +107,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       @Override
       protected void hyperlinkActivated(final HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          BrowserUtil.launchBrowser("http://confluence.jetbrains.net/pages/viewpage.action?pageId=35367");
+          BrowserUtil.launchBrowser("http://confluence.jetbrains.com/pages/viewpage.action?pageId=35367");
         }
       }
     });
