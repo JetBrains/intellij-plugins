@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
 -->
-<idea-plugin version="2" xmlns="http://plugins.intellij.net/plugin.dtd">
+<idea-plugin version="2">
 
   <extensions defaultExtensionNs="com.intellij">
     <completion.contributor language="yaml" implementationClass="com.google.jstestdriver.idea.config.JstdConfigFileCompletionContributor"/>
