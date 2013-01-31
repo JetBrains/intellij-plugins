@@ -30,7 +30,7 @@ public class DartWebApplicationGenerator extends WebProjectTemplate {
   }
 
   @Override
-  protected Icon getIcon() {
+  public Icon getIcon() {
     return DartIcons.Dart_16;
   }
 
