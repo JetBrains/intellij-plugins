@@ -410,12 +410,6 @@ public class OgnlParser implements PsiParser {
 
   // []
   private static boolean methodCallParameters_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "methodCallParameters_0")) return false;
-    methodCallParameters_0_0(builder_, level_ + 1);
-    return true;
-  }
-
-  private static boolean methodCallParameters_0_0(PsiBuilder builder_, int level_) {
     return true;
   }
 
