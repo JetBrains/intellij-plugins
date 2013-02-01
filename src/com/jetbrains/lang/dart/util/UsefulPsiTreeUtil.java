@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.util;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
@@ -171,5 +172,14 @@ public class UsefulPsiTreeUtil {
       }
     }
     return result == null ? null : ArrayUtil.toObjectArray(result, aClass);
+  }
+
+  public static boolean isAncestor(@NotNull PsiElement element, List<PsiElement> children, boolean strict) {
+    for (PsiElement child : children) {
+      if (child != null && !PsiTreeUtil.isAncestor(element, child, strict)) {
+        return false;
+      }
+    }
+    return true;
   }
 }

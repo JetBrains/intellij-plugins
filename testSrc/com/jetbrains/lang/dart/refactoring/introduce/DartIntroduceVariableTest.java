@@ -1,6 +1,7 @@
 package com.jetbrains.lang.dart.refactoring.introduce;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.jetbrains.lang.dart.ide.refactoring.introduce.DartIntroduceHandler;
 import com.jetbrains.lang.dart.ide.refactoring.introduce.DartIntroduceVariableHandler;
 import com.jetbrains.lang.dart.psi.DartCallExpression;
@@ -25,6 +26,18 @@ public class DartIntroduceVariableTest extends DartIntroduceTestBase {
 
   public void testAlone() throws Throwable {
     doTest();
+  }
+
+  public void testIntroduceWEB6458() throws Throwable {
+    try {
+      doTest();
+    }
+    catch (RuntimeException e) {
+      assertEquals("com.intellij.refactoring.util.CommonRefactoringUtil$RefactoringErrorHintException: Cannot perform refactoring.\n" +
+                   "Can't find place for the result", e.getMessage());
+      return;
+    }
+    fail("Expected: Can't find place for the result");
   }
 
   public void testReplaceAll1() throws Throwable {

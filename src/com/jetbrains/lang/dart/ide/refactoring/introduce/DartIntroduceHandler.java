@@ -18,6 +18,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.IntroduceTargetChooser;
 import com.intellij.refactoring.RefactoringActionHandler;
+import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.introduce.inplace.InplaceVariableIntroducer;
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
@@ -29,6 +30,7 @@ import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
 import com.jetbrains.lang.dart.util.DartNameSuggesterUtil;
 import com.jetbrains.lang.dart.util.DartRefactoringUtil;
+import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,36 +48,35 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
 
   @Nullable
   protected static PsiElement findAnchor(List<PsiElement> occurrences) {
-    PsiElement anchor = occurrences.get(0);
-    next:
-    do {
-      final DartStatements statements = PsiTreeUtil.getParentOfType(anchor, DartStatements.class);
-
-      int minOffset = Integer.MAX_VALUE;
-      for (PsiElement element : occurrences) {
-        minOffset = Math.min(minOffset, element.getTextOffset());
-        if (!PsiTreeUtil.isAncestor(statements, element, true)) {
-          anchor = statements;
-          continue next;
-        }
-      }
-
-      if (statements == null) {
-        return null;
-      }
-
-      PsiElement child = null;
-      PsiElement[] children = statements.getChildren();
-      for (PsiElement aChildren : children) {
-        child = aChildren;
-        if (child.getTextRange().contains(minOffset)) {
-          break;
-        }
-      }
-
-      return child;
+    int minOffset = Integer.MAX_VALUE;
+    for (PsiElement element : occurrences) {
+      minOffset = Math.min(minOffset, element.getTextOffset());
     }
-    while (true);
+
+    DartStatements statements = findContainingStatements(occurrences);
+    if (statements == null) {
+      return null;
+    }
+
+    PsiElement child = null;
+    PsiElement[] children = statements.getChildren();
+    for (PsiElement aChildren : children) {
+      child = aChildren;
+      if (child.getTextRange().contains(minOffset)) {
+        break;
+      }
+    }
+
+    return child;
+  }
+
+  @Nullable
+  private static DartStatements findContainingStatements(List<PsiElement> occurrences) {
+    DartStatements result = PsiTreeUtil.getParentOfType(occurrences.get(0), DartStatements.class, true);
+    while (result != null && !UsefulPsiTreeUtil.isAncestor(result, occurrences, true)) {
+      result = PsiTreeUtil.getParentOfType(result, DartStatements.class, true);
+    }
+    return result;
   }
 
   protected final String myDialogTitle;
@@ -343,7 +344,9 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
     }
 
     declaration = performReplace(declaration, operation);
-    declaration = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(declaration);
+    if (declaration != null) {
+      declaration = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(declaration);
+    }
     return declaration;
   }
 
@@ -367,6 +370,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
     return DartElementGenerator.createStatementFromText(project, text);
   }
 
+  @Nullable
   private PsiElement performReplace(@NotNull final PsiElement declaration, final DartIntroduceOperation operation) {
     final DartExpression expression = operation.getInitializer();
     final Project project = operation.getProject();
@@ -427,7 +431,16 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   @Nullable
   public PsiElement addDeclaration(DartIntroduceOperation operation, PsiElement declaration) {
     PsiElement anchor = operation.isReplaceAll() ? findAnchor(operation.getOccurrences()) : findAnchor(operation.getInitializer());
-    assert anchor != null;
+    if (anchor == null) {
+      CommonRefactoringUtil.showErrorHint(
+        operation.getProject(),
+        operation.getEditor(),
+        RefactoringBundle.getCannotRefactorMessage(DartBundle.message("dart.refactoring.introduce.anchor.error")),
+        DartBundle.message("dart.refactoring.introduce.error"),
+        null
+      );
+      return null;
+    }
     final PsiElement parent = anchor.getParent();
     return parent.addBefore(declaration, anchor);
   }
