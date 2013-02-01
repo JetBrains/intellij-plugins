@@ -15,6 +15,7 @@ import com.intellij.psi.tree.IElementType;
  * on 25.01.13 13:52 from the specification file
  * <tt>/Users/yann/idea-ultimate/IDEA/tools/lexer/../../contrib/struts2/ognl/src/com/intellij/lang/ognl/lexer/_OgnlLexer.flex</tt>
  */
+@SuppressWarnings("ALL")
 public class _OgnlLexer implements FlexLexer {
   /** initial size of the lookahead buffer */
   private static final int ZZ_BUFFERSIZE = 16384;
