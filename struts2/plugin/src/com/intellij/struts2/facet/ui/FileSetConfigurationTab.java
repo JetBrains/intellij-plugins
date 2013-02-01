@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,6 +18,9 @@ package com.intellij.struts2.facet.ui;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.ide.BrowserUtil;
+import com.intellij.ide.CommonActionsManager;
+import com.intellij.ide.DefaultTreeExpander;
+import com.intellij.ide.TreeExpander;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.module.Module;
@@ -82,8 +85,9 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     public boolean isAutoExpandNode() {
       return true;
     }
-
   };
+
+  private final TreeExpander myTreeExpander;
 
   private final StrutsConfigsSearcher myConfigsSearcher;
 
@@ -111,7 +115,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
         }
       }
     });
-    
+
     headerPanel.setLayout(new BorderLayout());
     headerPanel.add(linkLabel);
 
@@ -126,8 +130,9 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     myTree.setRootVisible(false);
     myTree.setShowsRootHandles(true); // show expand/collapse handles
     myTree.getEmptyText().setText(StrutsBundle.message("facet.fileset.no.filesets.defined"), SimpleTextAttributes.ERROR_ATTRIBUTES);
+    myTreeExpander = new DefaultTreeExpander(myTree);
 
-    myBuilder = new SimpleTreeBuilder(myTree, (DefaultTreeModel) myTree.getModel(), structure, null);
+    myBuilder = new SimpleTreeBuilder(myTree, (DefaultTreeModel)myTree.getModel(), structure, null);
     myBuilder.initRoot();
 
     final DumbService dumbService = DumbService.getInstance(facetEditorContext.getProject());
@@ -139,8 +144,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       }
     });
 
-    myTreePanel.add(
-      ToolbarDecorator.createDecorator(myTree)
+    final CommonActionsManager actionManager = CommonActionsManager.getInstance();
+    myTreePanel.add(ToolbarDecorator.createDecorator(myTree)
         .setAddAction(new AnActionButtonRunnable() {
           @Override
           public void run(AnActionButton button) {
@@ -168,38 +173,45 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
             }
             myTree.requestFocus();
           }
-        }).setRemoveAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          remove();
-          myModified = true;
-          myBuilder.updateFromRoot();
-          myTree.requestFocus();
-        }
-      }).setEditAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          final StrutsFileSet fileSet = getCurrentFileSet();
-          if (fileSet != null) {
-            final FileSetEditor editor = new FileSetEditor(myPanel,
-                                                           fileSet,
-                                                           facetEditorContext,
-                                                           myConfigsSearcher);
-            editor.show();
-            if (editor.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
-              myModified = true;
-              myBuffer.remove(fileSet);
-              final StrutsFileSet edited = editor.getEditedFileSet();
-              Disposer.register(strutsFacetConfiguration, edited);
-              myBuffer.add(edited);
-              edited.setAutodetected(false);
-              myBuilder.updateFromRoot();
-              selectFileSet(edited);
-            }
+        })
+        .setRemoveAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            remove();
+            myModified = true;
+            myBuilder.updateFromRoot();
             myTree.requestFocus();
           }
-        }
-      }).disableUpDownActions().createPanel());
+        })
+        .setEditAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            final StrutsFileSet fileSet = getCurrentFileSet();
+            if (fileSet != null) {
+              final FileSetEditor editor = new FileSetEditor(myPanel,
+                                                             fileSet,
+                                                             facetEditorContext,
+                                                             myConfigsSearcher);
+              editor.show();
+              if (editor.getExitCode() == DialogWrapper.OK_EXIT_CODE) {
+                myModified = true;
+                myBuffer.remove(fileSet);
+                final StrutsFileSet edited = editor.getEditedFileSet();
+                Disposer.register(strutsFacetConfiguration, edited);
+                myBuffer.add(edited);
+                edited.setAutodetected(false);
+                myBuilder.updateFromRoot();
+                selectFileSet(edited);
+              }
+              myTree.requestFocus();
+            }
+          }
+        })
+        .addExtraAction(AnActionButton.fromAction(actionManager.createExpandAllAction(myTreeExpander, myTree)))
+        .addExtraAction(AnActionButton.fromAction(actionManager.createCollapseAllAction(myTreeExpander, myTree)))
+
+        .disableUpDownActions()
+        .createPanel());
 
     myEditButton = ToolbarDecorator.findEditButton(myTreePanel);
     myRemoveButton = ToolbarDecorator.findRemoveButton(myTreePanel);
@@ -223,13 +235,15 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       return null;
     }
     if (selectedNode instanceof FileSetNode) {
-      return (FileSetNode) selectedNode;
-    } else if (selectedNode.getParent() instanceof FileSetNode) {
-      return (FileSetNode) selectedNode.getParent();
-    } else {
+      return (FileSetNode)selectedNode;
+    }
+    else if (selectedNode.getParent() instanceof FileSetNode) {
+      return (FileSetNode)selectedNode.getParent();
+    }
+    else {
       final SimpleNode parent = selectedNode.getParent();
       if (parent != null && parent.getParent() instanceof FileSetNode) {
-        return (FileSetNode) selectedNode.getParent().getParent();
+        return (FileSetNode)selectedNode.getParent().getParent();
       }
     }
     return null;
@@ -239,7 +253,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     myTree.select(myBuilder, new SimpleNodeVisitor() {
       public boolean accept(final SimpleNode simpleNode) {
         if (simpleNode instanceof FileSetNode) {
-          if (((FileSetNode) simpleNode).mySet.equals(fileSet)) {
+          if (((FileSetNode)simpleNode).mySet.equals(fileSet)) {
             return true;
           }
         }
@@ -253,7 +267,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     for (final SimpleNode node : nodes) {
 
       if (node instanceof FileSetNode) {
-        final StrutsFileSet fileSet = ((FileSetNode) node).mySet;
+        final StrutsFileSet fileSet = ((FileSetNode)node).mySet;
         if (fileSet.getFiles().isEmpty()) {
           myBuffer.remove(fileSet);
           return;
@@ -268,17 +282,18 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
           if (fileSet.isAutodetected()) {
             fileSet.setRemoved(true);
             myBuffer.add(fileSet);
-          } else {
+          }
+          else {
             myBuffer.remove(fileSet);
           }
         }
-      } else if (node instanceof ConfigFileNode) {
-        final VirtualFilePointer filePointer = ((ConfigFileNode) node).myFilePointer;
-        final StrutsFileSet fileSet = ((FileSetNode) node.getParent()).mySet;
+      }
+      else if (node instanceof ConfigFileNode) {
+        final VirtualFilePointer filePointer = ((ConfigFileNode)node).myFilePointer;
+        final StrutsFileSet fileSet = ((FileSetNode)node.getParent()).mySet;
         fileSet.removeFile(filePointer);
       }
     }
-
   }
 
   @Nls
@@ -337,7 +352,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       if (fileSet.getFiles().isEmpty()) {
         presentationData.addText(name, getErrorAttributes());
         presentationData.setTooltip(StrutsBundle.message("facet.fileset.no.files.attached"));
-      } else {
+      }
+      else {
         presentationData.addText(name, getPlainAttributes());
         presentationData.setLocationString(Integer.toString(fileSet.getFiles().size()));
       }
@@ -382,7 +398,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       final VirtualFile file = myFilePointer.getFile();
       if (file != null) {
         renderFile(file, getPlainAttributes(), null);
-      } else {
+      }
+      else {
         renderFile(file, getErrorAttributes(), StrutsBundle.message("facet.fileset.file.not.found"));
       }
     }
@@ -402,12 +419,10 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     public SimpleNode[] getChildren() {
       return NO_CHILDREN;
     }
-
   }
 
   @Override
   public String getHelpTopic() {
     return "reference.settings.project.structure.facets.struts2.facet";
   }
-
 }
