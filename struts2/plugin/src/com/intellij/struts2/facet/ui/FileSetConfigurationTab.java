@@ -17,12 +17,14 @@ package com.intellij.struts2.facet.ui;
 
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.DefaultTreeExpander;
 import com.intellij.ide.TreeExpander;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -34,7 +36,10 @@ import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsIcons;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
-import com.intellij.ui.*;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.treeStructure.*;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.Nls;
@@ -42,11 +47,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultTreeModel;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -61,7 +64,6 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
 
   // GUI components -----------------------
   private JPanel myPanel;
-  private JPanel headerPanel;
 
   private SimpleTree myTree;
   private AnActionButton myRemoveButton;
@@ -105,20 +107,6 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     module = facetEditorContext.getModule();
     myConfigsSearcher = new StrutsConfigsSearcher(module);
 
-
-    final HyperlinkLabel linkLabel = new HyperlinkLabel("Open Struts 2 plugin documentation…");
-    linkLabel.addHyperlinkListener(new HyperlinkAdapter() {
-      @Override
-      protected void hyperlinkActivated(final HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          BrowserUtil.launchBrowser("http://confluence.jetbrains.com/pages/viewpage.action?pageId=35367");
-        }
-      }
-    });
-
-    headerPanel.setLayout(new BorderLayout());
-    headerPanel.add(linkLabel);
-
     // init tree
     final SimpleTreeStructure structure = new SimpleTreeStructure() {
       public Object getRootElement() {
@@ -145,7 +133,8 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
     });
 
     final CommonActionsManager actionManager = CommonActionsManager.getInstance();
-    myTreePanel.add(ToolbarDecorator.createDecorator(myTree)
+    myTreePanel.add(
+      ToolbarDecorator.createDecorator(myTree)
         .setAddAction(new AnActionButtonRunnable() {
           @Override
           public void run(AnActionButton button) {
@@ -209,6 +198,12 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
         })
         .addExtraAction(AnActionButton.fromAction(actionManager.createExpandAllAction(myTreeExpander, myTree)))
         .addExtraAction(AnActionButton.fromAction(actionManager.createCollapseAllAction(myTreeExpander, myTree)))
+        .addExtraAction(new AnActionButton("Open Struts 2 plugin documentation…", AllIcons.Actions.Help) {
+          @Override
+          public void actionPerformed(AnActionEvent e) {
+            BrowserUtil.launchBrowser("http://confluence.jetbrains.com/pages/viewpage.action?pageId=35367");
+          }
+        })
 
         .disableUpDownActions()
         .createPanel());
