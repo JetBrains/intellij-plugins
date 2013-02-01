@@ -39,10 +39,23 @@ public class DartSpacingProcessor {
     final ASTNode nodeNode2 = node2 == null ? null : node2.getFirstChildNode();
     final IElementType typeType2 = nodeNode2 == null ? null : nodeNode2.getElementType();
 
+    if (FUNCTION_DEFINITION.contains(type2)) {
+      return Spacing.createSpacing(0, 0, 2, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    }
+    if (type2 != SEMICOLON && BLOCKS.contains(elementType)) {
+      int lineFeeds = elementType == BLOCK ? 1 : 2;
+      return Spacing.createSpacing(0, 0, lineFeeds, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    }
     if (type1 == SEMICOLON && parentType == BLOCK) {
       return addSingleSpaceIf(false, true);
     }
     if (type1 == STATEMENTS || type2 == STATEMENTS) {
+      return addSingleSpaceIf(false, true);
+    }
+    if (type1 == CLASS_BODY || type2 == CLASS_BODY) {
+      return addSingleSpaceIf(false, true);
+    }
+    if (type1 == INTERFACE_BODY || type2 == INTERFACE_BODY) {
       return addSingleSpaceIf(false, true);
     }
 
@@ -54,10 +67,6 @@ public class DartSpacingProcessor {
 
     if (type1 == CLASS_BODY || type1 == INTERFACE_BODY) {
       return Spacing.createSpacing(0, 0, 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
-    }
-
-    if (FUNCTION_DEFINITION.contains(type2)) {
-      return Spacing.createSpacing(0, 0, 2, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
 
     if (type2 == LPAREN) {

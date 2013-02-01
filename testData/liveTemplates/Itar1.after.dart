@@ -8,5 +8,6 @@ main() {
 
 class Foo {
   get length() => 0;
+
   operator []() => this;
 }

@@ -19,7 +19,8 @@ class Foo {
         }
         catch (
             string ignored
-            ) {}
+            ) {
+        }
         var z =
         argA == 'Some string' ?
         'yes' : 'no';

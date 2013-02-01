@@ -1,4 +1,5 @@
 #import('superLib');
+
 class Foo {
     // comment
     Array<Array<Int>> tmp;

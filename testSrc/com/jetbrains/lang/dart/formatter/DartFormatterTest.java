@@ -115,6 +115,10 @@ public class DartFormatterTest extends JavaCodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testDefault3() throws Exception {
+    doTest();
+  }
+
   public void testSpaceAroundOperators() throws Exception {
     myTestStyleSettings.KEEP_LINE_BREAKS = false;
     myTestStyleSettings.SPACE_AROUND_ASSIGNMENT_OPERATORS = false;

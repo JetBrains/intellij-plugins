@@ -72,7 +72,6 @@ public interface DartTokenTypesSets {
     PLUS_PLUS, MINUS_MINUS, NOT, MINUS
   );
   TokenSet BITWISE_OPERATORS = TokenSet.create(BITWISE_OPERATOR);
-
   TokenSet FUNCTION_DEFINITION = TokenSet.create(
     FUNCTION_DECLARATION,
     FUNCTION_DECLARATION_WITH_BODY,
@@ -88,6 +87,14 @@ public interface DartTokenTypesSets {
   );
 
   IElementType EMBEDDED_CONTENT = new DartEmbeddedContentElementType();
+
+  TokenSet BLOCKS = TokenSet.create(
+    BLOCK,
+    CLASS_BODY,
+    INTERFACE_BODY,
+    DART_FILE,
+    EMBEDDED_CONTENT
+  );
 
   class DartEmbeddedContentElementType extends ILazyParseableElementType implements ILightLazyParseableElementType {
     public DartEmbeddedContentElementType() {
