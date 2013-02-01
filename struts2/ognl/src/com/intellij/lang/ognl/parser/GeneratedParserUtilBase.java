@@ -29,7 +29,7 @@ import java.util.*;
 /**
  * @author gregsh
  */
-@SuppressWarnings("StringEquality")
+@SuppressWarnings("ALL")
 public class GeneratedParserUtilBase {
 
   private static final Logger LOG = Logger.getInstance("org.intellij.grammar.parser.GeneratedParserUtilBase");
