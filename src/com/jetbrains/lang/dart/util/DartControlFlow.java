@@ -143,8 +143,7 @@ public class DartControlFlow {
       }
       if (element instanceof DartReference &&
           DartResolveUtil.aloneOrFirstInChain((DartReference)element)) {
-        final PsiReference at = element.getContainingFile().findReferenceAt(element.getTextOffset());
-        final PsiElement resolve = at == null ? null : at.resolve();
+        final PsiElement resolve = ((DartReference)element).resolve();
         if (resolve instanceof DartComponentName && !myComponentNames.contains((DartComponentName)resolve)) {
           myComponentNames.add((DartComponentName)resolve);
         }

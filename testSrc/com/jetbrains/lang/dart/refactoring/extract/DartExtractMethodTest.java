@@ -56,6 +56,10 @@ public class DartExtractMethodTest extends JavaCodeInsightFixtureTestCase {
     doTest();
   }
 
+  public void testExtractWEB6459() throws Throwable {
+    doTest();
+  }
+
   public void testExtractWI14240() throws Throwable {
     doTest();
   }
