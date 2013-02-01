@@ -17,19 +17,20 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.parser;
 
-import org.jetbrains.annotations.*;
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.LighterASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
+import com.intellij.lang.PsiParser;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
+
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import static com.intellij.lang.ognl.parser.GeneratedParserUtilBase.*;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.lang.PsiParser;
 
-@SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
+@SuppressWarnings("ALL")
 public class OgnlParser implements PsiParser {
 
   public static Logger LOG_ = Logger.getInstance("com.intellij.lang.ognl.parser.OgnlParser");
