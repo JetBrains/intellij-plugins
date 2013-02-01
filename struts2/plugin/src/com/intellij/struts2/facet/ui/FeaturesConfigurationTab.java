@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,12 +20,14 @@ import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
 import com.intellij.facet.ui.libraries.FacetLibrariesValidator;
 import com.intellij.facet.ui.libraries.LibraryInfo;
-import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.module.Module;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.facet.Struts2LibraryType;
 import com.intellij.struts2.facet.StrutsFacetConfiguration;
 import com.intellij.struts2.facet.StrutsFacetLibrariesValidatorDescription;
+import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.download.DownloadableFileSetDescription;
 import com.intellij.util.download.DownloadableFileSetVersions;
@@ -92,11 +94,13 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
       }
     });
 
+    final ModalityState state = ModalityState.current();
+
     final DownloadableFileSetVersions<DownloadableFileSetDescription> fileSetVersions = Struts2LibraryType.getVersions();
     fileSetVersions.fetchVersions(new DownloadableFileSetVersions.FileSetVersionsCallback<DownloadableFileSetDescription>() {
       @Override
       public void onSuccess(@NotNull final List<? extends DownloadableFileSetDescription> versions) {
-        SwingUtilities.invokeLater(new Runnable() {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
           @Override
           public void run() {
             versionComboBox.setModel(new DefaultComboBoxModel(ArrayUtil.toObjectArray(versions)));
@@ -105,7 +109,7 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
             validator.setRequiredLibraries(getRequiredLibraries());
             validator.setDescription(new StrutsFacetLibrariesValidatorDescription(versions.get(0).getVersionString()));
           }
-        });
+        }, state);
       }
     });
   }
@@ -113,7 +117,7 @@ public class FeaturesConfigurationTab extends FacetEditorTab {
   @Nullable
   private DownloadableFileSetDescription getSelectedVersion() {
     final Object version = versionComboBox.getModel().getSelectedItem();
-    return version instanceof DownloadableFileSetDescription ? (DownloadableFileSetDescription) version : null;
+    return version instanceof DownloadableFileSetDescription ? (DownloadableFileSetDescription)version : null;
   }
 
   @Nullable
