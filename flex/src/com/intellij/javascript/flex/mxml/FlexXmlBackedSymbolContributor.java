@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.mxml;
 
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.index.JavaScriptClassContributor;
 import com.intellij.navigation.ChooseByNameContributor;
 import com.intellij.navigation.NavigationItem;
@@ -23,7 +24,11 @@ public class FlexXmlBackedSymbolContributor implements ChooseByNameContributor {
   public NavigationItem[] getItemsByName(String name, final String pattern, Project project, boolean includeNonProjectItems) {
     Collection<NavigationItem> result = new THashSet<NavigationItem>();
     result.addAll(FlexXmlBackedMembersIndex.getItemsByName(name, project));
-    result.addAll(JavaScriptClassContributor.getItemsByNameStatic(name, pattern, project, includeNonProjectItems));
+    for (NavigationItem item : JavaScriptClassContributor.getItemsByNameStatic(name, pattern, project, includeNonProjectItems)) {
+      if (item instanceof XmlBackedJSClassImpl) {
+        result.add(item);
+      }
+    }
     return result.toArray(new NavigationItem[result.size()]);
   }
 }
