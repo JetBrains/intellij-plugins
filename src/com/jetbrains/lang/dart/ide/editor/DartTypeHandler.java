@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class DartTypeHandler extends TypedHandlerDelegate {
   private boolean myAfterTypeOrComponentName = false;
+  private boolean myAfterDollar = false;
+
 
   @Override
   public Result beforeCharTyped(char c,
@@ -24,6 +26,9 @@ public class DartTypeHandler extends TypedHandlerDelegate {
     if (c == '<') {
       myAfterTypeOrComponentName = checkAfterTypeOrComponentName(file, editor.getCaretModel().getOffset());
     }
+    if (c == '{') {
+      myAfterDollar = checkAfterDollarInString(file, editor.getCaretModel().getOffset());
+    }
     return super.beforeCharTyped(c, project, editor, file, fileType);
   }
 
@@ -33,13 +38,27 @@ public class DartTypeHandler extends TypedHandlerDelegate {
     return PsiTreeUtil.getParentOfType(toCheck, DartType.class, DartComponentName.class) != null;
   }
 
+  private static boolean checkAfterDollarInString(PsiFile file, int offset) {
+    PsiElement at = file.findElementAt(offset - 1);
+    final String text = at != null ? at.getText() : "";
+    return text.endsWith("$");
+  }
+
   @Override
   public Result charTyped(char c, Project project, Editor editor, @NotNull PsiFile file) {
+    String textToInsert = null;
     if (c == '<' && myAfterTypeOrComponentName) {
       myAfterTypeOrComponentName = false;
+      textToInsert = ">";
+    }
+    else if (c == '{' && myAfterDollar) {
+      myAfterDollar = false;
+      textToInsert = "}";
+    }
+    if (textToInsert != null) {
       int offset = editor.getCaretModel().getOffset();
       if (offset >= 0) {
-        editor.getDocument().insertString(offset, ">");
+        editor.getDocument().insertString(offset, textToInsert);
         editor.getCaretModel().moveToOffset(offset);
         return Result.STOP;
       }

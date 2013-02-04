@@ -22,4 +22,16 @@ public class DartEditorCompletionTest extends DartCompletionTestBase {
   public void testLess() throws Throwable {
     doTest('<');
   }
+
+  public void testString1() throws Throwable {
+    doTest('{');
+  }
+
+  public void testString2() throws Throwable {
+    doTest('{');
+  }
+
+  public void testString3() throws Throwable {
+    doTest('{');
+  }
 }
