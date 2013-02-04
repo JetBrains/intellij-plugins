@@ -29,7 +29,9 @@ public class TelLanguageInjector implements MultiHostInjector {
 
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement context) {
-    XmlAttribute attr = (XmlAttribute)context.getParent();
+    PsiElement contextParent = context.getParent();
+    if (!(contextParent instanceof XmlAttribute)) return;
+    XmlAttribute attr = (XmlAttribute)contextParent;
     String name = attr.getLocalName();
     if ("type".equals(name) || "id".equals(name)) return;
     XmlTag parent = attr.getParent();
