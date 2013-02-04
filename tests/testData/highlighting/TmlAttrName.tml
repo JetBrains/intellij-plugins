@@ -4,6 +4,6 @@
         </<info>t:count</info>>
     </head>
     <body>
-    <<info>t:actionlink</info> class="<inject>alink</inject>" foobaz="<inject>true</inject>"/>
+    <<info>t:actionlink</info> class="<inject>alink</inject>" foobaz="true"/>
     </body>
 </html>

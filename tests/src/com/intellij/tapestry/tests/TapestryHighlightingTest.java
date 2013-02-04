@@ -43,7 +43,8 @@ public class TapestryHighlightingTest extends TapestryBaseTestCase {
 
   public void testTmlAttrNameWithPrefix() throws Throwable {
     addComponentToProject("Count");
-    doTest(true, new RequiredAttributesInspection());
+    addComponentToProject("Count2");
+    doTest(true, new RequiredAttributesInspection(), new TelReferencesInspection());
   }
 
   public void testNonPropBindingPrefix() throws Throwable {

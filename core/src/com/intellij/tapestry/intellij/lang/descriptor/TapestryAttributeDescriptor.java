@@ -37,4 +37,8 @@ public class TapestryAttributeDescriptor extends BasicTapestryAttributeDescripto
   public String getDefaultValue() {
     return myParam.getDefaultValue();
   }
+
+  public String getDefaultPrefix() {
+    return myParam.getDefaultPrefix();
+  }
 }

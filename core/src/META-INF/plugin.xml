@@ -31,6 +31,7 @@
     <lang.parserDefinition language="TML" implementationClass="com.intellij.tapestry.psi.TmlParserDefinition"/>
     <lang.parserDefinition language="TEL" implementationClass="com.intellij.tapestry.psi.TelParserDefinition"/>
 
+    <multiHostInjector implementation="com.intellij.tapestry.intellij.lang.TelLanguageInjector" />
     <annotator language="TML" implementationClass="com.intellij.tapestry.intellij.lang.annotator.TemplateTagAnnotator"/>
 
     <psi.referenceContributor implementation="com.intellij.tapestry.intellij.lang.reference.TapestryReferenceContributor"/>
