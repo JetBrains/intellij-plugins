@@ -1001,26 +1001,53 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
   @Nullable
   private AnnotationBackedDescriptor getDefaultPropertyDescriptor(final JSClass jsClass) {
-    JSAttributeList attributeList = jsClass.getAttributeList();
+    final Ref<JSAttribute> dpAttributeRef = Ref.create();
 
-    if (attributeList != null) {
-      JSAttribute[] attributes = attributeList.getAttributesByName("DefaultProperty");
-
-      if (attributes.length > 0) {
-        JSAttributeNameValuePair pair = attributes[0].getValueByName(null);
-        if (pair != null) {
-          String s = pair.getSimpleValue();
-
-          if (s != null) {
-            getAttributesDescriptors(null);
-            XmlAttributeDescriptor descriptor = getAttributeDescriptor(s, null);
-
-            if (descriptor instanceof AnnotationBackedDescriptor) {
-              return (AnnotationBackedDescriptor)descriptor;
+    if (jsClass instanceof XmlBackedJSClassImpl) {
+      final XmlFile xmlFile = (XmlFile)jsClass.getContainingFile();
+      final XmlTag rootTag = xmlFile.getRootTag();
+      if (rootTag != null) {
+        for (XmlTag metadataTag : rootTag.findSubTags(XmlBackedJSClassImpl.METADATA_TAG_NAME, JavaScriptSupportLoader.MXML_URI3)) {
+          JSResolveUtil.processInjectedFileForTag(metadataTag, new JSResolveUtil.JSInjectedFilesVisitor() {
+            protected void process(final JSFile file) {
+              for (PsiElement elt : file.getChildren()) {
+                if (elt instanceof JSAttributeList) {
+                  final JSAttribute dpAttribute = ((JSAttributeList)elt).findAttributeByName("DefaultProperty");
+                  if (dpAttributeRef.isNull() && dpAttribute != null) {
+                    dpAttributeRef.set(dpAttribute);
+                    return;
+                  }
+                }
+              }
             }
-            else {
-              return new AnnotationBackedDescriptorImpl("any", this, true, "NonExistentClass!", null, null);
-            }
+          });
+        }
+      }
+    }
+    else {
+      final JSAttributeList attributeList = jsClass.getAttributeList();
+
+      if (attributeList != null) {
+        dpAttributeRef.set(attributeList.findAttributeByName("DefaultProperty"));
+      }
+    }
+
+    final JSAttribute attribute = dpAttributeRef.get();
+
+    if (attribute != null) {
+      JSAttributeNameValuePair pair = attribute.getValueByName(null);
+      if (pair != null) {
+        String s = pair.getSimpleValue();
+
+        if (s != null) {
+          getAttributesDescriptors(null);
+          XmlAttributeDescriptor descriptor = getAttributeDescriptor(s, null);
+
+          if (descriptor instanceof AnnotationBackedDescriptor) {
+            return (AnnotationBackedDescriptor)descriptor;
+          }
+          else {
+            return new AnnotationBackedDescriptorImpl("any", this, true, "NonExistentClass!", null, null);
           }
         }
       }
