@@ -117,7 +117,6 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
 
     performTearDown();
 
-    DomApplicationComponent.getInstance().clearCachesInTests();
     super.tearDown();
   }
 
