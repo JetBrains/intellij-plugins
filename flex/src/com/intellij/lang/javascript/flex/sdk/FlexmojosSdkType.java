@@ -105,9 +105,9 @@ public class FlexmojosSdkType extends SdkType {
   }
 
   public String getVersionString(final String sdkHome) {
-    // C:/Users/xxx/.m2/repository/com/adobe/flex/compiler/4.0.0.14159/compiler-4.0.0.14159.pom
-    final int lastDash = sdkHome.lastIndexOf("-");
-    final int lastDot = sdkHome.lastIndexOf(".");
-    return lastDot > lastDash ? sdkHome.substring(lastDash + 1, lastDot) : FlexBundle.message("flex.sdk.version.unknown");
+    // C:/Users/xxx/.m2/repository/com/adobe/flex/compiler/4.10.0-SNAPSHOT/compiler-4.10.0-SNAPSHOT.pom
+    final int index1 = sdkHome.lastIndexOf("compiler-");
+    return index1 > 0 && sdkHome.endsWith(".pom") ? sdkHome.substring(index1 + "compiler-".length(), sdkHome.length() - ".pom".length())
+                                                  : FlexBundle.message("flex.sdk.version.unknown");
   }
 }
