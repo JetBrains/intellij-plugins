@@ -2,23 +2,19 @@ package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypes;
-import com.jetbrains.lang.dart.ide.index.DartReversedLibraryIndex;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Set;
 
 /**
  * @author: Fedor.Korotkov
@@ -44,6 +40,12 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
       componentName.setName(name);
     }
     return this;
+  }
+
+  @Nullable
+  @Override
+  public PsiElement getNameIdentifier() {
+    return getComponentName();
   }
 
   @Override
@@ -86,7 +88,8 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
         final StringBuilder result = new StringBuilder();
         result.append(getComponentName());
         final DartComponentType type = DartComponentType.typeOf(AbstractDartComponentImpl.this);
-        if ((type == DartComponentType.METHOD || type == DartComponentType.FUNCTION || type == DartComponentType.CONSTRUCTOR) && !(isGetter() || isSetter())) {
+        if ((type == DartComponentType.METHOD || type == DartComponentType.FUNCTION || type == DartComponentType.CONSTRUCTOR) &&
+            !(isGetter() || isSetter())) {
           final String parameterList = DartPresentableUtil.getPresentableParameterList(AbstractDartComponentImpl.this);
           result.append("(").append(parameterList).append(")");
         }
