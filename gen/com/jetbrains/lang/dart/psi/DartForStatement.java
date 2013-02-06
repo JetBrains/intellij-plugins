@@ -26,7 +26,7 @@ public interface DartForStatement extends DartPsiCompositeElement {
   DartExpression getExpression();
 
   @Nullable
-  DartForLoopParts getForLoopParts();
+  DartForLoopPartsInBraces getForLoopPartsInBraces();
 
   @Nullable
   DartForStatement getForStatement();

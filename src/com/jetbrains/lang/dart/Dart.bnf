@@ -394,7 +394,7 @@ private not_paren_recover ::= !')'
 
 whileStatement ::= 'while' '(' expressionWithRecoverUntilParen ')' statement {pin=1}
 doWhileStatement ::= 'do' statement 'while' '(' expressionWithRecoverUntilParen ')' ';' {pin=1}
-forStatement ::= 'for' '(' forLoopParts ')' statement {pin=1}
+forStatement ::= 'for' forLoopPartsInBraces statement {pin=1}
 //todo component
 assertStatement ::= 'assert' '(' expressionWithRecoverUntilParen ')' ';' {pin=1}
 breakStatement ::= 'break' referenceExpression? ';' {pin=1}
@@ -402,6 +402,7 @@ continueStatement ::= 'continue' referenceExpression? ';' {pin=1}
 returnStatement ::= 'return' expression? ';' {pin=1}
 throwStatement ::= 'throw' expression? ';' {pin=1}
 
+forLoopPartsInBraces::= '(' forLoopParts ')'
 forLoopParts::= varDeclarationList ';' expression? ';' expressionList?
               | forInPart
               | expressionList? ';' expression? ';' expressionList?

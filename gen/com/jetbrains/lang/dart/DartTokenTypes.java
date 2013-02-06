@@ -49,6 +49,7 @@ public interface DartTokenTypes {
   IElementType FORMAL_PARAMETER_LIST = new DartElementType("FORMAL_PARAMETER_LIST");
   IElementType FOR_IN_PART = new DartElementType("FOR_IN_PART");
   IElementType FOR_LOOP_PARTS = new DartElementType("FOR_LOOP_PARTS");
+  IElementType FOR_LOOP_PARTS_IN_BRACES = new DartElementType("FOR_LOOP_PARTS_IN_BRACES");
   IElementType FOR_STATEMENT = new DartElementType("FOR_STATEMENT");
   IElementType FUNCTION_BODY = new DartElementType("FUNCTION_BODY");
   IElementType FUNCTION_DECLARATION = new DartElementType("FUNCTION_DECLARATION");
@@ -380,6 +381,9 @@ public interface DartTokenTypes {
       }
       else if (type == FOR_LOOP_PARTS) {
         return new DartForLoopPartsImpl(node);
+      }
+      else if (type == FOR_LOOP_PARTS_IN_BRACES) {
+        return new DartForLoopPartsInBracesImpl(node);
       }
       else if (type == FOR_STATEMENT) {
         return new DartForStatementImpl(node);

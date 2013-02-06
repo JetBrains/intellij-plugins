@@ -169,22 +169,23 @@ Dart File
           PsiElement(;)(';')
           FOR_STATEMENT
             PsiElement(for)('for')
-            PsiElement(()('(')
-            FOR_LOOP_PARTS
-              FOR_IN_PART
-                VAR_ACCESS_DECLARATION
-                  TYPE
-                    REFERENCE_EXPRESSION
+            FOR_LOOP_PARTS_IN_BRACES
+              PsiElement(()('(')
+              FOR_LOOP_PARTS
+                FOR_IN_PART
+                  VAR_ACCESS_DECLARATION
+                    TYPE
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('Element')
+                    COMPONENT_NAME
                       ID
-                        PsiElement(IDENTIFIER)('Element')
-                  COMPONENT_NAME
+                        PsiElement(export)('export')
+                  PsiElement(in)('in')
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(export)('export')
-                PsiElement(in)('in')
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('exportedElements')
-            PsiElement())(')')
+                      PsiElement(IDENTIFIER)('exportedElements')
+              PsiElement())(')')
             BLOCK
               PsiElement({)('{')
               STATEMENTS

@@ -55,8 +55,8 @@ public class DartForStatementImpl extends DartPsiCompositeElementImpl implements
 
   @Override
   @Nullable
-  public DartForLoopParts getForLoopParts() {
-    return findChildByClass(DartForLoopParts.class);
+  public DartForLoopPartsInBraces getForLoopPartsInBraces() {
+    return findChildByClass(DartForLoopPartsInBraces.class);
   }
 
   @Override

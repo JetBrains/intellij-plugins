@@ -1,11 +1,10 @@
 main() {
-    var args=new Options().arguments;
+    var args = new Options().arguments;
     if (args.length == 0) {
         print("Usage: dart embiggen.dart phrase");
         return;
     }
-    var
-    phrase=args[0];
+    var phrase = args[0];
     print(embiggen(phrase));
 }
 

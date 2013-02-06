@@ -89,7 +89,7 @@ public class DartIndentProcessor {
     if (parentType == FORMAL_PARAMETER_LIST) {
       return Indent.getContinuationIndent();
     }
-    if (parentType == FOR_STATEMENT && prevSiblingType == RPAREN && elementType != BLOCK) {
+    if (parentType == FOR_STATEMENT && prevSiblingType == FOR_LOOP_PARTS_IN_BRACES && elementType != BLOCK) {
       return Indent.getNormalIndent();
     }
     if (parentType == SWITCH_STATEMENT && prevSiblingType == RPAREN) {

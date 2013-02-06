@@ -7,6 +7,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
 import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
@@ -15,6 +16,31 @@ import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
  * @author: Fedor.Korotkov
  */
 public class DartSpacingProcessor {
+  TokenSet KEYWORDS_WITH_SPACE_AFTER = TokenSet.create(
+    VAR,
+    FINAL,
+    STATIC,
+    EXTERNAL,
+    ABSTRACT,
+    GET,
+    SET,
+    FACTORY,
+    OPERATOR,
+    METADATA,
+    PART,
+    EXPORT,
+    AS,
+    SHOW,
+    HIDE
+  );
+  TokenSet KEYWORDS_WITH_SPACE_BEFORE = TokenSet.create(
+    GET,
+    SET,
+    EXTENDS,
+    IMPLEMENTS,
+    AS
+  );
+
   private final ASTNode myNode;
   private final CommonCodeStyleSettings mySettings;
 
@@ -44,13 +70,16 @@ public class DartSpacingProcessor {
     }
     if (type2 != SEMICOLON && BLOCKS.contains(elementType)) {
       int lineFeeds = elementType == BLOCK ? 1 : 2;
-      return Spacing.createSpacing(0, 0, lineFeeds, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      return Spacing.createSpacing(0, 0, lineFeeds, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    }
+    if (type2 != SEMICOLON && (parentType == SWITCH_CASE || parentType == DEFAULT_CASE)) {
+      return Spacing.createSpacing(0, 0, 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
     if (type1 == SEMICOLON && parentType == BLOCK) {
-      return addSingleSpaceIf(false, true);
+      return addLineBreak();
     }
     if (type1 == STATEMENTS || type2 == STATEMENTS) {
-      return addSingleSpaceIf(false, true);
+      return addLineBreak();
     }
     if (type1 == CLASS_BODY || type2 == CLASS_BODY) {
       return addSingleSpaceIf(false, true);
@@ -66,7 +95,7 @@ public class DartSpacingProcessor {
     }
 
     if (type1 == CLASS_BODY || type1 == INTERFACE_BODY) {
-      return Spacing.createSpacing(0, 0, 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
+      return addLineBreak();
     }
 
     if (type2 == LPAREN) {
@@ -75,9 +104,6 @@ public class DartSpacingProcessor {
       }
       else if (elementType == WHILE_STATEMENT || elementType == DO_WHILE_STATEMENT) {
         return addSingleSpaceIf(mySettings.SPACE_BEFORE_WHILE_PARENTHESES);
-      }
-      else if (elementType == FOR_STATEMENT) {
-        return addSingleSpaceIf(mySettings.SPACE_BEFORE_FOR_PARENTHESES);
       }
       else if (elementType == SWITCH_STATEMENT) {
         return addSingleSpaceIf(mySettings.SPACE_BEFORE_SWITCH_PARENTHESES);
@@ -88,6 +114,10 @@ public class DartSpacingProcessor {
       else if (elementType == CATCH_PART) {
         return addSingleSpaceIf(mySettings.SPACE_BEFORE_CATCH_PARENTHESES);
       }
+    }
+
+    if (type2 == FOR_LOOP_PARTS_IN_BRACES) {
+      return addSingleSpaceIf(mySettings.SPACE_BEFORE_FOR_PARENTHESES);
     }
 
     if (type2 == FORMAL_PARAMETER_LIST && (FUNCTION_DEFINITION.contains(elementType) || elementType == FUNCTION_EXPRESSION)) {
@@ -146,7 +176,7 @@ public class DartSpacingProcessor {
       else if (elementType == WHILE_STATEMENT || elementType == DO_WHILE_STATEMENT) {
         return addSingleSpaceIf(mySettings.SPACE_WITHIN_WHILE_PARENTHESES);
       }
-      else if (elementType == FOR_STATEMENT) {
+      else if (elementType == FOR_LOOP_PARTS_IN_BRACES) {
         return addSingleSpaceIf(mySettings.SPACE_WITHIN_FOR_PARENTHESES);
       }
       else if (elementType == SWITCH_STATEMENT) {
@@ -201,8 +231,11 @@ public class DartSpacingProcessor {
       return addSingleSpaceIf(mySettings.SPACE_AROUND_ASSIGNMENT_OPERATORS);
     }
 
-    if ((type1 == EQ || type2 == EQ) &&
-        type2 == VAR_INIT) {
+    if (type1 == EQ && elementType == VAR_INIT) {
+      return addSingleSpaceIf(mySettings.SPACE_AROUND_ASSIGNMENT_OPERATORS);
+    }
+
+    if (type2 == VAR_INIT) {
       return addSingleSpaceIf(mySettings.SPACE_AROUND_ASSIGNMENT_OPERATORS);
     }
 
@@ -296,15 +329,34 @@ public class DartSpacingProcessor {
       return addSingleSpaceIf(true);
     }
 
+    if (type1 == FOR_LOOP_PARTS_IN_BRACES && !BLOCKS.contains(type2)) {
+      return addLineBreak();
+    }
+
     if (type1 == IF_STATEMENT ||
         type1 == SWITCH_STATEMENT ||
         type1 == TRY_STATEMENT ||
         type1 == DO_WHILE_STATEMENT ||
+        type1 == FOR_STATEMENT ||
+        type1 == SWITCH_CASE ||
+        type1 == DEFAULT_CASE ||
         type1 == WHILE_STATEMENT) {
-      return addSingleSpaceIf(false, true);
+      return addLineBreak();
     }
 
-    return Spacing.createSpacing(0, 1, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    if (type1 == LBRACE || type2 == RBRACE || BLOCKS.contains(type1) || FUNCTION_DEFINITION.contains(type1)) {
+      return addLineBreak();
+    }
+
+    if(KEYWORDS_WITH_SPACE_AFTER.contains(type1) || KEYWORDS_WITH_SPACE_BEFORE.contains(type2)) {
+      return addSingleSpaceIf(true);
+    }
+
+    return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
+  }
+
+  private Spacing addLineBreak() {
+    return Spacing.createSpacing(0, 0, 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
   }
 
   private Spacing addSingleSpaceIf(boolean condition) {

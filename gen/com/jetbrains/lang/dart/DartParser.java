@@ -143,6 +143,9 @@ public class DartParser implements PsiParser {
     else if (root_ == FOR_LOOP_PARTS) {
       result_ = forLoopParts(builder_, level_ + 1);
     }
+    else if (root_ == FOR_LOOP_PARTS_IN_BRACES) {
+      result_ = forLoopPartsInBraces(builder_, level_ + 1);
+    }
     else if (root_ == FOR_STATEMENT) {
       result_ = forStatement(builder_, level_ + 1);
     }
@@ -2873,7 +2876,26 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // 'for' '(' forLoopParts ')' statement
+  // '(' forLoopParts ')'
+  public static boolean forLoopPartsInBraces(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "forLoopPartsInBraces")) return false;
+    if (!nextTokenIs(builder_, LPAREN)) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = consumeToken(builder_, LPAREN);
+    result_ = result_ && forLoopParts(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, RPAREN);
+    if (result_) {
+      marker_.done(FOR_LOOP_PARTS_IN_BRACES);
+    }
+    else {
+      marker_.rollbackTo();
+    }
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // 'for' forLoopPartsInBraces statement
   public static boolean forStatement(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "forStatement")) return false;
     if (!nextTokenIs(builder_, FOR)) return false;
@@ -2883,9 +2905,7 @@ public class DartParser implements PsiParser {
     enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
     result_ = consumeToken(builder_, FOR);
     pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, consumeToken(builder_, LPAREN));
-    result_ = pinned_ && report_error_(builder_, forLoopParts(builder_, level_ + 1)) && result_;
-    result_ = pinned_ && report_error_(builder_, consumeToken(builder_, RPAREN)) && result_;
+    result_ = result_ && report_error_(builder_, forLoopPartsInBraces(builder_, level_ + 1));
     result_ = pinned_ && statement(builder_, level_ + 1) && result_;
     if (result_ || pinned_) {
       marker_.done(FOR_STATEMENT);

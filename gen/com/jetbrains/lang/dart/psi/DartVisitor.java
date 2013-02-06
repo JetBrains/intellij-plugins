@@ -175,6 +175,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitPsiCompositeElement(o);
   }
 
+  public void visitForLoopPartsInBraces(@NotNull DartForLoopPartsInBraces o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitForStatement(@NotNull DartForStatement o) {
     visitPsiCompositeElement(o);
   }
