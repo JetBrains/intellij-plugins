@@ -36,7 +36,6 @@ import gherkin.formatter.model.Step;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
-import org.jetbrains.plugins.cucumber.java.config.CucumberConfigUtil;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
 import java.util.ArrayList;
@@ -46,9 +45,6 @@ import java.util.ArrayList;
  * Date: 8/1/12
  */
 public class JavaStepDefinitionCreator implements StepDefinitionCreator {
-  public static final String CUCUMBER_1_1_ANNOTATION_PACKAGE = "@cucumber.api.java.en.";
-  public static final String CUCUMBER_1_0_ANNOTATION_PACKAGE = "@cucumber.annotation.en.";
-
   @NotNull
   @Override
   public PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
@@ -202,20 +198,16 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
   }
 
   private static PsiMethod buildStepDefinitionByStep(@NotNull final GherkinStep step) {
-    String annotationPackage = CUCUMBER_1_1_ANNOTATION_PACKAGE;
-    final String version = CucumberConfigUtil.getCucumberCoreVersion(step);
-    if (version != null && version.compareTo(CucumberConfigUtil.CUCUMBER_VERSION_1_1) < 0) {
-      annotationPackage = CUCUMBER_1_0_ANNOTATION_PACKAGE;
-    }
+    String annotationPackage = new AnnotationPackageProvider().getAnnotationPackageFor(step);
+    String methodAnnotation = String.format("@%s.", annotationPackage);
 
-    final PsiElementFactory factory = JavaPsiFacade.getInstance(step.getProject()).getElementFactory();
     final Step cucumberStep = new Step(new ArrayList<Comment>(), step.getKeyword().getText(), step.getStepName(), 0, null, null);
     final String snippet = new SnippetGenerator(new JavaSnippet()).getSnippet(cucumberStep)
       .replace("PendingException", "cucumber.runtime.PendingException")
-      .replaceFirst("@", annotationPackage)
+      .replaceFirst("@", methodAnnotation)
       .replaceAll("\\\\\\\\", "\\\\")
       .replaceAll("\\\\d", "\\\\\\\\d");
 
-    return factory.createMethodFromText(snippet, step);
+    return JavaPsiFacade.getInstance(step.getProject()).getElementFactory().createMethodFromText(snippet, step);
   }
 }

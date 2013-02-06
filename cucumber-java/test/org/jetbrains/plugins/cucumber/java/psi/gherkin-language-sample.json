@@ -1,0 +1,30 @@
+{
+    "en": {
+        "name": "English",
+        "native": "English",
+        "feature": "Feature|Business Need|Ability",
+        "background": "Background",
+        "scenario": "Scenario",
+        "scenario_outline": "Scenario Outline|Scenario Template",
+        "examples": "Examples|Scenarios",
+        "given": "*|Given",
+        "when": "*|When",
+        "then": "*|Then",
+        "and": "*|And",
+        "but": "*|But"
+    },
+    "ar": {
+        "name": "Arabic",
+        "native": "العربية",
+        "feature": "خاصية",
+        "background": "الخلفية",
+        "scenario": "سيناريو",
+        "scenario_outline": "سيناريو مخطط",
+        "examples": "امثلة",
+        "given": "*|بفرض",
+        "when": "*|متى|عندما",
+        "then": "*|اذاً|ثم",
+        "and": "*|و",
+        "but": "*|لكن"
+    }
+}
