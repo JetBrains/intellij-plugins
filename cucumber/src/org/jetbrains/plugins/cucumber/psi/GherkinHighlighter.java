@@ -82,7 +82,6 @@ public class GherkinHighlighter {
   static {
     //Init additional color, font types and effects
     KEYWORD_DEFAULT_ATTRS.setFontType(Font.BOLD);
-    KEYWORD_DEFAULT_ATTRS.setForegroundColor(new Color(0, 0, 128));
 
     COMMENT_DEFAULT_ATTRS.setFontType(Font.ITALIC);
     COMMENT_DEFAULT_ATTRS.setForegroundColor(Color.GRAY);
