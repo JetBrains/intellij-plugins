@@ -23,6 +23,8 @@
     <orderEntry type="library" name="cucumber-java" level="project" />
     <orderEntry type="module" module-name="java-indexing-api" />
     <orderEntry type="module" module-name="openapi" />
+    <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="library" scope="TEST" name="EasyMock" level="project" />
   </component>
 </module>
 

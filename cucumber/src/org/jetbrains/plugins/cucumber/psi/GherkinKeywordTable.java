@@ -21,6 +21,17 @@ public class GherkinKeywordTable {
     }
   }
 
+  public void putAllKeywordsInto(Map<String, IElementType> target) {
+    for (IElementType type : this.getTypes()) {
+      final Collection<String> keywords = this.getKeywords(type);
+      if (keywords != null) {
+        for (String keyword : keywords) {
+          target.put(keyword, type);
+        }
+      }
+    }
+  }
+
   public void put(IElementType type, String keyword) {
     if (GherkinTokenTypes.KEYWORDS.contains(type)) {
       Collection<String> keywords = getKeywords(type);
@@ -114,5 +125,10 @@ public class GherkinKeywordTable {
   @Nullable
   public Collection<String> getKeywords(final IElementType type) {
     return myType2KeywordsTable.get(type);
+  }
+
+  public boolean tableContainsKeyword(GherkinElementType type, String keyword) {
+    Collection<String> alreadyKnownKeywords = getKeywords(type);
+    return null != alreadyKnownKeywords && alreadyKnownKeywords.contains(keyword);
   }
 }
