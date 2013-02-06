@@ -1,0 +1,1 @@
+String ttt(varr) => <selection>'some string'</selection>;

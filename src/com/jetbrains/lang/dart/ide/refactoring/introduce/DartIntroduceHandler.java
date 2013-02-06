@@ -336,7 +336,20 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   }
 
   @Nullable
-  protected PsiElement performRefactoring(DartIntroduceOperation operation) {
+  protected PsiElement performRefactoring(@NotNull DartIntroduceOperation operation) {
+    PsiElement anchor = operation.isReplaceAll()
+                        ? findAnchor(operation.getOccurrences())
+                        : findAnchor(operation.getInitializer());
+    if (anchor == null) {
+      CommonRefactoringUtil.showErrorHint(
+        operation.getProject(),
+        operation.getEditor(),
+        RefactoringBundle.getCannotRefactorMessage(DartBundle.message("dart.refactoring.introduce.anchor.error")),
+        DartBundle.message("dart.refactoring.introduce.error"),
+        null
+      );
+      return null;
+    }
     PsiElement declaration = createDeclaration(operation);
     if (declaration == null) {
       showCannotPerformError(operation.getProject(), operation.getEditor());
@@ -357,18 +370,10 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
     InitializerTextBuilder builder = new InitializerTextBuilder();
     initializer.accept(builder);
     String assignmentText = getDeclarationString(operation, builder.result());
-    PsiElement anchor = operation.isReplaceAll()
-                        ? findAnchor(operation.getOccurrences())
-                        : findAnchor(initializer);
-    return createDeclaration(project, assignmentText, anchor);
+    return DartElementGenerator.createStatementFromText(project, assignmentText);
   }
 
   abstract protected String getDeclarationString(DartIntroduceOperation operation, String initExpression);
-
-  @Nullable
-  protected PsiElement createDeclaration(Project project, String text, PsiElement anchor) {
-    return DartElementGenerator.createStatementFromText(project, text);
-  }
 
   @Nullable
   private PsiElement performReplace(@NotNull final PsiElement declaration, final DartIntroduceOperation operation) {

@@ -60,11 +60,15 @@ public abstract class DartIntroduceTestBase extends LightCodeInsightFixtureTestC
         customization.consume(operation);
       }
       handler.performAction(operation);
-      myFixture.checkResultByFile(getTestName(false) + ".after" + getFileExtension());
+      doCheck();
     }
     finally {
       myFixture.getEditor().getSettings().setVariableInplaceRenameEnabled(inplaceEnabled);
     }
+  }
+
+  protected void doCheck() {
+    myFixture.checkResultByFile(getTestName(false) + ".after" + getFileExtension());
   }
 
   protected void doTestInplace(@Nullable Consumer<DartIntroduceOperation> customization) {
