@@ -775,6 +775,50 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // '=>' expression
+  static boolean arrowBody(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "arrowBody")) return false;
+    if (!nextTokenIs(builder_, EXPRESSION_BODY_DEF)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = builder_.mark();
+    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
+    result_ = consumeToken(builder_, EXPRESSION_BODY_DEF);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && expression(builder_, level_ + 1);
+    if (!result_ && !pinned_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
+    }
+    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // arrowBody ';'
+  static boolean arrowBodyWithSemi(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "arrowBodyWithSemi")) return false;
+    if (!nextTokenIs(builder_, EXPRESSION_BODY_DEF)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = builder_.mark();
+    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
+    result_ = arrowBody(builder_, level_ + 1);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && consumeToken(builder_, SEMICOLON);
+    if (!result_ && !pinned_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
+    }
+    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
+    return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
   // 'as' type
   public static boolean asExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "asExpression")) return false;
@@ -2996,7 +3040,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '=>' expression ';' | block
+  // arrowBodyWithSemi | block
   public static boolean functionBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionBody")) return false;
     if (!nextTokenIs(builder_, EXPRESSION_BODY_DEF) && !nextTokenIs(builder_, LBRACE)
@@ -3004,7 +3048,7 @@ public class DartParser implements PsiParser {
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<function body>");
-    result_ = functionBody_0(builder_, level_ + 1);
+    result_ = arrowBodyWithSemi(builder_, level_ + 1);
     if (!result_) result_ = block(builder_, level_ + 1);
     if (result_) {
       marker_.done(FUNCTION_BODY);
@@ -3013,23 +3057,6 @@ public class DartParser implements PsiParser {
       marker_.rollbackTo();
     }
     result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_GENERAL_, null);
-    return result_;
-  }
-
-  // '=>' expression ';'
-  private static boolean functionBody_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "functionBody_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = consumeToken(builder_, EXPRESSION_BODY_DEF);
-    result_ = result_ && expression(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, SEMICOLON);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
     return result_;
   }
 
@@ -3412,7 +3439,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '=>' expression | block
+  // arrowBody | block
   public static boolean functionExpressionBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "functionExpressionBody")) return false;
     if (!nextTokenIs(builder_, EXPRESSION_BODY_DEF) && !nextTokenIs(builder_, LBRACE)
@@ -3420,7 +3447,7 @@ public class DartParser implements PsiParser {
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<function expression body>");
-    result_ = functionExpressionBody_0(builder_, level_ + 1);
+    result_ = arrowBody(builder_, level_ + 1);
     if (!result_) result_ = block(builder_, level_ + 1);
     if (result_) {
       marker_.done(FUNCTION_EXPRESSION_BODY);
@@ -3429,22 +3456,6 @@ public class DartParser implements PsiParser {
       marker_.rollbackTo();
     }
     result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_GENERAL_, null);
-    return result_;
-  }
-
-  // '=>' expression
-  private static boolean functionExpressionBody_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "functionExpressionBody_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = consumeToken(builder_, EXPRESSION_BODY_DEF);
-    result_ = result_ && expression(builder_, level_ + 1);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
     return result_;
   }
 

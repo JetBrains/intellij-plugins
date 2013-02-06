@@ -572,7 +572,9 @@ functionDeclarationWithBody ::= (returnType componentName formalParameterList | 
 {mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 private functionPrefix ::= returnType componentName | componentName
 
-functionBody ::= '=>' expression ';' | block
+functionBody ::= arrowBodyWithSemi | block
+private arrowBodyWithSemi ::= arrowBody ';' {pin=1}
 
-functionExpressionBody ::= '=>' expression | block
+functionExpressionBody ::= arrowBody | block
+private arrowBody ::= '=>' expression {pin=1}
 
