@@ -83,7 +83,7 @@ public class BrowserErrorNode extends AbstractNodeWithParent<BrowserErrorNode> {
         if (parsedErrorMessage != null && parsedErrorMessage.getFileWithError().equals(file)) {
           result = parsedErrorMessage;
         } else {
-          result = new JsErrorMessage(file, 1, null, null, -1, -1);
+          result = new JsErrorMessage(file, 1, null, false, null, -1, -1);
         }
       }
     }

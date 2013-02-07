@@ -10,7 +10,6 @@ import com.google.jstestdriver.hooks.ServerListener;
 import com.google.jstestdriver.html.HtmlDocLexer;
 import com.google.jstestdriver.html.HtmlDocParser;
 import com.google.jstestdriver.html.InlineHtmlProcessor;
-import com.google.jstestdriver.idea.icons.JstdIcons;
 import com.google.jstestdriver.idea.server.JstdServerState;
 import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.model.NullPathPrefix;

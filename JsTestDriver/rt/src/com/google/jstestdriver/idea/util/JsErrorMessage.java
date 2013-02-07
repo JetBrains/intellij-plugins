@@ -10,9 +10,12 @@ import java.io.File;
  */
 public class JsErrorMessage {
 
+  private static final String UNCAUGHT_PREFIX = "Uncaught ";
+
   private final File myFileWithError;
   private int myLineNumber;
   private final Integer myColumnNumber;
+  private final boolean myErrorNameWithUncaughtPrefix;
   private final String myParsedErrorName;
   private final int myHyperlinkStartInclusiveInd;
   private final int myHyperlinkEndExclusiveInd;
@@ -20,12 +23,14 @@ public class JsErrorMessage {
   public JsErrorMessage(@NotNull File fileWithError,
                         int lineNumber,
                         @Nullable Integer columnNumber,
+                        boolean errorNameWithUncaughtPrefix,
                         @Nullable String parsedErrorName,
                         int hyperlinkStartInclusiveInd,
                         int hyperlinkEndExclusiveInd) {
     myFileWithError = fileWithError;
     myLineNumber = lineNumber;
     myColumnNumber = columnNumber;
+    myErrorNameWithUncaughtPrefix = errorNameWithUncaughtPrefix;
     myParsedErrorName = parsedErrorName;
     myHyperlinkStartInclusiveInd = hyperlinkStartInclusiveInd;
     myHyperlinkEndExclusiveInd = hyperlinkEndExclusiveInd;
@@ -40,7 +45,13 @@ public class JsErrorMessage {
     if (errorName != null && !errorName.endsWith("Error")) {
       errorName = null;
     }
-    return errorName != null ? errorName : "Error";
+    if (errorName == null) {
+      errorName = "Error";
+    }
+    if (myErrorNameWithUncaughtPrefix) {
+      errorName = UNCAUGHT_PREFIX + errorName;
+    }
+    return errorName;
   }
 
   @NotNull
@@ -98,9 +109,10 @@ public class JsErrorMessage {
       }
     }
     String errorNameAndOther = pathAndOther.substring(textMessageStartInd).trim();
-    String uncaughtPrefix = "Uncaught ";
-    if (errorNameAndOther.startsWith(uncaughtPrefix)) {
-      errorNameAndOther = errorNameAndOther.substring(uncaughtPrefix.length()).trim();
+    boolean uncaughtTextPresented = false;
+    if (errorNameAndOther.startsWith(UNCAUGHT_PREFIX)) {
+      errorNameAndOther = errorNameAndOther.substring(UNCAUGHT_PREFIX.length()).trim();
+      uncaughtTextPresented = true;
     }
     String exceptionStr = "exception:";
     if (errorNameAndOther.startsWith(exceptionStr)) {
@@ -110,7 +122,7 @@ public class JsErrorMessage {
     if (detailsStartInd > 0) {
       errorNameAndOther = errorNameAndOther.substring(0, detailsStartInd);
     }
-    return new JsErrorMessage(file, lineNumber, columnNumber, errorNameAndOther,
+    return new JsErrorMessage(file, lineNumber, columnNumber, uncaughtTextPresented, errorNameAndOther,
                               prefix.length(), prefix.length() + textMessageStartInd - 1);
   }
 

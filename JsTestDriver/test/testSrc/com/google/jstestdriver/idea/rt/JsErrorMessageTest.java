@@ -26,7 +26,7 @@ public class JsErrorMessageTest extends TestCase {
     Assert.assertEquals(errorMessage.getFileWithError(), new File(myBasePath, "assertFramework/jasmine/structure/emailValidator.js"));
     Assert.assertEquals(errorMessage.getLineNumber(), 2);
     Assert.assertEquals(errorMessage.getColumnNumber(), null);
-    Assert.assertEquals(errorMessage.getErrorName(), "ReferenceError");
+    Assert.assertEquals(errorMessage.getErrorName(), "Uncaught ReferenceError");
   }
 
   public void testStrangeErrorName() throws Exception {
@@ -36,7 +36,7 @@ public class JsErrorMessageTest extends TestCase {
     Assert.assertEquals(errorMessage.getFileWithError(), new File(myBasePath, "assertFramework/qunit/structure/basicUsage.js"));
     Assert.assertEquals(errorMessage.getLineNumber(), 1);
     Assert.assertEquals(errorMessage.getColumnNumber(), null);
-    Assert.assertEquals(errorMessage.getErrorName(), "Error");
+    Assert.assertEquals(errorMessage.getErrorName(), "Uncaught Error");
   }
 
   public void testColumnNumber() throws Exception {
@@ -46,7 +46,7 @@ public class JsErrorMessageTest extends TestCase {
     Assert.assertEquals(errorMessage.getFileWithError(), new File(myBasePath, "assertFramework/qunit/structure/basicUsage.js"));
     Assert.assertEquals(errorMessage.getLineNumber(), 1);
     Assert.assertEquals(errorMessage.getColumnNumber(), new Integer(10));
-    Assert.assertEquals(errorMessage.getErrorName(), "ReferenceError");
+    Assert.assertEquals(errorMessage.getErrorName(), "Uncaught ReferenceError");
   }
 
   public void testOperaError() throws Exception {
@@ -56,7 +56,7 @@ public class JsErrorMessageTest extends TestCase {
     Assert.assertEquals(errorMessage.getFileWithError(), new File(myBasePath, "assertFramework/qunit/structure/basicUsage.js"));
     Assert.assertEquals(errorMessage.getLineNumber(), 1);
     Assert.assertEquals(errorMessage.getColumnNumber(), null);
-    Assert.assertEquals(errorMessage.getErrorName(), "ReferenceError");
+    Assert.assertEquals(errorMessage.getErrorName(), "Uncaught ReferenceError");
   }
 
   public void testName() throws Exception {
@@ -67,5 +67,15 @@ public class JsErrorMessageTest extends TestCase {
     Assert.assertEquals(errorMessage.getLineNumber(), 1);
     Assert.assertEquals(errorMessage.getColumnNumber(), null);
     Assert.assertEquals(errorMessage.getErrorName(), "ReferenceError");
+  }
+
+  public void testUncaughtError() throws Exception {
+    String text = "error loading file: /test/assertFramework/qunit/structure/basicUsage.js:301: Uncaught Error: xhrFailed";
+    JsErrorMessage errorMessage = JsErrorMessage.parseFromText(text, myBasePath);
+    Assert.assertNotNull(errorMessage);
+    Assert.assertEquals(errorMessage.getFileWithError(), new File(myBasePath, "assertFramework/qunit/structure/basicUsage.js"));
+    Assert.assertEquals(errorMessage.getLineNumber(), 301);
+    Assert.assertEquals(errorMessage.getColumnNumber(), null);
+    Assert.assertEquals(errorMessage.getErrorName(), "Uncaught Error");
   }
 }
