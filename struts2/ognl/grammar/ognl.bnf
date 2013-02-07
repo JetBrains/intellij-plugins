@@ -119,6 +119,7 @@ private rootElement ::= expression
 
 expression ::= sequenceExpression |
                parenthesizedExpression |
+               variableAssignmentExpression |
                conditionalExpression |
                binaryExpression |
                newExpression |
@@ -153,6 +154,10 @@ referenceExpression ::= ('@')? IDENTIFIER ('.' IDENTIFIER) * ('@' IDENTIFIER)? {
 variableExpression ::= '#' IDENTIFIER {
   pin=1
   mixin="com.intellij.lang.ognl.psi.impl.OgnlVariableExpressionBase"
+}
+
+variableAssignmentExpression ::= '#' IDENTIFIER '=' expression {
+  pin = 3
 }
 
 private methodCallParameters ::= [] expression (',' expression)*  { pin(".*")=1 }
@@ -247,4 +252,3 @@ newExpression ::= NEW_KEYWORD referenceExpression (arrayConstructorExpression | 
 // map creation: #{ e1 : e2, ... }
 // map creation w/ class: #@classname@{ e1 : e2, ... }
 // lambda: :[ e ]
-// #var = value

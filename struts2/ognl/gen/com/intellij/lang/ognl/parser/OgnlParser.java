@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import static com.intellij.lang.ognl.parser.GeneratedParserUtilBase.*;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class OgnlParser implements PsiParser {
 
   public static Logger LOG_ = Logger.getInstance("com.intellij.lang.ognl.parser.OgnlParser");
@@ -41,10 +41,10 @@ public class OgnlParser implements PsiParser {
     boolean result_;
     builder_ = adapt_builder_(root_, builder_, this);
     if (root_ == BINARY_EXPRESSION) {
-      result_ = expression(builder_, level_ + 1, 3);
+      result_ = expression(builder_, level_ + 1, 4);
     }
     else if (root_ == CONDITIONAL_EXPRESSION) {
-      result_ = expression(builder_, level_ + 1, 2);
+      result_ = expression(builder_, level_ + 1, 3);
     }
     else if (root_ == EXPRESSION) {
       result_ = expression(builder_, level_ + 1, -1);
@@ -73,6 +73,9 @@ public class OgnlParser implements PsiParser {
     else if (root_ == UNARY_EXPRESSION) {
       result_ = unaryExpression(builder_, level_ + 1);
     }
+    else if (root_ == VARIABLE_ASSIGNMENT_EXPRESSION) {
+      result_ = variableAssignmentExpression(builder_, level_ + 1);
+    }
     else if (root_ == VARIABLE_EXPRESSION) {
       result_ = variableExpression(builder_, level_ + 1);
     }
@@ -94,7 +97,8 @@ public class OgnlParser implements PsiParser {
   private static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     TokenSet.create(BINARY_EXPRESSION, CONDITIONAL_EXPRESSION, EXPRESSION, INDEXED_EXPRESSION,
       LITERAL_EXPRESSION, METHOD_CALL_EXPRESSION, NEW_EXPRESSION, PARENTHESIZED_EXPRESSION,
-      REFERENCE_EXPRESSION, SEQUENCE_EXPRESSION, UNARY_EXPRESSION, VARIABLE_EXPRESSION),
+      REFERENCE_EXPRESSION, SEQUENCE_EXPRESSION, UNARY_EXPRESSION, VARIABLE_ASSIGNMENT_EXPRESSION,
+      VARIABLE_EXPRESSION),
   };
   public static boolean type_extends_(IElementType child_, IElementType parent_) {
     for (TokenSet set : EXTENDS_SETS_) {
@@ -652,15 +656,16 @@ public class OgnlParser implements PsiParser {
   // Operator priority table:
   // 0: ATOM(sequenceExpression)
   // 1: ATOM(parenthesizedExpression)
-  // 2: BINARY(conditionalExpression)
-  // 3: BINARY(binaryExpression)
-  // 4: ATOM(newExpression)
-  // 5: ATOM(methodCallExpression)
-  // 6: ATOM(indexedExpression)
-  // 7: ATOM(variableExpression)
-  // 8: ATOM(referenceExpression)
-  // 9: ATOM(unaryExpression)
-  // 10: ATOM(literalExpression)
+  // 2: ATOM(variableAssignmentExpression)
+  // 3: BINARY(conditionalExpression)
+  // 4: BINARY(binaryExpression)
+  // 5: ATOM(newExpression)
+  // 6: ATOM(methodCallExpression)
+  // 7: ATOM(indexedExpression)
+  // 8: ATOM(variableExpression)
+  // 9: ATOM(referenceExpression)
+  // 10: ATOM(unaryExpression)
+  // 11: ATOM(literalExpression)
   public static boolean expression(PsiBuilder builder_, int level_, int priority_) {
     if (!recursion_guard_(builder_, level_, "expression")) return false;
     Marker marker_ = builder_.mark();
@@ -669,6 +674,7 @@ public class OgnlParser implements PsiParser {
     enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<expression>");
     result_ = sequenceExpression(builder_, level_ + 1);
     if (!result_) result_ = parenthesizedExpression(builder_, level_ + 1);
+    if (!result_) result_ = variableAssignmentExpression(builder_, level_ + 1);
     if (!result_) result_ = newExpression(builder_, level_ + 1);
     if (!result_) result_ = methodCallExpression(builder_, level_ + 1);
     if (!result_) result_ = indexedExpression(builder_, level_ + 1);
@@ -695,14 +701,14 @@ public class OgnlParser implements PsiParser {
       Marker left_marker_ = (Marker) builder_.getLatestDoneMarker();
       if (!invalid_left_marker_guard_(builder_, left_marker_, "expression_0")) return false;
       Marker marker_ = builder_.mark();
-      if (priority_ < 2 && consumeToken(builder_, QUESTION)) {
-        result_ = report_error_(builder_, expression(builder_, level_, 2));
+      if (priority_ < 3 && consumeToken(builder_, QUESTION)) {
+        result_ = report_error_(builder_, expression(builder_, level_, 3));
         result_ = conditionalExpression_1(builder_, level_ + 1) && result_;
         marker_.drop();
         left_marker_.precede().done(CONDITIONAL_EXPRESSION);
       }
-      else if (priority_ < 3 && binaryOperations(builder_, level_ + 1)) {
-        result_ = report_error_(builder_, expression(builder_, level_, 3));
+      else if (priority_ < 4 && binaryOperations(builder_, level_ + 1)) {
+        result_ = report_error_(builder_, expression(builder_, level_, 4));
         marker_.drop();
         left_marker_.precede().done(BINARY_EXPRESSION);
       }
@@ -750,6 +756,29 @@ public class OgnlParser implements PsiParser {
     result_ = pinned_ && consumeToken(builder_, RPARENTH) && result_;
     if (result_ || pinned_) {
       marker_.done(PARENTHESIZED_EXPRESSION);
+    }
+    else {
+      marker_.rollbackTo();
+    }
+    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
+    return result_ || pinned_;
+  }
+
+  // '#' IDENTIFIER '=' expression
+  public static boolean variableAssignmentExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "variableAssignmentExpression")) return false;
+    if (!nextTokenIs(builder_, HASH)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = builder_.mark();
+    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
+    result_ = consumeToken(builder_, HASH);
+    result_ = result_ && consumeToken(builder_, IDENTIFIER);
+    result_ = result_ && consumeToken(builder_, EQ);
+    pinned_ = result_; // pin = 3
+    result_ = result_ && expression(builder_, level_ + 1, -1);
+    if (result_ || pinned_) {
+      marker_.done(VARIABLE_ASSIGNMENT_EXPRESSION);
     }
     else {
       marker_.rollbackTo();

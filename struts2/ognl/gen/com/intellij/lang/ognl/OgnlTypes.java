@@ -36,6 +36,7 @@ public interface OgnlTypes {
   IElementType REFERENCE_EXPRESSION = new OgnlTokenType("REFERENCE_EXPRESSION");
   IElementType SEQUENCE_EXPRESSION = new OgnlTokenType("SEQUENCE_EXPRESSION");
   IElementType UNARY_EXPRESSION = new OgnlTokenType("UNARY_EXPRESSION");
+  IElementType VARIABLE_ASSIGNMENT_EXPRESSION = new OgnlTokenType("VARIABLE_ASSIGNMENT_EXPRESSION");
   IElementType VARIABLE_EXPRESSION = new OgnlTokenType("VARIABLE_EXPRESSION");
 
   IElementType AND = new OgnlTokenType("&");
@@ -141,6 +142,9 @@ public interface OgnlTypes {
       }
       else if (type == UNARY_EXPRESSION) {
         return new OgnlUnaryExpressionImpl(node);
+      }
+      else if (type == VARIABLE_ASSIGNMENT_EXPRESSION) {
+        return new OgnlVariableAssignmentExpressionImpl(node);
       }
       else if (type == VARIABLE_EXPRESSION) {
         return new OgnlVariableExpressionImpl(node);
