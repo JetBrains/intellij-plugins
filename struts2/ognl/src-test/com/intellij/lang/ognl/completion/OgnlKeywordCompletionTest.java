@@ -61,6 +61,10 @@ public class OgnlKeywordCompletionTest extends OgnlCompletionTestCase {
            FALSE, TRUE, NULL);
   }
 
+  public void testAfterNewNoKeywords() throws Throwable {
+    doTest("new <caret>");
+  }
+
   public void testAfterVariableAssignment() throws Throwable {
     doTest("#var = <caret>",
            FALSE, TRUE, NULL, NEW);

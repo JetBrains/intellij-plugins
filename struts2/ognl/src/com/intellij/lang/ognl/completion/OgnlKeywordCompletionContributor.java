@@ -47,6 +47,9 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
   private static final PsiElementPattern.Capture<PsiElement> AFTER_OPERATIONS =
     psiElement().afterLeaf(psiElement().withElementType(OgnlTokenGroups.OPERATIONS));
 
+  private static final PsiElementPattern.Capture<PsiElement> AFTER_NEW =
+    psiElement().afterLeaf(psiElement().withElementType(OgnlTypes.NEW_KEYWORD));
+
   private static final PsiElementPattern.Capture<PsiElement> AFTER_QUESTION =
     psiElement().afterLeaf(psiElement().withElementType(OgnlTypes.QUESTION));
 
@@ -54,6 +57,7 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
     psiElement().afterLeaf(psiElement().inside(OgnlExpression.class))
       .andNot(AFTER_OPERATIONS)
       .andNot(AFTER_QUESTION)
+      .andNot(AFTER_NEW)
       .andNot(VARIABLE_EXPRESSION)
       .andNot(VARIABLE_ASSIGNMENT_EXPRESSION);
 
@@ -105,9 +109,11 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
                             FALSE, TRUE, NULL);
   }
 
+  // TODO simplify -> expression with no text
   private void installNew() {
     extendKeywordCompletion(psiElement().atStartOf(psiElement(OgnlExpression.class))
-                              .andNot(AFTER_OPERATIONS), NEW);
+                              .andNot(AFTER_OPERATIONS)
+                              .andNot(AFTER_NEW), NEW);
   }
 
   private void extendKeywordCompletion(final PsiElementPattern.Capture<PsiElement> pattern,
