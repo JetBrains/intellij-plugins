@@ -47,9 +47,13 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
   private static final PsiElementPattern.Capture<PsiElement> AFTER_OPERATIONS =
     psiElement().afterLeaf(psiElement().withElementType(OgnlTokenGroups.OPERATIONS));
 
+  private static final PsiElementPattern.Capture<PsiElement> AFTER_QUESTION =
+    psiElement().afterLeaf(psiElement().withElementType(OgnlTypes.QUESTION));
+
   private static final PsiElementPattern.Capture<PsiElement> AFTER_EXPRESSION =
     psiElement().afterLeaf(psiElement().inside(OgnlExpression.class))
       .andNot(AFTER_OPERATIONS)
+      .andNot(AFTER_QUESTION)
       .andNot(VARIABLE_EXPRESSION)
       .andNot(VARIABLE_ASSIGNMENT_EXPRESSION);
 
@@ -61,7 +65,7 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
     installSequence();
     installIdentifier();
     installBooleanNull();
-    // TODO: new
+    installNew();
   }
 
   private void installBinaryOperations() {
@@ -99,6 +103,11 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
     extendKeywordCompletion(psiElement().afterLeaf(psiElement().inside(OgnlExpression.class)
                                                      .withElementType(precedingOperators)),
                             FALSE, TRUE, NULL);
+  }
+
+  private void installNew() {
+    extendKeywordCompletion(psiElement().atStartOf(psiElement(OgnlExpression.class))
+                              .andNot(AFTER_OPERATIONS), NEW);
   }
 
   private void extendKeywordCompletion(final PsiElementPattern.Capture<PsiElement> pattern,

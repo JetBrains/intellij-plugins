@@ -24,6 +24,11 @@ import static com.intellij.lang.ognl.psi.OgnlKeyword.*;
  */
 public class OgnlKeywordCompletionTest extends OgnlCompletionTestCase {
 
+  public void testEmptyExpression() throws  Throwable{
+    doTest("<caret>",
+           NEW);
+  }
+
   public void testAfterPlainReference() throws Throwable {
     doTest("reference <caret> ",
            SHL, SHR, USHR,
@@ -43,7 +48,7 @@ public class OgnlKeywordCompletionTest extends OgnlCompletionTestCase {
 
   public void testAfterQuestion() throws Throwable {
     doTest("reference ? <caret> ",
-           FALSE, TRUE, NULL);
+           FALSE, TRUE, NULL, NEW);
   }
 
   public void testAfterEquals() throws Throwable {
@@ -58,6 +63,6 @@ public class OgnlKeywordCompletionTest extends OgnlCompletionTestCase {
 
   public void testAfterVariableAssignment() throws Throwable {
     doTest("#var = <caret>",
-           FALSE, TRUE, NULL);
+           FALSE, TRUE, NULL, NEW);
   }
 }
