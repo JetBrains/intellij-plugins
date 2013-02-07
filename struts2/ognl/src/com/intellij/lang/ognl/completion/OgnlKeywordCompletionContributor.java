@@ -53,10 +53,14 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
   private static final PsiElementPattern.Capture<PsiElement> AFTER_QUESTION =
     psiElement().afterLeaf(psiElement().withElementType(OgnlTypes.QUESTION));
 
+  private static final PsiElementPattern.Capture<PsiElement> AFTER_COLON =
+    psiElement().afterLeaf(psiElement().withElementType(OgnlTypes.COLON));
+
   private static final PsiElementPattern.Capture<PsiElement> AFTER_EXPRESSION =
     psiElement().afterLeaf(psiElement().inside(OgnlExpression.class))
       .andNot(AFTER_OPERATIONS)
       .andNot(AFTER_QUESTION)
+      .andNot(AFTER_COLON)
       .andNot(AFTER_NEW)
       .andNot(VARIABLE_EXPRESSION)
       .andNot(VARIABLE_ASSIGNMENT_EXPRESSION);

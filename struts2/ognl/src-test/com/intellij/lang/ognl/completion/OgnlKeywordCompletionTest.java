@@ -51,6 +51,11 @@ public class OgnlKeywordCompletionTest extends OgnlCompletionTestCase {
            FALSE, TRUE, NULL, NEW);
   }
 
+  public void testAfterColon() throws Throwable {
+    doTest("reference ? 1 : <caret> ",
+           FALSE, TRUE, NULL, NEW);
+  }
+
   public void testAfterEquals() throws Throwable {
     doTest("reference == <caret> ",
            FALSE, TRUE, NULL);
