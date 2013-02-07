@@ -20,10 +20,7 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.TailTypeDecorator;
 import com.intellij.lang.ognl.OgnlTypes;
-import com.intellij.lang.ognl.psi.OgnlExpression;
-import com.intellij.lang.ognl.psi.OgnlReferenceExpression;
-import com.intellij.lang.ognl.psi.OgnlTokenGroups;
-import com.intellij.lang.ognl.psi.OgnlVariableExpression;
+import com.intellij.lang.ognl.psi.*;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
@@ -44,13 +41,17 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
   private static final PsiElementPattern.Capture<PsiElement> VARIABLE_EXPRESSION =
     psiElement().inside(OgnlVariableExpression.class);
 
+  private static final PsiElementPattern.Capture<PsiElement> VARIABLE_ASSIGNMENT_EXPRESSION =
+    psiElement().inside(OgnlVariableAssignmentExpression.class);
+
   private static final PsiElementPattern.Capture<PsiElement> AFTER_OPERATIONS =
     psiElement().afterLeaf(psiElement().withElementType(OgnlTokenGroups.OPERATIONS));
 
   private static final PsiElementPattern.Capture<PsiElement> AFTER_EXPRESSION =
     psiElement().afterLeaf(psiElement().inside(OgnlExpression.class))
       .andNot(AFTER_OPERATIONS)
-      .andNot(VARIABLE_EXPRESSION); // TODO
+      .andNot(VARIABLE_EXPRESSION)
+      .andNot(VARIABLE_ASSIGNMENT_EXPRESSION);
 
   private static final PsiElementPattern.Capture<PsiElement> AFTER_IDENTIFIER =
     psiElement().afterLeaf(psiElement().inside(OgnlReferenceExpression.class));
@@ -93,7 +94,8 @@ public class OgnlKeywordCompletionContributor extends CompletionContributor impl
                       OgnlTypes.OR_KEYWORD,
                       OgnlTypes.OR_OR,
                       OgnlTypes.NEGATE,
-                      OgnlTypes.NOT_KEYWORD);
+                      OgnlTypes.NOT_KEYWORD,
+                      OgnlTypes.EQ);
     extendKeywordCompletion(psiElement().afterLeaf(psiElement().inside(OgnlExpression.class)
                                                      .withElementType(precedingOperators)),
                             FALSE, TRUE, NULL);
