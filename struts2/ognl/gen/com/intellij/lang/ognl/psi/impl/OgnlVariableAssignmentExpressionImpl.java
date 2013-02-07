@@ -34,7 +34,7 @@ public class OgnlVariableAssignmentExpressionImpl extends OgnlExpressionImpl imp
 
   @Override
   @Nullable
-  public OgnlExpression getExpression() {
+  public OgnlExpression getAssignment() {
     return findChildByClass(OgnlExpression.class);
   }
 

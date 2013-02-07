@@ -29,7 +29,7 @@ public class VariableAssignmentExpressionPsiTest extends PsiTestCase {
 
   public void testVariableAssignment() {
     final OgnlVariableAssignmentExpression expression = parse("#varName = 1 + 2");
-    final OgnlExpression assignment = expression.getExpression();
+    final OgnlExpression assignment = expression.getAssignment();
     assertElementType(OgnlTypes.BINARY_EXPRESSION, assignment);
     assertEquals(PsiType.INT, expression.getType());
   }

@@ -72,7 +72,7 @@ public class OgnlPsiUtil {
     }
 
     if (expression instanceof OgnlVariableAssignmentExpression) {
-      OgnlExpression assignment = ((OgnlVariableAssignmentExpression)expression).getExpression();
+      OgnlExpression assignment = ((OgnlVariableAssignmentExpression)expression).getAssignment();
       return getType(assignment);
     }
 

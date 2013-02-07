@@ -157,7 +157,8 @@ variableExpression ::= '#' IDENTIFIER {
 }
 
 variableAssignmentExpression ::= '#' IDENTIFIER '=' expression {
-  pin = 3
+  methodRenames("getExpression")="getAssignment"
+  pin=3
 }
 
 private methodCallParameters ::= expression? (',' expression)*
