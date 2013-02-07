@@ -19,8 +19,11 @@ import com.intellij.lang.ognl.OgnlFile;
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.OgnlTestUtils;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.impl.DebugUtil;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.intellij.lang.annotations.Language;
@@ -36,6 +39,12 @@ public abstract class PsiTestCase extends LightPlatformTestCase {
                                                            prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                            suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String text) {
     final PsiElement expression = doParse(text);
+
+    final PsiErrorElement[] errorElements = PsiTreeUtil.getChildrenOfType(expression, PsiErrorElement.class);
+    if (errorElements != null) {
+      fail(text + " parsed with errors:\n" + DebugUtil.psiToString(expression, true));
+    }
+
     return assertInstanceOf(expression, OgnlExpression.class);
   }
 
