@@ -47,7 +47,11 @@ public class OgnlPsiUtil {
   }
 
   @Nullable
-  public static PsiType getType(OgnlExpression expression) {
+  public static PsiType getType(@Nullable OgnlExpression expression) {
+    if (expression == null) {
+      return null;
+    }
+
     if (expression instanceof OgnlLiteralExpression) {
       return resolveLiteralExpressionType((OgnlLiteralExpression)expression);
     }
