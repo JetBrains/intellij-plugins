@@ -5,6 +5,7 @@ import com.intellij.flex.FlexCommonUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompileContext;
@@ -16,7 +17,6 @@ import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.GuiUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -336,9 +336,10 @@ public class FlexCompilationManager {
     final LocalFileSystem localFileSystem = LocalFileSystem.getInstance();
     final Ref<VirtualFile> outputFileRef = new Ref<VirtualFile>();
 
-    GuiUtils.invokeAndWaitIfNeeded(new Runnable() {
+    final Application app = ApplicationManager.getApplication();
+    app.invokeAndWait(new Runnable() {
       public void run() {
-        outputFileRef.set(ApplicationManager.getApplication().runWriteAction(new NullableComputable<VirtualFile>() {
+        outputFileRef.set(app.runWriteAction(new NullableComputable<VirtualFile>() {
           public VirtualFile compute() {
             VirtualFile outputFile = localFileSystem.refreshAndFindFileByPath(outputFilePath);
             //if (outputFile == null) {
