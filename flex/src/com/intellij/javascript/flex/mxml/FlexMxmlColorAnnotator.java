@@ -18,7 +18,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.css.impl.util.CssUtil;
+import com.intellij.psi.css.impl.util.CssColorUtil;
 import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.ui.ColorChooser;
 import com.intellij.util.ui.EmptyIcon;
@@ -171,16 +171,14 @@ public class FlexMxmlColorAnnotator implements Annotator {
               final PsiFile psiFile = myAttribute.getContainingFile();
               if (!CodeInsightUtilBase.prepareFileForWrite(psiFile)) return;
 
-              final String hex = CssUtil.toHexColor(color);
-              if (hex != null) {
-                final String mxmlStyleHex = toCannonicalHex(hex, false);
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                  @Override
-                  public void run() {
-                    myAttribute.setValue(mxmlStyleHex);
-                  }
-                });
-              }
+              final String hex = CssColorUtil.toHexColor(color);
+              final String mxmlStyleHex = toCannonicalHex(hex, false);
+              ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                @Override
+                public void run() {
+                  myAttribute.setValue(mxmlStyleHex);
+                }
+              });
             }
           }
         }
