@@ -160,7 +160,7 @@ variableAssignmentExpression ::= '#' IDENTIFIER '=' expression {
   pin = 3
 }
 
-private methodCallParameters ::= [] expression (',' expression)*  { pin(".*")=1 }
+private methodCallParameters ::= expression? (',' expression)*
 methodCallExpression ::= referenceExpression '(' methodCallParameters ')'  {
   methods=[
     method="expression[0]"
@@ -237,7 +237,7 @@ conditionalExpression ::= expression QUESTION expression COLON expression {
 }
 
 private arrayConstructorExpression ::= '[' expression? ']' sequenceExpression?
-private constructorExpression ::= '(' methodCallParameters? ')'
+private constructorExpression ::= '(' methodCallParameters ')'
 newExpression ::= NEW_KEYWORD referenceExpression (arrayConstructorExpression | constructorExpression) {
   pin(".*")=1
 }

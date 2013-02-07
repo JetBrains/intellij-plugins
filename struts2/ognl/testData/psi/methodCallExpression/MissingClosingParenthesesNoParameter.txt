@@ -4,6 +4,6 @@ OgnlFile:MissingClosingParenthesesNoParameter.ognl
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('methodName')
     PsiElement(()('(')
-    PsiErrorElement:<expression> expected, got '}'
-      <empty list>
+  PsiErrorElement:')', ',' or <expression> expected, got '}'
+    <empty list>
   PsiElement(EXPRESSION_END)('}')

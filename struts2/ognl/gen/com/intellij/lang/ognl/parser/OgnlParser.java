@@ -255,14 +255,14 @@ public class OgnlParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '(' methodCallParameters? ')'
+  // '(' methodCallParameters ')'
   static boolean constructorExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constructorExpression")) return false;
     if (!nextTokenIs(builder_, LPARENTH)) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     result_ = consumeToken(builder_, LPARENTH);
-    result_ = result_ && constructorExpression_1(builder_, level_ + 1);
+    result_ = result_ && methodCallParameters(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, RPARENTH);
     if (!result_) {
       marker_.rollbackTo();
@@ -271,13 +271,6 @@ public class OgnlParser implements PsiParser {
       marker_.drop();
     }
     return result_;
-  }
-
-  // methodCallParameters?
-  private static boolean constructorExpression_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "constructorExpression_1")) return false;
-    methodCallParameters(builder_, level_ + 1);
-    return true;
   }
 
   /* ********************************************************** */
@@ -391,41 +384,38 @@ public class OgnlParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // [] expression (',' expression)*
+  // expression? (',' expression)*
   static boolean methodCallParameters(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "methodCallParameters")) return false;
     boolean result_ = false;
-    boolean pinned_ = false;
     Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
     result_ = methodCallParameters_0(builder_, level_ + 1);
-    pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, expression(builder_, level_ + 1, -1));
-    result_ = pinned_ && methodCallParameters_2(builder_, level_ + 1) && result_;
-    if (!result_ && !pinned_) {
+    result_ = result_ && methodCallParameters_1(builder_, level_ + 1);
+    if (!result_) {
       marker_.rollbackTo();
     }
     else {
       marker_.drop();
     }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
-    return result_ || pinned_;
+    return result_;
   }
 
-  // []
+  // expression?
   private static boolean methodCallParameters_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "methodCallParameters_0")) return false;
+    expression(builder_, level_ + 1, -1);
     return true;
   }
 
   // (',' expression)*
-  private static boolean methodCallParameters_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "methodCallParameters_2")) return false;
+  private static boolean methodCallParameters_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "methodCallParameters_1")) return false;
     int offset_ = builder_.getCurrentOffset();
     while (true) {
-      if (!methodCallParameters_2_0(builder_, level_ + 1)) break;
+      if (!methodCallParameters_1_0(builder_, level_ + 1)) break;
       int next_offset_ = builder_.getCurrentOffset();
       if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "methodCallParameters_2");
+        empty_element_parsed_guard_(builder_, offset_, "methodCallParameters_1");
         break;
       }
       offset_ = next_offset_;
@@ -434,23 +424,19 @@ public class OgnlParser implements PsiParser {
   }
 
   // ',' expression
-  private static boolean methodCallParameters_2_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "methodCallParameters_2_0")) return false;
+  private static boolean methodCallParameters_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "methodCallParameters_1_0")) return false;
     boolean result_ = false;
-    boolean pinned_ = false;
     Marker marker_ = builder_.mark();
-    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
     result_ = consumeToken(builder_, COMMA);
-    pinned_ = result_; // pin = 1
     result_ = result_ && expression(builder_, level_ + 1, -1);
-    if (!result_ && !pinned_) {
+    if (!result_) {
       marker_.rollbackTo();
     }
     else {
       marker_.drop();
     }
-    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
-    return result_ || pinned_;
+    return result_;
   }
 
   /* ********************************************************** */
