@@ -17,6 +17,7 @@ package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.OgnlTypes;
+import com.intellij.psi.PsiType;
 import org.intellij.lang.annotations.Language;
 
 /**
@@ -30,6 +31,7 @@ public class VariableAssignmentExpressionPsiTest extends PsiTestCase {
     final OgnlVariableAssignmentExpression expression = parse("#varName = 1 + 2");
     final OgnlExpression assignment = expression.getExpression();
     assertElementType(OgnlTypes.BINARY_EXPRESSION, assignment);
+    assertEquals(PsiType.INT, expression.getType());
   }
 
   private OgnlVariableAssignmentExpression parse(@Language(value = OgnlLanguage.ID,
