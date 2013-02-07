@@ -10,6 +10,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
+import com.intellij.lang.javascript.flex.actions.airpackage.DeviceInfo;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
@@ -101,7 +102,7 @@ public class FlexDebugRunner extends FlexBaseRunner {
           }
 
           if (runnerParameters.getDebugTransport() == AirMobileDebugTransport.USB) {
-            if (!AirPackageUtil.androidForwardTcpPort(project, sdk, runnerParameters.getUsbDebugPort())) {
+            if (!AirPackageUtil.androidForwardTcpPort(project, sdk, runnerParameters.getDeviceInfo(), runnerParameters.getUsbDebugPort())) {
               return null;
             }
           }
@@ -125,7 +126,8 @@ public class FlexDebugRunner extends FlexBaseRunner {
             }
 
             if (runnerParameters.getDebugTransport() == AirMobileDebugTransport.USB) {
-              final int deviceHandle = AirPackageUtil.getIOSDeviceHandle(project, sdk);
+              final DeviceInfo device = runnerParameters.getDeviceInfo();
+              final int deviceHandle = device == null ? -1 : device.IOS_HANDLE;
               if (deviceHandle < 0) {
                 return null;
               }

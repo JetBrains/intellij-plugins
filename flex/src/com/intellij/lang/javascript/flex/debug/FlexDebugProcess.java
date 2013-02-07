@@ -14,6 +14,7 @@ import com.intellij.idea.LoggerFactory;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
+import com.intellij.lang.javascript.flex.actions.airpackage.DeviceInfo;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
@@ -240,7 +241,7 @@ public class FlexDebugProcess extends XDebugProcess {
             case AndroidDevice:
               final String androidAppId =
                 FlexBaseRunner.getApplicationId(FlexBaseRunner.getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
-              sendCommand(new StartAppOnAndroidDeviceCommand(bc.getSdk(), androidAppId));
+              sendCommand(new StartAppOnAndroidDeviceCommand(bc.getSdk(), appParams.getDeviceInfo(), androidAppId));
               break;
             case iOSSimulator:
               final String iosSimulatorAppId =
@@ -1421,17 +1422,19 @@ public class FlexDebugProcess extends XDebugProcess {
   class StartAppOnAndroidDeviceCommand extends StartDebuggingCommand {
 
     private final Sdk myFlexSdk;
+    private final @Nullable DeviceInfo myDevice;
     private final String myAppId;
 
-    StartAppOnAndroidDeviceCommand(final Sdk flexSdk, final String appId) {
+    StartAppOnAndroidDeviceCommand(final Sdk flexSdk, final @Nullable DeviceInfo device, final String appId) {
       myFlexSdk = flexSdk;
+      myDevice = device;
       myAppId = appId;
     }
 
     void launchDebuggedApplication() throws IOException {
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         public void run() {
-          FlexBaseRunner.launchOnAndroidDevice(getSession().getProject(), myFlexSdk, myAppId, true);
+          FlexBaseRunner.launchOnAndroidDevice(getSession().getProject(), myFlexSdk, myDevice, myAppId, true);
         }
       });
     }

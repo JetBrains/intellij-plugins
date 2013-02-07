@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.flex.FlexCommonUtils;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
@@ -22,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -40,8 +42,11 @@ public class AirPackageUtil {
   public static final String TEMP_KEYSTORE_PASSWORD = "keystore_password";
 
   private static final Pattern AIR_VERSION_PATTERN = Pattern.compile("[1-9]\\.[0-9]{1,2}(\\.[0-9]{1,6})*");
-  private static final String ADB_RELATIVE_PATH = "/lib/android/bin/adb" + (SystemInfo.isWindows ? ".exe" : "");
+  static final String ADB_RELATIVE_PATH = "/lib/android/bin/adb" + (SystemInfo.isWindows ? ".exe" : "");
   private static final String IDB_RELATIVE_PATH = "/lib/aot/bin/iOSBin/idb" + (SystemInfo.isWindows ? ".exe" : "");
+
+  private static final String PREFERRED_IOS_DEVICE_ID_PROPERTY = "flex.preferred.ios.device.id";
+  private static final String PREFERRED_ANDROID_DEVICE_ID_PROPERTY = "flex.preferred.android.device.id";
 
   private AirPackageUtil() {
   }
@@ -90,7 +95,10 @@ public class AirPackageUtil {
    * @return AIR runtime version or empty string if AIR is not installed on the device
    * @throws AdtException if failed to detect AIR runtime version, for example when device is not connected
    */
-  public static String getAirRuntimeVersionOnDevice(final Project project, final Sdk sdk) throws AdtException {
+  public static String getAirRuntimeVersionOnDevice(final Project project, final Sdk sdk, final FlashRunnerParameters runnerParameters)
+    throws AdtException {
+    if (!scanAndroidDevices(project, sdk, runnerParameters)) throw new AdtException();
+
     final Ref<String> versionRef = new Ref<String>();
 
     final boolean ok = ExternalTask.runWithProgress(
@@ -99,6 +107,12 @@ public class AirPackageUtil {
           command.add("-runtimeVersion");
           command.add("-platform");
           command.add("android");
+
+          final DeviceInfo device = runnerParameters.getDeviceInfo();
+          if (device != null) {
+            command.add("-device");
+            command.add(device.DEVICE_ID);
+          }
         }
 
         protected boolean checkMessages() {
@@ -185,9 +199,12 @@ public class AirPackageUtil {
     }, progressTitle, frameTitle);
   }
 
-  public static boolean checkAirRuntimeOnDevice(final Project project, final Sdk sdk, final String adtVersion) {
+  public static boolean checkAirRuntimeOnDevice(final Project project,
+                                                final Sdk sdk,
+                                                final FlashRunnerParameters runnerParameters,
+                                                final String adtVersion) {
     try {
-      final String airRuntimeVersion = getAirRuntimeVersionOnDevice(project, sdk);
+      final String airRuntimeVersion = getAirRuntimeVersionOnDevice(project, sdk, runnerParameters);
       final String adtVersionTruncated = truncateVersionString(adtVersion);
       final String airRuntimeVersionTruncated = truncateVersionString(airRuntimeVersion);
       if (airRuntimeVersion.isEmpty() || StringUtil.compareVersionNumbers(adtVersionTruncated, airRuntimeVersionTruncated) > 0) {
@@ -202,7 +219,7 @@ public class AirPackageUtil {
           return false;
         }
         else if (answer == 0) {
-          installAirRuntimeOnDevice(project, sdk, adtVersionTruncated, !airRuntimeVersion.isEmpty());
+          installAirRuntimeOnDevice(project, sdk, runnerParameters.getDeviceInfo(), adtVersionTruncated, !airRuntimeVersion.isEmpty());
         }
       }
       return true;
@@ -221,6 +238,7 @@ public class AirPackageUtil {
 
   private static void installAirRuntimeOnDevice(final Project project,
                                                 final Sdk sdk,
+                                                final @Nullable DeviceInfo device,
                                                 final String version,
                                                 final boolean uninstallExistingBeforeInstalling) {
     if (uninstallExistingBeforeInstalling) {
@@ -229,6 +247,11 @@ public class AirPackageUtil {
           command.add("-uninstallRuntime");
           command.add("-platform");
           command.add("android");
+
+          if (device != null) {
+            command.add("-device");
+            command.add(device.DEVICE_ID);
+          }
         }
       }, FlexBundle.message("uninstalling.air.runtime"), FlexBundle.message("uninstall.air.runtime.title"));
     }
@@ -238,6 +261,11 @@ public class AirPackageUtil {
         command.add("-installRuntime");
         command.add("-platform");
         command.add("android");
+
+        if (device != null) {
+          command.add("-device");
+          command.add(device.DEVICE_ID);
+        }
       }
     }, FlexBundle.message("installing.air.runtime", version), FlexBundle.message("install.air.runtime.title"));
   }
@@ -510,13 +538,23 @@ public class AirPackageUtil {
     };
   }
 
-  public static boolean installApk(final Project project, final Sdk flexSdk, final String apkPath, final String applicationId) {
-    return uninstallAndroidApplication(project, flexSdk, applicationId) &&
+  public static boolean installApk(final Project project,
+                                   final Sdk flexSdk,
+                                   final @Nullable DeviceInfo device,
+                                   final String apkPath,
+                                   final String applicationId) {
+    return uninstallAndroidApplication(project, flexSdk, device, applicationId) &&
            ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
              protected void appendAdtOptions(final List<String> command) {
                command.add("-installApp");
                command.add("-platform");
                command.add("android");
+
+               if (device != null) {
+                 command.add("-device");
+                 command.add(device.DEVICE_ID);
+               }
+
                command.add("-package");
                command.add(apkPath);
              }
@@ -546,18 +584,129 @@ public class AirPackageUtil {
                                         FlexBundle.message("install.ipa.on.simulator.title"));
   }
 
-  public static boolean installOnIosDevice(final Project project, final Sdk flexSdk, final String ipaPath) {
-    return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
-      protected void appendAdtOptions(final List<String> command) {
-        command.add("-installApp");
-        command.add("-platform");
-        command.add("ios");
-        //command.add("-platformsdk");
-        //command.add(iOSSdkPath);
-        command.add("-package");
-        command.add(ipaPath);
+  public static boolean installOnIosDevice(final Project project,
+                                           final Sdk flexSdk,
+                                           final FlashRunnerParameters runnerParameters,
+                                           final String ipaPath) {
+    return scanIosDevices(project, flexSdk, runnerParameters) &&
+           ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
+             protected void appendAdtOptions(final List<String> command) {
+               command.add("-installApp");
+               command.add("-platform");
+               command.add("ios");
+               //command.add("-platformsdk");
+               //command.add(iOSSdkPath);
+
+               final DeviceInfo device = runnerParameters.getDeviceInfo();
+               if (device != null) {
+                 command.add("-device");
+                 command.add(String.valueOf(device.IOS_HANDLE));
+               }
+
+               command.add("-package");
+               command.add(ipaPath);
+             }
+           }, FlexBundle.message("installing.0", ipaPath.substring(ipaPath.lastIndexOf('/') + 1)),
+                                        FlexBundle.message("install.ios.app.title"));
+  }
+
+  private static boolean scanIosDevices(final Project project, final Sdk flexSdk, final FlashRunnerParameters runnerParameters) {
+    final List<DeviceInfo> devices = DeviceInfo.getIosDevices(project, flexSdk);
+
+    if (devices.isEmpty()) {
+      final int choice = Messages
+        .showYesNoDialog(project, "No iOS devices connected to the computer", "Error", "Scan Again", "Cancel", Messages.getErrorIcon());
+      return choice == Messages.YES && scanIosDevices(project, flexSdk, runnerParameters);
+    }
+    else if (devices.size() == 1) {
+      runnerParameters.setDeviceInfo(devices.get(0));
+      return true;
+    }
+    else {
+      final String preferredId = PropertiesComponent.getInstance(project).getValue(PREFERRED_IOS_DEVICE_ID_PROPERTY);
+      String preferredPresentableName = null;
+
+      final Collection<String> presentableNames = new ArrayList<String>();
+      for (DeviceInfo device : devices) {
+        final StringBuilder presentableName = new StringBuilder();
+        if (device.DEVICE_NAME != null && device.IOS_DEVICE_CLASS != null && !device.DEVICE_NAME.contains(device.IOS_DEVICE_CLASS)) {
+          presentableName.append(device.IOS_DEVICE_CLASS).append(' ');
+        }
+        if (device.DEVICE_NAME != null) {
+          presentableName.append('\'').append(device.DEVICE_NAME).append("' ");
+        }
+        presentableName.append('(').append(device.DEVICE_ID.substring(0, 6)).append("...").append(device.DEVICE_ID.substring(36))
+          .append(')');
+
+        if (device.DEVICE_ID.equals(preferredId)) {
+          preferredPresentableName = presentableName.toString();
+        }
+
+        presentableNames.add(presentableName.toString());
       }
-    }, FlexBundle.message("installing.0", ipaPath.substring(ipaPath.lastIndexOf('/') + 1)), FlexBundle.message("install.ios.app.title"));
+
+      if (preferredPresentableName == null) {
+        preferredPresentableName = presentableNames.iterator().next();
+      }
+
+      final int choice = Messages.showChooseDialog(project, "Select iOS device", "iOS Device", null,
+                                                   presentableNames.toArray(new String[presentableNames.size()]), preferredPresentableName);
+      if (choice == -1) return false;
+
+      final DeviceInfo selectedDevice = devices.get(choice);
+      runnerParameters.setDeviceInfo(selectedDevice);
+      PropertiesComponent.getInstance(project).setValue(PREFERRED_IOS_DEVICE_ID_PROPERTY, selectedDevice.DEVICE_ID);
+      return true;
+    }
+  }
+
+  private static boolean scanAndroidDevices(final Project project, final Sdk flexSdk, final FlashRunnerParameters runnerParameters) {
+    final List<DeviceInfo> devices = DeviceInfo.getAndroidDevices(project, flexSdk);
+
+    if (devices.isEmpty()) {
+      final int choice = Messages
+        .showYesNoDialog(project, "No Android devices connected to the computer", "Error", "Scan Again", "Cancel", Messages.getErrorIcon());
+      return choice == Messages.YES && scanAndroidDevices(project, flexSdk, runnerParameters);
+    }
+    else if (devices.size() == 1) {
+      runnerParameters.setDeviceInfo(devices.get(0));
+      return true;
+    }
+    else {
+      final String preferredId = PropertiesComponent.getInstance(project).getValue(PREFERRED_ANDROID_DEVICE_ID_PROPERTY);
+      String preferredPresentableName = null;
+
+      final Collection<String> presentableNames = new ArrayList<String>();
+      for (DeviceInfo device : devices) {
+        final StringBuilder presentableName = new StringBuilder();
+        if (!"device".equals(device.DEVICE_NAME)) {
+          presentableName.append(device.DEVICE_NAME).append(' ');
+          presentableName.append('(').append(device.DEVICE_ID).append(')');
+        }
+        else {
+          presentableName.append(device.DEVICE_ID);
+        }
+
+        if (device.DEVICE_ID.equals(preferredId)) {
+          preferredPresentableName = presentableName.toString();
+        }
+
+        presentableNames.add(presentableName.toString());
+      }
+
+      if (preferredPresentableName == null) {
+        preferredPresentableName = presentableNames.iterator().next();
+      }
+
+      final int choice = Messages.showChooseDialog(project, "Select Android device", "Android Device", null,
+                                                   presentableNames.toArray(new String[presentableNames.size()]), preferredPresentableName);
+      if (choice == -1) return false;
+
+      final DeviceInfo selectedDevice = devices.get(choice);
+      runnerParameters.setDeviceInfo(selectedDevice);
+      PropertiesComponent.getInstance(project).setValue(PREFERRED_ANDROID_DEVICE_ID_PROPERTY, selectedDevice.DEVICE_ID);
+      return true;
+    }
   }
 
   private static boolean uninstallFromIosSimulator(final Project project,
@@ -586,12 +735,21 @@ public class AirPackageUtil {
     }, FlexBundle.message("uninstalling.0", applicationId), FlexBundle.message("uninstall.ios.simulator.application.title"));
   }
 
-  private static boolean uninstallAndroidApplication(final Project project, final Sdk flexSdk, final String applicationId) {
+  private static boolean uninstallAndroidApplication(final Project project,
+                                                     final Sdk flexSdk,
+                                                     final @Nullable DeviceInfo device,
+                                                     final String applicationId) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
       protected void appendAdtOptions(final List<String> command) {
         command.add("-uninstallApp");
         command.add("-platform");
         command.add("android");
+
+        if (device != null) {
+          command.add("-device");
+          command.add(device.DEVICE_ID);
+        }
+
         command.add("-appid");
         command.add(applicationId);
       }
@@ -602,12 +760,21 @@ public class AirPackageUtil {
     }, FlexBundle.message("uninstalling.0", applicationId), FlexBundle.message("uninstall.android.application.title"));
   }
 
-  public static boolean launchAndroidApplication(final Project project, final Sdk flexSdk, final String applicationId) {
+  public static boolean launchAndroidApplication(final Project project,
+                                                 final Sdk flexSdk,
+                                                 final @Nullable DeviceInfo device,
+                                                 final String applicationId) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
       protected void appendAdtOptions(final List<String> command) {
         command.add("-launchApp");
         command.add("-platform");
         command.add("android");
+
+        if (device != null) {
+          command.add("-device");
+          command.add(device.DEVICE_ID);
+        }
+
         command.add("-appid");
         command.add(applicationId);
       }
@@ -633,65 +800,26 @@ public class AirPackageUtil {
     }, FlexBundle.message("launching.ios.application", applicationId), FlexBundle.message("launch.ios.application.title"));
   }
 
-  public static boolean androidForwardTcpPort(final Project project, final Sdk sdk, final int usbDebugPort) {
+  public static boolean androidForwardTcpPort(final Project project,
+                                              final Sdk sdk,
+                                              final @Nullable DeviceInfo device,
+                                              final int usbDebugPort) {
     return ExternalTask.runWithProgress(new ExternalTask(project, sdk) {
       protected List<String> createCommandLine() {
         final List<String> command = new ArrayList<String>();
         command.add(sdk.getHomePath() + ADB_RELATIVE_PATH);
+
+        if (device != null) {
+          command.add("-s");
+          command.add(device.DEVICE_ID);
+        }
+
         command.add("forward");
         command.add("tcp:" + usbDebugPort);
         command.add("tcp:" + usbDebugPort);
         return command;
       }
     }, "adb forward tcp:" + usbDebugPort + " tcp:" + usbDebugPort, FlexBundle.message("adb.forward.title"));
-  }
-
-  public static int getIOSDeviceHandle(final Project project, final Sdk sdk) {
-    final Ref<Integer> deviceHandleRef = new Ref<Integer>();
-
-    final boolean ok = ExternalTask.runWithProgress(new AdtTask(project, sdk) {
-      protected void appendAdtOptions(final List<String> command) {
-        command.add("-devices");
-        command.add("-platform");
-        command.add("ios");
-      }
-
-      protected boolean checkMessages() {
-        if (myMessages.size() < 3) return false;
-        if (!myMessages.get(0).trim().contains("List of attached devices")) return false;
-        if (!myMessages.get(1).trim().startsWith("Handle")) return false;
-
-        final String deviceLine = myMessages.get(2).trim();
-        int spaceIndex = deviceLine.indexOf(" ");
-        int tabIndex = deviceLine.indexOf("\t");
-        int index = spaceIndex > 0 && (spaceIndex < tabIndex || tabIndex < 0) ? spaceIndex : tabIndex;
-        if (index <= 0) return false;
-        try {
-          deviceHandleRef.set(Integer.parseInt(deviceLine.substring(0, index)));
-        }
-        catch (NumberFormatException e) {
-          return false;
-        }
-
-        if (myMessages.size() >= 4) {
-          final String secondDeviceLine = myMessages.get(3).trim();
-          spaceIndex = secondDeviceLine.indexOf(" ");
-          tabIndex = secondDeviceLine.indexOf("\t");
-          index = spaceIndex > 0 && (spaceIndex < tabIndex || tabIndex < 0) ? spaceIndex : tabIndex;
-          try {
-            if (index > 0 && Integer.parseInt(secondDeviceLine.substring(0, index)) >= 0) {
-              myMessages.clear();
-              myMessages.add(FlexBundle.message("more.than.one.ios.device"));
-              return false;
-            }
-          }
-          catch (NumberFormatException ignore) {/*ok, not a device line*/}
-        }
-        return true;
-      }
-    }, FlexBundle.message("checking.ios.devices"), FlexBundle.message("check.ios.devices.title"));
-
-    return ok ? deviceHandleRef.get() : -1;
   }
 
   /**

@@ -23,6 +23,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexStackTraceFilter;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
+import com.intellij.lang.javascript.flex.actions.airpackage.DeviceInfo;
 import com.intellij.lang.javascript.flex.build.FlexCompilationUtils;
 import com.intellij.lang.javascript.flex.debug.FlexDebugProcess;
 import com.intellij.lang.javascript.flex.debug.FlexDebugRunner;
@@ -146,6 +147,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       if (runProfile instanceof FlashRunConfiguration) {
         final FlashRunnerParameters params = ((FlashRunConfiguration)runProfile).getRunnerParameters();
+        params.setDeviceInfo(null);
         final Pair<Module, FlexBuildConfiguration> moduleAndConfig = params.checkAndGetModuleAndBC(project);
         final Module module = moduleAndConfig.first;
         final FlexBuildConfiguration bc = moduleAndConfig.second;
@@ -335,9 +337,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final String adtVersion;
     return (adtVersion = AirPackageUtil.getAdtVersion(project, sdk)) != null
            && AirPackageUtil.startAdbServer(project, sdk)
-           && AirPackageUtil.checkAirRuntimeOnDevice(project, sdk, adtVersion)
+           && AirPackageUtil.checkAirRuntimeOnDevice(project, sdk, runnerParameters, adtVersion)
            && AirPackageUtil.packageApk(module, bc, runnerParameters, isDebug)
-           && AirPackageUtil.installApk(project, sdk, apkPath, applicationId);
+           && AirPackageUtil.installApk(project, sdk, runnerParameters.getDeviceInfo(), apkPath, applicationId);
   }
 
   public static boolean packAndInstallToIOSSimulator(final Module module,
@@ -370,7 +372,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final String ipaPath = outputFolder + "/" + bc.getIosPackagingOptions().getPackageFileName() + ".ipa";
 
     return AirPackageUtil.packageIpaForDevice(module, bc, runnerParameters, adtVersion, isDebug) &&
-           AirPackageUtil.installOnIosDevice(module.getProject(), bc.getSdk(), ipaPath);
+           AirPackageUtil.installOnIosDevice(module.getProject(), bc.getSdk(), runnerParameters, ipaPath);
   }
 
   @Nullable
@@ -397,8 +399,12 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return null;
   }
 
-  public static void launchOnAndroidDevice(final Project project, final Sdk flexSdk, final String applicationId, final boolean isDebug) {
-    if (AirPackageUtil.launchAndroidApplication(project, flexSdk, applicationId)) {
+  public static void launchOnAndroidDevice(final Project project,
+                                           final Sdk flexSdk,
+                                           final @Nullable DeviceInfo device,
+                                           final String applicationId,
+                                           final boolean isDebug) {
+    if (AirPackageUtil.launchAndroidApplication(project, flexSdk, device, applicationId)) {
       ToolWindowManager.getInstance(project).notifyByBalloon(isDebug ? ToolWindowId.DEBUG : ToolWindowId.RUN, MessageType.INFO,
                                                              FlexBundle.message("android.application.launched"));
     }

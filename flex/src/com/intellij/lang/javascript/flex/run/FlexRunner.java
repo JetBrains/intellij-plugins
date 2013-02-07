@@ -75,7 +75,7 @@ public class FlexRunner extends FlexBaseRunner {
           case AndroidDevice:
             final String androidAppId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
             if (packAndInstallToAndroidDevice(module, bc, runnerParameters, androidAppId, false)) {
-              launchOnAndroidDevice(module.getProject(), bc.getSdk(), androidAppId, false);
+              launchOnAndroidDevice(module.getProject(), bc.getSdk(), runnerParameters.getDeviceInfo(), androidAppId, false);
             }
             return null;
           case iOSSimulator:

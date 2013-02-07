@@ -8,6 +8,7 @@ import com.intellij.flex.model.bc.OutputType;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
+import com.intellij.lang.javascript.flex.actions.airpackage.DeviceInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -27,6 +28,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -134,6 +136,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
   private @NotNull AppDescriptorForEmulator myAppDescriptorForEmulator = AppDescriptorForEmulator.Android;
 
   private @NotNull String myDebuggerSdkRaw = FlexSdkComboBoxWithBrowseButton.BC_SDK_KEY;
+
+  private @Nullable DeviceInfo myDeviceInfo;
 
   public boolean isOverrideMainClass() {
     return myOverrideMainClass;
@@ -335,6 +339,16 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
   public void setDebuggerSdkRaw(final @NotNull String debuggerSdkRaw) {
     myDebuggerSdkRaw = debuggerSdkRaw;
+  }
+
+  @Transient
+  @Nullable
+  public DeviceInfo getDeviceInfo() {
+    return myDeviceInfo;
+  }
+
+  public void setDeviceInfo(@Nullable final DeviceInfo deviceInfo) {
+    myDeviceInfo = deviceInfo;
   }
 
   public void check(final Project project) throws RuntimeConfigurationError {
