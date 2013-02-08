@@ -8,6 +8,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartPsiCompositeElement;
 import com.jetbrains.lang.dart.psi.DartType;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +42,7 @@ public class DartTypeHandler extends TypedHandlerDelegate {
   private static boolean checkAfterDollarInString(PsiFile file, int offset) {
     PsiElement at = file.findElementAt(offset - 1);
     final String text = at != null ? at.getText() : "";
-    return text.endsWith("$");
+    return text.endsWith("$") && PsiTreeUtil.getParentOfType(at, DartPsiCompositeElement.class) != null;
   }
 
   @Override
