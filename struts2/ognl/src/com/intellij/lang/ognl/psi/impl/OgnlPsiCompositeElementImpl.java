@@ -18,7 +18,6 @@ package com.intellij.lang.ognl.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ognl.psi.OgnlPsiCompositeElement;
-import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -30,11 +29,7 @@ abstract class OgnlPsiCompositeElementImpl extends ASTWrapperPsiElement implemen
     super(node);
   }
 
-  public IElementType getTokenType() {
-    return getNode().getElementType();
-  }
-
   public String toString() {
-    return getTokenType().toString();
+    return getNode().getElementType().toString();
   }
 }

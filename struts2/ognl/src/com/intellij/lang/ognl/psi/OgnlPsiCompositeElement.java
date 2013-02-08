@@ -16,11 +16,9 @@
 package com.intellij.lang.ognl.psi;
 
 import com.intellij.psi.NavigatablePsiElement;
-import com.intellij.psi.tree.IElementType;
 
 /**
  * @author Yann C&eacute;bron
  */
 public interface OgnlPsiCompositeElement extends NavigatablePsiElement {
-  IElementType getTokenType();
 }
