@@ -15,7 +15,7 @@
 {
   classHeader="apache2.txt"
 
-  psiImplUtilClass="com.intellij.lang.ognl.psi.OgnlPsiUtil"
+  psiImplUtilClass="com.intellij.lang.ognl.psi.impl.OgnlPsiUtil"
 
   parserClass="com.intellij.lang.ognl.parser.OgnlParser"
   stubParserClass="com.intellij.lang.ognl.parser.GeneratedParserUtilBase"

@@ -13,10 +13,11 @@
  * limitations under the License.
  */
 
-package com.intellij.lang.ognl.psi;
+package com.intellij.lang.ognl.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ognl.OgnlTypes;
+import com.intellij.lang.ognl.psi.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiType;
@@ -30,24 +31,24 @@ import java.math.BigInteger;
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlPsiUtil {
+class OgnlPsiUtil {
 
   @NotNull
-  public static OgnlTokenType getOperator(OgnlBinaryExpression expression) {
+  static OgnlTokenType getOperator(OgnlBinaryExpression expression) {
     final ASTNode node = expression.getNode().findChildByType(OgnlTokenGroups.OPERATIONS);
     assert node != null : "unknown operation sign: '" + expression.getText() + "'";
     return (OgnlTokenType)node.getElementType();
   }
 
   @NotNull
-  public static OgnlTokenType getUnaryOperator(OgnlUnaryExpression expression) {
+  static OgnlTokenType getUnaryOperator(OgnlUnaryExpression expression) {
     final ASTNode node = expression.getNode().findChildByType(OgnlTokenGroups.UNARY_OPS);
     assert node != null : "unknown unary operation sign: '" + expression.getText() + "'";
     return (OgnlTokenType)node.getElementType();
   }
 
   @Nullable
-  public static PsiType getType(@Nullable OgnlExpression expression) {
+  static PsiType getType(@Nullable OgnlExpression expression) {
     if (expression == null) {
       return null;
     }
@@ -115,7 +116,7 @@ public class OgnlPsiUtil {
   }
 
   @Nullable
-  public static Object getConstantValue(OgnlLiteralExpression expression) {
+  static Object getConstantValue(OgnlLiteralExpression expression) {
     final ASTNode node = expression.getNode();
     final IElementType type = node.getFirstChildNode().getElementType();
 
@@ -149,7 +150,7 @@ public class OgnlPsiUtil {
     throw new IllegalArgumentException("could not resolve constant value for literal " + type + " / " + text);
   }
 
-  public static int getParameterCount(OgnlMethodCallExpression expression) {
+  static int getParameterCount(OgnlMethodCallExpression expression) {
     return expression.getExpressionList().size() - 1;
   }
 }

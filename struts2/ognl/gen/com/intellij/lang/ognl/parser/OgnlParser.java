@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import static com.intellij.lang.ognl.parser.GeneratedParserUtilBase.*;
 
-@SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
+@SuppressWarnings("ALL")
 public class OgnlParser implements PsiParser {
 
   public static Logger LOG_ = Logger.getInstance("com.intellij.lang.ognl.parser.OgnlParser");
