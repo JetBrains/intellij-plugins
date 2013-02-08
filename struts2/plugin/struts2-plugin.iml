@@ -37,6 +37,7 @@
     <orderEntry type="module" module-name="jsp-openapi" />
     <orderEntry type="module" module-name="jsp-spi" />
     <orderEntry type="module" module-name="ognl" />
+    <orderEntry type="module" module-name="css-api" />
   </component>
 </module>
 
