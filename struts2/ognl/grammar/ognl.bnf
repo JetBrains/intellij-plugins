@@ -22,7 +22,7 @@
   // generateStubParser=true
 
   implements="com.intellij.lang.ognl.psi.OgnlPsiCompositeElement"
-  extends="com.intellij.lang.ognl.psi.OgnlPsiCompositeElementImpl"
+  extends="com.intellij.lang.ognl.psi.impl.OgnlPsiCompositeElementImpl"
 
   psiClassPrefix="Ognl"
   psiImplClassSuffix="Impl"

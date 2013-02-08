@@ -13,19 +13,20 @@
  * limitations under the License.
  */
 
-package com.intellij.lang.ognl.psi;
+package com.intellij.lang.ognl.psi.impl;
 
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.ognl.psi.OgnlPsiCompositeElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlPsiCompositeElementImpl extends ASTWrapperPsiElement implements OgnlPsiCompositeElement  {
+abstract class OgnlPsiCompositeElementImpl extends ASTWrapperPsiElement implements OgnlPsiCompositeElement {
 
- public OgnlPsiCompositeElementImpl(@NotNull ASTNode node) {
+  protected OgnlPsiCompositeElementImpl(@NotNull ASTNode node) {
     super(node);
   }
 

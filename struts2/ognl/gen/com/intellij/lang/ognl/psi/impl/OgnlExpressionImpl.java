@@ -17,16 +17,13 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
+import com.intellij.lang.ognl.psi.OgnlExpression;
+import com.intellij.lang.ognl.psi.OgnlVisitor;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
-import static com.intellij.lang.ognl.OgnlTypes.*;
-import com.intellij.lang.ognl.psi.OgnlPsiCompositeElementImpl;
-import com.intellij.lang.ognl.psi.*;
 import com.intellij.psi.PsiType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class OgnlExpressionImpl extends OgnlPsiCompositeElementImpl implements OgnlExpression {
 
