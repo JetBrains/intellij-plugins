@@ -15,15 +15,10 @@
 
 package com.intellij.lang.ognl;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.fileTypes.FileTypeManager;
-
 /**
  * @author Yann C&eacute;bron
  */
 public final class OgnlTestUtils {
-
-  public static final String DUMMY_OGNL_FILE_NAME = "test." + OgnlFileType.INSTANCE.getDefaultExtension();
 
   private OgnlTestUtils() {
   }
@@ -36,34 +31,5 @@ public final class OgnlTestUtils {
    */
   public static String createExpression(final String text) {
     return OgnlLanguage.EXPRESSION_PREFIX + text + OgnlLanguage.EXPRESSION_SUFFIX;
-  }
-
-  /**
-   * Installs OGNL file-type for using {@code .ognl} files.
-   */
-  public static void installOgnlFileType() {
-    associateOgnlFileType(false);
-  }
-
-  /**
-   * Removes OGNL file-type.
-   */
-  public static void removeOgnlFileType() {
-    associateOgnlFileType(true);
-  }
-
-  private static void associateOgnlFileType(final boolean remove) {
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      @Override
-      public void run() {
-        if (remove) {
-          FileTypeManager.getInstance().removeAssociatedExtension(OgnlFileType.INSTANCE,
-                                                                  OgnlFileType.INSTANCE.getDefaultExtension());
-          return;
-        }
-        FileTypeManager.getInstance().associateExtension(OgnlFileType.INSTANCE,
-                                                         OgnlFileType.INSTANCE.getDefaultExtension());
-      }
-    });
   }
 }

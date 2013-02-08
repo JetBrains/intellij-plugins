@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +15,9 @@
 
 package com.intellij.lang.ognl.completion;
 
-import com.intellij.codeInsight.completion.LightCompletionTestCase;
+import com.intellij.lang.ognl.OgnlFileType;
 import com.intellij.lang.ognl.OgnlTestUtils;
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 
 import java.util.Arrays;
 
@@ -25,30 +26,15 @@ import java.util.Arrays;
  *
  * @author Yann C&eacute;bron
  */
-abstract class OgnlCompletionTestCase extends LightCompletionTestCase {
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-
-    OgnlTestUtils.installOgnlFileType();
-  }
-
-  @Override
-  protected void tearDown() throws Exception {
-    OgnlTestUtils.removeOgnlFileType();
-
-    super.tearDown();
-  }
+abstract class OgnlCompletionTestCase extends LightCodeInsightFixtureTestCase {
 
   protected void doTest(final String ognlExpression,
                         final String... expectedCompletionItems) throws Throwable {
-    configureFromFileText(OgnlTestUtils.DUMMY_OGNL_FILE_NAME,
-                          OgnlTestUtils.createExpression(ognlExpression));
-    complete();
+    myFixture.configureByText(OgnlFileType.INSTANCE,
+                              OgnlTestUtils.createExpression(ognlExpression));
+    myFixture.completeBasic();
 
     Arrays.sort(expectedCompletionItems);
-    assertStringItems(expectedCompletionItems);
+    assertSameElements(myFixture.getLookupElementStrings(), expectedCompletionItems);
   }
-
 }
