@@ -23,6 +23,7 @@ import com.google.jstestdriver.hooks.ServerListener;
 import com.google.jstestdriver.idea.util.SwingUtils;
 import com.intellij.ide.BrowserSettings;
 import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.UrlOpener;
 import com.intellij.ide.browsers.WebBrowserSettings;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -282,7 +283,7 @@ public class CapturedBrowsersController implements ServerListener {
         return false;
       }
 
-      BrowsersConfiguration.launchBrowser(myBrowser.getBrowserFamily(), captureUrl);
+      UrlOpener.launchBrowser(myBrowser.getBrowserFamily(), captureUrl);
       return true;
     }
 
