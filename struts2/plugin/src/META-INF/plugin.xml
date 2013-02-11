@@ -57,6 +57,12 @@
                     interface="com.intellij.struts2.dom.params.ParamNameConverter$ParamNameCustomConverter"/>
   </extensionPoints>
 
+  <!-- OGNL extension points -->
+  <extensionPoints>
+    <extensionPoint qualifiedName="com.intellij.ognl.variableReferencesContributor"
+                    interface="com.intellij.lang.ognl.psi.resolve.variable.OgnlVariableReferencesContributor"/>
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
@@ -244,6 +250,7 @@
     <typedHandler implementation="com.intellij.lang.ognl.OgnlTypedHandler"/>
     <completion.contributor language="OGNL"
                             implementationClass="com.intellij.lang.ognl.completion.OgnlKeywordCompletionContributor"/>
+    <ognl.variableReferencesContributor implementation="com.intellij.lang.ognl.psi.resolve.variable.OgnlDefaultVariableReferencesContributor"/>
 
     <colorSettingsPage implementation="com.intellij.lang.ognl.highlight.OgnlColorSettingsPage"/>
     <liveTemplateContext implementation="com.intellij.lang.ognl.template.OgnlTemplateContextType"/>

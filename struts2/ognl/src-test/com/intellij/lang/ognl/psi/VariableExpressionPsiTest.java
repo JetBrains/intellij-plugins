@@ -16,8 +16,9 @@
 package com.intellij.lang.ognl.psi;
 
 import com.intellij.lang.ognl.OgnlLanguage;
-import com.intellij.navigation.ItemPresentation;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.PsiType;
 import org.intellij.lang.annotations.Language;
 
 /**
@@ -27,33 +28,61 @@ import org.intellij.lang.annotations.Language;
  */
 public class VariableExpressionPsiTest extends PsiTestCase {
 
-  public void testVariableReference() {
-    final OgnlVariableExpression expression = parse("#exp");
-    final ItemPresentation presentation = expression.getPresentation();
-    assertNotNull(presentation);
-    assertEquals("exp", presentation.getPresentableText());
+  enum ResolveTarget {
+    NULL,
+    ELEMENT,
+    SELF,
+    TYPE
+  }
 
-    final PsiReference reference = expression.getReference();
-    assertNotNull(reference);
-    assertEquals("exp", reference.getCanonicalText());
-    assertEquals(expression.getNavigationElement(), reference.resolve());
+  public void testUndefinedVariableReference() {
+    doTest("undefinedVariable", ResolveTarget.NULL, null);
+  }
+
+  public void testVariableContext() {
+    doTest("context", ResolveTarget.TYPE, "java.util.Map<String,Object>");
+  }
+
+  public void testVariableRoot() {
+    doTest("root", ResolveTarget.SELF, null);
   }
 
   public void testVariableThis() {
-    final OgnlVariableExpression expression = parse("#this");
-    final ItemPresentation presentation = expression.getPresentation();
-    assertNotNull(presentation);
-    assertEquals("this", presentation.getPresentableText());
-
-    final PsiReference reference = expression.getReference();
-    assertNotNull(reference);
-    assertEquals("this", reference.getCanonicalText());
-    assertEquals(expression.getNavigationElement(), reference.resolve());
+    doTest("this", ResolveTarget.SELF, null);
   }
 
   private OgnlVariableExpression parse(@Language(value = OgnlLanguage.ID,
                                                  prefix = OgnlLanguage.EXPRESSION_PREFIX,
                                                  suffix = OgnlLanguage.EXPRESSION_SUFFIX) final String expression) {
     return (OgnlVariableExpression)parseSingleExpression(expression);
+  }
+
+  private void doTest(String name,
+                      ResolveTarget resolveTarget,
+                      Object expectedResolveTarget) {
+    final OgnlVariableExpression expression = parse("#" + name);
+
+    final PsiReference reference = expression.getReference();
+    assertNotNull(reference);
+    assertEquals(name, reference.getCanonicalText());
+
+    final PsiElement resolveElement = reference.resolve();
+    switch (resolveTarget) {
+      case NULL:
+        assertNull(resolveElement);
+        break;
+      case ELEMENT:
+        assertEquals(expectedResolveTarget, resolveElement);
+        break;
+      case SELF:
+        assertEquals(expression.getNavigationElement(), resolveElement);
+        break;
+      case TYPE:
+        final String expectedType = (String)expectedResolveTarget;
+        final PsiType type = getJavaFacade().getElementFactory().createTypeFromText(expectedType, expression);
+        assertNotNull(type);
+        assertEquals(expectedType, type.getCanonicalText());
+        break;
+    }
   }
 }

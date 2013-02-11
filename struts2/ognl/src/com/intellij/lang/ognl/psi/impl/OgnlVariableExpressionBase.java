@@ -15,19 +15,17 @@
 
 package com.intellij.lang.ognl.psi.impl;
 
-import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.ASTNode;
-import com.intellij.navigation.ItemPresentation;
+import com.intellij.lang.ognl.psi.resolve.OgnlResolveUtil;
+import com.intellij.lang.ognl.psi.resolve.variable.OgnlVariableReference;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiReferenceBase;
-import com.intellij.util.PlatformIcons;
+import com.intellij.psi.*;
+import com.intellij.util.CommonProcessors;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 /**
  * @author Yann C&eacute;bron
@@ -38,51 +36,59 @@ abstract class OgnlVariableExpressionBase extends OgnlExpressionImpl {
     super(node);
   }
 
-  @Override
-  public ItemPresentation getPresentation() {
-    return new ItemPresentation() {
-      @Nullable
-      @Override
-      public String getPresentableText() {
-        return getText().substring(1);
-      }
-
-      @Nullable
-      @Override
-      public String getLocationString() {
-        return null;
-      }
-
-      @Nullable
-      @Override
-      public Icon getIcon(boolean unused) {
-        return null;
-      }
-    };
-  }
-
-
-  // TODO add some fake completion variants
   @Nullable
   @Override
   public PsiReference getReference() {
-    return new PsiReferenceBase<PsiElement>(this, TextRange.from(1, getTextLength() - 1), true) {
-      @Nullable
-      @Override
-      public PsiElement resolve() {
-        return OgnlVariableExpressionBase.this;
-      }
+    return new OgnlVariableReferencePsiReference(this);
+  }
 
+  private static class OgnlVariableReferencePsiReference extends PsiReferenceBase.Poly<PsiElement> {
 
-      @NotNull
+    private static final Function<OgnlVariableReference, PsiElementResolveResult> RESOLVE_FUNCTION =
+      new Function<OgnlVariableReference, PsiElementResolveResult>() {
+        @Override
+        public PsiElementResolveResult fun(OgnlVariableReference reference) {
+          return new PsiElementResolveResult(reference.getNavigationElement());
+        }
+      };
+    private static final Function<OgnlVariableReference, Object> VARIANT_FUNCTION = new Function<OgnlVariableReference, Object>() {
       @Override
-      public Object[] getVariants() {
-        return new LookupElement[]{
-          LookupElementBuilder.create("context").withIcon(PlatformIcons.VARIABLE_ICON).withTypeText("Map<String,Object>"),
-          LookupElementBuilder.create("root").withIcon(PlatformIcons.VARIABLE_ICON).withTypeText("Root Object"),
-          LookupElementBuilder.create("this").withIcon(PlatformIcons.VARIABLE_ICON).withTypeText("<Current Object>")
-        };
+      public Object fun(OgnlVariableReference element) {
+        return LookupElementBuilder.create(element.getNavigationElement(), element.getName())
+          .withIcon(element.getIcon(0))
+          .withTailText(" (" + element.getOriginInfo() + ")", true)
+          .withTypeText(element.getType().getPresentableText());
       }
     };
+
+    private OgnlVariableReferencePsiReference(OgnlVariableExpressionBase element) {
+      super(element, TextRange.from(1, element.getTextLength() - 1), true);
+    }
+
+    @NotNull
+    @Override
+    public ResolveResult[] multiResolve(boolean incompleteCode) {
+      final String name = getValue();
+
+      final CommonProcessors.CollectProcessor<OgnlVariableReference> processor =
+        new CommonProcessors.CollectProcessor<OgnlVariableReference>() {
+          @Override
+          protected boolean accept(OgnlVariableReference reference) {
+            return reference.getName().equals(name);
+          }
+        };
+      OgnlResolveUtil.processVariables(getElement(), processor);
+      return ContainerUtil.map2Array(processor.getResults(), PsiElementResolveResult.class, RESOLVE_FUNCTION);
+    }
+
+    @NotNull
+    @Override
+    public Object[] getVariants() {
+      final CommonProcessors.CollectProcessor<OgnlVariableReference> processor =
+        new CommonProcessors.CollectProcessor<OgnlVariableReference>();
+      OgnlResolveUtil.processVariables(getElement(), processor);
+
+      return ContainerUtil.map2Array(processor.getResults(), VARIANT_FUNCTION);
+    }
   }
 }
