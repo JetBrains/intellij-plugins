@@ -950,6 +950,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
       return false;
     }
 
+    @NotNull
     public String getUnresolvedMessagePattern() {
       return FlexBundle.message("cannot.resolve.state");
     }
