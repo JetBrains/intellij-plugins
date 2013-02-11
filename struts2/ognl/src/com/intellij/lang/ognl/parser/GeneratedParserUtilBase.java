@@ -56,6 +56,10 @@ public class GeneratedParserUtilBase {
     }
   };
 
+  public static boolean eof(PsiBuilder builder_, int level_) {
+    return builder_.eof();
+  }
+
   public static boolean recursion_guard_(PsiBuilder builder_, int level_, String funcName_) {
     if (level_ > 1000) {
       builder_.error("Maximum recursion level (" + 1000 + ") reached in " + funcName_);
@@ -314,7 +318,7 @@ public class GeneratedParserUtilBase {
         eatMoreFlagOnce ? builder_.getLatestDoneMarker() : null;
       PsiBuilder.Marker extensionMarker = null;
       IElementType extensionTokenType = null;
-      if (latestDoneMarker instanceof PsiBuilder.Marker) {
+      if (latestDoneMarker instanceof PsiBuilder.Marker && frame.offset == latestDoneMarker.getStartOffset()) {
         extensionMarker = ((PsiBuilder.Marker)latestDoneMarker).precede();
         extensionTokenType = latestDoneMarker.getTokenType();
         ((PsiBuilder.Marker)latestDoneMarker).drop();
@@ -523,11 +527,12 @@ public class GeneratedParserUtilBase {
 
     private static final int MAX_VARIANTS_TO_DISPLAY = Integer.MAX_VALUE;
     private boolean addExpected(StringBuilder sb, int offset, boolean expected) {
-      String[] strings = new String[variants.size()];
+      MyList<Variant> list = expected ? variants : unexpected;
+      String[] strings = new String[list.size()];
       long[] hashes = new long[strings.length];
       Arrays.fill(strings, "");
       int count = 0;
-      loop: for (Variant variant : expected? variants : unexpected) {
+      loop: for (Variant variant : list) {
         if (offset == variant.offset) {
           String text = variant.object.toString();
           long hash = StringHash.calc(text);
