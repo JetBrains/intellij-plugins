@@ -67,6 +67,6 @@ class FlexProjectConverter extends ProjectConverter {
 
 
   public ConversionProcessor<ProjectLibrariesSettings> createProjectLibrariesConverter() {
-    return new FlexLibrariesConverter(myParams);
+    return new FlexLibrariesConverter(myContext, myParams);
   }
 }
