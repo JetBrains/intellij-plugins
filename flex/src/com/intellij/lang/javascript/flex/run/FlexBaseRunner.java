@@ -18,7 +18,7 @@ import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.ide.BrowserUtil;
-import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.UrlOpener;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexStackTraceFilter;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -58,7 +58,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -280,8 +280,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       case Browser:
         final Runnable runnable1 = new Runnable() {
           public void run() {
-            BrowsersConfiguration.launchBrowser(launcherParams.getBrowserFamily(),
-                                                BrowserUtil.isAbsoluteURL(urlOrPath) ? urlOrPath : VfsUtil.pathToUrl(urlOrPath));
+            UrlOpener.launchBrowser(launcherParams.getBrowserFamily(),
+                                    BrowserUtil.isAbsoluteURL(urlOrPath) ? urlOrPath : VfsUtilCore.pathToUrl(urlOrPath));
           }
         };
 
