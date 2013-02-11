@@ -1,8 +1,7 @@
 {
 
   parserClass="com.jetbrains.typoscript.lang.TypoScriptGeneratedParser"
-  stubParserClass="com.jetbrains.typoscript.lang.TypoScriptParserUtil"
-  generateStubParser = true
+  parserUtilClass="com.jetbrains.typoscript.lang.TypoScriptParserUtil"
   tokenTypeClass="com.jetbrains.typoscript.lang.TypoScriptTokenType"
   elementTypeClass="com.jetbrains.typoscript.lang.TypoScriptTokenType"
   elementTypeHolderClass="com.jetbrains.typoscript.lang.TypoScriptElementTypes"

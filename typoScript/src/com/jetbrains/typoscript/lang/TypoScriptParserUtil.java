@@ -16,6 +16,7 @@
 package com.jetbrains.typoscript.lang;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.psi.tree.IElementType;
 
 
