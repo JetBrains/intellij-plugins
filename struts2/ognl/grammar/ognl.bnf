@@ -18,8 +18,7 @@
   psiImplUtilClass="com.intellij.lang.ognl.psi.impl.OgnlPsiUtil"
 
   parserClass="com.intellij.lang.ognl.parser.OgnlParser"
-  stubParserClass="com.intellij.lang.ognl.parser.GeneratedParserUtilBase"
-  // generateStubParser=true
+  parserUtilClass="com.intellij.lang.ognl.parser.GeneratedParserUtilBase"
 
   implements="com.intellij.lang.ognl.psi.OgnlPsiCompositeElement"
   extends="com.intellij.lang.ognl.psi.impl.OgnlPsiCompositeElementImpl"
