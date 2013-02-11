@@ -144,7 +144,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     return element;
   }
 
-  public PsiElement[] getNodeElements(Object parent) {
+  public PsiElement[] getNodeItems(Object parent) {
     if (parent instanceof JSClass) {
       final JSClass clazz = (JSClass)parent;
       if (!clazz.isValid()) { return PsiElement.EMPTY_ARRAY; }
@@ -212,7 +212,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     }
   }
 
-  public SimpleColoredText getPresentableName(Object element, DiagramState presentation) {
+  public SimpleColoredText getItemName(Object element, DiagramState presentation) {
     if (element instanceof JSFunction) {
       return getMethodPresentableName((JSFunction)element);
     }
@@ -295,7 +295,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
   }
 
 
-  public SimpleColoredText getPresentableType(Object element) {
+  public SimpleColoredText getItemType(Object element) {
     String text = getPresentableTypeStatic(element);
     return text != null ? new SimpleColoredText(text, new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, getFGColor())) : null;
   }
@@ -313,7 +313,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
     }
   }
 
-  public String getElementDescription(Object element) {
+  public String getNodeTooltip(Object element) {
     if (element instanceof JSClass) {
       return "<html><b>" + JSFormatUtil.formatClass((JSClass)element, JSFormatUtil.SHOW_FQ_NAME) + "</b></html>";
     }
@@ -321,7 +321,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
   }
 
   @Override
-  public Icon getNodeElementIcon(Object element, DiagramState presentation) {
+  public Icon getItemIcon(Object element, DiagramState presentation) {
     return getNodeElementIconStatic(element);
   }
 

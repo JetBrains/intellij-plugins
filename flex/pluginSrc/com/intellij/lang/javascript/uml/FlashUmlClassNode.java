@@ -25,7 +25,7 @@ public class FlashUmlClassNode extends PsiDiagramNode {
     super(clazz, provider);
   }
 
-  public String getName() {
+  public String getTooltip() {
     return "<html><b>" + ((JSClass)getElement()).getQualifiedName() + "</b></html>";
   }
 }

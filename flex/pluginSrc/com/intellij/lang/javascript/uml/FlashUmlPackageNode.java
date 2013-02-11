@@ -42,7 +42,7 @@ public class FlashUmlPackageNode extends DiagramNodeBase<Object> {
     return myPackage;
   }
 
-  public String getName() {
+  public String getTooltip() {
     return "<html><b>" + (myPackage.length() > 0 ? myPackage : JSBundle.message("top.level")) + "</b></html>";
   }
 
