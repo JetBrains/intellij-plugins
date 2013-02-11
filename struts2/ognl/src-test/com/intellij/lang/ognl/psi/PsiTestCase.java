@@ -24,7 +24,7 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.LightPlatformTestCase;
+import com.intellij.testFramework.LightIdeaTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.intellij.lang.annotations.Language;
 
@@ -33,7 +33,7 @@ import org.intellij.lang.annotations.Language;
  *
  * @author Yann C&eacute;bron
  */
-public abstract class PsiTestCase extends LightPlatformTestCase {
+public abstract class PsiTestCase extends LightIdeaTestCase {
 
   protected OgnlExpression parseSingleExpression(@Language(value = OgnlLanguage.ID,
                                                            prefix = OgnlLanguage.EXPRESSION_PREFIX,
