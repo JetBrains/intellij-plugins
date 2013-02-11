@@ -186,7 +186,11 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
             final ModifiableCompilerOptions compilerOptions = rlmBC.getCompilerOptions();
             compilerOptions.setResourceFilesMode(ResourceFilesMode.None);
-            compilerOptions.setAdditionalOptions(FlexCommonUtils.removeOptions(compilerOptions.getAdditionalOptions(), "link-report"));
+
+            String additionalOptions = compilerOptions.getAdditionalOptions();
+            additionalOptions = FlexCommonUtils.removeOptions(additionalOptions, "link-report");
+            additionalOptions = FlexCommonUtils.fixSizeReportOption(additionalOptions, StringUtil.getShortName(rlmBC.getMainClass()));
+            compilerOptions.setAdditionalOptions(additionalOptions);
 
             compilationTasks.add(createCompilationTask(((MyProcessingItem)item).myModule, rlmBC, dependencies, builtInCompilerShell));
           }
@@ -213,7 +217,14 @@ public class FlexCompiler implements SourceProcessingCompiler {
             cssBC.setRLMs(Collections.<FlexBuildConfiguration.RLMInfo>emptyList());
             cssBC.setCssFilesToCompile(Collections.<String>emptyList());
 
-            cssBC.getCompilerOptions().setResourceFilesMode(ResourceFilesMode.None);
+            final ModifiableCompilerOptions compilerOptions = cssBC.getCompilerOptions();
+            compilerOptions.setResourceFilesMode(ResourceFilesMode.None);
+
+            String additionalOptions = compilerOptions.getAdditionalOptions();
+            additionalOptions = FlexCommonUtils.removeOptions(additionalOptions, "link-report");
+            additionalOptions =
+              FlexCommonUtils.fixSizeReportOption(additionalOptions, FileUtil.getNameWithoutExtension((PathUtil.getFileName(cssPath))));
+            compilerOptions.setAdditionalOptions(additionalOptions);
 
             compilationTasks.add(createCompilationTask(((MyProcessingItem)item).myModule, cssBC, dependencies, builtInCompilerShell));
           }

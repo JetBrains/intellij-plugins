@@ -228,7 +228,11 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
 
     final JpsFlexCompilerOptions compilerOptions = rlmBC.getCompilerOptions();
     compilerOptions.setResourceFilesMode(JpsFlexCompilerOptions.ResourceFilesMode.None);
-    compilerOptions.setAdditionalOptions(FlexCommonUtils.removeOptions(compilerOptions.getAdditionalOptions(), "link-report"));
+
+    String additionalOptions = compilerOptions.getAdditionalOptions();
+    additionalOptions = FlexCommonUtils.removeOptions(additionalOptions, "link-report");
+    additionalOptions = FlexCommonUtils.fixSizeReportOption(additionalOptions, StringUtil.getShortName(rlmBC.getMainClass()));
+    compilerOptions.setAdditionalOptions(additionalOptions);
 
     return rlmBC;
   }
@@ -255,7 +259,15 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     cssBC.setRLMs(Collections.<JpsFlexBuildConfiguration.RLMInfo>emptyList());
     cssBC.setCssFilesToCompile(Collections.<String>emptyList());
 
-    cssBC.getCompilerOptions().setResourceFilesMode(JpsFlexCompilerOptions.ResourceFilesMode.None);
+    final JpsFlexCompilerOptions compilerOptions = cssBC.getCompilerOptions();
+    compilerOptions.setResourceFilesMode(JpsFlexCompilerOptions.ResourceFilesMode.None);
+
+    String additionalOptions = compilerOptions.getAdditionalOptions();
+    additionalOptions = FlexCommonUtils.removeOptions(additionalOptions, "link-report");
+    additionalOptions =
+      FlexCommonUtils.fixSizeReportOption(additionalOptions, FileUtil.getNameWithoutExtension(PathUtilRt.getFileName(cssPath)));
+    compilerOptions.setAdditionalOptions(additionalOptions);
+
     return cssBC;
   }
 

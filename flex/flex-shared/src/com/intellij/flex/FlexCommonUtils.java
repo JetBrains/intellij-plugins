@@ -1069,4 +1069,24 @@ public class FlexCommonUtils {
       return new InputStreamReader(inputStream);
     }
   }
+
+  public static String fixSizeReportOption(final String additionalOptions, final String postfix) {
+    final List<String> values = getOptionValues(additionalOptions, "size-report");
+    final StringBuilder result = new StringBuilder(removeOptions(additionalOptions, "size-report"));
+    if (values.size() == 1 && values.get(0).toLowerCase().endsWith(".xml")) {
+      final String path = values.get(0);
+      result.append(" -size-report=");
+      if (path.contains(" ")) {
+        result.append("\"");
+      }
+      result.append(path.substring(0, path.length() - ".xml".length()));
+      result.append("-").append(postfix);
+      result.append(path.substring(path.length() - ".xml".length()));
+      if (path.contains(" ")) {
+        result.append("\"");
+      }
+    }
+
+    return result.toString();
+  }
 }
