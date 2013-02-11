@@ -98,6 +98,7 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     return variants;
   }
 
+  @NotNull
   public String getUnresolvedMessagePattern() {
     return "Cannot resolve property '" + getValue() + "'";
   }

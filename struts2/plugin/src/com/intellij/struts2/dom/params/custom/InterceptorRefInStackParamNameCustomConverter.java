@@ -148,6 +148,7 @@ public class InterceptorRefInStackParamNameCustomConverter extends ParamNameConv
       return ArrayUtil.toObjectArray(names, LookupElement.class);
     }
 
+    @NotNull
     @Override
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve interceptor '" + getValue() + "' " +

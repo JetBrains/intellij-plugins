@@ -89,6 +89,7 @@ class StrutsConstantValueReference extends PsiReferenceBase<XmlTag> implements E
     return (PsiElement) resolveObject;
   }
 
+  @NotNull
   public String getUnresolvedMessagePattern() {
     assert elementConverterPair != null;
     

@@ -118,6 +118,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
       return ArrayUtil.toObjectArray(action.getActionMethods());
     }
 
+    @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve action method '" + getValue() + "'";
     }
@@ -168,6 +169,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
       return ArrayUtil.toObjectArray(variants);
     }
 
+    @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve action '" + getValue() + "'";
     }

@@ -141,6 +141,7 @@ public class ActionChainOrRedirectResultContributor extends StrutsResultContribu
       return ArrayUtil.toObjectArray(variants);
     }
 
+    @NotNull
     @Override
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve Action '" + getValue() + "'";

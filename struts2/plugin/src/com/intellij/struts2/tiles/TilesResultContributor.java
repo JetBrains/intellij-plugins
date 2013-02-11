@@ -142,6 +142,7 @@ public class TilesResultContributor extends StrutsResultContributor {
       return ArrayUtil.toObjectArray(variants);
     }
 
+    @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve Tiles definition '" + getValue() + "'";
     }

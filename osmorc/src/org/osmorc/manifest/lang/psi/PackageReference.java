@@ -94,6 +94,7 @@ public class PackageReference extends PsiReferenceBase<PsiElement> implements Em
   }
 
 
+  @NotNull
   public String getUnresolvedMessagePattern() {
     return "Cannot resolve symbol";
   }

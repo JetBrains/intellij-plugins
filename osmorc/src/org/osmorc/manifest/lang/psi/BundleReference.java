@@ -58,6 +58,7 @@ public class BundleReference extends PsiReferenceBase<HeaderValuePart> implement
     return ArrayUtil.EMPTY_OBJECT_ARRAY;
   }
 
+  @NotNull
   public String getUnresolvedMessagePattern() {
     return "Cannot resolve bundle";
   }

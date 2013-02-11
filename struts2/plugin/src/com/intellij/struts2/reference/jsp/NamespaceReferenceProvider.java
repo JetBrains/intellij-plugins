@@ -96,6 +96,7 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
                                      STRUTS_PACKAGE_LOOKUP_ELEMENT_FUNCTION);
     }
 
+    @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve namespace '" + getCanonicalText() + "'";
     }

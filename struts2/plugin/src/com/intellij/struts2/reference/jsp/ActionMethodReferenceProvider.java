@@ -118,6 +118,7 @@ public class ActionMethodReferenceProvider extends PsiReferenceProvider {
       return ArrayUtil.toObjectArray(action.getActionMethods());
     }
 
+    @NotNull
     @Override
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve action-method '" + methodName + "'";

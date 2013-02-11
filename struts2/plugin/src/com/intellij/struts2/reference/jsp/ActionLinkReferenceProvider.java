@@ -174,6 +174,7 @@ TODO not needed so far ?!
       return ArrayUtil.toObjectArray(variants);
     }
 
+    @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve action '" + getValue() + "'";
     }
@@ -261,6 +262,7 @@ TODO not needed so far ?!
       });
     }
 
+    @NotNull
     public String getUnresolvedMessagePattern() {
       return "Cannot resolve Struts 2 package '" + namespace + "'";
     }
