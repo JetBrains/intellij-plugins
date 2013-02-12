@@ -2,14 +2,14 @@ package com.jetbrains.lang.dart.liveEdit;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.PsiFile;
-import com.jetbrains.browserConnection.BrowserConnection;
+import com.jetbrains.browserConnection.BrowserConnectionManager;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.liveEdit.Dom;
 import com.jetbrains.liveEdit.FileBasedSynchronizer;
 
 public class DartSynchronizer extends FileBasedSynchronizer<DartFile> {
-  public DartSynchronizer(BrowserConnection browserConnection) {
+  public DartSynchronizer(BrowserConnectionManager browserConnection) {
     super(browserConnection);
   }
 
