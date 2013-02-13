@@ -1,0 +1,6 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij.plugins.watcher">
+    <consumer implementation="com.jetbrains.lang.dart.ide.watcher.Dart2JSTaskConsumer"/>
+    <dependency.finder implementation="com.jetbrains.lang.dart.ide.watcher.DartFileDependencyFinder"/>
+  </extensions>
+</idea-plugin>

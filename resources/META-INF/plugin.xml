@@ -10,7 +10,7 @@
   <depends optional="true" config-file="pub-support.xml">org.jetbrains.plugins.yaml</depends>
   <depends optional="true" config-file="rich-platform.xml">com.intellij.modules.java</depends>
   <depends optional="true" config-file="dart-copyright.xml">com.intellij.copyright</depends>
-  <!--<depends optional="true" config-file="liveedit-support.xml">com.intellij.plugins.html.instantEditing</depends>-->
+  <depends optional="true" config-file="dart-file-watcher.xml">com.intellij.plugins.watcher</depends>
   <change-notes>
     <![CDATA[
         <p>0.4.8:</p>
@@ -135,6 +135,7 @@
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <fileTypeFactory implementation="com.jetbrains.lang.dart.DartFileTypeFactory"/>
     <lang.syntaxHighlighterFactory key="Dart" implementationClass="com.jetbrains.lang.dart.highlight.DartSyntaxHighlighterFactory"/>
+    <problemFileHighlightFilter implementation="com.jetbrains.lang.dart.highlight.DartProblemFileHighlightFilter"/>
 
     <lang.braceMatcher language="Dart" implementationClass="com.jetbrains.lang.dart.ide.DartBraceMatcher"/>
     <typedHandler implementation="com.jetbrains.lang.dart.ide.editor.DartTypeHandler" id="Dart"/>
