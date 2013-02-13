@@ -39,6 +39,7 @@ public class DartSettingsUI {
   private TextFieldWithBrowseButton myPathChooser;
   private JLabel mySetupLabel;
   private HyperlinkLabel mySetupScopeLabel;
+  private JCheckBox myDartSdkEnabled;
   private final Project myProject;
 
   public DartSettingsUI(final Project project) {
@@ -88,6 +89,24 @@ public class DartSettingsUI {
         }
       }
     });
+    myDartSdkEnabled.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        final JSLibraryManager libraryManager = JSLibraryManager.getInstance(myProject);
+        final JSLibraryMappings libraryMappings = libraryManager.getLibraryMappings();
+        final String libName = DartBundle.message("dart.sdk.name");
+        if (libraryMappings.isAssociatedWithProject(libName)) {
+          libraryMappings.disassociateWithProject(libName);
+        }
+        else if (libraryManager.getLibraryByName(libName) != null) {
+          libraryMappings.associate(null, libName, false);
+        }
+        AccessToken writeToken = ApplicationManager.getApplication().acquireWriteActionLock(getClass());
+        libraryManager.commitChanges();
+        writeToken.finish();
+        updateUI();
+      }
+    });
   }
 
   private boolean isDartSDKConfigured() {
@@ -101,7 +120,11 @@ public class DartSettingsUI {
   }
 
   private void updateUI() {
-    if (!isDartSDKConfigured()) {
+    final boolean sdkConfigured = isDartSDKConfigured();
+    myDartSdkEnabled.setEnabled(sdkConfigured);
+    final JSLibraryManager libraryManager = JSLibraryManager.getInstance(myProject);
+    myDartSdkEnabled.setSelected(libraryManager.getLibraryMappings().isAssociatedWithProject(DartBundle.message("dart.sdk.name")));
+    if (!sdkConfigured) {
       mySetupLabel.setText(DartBundle.message("dart.sdk.not.configured"));
       mySetupScopeLabel.setHyperlinkText(DartBundle.message("dart.sdk.configure"));
       return;
