@@ -1,10 +1,15 @@
 <state>
   <library name="jslib" type="javaScript">
-    <CLASSES />
-    <JAVADOC />
-    <SOURCES>
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$TEST_SDK_HOME$/1.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
       <root url="file://$TEST_SDK_HOME$/1.js" />
-    </SOURCES>
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
   </library>
   <library name="Lib2" type="flex">
     <CLASSES>
