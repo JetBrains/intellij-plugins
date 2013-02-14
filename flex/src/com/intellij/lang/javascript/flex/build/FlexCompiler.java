@@ -25,6 +25,7 @@ import com.intellij.lang.javascript.flex.projectStructure.ui.FlexBCConfigurable;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.*;
@@ -143,6 +144,8 @@ public class FlexCompiler implements SourceProcessingCompiler {
 
       context.addMessage(CompilerMessageCategory.INFORMATION, buf.toString(), null, -1, -1);
 
+      boolean startBuiltInCompiler = false;
+
       final Collection<FlexCompilationTask> compilationTasks = new ArrayList<FlexCompilationTask>();
       for (final ProcessingItem item : items) {
         final Collection<FlexBuildConfiguration> dependencies = new HashSet<FlexBuildConfiguration>();
@@ -158,7 +161,11 @@ public class FlexCompiler implements SourceProcessingCompiler {
           }
         }
 
-        compilationTasks.add(createCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies, builtInCompilerShell));
+        final FlexCompilationTask task = createCompilationTask(((MyProcessingItem)item).myModule, bc, dependencies, builtInCompilerShell);
+        if (task instanceof BuiltInCompilationTask) {
+          startBuiltInCompiler = true;
+        }
+        compilationTasks.add(task);
 
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
           for (FlexBuildConfiguration.RLMInfo rlm : bc.getRLMs()) {
@@ -231,7 +238,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
         }
       }
 
-      if (builtInCompilerShell) {
+      if (startBuiltInCompiler) {
         try {
           flexCompilerHandler.getBuiltInFlexCompilerHandler().startCompilerIfNeeded(commonSdk, context);
         }
@@ -271,8 +278,9 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                                            final Collection<FlexBuildConfiguration> dependencies,
                                                            final boolean builtInCompilerShell) {
     final boolean asc20 = bc.isPureAs() &&
-                          FlexCompilerProjectConfiguration.getInstance(module.getProject()).PREFER_ASC_20 &&
-                          FlexCommonUtils.containsASC20(bc.getSdk().getHomePath());
+                          FlexCommonUtils.containsASC20(bc.getSdk().getHomePath()) &&
+                          (FlexCompilerProjectConfiguration.getInstance(module.getProject()).PREFER_ASC_20 ||
+                           FlexSdkUtils.isAirSdkWithoutFlex(bc.getSdk()));
     if (asc20) return new ASC20CompilationTask(module, bc, dependencies);
     if (builtInCompilerShell) return new BuiltInCompilationTask(module, bc, dependencies);
     return new MxmlcCompcCompilationTask(module, bc, dependencies);
@@ -530,11 +538,23 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                                                                    DependenciesConfigurable.Location.SDK));
     }
 
-    if (sdk != null &&
-        (StringUtil.compareVersionNumbers(sdk.getVersionString(), "0") < 0 ||
-         StringUtil.compareVersionNumbers(sdk.getVersionString(), "100") > 0)) {
-      errorConsumer.consume(FlashProjectStructureProblem.createDependenciesProblem(FlexBundle.message("sdk.version.unknown", sdk.getName()),
-                                                                                   DependenciesConfigurable.Location.SDK));
+    if (sdk != null) {
+      String version = sdk.getVersionString();
+      if (FlexSdkUtils.isAirSdkWithoutFlex(sdk)) {
+        version = version.substring(FlexCommonUtils.AIR_SDK_VERSION_PREFIX.length());
+      }
+
+      if (StringUtil.compareVersionNumbers(version, "0") < 0 || StringUtil.compareVersionNumbers(version, "100") > 0) {
+        errorConsumer.consume(FlashProjectStructureProblem
+                                .createDependenciesProblem(FlexBundle.message("sdk.version.unknown", sdk.getName()),
+                                                           DependenciesConfigurable.Location.SDK));
+      }
+
+      if (FlexSdkUtils.isAirSdkWithoutFlex(sdk) && !bc.isPureAs()) {
+        errorConsumer.consume(FlashProjectStructureProblem
+                                .createGeneralOptionProblem(bc.getName(), FlexBundle.message("air.sdk.requires.pure.as", sdk.getName()),
+                                                            FlexBCConfigurable.Location.Nature));
+      }
     }
 
     InfoFromConfigFile info = InfoFromConfigFile.DEFAULT;

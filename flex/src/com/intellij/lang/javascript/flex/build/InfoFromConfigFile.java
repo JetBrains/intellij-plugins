@@ -10,7 +10,7 @@ import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.Nullable;
 
 public class InfoFromConfigFile {
-  public static InfoFromConfigFile DEFAULT = new InfoFromConfigFile(null, null, null, null, null);
+  public static final InfoFromConfigFile DEFAULT = new InfoFromConfigFile(null, null, null, null, null);
 
   private final @Nullable VirtualFile myConfigFile;
   private final @Nullable String myMainClassPath;

@@ -35,7 +35,9 @@ import com.intellij.util.io.ZipUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -77,17 +79,27 @@ public class FlexSdkUtils {
   }
 
   @Nullable
-  public static String doReadFlexSdkVersion(final VirtualFile flexSdkRoot) {
-    if (flexSdkRoot == null) {
+  public static String doReadFlexSdkVersion(final VirtualFile sdkRoot) {
+    return doReadSdkVersion(sdkRoot, false);
+  }
+
+  @Nullable
+  public static String doReadAirSdkVersion(final VirtualFile sdkRoot) {
+    return doReadSdkVersion(sdkRoot, true);
+  }
+
+  @Nullable
+  private static String doReadSdkVersion(final VirtualFile sdkRoot, final boolean airSdk) {
+    if (sdkRoot == null) {
       return null;
     }
-    final VirtualFile flexSdkDescriptionFile = flexSdkRoot.findChild("flex-sdk-description.xml");
+    final VirtualFile flexSdkDescriptionFile = sdkRoot.findChild(airSdk ? "air-sdk-description.xml" : "flex-sdk-description.xml");
     if (flexSdkDescriptionFile == null) {
       return null;
     }
     try {
-      final String versionElement = "<flex-sdk-description><version>";
-      final String buildElement = "<flex-sdk-description><build>";
+      final String versionElement = airSdk ? "<air-sdk-description><version>" : "<flex-sdk-description><version>";
+      final String buildElement = airSdk ? "<air-sdk-description><build>" : "<flex-sdk-description><build>";
       final Map<String, List<String>> versionInfo =
         FlexUtils.findXMLElements(flexSdkDescriptionFile.getInputStream(), Arrays.asList(versionElement, buildElement));
       final List<String> majorMinor = versionInfo.get(versionElement);
@@ -477,5 +489,10 @@ public class FlexSdkUtils {
         return sdk.getSdkType() instanceof FlexSdkType2;
       }
     });
+  }
+
+  public static boolean isAirSdkWithoutFlex(final @Nullable Sdk sdk) {
+    final String version = sdk == null ? null : sdk.getVersionString();
+    return version != null && version.startsWith(FlexCommonUtils.AIR_SDK_VERSION_PREFIX);
   }
 }

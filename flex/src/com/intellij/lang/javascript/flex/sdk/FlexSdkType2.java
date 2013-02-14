@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.sdk;
 
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.flashbuilder.FlashBuilderSdkFinder;
@@ -8,7 +9,6 @@ import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
@@ -50,7 +50,7 @@ public class FlexSdkType2 extends SdkType {
       return false;
     }
 
-    return FlexSdkUtils.doReadFlexSdkVersion(sdkHome) != null;
+    return FlexSdkUtils.doReadFlexSdkVersion(sdkHome) != null || FlexSdkUtils.doReadAirSdkVersion(sdkHome) != null;
   }
 
   public String suggestSdkName(final String currentSdkName, final String sdkHome) {
@@ -103,8 +103,12 @@ public class FlexSdkType2 extends SdkType {
   }
 
   public String getVersionString(final String sdkHome) {
-    return StringUtil.notNullize(FlexSdkUtils.doReadFlexSdkVersion(LocalFileSystem.getInstance().findFileByPath(sdkHome)),
-                                 FlexBundle.message("flex.sdk.version.unknown"));
+    final VirtualFile sdkRoot = LocalFileSystem.getInstance().findFileByPath(sdkHome);
+    final String flexVersion = FlexSdkUtils.doReadFlexSdkVersion(sdkRoot);
+    if (flexVersion != null) return flexVersion;
+
+    final String airVersion = FlexSdkUtils.doReadAirSdkVersion(sdkRoot);
+    return airVersion != null ? FlexCommonUtils.AIR_SDK_VERSION_PREFIX + airVersion : FlexBundle.message("flex.sdk.version.unknown");
   }
 
   private void setupSdkPaths(final VirtualFile sdkRoot, final SdkModificator sdkModificator) {

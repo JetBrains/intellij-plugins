@@ -347,8 +347,9 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     assert sdk != null;
 
     final boolean asc20 = bc.isPureAs() &&
-                          JpsFlexCompilerProjectExtension.getInstance(bc.getModule().getProject()).PREFER_ASC_20 &&
-                          FlexCommonUtils.containsASC20(sdk.getHomePath());
+                          FlexCommonUtils.containsASC20(sdk.getHomePath()) &&
+                          (JpsFlexCompilerProjectExtension.getInstance(bc.getModule().getProject()).PREFER_ASC_20 ||
+                          FlexCommonUtils.isAirSdkWithoutFlex(sdk));
     final boolean builtIn = !asc20 &&
                             JpsFlexCompilerProjectExtension.getInstance(bc.getModule().getProject()).USE_BUILT_IN_COMPILER &&
                             builtInCompilerHandler.canBeUsedForSdk(sdk.getHomePath());

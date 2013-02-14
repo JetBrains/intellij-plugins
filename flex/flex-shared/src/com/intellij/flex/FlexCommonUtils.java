@@ -58,6 +58,8 @@ public class FlexCommonUtils {
   public static final String LOCALE_TOKEN = "{locale}";
   public static final Pattern XMX_PATTERN = Pattern.compile("(.* )?-Xmx([0-9]+)[mM]( .*)?");
 
+  public static final String AIR_SDK_VERSION_PREFIX = "AIR SDK ";
+
   public static final String FLEX_UNIT_LAUNCHER = "____FlexUnitLauncher";
   public static final String SDK_TOOLS_ENCODING = "UTF-8";
 
@@ -1088,5 +1090,10 @@ public class FlexCommonUtils {
     }
 
     return result.toString();
+  }
+
+  public static boolean isAirSdkWithoutFlex(final @Nullable JpsSdk<?> sdk) {
+    final String version = sdk == null ? null : sdk.getVersionString();
+    return version != null && version.startsWith(AIR_SDK_VERSION_PREFIX);
   }
 }

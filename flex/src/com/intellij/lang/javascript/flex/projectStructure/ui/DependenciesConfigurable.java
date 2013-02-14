@@ -555,7 +555,12 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
     public SimpleColoredText getPresentableText() {
       SimpleColoredText text = new SimpleColoredText();
       final String sdkVersion = StringUtil.notNullize(mySdk.getVersionString(), FlexBundle.message("flex.sdk.version.unknown"));
-      text.append(mySdkType.getPresentableName() + " " + sdkVersion, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      if (sdkVersion.startsWith(FlexCommonUtils.AIR_SDK_VERSION_PREFIX)) {
+        text.append(sdkVersion, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      }
+      else {
+        text.append(mySdkType.getPresentableName() + " " + sdkVersion, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      }
       return text;
     }
 

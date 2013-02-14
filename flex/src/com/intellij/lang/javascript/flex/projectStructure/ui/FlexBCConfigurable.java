@@ -71,6 +71,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   public static final String LOCATION_ON_TAB = "FlashBuildConfiguration.locationOnTab";
 
   public enum Location {
+    Nature("nature"),
     MainClass("main-class"),
     OutputFileName("output-file-name"),
     OutputFolder("output-folder"),
@@ -756,6 +757,8 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
       final Object location = place.getPath(LOCATION_ON_TAB);
       if (location instanceof Location) {
         switch ((Location)location) {
+          case Nature:
+            return IdeFocusManager.findInstance().requestFocus(myChangeNatureHyperlink, true);
           case MainClass:
             return IdeFocusManager.findInstance().requestFocus(myMainClassComponent.getChildComponent(), true);
           case OutputFileName:
