@@ -17,17 +17,18 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.parser;
 
-import org.jetbrains.annotations.*;
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.LighterASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
+import com.intellij.lang.PsiParser;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
+
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.lang.PsiParser;
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
 public class OgnlParser implements PsiParser {
@@ -40,10 +41,10 @@ public class OgnlParser implements PsiParser {
     boolean result_;
     builder_ = adapt_builder_(root_, builder_, this);
     if (root_ == BINARY_EXPRESSION) {
-      result_ = expression(builder_, level_ + 1, 4);
+      result_ = expression(builder_, level_ + 1, 3);
     }
     else if (root_ == CONDITIONAL_EXPRESSION) {
-      result_ = expression(builder_, level_ + 1, 3);
+      result_ = expression(builder_, level_ + 1, 2);
     }
     else if (root_ == EXPRESSION) {
       result_ = expression(builder_, level_ + 1, -1);
@@ -80,10 +81,9 @@ public class OgnlParser implements PsiParser {
     }
     else {
       Marker marker_ = builder_.mark();
+      enterErrorRecordingSection(builder_, level_, _SECTION_RECOVER_, null);
       result_ = parse_root_(root_, builder_, level_);
-      while (builder_.getTokenType() != null) {
-        builder_.advanceLexer();
-      }
+      exitErrorRecordingSection(builder_, level_, result_, true, _SECTION_RECOVER_, TOKEN_ADVANCER);
       marker_.done(root_);
     }
     return builder_.getTreeBuilt();
@@ -99,6 +99,7 @@ public class OgnlParser implements PsiParser {
       REFERENCE_EXPRESSION, SEQUENCE_EXPRESSION, UNARY_EXPRESSION, VARIABLE_ASSIGNMENT_EXPRESSION,
       VARIABLE_EXPRESSION),
   };
+
   public static boolean type_extends_(IElementType child_, IElementType parent_) {
     for (TokenSet set : EXTENDS_SETS_) {
       if (set.contains(child_) && set.contains(parent_)) return true;
