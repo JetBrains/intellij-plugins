@@ -34,6 +34,7 @@ import jetbrains.communicator.util.StringUtil;
 import jetbrains.communicator.util.TimeUtil;
 import jetbrains.communicator.util.UIUtil;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -102,6 +103,7 @@ public class ShowHistoryDialog extends IdeaDialog {
     return getClass().getName();
   }
 
+  @NotNull
   protected Action[] createActions() {
     return new Action[]{
         new AbstractAction(CommonBundle.getCloseButtonText()) {

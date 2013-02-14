@@ -22,6 +22,7 @@ import jetbrains.communicator.core.vfs.ProjectsData;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.idea.IdeaDialog;
 import jetbrains.communicator.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -51,6 +52,7 @@ public class ViewFilesDialog extends IdeaDialog {
     myPanel.refreshData(user, data);
   }
 
+  @NotNull
   protected Action[] createActions() {
     setOKButtonText(StringUtil.getMsg("close"));
     return new Action[] {getOKAction()};
