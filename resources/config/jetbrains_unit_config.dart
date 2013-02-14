@@ -41,7 +41,7 @@ class JetBrainsUnitConfig extends Configuration {
     Set<String> groupsSet = new Set.from(testCases.map((TestCase testCase) => testCase.currentGroup));
     List<String> groups = new List.from(groupsSet);
     groups.sort((String a, String b) => a.length - b.length);
-    groups.filter((String groupName) => groupName != '');
+    groups.removeMatching((String groupName) => groupName == '');
 
     for(int i = 0; i < groups.length; ++i) {
       var parentGroup = '';
