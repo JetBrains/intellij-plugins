@@ -228,8 +228,6 @@
     <projectService serviceInterface="com.jetbrains.lang.dart.psi.DartClassResolveCache"
                     serviceImplementation="com.jetbrains.lang.dart.psi.DartClassResolveCache"/>
 
-    <xdebugger.breakpointType implementation="com.jetbrains.lang.dart.ide.runner.base.DartBreakpointType"/>
-
     <codeInspection.InspectionExtension id="dartGlobalInspection"
                                         implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartInspectionExtensionsFactory"/>
 
@@ -240,12 +238,6 @@
                       enabledByDefault="true"
                       level="WARNING"
                       implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartGlobalInspectionTool"/>
-
-    <!--server side-->
-    <sdkType implementation="com.jetbrains.lang.dart.ide.DartSdkType"/>
-    <moduleType id="DART_MODULE" implementationClass="com.jetbrains.lang.dart.ide.module.DartModuleType"/>
-    <moduleConfigurationEditorProvider
-        implementation="com.jetbrains.lang.dart.ide.projectStructure.DartModuleConfigurationEditorProvider"/>
 
     <!--unit test-->
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationType"/>
