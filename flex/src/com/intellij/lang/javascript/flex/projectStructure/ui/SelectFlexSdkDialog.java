@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.DialogWrapper;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -21,6 +22,7 @@ public class SelectFlexSdkDialog extends DialogWrapper {
     init();
   }
 
+  @NotNull
   protected Action[] createActions() {
     return new Action[]{getOKAction()};
   }

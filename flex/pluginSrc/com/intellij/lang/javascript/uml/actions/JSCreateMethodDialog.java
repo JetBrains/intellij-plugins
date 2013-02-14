@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.refactoring.changeSignature.JSChangeSignatur
 import com.intellij.openapi.ui.Messages;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.BaseRefactoringProcessor;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -61,6 +62,7 @@ public class JSCreateMethodDialog extends JSChangeSignatureDialog {
     myCreateAction = new CreateAction();
   }
 
+  @NotNull
   @Override
   protected Action[] createActions() {
     return new Action[]{myCreateAction, getCancelAction()};
