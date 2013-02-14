@@ -27,14 +27,17 @@ public class Dart2JSTaskConsumer extends BackgroundTaskConsumer {
     TaskOptions options = new TaskOptions();
     options.setName("Dart2JS");
     final VirtualFile dart2JS = DartSettingsUtil.getSettings().getDart2JS();
-    assert dart2JS != null;
-    options.setProgram(dart2JS.getPath());
+    if (dart2JS != null) {
+      options.setProgram(dart2JS.getPath());
+    }
     options.setDescription("Compiles .dart files into .js files");
     options.setFileExtension(DartFileType.DEFAULT_EXTENSION);
     options.setScopeName(PsiBundle.message("psi.search.scope.project"));
 
     options.setArguments("-v --out=$" + new FilePathMacro().getName() + "$.js $" + new FilePathMacro().getName() + "$");
-    options.setWorkingDir(dart2JS.getParent().getPath());
+    if (dart2JS != null) {
+      options.setWorkingDir(dart2JS.getParent().getPath());
+    }
 
     options.setOutput("$" + new FileNameMacro().getName() + "$.js:$" +
                       new FileNameMacro().getName() + "$.js.maps:$" +
