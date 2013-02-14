@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex;
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.lang.javascript.flex.wizard.FlexModuleWizardForm;
+import com.intellij.openapi.options.ConfigurationException;
 
 import javax.swing.*;
 
@@ -28,6 +29,10 @@ public class SetupFlexModuleWizardStep extends ModuleWizardStep {
 
   public void updateDataModel() {
     myForm.applyTo(myModuleBuilder);
+  }
+
+  public boolean validate() throws ConfigurationException {
+    return myForm.validate();
   }
 
   public String getHelpId() {

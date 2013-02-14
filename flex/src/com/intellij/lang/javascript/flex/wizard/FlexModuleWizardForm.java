@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
@@ -211,25 +212,29 @@ public class FlexModuleWizardForm {
   }
 
   public boolean validate() throws ConfigurationException {
-    final Sdk sdk = null;//myFlexSdkPanel.getCurrentSdk();
-    if (sdk == null) {
-      throw new ConfigurationException("Flex SDK is not set");
-    }
+    final Sdk sdk = mySdkCombo.getSelectedSdk();
+    if (sdk != null) {
 
-    if (myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Mobile &&
-        StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.5") < 0) {
-      throw new ConfigurationException(FlexBundle.message("sdk.does.not.support.air.mobile", sdk.getVersionString()));
-    }
-
-    if (mySampleAppCheckBox.isSelected()) {
-      final String fileName = mySampleAppTextField.getText().trim();
-      if (fileName.isEmpty()) {
-        throw new ConfigurationException(FlexBundle.message("sample.app.name.empty"));
+      if (myTargetPlatformCombo.getSelectedItem() == TargetPlatform.Mobile &&
+          !FlexSdkUtils.isAirSdkWithoutFlex(sdk) &&
+          StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.5") < 0) {
+        throw new ConfigurationException(FlexBundle.message("sdk.does.not.support.air.mobile", sdk.getVersionString()));
       }
 
-      final String extension = FileUtilRt.getExtension(fileName).toLowerCase();
-      if (!"mxml".equals(extension) && !"as".equals(extension)) {
-        throw new ConfigurationException(FlexBundle.message("sample.app.incorrect.extension"));
+      if (FlexSdkUtils.isAirSdkWithoutFlex(sdk) && !myPureActionScriptCheckBox.isSelected()) {
+        throw new ConfigurationException(StringUtil.capitalize(FlexBundle.message("air.sdk.requires.pure.as", sdk.getName())));
+      }
+
+      if (mySampleAppCheckBox.isSelected()) {
+        final String fileName = mySampleAppTextField.getText().trim();
+        if (fileName.isEmpty()) {
+          throw new ConfigurationException(FlexBundle.message("sample.app.name.empty"));
+        }
+
+        final String extension = FileUtilRt.getExtension(fileName).toLowerCase();
+        if (!"mxml".equals(extension) && !"as".equals(extension)) {
+          throw new ConfigurationException(FlexBundle.message("sample.app.incorrect.extension"));
+        }
       }
     }
 

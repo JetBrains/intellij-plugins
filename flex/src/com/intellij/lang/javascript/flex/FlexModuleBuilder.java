@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.flex.projectStructure.ui.CreateHtmlWrapperTe
 import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationType;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -135,7 +136,8 @@ public class FlexModuleBuilder extends ModuleBuilder {
 
     if (sourceRoot != null && myCreateSampleApp && myFlexSdk != null) {
       try {
-        final boolean flex4 = StringUtil.compareVersionNumbers(myFlexSdk.getVersionString(), "4") >= 0;
+        final boolean flex4 = !FlexSdkUtils.isAirSdkWithoutFlex(myFlexSdk) &&
+                              StringUtil.compareVersionNumbers(myFlexSdk.getVersionString(), "4") >= 0;
         FlexUtils.createSampleApp(module.getProject(), sourceRoot, mySampleAppName, myTargetPlatform, flex4);
       }
       catch (IOException ex) {
