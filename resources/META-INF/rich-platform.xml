@@ -16,7 +16,5 @@
 
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunner"/>
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugRunner"/>
-
-    <xdebugger.breakpointType implementation="com.jetbrains.lang.dart.ide.runner.base.DartBreakpointType"/>
  </extensions>
 </idea-plugin>
