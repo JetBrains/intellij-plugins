@@ -38,7 +38,7 @@
 <!ELEMENT Embed EMPTY>
 <!ATTLIST Embed 
   source CDATA #REQUIRED 
-  mimeType CDATA #IMPLIED 
+  mimeType CDATA #IMPLIED
   smoothing (true|false) #IMPLIED
   compression (true|false) #IMPLIED
   quality CDATA #IMPLIED
@@ -55,7 +55,14 @@
   fontWeight CDATA #IMPLIED 
   advancedAntiAliasing CDATA #IMPLIED 
   embedAsCFF CDATA #IMPLIED 
-  unicodeRange CDATA #IMPLIED 
+  unicodeRange CDATA #IMPLIED
+
+  encoding CDATA #IMPLIED
+  exportSymbol CDATA #IMPLIED
+  original CDATA #IMPLIED
+  skinClass CDATA "Object"
+  sourceList CDATA #IMPLIED
+  flashType (true|false) #IMPLIED
   >
   
 <!ELEMENT Event EMPTY>
@@ -74,7 +81,8 @@
 <!ELEMENT ExcludeClass EMPTY>
 <!ELEMENT Frame EMPTY>
 <!ATTLIST Frame
-  factoryClass CDATA #REQUIRED
+  factoryClass CDATA "Object"
+  extraClass CDATA "Object"
 >
 <!ELEMENT HostComponent EMPTY>
 <!ATTLIST HostComponent
@@ -148,6 +156,7 @@
   scaleMode CDATA #IMPLIED
   scriptTimeLimit CDATA #IMPLIED
   pageTitle CDATA #IMPLIED
+  quality CDATA #IMPLIED
 >
 <!ELEMENT Transient EMPTY>
 <!ELEMENT Mixin EMPTY>
@@ -163,6 +172,7 @@
   name CDATA #IMPLIED
 
   id CDATA #IMPLIED
+  type CDATA #IMPLIED
 >
 
 <!ELEMENT Autowire EMPTY>
@@ -341,6 +351,7 @@
   selector CDATA #IMPLIED
   scope CDATA #IMPLIED
   method CDATA #IMPLIED
+  order CDATA #IMPLIED
 >
 <!ELEMENT MessageBinding EMPTY>
 <!ATTLIST MessageBinding
@@ -379,4 +390,22 @@
   singleton (true|false) #IMPLIED
   id CDATA #IMPLIED
   order CDATA #IMPLIED
+>
+<!ELEMENT Publish EMPTY>
+<!ATTLIST Publish
+  objectId CDATA #IMPLIED
+  scope CDATA #IMPLIED
+  managed CDATA #IMPLIED
+  changeEvent CDATA #IMPLIED
+>
+<!ELEMENT PublishSubscribe EMPTY>
+<!ATTLIST PublishSubscribe
+  objectId CDATA #IMPLIED
+  persistent (true|false) #IMPLIED
+  scope CDATA #IMPLIED
+>
+<!ELEMENT Subscribe EMPTY>
+<!ATTLIST Subscribe
+  objectId CDATA #IMPLIED
+  scope CDATA #IMPLIED
 >
