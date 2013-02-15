@@ -62,7 +62,7 @@ class JetBrainsUnitConfig extends Configuration {
     }
   }
 
-  void onDone(int passed, int failed, int errors, List<TestCase> results, String uncaughtError) {
+  void onSummary(int passed, int failed, int errors, List<TestCase> results, String uncaughtError) {
     if(done) return;
     done = true;
     List<int> ids = new List.from(group2id.values);
