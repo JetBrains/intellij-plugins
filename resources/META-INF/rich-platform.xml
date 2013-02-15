@@ -11,6 +11,8 @@
     <moduleConfigurationEditorProvider
         implementation="com.jetbrains.lang.dart.ide.projectStructure.DartModuleConfigurationEditorProvider"/>
 
+    <xdebugger.breakpointType implementation="com.jetbrains.lang.dart.ide.runner.base.DartBreakpointType"/>
+
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfigurationType"/>
     <configurationProducer implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer"/>
 

@@ -186,7 +186,7 @@ public class DartSettings {
   public static DartSettings getSettingsForModule(@Nullable Module module) {
     // todo: check file path
     DartSettings settings = null;
-    if (module == null || ModuleType.get(module) instanceof WebModuleTypeBase || ApplicationManager.getApplication().isUnitTestMode()) {
+    if (shouldTakeWebSettings(module) || ApplicationManager.getApplication().isUnitTestMode()) {
       settings = DartSettingsUtil.getSettings();
     }
     else if (ModuleType.get(module) instanceof DartModuleType) {
@@ -195,6 +195,10 @@ public class DartSettings {
       settings = new DartSettings(StringUtil.notNullize(sdk == null ? null : sdk.getHomePath()));
     }
     return settings;
+  }
+
+  public static boolean shouldTakeWebSettings(@Nullable Module module) {
+    return module == null || ModuleType.get(module) instanceof WebModuleTypeBase;
   }
 
   public static ScriptingLibraryModel setUpDartLibrary(final Project myProject, final String sdkPath) {

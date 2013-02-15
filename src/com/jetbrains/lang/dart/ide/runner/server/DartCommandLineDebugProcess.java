@@ -17,8 +17,10 @@ import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
+import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
+import com.jetbrains.lang.dart.ide.runner.base.DartBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.server.connection.DartVMConnection;
 import com.jetbrains.lang.dart.ide.runner.server.connection.JsonResponse;
@@ -99,11 +101,14 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     return super.createConsole();
   }
 
-  public DartCommandLineDebugProcess(@NotNull XDebugSession session, int debuggingPort, ExecutionResult executionResult)
+  public DartCommandLineDebugProcess(@NotNull XDebugSession session,
+                                     int debuggingPort,
+                                     ExecutionResult executionResult,
+                                     Class<? extends XBreakpointType<XLineBreakpoint<XBreakpointProperties>,?>> breakpointTypeClass)
     throws IOException {
     super(session);
 
-    myBreakpointsHandler = new DartCommandLineBreakpointsHandler(this);
+    myBreakpointsHandler = new DartCommandLineBreakpointsHandler(this, breakpointTypeClass);
     myExecutionResult = executionResult;
     startCommandProcessingThread(debuggingPort);
   }

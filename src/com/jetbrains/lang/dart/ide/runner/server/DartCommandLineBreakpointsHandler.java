@@ -9,6 +9,7 @@ import com.intellij.util.io.socketConnection.AbstractResponseToRequestHandler;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
+import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.jetbrains.lang.dart.ide.runner.base.DartBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.server.connection.JsonResponse;
@@ -25,11 +26,12 @@ public class DartCommandLineBreakpointsHandler {
   private final Map<Integer, XLineBreakpoint<XBreakpointProperties>> myIndexToBreakpointMap =
     new THashMap<Integer, XLineBreakpoint<XBreakpointProperties>>();
 
-  public DartCommandLineBreakpointsHandler(DartCommandLineDebugProcess process) {
+  public DartCommandLineBreakpointsHandler(DartCommandLineDebugProcess process,
+                                           final Class<? extends XBreakpointType<XLineBreakpoint<XBreakpointProperties>,?>> breakpointTypeClass) {
     myDebugProcess = process;
 
     myBreakpointHandlers = new XBreakpointHandler<?>[]{
-      new XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>>(DartBreakpointType.class) {
+      new XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>>(breakpointTypeClass) {
         public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
           final XSourcePosition position = breakpoint.getSourcePosition();
           if (position != null) {
