@@ -19,6 +19,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.components.JBTabbedPane;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +28,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import static com.intellij.flex.build.AirDescriptorOptions.ANDROID_PERMISSION_ACCESS_FINE_LOCATION;
@@ -116,7 +118,8 @@ public class CreateAirDescriptorTemplateDialog extends DialogWrapper {
     myDescriptorFolderTextWithBrowse
       .addBrowseFolderListener(null, null, myProject, FileChooserDescriptorFactory.createSingleFolderDescriptor());
 
-    myAirVersionCombo.setModel(new DefaultComboBoxModel(FlexApplicationComponent.AIR_VERSIONS));
+    final String[] items = Arrays.copyOfRange(ArrayUtil.reverseArray(FlexApplicationComponent.AIR_VERSIONS), 0, 8);
+    myAirVersionCombo.setModel(new DefaultComboBoxModel(items));
 
     final ActionListener listener = new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
