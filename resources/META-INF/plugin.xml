@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <name>Dart</name>
   <description>Support for Dart programming language</description>
-  <version>0.4.8</version>
+  <version>0.4.9</version>
   <vendor>JetBrains</vendor>
   <idea-version since-build="126.1" until-build="127.1"/>
   <depends>com.intellij.modules.xml</depends>
@@ -13,7 +13,7 @@
   <depends optional="true" config-file="dart-file-watcher.xml">com.intellij.plugins.watcher</depends>
   <change-notes>
     <![CDATA[
-        <p>0.4.8:</p>
+        <p>0.4.9:</p>
         <ul>
           <li>Bug fixes</li>
           <li>Copyright support</li>
