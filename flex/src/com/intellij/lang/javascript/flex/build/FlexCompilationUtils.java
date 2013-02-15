@@ -273,7 +273,7 @@ public class FlexCompilationUtils {
     final Sdk sdk = bc.getSdk();
     assert sdk != null;
 
-    if (StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.8") >= 0) {
+    if (!FlexSdkUtils.isAirSdkWithoutFlex(sdk) && StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.8") >= 0) {
       final List<String> rsls = getRequiredRsls(compileInfoMessages);
       final Collection<File> filesToRefresh = new THashSet<File>();
 

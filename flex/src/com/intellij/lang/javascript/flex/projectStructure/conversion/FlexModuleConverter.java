@@ -8,7 +8,6 @@ import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.TargetPlayerUtils;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
@@ -20,6 +19,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexLibraryIdGenerator;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.StdModuleTypes;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
@@ -555,8 +555,8 @@ class FlexModuleConverter extends ConversionProcessor<ModuleSettings> {
     }
     else {
       bc.setTargetPlatform(TargetPlatform.Web);
-      final String targetPlayer = TargetPlayerUtils.getTargetPlayer(oldConfiguration == null ? null :
-                                                                    oldConfiguration.TARGET_PLAYER_VERSION, oldSdk.getHomePath());
+      final String targetPlayer = FlexSdkUtils.getTargetPlayer(oldConfiguration == null ? null :
+                                                               oldConfiguration.TARGET_PLAYER_VERSION, oldSdk.getHomePath());
       bc.getDependencies().setTargetPlayer(targetPlayer);
     }
 

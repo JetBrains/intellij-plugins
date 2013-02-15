@@ -167,11 +167,7 @@ class FlexValue extends XValue {
     }
 
     if ((XML_TYPE.equals(typeFromFlexValueResult) || XMLLIST_TYPE.equals(typeFromFlexValueResult)) && myExpression.indexOf('=') == -1) {
-      if (myDebugProcess.isDebuggerFromSdk4()) {
-        scheduleToXmlStringCalculation(node, typeFromFlexValueResult);
-        // return; no return - show default presentation until toXmlString calculated
-      }
-      else if (myDebugProcess.isDebuggerFromSdk3()) {
+      if (myDebugProcess.isDebuggerFromSdk3()) {
         if (XMLLIST_TYPE.equals(typeFromFlexValueResult)) {
           setXmlListPresentation(node, val, this);
           return;
@@ -180,6 +176,10 @@ class FlexValue extends XValue {
           setXmlPresentation(node, additionalInfo, this);
           return;
         }
+      }
+      else {
+        scheduleToXmlStringCalculation(node, typeFromFlexValueResult);
+        // return; no return - show default presentation until toXmlString calculated
       }
     }
 

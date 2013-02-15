@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
@@ -192,7 +193,7 @@ public class CreateHtmlWrapperTemplateDialog extends DialogWrapper {
                                          final boolean checkPlayerVersion,
                                          final boolean expressInstall) {
     final String wrapperName;
-    if (StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") < 0) {
+    if (!FlexSdkUtils.isAirSdkWithoutFlex(sdk) && StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") < 0) {
       final String prefix = checkPlayerVersion
                             ? expressInstall ? "express-installation"
                                              : "client-side-detection"

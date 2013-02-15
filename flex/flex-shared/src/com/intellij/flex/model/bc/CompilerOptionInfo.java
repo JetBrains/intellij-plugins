@@ -1,5 +1,6 @@
 package com.intellij.flex.model.bc;
 
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -213,7 +214,11 @@ public class CompilerOptionInfo {
   }
 
   public boolean isApplicable(final String sdkVersion, final BuildConfigurationNature nature) {
-    if (mySinceVersion != null && StringUtil.compareVersionNumbers(sdkVersion, mySinceVersion) < 0) return false;
+    if (mySinceVersion != null &&
+        !sdkVersion.startsWith(FlexCommonUtils.AIR_SDK_VERSION_PREFIX) &&
+        StringUtil.compareVersionNumbers(sdkVersion, mySinceVersion) < 0) {
+      return false;
+    }
     if (!myOkForPureAS && nature.pureAS) return false;
     if (!myOkForSwf && !nature.isLib()) return false;
     if (!myOkForSwc && nature.isLib()) return false;
@@ -253,7 +258,10 @@ public class CompilerOptionInfo {
         return "en_US";
       }
       else if ("compiler.theme".equals(ID)) {
-        if (!nature.pureAS && !nature.isDesktopPlatform() && StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0) {
+        if (!nature.pureAS &&
+            !nature.isDesktopPlatform() &&
+            !sdkVersion.startsWith(FlexCommonUtils.AIR_SDK_VERSION_PREFIX) &&
+            StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0) {
           if (nature.isMobilePlatform()) return FLEX_SDK_MACRO + "/frameworks/themes/Mobile/mobile.swc";
           if (StringUtil.compareVersionNumbers(sdkVersion, "4") >= 0 && componentSet == ComponentSet.MxOnly) {
             return FLEX_SDK_MACRO + "/frameworks/themes/Halo/halo.swc";

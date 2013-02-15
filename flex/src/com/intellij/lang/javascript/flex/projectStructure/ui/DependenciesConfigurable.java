@@ -1357,13 +1357,14 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       myWarning.setVisible(false);
     }
 
-    final boolean visible = sdk != null && !flexmojos && !myNature.isMobilePlatform() && !myNature.pureAS &&
+    final boolean airSdk = FlexSdkUtils.isAirSdkWithoutFlex(sdk);
+    final boolean visible = sdk != null && !flexmojos && !myNature.isMobilePlatform() && !myNature.pureAS && !airSdk &&
                             StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") >= 0;
     myComponentSetLabel.setVisible(visible);
     myComponentSetCombo.setVisible(visible);
 
-    myFrameworkLinkageLabel.setVisible(!myNature.pureAS && !flexmojos);
-    myFrameworkLinkageCombo.setVisible(!myNature.pureAS && !flexmojos);
+    myFrameworkLinkageLabel.setVisible(!myNature.pureAS && !flexmojos && !airSdk);
+    myFrameworkLinkageCombo.setVisible(!myNature.pureAS && !flexmojos && !airSdk);
   }
 
   private void resetTable(SdkEntry sdkEntry, boolean keepSelection) {

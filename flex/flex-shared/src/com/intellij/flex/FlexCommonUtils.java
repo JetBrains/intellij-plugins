@@ -932,37 +932,45 @@ public class FlexCommonUtils {
     return StringUtil.replace(text, from, to);
   }
 
-  public static String getAirVersion(final String flexVersion) {
+  public static String getAirVersion(final String sdkVersion) {
+    if (sdkVersion.startsWith(AIR_SDK_VERSION_PREFIX)) {
+      final Trinity<String, String, String> majorMinorRevision =
+        getMajorMinorRevisionVersion(sdkVersion.substring(AIR_SDK_VERSION_PREFIX.length()));
+      return majorMinorRevision.third.isEmpty() || "0".equals(majorMinorRevision.third)
+             ? majorMinorRevision.first + "." + majorMinorRevision.second
+             : majorMinorRevision.first + "." + majorMinorRevision.second + "." + majorMinorRevision.third;
+    }
+
     // todo store adt -version
 
-    if (flexVersion.startsWith("4.")) {
-      if (flexVersion.startsWith("4.0")) {
+    if (sdkVersion.startsWith("4.")) {
+      if (sdkVersion.startsWith("4.0")) {
         return "1.5.3";
       }
-      if (flexVersion.startsWith("4.1")) {
+      if (sdkVersion.startsWith("4.1")) {
         return "2.0";
       }
-      if (flexVersion.startsWith("4.5")) {
+      if (sdkVersion.startsWith("4.5")) {
         return "2.6";
       }
 
       return "3.1";
     }
 
-    if (flexVersion.startsWith("3.")) {
-      if (flexVersion.startsWith("3.0")) {
+    if (sdkVersion.startsWith("3.")) {
+      if (sdkVersion.startsWith("3.0")) {
         return "1.0";
       }
-      if (flexVersion.startsWith("3.1")) {
+      if (sdkVersion.startsWith("3.1")) {
         return "1.1";
       }
-      if (flexVersion.startsWith("3.2")) {
+      if (sdkVersion.startsWith("3.2")) {
         return "1.5";
       }
-      if (flexVersion.startsWith("3.3")) {
+      if (sdkVersion.startsWith("3.3")) {
         return "1.5";
       }
-      if (flexVersion.startsWith("3.4")) {
+      if (sdkVersion.startsWith("3.4")) {
         return "1.5.2";
       }
 
@@ -1033,8 +1041,13 @@ public class FlexCommonUtils {
   }
 
   public static String getSwfVersionForSdk(final String sdkVersion) {
+    if (sdkVersion.startsWith(AIR_SDK_VERSION_PREFIX)) {
+      return getSwfVersionForAirVersion(sdkVersion.substring(AIR_SDK_VERSION_PREFIX.length()));
+    }
+
     if (StringUtil.compareVersionNumbers(sdkVersion, "4.6") >= 0) return "14";
     if (StringUtil.compareVersionNumbers(sdkVersion, "4.5") >= 0) return "11";
+
     assert false : sdkVersion;
     return null;
   }
@@ -1095,5 +1108,28 @@ public class FlexCommonUtils {
   public static boolean isAirSdkWithoutFlex(final @Nullable JpsSdk<?> sdk) {
     final String version = sdk == null ? null : sdk.getVersionString();
     return version != null && version.startsWith(AIR_SDK_VERSION_PREFIX);
+  }
+
+  public static Trinity<String, String, String> getMajorMinorRevisionVersion(final @NotNull String version) {
+    final int firstDotIndex = version.indexOf('.');
+
+    if (firstDotIndex == -1) {
+      return Trinity.create(version, "0", "0");
+    }
+
+    final String majorVersion = version.substring(0, firstDotIndex);
+    final int secondDotIndex = version.indexOf('.', firstDotIndex + 1);
+
+    if (secondDotIndex == -1) {
+      return Trinity.create(majorVersion, version.substring(firstDotIndex + 1), "0");
+    }
+
+    final String minorVersion = version.substring(firstDotIndex + 1, secondDotIndex);
+
+    final int thirdDotIndex = version.indexOf('.', secondDotIndex + 1);
+    final String revision = thirdDotIndex == -1 ? version.substring(secondDotIndex + 1)
+                                                : version.substring(secondDotIndex + 1, thirdDotIndex);
+
+    return Trinity.create(majorVersion, minorVersion, revision);
   }
 }

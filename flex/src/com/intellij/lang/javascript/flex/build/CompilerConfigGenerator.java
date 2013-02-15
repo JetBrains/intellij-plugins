@@ -141,7 +141,7 @@ public class CompilerConfigGenerator {
                                 : FlexCommonUtils.getMaximumTargetPlayer(mySdk.getHomePath());
     addOption(rootElement, CompilerOptionInfo.TARGET_PLAYER_INFO, targetPlayer);
 
-    if (StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4.5") >= 0) {
+    if (FlexSdkUtils.isAirSdkWithoutFlex(mySdk) || StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4.5") >= 0) {
       final String swfVersion;
       if (nature.isWebPlatform()) {
         swfVersion = FlexCommonUtils.getSwfVersionForTargetPlayer(targetPlayer);
@@ -161,23 +161,25 @@ public class CompilerConfigGenerator {
       addOption(rootElement, CompilerOptionInfo.PRELOADER_INFO, "spark.preloaders.SplashScreen");
     }
 
-    final String accessible = nature.isMobilePlatform() ? "false"
-                                                        : StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4") >= 0 ? "true"
-                                                                                                                               : "false";
-    addOption(rootElement, CompilerOptionInfo.ACCESSIBLE_INFO, accessible);
+    if (!FlexSdkUtils.isAirSdkWithoutFlex(mySdk)) {
+      final String accessible = nature.isMobilePlatform() ? "false"
+                                                          : StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4") >= 0 ? "true"
+                                                                                                                                 : "false";
+      addOption(rootElement, CompilerOptionInfo.ACCESSIBLE_INFO, accessible);
 
-    final String fontManagers = StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4") >= 0
-                                ? "flash.fonts.JREFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
-                                  "flash.fonts.BatikFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
-                                  "flash.fonts.AFEFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
-                                  "flash.fonts.CFFFontManager"
+      final String fontManagers = StringUtil.compareVersionNumbers(mySdk.getVersionString(), "4") >= 0
+                                  ? "flash.fonts.JREFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
+                                    "flash.fonts.BatikFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
+                                    "flash.fonts.AFEFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
+                                    "flash.fonts.CFFFontManager"
 
-                                : "flash.fonts.JREFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
-                                  "flash.fonts.AFEFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
-                                  "flash.fonts.BatikFontManager";
-    addOption(rootElement, CompilerOptionInfo.FONT_MANAGERS_INFO, fontManagers);
+                                  : "flash.fonts.JREFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
+                                    "flash.fonts.AFEFontManager" + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR +
+                                    "flash.fonts.BatikFontManager";
+      addOption(rootElement, CompilerOptionInfo.FONT_MANAGERS_INFO, fontManagers);
 
-    addOption(rootElement, CompilerOptionInfo.STATIC_RSLS_INFO, "false");
+      addOption(rootElement, CompilerOptionInfo.STATIC_RSLS_INFO, "false");
+    }
   }
 
   @Nullable

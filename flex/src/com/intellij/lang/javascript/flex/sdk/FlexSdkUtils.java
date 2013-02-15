@@ -495,4 +495,23 @@ public class FlexSdkUtils {
     final String version = sdk == null ? null : sdk.getVersionString();
     return version != null && version.startsWith(FlexCommonUtils.AIR_SDK_VERSION_PREFIX);
   }
+
+  /**
+   * Returned string is equal to folder name in which playerglobal.swc resides
+   */
+  public static String getTargetPlayer(final @Nullable String playerVersionInAnyForm, final String sdkHome) {
+    String targetPlayer = null;
+    final String[] targetPlayers = FlexCommonUtils.getTargetPlayers(sdkHome);
+    if (playerVersionInAnyForm != null) {
+      final Trinity<String,String,String> majorMinorRevision = FlexCommonUtils.getMajorMinorRevisionVersion(playerVersionInAnyForm);
+      if (ArrayUtil.contains(majorMinorRevision.first, targetPlayers)) {
+        targetPlayer = majorMinorRevision.first;
+      }
+      else if (ArrayUtil.contains(majorMinorRevision.first + "." + majorMinorRevision.second, targetPlayers)) {
+        targetPlayer = majorMinorRevision.first + "." + majorMinorRevision.second;
+      }
+    }
+
+    return targetPlayer != null ? targetPlayer : FlexCommonUtils.getMaximumVersion(targetPlayers);
+  }
 }

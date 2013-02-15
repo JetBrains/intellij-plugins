@@ -312,7 +312,7 @@ public class FlexDebugProcess extends XDebugProcess {
     if (isDebuggerFromSdk3()) {
       classpath = FlexCommonUtils.getPathToBundledJar("idea-fdb-3-fix.jar") + File.pathSeparator + classpath;
     }
-    else if (isDebuggerFromSdk4()) {
+    else if (!myDebuggerVersion.startsWith(FlexCommonUtils.AIR_SDK_VERSION_PREFIX)) {
       if (StringUtil.compareVersionNumbers(myDebuggerVersion, "4.0") >= 0 &&
           StringUtil.compareVersionNumbers(myDebuggerVersion, "4.1.1") < 0) {
         classpath = FlexCommonUtils.getPathToBundledJar("idea-fdb-4.0.0.14159-fix.jar") + File.pathSeparator + classpath;
@@ -966,10 +966,6 @@ public class FlexDebugProcess extends XDebugProcess {
 
     command.post(this);
     return command;
-  }
-
-  boolean isDebuggerFromSdk4() {
-    return myDebuggerVersion != null && myDebuggerVersion.startsWith("4.");
   }
 
   boolean isDebuggerFromSdk3() {

@@ -459,7 +459,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       final String adlOptions =
         params instanceof FlashRunnerParameters ? ((FlashRunnerParameters)params).getAdlOptions() : "";
 
-      if (StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") >= 0 &&
+      if (FlexSdkUtils.isAirSdkWithoutFlex(sdk) || StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") >= 0 &&
           FlexCommonUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
         commandLine.addParameter("-profile");
         commandLine.addParameter("extendedDesktop");
@@ -659,7 +659,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     assert sdk != null;
 
     final Sdk sdkForDebugger = FlexDebugProcess.getDebuggerSdk(params.getDebuggerSdkRaw(), sdk);
-    if (StringUtil.compareVersionNumbers(sdkForDebugger.getVersionString(), "4") < 0) {
+    if (!FlexSdkUtils.isAirSdkWithoutFlex(sdk) && StringUtil.compareVersionNumbers(sdkForDebugger.getVersionString(), "4") < 0) {
       final HyperlinkListener listener = new HyperlinkAdapter() {
         protected void hyperlinkActivated(final HyperlinkEvent e) {
           if ("RunConfiguration".equals(e.getDescription())) {

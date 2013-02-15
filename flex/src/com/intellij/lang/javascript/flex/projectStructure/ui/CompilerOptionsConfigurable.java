@@ -2,11 +2,11 @@ package com.intellij.lang.javascript.flex.projectStructure.ui;
 
 import com.intellij.compiler.options.CompilerUIConfigurable;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.CompilerOptionInfo;
+import com.intellij.flex.model.bc.ValueSource;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
-import com.intellij.flex.model.bc.ValueSource;
 import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptions;
 import com.intellij.lang.javascript.flex.projectStructure.model.CompilerOptionsListener;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
@@ -75,13 +75,13 @@ import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerO
 public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> implements Place.Navigator {
   public static final String TAB_NAME = FlexBundle.message("bc.tab.compiler.options.display.name");
 
-  public static enum Location {
+  public enum Location {
     AdditonalConfigFile("additional-config-file"),
     FilesToIncludeInSwc("files-to-include-in-swc");
 
     public final String errorId;
 
-    private Location(final String errorId) {
+    Location(final String errorId) {
       this.errorId = errorId;
     }
   }
