@@ -34,7 +34,7 @@ public class Dart2JSTaskConsumer extends BackgroundTaskConsumer {
     options.setFileExtension(DartFileType.DEFAULT_EXTENSION);
     options.setScopeName(PsiBundle.message("psi.search.scope.project"));
 
-    options.setArguments("-v --out=$" + new FilePathMacro().getName() + "$.js $" + new FilePathMacro().getName() + "$");
+    options.setArguments("--out=$" + new FilePathMacro().getName() + "$.js $" + new FilePathMacro().getName() + "$");
     if (dart2JS != null) {
       options.setWorkingDir(dart2JS.getParent().getPath());
     }
