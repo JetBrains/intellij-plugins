@@ -109,7 +109,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     final PsiElement superParent = parent.getParent();
     final boolean isSimpleConstructor = parent instanceof DartType
                                         && superParent instanceof DartNewExpression
-                                        && ((DartNewExpression)superParent).getExpression() == null;
+                                        && ((DartNewExpression)superParent).getReferenceExpression() == null;
     if (!isSimpleConstructor || result.isEmpty()) {
       return result;
     }

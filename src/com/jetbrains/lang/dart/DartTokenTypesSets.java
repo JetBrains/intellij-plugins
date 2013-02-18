@@ -9,8 +9,8 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.*;
 import com.intellij.util.diff.FlyweightCapableTreeStructure;
 
+import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 import static com.jetbrains.lang.dart.DartTokenTypes.*;
-import static com.jetbrains.lang.dart.GeneratedParserUtilBase.*;
 
 /**
  * @author: Fedor.Korotkov

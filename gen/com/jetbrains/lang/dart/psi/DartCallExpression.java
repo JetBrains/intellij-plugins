@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartCallExpression extends DartReference, DartExpression {
+public interface DartCallExpression extends DartExpression, DartReference {
 
   @NotNull
   DartArguments getArguments();

@@ -68,7 +68,7 @@ public class DartPsiImplUtil {
 
   @Nullable
   public static PsiElement resolveReference(@NotNull DartType dartType) {
-    final DartExpression expression = dartType.getExpression();
+    final DartExpression expression = dartType.getReferenceExpression();
     final String typeName = expression.getText();
     if (typeName.indexOf('.') != -1) {
       return expression instanceof DartReference ? ((DartReference)expression).resolve() : null;

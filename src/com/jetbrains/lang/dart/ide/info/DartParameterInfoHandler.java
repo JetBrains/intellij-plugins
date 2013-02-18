@@ -62,9 +62,9 @@ public class DartParameterInfoHandler implements ParameterInfoHandler<PsiElement
       final DartNewExpression newExpression = (DartNewExpression)element;
       final DartType type = newExpression.getType();
       final DartClassResolveResult classResolveResult = DartResolveUtil.resolveClassByType(type);
-      PsiElement psiElement = ((DartNewExpression)element).getExpression();
-      psiElement = psiElement == null && type != null ? type.getExpression() : psiElement;
-      final PsiElement target = psiElement instanceof DartReference ? ((DartReference)psiElement).resolve() : null;
+      PsiElement psiElement = ((DartNewExpression)element).getReferenceExpression();
+      psiElement = psiElement == null && type != null ? type.getReferenceExpression() : psiElement;
+      final PsiElement target = psiElement != null ? ((DartReference)psiElement).resolve() : null;
       if (target instanceof DartComponentName) {
         functionDescription = DartFunctionDescription.createDescription((DartComponent)target.getParent(), classResolveResult);
       }

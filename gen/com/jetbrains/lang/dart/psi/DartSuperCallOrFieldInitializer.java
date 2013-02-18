@@ -11,9 +11,9 @@ public interface DartSuperCallOrFieldInitializer extends DartPsiCompositeElement
   DartArguments getArguments();
 
   @Nullable
-  DartExpression getExpression();
+  DartFieldInitializer getFieldInitializer();
 
   @Nullable
-  DartFieldInitializer getFieldInitializer();
+  DartReferenceExpression getReferenceExpression();
 
 }

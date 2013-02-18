@@ -57,7 +57,7 @@ public class DartColorAnnotator implements Annotator {
       }
     }
     else if (node instanceof DartType) {
-      final TextAttributesKey attribute = getAttributeByTypeName(((DartType)node).getExpression().getText());
+      final TextAttributesKey attribute = getAttributeByTypeName(((DartType)node).getReferenceExpression().getText());
       if (attribute != null) {
         holder.createInfoAnnotation(node, null).setTextAttributes(attribute);
       }

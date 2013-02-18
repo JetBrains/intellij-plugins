@@ -5,6 +5,6 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartLibraryComponentReferenceExpression extends DartReference, DartExpression {
+public interface DartLibraryComponentReferenceExpression extends DartExpression, DartReference {
 
 }

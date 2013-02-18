@@ -11,6 +11,6 @@ public interface DartMetadata extends DartPsiCompositeElement {
   DartArguments getArguments();
 
   @NotNull
-  DartExpression getExpression();
+  DartReferenceExpression getReferenceExpression();
 
 }

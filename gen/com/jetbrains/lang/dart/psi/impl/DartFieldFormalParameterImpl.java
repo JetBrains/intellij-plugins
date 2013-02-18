@@ -18,15 +18,15 @@ public class DartFieldFormalParameterImpl extends DartPsiCompositeElementImpl im
   }
 
   @Override
-  @NotNull
-  public DartExpression getExpression() {
-    return findNotNullChildByClass(DartExpression.class);
-  }
-
-  @Override
   @Nullable
   public DartFinalVarOrType getFinalVarOrType() {
     return findChildByClass(DartFinalVarOrType.class);
+  }
+
+  @Override
+  @NotNull
+  public DartReferenceExpression getReferenceExpression() {
+    return findNotNullChildByClass(DartReferenceExpression.class);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

@@ -96,7 +96,7 @@ public class DartPsiCompositeElementImpl extends ASTWrapperPsiElement implements
 
     if (context instanceof DartForStatement) {
       final DartForLoopPartsInBraces loopPartsInBraces = ((DartForStatement)context).getForLoopPartsInBraces();
-      final DartForLoopParts loopParts = loopPartsInBraces.getForLoopParts();
+      final DartForLoopParts loopParts = loopPartsInBraces == null ? null : loopPartsInBraces.getForLoopParts();
       final DartForInPart forInPart = loopParts == null ? null : loopParts.getForInPart();
       final DartComponentName componentName = forInPart == null ? null : forInPart.getComponentName();
       if (componentName != null) {

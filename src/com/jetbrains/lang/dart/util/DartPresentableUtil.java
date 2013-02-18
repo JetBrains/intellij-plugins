@@ -138,7 +138,7 @@ public class DartPresentableUtil {
       return "";
     }
     final StringBuilder result = new StringBuilder();
-    final String typeText = type.getExpression().getText();
+    final String typeText = type.getReferenceExpression().getText();
     if (specializations.containsKey(element, typeText)) {
       final DartClass haxeClass = specializations.get(element, typeText).getDartClass();
       result.append(haxeClass == null ? typeText : haxeClass.getName());

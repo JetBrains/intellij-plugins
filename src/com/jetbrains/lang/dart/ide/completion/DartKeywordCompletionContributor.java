@@ -16,7 +16,7 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
-import com.jetbrains.lang.dart.GeneratedParserUtilBase;
+import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartCodeGenerateUtil;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;

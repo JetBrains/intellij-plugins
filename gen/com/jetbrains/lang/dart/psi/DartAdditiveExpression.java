@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartAdditiveExpression extends DartReference, DartExpression {
+public interface DartAdditiveExpression extends DartExpression, DartReference {
 
   @NotNull
   DartAdditiveOperator getAdditiveOperator();

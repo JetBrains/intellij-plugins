@@ -7,10 +7,10 @@ import com.intellij.psi.PsiElement;
 
 public interface DartFieldFormalParameter extends DartPsiCompositeElement {
 
-  @NotNull
-  DartExpression getExpression();
-
   @Nullable
   DartFinalVarOrType getFinalVarOrType();
+
+  @NotNull
+  DartReferenceExpression getReferenceExpression();
 
 }

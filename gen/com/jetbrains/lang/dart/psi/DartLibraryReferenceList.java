@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface DartLibraryReferenceList extends DartPsiCompositeElement {
 
   @NotNull
-  List<DartExpression> getExpressionList();
+  List<DartLibraryComponentReferenceExpression> getLibraryComponentReferenceExpressionList();
 
 }

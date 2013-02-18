@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartPrefixExpression extends DartReference, DartExpression {
+public interface DartPrefixExpression extends DartExpression, DartReference {
 
   @Nullable
   DartPrefixOperator getPrefixOperator();

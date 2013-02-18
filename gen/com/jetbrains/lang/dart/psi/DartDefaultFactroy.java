@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface DartDefaultFactroy extends DartPsiCompositeElement {
 
   @Nullable
-  DartExpression getExpression();
+  DartReferenceExpression getReferenceExpression();
 
   @Nullable
   DartTypeParameters getTypeParameters();

@@ -19,8 +19,8 @@ public class DartLibraryReferenceListImpl extends DartPsiCompositeElementImpl im
 
   @Override
   @NotNull
-  public List<DartExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
+  public List<DartLibraryComponentReferenceExpression> getLibraryComponentReferenceExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartLibraryComponentReferenceExpression.class);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

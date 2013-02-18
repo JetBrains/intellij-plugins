@@ -67,12 +67,12 @@ public class DartArgumentNameContributor extends CompletionContributor {
     }
     DartNewExpression newExpression = PsiTreeUtil.getParentOfType(parameters.getPosition(), DartNewExpression.class);
     if (newExpression != null) {
-      final DartExpression expression = newExpression.getExpression();
+      final DartExpression expression = newExpression.getReferenceExpression();
       if (expression != null) {
         return expression;
       }
       final DartType type = newExpression.getType();
-      return type != null ? type.getExpression() : null;
+      return type != null ? type.getReferenceExpression() : null;
     }
     return null;
   }

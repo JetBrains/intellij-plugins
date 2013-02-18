@@ -179,7 +179,7 @@ public class DartResolveUtil {
     if (dartType == null) {
       return false;
     }
-    final String typeName = dartType.getExpression().getText();
+    final String typeName = dartType.getReferenceExpression().getText();
     if (!typeName.equals(classCandidate.getName())) {
       return false;
     }
@@ -494,7 +494,7 @@ public class DartResolveUtil {
       if (".".equals(sibling.getText())) continue;
       PsiElement candidate = sibling;
       if (candidate instanceof DartType) {
-        candidate = ((DartType)sibling).getExpression();
+        candidate = ((DartType)sibling).getReferenceExpression();
       }
       return candidate instanceof DartReference && candidate != node ? (DartReference)candidate : null;
     }

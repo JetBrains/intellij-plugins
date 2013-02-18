@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartParenthesizedExpression extends DartReference, DartExpression {
+public interface DartParenthesizedExpression extends DartExpression, DartReference {
 
   @Nullable
   DartAssertStatement getAssertStatement();

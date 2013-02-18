@@ -103,11 +103,11 @@ public class DartIndexUtil {
     final DartComponentInfo value = new DartComponentInfo(dartClassName, DartComponentType.typeOf(dartClass));
     final DartType superClass = dartClass.getSuperClass();
     if (superClass != null) {
-      result.addInheritor(superClass.getExpression().getText(), value);
+      result.addInheritor(superClass.getReferenceExpression().getText(), value);
     }
     for (DartType dartType : dartClass.getImplementsList()) {
       if (dartType == null) continue;
-      result.addInheritor(dartType.getExpression().getText(), value);
+      result.addInheritor(dartType.getReferenceExpression().getText(), value);
     }
   }
 
@@ -116,14 +116,14 @@ public class DartIndexUtil {
 
     final Set<String> showComponentNames = new THashSet<String>();
     for (DartShowCombinator showCombinator : importStatement.getShowCombinatorList()) {
-      for (DartExpression expression : showCombinator.getLibraryReferenceList().getExpressionList()) {
+      for (DartExpression expression : showCombinator.getLibraryReferenceList().getLibraryComponentReferenceExpressionList()) {
         showComponentNames.add(expression.getText());
       }
     }
 
     final Set<String> hideComponentNames = new THashSet<String>();
     for (DartHideCombinator hideCombinator : importStatement.getHideCombinatorList()) {
-      for (DartExpression expression : hideCombinator.getLibraryReferenceList().getExpressionList()) {
+      for (DartExpression expression : hideCombinator.getLibraryReferenceList().getLibraryComponentReferenceExpressionList()) {
         hideComponentNames.add(expression.getText());
       }
     }

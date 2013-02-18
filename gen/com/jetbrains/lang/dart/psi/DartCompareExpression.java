@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartCompareExpression extends DartReference, DartExpression {
+public interface DartCompareExpression extends DartExpression, DartReference {
 
   @Nullable
   DartEqualityOperator getEqualityOperator();

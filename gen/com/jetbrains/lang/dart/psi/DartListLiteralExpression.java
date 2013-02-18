@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartListLiteralExpression extends DartReference, DartExpression {
+public interface DartListLiteralExpression extends DartExpression, DartReference {
 
   @Nullable
   DartExpressionList getExpressionList();

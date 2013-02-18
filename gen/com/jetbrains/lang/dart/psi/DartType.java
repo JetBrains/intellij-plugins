@@ -8,7 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface DartType extends DartPsiCompositeElement {
 
   @NotNull
-  DartExpression getExpression();
+  DartReferenceExpression getReferenceExpression();
 
   @Nullable
   DartTypeArguments getTypeArguments();

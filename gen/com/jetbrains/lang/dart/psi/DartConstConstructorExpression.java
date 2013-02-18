@@ -5,13 +5,13 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartConstConstructorExpression extends DartReference, DartExpression {
+public interface DartConstConstructorExpression extends DartExpression, DartReference {
 
   @Nullable
   DartArguments getArguments();
 
   @Nullable
-  DartExpression getExpression();
+  DartReferenceExpression getReferenceExpression();
 
   @Nullable
   DartType getType();

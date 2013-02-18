@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartBitwiseExpression extends DartReference, DartExpression {
+public interface DartBitwiseExpression extends DartExpression, DartReference {
 
   @NotNull
   DartBitwiseOperator getBitwiseOperator();

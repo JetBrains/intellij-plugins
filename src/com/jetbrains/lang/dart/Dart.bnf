@@ -2,7 +2,7 @@
   psiImplUtilClass="com.jetbrains.lang.dart.util.DartPsiImplUtil"
 
   parserClass="com.jetbrains.lang.dart.DartParser"
-  stubParserClass="com.jetbrains.lang.dart.GeneratedParserUtilBase"
+  parserUtilClass="com.jetbrains.lang.dart.DartGeneratedParserUtilBase"
 
   implements="com.jetbrains.lang.dart.psi.DartPsiCompositeElement"
   extends="com.jetbrains.lang.dart.psi.impl.DartPsiCompositeElementImpl"
@@ -444,7 +444,7 @@ private expression_recover ::= !('!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | 
                                | 'continue' | 'default' | 'do' | 'else' | 'factory' | 'false' | 'final' | 'finally'
                                | 'for' | 'get' | 'if' | 'in' | 'interface' | 'native' | 'new' | 'null' | 'operator'
                                | 'return' | 'set' | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try'
-                               | 'typedef' | 'var' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/='
+                               | 'typedef' | 'var' | 'while' | '{' | '|' | '|=' | '||' | '}' | '~' | '~/=' | '.'
                                | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
                                | LONG_TEMPLATE_ENTRY_END | shiftRightOperator | ('.' '.'))
 

@@ -11,6 +11,6 @@ public interface DartRedirection extends DartPsiCompositeElement {
   DartArguments getArguments();
 
   @Nullable
-  DartExpression getExpression();
+  DartReferenceExpression getReferenceExpression();
 
 }

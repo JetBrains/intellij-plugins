@@ -29,6 +29,23 @@ Dart File
           BLOCK
             PsiElement({)('{')
             STATEMENTS
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('bar')
+                    ARGUMENTS
+                      PsiElement(()('(')
+                      PsiElement())(')')
+                  PsiElement(.)('.')
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('baz')
+                ARGUMENTS
+                  PsiElement(()('(')
+                  PsiElement())(')')
+              PsiElement(;)(';')
               RETURN_STATEMENT
                 PsiElement(return)('return')
                 LITERAL_EXPRESSION

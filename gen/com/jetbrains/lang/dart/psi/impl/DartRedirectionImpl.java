@@ -25,8 +25,8 @@ public class DartRedirectionImpl extends DartPsiCompositeElementImpl implements 
 
   @Override
   @Nullable
-  public DartExpression getExpression() {
-    return findChildByClass(DartExpression.class);
+  public DartReferenceExpression getReferenceExpression() {
+    return findChildByClass(DartReferenceExpression.class);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

@@ -25,14 +25,14 @@ public class DartSuperCallOrFieldInitializerImpl extends DartPsiCompositeElement
 
   @Override
   @Nullable
-  public DartExpression getExpression() {
-    return findChildByClass(DartExpression.class);
+  public DartFieldInitializer getFieldInitializer() {
+    return findChildByClass(DartFieldInitializer.class);
   }
 
   @Override
   @Nullable
-  public DartFieldInitializer getFieldInitializer() {
-    return findChildByClass(DartFieldInitializer.class);
+  public DartReferenceExpression getReferenceExpression() {
+    return findChildByClass(DartReferenceExpression.class);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {

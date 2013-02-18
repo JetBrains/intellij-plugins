@@ -25,8 +25,8 @@ public class DartNewExpressionImpl extends DartReferenceImpl implements DartNewE
 
   @Override
   @Nullable
-  public DartExpression getExpression() {
-    return findChildByClass(DartExpression.class);
+  public DartReferenceExpression getReferenceExpression() {
+    return findChildByClass(DartReferenceExpression.class);
   }
 
   @Override

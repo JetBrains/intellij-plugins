@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface DartBreakStatement extends DartPsiCompositeElement {
 
   @Nullable
-  DartExpression getExpression();
+  DartReferenceExpression getReferenceExpression();
 
 }

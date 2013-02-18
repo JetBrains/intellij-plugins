@@ -25,8 +25,8 @@ public class DartMetadataImpl extends DartPsiCompositeElementImpl implements Dar
 
   @Override
   @NotNull
-  public DartExpression getExpression() {
-    return findNotNullChildByClass(DartExpression.class);
+  public DartReferenceExpression getReferenceExpression() {
+    return findNotNullChildByClass(DartReferenceExpression.class);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
