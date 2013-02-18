@@ -68,7 +68,7 @@
 <!ELEMENT Event EMPTY>
 <!ATTLIST Event
   name CDATA #REQUIRED
-  type CDATA "flash.events.Event"
+  type CDATA "flash.events.Event,starling.events.Event"
   deprecatedMessage CDATA #IMPLIED
   deprecatedReplacement CDATA #IMPLIED
   deprecatedSince CDATA #IMPLIED

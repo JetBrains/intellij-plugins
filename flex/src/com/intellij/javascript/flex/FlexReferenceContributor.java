@@ -61,10 +61,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.intellij.flex.build.FlexCompilerConfigFileUtilBase.PATH_ELEMENT;
 import static com.intellij.patterns.XmlPatterns.*;
@@ -751,7 +748,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
         final JSReferenceSet jsReferenceSet =
           new JSReferenceSet(element, trimmedValueAndRange.first, trimmedValueAndRange.second.getStartOffset(), false, false, true);
         if (SKIN_CLASS_ATTR_NAME.equals(name)) {
-          jsReferenceSet.setBaseClassFqn(UI_COMPONENT_FQN);
+          jsReferenceSet.setBaseClassFqns(Collections.singletonList(UI_COMPONENT_FQN));
         }
         jsReferenceSet.setQuickFixProvider(quickFixProvider);
         return jsReferenceSet.getReferences();
