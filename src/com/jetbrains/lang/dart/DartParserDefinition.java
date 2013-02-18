@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
-import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
@@ -27,7 +26,7 @@ public class DartParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public Lexer createLexer(Project project) {
-    return new FlexAdapter(new _DartLexer());
+    return new DartFlexLexer();
   }
 
   @Override
@@ -67,7 +66,7 @@ public class DartParserDefinition implements ParserDefinition {
   @NotNull
   @Override
   public PsiElement createElement(ASTNode node) {
-    if(node.getElementType() == DartTokenTypesSets.EMBEDDED_CONTENT) {
+    if (node.getElementType() == DartTokenTypesSets.EMBEDDED_CONTENT) {
       return new DartEmbeddedContentImpl(node);
     }
     return DartTokenTypes.Factory.createElement(node);
