@@ -40,7 +40,7 @@ public class Dart2JSTaskConsumer extends BackgroundTaskConsumer {
     }
 
     options.setOutput("$" + new FileNameMacro().getName() + "$.js:$" +
-                      new FileNameMacro().getName() + "$.js.maps:$" +
+                      new FileNameMacro().getName() + "$.js.map:$" +
                       new FileNameMacro().getName() + "$.js.deps");
     options.setTrackOnlyRoot(true);
     options.setImmediateSync(false);
