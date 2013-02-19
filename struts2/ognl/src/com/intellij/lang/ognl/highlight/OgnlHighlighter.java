@@ -57,7 +57,7 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
   public static final TextAttributesKey BACKGROUND = TextAttributesKey.createTextAttributesKey(
     "OGNL.BACKGROUND", JspHighlighterColors.JSP_ACTION_AND_DIRECTIVE_BACKGROUND);
 
-  public static final TextAttributesKey EXPRESSION = TextAttributesKey.createTextAttributesKey(
+  public static final TextAttributesKey EXPRESSION_BOUNDS = TextAttributesKey.createTextAttributesKey(
     "OGNL.EXPRESSION", DefaultLanguageHighlighterColors.KEYWORD);
 
   public static final TextAttributesKey BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(
@@ -94,8 +94,8 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
     keys1.put(TokenType.BAD_CHARACTER, BAD_CHARACTER);
 
     // EXPR_HOLDER
-    keys1.put(OgnlTypes.EXPRESSION_START, EXPRESSION);
-    keys1.put(OgnlTypes.EXPRESSION_END, EXPRESSION);
+    keys1.put(OgnlTypes.EXPRESSION_START, EXPRESSION_BOUNDS);
+    keys1.put(OgnlTypes.EXPRESSION_END, EXPRESSION_BOUNDS);
 
     keys1.put(OgnlTypes.IDENTIFIER, IDENTIFIER);
 
