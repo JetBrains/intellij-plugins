@@ -263,8 +263,14 @@ public class Flexmojos3Configurator {
         final String dependencyModuleName = ((ModuleOrderEntry)entry).getModuleName();
 
         final MavenProject dependencyMavenProject = findMavenProjectByModuleName(dependencyModuleName);
-        if (dependencyMavenProject == null ||
-            !ArrayUtil.contains(dependencyMavenProject.getPackaging(), FlexmojosImporter.SUPPORTED_PACKAGINGS)) {
+
+        if (dependencyMavenProject == null) {
+          MavenLog.LOG.warn("Maven project not found, module dependency skipped: " + myModule.getName() + " on " + dependencyModuleName);
+          continue;
+        }
+        if (!ArrayUtil.contains(dependencyMavenProject.getPackaging(), FlexmojosImporter.SUPPORTED_PACKAGINGS)) {
+          MavenLog.LOG.info("Unexpected packaging (" + dependencyMavenProject.getPackaging() + "), module dependency skipped: " +
+                            myModule.getName() + " on " + dependencyModuleName);
           continue;
         }
 
