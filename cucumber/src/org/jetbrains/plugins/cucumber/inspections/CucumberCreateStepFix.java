@@ -9,7 +9,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
@@ -59,7 +59,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
 
   public static Set<PsiFile> getStepDefinitionContainers(final PsiFile featureFile) {
     final List<PsiDirectory> stepDefsRoots = new ArrayList<PsiDirectory>();
-    final Module module = ObjectUtils.assertNotNull(ModuleUtil.findModuleForPsiElement(featureFile));
+    final Module module = ObjectUtils.assertNotNull(ModuleUtilCore.findModuleForPsiElement(featureFile));
     CucumberStepsIndex.getInstance(featureFile.getProject())
       .findRelatedStepDefsRoots(featureFile, module, stepDefsRoots, new HashSet<String>());
 
@@ -83,9 +83,9 @@ public class CucumberCreateStepFix implements LocalQuickFix {
         public int compare(PsiFile file, PsiFile file2) {
           if (file == null && file2 == null) {
             return 0;
-          } else if (file == null && file2 != null) {
+          } else if (file == null) {
             return -1;
-          } else if (file != null && file2 == null) {
+          } else if (file2 == null) {
             return 1;
           }
 
@@ -162,7 +162,9 @@ public class CucumberCreateStepFix implements LocalQuickFix {
             @Override
             protected void run() throws Throwable {
               final VirtualFile parentDir = VfsUtil.createDirectories(parentDirPath);
-              final PsiDirectory parentPsiDir = PsiManager.getInstance(getProject()).findDirectory(parentDir);
+              final Project project = getProject();
+              assert project != null;
+              final PsiDirectory parentPsiDir = PsiManager.getInstance(project).findDirectory(parentDir);
               assert parentPsiDir != null;
               PsiFile newFile = CucumberStepsIndex.getInstance(step.getProject())
                 .createStepDefinitionFile(model.getDirectory(), model.getFileName(), fileType);
