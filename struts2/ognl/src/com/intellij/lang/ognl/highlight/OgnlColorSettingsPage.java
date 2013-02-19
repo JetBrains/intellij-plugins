@@ -40,6 +40,7 @@ public class OgnlColorSettingsPage implements ColorSettingsPage {
       new AttributesDescriptor("Identifier", OgnlHighlighter.IDENTIFIER),
       new AttributesDescriptor("String", OgnlHighlighter.STRING),
       new AttributesDescriptor("Number", OgnlHighlighter.NUMBER),
+      new AttributesDescriptor("Comma", OgnlHighlighter.COMMA),
       new AttributesDescriptor("Parentheses", OgnlHighlighter.PARENTHESES),
       new AttributesDescriptor("Brackets", OgnlHighlighter.BRACKETS),
       new AttributesDescriptor("Braces", OgnlHighlighter.BRACES)

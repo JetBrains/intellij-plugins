@@ -78,6 +78,9 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
   public static final TextAttributesKey STRING = TextAttributesKey.createTextAttributesKey(
     "OGNL.STRING", DefaultLanguageHighlighterColors.STRING);
 
+  public static final TextAttributesKey COMMA = TextAttributesKey.createTextAttributesKey(
+    "OGNL.COMMA", DefaultLanguageHighlighterColors.COMMA);
+
   public static final TextAttributesKey BRACKETS = TextAttributesKey.createTextAttributesKey(
     "OGNL.BRACKETS", DefaultLanguageHighlighterColors.BRACKETS);
 
@@ -92,6 +95,8 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
 
     // single characters
     keys1.put(TokenType.BAD_CHARACTER, BAD_CHARACTER);
+
+    keys1.put(OgnlTypes.COMMA, COMMA);
 
     // EXPR_HOLDER
     keys1.put(OgnlTypes.EXPRESSION_START, EXPRESSION_BOUNDS);
