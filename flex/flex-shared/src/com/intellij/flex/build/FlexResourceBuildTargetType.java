@@ -5,7 +5,7 @@ import com.intellij.flex.model.module.JpsFlexModuleType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.BuildTargetLoader;
-import org.jetbrains.jps.builders.BuildTargetType;
+import org.jetbrains.jps.builders.ModuleBasedBuildTargetType;
 import org.jetbrains.jps.model.JpsModel;
 import org.jetbrains.jps.model.module.JpsTypedModule;
 
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FlexResourceBuildTargetType extends BuildTargetType<FlexResourceBuildTarget> {
+public class FlexResourceBuildTargetType extends ModuleBasedBuildTargetType<FlexResourceBuildTarget> {
   public static final FlexResourceBuildTargetType PRODUCTION = new FlexResourceBuildTargetType("flex-resource-production", false);
   public static final FlexResourceBuildTargetType TEST = new FlexResourceBuildTargetType("flex-resource-test", true);
 
