@@ -146,6 +146,9 @@ public class DartUnitRunningState extends CommandLineState {
     }
 
     commandLine.setExePath(exePath);
+    if (realFile != null) {
+      commandLine.setWorkDirectory(realFile.getParent().getPath());
+    }
     commandLine.setPassParentEnvs(true);
 
     setupUserProperties(commandLine);
@@ -220,7 +223,7 @@ public class DartUnitRunningState extends CommandLineState {
   }
 
   private static String pathToDartUrl(String path) {
-    return VfsUtilCore.pathToUrl(path);
+    return VfsUtilCore.pathToUrl(path).replace("file://", "file:///");
   }
 
   private static String getRunnerCode() throws IOException {
