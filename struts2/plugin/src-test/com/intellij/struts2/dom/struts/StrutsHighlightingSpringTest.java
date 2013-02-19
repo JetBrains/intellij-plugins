@@ -62,8 +62,7 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
   protected void performTearDown() throws Exception {
     final SpringFacet springFacet = SpringFacet.getInstance(myModule);
     assertNotNull(springFacet);
-    final SpringFacetConfiguration configuration = springFacet.getConfiguration();
-    configuration.getFileSets().clear();
+    springFacet.removeFileSets();
   }
 
   public void testStrutsSpringHighlighting() throws Throwable {
@@ -115,11 +114,7 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
   protected void createSpringFileSet(final String... springXmlPaths) {
     final SpringFacet springFacet = createSpringFacet();
 
-    final SpringFacetConfiguration configuration = springFacet.getConfiguration();
-    final Set<SpringFileSet> list = configuration.getFileSets();
-    @NonNls final SpringFileSet fileSet = new SpringFileSet("", "default", configuration);
-    list.add(fileSet);
-
+    @NonNls final SpringFileSet fileSet = springFacet.addFileSet("", "default");
     for (final String springXmlPath : springXmlPaths) {
       myFixture.copyFileToProject(springXmlPath);
       final VirtualFile file = myFixture.getTempDirFixture().getFile(springXmlPath);
