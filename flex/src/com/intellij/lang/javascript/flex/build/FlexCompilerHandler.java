@@ -40,7 +40,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.Alarm;
 import com.intellij.util.PlatformUtils;
-import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.BidirectionalMap;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.StringTokenizer;
@@ -62,7 +61,6 @@ import java.util.regex.Matcher;
 public class FlexCompilerHandler extends AbstractProjectComponent {
 
   private static final Logger LOG = Logger.getInstance(FlexCompilerHandler.class.getName());
-  private static final boolean KEEP_TEMP_FILES = Boolean.parseBoolean(System.getProperty("idea.keep.flex.temporary.files"));
 
   private final FlexCompilerDependenciesCache myCompilerDependenciesCache;
   private BuiltInFlexCompilerHandler myBuiltInFlexCompilerHandler;
@@ -196,7 +194,7 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
     }
     quitCompilerShell();
     myCompilerDependenciesCache.clear();
-    deleteTempFlexConfigFiles(myProject.getName());
+    FlexCommonUtils.deleteTempFlexConfigFiles(myProject.getName());
     FlexCompilationUtils.deleteUnzippedANEFiles();
     myWidget.destroy();
   }
@@ -279,64 +277,6 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
         if (!wasFailure && !allConfigFiles.isEmpty()) {
           //myCompilerDependenciesCache.cacheBC(context, module, allConfigFiles);
         }
-      }
-    }
-  }
-
-  public static void deleteTempFlexUnitFiles(final CompileContext context) {
-    if (!KEEP_TEMP_FILES) {
-      final Collection<String> filesToDelete = context.getUserData(FlexUnitPrecompileTask.FILES_TO_DELETE);
-      if (filesToDelete != null) {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          public void run() {
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-              public void run() {
-                for (String path : filesToDelete) {
-                  VirtualFile file = LocalFileSystem.getInstance().findFileByPath(path);
-                  if (file != null && file.exists()) {
-                    try {
-                      file.delete(this);
-                    }
-                    catch (IOException e) {
-                      LOG.warn("Failed to delete FlexUnit launcher file: " + path, e);
-                    }
-                  }
-                }
-              }
-            });
-          }
-        });
-      }
-    }
-  }
-
-  private static void deleteTempFlexConfigFiles(final String projectName) {
-    if (KEEP_TEMP_FILES) return;
-
-    final File flexunitDir = new File(FlexCommonUtils.getPathToFlexUnitTempDirectory(projectName));
-    if (flexunitDir.isDirectory() && flexunitDir.list().length == 0) {
-      FileUtil.delete(flexunitDir);
-    }
-
-    final String hash1 = Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()).toUpperCase();
-    final File dir = new File(FlexCommonUtils.getTempFlexConfigsDirPath());
-
-    if (!dir.isDirectory()) return;
-
-    final File[] filesToDelete = dir.listFiles(new FilenameFilter() {
-      public boolean accept(final File file, final String name) {
-        if (name.endsWith(".xml")) {
-          if (name.startsWith(PlatformUtils.getPlatformPrefix().toLowerCase() + "-" + hash1)) {
-            return true;
-          }
-        }
-        return false;
-      }
-    });
-
-    if (filesToDelete != null) {
-      for (final File file : filesToDelete) {
-        FileUtil.delete(file);
       }
     }
   }

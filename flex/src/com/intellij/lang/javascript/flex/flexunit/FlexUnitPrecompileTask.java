@@ -8,27 +8,21 @@ import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.ComponentSet;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.index.JSPackageIndex;
 import com.intellij.lang.javascript.index.JSPackageIndexInfo;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.UIBundle;
@@ -42,6 +36,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 public class FlexUnitPrecompileTask implements CompileTask {
@@ -269,7 +264,8 @@ public class FlexUnitPrecompileTask implements CompileTask {
     }
 
     launcherText = replace(launcherText, "/*imports*/", imports.toString());
-    launcherText = replace(launcherText, "/*test_runner*/", flexUnit4 ? FlexCommonUtils.FLEXUNIT_4_TEST_RUNNER : FlexCommonUtils.FLEXUNIT_1_TEST_RUNNER);
+    launcherText =
+      replace(launcherText, "/*test_runner*/", flexUnit4 ? FlexCommonUtils.FLEXUNIT_4_TEST_RUNNER : FlexCommonUtils.FLEXUNIT_1_TEST_RUNNER);
     launcherText = replace(launcherText, "/*code*/", code.toString());
     launcherText = replace(launcherText, "/*port*/", String.valueOf(flexUnitPort));
     launcherText = replace(launcherText, "/*socketPolicyPort*/", String.valueOf(socketPolicyPort));
@@ -293,43 +289,19 @@ public class FlexUnitPrecompileTask implements CompileTask {
       return false;
     }
 
-    final Ref<VirtualFile> launcherFile = new Ref<VirtualFile>();
-    final Ref<IOException> createLauncherError = new Ref<IOException>();
-    final String launcherText1 = launcherText;
-    final Collection<String> filesToDelete = new ArrayList<String>();
-    final Runnable createLauncherRunnable = new Runnable() {
-      public void run() {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-          public void run() {
-            try {
-              final VirtualFile tempDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(tmpDir);
-              launcherFile.set(FlexUtils.addFileWithContent(
-                FlexCommonUtils.FLEX_UNIT_LAUNCHER + FlexCommonUtils.getFlexUnitLauncherExtension(bc.getNature()), launcherText1, tempDir));
+    final String fileName = FlexCommonUtils.FLEX_UNIT_LAUNCHER + FlexCommonUtils.getFlexUnitLauncherExtension(bc.getNature());
+    final File launcherFile = new File(tmpDir, fileName);
+    FileUtil.delete(launcherFile);
 
-              filesToDelete.add(launcherFile.get().getPath());
-            }
-            catch (IOException ex) {
-              createLauncherError.set(ex);
-            }
-          }
-        });
-      }
-    };
-    if (ApplicationManager.getApplication().isDispatchThread()) {
-      createLauncherRunnable.run();
+    try {
+      FileUtil.writeToFile(launcherFile, launcherText);
     }
-    else {
-      ProgressIndicator pi = ProgressManager.getInstance().getProgressIndicator();
-      ApplicationManager.getApplication()
-        .invokeAndWait(createLauncherRunnable, pi != null ? pi.getModalityState() : ModalityState.NON_MODAL);
-    }
-
-    if (!createLauncherError.isNull()) {
-      context.addMessage(CompilerMessageCategory.ERROR, createLauncherError.get().getMessage(), null, -1, -1);
+    catch (IOException e) {
+      context.addMessage(CompilerMessageCategory.ERROR, e.getMessage(), null, -1, -1);
       return false;
     }
 
-    context.putUserData(FILES_TO_DELETE, filesToDelete);
+    context.putUserData(FILES_TO_DELETE, Collections.singletonList(launcherFile.getPath()));
     return true;
   }
 

@@ -68,6 +68,9 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
                    myBuiltInCompilerHandler.getActiveCompilationsNumber() + " Flex compilation(s) are not finished!");
     myBuiltInCompilerHandler.stopCompilerProcess();
     myBuiltInCompilerHandler = null;
+
+    FlexCommonUtils.deleteTempFlexConfigFiles(context.getProjectDescriptor().getProject().getName());
+
     super.buildFinished(context);
   }
 

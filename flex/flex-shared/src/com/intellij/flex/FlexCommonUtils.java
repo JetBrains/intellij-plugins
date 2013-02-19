@@ -95,6 +95,8 @@ public class FlexCommonUtils {
 
   private static final Logger LOG = Logger.getInstance(FlexCommonUtils.class.getName());
 
+  public static final boolean KEEP_TEMP_FILES = Boolean.parseBoolean(System.getProperty("idea.keep.flex.temporary.files"));
+
   public static boolean isSourceFile(final String fileName) {
     final String ext = FileUtilRt.getExtension(fileName);
     return ext.equalsIgnoreCase("as") || ext.equalsIgnoreCase("mxml") || ext.equalsIgnoreCase("fxg");
@@ -140,7 +142,7 @@ public class FlexCommonUtils {
   }
 
   public static String getPathToFlexUnitTempDirectory(final String projectName) {
-    return getTempFlexConfigsDirPath() + "/flexunit-" +
+    return PathManager.getSystemPath() + "/tmp/flexunit-" +
            Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()).toUpperCase();
   }
 
@@ -1131,5 +1133,36 @@ public class FlexCommonUtils {
                                                 : version.substring(secondDotIndex + 1, thirdDotIndex);
 
     return Trinity.create(majorVersion, minorVersion, revision);
+  }
+
+  public static void deleteTempFlexConfigFiles(final String projectName) {
+    if (KEEP_TEMP_FILES) return;
+
+    final File flexunitDir = new File(getPathToFlexUnitTempDirectory(projectName));
+    if (flexunitDir.isDirectory() && flexunitDir.list().length == 0) {
+      FileUtil.delete(flexunitDir);
+    }
+
+    final String hash1 = Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()).toUpperCase();
+    final File dir = new File(getTempFlexConfigsDirPath());
+
+    if (!dir.isDirectory()) return;
+
+    final File[] filesToDelete = dir.listFiles(new FilenameFilter() {
+      public boolean accept(final File file, final String name) {
+        if (name.endsWith(".xml")) {
+          if (name.startsWith("idea-" + hash1)) {  // PlatformUtils.getPlatformPrefix().toLowerCase()
+            return true;
+          }
+        }
+        return false;
+      }
+    });
+
+    if (filesToDelete != null) {
+      for (final File file : filesToDelete) {
+        FileUtil.delete(file);
+      }
+    }
   }
 }
