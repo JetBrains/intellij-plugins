@@ -41,7 +41,7 @@ public class DartSyntaxHighlighterColors {
   public static final TextAttributesKey LINE_COMMENT =
     createTextAttributesKey(DART_LINE_COMMENT, DefaultLanguageHighlighterColors.LINE_COMMENT);
   public static final TextAttributesKey BLOCK_COMMENT =
-    createTextAttributesKey(DART_BLOCK_COMMENT, DefaultLanguageHighlighterColors.BLOCk_COMMENT);
+    createTextAttributesKey(DART_BLOCK_COMMENT, DefaultLanguageHighlighterColors.BLOCK_COMMENT);
   public static final TextAttributesKey DOC_COMMENT =
     createTextAttributesKey(DART_DOC_COMMENT, DefaultLanguageHighlighterColors.DOC_COMMENT);
   public static final TextAttributesKey KEYWORD =
