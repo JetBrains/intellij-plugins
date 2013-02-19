@@ -36,10 +36,19 @@ public class OgnlDefaultVariableReferencesContributor extends OgnlVariableRefere
 
     final JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(project);
     final PsiClass mapClass = javaPsiFacade.findClass(CommonClassNames.JAVA_UTIL_MAP, GlobalSearchScope.allScope(project));
-    processor.process(new OgnlVariableReference("context", "java.util.Map<String,Object>", ORIGIN_INFO,
-                                                mapClass != null ? mapClass : selfNavigation));
-    processor.process(new OgnlVariableReference("root", CommonClassNames.JAVA_LANG_OBJECT, ORIGIN_INFO, selfNavigation));
-    processor.process(new OgnlVariableReference("this", CommonClassNames.JAVA_LANG_OBJECT, ORIGIN_INFO, selfNavigation));
+
+    final OgnlVariableReference context =
+      new OgnlVariableReference("context", "java.util.Map<String,Object>", ORIGIN_INFO, mapClass != null ? mapClass : selfNavigation);
+    if (!processor.process(context)) {
+      return false;
+    }
+    if (!processor.process(new OgnlVariableReference("root", CommonClassNames.JAVA_LANG_OBJECT, ORIGIN_INFO, selfNavigation))) {
+      return false;
+    }
+    if (!processor.process(new OgnlVariableReference("this", CommonClassNames.JAVA_LANG_OBJECT, ORIGIN_INFO, selfNavigation))) {
+      return false;
+    }
+
     return true;
   }
 }
