@@ -80,7 +80,7 @@ public class DartExternalAnnotator extends ExternalAnnotator<AnalyzerDriver, Lis
 
   @Override
   public void apply(@NotNull PsiFile file, @Nullable List<AnalyzerMessage> messages, @NotNull AnnotationHolder holder) {
-    if (messages == null) {
+    if (messages == null || !file.isValid()) {
       return;
     }
     final VirtualFile realVirtualFile = DartResolveUtil.getRealVirtualFile(file);
