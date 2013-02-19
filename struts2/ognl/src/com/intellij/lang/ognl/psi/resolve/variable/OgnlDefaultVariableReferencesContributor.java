@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class OgnlDefaultVariableReferencesContributor extends OgnlVariableReferencesContributor {
 
+  private static final String ORIGIN_INFO = "OGNL";
+
   @Override
   public boolean process(@NotNull PsiElement element,
                          @NotNull PsiFile containingFile,
@@ -34,10 +36,10 @@ public class OgnlDefaultVariableReferencesContributor extends OgnlVariableRefere
 
     final JavaPsiFacade javaPsiFacade = JavaPsiFacade.getInstance(project);
     final PsiClass mapClass = javaPsiFacade.findClass(CommonClassNames.JAVA_UTIL_MAP, GlobalSearchScope.allScope(project));
-    processor.process(new OgnlVariableReference("context", "java.util.Map<String,Object>", "OGNL",
+    processor.process(new OgnlVariableReference("context", "java.util.Map<String,Object>", ORIGIN_INFO,
                                                 mapClass != null ? mapClass : selfNavigation));
-    processor.process(new OgnlVariableReference("root", CommonClassNames.JAVA_LANG_OBJECT, "OGNL", selfNavigation));
-    processor.process(new OgnlVariableReference("this", CommonClassNames.JAVA_LANG_OBJECT, "OGNL", selfNavigation));
+    processor.process(new OgnlVariableReference("root", CommonClassNames.JAVA_LANG_OBJECT, ORIGIN_INFO, selfNavigation));
+    processor.process(new OgnlVariableReference("this", CommonClassNames.JAVA_LANG_OBJECT, ORIGIN_INFO, selfNavigation));
     return true;
   }
 }
