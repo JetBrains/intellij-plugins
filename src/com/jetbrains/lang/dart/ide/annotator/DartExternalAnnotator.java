@@ -98,7 +98,7 @@ public class DartExternalAnnotator extends ExternalAnnotator<AnalyzerDriver, Lis
 
   private static void createAnnotation(@NotNull PsiFile file, @NotNull AnalyzerMessage message, @NotNull AnnotationHolder holder) {
     final Document document = file.getViewProvider().getDocument();
-    if (document == null) {
+    if (document == null || message.getLine() < 0) {
       return;
     }
     final int startOffset = document.getLineStartOffset(message.getLine()) + message.getOffset();
