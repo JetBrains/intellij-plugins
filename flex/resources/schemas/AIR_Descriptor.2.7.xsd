@@ -220,7 +220,7 @@
 	</xs:all>	  
 
       <!-- About the runtime version required -->
-      <xs:attribute name="minimumPatchLevel" type="xs:unsignedInt" minOccurs="0"/>
+      <xs:attribute name="minimumPatchLevel" type="xs:unsignedInt"/>
     </xs:complexType>
   </xs:element>
 

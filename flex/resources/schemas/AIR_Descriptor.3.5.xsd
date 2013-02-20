@@ -213,6 +213,7 @@
        	    <xs:all>
 		 	  <!-- A list of plist key/value pairs to be added to the application Info.plist -->
        	      <xs:element name="InfoAdditions" type="xs:string" minOccurs="0"/>
+       	      <xs:element name="Entitlements" type="xs:string" minOccurs="0"/>
               <xs:element name="requestedDisplayResolution" type="xs:string" minOccurs="0"/>
        	    </xs:all>
        	  </xs:complexType>
@@ -223,6 +224,14 @@
           <xs:complexType>
             <xs:all>
               <xs:element name="manifestAdditions" type="xs:string" minOccurs="0" maxOccurs="1"/>
+              <xs:element name="colorDepth" minOccurs="0" maxOccurs="1"  >
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="16bit" />
+                    <xs:enumeration value="32bit"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
             </xs:all>
           </xs:complexType>
         </xs:element>
@@ -230,7 +239,7 @@
 	</xs:all>	  
 
       <!-- About the runtime version required -->
-      <xs:attribute name="minimumPatchLevel" type="xs:unsignedInt" minOccurs="0"/>
+      <xs:attribute name="minimumPatchLevel" type="xs:unsignedInt"/>
     </xs:complexType>
   </xs:element>
 
