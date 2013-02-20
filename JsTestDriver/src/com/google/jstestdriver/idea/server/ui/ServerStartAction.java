@@ -15,11 +15,13 @@ import com.google.jstestdriver.model.HandlerPathPrefix;
 import com.google.jstestdriver.model.NullPathPrefix;
 import com.google.jstestdriver.server.JstdTestCaseStore;
 import com.google.jstestdriver.util.NullStopWatch;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.util.PlatformIcons;
 import icons.JsTestDriverIcons;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +44,7 @@ public class ServerStartAction extends AnAction {
   private static boolean myLocalServerStarting = false;
 
   public ServerStartAction() {
-    super("Start a local server", null, JsTestDriverIcons.StartLocalServer);
+    super("Start a local server", null, AllIcons.Actions.Execute);
   }
 
   @Override

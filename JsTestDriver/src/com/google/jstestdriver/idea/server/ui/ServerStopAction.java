@@ -2,12 +2,11 @@ package com.google.jstestdriver.idea.server.ui;
 
 import com.google.jstestdriver.ServerShutdownAction;
 import com.google.jstestdriver.ServerStartupAction;
-import com.google.jstestdriver.idea.icons.JstdIcons;
 import com.google.jstestdriver.idea.server.JstdServerState;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
-import icons.JsTestDriverIcons;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,7 +17,7 @@ public class ServerStopAction extends AnAction {
   private static final Logger LOG = Logger.getInstance(ServerStopAction.class);
 
   ServerStopAction() {
-    super("Stop the local server", null, JsTestDriverIcons.StopLocalServer);
+    super("Stop the local server", null, AllIcons.Actions.Suspend);
   }
 
   @Override
