@@ -197,10 +197,16 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
 
   public static boolean isEventClass(final JSClass jsClass) {
     final PsiElement eventClass = JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(JSAnnotatingVisitor.FLASH_EVENT_FQN, jsClass));
-    if (!(eventClass instanceof JSClass)) return false;
-    if (JSInheritanceUtil.isParentClass(jsClass, (JSClass)eventClass)) {
+    if ((eventClass instanceof JSClass) && JSInheritanceUtil.isParentClass(jsClass, (JSClass)eventClass)) {
       return true;
     }
+
+    final PsiElement eventClass2 =
+      JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(JSAnnotatingVisitor.STARLING_EVENT_FQN, jsClass));
+    if ((eventClass2 instanceof JSClass) && JSInheritanceUtil.isParentClass(jsClass, (JSClass)eventClass2)) {
+      return true;
+    }
+
     return false;
   }
 

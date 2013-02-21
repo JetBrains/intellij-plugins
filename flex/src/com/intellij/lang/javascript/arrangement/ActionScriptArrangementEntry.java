@@ -124,6 +124,7 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
         final PsiElement resolve = ((JSReferenceExpression)typeElement).resolve();
         if (resolve instanceof JSClass &&
             (JSAnnotatingVisitor.FLASH_EVENT_FQN.equals(((JSClass)resolve).getQualifiedName()) ||
+             JSAnnotatingVisitor.STARLING_EVENT_FQN.equals(((JSClass)resolve).getQualifiedName()) ||
              JavaScriptGenerateEventHandler.isEventClass((JSClass)resolve))) {
           return true;
         }
