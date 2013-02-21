@@ -20,6 +20,6 @@ public class DartCodeStyleConfigurable extends CodeStyleAbstractConfigurable {
 
   @Override
   public String getHelpTopic() {
-    return null;
+    return "reference.settingsdialog.codestyle.dart";
   }
 }
