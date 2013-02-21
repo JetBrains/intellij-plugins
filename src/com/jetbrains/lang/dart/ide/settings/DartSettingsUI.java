@@ -23,6 +23,7 @@ import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.intellij.webcore.libraries.ui.ScriptingContextsConfigurable;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
+import icons.DartIcons;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -53,11 +54,11 @@ public class DartSettingsUI {
           Messages.showOkCancelDialog(
             myProject,
             DartBundle.message("dart.sdk.bad.home.path.to.dartvm"), DartBundle.message("dart.sdk.name"),
-            icons.DartIcons.Dart_16
+            DartIcons.Dart_16
           );
         }
         else if (file != null && getExecutablePathByFolderPath(file.getPath(), "dart") != null) {
-          myPathChooser.setText(FileUtil.toSystemIndependentName(file.getPath()));
+          myPathChooser.setText(FileUtil.toSystemDependentName(file.getPath()));
           updateUI();
           if (!SystemInfo.isWindows && getSettings().getAnalyzer() == null) {
             Messages.showErrorDialog(
@@ -86,6 +87,13 @@ public class DartSettingsUI {
         else if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && !isDartSDKConfigured() && isDartSDKPathValid()) {
           updateOrCreateDartLibrary();
           updateUI();
+        }
+        else if (!isDartSDKPathValid()) {
+          Messages.showOkCancelDialog(
+            myProject,
+            DartBundle.message("invalid.dart.sdk.path"), DartBundle.message("dart.sdk.name"),
+            DartIcons.Dart_16
+          );
         }
       }
     });
@@ -138,9 +146,9 @@ public class DartSettingsUI {
           mySetupLabel.setText(DartBundle.message("dart.sdk.bad.path"));
         }
         else {
-          mySetupLabel
-            .setText(
-              DartBundle.message("dart.sdk.setup", DartSdkUtil.getSdkVersion(FileUtil.toSystemDependentName(myPathChooser.getText()))));
+          mySetupLabel.setText(
+              DartBundle.message("dart.sdk.setup", DartSdkUtil.getSdkVersion(FileUtil.toSystemDependentName(myPathChooser.getText())))
+          );
           mySetupScopeLabel.setHyperlinkText(DartBundle.message("dart.sdk.edit.usage.scope"));
         }
       }
