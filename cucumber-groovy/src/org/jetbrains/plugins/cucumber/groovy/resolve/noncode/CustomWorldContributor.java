@@ -2,12 +2,15 @@ package org.jetbrains.plugins.cucumber.groovy.resolve.noncode;
 
 import com.intellij.psi.*;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberCommonClassNames;
 import org.jetbrains.plugins.cucumber.groovy.GrCucumberUtil;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.arguments.GrArgumentList;
@@ -19,6 +22,8 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.typedef.members.GrMe
 import org.jetbrains.plugins.groovy.lang.psi.util.GroovyCommonClassNames;
 import org.jetbrains.plugins.groovy.lang.resolve.NonCodeMembersContributor;
 import org.jetbrains.plugins.groovy.lang.resolve.ResolveUtil;
+
+import java.util.List;
 
 public class CustomWorldContributor extends NonCodeMembersContributor {
   @Override
@@ -38,35 +43,53 @@ public class CustomWorldContributor extends NonCodeMembersContributor {
         }
 
         if (parent instanceof GrMethodCall && (GrCucumberUtil.isStepDefinition(parent) || GrCucumberUtil.isHook((GrMethodCall)parent))) {
-          doProcessDynamicMethods(processor, (GrMethodCall)parent, place, state);
+          doProcessDynamicMethods(processor, place, state, parent.getContainingFile());
         }
       }
     }
   }
 
   private static void doProcessDynamicMethods(@NotNull PsiScopeProcessor processor,
-                                              @NotNull GrMethodCall stepDef,
                                               @NotNull PsiElement place,
-                                              @NotNull ResolveState state) {
-    final PsiFile file = stepDef.getContainingFile();
-    if (file instanceof GroovyFile) {
-      final PsiType worldType = getWorldType((GroovyFile)file);
+                                              @NotNull ResolveState state,
+                                              final PsiFile stepFile) {
+    if (stepFile instanceof GroovyFile) {
+      final PsiType worldType = getWorldType((GroovyFile)stepFile);
       if (worldType != null) {
         ResolveUtil.processAllDeclarations(worldType, processor, state, place);
+      }
+      else {
+        final PsiDirectory directory = stepFile.getContainingDirectory();
+        if (directory != null) {
+          final List<PsiFile> otherStepFiles = CucumberStepsIndex.getInstance(place.getProject()).gatherStepDefinitionsFilesFromDirectory(directory, false);
+          for (PsiFile otherFile : otherStepFiles) {
+            if (otherFile instanceof GroovyFile) {
+              final PsiType type = getWorldType((GroovyFile)otherFile);
+              if (type != null) {
+                ResolveUtil.processAllDeclarations(type, processor, state, place);
+              }
+            }
+          }
+        }
       }
     }
   }
 
   @Nullable
-  private static PsiType getWorldType(@NotNull GroovyFile stepFile) {
-    for (GrStatement statement : stepFile.getStatements()) {
-      if (statement instanceof GrMethodCall && isWorldDeclaration((GrMethodCall)statement)) {
-        final GrClosableBlock closure = getClosureArg((GrMethodCall)statement);
-        return closure == null ? null : closure.getReturnType();
+  private static PsiType getWorldType(@NotNull final GroovyFile stepFile) {
+    return CachedValuesManager.getManager(stepFile.getProject()).getCachedValue(stepFile, new CachedValueProvider<PsiType>() {
+      @Nullable
+      @Override
+      public Result<PsiType> compute() {
+        for (GrStatement statement : stepFile.getStatements()) {
+          if (statement instanceof GrMethodCall && isWorldDeclaration((GrMethodCall)statement)) {
+            final GrClosableBlock closure = getClosureArg((GrMethodCall)statement);
+            return Result.create(closure == null ? null : closure.getReturnType(), stepFile);
+          }
+        }
+        return Result.create(null, stepFile);
       }
-    }
-
-    return null;
+    });
   }
 
   @Nullable

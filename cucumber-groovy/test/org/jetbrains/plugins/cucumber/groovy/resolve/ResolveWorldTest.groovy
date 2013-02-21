@@ -10,7 +10,7 @@ class ResolveWorldTest extends GrCucumberLightTestCase {
   final String basePath = null
 
   void testResolveCustomWorldInHook() {
-    myFixture.configureByText(getTestName(false) + '.groovy', '''\
+    assertResolveToMethod('''\
 this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
 this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
@@ -28,14 +28,10 @@ Before() {
     assert "foo" == custom<caret>Method()
 }
 ''')
-
-    final ref = myFixture.getReferenceAtCaretPosition()
-    assertNotNull(ref)
-    assertInstanceOf(ref.resolve(), PsiMethod)
   }
 
   void testResolveCustomWorldInStep() {
-    myFixture.configureByText(getTestName(false) + '.groovy', '''\
+    assertResolveToMethod( '''\
 this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
 this.metaClass.mixin(cucumber.runtime.groovy.EN)
 
@@ -53,6 +49,36 @@ Given(~"I have entered (\\\\d+) into (.*) calculator") { int number, String igno
     assert "foo" == custom<caret>Method()
 }
 ''')
+  }
+
+  void testWorldFromSameDirectoryFile() {
+    myFixture.addFileToProject('otherSteps.groovy', '''\
+this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
+this.metaClass.mixin(cucumber.runtime.groovy.EN)
+
+class CustomWorld {
+    String customMethod() {
+        "foo"
+    }
+}
+
+World {
+    new CustomWorld()
+}
+''')
+
+    assertResolveToMethod('''\
+this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
+this.metaClass.mixin(cucumber.runtime.groovy.EN)
+
+Given(~"I have entered (\\\\d+) into (.*) calculator") { int number, String ignore ->
+    assert "foo" == custom<caret>Method()
+}
+''')
+  }
+
+  private void assertResolveToMethod(final String text) {
+    myFixture.configureByText(getTestName(false) + '.groovy', text)
 
     final ref = myFixture.getReferenceAtCaretPosition()
     assertNotNull(ref)
