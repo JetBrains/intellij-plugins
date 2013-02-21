@@ -27,6 +27,10 @@ public class DartIntroduceVariableTest extends DartIntroduceTestBase {
     doTest();
   }
 
+  public void testIntroduceWEB6426() throws Throwable {
+    doTestInplace(null);
+  }
+
   public void testIntroduceWEB6458() throws Throwable {
     try {
       doTest();

@@ -239,7 +239,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
     final Editor editor = operation.getEditor();
     if (editor.getSettings().isVariableInplaceRenameEnabled()) {
       ensureName(operation);
-      if (operation.isReplaceAll() != null) {
+      if (operation.isReplaceAll()) {
         performInplaceIntroduce(operation);
       }
       else {
@@ -323,15 +323,14 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
   protected void performInplaceIntroduce(DartIntroduceOperation operation) {
     final PsiElement statement = performRefactoring(operation);
     final DartComponent target = PsiTreeUtil.findChildOfType(statement, DartComponent.class);
-    if (target == null) {
+    final DartComponentName componentName = target != null ? target.getComponentName() : null;
+    if (componentName == null) {
       return;
     }
     final List<PsiElement> occurrences = operation.getOccurrences();
-    final PsiElement occurrence = DartRefactoringUtil.findOccurrenceUnderCaret(occurrences, operation.getEditor());
-    final PsiElement elementForCaret = occurrence != null ? occurrence : target;
-    operation.getEditor().getCaretModel().moveToOffset(elementForCaret.getTextRange().getStartOffset());
+    operation.getEditor().getCaretModel().moveToOffset(componentName.getTextOffset());
     final InplaceVariableIntroducer<PsiElement> introducer =
-      new DartInplaceVariableIntroducer(target.getComponentName(), operation, occurrences);
+      new DartInplaceVariableIntroducer(componentName, operation, occurrences);
     introducer.performInplaceRefactoring(new LinkedHashSet<String>(operation.getSuggestedNames()));
   }
 
