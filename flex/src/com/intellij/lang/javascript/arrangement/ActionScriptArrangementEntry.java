@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
@@ -122,7 +123,7 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
       if (typeElement instanceof JSReferenceExpression) {
         final PsiElement resolve = ((JSReferenceExpression)typeElement).resolve();
         if (resolve instanceof JSClass &&
-            (JavaScriptGenerateEventHandler.EVENT_BASE_CLASS_FQN.equals(((JSClass)resolve).getQualifiedName()) ||
+            (JSAnnotatingVisitor.FLASH_EVENT_FQN.equals(((JSClass)resolve).getQualifiedName()) ||
              JavaScriptGenerateEventHandler.isEventClass((JSClass)resolve))) {
           return true;
         }
