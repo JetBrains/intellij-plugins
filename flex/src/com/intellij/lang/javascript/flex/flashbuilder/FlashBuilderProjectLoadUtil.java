@@ -17,6 +17,7 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -85,6 +86,8 @@ public class FlashBuilderProjectLoadUtil {
   private static final String INCLUDE_RESOURCES_ELEMENT = "includeResources";
   private static final String RESOURCE_ENTRY_ELEMENT = "resourceEntry";
   private static final String DEFAULT_VALUE = "default";
+  private static final String PLATFORM_ID_1 = "platformId";
+  private static final String PLATFORM_ID_2 = "platformID";
 
   private FlashBuilderProjectLoadUtil() {
   }
@@ -295,20 +298,29 @@ public class FlashBuilderProjectLoadUtil {
         for (final Element buildTargetElement : (Iterable<Element>)(buildTargetsElement
                                                                       .getChildren(BUILD_TARGET_ELEMENT, parentElement.getNamespace()))) {
           final String buildTarget = buildTargetElement.getAttributeValue(BUILD_TARGET_NAME_ATTR);
-          if (ANDROID_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
-            flashBuilderProject.setAndroidSupported(isPlatformEnabled(buildTargetElement));
+          final String platformId1 = buildTargetElement.getAttributeValue(PLATFORM_ID_1);
+          final String platformId2 = getMultiPlatformId(buildTargetElement);
+
+          if (ANDROID_PLATFORM_ATTR_VALUE.equals(buildTarget) ||
+              ANDROID_PLATFORM_ATTR_VALUE.equals(platformId1) ||
+              ANDROID_PLATFORM_ATTR_VALUE.equals(platformId2)) {
             flashBuilderProject.setTargetPlatform(TargetPlatform.Mobile);
+            flashBuilderProject.setAndroidSupported(isPlatformEnabled(buildTargetElement));
             loadSigningOptions(flashBuilderProject, buildTargetElement, TargetPlatform.Mobile, false);
           }
-          else if (IOS_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
-            flashBuilderProject.setIosSupported(isPlatformEnabled(buildTargetElement));
+          else if (IOS_PLATFORM_ATTR_VALUE.equals(buildTarget) ||
+                   IOS_PLATFORM_ATTR_VALUE.equals(platformId1) ||
+                   IOS_PLATFORM_ATTR_VALUE.equals(platformId2)) {
             flashBuilderProject.setTargetPlatform(TargetPlatform.Mobile);
+            flashBuilderProject.setIosSupported(isPlatformEnabled(buildTargetElement));
             loadSigningOptions(flashBuilderProject, buildTargetElement, TargetPlatform.Mobile, true);
           }
-          else if (BLACKBERRY_PLATFORM_ATTR_VALUE.equals(buildTarget)) {
+          else if (BLACKBERRY_PLATFORM_ATTR_VALUE.equals(buildTarget) ||
+                   BLACKBERRY_PLATFORM_ATTR_VALUE.equals(platformId1) ||
+                   BLACKBERRY_PLATFORM_ATTR_VALUE.equals(platformId2)) {
             flashBuilderProject.setTargetPlatform(TargetPlatform.Mobile);
           }
-          else if (DEFAULT_VALUE.equals(buildTarget)) {
+          else {
             loadSigningOptions(flashBuilderProject, buildTargetElement, TargetPlatform.Desktop, false);
           }
         }
@@ -333,6 +345,12 @@ public class FlashBuilderProjectLoadUtil {
   private static boolean isPlatformEnabled(final Element buildTargetElement) {
     final Element multiPlatformSettings = buildTargetElement.getChild(MULTI_PLATFORM_SETTINGS_ELEMENT, buildTargetElement.getNamespace());
     return multiPlatformSettings != null && "true".equals(multiPlatformSettings.getAttributeValue(ENABLED_ATTR));
+  }
+
+  @Nullable
+  private static String getMultiPlatformId(final Element buildTargetElement) {
+    final Element multiPlatformSettings = buildTargetElement.getChild(MULTI_PLATFORM_SETTINGS_ELEMENT, buildTargetElement.getNamespace());
+    return multiPlatformSettings == null ? null : multiPlatformSettings.getAttributeValue(PLATFORM_ID_2);
   }
 
   private static void loadSigningOptions(final FlashBuilderProject fbProject,
