@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.findUsages.SuperMethodUtil;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.RenameMoveUtils;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
@@ -28,7 +29,8 @@ import java.util.Map;
  */
 public class FlexRenameHandler extends RenamePsiElementProcessor {
   public boolean canProcessElement(@NotNull final PsiElement element) {
-    return element instanceof JSFunction || (element instanceof JSFile && element.getLanguage() == JavaScriptSupportLoader.ECMA_SCRIPT_L4);
+    return (element instanceof JSFunction || element instanceof JSFile) &&
+           JSResolveUtil.isNewResolveAndCompletion(element.getContainingFile());
   }
 
   @Override
