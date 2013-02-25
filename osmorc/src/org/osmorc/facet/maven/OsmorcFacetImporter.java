@@ -61,14 +61,14 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
 
 
   public OsmorcFacetImporter() {
-    super("org.apache.felix", "maven-bundle-plugin", OsmorcFacetType.getInstance(), "OSGi");
+    super("org.apache.felix", "maven-bundle-plugin", OsmorcFacetType.getInstance());
   }
 
   public boolean isApplicable(MavenProject mavenProjectModel) {
     MavenPlugin p = mavenProjectModel.findPlugin(myPluginGroupID, myPluginArtifactID);
     // fixes: IDEA-56021
     String packaging = mavenProjectModel.getPackaging();
-    return p != null && packaging != null && "bundle".equals(packaging);
+    return p != null && "bundle".equals(packaging);
   }
 
   protected void setupFacet(OsmorcFacet osmorcFacet, MavenProject mavenProjectModel) {
@@ -105,7 +105,7 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
       setConfigProperty(mavenProject, conf, "bundleActivator", "instructions." + Constants.BUNDLE_ACTIVATOR);
 
 
-      if ("".equals(conf.getBundleVersion().trim())) {  // IDEA-74272
+      if (StringUtil.isEmptyOrSpaces(conf.getBundleVersion())) {  // IDEA-74272
         // if there is no bundle-version int the instructions, derive it from the maven settings.
         String version = mavenProject.getMavenId().getVersion();  //that is ${pom.version}
         conf.setBundleVersion(ImporterUtil.cleanupVersion(version));
