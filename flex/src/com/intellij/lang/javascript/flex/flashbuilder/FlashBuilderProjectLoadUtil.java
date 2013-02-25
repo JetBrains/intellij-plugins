@@ -504,8 +504,9 @@ public class FlashBuilderProjectLoadUtil {
       //noinspection unchecked
       for (final Element applicationElement : ((Iterable<Element>)applicationsElement.getChildren(APPLICATION_ELEMENT))) {
         final String path = applicationElement.getAttributeValue(PATH_ATTR);
-        if (path != null) {
-          project.addApplicationClassName(getClassName(path));
+        final String className = path == null ? null : getClassName(path);
+        if (className != null && !"FlexUnitApplication".equals(className) && !"FlexUnitCompilerApplication".equals(className)) {
+          project.addApplicationClassName(className);
         }
       }
     }
