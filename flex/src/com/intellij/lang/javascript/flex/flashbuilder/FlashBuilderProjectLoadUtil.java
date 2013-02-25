@@ -88,6 +88,7 @@ public class FlashBuilderProjectLoadUtil {
   private static final String DEFAULT_VALUE = "default";
   private static final String PLATFORM_ID_1 = "platformId";
   private static final String PLATFORM_ID_2 = "platformID";
+  private static final String USE_FLASH_SDK = "useFlashSDK";
 
   private FlashBuilderProjectLoadUtil() {
   }
@@ -287,7 +288,8 @@ public class FlashBuilderProjectLoadUtil {
     assert dir != null;
 
     final VirtualFile flexLibPropertiesFile = dir.findChild(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES);
-    flashBuilderProject.setPureActionScript(dir.findChild(FlashBuilderImporter.DOT_FLEX_PROPERTIES) == null &&
+    flashBuilderProject.setPureActionScript("true".equals(compilerElement.getAttributeValue(USE_FLASH_SDK)) ||
+                                            dir.findChild(FlashBuilderImporter.DOT_FLEX_PROPERTIES) == null &&
                                             flexLibPropertiesFile == null);
     if (flexLibPropertiesFile == null) {
       final Element parentElement = compilerElement.getParentElement();
@@ -327,7 +329,7 @@ public class FlashBuilderProjectLoadUtil {
       }
     }
     else {
-      // if this is Pure AS Mobile library its target platform will be read a bit later in loadInfoFromDotFlexLibPropertiesFile()}
+      // if this is Mobile library its target platform will be read a bit later in loadInfoFromDotFlexLibPropertiesFile()}
     }
 
     if (flashBuilderProject.getTargetPlatform() == TargetPlatform.Mobile) {
