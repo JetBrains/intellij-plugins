@@ -455,7 +455,8 @@ public class FlashBuilderProjectLoadUtil {
   private static void loadAdditionalCompilerArguments(final FlashBuilderProject project, final Element compilerElement) {
     final Attribute additionalCompilerArgumentsAttr = compilerElement.getAttribute(ADDITIONAL_COMPILER_ARGUMENTS_ATTR);
     if (additionalCompilerArgumentsAttr != null) {
-      project.setAdditionalCompilerOptions(additionalCompilerArgumentsAttr.getValue());
+      project.setAdditionalCompilerOptions(
+        additionalCompilerArgumentsAttr.getValue().replace('\n', ' ').replace('\r', ' ').replace('\t', ' '));
     }
   }
 
