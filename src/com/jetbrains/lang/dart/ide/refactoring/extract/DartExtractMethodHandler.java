@@ -11,7 +11,10 @@ import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiParserFacade;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.RefactoringActionHandler;
@@ -20,10 +23,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
-import com.jetbrains.lang.dart.util.DartControlFlow;
-import com.jetbrains.lang.dart.util.DartElementGenerator;
-import com.jetbrains.lang.dart.util.DartRefactoringUtil;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -183,7 +183,7 @@ public class DartExtractMethodHandler implements RefactoringActionHandler {
     }
 
     public boolean containsDeclaration(final DartComponentName declarationName) {
-      return !DartResolver.resolveSimpleReference(getScopeBody(), declarationName.getText()).isEmpty();
+      return DartResolver.resolveSimpleReference(getScopeBody(), declarationName.getText()).contains(declarationName);
     }
 
     private PsiElement getScopeBody() {
