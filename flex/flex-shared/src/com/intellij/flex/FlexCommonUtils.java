@@ -137,13 +137,20 @@ public class FlexCommonUtils {
   }
 
   public static String getTempFlexConfigsDirPath() {
-    return FileUtil.toSystemIndependentName(FileUtil.getTempDirectory()) + "/" +
+    return getTempFlexConfigsDirPath(FileUtil.getTempDirectory());
+  }
+
+  public static String getTempFlexConfigsDirPath(final String tempDirPath) {
+    return FileUtil.toSystemIndependentName(tempDirPath) + "/" +
            "IntelliJ_IDEA"; //ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_');
   }
 
   public static String getPathToFlexUnitTempDirectory(final String projectName) {
-    return PathManager.getSystemPath() + "/tmp/flexunit-" +
-           Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()).toUpperCase();
+    return getTempFlexConfigsDirPath() + "/" + getFlexUnitTempDirName(projectName);
+  }
+
+  public static String getFlexUnitTempDirName(final String projectName) {
+    return "flexunit-" + Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()).toUpperCase();
   }
 
   /**
@@ -1138,11 +1145,6 @@ public class FlexCommonUtils {
   public static void deleteTempFlexConfigFiles(final String projectName) {
     if (KEEP_TEMP_FILES) return;
 
-    final File flexunitDir = new File(getPathToFlexUnitTempDirectory(projectName));
-    if (flexunitDir.isDirectory() && flexunitDir.list().length == 0) {
-      FileUtil.delete(flexunitDir);
-    }
-
     final String hash1 = Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()).toUpperCase();
     final File dir = new File(getTempFlexConfigsDirPath());
 
@@ -1150,12 +1152,9 @@ public class FlexCommonUtils {
 
     final File[] filesToDelete = dir.listFiles(new FilenameFilter() {
       public boolean accept(final File file, final String name) {
-        if (name.endsWith(".xml")) {
-          if (name.startsWith("idea-" + hash1)) {  // PlatformUtils.getPlatformPrefix().toLowerCase()
-            return true;
-          }
-        }
-        return false;
+        return file.isDirectory() && name.equals(getFlexUnitTempDirName(projectName)) ||
+               // PlatformUtils.getPlatformPrefix().toLowerCase()
+               name.startsWith("idea-" + hash1) && name.endsWith(".xml");
       }
     });
 

@@ -1,6 +1,8 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
+import com.intellij.compiler.CompilerWorkspaceConfiguration;
 import com.intellij.compiler.options.CompileStepBeforeRun;
+import com.intellij.compiler.server.BuildManager;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
@@ -14,6 +16,7 @@ import com.intellij.lang.javascript.index.JSPackageIndexInfo;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
@@ -278,7 +281,18 @@ public class FlexUnitPrecompileTask implements CompileTask {
                                                            : FlexUnitRunnerParameters.OutputLogLevel.All.getFlexConstant());
     }
 
-    final File tmpDir = new File(FlexCommonUtils.getPathToFlexUnitTempDirectory(myProject.getName()));
+
+    final String flexUnitTempDirPath;
+    if (CompilerWorkspaceConfiguration.getInstance(context.getProject()).useOutOfProcessBuild()) {
+      flexUnitTempDirPath = FlexCommonUtils.getTempFlexConfigsDirPath(PathManager.getSystemPath() + "/" +
+                                                                      BuildManager.SYSTEM_ROOT + "/" + BuildManager.TEMP_DIR_NAME) +
+                            "/" + FlexCommonUtils.getFlexUnitTempDirName(myProject.getName());
+    }
+    else {
+      flexUnitTempDirPath = FlexCommonUtils.getPathToFlexUnitTempDirectory(myProject.getName());
+    }
+
+    final File tmpDir = new File(flexUnitTempDirPath);
     boolean ok = true;
     if (tmpDir.isFile()) ok &= FileUtil.delete(tmpDir);
     if (!tmpDir.isDirectory()) ok &= tmpDir.mkdirs();
