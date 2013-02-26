@@ -313,6 +313,7 @@ public class FileSetConfigurationTab extends FacetEditorTab implements Disposabl
       }
     }
     originalConfiguration.setModified();
+    myModified = false;
   }
 
   public void reset() {
