@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,27 +16,26 @@
 package com.intellij.struts2.facet.ui;
 
 import com.intellij.facet.ui.FacetEditorContext;
-import com.intellij.openapi.editor.event.DocumentAdapter;
-import com.intellij.openapi.editor.event.DocumentEvent;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.ui.CheckedTreeNode;
-import com.intellij.ui.EditorTextField;
-import com.intellij.util.containers.MultiMap;
+import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.ui.tree.TreeModelAdapter;
 import com.intellij.util.ui.tree.TreeUtil;
+import com.intellij.xml.config.ConfigFilesTreeBuilder;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
 import javax.swing.event.TreeModelEvent;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
 import java.util.List;
@@ -45,7 +44,7 @@ import java.util.Set;
 public class FileSetEditor extends DialogWrapper {
 
   private JPanel myMainPanel;
-  private EditorTextField mySetName;
+  private JTextField mySetName;
   private StrutsFilesTree myFilesTree;
 
   private final StrutsFileSet myFileSet;
@@ -62,24 +61,37 @@ public class FileSetEditor extends DialogWrapper {
     myOriginalSet = fileSet;
     myFileSet = new StrutsFileSet(fileSet);
 
+    ConfigFilesTreeBuilder builder = new ConfigFilesTreeBuilder(myFilesTree) {
+      @Override
+      protected DefaultMutableTreeNode createFileNode(Object file) {
+        CheckedTreeNode node = new CheckedTreeNode(file);
+        if (file instanceof PsiFile && myFileSet.hasFile(((PsiFile)file).getVirtualFile()) ||
+            file instanceof VirtualFile && myFileSet.hasFile((VirtualFile)file)) {
+          node.setChecked(true);
+        }
+        else {
+          node.setChecked(false);
+        }
+        return node;
+      }
+    };
+
     final CheckedTreeNode myRoot = new CheckedTreeNode(null);
     myFilesTree.setModel(new DefaultTreeModel(myRoot));
-    searcher.search();
-    final MultiMap<Module,PsiFile> files = searcher.getFilesByModules();
-    final MultiMap<VirtualFile, PsiFile> jars = searcher.getJars();
-    final Set<PsiFile> psiFiles = myFilesTree.buildModuleNodes(files, jars, fileSet);
 
-    final Project project = context.getProject();
-    final PsiManager psiManager = PsiManager.getInstance(project);
+    searcher.search();
+    Set<PsiFile> psiFiles = builder.buildTree(myRoot, searcher);
+
+    final PsiManager psiManager = PsiManager.getInstance(context.getProject());
     final List<VirtualFilePointer> list = fileSet.getFiles();
-    for (final VirtualFilePointer pointer : list) {
+    for (VirtualFilePointer pointer : list) {
       final VirtualFile file = pointer.getFile();
       if (file != null) {
         final PsiFile psiFile = psiManager.findFile(file);
         if (psiFile != null && psiFiles.contains(psiFile)) {
           continue;
         }
-        myFilesTree.addFile(file);
+        builder.addFile(file);
       }
     }
 
@@ -91,8 +103,9 @@ public class FileSetEditor extends DialogWrapper {
     });
 
     mySetName.setText(fileSet.getName());
-    mySetName.addDocumentListener(new DocumentAdapter() {
-      public void documentChanged(final DocumentEvent e) {
+    mySetName.getDocument().addDocumentListener(new DocumentAdapter() {
+      @Override
+      protected void textChanged(DocumentEvent e) {
         updateFileSet();
       }
     });
@@ -115,6 +128,10 @@ public class FileSetEditor extends DialogWrapper {
   public boolean isOKActionEnabled() {
     if (myOriginalSet.isNew()) {
       return true;
+    }
+
+    if (StringUtil.isEmptyOrSpaces(mySetName.getText())) {
+      return false;
     }
 
     final int selectedFilesCount = myFileSet.getFiles().size();

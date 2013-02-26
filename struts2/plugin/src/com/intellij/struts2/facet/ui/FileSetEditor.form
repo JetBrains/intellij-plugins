@@ -34,7 +34,7 @@
           <text resource-bundle="resources/Struts2Bundle" key="facet.fileset.editor.label.fileset.name"/>
         </properties>
       </component>
-      <component id="aa71d" class="com.intellij.ui.EditorTextField" binding="mySetName">
+      <component id="aa71d" class="javax.swing.JTextField" binding="mySetName">
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
