@@ -27,7 +27,9 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -48,6 +50,16 @@ import javax.swing.*;
  * @author yole
  */
 public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewProjectSettings> {
+  private final boolean myForceInstallFlask;
+
+  public FlaskProjectGenerator() {
+    myForceInstallFlask = false;
+  }
+
+  public FlaskProjectGenerator(boolean forceInstallFlask) {
+    myForceInstallFlask = forceInstallFlask;
+  }
+
   @Nls
   @Override
   public String getName() {
@@ -87,12 +99,13 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
 
   @Override
   public void generateProject(final Project project, final VirtualFile baseDir, final PyNewProjectSettings settings, final Module module) {
-    if (settings.installFramework()) {
+    if (needInstallFlask(settings, module)) {
       ProgressManager.getInstance().run(new Task.Backgroundable(project, "Installing Flask", false) {
         @Override
         public void run(@NotNull ProgressIndicator indicator) {
           indicator.setText("Installing Flask...");
-          final PyPackageManager packageManager = PyPackageManager.getInstance(settings.getSdk());
+          Sdk targetSdk = settings != null ? settings.getSdk() : ModuleRootManager.getInstance(module).getSdk();
+          final PyPackageManager packageManager = PyPackageManager.getInstance(targetSdk);
           try {
             packageManager.install("Flask");
             packageManager.refresh();
@@ -107,6 +120,27 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
           }
         }});
     }
+    StartupManager.getInstance(project).runWhenProjectIsInitialized(new Runnable() {
+      @Override
+      public void run() {
+        createFlaskMain(module, baseDir);
+      }
+    });
+  }
+
+  private boolean needInstallFlask(PyNewProjectSettings settings, Module module) {
+    if (settings != null) {
+      return settings.installFramework();
+    }
+    if (myForceInstallFlask) {
+      Sdk sdk = ModuleRootManager.getInstance(module).getSdk();
+      return sdk != null && !isFrameworkInstalled(module.getProject(), sdk);
+    }
+    return false;
+  }
+
+  private static void createFlaskMain(final Module module, final VirtualFile baseDir) {
+    final Project project = module.getProject();
     final PsiDirectory projectDir = PsiManager.getInstance(project).findDirectory(baseDir);
     new WriteCommandAction.Simple(project) {
       @Override
