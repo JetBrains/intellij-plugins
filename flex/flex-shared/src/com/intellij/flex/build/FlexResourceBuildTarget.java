@@ -112,7 +112,7 @@ public class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescript
   }
 
   @Override
-  public void writeConfiguration(final PrintWriter out, final BuildDataPaths dataPaths, final BuildRootIndex buildRootIndex) {
+  public void writeConfiguration(CompileContext context, final PrintWriter out) {
     out.println("Module: " + getModule().getName());
     for (JpsFlexBuildConfiguration bc : getModule().getProperties().getBuildConfigurations()) {
       if (!bc.isSkipCompile() &&

@@ -235,7 +235,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     return Collections.singleton(new File(PathUtilRt.getParentPath(myBC.getActualOutputFilePath())));
   }
 
-  public void writeConfiguration(final PrintWriter out, BuildDataPaths dataPaths, final BuildRootIndex buildRootIndex) {
+  public void writeConfiguration(CompileContext context, final PrintWriter out) {
     out.println("id: " + myId);
 
     out.println(JDOMUtil.writeElement(XmlSerializer.serialize(JpsFlexBCState.getState(myBC)), "\n"));
