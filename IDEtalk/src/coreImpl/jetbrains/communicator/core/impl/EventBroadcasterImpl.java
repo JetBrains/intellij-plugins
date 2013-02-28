@@ -55,7 +55,7 @@ public class EventBroadcasterImpl implements EventBroadcaster {
   }
 
   private void fireBeforeChange(IDEtalkEvent event) {
-    for (IDEtalkListener listener : getListeners()) {
+    for (IDEtalkListener listener : myListeners) {
       listener.beforeChange(event);
     }
   }
@@ -64,7 +64,7 @@ public class EventBroadcasterImpl implements EventBroadcaster {
     if (LOG.isDebugEnabled()) {
       LOG.debug("afterChange: " + event);
     }
-    for (IDEtalkListener listener : getListeners()) {
+    for (IDEtalkListener listener : myListeners) {
       listener.afterChange(event);
     }
   }
