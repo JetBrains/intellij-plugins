@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,6 @@ import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
-import com.intellij.openapi.util.ProperTextRange;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
@@ -49,9 +48,6 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
                             final TextRange range,
                             final int index) {
     super(referenceSet.getElement(), range, referenceSet.isSoft());
-    ProperTextRange.assertProperRange(range, "invalid range: " + range +
-                                             " with index " + index +
-                                             " for '" + referenceSet.getElement().getText() + "'");
     this.referenceSet = referenceSet;
     this.index = index;
   }
