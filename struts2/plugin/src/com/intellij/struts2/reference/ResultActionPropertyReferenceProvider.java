@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 package com.intellij.struts2.reference;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.struts2.dom.struts.action.Action;
 import com.intellij.struts2.dom.struts.action.Result;
@@ -24,7 +25,6 @@ import com.intellij.struts2.reference.common.BeanPropertyPathReferenceSet;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.xml.DomUtil;
-import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -53,7 +53,12 @@ public class ResultActionPropertyReferenceProvider extends PsiReferenceProvider 
     final int tagValueStartOffset = ElementManipulators.getOffsetInElement(result.getXmlTag());
     PsiReference[] references = new PsiReference[1];
 
-    final String resultText = XmlUtil.escape(result.getStringValue());  // fix &amp;
+    final String stringValue = result.getStringValue();
+    if (!StringUtil.isNotEmpty(stringValue)) {
+      return PsiReference.EMPTY_ARRAY;
+    }
+
+    final String resultText = StringUtil.replace(stringValue, "&", "&amp;");
     final int lastExpressionEnd = Math.max(resultText.length(),         // missing '}'
                                            resultText.lastIndexOf(EXPRESSION_START));
 
@@ -77,7 +82,7 @@ public class ResultActionPropertyReferenceProvider extends PsiReferenceProvider 
                                          actionClass,
                                          true) {
 
-          // TODO CTOR creates references eagerly, so we have to subclass here
+          // CTOR creates references eagerly, so we have to subclass here
           @Override
           public boolean isSoft() {
             return false;
