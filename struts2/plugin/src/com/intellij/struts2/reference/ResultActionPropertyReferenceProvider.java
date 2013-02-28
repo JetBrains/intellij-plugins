@@ -74,6 +74,12 @@ public class ResultActionPropertyReferenceProvider extends PsiReferenceProvider 
       final int length = (closingBraceIdx != -1 ? closingBraceIdx : resultText.length()) - startOffset;
 
       final String expressionString = resultText.substring(startOffset, startOffset + length);
+
+      // we only "fake" OGNL here, skip method call expressions for now
+      if (StringUtil.containsChar(expressionString, '(')) {
+        continue;
+      }
+
       final BeanPropertyPathReferenceSet propertyPathReferenceSet =
         new BeanPropertyPathReferenceSet(expressionString,
                                          psiElement,

@@ -22,6 +22,8 @@
 
       <result name="invalidField">singleProperty.action?myParam=${<error descr="Cannot resolve property 'INVALID_VALUE'">INVALID_VALUE</error>}</result>
       <result name="nestedInvalidField">singleProperty.action?myParam=${nested.<error descr="Cannot resolve property 'INVALID_VALUE'">INVALID_VALUE</error>}</result>
+
+      <result name="skipMethodCallExpressions">${methodCallsWillBeIgnored(param1, param2)}</result>
     </action>
 
     <action name="multipleProperties" class="ActionClass">
