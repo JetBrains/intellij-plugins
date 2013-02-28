@@ -41,8 +41,8 @@ public class FlexmojosImporter extends MavenImporter implements FlexConfigInform
   static final String[] SUPPORTED_PACKAGINGS = {"swf", "swc", "air"};
   static final String FLEXMOJOS_GROUP_ID = "org.sonatype.flexmojos";
   static final String FLEXMOJOS_ARTIFACT_ID = "flexmojos-maven-plugin";
-  private static final List<String> DEPENDENCY_TYPES_FOR_IMPORT = Arrays.asList("swf", "swc", "resource-bundle", "rb.swc");
-  private static final List<String> DEPENDENCY_TYPES_FOR_COMPLETION = Arrays.asList("swf", "swc", "resource-bundle", "rb.swc");
+  private static final List<String> DEPENDENCY_TYPES_FOR_IMPORT = Arrays.asList("swf", "swc", "ane", "resource-bundle", "rb.swc");
+  private static final List<String> DEPENDENCY_TYPES_FOR_COMPLETION = Arrays.asList("swf", "swc", "ane", "resource-bundle", "rb.swc");
 
   private Notification myFlexConfigNotification;
 

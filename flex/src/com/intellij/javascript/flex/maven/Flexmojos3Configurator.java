@@ -326,10 +326,14 @@ public class Flexmojos3Configurator {
         }
       }
 
-      if (libraryName.contains(":swc:") || libraryName.contains(":rb.swc:") || libraryName.contains(":resource-bundle:")) {
+      if (libraryName.contains(":swc:") ||
+          libraryName.contains(":rb.swc:") ||
+          libraryName.contains(":resource-bundle:") ||
+          libraryName.contains(":ane:")) {
         playerglobal |= libraryName.contains("playerglobal");
         airglobal |= libraryName.contains("airglobal");
         mobilecomponents |= libraryName.contains("mobilecomponents");
+        final boolean ane = libraryName.contains(":ane:") && !libraryName.contains(":swc:");
 
         final LibraryKind kind = ((LibraryEx)library).getKind();
 
@@ -344,7 +348,9 @@ public class Flexmojos3Configurator {
         final ModifiableDependencyEntry sharedLibraryEntry =
           myFlexEditor.createSharedLibraryEntry(bc.getDependencies(), ((LibraryOrderEntry)entry).getLibraryName(),
                                                 ((LibraryOrderEntry)entry).getLibraryLevel());
-        sharedLibraryEntry.getDependencyType().setLinkageType(FlexUtils.convertLinkageType(scope, isExported));
+        final LinkageType linkageType = ane ? DependencyType.DEFAULT_LINKAGE
+                                            : FlexUtils.convertLinkageType(scope, isExported);
+        sharedLibraryEntry.getDependencyType().setLinkageType(linkageType);
         bc.getDependencies().getModifiableEntries().add(sharedLibraryEntry);
       }
       else {
