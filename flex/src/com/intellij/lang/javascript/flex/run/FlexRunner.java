@@ -125,9 +125,7 @@ public class FlexRunner extends FlexBaseRunner {
     final ExecutionResult executionResult = state.execute(executor, this);
     if (executionResult == null) return null;
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor);
-    contentBuilder.setExecutionResult(executionResult);
-    contentBuilder.setEnvironment(environment);
+    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, environment);
     return contentBuilder.showRunContent(contentToReuse);
   }
 
@@ -163,9 +161,7 @@ public class FlexRunner extends FlexBaseRunner {
 
     launchWithSelectedApplication(swfFilePath, params.getLauncherParameters());
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor);
-    contentBuilder.setExecutionResult(new DefaultExecutionResult(console, processHandler));
-    contentBuilder.setEnvironment(env);
+    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, new DefaultExecutionResult(console, processHandler), env);
     Disposer.register(project, contentBuilder);
     return contentBuilder.showRunContent(contentToReuse);
   }
@@ -204,9 +200,7 @@ public class FlexRunner extends FlexBaseRunner {
       }
     });
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor);
-    contentBuilder.setExecutionResult(executionResult);
-    contentBuilder.setEnvironment(env);
+    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
     return contentBuilder.showRunContent(contentToReuse);
   }
 
