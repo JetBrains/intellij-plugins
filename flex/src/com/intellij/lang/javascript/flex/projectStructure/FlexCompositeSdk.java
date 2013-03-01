@@ -136,7 +136,9 @@ public class FlexCompositeSdk extends UserDataHolderBase implements Sdk, Composi
       public void addRootSetChangedListener(@NotNull final RootSetChangedListener listener) {
         forAllSdks(new Processor<Sdk>() {
           public boolean process(final Sdk sdk) {
-            sdk.getRootProvider().addRootSetChangedListener(listener);
+            final RootProvider rootProvider = sdk.getRootProvider();
+            rootProvider.removeRootSetChangedListener(listener);
+            rootProvider.addRootSetChangedListener(listener);
             return true;
           }
         });
