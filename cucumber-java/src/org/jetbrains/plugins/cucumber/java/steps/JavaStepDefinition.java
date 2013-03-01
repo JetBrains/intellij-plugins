@@ -29,7 +29,9 @@ public class JavaStepDefinition extends AbstractStepDefinition {
         final PsiElement patternLiteral = annotationValue.getFirstChild();
         if (patternLiteral != null) {
           final String patternContainer = patternLiteral.getText();
-          pattern =  patternContainer.substring(1, patternContainer.length() - 1).replace("\\\\", "\\").replace("\\\"", "\"");
+          if (patternContainer.length() > 1) {
+            pattern =  patternContainer.substring(1, patternContainer.length() - 1).replace("\\\\", "\\").replace("\\\"", "\"");
+          }
         }
       }
     }
