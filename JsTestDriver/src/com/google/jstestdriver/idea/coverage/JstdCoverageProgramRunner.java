@@ -72,9 +72,7 @@ public class JstdCoverageProgramRunner extends GenericProgramRunner {
 
     CoverageHelper.attachToProcess(runConfiguration, executionResult.getProcessHandler(), env.getRunnerSettings());
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor);
-    contentBuilder.setExecutionResult(executionResult);
-    contentBuilder.setEnvironment(env);
+    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
     return contentBuilder.showRunContent(contentToReuse);
   }
 }
