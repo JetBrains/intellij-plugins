@@ -43,6 +43,7 @@ import com.intellij.util.EventDispatcher;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Convertor;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
@@ -128,7 +129,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   private final EventDispatcher<UserActivityListener> myUserActivityDispatcher;
   private boolean myFreeze;
 
-  private final Collection<OptionsListener> myListeners = new ArrayList<OptionsListener>();
+  private final Collection<OptionsListener> myListeners = ContainerUtil.createLockFreeCopyOnWriteList();
   private final Disposable myDisposable = Disposer.newDisposable();
 
   private static final String UNKNOWN_SDK_VERSION = "100";
