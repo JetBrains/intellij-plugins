@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.ProjectPaths;
 import org.jetbrains.jps.builders.*;
 import org.jetbrains.jps.builders.storage.BuildDataPaths;
+import org.jetbrains.jps.cmdline.ProjectDescriptor;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.indices.IgnoredFileIndex;
 import org.jetbrains.jps.indices.ModuleExcludeIndex;
@@ -112,7 +113,7 @@ public class FlexResourceBuildTarget extends ModuleBasedTarget<BuildRootDescript
   }
 
   @Override
-  public void writeConfiguration(CompileContext context, final PrintWriter out) {
+  public void writeConfiguration(ProjectDescriptor pd, final PrintWriter out) {
     out.println("Module: " + getModule().getName());
     for (JpsFlexBuildConfiguration bc : getModule().getProperties().getBuildConfigurations()) {
       if (!bc.isSkipCompile() &&

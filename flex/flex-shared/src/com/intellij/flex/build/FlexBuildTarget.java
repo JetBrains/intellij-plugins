@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.*;
 import org.jetbrains.jps.builders.storage.BuildDataPaths;
+import org.jetbrains.jps.cmdline.ProjectDescriptor;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.indices.IgnoredFileIndex;
 import org.jetbrains.jps.indices.ModuleExcludeIndex;
@@ -235,7 +236,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     return Collections.singleton(new File(PathUtilRt.getParentPath(myBC.getActualOutputFilePath())));
   }
 
-  public void writeConfiguration(CompileContext context, final PrintWriter out) {
+  public void writeConfiguration(ProjectDescriptor pd, final PrintWriter out) {
     out.println("id: " + myId);
 
     out.println(JDOMUtil.writeElement(XmlSerializer.serialize(JpsFlexBCState.getState(myBC)), "\n"));
