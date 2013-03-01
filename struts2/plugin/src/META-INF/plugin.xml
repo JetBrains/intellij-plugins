@@ -15,14 +15,14 @@
   ~ limitations under the License.
   -->
 
-<idea-plugin url="http://confluence.jetbrains.com/display/CONTEST/Struts+2+Plugin+for+IntelliJ+IDEA" version="2">
+<idea-plugin url="http://confluence.jetbrains.com/display/IDEADEV/Struts+2+Plugin+for+IntelliJ+IDEA" version="2">
   <id>com.intellij.struts2</id>
   <name>Struts 2</name>
   <description>Provides full integration of Apache Struts 2.</description>
 
   <change-notes>
     <![CDATA[
-  Please see <a href="http://confluence.jetbrains.com/display/CONTEST/Struts2PluginChangeNotes">Struts2PluginChangeNotes</a>.
+  Please see <a href="http://confluence.jetbrains.com/display/IDEADEV/Struts2PluginChangeNotes">Struts2PluginChangeNotes</a>.
   ]]>
   </change-notes>
 
@@ -41,7 +41,7 @@
   <depends optional="true" config-file="struts2-tiles.xml">StrutsAssistant</depends>
   <depends optional="true" config-file="struts2-velocity.xml">com.intellij.velocity</depends>
 
-  <vendor url="http://strutsidea.blogspot.com" email="yann.cebron@googlemail.com">Yann Cébron</vendor>
+  <vendor url="http://strutsidea.blogspot.com" email="yann.cebron@gmail.com">Yann Cébron</vendor>
 
   <!-- published extension points -->
   <extensionPoints>
