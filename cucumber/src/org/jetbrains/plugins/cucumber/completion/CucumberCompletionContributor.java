@@ -146,14 +146,16 @@ public class CucumberCompletionContributor extends CompletionContributor {
     final List<AbstractStepDefinition> definitions = CucumberStepsIndex.getInstance(file.getProject()).getAllStepDefinitions(file);
     for (AbstractStepDefinition definition : definitions) {
       String text = definition.getElementText();
-      // trim regexp line start/end markers
-      if (text.startsWith("^")) {
-        text = text.substring(1);
+      if (text != null) {
+        // trim regexp line start/end markers
+        if (text.startsWith("^")) {
+          text = text.substring(1);
+        }
+        if (text.endsWith("$")) {
+          text = text.substring(0, text.length() - 1);
+        }
+        result.addElement(LookupElementBuilder.create(text).withInsertHandler(new StepInsertHandler()));
       }
-      if (text.endsWith("$")) {
-        text = text.substring(0, text.length() - 1);
-      }
-      result.addElement(LookupElementBuilder.create(text).withInsertHandler(new StepInsertHandler()));
     }
   }
 
