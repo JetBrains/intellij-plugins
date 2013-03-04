@@ -25,7 +25,8 @@
 
 package org.osmorc.settings;
 
-import java.util.ArrayList;
+import com.intellij.util.containers.ContainerUtil;
+
 import java.util.List;
 
 /**
@@ -33,7 +34,6 @@ import java.util.List;
  */
 public class ApplicationSettingsUpdateNotifier {
   public ApplicationSettingsUpdateNotifier() {
-    _listeners = new ArrayList<Listener>();
   }
 
   public void fireApplicationSettingsChanged() {
@@ -54,5 +54,5 @@ public class ApplicationSettingsUpdateNotifier {
     void applicationSettingsChanged();
   }
 
-  private final List<Listener> _listeners;
+  private final List<Listener> _listeners = ContainerUtil.createLockFreeCopyOnWriteList();
 }

@@ -25,11 +25,12 @@
 
 package org.osmorc.obrimport;
 
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.CollectionListModel;
+import com.intellij.ui.ListCellRendererWrapper;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.HTTPProxySettingsDialog;
 
 import javax.swing.*;
@@ -40,7 +41,6 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -216,5 +216,5 @@ public class ObrSearchPanel extends ProgressIndicatorBase {
   private JLabel _statusLabel;
   private JComboBox _obrBox;
   private final QueryType _queryType;
-  private final List<PropertyChangeListener> propertyChangeListeners = new ArrayList<PropertyChangeListener>();
+  private final List<PropertyChangeListener> propertyChangeListeners = ContainerUtil.createLockFreeCopyOnWriteList();
 }

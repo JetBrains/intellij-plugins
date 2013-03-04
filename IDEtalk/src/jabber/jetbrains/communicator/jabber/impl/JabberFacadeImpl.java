@@ -16,6 +16,7 @@
 package jetbrains.communicator.jabber.impl;
 
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.users.PresenceMode;
 import jetbrains.communicator.core.users.UserPresence;
@@ -56,7 +57,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
   private final IDEFacade myIdeFacade;
   private XStream myXStream;
 
-  private final List<ConnectionListener> myConnectionListeners = new ArrayList<ConnectionListener>();
+  private final List<ConnectionListener> myConnectionListeners = ContainerUtil.createLockFreeCopyOnWriteList();
   private XMPPConnection myConnection;
 
   public JabberFacadeImpl(IDEFacade ideFacade) {
@@ -319,25 +320,21 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
   }
 
   protected void fireConnected(XMPPConnection connection) {
-    for (ConnectionListener listener : getListeners()) {
+    for (ConnectionListener listener : myConnectionListeners) {
       listener.connected(connection);
     }
   }
 
   protected void fireAuthenticated() {
-    for (ConnectionListener listener : getListeners()) {
+    for (ConnectionListener listener : myConnectionListeners) {
       listener.authenticated();
     }
   }
 
   protected void fireDisconnected(boolean onError) {
-    for (ConnectionListener listener : getListeners()) {
+    for (ConnectionListener listener : myConnectionListeners) {
       listener.disconnected(onError);
     }
-  }
-
-  private ConnectionListener[] getListeners() {
-    return myConnectionListeners.toArray(new ConnectionListener[myConnectionListeners.size()]);
   }
 
   private class SmackConnectionListener implements org.jivesoftware.smack.ConnectionListener {
