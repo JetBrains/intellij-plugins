@@ -39,7 +39,7 @@ public class CucumberJavaExtension implements CucumberJvmExtensionPoint {
   @Override
   public boolean isStepLikeFile(@NotNull final PsiElement child, @NotNull final PsiElement parent) {
     if (child instanceof PsiJavaFile) {
-      return CucumberJavaUtil.isUnderTestSources(child);
+      return true;
     }
     return false;
   }

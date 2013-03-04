@@ -1,10 +1,8 @@
 package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,12 +21,6 @@ import static com.intellij.psi.util.PsiTreeUtil.getChildrenOfTypeAsList;
 public class CucumberJavaUtil {
   public static final String CUCUMBER_STEP_ANNOTATION_PREFIX_1_0 = "cucumber.annotation.";
   public static final String CUCUMBER_STEP_ANNOTATION_PREFIX_1_1 = "cucumber.api.java.";
-
-  public static boolean isUnderTestSources(@NotNull final PsiElement element) {
-    final ProjectRootManager rootManager = ProjectRootManager.getInstance(element.getProject());
-    final VirtualFile file = element.getContainingFile().getVirtualFile();
-    return file != null && rootManager.getFileIndex().isInTestSourceContent(file);
-  }
 
   private static String getCucumberAnnotationSuffix(@NotNull String name) {
     if (name.startsWith(CUCUMBER_STEP_ANNOTATION_PREFIX_1_0)) {
