@@ -160,7 +160,9 @@ public class FilesToPackageForm {
 
         for (final VirtualFile file : files) {
           final VirtualFile sourceRoot = fileIndex.getSourceRootForFile(file);
-          final String relativePath = sourceRoot == null ? null : VfsUtilCore.getRelativePath(file, sourceRoot, '/');
+          String relativePath = sourceRoot == null ? null
+                                                   : sourceRoot.equals(file) ? "."
+                                                                             : VfsUtilCore.getRelativePath(file, sourceRoot, '/');
           myFilesToPackage.add(new FilePathAndPathInPackage(file.getPath(), StringUtil.notNullize(relativePath, file.getName())));
         }
 

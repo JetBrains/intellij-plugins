@@ -870,7 +870,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
                                       .message("folder.to.package.includes.output", device, file.getPresentableUrl()),
                                                                    AirPackagingConfigurableBase.Location.FilesToPackage));
           }
-          else if (!relPathInPackage.isEmpty() && !fullPath.endsWith("/" + relPathInPackage)) {
+          else if (!relPathInPackage.isEmpty() && !".".equals(relPathInPackage) && !fullPath.endsWith("/" + relPathInPackage)) {
             errorConsumer.consume(
               FlashProjectStructureProblem.createPackagingOptionsProblem(packagingOptions, FlexBundle
                 .message("packaging.options.relative.path.not.matches", device, FileUtil.toSystemDependentName(relPathInPackage)),

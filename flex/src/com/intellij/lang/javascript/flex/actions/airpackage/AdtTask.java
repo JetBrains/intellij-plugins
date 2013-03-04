@@ -116,6 +116,11 @@ public abstract class AdtTask extends ExternalTask {
         command.add(FileUtil.toSystemDependentName(fullPath.substring(0, fullPath.length() - pathEnd.length())));
         command.add(FileUtil.toSystemDependentName(relPathInPackage));
       }
+      else if (".".equals(relPathInPackage)) {
+        command.add("-C");
+        command.add(FileUtil.toSystemDependentName(fullPath));
+        command.add(FileUtil.toSystemDependentName("."));
+      }
       else {
         command.add("-e");
         command.add(FileUtil.toSystemDependentName(fullPath));
