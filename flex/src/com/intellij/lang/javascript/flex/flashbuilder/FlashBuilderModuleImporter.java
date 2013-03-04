@@ -8,10 +8,7 @@ import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableBuildConfigurationEntry;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableModuleLibraryEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -108,6 +105,7 @@ public class FlashBuilderModuleImporter {
           mainBC.getAirDesktopPackagingOptions().getSigningOptions().setUseTempCertificate(false);
           mainBC.getAirDesktopPackagingOptions().getSigningOptions().setKeystorePath(fbProject.getDesktopCertPath());
         }
+        setupFilesToPackage(mainBC.getAirDesktopPackagingOptions(), fbProject.getPathsExcludedFromDesktopPackaging(), rootModel);
       }
 
       if (targetPlatform == TargetPlatform.Mobile) {
@@ -119,12 +117,14 @@ public class FlashBuilderModuleImporter {
           mainBC.getAndroidPackagingOptions().getSigningOptions().setUseTempCertificate(false);
           mainBC.getAndroidPackagingOptions().getSigningOptions().setKeystorePath(fbProject.getAndroidCertPath());
         }
+        setupFilesToPackage(mainBC.getAndroidPackagingOptions(), fbProject.getPathsExcludedFromAndroidPackaging(), rootModel);
 
         mainBC.getIosPackagingOptions().setEnabled(fbProject.isIosSupported());
         mainBC.getIosPackagingOptions().setPackageFileName(shortClassName);
         mainBC.getIosPackagingOptions().getSigningOptions()
           .setProvisioningProfilePath(StringUtil.notNullize(fbProject.getIOSProvisioningPath()));
         mainBC.getIosPackagingOptions().getSigningOptions().setKeystorePath(StringUtil.notNullize(fbProject.getIOSCertPath()));
+        setupFilesToPackage(mainBC.getIosPackagingOptions(), fbProject.getPathsExcludedFromIOSPackaging(), rootModel);
       }
     }
     else {
@@ -210,6 +210,12 @@ public class FlashBuilderModuleImporter {
     mainBC.getCompilerOptions().setAllOptions(compilerOptions);
 
     setupOtherAppsAndModules(rootModel, mainBC, fbProject);
+  }
+
+  private void setupFilesToPackage(final AirPackagingOptions packagingOptions,
+                                   final Collection<String> pathsExcludedFromPackaging,
+                                   final ModuleRootModel rootModel) {
+    int i = 0;
   }
 
   private static void setupAirDescriptor(final ModifiableFlexBuildConfiguration bc, final ModuleRootModel rootModel) {

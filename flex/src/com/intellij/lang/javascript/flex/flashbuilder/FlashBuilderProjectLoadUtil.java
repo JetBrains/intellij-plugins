@@ -35,6 +35,7 @@ public class FlashBuilderProjectLoadUtil {
   private static final String LINKED_TAG = "linked";
   private static final String COMPILER_SOURCE_PATH_ENTRY_TAG = "compilerSourcePathEntry";
   private static final String PATH_ATTR = "path";
+  private static final String PATH_ENTRY_ELEMENT = "pathEntry";
   private static final String LOCATION_ATTR = "location";
   private static final String OUTPUT_FOLDER_LOCATION_ATTR = "outputFolderLocation";
   private static final String OUTPUT_FOLDER_PATH_ATTR = "outputFolderPath";
@@ -82,6 +83,7 @@ public class FlashBuilderProjectLoadUtil {
   private static final String USE_MULTIPLATFORM_CONFIG_ATTR = "useMultiPlatformConfig";
   private static final String PROVISIONING_FILE_ATTR = "provisioningFile";
   private static final String AIR_SETTINGS_ELEMENT = "airSettings";
+  private static final String AIR_EXCLUDES_ELEMENT = "airExcludes";
   private static final String AIR_CERTIFICATE_ATTR = "airCertificatePath";
   private static final String INCLUDE_RESOURCES_ELEMENT = "includeResources";
   private static final String RESOURCE_ENTRY_ELEMENT = "resourceEntry";
@@ -309,6 +311,7 @@ public class FlashBuilderProjectLoadUtil {
             flashBuilderProject.setTargetPlatform(TargetPlatform.Mobile);
             flashBuilderProject.setAndroidSupported(isPlatformEnabled(buildTargetElement));
             loadSigningOptions(flashBuilderProject, buildTargetElement, TargetPlatform.Mobile, false);
+            loadFilesExcludedFromPackage(flashBuilderProject, buildTargetElement, TargetPlatform.Mobile, false);
           }
           else if (IOS_PLATFORM_ATTR_VALUE.equals(buildTarget) ||
                    IOS_PLATFORM_ATTR_VALUE.equals(platformId1) ||
@@ -316,6 +319,7 @@ public class FlashBuilderProjectLoadUtil {
             flashBuilderProject.setTargetPlatform(TargetPlatform.Mobile);
             flashBuilderProject.setIosSupported(isPlatformEnabled(buildTargetElement));
             loadSigningOptions(flashBuilderProject, buildTargetElement, TargetPlatform.Mobile, true);
+            loadFilesExcludedFromPackage(flashBuilderProject, buildTargetElement, TargetPlatform.Mobile, true);
           }
           else if (BLACKBERRY_PLATFORM_ATTR_VALUE.equals(buildTarget) ||
                    BLACKBERRY_PLATFORM_ATTR_VALUE.equals(platformId1) ||
@@ -324,6 +328,7 @@ public class FlashBuilderProjectLoadUtil {
           }
           else {
             loadSigningOptions(flashBuilderProject, buildTargetElement, TargetPlatform.Desktop, false);
+            loadFilesExcludedFromPackage(flashBuilderProject, buildTargetElement, TargetPlatform.Desktop, false);
           }
         }
       }
@@ -381,6 +386,36 @@ public class FlashBuilderProjectLoadUtil {
       final String provisioningPath = buildTargetElement.getAttributeValue(PROVISIONING_FILE_ATTR);
       if (provisioningPath != null) {
         fbProject.setIOSProvisioningPath(provisioningPath);
+      }
+    }
+  }
+
+  private static void loadFilesExcludedFromPackage(final FlashBuilderProject fbProject,
+                                                   final Element buildTargetElement,
+                                                   final TargetPlatform targetPlatform,
+                                                   final boolean iOS) {
+    final Element airSettingsElement = buildTargetElement.getChild(AIR_SETTINGS_ELEMENT, buildTargetElement.getNamespace());
+    final Element airExcludesElement = airSettingsElement == null
+                                       ? null
+                                       : airSettingsElement.getChild(AIR_EXCLUDES_ELEMENT, airSettingsElement.getNamespace());
+    if (airExcludesElement == null) return;
+
+    //noinspection unchecked
+    for (Element pathEntryElement : (Iterable<Element>)(airExcludesElement
+                                                          .getChildren(PATH_ENTRY_ELEMENT, airExcludesElement.getNamespace()))) {
+      final String path = pathEntryElement.getAttributeValue(PATH_ATTR);
+      if (!StringUtil.isEmptyOrSpaces(path)) {
+        if (targetPlatform == TargetPlatform.Mobile) {
+          if (iOS) {
+            fbProject.addPathExcludedFromIOSPackaging(path);
+          }
+          else {
+            fbProject.addPathExcludedFromAndroidPackaging(path);
+          }
+        }
+        else if (targetPlatform == TargetPlatform.Desktop) {
+          fbProject.addPathExcludedFromDesktopPackaging(path);
+        }
       }
     }
   }

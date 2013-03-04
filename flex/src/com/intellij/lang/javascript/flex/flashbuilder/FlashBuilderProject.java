@@ -37,6 +37,9 @@ public class FlashBuilderProject {
   private Collection<Pair<String, String>> myNamespacesAndManifestPaths = new ArrayList<Pair<String, String>>(1);
   private Collection<FBRLMInfo> myModules = new ArrayList<FBRLMInfo>();
   private Collection<String> myCssFilesToCompile = new ArrayList<String>();
+  private Collection<String> myPathsExcludedFromDesktopPackaging = new ArrayList<String>();
+  private Collection<String> myPathsExcludedFromAndroidPackaging = new ArrayList<String>();
+  private Collection<String> myPathsExcludedFromIOSPackaging = new ArrayList<String>();
 
   public static class FBRLMInfo {
     public final String MAIN_CLASS_PATH;
@@ -274,6 +277,30 @@ public class FlashBuilderProject {
 
   public Collection<String> getCssFilesToCompile() {
     return myCssFilesToCompile;
+  }
+
+  public void addPathExcludedFromDesktopPackaging(final String path) {
+    myPathsExcludedFromDesktopPackaging.add(path);
+  }
+
+  public Collection<String> getPathsExcludedFromDesktopPackaging() {
+    return myPathsExcludedFromDesktopPackaging;
+  }
+
+  public void addPathExcludedFromAndroidPackaging(final String path) {
+    myPathsExcludedFromAndroidPackaging.add(path);
+  }
+
+  public Collection<String> getPathsExcludedFromAndroidPackaging() {
+    return myPathsExcludedFromAndroidPackaging;
+  }
+
+  public void addPathExcludedFromIOSPackaging(final String path) {
+    myPathsExcludedFromIOSPackaging.add(path);
+  }
+
+  public Collection<String> getPathsExcludedFromIOSPackaging() {
+    return myPathsExcludedFromIOSPackaging;
   }
 
   private void checkIfPathMacroUsed(final String path) {
