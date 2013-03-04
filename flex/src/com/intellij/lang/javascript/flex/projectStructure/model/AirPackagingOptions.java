@@ -44,6 +44,10 @@ public interface AirPackagingOptions {
       }
     }
 
+    public String toString() {
+      return FILE_PATH + "->" + PATH_IN_PACKAGE;
+    }
+
     @Override
     public boolean equals(final Object o) {
       if (this == o) return true;
