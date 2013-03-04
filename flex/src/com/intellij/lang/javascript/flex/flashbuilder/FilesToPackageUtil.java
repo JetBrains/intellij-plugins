@@ -30,7 +30,7 @@ public class FilesToPackageUtil {
 
     for (VirtualFile srcRoot : rootModel.getSourceRoots()) {
       final FolderNode rootNode = new FolderNode(null, srcRoot.getPath(), ".");
-      initNodes(srcRoot, rootNode, pathsExcludedFromPackaging, packagingOptions.getCustomDescriptorPath());
+      initNodes(srcRoot, rootNode, pathsExcludedFromPackaging);
       appendFilesToPackage(filesToPackage, rootNode);
     }
 
@@ -39,8 +39,7 @@ public class FilesToPackageUtil {
 
   private static void initNodes(final VirtualFile rootFolder,
                                 final FolderNode rootFolderNode,
-                                final Collection<String> pathsExcludedFromPackaging,
-                                final String airDescriptorPath) {
+                                final Collection<String> pathsExcludedFromPackaging) {
     final Map<VirtualFile, Node> map = new THashMap<VirtualFile, Node>();
     map.put(rootFolder, rootFolderNode);
 
@@ -55,7 +54,7 @@ public class FilesToPackageUtil {
         LOG.assertTrue(parentNode instanceof FolderNode, file.getPath());
 
         if (pathsExcludedFromPackaging.contains(((FolderNode)parentNode).getChildRelativePath(file.getName())) ||
-            file.getPath().equals(airDescriptorPath) ||
+            file.getPath().endsWith("-app.xml") ||
             !canBeAddedToPackage(file)) {
 
           ((FolderNode)parentNode).setHasExcludedChildren();
