@@ -1,8 +1,8 @@
 package com.intellij.tapestry.core.events;
 
 import com.intellij.tapestry.core.resource.IResource;
+import com.intellij.util.containers.ContainerUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,8 +11,8 @@ import java.util.List;
  */
 public class TapestryEventsManager implements FileSystemListener, TapestryModelChangeListener {
 
-    private final List<FileSystemListener> _fileSystemListeners = new ArrayList<FileSystemListener>();
-    private final List<TapestryModelChangeListener> _tapestryModelChangeListeners = new ArrayList<TapestryModelChangeListener>();
+    private final List<FileSystemListener> _fileSystemListeners = ContainerUtil.createLockFreeCopyOnWriteList();
+    private final List<TapestryModelChangeListener> _tapestryModelChangeListeners = ContainerUtil.createLockFreeCopyOnWriteList();
 
     /**
      * Adds a Tapestry model listener.
