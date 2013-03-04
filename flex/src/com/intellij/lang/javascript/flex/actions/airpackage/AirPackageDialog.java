@@ -257,7 +257,9 @@ public class AirPackageDialog extends DialogWrapper {
     for (Pair<Module, FlexBuildConfiguration> moduleAndBC : selectedBCs) {
       final FlexBuildConfiguration bc = moduleAndBC.second;
       if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
-        allPackagingOptions.add(bc.getAirDesktopPackagingOptions());
+        if (myDesktopTypeCombo.getSelectedItem() != DesktopPackageType.Airi) {
+          allPackagingOptions.add(bc.getAirDesktopPackagingOptions());
+        }
       }
       else {
         if (bc.getAndroidPackagingOptions().isEnabled()) {
