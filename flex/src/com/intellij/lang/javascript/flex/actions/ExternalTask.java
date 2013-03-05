@@ -14,6 +14,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
+import com.intellij.util.Function;
 import com.intellij.util.text.StringTokenizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +45,17 @@ public abstract class ExternalTask {
 
   public void start() {
     final List<String> command = createCommandLine();
+
+    for (String s : command) {
+      if (s == null) {
+        LOG.error(StringUtil.join(command, new Function<String, String>() {
+          public String fun(final String s) {
+            return s == null ? "null" : s;
+          }
+        }, " "));
+      }
+    }
+
     final ProcessBuilder processBuilder = new ProcessBuilder(command);
     processBuilder.redirectErrorStream(true);
 
