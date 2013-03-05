@@ -5,6 +5,7 @@ import com.intellij.flex.FlexCommonUtils;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.PathUtilRt;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
@@ -92,7 +93,7 @@ public abstract class CompilerMessageHandlerBase {
 
         final BuildMessage.Kind kind = text.startsWith("Warning: ") ? BuildMessage.Kind.WARNING : BuildMessage.Kind.ERROR;
         final int index = text.indexOf(": ");
-        final String usefulMessage = text.substring(index);
+        final String usefulMessage = text.substring(index + ": ".length());
 
         final Pair<String, Integer> sourcePathAndLine =
           FlexCommonUtils.getSourcePathAndLineFromASC20Message(myPreviousUnreportedInfoMessage);
@@ -102,8 +103,10 @@ public abstract class CompilerMessageHandlerBase {
         }
         else {
           myPreviousUnreportedInfoMessage = null;
-          myContext.processMessage(
-            new CompilerMessage(myCompilerName, kind, usefulMessage, sourcePathAndLine.first, -1, -1, -1, sourcePathAndLine.second, 0));
+          if (!isNotSupportedOptionFromGeneratedConfig(usefulMessage, sourcePathAndLine.first)) {
+            myContext.processMessage(
+              new CompilerMessage(myCompilerName, kind, usefulMessage, sourcePathAndLine.first, -1, -1, -1, sourcePathAndLine.second, 0));
+          }
         }
 
         myCompilationFailed |= kind == BuildMessage.Kind.ERROR;
@@ -159,9 +162,20 @@ public abstract class CompilerMessageHandlerBase {
     }
   }
 
+  private static boolean isNotSupportedOptionFromGeneratedConfig(final String message, final String filePath) {
+    final String fileName = PathUtilRt.getFileName(filePath);
+    return fileName.startsWith("idea-") && fileName.endsWith(".xml") && ("'compiler.locale' is not fully supported.".equals(message) ||
+                                                                         "'compiler.theme' is not fully supported.".equals(message) ||
+                                                                         "'compiler.preloader' is not fully supported.".equals(message));
+  }
+
   private void reportPreviousInfoMessage() {
     if (myPreviousUnreportedInfoMessage != null) {
-      myContext.processMessage(new CompilerMessage(myCompilerName, BuildMessage.Kind.INFO, myPreviousUnreportedInfoMessage));
+      if (!myPreviousUnreportedInfoMessage.equals("<theme />") &&
+          !myPreviousUnreportedInfoMessage.equals("</locale>") &&
+          !myPreviousUnreportedInfoMessage.equals("<preloader>spark.preloaders.SplashScreen</preloader>")) {
+        myContext.processMessage(new CompilerMessage(myCompilerName, BuildMessage.Kind.INFO, myPreviousUnreportedInfoMessage));
+      }
       myPreviousUnreportedInfoMessage = null;
     }
   }

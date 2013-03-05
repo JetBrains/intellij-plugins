@@ -73,7 +73,7 @@ public class ASC20CompilationTask extends FlexCompilationTask {
               final String message = tokenizer.nextElement();
               if (StringUtil.isEmptyOrSpaces(message)) continue;
 
-              final boolean ok = handleCompilerMessage(compilationManager, message);
+              final boolean ok = handleCompilerMessage(compilationManager, message.trim());
 
               if (!ok) {
                 myCompilationFailed = true;
@@ -103,7 +103,7 @@ public class ASC20CompilationTask extends FlexCompilationTask {
    * @return <code>false</code> if error reported
    */
   private boolean handleCompilerMessage(final FlexCompilationManager compilationManager, final String message) {
-    if ("^".equals(message.trim())) {
+    if ("^".equals(message)) {
       // ignore this and previous line - no need to print source code in Messages tool window
       myPreviousUnreportedMessage = null;
       return true;
@@ -129,7 +129,7 @@ public class ASC20CompilationTask extends FlexCompilationTask {
       final CompilerMessageCategory category = message.startsWith("Warning: ") ? CompilerMessageCategory.WARNING
                                                                                : CompilerMessageCategory.ERROR;
       final int index = message.indexOf(": ");
-      final String usefulMessage = message.substring(index);
+      final String usefulMessage = message.substring(index + ": ".length());
 
       final Pair<String, Integer> sourcePathAndLine = FlexCommonUtils.getSourcePathAndLineFromASC20Message(myPreviousUnreportedMessage);
       if (sourcePathAndLine == null) {
@@ -137,8 +137,10 @@ public class ASC20CompilationTask extends FlexCompilationTask {
         compilationManager.addMessage(this, category, usefulMessage, null, -1, -1);
       }
       else {
-        compilationManager
-          .addMessage(this, category, usefulMessage, VfsUtilCore.pathToUrl(sourcePathAndLine.first), sourcePathAndLine.second, -1);
+        if (!isNotSupportedOptionFromGeneratedConfig(usefulMessage, sourcePathAndLine.first)) {
+          compilationManager
+            .addMessage(this, category, usefulMessage, VfsUtilCore.pathToUrl(sourcePathAndLine.first), sourcePathAndLine.second, -1);
+        }
       }
 
       myPreviousUnreportedMessage = null;
@@ -151,9 +153,19 @@ public class ASC20CompilationTask extends FlexCompilationTask {
     return true;
   }
 
+  private boolean isNotSupportedOptionFromGeneratedConfig(final String message, final String filePath) {
+    return filePath.equals(getConfigFiles().get(0).getPath()) && ("'compiler.locale' is not fully supported.".equals(message) ||
+                                                                  "'compiler.theme' is not fully supported.".equals(message) ||
+                                                                  "'compiler.preloader' is not fully supported.".equals(message));
+  }
+
   private void printPreviousLine(final FlexCompilationManager compilationManager) {
     if (myPreviousUnreportedMessage != null) {
-      compilationManager.addMessage(this, CompilerMessageCategory.INFORMATION, myPreviousUnreportedMessage, null, -1, -1);
+      if (!myPreviousUnreportedMessage.equals("<theme />") &&
+          !myPreviousUnreportedMessage.equals("</locale>") &&
+          !myPreviousUnreportedMessage.equals("<preloader>spark.preloaders.SplashScreen</preloader>")) {
+        compilationManager.addMessage(this, CompilerMessageCategory.INFORMATION, myPreviousUnreportedMessage, null, -1, -1);
+      }
       myPreviousUnreportedMessage = null;
     }
   }
