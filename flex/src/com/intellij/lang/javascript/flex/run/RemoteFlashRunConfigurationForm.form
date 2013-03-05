@@ -34,7 +34,7 @@
         <properties>
           <componentStyle value="SMALL"/>
           <fontColor value="BRIGHTER"/>
-          <text value="Debugger is taken from Flex SDK configured for selected build configuration"/>
+          <text value="Debugger is taken from the Flex/AIR SDK configured for the selected build configuration"/>
         </properties>
       </component>
       <component id="c3140" class="com.intellij.ui.components.JBLabel">
@@ -44,7 +44,7 @@
         <properties>
           <componentStyle value="SMALL"/>
           <fontColor value="BRIGHTER"/>
-          <text value="Source files are searched according to dependencies of selected build configuration"/>
+          <text value="Source files are searched according to the dependencies of the selected build configuration"/>
         </properties>
       </component>
       <component id="34ecd" class="com.intellij.lang.javascript.flex.run.BCCombo" binding="myBCCombo" custom-create="true">
