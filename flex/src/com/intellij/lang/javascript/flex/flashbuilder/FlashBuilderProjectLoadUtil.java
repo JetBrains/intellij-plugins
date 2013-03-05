@@ -12,7 +12,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import gnu.trove.THashMap;
-import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -485,20 +484,16 @@ public class FlashBuilderProjectLoadUtil {
   }
 
   private static void loadTargetPlayerVersion(final FlashBuilderProject project, final Element compilerElement) {
-    final Attribute targetPlayerVersionAttr = compilerElement.getAttribute(TARGET_PLAYER_VERSION_ATTR);
-    if (targetPlayerVersionAttr != null) {
-      final String version = targetPlayerVersionAttr.getValue();
-      if (!version.startsWith("0")) {
-        project.setTargetPlayerVersion(version);
-      }
+    final String version = compilerElement.getAttributeValue(TARGET_PLAYER_VERSION_ATTR);
+    if (version != null && !version.startsWith("0")) {
+      project.setTargetPlayerVersion(version);
     }
   }
 
   private static void loadAdditionalCompilerArguments(final FlashBuilderProject project, final Element compilerElement) {
-    final Attribute additionalCompilerArgumentsAttr = compilerElement.getAttribute(ADDITIONAL_COMPILER_ARGUMENTS_ATTR);
-    if (additionalCompilerArgumentsAttr != null) {
-      project.setAdditionalCompilerOptions(
-        additionalCompilerArgumentsAttr.getValue().replace('\n', ' ').replace('\r', ' ').replace('\t', ' '));
+    final String arguments = compilerElement.getAttributeValue(ADDITIONAL_COMPILER_ARGUMENTS_ATTR);
+    if (!StringUtil.isEmptyOrSpaces(arguments)) {
+      project.setAdditionalCompilerOptions(arguments.replace('\n', ' ').replace('\r', ' ').replace('\t', ' '));
     }
   }
 
@@ -509,8 +504,7 @@ public class FlashBuilderProjectLoadUtil {
     for (final Element libraryPathElement : ((Iterable<Element>)compilerElement.getChildren(LIBRARY_PATH_TAG))) {
       //noinspection unchecked
       for (final Element libraryPathEntryElement : ((Iterable<Element>)libraryPathElement.getChildren(LIBRARY_PATH_ENTRY_TAG))) {
-        final Attribute libraryKindAttr = libraryPathEntryElement.getAttribute(LIBRARY_KIND_ATTR);
-        final String libraryKind = libraryKindAttr != null ? libraryKindAttr.getValue() : SWC_FILE_KIND;
+        final String libraryKind = StringUtil.notNullize(libraryPathEntryElement.getAttributeValue(LIBRARY_KIND_ATTR), SWC_FILE_KIND);
         if (libraryKind.equals(USE_SDK_KIND)) {
           project.setSdkUsed(true);
         }
@@ -537,7 +531,7 @@ public class FlashBuilderProjectLoadUtil {
                 }
               }
 
-              project.addLibraryPathAndSources(FileUtil.toSystemIndependentName(path),librarySourcePaths);
+              project.addLibraryPathAndSources(FileUtil.toSystemIndependentName(path), librarySourcePaths);
             }
           }
         }
@@ -568,9 +562,9 @@ public class FlashBuilderProjectLoadUtil {
   }
 
   private static void loadSdkName(final FlashBuilderProject project, final Element compilerElement) {
-    final Attribute flexSdkAttr = compilerElement.getAttribute(FLEX_SDK_ATTR);
-    if (flexSdkAttr != null) {
-      project.setSdkName(flexSdkAttr.getValue());
+    final String sdkName = compilerElement.getAttributeValue(FLEX_SDK_ATTR);
+    if (!StringUtil.isEmptyOrSpaces(sdkName)) {
+      project.setSdkName(sdkName);
     }
   }
 

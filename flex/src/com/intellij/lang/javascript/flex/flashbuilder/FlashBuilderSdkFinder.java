@@ -21,17 +21,15 @@ import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class FlashBuilderSdkFinder {
 
-  static String DEFAULT_SDK_NAME = ""; // used as default name in FB project files
+  static final String DEFAULT_SDK_NAME = ""; // used as default name in FB project files
 
   private boolean myInitialized = false;
 
@@ -41,6 +39,7 @@ public class FlashBuilderSdkFinder {
 
   private String myWorkspacePath;
   private Map<String, String> mySdkNameToRootPath = new HashMap<String, String>();
+  private String myAirSdkHome;
   private Sdk mySdk;
   private boolean myDialogWasShown = false;
 
@@ -100,6 +99,10 @@ public class FlashBuilderSdkFinder {
       myInitialized = true;
     }
 
+    if (fbProject.isPureActionScript() && myAirSdkHome != null) {
+      return FlexSdkUtils.createOrGetSdk(FlexSdkType2.getInstance(), myAirSdkHome);
+    }
+
     final String sdkHome = mySdkNameToRootPath.get(fbProject.getSdkName());
     if (sdkHome != null) return FlexSdkUtils.createOrGetSdk(FlexSdkType2.getInstance(), sdkHome);
 
@@ -120,9 +123,13 @@ public class FlashBuilderSdkFinder {
   }
 
   private void initialize() {
-    // first look for SDKs in installation, then in workspace. Some can be overwritten by workspace-specific ones.
-    if (!ApplicationManager.getApplication().isUnitTestMode()) {
-      initializeSdksFromFBInstallation();
+    final String fbInstallationPath = findFBInstallationPath();
+
+    if (fbInstallationPath != null && !ApplicationManager.getApplication().isUnitTestMode()) {
+      initializeAirSdk(fbInstallationPath);
+
+      // first look for SDKs in installation, then in workspace. Some can be overwritten by workspace-specific ones.
+      initializeSdksFromFBInstallation(fbInstallationPath);
     }
 
     myWorkspacePath = findWorkspacePath();
@@ -131,10 +138,27 @@ public class FlashBuilderSdkFinder {
     }
   }
 
-  private void initializeSdksFromFBInstallation() {
-    final String installationPath = findFBInstallationPath();
-    if (installationPath == null) return;
-    final File sdksDir = new File(installationPath, SDKS_FOLDER);
+  private void initializeAirSdk(final @NotNull String fbInstallationPath) {
+    final File pluginsDir = new File(fbInstallationPath + "/eclipse/plugins");
+    if (!pluginsDir.isDirectory()) return;
+
+    final File[] airSdkParents = pluginsDir.listFiles(new FilenameFilter() {
+      public boolean accept(final File dir, final String name) {
+        return name.startsWith("com.adobe.flash.compiler_");
+      }
+    });
+
+    for (File airSdkParent : airSdkParents) {
+      final String airSdkHome = airSdkParent.getPath() + "/AIRSDK";
+      if (FlexSdkType2.getInstance().isValidSdkHome(airSdkHome)) {
+        myAirSdkHome = airSdkHome;
+        return;
+      }
+    }
+  }
+
+  private void initializeSdksFromFBInstallation(final @NotNull String fbInstallationPath) {
+    final File sdksDir = new File(fbInstallationPath, SDKS_FOLDER);
     if (!sdksDir.isDirectory()) return;
 
     String maxVersion = "0";
