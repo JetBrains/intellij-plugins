@@ -11,7 +11,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
-import com.jetbrains.lang.dart.ide.runner.base.DartBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.server.connection.JsonResponse;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +38,7 @@ public class DartCommandLineBreakpointsHandler {
               @Override
               public boolean processResponse(JsonResponse response) {
                 if (response.getJsonObject().get("error") != null) {
-                  myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, AllIcons.Debugger.Db_disabled_breakpoint, null);
+                  myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, AllIcons.Debugger.Db_invalid_breakpoint, null);
                   return true;
                 }
                 final JsonObject result = response.getJsonObject().get("result").getAsJsonObject();
