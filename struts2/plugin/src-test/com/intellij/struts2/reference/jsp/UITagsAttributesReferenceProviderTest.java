@@ -21,6 +21,7 @@ import com.intellij.struts2.BasicLightHighlightingTestCase;
 import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.xml.util.XmlDuplicatedIdInspection;
+import com.intellij.xml.util.XmlInvalidIdInspection;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,7 +37,8 @@ public class UITagsAttributesReferenceProviderTest extends BasicLightHighlightin
 
   @Override
   protected LocalInspectionTool[] getHighlightingInspections() {
-    return new LocalInspectionTool[]{new XmlDuplicatedIdInspection(), new XmlPathReferenceInspection()};
+    return new LocalInspectionTool[]{new XmlDuplicatedIdInspection(), new XmlInvalidIdInspection(),
+      new XmlPathReferenceInspection()};
   }
 
   @Override
