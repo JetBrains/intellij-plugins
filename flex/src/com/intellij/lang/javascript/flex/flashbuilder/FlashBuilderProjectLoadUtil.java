@@ -19,7 +19,9 @@ import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.*;
 
@@ -91,6 +93,9 @@ public class FlashBuilderProjectLoadUtil {
   private static final String PLATFORM_ID_1 = "platformId";
   private static final String PLATFORM_ID_2 = "platformID";
   private static final String USE_FLASH_SDK = "useFlashSDK";
+
+  private static final String FLEXUNIT_LIB_MACRO = "${FLEXUNIT_LIB_LOCATION}";
+  private static final String FLEXUNIT_LOCALE_MACRO = "${FLEXUNIT_LOCALE_LOCATION}";
 
   private FlashBuilderProjectLoadUtil() {
   }
@@ -517,13 +522,49 @@ public class FlashBuilderProjectLoadUtil {
               final Collection<String> librarySourcePaths = new ArrayList<String>();
 
               final String replacedPath = pathReplacementMap.get(libraryPath);
-              project.addLibraryPathAndSources(FileUtil.toSystemIndependentName(replacedPath != null ? replacedPath : libraryPath),
-                                               librarySourcePaths);
+              String path = replacedPath != null ? replacedPath : libraryPath;
+
+              if (path.startsWith(FLEXUNIT_LIB_MACRO)) {
+                final String flexUnitFrameworkPath = guessFlexUnitFrameworkPath();
+                if (flexUnitFrameworkPath != null) {
+                  path = flexUnitFrameworkPath + "/libs" + path.substring(FLEXUNIT_LIB_MACRO.length());
+                }
+              }
+              else if (path.equals(FLEXUNIT_LOCALE_MACRO)) {
+                final String flexUnitFrameworkPath = guessFlexUnitFrameworkPath();
+                if (flexUnitFrameworkPath != null) {
+                  path = flexUnitFrameworkPath + "/locale/version4locale/FlexUnitTestRunner_rb.swc";
+                }
+              }
+
+              project.addLibraryPathAndSources(FileUtil.toSystemIndependentName(path),librarySourcePaths);
             }
           }
         }
       }
     }
+  }
+
+  private static String guessFlexUnitFrameworkPath() {
+    final String fbPath = FlashBuilderSdkFinder.findFBInstallationPath();
+    if (fbPath == null) return null;
+
+    final File pluginsDir = new File(fbPath + "/eclipse/plugins");
+    if (!pluginsDir.isDirectory()) return null;
+
+    final File[] flexUnitDirs = pluginsDir.listFiles(new FilenameFilter() {
+      public boolean accept(final File dir, final String name) {
+        return name.startsWith("com.adobe.flexbuilder.flexunit_");
+      }
+    });
+
+    for (File flexUnitDir : flexUnitDirs) {
+      final String flexUnitLibPath = flexUnitDir.getPath() + "/flexunitframework";
+      if (new File(flexUnitLibPath).isDirectory()) {
+        return flexUnitLibPath;
+      }
+    }
+    return null;
   }
 
   private static void loadSdkName(final FlashBuilderProject project, final Element compilerElement) {
