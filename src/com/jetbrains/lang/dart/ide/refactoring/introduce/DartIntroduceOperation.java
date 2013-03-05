@@ -19,7 +19,7 @@ public class DartIntroduceOperation {
   private final Editor myEditor;
   private final PsiFile myFile;
   private String myName;
-  private Boolean myReplaceAll;
+  private boolean myReplaceAll;
   private PsiElement myElement;
   private DartExpression myInitializer;
   private List<PsiElement> myOccurrences = Collections.emptyList();
@@ -63,7 +63,7 @@ public class DartIntroduceOperation {
     myElement = element;
   }
 
-  public Boolean isReplaceAll() {
+  public boolean isReplaceAll() {
     return myReplaceAll;
   }
 
