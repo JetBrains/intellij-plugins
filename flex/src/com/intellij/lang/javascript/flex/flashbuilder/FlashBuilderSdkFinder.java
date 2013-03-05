@@ -179,11 +179,8 @@ public class FlashBuilderSdkFinder {
 
   @Nullable
   public static String findFBInstallationPath() {
-    final String programsPath = SystemInfo.isMac ? "/Applications" : SystemInfo.isWindows ? System.getenv("ProgramFiles") : null;
-    final File programsDir = programsPath == null ? null : new File(programsPath);
-    if (programsDir == null || !programsDir.isDirectory()) return null;
-
     final List<File> fbDirs = new ArrayList<File>();
+
     final FileFilter filter = new FileFilter() {
       public boolean accept(final File dir) {
         final String name = dir.getName();
@@ -191,10 +188,31 @@ public class FlashBuilderSdkFinder {
                && new File(dir, SDKS_FOLDER).isDirectory();
       }
     };
-    Collections.addAll(fbDirs, programsDir.listFiles(filter));
-    final File adobeDir = new File(programsDir, "Adobe");
-    if (adobeDir.isDirectory()) {
-      Collections.addAll(fbDirs, adobeDir.listFiles(filter));
+
+    final String programsPath = SystemInfo.isMac ? "/Applications" : SystemInfo.isWindows ? System.getenv("ProgramFiles") : null;
+    final File programsDir = programsPath == null ? null : new File(programsPath);
+
+    if (programsDir != null && programsDir.isDirectory()) {
+      Collections.addAll(fbDirs, programsDir.listFiles(filter));
+
+      final File adobeDir = new File(programsDir, "Adobe");
+      if (adobeDir.isDirectory()) {
+        Collections.addAll(fbDirs, adobeDir.listFiles(filter));
+      }
+    }
+
+    if (SystemInfo.isWindows) {
+      final String programs64Path = System.getenv("ProgramW6432");
+      final File programs64Dir = programs64Path == null ? null : new File(programs64Path);
+
+      if (programs64Dir != null && programs64Dir.isDirectory()) {
+        Collections.addAll(fbDirs, programs64Dir.listFiles(filter));
+
+        final File adobeDir = new File(programs64Dir, "Adobe");
+        if (adobeDir.isDirectory()) {
+          Collections.addAll(fbDirs, adobeDir.listFiles(filter));
+        }
+      }
     }
 
     if (fbDirs.size() == 0) return null;
@@ -214,9 +232,13 @@ public class FlashBuilderSdkFinder {
   }
 
   private static String guessFBVersion(final String fbInstallFolderName) {
+    final String suffix = " (64 Bit)";
+    final String folderName = fbInstallFolderName.endsWith(suffix)
+                              ? fbInstallFolderName.substring(0, fbInstallFolderName.length() - suffix.length())
+                              : fbInstallFolderName;
     final StringBuilder b = new StringBuilder();
-    for (int i = fbInstallFolderName.length() - 1; i >= 0; i--) {
-      final char ch = fbInstallFolderName.charAt(i);
+    for (int i = folderName.length() - 1; i >= 0; i--) {
+      final char ch = folderName.charAt(i);
       if ('.' == ch || Character.isDigit(ch)) {
         b.insert(0, ch);
       }
