@@ -46,6 +46,10 @@ public class TypoScriptLexerTest extends UsefulTestCase {
     doTest();
   }
 
+  public void testCommentBlock() throws Throwable {
+      doTest();
+    }
+
   public void testSimpleAssignment() throws Throwable {
     doTest();
   }
