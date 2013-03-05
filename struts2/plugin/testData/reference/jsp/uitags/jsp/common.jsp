@@ -13,9 +13,9 @@
 <s:textfield disabled="<error>INVALID_VALUE</error>"/>
 
 <%-- "labelposition" --%>
-<s:textfield disabled="true"/>
-<s:textfield disabled="false"/>
-<s:textfield disabled="<error>INVALID_VALUE</error>"/>
+<s:textfield labelposition="left"/>
+<s:textfield labelposition="top"/>
+<s:textfield labelposition="<error>INVALID_VALUE</error>"/>
 
 <%-- "requiredposition" --%>
 <s:textfield requiredposition="left"/>
