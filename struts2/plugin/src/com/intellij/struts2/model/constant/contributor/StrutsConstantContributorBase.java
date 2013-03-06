@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,7 +51,7 @@ public abstract class StrutsConstantContributorBase implements StrutsConstantCon
   public boolean isAvailable(@NotNull final Module module) {
     return JavaPsiFacade.getInstance(module.getProject())
         .findClass(getRequiredPluginClassName(),
-                   GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module)) != null;
+                   GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, false)) != null;
   }
 
   protected static StrutsConstant addBooleanProperty(@NonNls final String propertyName) {
