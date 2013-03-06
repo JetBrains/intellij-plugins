@@ -8,7 +8,7 @@
   <description>Typo3 language TypoScript support</description>
 
   <version>0.1.1</version>
-  <idea-version since-build="126"/>
+  <idea-version since-build="126.319"/>
 
   <vendor>JetBrains</vendor>
   <depends>com.intellij.modules.lang</depends>
