@@ -1,0 +1,2 @@
+temp.menu = COA
+[GLOBAL]

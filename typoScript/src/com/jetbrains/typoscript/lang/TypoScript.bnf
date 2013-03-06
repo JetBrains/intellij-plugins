@@ -26,15 +26,15 @@
 }
 
 file ::= (expression)*
-private expression ::=  value_modification | multiline_value_assignment | copying | unsetting | code_block | assignment
-| condition_element | include_statement_element {recoverUntil="top_expression_recover"}
+private expression ::=  condition_element | include_statement_element | value_modification | multiline_value_assignment
+| copying | unsetting | code_block | assignment {recoverUntil="top_expression_recover"}
 private top_expression_recover ::= ! new_line_white_space
 external new_line_white_space ::= isAfterNewLine
 
 include_statement_element ::= INCLUDE_STATEMENT
 condition_element ::= CONDITION
 
-assignment ::= object_path '=' ASSIGNMENT_VALUE? {pin=1}
+assignment ::= object_path '=' ASSIGNMENT_VALUE?{pin=2}
 
 value_modification ::= object_path ':=' MODIFICATION_OPERATOR_FUNCTION MODIFICATION_OPERATOR_FUNCTION_PARAM_BEGIN
   MODIFICATION_OPERATOR_FUNCTION_ARGUMENT MODIFICATION_OPERATOR_FUNCTION_PARAM_END {pin=2}
