@@ -16,22 +16,15 @@
 package com.jetbrains.typoscript;
 
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.testFramework.UsefulTestCase;
 import com.jetbrains.typoscript.lang.TypoScriptLexer;
 import org.jetbrains.annotations.NonNls;
 
-import java.io.File;
 import java.io.IOException;
 
 
 public class TypoScriptLexerTest extends UsefulTestCase {
-  @NonNls
-  private static final String INPUT_DATA_FILE_EXT = "test.ts";
-  @NonNls
-  private static final String EXPECTED_RESULT_FILE_EXT = "test.expected";
 
 
   public void testSlashComment() throws Throwable {
@@ -94,10 +87,14 @@ public class TypoScriptLexerTest extends UsefulTestCase {
     doTest();
   }
 
+  public void testCondition() throws Throwable {
+    doTest();
+  }
+
   private void doTest() throws IOException {
     Lexer lexer = new TypoScriptLexer();
-    String testText = getInputData(getDataSubPath(), getTestName(true));
-    String expected = getExpectedDataFilePath(getDataSubPath(), getTestName(true));
+    String testText = TypoScriptTestUtil.getInputData(getDataSubPath(), getTestName(true));
+    String expected = TypoScriptTestUtil.getExpectedDataFilePath(getDataSubPath(), getTestName(true));
     doFileLexerTest(lexer, testText, expected);
   }
 
@@ -114,27 +111,8 @@ public class TypoScriptLexerTest extends UsefulTestCase {
     UsefulTestCase.assertSameLinesWithFile(expected, result);
   }
 
-  private static String getExpectedDataFilePath(final String dataSubPath, final String testName) {
-    return getInputDataFilePath(dataSubPath, testName, EXPECTED_RESULT_FILE_EXT);
-  }
-
-  private static String getInputData(final String dataSubPath, final String testName) {
-    final String filePath = getInputDataFilePath(dataSubPath, testName, INPUT_DATA_FILE_EXT);
-    try {
-      return FileUtil.loadFile(new File(filePath));
-    }
-    catch (IOException e) {
-      System.out.println(filePath);
-      throw new RuntimeException(e);
-    }
-  }
-
-  private static String getInputDataFilePath(final String dataSubPath, final String testName, final String fileExtension) {
-    return PathManager.getHomePath() + "/" + dataSubPath + "/" + testName + "." + fileExtension;
-  }
-
   @NonNls
   private static String getDataSubPath() {
-    return "/contrib/typoScript/testData/typoscript/lexer";
+    return TypoScriptTestUtil.getDataSubPath("lexer");
   }
 }

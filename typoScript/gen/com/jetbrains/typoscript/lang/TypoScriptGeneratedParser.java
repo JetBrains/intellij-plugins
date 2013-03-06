@@ -91,9 +91,9 @@ public class TypoScriptGeneratedParser implements PsiParser {
     Marker marker_ = builder_.mark();
     enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, "<assignment>");
     result_ = object_path(builder_, level_ + 1);
-    pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, consumeToken(builder_, ASSIGNMENT_OPERATOR));
-    result_ = pinned_ && assignment_2(builder_, level_ + 1) && result_;
+    result_ = result_ && consumeToken(builder_, ASSIGNMENT_OPERATOR);
+    pinned_ = result_; // pin = 2
+    result_ = result_ && assignment_2(builder_, level_ + 1);
     if (result_ || pinned_) {
       marker_.done(ASSIGNMENT);
     }
@@ -206,21 +206,21 @@ public class TypoScriptGeneratedParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // value_modification | multiline_value_assignment | copying | unsetting | code_block | assignment
-  // | condition_element | include_statement_element
+  // condition_element | include_statement_element | value_modification | multiline_value_assignment
+  // | copying | unsetting | code_block | assignment
   static boolean expression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "expression")) return false;
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     enterErrorRecordingSection(builder_, level_, _SECTION_RECOVER_, null);
-    result_ = value_modification(builder_, level_ + 1);
+    result_ = condition_element(builder_, level_ + 1);
+    if (!result_) result_ = include_statement_element(builder_, level_ + 1);
+    if (!result_) result_ = value_modification(builder_, level_ + 1);
     if (!result_) result_ = multiline_value_assignment(builder_, level_ + 1);
     if (!result_) result_ = copying(builder_, level_ + 1);
     if (!result_) result_ = unsetting(builder_, level_ + 1);
     if (!result_) result_ = code_block(builder_, level_ + 1);
     if (!result_) result_ = assignment(builder_, level_ + 1);
-    if (!result_) result_ = condition_element(builder_, level_ + 1);
-    if (!result_) result_ = include_statement_element(builder_, level_ + 1);
     if (!result_) {
       marker_.rollbackTo();
     }
