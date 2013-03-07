@@ -8,7 +8,7 @@
             id="ShowDartSettingsAction"
             description="Dart settings"
             text="Dart Settings">
-      <add-to-group group-id="MainToolBar"/>
+      <add-to-group group-id="MainToolBarSettings" anchor="last"/>
     </action>
   </actions>
 </idea-plugin>
