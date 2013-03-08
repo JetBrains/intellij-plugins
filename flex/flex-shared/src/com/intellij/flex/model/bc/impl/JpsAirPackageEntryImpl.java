@@ -11,8 +11,8 @@ import org.jetbrains.jps.model.ex.JpsElementCollectionRole;
 
 public class JpsAirPackageEntryImpl extends JpsElementBase<JpsAirPackageEntryImpl> implements JpsAirPackageEntry {
 
-  static JpsAirPackageEntryRole ROLE = new JpsAirPackageEntryRole();
-  static JpsElementCollectionRole<JpsAirPackageEntry> COLLECTION_ROLE = JpsElementCollectionRole.create(ROLE);
+  static final JpsAirPackageEntryRole ROLE = new JpsAirPackageEntryRole();
+  static final JpsElementCollectionRole<JpsAirPackageEntry> COLLECTION_ROLE = JpsElementCollectionRole.create(ROLE);
 
   private @NotNull String myFilePath = "";
   private @NotNull String myPathInPackage = "";
