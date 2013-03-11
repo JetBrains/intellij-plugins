@@ -31,11 +31,12 @@ public class FlexBuildTargetScopeProvider extends BuildTargetScopeProvider {
   @NotNull
   public List<TargetTypeBuildScope> getBuildTargetScopes(@NotNull final CompileScope baseScope,
                                                          @NotNull final CompilerFilter filter,
-                                                         @NotNull final Project project) {
+                                                         @NotNull final Project project,
+                                                         boolean forceBuild) {
     final FlexCompiler flexCompiler = FlexCompiler.getInstance(project);
     if (!filter.acceptCompiler(flexCompiler)) return Collections.emptyList();
 
-    final TargetTypeBuildScope.Builder builder = TargetTypeBuildScope.newBuilder().setTypeId(FlexBuildTargetType.INSTANCE.getTypeId());
+    final TargetTypeBuildScope.Builder builder = TargetTypeBuildScope.newBuilder().setTypeId(FlexBuildTargetType.INSTANCE.getTypeId()).setForceBuild(forceBuild);
 
     final RunConfiguration runConfiguration = CompileStepBeforeRun.getRunConfiguration(baseScope);
     final Collection<Pair<Module, FlexBuildConfiguration>> bcsToCompileForPackaging =

@@ -22,14 +22,15 @@ public class FlexResourceBuildTargetScopeProvider extends BuildTargetScopeProvid
   @NotNull
   public List<TargetTypeBuildScope> getBuildTargetScopes(@NotNull final CompileScope baseScope,
                                                          @NotNull final CompilerFilter filter,
-                                                         @NotNull final Project project) {
+                                                         @NotNull final Project project,
+                                                         boolean forceBuild) {
     final FlexCompiler flexCompiler = FlexCompiler.getInstance(project);
     if (!filter.acceptCompiler(flexCompiler)) return Collections.emptyList();
 
     final TargetTypeBuildScope.Builder productionBuilder = TargetTypeBuildScope.newBuilder().setTypeId(
-      FlexResourceBuildTargetType.PRODUCTION.getTypeId());
+      FlexResourceBuildTargetType.PRODUCTION.getTypeId()).setForceBuild(forceBuild);
     final TargetTypeBuildScope.Builder testBuilder = TargetTypeBuildScope.newBuilder().setTypeId(
-      FlexResourceBuildTargetType.TEST.getTypeId());
+      FlexResourceBuildTargetType.TEST.getTypeId()).setForceBuild(forceBuild);
 
     try {
       for (Pair<Module, FlexBuildConfiguration> moduleAndBC : FlexCompiler.getModulesAndBCsToCompile(baseScope)) {
