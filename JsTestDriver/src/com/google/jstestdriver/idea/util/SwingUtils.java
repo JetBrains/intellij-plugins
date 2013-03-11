@@ -49,14 +49,10 @@ public class SwingUtils {
   }
 
   @NotNull
-  public static BufferedImage convertIconToImage(@NotNull Icon icon) {
-    if (icon instanceof ImageIcon) {
-      Image image = ((ImageIcon)icon).getImage();
-      if (image instanceof BufferedImage) {
-        return (BufferedImage) image;
-      }
-    }
-    BufferedImage image = UIUtil.createImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+  private static BufferedImage convertIconToBufferedImage(@NotNull Icon icon) {
+    // We can't use here UIUtil.createImage(), because of WEB-7013
+    @SuppressWarnings("UndesirableClassUsage")
+    BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
     Graphics2D graphics = image.createGraphics();
     graphics.setColor(UIUtil.TRANSPARENT_COLOR);
     graphics.fillRect(0, 0, icon.getIconWidth(), icon.getIconHeight());
@@ -68,7 +64,7 @@ public class SwingUtils {
   @NotNull
   public static Icon getGreyIcon(@NotNull Icon icon) {
     ColorConvertOp op = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
-    BufferedImage originalImage = convertIconToImage(icon);
+    BufferedImage originalImage = convertIconToBufferedImage(icon);
     BufferedImage greyImage = op.filter(originalImage, null);
     return new ImageIcon(greyImage);
   }
