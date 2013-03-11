@@ -205,5 +205,52 @@ public final class StrutsConstants {
   @NonNls
   public static final String TAGLIB_JQUERY_RICHTEXT_PLUGIN_PREFIX = "sjr";
 
+  /**
+   * Struts jQuery-plugin chart taglib URI.
+   */
+  @NonNls
+  public static final String TAGLIB_JQUERY_CHART_PLUGIN_URI = "/struts-jquery-chart-tags";
+
+  /**
+   * Struts jQuery-plugin chart taglib default prefix.
+   */
+  @NonNls
+  public static final String TAGLIB_JQUERY_CHART_PLUGIN_PREFIX = "sjc";
+
+  /**
+   * Struts jQuery-plugin tree taglib URI.
+   */
+  @NonNls
+  public static final String TAGLIB_JQUERY_TREE_PLUGIN_URI = "/struts-jquery-tree-tags";
+
+  /**
+   * Struts jQuery-plugin tree taglib default prefix.
+   */
+  @NonNls
+  public static final String TAGLIB_JQUERY_TREE_PLUGIN_PREFIX = "sjt";
+
+  /**
+   * Struts jQuery-plugin grid taglib URI.
+   */
+  @NonNls
+  public static final String TAGLIB_JQUERY_GRID_PLUGIN_URI = "/struts-jquery-grid-tags";
+
+  /**
+   * Struts jQuery-plugin grid taglib default prefix.
+   */
+  @NonNls
+  public static final String TAGLIB_JQUERY_GRID_PLUGIN_PREFIX = "sjg";
+
+  /**
+   * Struts jQuery-plugin mobile taglib URI.
+   */
+  @NonNls
+  public static final String TAGLIB_JQUERY_MOBILE_PLUGIN_URI = "/struts-jquery-mobile-tags";
+
+  /**
+   * Struts jQuery-plugin mobile taglib default prefix.
+   */
+  @NonNls
+  public static final String TAGLIB_JQUERY_MOBILE_PLUGIN_PREFIX = "sjm";
 
 }

@@ -80,6 +80,14 @@
         implementation="com.intellij.struts2.reference.StrutsJQueryTaglibReferenceContributor"/>
     <psi.referenceContributor
         implementation="com.intellij.struts2.reference.StrutsJQueryRichtextTaglibReferenceContributor"/>
+    <psi.referenceContributor
+        implementation="com.intellij.struts2.reference.StrutsJQueryGridTaglibReferenceContributor"/>
+    <psi.referenceContributor
+        implementation="com.intellij.struts2.reference.StrutsJQueryChartTaglibReferenceContributor"/>
+    <psi.referenceContributor
+        implementation="com.intellij.struts2.reference.StrutsJQueryTreeTaglibReferenceContributor"/>
+    <psi.referenceContributor
+        implementation="com.intellij.struts2.reference.StrutsJQueryMobileTaglibReferenceContributor"/>
 
     <iconProvider implementation="com.intellij.struts2.Struts2IconProvider"/>
     <problemFileHighlightFilter implementation="com.intellij.struts2.Struts2ProblemFileHighlightFilter"/>
