@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 public class StrutsJQueryRichtextTaglibReferenceContributor extends StrutsJQueryTaglibReferenceContributorBase {
 
   private static final String CKEDITOR = "ckeditor";
+  private static final String TINYMCE = "tinymce";
 
   @NotNull
   @Override
@@ -41,39 +42,46 @@ public class StrutsJQueryRichtextTaglibReferenceContributor extends StrutsJQuery
 
     // common attributes
 
-    installCSS(registrar, CKEDITOR);
+    installCSS(registrar, CKEDITOR, TINYMCE);
 
-    registerBoolean("disabled", registrar, CKEDITOR);
+    registerBoolean("disabled", registrar, CKEDITOR, TINYMCE);
 
-    installDraggable(registrar, CKEDITOR);
-    installDroppable(registrar, CKEDITOR);
+    installDraggable(registrar, CKEDITOR, TINYMCE);
+    installDroppable(registrar, CKEDITOR, TINYMCE);
 
-    installEffect(registrar, CKEDITOR);
+    installEffect(registrar, CKEDITOR, TINYMCE);
 
-    installErrorElementId(registrar, CKEDITOR);
+    installErrorElementId(registrar, CKEDITOR, TINYMCE);
 
-    installEvents(registrar, CKEDITOR);
+    installEvents(registrar, CKEDITOR, TINYMCE);
 
-    installIndicator(registrar, CKEDITOR);
+    installIndicator(registrar, CKEDITOR, TINYMCE);
 
-    installRequired(registrar, CKEDITOR);
+    installRequired(registrar, CKEDITOR, TINYMCE);
 
-    installResizable(registrar, CKEDITOR);
+    installResizable(registrar, CKEDITOR, TINYMCE);
 
-    installSelectable(registrar, CKEDITOR);
+    installSelectable(registrar, CKEDITOR, TINYMCE);
 
-    installSortable(registrar, CKEDITOR);
+    installSortable(registrar, CKEDITOR, TINYMCE);
 
-    installTargets(registrar, CKEDITOR);
+    installTargets(registrar, CKEDITOR, TINYMCE);
 
     // specific attributes
 
     // "readonly"
-    registerBoolean("readonly", registrar, CKEDITOR);
+    registerBoolean("readonly", registrar, CKEDITOR, TINYMCE);
 
     // "skin"
-    registerTags(new StaticStringValuesReferenceProvider("kama", "office2003", "v2"),
+    registerTags(new StaticStringValuesReferenceProvider("kama", "moono"),
                  "skin", registrar, CKEDITOR);
-  }
 
+    // "editorTheme"
+    registerTags(new StaticStringValuesReferenceProvider("simple", "advanced"),
+                 "editorTheme", registrar, TINYMCE);
+
+    // "editorSkin"
+    registerTags(new StaticStringValuesReferenceProvider("default", "highcontrast", "o2k7"),
+                 "editorSkin", registrar, TINYMCE);
+  }
 }

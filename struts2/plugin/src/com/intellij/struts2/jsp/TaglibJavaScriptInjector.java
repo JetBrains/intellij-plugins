@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,39 +45,44 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
 public class TaglibJavaScriptInjector implements MultiHostInjector, DumbAware {
 
   private static final ElementPattern<XmlAttributeValue> JS_ATTRIBUTE_PATTERN =
-      xmlAttributeValue()
-          .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
-                            virtualFile().ofType(StdFileTypes.JSPX)))
-          .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
-                                                     StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
-                                                     StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI))
-          .withLocalName(not(string().oneOf(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES))); // do not mix with CSS
+    xmlAttributeValue()
+      .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
+                        virtualFile().ofType(StdFileTypes.JSPX)))
+      .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_CHART_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_TREE_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_GRID_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_URI
+      ))
+      .withLocalName(not(string().oneOf(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES))); // do not mix with CSS
 
   // everything with "onXXX"
   private static final ElementPattern<XmlAttributeValue> JS_TAGLIB_PATTERN =
-      xmlAttributeValue()
-          .withLocalName(
-              and(
-                string().longerThan(5), // shortest "onXXX" attribute name: 6 characters
-                or(string().startsWith("on"),
-                   string().startsWith("doubleOn")),  // **TransferSelect-tags
-                not(string().endsWith("Topics"))));   // exclude jQuery-plugin "onXXXTopics"
+    xmlAttributeValue()
+      .withLocalName(
+        and(
+          string().longerThan(5), // shortest "onXXX" attribute name: 6 characters
+          or(string().startsWith("on"),
+             string().startsWith("doubleOn")),  // **TransferSelect-tags
+          not(string().endsWith("Topics"))));   // exclude jQuery-plugin "onXXXTopics"
 
   // struts2-jQuery taglib "pseudo" JS-highlighting
   private static final ElementPattern<XmlAttributeValue> JS_JQUERY_PATTERN =
-      xmlAttributeValue()
-          .withLocalName("effectOptions",
-                         // dialog
-                         "buttons",
-                         // datepicker
-                         "showOptions",
-                         // grid
-                         "filterOptions", "navigatorAddOptions", "navigatorDeleteOptions",
-                         "navigatorEditOptions", "navigatorSearchOptions", "navigatorViewOptions",
-                         // gridColumn
-                         "editoptions", "editrules", "searchoptions",
-                         // tabbedPanel
-                         "disabledTabs");
+    xmlAttributeValue()
+      .withLocalName("effectOptions",
+                     // dialog
+                     "buttons",
+                     // datepicker
+                     "showOptions",
+                     // grid
+                     "filterOptions", "navigatorAddOptions", "navigatorDeleteOptions",
+                     "navigatorEditOptions", "navigatorSearchOptions", "navigatorViewOptions",
+                     // gridColumn
+                     "editoptions", "editrules", "searchoptions",
+                     // tabbedPanel
+                     "disabledTabs");
 
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement host) {
     if (!JS_ATTRIBUTE_PATTERN.accepts(host)) {
@@ -85,16 +90,16 @@ public class TaglibJavaScriptInjector implements MultiHostInjector, DumbAware {
     }
 
     if (JS_TAGLIB_PATTERN.accepts(host)) {
-      JSLanguageInjector.injectJSIntoAttributeValue(registrar, (XmlAttributeValue) host, false);
+      JSLanguageInjector.injectJSIntoAttributeValue(registrar, (XmlAttributeValue)host, false);
       return;
     }
 
     // "pseudo" JS
     if (JS_JQUERY_PATTERN.accepts(host)) {
       registrar.startInjecting(JavaScriptSupportLoader.JAVASCRIPT.getLanguage())
-               .addPlace("(", ")", (PsiLanguageInjectionHost) host,
-                         TextRange.from(1, host.getTextLength() - 2))
-               .doneInjecting();
+        .addPlace("(", ")", (PsiLanguageInjectionHost)host,
+                  TextRange.from(1, host.getTextLength() - 2))
+        .doneInjecting();
     }
   }
 
@@ -102,5 +107,4 @@ public class TaglibJavaScriptInjector implements MultiHostInjector, DumbAware {
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
     return Collections.singletonList(XmlAttributeValue.class);
   }
-
 }

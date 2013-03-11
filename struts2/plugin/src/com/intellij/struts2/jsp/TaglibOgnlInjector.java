@@ -45,26 +45,31 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
 public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
 
   private static final XmlAttributeValuePattern STRUTS_TAG_ATTRIBUTE = xmlAttributeValue()
-      .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
-                        virtualFile().ofType(StdFileTypes.JSPX)))
-      .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI))
-      .withLocalName(not(string().oneOf(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES))); // do not mix with CSS
+    .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
+                      virtualFile().ofType(StdFileTypes.JSPX)))
+    .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
+                                               StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
+                                               StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI,
+                                               StrutsConstants.TAGLIB_JQUERY_CHART_PLUGIN_URI,
+                                               StrutsConstants.TAGLIB_JQUERY_TREE_PLUGIN_URI,
+                                               StrutsConstants.TAGLIB_JQUERY_GRID_PLUGIN_URI,
+                                               StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_URI
+    ))
+    .withLocalName(not(string().oneOf(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES))); // do not mix with CSS
 
   // generic attribute containing "%{" (multiple occurrences possible)
   private static final ElementPattern<XmlAttributeValue> OGNL_OCCURRENCE_PATTERN = xmlAttributeValue()
-      .withValue(string().longerThan(OgnlLanguage.EXPRESSION_PREFIX.length()).contains(OgnlLanguage.EXPRESSION_PREFIX));
+    .withValue(string().longerThan(OgnlLanguage.EXPRESSION_PREFIX.length()).contains(OgnlLanguage.EXPRESSION_PREFIX));
 
   // attributes always containing expression _without_ prefix
   // <s:iterator> "value"
   private static final ElementPattern<XmlAttributeValue> OGNL_WITHOUT_PREFIX_PATTERN = xmlAttributeValue()
-      .withLocalName("value")
-      .withSuperParent(2, xmlTag().withLocalName("iterator"));
+    .withLocalName("value")
+    .withSuperParent(2, xmlTag().withLocalName("iterator"));
 
   // list expression "{....}"
   private static final ElementPattern<XmlAttributeValue> OGNL_LIST_ELEMENT_PATTERN = xmlAttributeValue()
-      .withValue(string().startsWith("{"));
+    .withValue(string().startsWith("{"));
 
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar multiHostRegistrar,
@@ -79,19 +84,17 @@ public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
     }
 
     if (OGNL_OCCURRENCE_PATTERN.accepts(psiElement)) {
-      OgnlLanguageInjector.injectOccurrences(multiHostRegistrar,
-                                             (PsiLanguageInjectionHost) psiElement);
+      OgnlLanguageInjector.injectOccurrences(multiHostRegistrar, (PsiLanguageInjectionHost)psiElement);
       return;
     }
 
     if (OGNL_WITHOUT_PREFIX_PATTERN.accepts(psiElement)) {
-      OgnlLanguageInjector.injectElementWithPrefixSuffix(multiHostRegistrar, (PsiLanguageInjectionHost) psiElement);
+      OgnlLanguageInjector.injectElementWithPrefixSuffix(multiHostRegistrar, (PsiLanguageInjectionHost)psiElement);
       return;
     }
 
     if (OGNL_LIST_ELEMENT_PATTERN.accepts(psiElement)) {
-      OgnlLanguageInjector.injectElementWithPrefixSuffix(multiHostRegistrar,
-                                                         (PsiLanguageInjectionHost) psiElement);
+      OgnlLanguageInjector.injectElementWithPrefixSuffix(multiHostRegistrar, (PsiLanguageInjectionHost)psiElement);
     }
   }
 
@@ -100,5 +103,4 @@ public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
     return Collections.singletonList(XmlAttributeValue.class);
   }
-
 }

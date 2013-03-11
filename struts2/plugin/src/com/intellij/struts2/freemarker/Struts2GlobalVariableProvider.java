@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -80,6 +80,14 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
                          StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI, StrutsConstants.TAGLIB_JQUERY_PLUGIN_PREFIX);
     installTaglibSupport(result, module,
                          StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI, StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_PREFIX);
+    installTaglibSupport(result, module,
+                         StrutsConstants.TAGLIB_JQUERY_CHART_PLUGIN_URI, StrutsConstants.TAGLIB_JQUERY_CHART_PLUGIN_PREFIX);
+    installTaglibSupport(result, module,
+                         StrutsConstants.TAGLIB_JQUERY_TREE_PLUGIN_URI, StrutsConstants.TAGLIB_JQUERY_TREE_PLUGIN_PREFIX);
+    installTaglibSupport(result, module,
+                         StrutsConstants.TAGLIB_JQUERY_GRID_PLUGIN_URI, StrutsConstants.TAGLIB_JQUERY_GRID_PLUGIN_PREFIX);
+    installTaglibSupport(result, module,
+                         StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_URI, StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_PREFIX);
 
     final Processor<Action> processor = new Processor<Action>() {
       @Override

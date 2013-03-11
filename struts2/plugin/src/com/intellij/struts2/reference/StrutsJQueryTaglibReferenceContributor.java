@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,24 +34,24 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibRe
 
   private static final String[] CSS_TAGS =
     new String[]{"a", "accordionItem", "autocompleter", "checkboxlist", "div", "submit",
-                 "tabbedpanel", "datepicker", "dialog", "accordion", "progressbar", "slider", "grid", "tab",
-                 "textfield", "textarea", "radio", "select"};
+      "tabbedpanel", "datepicker", "dialog", "accordion", "progressbar", "slider", "grid", "tab",
+      "textfield", "textarea", "radio", "select", "spinner"};
 
   private static final String[] REQUIRED_TAGS =
     new String[]{"a", "accordionItem", "autocompleter", "accordion", "checkboxlist", "div", "tabbedpanel", "datepicker", "dialog",
-                 "progressbar", "slider", "grid", "gridColumn", "radio", "textfield", "textarea", "select"};
+      "progressbar", "slider", "grid", "gridColumn", "radio", "textfield", "textarea", "select", "spinner"};
 
   private static final String[] DRAG_DROP_TAGS =
-    new String[]{"autocompleter", "checkboxlist", "div", "radio", "textfield", "textarea", "select"};
+    new String[]{"autocompleter", "checkboxlist", "div", "radio", "textfield", "textarea", "select", "spinner"};
 
   private static final String[] SORTABLE_TAGS =
-    new String[]{"autocompleter", "checkboxlist", "div", "radio", "select", "textfield"};
+    new String[]{"autocompleter", "checkboxlist", "div", "radio", "select", "textfield", "spinner"};
 
   private static final String[] SELECTABLE_TAGS =
-    new String[]{"autocompleter", "checkboxlist", "div", "radio", "select", "textfield"};
+    new String[]{"autocompleter", "checkboxlist", "div", "radio", "select", "textfield", "spinner"};
 
   private static final String[] RESIZABLE_TAGS =
-    new String[]{"autocompleter", "checkboxlist", "dialog", "div", "radio", "textarea", "textfield", "select"};
+    new String[]{"autocompleter", "checkboxlist", "dialog", "div", "radio", "textarea", "textfield", "select", "spinner"};
 
   private static final StaticStringValuesReferenceProvider ALL_EFFECTS_PROVIDER =
     new StaticStringValuesReferenceProvider("slide", "scale", "blind", "clip", "puff", "explode", "fold", "drop");
@@ -100,7 +100,8 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibRe
                      "submit", "textfield", "textarea", "radio", "select");
 
     // "errorElementId"
-    installErrorElementId(registrar,"a", "autocompleter", "checkboxlist", "dialog", "grid", "radio", "select", "submit", "tab", "textfield");
+    installErrorElementId(registrar, "a", "autocompleter", "checkboxlist", "dialog", "grid", "radio", "select", "submit", "tab",
+                          "textfield");
 
     // "disabled"
     registerBoolean("disabled", registrar, ArrayUtil.mergeArrays(CSS_TAGS, REQUIRED_TAGS));
@@ -136,7 +137,6 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibRe
                  "jquerytheme", registrar, "head");
     registerBoolean("jqueryui", registrar, "head");
     registerBoolean("loadFromGoogle", registrar, "head");
-    registerBoolean("useJqGridPlugin", registrar, "head");
 
 
     // <submit>
@@ -155,16 +155,16 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibRe
     registerTags(ALL_EFFECTS_PROVIDER, "showEffect", registrar, "dialog");
 
     // <accordion>
-    registerTags(new StaticStringValuesReferenceProvider("false", "slide", "bounceslide"),
-                 "animated", registrar, "accordion");
-    registerBoolean("autoHeight", registrar, "accordion");
-    registerBoolean("clearStyle", registrar, "accordion");
+    registerTags(new StaticStringValuesReferenceProvider("false", "slide", "bounceslide", "fade"),
+                 "animate", registrar, "accordion");
+    registerTags(new StaticStringValuesReferenceProvider("auto", "content", "fill"),
+                 "heightStyle", registrar, "accordion");
     registerBoolean("collapsible", registrar, "accordion");
-    registerBoolean("fillSpace", registrar, "accordion");
     registerBoolean("openOnMouseover", registrar, "accordion");
 
     // <tabbedpanel>
-    registerBoolean("animate", registrar, "tabbedpanel");
+    registerTags(ALL_EFFECTS_PROVIDER, "hide", registrar, "tabbedpanel");
+    registerTags(ALL_EFFECTS_PROVIDER, "show", registrar, "tabbedpanel");
     registerBoolean("cache", registrar, "tabbedpanel");
     registerBoolean("collapsible", registrar, "tabbedpanel");
     registerBoolean("openOnMouseover", registrar, "tabbedpanel");
@@ -193,52 +193,7 @@ public class StrutsJQueryTaglibReferenceContributor extends StrutsJQueryTaglibRe
     registerTags(new StaticStringValuesReferenceProvider(false, "horizontal", "vertical", "auto"),
                  "orientation", registrar, "slider");
 
-    // <grid>
-    registerBoolean("autoencode", registrar, "grid");
-    registerBoolean("cellEdit", registrar, "grid");
-    registerBoolean("editinline", registrar, "grid");
-    registerBoolean("footerrow", registrar, "grid");
-    registerBoolean("hiddengrid", registrar, "grid");
-    registerBoolean("hidegrid", registrar, "grid");
-    registerBoolean("hoverrows", registrar, "grid");
-    registerBoolean("loadonce", registrar, "grid");
-    registerBoolean("multiselect", registrar, "grid");
-    registerBoolean("navigator", registrar, "grid");
-    registerBoolean("navigatorAdd", registrar, "grid");
-    registerBoolean("navigatorDelete", registrar, "grid");
-    registerBoolean("navigatorEdit", registrar, "grid");
-    registerBoolean("navigatorRefresh", registrar, "grid");
-    registerBoolean("navigatorSearch", registrar, "grid");
-    registerBoolean("navigatorView", registrar, "grid");
-    registerBoolean("pager", registrar, "grid");
-    registerBoolean("rownumbers", registrar, "grid");
-    registerBoolean("scroll", registrar, "grid");
-    registerBoolean("scrollrows", registrar, "grid");
-    registerBoolean("shrinkToFit", registrar, "grid");
-    registerBoolean("sortable", registrar, "grid");
-    registerTags(new StaticStringValuesReferenceProvider(false, "asc", "desc"),
-                 "sortorder", registrar, "grid");
-    registerBoolean("userDataOnFooter", registrar, "grid");
-    registerBoolean("viewrecords", registrar, "grid");
-
-    // <gridColumn>
-    registerTags(new StaticStringValuesReferenceProvider(false, "left", "center", "right"),
-                 "align", registrar, "gridColumn");
-    registerBoolean("editable", registrar, "gridColumn");
-    registerTags(new StaticStringValuesReferenceProvider(false, "text", "textarea", "select", "checkbox",
-                                                         "password", "button", "image", "file"),
-                 "edittype", registrar, "gridColumn");
-    registerTags(new StaticStringValuesReferenceProvider("integer", "currency", "date", "checkbox"),
-                 "formatter", registrar, "gridColumn");
-    registerBoolean("hidden", registrar, "gridColumn");
-    registerBoolean("hidedlg", registrar, "gridColumn");
-    registerBoolean("resizable", registrar, "gridColumn");
-    registerBoolean("search", registrar, "gridColumn");
-    registerBoolean("sortable", registrar, "gridColumn");
-
     // <select>
     registerBoolean("emptyOption", registrar, "select");
-
   }
-
 }
