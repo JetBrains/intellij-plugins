@@ -160,7 +160,6 @@ public class CucumberStepsIndex {
     return extension.getStepDefinitionCreator().createStepDefinitionContainer(dir, fileNameWithoutExtension);
   }
 
-  // ToDo: move to q-fix
   public boolean validateNewStepDefinitionFileName(@NotNull final PsiDirectory directory, @NotNull final String fileName, @NotNull final FileType fileType) {
     CucumberJvmExtensionPoint ep = myExtensionMap.get(fileType);
     assert ep != null;

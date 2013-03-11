@@ -219,7 +219,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     }
 
     CreateStepDefinitionFileModel model =
-      new CreateStepDefinitionFileModel(supportedFileTypesAndDefaultFileNames, fileTypeToDefaultDirectoryMap);
+      new CreateStepDefinitionFileModel(step.getProject(), supportedFileTypesAndDefaultFileNames, fileTypeToDefaultDirectoryMap);
     CreateStepDefinitionFileDialog createStepDefinitionFileDialog = new CreateStepDefinitionFileDialog(step.getProject(), model, validator);
     createStepDefinitionFileDialog.show();
 

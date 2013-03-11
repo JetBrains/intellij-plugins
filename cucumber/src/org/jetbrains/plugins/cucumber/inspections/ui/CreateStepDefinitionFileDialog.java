@@ -7,8 +7,11 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
@@ -34,7 +37,6 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
 
   private JPanel myContentPanel;
   private TextFieldWithBrowseButton myDirectoryTextField;
-  private JLabel myDirectoryLabel;
 
   private InputValidator myValidator;
 
@@ -61,12 +63,13 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
           myFileNameTextField.setText(newItem.getDefaultFileName());
           myModel.setFileName(newItem.getDefaultFileName());
         }
-        myDirectoryTextField.setText(FileUtil.toSystemDependentName(model.getDirectory().getVirtualFile().getPath()));
+        myDirectoryTextField.setText(FileUtil.toSystemDependentName(model.getDefaultDirectory().getVirtualFile().getPath()));
       }
     });
 
     myFileNameTextField.setText(model.getFileName());
-    myFileNameTextField.addKeyListener(new FileNameKeyListener());
+    final FileNameKeyListener keyListener = new FileNameKeyListener();
+    myFileNameTextField.addKeyListener(keyListener);
 
     String folderChooserTitle = CucumberBundle.message("cucumber.quick.fix.create.step.folder.chooser.title");
     final FileChooserDescriptor folderChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
@@ -77,9 +80,9 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
     folderChooserDescriptor.setHideIgnored(true);
 
     myDirectoryTextField.addBrowseFolderListener(folderChooserTitle, null, project, folderChooserDescriptor);
-    myDirectoryTextField.setText(FileUtil.toSystemDependentName(model.getDirectory().getVirtualFile().getPath()));
-
-    validateFileName();
+    myDirectoryTextField.getTextField().addKeyListener(keyListener);
+    myDirectoryTextField.setText(FileUtil.toSystemDependentName(model.getDefaultDirectory().getVirtualFile().getPath()));
+    validateAll();
   }
 
   public JComponent getPreferredFocusedComponent() {
@@ -94,6 +97,7 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
     }
     else {
       if (myValidator.checkInput(fileName) && myValidator.canClose(fileName)) {
+        myModel.setFileName(myFileNameTextField.getText());
         close(OK_EXIT_CODE);
       }
     }
@@ -110,7 +114,15 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
     return CreateStepDefinitionFileDialog.class.getName();
   }
 
-  protected void validateFileName() {
+  protected boolean validateAll() {
+    if (validateFileName()) {
+      return validateDirectoryPath();
+    } else {
+      return false;
+    }
+  }
+
+  protected boolean validateFileName() {
     final String fileName = myFileNameTextField.getText();
 
     Project project = myModel.getDirectory().getProject();
@@ -125,28 +137,43 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
       VirtualFile vFile = file != null ? file.getVirtualFile() : null;
       if (vFile != null) {
         fileNameIsOk = false;
-        setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.file.exists",
-                                     (myModel.getFileNameWithExtension())));
-      } else {
-        setErrorText(null);
+        setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.file.exists", (myModel.getFileNameWithExtension())));
       }
     }
-    setOKActionEnabled(fileNameIsOk);
+    return fileNameIsOk;
+  }
+
+  protected boolean validateDirectoryPath() {
+    final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(myDirectoryTextField.getText());
+    final boolean directoryIsOk = vFile != null && vFile.exists();
+    if (!directoryIsOk) {
+      setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.directory.doesnt.exist"));
+    } else {
+      setErrorText(null);
+    }
+    setOKActionEnabled(directoryIsOk);
+    return directoryIsOk;
   }
 
   class FileNameKeyListener implements KeyListener {
     @Override
-    public void keyTyped(KeyEvent e) {
-    }
+    public void keyTyped(KeyEvent e) {}
 
     @Override
-    public void keyPressed(KeyEvent e) {
-    }
+    public void keyPressed(KeyEvent e) {}
 
     @Override
     public void keyReleased(KeyEvent e) {
       myModel.setFileName(myFileNameTextField.getText());
-      validateFileName();
+
+      final VirtualFile vFile = LocalFileSystem.getInstance().findFileByPath(myDirectoryTextField.getText());
+      if (vFile != null) {
+        final PsiDirectory psiDirectory = PsiManager.getInstance(myModel.getProject()).findDirectory(vFile);
+        if (psiDirectory != null) {
+          myModel.setDirectory(psiDirectory);
+        }
+      }
+      validateAll();
     }
   }
 }

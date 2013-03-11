@@ -1,8 +1,10 @@
 package org.jetbrains.plugins.cucumber.inspections.model;
 
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.io.File;
@@ -22,7 +24,12 @@ public class CreateStepDefinitionFileModel {
 
   DefaultComboBoxModel myFileTypeModel;
 
-  public CreateStepDefinitionFileModel(@NotNull final Map<FileType, String> fileTypeToDefaultNameMap, @NotNull final Map<FileType, PsiDirectory> fileTypeToDefaultDirectoryMap) {
+  private PsiDirectory myDirectory;
+
+  private Project myProject;
+
+  public CreateStepDefinitionFileModel(@NotNull final Project project, @NotNull final Map<FileType, String> fileTypeToDefaultNameMap, @NotNull final Map<FileType, PsiDirectory> fileTypeToDefaultDirectoryMap) {
+    myProject = project;
     List<FileTypeComboboxItem> myFileTypeList = new ArrayList<FileTypeComboboxItem>();
     for (Map.Entry<FileType, String> entry : fileTypeToDefaultNameMap.entrySet()) {
       if (myFileName == null) {
@@ -31,8 +38,9 @@ public class CreateStepDefinitionFileModel {
       FileTypeComboboxItem item = new FileTypeComboboxItem(entry.getKey(), entry.getValue());
       myFileTypeList.add(item);
     }
-    myFileTypeModel = new DefaultComboBoxModel(myFileTypeList.toArray());
     myFileTypeToDefaultDirectoryMap = fileTypeToDefaultDirectoryMap;
+    myFileTypeModel = new DefaultComboBoxModel(myFileTypeList.toArray());
+    myDirectory = fileTypeToDefaultDirectoryMap.get(getSelectedFileType());
   }
 
   public String getFilePath() {
@@ -56,8 +64,16 @@ public class CreateStepDefinitionFileModel {
     myFileName = fileName;
   }
 
-  public PsiDirectory getDirectory() {
+  public PsiDirectory getDefaultDirectory() {
     return myFileTypeToDefaultDirectoryMap.get(getSelectedFileType());
+  }
+
+  public PsiDirectory getDirectory() {
+    return myDirectory;
+  }
+
+  public void setDirectory(@Nullable final PsiDirectory psiDirectory) {
+    myDirectory = psiDirectory;
   }
 
   public FileType getSelectedFileType() {
@@ -67,5 +83,9 @@ public class CreateStepDefinitionFileModel {
 
   public DefaultComboBoxModel getFileTypeModel() {
     return myFileTypeModel;
+  }
+
+  public Project getProject() {
+    return myProject;
   }
 }
