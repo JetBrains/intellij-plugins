@@ -142,18 +142,13 @@ public class DartSettings {
       return Collections.emptyMap();
     }
     final Map<String, String> result = new THashMap<String, String>();
-    file.acceptChildren(new DartVisitor() {
+    file.acceptChildren(new DartRecursiveVisitor() {
       @Override
       public void visitConstConstructorExpression(@NotNull DartConstConstructorExpression constructorExpression) {
         Pair<String, String> libInfo = extractLibraryInfo(constructorExpression);
         if (libInfo != null) {
           result.put(libInfo.getFirst(), libInfo.getSecond());
         }
-      }
-
-      @Override
-      public void visitElement(PsiElement element) {
-        element.acceptChildren(this);
       }
     });
     return result;

@@ -51,7 +51,7 @@ public class DartResolveUtil {
     if (psiFile instanceof XmlFile) {
       return findDartRootsInXml((XmlFile)psiFile);
     }
-    return Collections.<PsiElement>singletonList(psiFile);
+    return psiFile instanceof DartFile ? Collections.<PsiElement>singletonList(psiFile) : Collections.<PsiElement>emptyList();
   }
 
   private static List<PsiElement> findDartRootsInXml(XmlFile xmlFile) {
@@ -70,7 +70,7 @@ public class DartResolveUtil {
   }
 
   public static boolean isLValue(PsiElement element) {
-    if(element instanceof PsiFile) return false;
+    if (element instanceof PsiFile) return false;
     PsiElement nextSibling = UsefulPsiTreeUtil.getNextSiblingSkippingWhiteSpacesAndComments(element);
     while (nextSibling == null && element != null) {
       element = element.getParent();

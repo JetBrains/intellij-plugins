@@ -235,19 +235,26 @@
     <codeInspection.InspectionExtension id="dartGlobalInspection"
                                         implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartInspectionExtensionsFactory"/>
 
-    <globalInspection shortName="DartGlobalInspectionTool"
-                      bundle="com.jetbrains.lang.dart.DartBundle"
-                      key="dart.analyzer.inspection.display.name"
-                      groupName="Dart Analyzer"
-                      enabledByDefault="true"
-                      level="WARNING"
-                      implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartGlobalInspectionTool"/>
-
     <!--unit test-->
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationType"/>
     <configurationProducer implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRuntimeConfigurationProducer"/>
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunner"/>
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitDebugRunner"/>
+
+    <!--inspections-->
+
+    <globalInspection shortName="DartGlobalInspectionTool"
+                      bundle="com.jetbrains.lang.dart.DartBundle"
+                      key="dart.analyzer.inspection.display.name"
+                      groupName="Dart"
+                      enabledByDefault="true"
+                      level="WARNING"
+                      implementationClass="com.jetbrains.lang.dart.ide.inspections.analyzer.DartGlobalInspectionTool"/>
+
+    <localInspection language="Dart" shortName="DartUnresolvedImport" bundle="com.jetbrains.lang.dart.DartBundle"
+                     key="inspections.unresolved.import.name"
+                     groupName="Dart" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartUnresolvedImportInspection"/>
   </extensions>
 
   <actions>

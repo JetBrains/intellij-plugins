@@ -63,7 +63,7 @@ public class DartRefactoringUtil {
       return Collections.emptyList();
     }
     final List<PsiElement> occurrences = new ArrayList<PsiElement>();
-    final DartVisitor visitor = new DartVisitor() {
+    context.acceptChildren(new DartRecursiveVisitor() {
       public void visitElement(@NotNull final PsiElement element) {
         if (DartComponentType.typeOf(element) == DartComponentType.PARAMETER) {
           return;
@@ -72,10 +72,9 @@ public class DartRefactoringUtil {
           occurrences.add(element);
           return;
         }
-        element.acceptChildren(this);
+        super.visitElement(element);
       }
-    };
-    context.acceptChildren(visitor);
+    });
     return occurrences;
   }
 
