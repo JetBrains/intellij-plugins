@@ -76,7 +76,9 @@ public class CucumberStepInspection extends GherkinInspection implements UnfairL
                                                                                         reference.getRangeInElement().getStartOffset());
             if (parameterRanges == null) return;
             for (TextRange range : parameterRanges) {
-              registerHiglighting(GherkinHighlighter.REGEXP_PARAMETER, step, range, holder);
+              if (range.getLength() > 0) {
+                registerHighlighting(GherkinHighlighter.REGEXP_PARAMETER, step, range, holder);
+              }
             }
           }
 
@@ -145,14 +147,14 @@ public class CucumberStepInspection extends GherkinInspection implements UnfairL
           final int start = matcher.start(1);
           final int end = matcher.end(1);
           final TextRange range = new TextRange(start, end).shiftRight(textStartInElementOffset);
-          registerHiglighting(GherkinHighlighter.OUTLINE_PARAMETER_SUBSTITUTION, step, range, holder);
+          registerHighlighting(GherkinHighlighter.OUTLINE_PARAMETER_SUBSTITUTION, step, range, holder);
         }
         result = matcher.find();
       } while (result);
     }
   }
 
-  private static void registerHiglighting(TextAttributesKey attributesKey, GherkinStep step, TextRange range, ProblemsHolder holder) {
+  private static void registerHighlighting(TextAttributesKey attributesKey, GherkinStep step, TextRange range, ProblemsHolder holder) {
     final ProblemDescriptor descriptor = new ProblemDescriptorImpl(step, step, "", LocalQuickFix.EMPTY_ARRAY,
                                                                    ProblemHighlightType.INFORMATION, false, range, false, null,
                                                                    holder.isOnTheFly());
