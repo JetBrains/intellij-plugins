@@ -25,9 +25,11 @@
 package org.osmorc;
 
 import com.intellij.ProjectTopics;
+import com.intellij.compiler.impl.FileProcessingCompilerAdapterTask;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
@@ -37,6 +39,7 @@ import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceLibraryManager;
+import org.osmorc.make.BundleCompiler;
 import org.osmorc.settings.ApplicationSettings;
 import org.osmorc.settings.ProjectSettings;
 
@@ -56,17 +59,20 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
   private final ProjectSettings myProjectSettings;
   private final Project myProject;
   private final FrameworkInstanceLibraryManager myFrameworkInstanceLibraryManager;
+  private final CompilerManager myCompilerManager;
   private Alarm myAlarm;
 
   public OsmorcProjectComponent(BundleManager bundleManager, ApplicationSettings applicationSettings,
                                 ProjectSettings projectSettings,
                                 Project project,
-                                FrameworkInstanceLibraryManager frameworkInstanceLibraryManager) {
+                                FrameworkInstanceLibraryManager frameworkInstanceLibraryManager,
+                                CompilerManager compilerManager) {
     this.myBundleManager = bundleManager;
     myApplicationSettings = applicationSettings;
     this.myProjectSettings = projectSettings;
     this.myProject = project;
     this.myFrameworkInstanceLibraryManager = frameworkInstanceLibraryManager;
+    myCompilerManager = compilerManager;
     myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, myProject);
   }
 
@@ -79,6 +85,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
     myProjectSettings.addProjectSettingsListener(this);
     myApplicationSettings.addApplicationSettingsListener(this);
     myProject.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener());
+    myCompilerManager.addAfterTask(new FileProcessingCompilerAdapterTask(new BundleCompiler()));
   }
 
   public void disposeComponent() {
