@@ -11,7 +11,7 @@ public class CucumberJavaStepDefClassInDefaultPackageInspectionTest extends Cucu
     doTest("StepDefClassInDefaultPackage.java");
   }
 
-  public void testStepDefСlassInNamedPackage() {
+  public void testStepDefClassInNamedPackage() {
     doTest("StepDefClassInNamedPackage.java");
   }
 
