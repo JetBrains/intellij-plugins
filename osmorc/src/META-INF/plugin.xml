@@ -221,6 +221,8 @@
                 implementation="org.osmorc.manifest.lang.headerparser.impl.SpringDMHeaderProviderRepository"/>
         <headerParserProviderRepository
                 implementation="org.osmorc.manifest.lang.headerparser.impl.BndHeaderProviderRepository"/>
+      <headerParserProviderRepository
+                implementation="org.osmorc.manifest.lang.headerparser.impl.JavaFxHeaderProviderRepository"/>
 
         <!-- Known bundle repositories -->
         <obr implementation="org.osmorc.obrimport.springsource.SpringSourceObr"/>
