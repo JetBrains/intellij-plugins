@@ -21,6 +21,7 @@ public class FlashBuilderProject {
   private String mySdkName = FlashBuilderSdkFinder.DEFAULT_SDK_NAME;
   private TargetPlatform myTargetPlatform = TargetPlatform.Web;
   private boolean myPureActionScript = false;
+  private boolean myAirSdk = false;
   private OutputType myOutputType = OutputType.Application;
   private boolean myAndroidSupported = false;
   private boolean myIosSupported = false;
@@ -130,6 +131,14 @@ public class FlashBuilderProject {
 
   public void setPureActionScript(final boolean pureActionScript) {
     myPureActionScript = pureActionScript;
+  }
+
+  public boolean isAirSdk() {
+    return myAirSdk;
+  }
+
+  public void setAirSdk(final boolean airSdk) {
+    myAirSdk = airSdk;
   }
 
   public OutputType getOutputType() {

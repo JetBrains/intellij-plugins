@@ -99,7 +99,7 @@ public class FlashBuilderSdkFinder {
       myInitialized = true;
     }
 
-    if (fbProject.isPureActionScript() && myAirSdkHome != null) {
+    if (fbProject.isAirSdk() && myAirSdkHome != null) {
       return FlexSdkUtils.createOrGetSdk(FlexSdkType2.getInstance(), myAirSdkHome);
     }
 

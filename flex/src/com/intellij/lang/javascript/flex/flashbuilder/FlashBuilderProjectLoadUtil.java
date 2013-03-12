@@ -294,9 +294,10 @@ public class FlashBuilderProjectLoadUtil {
     assert dir != null;
 
     final VirtualFile flexLibPropertiesFile = dir.findChild(FlashBuilderImporter.DOT_FLEX_LIB_PROPERTIES);
-    flashBuilderProject.setPureActionScript("true".equals(compilerElement.getAttributeValue(USE_FLASH_SDK)) ||
-                                            dir.findChild(FlashBuilderImporter.DOT_FLEX_PROPERTIES) == null &&
-                                            flexLibPropertiesFile == null);
+    final boolean airSdk = "true".equals(compilerElement.getAttributeValue(USE_FLASH_SDK));
+    flashBuilderProject.setAirSdk(airSdk);
+    flashBuilderProject.setPureActionScript(airSdk || dir.findChild(FlashBuilderImporter.DOT_FLEX_PROPERTIES) == null &&
+                                                      flexLibPropertiesFile == null);
     if (flexLibPropertiesFile == null) {
       final Element parentElement = compilerElement.getParentElement();
       //noinspection unchecked
