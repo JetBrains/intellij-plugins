@@ -45,6 +45,8 @@ public class JavaFxHeaderProviderRepository implements HeaderParserProviderRepos
     _headerProviders.add(new HeaderParserProviderImpl("implementation-vendor", genericComplexHeaderParser));
     _headerProviders.add(new HeaderParserProviderImpl("implementation-title", genericComplexHeaderParser));
     _headerProviders.add(new HeaderParserProviderImpl("implementation-version", genericComplexHeaderParser));
+    _headerProviders.add(new HeaderParserProviderImpl("JavaFX-Preloader-Class", genericComplexHeaderParser));
+    _headerProviders.add(new HeaderParserProviderImpl("JavaFX-Fallback-Class", genericComplexHeaderParser));
   }
 
   @NotNull
