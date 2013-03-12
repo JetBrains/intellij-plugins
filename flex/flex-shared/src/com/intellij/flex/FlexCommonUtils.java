@@ -36,7 +36,6 @@ import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.jps.model.runConfiguration.JpsRunConfigurationType;
 import org.jetbrains.jps.model.runConfiguration.JpsTypedRunConfiguration;
-import org.jetbrains.jps.model.serialization.JpsGlobalLoader;
 import org.jetbrains.jps.model.serialization.JpsModelSerializationDataService;
 import org.jetbrains.jps.util.JpsPathUtil;
 
@@ -734,7 +733,8 @@ public class FlexCommonUtils {
 
       if (endIndex > startIndex) {
         final String macroName = builder.substring(startIndex + 2, endIndex);
-        final String macroValue = JpsGlobalLoader.getPathVariable(module.getProject().getModel().getGlobal(), macroName);
+        final String macroValue = JpsModelSerializationDataService.getPathVariableValue(module.getProject().getModel().getGlobal(),
+                                                                                        macroName);
 
         if (macroValue != null && !StringUtil.isEmptyOrSpaces(macroValue)) {
           builder.replace(startIndex, endIndex + 1, macroValue);
