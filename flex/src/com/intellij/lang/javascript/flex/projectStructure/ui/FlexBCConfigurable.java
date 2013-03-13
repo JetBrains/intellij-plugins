@@ -532,7 +532,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
       myCreateHtmlWrapperTemplateButton.setEnabled(myUseHTMLWrapperCheckBox.isSelected());
     }
 
-    final boolean canHaveRLMsAndRuntimeStylesheets = BCUtils.canHaveRLMsAndRuntimeStylesheets(outputType, targetPlatform);
+    final boolean canHaveRLMsAndRuntimeStylesheets = FlexCommonUtils.canHaveRLMsAndRuntimeStylesheets(outputType, targetPlatform);
 
     myRLMLabel.setVisible(canHaveRLMsAndRuntimeStylesheets);
     myRLMTextWithBrowse.setVisible(canHaveRLMsAndRuntimeStylesheets);

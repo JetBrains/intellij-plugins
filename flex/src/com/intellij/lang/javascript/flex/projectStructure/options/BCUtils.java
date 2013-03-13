@@ -77,11 +77,7 @@ public class BCUtils {
   }
 
   public static boolean canHaveRLMsAndRuntimeStylesheets(final FlexBuildConfiguration bc) {
-    return canHaveRLMsAndRuntimeStylesheets(bc.getOutputType(), bc.getTargetPlatform());
-  }
-
-  public static boolean canHaveRLMsAndRuntimeStylesheets(final OutputType outputType, final TargetPlatform targetPlatform) {
-    return outputType == OutputType.Application && targetPlatform != TargetPlatform.Mobile;
+    return FlexCommonUtils.canHaveRLMsAndRuntimeStylesheets(bc.getOutputType(), bc.getTargetPlatform());
   }
 
   public static boolean isRLMTemporaryBC(final FlexBuildConfiguration bc) {
