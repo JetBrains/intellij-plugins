@@ -34,6 +34,8 @@ public class CucumberCompletionContributor extends CompletionContributor {
                                       "(\\d*)", "(\\d+)",
                                       "([^\"]*)", "([^\"]+)"
     ));
+  public static final int SCENARIO_KEYWORD_PRIORITY = 70;
+  public static final int SCENARIO_OUTLINE_KEYWORD_PRIORITY = 60;
 
   public CucumberCompletionContributor() {
     final PsiElementPattern.Capture<PsiElement> inScenario = psiElement().inside(psiElement().withElementType(GherkinElementTypes.SCENARIOS));
@@ -88,7 +90,8 @@ public class CucumberCompletionContributor extends CompletionContributor {
       keywords.addAll(table.getBackgroundKeywords());
     }
 
-    keywords.addAll(table.getScenarioLikeKeywords());
+    addKeywordsToResult(table.getScenarioKeywords(), result, true, SCENARIO_KEYWORD_PRIORITY);
+    addKeywordsToResult(table.getScenarioOutlineKeywords(), result, true, SCENARIO_OUTLINE_KEYWORD_PRIORITY);
 
     if (PsiTreeUtil.getParentOfType(originalPosition, GherkinScenarioOutlineImpl.class, GherkinExamplesBlockImpl.class) != null) {
       keywords.addAll(table.getExampleSectionKeywords());
@@ -109,8 +112,16 @@ public class CucumberCompletionContributor extends CompletionContributor {
   private static void addKeywordsToResult(final Collection<String> keywords,
                                           final CompletionResultSet result,
                                           final boolean withColonSuffix) {
+    addKeywordsToResult(keywords, result, withColonSuffix, 0);
+  }
+
+  private static void addKeywordsToResult(final Collection<String> keywords,
+                                          final CompletionResultSet result,
+                                          final boolean withColonSuffix, int priority) {
     for (String keyword : keywords) {
-      result.addElement(createKeywordLookupElement(withColonSuffix ? keyword + ":" : keyword));
+      LookupElement element = createKeywordLookupElement(withColonSuffix ? keyword + ":" : keyword);
+
+      result.addElement(PrioritizedLookupElement.withPriority(element, priority));
     }
   }
 
@@ -192,5 +203,4 @@ public class CucumberCompletionContributor extends CompletionContributor {
       }
     }
   }
-
 }

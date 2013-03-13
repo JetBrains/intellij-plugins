@@ -38,6 +38,10 @@ public class GherkinKeywordTable {
     return keywords;
   }
 
+  public Collection<String> getScenarioKeywords() {
+    return getKeywords(GherkinTokenTypes.SCENARIO_KEYWORD);
+  }
+
   public Collection<String> getScenarioLikeKeywords() {
     final Set<String> keywords = new HashSet<String>();
 

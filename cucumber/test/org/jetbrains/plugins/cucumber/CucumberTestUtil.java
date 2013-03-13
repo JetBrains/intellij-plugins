@@ -20,6 +20,6 @@ public class CucumberTestUtil {
   }
 
   public static String getShortTestPath() {
-    return "/testdata";
+    return "/testData";
   }
 }
