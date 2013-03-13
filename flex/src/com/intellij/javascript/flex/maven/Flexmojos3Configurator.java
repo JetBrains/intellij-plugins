@@ -149,9 +149,12 @@ public class Flexmojos3Configurator {
     }
     final OutputType outputType = FlexmojosImporter.isFlexApp(myMavenProject) ? OutputType.Application : OutputType.Library;
 
-    if (outputType != mainBC.getOutputType()) {
-      mainBC.setOutputType(outputType);
-      FlexProjectConfigurationEditor.resetNonApplicableValuesToDefaults(mainBC);
+    // keep outputType == RLM set manually
+    if (!(outputType == OutputType.Application && mainBC.getOutputType() == OutputType.RuntimeLoadedModule)) {
+      if (outputType != mainBC.getOutputType()) {
+        mainBC.setOutputType(outputType);
+        FlexProjectConfigurationEditor.resetNonApplicableValuesToDefaults(mainBC);
+      }
     }
 
     final Element configurationElement = myFlexmojosPlugin.getConfigurationElement();
