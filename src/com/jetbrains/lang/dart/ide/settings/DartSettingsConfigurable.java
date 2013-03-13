@@ -28,7 +28,7 @@ public class DartSettingsConfigurable implements Configurable {
 
   @Override
   public String getHelpTopic() {
-    return null;
+    return "settings.dart";
   }
 
   @NotNull
