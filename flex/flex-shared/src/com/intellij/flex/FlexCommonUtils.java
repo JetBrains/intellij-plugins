@@ -620,24 +620,16 @@ public class FlexCommonUtils {
   public static boolean checkDependencyType(final OutputType bcOutputType,
                                             final OutputType dependencyBCOutputType,
                                             final LinkageType linkageType) {
-    final boolean ok;
-
     switch (dependencyBCOutputType) {
       case Application:
-        ok = false;
-        break;
       case RuntimeLoadedModule:
-        ok = bcOutputType == OutputType.Application && linkageType == LinkageType.LoadInRuntime;
-        break;
+        return bcOutputType != OutputType.Library && linkageType == LinkageType.LoadInRuntime;
       case Library:
-        ok = ArrayUtil.contains(linkageType, LinkageType.getSwcLinkageValues());
-        break;
+        return ArrayUtil.contains(linkageType, LinkageType.getSwcLinkageValues());
       default:
-        assert false;
-        ok = false;
+        LOG.error(dependencyBCOutputType);
+        return false;
     }
-
-    return ok;
   }
 
   public static String getPathToBundledJar(String filename) {

@@ -119,29 +119,12 @@ public class BCUtils {
                                                   bc.getDependencies().getComponentSet());
   }
 
-  public static boolean isApplicable(final BuildConfigurationNature dependantNature,
-                                     final BuildConfigurationNature dependencyNature,
-                                     final LinkageType linkageType) {
-    switch (dependencyNature.outputType) {
-      case Application:
-        return false;
-      case Library:
-        return ArrayUtil.contains(linkageType, LinkageType.getSwcLinkageValues());
-      case RuntimeLoadedModule:
-        return linkageType == LinkageType.LoadInRuntime && !dependantNature.isLib();
-      default:
-        assert false;
-        return true;
-    }
-  }
-
   public static boolean isApplicableForDependency(BuildConfigurationNature dependantNature, OutputType dependencyOutputType) {
     if (dependantNature.isLib()) {
       return dependencyOutputType == OutputType.Library;
     }
     else {
-      return dependencyOutputType == OutputType.Library ||
-             dependencyOutputType == OutputType.RuntimeLoadedModule;
+      return true;
     }
   }
 

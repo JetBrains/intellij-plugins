@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.projectStructure.model.impl;
 
+import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -272,7 +273,7 @@ public class FlexProjectConfigurationEditor implements Disposable {
   }
 
   public ModifiableFlexBuildConfiguration copyConfiguration(ModifiableFlexBuildConfiguration configuration,
-                                                               BuildConfigurationNature newNature) {
+                                                            BuildConfigurationNature newNature) {
     assertAlive();
     Module module = ((Editor)configuration).myModule;
     List<Editor> editors = myModule2Editors.get(module);
@@ -347,7 +348,9 @@ public class FlexProjectConfigurationEditor implements Disposable {
       final ModifiableDependencyEntry entry = i.next();
       if (entry instanceof BuildConfigurationEntry) {
         final FlexBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
-        if (dependencyBC == null || !BCUtils.isApplicable(nature, dependencyBC.getNature(), entry.getDependencyType().getLinkageType())) {
+        if (dependencyBC == null || !FlexCommonUtils.checkDependencyType(bc.getOutputType(),
+                                                                         dependencyBC.getOutputType(),
+                                                                         entry.getDependencyType().getLinkageType())) {
           i.remove();
         }
       }

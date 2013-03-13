@@ -248,7 +248,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       this.moduleName = null;
       this.bcName = null;
       this.configurable = configurable;
-      if (configurable.getOutputType() == OutputType.RuntimeLoadedModule) {
+      if (configurable.getOutputType() != OutputType.Library) {
         dependencyType.setLinkageType(LinkageType.LoadInRuntime);
       }
     }
@@ -276,7 +276,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
 
     @Override
     public boolean isLinkageEditable() {
-      return configurable != null && configurable.getOutputType() != OutputType.RuntimeLoadedModule;
+      return configurable != null && configurable.getOutputType() == OutputType.Library;
     }
 
     @Override
@@ -930,7 +930,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
         Pair<BCItem, Integer> item = findDependencyItem(configurable);
         if (item != null) {
           final BuildConfigurationNature dependencyNature = item.first.configurable.getEditableObject().getNature();
-          if (!BCUtils.isApplicable(myNature, dependencyNature, item.first.getLinkageType())) {
+          if (!FlexCommonUtils.checkDependencyType(myNature.outputType, dependencyNature.outputType, item.first.getLinkageType())) {
             removeItems(Collections.singleton(item.first), true);
           }
         }

@@ -284,16 +284,20 @@ public class Flexmojos3Configurator {
                   }
                 });
 
+        final LinkageType linkageType = "swc".equals(dependencyMavenProject.getPackaging())
+                                        ? FlexUtils.convertLinkageType(scope, isExported)
+                                        : LinkageType.LoadInRuntime;
+
         if (existingEntry != null) {
           if (existingEntry.getDependencyType().getLinkageType() == LinkageType.Test) {
-            existingEntry.getDependencyType().setLinkageType(FlexUtils.convertLinkageType(scope, isExported));
+            existingEntry.getDependencyType().setLinkageType(linkageType);
           }
           continue;
         }
 
         final ModifiableBuildConfigurationEntry bcEntry =
           myFlexEditor.createBcEntry(bc.getDependencies(), dependencyModuleName, dependencyModuleName);
-        bcEntry.getDependencyType().setLinkageType(FlexUtils.convertLinkageType(scope, isExported));
+        bcEntry.getDependencyType().setLinkageType(linkageType);
         bc.getDependencies().getModifiableEntries().add(0, bcEntry);
 
         continue;
