@@ -35,6 +35,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ResourceUtil;
 import com.intellij.util.text.StringTokenizer;
+import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.runner.DartStackTraceMessageFiler;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -131,7 +132,7 @@ public class DartUnitRunningState extends CommandLineState {
     final String path = myDartSettings == null ? null : myDartSettings.getSdkPath();
     final String exePath = path == null ? null : DartSdkUtil.getCompilerPathByFolderPath(path);
     if (exePath == null) {
-      throw new ExecutionException("Bad SDK home path!");
+      throw new ExecutionException(DartBundle.message("dart.invalid.sdk"));
     }
 
     Project project = getEnvironment().getProject();
