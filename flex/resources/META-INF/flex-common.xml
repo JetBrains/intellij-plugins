@@ -67,7 +67,7 @@
 
     <testSrcLocator implementation="com.intellij.lang.javascript.flex.flexunit.FlexQualifiedNameLocationProvider"/>
     <psi.referenceContributor implementation="com.intellij.javascript.flex.FlexReferenceContributor"/>
-    <psi.fileReferenceHelper implementation="com.intellij.lang.javascript.psi.impl.JSFileReferenceHelper"/>
+    <psi.fileReferenceHelper implementation="com.intellij.lang.javascript.flex.FlexFileReferenceHelper"/>
     <lookup.charFilter implementation="com.intellij.lang.javascript.flex.ActionScriptCharFilter"/>
     <codeInsight.overrideMethod language="JavaScript"
                                 implementationClass="com.intellij.lang.javascript.generation.JavaScriptOverrideMethodsHandler"/>
