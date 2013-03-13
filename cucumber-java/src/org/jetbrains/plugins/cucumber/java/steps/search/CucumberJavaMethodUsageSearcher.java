@@ -18,6 +18,11 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFileType;
  * Date: 7/27/12
  */
 public class CucumberJavaMethodUsageSearcher extends QueryExecutorBase<PsiReference, MethodReferencesSearch.SearchParameters> {
+
+  public CucumberJavaMethodUsageSearcher() {
+    super(true);
+  }
+
   @Override
   public void processQuery(@NotNull MethodReferencesSearch.SearchParameters p, @NotNull final Processor<PsiReference> consumer) {
     final PsiMethod method = p.getMethod();
