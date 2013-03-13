@@ -110,8 +110,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
       return null;
     }
 
-    final JSArgumentList argumentList = callExpression.getArgumentList();
-    final JSExpression[] params = argumentList != null ? argumentList.getArguments() : JSExpression.EMPTY_ARRAY;
+    final JSExpression[] params = callExpression.getArguments();
 
     if (params.length > 0 &&
         ((params[0] instanceof JSReferenceExpression && ((JSReferenceExpression)params[0]).getQualifier() != null) ||
@@ -458,7 +457,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
     }
 
     private void prepareForEventListenerCall(final JSCallExpression callExpression) {
-      final JSExpression[] params = callExpression.getArgumentList().getArguments();
+      final JSExpression[] params = callExpression.getArguments();
       String eventName = "event";
 
       if (params.length > 0) {
