@@ -221,6 +221,11 @@
                      key="js.untyped.declaration.inspection.name" groupKey="js.actionscript.specific.group.name" enabledByDefault="true"
                      level="WARNING" implementationClass="com.intellij.lang.javascript.inspections.actionscript.JSUntypedDeclarationInspection"/>
 
+    <localInspection language="JavaScript" groupPath="JavaScript" shortName="JSImplicitlyInternalDeclaration" bundle="com.intellij.lang.javascript.JavaScriptBundle"
+                     key="js.implicitly.internal.declaration.inspection.name" groupKey="js.actionscript.specific.group.name" enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.lang.javascript.inspections.actionscript.JSImplicitlyInternalDeclarationInspection"/>
+
     <intentionAction>
       <className>com.intellij.lang.javascript.intentions.CreateJSSubclassIntention</className>
       <category>ActionScript</category>
