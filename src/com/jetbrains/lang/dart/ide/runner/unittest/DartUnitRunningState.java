@@ -132,6 +132,7 @@ public class DartUnitRunningState extends CommandLineState {
     final String path = myDartSettings == null ? null : myDartSettings.getSdkPath();
     final String exePath = path == null ? null : DartSdkUtil.getCompilerPathByFolderPath(path);
     if (exePath == null) {
+      // todo: fix link
       throw new ExecutionException(DartBundle.message("dart.invalid.sdk"));
     }
 
