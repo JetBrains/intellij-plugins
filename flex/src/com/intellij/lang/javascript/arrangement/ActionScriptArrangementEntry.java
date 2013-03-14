@@ -12,14 +12,15 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.arrangement.*;
-import com.intellij.psi.codeStyle.arrangement.match.ArrangementEntryType;
-import com.intellij.psi.codeStyle.arrangement.match.ArrangementModifier;
+import com.intellij.psi.codeStyle.arrangement.std.ArrangementSettingsToken;
+import com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens;
+import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.intellij.psi.codeStyle.arrangement.match.ArrangementEntryType.*;
+import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.EntryType.*;
 
 public class ActionScriptArrangementEntry extends DefaultArrangementEntry implements TypeAwareArrangementEntry,
                                                                                      ModifierAwareArrangementEntry,
@@ -34,14 +35,15 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
   };
 
 
-  private final String myName;
-  private ArrangementEntryType myType;
-  private Set<ArrangementModifier> myModifiers;
+  private final String                        myName;
+  private       ArrangementSettingsToken      myType;
+  private       Set<ArrangementSettingsToken> myModifiers;
 
   private ActionScriptArrangementEntry(final @Nullable String name,
-                                       final @NotNull ArrangementEntryType type,
-                                       final @NotNull Set<ArrangementModifier> modifiers,
-                                       final @NotNull TextRange range) {
+                                       final @NotNull ArrangementSettingsToken type,
+                                       final @NotNull Set<ArrangementSettingsToken> modifiers,
+                                       final @NotNull TextRange range)
+  {
     super(null, range.getStartOffset(), range.getEndOffset(), true);
 
     myName = name;
@@ -52,12 +54,13 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
   @Nullable
   public static ActionScriptArrangementEntry create(final @NotNull JSBlockStatement blockStatement,
                                                     final @NotNull Collection<TextRange> allowedRanges,
-                                                    final @Nullable Document document) {
+                                                    final @Nullable Document document)
+  {
     final TextRange textRange = blockStatement.getTextRange();
 
     if (isWithinBounds(textRange, allowedRanges)) {
       final TextRange range = document == null ? textRange : ArrangementUtil.expandToLine(textRange, document);
-      return new ActionScriptArrangementEntry(null, STATIC_INIT, Collections.<ArrangementModifier>emptySet(), range);
+      return new ActionScriptArrangementEntry(null, STATIC_INIT, Collections.<ArrangementSettingsToken>emptySet(), range);
     }
 
     return null;
@@ -66,7 +69,8 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
   @Nullable
   public static ActionScriptArrangementEntry create(final @NotNull JSVarStatement varStatement,
                                                     final @NotNull Collection<TextRange> allowedRanges,
-                                                    final @Nullable Document document) {
+                                                    final @Nullable Document document)
+  {
     final TextRange textRange = varStatement.getTextRange();
 
     if (isWithinBounds(textRange, allowedRanges)) {
@@ -96,7 +100,7 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
     return null;
   }
 
-  private static ArrangementEntryType getType(final JSAttributeListOwner fieldOrMethod) {
+  private static ArrangementSettingsToken getType(final JSAttributeListOwner fieldOrMethod) {
     if (fieldOrMethod instanceof JSVariable) {
       return ((JSVariable)fieldOrMethod).isConst() ? CONST : VAR;
     }
@@ -134,8 +138,8 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
     return false;
   }
 
-  private static Set<ArrangementModifier> getModifiers(final JSAttributeListOwner fieldOrMethod) {
-    final Set<ArrangementModifier> result = EnumSet.noneOf(ArrangementModifier.class);
+  private static Set<ArrangementSettingsToken> getModifiers(final JSAttributeListOwner fieldOrMethod) {
+    final Set<ArrangementSettingsToken> result = ContainerUtilRt.newHashSet();
 
     final JSAttributeList attributes = fieldOrMethod.getAttributeList();
 
@@ -152,23 +156,23 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
       if (accessType != null) {
         switch (accessType) {
           case PUBLIC:
-            result.add(ArrangementModifier.PUBLIC);
+            result.add(StdArrangementTokens.Modifier.PUBLIC);
             break;
           case PROTECTED:
-            result.add(ArrangementModifier.PROTECTED);
+            result.add(StdArrangementTokens.Modifier.PROTECTED);
             break;
           case PACKAGE_LOCAL:
-            result.add(ArrangementModifier.PACKAGE_PRIVATE);
+            result.add(StdArrangementTokens.Modifier.PACKAGE_PRIVATE);
             break;
           case PRIVATE:
-            result.add(ArrangementModifier.PRIVATE);
+            result.add(StdArrangementTokens.Modifier.PRIVATE);
             break;
         }
       }
 
-      if (attributes.hasModifier(JSAttributeList.ModifierType.STATIC)) result.add(ArrangementModifier.STATIC);
-      if (attributes.hasModifier(JSAttributeList.ModifierType.FINAL)) result.add(ArrangementModifier.FINAL);
-      if (attributes.hasModifier(JSAttributeList.ModifierType.OVERRIDE)) result.add(ArrangementModifier.OVERRIDE);
+      if (attributes.hasModifier(JSAttributeList.ModifierType.STATIC)) result.add(StdArrangementTokens.Modifier.STATIC);
+      if (attributes.hasModifier(JSAttributeList.ModifierType.FINAL)) result.add(StdArrangementTokens.Modifier.FINAL);
+      if (attributes.hasModifier(JSAttributeList.ModifierType.OVERRIDE)) result.add(StdArrangementTokens.Modifier.OVERRIDE);
     }
     return result;
   }
@@ -187,26 +191,26 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
     return myName;
   }
 
-  public void setType(final @NotNull ArrangementEntryType type) {
+  public void setType(final @NotNull ArrangementSettingsToken type) {
     myType = type;
   }
 
   @NotNull
-  public ArrangementEntryType getType() {
+  public ArrangementSettingsToken getType() {
     return myType;
   }
 
   @NotNull
-  public Set<ArrangementEntryType> getTypes() {
-    return EnumSet.of(myType);
+  public Set<ArrangementSettingsToken> getTypes() {
+    return ContainerUtilRt.newHashSet(myType);
   }
 
-  public void setModifiers(final @NotNull Set<ArrangementModifier> modifiers) {
+  public void setModifiers(final @NotNull Set<ArrangementSettingsToken> modifiers) {
     myModifiers = modifiers;
   }
 
   @NotNull
-  public Set<ArrangementModifier> getModifiers() {
+  public Set<ArrangementSettingsToken> getModifiers() {
     return myModifiers;
   }
 

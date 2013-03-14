@@ -9,7 +9,6 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -20,19 +19,14 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.codeStyle.arrangement.ArrangementSettings;
 import com.intellij.psi.codeStyle.arrangement.ArrangementUtil;
 import com.intellij.psi.codeStyle.arrangement.Rearranger;
-import com.intellij.psi.codeStyle.arrangement.StdArrangementSettings;
 import com.intellij.psi.codeStyle.arrangement.group.ArrangementGroupingRule;
-import com.intellij.psi.codeStyle.arrangement.group.ArrangementGroupingType;
-import com.intellij.psi.codeStyle.arrangement.match.ArrangementEntryType;
-import com.intellij.psi.codeStyle.arrangement.match.ArrangementModifier;
-import com.intellij.psi.codeStyle.arrangement.match.StdArrangementEntryMatcher;
-import com.intellij.psi.codeStyle.arrangement.match.StdArrangementMatchRule;
+import com.intellij.psi.codeStyle.arrangement.match.*;
+import com.intellij.psi.codeStyle.arrangement.std.*;
 import com.intellij.psi.codeStyle.arrangement.model.*;
-import com.intellij.psi.codeStyle.arrangement.order.ArrangementEntryOrderType;
-import com.intellij.psi.codeStyle.arrangement.settings.ArrangementConditionsGrouper;
-import com.intellij.psi.codeStyle.arrangement.settings.ArrangementStandardSettingsAware;
+import com.intellij.psi.codeStyle.arrangement.std.ArrangementStandardSettingsAware;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.SortedList;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
@@ -40,30 +34,35 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static com.intellij.psi.codeStyle.arrangement.match.ArrangementEntryType.*;
-import static com.intellij.psi.codeStyle.arrangement.match.ArrangementModifier.*;
+import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.EntryType.*;
+import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Modifier.*;
+import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Grouping.*;
+import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Order.BY_NAME;
+import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Order.KEEP;
+import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.General.*;
 
-public class ActionScriptRearranger implements Rearranger<ActionScriptArrangementEntry>, ArrangementStandardSettingsAware,
-                                               ArrangementConditionsGrouper {
+public class ActionScriptRearranger implements Rearranger<ActionScriptArrangementEntry>, ArrangementStandardSettingsAware {
 
   private static final Logger LOG = Logger.getInstance(ActionScriptRearranger.class.getName());
 
-  private static final Set<ArrangementEntryType> SUPPORTED_TYPES =
-    EnumSet.of(STATIC_INIT, CONST, VAR, METHOD, CONSTRUCTOR, PROPERTY, EVENT_HANDLER);
+  private static final Set<ArrangementSettingsToken> SUPPORTED_TYPES = ContainerUtilRt.newLinkedHashSet(
+    CONSTRUCTOR, METHOD, STATIC_INIT, CONST, VAR, PROPERTY, EVENT_HANDLER
+  );
 
-  private static final Set<ArrangementModifier> SUPPORTED_MODIFIERS =
-    EnumSet.of(PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE, STATIC, FINAL, OVERRIDE);
+  private static final Set<ArrangementSettingsToken> SUPPORTED_MODIFIERS = ContainerUtilRt.newLinkedHashSet(
+    PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE, STATIC, FINAL, OVERRIDE
+  );
 
-  private static void addRule(final List<StdArrangementMatchRule> rules, @NotNull Object... conditions) {
+  private static void addRule(final List<StdArrangementMatchRule> rules, @NotNull ArrangementSettingsToken... conditions) {
     if (conditions.length == 1) {
       rules.add(new StdArrangementMatchRule(
-        new StdArrangementEntryMatcher(new ArrangementAtomMatchCondition(ArrangementUtil.parseType(conditions[0]), conditions[0]))));
+        new StdArrangementEntryMatcher(new ArrangementAtomMatchCondition(conditions[0]))));
       return;
     }
 
     ArrangementCompositeMatchCondition composite = new ArrangementCompositeMatchCondition();
-    for (Object condition : conditions) {
-      composite.addOperand(new ArrangementAtomMatchCondition(ArrangementUtil.parseType(condition), condition));
+    for (ArrangementSettingsToken condition : conditions) {
+      composite.addOperand(new ArrangementAtomMatchCondition(condition));
     }
     rules.add(new StdArrangementMatchRule(new StdArrangementEntryMatcher(composite)));
   }
@@ -180,7 +179,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
 
   private static boolean groupPropertyFieldWithGetterSetter(final @NotNull ArrangementSettings settings) {
     for (ArrangementGroupingRule rule : settings.getGroupings()) {
-      if (rule.getGroupingType() == ArrangementGroupingType.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER) {
+      if (rule.getGroupingType() == GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER) {
         return true;
       }
     }
@@ -197,21 +196,18 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     }
 
     final CommonCodeStyleSettings commonSettings = settings.getCommonSettings(JavaScriptSupportLoader.ECMA_SCRIPT_L4);
-    switch (target.getType()) {
-      case VAR:
-      case CONST:
-        return commonSettings.BLANK_LINES_AROUND_FIELD;
-
-      case STATIC_INIT:
-      case CONSTRUCTOR:
-      case METHOD:
-      case PROPERTY:
-      case EVENT_HANDLER:
-        return commonSettings.BLANK_LINES_AROUND_METHOD;
-
-      default:
-        LOG.error(target.getType());
-        return 0;
+    ArrangementSettingsToken type = target.getType();
+    if (VAR.equals(type) || CONST.equals(type)) {
+      return commonSettings.BLANK_LINES_AROUND_FIELD;
+    }
+    else if (STATIC_INIT.equals(type) || CONSTRUCTOR.equals(type) || METHOD.equals(type) || PROPERTY.equals(type)
+             || EVENT_HANDLER.equals(type))
+    {
+      return commonSettings.BLANK_LINES_AROUND_METHOD;
+    }
+    else {
+      LOG.error(target.getType());
+      return 0;
     }
   }
 
@@ -219,22 +215,17 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
   @Override
   public StdArrangementSettings getDefaultSettings() {
     final List<ArrangementGroupingRule> groupingRules =
-      Collections.singletonList(new ArrangementGroupingRule(ArrangementGroupingType.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER));
+      Collections.singletonList(new ArrangementGroupingRule(GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER));
     final List<StdArrangementMatchRule> matchRules = getDefaultMatchRules();
 
     return new StdArrangementSettings(groupingRules, matchRules);
-  }
-
-  @Override
-  public boolean isNameFilterSupported() {
-    return true;
   }
 
   public static List<StdArrangementMatchRule> getDefaultMatchRules() {
     // more or less close to Coding Conventions at http://sourceforge.net/adobe/flexsdk/wiki/Coding%20Conventions/
     final List<StdArrangementMatchRule> matchRules = new ArrayList<StdArrangementMatchRule>();
 
-    final ArrangementModifier[] visibility = {PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE};
+    final ArrangementSettingsToken[] visibility = {PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE};
 
     // static initialization blocks
     addRule(matchRules, STATIC_INIT);
@@ -247,20 +238,20 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     // resources (what's this?)
 
     // static vars
-    for (ArrangementModifier modifier : visibility) {
+    for (ArrangementSettingsToken modifier : visibility) {
       addRule(matchRules, VAR, modifier, STATIC, FINAL);
     }
-    for (ArrangementModifier modifier : visibility) {
+    for (ArrangementSettingsToken modifier : visibility) {
       addRule(matchRules, VAR, modifier, STATIC);
     }
 
     // static properties
-    for (ArrangementModifier modifier : visibility) {
+    for (ArrangementSettingsToken modifier : visibility) {
       addRule(matchRules, PROPERTY, modifier, STATIC);
     }
 
     // static methods
-    for (ArrangementModifier modifier : visibility) {
+    for (ArrangementSettingsToken modifier : visibility) {
       addRule(matchRules, METHOD, modifier, STATIC);
     }
 
@@ -268,31 +259,31 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     addRule(matchRules, CONSTRUCTOR);
 
     // vars
-    for (ArrangementModifier modifier : visibility) {
+    for (ArrangementSettingsToken modifier : visibility) {
       addRule(matchRules, VAR, modifier, FINAL);
     }
-    for (ArrangementModifier modifier : visibility) {
+    for (ArrangementSettingsToken modifier : visibility) {
       addRule(matchRules, VAR, modifier);
     }
 
     // properties
     addRule(matchRules, PROPERTY, OVERRIDE);
 
-    for (ArrangementModifier modifier : visibility) {
+    for (ArrangementSettingsToken modifier : visibility) {
       addRule(matchRules, PROPERTY, modifier);
     }
 
     // methods
     addRule(matchRules, METHOD, OVERRIDE);
 
-    for (ArrangementModifier modifier : visibility) {
+    for (ArrangementSettingsToken modifier : visibility) {
       addRule(matchRules, METHOD, modifier);
     }
 
     // event handlers
     addRule(matchRules, EVENT_HANDLER, OVERRIDE);
 
-    for (ArrangementModifier modifier : visibility) {
+    for (ArrangementSettingsToken modifier : visibility) {
       addRule(matchRules, EVENT_HANDLER, modifier);
     }
 
@@ -300,103 +291,88 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
   }
 
   @Override
-  public boolean isEnabled(@NotNull ArrangementEntryType type, @Nullable ArrangementMatchCondition current) {
-    return SUPPORTED_TYPES.contains(type);
-  }
-
-  @Override
-  public boolean isEnabled(@NotNull ArrangementModifier modifier, @Nullable ArrangementMatchCondition current) {
+  public boolean isEnabled(@NotNull ArrangementSettingsToken token, @Nullable ArrangementMatchCondition current) {
+    if (SUPPORTED_TYPES.contains(token) || KEEP.equals(token) || BY_NAME.equals(token) || NAME.equals(token)) {
+      return true;
+    }
+    
+    // Assuming that the token is a modifier then.
     if (current == null) {
-      return SUPPORTED_MODIFIERS.contains(modifier);
+      return SUPPORTED_MODIFIERS.contains(token);
     }
 
-    final Ref<ArrangementEntryType> typeRef = new Ref<ArrangementEntryType>();
-    final Ref<Boolean> staticRef = new Ref<Boolean>(false);
-    final Ref<Boolean> finalRef = new Ref<Boolean>(false);
-    final Ref<Boolean> overrideRef = new Ref<Boolean>(false);
-
-    current.invite(new ArrangementMatchConditionVisitor() {
-      @Override
-      public void visit(@NotNull ArrangementAtomMatchCondition setting) {
-        if (setting.getType() == ArrangementSettingType.TYPE) {
-          typeRef.set((ArrangementEntryType)setting.getValue());
-        }
-        else if (setting.getValue() == STATIC) {
-          staticRef.set(true);
-        }
-        else if (setting.getValue() == FINAL) {
-          finalRef.set(true);
-        }
-        else if (setting.getValue() == OVERRIDE) {
-          overrideRef.set(true);
-        }
-      }
-
-      @Override
-      public void visit(@NotNull ArrangementCompositeMatchCondition setting) {
-        for (ArrangementMatchCondition n : setting.getOperands()) {
-          n.invite(this);
-        }
-      }
-    });
-
-
-    final ArrangementEntryType type = typeRef.get();
+    ArrangementSettingsToken type = ArrangementUtil.parseType(current);
     if (type == null) {
       return true;
     }
 
-    switch (type) {
-      case STATIC_INIT:
-        return false;
-
-      case CONST:
-        // const can also be static/not static, but there's no sense in non-static constants
-        return modifier == PUBLIC || modifier == PROTECTED || modifier == PACKAGE_PRIVATE || modifier == PRIVATE;
-
-      case VAR:
-        return modifier == STATIC || modifier == PUBLIC || modifier == PROTECTED || modifier == PACKAGE_PRIVATE || modifier == PRIVATE;
-
-      case CONSTRUCTOR:
-        return false; // constructor can have visibility modifier, but there's no sense in selecting it 'cuz constructor is only one
-
-      case METHOD:
-      case PROPERTY:
-      case EVENT_HANDLER:
-        if (staticRef.get() && modifier == OVERRIDE) return false;
-        if (overrideRef.get() && modifier == STATIC) return false;
-
-        if (staticRef.get() && modifier == FINAL) return false;
-        if (finalRef.get() && modifier == STATIC) return false;
-
-        return true;
-
-      default:
-        LOG.error(type);
-        return true;
+    if (STATIC_INIT.equals(type)) {
+      return false;
     }
-  }
-
-  @Override
-  public boolean isEnabled(@NotNull ArrangementGroupingType groupingType, @Nullable ArrangementEntryOrderType orderType) {
-    return groupingType == ArrangementGroupingType.GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER && orderType == null;
+    else if (CONST.equals(type)) {
+      // const can also be static/not static, but there's no sense in non-static constants
+      return PUBLIC.equals(token) || PROTECTED.equals(token) || PACKAGE_PRIVATE.equals(token) || PRIVATE.equals(token);
+    }
+    else if (VAR.equals(type)) {
+      return STATIC.equals(token) || PUBLIC.equals(token) || PROTECTED.equals(token) || PACKAGE_PRIVATE.equals(token)
+             || PRIVATE.equals(token);
+    }
+    else if (CONSTRUCTOR.equals(token)) {
+      return false; // constructor can have visibility modifier, but there's no sense in selecting it 'cuz constructor is only one
+    }
+    else if (METHOD.equals(token) || PROPERTY.equals(token) || EVENT_HANDLER.equals(token)) {
+      Set<ArrangementSettingsToken> tokens = ArrangementUtil.extractTokens(current);
+      if (OVERRIDE.equals(token) && tokens.contains(STATIC)) {
+        return false;
+      }
+      else if (STATIC.equals(token) && (tokens.contains(OVERRIDE) || tokens.contains(FINAL))) {
+        return false;
+      }
+      else if (FINAL.equals(token) && tokens.contains(STATIC)) {
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+    else {
+      LOG.error(type);
+      return true;
+    }
   }
 
   @NotNull
   @Override
-  public Collection<Set<?>> getMutexes() {
-    final Collection<Set<?>> result = new ArrayList<Set<?>>();
+  public Collection<Set<ArrangementSettingsToken>> getMutexes() {
+    final Collection<Set<ArrangementSettingsToken>> result = ContainerUtilRt.newArrayList();
 
     result.add(SUPPORTED_TYPES);
-    result.add(EnumSet.of(PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE));
+    result.add(ContainerUtilRt.newHashSet(PUBLIC, PROTECTED, PACKAGE_PRIVATE, PRIVATE));
 
     return result;
   }
 
+  @Nullable
+  @Override
+  public List<CompositeArrangementSettingsToken> getSupportedGroupingTokens() {
+    return Collections.singletonList(new CompositeArrangementSettingsToken(GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER));
+  }
+
+  @Nullable
+  @Override
+  public List<CompositeArrangementSettingsToken> getSupportedMatchingTokens() {
+    return ContainerUtilRt.newArrayList(
+      new CompositeArrangementSettingsToken(TYPE, SUPPORTED_TYPES),
+      new CompositeArrangementSettingsToken(MODIFIER, SUPPORTED_MODIFIERS),
+      new CompositeArrangementSettingsToken(NAME),
+      new CompositeArrangementSettingsToken(ORDER, KEEP, BY_NAME)
+    );
+  }
+
   @NotNull
   @Override
-  public List<Set<ArrangementMatchCondition>> getGroupingConditions() {
-    return Collections.emptyList();
+  public ArrangementEntryMatcher buildMatcher(@NotNull ArrangementMatchCondition condition) throws IllegalArgumentException {
+    throw new IllegalArgumentException("Can't build a matcher for condition " + condition);
   }
 }
 
