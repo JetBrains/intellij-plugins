@@ -7,11 +7,11 @@ import com.intellij.facet.impl.invalid.InvalidFacetManagerImpl;
 import com.intellij.facet.impl.invalid.InvalidFacetType;
 import com.intellij.facet.pointers.FacetPointersManager;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
+import com.intellij.flex.model.bc.OutputType;
 import com.intellij.lang.javascript.flex.build.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationManagerImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexBuildConfigurationState;
-import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkType2;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ApplicationManager;
@@ -224,7 +224,7 @@ public class ConversionParams {
             @Nullable
             @Override
             public String fun(final FlexBuildConfigurationState bcState) {
-              return BCUtils.isApplicableForDependency(dependantNature, bcState.OUTPUT_TYPE) ? bcState.NAME : null;
+              return bcState.OUTPUT_TYPE == OutputType.Library ? bcState.NAME : null;
             }
           });
         }
