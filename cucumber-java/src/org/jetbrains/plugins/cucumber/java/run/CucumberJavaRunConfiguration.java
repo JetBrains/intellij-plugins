@@ -129,7 +129,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
   public void checkConfiguration() throws RuntimeConfigurationException {
     final String[] parameters = getProgramParameters().split(" ");
     if (parameters.length > 0) {
-      final String fileToRun = parameters[0];
+      final String fileToRun = StringUtil.trimEnd(StringUtil.trimStart(parameters[0], "\""), "\"");
       if (!(new File(fileToRun)).exists()) {
         throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.file.doesnt.exist"));
       }
