@@ -75,7 +75,7 @@ public class DartSpacingProcessor {
     if (type2 != SEMICOLON && (parentType == SWITCH_CASE || parentType == DEFAULT_CASE)) {
       return Spacing.createSpacing(0, 0, 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
-    if (type1 == SEMICOLON && parentType == BLOCK) {
+    if (type1 == SEMICOLON && !COMMENTS.contains(type2) && parentType == BLOCK) {
       return addLineBreak();
     }
     if (type1 == STATEMENTS || type2 == STATEMENTS) {
@@ -344,11 +344,15 @@ public class DartSpacingProcessor {
       return addLineBreak();
     }
 
-    if (type1 == LBRACE || type2 == RBRACE || BLOCKS.contains(type1) || FUNCTION_DEFINITION.contains(type1)) {
+    if (type1 == LBRACE || type2 == RBRACE || BLOCKS.contains(type1) || FUNCTION_DEFINITION.contains(type1) || COMMENTS.contains(type1)) {
       return addLineBreak();
     }
 
-    if(KEYWORDS_WITH_SPACE_AFTER.contains(type1) || KEYWORDS_WITH_SPACE_BEFORE.contains(type2)) {
+    if (COMMENTS.contains(type2)) {
+      return Spacing.createSpacing(0, 1, 0, true, mySettings.KEEP_BLANK_LINES_IN_CODE);
+    }
+
+    if (KEYWORDS_WITH_SPACE_AFTER.contains(type1) || KEYWORDS_WITH_SPACE_BEFORE.contains(type2)) {
       return addSingleSpaceIf(true);
     }
 
