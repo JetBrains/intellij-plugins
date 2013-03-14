@@ -85,7 +85,7 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
       return myApplication.runReadAction(new Computable<BundleManifest>() {
         public BundleManifest compute() {
           PsiFile psiFile = PsiManager.getInstance(myModule.getProject()).findFile(manifestFile);
-          if (psiFile == null) {
+          if (!(psiFile instanceof ManifestFile)) {
             // IDEADEV-40349 removed all messageboxes
             return null;
           }
