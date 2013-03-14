@@ -7,11 +7,13 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.TailTypeDecorator;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
-import com.intellij.lang.Language;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PsiElementPattern;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +24,8 @@ import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
@@ -29,11 +33,16 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * @author yole
  */
 public class CucumberCompletionContributor extends CompletionContributor {
-  private static final Set<String> INGORED_MATCHER_TEXT_SET =
-    new HashSet<String>(Arrays.asList("(.*)", "(.+)",
-                                      "(\\d*)", "(\\d+)",
-                                      "([^\"]*)", "([^\"]+)"
-    ));
+  private static final Map<String, String> GROUP_TYPE_MAP = new HashMap<String, String>();
+  static {
+    GROUP_TYPE_MAP.put("(.*)", "<string>");
+    GROUP_TYPE_MAP.put("(.+)", "<string>");
+    GROUP_TYPE_MAP.put("([^\"]*)", "<string>");
+    GROUP_TYPE_MAP.put("([^\"]+)", "<string>");
+    GROUP_TYPE_MAP.put("(\\d*)", "<number>");
+    GROUP_TYPE_MAP.put("(\\d+)", "<number>");
+  }
+
   public static final int SCENARIO_KEYWORD_PRIORITY = 70;
   public static final int SCENARIO_OUTLINE_KEYWORD_PRIORITY = 60;
 
@@ -165,6 +174,10 @@ public class CucumberCompletionContributor extends CompletionContributor {
         if (text.endsWith("$")) {
           text = text.substring(0, text.length() - 1);
         }
+        text = StringUtil.replace(text, "\\\"", "\"");
+        for (Map.Entry<String, String> group : GROUP_TYPE_MAP.entrySet()) {
+          text = StringUtil.replace(text, group.getKey(), group.getValue());
+        }
         result.addElement(LookupElementBuilder.create(text).withInsertHandler(new StepInsertHandler()));
       }
     }
@@ -172,33 +185,31 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
   private static class StepInsertHandler implements InsertHandler<LookupElement> {
     public void handleInsert(final InsertionContext context, LookupElement item) {
-      final Language rx = Language.findLanguageByID("RegExp");
-      if (rx != null) {
-        final PsiFile rxFile = PsiFileFactory.getInstance(context.getProject()).createFileFromText("a", rx, item.getLookupString());
-        final List<TextRange> groupRanges = new ArrayList<TextRange>();
-        rxFile.acceptChildren(new PsiRecursiveElementVisitor() {
-          @Override
-          public void visitElement(PsiElement element) {
-            super.visitElement(element);
-            if (element.toString().startsWith("RegExpGroup")) {
-              groupRanges.add(element.getTextRange());
-            }
+      String stepText2 = item.getLookupString();
+      Pattern pattern = Pattern.compile("(<string>|<number>)");
+      Matcher m = pattern.matcher(stepText2);
+
+      List<TextRange> ranges = new ArrayList<TextRange>();
+      while (m.find()) {
+        String group = m.group(1);
+        if (group != null) {
+          ranges.add(new TextRange(m.start(), m.end()));
+        }
+      }
+
+      if (!ranges.isEmpty()) {
+        final PsiElement element = context.getFile().findElementAt(context.getStartOffset());
+        final GherkinStep step = PsiTreeUtil.getParentOfType(element, GherkinStep.class);
+        if (step != null) {
+          final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(step);
+          int off = context.getStartOffset() - step.getTextRange().getStartOffset();
+          final String stepText = step.getText();
+          for (TextRange groupRange : ranges) {
+            final TextRange shiftedRange = groupRange.shiftRight(off);
+            final String matchedText = shiftedRange.substring(stepText);
+            builder.replaceRange(shiftedRange, matchedText);
           }
-        });
-        if (!groupRanges.isEmpty()) {
-          final PsiElement element = context.getFile().findElementAt(context.getStartOffset());
-          final GherkinStep step = PsiTreeUtil.getParentOfType(element, GherkinStep.class);
-          if (step != null) {
-            final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(step);
-            int off = context.getStartOffset() - step.getTextRange().getStartOffset();
-            final String stepText = step.getText();
-            for (TextRange groupRange : groupRanges) {
-              final TextRange shiftedRange = groupRange.shiftRight(off);
-              final String matchedText = shiftedRange.substring(stepText);
-              builder.replaceRange(shiftedRange, INGORED_MATCHER_TEXT_SET.contains(matchedText) ? "" : matchedText);
-            }
-            builder.run();
-          }
+          builder.run();
         }
       }
     }
