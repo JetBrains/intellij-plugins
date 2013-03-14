@@ -239,9 +239,6 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
 
     // static vars
     for (ArrangementSettingsToken modifier : visibility) {
-      addRule(matchRules, VAR, modifier, STATIC, FINAL);
-    }
-    for (ArrangementSettingsToken modifier : visibility) {
       addRule(matchRules, VAR, modifier, STATIC);
     }
 
@@ -259,9 +256,6 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     addRule(matchRules, CONSTRUCTOR);
 
     // vars
-    for (ArrangementSettingsToken modifier : visibility) {
-      addRule(matchRules, VAR, modifier, FINAL);
-    }
     for (ArrangementSettingsToken modifier : visibility) {
       addRule(matchRules, VAR, modifier);
     }
@@ -317,10 +311,10 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
       return STATIC.equals(token) || PUBLIC.equals(token) || PROTECTED.equals(token) || PACKAGE_PRIVATE.equals(token)
              || PRIVATE.equals(token);
     }
-    else if (CONSTRUCTOR.equals(token)) {
+    else if (CONSTRUCTOR.equals(type)) {
       return false; // constructor can have visibility modifier, but there's no sense in selecting it 'cuz constructor is only one
     }
-    else if (METHOD.equals(token) || PROPERTY.equals(token) || EVENT_HANDLER.equals(token)) {
+    else if (METHOD.equals(type) || PROPERTY.equals(type) || EVENT_HANDLER.equals(type)) {
       Set<ArrangementSettingsToken> tokens = ArrangementUtil.extractTokens(current);
       if (OVERRIDE.equals(token) && tokens.contains(STATIC)) {
         return false;
