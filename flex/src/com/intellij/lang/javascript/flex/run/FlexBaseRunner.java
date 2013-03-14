@@ -71,7 +71,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.StringTokenizer;
@@ -131,14 +130,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         final FlexBuildConfiguration bc = moduleAndConfig.second;
 
         if (bc.getTargetPlatform() == TargetPlatform.Web) {
-          final String outputFilePath = bc.getActualOutputFilePath();
-          try {
-            final String canonicalPath = new File(PathUtil.getParentPath(outputFilePath)).getCanonicalPath();
-            FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), params.isTrusted(), false, canonicalPath);
-          }
-          catch (IOException e) {/**/}
-
-          return launchWebFlexUnit(project, executor, contentToReuse, env, params, outputFilePath);
+          FlashPlayerTrustUtil.updateTrustedStatus(module, bc, isDebug, params.isTrusted());
+          return launchWebFlexUnit(project, executor, contentToReuse, env, params, bc.getActualOutputFilePath());
         }
         else {
           return launchAirFlexUnit(project, executor, state, contentToReuse, env, params);
@@ -160,11 +153,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         }
 
         if (bc.getTargetPlatform() == TargetPlatform.Web && !params.isLaunchUrl()) {
-          try {
-            final String canonicalPath = new File(PathUtil.getParentPath(bc.getActualOutputFilePath())).getCanonicalPath();
-            FlashPlayerTrustUtil.updateTrustedStatus(module.getProject(), params.isRunTrusted(), isDebug, canonicalPath);
-          }
-          catch (IOException e) {/**/}
+          FlashPlayerTrustUtil.updateTrustedStatus(module, bc, isDebug, params.isRunTrusted());
         }
 
         return launchFlexConfig(module, bc, params, executor, state, contentToReuse, env);
@@ -459,7 +448,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       final String adlOptions =
         params instanceof FlashRunnerParameters ? ((FlashRunnerParameters)params).getAdlOptions() : "";
 
-      if (FlexSdkUtils.isAirSdkWithoutFlex(sdk) || StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") >= 0 &&
+      if ((FlexSdkUtils.isAirSdkWithoutFlex(sdk) || StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") >= 0) &&
           FlexCommonUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
         commandLine.addParameter("-profile");
         commandLine.addParameter("extendedDesktop");
