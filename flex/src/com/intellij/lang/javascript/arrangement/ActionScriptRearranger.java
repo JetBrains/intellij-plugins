@@ -292,7 +292,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
 
   @Override
   public boolean isEnabled(@NotNull ArrangementSettingsToken token, @Nullable ArrangementMatchCondition current) {
-    if (SUPPORTED_TYPES.contains(token) || KEEP.equals(token) || BY_NAME.equals(token) || NAME.equals(token)) {
+    if (SUPPORTED_TYPES.contains(token) || KEEP.equals(token) || BY_NAME.equals(token) || StdArrangementTokens.Regexp.NAME.equals(token)) {
       return true;
     }
     
@@ -364,7 +364,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
     return ContainerUtilRt.newArrayList(
       new CompositeArrangementSettingsToken(TYPE, SUPPORTED_TYPES),
       new CompositeArrangementSettingsToken(MODIFIER, SUPPORTED_MODIFIERS),
-      new CompositeArrangementSettingsToken(NAME),
+      new CompositeArrangementSettingsToken(StdArrangementTokens.Regexp.NAME),
       new CompositeArrangementSettingsToken(ORDER, KEEP, BY_NAME)
     );
   }
