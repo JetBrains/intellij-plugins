@@ -88,6 +88,8 @@
         implementation="com.intellij.struts2.reference.StrutsJQueryTreeTaglibReferenceContributor"/>
     <psi.referenceContributor
         implementation="com.intellij.struts2.reference.StrutsJQueryMobileTaglibReferenceContributor"/>
+    <psi.referenceContributor
+        implementation="com.intellij.struts2.reference.StrutsBootstrapTaglibReferenceContributor"/>
 
     <iconProvider implementation="com.intellij.struts2.Struts2IconProvider"/>
     <problemFileHighlightFilter implementation="com.intellij.struts2.Struts2ProblemFileHighlightFilter"/>
