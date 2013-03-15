@@ -54,7 +54,8 @@ public class TaglibJavaScriptInjector implements MultiHostInjector, DumbAware {
                                                  StrutsConstants.TAGLIB_JQUERY_CHART_PLUGIN_URI,
                                                  StrutsConstants.TAGLIB_JQUERY_TREE_PLUGIN_URI,
                                                  StrutsConstants.TAGLIB_JQUERY_GRID_PLUGIN_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_URI
+                                                 StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_BOOTSTRAP_PLUGIN_URI
       ))
       .withLocalName(not(string().oneOf(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES))); // do not mix with CSS
 
