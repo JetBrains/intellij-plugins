@@ -121,4 +121,8 @@ public class RLMsDialog extends RepeatableValueDialog {
 
     return result;
   }
+
+  protected String getHelpId() {
+    return "Runtime-Loaded_Modules_dialog";
+  }
 }

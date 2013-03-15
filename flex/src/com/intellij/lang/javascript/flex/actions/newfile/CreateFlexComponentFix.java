@@ -92,8 +92,9 @@ public class CreateFlexComponentFix extends CreateClassOrInterfaceFix {
 
     MainStep mainStep = new FlexMainStep(model, context, classNameToCreate, packageName, templateName);
     CustomVariablesStep customVariablesStep = new CustomVariablesStep(model);
-    CreateFlashClassWizard w = new CreateFlashClassWizard(
-      FlexBundle.message("new.flex.component.dialog.title"), context.getProject(), model, mainStep, customVariablesStep);
+    CreateFlashClassWizard w =
+      new CreateFlashClassWizard(FlexBundle.message("new.flex.component.dialog.title"), context.getProject(), model,
+                                 "New_MXML_Component_dialog", mainStep, customVariablesStep);
     w.show();
     if (w.getExitCode() != DialogWrapper.OK_EXIT_CODE) return null;
     return model;
