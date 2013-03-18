@@ -315,14 +315,14 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
       return false; // constructor can have visibility modifier, but there's no sense in selecting it 'cuz constructor is only one
     }
     else if (METHOD.equals(type) || PROPERTY.equals(type) || EVENT_HANDLER.equals(type)) {
-      Set<ArrangementSettingsToken> tokens = ArrangementUtil.extractTokens(current);
-      if (OVERRIDE.equals(token) && tokens.contains(STATIC)) {
+      Map<ArrangementSettingsToken, Object> tokens = ArrangementUtil.extractTokens(current);
+      if (OVERRIDE.equals(token) && tokens.keySet().contains(STATIC)) {
         return false;
       }
-      else if (STATIC.equals(token) && (tokens.contains(OVERRIDE) || tokens.contains(FINAL))) {
+      else if (STATIC.equals(token) && (tokens.keySet().contains(OVERRIDE) || tokens.keySet().contains(FINAL))) {
         return false;
       }
-      else if (FINAL.equals(token) && tokens.contains(STATIC)) {
+      else if (FINAL.equals(token) && tokens.keySet().contains(STATIC)) {
         return false;
       }
       else {
