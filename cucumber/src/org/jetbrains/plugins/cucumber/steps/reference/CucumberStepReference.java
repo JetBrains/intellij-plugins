@@ -85,7 +85,7 @@ public class CucumberStepReference implements PsiPolyVariantReference {
     for (CucumberJvmExtensionPoint e : extensionList) {
       final List<PsiElement> extensionResult = e.resolveStep(myStep);
       for (final PsiElement element : extensionResult) {
-        if (!resolvedElements.contains(element)) {
+        if (element != null && !resolvedElements.contains(element)) {
           resolvedElements.add(element);
           result.add(new ResolveResult() {
             @Override
