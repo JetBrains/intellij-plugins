@@ -185,16 +185,13 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
   private static class StepInsertHandler implements InsertHandler<LookupElement> {
     public void handleInsert(final InsertionContext context, LookupElement item) {
-      String stepText2 = item.getLookupString();
-      Pattern pattern = Pattern.compile("(<string>|<number>)");
-      Matcher m = pattern.matcher(stepText2);
+      final String lookupString = item.getLookupString();
+      final Pattern pattern = Pattern.compile("<string>|<number>");
+      final Matcher m = pattern.matcher(lookupString);
 
-      List<TextRange> ranges = new ArrayList<TextRange>();
+      final List<TextRange> ranges = new ArrayList<TextRange>();
       while (m.find()) {
-        String group = m.group(1);
-        if (group != null) {
-          ranges.add(new TextRange(m.start(), m.end()));
-        }
+        ranges.add(new TextRange(m.start(), m.end()));
       }
 
       if (!ranges.isEmpty()) {
