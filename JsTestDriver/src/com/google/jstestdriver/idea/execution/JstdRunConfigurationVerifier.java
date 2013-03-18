@@ -17,13 +17,13 @@ import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -214,7 +214,7 @@ public class JstdRunConfigurationVerifier {
   }
 
   private static void ensureJstdToolWindowRegistered(@NotNull final Project project) {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
       @Override
       public void run() {
         JstdToolWindowManager manager = JstdToolWindowManager.getInstance(project);
@@ -250,7 +250,7 @@ public class JstdRunConfigurationVerifier {
           ServerStartAction.asyncStartServer(new Runnable() {
             @Override
             public void run() {
-              ApplicationManager.getApplication().invokeLater(new Runnable() {
+              UIUtil.invokeLaterIfNeeded(new Runnable() {
                 @Override
                 public void run() {
                   JstdToolWindowManager manager = JstdToolWindowManager.getInstance(myProject);
