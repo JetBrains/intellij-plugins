@@ -43,8 +43,8 @@ public class CucumberCompletionContributor extends CompletionContributor {
     GROUP_TYPE_MAP.put("(\\d+)", "<number>");
   }
 
-  public static final int SCENARIO_KEYWORD_PRIORITY = 70;
-  public static final int SCENARIO_OUTLINE_KEYWORD_PRIORITY = 60;
+  private static final int SCENARIO_KEYWORD_PRIORITY = 70;
+  private static final int SCENARIO_OUTLINE_KEYWORD_PRIORITY = 60;
 
   public CucumberCompletionContributor() {
     final PsiElementPattern.Capture<PsiElement> inScenario = psiElement().inside(psiElement().withElementType(GherkinElementTypes.SCENARIOS));
