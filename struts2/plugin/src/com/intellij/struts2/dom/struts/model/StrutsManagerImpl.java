@@ -61,6 +61,10 @@ public class StrutsManagerImpl extends StrutsManager {
 
   @NotNull
   public Set<StrutsFileSet> getAllConfigFileSets(@NotNull final Module module) {
+    if (module.isDisposed()) {
+      return Collections.emptySet();
+    }
+
     final StrutsFacet facet = StrutsFacet.getInstance(module);
     if (facet != null) {
       return facet.getConfiguration().getFileSets();
