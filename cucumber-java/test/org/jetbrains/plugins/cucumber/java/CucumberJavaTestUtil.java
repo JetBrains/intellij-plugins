@@ -5,5 +5,5 @@ package org.jetbrains.plugins.cucumber.java;
  * Date: 8/9/12
  */
 public class CucumberJavaTestUtil {
-  public static final String RELATED_TEST_DATA_PATH = "\\contrib\\cucumber-java\\testData\\";
+  public static final String RELATED_TEST_DATA_PATH = "/contrib/cucumber-java/testData/";
 }
