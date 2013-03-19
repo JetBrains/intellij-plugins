@@ -52,10 +52,11 @@ public class OgnlTokenGroups implements OgnlTypes {
   // logical ops
   public static final TokenSet LOGICAL_OPS = TokenSet.create(AND_AND, OR_OR);
 
-  public static final TokenSet UNARY_OPS = TokenSet.create(PLUS, MINUS, NEGATE, NOT, NOT_KEYWORD);
+  public static final TokenSet UNARY_OPERATION_SIGNS = TokenSet.create(PLUS, MINUS, NEGATE, NOT);
+  public static final TokenSet UNARY_OPS = TokenSet.orSet(UNARY_OPERATION_SIGNS, TokenSet.create(NOT_KEYWORD));
 
   public static final TokenSet OPERATION_SIGNS = TokenSet.orSet(
-    SHIFT_OPS, ADDITION_OPS, MULTIPLICATION_OPS, EQUALITY_OPS, RELATIONAL_OPS, BITWISE_OPS, LOGICAL_OPS, UNARY_OPS);
+    SHIFT_OPS, ADDITION_OPS, MULTIPLICATION_OPS, EQUALITY_OPS, RELATIONAL_OPS, BITWISE_OPS, LOGICAL_OPS, UNARY_OPERATION_SIGNS);
 
   public static final TokenSet OPERATION_KEYWORDS = TokenSet.create(
     NOT_KEYWORD, NOT_IN_KEYWORD, IN_KEYWORD, INSTANCEOF_KEYWORD,
