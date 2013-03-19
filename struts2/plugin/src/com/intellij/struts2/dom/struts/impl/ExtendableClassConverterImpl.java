@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,6 @@ package com.intellij.struts2.dom.struts.impl;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -88,24 +87,10 @@ public class ExtendableClassConverterImpl extends ExtendableClassConverter {
             return scope;
           }
         };
-    if (extendClass.instantiatable()) {
-      classReferenceProvider.setOption(JavaClassReferenceProvider.INSTANTIATABLE, Boolean.TRUE);
-    }
-    if (!extendClass.allowAbstract()) {
-      classReferenceProvider.setOption(JavaClassReferenceProvider.CONCRETE, Boolean.TRUE);
-    }
-    final boolean allowInterface = extendClass.allowInterface();
-    if (!allowInterface) {
-      classReferenceProvider.setOption(JavaClassReferenceProvider.NOT_INTERFACE, Boolean.TRUE);
-    }
-    if (StringUtil.isNotEmpty(extendClass.value())) {
-      classReferenceProvider.setOption(JavaClassReferenceProvider.EXTEND_CLASS_NAMES,
-                                       new String[]{extendClass.value()});
-    }
-    classReferenceProvider.setSoft(true);
+    PsiClassConverter.createJavaClassReferenceProvider(psiClassGenericDomValue, extendClass, classReferenceProvider);
     PsiReference[] javaClassReferences = classReferenceProvider.getReferencesByElement(element);
 
-
+    final boolean allowInterface = extendClass.allowInterface();
     @NonNls String[] referenceTypes = allowInterface ? new String[]{"class", "interface"} : new String[]{"class"};
 
     // 2. additional resolvers
