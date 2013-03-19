@@ -37,8 +37,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.*;
-import com.intellij.psi.css.descriptor.CssPseudoClassDescriptor;
-import com.intellij.psi.css.descriptor.CssPseudoElementDescriptor;
+import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
 import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.util.references.HtmlCssClassOrIdReference;
@@ -49,6 +48,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlElementDescriptor;
@@ -206,16 +206,10 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return null;
   }
 
-  @Nullable
+  @NotNull
   @Override
-  public CssPseudoElementDescriptor getPseudoElementDescriptor(@NotNull String name) {
-    return null;
-  }
-
-  @Nullable
-  @Override
-  public CssPseudoClassDescriptor getPseudoClassDescriptor(@NotNull String name) {
-    return new CssPseudoSelectorDescriptorStub();
+  public Collection<CssPseudoSelectorDescriptor> getPseudoSelectorDescriptors(@NotNull String name) {
+    return ContainerUtil.<CssPseudoSelectorDescriptor>newArrayList(new CssPseudoSelectorDescriptorStub());
   }
 
   public boolean isPossibleSelector(@NotNull String selector, @NotNull PsiElement context) {
