@@ -247,7 +247,7 @@ public class JstdRunConfigurationVerifier {
       if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
         JstdServerState jstdServerState = JstdServerState.getInstance();
         if (!jstdServerState.isServerRunning()) {
-          ServerStartAction.asyncStartServer(new Runnable() {
+          ServerStartAction.asyncStartServer(myProject, new Runnable() {
             @Override
             public void run() {
               UIUtil.invokeLaterIfNeeded(new Runnable() {
