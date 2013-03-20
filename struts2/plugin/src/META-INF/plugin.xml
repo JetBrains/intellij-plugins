@@ -283,12 +283,11 @@
   </application-components>
 
   <actions>
-    <group id="Struts2.Create.Context.Group" text="Struts 2">
-      <action id="Struts2.Create.StrutsXml"
-              class="com.intellij.struts2.actions.create.CreateStrutsXmlAction"
-              text="Struts Config"/>
+    <action id="Struts2.Create.StrutsXml"
+            class="com.intellij.struts2.actions.create.CreateStrutsXmlAction"
+            text="Struts Config">
       <add-to-group anchor="last" group-id="NewXmlDescriptor"/>
-    </group>
+    </action>
   </actions>
 
 </idea-plugin>
