@@ -289,6 +289,20 @@ public class FlashBuilderProjectLoadUtil {
             }
           }
         }
+
+        //noinspection unchecked
+        for (final Element includeResourcesElement : (Iterable<Element>)flexLibPropertiesElement
+          .getChildren(INCLUDE_RESOURCES_ELEMENT, flexLibPropertiesElement.getNamespace())) {
+          //noinspection unchecked
+          for (final Element resourceEntryElement : (Iterable<Element>)includeResourcesElement
+            .getChildren(RESOURCE_ENTRY_ELEMENT, includeResourcesElement.getNamespace())) {
+
+            final String sourcePath = resourceEntryElement.getAttributeValue(SOURCE_PATH_ATTR);
+            if (!StringUtil.isEmpty(sourcePath)) {
+              project.addFileIncludedInSwc(FileUtil.toSystemIndependentName(sourcePath));
+            }
+          }
+        }
       }
       catch (JDOMException e) {/*ignore*/}
       catch (IOException e) {/*ignore*/}

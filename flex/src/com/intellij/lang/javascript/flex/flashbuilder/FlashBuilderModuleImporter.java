@@ -33,6 +33,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
+import com.intellij.util.Function;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashMap;
@@ -155,20 +156,7 @@ public class FlashBuilderModuleImporter {
 
     mainBC.setOutputFolder(getAbsolutePathWithLinksHandled(fbProject, fbProject.getOutputFolderPath()));
 
-    if (BCUtils.canHaveRLMsAndRuntimeStylesheets(mainBC) && !fbProject.getCssFilesToCompile().isEmpty()) {
-      final Collection<String> cssPaths = new ArrayList<String>();
-      for (final String path : fbProject.getCssFilesToCompile()) {
-        final String cssPath = getAbsolutePathWithLinksHandled(fbProject, path);
-        final VirtualFile cssFile = LocalFileSystem.getInstance().findFileByPath(cssPath);
-        if (cssFile != null) {
-          cssPaths.add(cssFile.getPath());
-        }
-        else if (ApplicationManager.getApplication().isUnitTestMode()) {
-          cssPaths.add(cssPath);
-        }
-      }
-      mainBC.setCssFilesToCompile(cssPaths);
-    }
+    setupRLMsAndCSSFilesToCompile(mainBC, fbProject);
 
     if (sdk != null) {
       mainBC.getDependencies().setSdkEntry(Factory.createSdkEntry(sdk.getName()));
@@ -183,11 +171,46 @@ public class FlashBuilderModuleImporter {
 
     setupDependencies(mainBC, fbProject);
 
-    // todo parse options, replace "-a b" to "-a=b", move some to dedicated fields
     final String fbOptions = fbProject.getAdditionalCompilerOptions();
-    final List<String> locales = FlexCommonUtils.getOptionValues(fbOptions, "locale", "compiler.locale");
+
+    setupLocales(fbOptions, compilerOptions);
+
+    setupNamespacesAndManifests(rootModel, fbProject, compilerOptions);
+
+    setupFilesToIncludeInSwc(rootModel, mainBC, fbProject.getFilesIncludedInSwc());
+
+    mainBC.getCompilerOptions().setAllOptions(compilerOptions);
+
+    // todo parse options, replace "-a b" to "-a=b", move some to dedicated fields
     final String ideaOptions = FlexCommonUtils.removeOptions(fbOptions, "locale", "compiler.locale", "source-path", "compiler.source-path");
     mainBC.getCompilerOptions().setAdditionalOptions(ideaOptions);
+
+    if (mainBC.getOutputType() == OutputType.Application) {
+      FlexModuleBuilder.createRunConfiguration(rootModel.getModule(), mainBC);
+    }
+
+    setupOtherAppsAndModules(rootModel, mainBC, fbProject);
+  }
+
+  private void setupRLMsAndCSSFilesToCompile(final ModifiableFlexBuildConfiguration mainBC, final FlashBuilderProject fbProject) {
+    if (BCUtils.canHaveRLMsAndRuntimeStylesheets(mainBC) && !fbProject.getCssFilesToCompile().isEmpty()) {
+      final Collection<String> cssPaths = new ArrayList<String>();
+      for (final String path : fbProject.getCssFilesToCompile()) {
+        final String cssPath = getAbsolutePathWithLinksHandled(fbProject, path);
+        final VirtualFile cssFile = LocalFileSystem.getInstance().findFileByPath(cssPath);
+        if (cssFile != null) {
+          cssPaths.add(cssFile.getPath());
+        }
+        else if (ApplicationManager.getApplication().isUnitTestMode()) {
+          cssPaths.add(cssPath);
+        }
+      }
+      mainBC.setCssFilesToCompile(cssPaths);
+    }
+  }
+
+  private static void setupLocales(final String fbOptions, final Map<String, String> compilerOptions) {
+    final List<String> locales = FlexCommonUtils.getOptionValues(fbOptions, "locale", "compiler.locale");
 
     final StringBuilder localesBuf = new StringBuilder();
     for (String locale : locales) {
@@ -197,11 +220,11 @@ public class FlashBuilderModuleImporter {
       localesBuf.append(locale);
     }
     compilerOptions.put("compiler.locale", localesBuf.toString());
+  }
 
-    if (mainBC.getOutputType() == OutputType.Application) {
-      FlexModuleBuilder.createRunConfiguration(rootModel.getModule(), mainBC);
-    }
-
+  private void setupNamespacesAndManifests(final ModuleRootModel rootModel,
+                                           final FlashBuilderProject fbProject,
+                                           final Map<String, String> compilerOptions) {
     if (!fbProject.getNamespacesAndManifestPaths().isEmpty()) {
       final StringBuilder nsBuf = new StringBuilder();
       for (Pair<String, String> nsAndManifestPath : fbProject.getNamespacesAndManifestPaths()) {
@@ -225,10 +248,24 @@ public class FlashBuilderModuleImporter {
 
       compilerOptions.put("compiler.namespaces.namespace", nsBuf.toString());
     }
+  }
 
-    mainBC.getCompilerOptions().setAllOptions(compilerOptions);
-
-    setupOtherAppsAndModules(rootModel, mainBC, fbProject);
+  private static void setupFilesToIncludeInSwc(final ModuleRootModel rootModel,
+                                               final ModifiableFlexBuildConfiguration bc,
+                                               final Collection<String> paths) {
+    if (bc.getOutputType() == OutputType.Library) {
+      bc.getCompilerOptions().setFilesToIncludeInSWC(ContainerUtil.mapNotNull(paths, new Function<String, String>() {
+        public String fun(final String path) {
+          for (VirtualFile srcRoot : rootModel.getSourceRoots()) {
+            final VirtualFile assetFile = LocalFileSystem.getInstance().findFileByPath(srcRoot.getPath() + "/" + path);
+            if (assetFile != null) {
+              return assetFile.getPath();
+            }
+          }
+          return null;
+        }
+      }));
+    }
   }
 
   private static void setupTheme(final String themeDirPathRaw,

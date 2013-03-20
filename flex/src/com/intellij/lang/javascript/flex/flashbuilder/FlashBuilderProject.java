@@ -36,6 +36,7 @@ public class FlashBuilderProject {
   private boolean myUseHtmlWrapper = false;
   private Map<String, Collection<String>> myLibraryPathsAndSources = new LinkedHashMap<String, Collection<String>>();
   private Collection<Pair<String, String>> myNamespacesAndManifestPaths = new ArrayList<Pair<String, String>>(1);
+  private Collection<String> myFilesIncludedInSwc = new ArrayList<String>();
   private Collection<FBRLMInfo> myModules = new ArrayList<FBRLMInfo>();
   private Collection<String> myCssFilesToCompile = new ArrayList<String>();
   private Collection<String> myPathsExcludedFromDesktopPackaging = new ArrayList<String>();
@@ -267,6 +268,14 @@ public class FlashBuilderProject {
 
   public Collection<Pair<String, String>> getNamespacesAndManifestPaths() {
     return myNamespacesAndManifestPaths;
+  }
+
+  public void addFileIncludedInSwc(final String path) {
+    myFilesIncludedInSwc.add(path);
+  }
+
+  public Collection<String> getFilesIncludedInSwc() {
+    return myFilesIncludedInSwc;
   }
 
   public void addModule(final FBRLMInfo rlmInfo) {
