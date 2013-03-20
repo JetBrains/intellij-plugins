@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.dom.struts.impl;
 
-import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
@@ -24,11 +24,13 @@ import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.spring.SpringManager;
 import com.intellij.spring.contexts.model.SpringModel;
 import com.intellij.spring.facet.SpringFacet;
+import com.intellij.spring.model.converters.SpringBeanConverterUtil;
 import com.intellij.spring.model.xml.beans.SpringBeanPointer;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.dom.ExtendableClassConverter;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomJavaUtil;
 import com.intellij.util.xml.ExtendClass;
@@ -121,7 +123,6 @@ public class ExtendableClassConverterSpringContributor
     }
 
     @NotNull
-    @SuppressWarnings({"unchecked"})
     public Object[] getVariants() {
       final SpringModel springModel = getSpringModel();
 
@@ -134,24 +135,16 @@ public class ExtendableClassConverterSpringContributor
         list = springModel.getAllCommonBeans();
       }
 
-      final List variants = new ArrayList(list.size());
+      final List<LookupElement> variants = new ArrayList<LookupElement>(list.size());
       for (final SpringBeanPointer bean : list) {
         if (bean.isAbstract()) {
           continue;
         }
 
-        final String beanName = bean.getName();
-        final PsiFile psiFile = bean.getContainingFile();
-
-        if (psiFile != null && StringUtil.isNotEmpty(beanName)) {
-          //noinspection ConstantConditions
-          variants.add(LookupElementBuilder.create(beanName)
-                         .withIcon(bean.getBeanIcon())
-                         .withTailText(" (" + psiFile.getName() + ")", true));
-        }
+        ContainerUtil.addIfNotNull(variants, SpringBeanConverterUtil.createCompletionVariant(bean));
       }
 
-      return ArrayUtil.toObjectArray(variants, LookupElementBuilder.class);
+      return ArrayUtil.toObjectArray(variants, LookupElement.class);
     }
 
     /**

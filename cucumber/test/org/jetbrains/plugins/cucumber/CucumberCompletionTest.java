@@ -16,10 +16,6 @@ public class CucumberCompletionTest extends CucumberCodeInsightTestCase {
     doTestVariants();
   }
 
-  public void testStepWithRegExGroups() throws Throwable {
-    doTestVariants();
-  }
-
   private void doTestVariants() throws Throwable {
     myCompletionTester.doTestVariantsInner(getTestName(false) + ".feature", GherkinFileType.INSTANCE);
   }

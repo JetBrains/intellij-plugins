@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,7 +19,6 @@ import com.intellij.facet.ui.FacetBasedFrameworkSupportProvider;
 import com.intellij.framework.library.DownloadableLibraryService;
 import com.intellij.framework.library.FrameworkSupportWithLibrary;
 import com.intellij.ide.fileTemplates.FileTemplate;
-import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.FileTemplateUtil;
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportConfigurableBase;
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel;
@@ -48,12 +47,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsConstants;
-import com.intellij.struts2.StrutsFileTemplateGroupDescriptorFactory;
+import com.intellij.struts2.StrutsFileTemplateProvider;
 import com.intellij.struts2.facet.ui.StrutsConfigsSearcher;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
-import com.intellij.struts2.facet.ui.StrutsVersionDetector;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.text.VersionComparatorUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -110,21 +107,8 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
           return;
         }
 
-        final String versionName = StrutsVersionDetector.detectStrutsVersion(module);
-
-        String template = StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_0_XML;
-        final boolean is2_1orNewer = VersionComparatorUtil.compare(versionName, "2.1") > 0;
-        final boolean is2_3orNewer = VersionComparatorUtil.compare(versionName, "2.3") > 0;
-        if (is2_3orNewer) {
-          template = StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_3_XML;
-        } else if (is2_1orNewer) {
-          final boolean is2_1_7X = VersionComparatorUtil.compare(versionName, "2.1.7") > 0;
-          template = is2_1_7X ?
-              StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_1_7_XML :
-              StrutsFileTemplateGroupDescriptorFactory.STRUTS_2_1_XML;
-        }
-        final FileTemplateManager fileTemplateManager = FileTemplateManager.getInstance();
-        final FileTemplate strutsXmlTemplate = fileTemplateManager.getJ2eeTemplate(template);
+        final StrutsFileTemplateProvider templateProvider = new StrutsFileTemplateProvider(module);
+        final FileTemplate strutsXmlTemplate = templateProvider.determineFileTemplate();
 
         try {
           final StrutsFacetConfiguration strutsFacetConfiguration = strutsFacet.getConfiguration();
@@ -162,7 +146,7 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
               final Filter strutsFilter = webApp.addFilter();
               strutsFilter.getFilterName().setStringValue("struts2");
 
-              @NonNls final String filterClass = is2_1orNewer ?
+              @NonNls final String filterClass = templateProvider.is21orNewer() ?
                   StrutsConstants.STRUTS_2_1_FILTER_CLASS :
                   StrutsConstants.STRUTS_2_0_FILTER_CLASS;
               strutsFilter.getFilterClass().setStringValue(filterClass);
