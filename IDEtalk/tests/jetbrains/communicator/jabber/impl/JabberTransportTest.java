@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.jabber.impl;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.dispatcher.AsyncMessageDispatcher;
 import jetbrains.communicator.core.impl.users.UserImpl;

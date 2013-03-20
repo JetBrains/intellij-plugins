@@ -19,7 +19,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.impl.ContentImpl;
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.dispatcher.LocalMessageDispatcherImpl;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.mock.MockIDEFacade;

@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.p2p;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.users.UserImpl;
 import jetbrains.communicator.core.users.PresenceMode;
 import jetbrains.communicator.core.users.User;

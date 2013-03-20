@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.core.impl.transport;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserModel;

@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.commands;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.vfs.ProjectsData;
 import jetbrains.communicator.core.vfs.VFile;

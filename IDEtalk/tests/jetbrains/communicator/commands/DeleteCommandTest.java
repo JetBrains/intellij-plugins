@@ -16,7 +16,7 @@
 package jetbrains.communicator.commands;
 
 import com.intellij.util.ArrayUtil;
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.UserListComponent;

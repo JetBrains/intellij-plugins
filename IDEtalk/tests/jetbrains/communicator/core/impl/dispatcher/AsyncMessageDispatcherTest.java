@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.core.impl.dispatcher;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.mock.MockIDEFacade;
 import jetbrains.communicator.mock.MockMessage;

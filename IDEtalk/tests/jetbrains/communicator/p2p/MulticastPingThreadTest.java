@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.p2p;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 
 import java.net.InetAddress;
 

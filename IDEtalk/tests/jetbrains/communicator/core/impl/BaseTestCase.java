@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jetbrains.communicator;
+package jetbrains.communicator.core.impl;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
+import jetbrains.communicator.LightTestCase;
 import jetbrains.communicator.core.*;
-import jetbrains.communicator.core.impl.EventBroadcasterImpl;
 import jetbrains.communicator.core.impl.transport.CodePointerEventProvider;
 import jetbrains.communicator.core.impl.transport.GetProjectsDataProvider;
 import jetbrains.communicator.core.impl.transport.GetVFileContentsProvider;
@@ -44,12 +44,12 @@ import java.util.List;
 /**
  * @author Kir
  */
-@SuppressWarnings({"ALL"})
 public abstract class BaseTestCase extends LightTestCase {
   @NonNls
   private static Logger LOG;
 
   protected static final DataContext NULL_DATA_CONTEXT = new DataContext() {
+    @Override
     public Object getData(String dataId) {
       return null;
     }
@@ -66,11 +66,13 @@ public abstract class BaseTestCase extends LightTestCase {
     super(s);
   }
                         
+  @Override
   protected void setUp() throws Exception {
     super.setUp();
 
     StringUtil.setMyUsername("user_" + getName());
     disposeOnTearDown(new Disposable(){
+      @Override
       public void dispose() {
         StringUtil.setMyUsername(null);
       }
@@ -80,6 +82,7 @@ public abstract class BaseTestCase extends LightTestCase {
     myOptions = Pico.getOptions();
   }
 
+  @Override
   protected void tearDown() throws Exception {
     if (myListener != null) {
       getBroadcaster().removeListener(myListener);
@@ -105,20 +108,21 @@ public abstract class BaseTestCase extends LightTestCase {
 
 
   protected void registerResponseProviders(UserModel userModel, IDEFacade ideFacade) {
-    final XmlResponseProvider providers[] = new XmlResponseProvider[]{
+    final XmlResponseProvider[] providers = {
         new GetVFileContentsProvider(ideFacade, userModel),
         new GetProjectsDataProvider(ideFacade, userModel),
         new CodePointerEventProvider(getBroadcaster()),
         new TextMessageEventProvider(getBroadcaster()),
         new BecomeAvailableXmlMessage()
     };
-    for (int i = 0; i < providers.length; i++) {
-      Pico.getInstance().registerComponentInstance(providers[i]);
+    for (XmlResponseProvider provider : providers) {
+      Pico.getInstance().registerComponentInstance(provider);
     }
     disposeOnTearDown(new Disposable(){
+      @Override
       public void dispose() {
-        for (int i = 0; i < providers.length; i++) {
-          Pico.getInstance().unregisterComponentByInstance(providers[i]);
+        for (XmlResponseProvider provider : providers) {
+          Pico.getInstance().unregisterComponentByInstance(provider);
         }
       }
     });
@@ -128,6 +132,7 @@ public abstract class BaseTestCase extends LightTestCase {
     IDEtalkListener[] listeners = getBroadcasterImpl().getListeners();
     final IDEtalkListener toRemove = listeners[listeners.length - 1];
     disposeOnTearDown(new Disposable() {
+      @Override
       public void dispose() {
         getBroadcaster().removeListener(toRemove);
       }
@@ -135,9 +140,10 @@ public abstract class BaseTestCase extends LightTestCase {
   }
 
   private EventBroadcasterImpl getBroadcasterImpl() {
-    return ((EventBroadcasterImpl) getBroadcaster());
+    return (EventBroadcasterImpl) getBroadcaster();
   }
 
+  @Override
   public void runBare() throws Throwable {
     try {
       Pico.initInTests();
@@ -172,6 +178,7 @@ public abstract class BaseTestCase extends LightTestCase {
 
   protected IDEtalkAdapter createListener() {
     return new IDEtalkAdapter() {
+      @Override
       public void afterChange(IDEtalkEvent event) {
         myEvents.add(event);
       }
@@ -182,7 +189,7 @@ public abstract class BaseTestCase extends LightTestCase {
     if (requireOneEvent) {
       assertEquals(myEvents.toString(), 1, myEvents.size());
     }
-    return (IDEtalkEvent) myEvents.remove(0);
+    return myEvents.remove(0);
   }
 
   protected void verifySendMessageLocalEvent(User user, String message) {
@@ -199,23 +206,19 @@ public abstract class BaseTestCase extends LightTestCase {
   protected static AnActionEvent createActionEvent(Presentation presentation, DataContext dataContext) throws IllegalAccessException, InvocationTargetException, InstantiationException {
     Constructor constructor = AnActionEvent.class.getConstructors()[0];
     if (constructor.getParameterTypes().length == 5) {
-      return (AnActionEvent) constructor.newInstance(new Object[]{
-                null,
-                dataContext,
-                "place",
-                presentation,
-                new Integer(0)
-                });
+      return (AnActionEvent) constructor.newInstance(null,
+                                                     dataContext,
+                                                     "place",
+                                                     presentation,
+                                                     new Integer(0));
     }
     else {
-      return (AnActionEvent) constructor.newInstance(new Object[]{
-                null,
-                dataContext,
-                "place",
-                presentation,
-                null,
-                new Integer(0)
-                });
+      return (AnActionEvent) constructor.newInstance(null,
+                                                     dataContext,
+                                                     "place",
+                                                     presentation,
+                                                     null,
+                                                     new Integer(0));
     }
   }
 }

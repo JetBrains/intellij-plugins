@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.idea.findUsers;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.mock.MockUser;
 

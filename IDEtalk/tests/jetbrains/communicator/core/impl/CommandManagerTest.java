@@ -15,7 +15,6 @@
  */
 package jetbrains.communicator.core.impl;
 
-import jetbrains.communicator.BaseTestCase;
 import jetbrains.communicator.core.commands.UserCommand;
 import jetbrains.communicator.core.Pico;
 import org.picocontainer.MutablePicoContainer;

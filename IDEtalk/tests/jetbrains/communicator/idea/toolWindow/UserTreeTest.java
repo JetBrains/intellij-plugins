@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.idea.toolWindow;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.dispatcher.LocalMessageDispatcherImpl;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
 import jetbrains.communicator.mock.MockIDEFacade;

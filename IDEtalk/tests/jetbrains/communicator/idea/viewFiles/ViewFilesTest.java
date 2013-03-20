@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.idea.viewFiles;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.vfs.ProjectsData;
 import jetbrains.communicator.core.vfs.VFile;
