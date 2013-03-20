@@ -23,8 +23,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.PsiManager;
 import com.jetbrains.python.psi.PyFile;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,19 +40,33 @@ public class SendToMayaAction extends AnAction {
   }
 
   public void actionPerformed(AnActionEvent e) {
-    final String selectionText = getSelectionText(e);
-
     Project p = PlatformDataKeys.PROJECT.getData(e.getDataContext());
 
     if (p != null) {
 
       final int port = getMayaCommandPort(p);
 
+      String selectionText = getSelectionText(e);
+
+      if (selectionText == null) {
+        selectionText = getFileText(e);
+      }
+
       if (selectionText != null && port > 0) {
         SendToMayaCommand c = new SendToMayaCommand(p, selectionText, port);
         c.run();
       }
     }
+  }
+
+  @Nullable
+  private static String getFileText(AnActionEvent e) {
+    PyFile file = getPythonFile(e);
+    if (file != null) {
+      return file.getText();
+    }
+
+    return null;
   }
 
   @Nullable
@@ -63,14 +80,45 @@ public class SendToMayaAction extends AnAction {
   }
 
   public void update(AnActionEvent e) {
-    boolean enabled = !StringUtil.isEmpty(getSelectionText(e)) && isPython(e);
-
     Presentation presentation = e.getPresentation();
+    boolean enabled = false;
+    String selectionText = getSelectionText(e);
+    if (selectionText != null && isPythonEditor(e)) {
+      if (!StringUtil.isEmpty(selectionText)) {
+        enabled = true;
+        presentation.setText("Send selection to Maya");
+      }
+    }
+    else if (isPythonFile(e) || isPythonEditor(e)) {
+      enabled = true;
+      presentation.setText("Send file to Maya");
+    }
+
     presentation.setEnabled(enabled);
     presentation.setVisible(enabled);
   }
 
-  private static boolean isPython(AnActionEvent e) {
+  @Nullable
+  private static PyFile getPythonFile(AnActionEvent e) {
+    VirtualFile vFile = e.getData(PlatformDataKeys.VIRTUAL_FILE);
+    Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
+
+    if (project != null && vFile != null) {
+      final PsiManager psiManager = PsiManager.getInstance(project);
+      PsiFileSystemItem fsItem = vFile.isDirectory() ? psiManager.findDirectory(vFile) : psiManager.findFile(vFile);
+      if (fsItem instanceof PyFile) {
+        return (PyFile)fsItem;
+      }
+    }
+
+    return null;
+  }
+
+  private static boolean isPythonFile(AnActionEvent e) {
+    return getPythonFile(e) != null;
+  }
+
+  private static boolean isPythonEditor(AnActionEvent e) {
     Editor editor = PlatformDataKeys.EDITOR.getData(e.getDataContext());
     Project project = PlatformDataKeys.PROJECT.getData(e.getDataContext());
 

@@ -14,6 +14,8 @@
             text="Send to Maya"
             description="Sends python script or selection to Maya command port">
       <add-to-group group-id="EditorPopupMenu" anchor="before" relative-to-action="CompareClipboardWithSelection"/>
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="CompareTwoFiles"/>
+
       <keyboard-shortcut keymap="$default" first-keystroke="alt shift M"/>
       <keyboard-shortcut keymap="Eclipse" first-keystroke="ctrl alt M" replace-all="true"/>
       <keyboard-shortcut keymap="NetBeans 6.5" first-keystroke="ctrl alt M" replace-all="true"/>

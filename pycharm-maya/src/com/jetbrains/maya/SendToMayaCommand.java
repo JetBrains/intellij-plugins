@@ -3,15 +3,14 @@ package com.jetbrains.maya;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.RunContentExecutor;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
-import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
