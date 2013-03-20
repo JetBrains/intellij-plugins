@@ -96,6 +96,10 @@ public class FlashBuilderProjectLoadUtil {
   private static final String FLEXUNIT_LIB_MACRO = "${FLEXUNIT_LIB_LOCATION}";
   private static final String FLEXUNIT_LOCALE_MACRO = "${FLEXUNIT_LOCALE_LOCATION}";
 
+  private static final String THEME_ELEMENT = "theme";
+  public static final String DEFAULT_THEME_ATTR = "themeIsDefault";
+  private static final String THEME_LOCATION_ATTR = "themeLocation";
+
   private FlashBuilderProjectLoadUtil() {
   }
 
@@ -248,6 +252,10 @@ public class FlashBuilderProjectLoadUtil {
           loadApplications(project, actionScriptPropertiesElement);
           loadModules(project, actionScriptPropertiesElement);
           loadCssFilesToCompile(project, actionScriptPropertiesElement);
+
+          if (!project.isPureActionScript()) {
+            loadTheme(project, actionScriptPropertiesElement);
+          }
         }
       }
       catch (JDOMException e) {/*ignore*/}
@@ -608,6 +616,17 @@ public class FlashBuilderProjectLoadUtil {
         if (!StringUtil.isEmpty(sourcePath)) {
           project.addCssFileToCompile(FileUtil.toSystemIndependentName(sourcePath));
         }
+      }
+    }
+  }
+
+  private static void loadTheme(final FlashBuilderProject project, final Element actionScriptPropertiesElement) {
+    final Element themeElement = actionScriptPropertiesElement.getChild(THEME_ELEMENT, actionScriptPropertiesElement.getNamespace());
+    final String defaultThemeAttr = themeElement == null ? null : themeElement.getAttributeValue(DEFAULT_THEME_ATTR);
+    if (defaultThemeAttr != null && "false".equals(defaultThemeAttr)) {
+      final String themeDirPathRaw = themeElement.getAttributeValue(THEME_LOCATION_ATTR);
+      if (themeDirPathRaw != null) {
+        project.setThemeDirPathRaw(themeDirPathRaw);
       }
     }
   }

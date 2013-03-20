@@ -1,14 +1,14 @@
 package com.intellij.lang.javascript.flex.flashbuilder;
 
 import com.intellij.flex.FlexCommonUtils;
-import com.intellij.flex.model.bc.CompilerOptionInfo;
-import com.intellij.flex.model.bc.LinkageType;
-import com.intellij.flex.model.bc.OutputType;
-import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.flex.model.bc.*;
 import com.intellij.lang.javascript.flex.FlexModuleBuilder;
 import com.intellij.lang.javascript.flex.library.FlexLibraryProperties;
 import com.intellij.lang.javascript.flex.library.FlexLibraryType;
-import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableBuildConfigurationEntry;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableFlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.ModifiableModuleLibraryEntry;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProjectConfigurationEditor;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -26,11 +26,15 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
+import com.intellij.util.SystemProperties;
+import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +48,12 @@ public class FlashBuilderModuleImporter {
   private static final String CORE_RESOURCES_PREFS_REL_PATH =
     "/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.core.resources.prefs";
   private static final String PATHVARIABLE_DOT = "pathvariable.";
+
+  private static final String SDK_THEMES_DIR_MACRO = "${SDK_THEMES_DIR}";
+  private static final String EXTERNAL_THEME_DIR_MACRO = "${EXTERNAL_THEME_DIR}";
+  private static final String EXTERNAL_THEME_DIR_REL_PATH = SystemInfo.isWindows
+                                                            ? "/AppData/Roaming/Adobe/Flash Builder/Themes"
+                                                            : "/Library/Application Support/Adobe/Flash Builder/Themes";
 
   private final Project myIdeaProject;
   private FlexProjectConfigurationEditor myFlexConfigEditor;
@@ -87,46 +97,56 @@ public class FlashBuilderModuleImporter {
     mainBC.setPureAs(fbProject.isPureActionScript());
     mainBC.setOutputType(fbProject.getOutputType());
 
+    final Map<String, String> compilerOptions = new THashMap<String, String>();
+
     if (fbProject.getOutputType() == OutputType.Application) {
       mainBC.setMainClass(fbProject.getMainAppClassName());
 
       final String shortClassName = StringUtil.getShortName(fbProject.getMainAppClassName());
       mainBC.setOutputFileName(shortClassName + ".swf");
 
-      if (targetPlatform == TargetPlatform.Web && fbProject.isUseHtmlWrapper()) {
-        mainBC.setUseHtmlWrapper(true);
-        mainBC.setWrapperTemplatePath(fbProject.getProjectRootPath() + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME);
+      // todo dependencies.setComponentSet();
+
+      if (!mainBC.isPureAs() && fbProject.getThemeDirPathRaw() != null && sdk != null) {
+        setupTheme(fbProject.getThemeDirPathRaw(), mainBC.getNature(), sdk, mainBC.getDependencies().getComponentSet(), compilerOptions);
       }
 
-      if (targetPlatform == TargetPlatform.Desktop) {
-        setupAirDescriptor(mainBC, rootModel);
-        mainBC.getAirDesktopPackagingOptions().setPackageFileName(shortClassName);
-        if (!StringUtil.isEmpty(fbProject.getDesktopCertPath())) {
-          mainBC.getAirDesktopPackagingOptions().getSigningOptions().setUseTempCertificate(false);
-          mainBC.getAirDesktopPackagingOptions().getSigningOptions().setKeystorePath(fbProject.getDesktopCertPath());
-        }
-        FilesToPackageUtil
-          .setupFilesToPackage(mainBC.getAirDesktopPackagingOptions(), fbProject.getPathsExcludedFromDesktopPackaging(), rootModel);
-      }
+      switch (targetPlatform) {
+        case Web:
+          if (fbProject.isUseHtmlWrapper()) {
+            mainBC.setUseHtmlWrapper(true);
+            mainBC.setWrapperTemplatePath(fbProject.getProjectRootPath() + "/" + CreateHtmlWrapperTemplateDialog.HTML_TEMPLATE_FOLDER_NAME);
+          }
+          break;
+        case Desktop:
+          setupAirDescriptor(mainBC, rootModel);
+          mainBC.getAirDesktopPackagingOptions().setPackageFileName(shortClassName);
+          if (!StringUtil.isEmpty(fbProject.getDesktopCertPath())) {
+            mainBC.getAirDesktopPackagingOptions().getSigningOptions().setUseTempCertificate(false);
+            mainBC.getAirDesktopPackagingOptions().getSigningOptions().setKeystorePath(fbProject.getDesktopCertPath());
+          }
+          FilesToPackageUtil
+            .setupFilesToPackage(mainBC.getAirDesktopPackagingOptions(), fbProject.getPathsExcludedFromDesktopPackaging(), rootModel);
+          break;
+        case Mobile:
+          setupAirDescriptor(mainBC, rootModel);
 
-      if (targetPlatform == TargetPlatform.Mobile) {
-        setupAirDescriptor(mainBC, rootModel);
+          mainBC.getAndroidPackagingOptions().setEnabled(fbProject.isAndroidSupported());
+          mainBC.getAndroidPackagingOptions().setPackageFileName(shortClassName);
+          if (!StringUtil.isEmpty(fbProject.getAndroidCertPath())) {
+            mainBC.getAndroidPackagingOptions().getSigningOptions().setUseTempCertificate(false);
+            mainBC.getAndroidPackagingOptions().getSigningOptions().setKeystorePath(fbProject.getAndroidCertPath());
+          }
+          FilesToPackageUtil
+            .setupFilesToPackage(mainBC.getAndroidPackagingOptions(), fbProject.getPathsExcludedFromAndroidPackaging(), rootModel);
 
-        mainBC.getAndroidPackagingOptions().setEnabled(fbProject.isAndroidSupported());
-        mainBC.getAndroidPackagingOptions().setPackageFileName(shortClassName);
-        if (!StringUtil.isEmpty(fbProject.getAndroidCertPath())) {
-          mainBC.getAndroidPackagingOptions().getSigningOptions().setUseTempCertificate(false);
-          mainBC.getAndroidPackagingOptions().getSigningOptions().setKeystorePath(fbProject.getAndroidCertPath());
-        }
-        FilesToPackageUtil
-          .setupFilesToPackage(mainBC.getAndroidPackagingOptions(), fbProject.getPathsExcludedFromAndroidPackaging(), rootModel);
-
-        mainBC.getIosPackagingOptions().setEnabled(fbProject.isIosSupported());
-        mainBC.getIosPackagingOptions().setPackageFileName(shortClassName);
-        mainBC.getIosPackagingOptions().getSigningOptions()
-          .setProvisioningProfilePath(StringUtil.notNullize(fbProject.getIOSProvisioningPath()));
-        mainBC.getIosPackagingOptions().getSigningOptions().setKeystorePath(StringUtil.notNullize(fbProject.getIOSCertPath()));
-        FilesToPackageUtil.setupFilesToPackage(mainBC.getIosPackagingOptions(), fbProject.getPathsExcludedFromIOSPackaging(), rootModel);
+          mainBC.getIosPackagingOptions().setEnabled(fbProject.isIosSupported());
+          mainBC.getIosPackagingOptions().setPackageFileName(shortClassName);
+          mainBC.getIosPackagingOptions().getSigningOptions()
+            .setProvisioningProfilePath(StringUtil.notNullize(fbProject.getIOSProvisioningPath()));
+          mainBC.getIosPackagingOptions().getSigningOptions().setKeystorePath(StringUtil.notNullize(fbProject.getIOSCertPath()));
+          FilesToPackageUtil.setupFilesToPackage(mainBC.getIosPackagingOptions(), fbProject.getPathsExcludedFromIOSPackaging(), rootModel);
+          break;
       }
     }
     else {
@@ -159,12 +179,9 @@ public class FlashBuilderModuleImporter {
       }
     }
 
-    // todo dependencies.setComponentSet();
     // todo dependencies.setFrameworkLinkage();
 
     setupDependencies(mainBC, fbProject);
-
-    final Map<String, String> compilerOptions = new THashMap<String, String>();
 
     // todo parse options, replace "-a b" to "-a=b", move some to dedicated fields
     final String fbOptions = fbProject.getAdditionalCompilerOptions();
@@ -212,6 +229,61 @@ public class FlashBuilderModuleImporter {
     mainBC.getCompilerOptions().setAllOptions(compilerOptions);
 
     setupOtherAppsAndModules(rootModel, mainBC, fbProject);
+  }
+
+  private static void setupTheme(final String themeDirPathRaw,
+                                 final BuildConfigurationNature nature,
+                                 final Sdk sdk,
+                                 final ComponentSet componentSet,
+                                 final Map<String, String> compilerOptions) {
+    String themeDirPath = null;
+
+    if (themeDirPathRaw.startsWith(EXTERNAL_THEME_DIR_MACRO)) {
+      themeDirPath =
+        SystemProperties.getUserHome() + EXTERNAL_THEME_DIR_REL_PATH + themeDirPathRaw.substring(EXTERNAL_THEME_DIR_MACRO.length());
+    }
+    else if (themeDirPathRaw.startsWith(SDK_THEMES_DIR_MACRO)) {
+      themeDirPath = sdk.getHomePath() + themeDirPathRaw.substring(SDK_THEMES_DIR_MACRO.length());
+    }
+
+    if (themeDirPath != null) {
+      final File themeDir = new File(themeDirPath);
+      if (themeDir.isDirectory()) {
+        final String themeFilePath = findThemeFilePath(themeDir);
+        if (themeFilePath != null) {
+          final String themePathWithMacro = themeFilePath.replace(sdk.getHomePath(), CompilerOptionInfo.FLEX_SDK_MACRO);
+
+          if ("${SDK_THEMES_DIR}/frameworks/themes/Halo".equals(themeDirPathRaw)) {
+            compilerOptions.put("compiler.theme", themePathWithMacro);
+          }
+          else if ("${SDK_THEMES_DIR}/frameworks/themes/AeonGraphical".equals(themeDirPathRaw)) {
+            final String haloTheme = CompilerOptionInfo.FLEX_SDK_MACRO + "/frameworks/themes/Halo/halo.swc";
+            compilerOptions.put("compiler.theme", haloTheme + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR + themePathWithMacro);
+          }
+          else {
+            final CompilerOptionInfo themeInfo = CompilerOptionInfo.getOptionInfo("compiler.theme");
+            final String defaultTheme = themeInfo.getDefaultValue(sdk.getVersionString(), nature, componentSet);
+
+            if (defaultTheme.isEmpty()) {
+              compilerOptions.put("compiler.theme", themePathWithMacro);
+            }
+            else {
+              compilerOptions.put("compiler.theme", defaultTheme + CompilerOptionInfo.LIST_ENTRIES_SEPARATOR + themePathWithMacro);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @Nullable
+  private static String findThemeFilePath(final File themeDir) {
+    final String fileName = ContainerUtil.find(themeDir.list(), new Condition<String>() {
+      public boolean value(final String path) {
+        return FileUtilRt.extensionEquals(path, "css") || FileUtilRt.extensionEquals(path, "swc");
+      }
+    });
+    return fileName == null ? null : FileUtil.toSystemIndependentName(themeDir + "/" + fileName);
   }
 
   private static void setupAirDescriptor(final ModifiableFlexBuildConfiguration bc, final ModuleRootModel rootModel) {
