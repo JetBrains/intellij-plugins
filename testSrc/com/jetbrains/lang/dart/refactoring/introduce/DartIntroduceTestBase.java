@@ -1,11 +1,9 @@
 package com.jetbrains.lang.dart.refactoring.introduce;
 
-import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.Consumer;
 import com.jetbrains.lang.dart.ide.refactoring.introduce.DartIntroduceHandler;
@@ -75,9 +73,8 @@ public abstract class DartIntroduceTestBase extends LightCodeInsightFixtureTestC
     String name = getTestName(false);
     myFixture.configureByFile(name + getFileExtension());
     final boolean enabled = myFixture.getEditor().getSettings().isVariableInplaceRenameEnabled();
-    TemplateManagerImpl templateManager = (TemplateManagerImpl)TemplateManager.getInstance(LightPlatformTestCase.getProject());
     try {
-      templateManager.setTemplateTesting(true);
+      TemplateManagerImpl.setTemplateTesting(getProject(), getTestRootDisposable());
       myFixture.getEditor().getSettings().setVariableInplaceRenameEnabled(true);
 
       DartIntroduceHandler handler = createHandler();
@@ -96,7 +93,6 @@ public abstract class DartIntroduceTestBase extends LightCodeInsightFixtureTestC
     }
     finally {
       myFixture.getEditor().getSettings().setVariableInplaceRenameEnabled(enabled);
-      templateManager.setTemplateTesting(false);
     }
   }
 }
