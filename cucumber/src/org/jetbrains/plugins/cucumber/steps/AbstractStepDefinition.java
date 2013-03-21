@@ -26,7 +26,7 @@ public abstract class AbstractStepDefinition {
   private final SmartPsiElementPointer<PsiElement> myElementPointer;
 
   public AbstractStepDefinition(@NotNull final PsiElement element) {
-    myElementPointer = SmartPointerManager.getInstance(element.getProject()).createLazyPointer(element);
+    myElementPointer = SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(element);
   }
 
   public abstract List<String> getVariableNames();
