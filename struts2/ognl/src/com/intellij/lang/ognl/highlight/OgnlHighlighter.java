@@ -104,15 +104,15 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
 
     keys1.put(OgnlTypes.IDENTIFIER, IDENTIFIER);
 
-    SyntaxHighlighterBase.safeMap(keys1, OgnlTokenGroups.KEYWORDS, KEYWORDS);
-    SyntaxHighlighterBase.safeMap(keys1, OgnlTokenGroups.OPERATION_KEYWORDS, KEYWORDS);
+    SyntaxHighlighterBase.fillMap(keys1, OgnlTokenGroups.KEYWORDS, KEYWORDS);
+    SyntaxHighlighterBase.fillMap(keys1, OgnlTokenGroups.OPERATION_KEYWORDS, KEYWORDS);
 
-    SyntaxHighlighterBase.safeMap(keys1, OgnlTokenGroups.OPERATION_SIGNS, OPERATIONS);
+    SyntaxHighlighterBase.fillMap(keys1, OgnlTokenGroups.OPERATION_SIGNS, OPERATIONS);
     keys1.put(OgnlTypes.QUESTION, OPERATIONS);
 
     // literals
-    SyntaxHighlighterBase.safeMap(keys1, OgnlTokenGroups.NUMBERS, NUMBER);
-    SyntaxHighlighterBase.safeMap(keys1, OgnlTokenGroups.TEXT, STRING);
+    SyntaxHighlighterBase.fillMap(keys1, OgnlTokenGroups.NUMBERS, NUMBER);
+    SyntaxHighlighterBase.fillMap(keys1, OgnlTokenGroups.TEXT, STRING);
 
     // string/character escape sequences
     keys1.put(StringEscapesTokenTypes.VALID_STRING_ESCAPE_TOKEN, DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE);
