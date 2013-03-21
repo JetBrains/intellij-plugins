@@ -46,16 +46,27 @@ public class SendToMayaAction extends AnAction {
 
       final int port = getMayaCommandPort(p);
 
-      String selectionText = getSelectionText(e);
+      if (port > 0) {
+        String selectionText = getSelectionText(e);
+        SendToMayaCommand sendCommand = new SendToMayaCommand(p, port);
 
-      if (selectionText == null) {
-        selectionText = getFileText(e);
+        if (selectionText != null) {
+          sendCommand = sendCommand.withSelectionText(selectionText);
+        }
+        else {
+          PyFile file = getPythonFile(e);
+          if (file != null) {
+            sendCommand = sendCommand.withFile(file.getVirtualFile());
+          }
+          else {
+            throw new IllegalStateException();
+          }
+        }
+        sendCommand.run();
       }
-
-      if (selectionText != null && port > 0) {
-        SendToMayaCommand c = new SendToMayaCommand(p, selectionText, port);
-        c.run();
-      }
+    }
+    else {
+      //TODO: specify command port in settings
     }
   }
 

@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.BufferedOutputStream;
 import java.io.PrintWriter;
@@ -20,19 +21,22 @@ public class SendToMayaCommand {
   private static final Logger LOG = Logger.getInstance(SendToMayaCommand.class);
 
   private Project myProject;
-  private final String myScriptText;
+  private String myScriptText = null;
+  private VirtualFile myFile = null;
 
   private final int myPythonCommandPort;
 
   private final static String PY_CMD_TEMPLATE =
     "import traceback\nimport sys\nimport __main__\ntry:\n\texec('''%s''', __main__.__dict__, __main__.__dict__)\nexcept:\n\ttraceback.print_exc()\nsys.stdout.write(%s)";
 
+  private final static String PY_FILE_TEMPLATE =
+    "import traceback\nimport sys\nimport __main__\ntry:\n\texecfile('''%s''', __main__.__dict__, __main__.__dict__)\nexcept:\n\ttraceback.print_exc()\nsys.stdout.write(%s)";
+
   private final static String TERMINATION_STRING = "'%c\\n'%26";
 
 
-  public SendToMayaCommand(Project project, String text, int port) {
+  public SendToMayaCommand(Project project, int port) {
     myProject = project;
-    myScriptText = text;
     myPythonCommandPort = port;
   }
 
@@ -77,11 +81,18 @@ public class SendToMayaCommand {
       try {
         PrintWriter writer = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
 
-        String[] lines = getScriptLines();
-        writeLines(writer, lines);
+        if (myScriptText != null) {
+          String[] lines = getScriptLines();
+          writeLines(writer, lines);
 
-        processHandler.setCommandLine(
-          "Sent " + lines.length + " line" + (lines.length != 1 ? "s" : "") + " to command port " + myPythonCommandPort + "\n");
+          processHandler.setCommandLine(
+            "Sent " + lines.length + " line" + (lines.length != 1 ? "s" : "") + " to command port " + myPythonCommandPort + "\n");
+        }
+        else {
+          writeFile(writer, myFile);
+          processHandler.setCommandLine(
+            "Sent " + myFile.getPath() + " to command port " + myPythonCommandPort + "\n");
+        }
 
         writer.flush();
       }
@@ -103,11 +114,25 @@ public class SendToMayaCommand {
     writer.print(String.format(PY_CMD_TEMPLATE, StringUtil.join(lines, "\n"), TERMINATION_STRING));
   }
 
+  private static void writeFile(PrintWriter writer, VirtualFile file) {
+    writer.print(String.format(PY_FILE_TEMPLATE, file.getPath(), TERMINATION_STRING));
+  }
+
   public String[] getScriptLines() {
     return StringUtil.splitByLines(myScriptText);
   }
 
   public String getTitle() {
     return "Send to Maya";
+  }
+
+  public SendToMayaCommand withSelectionText(String selectionText) {
+    myScriptText = selectionText;
+    return this;
+  }
+
+  public SendToMayaCommand withFile(VirtualFile file) {
+    myFile = file;
+    return this;
   }
 }
