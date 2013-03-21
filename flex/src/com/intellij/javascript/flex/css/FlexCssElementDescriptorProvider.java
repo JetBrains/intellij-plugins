@@ -209,7 +209,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   @NotNull
   @Override
   public Collection<CssPseudoSelectorDescriptor> getPseudoSelectorDescriptors(@NotNull String name) {
-    return ContainerUtil.<CssPseudoSelectorDescriptor>newArrayList(new CssPseudoSelectorDescriptorStub());
+    return ContainerUtil.<CssPseudoSelectorDescriptor>newArrayList(new CssPseudoSelectorDescriptorStub(name));
   }
 
   public boolean isPossibleSelector(@NotNull String selector, @NotNull PsiElement context) {
