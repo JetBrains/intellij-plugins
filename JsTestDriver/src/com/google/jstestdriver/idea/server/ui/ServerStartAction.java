@@ -109,7 +109,7 @@ public class ServerStartAction extends AnAction {
     if (jstdServerState.isServerRunning()) {
       return;
     }
-    setJstdLoggerConfiguration(RunnerMode.DEBUG);
+    setJstdLoggerConfiguration(RunnerMode.TRACE);
     final ServerStartupError serverStartupError;
     try {
       Pair<ServerStartupError, StandardStreamsUtil.CapturedStreams> result = StandardStreamsUtil.captureStandardStreams(
