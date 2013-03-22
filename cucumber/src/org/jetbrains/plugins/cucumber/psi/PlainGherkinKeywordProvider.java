@@ -30,14 +30,7 @@ public class PlainGherkinKeywordProvider implements GherkinKeywordProvider {
     DEFAULT_KEYWORD_TABLE.put(GherkinTokenTypes.STEP_KEYWORD, "Lorsqu'");
     ourKeywordsWithNoSpaceAfter.add("Lorsqu'");
 
-    for (IElementType type : DEFAULT_KEYWORD_TABLE.getTypes()) {
-      final Collection<String> keywords = DEFAULT_KEYWORD_TABLE.getKeywords(type);
-      if (keywords != null) {
-        for (String keyword : keywords) {
-          DEFAULT_KEYWORDS.put(keyword, type);
-        }
-      }
-    }
+    DEFAULT_KEYWORD_TABLE.putAllKeywordsInto(DEFAULT_KEYWORDS);
   }
 
   public Collection<String> getAllKeywords(String language) {
