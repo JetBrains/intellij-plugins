@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,7 +47,7 @@ public class ResultTypeResolvingConverterImpl extends ResultTypeResolvingConvert
       @Override
       public boolean process(final StrutsPackage strutsPackage) {
         results.addAll(strutsPackage.getResultTypes());
-        return false;
+        return true;
       }
     };
 
@@ -77,10 +77,10 @@ public class ResultTypeResolvingConverterImpl extends ResultTypeResolvingConvert
         final ResultType result = ContainerUtil.find(strutsPackage.getResultTypes(), nameCondition);
         if (result != null) {
           resolveResult.set(result);
-          return true;
+          return false;
         }
 
-        return false;
+        return true;
       }
     };
     final StrutsPackageHierarchyWalker walker =

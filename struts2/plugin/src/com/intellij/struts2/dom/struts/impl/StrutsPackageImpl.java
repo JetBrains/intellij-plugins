@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,9 +42,9 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
       public boolean process(final StrutsPackage strutsPackage) {
         if (DomUtil.hasXml(strutsPackage.getNamespace())) {
           result.set(strutsPackage.getNamespace().getStringValue());
-          return true;
+          return false;
         }
-        return false;
+        return true;
       }
     });
     walker.walkUp();
@@ -60,9 +60,9 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
       public boolean process(final StrutsPackage strutsPackage) {
         if (DomUtil.hasXml(strutsPackage.getDefaultClassRef())) {
           result.set(strutsPackage.getDefaultClassRef());
-          return true;
+          return false;
         }
-        return false;
+        return true;
       }
     });
     walker.walkUp();
@@ -80,10 +80,10 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
         for (final ResultType resultType : resultTypes) {
           if (resultType.getDefault().getValue() == Boolean.TRUE) {
             result.set(resultType);
-            return true;
+            return false;
           }
         }
-        return false;
+        return true;
       }
     });
     walker.walkUp();
