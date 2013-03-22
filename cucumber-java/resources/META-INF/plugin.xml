@@ -30,4 +30,7 @@
   <extensions defaultExtensionNs="org.jetbrains.plugins.cucumber.steps">
     <cucumberJvmExtensionPoint implementation="org.jetbrains.plugins.cucumber.java.CucumberJavaExtension"/>
   </extensions>
+  <extensions defaultExtensionNs="cucumber">
+    <KeywordProvider implementation="org.jetbrains.plugins.cucumber.java.psi.JavaGherkinKeywordProvider"/>
+  </extensions>
 </idea-plugin>

@@ -20,15 +20,15 @@ public class CucumberUtil {
   public static final String PREFIX_CHAR = "^";
   public static final String SUFFIX_CHAR = "$";
 
-  private static boolean isAlphabetCharOrSpace(char c) {
-    return 'a' <= c && c <= 'z' || 'A' <= c && c <= 'Z' || c == ' ';
+  public static boolean isAlphabetCharOrSpace(char c) {
+    return Character.isLetterOrDigit(c) || Character.isSpaceChar(c);
   }
 
   /**
    * Approximately checks if cucumber pattern could be matched to list of word prepared from cucumber step call.
    * Method ignores parameters of cucumber step and takes into account only keywords.
    * @param pattern to check
-   * @param wordList word from cucumber step call
+   * @param word word from cucumber step call
    * @return true if pattern could by found by @param word
    */
   public static boolean isPatternRelatedToPartOfName(@Nullable Pattern pattern, @NotNull final String word) {
