@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,8 +15,8 @@
 
 package com.intellij.struts2.dom.struts.strutspackage;
 
-import com.intellij.struts2.dom.FilterCurrentElementInVariantsResolvingConverter;
-import com.intellij.util.xml.ConvertContext;
+import com.intellij.ide.TypePresentationService;
+import com.intellij.util.xml.converters.DelimitedListConverter;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -25,15 +25,20 @@ import org.jetbrains.annotations.Nullable;
  * @author Yann C&eacute;bron
  * @see com.intellij.struts2.dom.struts.strutspackage.StrutsPackage#getExtends()
  */
-public abstract class StrutsPackageExtendsResolveConverter extends FilterCurrentElementInVariantsResolvingConverter<StrutsPackage> {
+public abstract class StrutsPackageExtendsResolveConverter extends DelimitedListConverter<StrutsPackage> {
 
-  public String getErrorMessage(@Nullable final String s, final ConvertContext convertContext) {
-    return "Cannot resolve package '" + s + "'";
+  public StrutsPackageExtendsResolveConverter() {
+    super(", ");
+  }
+
+  @Override
+  protected String getUnresolvedMessage(String value) {
+    return "Cannot resolve " + TypePresentationService.getDefaultTypeName(StrutsPackage.class) + " '" + value + "'";
   }
 
   @Nullable
-  public String toString(@Nullable final StrutsPackage strutsPackage, final ConvertContext context) {
+  @Override
+  protected String toString(@Nullable StrutsPackage strutsPackage) {
     return strutsPackage != null ? strutsPackage.getName().getStringValue() : null;
   }
-
 }

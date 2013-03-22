@@ -4,7 +4,7 @@
     "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
     "http://struts.apache.org/dtds/struts-2.0.dtd">
 
-<!-- <result> "type" including extended package -->
+<!-- <result> "type" including extended packages -->
 <struts>
 
   <package name="extendTest" namespace="/extendTest">
@@ -18,9 +18,15 @@
 
   </package>
 
-  <package name="resultTypeCompletionTestExtendingPackage" extends="extendTest" namespace="/resultTypeCompletionTestExtendingPackage">
+  <package name="anotherPackage" namespace="/anotherPackage" extends="extendTest">
+    <result-types>
+      <result-type name="chain2" class="com.opensymphony.xwork2.ActionChainResult"/>
+    </result-types>
+  </package>
 
-    <!-- one additional type, will be merged with package "extendTest" -->
+  <package name="resultTypeCompletionTestExtendingPackage" extends="anotherPackage" namespace="/resultTypeCompletionTestExtendingPackage">
+
+    <!-- one additional type, will be merged with package "anotherPackage" => "extendTest" -->
     <result-types>
       <result-type name="velocity" class="org.apache.struts2.dispatcher.VelocityResult"/>
     </result-types>

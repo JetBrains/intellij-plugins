@@ -46,7 +46,7 @@ public class StrutsCompletionTest extends StrutsLightHighlightingTestCase {
 
   public void testCompletionVariantsResultTypeExtendingPackage() throws Throwable {
     performCompletionVariantTest("struts-completionvariants-result_type-extending.xml",
-                                 "chain", "dispatcher", "freemarker", "httpheader", "velocity");
+                                 "chain", "chain2", "dispatcher", "freemarker", "httpheader", "velocity");
   }
 
   public void testCompletionVariantsPackageExtends() throws Throwable {
