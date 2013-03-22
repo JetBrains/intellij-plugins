@@ -21,8 +21,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.util.PlatformIcons;
-import icons.JsTestDriverIcons;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -71,7 +70,7 @@ public class ServerStartAction extends AnAction {
           if (callback != null) {
             callback.run();
           }
-          ApplicationManager.getApplication().invokeLater(new Runnable() {
+          UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override
             public void run() {
               localServerStarted();
