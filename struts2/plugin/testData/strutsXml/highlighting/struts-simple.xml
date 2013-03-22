@@ -78,8 +78,10 @@
 
   <!-- "extends" -->
   <package name="extendingPackage" extends="validName3"/>
-  <package name="extendingPackageExtendsInvalid" extends="<error descr="Cannot resolve package 'INVALID_VALUE'">INVALID_VALUE</error>"/>
+  <package name="extendingPackageExtendsInvalid" extends="<error descr="Cannot resolve Struts Package 'INVALID_VALUE'">INVALID_VALUE</error>"/>
 
+  <package name="multiplePackages" extends="emptyName,validName3"/>
+  <package name="multiplePackagesInvalid" extends="emptyName,<error descr="Cannot resolve Struts Package 'INVALID_VALUE'">INVALID_VALUE</error>"/>
 
   <!-- DEFAULT-ACTION-REF  ====================================================================================== -->
 

@@ -17,6 +17,8 @@ package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.util.Processor;
 
+import java.util.List;
+
 /**
  * Walks StrutsPackage hierarchically via {@code "extends"}.
  *
@@ -34,13 +36,24 @@ public class StrutsPackageHierarchyWalker {
   }
 
   public void walkUp() {
-    StrutsPackage currentPackage = start;
-    while (currentPackage != null) {
-      if (!processor.process(currentPackage)) {
-        return;
-      }
-      currentPackage = currentPackage.getExtends().getValue();
-    }
+    walkPackage(start);
   }
 
+  private boolean walkPackage(final StrutsPackage startPackage) {
+    if (!processor.process(startPackage)) {
+      return false;
+    }
+
+    final List<StrutsPackage> extendsList = startPackage.getExtends().getValue();
+    if (extendsList == null) {
+      return true;
+    }
+
+    for (StrutsPackage strutsPackage : extendsList) {
+      if (!walkPackage(strutsPackage)) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
