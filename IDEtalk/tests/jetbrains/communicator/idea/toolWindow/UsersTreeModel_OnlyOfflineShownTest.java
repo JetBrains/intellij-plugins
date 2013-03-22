@@ -17,7 +17,7 @@ package jetbrains.communicator.idea.toolWindow;
 
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ui.tree.TreeUtil;
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.OptionFlag;
 import jetbrains.communicator.core.TestFactory;
 import jetbrains.communicator.core.impl.dispatcher.LocalMessageDispatcherImpl;

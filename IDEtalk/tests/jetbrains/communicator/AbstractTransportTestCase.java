@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator;
 
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.dispatcher.AsyncMessageDispatcherImpl;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
 import jetbrains.communicator.core.transport.Transport;

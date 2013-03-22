@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.jabber.register;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.mock.MockIDEFacade;
 import jetbrains.communicator.util.StringUtil;
 import jetbrains.communicator.util.TextAcceptor;

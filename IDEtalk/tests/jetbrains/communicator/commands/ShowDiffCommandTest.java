@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.commands;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.vfs.VFile;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.mock.MockUser;

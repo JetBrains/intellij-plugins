@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.core.impl.users;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.IDEtalkEvent;
 import jetbrains.communicator.core.IDEtalkListener;
 import jetbrains.communicator.core.TestFactory;

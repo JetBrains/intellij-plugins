@@ -16,7 +16,7 @@
 package jetbrains.communicator.core.impl.users;
 
 import com.intellij.openapi.util.io.FileUtil;
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.TestFactory;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserEvent;

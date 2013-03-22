@@ -16,7 +16,7 @@
 package jetbrains.communicator.core;
 
 import com.intellij.openapi.util.io.FileUtil;
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.commands.CommandManager;
 import jetbrains.communicator.core.impl.CommandManagerImpl;
 import jetbrains.communicator.core.impl.EventBroadcasterImpl;

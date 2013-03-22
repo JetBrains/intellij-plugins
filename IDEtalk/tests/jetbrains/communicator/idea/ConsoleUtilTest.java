@@ -17,7 +17,7 @@ package jetbrains.communicator.idea;
 
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import org.jmock.Mock;
 
 import java.awt.*;

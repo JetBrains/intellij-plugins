@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.commands;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.EventBroadcaster;
 import jetbrains.communicator.core.impl.users.UserImpl;
 import jetbrains.communicator.core.impl.users.UserModelImpl;

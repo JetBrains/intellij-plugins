@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.core.impl.dispatcher;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.dispatcher.LocalMessage;
 import jetbrains.communicator.core.dispatcher.Message;
 import jetbrains.communicator.core.impl.users.UserImpl;

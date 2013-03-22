@@ -16,7 +16,7 @@
 package jetbrains.communicator.jabber.impl;
 
 import com.intellij.openapi.util.io.FileUtil;
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.jabber.AccountInfo;
 import jetbrains.communicator.mock.MockIDEFacade;
 

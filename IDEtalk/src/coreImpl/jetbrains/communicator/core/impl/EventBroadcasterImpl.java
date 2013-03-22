@@ -19,29 +19,35 @@ import jetbrains.communicator.core.EventBroadcaster;
 import jetbrains.communicator.core.IDEtalkEvent;
 import jetbrains.communicator.core.IDEtalkListener;
 import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Kir Maximov
  */
 public class EventBroadcasterImpl implements EventBroadcaster {
   private static final Logger LOG = Logger.getLogger(EventBroadcasterImpl.class);
-  public static final Runnable NO_ACTION = new Runnable() { public void run() { } };
+  public static final Runnable NO_ACTION = new Runnable() { @Override
+                                                            public void run() { } };
 
-  private final List<IDEtalkListener> myListeners = new ArrayList<IDEtalkListener>();
+  private final List<IDEtalkListener> myListeners = new CopyOnWriteArrayList<IDEtalkListener>();
 
-  public synchronized void addListener(IDEtalkListener listener) {
+  @Override
+  public void addListener(IDEtalkListener listener) {
     assert !myListeners.contains(listener);
     myListeners.add(listener);
   }
 
-  public synchronized void removeListener(IDEtalkListener listener) {
+  @Override
+  public void removeListener(IDEtalkListener listener) {
     myListeners.remove(listener);
   }
 
-  public void doChange(IDEtalkEvent event, Runnable action) {
+  @Override
+  public void doChange(@NotNull IDEtalkEvent event, Runnable action) {
     try {
       fireBeforeChange(event);
       action.run();
@@ -50,7 +56,8 @@ public class EventBroadcasterImpl implements EventBroadcaster {
     }
   }
 
-  public void fireEvent(IDEtalkEvent event) {
+  @Override
+  public void fireEvent(@NotNull IDEtalkEvent event) {
     doChange(event, NO_ACTION);
   }
 
@@ -69,13 +76,13 @@ public class EventBroadcasterImpl implements EventBroadcaster {
     }
   }
 
-  /** public for tests */
-  public synchronized IDEtalkListener[] getListeners() {
+  @TestOnly
+  IDEtalkListener[] getListeners() {
     return myListeners.toArray(new IDEtalkListener[myListeners.size()]);
   }
 
-  /** for tests */
-  public synchronized void clearListeners() {
+  @TestOnly
+  void clearListeners() {
     myListeners.clear();
   }
 

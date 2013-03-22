@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.util;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.ide.CanceledException;
 import jetbrains.communicator.ide.ProgressIndicator;
 import jetbrains.communicator.mock.MockIDEFacade;

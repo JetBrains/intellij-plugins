@@ -164,7 +164,7 @@ public abstract class StrutsTaglibReferenceContributorBase extends PsiReferenceC
         and(
             xmlAttributeValue()
                 .withLocalName(attributeName)
-                .withSuperParent(2, xmlTag().withLocalName(string().oneOf(tagNames))),
+                .withSuperParent(2, xmlTag().withLocalName(tagNames)),
             jspElementPattern
            ),
         provider);

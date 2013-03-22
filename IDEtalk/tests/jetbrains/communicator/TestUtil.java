@@ -19,6 +19,7 @@ import jetbrains.communicator.core.EventVisitor;
 import jetbrains.communicator.core.IDEtalkAdapter;
 import jetbrains.communicator.core.IDEtalkEvent;
 import jetbrains.communicator.core.Pico;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.transport.CodePointerEvent;
 import jetbrains.communicator.core.transport.MessageEvent;
 import jetbrains.communicator.core.transport.Transport;

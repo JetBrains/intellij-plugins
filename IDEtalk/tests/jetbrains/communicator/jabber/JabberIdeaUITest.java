@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.jabber;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.ide.StatusToolbar;

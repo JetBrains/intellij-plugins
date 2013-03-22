@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.idea.codePointer;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.transport.CodePointerEvent;
 import jetbrains.communicator.core.transport.EventFactory;
 import jetbrains.communicator.core.vfs.VFile;

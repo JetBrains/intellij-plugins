@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.jabber.impl;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.core.impl.users.UserModelImpl;
 import jetbrains.communicator.jabber.JabberFacade;
 import jetbrains.communicator.jabber.JabberUI;

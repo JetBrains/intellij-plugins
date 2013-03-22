@@ -15,7 +15,7 @@
  */
 package jetbrains.communicator.jabber.impl;
 
-import jetbrains.communicator.BaseTestCase;
+import jetbrains.communicator.core.impl.BaseTestCase;
 import jetbrains.communicator.jabber.ConnectionListener;
 import jetbrains.communicator.jabber.JabberFacade;
 import jetbrains.communicator.jabber.VCardInfo;
@@ -25,7 +25,6 @@ import jetbrains.communicator.util.WaitFor;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jivesoftware.smack.Roster;
-import org.jivesoftware.smack.RosterGroup;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
