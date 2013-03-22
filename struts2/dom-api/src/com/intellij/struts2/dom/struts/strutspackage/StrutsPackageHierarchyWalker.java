@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,7 +36,7 @@ public class StrutsPackageHierarchyWalker {
   public void walkUp() {
     StrutsPackage currentPackage = start;
     while (currentPackage != null) {
-      if (processor.process(currentPackage)) {
+      if (!processor.process(currentPackage)) {
         return;
       }
       currentPackage = currentPackage.getExtends().getValue();

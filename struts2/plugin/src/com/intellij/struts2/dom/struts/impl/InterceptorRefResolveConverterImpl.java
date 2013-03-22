@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,7 +46,7 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
       public boolean process(final StrutsPackage strutsPackage) {
         final List<InterceptorOrStackBase> allInterceptors = getAllInterceptors(strutsPackage);
         results.addAll(allInterceptors);
-        return false;
+        return true;
       }
     };
     final StrutsPackageHierarchyWalker walker =
@@ -75,10 +75,10 @@ public class InterceptorRefResolveConverterImpl extends InterceptorRefResolveCon
         final InterceptorOrStackBase result = ContainerUtil.find(getAllInterceptors(strutsPackage), nameCondition);
         if (result != null) {
           resolveResult.set(result);
-          return true;
+          return false;
         }
 
-        return false;
+        return true;
       }
     };
     final StrutsPackageHierarchyWalker walker =
