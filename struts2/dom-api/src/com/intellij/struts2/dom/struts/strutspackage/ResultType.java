@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,19 +28,22 @@ import org.jetbrains.annotations.NotNull;
  * @author Yann C&eacute;bron
  */
 @Presentation(typeName = "Result Type", provider = Struts2PresentationProvider.class)
+@Stubbed
 public interface ResultType extends DomElement {
 
   @NameValue
   @Required
+  @Stubbed
   @NotNull
   GenericAttributeValue<String> getName();
 
   @Attribute(value = "class")
   @ExtendClass(value = "com.opensymphony.xwork2.Result", allowAbstract = false, allowInterface = false)
   @Convert(ExtendableClassConverter.class)
+  @Stubbed
   @Required
   GenericAttributeValue<PsiClass> getResultTypeClass();
 
+  @Stubbed
   GenericAttributeValue<Boolean> getDefault();
-
 }

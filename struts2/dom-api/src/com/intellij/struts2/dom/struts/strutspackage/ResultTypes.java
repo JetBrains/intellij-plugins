@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,6 +16,7 @@
 package com.intellij.struts2.dom.struts.strutspackage;
 
 import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.Stubbed;
 import com.intellij.util.xml.SubTagList;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,10 +28,12 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @SuppressWarnings({"UnusedDeclaration"})
+@Stubbed
 public interface ResultTypes extends DomElement {
 
   @SubTagList(value = "result-type")
   @NotNull
+  @Stubbed
   List<ResultType> getResultTypes();
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,10 +20,7 @@ import com.intellij.struts2.Struts2PresentationProvider;
 import com.intellij.struts2.dom.StrutsDomConstants;
 import com.intellij.struts2.dom.struts.constant.Constant;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
-import com.intellij.util.xml.DomElement;
-import com.intellij.util.xml.GenericAttributeValue;
-import com.intellij.util.xml.Namespace;
-import com.intellij.util.xml.SubTagList;
+import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +34,7 @@ import java.util.List;
  */
 @SuppressWarnings("UnusedDeclaration")
 @Namespace(StrutsDomConstants.STRUTS_NAMESPACE_KEY)
+@Stubbed
 @Presentation(typeName = "Struts Root", provider = Struts2PresentationProvider.class)
 public interface StrutsRoot extends DomElement {
 
@@ -47,6 +45,7 @@ public interface StrutsRoot extends DomElement {
 
   @SubTagList(value = "package")
   @NotNull
+  @Stubbed
   List<StrutsPackage> getPackages();
 
   @SubTagList(value = "include")
@@ -58,6 +57,7 @@ public interface StrutsRoot extends DomElement {
 
   @SubTagList(value = "constant")
   @NotNull
+  @Stubbed
   List<Constant> getConstants();
 
   @Nullable

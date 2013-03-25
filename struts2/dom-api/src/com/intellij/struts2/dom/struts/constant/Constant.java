@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,20 +20,22 @@ import com.intellij.util.xml.*;
 
 /**
  * {@code <constant>}.
-
+ *
  * @author Yann C&eacute;bron
  */
 @SuppressWarnings({"UnusedDeclaration"})
+@Stubbed
 @Presentation(typeName = "Constant", icon = "AllIcons.Nodes.Parameter")
 public interface Constant extends DomElement {
 
   @NameValue
   @Required
   @Convert(ConstantNameConverter.class)
+  @Stubbed
   GenericAttributeValue<String> getName();
 
   @Required(nonEmpty = false)
   @Convert(ConstantValueConverter.class)
+  @Stubbed
   GenericAttributeValue<String> getValue();
-
 }

@@ -28,7 +28,6 @@ import com.intellij.struts2.facet.ui.StrutsFileSet;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import com.intellij.util.xml.impl.DomApplicationComponent;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +41,7 @@ import java.util.Set;
  */
 public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFixtureTestCase {
 
-  private static final String TEST_DATA_PATH = "/contrib/struts2/plugin/testData/";
+  public static final String TEST_DATA_PATH = "/contrib/struts2/plugin/testData/";
 
   private static final LightProjectDescriptor STRUTS =
     new Struts2ProjectDescriptorBuilder().withStrutsLibrary().withStrutsFacet().build();

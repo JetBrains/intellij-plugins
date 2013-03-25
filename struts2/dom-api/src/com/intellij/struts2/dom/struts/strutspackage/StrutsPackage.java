@@ -33,6 +33,7 @@ import java.util.List;
  */
 @SuppressWarnings({"UnusedDeclaration"})
 @Namespace(StrutsDomConstants.STRUTS_NAMESPACE_KEY)
+@Stubbed
 @Presentation(typeName = "Struts Package", provider = Struts2PresentationProvider.class)
 public interface StrutsPackage extends CommonDomModelElement {
 
@@ -40,14 +41,17 @@ public interface StrutsPackage extends CommonDomModelElement {
 
   @NameValue
   @Required
+  @Stubbed
   GenericAttributeValue<String> getName();
 
   @Convert(StrutsPackageExtendsResolveConverter.class)
+  @Stubbed
   GenericAttributeValue<List<StrutsPackage>> getExtends();
 
   GenericAttributeValue<Boolean> getAbstract();
 
   @Required(value = false, nonEmpty = true)
+  @Stubbed
   GenericAttributeValue<String> getNamespace();
 
   GenericAttributeValue<Boolean> getStrictMethodInvocation();

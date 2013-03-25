@@ -38,6 +38,7 @@
     <orderEntry type="module" module-name="jsp-spi" />
     <orderEntry type="module" module-name="ognl" />
     <orderEntry type="module" module-name="css-api" />
+    <orderEntry type="module" module-name="dom-tests" scope="TEST" />
   </component>
 </module>
 
