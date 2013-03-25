@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -84,7 +84,7 @@ public class Struts2PresentationProvider extends PresentationProvider {
     if (o instanceof ResultType) {
       final ResultType resultType = (ResultType) o;
       final GenericAttributeValue<Boolean> resultTypeDefault = resultType.getDefault();
-      if (resultTypeDefault != null &&
+      if (DomUtil.hasXml(resultTypeDefault) &&
           resultTypeDefault.getValue() == Boolean.TRUE) {
         return StrutsIcons.RESULT_TYPE_DEFAULT;
       }
