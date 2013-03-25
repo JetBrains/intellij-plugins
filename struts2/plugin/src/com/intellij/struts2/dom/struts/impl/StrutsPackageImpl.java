@@ -17,6 +17,11 @@ package com.intellij.struts2.dom.struts.impl;
 
 import com.intellij.javaee.model.xml.impl.BaseImpl;
 import com.intellij.openapi.util.Ref;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
+import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.struts2.dom.struts.strutspackage.DefaultClassRef;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
@@ -71,27 +76,45 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
     return result.get();
   }
 
+  private CachedValue<ResultType> myCachedDefaultResultType;
+
   @Nullable
   public ResultType searchDefaultResultType() {
-    final Ref<ResultType> result = new Ref<ResultType>();
-    final StrutsPackageHierarchyWalker walker = new StrutsPackageHierarchyWalker(this, new Processor<StrutsPackage>() {
-      @Override
-      public boolean process(final StrutsPackage strutsPackage) {
-        final List<ResultType> resultTypes = strutsPackage.getResultTypes();
-        for (final ResultType resultType : resultTypes) {
-          final GenericAttributeValue<Boolean> defaultAttribute = resultType.getDefault();
-          if (DomUtil.hasXml(defaultAttribute) &&
-              defaultAttribute.getValue() == Boolean.TRUE) {
-            result.set(resultType);
-            return false;
-          }
-        }
-        return true;
+    if (myCachedDefaultResultType == null) {
+      final PsiFile containingFile = getContainingFile();
+      if (containingFile == null) {
+        return null;
       }
-    });
-    walker.walkUp();
 
-    return result.get();
+      myCachedDefaultResultType = CachedValuesManager.getManager(containingFile.getProject()).createCachedValue(
+        new CachedValueProvider<ResultType>() {
+          @Nullable
+          @Override
+          public Result<ResultType> compute() {
+            final Ref<ResultType> result = new Ref<ResultType>();
+            final StrutsPackageHierarchyWalker walker =
+              new StrutsPackageHierarchyWalker(StrutsPackageImpl.this, new Processor<StrutsPackage>() {
+                @Override
+                public boolean process(final StrutsPackage strutsPackage) {
+                  final List<ResultType> resultTypes = strutsPackage.getResultTypes();
+                  for (final ResultType resultType : resultTypes) {
+                    final GenericAttributeValue<Boolean> defaultAttribute = resultType.getDefault();
+                    if (DomUtil.hasXml(defaultAttribute) &&
+                        defaultAttribute.getValue() == Boolean.TRUE) {
+                      result.set(resultType);
+                      return false;
+                    }
+                  }
+                  return true;
+                }
+              });
+            walker.walkUp();
+
+            return Result.createSingleDependency(result.get(), PsiModificationTracker.MODIFICATION_COUNT);
+          }
+        }, false);
+    }
+
+    return myCachedDefaultResultType.getValue();
   }
-
 }
