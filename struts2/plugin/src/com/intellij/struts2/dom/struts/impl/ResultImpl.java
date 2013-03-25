@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,8 @@ import com.intellij.psi.PsiClass;
 import com.intellij.struts2.dom.struts.action.Result;
 import com.intellij.struts2.dom.struts.strutspackage.ResultType;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
+import com.intellij.util.xml.DomUtil;
+import com.intellij.util.xml.GenericAttributeValue;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -35,13 +37,12 @@ public abstract class ResultImpl implements Result {
 
   @Nullable
   public ResultType getEffectiveResultType() {
-    final ResultType resultType = getType().getValue();
-    if (resultType != null) {
-      return resultType;
+    final GenericAttributeValue<ResultType> typeAttribute = getType();
+    if (DomUtil.hasXml(typeAttribute)) {
+      return typeAttribute.getValue();
     }
 
     final StrutsPackage strutsPackage = getParentOfType(StrutsPackage.class, true);
     return strutsPackage != null ? strutsPackage.searchDefaultResultType() : null;
   }
-
 }
