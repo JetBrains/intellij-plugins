@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -252,5 +252,17 @@ public final class StrutsConstants {
    */
   @NonNls
   public static final String TAGLIB_JQUERY_MOBILE_PLUGIN_PREFIX = "sjm";
+
+  /**
+   * Struts bootstrap-plugin taglib URI.
+   */
+  @NonNls
+  public static final String TAGLIB_BOOTSTRAP_PLUGIN_URI = "/struts-bootstrap-tags";
+
+  /**
+   * Struts bootstrap-plugin taglib default prefix.
+   */
+  @NonNls
+  public static final String TAGLIB_BOOTSTRAP_PLUGIN_PREFIX = "sb";
 
 }

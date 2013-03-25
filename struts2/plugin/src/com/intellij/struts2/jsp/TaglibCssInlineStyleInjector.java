@@ -53,7 +53,8 @@ public class TaglibCssInlineStyleInjector implements MultiHostInjector, DumbAwar
                                                  StrutsConstants.TAGLIB_JQUERY_CHART_PLUGIN_URI,
                                                  StrutsConstants.TAGLIB_JQUERY_TREE_PLUGIN_URI,
                                                  StrutsConstants.TAGLIB_JQUERY_GRID_PLUGIN_URI,
-                                                 StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_URI
+                                                 StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_URI,
+                                                 StrutsConstants.TAGLIB_BOOTSTRAP_PLUGIN_URI
       ))
       .withLocalName(StrutsConstants.TAGLIB_STRUTS_UI_CSS_ATTRIBUTES);
 

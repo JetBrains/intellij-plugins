@@ -88,6 +88,8 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
                          StrutsConstants.TAGLIB_JQUERY_GRID_PLUGIN_URI, StrutsConstants.TAGLIB_JQUERY_GRID_PLUGIN_PREFIX);
     installTaglibSupport(result, module,
                          StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_URI, StrutsConstants.TAGLIB_JQUERY_MOBILE_PLUGIN_PREFIX);
+    installTaglibSupport(result, module,
+                         StrutsConstants.TAGLIB_BOOTSTRAP_PLUGIN_URI, StrutsConstants.TAGLIB_BOOTSTRAP_PLUGIN_PREFIX);
 
     final Processor<Action> processor = new Processor<Action>() {
       @Override
