@@ -27,6 +27,6 @@ public class CucumberJavaStepDefClassIsPublicInspectionTest extends CucumberJava
 
   @Override
   protected String getBasePath() {
-    return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "inspections\\stepDefClassIsPublic";
+    return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "inspections/stepDefClassIsPublic";
   }
 }
