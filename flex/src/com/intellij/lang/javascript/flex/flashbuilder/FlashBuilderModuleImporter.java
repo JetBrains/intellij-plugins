@@ -28,6 +28,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryTableBase;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -38,6 +39,7 @@ import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -508,20 +510,67 @@ public class FlashBuilderModuleImporter {
     final String sourcePath = getAbsolutePathWithLinksHandled(fbProject, rawSourcePath);
     final String sourceUrl = VfsUtilCore.pathToUrl(sourcePath);
     if (FileUtil.isAncestor(new File(VfsUtilCore.urlToPath(mainContentEntryUrl)), new File(VfsUtilCore.urlToPath(sourceUrl)), false)) {
-      mainContentEntry.addSourceFolder(sourceUrl, false);
+      addSourceRoot(mainContentEntry, sourceUrl);
     }
     else {
       for (final ContentEntry otherContentEntry : otherContentEntries) {
         if (FileUtil.isAncestor(new File(VfsUtilCore.urlToPath(mainContentEntryUrl)), new File(VfsUtilCore.urlToPath(sourceUrl)), false)) {
-          otherContentEntry.addSourceFolder(sourceUrl, false);
+          addSourceRoot(otherContentEntry, sourceUrl);
           return;
         }
       }
 
       final ContentEntry newContentEntry = rootModel.addContentEntry(sourceUrl);
-      newContentEntry.addSourceFolder(sourceUrl, false);
+      addSourceRoot(newContentEntry, sourceUrl);
       otherContentEntries.add(newContentEntry);
     }
+  }
+
+  private static void addSourceRoot(final ContentEntry contentEntry, final String sourceUrl) {
+    final VirtualFile srcDir = LocalFileSystem.getInstance().findFileByPath(VfsUtilCore.urlToPath(sourceUrl));
+
+    final Ref<Boolean> testClassesFound = Ref.create(false);
+    final Ref<Boolean> nonTestClassesFound = Ref.create(false);
+
+    if (srcDir != null && !"src".equals(srcDir.getName())) {
+      VfsUtilCore.visitChildrenRecursively(srcDir, new VirtualFileVisitor() {
+        @NotNull
+        public Result visitFileEx(@NotNull final VirtualFile file) {
+          if (nonTestClassesFound.get()) {
+            return SKIP_CHILDREN;
+          }
+
+          if (file.isDirectory()) {
+            if ("flexUnitTests".equals(file.getName())) {
+              testClassesFound.set(true);
+              return SKIP_CHILDREN;
+            }
+
+            return CONTINUE;
+          }
+          else {
+            final String ext = StringUtil.notNullize(file.getExtension()).toLowerCase();
+
+            if ("mxml".equals(ext) || "fxg".equals(ext)) {
+              nonTestClassesFound.set(true);
+            }
+            else if ("as".equals(ext)) {
+              if (file.getNameWithoutExtension().endsWith("Test") || file.getName().contains("Test") && file.getName().contains("Suite")) {
+                testClassesFound.set(true);
+              }
+              else {
+                nonTestClassesFound.set(true);
+              }
+            }
+
+            return CONTINUE;
+          }
+        }
+      });
+    }
+
+    final boolean isTest = testClassesFound.get() && !nonTestClassesFound.get();
+    contentEntry.addSourceFolder(sourceUrl, isTest);
   }
 
   private void setupDependencies(final ModifiableFlexBuildConfiguration bc, final FlashBuilderProject fbProject) {
