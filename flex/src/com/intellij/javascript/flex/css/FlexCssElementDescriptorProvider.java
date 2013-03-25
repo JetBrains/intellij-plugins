@@ -418,7 +418,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   @NotNull
-  private static PsiElement[] getDeclarationsForSimpleSelector(@NotNull String className, @NotNull PsiElement context) {
+  private static PsiElement[] getDeclarationsForSimpleSelector(@NotNull String className, @Nullable PsiElement context) {
     Collection<JSQualifiedNamedElement> elements = getClasses(className, context);
     if (elements != null && elements.size() > 0) {
       List<PsiElement> result = new ArrayList<PsiElement>();
@@ -442,7 +442,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return false;
   }
 
-  public String generateDocForSelector(@NotNull String selectorName, @NotNull PsiElement context) {
+  public String generateDocForSelector(@NotNull String selectorName, @Nullable PsiElement context) {
     PsiElement[] declarations = getDeclarationsForSimpleSelector(selectorName, context);
     JSClass[] classes = new JSClass[declarations.length];
     for (int i = 0; i < declarations.length; i++) {
