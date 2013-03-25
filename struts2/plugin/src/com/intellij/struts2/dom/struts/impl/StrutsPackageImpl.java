@@ -23,6 +23,7 @@ import com.intellij.struts2.dom.struts.strutspackage.StrutsPackage;
 import com.intellij.struts2.dom.struts.strutspackage.StrutsPackageHierarchyWalker;
 import com.intellij.util.Processor;
 import com.intellij.util.xml.DomUtil;
+import com.intellij.util.xml.GenericAttributeValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,7 +79,9 @@ public abstract class StrutsPackageImpl extends BaseImpl implements StrutsPackag
       public boolean process(final StrutsPackage strutsPackage) {
         final List<ResultType> resultTypes = strutsPackage.getResultTypes();
         for (final ResultType resultType : resultTypes) {
-          if (resultType.getDefault().getValue() == Boolean.TRUE) {
+          final GenericAttributeValue<Boolean> defaultAttribute = resultType.getDefault();
+          if (DomUtil.hasXml(defaultAttribute) &&
+              defaultAttribute.getValue() == Boolean.TRUE) {
             result.set(resultType);
             return false;
           }
