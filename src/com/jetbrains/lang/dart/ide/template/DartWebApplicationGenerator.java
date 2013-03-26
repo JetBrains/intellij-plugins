@@ -47,6 +47,8 @@ public class DartWebApplicationGenerator extends WebProjectTemplate {
       @Override
       public void run() {
         try {
+          baseDir.createChildDirectory(this, "web");
+          baseDir.createChildDirectory(this, "lib");
           VirtualFile pubspec = baseDir.createChildData(this, "pubspec.yaml");
           pubspec.setBinaryContent(("name: " + module.getName() + "\n" +
                                     "dependencies:\n" +
