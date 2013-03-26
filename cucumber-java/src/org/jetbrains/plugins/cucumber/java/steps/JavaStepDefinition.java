@@ -1,9 +1,6 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
-import com.intellij.psi.PsiParameter;
+import com.intellij.psi.*;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
@@ -26,11 +23,12 @@ public class JavaStepDefinition extends AbstractStepDefinition {
     if (stepAnnotation.getParameterList().getAttributes().length > 0) {
       final PsiElement annotationValue = stepAnnotation.getParameterList().getAttributes()[0].getValue();
       if (annotationValue != null) {
-        final PsiElement patternLiteral = annotationValue.getFirstChild();
-        if (patternLiteral != null) {
-          final String patternContainer = patternLiteral.getText();
-          if (patternContainer.length() > 1) {
-            pattern =  patternContainer.substring(1, patternContainer.length() - 1).replace("\\\\", "\\").replace("\\\"", "\"");
+        final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(method.getProject()).getConstantEvaluationHelper();
+        final Object constantValue = evaluationHelper.computeConstantExpression(annotationValue, false);
+        if (constantValue != null) {
+          String patternText = constantValue.toString();
+          if (patternText.length() > 1) {
+            pattern = patternText.substring(1, patternText.length() - 1).replace("\\\\", "\\").replace("\\\"", "\"");
           }
         }
       }
