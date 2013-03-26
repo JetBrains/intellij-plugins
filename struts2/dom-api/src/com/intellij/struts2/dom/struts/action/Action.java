@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,6 +35,7 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 @SuppressWarnings("UnusedDeclaration")
+@Stubbed
 @Presentation(typeName = "Struts Action", icon = "Struts2Icons.Action")
 public interface Action extends ParamsElement {
 
@@ -47,6 +48,7 @@ public interface Action extends ParamsElement {
   @Referencing(value = ActionNameCustomReferenceConverter.class, soft = true)
   @Attribute(value = "name")
   @NameValue
+  @Stubbed
   @Required(nonEmpty = true)
   @NotNull
   GenericAttributeValue<String> getName();
@@ -54,6 +56,7 @@ public interface Action extends ParamsElement {
   @Attribute(value = "class")
   @Convert(ExtendableClassConverter.class)
   @ExtendClass(allowAbstract = false, allowInterface = false, instantiatable = false)
+  @Stubbed
   GenericAttributeValue<PsiClass> getActionClass();
 
   @Attribute(value = "method")

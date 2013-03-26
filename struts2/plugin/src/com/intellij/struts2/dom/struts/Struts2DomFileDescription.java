@@ -51,6 +51,6 @@ public class Struts2DomFileDescription extends DomFileDescription<StrutsRoot> {
 
   @Override
   public int getStubVersion() {
-    return 0;
+    return 1;
   }
 }

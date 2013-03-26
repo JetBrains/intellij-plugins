@@ -47,6 +47,9 @@ public class StrutsDomStubTest extends DomStubTest {
                   "      Element:struts namespace:result-types\n" +
                   "        Element:result-type\n" +
                   "          Attribute:name:resultType\n" +
-                  "          Attribute:class:MyClass\n");
+                  "          Attribute:class:MyClass\n" +
+                  "      Element:struts namespace:action\n" +
+                  "        Attribute:name:action\n" +
+                  "        Attribute:class:MyActionClass\n");
   }
 }

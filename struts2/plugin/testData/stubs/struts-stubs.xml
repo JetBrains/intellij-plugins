@@ -13,6 +13,9 @@
     <result-types>
       <result-type name="resultType" class="MyClass"/>
     </result-types>
+    
+    <action name="action" class="MyActionClass"/>
+    
   </package>
 
 </struts>
