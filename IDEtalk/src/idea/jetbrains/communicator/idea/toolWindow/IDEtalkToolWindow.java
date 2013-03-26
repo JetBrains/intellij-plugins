@@ -15,9 +15,11 @@
  */
 package jetbrains.communicator.idea.toolWindow;
 
+import com.intellij.ide.actions.ContextHelpAction;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.InvalidDataException;
@@ -122,18 +124,19 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
 
     StatusToolbar statusToolbar = ((StatusToolbar) myContainer.getComponentInstanceOfType(StatusToolbar.class));
 
-    ActionGroup toolbarActions = (ActionGroup) myActionManager.getAction("IDEtalk");
+    DefaultActionGroup toolbarActions = new DefaultActionGroup();
+    ActionGroup actions = (ActionGroup)myActionManager.getAction("IDEtalk");
+    if (actions != null) {
+      toolbarActions.addAll(actions);
+    }
+    toolbarActions.add(new ContextHelpAction("reference.toolWindows.idetalk"));
+
     ActionGroup treeActions = (ActionGroup) myActionManager.getAction("IDEtalk_Tree");
 
     JPanel toolbarPanel = new JPanel();
     toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.X_AXIS));
-
-    toolbarActions = buildToolbarActions(toolbarPanel, toolbarActions);
-
-    if (toolbarActions != null) {
-      JComponent toolbar = createToolbar(toolbarActions).getComponent();
-      toolbarPanel.add(toolbar);
-    }
+    toolbarPanel.add(DropDownButton.wrap(new DropDownButton(new FindUsersAction(), IconUtil.getAddIcon())));
+    toolbarPanel.add(createToolbar(toolbarActions).getComponent());
 
     toolbarPanel.add(Box.createHorizontalStrut(10));
     toolbarPanel.add(new SeparatorComponent(JBColor.LIGHT_GRAY, SeparatorOrientation.VERTICAL));
@@ -169,12 +172,6 @@ public class IDEtalkToolWindow extends BaseToolWindow implements JDOMExternaliza
     final ActionToolbar toolbar = myActionManager.createActionToolbar(PLACE_TOOLBAR, toolbarActions, true);
     toolbar.setLayoutPolicy(ActionToolbar.NOWRAP_LAYOUT_POLICY);
     return toolbar;
-  }
-
-  private ActionGroup buildToolbarActions(JPanel toolbarPanel, ActionGroup toolbarActions) {
-    FindUsersAction findUsersAction = new FindUsersAction();
-    toolbarPanel.add(DropDownButton.wrap(new DropDownButton(findUsersAction, IconUtil.getAddIcon())));
-    return toolbarActions;
   }
 
   protected ToolWindowAnchor getAnchor() {
