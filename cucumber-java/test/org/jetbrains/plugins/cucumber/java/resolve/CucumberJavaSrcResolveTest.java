@@ -8,4 +8,8 @@ public class CucumberJavaSrcResolveTest extends BaseCucumberJavaResolveTest {
   public void testNavigationToSrc() throws Exception {
     doTest("stepResolve_03", "tes<caret>t \"test\"", "test");
   }
+
+  public void testResolveToStepWithStringConcatenation() throws Exception {
+    doTest("stepResolveStringConcatenation", "subt<caret>ract", "I_subtract_from");
+  }
 }
