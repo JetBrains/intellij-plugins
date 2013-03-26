@@ -4,6 +4,7 @@ import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
@@ -55,7 +56,8 @@ public class DartUnresolvedImportInspection extends LocalInspectionTool {
       root.acceptChildren(new DartRecursiveVisitor(){
         @Override
         public void visitPathOrLibraryReference(@NotNull DartPathOrLibraryReference pathOrLibraryReference) {
-          if (URLUtil.containsScheme(pathOrLibraryReference.getText())) {
+          String pathOrLibraryReferenceText = StringUtil.unquoteString(pathOrLibraryReference.getText());
+          if (URLUtil.containsScheme(pathOrLibraryReferenceText) || !pathOrLibraryReferenceText.endsWith(".dart")) {
             return;
           }
           for (PsiReference reference : pathOrLibraryReference.getReferences()) {
