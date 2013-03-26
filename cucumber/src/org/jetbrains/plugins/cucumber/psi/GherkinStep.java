@@ -17,8 +17,6 @@ public interface GherkinStep extends GherkinPsiElement, GherkinSuppressionHolder
   ASTNode getKeyword();
   String getStepName();
 
-  String getStepNameWithParameters();
-
   @Nullable
   GherkinTable getTable();
 

@@ -4,5 +4,6 @@ Feature: test completion priority for Scenario keywords
 BASIC 1 EQUALS
 Scenario:
 Scenario Outline:
+Scenario Template:
 Background:
 

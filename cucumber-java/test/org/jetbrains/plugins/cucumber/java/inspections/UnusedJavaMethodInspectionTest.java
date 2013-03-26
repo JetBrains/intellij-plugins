@@ -25,6 +25,6 @@ public class UnusedJavaMethodInspectionTest extends CucumberJavaBaseInspectionTe
 
   @Override
   protected String getBasePath() {
-    return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "inspections\\unusedMethod";
+    return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "inspections/unusedMethod";
   }
 }

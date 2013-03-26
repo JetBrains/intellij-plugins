@@ -23,6 +23,6 @@ public class CucumberJavaStepDefClassInDefaultPackageInspectionTest extends Cucu
 
   @Override
   protected String getBasePath() {
-    return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "inspections\\stepDefClassInDefaultPackage";
+    return CucumberJavaTestUtil.RELATED_TEST_DATA_PATH + "inspections/stepDefClassInDefaultPackage";
   }
 }
