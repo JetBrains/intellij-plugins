@@ -109,7 +109,7 @@ public class FlexBuildTarget extends BuildTarget<BuildRootDescriptor> {
     for (JpsFlexDependencyEntry entry : myBC.getDependencies().getEntries()) {
       if (entry instanceof JpsFlexBCDependencyEntry) {
         final JpsFlexBuildConfiguration dependencyBC = ((JpsFlexBCDependencyEntry)entry).getBC();
-        if (dependencyBC != null && entry.getLinkageType() != LinkageType.LoadInRuntime) {
+        if (dependencyBC != null) {
           result.add(create(dependencyBC, null));
         }
       }
