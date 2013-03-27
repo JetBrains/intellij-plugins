@@ -102,7 +102,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     } catch (IOException e) {
       LOG.error(e.getMessage(), e);
     }
-    return new String[]{"intellijoin.org"};
+    return new String[]{"jabber.org"};
   }
 
   public AccountInfo getMyAccount() {

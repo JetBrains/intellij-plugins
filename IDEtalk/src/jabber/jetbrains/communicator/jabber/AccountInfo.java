@@ -32,7 +32,7 @@ public class AccountInfo {
   private boolean myShouldLogin = true;
 
   public AccountInfo() {
-    this(StringUtil.getMyUsername(), null, "intellijoin.org", DEFAULT_PORT);
+    this(StringUtil.getMyUsername(), null, "jabber.org", DEFAULT_PORT);
   }
 
   public AccountInfo(String user, String password, String server, int port) {

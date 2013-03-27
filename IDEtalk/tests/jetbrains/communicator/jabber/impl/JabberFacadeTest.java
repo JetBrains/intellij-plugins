@@ -97,7 +97,7 @@ public class JabberFacadeTest extends BaseTestCase {
   public void testGetServers() throws Exception {
     List<String> list = Arrays.asList(myFacade.getServers());
     assertTrue("List of servers should be taken from file:" + list, list.size() > 20);
-    assertTrue("List should contain intellijoin.org:" + list,  list.contains("intellijoin.org"));
+    assertTrue("List should contain jabber.org:" + list,  list.contains("jabber.org"));
     for (int i = 0; i < list.size(); i++) {
       java.lang.String s = list.get(i);
       assertNotNull("Nulls not allowed:" + i +" " + list, s);
