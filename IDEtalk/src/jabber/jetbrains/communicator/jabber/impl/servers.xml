@@ -7,9 +7,6 @@
      To add your server to the list, contact stpeter@jabber.org -->
 
 <query xmlns='http://jabber.org/protocol/disco#items'>
-  <item jid='intellijoin.org' name='JetBrains/JiveSoftware Jabber'>
-    <active port='5222'/>
-  </item>
   <item jid='12jabber.com' name='Jabber server hosted by Anywise.com'>
     <active port='5222'/>
   </item>

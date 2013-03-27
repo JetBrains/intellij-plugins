@@ -35,7 +35,7 @@ public class MockJabberFacade implements JabberFacade {
   public static final String ERROR_LINE = "connection error";
 
   public String[] getServers() {
-    return new String[] {"foo.bar", "mu.no", "jabber.ru", "jabber.org", "intellijoin.org"};
+    return new String[] {"foo.bar", "mu.no", "jabber.ru", "jabber.org"};
   }
 
   public XMPPConnection getConnection() {

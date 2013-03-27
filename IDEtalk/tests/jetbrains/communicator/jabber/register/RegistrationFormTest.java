@@ -53,8 +53,8 @@ public class RegistrationFormTest extends BaseTestCase {
 
     assertEquals("Bad Default username", StringUtil.getMyUsername(), myFacade.getMyAccount().getUsername());
     assertEquals("Bad Default username", StringUtil.getMyUsername(), myForm.getUsername());
-    assertEquals("Bad Default server", "intellijoin.org", myFacade.getMyAccount().getServer());
-    assertEquals("Bad Default server", "intellijoin.org", myForm.getServer());
+    assertEquals("Bad Default server", "jabber.org", myFacade.getMyAccount().getServer());
+    assertEquals("Bad Default server", "jabber.org", myForm.getServer());
     assertEquals("Bad Default port", 5222, myFacade.getMyAccount().getPort());
     assertEquals("Bad Default port", 5222, myForm.getPort());
     assertFalse("Bad Default SSL", myForm.isForceSSL());

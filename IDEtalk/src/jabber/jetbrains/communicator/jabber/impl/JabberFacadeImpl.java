@@ -102,7 +102,7 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
     } catch (IOException e) {
       LOG.error(e.getMessage(), e);
     }
-    return new String[]{"intellijoin.org"};
+    return new String[]{"jabber.org"};
   }
 
   public AccountInfo getMyAccount() {
@@ -175,8 +175,11 @@ public class JabberFacadeImpl implements JabberFacade, Disposable {
       fireAuthenticated();
       myConnection.addConnectionListener(new SmackConnectionListener());
     } catch (XMPPException e) {
-      LOG.info(getMessage(e), e);
-      return getMessage(e);
+      String message = getMessage(e);
+      if (message != null && (message.indexOf("authentication failed") == -1 || password.length() != 0)) {
+        LOG.info(message, e);
+      }
+      return message;
     } catch (IllegalStateException e) {
       LOG.info(e, e);
       return e.getMessage();
