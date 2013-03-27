@@ -5,6 +5,6 @@ class Generic1<T> {
 
   foo(){
     var test = new Generic1<String>();
-    test.generate().charCode<caret>At(0);
+    test.generate().codeUnit<caret>At(0);
   }
 }

@@ -2,17 +2,23 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+part of dart.core;
+
 /**
+ * This class is *deprecated*.
+ *
  * Expect is used for tests that do not want to make use of the
  * Dart unit test library - for example, the core language tests.
  * Third parties are discouraged from using this, and should use
  * the expect() function in the unit test library instead for
  * test assertions.
  */
+@deprecated
 class Expect {
   /**
    * Checks whether the expected and actual values are equal (using `==`).
    */
+  @deprecated
   static void equals(var expected, var actual, [String reason = null]) {
     if (expected == actual) return;
     String msg = _getMessage(reason);
@@ -22,6 +28,7 @@ class Expect {
   /**
    * Checks whether the actual value is a bool and its value is true.
    */
+  @deprecated
   static void isTrue(var actual, [String reason = null]) {
     if (_identical(actual, true)) return;
     String msg = _getMessage(reason);
@@ -31,6 +38,7 @@ class Expect {
   /**
    * Checks whether the actual value is a bool and its value is false.
    */
+  @deprecated
   static void isFalse(var actual, [String reason = null]) {
     if (_identical(actual, false)) return;
     String msg = _getMessage(reason);
@@ -40,6 +48,7 @@ class Expect {
   /**
    * Checks whether [actual] is null.
    */
+  @deprecated
   static void isNull(actual, [String reason = null]) {
     if (null == actual) return;
     String msg = _getMessage(reason);
@@ -49,6 +58,7 @@ class Expect {
   /**
    * Checks whether [actual] is not null.
    */
+  @deprecated
   static void isNotNull(actual, [String reason = null]) {
     if (null != actual) return;
     String msg = _getMessage(reason);
@@ -59,6 +69,7 @@ class Expect {
    * Checks whether the expected and actual values are identical
    * (using `identical`).
    */
+  @deprecated
   static void identical(var expected, var actual, [String reason = null]) {
     if (_identical(expected, actual)) return;
     String msg = _getMessage(reason);
@@ -67,6 +78,7 @@ class Expect {
   }
 
   // Unconditional failure.
+  @deprecated
   static void fail(String msg) {
     _fail("Expect.fail('$msg')");
   }
@@ -76,6 +88,7 @@ class Expect {
    * given tolerance. If no tolerance is given, tolerance is assumed to be the
    * value 4 significant digits smaller than the value given for expected.
    */
+  @deprecated
   static void approxEquals(num expected,
                            num actual,
                            [num tolerance = null,
@@ -91,6 +104,7 @@ class Expect {
           'tolerance:<$tolerance>$msg) fails');
   }
 
+  @deprecated
   static void notEquals(unexpected, actual, [String reason = null]) {
     if (unexpected != actual) return;
     String msg = _getMessage(reason);
@@ -104,6 +118,7 @@ class Expect {
    * used by the standard list implementation.  It should also produce nicer
    * error messages than just calling `Expect.equals(expected, actual)`.
    */
+  @deprecated
   static void listEquals(List expected, List actual, [String reason = null]) {
     String msg = _getMessage(reason);
     int n = (expected.length < actual.length) ? expected.length : actual.length;
@@ -118,7 +133,8 @@ class Expect {
     if (expected.length != actual.length) {
       _fail('Expect.listEquals(list length, '
         'expected: <${expected.length}>, actual: <${actual.length}>$msg) '
-        'fails');
+        'fails: Next element <'
+        '${expected.length > n ? expected[n] : actual[n]}>');
     }
   }
 
@@ -127,6 +143,7 @@ class Expect {
    * the semantics of [Map.containsKey] to determine what "same" means. For
    * each key, checks that the values in both maps are equal using `==`.
    */
+  @deprecated
   static void mapEquals(Map expected, Map actual, [String reason = null]) {
     String msg = _getMessage(reason);
 
@@ -151,6 +168,7 @@ class Expect {
    * Specialized equality test for strings. When the strings don't match,
    * this method shows where the mismatch starts and ends.
    */
+  @deprecated
   static void stringEquals(String expected,
                            String actual,
                            [String reason = null]) {
@@ -219,6 +237,7 @@ class Expect {
    * Checks that every element of [expected] is also in [actual], and that
    * every element of [actual] is also in [expected].
    */
+  @deprecated
   static void setEquals(Iterable expected,
                         Iterable actual,
                         [String reason = null]) {
@@ -259,6 +278,7 @@ class Expect {
    *
    *     Expect.throws(myThrowingFunction, (e) => e is MyException);
    */
+  @deprecated
   static void throws(void f(),
                      [_CheckExceptionFn check = null,
                       String reason = null]) {
@@ -289,6 +309,7 @@ bool _identical(a, b) => identical(a, b);
 
 typedef bool _CheckExceptionFn(exception);
 
+@deprecated
 class ExpectException implements Exception {
   ExpectException(this.message);
   String toString() => message;

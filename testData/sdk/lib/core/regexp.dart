@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+part of dart.core;
+
 /**
  * [Match] contains methods to manipulate a regular expression match.
  *
@@ -60,7 +62,7 @@ abstract class Match {
   String get str;
 
   /**
-   * The pattern to search for in [str].
+   * The pattern used to search in [str].
    */
   Pattern get pattern;
 }
@@ -91,10 +93,12 @@ abstract class Match {
 abstract class RegExp implements Pattern {
   /**
    * Constructs a regular expression. The default implementation of a
-   * [RegExp] sets [multiLine] and [ignoreCase] to false.
+   * [RegExp] sets [multiLine] to false and [caseSensitive] to true.
+   * Throws a [FormatException] if [pattern] is not a valid regular
+   * exression pattern.
    */
   external factory RegExp(String pattern, {bool multiLine: false,
-                                           bool ignoreCase: false});
+                                           bool caseSensitive: true});
 
   /**
    * Searches for the first match of the regular expression
@@ -127,10 +131,10 @@ abstract class RegExp implements Pattern {
   /**
    * Whether this regular expression matches multiple lines.
    */
-  bool get multiLine;
+  bool get isMultiLine;
 
   /**
    * Whether this regular expression is case insensitive.
    */
-  bool get ignoreCase;
+  bool get isCaseSensitive;
 }

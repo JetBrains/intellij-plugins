@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+part of dart.core;
+
 class Error {
   const Error();
 
@@ -17,8 +19,9 @@ class Error {
     }
     if (object is String) {
       // TODO(ahe): Remove backslash when http://dartbug.com/4995 is fixed.
+      String string = object;
       const backslash = '\\';
-      String escaped = object
+      String escaped = string
         .replaceAll('$backslash', '$backslash$backslash')
         .replaceAll('\n', '${backslash}n')
         .replaceAll('\r', '${backslash}r')
@@ -75,7 +78,7 @@ class ArgumentError implements Error {
 }
 
 /**
- * Exception thrown because of an index outside of the valid range.
+ * Error thrown because of an index outside of the valid range.
  *
  */
 class RangeError extends ArgumentError {
@@ -90,6 +93,10 @@ class RangeError extends ArgumentError {
 
   /** Create a new [RangeError] with a message for the given [value]. */
   RangeError.value(num value) : super("value $value");
+
+  /** Create a new [RangeError] with a message for a value and a range. */
+  RangeError.range(num value, num start, num end)
+      : super("value $value not in range $start..$end");
 
   String toString() => "RangeError: $message";
 }
@@ -145,57 +152,15 @@ class NoSuchMethodError implements Error {
                           [List existingArgumentNames = null])
       : this._existingArgumentNames = existingArgumentNames;
 
-  String toString() {
-    StringBuffer sb = new StringBuffer();
-    int i = 0;
-    if (_arguments != null) {
-      for (; i < _arguments.length; i++) {
-        if (i > 0) {
-          sb.add(", ");
-        }
-        sb.add(Error.safeToString(_arguments[i]));
-      }
-    }
-    if (_namedArguments != null) {
-      _namedArguments.forEach((String key, var value) {
-        if (i > 0) {
-          sb.add(", ");
-        }
-        sb.add(key);
-        sb.add(": ");
-        sb.add(Error.safeToString(value));
-        i++;
-      });
-    }
-    if (_existingArgumentNames == null) {
-      return "NoSuchMethodError : method not found: '$_memberName'\n"
-          "Receiver: ${Error.safeToString(_receiver)}\n"
-          "Arguments: [$sb]";
-    } else {
-      String actualParameters = sb.toString();
-      sb = new StringBuffer();
-      for (int i = 0; i < _existingArgumentNames.length; i++) {
-        if (i > 0) {
-          sb.add(", ");
-        }
-        sb.add(_existingArgumentNames[i]);
-      }
-      String formalParameters = sb.toString();
-      return "NoSuchMethodError: incorrect number of arguments passed to "
-          "method named '$_memberName'\n"
-          "Receiver: ${Error.safeToString(_receiver)}\n"
-          "Tried calling: $_memberName($actualParameters)\n"
-          "Found: $_memberName($formalParameters)";
-    }
-  }
+  external String toString();
 }
 
 
 /**
  * The operation was not allowed by the object.
  *
- * This [Error] is thrown when a class cannot implement
- * one of the methods in its signature.
+ * This [Error] is thrown when an instance cannot implement one of the methods
+ * in its signature.
  */
 class UnsupportedError implements Error {
   final String message;
@@ -233,6 +198,29 @@ class StateError implements Error {
   final String message;
   StateError(this.message);
   String toString() => "Bad state: $message";
+}
+
+
+/**
+ * Error occurring when a collection is modified during iteration.
+ *
+ * Some modifications may be allowed for some collections, so each collection
+ * ([Iterable] or similar collection of values) should declare which operations
+ * are allowed during an iteration.
+ */
+class ConcurrentModificationError implements Error {
+  /** The object that was modified in an incompatible way. */
+  final Object modifiedObject;
+
+  const ConcurrentModificationError([this.modifiedObject]);
+
+  String toString() {
+    if (modifiedObject == null) {
+      return "Concurrent modification during iteration.";
+    }
+    return "Concurrent modification during iteration: "
+           "${Error.safeToString(modifiedObject)}.";
+  }
 }
 
 

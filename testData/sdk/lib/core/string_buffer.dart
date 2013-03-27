@@ -2,129 +2,79 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+part of dart.core;
+
 /**
  * The StringBuffer class is useful for concatenating strings
  * efficiently. Only on a call to [toString] are the strings
  * concatenated to a single String.
  */
-abstract class StringBuffer {
-  /**
-   * Creates the string buffer with an initial content.
-   */
-  factory StringBuffer([Object content = ""])
-    => new _StringBufferImpl(content);
+class StringBuffer implements StringSink {
+
+  /** Creates the string buffer with an initial content. */
+  external StringBuffer([Object content = ""]);
 
   /**
-   * Returns the length of the buffer.
+   * Returns the length of the content that has been accumulated so far.
+   * This is a constant-time operation.
    */
-  int get length;
+  external int get length;
+
+  /** Returns whether the buffer is empty. This is a constant-time operation. */
+  bool get isEmpty => length == 0;
 
   /**
-   * Returns whether the buffer is empty.
+   * Converts [obj] to a string and adds it to the buffer.
+   *
+   * *Deprecated*. Use [write] instead.
    */
-  bool get isEmpty;
+  @deprecated
+  void add(Object obj) => write(obj);
 
-  /**
-   * Converts [obj] to a string and adds it to the buffer. Returns [:this:].
-   */
-  StringBuffer add(Object obj);
+  external void write(Object obj);
 
-  /**
-   * Adds the string representation of [charCode] to the buffer.
-   * Returns [this].
-   */
-  StringBuffer addCharCode(int charCode);
-
-  /**
-   * Adds all items in [objects] to the buffer. Returns [:this:].
-   */
-  StringBuffer addAll(Collection objects);
-
-  /**
-   * Clears the string buffer. Returns [:this:].
-   */
-  StringBuffer clear();
-
-  /**
-   * Returns the contents of buffer as a concatenated string.
-   */
-  String toString();
-}
-
-class _StringBufferImpl implements StringBuffer {
-  /**
-   * Creates the string buffer with an initial content.
-   */
-  _StringBufferImpl(Object content) {
-    clear();
-    add(content);
+  void writeAll(Iterable objects) {
+    for (Object obj in objects) write(obj);
   }
 
-  /**
-   * Returns the length of the buffer.
-   */
-  int get length {
-    return _length;
-  }
-
-  bool get isEmpty {
-    return _length == 0;
-  }
-
-  /**
-   * Adds [obj] to the buffer. Returns [this].
-   */
-  StringBuffer add(Object obj) {
-    String str = obj.toString();
-    if (str == null || str.isEmpty) {
-      return this;
-    }
-    _buffer.add(str);
-    _length += str.length;
-    return this;
-  }
-
-  /**
-   * Adds all items in [objects] to the buffer. Returns [this].
-   */
-  StringBuffer addAll(Collection objects) {
-    for (Object obj in objects) {
-      add(obj);
-    }
-    return this;
+  void writeln(Object obj) {
+    write(obj);
+    write("\n");
   }
 
   /**
    * Adds the string representation of [charCode] to the buffer.
-   * Returns [this].
+   *
+   * *Deprecated* Use [writeCharCode] instead.
    */
-  StringBuffer addCharCode(int charCode) {
-    return add(new String.fromCharCodes([charCode]));
+  @deprecated
+  void addCharCode(int charCode) {
+    writeCharCode(charCode);
+  }
+
+  /// Adds the string representation of [charCode] to the buffer.
+  void writeCharCode(int charCode) {
+    write(new String.fromCharCode(charCode));
   }
 
   /**
-   * Clears the string buffer. Returns [this].
+   * Adds all items in [objects] to the buffer.
+   *
+   * *Deprecated*. Use [writeAll] instead.
    */
-  StringBuffer clear() {
-    _buffer = new List<String>();
-    _length = 0;
-    return this;
+  @deprecated
+  void addAll(Iterable objects) {
+    for (Object obj in objects) write(obj);
   }
 
   /**
-   * Returns the contents of buffer as a concatenated string.
+   * Clears the string buffer.
+   *
+   * *Deprecated*.
    */
-  String toString() {
-    if (_buffer.length == 0) return "";
-    if (_buffer.length == 1) return _buffer[0];
-    String result = Strings.concatAll(_buffer);
-    _buffer.clear();
-    _buffer.add(result);
-    // Since we track the length at each add operation, there is no
-    // need to update it in this function.
-    return result;
-  }
+  @deprecated
+  external void clear();
 
-  List<String> _buffer;
-  int _length;
+  /// Returns the contents of buffer as a concatenated string.
+  external String toString();
 }

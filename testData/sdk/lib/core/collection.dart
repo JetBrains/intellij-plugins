@@ -2,98 +2,93 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+part of dart.core;
+
 /**
- * The common interface of all collections.
+ * A collection of individual elements.
  *
- * The [Collection] class contains a skeleton implementation of
- * an iterator based collection.
+ * A [Collection] contains some elements in a structure optimized
+ * for certain operations. Different collections are optimized for different
+ * uses.
+ *
+ * A collection can be updated by adding or removing elements.
+ *
+ * Collections are [Iterable]. The order of iteration is defined by
+ * each type of collection.
  */
 abstract class Collection<E> extends Iterable<E> {
-  /**
-   * Returns a new collection with the elements [: f(e) :]
-   * for each element [:e:] of this collection.
-   *
-   * Subclasses of [Collection] should implement the [map] method
-   * to return a collection of the same general type as themselves.
-   * E.g., [List.map] should return a [List].
-   */
-  Collection map(f(E element));
+  const Collection();
 
   /**
-   * Returns a collection with the elements of this collection
-   * that satisfy the predicate [f].
-   *
-   * The returned collection should be of the same type as the collection
-   * creating it.
-   *
-   * An element satisfies the predicate [f] if [:f(element):]
-   * returns true.
+   * Adds an element to this collection.
    */
-  Collection<E> filter(bool f(E element));
+  void add(E element);
 
   /**
-   * Returns the number of elements in this collection.
+   * Adds all of [elements] to this collection.
+   *
+   * Equivalent to adding each element in [elements] using [add],
+   * but some collections may be able to optimize it.
    */
-  int get length;
-
-  /**
-   * Check whether the collection contains an element equal to [element].
-   */
-  bool contains(E element) {
-    for (E e in this) {
-      if (e == element) return true;
+  void addAll(Iterable<E> elements) {
+    for (E element in elements) {
+      add(element);
     }
-    return false;
   }
 
   /**
-   * Applies the function [f] to each element of this collection.
-   */
-  void forEach(void f(E element)) {
-    for (E element in this) f(element);
-  }
-
-  /**
-   * Reduce a collection to a single value by iteratively combining each element
-   * of the collection with an existing value using the provided function.
-   * Use [initialValue] as the initial value, and the function [combine] to
-   * create a new value from the previous one and an element.
+   * Removes an instance of [element] from this collection.
    *
-   * Example of calculating the sum of a collection:
+   * This removes only one instance of the element for collections that can
+   * contain the same element more than once (e.g., [List]). Which instance
+   * is removed is decided by the collection.
    *
-   *   collection.reduce(0, (prev, element) => prev + element);
+   * Has no effect if the elements is not in this collection.
    */
-  dynamic reduce(var initialValue,
-                 dynamic combine(var previousValue, E element)) {
-    var value = initialValue;
-    for (E element in this) value = combine(value, element);
-    return value;
+  void remove(Object element);
+
+  /**
+   * Removes all of [elements] from this collection.
+   *
+   * Equivalent to calling [remove] once for each element in
+   * [elements], but may be faster for some collections.
+   */
+  void removeAll(Iterable elements) {
+    IterableMixinWorkaround.removeAll(this, elements);
   }
 
   /**
-   * Returns true if every elements of this collection satisify the
-   * predicate [f]. Returns false otherwise.
+   * Removes all elements of this collection that are not
+   * in [elements].
+   *
+   * For [Set]s, this is the intersection of the two original sets.
    */
-  bool every(bool f(E element)) {
-    for (E element in this) {
-      if (!f(element)) return false;
-    }
-    return true;
+  void retainAll(Iterable elements) {
+    IterableMixinWorkaround.retainAll(this, elements);
   }
 
   /**
-   * Returns true if one element of this collection satisfies the
-   * predicate [f]. Returns false otherwise.
+   * Removes all elements of this collection that satisfy [test].
+   *
+   * An elements [:e:] satisfies [test] if [:test(e):] is true.
    */
-  bool some(bool f(E element)) {
-    for (E element in this) {
-      if (f(element)) return true;
-    }
-    return false;
+  void removeMatching(bool test(E element)) {
+    IterableMixinWorkaround.removeMatching(this, test);
   }
 
   /**
-   * Returns true if there is no element in this collection.
+   * Removes all elements of this collection that fail to satisfy [test].
+   *
+   * An elements [:e:] satisfies [test] if [:test(e):] is true.
    */
-  bool get isEmpty => !iterator().hasNext;
+  void retainMatching(bool test(E element)) {
+    IterableMixinWorkaround.retainMatching(this, test);
+  }
+
+  /**
+   * Removes all elements of this collection.
+   */
+  void clear() {
+    IterableMixinWorkaround.removeMatching(this, (E e) => true);
+  }
 }

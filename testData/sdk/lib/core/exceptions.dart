@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+part of dart.core;
+
 // Exceptions are thrown either by the VM or from Dart code.
 
 /**
@@ -50,15 +52,6 @@ class FormatException implements Exception {
 
   String toString() => "FormatException: $message";
 }
-
-
-class IllegalJSRegExpException implements Exception {
-  const IllegalJSRegExpException(String this._pattern, String this._errmsg);
-  String toString() => "IllegalJSRegExpException: '$_pattern' '$_errmsg'";
-  final String _pattern;
-  final String _errmsg;
-}
-
 
 class IntegerDivisionByZeroException implements Exception {
   const IntegerDivisionByZeroException();

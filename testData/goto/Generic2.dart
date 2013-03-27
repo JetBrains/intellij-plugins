@@ -4,6 +4,6 @@ class Generic2<T> {
   }
 
   foo(Generic2<Generic2<String>> test){
-    test.generate().generate().charCode<caret>At(0);
+    test.generate().generate().codeUnit<caret>At(0);
   }
 }
