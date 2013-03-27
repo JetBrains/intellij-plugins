@@ -15,11 +15,9 @@
  */
 package org.angularjs;
 
+import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
-import com.intellij.find.FindResult;
-import com.intellij.find.FindUtil;
-import com.intellij.find.findInProject.FindInProjectManager;
 import com.intellij.find.impl.FindInProjectUtil;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.GotoActionBase;
@@ -32,25 +30,22 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Factory;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.Segment;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
+import com.intellij.psi.util.PsiUtil;
 import com.intellij.usageView.UsageInfo;
-import com.intellij.usages.*;
+import com.intellij.usages.Usage;
+import com.intellij.usages.UsageInfo2UsageAdapter;
 import com.intellij.util.AdapterProcessor;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GotoAngularAction extends GotoActionBase {
     public GotoAngularAction() {
@@ -69,13 +64,12 @@ public class GotoAngularAction extends GotoActionBase {
         final PsiFile psiFile = LangDataKeys.PSI_FILE.getData(dataContext);
         final VirtualFile virtualFile = PlatformDataKeys.VIRTUAL_FILE.getData(dataContext);
 
-        FindManager findManager = FindManager.getInstance(project);
-        FindModel findModel = (FindModel) findManager.getFindInFileModel().clone();
+        final FindManager findManager = FindManager.getInstance(project);
+        final FindModel findModel = (FindModel) findManager.getFindInFileModel().clone();
         findModel.setRegularExpressions(true);
-        findModel.setStringToFind("\\.controller\\((.*),");
+        findModel.setStringToFind("\\.(controller|filter|service|factory|module|value|constant|directive)\\(\\s*(\"|')(.*)(\"|')");
+        findModel.setStringToReplace("$3");
         FindInProjectUtil.setDirectoryName(findModel, dataContext);
-        final PsiDirectory psiDirectory = FindInProjectUtil.getPsiDirectory(findModel, project);
-
 
         CommonProcessors.CollectProcessor<Usage> collectProcessor = new CommonProcessors.CollectProcessor<Usage>() {
             @Override
@@ -88,33 +82,62 @@ public class GotoAngularAction extends GotoActionBase {
                 return super.getResults();    //To change body of overridden methods use File | Settings | File Templates.
             }
         };
-        FindInProjectUtil.findUsages(findModel, psiDirectory, project,
+
+        PsiDirectory directory = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
+        FindInProjectUtil.findUsages(findModel, directory, project,
                 true, new AdapterProcessor<UsageInfo, Usage>(collectProcessor, UsageInfo2UsageAdapter.CONVERTER));
 
-        Collection<Usage> results = collectProcessor.getResults();
+        final Collection<Usage> results = collectProcessor.getResults();
 
-        for (Usage result : results) {
-            /*Document document = ((UsageInfo2UsageAdapter) result).getDocument();
-            Segment segment = ((UsageInfo2UsageAdapter) result).getUsageInfo().getSegment();
-            TextRange range = new TextRange(segment.getStartOffset(), segment.getEndOffset());
-            String text = document.getText(range);
-            System.out.println(text);*/
+        final Map<String, AngularItem> validResults = new HashMap<String, AngularItem>();
 
-            TextChunk[] chunks = ((UsageInfo2UsageAdapter) result).getText();
-            for (int i = 0; i < chunks.length; i++) {
-                TextChunk chunk = chunks[i];
-                if (chunk.getText().equals("controller")) {
-                    System.out.println(chunks[i + 2]);
+        //todo: needs code review. There must be a better way to do this
+        Runnable runnable = new Runnable() {
+            public void run() {
+                for (final Usage result : results) {
+
+                    final UsageInfo2UsageAdapter usage = (UsageInfo2UsageAdapter) result;
+                    if (usage.getFile().getName().startsWith("angular")) continue;
+
+                    usage.processRangeMarkers(new Processor<Segment>() {
+                        @Override
+                        public boolean process(Segment segment) {
+                            try {
+                                final int textOffset = segment.getStartOffset();
+
+                                final int textEndOffset = segment.getEndOffset();
+                                Document document = usage.getDocument();
+                                CharSequence charsSequence = document.getCharsSequence();
+                                final CharSequence foundString = charsSequence.subSequence(textOffset, textEndOffset);
+                                String regExMatch = FindManager.getInstance(project).getStringToReplace(foundString.toString(), findModel, textOffset, document.getText());
+                                System.out.println(regExMatch);
+                                PsiElement element = PsiUtil.getElementAtOffset(((UsageInfo2UsageAdapter) result).getUsageInfo().getFile(), textOffset + 1);
+                                System.out.println(element.getText() + ": " + regExMatch + " - " + foundString.toString());
+                                //hack to block weird css matches (I have no idea how many edge cases I'll have :/ )
+                                if(regExMatch.length() > 20) return true;
+                                validResults.put(regExMatch, new AngularItem(regExMatch, result, element));
+
+                                return true;
+                            } catch (FindManager.MalformedReplacementStringException e1) {
+                                e1.printStackTrace();
+                            }
+
+                            return false;
+                        }
+                    });
                 }
             }
-        }
+        };
+
+        ApplicationManager.getApplication().runReadAction(runnable);
 
 
-        final GotoAngularModel model = new GotoAngularModel(project);
+        final GotoAngularModel model = new GotoAngularModel(project, validResults);
         showNavigationPopup(e, model, new GotoActionBase.GotoActionCallback<Object>() {
             @Override
             protected ChooseByNameFilter<Object> createFilter(@NotNull ChooseByNamePopup popup) {
                 popup.setSearchInAnyPlace(true);
+                popup.setShowListForEmptyPattern(true);
                 return super.createFilter(popup);
             }
 
@@ -122,9 +145,9 @@ public class GotoAngularAction extends GotoActionBase {
             public void elementChosen(ChooseByNamePopup popup, final Object element) {
                 ApplicationManager.getApplication().invokeLater(new Runnable() {
                     public void run() {
+                        PsiElement psi = ((AngularItem) element).getElement();
+                        NavigationUtil.activateFileWithPsiElement(psi.getNavigationElement());
                     }
-
-
                 });
             }
         });

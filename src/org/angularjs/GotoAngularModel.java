@@ -1,6 +1,5 @@
 package org.angularjs;
 
-import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.ide.util.gotoByName.ChooseByNameBase;
 import com.intellij.ide.util.gotoByName.SimpleChooseByNameModel;
 import com.intellij.openapi.project.Project;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,29 +25,11 @@ import java.util.List;
  */
 public class GotoAngularModel extends SimpleChooseByNameModel{
 
-    private final Map<String, AngularItem> angularItems = new HashMap<String, AngularItem>();
+    private final Map<String, AngularItem> angularItems;
 
-    public GotoAngularModel(@NotNull Project project) {
+    public GotoAngularModel(@NotNull Project project, Map<String, AngularItem> angularItems) {
         super(project, "AngularJS", "Help id");
-
-        AngularItem oneCtrl = new AngularItem("OneCtrl");
-        AngularItem twoCtrl = new AngularItem("TwoCtrl");
-        AngularItem threeCtrl = new AngularItem("ThreeCtrl");
-        AngularItem fourCtrl = new AngularItem("FourCtrl");
-        AngularItem fiveCtrl = new AngularItem("FiveCtrl");
-        AngularItem sixCtrl = new AngularItem("SixCtrl");
-        AngularItem sevenCtrl = new AngularItem("SevenCtrl");
-        AngularItem eightCtrl = new AngularItem("EightCtrl");
-        AngularItem nineCtrl = new AngularItem("NineCtrl");
-        angularItems.put(oneCtrl.getItemName(), oneCtrl);
-        angularItems.put(twoCtrl.getItemName(), twoCtrl);
-        angularItems.put(threeCtrl.getItemName(), threeCtrl);
-        angularItems.put(fourCtrl.getItemName(), fourCtrl);
-        angularItems.put(fiveCtrl.getItemName(), fiveCtrl);
-        angularItems.put(sixCtrl.getItemName(), sixCtrl);
-        angularItems.put(sevenCtrl.getItemName(), sevenCtrl);
-        angularItems.put(eightCtrl.getItemName(), eightCtrl);
-        angularItems.put(nineCtrl.getItemName(), nineCtrl);
+        this.angularItems = angularItems;
     }
 
     //these are searched
@@ -110,7 +90,7 @@ public class GotoAngularModel extends SimpleChooseByNameModel{
                 jPanel.add(c, BorderLayout.WEST);
 
                 final SimpleColoredComponent group = new SimpleColoredComponent();
-                SpeedSearchUtil.appendColoredFragmentForMatcher(item.getItemName() + "  ", group, attr, null, bg, sel);
+                SpeedSearchUtil.appendColoredFragmentForMatcher(item.getItemType() + "  ", group, attr, null, bg, sel);
                 final JPanel right = new JPanel(new BorderLayout());
                 right.setBackground(bg);
                 right.setForeground(fg);
@@ -126,16 +106,4 @@ public class GotoAngularModel extends SimpleChooseByNameModel{
         }
     }
 
-    protected class AngularItem {
-        private String itemName;
-
-        private AngularItem(String itemName) {
-            this.itemName = itemName;
-        }
-
-
-        public String getItemName() {
-            return itemName;
-        }
-    }
 }
