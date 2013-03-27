@@ -40,7 +40,15 @@
     </project-components>
 
     <actions>
-        <!-- Add your actions here -->
+        <action id="GotoAngularAction"
+                class="org.angularjs.GotoAngularAction"
+                text="Go to Angular"
+                description="Navigate to Angular code">
+            <keyboard-shortcut keymap="$default"
+                               first-keystroke="ctrl 1"/>
+            <keyboard-shortcut keymap="Mac OS X" first-keystroke="ctrl 1"/>
+            <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="ctrl 1"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
