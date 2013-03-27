@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.refactoring.util.JSMemberInfo;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -91,10 +92,15 @@ public class FlexUnitTestCreator implements TestCreator {
       }
     };
 
-    CreateClassOrInterfaceFix.createClass(JavaScriptSupportLoader.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, testClassName,
-                                          packageName, superClass, Collections.<String>emptyList(), targetDirectory,
-                                          CodeInsightBundle.message("intention.create.test"), true, Collections.<String, Object>emptyMap(),
-                                          postProcessRunnable);
+    CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+      public void run() {
+        CreateClassOrInterfaceFix.createClass(JavaScriptSupportLoader.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, testClassName,
+                                              packageName, superClass, Collections.<String>emptyList(), targetDirectory,
+                                              CodeInsightBundle.message("intention.create.test"), true,
+                                              Collections.<String, Object>emptyMap(),
+                                              postProcessRunnable);
+      }
+    }, CodeInsightBundle.message("intention.create.test"), null);
   }
 
   private static String getMethodsText(final JSClass createdClass,
