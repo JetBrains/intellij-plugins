@@ -17,17 +17,17 @@ public class CucumberLanguageService {
   public CucumberLanguageService(Project project) {
     // TODO - more correct is to use attached version or at least
     // refresh keyword provider after roots changed event
-
-    GherkinKeywordProviderBuilder[] builders = Extensions.getExtensions(GherkinKeywordProviderBuilder.EP_NAME);
-    if (builders.length > 0) {
-      myKeywordProvider = builders[0].getKeywordProvider(project);
+    final GherkinKeywordProviderBuilder[] builders = Extensions.getExtensions(GherkinKeywordProviderBuilder.EP_NAME);
+    for (GherkinKeywordProviderBuilder builder : builders) {
+      myKeywordProvider = builder.getKeywordProvider(project);
+      if (myKeywordProvider != null) {
+        break;
+      }
     }
     if (myKeywordProvider == null) {
       myKeywordProvider = new PlainGherkinKeywordProvider();
     }
   }
-
-  //
 
   public GherkinKeywordProvider getKeywordProvider() {
     return myKeywordProvider;
