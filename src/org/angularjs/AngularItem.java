@@ -1,6 +1,5 @@
 package org.angularjs;
 
-import com.intellij.find.FindResult;
 import com.intellij.psi.PsiElement;
 import com.intellij.usages.Usage;
 
@@ -19,16 +18,18 @@ public class AngularItem {
     }
 
     private Usage usage;
-    private final PsiElement element;
+    private PsiElement element;
+    private final String itemType;
 
     public PsiElement getElement() {
         return element;
     }
 
-    AngularItem(String itemName, Usage usage, PsiElement element) {
+    AngularItem(String itemName, Usage usage, PsiElement element, String itemType) {
         this.itemName = itemName;
         this.usage = usage;
         this.element = element;
+        this.itemType = itemType;
     }
 
 
@@ -37,6 +38,6 @@ public class AngularItem {
     }
 
     public String getItemType() {
-        return element.getText();
+        return itemType;
     }
 }

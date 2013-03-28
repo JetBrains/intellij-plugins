@@ -54,5 +54,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <xml.attributeDescriptorsProvider implementation="org.angularjs.AngularJSCustomAttributeDescriptorsProvider"/>
         <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
+        <typedHandler implementation="org.angularjs.AngularBracesInterpolationTypedHandler"/>
     </extensions>
 </idea-plugin>
