@@ -14,7 +14,10 @@ import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.*;
+import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinIntention;
 import com.intellij.lang.javascript.psi.*;
@@ -28,7 +31,6 @@ import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.lang.javascript.validation.fixes.CreateFlexMobileViewIntentionAndFix;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -39,6 +41,7 @@ import com.intellij.patterns.StandardPatterns;
 import com.intellij.patterns.XmlPatterns;
 import com.intellij.psi.*;
 import com.intellij.psi.css.*;
+import com.intellij.psi.css.util.CssConstants;
 import com.intellij.psi.filters.*;
 import com.intellij.psi.filters.position.FilterPattern;
 import com.intellij.psi.filters.position.NamespaceFilter;
@@ -64,6 +67,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static com.intellij.flex.build.FlexCompilerConfigFileUtilBase.PATH_ELEMENT;
+import static com.intellij.openapi.module.ModuleUtilCore.findModuleForPsiElement;
 import static com.intellij.patterns.XmlPatterns.*;
 
 /**
@@ -155,7 +159,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
                 PsiFile file = cssDeclaration.getContainingFile();
                 if (file != null) {
                   if (file.getFileType() == CssFileType.INSTANCE) {
-                    Module module = ModuleUtil.findModuleForPsiElement(cssDeclaration);
+                    Module module = findModuleForPsiElement(cssDeclaration);
                     return module != null && ModuleType.get(module) == FlexModuleType.getInstance();
                   }
                   return JavaScriptSupportLoader.isFlexMxmFile(file);
@@ -194,7 +198,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
               if (invokedMethod instanceof JSReferenceExpression) {
                 String methodName = ((JSReferenceExpression)invokedMethod).getReferencedName();
                 if (SET_STYLE_METHOD_NAME.equals(methodName)) {
-                  Module module = ModuleUtil.findModuleForPsiElement(parent);
+                  Module module = findModuleForPsiElement(parent);
                   return module != null && ModuleType.get(module) == FlexModuleType.getInstance();
                 }
               }
@@ -229,7 +233,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
             if (expression instanceof JSReferenceExpression) {
               String refName = ((JSReferenceExpression)expression).getReferencedName();
               if (refName != null && FlexCssUtil.isStyleNameProperty(refName)) {
-                Module module = ModuleUtil.findModuleForPsiElement(parent);
+                Module module = findModuleForPsiElement(parent);
                 return module != null && ModuleType.get(module) == FlexModuleType.getInstance();
               }
             }
@@ -265,7 +269,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
               if (invokedMethod instanceof JSReferenceExpression) {
                 final String methodName = ((JSReferenceExpression)invokedMethod).getReferencedName();
                 if (methodName != null && FlexCssUtil.isStyleNameMethod(methodName)) {
-                  Module module = ModuleUtil.findModuleForPsiElement(parent);
+                  Module module = findModuleForPsiElement(parent);
                   return module != null && ModuleType.get(module) == FlexModuleType.getInstance();
                 }
               }
