@@ -28,11 +28,8 @@ public class DartLookupElement extends LookupElement {
                                                       boolean constructorCompletion) {
     final Map<String, DartLookupElement> result = new THashMap<String, DartLookupElement>();
     for (DartComponentName componentName : componentNames) {
-      String name = componentName.getName();
-      if (name == null || result.containsKey(name)) {
-        continue;
-      }
-      result.put(name, new DartLookupElement(componentName, constructorCompletion));
+      DartLookupElement lookupElement = new DartLookupElement(componentName, constructorCompletion);
+      result.put(lookupElement.getLookupString(), lookupElement);
     }
     return result.values();
   }
@@ -69,11 +66,6 @@ public class DartLookupElement extends LookupElement {
       return;
     }
     String text = myComponentNamePresentation.getPresentableText();
-    if (isCompleteConstructorComponent()) {
-      final DartClass dartClass = PsiTreeUtil.getParentOfType(myComponentName, DartClass.class);
-      assert dartClass != null;
-      text = dartClass.getName() + "." + text;
-    }
     presentation.setItemText(text);
     presentation.setIcon(myComponentNamePresentation.getIcon(true));
     final String pkg = myComponentNamePresentation.getLocationString();

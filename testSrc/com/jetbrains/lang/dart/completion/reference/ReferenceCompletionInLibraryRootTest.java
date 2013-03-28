@@ -229,6 +229,11 @@ public class ReferenceCompletionInLibraryRootTest extends DartCompletionTestBase
     doTest();
   }
 
+  public void testWEB_6447() throws Throwable {
+    DartSdkTestUtil.configFakeSdk(myFixture);
+    doTest();
+  }
+
   public void testWEB_6480() throws Throwable {
     DartSdkTestUtil.configFakeSdk(myFixture);
     doTest();

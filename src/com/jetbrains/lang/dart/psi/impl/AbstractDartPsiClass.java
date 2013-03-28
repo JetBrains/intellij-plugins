@@ -70,7 +70,7 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
   @NotNull
   @Override
   public List<DartComponent> getConstructors() {
-    final List<DartComponent> components = DartResolveUtil.findNamedSubComponents(this);
+    final List<DartComponent> components = DartResolveUtil.getNamedSubComponents(this);
     final String className = getName();
     if (className == null) {
       return Collections.emptyList();
@@ -78,7 +78,7 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     return ContainerUtil.filter(components, new Condition<DartComponent>() {
       @Override
       public boolean value(DartComponent component) {
-        return DartComponentType.typeOf(component) == DartComponentType.CONSTRUCTOR || className.equals(component.getName());
+        return DartComponentType.typeOf(component) == DartComponentType.CONSTRUCTOR;
       }
     });
   }

@@ -4,7 +4,10 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiPolyVariantReference;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -12,16 +15,13 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.ide.DartLookupElement;
-import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -174,7 +174,7 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
       final DartClassResolveResult classResolveResult = leftReference.resolveDartClass();
       dartClass = classResolveResult.getDartClass();
       // prefix
-      if(PsiTreeUtil.getParentOfType(leftReference.resolve(), DartImportStatement.class, DartExportStatement.class) != null){
+      if (PsiTreeUtil.getParentOfType(leftReference.resolve(), DartImportStatement.class, DartExportStatement.class) != null) {
         final VirtualFile virtualFile = DartResolveUtil.getFileByPrefix(getContainingFile(), leftReference.getText());
         DartResolveUtil.processTopLevelDeclarations(this, new ComponentNameScopeProcessor(suggestedVariants), virtualFile, null);
       }
@@ -206,7 +206,9 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
           new Condition<DartComponent>() {
             @Override
             public boolean value(DartComponent component) {
-              return component instanceof DartNamedConstructorDeclaration || component instanceof DartFactoryConstructorDeclaration;
+              boolean namedOrFactory = component instanceof DartNamedConstructorDeclaration ||
+                                       component instanceof DartFactoryConstructorDeclaration;
+              return namedOrFactory && component.isPublic();
             }
           })
         ));

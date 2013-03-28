@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -107,11 +108,15 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
 
       @Nullable
       private String getComponentName() {
-        if (AbstractDartComponentImpl.this instanceof DartFactoryConstructorDeclaration) {
+        String name = getName();
+        if (DartComponentType.typeOf(AbstractDartComponentImpl.this) == DartComponentType.CONSTRUCTOR) {
           DartClass dartClass = PsiTreeUtil.getParentOfType(AbstractDartComponentImpl.this, DartClass.class);
-          return dartClass != null ? dartClass.getName() : null;
+          if (dartClass == null) {
+            return name;
+          }
+          return StringUtil.isEmpty(name) ? dartClass.getName() : dartClass.getName() + "." + name;
         }
-        return getName();
+        return name;
       }
 
       @Override

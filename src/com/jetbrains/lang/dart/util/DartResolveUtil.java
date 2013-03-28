@@ -649,12 +649,12 @@ public class DartResolveUtil {
   }
 
   public static List<DartComponentName> getComponentNames(List<? extends DartComponent> fields) {
-    return ContainerUtil.map(fields, new Function<DartComponent, DartComponentName>() {
+    return ContainerUtil.filter(ContainerUtil.map(fields, new Function<DartComponent, DartComponentName>() {
       @Override
       public DartComponentName fun(DartComponent component) {
         return component.getComponentName();
       }
-    });
+    }), Condition.NOT_NULL);
   }
 
   @NotNull
