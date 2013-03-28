@@ -4,6 +4,7 @@ import com.intellij.ide.util.gotoByName.ChooseByNameBase;
 import com.intellij.ide.util.gotoByName.SimpleChooseByNameModel;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.ListUtil;
 import com.intellij.ui.SimpleColoredComponent;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.speedSearch.SpeedSearchUtil;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,9 +27,9 @@ import java.util.*;
  */
 public class GotoAngularModel extends SimpleChooseByNameModel{
 
-    private final Map<String, AngularItem> angularItems;
+    private final List<AngularItem> angularItems;
 
-    public GotoAngularModel(@NotNull Project project, Map<String, AngularItem> angularItems) {
+    public GotoAngularModel(@NotNull Project project, List<AngularItem> angularItems) {
         super(project, "AngularJS", "Help id");
         this.angularItems = angularItems;
     }
@@ -35,13 +37,24 @@ public class GotoAngularModel extends SimpleChooseByNameModel{
     //these are searched
     @Override
     public String[] getNames() {
-        return ArrayUtil.toStringArray(angularItems.keySet());
+        List<String> strings = new ArrayList<String>();
+        for (AngularItem angularItem : angularItems) {
+            strings.add(angularItem.getKey());
+        }
+
+        return ArrayUtil.toStringArray(strings);
     }
 
     //list provided to the item renderer
     @Override
     protected Object[] getElementsByName(String name, String pattern) {
-        return new Object[]{angularItems.get(name)};
+        for (AngularItem angularItem : angularItems) {
+            if (angularItem.getKey().equals(name)) {
+                return new Object[]{angularItem};
+            }
+        }
+
+        return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
     @Override

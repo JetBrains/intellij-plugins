@@ -12,6 +12,7 @@ import com.intellij.usages.Usage;
 */
 public class AngularItem {
     private String itemName;
+    private String key;
 
     public Usage getUsage() {
         return usage;
@@ -25,7 +26,8 @@ public class AngularItem {
         return element;
     }
 
-    AngularItem(String itemName, Usage usage, PsiElement element, String itemType) {
+    AngularItem(String key, String itemName, Usage usage, PsiElement element, String itemType) {
+        this.key = key;
         this.itemName = itemName;
         this.usage = usage;
         this.element = element;
@@ -39,5 +41,9 @@ public class AngularItem {
 
     public String getItemType() {
         return itemType;
+    }
+
+    public String getKey() {
+        return key;
     }
 }

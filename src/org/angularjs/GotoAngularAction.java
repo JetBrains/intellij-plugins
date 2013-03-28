@@ -43,13 +43,12 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class GotoAngularAction extends GotoActionBase {
     private static final int MODULE_METHODS = 0;
     private static final int CTRL_CONVENTIONS = 1;
+    private static final int NG_CONTROLLER = 2;
 
     public GotoAngularAction() {
         getTemplatePresentation().setText(IdeBundle.message("goto.inspection.action.text"));
@@ -68,22 +67,29 @@ public class GotoAngularAction extends GotoActionBase {
         final FindModel findModel = (FindModel) findManager.getFindInFileModel().clone();
 
 
-        final Map<String, AngularItem> validResults = new HashMap<String, AngularItem>();
+        final List<AngularItem> validResults = new ArrayList<AngularItem>();
 
         findModel.setRegularExpressions(true);
         findModel.setFileFilter("*.js, *.html");
 
-        findModel.setStringToFind("\\.(controller|filter|service|factory|module|value|constant|directive|provider)\\(\\s*(\"|')([^\\[]*)(\"|'\\s*,)");
+        findModel.setStringToFind("\\.(controller|filter|service|factory|module|value|constant|directive|provider)\\(\\s*(\"|')([^(\"|')]+)(\"|')");
         findModel.setStringToReplace("$3");
         final Collection<Usage> moduleMethodUsages = getAngularUsages(project, dataContext, findModel);
-        Map<String, AngularItem> moduleMethodResults = getValidResults(project, findModel, moduleMethodUsages, MODULE_METHODS);
-        validResults.putAll(moduleMethodResults);
+        List<AngularItem> moduleMethodResults = getValidResults(project, findModel, moduleMethodUsages, MODULE_METHODS);
+        validResults.addAll(moduleMethodResults);
 
         findModel.setStringToFind("Ctrl\\(\\s*\\$scope");
         findModel.setStringToReplace("$0");
         final Collection<Usage> ctrlByConventionUsages = getAngularUsages(project, dataContext, findModel);
-        Map<String, AngularItem> ctrlByConventionResults = getValidResults(project, findModel, ctrlByConventionUsages, CTRL_CONVENTIONS);
-        validResults.putAll(ctrlByConventionResults);
+        List<AngularItem> ctrlByConventionResults = getValidResults(project, findModel, ctrlByConventionUsages, CTRL_CONVENTIONS);
+        validResults.addAll(ctrlByConventionResults);
+
+
+        findModel.setStringToFind("ng\\-controller\\=\"([^(\"]+)\"");
+        findModel.setStringToReplace("$1");
+        final Collection<Usage> ngControllerUsages = getAngularUsages(project, dataContext, findModel);
+        List<AngularItem> ngControllerResults = getValidResults(project, findModel, ngControllerUsages, NG_CONTROLLER);
+        validResults.addAll(ngControllerResults);
 
 
 
@@ -95,6 +101,7 @@ public class GotoAngularAction extends GotoActionBase {
                 popup.setSearchInAnyPlace(true);
                 popup.setShowListForEmptyPattern(true);
                 popup.setSearchInAnyPlace(true);
+                popup.setMaximumListSizeLimit(255);
                 return super.createFilter(popup);
             }
 
@@ -110,8 +117,8 @@ public class GotoAngularAction extends GotoActionBase {
         });
     }
 
-    private Map<String, AngularItem> getValidResults(final Project project, final FindModel findModel, final Collection<Usage> usages, final int type) {
-        final Map<String, AngularItem> validResults = new HashMap<String, AngularItem>();
+    private List<AngularItem> getValidResults(final Project project, final FindModel findModel, final Collection<Usage> usages, final int type) {
+        final List<AngularItem> validResults = new ArrayList<AngularItem>();
 
         //todo: needs code review. There must be a better way to do this
         Runnable runnable = new Runnable() {
@@ -119,6 +126,7 @@ public class GotoAngularAction extends GotoActionBase {
                 for (final Usage result : usages) {
 
                     final UsageInfo2UsageAdapter usage = (UsageInfo2UsageAdapter) result;
+                    //avoid angular source files. Is there a better way to do this?
                     if (usage.getFile().getName().startsWith("angular")) continue;
 
                     usage.processRangeMarkers(new Processor<Segment>() {
@@ -131,21 +139,26 @@ public class GotoAngularAction extends GotoActionBase {
                                 Document document = usage.getDocument();
                                 CharSequence charsSequence = document.getCharsSequence();
                                 final CharSequence foundString = charsSequence.subSequence(textOffset, textEndOffset);
-                                String regExMatch = FindManager.getInstance(project).getStringToReplace(foundString.toString(), findModel, textOffset, document.getText());
+                                String s = foundString.toString();
+                                String regExMatch = FindManager.getInstance(project).getStringToReplace(s, findModel, textOffset, document.getText());
                                 System.out.println(regExMatch);
                                 PsiElement element = PsiUtil.getElementAtOffset(((UsageInfo2UsageAdapter) result).getUsageInfo().getFile(), textOffset + 1);
                                 String elementText = element.getText();
-                                System.out.println(elementText + ": " + regExMatch + " - " + foundString.toString());
+                                System.out.println(elementText + ": " + regExMatch + " - " + s);
                                 //hack to block weird css matches (I have no idea how many edge cases I'll have :/ )
-                                if(regExMatch.length() > 20) return true;
+//                                if(regExMatch.length() > 20) return true;
 
                                 switch (type) {
                                     case CTRL_CONVENTIONS:
-                                        validResults.put(elementText, new AngularItem(elementText, result, element, "controller"));
+                                        validResults.add(new AngularItem(s, elementText, result, element, "controller"));
                                         break;
 
                                     case MODULE_METHODS:
-                                        validResults.put(regExMatch, new AngularItem(regExMatch, result, element, element.getText()));
+                                        validResults.add(new AngularItem(s, regExMatch, result, element, element.getText()));
+                                        break;
+
+                                    case NG_CONTROLLER:
+                                        validResults.add(new AngularItem(s, regExMatch, result, element, "ng-controller"));
                                         break;
                                 }
 
