@@ -55,7 +55,7 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
         final NonOpaquePanel panel = super.customizeLoadingLayer(parent, text, icon);
         final Font font = text.getFont();
         text.setFont(font.deriveFont(font.getStyle(), font.getSize() + 6));
-        text.setForeground(new JBColor(new Color(0, 0, 0, 150), JBColor.foreground));
+        text.setForeground(new JBColor(new Color(0, 0, 0, 150), JBColor.foreground()));
         return panel;
       }
     };
