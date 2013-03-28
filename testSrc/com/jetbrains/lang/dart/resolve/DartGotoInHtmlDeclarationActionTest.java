@@ -409,6 +409,6 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
   }
 
   public void testWi14225() throws Throwable {
-    doTest(2);
+    doTest(1);
   }
 }

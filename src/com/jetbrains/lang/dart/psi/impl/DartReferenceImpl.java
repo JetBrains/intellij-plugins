@@ -46,6 +46,16 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
   @Override
   public TextRange getRangeInElement() {
     final TextRange textRange = getTextRange();
+
+    DartReference[] dartReferences = PsiTreeUtil.getChildrenOfType(this, DartReference.class);
+    if (dartReferences != null && dartReferences.length > 0) {
+      TextRange lastReferenceRange = dartReferences[dartReferences.length - 1].getTextRange();
+      return new TextRange(
+        lastReferenceRange.getStartOffset() - textRange.getStartOffset(),
+        lastReferenceRange.getEndOffset() - textRange.getEndOffset()
+      );
+    }
+
     return new TextRange(0, textRange.getEndOffset() - textRange.getStartOffset());
   }
 

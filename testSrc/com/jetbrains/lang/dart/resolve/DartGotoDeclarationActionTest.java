@@ -426,6 +426,6 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
   }
 
   public void testWi14225() throws Throwable {
-    doTest(2);
+    doTest(1);
   }
 }

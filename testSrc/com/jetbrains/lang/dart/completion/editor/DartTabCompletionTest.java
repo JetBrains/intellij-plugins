@@ -27,4 +27,8 @@ public class DartTabCompletionTest extends LightFixtureCompletionTestCase {
   public void testExpression1() {
     doTest();
   }
+
+  public void testWEB_7191() {
+    doTest();
+  }
 }
