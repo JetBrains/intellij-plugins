@@ -20,7 +20,6 @@ import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.spring.facet.SpringFacet;
-import com.intellij.spring.facet.SpringFacetConfiguration;
 import com.intellij.spring.facet.SpringFacetType;
 import com.intellij.spring.facet.SpringFileSet;
 import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
@@ -31,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Tests highlighting with Spring plugin.
@@ -125,6 +123,7 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
     springFacet.getConfiguration().setModified();
   }
 
+  @NotNull
   protected SpringFacet createSpringFacet() {
     final SpringFacet springFacet = SpringFacet.getInstance(myModule);
     if (springFacet != null) {

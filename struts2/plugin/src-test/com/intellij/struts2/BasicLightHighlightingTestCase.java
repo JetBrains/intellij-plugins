@@ -108,13 +108,13 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
 
   @Override
   protected final void tearDown() throws Exception {
+
+    performTearDown();
     // clear existing StrutsFacet configuration before running next test
     final StrutsFacet existing = StrutsFacet.getInstance(myModule);
     if (existing != null) {
       existing.getConfiguration().getFileSets().clear();
     }
-
-    performTearDown();
 
     super.tearDown();
   }
