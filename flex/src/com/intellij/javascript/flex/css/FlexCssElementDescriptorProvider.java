@@ -225,7 +225,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   public boolean isPossiblePseudoSelector(@NotNull String selectorName, @Nullable PsiElement context) {
-    return true;
+    return false;
   }
 
   @NotNull
