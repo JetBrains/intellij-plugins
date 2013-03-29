@@ -70,11 +70,11 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
       case ServerMethod.SHOW_ERROR:
         final String errorMessage = reader.readUTF();
         if (expectedError == null) {
-          throw new AssertionErrorWithoutStackTrace(errorMessage);
+          throw new TraceLessAssertionError(errorMessage);
         }
         else {
           if (!errorMessage.startsWith(expectedError)) {
-            throw new AssertionErrorWithoutStackTrace("Expected error message " + expectedError + ", but got " + errorMessage);
+            throw new TraceLessAssertionError("Expected error message " + expectedError + ", but got " + errorMessage);
           }
           expectedError = null;
         }
@@ -86,13 +86,13 @@ class TestSocketInputHandler extends SocketInputHandlerImpl {
           customMessageHandler = null;
         }
         else {
-          throw new AssertionErrorWithoutStackTrace("Unexpected server command: " + command);
+          throw new TraceLessAssertionError("Unexpected server command: " + command);
         }
     }
   }
 
-  private static class AssertionErrorWithoutStackTrace extends AssertionError {
-    public AssertionErrorWithoutStackTrace(String m) {
+  private static class TraceLessAssertionError extends AssertionError {
+    public TraceLessAssertionError(String m) {
       super(m);
     }
 
