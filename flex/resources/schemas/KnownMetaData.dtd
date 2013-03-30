@@ -8,6 +8,7 @@
 <!ELEMENT ArrayElementType EMPTY>
 <!ATTLIST ArrayElementType
   _DEFAULT_ CDATA "Object"
+  elementType CDATA "Object"
 >
 <!ELEMENT Bindable EMPTY>
 <!ATTLIST Bindable
@@ -161,6 +162,7 @@
 <!ELEMENT Transient EMPTY>
 <!ELEMENT Mixin EMPTY>
 
+<!ELEMENT Mock EMPTY>
 <!ELEMENT Inject EMPTY>
 <!ATTLIST Inject
   source CDATA #IMPLIED
@@ -168,6 +170,7 @@
   required (true|false) #IMPLIED
   bind (true|false) #IMPLIED
   twoWay (true|false) #IMPLIED
+  optional (true|false) #IMPLIED
 
   name CDATA #IMPLIED
 

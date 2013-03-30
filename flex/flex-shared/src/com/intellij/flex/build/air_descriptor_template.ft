@@ -106,6 +106,9 @@
 
         <!-- Whether or not to pan when a soft keyboard is raised or lowered (either "pan" or "none").  Optional.  Defaults "pan." -->
         <!--<softKeyboardBehavior></softKeyboardBehavior>-->
+
+        <!-- Display Resolution for the app (either "standard" or "high"). Optional, OSX-only. Default "standard" -->
+        <!-- <requestedDisplayResolution></requestedDisplayResolution> -->
     </initialWindow>
 
     <!-- We recommend omitting the supportedProfiles element, which in turn permits your application to be deployed to all devices supported by AIR.
@@ -132,11 +135,13 @@
         <image57x57></image57x57>
         <image58x58></image58x58>
         <image72x72></image72x72>
+        <image96x96></image96x96>
         <image100x100></image100x100>
         <image114x114></image114x114>
         <image128x128></image128x128>
         <image144x144></image144x144>
         <image512x512></image512x512>
+        <image732x412></image732x412>
         <image1024x1024></image1024x1024>
     </icon>-->
 
@@ -201,6 +206,11 @@
 
         <!-- Display Resolution for the app (either "standard" or "high"). Optional. Default "standard" -->
         ${iOS_high_resolution_comment_start}<requestedDisplayResolution>high</requestedDisplayResolution>${iOS_high_resolution_comment_end}
+        <!-- Forcing Render Mode CPU for the devices mentioned. Optional  -->
+        <!--<forceCPURenderModeForDevices></forceCPURenderModeForDevices> -->
+        <!-- File containing line separated list of external swf paths. These swfs won't be packaged inside the application
+        and corresponding stripped swfs will be output in externalStrippedSwfs folder. -->
+        <!--<externalSwfs></externalSwfs> -->
     ${iOS_comment_start}</iPhone>${iOS_comment_end}
 
     <!-- Android specific tags that get passed to AndroidManifest.xml file. -->
@@ -235,6 +245,8 @@
 
         <!-- Color depth for the app (either "32bit" or "16bit"). Optional. Default 16bit before namespace 3.0, 32bit after -->
         <!--<colorDepth></colorDepth>-->
+        <!-- Indicates if the app contains video or not. Necessary for ordering of video planes with graphics plane, especially in Jellybean - if you app does video this must be set to true - valid values are true or false -->
+        <!-- <containsVideo></containsVideo> -->
     ${android_comment_start}</android>${android_comment_end}
 
 </application>

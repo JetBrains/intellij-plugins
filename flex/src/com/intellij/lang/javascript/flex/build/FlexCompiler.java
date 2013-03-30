@@ -154,8 +154,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
         for (final DependencyEntry entry : bc.getDependencies().getEntries()) {
           if (entry instanceof BuildConfigurationEntry) {
             final FlexBuildConfiguration dependencyBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
-            if (dependencyBC != null && !dependencyBC.isSkipCompile() &&
-                entry.getDependencyType().getLinkageType() != LinkageType.LoadInRuntime) {
+            if (dependencyBC != null && !dependencyBC.isSkipCompile()) {
               dependencies.add(dependencyBC);
             }
           }

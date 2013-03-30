@@ -558,12 +558,12 @@ public class FlexCommonUtils {
     }
 
     if (swcName.endsWith("asc-support.swc")) {
-      return false; // bundled with AIR SDK 3.4 with ASC 2.0, no idea what for is it
+      return true;
     }
 
     if (swcName.equals("apache.swc") ||
         swcName.equals("experimental.swc")) {
-      return true; // Apache Flex SDK 4.9
+      return !bcNature.pureAS; // Apache Flex SDK 4.9
     }
 
     if (swcName.equals("automation.swc") ||
@@ -1014,6 +1014,7 @@ public class FlexCommonUtils {
   }
 
   public static String getSwfVersionForTargetPlayer(final String targetPlayer) {
+    if (StringUtil.compareVersionNumbers(targetPlayer, "11.7") >= 0) return "20";
     if (StringUtil.compareVersionNumbers(targetPlayer, "11.6") >= 0) return "19";
     if (StringUtil.compareVersionNumbers(targetPlayer, "11.5") >= 0) return "18";
     if (StringUtil.compareVersionNumbers(targetPlayer, "11.4") >= 0) return "17";
@@ -1028,6 +1029,7 @@ public class FlexCommonUtils {
   }
 
   public static String getSwfVersionForAirVersion(final String airVersion) {
+    if (StringUtil.compareVersionNumbers(airVersion, "3.7") >= 0) return "20";
     if (StringUtil.compareVersionNumbers(airVersion, "3.6") >= 0) return "19";
     if (StringUtil.compareVersionNumbers(airVersion, "3.5") >= 0) return "18";
     if (StringUtil.compareVersionNumbers(airVersion, "3.4") >= 0) return "17";

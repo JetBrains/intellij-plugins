@@ -36,11 +36,13 @@ public class FlashBuilderProject {
   private boolean myUseHtmlWrapper = false;
   private Map<String, Collection<String>> myLibraryPathsAndSources = new LinkedHashMap<String, Collection<String>>();
   private Collection<Pair<String, String>> myNamespacesAndManifestPaths = new ArrayList<Pair<String, String>>(1);
+  private Collection<String> myFilesIncludedInSwc = new ArrayList<String>();
   private Collection<FBRLMInfo> myModules = new ArrayList<FBRLMInfo>();
   private Collection<String> myCssFilesToCompile = new ArrayList<String>();
   private Collection<String> myPathsExcludedFromDesktopPackaging = new ArrayList<String>();
   private Collection<String> myPathsExcludedFromAndroidPackaging = new ArrayList<String>();
   private Collection<String> myPathsExcludedFromIOSPackaging = new ArrayList<String>();
+  private String myThemeDirPathRaw;
 
   public static class FBRLMInfo {
     public final String MAIN_CLASS_PATH;
@@ -268,6 +270,14 @@ public class FlashBuilderProject {
     return myNamespacesAndManifestPaths;
   }
 
+  public void addFileIncludedInSwc(final String path) {
+    myFilesIncludedInSwc.add(path);
+  }
+
+  public Collection<String> getFilesIncludedInSwc() {
+    return myFilesIncludedInSwc;
+  }
+
   public void addModule(final FBRLMInfo rlmInfo) {
     checkIfPathMacroUsed(rlmInfo.MAIN_CLASS_PATH);
     checkIfPathMacroUsed(rlmInfo.OUTPUT_PATH);
@@ -310,6 +320,15 @@ public class FlashBuilderProject {
 
   public Collection<String> getPathsExcludedFromIOSPackaging() {
     return myPathsExcludedFromIOSPackaging;
+  }
+
+  public void setThemeDirPathRaw(final String themeDirPathRaw) {
+    // do not check path macro usage - there's a special macros always
+    myThemeDirPathRaw = themeDirPathRaw;
+  }
+
+  public String getThemeDirPathRaw() {
+    return myThemeDirPathRaw;
   }
 
   private void checkIfPathMacroUsed(final String path) {
