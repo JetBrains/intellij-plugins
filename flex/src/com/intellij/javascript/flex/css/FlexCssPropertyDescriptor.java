@@ -171,7 +171,7 @@ public class FlexCssPropertyDescriptor extends AbstractCssPropertyDescriptor {
     }
   }
 
-  public String generateDoc(PsiElement context) {
+  public String generateDoc(@Nullable PsiElement context) {
     if (context == null) return null;
     PsiElement[] declarations = getDeclarations(context);
     List<DocumentationElement> docElements = new ArrayList<DocumentationElement>();

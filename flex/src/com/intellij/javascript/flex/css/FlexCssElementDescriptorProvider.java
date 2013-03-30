@@ -37,15 +37,18 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.css.*;
+import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptor;
+import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.util.references.HtmlCssClassOrIdReference;
-import com.intellij.psi.css.impl.util.table.CssElementDescriptorProviderImpl;
+import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xml.XmlElementDescriptor;
@@ -175,9 +178,9 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return result;
   }
 
-  public PsiElement getDocumentationElementForSelector(@NotNull String text, @Nullable PsiElement context) {
+  public PsiElement getDocumentationElementForSelector(@NotNull String selectorName, @Nullable PsiElement context) {
     if (context != null) {
-      Collection<JSQualifiedNamedElement> classes = getClasses(text, context);
+      Collection<JSQualifiedNamedElement> classes = getClasses(selectorName, context);
       if (classes != null) {
         for (JSQualifiedNamedElement c : classes) {
           if (c instanceof JSClass) {
@@ -203,6 +206,12 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return null;
   }
 
+  @NotNull
+  @Override
+  public Collection<CssPseudoSelectorDescriptor> getPseudoSelectorDescriptors(@NotNull String name) {
+    return ContainerUtil.<CssPseudoSelectorDescriptor>newArrayList(new CssPseudoSelectorDescriptorStub(name));
+  }
+
   public boolean isPossibleSelector(@NotNull String selector, @NotNull PsiElement context) {
     if (selector.equals("global")) return true;
     GlobalSearchScope scope = FlexCssUtil.getResolveScope(context);
@@ -215,12 +224,12 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return false;
   }
 
-  public boolean isPossiblePseudoClass(@NotNull String pseudoClass, @NotNull PsiElement context) {
-    return true;
+  public boolean isPossiblePseudoSelector(@NotNull String selectorName, @Nullable PsiElement context) {
+    return false;
   }
 
   @NotNull
-  public String[] getPossiblePseudoClasses(@NotNull PsiElement context) {
+  public String[] getPossiblePseudoSelectorsNames(@Nullable PsiElement context) {
     return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
@@ -409,7 +418,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   @NotNull
-  private static PsiElement[] getDeclarationsForSimpleSelector(@NotNull String className, @NotNull PsiElement context) {
+  private static PsiElement[] getDeclarationsForSimpleSelector(@NotNull String className, @Nullable PsiElement context) {
     Collection<JSQualifiedNamedElement> elements = getClasses(className, context);
     if (elements != null && elements.size() > 0) {
       List<PsiElement> result = new ArrayList<PsiElement>();
@@ -428,12 +437,13 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     return PsiElement.EMPTY_ARRAY;
   }
 
+  @Override
   public boolean providesClassicCss() {
     return false;
   }
 
-  public String generateDocForSelector(@NotNull String s, @NotNull PsiElement context) {
-    PsiElement[] declarations = getDeclarationsForSimpleSelector(s, context);
+  public String generateDocForSelector(@NotNull String selectorName, @Nullable PsiElement context) {
+    PsiElement[] declarations = getDeclarationsForSimpleSelector(selectorName, context);
     JSClass[] classes = new JSClass[declarations.length];
     for (int i = 0; i < declarations.length; i++) {
       PsiElement declaration = declarations[i];
@@ -570,7 +580,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
   }
 
   @Override
-  public boolean supportColorTerms() {
+  public boolean isColorTermsSupported() {
     return false;
   }
 
