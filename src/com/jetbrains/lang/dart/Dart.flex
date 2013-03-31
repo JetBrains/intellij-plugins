@@ -160,6 +160,7 @@ FLOAT_LITERAL=(({FLOATING_POINT_LITERAL1})|({FLOATING_POINT_LITERAL2}))
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "while"                { return WHILE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "class"                { return CLASS; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "extends"              { return EXTENDS; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> "with"                 { return WITH; }
 
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "abstract"             { return ABSTRACT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "assert"               { return ASSERT; }

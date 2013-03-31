@@ -326,6 +326,10 @@ public class DartVisitor extends PsiElementVisitor {
     visitComponent(o);
   }
 
+  public void visitMixins(@NotNull DartMixins o) {
+    visitPsiCompositeElement(o);
+  }
+
   public void visitMultiplicativeExpression(@NotNull DartMultiplicativeExpression o) {
     visitExpression(o);
     // visitReference(o);

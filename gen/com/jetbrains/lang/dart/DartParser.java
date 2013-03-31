@@ -251,6 +251,9 @@ public class DartParser implements PsiParser {
     else if (root_ == METHOD_PROTOTYPE_DECLARATION) {
       result_ = methodPrototypeDeclaration(builder_, level_ + 1);
     }
+    else if (root_ == MIXINS) {
+      result_ = mixins(builder_, level_ + 1);
+    }
     else if (root_ == MULTIPLICATIVE_EXPRESSION) {
       result_ = multiplicativeExpression(builder_, level_ + 1);
     }
@@ -421,10 +424,9 @@ public class DartParser implements PsiParser {
     }
     else {
       Marker marker_ = builder_.mark();
+      enterErrorRecordingSection(builder_, level_, _SECTION_RECOVER_, null);
       result_ = parse_root_(root_, builder_, level_);
-      while (builder_.getTokenType() != null) {
-        builder_.advanceLexer();
-      }
+      exitErrorRecordingSection(builder_, level_, result_, true, _SECTION_RECOVER_, TOKEN_ADVANCER);
       marker_.done(root_);
     }
     return builder_.getTreeBuilt();
@@ -444,6 +446,7 @@ public class DartParser implements PsiParser {
       REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION,
       SUPER_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION, VALUE_EXPRESSION),
   };
+
   public static boolean type_extends_(IElementType child_, IElementType parent_) {
     for (TokenSet set : EXTENDS_SETS_) {
       if (set.contains(child_) && set.contains(parent_)) return true;
@@ -1296,7 +1299,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // 'abstract'? 'class' componentName typeParameters? superclass? interfaces? ('native' stringLiteralExpression?)? classBodyWithBracesPrivate
+  // 'abstract'? 'class' componentName typeParameters? (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBodyWithBracesPrivate
   public static boolean classDefinition(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classDefinition")) return false;
     if (!nextTokenIs(builder_, ABSTRACT) && !nextTokenIs(builder_, CLASS)
@@ -1338,10 +1341,33 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // superclass?
+  // (superclass mixins?)?
   private static boolean classDefinition_4(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classDefinition_4")) return false;
-    superclass(builder_, level_ + 1);
+    classDefinition_4_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // superclass mixins?
+  private static boolean classDefinition_4_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDefinition_4_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = superclass(builder_, level_ + 1);
+    result_ = result_ && classDefinition_4_0_1(builder_, level_ + 1);
+    if (!result_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
+    }
+    return result_;
+  }
+
+  // mixins?
+  private static boolean classDefinition_4_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classDefinition_4_0_1")) return false;
+    mixins(builder_, level_ + 1);
     return true;
   }
 
@@ -4711,6 +4737,28 @@ public class DartParser implements PsiParser {
     if (!recursion_guard_(builder_, level_, "methodPrototypeDeclaration_0")) return false;
     consumeToken(builder_, CONST);
     return true;
+  }
+
+  /* ********************************************************** */
+  // 'with' typeList
+  public static boolean mixins(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mixins")) return false;
+    if (!nextTokenIs(builder_, WITH)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = builder_.mark();
+    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
+    result_ = consumeToken(builder_, WITH);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && typeList(builder_, level_ + 1);
+    if (result_ || pinned_) {
+      marker_.done(MIXINS);
+    }
+    else {
+      marker_.rollbackTo();
+    }
+    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
+    return result_ || pinned_;
   }
 
   /* ********************************************************** */

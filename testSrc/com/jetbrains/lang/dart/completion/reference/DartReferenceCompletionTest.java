@@ -5,8 +5,8 @@ import com.jetbrains.lang.dart.completion.base.DartCompletionTestBase;
 /**
  * @author: Fedor.Korotkov
  */
-public class ReferenceCompletionTest extends DartCompletionTestBase {
-  public ReferenceCompletionTest() {
+public class DartReferenceCompletionTest extends DartCompletionTestBase {
+  public DartReferenceCompletionTest() {
     super("completion", "references");
   }
 

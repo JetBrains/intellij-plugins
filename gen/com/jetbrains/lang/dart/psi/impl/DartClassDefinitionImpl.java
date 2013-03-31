@@ -37,6 +37,12 @@ public class DartClassDefinitionImpl extends AbstractDartPsiClass implements Dar
 
   @Override
   @Nullable
+  public DartMixins getMixins() {
+    return findChildByClass(DartMixins.class);
+  }
+
+  @Override
+  @Nullable
   public DartStringLiteralExpression getStringLiteralExpression() {
     return findChildByClass(DartStringLiteralExpression.class);
   }

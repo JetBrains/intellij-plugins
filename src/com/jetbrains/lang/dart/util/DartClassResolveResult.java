@@ -55,7 +55,7 @@ public class DartClassResolveResult implements Cloneable {
         result.specializeByParameters(superClass.getTypeArguments());
         resolveResult.merge(result.getSpecialization());
       }
-      for (DartType dartType : dartClass.getImplementsList()) {
+      for (DartType dartType : DartResolveUtil.getImplementsAndMixinsList(dartClass)) {
         final DartClassResolveResult result = DartResolveUtil.resolveClassByType(dartType);
         result.specializeByParameters(dartType.getTypeArguments());
         resolveResult.merge(result.getSpecialization());
@@ -130,7 +130,7 @@ public class DartClassResolveResult implements Cloneable {
     if (superType != null) {
       specializeSuperType(dartClass, specialization, superType);
     }
-    for (DartType dartType : dartClass.getImplementsList()) {
+    for (DartType dartType : DartResolveUtil.getImplementsAndMixinsList(dartClass)) {
       specializeSuperType(dartClass, specialization, dartType);
     }
   }

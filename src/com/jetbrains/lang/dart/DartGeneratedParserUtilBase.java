@@ -22,7 +22,7 @@ public class DartGeneratedParserUtilBase extends GeneratedParserUtilBase {
   private static final Set<String> pseudoKeywords = new THashSet<String>(Arrays.asList(
     "abstract", "assert", "class", "extends", "factory", "implements", "import", "interface",
     "is", "as", "on", "library", "native", "negate", "source", "static", "typedef", "operator",
-    "set", "get", "of", "part", "show", "hide", "export"
+    "set", "get", "of", "part", "show", "hide", "export", "with"
   ));
 
   private static final Set<String> operators = new THashSet<String>(Arrays.asList(

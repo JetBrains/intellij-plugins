@@ -169,7 +169,7 @@ public class DartResolveUtil {
 
   private static boolean checkInheritanceBySuperAndImplementationList(DartClass dartClass, DartClass superCandidate) {
     if (typeResolvesToClass(dartClass.getSuperClass(), superCandidate)) return true;
-    for (DartType dartType : dartClass.getImplementsList()) {
+    for (DartType dartType : getImplementsAndMixinsList(dartClass)) {
       if (typeResolvesToClass(dartType, superCandidate)) return true;
     }
     return false;
@@ -570,7 +570,7 @@ public class DartResolveUtil {
       }
 
       tryAddClassByType(classes, dartClass.getSuperClass());
-      for (DartType type : dartClass.getImplementsList()) {
+      for (DartType type : getImplementsAndMixinsList(dartClass)) {
         tryAddClassByType(classes, type);
       }
       processedClasses.add(dartClass);
@@ -605,6 +605,8 @@ public class DartResolveUtil {
     DartClass currentClass = rootDartClass;
     while (currentClass != null) {
       processedClasses.add(currentClass);
+
+      // implements
       for (DartType type : currentClass.getImplementsList()) {
         final DartClass result = resolveClassByType(type).getDartClass();
         if (superInterfaceProcessor == null || result == null || processedClasses.contains(result)) {
@@ -617,6 +619,18 @@ public class DartResolveUtil {
           return;
         }
       }
+
+      // mixins
+      for (DartType type : currentClass.getMixinsList()) {
+        final DartClass result = resolveClassByType(type).getDartClass();
+        if (superClassProcessor == null || result == null || processedClasses.contains(result)) {
+          continue;
+        }
+        if (!superClassProcessor.execute(result)) {
+          return;
+        }
+      }
+
       currentClass = resolveClassByType(currentClass.getSuperClass()).getDartClass();
       if (currentClass == null || processedClasses.contains(currentClass)) {
         break;
@@ -628,7 +642,6 @@ public class DartResolveUtil {
       }
     }
   }
-
 
   private static void tryAddClassByType(LinkedList<DartClass> classes, DartType type) {
     final DartClassResolveResult result = resolveClassByType(type);
@@ -721,7 +734,7 @@ public class DartResolveUtil {
     return typeList.getTypeList();
   }
 
-  public static List<DartClassResolveResult> resolveClassesByType(List<DartType> types) {
+  public static List<DartClassResolveResult> resolveClassesByTypes(List<DartType> types) {
     return ContainerUtil.map(types, new Function<DartType, DartClassResolveResult>() {
       @Override
       public DartClassResolveResult fun(DartType dartType) {
@@ -1104,5 +1117,9 @@ public class DartResolveUtil {
     libraryFiles.addAll(DartLibraryIndex.findLibraryClass(context, "dart:core"));
 
     processTopLevelDeclarations(context, processor, libraryFiles, null);
+  }
+
+  public static List<DartType> getImplementsAndMixinsList(DartClass dartClass) {
+    return ContainerUtil.concat(dartClass.getImplementsList(), dartClass.getMixinsList());
   }
 }

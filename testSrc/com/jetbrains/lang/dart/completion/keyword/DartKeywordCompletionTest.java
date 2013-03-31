@@ -5,8 +5,8 @@ import com.jetbrains.lang.dart.completion.base.DartCompletionTestBase;
 /**
  * @author: Fedor.Korotkov
  */
-public class KeywordCompletionTest extends DartCompletionTestBase {
-  public KeywordCompletionTest() {
+public class DartKeywordCompletionTest extends DartCompletionTestBase {
+  public DartKeywordCompletionTest() {
     super("completion", "keywords");
   }
 
@@ -27,6 +27,10 @@ public class KeywordCompletionTest extends DartCompletionTestBase {
   }
 
   public void testInterface() throws Throwable {
+    doTest();
+  }
+
+  public void testMixin1() throws Throwable {
     doTest();
   }
 

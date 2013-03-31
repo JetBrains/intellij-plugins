@@ -15,6 +15,9 @@ public interface DartClass extends DartComponent {
   @NotNull
   List<DartType> getImplementsList();
 
+  @NotNull
+  List<DartType> getMixinsList();
+
   boolean isInterface();
 
   boolean isGeneric();

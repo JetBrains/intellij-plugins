@@ -43,6 +43,16 @@ abstract public class AbstractDartPsiClass extends AbstractDartComponentImpl imp
     return Collections.emptyList();
   }
 
+  @NotNull
+  @Override
+  public List<DartType> getMixinsList() {
+    final DartMixins mixins = PsiTreeUtil.getChildOfType(this, DartMixins.class);
+    if (mixins != null) {
+      return DartResolveUtil.getTypes(mixins.getTypeList());
+    }
+    return Collections.emptyList();
+  }
+
   @Override
   public boolean isInterface() {
     return DartComponentType.typeOf(this) == DartComponentType.INTERFACE;

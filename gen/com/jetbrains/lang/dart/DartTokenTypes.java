@@ -84,6 +84,7 @@ public interface DartTokenTypes {
   IElementType METADATA = new DartElementType("METADATA");
   IElementType METHOD_DECLARATION = new DartElementType("METHOD_DECLARATION");
   IElementType METHOD_PROTOTYPE_DECLARATION = new DartElementType("METHOD_PROTOTYPE_DECLARATION");
+  IElementType MIXINS = new DartElementType("MIXINS");
   IElementType MULTIPLICATIVE_EXPRESSION = new DartElementType("MULTIPLICATIVE_EXPRESSION");
   IElementType MULTIPLICATIVE_OPERATOR = new DartElementType("MULTIPLICATIVE_OPERATOR");
   IElementType NAMED_ARGUMENT = new DartElementType("NAMED_ARGUMENT");
@@ -253,6 +254,7 @@ public interface DartTokenTypes {
   IElementType TYPEDEF = new DartElementType("typedef");
   IElementType VAR = new DartElementType("var");
   IElementType WHILE = new DartElementType("while");
+  IElementType WITH = new DartElementType("with");
   IElementType XOR = new DartElementType("^");
   IElementType XOR_EQ = new DartElementType("^=");
 
@@ -486,6 +488,9 @@ public interface DartTokenTypes {
       }
       else if (type == METHOD_PROTOTYPE_DECLARATION) {
         return new DartMethodPrototypeDeclarationImpl(node);
+      }
+      else if (type == MIXINS) {
+        return new DartMixinsImpl(node);
       }
       else if (type == MULTIPLICATIVE_EXPRESSION) {
         return new DartMultiplicativeExpressionImpl(node);

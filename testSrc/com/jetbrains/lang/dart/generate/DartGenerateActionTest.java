@@ -43,6 +43,10 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
     doImplementTest();
   }
 
+  public void testImplementMixin1() throws Throwable {
+    doImplementTest();
+  }
+
   public void testOverride1() throws Throwable {
     doOverrideTest();
   }
@@ -56,6 +60,10 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
   }
 
   public void testOverride4() throws Throwable {
+    doOverrideTest();
+  }
+
+  public void testOverrideMixin1() throws Throwable {
     doOverrideTest();
   }
 

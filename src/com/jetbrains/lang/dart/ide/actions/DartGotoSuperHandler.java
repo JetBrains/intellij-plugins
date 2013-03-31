@@ -45,7 +45,10 @@ public class DartGotoSuperHandler implements LanguageCodeInsightActionHandler {
     if (dartClassResolveResult.getDartClass() != null) {
       supers.add(dartClassResolveResult.getDartClass());
     }
-    for (DartClassResolveResult resolveResult : DartResolveUtil.resolveClassesByType(dartClass.getImplementsList())) {
+    List<DartClassResolveResult> implementsAndMixinsList = DartResolveUtil.resolveClassesByTypes(
+      DartResolveUtil.getImplementsAndMixinsList(dartClass)
+    );
+    for (DartClassResolveResult resolveResult : implementsAndMixinsList) {
       final DartClass resolveResultDartClass = resolveResult.getDartClass();
       if (resolveResultDartClass != null) {
         supers.add(resolveResultDartClass);

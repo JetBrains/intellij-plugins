@@ -43,4 +43,8 @@ public class DartGotoImplementationTest extends JavaCodeInsightFixtureTestCase {
   public void testGti4() throws Throwable {
     doTest(1);
   }
+
+  public void testMixin1() throws Throwable {
+    doTest(1);
+  }
 }

@@ -17,6 +17,9 @@ public interface DartClassDefinition extends DartClass {
   DartInterfaces getInterfaces();
 
   @Nullable
+  DartMixins getMixins();
+
+  @Nullable
   DartStringLiteralExpression getStringLiteralExpression();
 
   @Nullable

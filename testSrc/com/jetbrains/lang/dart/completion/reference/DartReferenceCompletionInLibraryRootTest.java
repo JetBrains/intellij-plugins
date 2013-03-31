@@ -8,8 +8,8 @@ import com.jetbrains.lang.dart.util.DartSdkTestUtil;
 /**
  * @author: Fedor.Korotkov
  */
-public class ReferenceCompletionInLibraryRootTest extends DartCompletionTestBase {
-  public ReferenceCompletionInLibraryRootTest() {
+public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTestBase {
+  public DartReferenceCompletionInLibraryRootTest() {
     super("completion", "references");
   }
 
@@ -42,6 +42,10 @@ public class ReferenceCompletionInLibraryRootTest extends DartCompletionTestBase
     myFixture.configureByText("baz.dart", "library dart.baz;");
     myFixture.configureByText("library3.dart", "part of da<caret>");
     doTestVariantsInner(getTestName(false) + ".txt");
+  }
+
+  public void testMixin1() throws Throwable {
+    doTest();
   }
 
   public void testPackages1() throws Throwable {

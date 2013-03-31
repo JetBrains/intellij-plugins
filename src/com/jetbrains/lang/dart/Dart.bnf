@@ -76,6 +76,7 @@
   PART="part"
   RESOURCE="resource"
   EXTERNAL="external"
+  WITH="with"
 
   LBRACE="{"
   RBRACE="}"
@@ -220,7 +221,7 @@ abstractOperatorDeclaration ::= 'abstract' returnType? 'operator' userDefinableO
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartOperator" implements="com.jetbrains.lang.dart.psi.DartOperator"}
 operatorDeclaration ::= returnType? 'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative)
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartOperator" implements="com.jetbrains.lang.dart.psi.DartOperator"}
-classDefinition ::= 'abstract'? 'class' componentName typeParameters? superclass? interfaces? ('native' stringLiteralExpression?)? classBodyWithBracesPrivate
+classDefinition ::= 'abstract'? 'class' componentName typeParameters? (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBodyWithBracesPrivate
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
 private classBodyWithBracesPrivate ::= '{' classBody '}'
@@ -239,6 +240,7 @@ typeParameter ::= componentName ('extends' type)?
 
 private type_parameter_recover ::= !('(' | ',' | '.' | '>' | 'extends' | 'factory' | 'implements' | '{')
 superclass ::= 'extends' type {pin=1}
+mixins ::= 'with' typeList {pin=1}
 interfaces ::= 'implements' typeList {pin=1}
 superinterfaces::= 'extends' typeList {pin=1}
 defaultFactroy::= 'default' simpleQualifiedReferenceExpression typeParameters? {pin=1}

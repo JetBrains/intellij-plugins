@@ -32,7 +32,7 @@ public interface DartTokenTypesSets {
                                         FACTORY, GET, IMPLEMENTS,
                                         IMPORT, INTERFACE, IS, AS, ON, LIBRARY,
                                         NEGATE, OPERATOR, SET, SOURCE,
-                                        STATIC, TYPEDEF, NATIVE, RESOURCE);
+                                        STATIC, TYPEDEF, NATIVE, RESOURCE, WITH);
 
   TokenSet RESERVED = TokenSet.create(IF, ELSE, TRY, THROW, CATCH, FINALLY, TRUE,
                                       FALSE, NULL, SWITCH, CASE, DEFAULT,

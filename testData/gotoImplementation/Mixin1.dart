@@ -1,4 +1,4 @@
-add(Foo foo, {Bar param}) {
+abstract class <caret>Mixin {
 }
 
 class AClass extends Object with Mixin {

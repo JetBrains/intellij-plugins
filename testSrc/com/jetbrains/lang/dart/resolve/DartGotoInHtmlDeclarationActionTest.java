@@ -172,6 +172,10 @@ public class DartGotoInHtmlDeclarationActionTest extends DartGotoDeclarationActi
     doTest(1, "Library12.dart", "packages/foo/Foo.dart", "packages/bar/Bar.dart");
   }
 
+  public void testMixin1() throws Throwable {
+    doTest(1);
+  }
+
   public void testLocalVarDeclaration1() throws Throwable {
     doTest(1);
   }
