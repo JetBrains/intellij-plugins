@@ -76,5 +76,5 @@ public interface CucumberJvmExtensionPoint {
    * @return inferred 'glue' parameters
    */
   @NotNull
-  Collection<String> getGlues(@NotNull GherkinFile file);
+  Collection<String> getGlues(@NotNull GherkinFile file, Set<String> gluesFromOtherFiles);
 }

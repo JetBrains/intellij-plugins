@@ -150,8 +150,11 @@ public class CucumberJavaExtension implements CucumberJvmExtensionPoint {
 
   @NotNull
   @Override
-  public Collection<String> getGlues(@NotNull GherkinFile file) {
-    final Set<String> glues = ContainerUtil.newHashSet();
+  public Collection<String> getGlues(@NotNull GherkinFile file, Set<String> gluesFromOtherFiles) {
+    if (gluesFromOtherFiles == null) {
+      gluesFromOtherFiles = ContainerUtil.newHashSet();
+    }
+    final Set<String> glues = gluesFromOtherFiles;
 
     file.accept(new GherkinRecursiveElementVisitor() {
       @Override

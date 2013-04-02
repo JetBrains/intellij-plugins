@@ -82,7 +82,7 @@ public abstract class CucumberJavaRunConfigurationProducer extends JavaRuntimeCo
     final CucumberJavaRunConfiguration configuration = (CucumberJavaRunConfiguration)settings.getConfiguration();
 
     final VirtualFile file = getFileToRun();
-    if (configuration.getGlue() == null) {
+    if (StringUtil.isEmpty(configuration.getGlue())) {
       final NullableComputable<String> glue = getGlue();
       configuration.setGlue(glue);
     }
