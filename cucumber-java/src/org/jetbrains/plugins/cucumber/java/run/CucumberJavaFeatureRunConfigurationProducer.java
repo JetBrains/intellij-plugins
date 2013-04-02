@@ -36,7 +36,7 @@ public class CucumberJavaFeatureRunConfigurationProducer extends CucumberJavaRun
 
           final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
           for (CucumberJvmExtensionPoint extension : extensions) {
-            glues.addAll(extension.getGlues((GherkinFile)file));
+            glues.addAll(extension.getGlues((GherkinFile)file, null));
           }
 
           return StringUtil.join(glues, " ");

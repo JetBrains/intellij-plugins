@@ -3,13 +3,23 @@ package org.jetbrains.plugins.cucumber.java.run;
 import com.intellij.execution.Location;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.NullableComputable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
+import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
+import org.jetbrains.plugins.cucumber.psi.GherkinFile;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: avokin
@@ -18,6 +28,41 @@ import org.jetbrains.plugins.cucumber.CucumberBundle;
 public class CucumberJavaAllFeaturesInFolderRunConfigurationProducer extends CucumberJavaRunConfigurationProducer {
   @Override
   protected NullableComputable<String> getGlue() {
+    final Set<String> glues = new HashSet<String>();
+    if (mySourceElement instanceof PsiDirectory) {
+      final PsiDirectory dir = (PsiDirectory)mySourceElement;
+      final CucumberJvmExtensionPoint[] extensions = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
+
+      return new NullableComputable<String>() {
+        @Nullable
+        @Override
+        public String compute() {
+          dir.accept(new PsiElementVisitor() {
+            @Override
+            public void visitFile(final PsiFile file) {
+              if (file instanceof GherkinFile) {
+                for (CucumberJvmExtensionPoint extension : extensions) {
+                  extension.getGlues((GherkinFile)file, glues);
+                }
+              }
+            }
+
+            @Override
+            public void visitDirectory(PsiDirectory dir) {
+              for (PsiDirectory subDir : dir.getSubdirectories()) {
+                subDir.accept(this);
+              }
+
+              for (PsiFile file : dir.getFiles()) {
+                file.accept(this);
+              }
+            }
+          });
+
+          return StringUtil.join(glues, " ");
+        }
+      };
+    }
     return null;
   }
 
