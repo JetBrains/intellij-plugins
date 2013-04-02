@@ -18,8 +18,8 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
-import com.jetbrains.lang.dart.analyzer.AnalyzerDriver;
 import com.jetbrains.lang.dart.analyzer.AnalyzerMessage;
+import com.jetbrains.lang.dart.analyzer.DartAnalyzerDriver;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import gnu.trove.THashMap;
@@ -82,8 +82,8 @@ public class DartGlobalInspectionContext implements GlobalInspectionContextExten
 
     DartSettings settings = DartSettings.getSettingsForModule(module);
     final VirtualFile analyzer = settings == null ? null : settings.getAnalyzer();
-    final AnalyzerDriver analyzerDriver =
-      analyzer == null ? null : new AnalyzerDriver(module.getProject(), analyzer, settings.getSdkPath(), libraryRoot);
+    final DartAnalyzerDriver analyzerDriver =
+      analyzer == null ? null : new DartAnalyzerDriver(module.getProject(), analyzer, settings.getSdkPath(), libraryRoot);
 
     setIndicatorText("Analyzing library root: " + libraryRoot.getName());
 

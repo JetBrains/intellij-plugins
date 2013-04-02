@@ -36,7 +36,7 @@ public enum DartTypeErrorCode {
       // "%s" is not a member of %s
       return findFixesForUnresolved(file, startOffset);
     }
-  }, CONTRETE_CLASS_WITH_UNIMPLEMENTED_MEMBERS {
+  }, CONCRETE_CLASS_WITH_UNIMPLEMENTED_MEMBERS {
     @NotNull
     @Override
     public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {

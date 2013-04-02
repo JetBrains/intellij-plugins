@@ -20,8 +20,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.lang.dart.analyzer.AnalyzerDriver;
 import com.jetbrains.lang.dart.analyzer.AnalyzerMessage;
+import com.jetbrains.lang.dart.analyzer.DartAnalyzerDriver;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.validation.fixes.DartResolverErrorCode;
@@ -36,11 +36,11 @@ import java.util.List;
 /**
  * @author: Fedor.Korotkov
  */
-public class DartExternalAnnotator extends ExternalAnnotator<AnalyzerDriver, List<AnalyzerMessage>> {
+public class DartExternalAnnotator extends ExternalAnnotator<DartAnalyzerDriver, List<AnalyzerMessage>> {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.annotator.DartExternalAnnotator");
 
   @Override
-  public AnalyzerDriver collectionInformation(@NotNull final PsiFile file) {
+  public DartAnalyzerDriver collectionInformation(@NotNull final PsiFile file) {
     final List<VirtualFile> library = DartResolveUtil.findLibrary(file, GlobalSearchScope.projectScope(file.getProject()));
     final VirtualFile libraryRoot = library.isEmpty() ? DartResolveUtil.getRealVirtualFile(file) : library.iterator().next();
     if (libraryRoot == null) {
@@ -60,12 +60,12 @@ public class DartExternalAnnotator extends ExternalAnnotator<AnalyzerDriver, Lis
       ModuleType moduleType = ModuleType.get(module);
       LOG.debug("Type " + (moduleType == null ? null : moduleType.getId()));
     }
-    final VirtualFile analyzer = settings == null ? null : settings.getAnalyzer();
-    return analyzer == null ? null : new AnalyzerDriver(module.getProject(), analyzer, settings.getSdkPath(), libraryRoot);
+    final VirtualFile analyzanalyzer = settings == null ? null : settings.getAnalyzer();
+    return analyzanalyzer == null ? null : new DartAnalyzerDriver(module.getProject(), analyzanalyzer, settings.getSdkPath(), libraryRoot);
   }
 
   @Override
-  public List<AnalyzerMessage> doAnnotate(@Nullable final AnalyzerDriver analyzerDriver) {
+  public List<AnalyzerMessage> doAnnotate(@Nullable final DartAnalyzerDriver analyzerDriver) {
     if (analyzerDriver == null) {
       return Collections.emptyList();
     }

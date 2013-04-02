@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * @author: Fedor.Korotkov
  */
-public class AnalyzerDriver {
+public class DartAnalyzerDriver {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.analyzer.AnalyzerDriver");
   @NotNull
   private final VirtualFile analyzerExecutable;
@@ -30,7 +30,7 @@ public class AnalyzerDriver {
   private final String sdkPath;
   private final Project myProject;
 
-  public AnalyzerDriver(Project project, @NotNull VirtualFile executable, String sdkPath, @NotNull VirtualFile libraryRoot) {
+  public DartAnalyzerDriver(Project project, @NotNull VirtualFile executable, String sdkPath, @NotNull VirtualFile libraryRoot) {
     myProject = project;
     analyzerExecutable = executable;
     this.libraryRoot = libraryRoot;

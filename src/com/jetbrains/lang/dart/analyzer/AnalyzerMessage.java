@@ -29,7 +29,7 @@ public class AnalyzerMessage {
   private final String message;
   private final String subSystem;
 
-  protected AnalyzerMessage(VirtualFile file, int line, int offset, int length, Type type, String system, String code, String message) {
+  protected AnalyzerMessage(@NotNull VirtualFile file, int line, int offset, int length, Type type, String system, String code, String message) {
     virtualFile = file;
     this.line = line;
     this.offset = offset;
@@ -76,7 +76,7 @@ public class AnalyzerMessage {
   @Override
   public String toString() {
     return "AnalyzerMessage{" +
-           "virtualFile=" + (virtualFile == null ? "null" : virtualFile.getPath()) +
+           "virtualFile=" + virtualFile.getPath() +
            ", line=" + line +
            ", offset=" + offset +
            ", length=" + length +
@@ -118,7 +118,7 @@ public class AnalyzerMessage {
       VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl(sourceUrl);
       if (virtualFile == null && !ApplicationManager.getApplication().isUnitTestMode() && sourceUrl.contains(libraryRootPath)) {
         //see http://code.google.com/p/dart/issues/detail?id=3391
-        virtualFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtil.pathToUrl(libraryRootPath));
+        virtualFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(libraryRootPath));
         if (virtualFile == null) {
           LOG.debug("cannot find library root");
           return null;
@@ -130,7 +130,7 @@ public class AnalyzerMessage {
         virtualFile = VfsUtil.findRelativeFile(virtualFile, relativePath.split("/"));
         LOG.debug("fix source url: " + (virtualFile == null ? null : virtualFile.getPath()));
       }
-      if (virtualFile == null && !ApplicationManager.getApplication().isUnitTestMode()) {
+      if (virtualFile == null) {
         LOG.debug("cannot find file: " + sourceUrl);
         return null;
       }

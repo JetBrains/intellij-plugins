@@ -70,6 +70,15 @@ public class DartSettings {
   }
 
   @Nullable
+  public VirtualFile getCompiler() {
+    return VirtualFileManager.getInstance().findFileByUrl(getCompilerPath());
+  }
+
+  public String getCompilerPath() {
+    return VfsUtilCore.pathToUrl(sdkPath) + "/bin/dart";
+  }
+
+  @Nullable
   public VirtualFile getAnalyzer() {
     return VirtualFileManager.getInstance().findFileByUrl(getAnalyzerPath());
   }
@@ -184,7 +193,7 @@ public class DartSettings {
     if (shouldTakeWebSettings(module) || ApplicationManager.getApplication().isUnitTestMode()) {
       settings = DartSettingsUtil.getSettings();
     }
-    else if (ModuleType.get(module) instanceof DartModuleType) {
+    else if (module != null && ModuleType.get(module) instanceof DartModuleType) {
       final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
       final Sdk sdk = moduleRootManager.getSdk();
       settings = new DartSettings(StringUtil.notNullize(sdk == null ? null : sdk.getHomePath()));

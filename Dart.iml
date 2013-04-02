@@ -29,15 +29,6 @@
     <orderEntry type="module" module-name="xdebugger-impl" />
     <orderEntry type="module" module-name="yaml" />
     <orderEntry type="module" module-name="smRunner" />
-    <orderEntry type="module-library" scope="TEST">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/testSrc/dart_analyzer.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="LiveEdit" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="xml-tests" scope="TEST" />

@@ -1,7 +1,5 @@
 package com.jetbrains.lang.dart.analyzer;
 
-import com.google.dart.compiler.*;
-import com.google.dart.compiler.ast.DartUnit;
 import com.intellij.codeInsight.daemon.impl.AnnotationHolderImpl;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationSession;
@@ -9,20 +7,16 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.annotator.DartExternalAnnotator;
-import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
 
 abstract public class DartAnalyzerTestBase extends JavaCodeInsightFixtureTestCase {
@@ -32,8 +26,12 @@ abstract public class DartAnalyzerTestBase extends JavaCodeInsightFixtureTestCas
     super.setUp();
     System.setProperty(
       "com.google.dart.sdk",
-      PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/sdk")
+      getDartSettings().getSdkPath()
     );
+  }
+
+  protected DartSettings getDartSettings() {
+    return new DartSettings(PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/sdk"));
   }
 
   void doTest(String message, String... additionalFiles) throws IOException {
@@ -87,69 +85,14 @@ abstract public class DartAnalyzerTestBase extends JavaCodeInsightFixtureTestCas
   }
 
   private List<AnalyzerMessage> getMessagesFromAnalyzer() throws IOException {
-    final List<AnalyzerMessage> result = new ArrayList<AnalyzerMessage>();
-
-    DefaultDartArtifactProvider provider = new DefaultDartArtifactProvider() {
-      @Override
-      public Writer getArtifactWriter(Source source, String part, String extension) throws IOException {
-        return new Writer() {
-          @Override
-          public void write(char[] cbuf, int off, int len) throws IOException {
-          }
-
-          @Override
-          public void flush() throws IOException {
-          }
-
-          @Override
-          public void close() throws IOException {
-          }
-        };
-      }
-    };
-    DefaultCompilerConfiguration config = new DefaultCompilerConfiguration() {
-      @Override
-      public CommandLineOptions.CompilerOptions getCompilerOptions() {
-        return new CompilerOptionsWrapper(super.getCompilerOptions()) {
-          @Override
-          public boolean typeChecksForInferredTypes() {
-            return true;
-          }
-        };
-      }
-    };
-    File libFile = new File(DartResolveUtil.getRealVirtualFile(myFixture.getFile()).getPath());
-    final LibrarySource lib = new UrlLibrarySource(libFile);
-    DartCompiler.compileLib(lib, config, provider, new DartCompilerListener() {
-      @Override
-      public void onError(DartCompilationError event) {
-        String url = VfsUtilCore.pathToUrl(event.getSource().getUri().getPath());
-        VirtualFile fileByUrl = VirtualFileManager.getInstance().findFileByUrl(url);
-        if (fileByUrl == null) {
-          return;
-        }
-        AnalyzerMessage message = new AnalyzerMessage(
-          fileByUrl,
-          event.getLineNumber() - 1,
-          event.getColumnNumber() - 1,
-          event.getLength(),
-          AnalyzerMessage.Type.WARNING,
-          event.getErrorCode().getSubSystem().toString(),
-          event.getErrorCode().toString(),
-          event.getMessage()
-        );
-        result.add(message);
-      }
-
-      @Override
-      public void unitAboutToCompile(DartSource source, boolean diet) {
-      }
-
-      @Override
-      public void unitCompiled(DartUnit unit) {
-      }
-    });
-
-    return result;
+    PsiFile file = myFixture.getFile();
+    assertNotNull(file);
+    VirtualFile virtualFile = file.getVirtualFile();
+    assertNotNull(virtualFile);
+    DartSettings settings = getDartSettings();
+    VirtualFile analyzer = settings.getAnalyzer();
+    assertNotNull(analyzer);
+    DartAnalyzerDriver analyzerDriver = new DartAnalyzerDriver(myFixture.getProject(), analyzer, settings.getSdkPath(), virtualFile);
+    return analyzerDriver.analyze(false);
   }
 }

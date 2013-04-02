@@ -3,7 +3,7 @@ package com.jetbrains.lang.dart.analyzer;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 
-abstract public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
+public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
   @Override
   protected String getTestDataPath() {
     return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/analyzer/type");
@@ -70,18 +70,11 @@ abstract public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
   }
 
   public void testConcreteClassHasUnimplementedMembers1() throws Throwable {
-    doTest("Concrete class A has unimplemented member(s) \n" +
-           "    # From Foo:\n" +
-           "        int fooA\n" +
-           "        void fooB()\n" +
-           "    # From Bar:\n" +
-           "        void barA()");
+    doTest("Concrete class A has unimplemented member(s)");
   }
 
   public void testConcreteClassHasUnimplementedMembers2() throws Throwable {
-    doTest("Concrete class A has unimplemented member(s) \n" +
-           "    # From I:\n" +
-           "        dynamic foo");
+    doTest("Concrete class A has unimplemented member(s)");
   }
 
   public void testFieldHasNoGetter1() throws Throwable {

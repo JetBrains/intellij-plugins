@@ -3,6 +3,7 @@ class A {
   static set noField(value) {
     <caret>
   }
+
   static var field = 239;
 }
 

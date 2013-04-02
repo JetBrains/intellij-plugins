@@ -11,17 +11,17 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.analyzer.AnalyzerDriver;
 import com.jetbrains.lang.dart.analyzer.AnalyzerMessage;
+import com.jetbrains.lang.dart.analyzer.DartAnalyzerDriver;
 import com.jetbrains.lang.dart.ide.DartSdkType;
 import com.jetbrains.lang.dart.ide.module.DartModuleType;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
-import com.jetbrains.lang.dart.util.DartSdkUtil;
+import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -41,14 +41,14 @@ public class DartCompiler implements CompileTask {
 
   private static boolean run(CompileContext context, DartCommandLineRunConfiguration configuration) {
     final Module module = configuration.getConfigurationModule().getModule();
-    if (ModuleType.get(module) != DartModuleType.getInstance()) {
-      // skip
-      return true;
-    }
     if (module == null) {
       context.addMessage(CompilerMessageCategory.ERROR,
                          DartBundle.message("no.module.for.run.configuration", configuration.getName()), null, -1, -1);
       return false;
+    }
+    if (ModuleType.get(module) != DartModuleType.getInstance()) {
+      // skip
+      return true;
     }
     return compileModule(context, module, configuration);
   }
@@ -63,7 +63,7 @@ public class DartCompiler implements CompileTask {
       return false;
     }
 
-    VirtualFile libraryRoot = VirtualFileManager.getInstance().findFileByUrl(VfsUtil.pathToUrl(filePath));
+    VirtualFile libraryRoot = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(filePath));
     if (libraryRoot == null) {
       context.addMessage(CompilerMessageCategory.ERROR, DartBundle.message("cannot.find.file", filePath), null, -1, -1);
       return false;
@@ -82,24 +82,21 @@ public class DartCompiler implements CompileTask {
       return false;
     }
 
-    final String sdkExePath = DartSdkUtil.getCompilerPathByFolderPath(sdk.getHomePath());
-    if (sdkExePath == null || sdkExePath.isEmpty()) {
+    DartSettings dartSettings = new DartSettings(sdk.getHomePath());
+    if (dartSettings.getCompiler() == null) {
       context.addMessage(CompilerMessageCategory.ERROR, DartBundle.message("invalid.dart.sdk.for.module", module.getName()), null, -1, -1);
       return false;
     }
 
-    final String analyzerUrl =
-      VfsUtil.pathToUrl(sdk.getHomePath()) + "/bin/" + (SystemInfo.isWindows ? "dart_analyzer.bat" : "dart_analyzer");
-
-    final VirtualFile analyzerExecutable = VirtualFileManager.getInstance().findFileByUrl(analyzerUrl);
+    VirtualFile analyzerExecutable = dartSettings.getAnalyzer();
     if (analyzerExecutable == null) {
       // can't "compile"
       return true;
     }
 
     final String outputUrl = CompilerModuleExtension.getInstance(module).getCompilerOutputUrl();
-    final AnalyzerDriver analyzerDriver = new AnalyzerDriver(module.getProject(), analyzerExecutable, sdk.getHomePath(), libraryRoot);
-    List<AnalyzerMessage> messages = analyzerDriver.analyze(VfsUtil.urlToPath(outputUrl), false);
+    final DartAnalyzerDriver analyzerDriver = new DartAnalyzerDriver(module.getProject(), analyzerExecutable, sdk.getHomePath(), libraryRoot);
+    List<AnalyzerMessage> messages = analyzerDriver.analyze(VfsUtilCore.urlToPath(outputUrl), false);
 
     if (messages != null && messages.isEmpty()) {
       return true;
