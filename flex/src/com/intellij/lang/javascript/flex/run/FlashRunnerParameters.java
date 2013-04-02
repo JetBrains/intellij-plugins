@@ -466,6 +466,14 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
         //  throw new RuntimeConfigurationError(FlexBundle.message("html.wrapper.can.not.be.run.with.flash.player"));
         //}
 
+        if (myLauncherParameters.getLauncherType() == LauncherParameters.LauncherType.Player) {
+          if (StringUtil.isEmptyOrSpaces(myLauncherParameters.getPlayerPath())) {
+            throw new RuntimeConfigurationError(FlexBundle.message("path.to.flash.player.not.set"));
+          }
+          if (!new File(myLauncherParameters.getPlayerPath()).exists()) {
+            throw new RuntimeConfigurationError(FlexBundle.message("flash.player.not.found", myLauncherParameters.getPresentableText()));
+          }
+        }
         checkDebuggerSdk();
         break;
 
@@ -529,7 +537,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     }
   }
 
-  public static void checkCustomDescriptor(final AirPackagingOptions packagingOptions, final String bcName, final String moduleName) throws RuntimeConfigurationError {
+  public static void checkCustomDescriptor(final AirPackagingOptions packagingOptions, final String bcName, final String moduleName)
+    throws RuntimeConfigurationError {
     final boolean android = packagingOptions instanceof AndroidPackagingOptions;
     final boolean ios = packagingOptions instanceof IosPackagingOptions;
 

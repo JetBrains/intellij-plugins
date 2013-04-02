@@ -14,6 +14,7 @@ import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.util.ExecUtil;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -284,19 +285,20 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         break;
 
       case Player:
-        final String playerPath = launcherParams.getPlayerPath();
-        final String executablePath = SystemInfo.isMac && playerPath.endsWith(".app") ? FlexUtils.getMacExecutable(playerPath) : playerPath;
         try {
-          if (executablePath == null) {
-            throw new IOException("failed to find application to launch with");
+          if (SystemInfo.isMac) {
+            Runtime.getRuntime().exec(new String[]{ExecUtil.getOpenCommandPath(), "-a", launcherParams.getPlayerPath(), urlOrPath});
           }
-
-          Runtime.getRuntime().exec(new String[]{executablePath, urlOrPath});
+          else {
+            Runtime.getRuntime().exec(new String[]{launcherParams.getPlayerPath(), urlOrPath});
+          }
+          // todo read error stream, report errors
+          // todo keep process to be able to kill it on user demand
         }
         catch (final IOException e) {
           final Runnable runnable2 = new Runnable() {
             public void run() {
-              Messages.showErrorDialog(FlexBundle.message("cant.launch", urlOrPath, playerPath, e.getMessage()),
+              Messages.showErrorDialog(FlexBundle.message("cant.launch", urlOrPath, launcherParams.getPlayerPath(), e.getMessage()),
                                        CommonBundle.getErrorTitle());
             }
           };
