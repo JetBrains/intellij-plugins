@@ -55,7 +55,12 @@ public class OgnlLanguageInjector {
   }
 
   private void injectWholeXmlAttributeValue() {
-    final TextRange range = new TextRange(1, element.getTextLength() - 1);
+    final int textLength = element.getTextLength();
+    if (textLength < 2) {
+      return;
+    }
+
+    final TextRange range = new TextRange(1, textLength - 1);
     registrar.startInjecting(OgnlLanguage.INSTANCE)
              .addPlace(addPrefixSuffix ? OgnlLanguage.EXPRESSION_PREFIX : null,
                        addPrefixSuffix ? OgnlLanguage.EXPRESSION_SUFFIX : null,
