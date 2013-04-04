@@ -3,7 +3,7 @@ import 'TEST_FILE_PATH' as testPrefix;
 
 main() {
   var config = new JetBrainsUnitConfig();
-  configure(config);
+  unittestConfiguration = config;
   testPrefix.main();
 }
 
@@ -41,7 +41,7 @@ class JetBrainsUnitConfig extends Configuration {
     Set<String> groupsSet = new Set.from(testCases.map((TestCase testCase) => testCase.currentGroup));
     List<String> groups = new List.from(groupsSet);
     groups.sort((String a, String b) => a.length - b.length);
-    groups.removeMatching((String groupName) => groupName == '');
+    groups.removeWhere((String groupName) => groupName == '');
 
     for(int i = 0; i < groups.length; ++i) {
       var parentGroup = '';
@@ -112,19 +112,19 @@ class JetBrainsUnitConfig extends Configuration {
 
   printTCMessage(String messageName, Map attrs) {
     var out = new StringBuffer();
-    out.add("##teamcity[$messageName");
+    out.write("##teamcity[$messageName");
     attrs.forEach((key, value){
-      out.add(" $key='${escapseString(value.toString())}'");
+      out.write(" $key='${escapseString(value.toString())}'");
     });
-    out.add("]");
+    out.write("]");
     print(out.toString());
   }
 
   String escapseString(String str){
     var out = new StringBuffer();
-    for(var ch in str.splitChars()){
+    for(var ch in str.split("")){
       var current = escapseChar(ch);
-      out.add(current == 0 ? ch : '|$current');
+      out.write(current == 0 ? ch : '|$current');
     }
     return out.toString();
   }
