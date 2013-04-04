@@ -19,6 +19,7 @@ import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.ognl.OgnlLanguage;
 import com.intellij.lang.ognl.OgnlLanguageInjector;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.patterns.ElementPattern;
@@ -32,8 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-import static com.intellij.patterns.PlatformPatterns.virtualFile;
-import static com.intellij.patterns.StandardPatterns.*;
+import static com.intellij.patterns.StandardPatterns.not;
+import static com.intellij.patterns.StandardPatterns.string;
 import static com.intellij.patterns.XmlPatterns.xmlAttributeValue;
 import static com.intellij.patterns.XmlPatterns.xmlTag;
 
@@ -45,8 +46,6 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
 public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
 
   private static final XmlAttributeValuePattern STRUTS_TAG_ATTRIBUTE = xmlAttributeValue()
-    .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
-                      virtualFile().ofType(StdFileTypes.JSPX)))
     .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
                                                StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
                                                StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI,
@@ -75,6 +74,11 @@ public class TaglibOgnlInjector implements MultiHostInjector, DumbAware {
   @Override
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar multiHostRegistrar,
                                    @NotNull final PsiElement psiElement) {
+    final FileType fileType = psiElement.getContainingFile().getFileType();
+    if (fileType != StdFileTypes.JSP && fileType != StdFileTypes.JSPX) {
+      return;
+    }
+
     if (!STRUTS_TAG_ATTRIBUTE.accepts(psiElement)) {
       return;
     }

@@ -19,6 +19,7 @@ import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
 import com.intellij.lang.javascript.JSLanguageInjector;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.TextRange;
@@ -32,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-import static com.intellij.patterns.PlatformPatterns.virtualFile;
 import static com.intellij.patterns.StandardPatterns.*;
 import static com.intellij.patterns.XmlPatterns.xmlAttributeValue;
 import static com.intellij.patterns.XmlPatterns.xmlTag;
@@ -46,8 +46,6 @@ public class TaglibJavaScriptInjector implements MultiHostInjector, DumbAware {
 
   private static final ElementPattern<XmlAttributeValue> JS_ATTRIBUTE_PATTERN =
     xmlAttributeValue()
-      .inVirtualFile(or(virtualFile().ofType(StdFileTypes.JSP),
-                        virtualFile().ofType(StdFileTypes.JSPX)))
       .withSuperParent(2, xmlTag().withNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI,
                                                  StrutsConstants.TAGLIB_JQUERY_PLUGIN_URI,
                                                  StrutsConstants.TAGLIB_JQUERY_RICHTEXT_PLUGIN_URI,
@@ -86,6 +84,11 @@ public class TaglibJavaScriptInjector implements MultiHostInjector, DumbAware {
                      "disabledTabs");
 
   public void getLanguagesToInject(@NotNull final MultiHostRegistrar registrar, @NotNull final PsiElement host) {
+    final FileType fileType = host.getContainingFile().getFileType();
+    if (fileType != StdFileTypes.JSP && fileType != StdFileTypes.JSPX) {
+      return;
+    }
+
     if (!JS_ATTRIBUTE_PATTERN.accepts(host)) {
       return;
     }
