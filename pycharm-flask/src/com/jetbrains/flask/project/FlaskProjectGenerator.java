@@ -75,7 +75,7 @@ public class FlaskProjectGenerator implements PyFrameworkProjectGenerator<PyNewP
   public boolean isFrameworkInstalled(Project project, Sdk sdk) {
     VirtualFile[] roots = sdk.getRootProvider().getFiles(OrderRootType.CLASSES);
     for (VirtualFile root : roots) {
-      if (root.findChild("flask") != null) {
+      if (root.isValid() && root.findChild("flask") != null) {
         return true;
       }
     }
