@@ -20,7 +20,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
 import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
-import com.jetbrains.lang.dart.ide.runner.base.DartBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.server.connection.DartVMConnection;
 import com.jetbrains.lang.dart.ide.runner.server.connection.JsonResponse;
@@ -32,10 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class DartCommandLineDebugProcess extends XDebugProcess {
   private static final Logger LOG = LoggerFactory.getInstance().getLoggerInstance(DartCommandLineDebugProcess.class.getName());
@@ -48,7 +44,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   ));
   private int myMainIsolateId;
 
-  static enum InitializingState {NOT_INITIALIZED, INITIALIZING, INITIALIZED}
+  enum InitializingState {NOT_INITIALIZED, INITIALIZING, INITIALIZED}
 
   private volatile InitializingState myInitialized = InitializingState.NOT_INITIALIZED;
 
@@ -104,7 +100,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   public DartCommandLineDebugProcess(@NotNull XDebugSession session,
                                      int debuggingPort,
                                      ExecutionResult executionResult,
-                                     Class<? extends XBreakpointType<XLineBreakpoint<XBreakpointProperties>,?>> breakpointTypeClass)
+                                     Class<? extends XBreakpointType<XLineBreakpoint<XBreakpointProperties>, ?>> breakpointTypeClass)
     throws IOException {
     super(session);
 
@@ -181,10 +177,29 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
         @Override
         public void run() {
           myInitialized = InitializingState.INITIALIZED;
-          for (Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>> command : postponedCommands) {
-            commandsToWrite.addLast(command);
+          // wait until commands are executed
+          Iterator<Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>>> iterator = postponedCommands.iterator();
+          if (!iterator.hasNext()) {
+            handleBreakpointResolved(paramsElement);
           }
-          handleBreakpointResolved(paramsElement);
+          while (iterator.hasNext()) {
+            final Pair<JsonObject, AbstractResponseToRequestHandler<JsonResponse>> command = iterator.next();
+            if (iterator.hasNext()) {
+              commandsToWrite.addLast(command);
+            }
+            else {
+              commandsToWrite.addLast(Pair.<JsonObject, AbstractResponseToRequestHandler<JsonResponse>>create(
+                command.getFirst(),
+                new AbstractResponseToRequestHandler<JsonResponse>() {
+                  @Override
+                  public boolean processResponse(JsonResponse response) {
+                    handleBreakpointResolved(paramsElement);
+                    return command.getSecond().processResponse(response);
+                  }
+                }
+              ));
+            }
+          }
         }
       });
     }
@@ -208,14 +223,25 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
           return true;
         }
         JsonArray libraries = response.getJsonObject().getAsJsonObject("result").getAsJsonArray("libraries");
-        for (JsonElement library : libraries) {
+        Iterator<JsonElement> iterator = libraries.iterator();
+        if (!iterator.hasNext()) {
+          runnable.run();
+          return true;
+        }
+        while (iterator.hasNext()) {
+          JsonElement library = iterator.next();
           int id = library.getAsJsonObject().get("id").getAsInt();
           String url = library.getAsJsonObject().get("url").getAsString();
           if (url != null && !CORE_LIBS.contains(url)) {
-            sendEnableLibrary(id, null);
+            sendEnableLibrary(id, iterator.hasNext() ? null : new AbstractResponseToRequestHandler<JsonResponse>() {
+              @Override
+              public boolean processResponse(JsonResponse response) {
+                runnable.run();
+                return true;
+              }
+            });
           }
         }
-        runnable.run();
         return true;
       }
     });
@@ -329,6 +355,6 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
   @Override
   public void runToPosition(@NotNull XSourcePosition position) {
-    myBreakpointsHandler.handleRunToPosition(position, this);
+    DartCommandLineBreakpointsHandler.handleRunToPosition(position, this);
   }
 }
