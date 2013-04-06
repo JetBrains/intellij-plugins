@@ -1,0 +1,13 @@
+FILE
+  HbStatementsImpl(STATEMENTS)
+    HbPartialImpl(PARTIAL_STACHE)
+      HbPsiElementImpl([Hb] OPEN_PARTIAL)
+        PsiElement([Hb] OPEN_PARTIAL)('{{>')
+      PsiWhiteSpace(' ')
+      HbPsiElementImpl([Hb] PARTIAL_NAME)
+        PsiElement([Hb] PARTIAL_NAME)('foo')
+      PsiWhiteSpace(' ')
+      HbPsiElementImpl([Hb] ID)
+        PsiElement([Hb] ID)('bar')
+      HbPsiElementImpl([Hb] CLOSE)
+        PsiElement([Hb] CLOSE)('}}')

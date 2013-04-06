@@ -1,0 +1,1 @@
+This directory contains images used in markdown files in the project

@@ -1,0 +1,13 @@
+FILE
+  HbStatementsImpl(STATEMENTS)
+    HbSimpleMustacheImpl(MUSTACHE)
+      HbPsiElementImpl([Hb] OPEN)
+        PsiElement([Hb] OPEN)('{{')
+      PsiErrorElement:Expected a path or @data
+        <empty list>
+      PsiErrorElement:Expected Close "}}"
+        PsiElement([Hb] ID)('test')
+        PsiElement([Hb] EQUALS)('=')
+        PsiElement([Hb] ID)('test')
+      HbPsiElementImpl([Hb] CLOSE)
+        PsiElement([Hb] CLOSE)('}}')

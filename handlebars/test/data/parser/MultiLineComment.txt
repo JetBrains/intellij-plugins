@@ -1,0 +1,2 @@
+FILE
+  PsiComment([Hb] COMMENT)('{{!\nthis is a multi-line comment\n}}')

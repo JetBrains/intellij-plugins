@@ -1,0 +1,14 @@
+<div class="data">
+    <span class="stuff">
+        <a href="#">{{#helper "yesLabel"}}Yes{{/helper}}</a>
+        {{#if Thing.Stuff}}
+            {{#each Thing.Stuff.Values}}
+            <span>{{.}}</span>
+            {{/each}}
+        {{else}}
+            <span>{{#helper "Nothing"}}Nothing{{/helper}}</span>
+        {{/if}}
+    </span>
+
+    {{> partialId }}
+</div>
