@@ -23,6 +23,8 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.vfs.VirtualFile;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserModel;
+import org.jetbrains.annotations.NotNull;
+
 import static jetbrains.communicator.idea.actions.ActionUtil.*;
 
 import java.util.ArrayList;
@@ -50,6 +52,7 @@ public abstract class BaseEditorPopup extends ActionGroup implements DumbAware {
             getUserModel().getAllUsers().length > 0);
   }
 
+  @NotNull
   public AnAction[] getChildren(AnActionEvent e) {
 
     if (e == null) return EMPTY_ARRAY;
@@ -93,6 +96,7 @@ public abstract class BaseEditorPopup extends ActionGroup implements DumbAware {
     final AnAction[] actions = users.toArray(new AnAction[users.size()]);
 
     return new ActionGroup(group, true) {
+      @NotNull
       public AnAction[] getChildren(AnActionEvent e) {
         return actions;
       }

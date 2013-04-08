@@ -22,6 +22,7 @@ import jetbrains.communicator.commands.FindUsersCommand;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.commands.UserCommand;
 import jetbrains.communicator.core.transport.Transport;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,7 @@ public class FindUsersAction extends ActionGroup {
     }
   }
 
+  @NotNull
   public AnAction[] getChildren(AnActionEvent e) {
     return myActions.toArray(new AnAction[myActions.size()]);
   }
