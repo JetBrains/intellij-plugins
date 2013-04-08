@@ -39,7 +39,7 @@ public abstract class BaseDartGenerateAction extends AnAction {
     final Editor editor = editorAndPsiFile.first;
     final PsiFile psiFile = editorAndPsiFile.second;
 
-    final int caretOffset = editor.getCaretModel().getOffset();
+    final int caretOffset = editor == null ? -1 : editor.getCaretModel().getOffset();
     final boolean inClass = psiFile != null && PsiTreeUtil.getParentOfType(psiFile.findElementAt(caretOffset), DartClass.class) != null;
 
     e.getPresentation().setEnabled(inClass);
