@@ -121,9 +121,13 @@ module Teamcity
         # AST and visitor API specific
         register_tags_holder
 
-        # each feature file contains only one feature
-        # so let's use 1 line of feature file for navigation
-        @current_feature_file_colon_line = feature.file_colon_line(1)
+        if feature.method(:file_colon_line).arity == 1
+          # each feature file contains only one feature
+          # so let's use 1 line of feature file for navigation
+          @current_feature_file_colon_line = feature.file_colon_line(1)
+        else
+          @current_feature_file_colon_line = feature.file_colon_line
+        end
       end
 
       def tc_after_feature (feature)
