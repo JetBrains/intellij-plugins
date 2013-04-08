@@ -4,7 +4,6 @@ import com.dmarcotte.handlebars.HbBundle;
 import com.dmarcotte.handlebars.exception.ShouldNotHappenException;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.containers.Stack;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +33,7 @@ import static com.dmarcotte.handlebars.parsing.HbTokenTypes.OPEN_UNESCAPED;
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.PARAM;
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.PARTIAL_NAME;
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.PARTIAL_STACHE;
+import static com.dmarcotte.handlebars.parsing.HbTokenTypes.PATH;
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.SEP;
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.SIMPLE_INVERSE;
 import static com.dmarcotte.handlebars.parsing.HbTokenTypes.STATEMENTS;
@@ -51,7 +51,6 @@ import static com.dmarcotte.handlebars.parsing.HbTokenTypes.UNCLOSED_COMMENT;
  */
 class HbParsing {
     private final PsiBuilder builder;
-    private final Stack<String> openTagNamesStack = new Stack<String>();
 
     // the set of tokens which, if we encounter them while in a bad state, we'll try to
     // resume parsing from them
@@ -83,9 +82,7 @@ class HbParsing {
             int problemOffset = builder.getCurrentOffset();
 
             if (tokenType == OPEN_ENDBLOCK) {
-                PsiBuilder.Marker badEndBlockMarker = builder.mark();
                 parseCloseBlock(builder);
-                badEndBlockMarker.error(HbBundle.message("hb.parsing.no.open.mustache"));
             }
 
             if (builder.getCurrentOffset() == problemOffset) {
@@ -173,9 +170,8 @@ class HbParsing {
             }
 
             PsiBuilder.Marker blockMarker = builder.mark();
-            PsiBuilder.Marker openInverseMarker = builder.mark();
             if (parseOpenInverse(builder)) {
-                openBlockMarker(builder, openInverseMarker, blockMarker);
+                parseRestOfBlock(builder, blockMarker);
             } else {
                 return false;
             }
@@ -185,9 +181,8 @@ class HbParsing {
 
         if (tokenType == OPEN_BLOCK) {
             PsiBuilder.Marker blockMarker = builder.mark();
-            PsiBuilder.Marker openBlockMarker = builder.mark();
             if (parseOpenBlock(builder)) {
-                openBlockMarker(builder, openBlockMarker, blockMarker);
+                parseRestOfBlock(builder, blockMarker);
             } else {
                 return false;
             }
@@ -232,25 +227,13 @@ class HbParsing {
     }
 
     /**
-     * Helper method to take care of the business need after an "open-type mustache" (openBlock or openInverse),
-     * including ensuring we've got the right close tag
+     * Helper method to take care of the business needed after an "open-type mustache" (openBlock or openInverse)
      *
-     * NOTE: will resolve the given openMustacheMarker
+     * NOTE: will resolve the given blockMarker
      */
-    private void openBlockMarker(PsiBuilder builder, PsiBuilder.Marker openMustacheMarker, PsiBuilder.Marker blockMarker) {
-        PsiBuilder.Marker parseProgramMarker = builder.mark();
+    private void parseRestOfBlock(PsiBuilder builder, PsiBuilder.Marker blockMarker) {
         parseProgram(builder);
-        if(parseCloseBlock(builder)) {
-            openMustacheMarker.drop();
-        } else {
-            if (!openTagNamesStack.empty()) {
-                openMustacheMarker.errorBefore(HbBundle.message("hb.parsing.block.not.closed", openTagNamesStack.pop()), parseProgramMarker);
-            } else {
-                openMustacheMarker.drop();
-            }
-        }
-        parseProgramMarker.drop();
-
+        parseCloseBlock(builder);
         blockMarker.done(HbTokenTypes.BLOCK_WRAPPER);
     }
 
@@ -266,7 +249,7 @@ class HbParsing {
             return false;
         }
 
-        if (parseInMustache(builder, true)) {
+        if (parseInMustache(builder)) {
             parseLeafTokenGreedy(builder, CLOSE);
         }
 
@@ -296,7 +279,7 @@ class HbParsing {
             regularInverseMarker.drop();
         }
 
-        if(parseInMustache(builder, true)) {
+        if(parseInMustache(builder)) {
             parseLeafTokenGreedy(builder, CLOSE);
         }
 
@@ -315,26 +298,6 @@ class HbParsing {
         if (!parseLeafToken(builder, OPEN_ENDBLOCK)) {
             closeBlockMarker.drop();
             return false;
-        }
-
-        // HB_CUSTOMIZATION: we store open/close IDs to detect mismatches.  Note that if the current token is not
-        // an id, we do nothing: the actual parser takes care of detecting the problem
-        if (builder.getTokenType() == HbTokenTypes.ID && !openTagNamesStack.empty()) {
-            String expectedCloseTag = openTagNamesStack.pop();
-            String actualCloseTag = builder.getTokenText();
-            if (!expectedCloseTag.equals(actualCloseTag)) {
-                // advance all the way to a recovery token or the close stache for this open block 'stache
-                while (builder.getTokenType() != CLOSE && !RECOVERY_SET.contains(builder.getTokenType()) && !builder.eof()) {
-                    builder.advanceLexer();
-                }
-
-                if (builder.getTokenType() == CLOSE) {
-                    builder.advanceLexer();
-                }
-                closeBlockMarker.error(
-                        HbBundle.message("hb.parsing.end.tag.bad.match", actualCloseTag, expectedCloseTag));
-                return true;
-            }
         }
 
         if(parsePath(builder)) {
@@ -361,7 +324,7 @@ class HbParsing {
             throw new ShouldNotHappenException();
         }
 
-        parseInMustache(builder, false);
+        parseInMustache(builder);
         // whether our parseInMustache hit trouble or not, we absolutely must have
         // a CLOSE token, so let's find it
         parseLeafTokenGreedy(builder, CLOSE);
@@ -445,22 +408,11 @@ class HbParsing {
      * | path { $$ = [[$1], null]; }
      * | DATA { $$ = [[new yy.DataNode($1)], null]; }
      * ;
-     *
-     * @param hasOpenTag is used to tell this method that the first ID in this 'stache is the open
-     *                   tag of a block (this method stores it so that we can compare to the close tag later)
      */
-    private boolean parseInMustache(PsiBuilder builder, boolean hasOpenTag) {
+    private boolean parseInMustache(PsiBuilder builder) {
         PsiBuilder.Marker inMustacheMarker = builder.mark();
 
-        // HB_CUSTOMIZATION: we store open/close IDs to detect mismatches.  Note that if the current token is not
-        // an id, we do nothing: the actual parser takes care of detecting the problem
-        if (hasOpenTag && builder.getTokenType() == HbTokenTypes.ID) {
-            openTagNamesStack.push(builder.getTokenText());
-        }
-
-        PsiBuilder.Marker pathMarker = builder.mark();
         if (!parsePath(builder)) {
-            pathMarker.rollbackTo();
             // not a path, try to parse DATA
             if (builder.getTokenType() == DATA_PREFIX
                     && parseLeafToken(builder, DATA_PREFIX)
@@ -471,8 +423,6 @@ class HbParsing {
                 inMustacheMarker.error(HbBundle.message("hb.parsing.expected.path.or.data"));
                 return false;
             }
-        } else {
-            pathMarker.drop();
         }
 
         // try to extend the 'path' we found to 'path hash'
@@ -549,13 +499,9 @@ class HbParsing {
     private boolean parseParam(PsiBuilder builder) {
         PsiBuilder.Marker paramMarker = builder.mark();
 
-        PsiBuilder.Marker pathMarker = builder.mark();
         if (parsePath(builder)) {
-            pathMarker.drop();
             paramMarker.done(PARAM);
             return true;
-        } else {
-            pathMarker.rollbackTo();
         }
 
         PsiBuilder.Marker stringMarker = builder.mark();
@@ -669,7 +615,13 @@ class HbParsing {
      * ;
      */
     private boolean parsePath(PsiBuilder builder) {
-        return parsePathSegments(builder);
+        PsiBuilder.Marker pathMarker = builder.mark();
+        if (parsePathSegments(builder)) {
+            pathMarker.done(PATH);
+            return true;
+        }
+        pathMarker.rollbackTo();
+        return false;
     }
 
     /**
@@ -690,7 +642,7 @@ class HbParsing {
     private boolean parsePathSegments(PsiBuilder builder) {
         PsiBuilder.Marker pathSegmentsMarker = builder.mark();
 
-        /* HB_CUSTOMIZATION: see ishashNextLookAhead docs for details */
+        /* HB_CUSTOMIZATION: see isHashNextLookAhead docs for details */
         if (isHashNextLookAhead(builder)) {
             pathSegmentsMarker.rollbackTo();
             return false;

@@ -6,13 +6,12 @@ IDEA-Handlebars adds support for [Handlebars](http://handlebarsjs.com/) and [Mus
 
 [Jetbrains plugin repository page](http://plugins.intellij.net/plugin/?idea&pluginId=6884)
 
-## _NEW:_ Updated parsing, improved comments, Darcula support
+## _NEW:_ Structure view, improved block errors, brace matching
 The new release includes the following:
-* handles the [latest Handlebars features](https://github.com/dmarcotte/idea-handlebars/pull/46)
-* adds [comment folding](https://github.com/dmarcotte/idea-handlebars/pull/49)
-* enables a [consistent commenter when editing](https://github.com/dmarcotte/idea-handlebars/pull/47) Handlebars files
-* updates look and feel to integrate properly with alternate themes, including Darcula
-    * *NOTE:* requires your IDE's build number to be greater than `128.18` (for IDEA, this means version at least `12.1`.  Other IDEs should catch up soon)
+* [Structure view support for templates](https://github.com/dmarcotte/idea-handlebars/pull/60)
+* [Improved mismatched block errors](https://github.com/dmarcotte/idea-handlebars/pull/63), with new `Alt-Enter` quick fixes
+* [New block-aware brace matching](https://github.com/dmarcotte/idea-handlebars/pull/51)
+* Fixes for [inverse block code folding](https://github.com/dmarcotte/idea-handlebars/pull/53) and [auto-insert of close block for complex ids](https://github.com/dmarcotte/idea-handlebars/issues/62)
 
 ## Installing
 * To install the latest release (and get automatic updates), install this plugin using your IDE's plugin manager:
@@ -22,9 +21,10 @@ The new release includes the following:
 * [Syntax error inspections](https://raw.github.com/dmarcotte/idea-handlebars/master/markdown_images/editor.png)
 * [Configurable syntax highlighting](https://raw.github.com/dmarcotte/idea-handlebars/master/markdown_images/highlight_config.png)
 * [Template formatter](https://raw.github.com/dmarcotte/idea-handlebars/master/markdown_images/formatter.png)
+* [Structure view](https://raw.github.com/dmarcotte/idea-handlebars/master/markdown_images/structure_view.png)
 * Code folding for mustache blocks and comments
 * Auto-insert of closing tags
-* Matched mustache pair highlighting
+* [Matched mustache pair highlighting](https://raw.github.com/dmarcotte/idea-handlebars/master/markdown_images/brace_match.png)
 * Full highlighting, code completion, inspections, formatting and commenting for the content in your templates (by default HTML, configurable in ["Settings->Template Data Languages"](https://raw.github.com/dmarcotte/idea-handlebars/master/markdown_images/custom_langs_by_project.png) and ["Settings->File Types"](https://raw.github.com/dmarcotte/idea-handlebars/master/markdown_images/custom_langs_by_filename_pattern.png))
 * By default, files matching `*.handlebars`, `*.hbs` or `*.mustache` are handled by this plugin.  Configure other file patterns in `Settings->File Types`
 

@@ -17,6 +17,7 @@ public class HbTokenTypes {
     public static final IElementType OPEN_INVERSE_BLOCK_STACHE = new HbCompositeElementType("OPEN_INVERSE_BLOCK_STACHE");
     public static final IElementType CLOSE_BLOCK_STACHE = new HbCompositeElementType("CLOSE_BLOCK_STACHE");
     public static final IElementType MUSTACHE = new HbCompositeElementType("MUSTACHE");
+    public static final IElementType PATH = new HbCompositeElementType("PATH");
     public static final IElementType PARAM = new HbCompositeElementType("PARAM");
     public static final IElementType PARTIAL_STACHE = new HbCompositeElementType("PARTIAL_STACHE");
     public static final IElementType SIMPLE_INVERSE = new HbCompositeElementType("SIMPLE_INVERSE");

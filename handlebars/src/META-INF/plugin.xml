@@ -13,6 +13,30 @@
   <category>Custom Languages</category>
   <change-notes>
     <![CDATA[
+      <b>Version 0.7</b>
+        <br>
+        <ul>
+          <li>
+              Adds <a href="https://github.com/dmarcotte/idea-handlebars/pull/60">structure view support</a> for templates
+          </li>
+          <li>
+              Improves <a href="https://github.com/dmarcotte/idea-handlebars/pull/63">mismatched block errors</a> and provides new quick fixes
+          </li>
+          <li>
+              Enhances <a href="https://github.com/dmarcotte/idea-handlebars/pull/51">brace matching to be block aware</a>
+          </li>
+          <li>
+              Fixes:
+            <ul>
+                <li>
+                    Code folding now <a href="https://github.com/dmarcotte/idea-handlebars/pull/53">supported for inverse blocks</a>
+                </li>
+                <li>
+                    Auto-insert of close tags now <a href="https://github.com/dmarcotte/idea-handlebars/issues/62">correctly handles complex ids</a>
+                </li>
+            </ul>
+          </li>
+        </ul>
       <b>Version 0.6</b>
       <br>
       <ul>
@@ -190,11 +214,11 @@
       </ul>
     ]]>
   </change-notes>
-  <version>0.6</version>
+  <version>0.7</version>
   <depends>com.intellij.modules.lang</depends>
   <vendor logo="/icons/handlebars_icon.png" url="https://github.com/dmarcotte">dmarcotte</vendor>
   
-  <idea-version since-build="110.000"/>
+  <idea-version since-build="110.000" until-build="128.18"/>
 
   <application-components>
     <!-- Add your application components here -->
@@ -223,5 +247,7 @@
     <applicationConfigurable instance="com.dmarcotte.handlebars.pages.HbConfigurationPage"/>
     <codeFoldingOptionsProvider
         instance="com.dmarcotte.handlebars.config.HbFoldingOptionsProvider" />
+    <lang.psiStructureViewFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.structure.HbStructureViewFactory"/>
+    <annotator language="Handlebars" implementationClass="com.dmarcotte.handlebars.inspections.HbBlockMismatchInspection"/>
   </extensions>
 </idea-plugin>

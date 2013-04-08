@@ -5,7 +5,7 @@ FILE
         PsiElement([Hb] OPEN)('{{')
       HbPsiElementImpl([Hb] DATA_PREFIX)
         PsiElement([Hb] DATA_PREFIX)('@')
-      HbPsiElementImpl([Hb] DATA)
+      HbDataImpl([Hb] DATA)
         PsiElement([Hb] DATA)('foo')
       HbPsiElementImpl([Hb] CLOSE)
         PsiElement([Hb] CLOSE)('}}')

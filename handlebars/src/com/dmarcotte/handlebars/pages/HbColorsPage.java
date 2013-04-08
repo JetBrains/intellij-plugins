@@ -1,8 +1,8 @@
 package com.dmarcotte.handlebars.pages;
 
 import com.dmarcotte.handlebars.HbBundle;
-import com.dmarcotte.handlebars.file.HbFileType;
 import com.dmarcotte.handlebars.HbHighlighter;
+import com.dmarcotte.handlebars.HbIcons;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.options.colors.AttributesDescriptor;
@@ -34,7 +34,7 @@ public class HbColorsPage implements ColorSettingsPage {
     }
 
     public Icon getIcon() {
-        return HbFileType.FILE_ICON;
+        return HbIcons.FILE_ICON;
     }
 
     @NotNull

@@ -3,8 +3,8 @@ package com.dmarcotte.handlebars.editor.actions;
 import com.dmarcotte.handlebars.HbLanguage;
 import com.dmarcotte.handlebars.config.HbConfig;
 import com.dmarcotte.handlebars.file.HbFileViewProvider;
-import com.dmarcotte.handlebars.parsing.HbTokenTypes;
 import com.dmarcotte.handlebars.psi.HbCloseBlockMustache;
+import com.dmarcotte.handlebars.psi.HbPath;
 import com.dmarcotte.handlebars.psi.HbPsiElement;
 import com.dmarcotte.handlebars.psi.HbPsiUtil;
 import com.dmarcotte.handlebars.psi.HbSimpleInverse;
@@ -96,13 +96,13 @@ public class HbTypedHandler extends TypedHandlerDelegate {
         PsiElement openTag = HbPsiUtil.findParentOpenTagElement(elementAtCaret);
 
         if (openTag != null && openTag.getChildren().length > 1) {
-            // we've got an open block type stache... find its ID
-            HbPsiElement idElem = (HbPsiElement) openTag.getChildren()[1];
+            // we've got an open block type stache... find its "name" (its first path element)
+            HbPsiElement pathElem = (HbPsiElement) openTag.getChildren()[1];
 
-            if (idElem != null
-                    && idElem.getNode().getElementType() == HbTokenTypes.ID) {
+            if (pathElem != null
+                    && pathElem instanceof HbPath) {
                 // insert the corresponding close tag
-                editor.getDocument().insertString(offset, "{{/" + idElem.getText() + "}}");
+                editor.getDocument().insertString(offset, "{{/" + pathElem.getText() + "}}");
             }
         }
     }

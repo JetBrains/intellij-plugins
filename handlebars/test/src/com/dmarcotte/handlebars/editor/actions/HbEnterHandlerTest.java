@@ -42,7 +42,7 @@ public class HbEnterHandlerTest extends HbActionHandlerTest {
 
     /**
      * On Enter between MIS-matched open/close tags,
-     * expect a standard newline
+     * we still get the standard behavior
      */
     public void testEnterBetweenMismatchedHbTags() {
         doEnterTest(
@@ -51,7 +51,8 @@ public class HbEnterHandlerTest extends HbActionHandlerTest {
                 "stuff",
 
                 "{{#foo}}\n" +
-                "<caret>{{/bar}}" +
+                "<caret>\n" +
+                "{{/bar}}" +
                 "stuff"
         );
     }
