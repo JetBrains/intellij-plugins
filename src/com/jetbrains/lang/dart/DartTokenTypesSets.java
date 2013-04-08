@@ -96,6 +96,17 @@ public interface DartTokenTypesSets {
     EMBEDDED_CONTENT
   );
 
+  TokenSet DECLARATIONS = TokenSet.create(
+    CLASS_DEFINITION,
+    INTERFACE_DEFINITION,
+    FUNCTION_DECLARATION_WITH_BODY,
+    FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE,
+    GETTER_DECLARATION,
+    SETTER_DECLARATION,
+    VAR_DECLARATION_LIST,
+    FUNCTION_TYPE_ALIAS
+  );
+
   class DartEmbeddedContentElementType extends ILazyParseableElementType implements ILightLazyParseableElementType {
     public DartEmbeddedContentElementType() {
       super("DART_EMBEDDED_CONTENT", DartInHtmlLanguage.INSTANCE);

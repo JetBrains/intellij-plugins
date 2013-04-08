@@ -69,7 +69,12 @@ public class DartSpacingProcessor {
       return Spacing.createSpacing(0, 0, 2, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
     if (type2 != SEMICOLON && BLOCKS.contains(elementType)) {
-      int lineFeeds = elementType == BLOCK ? 1 : 2;
+      boolean topLevel = elementType == DART_FILE || elementType == EMBEDDED_CONTENT;
+      int lineFeeds = elementType == BLOCK || topLevel ? 1 : 2;
+      if (topLevel && DECLARATIONS.contains(type2)) {
+        // additional
+        lineFeeds = 2;
+      }
       return Spacing.createSpacing(0, 0, lineFeeds, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
     if (type2 != SEMICOLON && (parentType == SWITCH_CASE || parentType == DEFAULT_CASE)) {
@@ -85,12 +90,6 @@ public class DartSpacingProcessor {
       return addSingleSpaceIf(false, true);
     }
     if (type1 == INTERFACE_BODY || type2 == INTERFACE_BODY) {
-      return addSingleSpaceIf(false, true);
-    }
-
-    if (type1 == LIBRARY_STATEMENT ||
-        type1 == IMPORT_STATEMENT ||
-        type1 == SOURCE_STATEMENT) {
       return addSingleSpaceIf(false, true);
     }
 
