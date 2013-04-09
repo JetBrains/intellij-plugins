@@ -7,6 +7,10 @@ public class DartEditorCompletionTest extends DartCompletionTestBase {
     super("completion", "editor");
   }
 
+  public void testDocComment() throws Throwable {
+    doTest('\n');
+  }
+
   public void testGenericBrace1() throws Throwable {
     doTest('<');
   }
