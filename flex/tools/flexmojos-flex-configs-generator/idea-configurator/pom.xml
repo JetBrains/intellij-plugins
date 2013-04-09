@@ -19,7 +19,7 @@
     <dependency>
       <groupId>net.flexmojos.oss</groupId>
       <artifactId>flexmojos-flex-compiler</artifactId>
-      <version>5.0-beta</version>
+      <version>6.0.0</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

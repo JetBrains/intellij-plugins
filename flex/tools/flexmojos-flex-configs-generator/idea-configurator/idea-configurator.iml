@@ -4,22 +4,13 @@
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/target/generated-sources/annotations" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/target/classes" />
-      <excludeFolder url="file://$MODULE_DIR$/target/maven-archiver" />
-      <excludeFolder url="file://$MODULE_DIR$/target/surefire" />
-      <excludeFolder url="file://$MODULE_DIR$/target/test-classes" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="generator-server" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-threadlocaltoolkit-wrapper:5.0-beta" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-generator-internal-compiler-iface:5.0-beta" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-generator-api:5.0-beta" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-threadlocaltoolkit-wrapper:5.0-beta" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-generator-internal-compiler-iface:5.0-beta" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-generator-api:5.0-beta" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-flex-compiler:4.2-beta" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-threadlocaltoolkit-wrapper:4.2-beta" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.sonatype.flexmojos:flexmojos-generator-internal-compiler-iface:4.2-beta" level="project" />
@@ -105,10 +96,10 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.adobe.flex.compiler:xmlParserAPIs:4.5.1.21328" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-library:1.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-flex-compiler:5.0-beta" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-threadlocaltoolkit-wrapper:5.0-beta" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-generator-internal-compiler-iface:5.0-beta" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-generator-api:5.0-beta" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-flex-compiler:6.0.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-threadlocaltoolkit-wrapper:6.0.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-generator-internal-compiler-iface:6.0.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.flexmojos.oss:flexmojos-generator-api:6.0.0" level="project" />
     <orderEntry type="module" module-name="shared" scope="PROVIDED" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-core:3.0.4" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-model:3.0.4" level="project" />

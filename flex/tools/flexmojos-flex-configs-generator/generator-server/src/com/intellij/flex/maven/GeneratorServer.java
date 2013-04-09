@@ -110,7 +110,7 @@ public class GeneratorServer {
               }
             }
             catch (Throwable e) {
-              getLogger().error("Cannnot generate flex config for " + pathname, e);
+              getLogger().error("Cannot generate flex config for " + pathname, e);
             }
           }
         });
