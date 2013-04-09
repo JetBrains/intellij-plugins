@@ -164,7 +164,7 @@ public class GeneratorServer {
 
       final Mojo mojo = mavenPluginManager.getConfiguredMojo(Mojo.class, session, flexmojosMojoExecution);
       try {
-        Class configuratorClass = flexmojosPluginRealm.loadClass(generators.get(0));
+        Class<?> configuratorClass = flexmojosPluginRealm.loadClass(generators.get(0));
         FlexConfigGenerator configurator = (FlexConfigGenerator)configuratorClass.getConstructor(MavenSession.class, File.class).newInstance(session, generatorOutputDirectory);
         configurator.preGenerate(project, Flexmojos.getClassifier(mojo));
         if ("swc".equals(project.getPackaging())) {
