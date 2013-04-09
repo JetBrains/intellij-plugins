@@ -6,10 +6,7 @@ import org.apache.maven.execution.*;
 import org.apache.maven.lifecycle.internal.ThreadConfigurationService;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.LegacySupport;
-import org.apache.maven.plugin.MavenPluginManager;
-import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.*;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.properties.internal.EnvironmentUtils;
 import org.apache.maven.repository.RepositorySystem;
@@ -126,6 +123,11 @@ public class GeneratorServer {
     }
   }
 
+  private void populateBuildNumberPluginFields(MavenProject project, Plugin plugin) throws Exception {
+    MojoExecution mojoExecution = maven.createMojoExecution(plugin, "create", project);
+    plexusContainer.lookup(BuildPluginManager.class).executeMojo(session, mojoExecution);
+  }
+
   private String generate(final MavenProject project, final List<String> generators, final URL generatorJarPath) throws Exception {
     session.setCurrentProject(project);
 
@@ -133,6 +135,7 @@ public class GeneratorServer {
     try {
       boolean flexmojosGeneratorFound = false;
       boolean buildHelperFound = false;
+      boolean buildNumberFound = false;
       for (Plugin plugin : project.getBuildPlugins()) {
         final String pluginGroupId = plugin.getGroupId();
         if (pluginGroupId.equals("org.sonatype.flexmojos") || pluginGroupId.equals("net.flexmojos.oss")) {
@@ -154,8 +157,12 @@ public class GeneratorServer {
           AdditionalSourceRootUtil.addByBuildHelper(maven.createMojoExecution(plugin, "add-source", project), session, project, getLogger());
           buildHelperFound = true;
         }
+        else if (!buildNumberFound && plugin.getArtifactId().equals("buildnumber-maven-plugin") && pluginGroupId.equals("org.codehaus.mojo")) {
+          populateBuildNumberPluginFields(project, plugin);
+          buildNumberFound = true;
+        }
 
-        if (flexmojosMojoExecution != null && flexmojosGeneratorFound && buildHelperFound) {
+        if (flexmojosMojoExecution != null && flexmojosGeneratorFound && buildHelperFound && buildNumberFound) {
           break;
         }
       }
