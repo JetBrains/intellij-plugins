@@ -21,17 +21,15 @@ import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.ConcurrentHashMap;
 
 final class Maven {
-  private final HashMap<File, ProjectCacheData> projectsCache = new HashMap<File, ProjectCacheData>();
+  private final ConcurrentHashMap<File, AtomicNotNullLazyValue<MavenProject>> projectsCache = new ConcurrentHashMap<File, AtomicNotNullLazyValue<MavenProject>>();
   private final PlexusContainer plexusContainer;
   private final MavenSession session;
 
   private final BuildPluginManager pluginManager;
-  private final ReentrantLock projectCacheLock = new ReentrantLock();
   private final ProjectBuilder projectBuilder;
 
   public Maven(PlexusContainer plexusContainer, MavenSession session) throws ComponentLookupException {
@@ -41,63 +39,56 @@ final class Maven {
     projectBuilder = plexusContainer.lookup(ProjectBuilder.class);
   }
 
-  public MavenProject readProject(final File pomFile) throws ComponentLookupException, ProjectBuildingException {
-    projectCacheLock.lock();
-    ProjectCacheData projectCacheData;
-    boolean unlocked = false;
-    try {
-      projectCacheData = projectsCache.get(pomFile);
-      if (projectCacheData != null) {
-        projectCacheLock.unlock();
-        unlocked = true;
-        //noinspection SynchronizationOnLocalVariableOrMethodParameter
-        synchronized (projectCacheData) {
-          while (!projectCacheData.processed) {
-            try {
-              projectCacheData.wait();
-            }
-            catch (InterruptedException e) {
-              break;
-            }
-          }
+  /**
+   * Copied from com.intellij.openapi.util.*
+   * @author peter
+   */
+  private abstract class AtomicNotNullLazyValue<T> {
+    private volatile T myValue;
 
-          return projectCacheData.project;
+    protected abstract T compute();
+
+    public final T getValue() {
+      T value = myValue;
+      if (value != null) {
+        return value;
+      }
+      synchronized (this) {
+        value = myValue;
+        if (value == null) {
+          myValue = value = compute();
         }
       }
-
-      projectCacheData = new ProjectCacheData();
-      projectsCache.put(pomFile, projectCacheData);
+      return value;
     }
-    finally {
-      if (!unlocked) {
-        projectCacheLock.unlock();
-      }
-    }
-
-    //noinspection SynchronizationOnLocalVariableOrMethodParameter
-    synchronized (projectCacheData) {
-      try {
-        final ProjectBuildingRequest projectBuildingRequest = session.getRequest().getProjectBuildingRequest();
-        projectBuildingRequest.setResolveDependencies(true);
-
-        projectBuildingRequest.setValidationLevel(ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL);
-        projectBuildingRequest.setRepositorySession(session.getRepositorySession());
-
-        projectCacheData.project = projectBuilder.build(pomFile, projectBuildingRequest).getProject();
-      }
-      finally {
-        projectCacheData.processed = true;
-        // well, NPE will be if we cannot build project and client will try to use projectCacheData.project — it is normal
-        projectCacheData.notifyAll();
-      }
-    }
-
-    return projectCacheData.project;
   }
 
-  private static final class ProjectCacheData {
-    private MavenProject project;
-    private boolean processed;
+  public MavenProject readProject(final File pomFile) throws ComponentLookupException, ProjectBuildingException {
+    AtomicNotNullLazyValue<MavenProject> projectRef = projectsCache.get(pomFile);
+    if (projectRef == null) {
+      AtomicNotNullLazyValue<MavenProject> candidate =
+        projectsCache.putIfAbsent(pomFile, projectRef = new AtomicNotNullLazyValue<MavenProject>() {
+          @Override
+          protected MavenProject compute() {
+            ProjectBuildingRequest projectBuildingRequest = session.getRequest().getProjectBuildingRequest();
+            projectBuildingRequest.setResolveDependencies(true);
+
+            projectBuildingRequest.setValidationLevel(ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL);
+            projectBuildingRequest.setRepositorySession(session.getRepositorySession());
+
+            try {
+              return projectBuilder.build(pomFile, projectBuildingRequest).getProject();
+            }
+            catch (ProjectBuildingException e) {
+              throw new RuntimeException(e);
+            }
+          }
+        });
+      if (candidate != null) {
+        projectRef = candidate;
+      }
+    }
+    return projectRef.getValue();
   }
 
   public MojoExecution createMojoExecution(Plugin plugin, String goal, MavenProject project) throws Exception {
