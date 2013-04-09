@@ -99,8 +99,12 @@ public class GeneratorServer {
           @Override
           public void run() {
             try {
-              final MavenProject project = maven.readProject(new File(pathname));
-              final String configFilePath = generate(project, generators, generatorJarPath);
+              MavenProject project = maven.readProject(new File(pathname), logger);
+              if (project == null) {
+                return;
+              }
+
+              String configFilePath = generate(project, generators, generatorJarPath);
               synchronized (System.out) {
                 System.out.append("\n[fcg] generated: ").append(projectId).append(':').append(configFilePath);
                 for (String sourceRoot : project.getCompileSourceRoots()) {
@@ -192,7 +196,12 @@ public class GeneratorServer {
   }
 
   public void resolveOutputs(WorkspaceReaderImpl.ArtifactData data) throws Exception {
-    final MavenProject project = maven.readProject(data.file);
+    final MavenProject project = maven.readProject(data.file, logger);
+    if (project == null) {
+      getLogger().warn("Cannot read project while resolve output file for " + data.toString());
+      return;
+    }
+
     final MavenProject oldProject = session.getCurrentProject();
     MojoExecution flexmojosMojoExecution = null;
     try {

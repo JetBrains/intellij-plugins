@@ -14,11 +14,11 @@ import org.apache.maven.plugin.version.DefaultPluginVersionRequest;
 import org.apache.maven.plugin.version.PluginVersionResolver;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.logging.Logger;
 
 import java.io.File;
 import java.util.List;
@@ -63,7 +63,8 @@ final class Maven {
     }
   }
 
-  public MavenProject readProject(final File pomFile) throws ComponentLookupException, ProjectBuildingException {
+  // @Nullable return null if cannot read
+  public MavenProject readProject(final File pomFile, final Logger logger) {
     AtomicNotNullLazyValue<MavenProject> projectRef = projectsCache.get(pomFile);
     if (projectRef == null) {
       AtomicNotNullLazyValue<MavenProject> candidate =
@@ -79,8 +80,9 @@ final class Maven {
             try {
               return projectBuilder.build(pomFile, projectBuildingRequest).getProject();
             }
-            catch (ProjectBuildingException e) {
-              throw new RuntimeException(e);
+            catch (Throwable e) {
+              logger.error("Cannot read project " + pomFile.getPath(), e);
+              return null;
             }
           }
         });
