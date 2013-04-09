@@ -21,6 +21,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import org.codehaus.plexus.logging.Logger;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -31,6 +32,7 @@ final class Maven {
 
   private final BuildPluginManager pluginManager;
   private final ProjectBuilder projectBuilder;
+  private final Date buildStartDate = new Date();
 
   public Maven(PlexusContainer plexusContainer, MavenSession session) throws ComponentLookupException {
     this.plexusContainer = plexusContainer;
@@ -76,6 +78,7 @@ final class Maven {
 
             projectBuildingRequest.setValidationLevel(ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL);
             projectBuildingRequest.setRepositorySession(session.getRepositorySession());
+            projectBuildingRequest.setBuildStartTime(buildStartDate);
 
             try {
               return projectBuilder.build(pomFile, projectBuildingRequest).getProject();
