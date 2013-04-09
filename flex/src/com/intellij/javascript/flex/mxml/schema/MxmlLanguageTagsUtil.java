@@ -9,6 +9,7 @@ import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JSLanguageInjector;
+import com.intellij.lang.javascript.MxmlLanguageInjector;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.openapi.editor.Editor;
@@ -62,7 +63,7 @@ public class MxmlLanguageTagsUtil {
   }
 
   static boolean isFxPrivateTag(final XmlTag tag) {
-    return JSLanguageInjector.isFxPrivateTag(tag);
+    return MxmlLanguageInjector.isFxPrivateTag(tag);
   }
 
   static boolean isXmlOrXmlListTag(final XmlTag tag) {
