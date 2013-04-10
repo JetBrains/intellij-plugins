@@ -39,7 +39,9 @@ public class DartAnalyzerDriver {
 
   @Nullable
   public List<AnalyzerMessage> analyze() {
-    return analyze(true);
+    // incremental mode is broken at the moment
+    // https://code.google.com/p/dart/issues/detail?id=9743
+    return analyze(false);
   }
 
   @Nullable
