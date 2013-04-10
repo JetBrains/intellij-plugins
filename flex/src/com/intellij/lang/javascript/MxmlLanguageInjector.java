@@ -28,6 +28,7 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
   private static final String FUNCTION_CALL_PREFIX = "(function (... _){}) (";
   private static final String FUNCTION_CALL_SUFFIX = "\n);";
   private static final Language regexpLanguage = Language.findLanguageByID("RegExp");
+  private static final Language cssLanguage = Language.findLanguageByID("CSS");
 
   @Override
   public void getLanguagesToInject(@NotNull MultiHostRegistrar registrar, @NotNull PsiElement host) {
@@ -102,6 +103,9 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
              XmlBackedJSClassImpl.METADATA_TAG_NAME.equals(localName) ) &&
             tag.getAttributeValue("source") == null) {
           JSLanguageInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, null, null);
+        }
+        else if ("Style".equals(localName) && JavaScriptSupportLoader.isMxmlNs(tag.getNamespace()) && cssLanguage != null) {
+          JSLanguageInjector.injectToXmlText(registrar, host, cssLanguage, null, null);
         }
         else if (tag.getSubTags().length == 0) {
           injectInMxmlFile(registrar, host, tag.getDescriptor(), tag);
