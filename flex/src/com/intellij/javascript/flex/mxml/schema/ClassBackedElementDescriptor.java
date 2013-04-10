@@ -15,6 +15,7 @@ import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
@@ -499,7 +500,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       }
 
       if (element instanceof XmlFile && JavaScriptSupportLoader.isFxgFile((PsiFile)element)) {
-        element = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)element);
+        element = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
       }
 
       while (element instanceof XmlFile) {
@@ -820,7 +821,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     }
 
     if (tag.getParent() instanceof XmlDocument) {
-      final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)tag.getContainingFile());
+      final JSClass jsClass = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)tag.getContainingFile());
       final JSReferenceList list = jsClass.getImplementsList();
       final MxmlErrorReportingClient reportingClient = new MxmlErrorReportingClient(host);
 
@@ -953,7 +954,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       if (isAdequateType(arrayElementType)) {
         PsiElement declaration = descriptor.getDeclaration();
         if (declaration instanceof XmlFile) {
-          declaration = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)declaration);
+          declaration = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)declaration);
         }
 
         if (declaration == null) {
@@ -977,7 +978,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       PsiElement element = predefined ? null : JSResolveUtil.unwrapProxy(getDeclaration());
 
       if (element instanceof XmlFile) {
-        element = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)element);
+        element = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
       }
 
       if (element instanceof JSClass) {

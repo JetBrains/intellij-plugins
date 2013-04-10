@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
@@ -54,7 +54,7 @@ public class FlexUnitTestFinder implements TestFinder {
       return JSPsiImplUtils.findClass((JSFile)psiFile);
     }
     else if (psiFile instanceof XmlFile) {
-      return XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)psiFile);
+      return XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)psiFile);
     }
 
     return null;

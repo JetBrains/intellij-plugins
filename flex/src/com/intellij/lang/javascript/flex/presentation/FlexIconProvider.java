@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.ide.IconProvider;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSFileImpl;
@@ -33,7 +33,7 @@ public class FlexIconProvider extends IconProvider {
 
     if (element instanceof XmlFile) {
       if (JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
-        final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)element);
+        final JSClass jsClass = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
         if (jsClass != null) {
           icon = jsClass.getIcon(flags);
         }

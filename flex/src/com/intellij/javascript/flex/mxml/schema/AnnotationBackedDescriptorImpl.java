@@ -11,10 +11,7 @@ import com.intellij.javascript.flex.mxml.FlexNameAlias;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
-import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
@@ -329,7 +326,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       }
 
       if (resultRef.isNull()) {
-        final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)descriptorDeclaration);
+        final JSClass jsClass = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)descriptorDeclaration);
         if (jsClass != null) {
           return findDeclarationByIdAttributeValueInSuperClass(jsClass, visited);
         }

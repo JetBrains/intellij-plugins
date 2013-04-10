@@ -4,7 +4,7 @@ import com.intellij.diagram.*;
 import com.intellij.diagram.actions.DiagramCreateNewNodeElementAction;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.uml.actions.*;
 import com.intellij.lang.javascript.uml.actions.NewFlexComponentUmlAction;
 import com.intellij.lang.javascript.psi.JSFile;
@@ -69,7 +69,7 @@ public class FlashUmlProvider extends DiagramProvider<Object> {
       element = JSPsiImplUtils.findQualifiedElement((JSFile)element);
     }
     else if (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
-      element = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)element);
+      element = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
     }
     else if (element instanceof PsiDirectory) {
       PsiDirectory directory = (PsiDirectory)element;

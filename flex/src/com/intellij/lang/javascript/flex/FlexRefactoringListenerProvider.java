@@ -8,10 +8,7 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProject
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.NonStructuralModifiableBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
-import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
-import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -72,7 +69,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
       return (JSClass)element;
     }
     if (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((XmlFile)element)) {
-      return XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)element);
+      return XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
     }
     if (element instanceof JSFile) {
       return JSPsiImplUtils.findClass((JSFile)element);

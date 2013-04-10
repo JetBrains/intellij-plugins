@@ -9,7 +9,7 @@ import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -183,7 +183,7 @@ public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer 
       element = JSPsiImplUtils.findClass((JSFile)element);
     }
     else if (element instanceof XmlFile) {
-      element = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)element);
+      element = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
     }
     return element instanceof JSClass ? (JSClass)element : null;
   }

@@ -8,6 +8,7 @@ import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -98,7 +99,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
         }
       }
       else if (file instanceof XmlFile) {
-        return XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)file);
+        return XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)file);
       }
     }
     return null;

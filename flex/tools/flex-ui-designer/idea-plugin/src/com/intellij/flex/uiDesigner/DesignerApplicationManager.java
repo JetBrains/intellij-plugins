@@ -6,7 +6,7 @@ import com.intellij.flex.uiDesigner.preview.MxmlPreviewToolWindowManager;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
@@ -422,7 +422,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       return false;
     }
 
-    final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(((XmlFile)psiFile).getRootTag());
+    final JSClass jsClass = XmlBackedJSClassFactory.getInstance().getXmlBackedClass(((XmlFile)psiFile).getRootTag());
     return jsClass != null && JSInheritanceUtil.isParentClass(jsClass, FlexCommonTypeNames.FLASH_DISPLAY_OBJECT_CONTAINER);
   }
 

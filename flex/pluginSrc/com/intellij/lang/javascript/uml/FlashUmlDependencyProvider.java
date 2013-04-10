@@ -5,6 +5,7 @@ import com.intellij.lang.Language;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -167,7 +168,7 @@ public class FlashUmlDependencyProvider {
           if (descriptor != null) {
             PsiElement declaration = descriptor.getDeclaration();
             if (declaration instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)declaration)) {
-              declaration = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)declaration);
+              declaration = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)declaration);
             }
             if (declaration instanceof JSClass) {
               XmlAttribute id = tag.getAttribute("id");

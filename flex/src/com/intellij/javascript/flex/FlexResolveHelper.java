@@ -4,7 +4,7 @@ import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.JSResolveHelper;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -51,7 +51,7 @@ public class FlexResolveHelper implements JSResolveHelper {
 
         if (expectedPackage.equals(VfsUtilCore.getRelativePath(file.getParent(), rootForFile, '.'))) {
           PsiFile psiFile = manager.findFile(file);
-          final JSClass clazz = psiFile instanceof XmlFile ? XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)psiFile):null;
+          final JSClass clazz = psiFile instanceof XmlFile ? XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)psiFile):null;
           if (clazz != null) {
             result.set(clazz);
             return false;
@@ -83,7 +83,7 @@ public class FlexResolveHelper implements JSResolveHelper {
       public boolean processFile(final VirtualFile file, final VirtualFile root) {
         final PsiFile xmlFile = manager.findFile(file);
         if (!(xmlFile instanceof XmlFile)) return true;
-        return processor.execute(XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)xmlFile), ResolveState.initial());
+        return processor.execute(XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)xmlFile), ResolveState.initial());
       }
     };
 

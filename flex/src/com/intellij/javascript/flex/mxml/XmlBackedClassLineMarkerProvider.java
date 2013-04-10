@@ -5,9 +5,10 @@ import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.highlighting.JavaScriptLineMarkerProvider;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.search.JSClassSearch;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.psi.PsiElement;
@@ -32,7 +33,7 @@ public class XmlBackedClassLineMarkerProvider implements LineMarkerProvider {
           element.getParent() instanceof XmlDocument &&
           element.getContainingFile() != null &&
           JavaScriptSupportLoader.isFlexMxmFile(element.getContainingFile())) {
-        final XmlBackedJSClassImpl clazz = XmlBackedJSClassImpl.getXmlBackedClass((XmlTag)element);
+        final XmlBackedJSClass clazz = XmlBackedJSClassFactory.getInstance().getXmlBackedClass((XmlTag)element);
         Query<JSClass> classQuery = JSClassSearch.searchClassInheritors(clazz, true);
         if (classQuery.findFirst() != null) {
           result.add(new LineMarkerInfo<JSClass>(clazz, element.getTextOffset(), AllIcons.Gutter.OverridenMethod,

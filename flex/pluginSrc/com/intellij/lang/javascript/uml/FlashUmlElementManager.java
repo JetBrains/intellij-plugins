@@ -21,10 +21,11 @@ import com.intellij.diagram.presentation.DiagramState;
 import com.intellij.javascript.flex.FlexResolveHelper;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassImpl;
 import com.intellij.lang.javascript.psi.impl.JSFunctionImpl;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
@@ -114,7 +115,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
           element = enclosing;
         }
         else if (enclosing instanceof JSFile) {
-          final XmlBackedJSClassImpl clazz = JSResolveUtil.getXmlBackedClass((JSFile)enclosing);
+          final XmlBackedJSClass clazz = JSResolveUtil.getXmlBackedClass((JSFile)enclosing);
           if (clazz != null) {
             return clazz;
           }
@@ -125,7 +126,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
           }
         }
         if (enclosing instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)enclosing)) {
-          return XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)enclosing);
+          return XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)enclosing);
         }
       }
     }

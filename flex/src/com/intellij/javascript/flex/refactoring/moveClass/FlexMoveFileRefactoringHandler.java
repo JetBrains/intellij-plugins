@@ -6,6 +6,8 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSVarStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
@@ -113,14 +115,14 @@ public class FlexMoveFileRefactoringHandler extends MoveHandlerDelegate {
       }
     }
     if (element instanceof JSFile) {
-      final XmlBackedJSClassImpl xmlBackedClass = JSResolveUtil.getXmlBackedClass((JSFile)element);
+      final XmlBackedJSClass xmlBackedClass = JSResolveUtil.getXmlBackedClass((JSFile)element);
       if (xmlBackedClass != null) {
         return xmlBackedClass;
       }
       return JSPsiImplUtils.findQualifiedElement((JSFile)element);
     }
     if (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) {
-      return XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)element);
+      return XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
     }
     return null;
   }

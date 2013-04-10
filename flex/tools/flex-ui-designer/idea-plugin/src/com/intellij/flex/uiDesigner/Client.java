@@ -9,7 +9,7 @@ import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.Disposable;
@@ -584,7 +584,7 @@ public class Client implements Disposable {
     final AccessToken token = ReadAction.start();
     final int flags;
     try {
-      final JSClass jsClass = XmlBackedJSClassImpl.getXmlBackedClass(psiFile);
+      final JSClass jsClass = XmlBackedJSClassFactory.getXmlBackedClass(psiFile);
       assert jsClass != null;
       out.writeAmfUtf(jsClass.getQualifiedName());
 

@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.uml;
 
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.openapi.project.Project;
@@ -27,7 +27,7 @@ public class FlashUmlDndProvider implements DiagramDnDProvider<Object> {
       result = JSPsiImplUtils.findQualifiedElement((JSFile)o);
     }
     else if (o instanceof XmlFile) {
-      result = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)o);
+      result = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)o);
     }
     return result == null ? null : new Object[]{result};
   }

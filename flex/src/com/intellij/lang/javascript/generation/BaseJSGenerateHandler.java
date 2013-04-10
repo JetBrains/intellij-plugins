@@ -11,7 +11,7 @@ import com.intellij.lang.LanguageCodeInsightActionHandler;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -204,7 +204,7 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
   @Nullable
   public static JSClass findClass(PsiFile file, Editor editor) {
     if (file instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile(file)) {
-      return XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)file);
+      return XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)file);
     }
 
     if (!(file instanceof JSFile)) return null;
@@ -220,7 +220,7 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
     } else if (JSResolveUtil.isArtificialClassUsedForReferenceList(clazz)) {
       final PsiElement context = InjectedLanguageManager.getInstance(file.getProject()).getInjectionHost(clazz);
       if (context != null && context.getContainingFile() instanceof XmlFile) {
-        clazz = XmlBackedJSClassImpl.getXmlBackedClass((XmlFile)context.getContainingFile());
+        clazz = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)context.getContainingFile());
       }
       else {
         clazz = null;
