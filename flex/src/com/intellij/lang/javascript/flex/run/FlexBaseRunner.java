@@ -328,6 +328,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final String adtVersion;
     return (adtVersion = AirPackageUtil.getAdtVersion(project, sdk)) != null
            && AirPackageUtil.startAdbServer(project, sdk)
+           && AirPackageUtil.scanAndroidDevices(project, sdk, runnerParameters)
            && AirPackageUtil.checkAirRuntimeOnDevice(project, sdk, runnerParameters, adtVersion)
            && AirPackageUtil.packageApk(module, bc, runnerParameters, isDebug)
            && AirPackageUtil.installApk(project, sdk, runnerParameters.getDeviceInfo(), apkPath, applicationId);
@@ -363,6 +364,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final String ipaPath = outputFolder + "/" + bc.getIosPackagingOptions().getPackageFileName() + ".ipa";
 
     return AirPackageUtil.packageIpaForDevice(module, bc, runnerParameters, adtVersion, isDebug) &&
+           AirPackageUtil.scanIosDevices(module.getProject(), bc.getSdk(), runnerParameters) &&
            AirPackageUtil.installOnIosDevice(module.getProject(), bc.getSdk(), runnerParameters, ipaPath);
   }
 

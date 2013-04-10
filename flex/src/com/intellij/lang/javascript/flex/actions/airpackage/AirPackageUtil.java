@@ -95,10 +95,9 @@ public class AirPackageUtil {
    * @return AIR runtime version or empty string if AIR is not installed on the device
    * @throws AdtException if failed to detect AIR runtime version, for example when device is not connected
    */
-  public static String getAirRuntimeVersionOnDevice(final Project project, final Sdk sdk, final FlashRunnerParameters runnerParameters)
-    throws AdtException {
-    if (!scanAndroidDevices(project, sdk, runnerParameters)) throw new AdtException();
-
+  public static String getAirRuntimeVersionOnDevice(final Project project,
+                                                    final Sdk sdk,
+                                                    final FlashRunnerParameters runnerParameters) throws AdtException {
     final Ref<String> versionRef = new Ref<String>();
 
     final boolean ok = ExternalTask.runWithProgress(
@@ -203,6 +202,11 @@ public class AirPackageUtil {
                                                 final Sdk sdk,
                                                 final FlashRunnerParameters runnerParameters,
                                                 final String adtVersion) {
+    if (StringUtil.compareVersionNumbers(adtVersion, "3.7") >= 0) {
+      // since AIR SDK 3.7 all Android packages include captive runtime
+      return true;
+    }
+
     try {
       final String airRuntimeVersion = getAirRuntimeVersionOnDevice(project, sdk, runnerParameters);
       final String adtVersionTruncated = truncateVersionString(adtVersion);
@@ -588,8 +592,7 @@ public class AirPackageUtil {
                                            final Sdk flexSdk,
                                            final FlashRunnerParameters runnerParameters,
                                            final String ipaPath) {
-    return scanIosDevices(project, flexSdk, runnerParameters) &&
-           ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
+    return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
              protected void appendAdtOptions(final List<String> command) {
                command.add("-installApp");
                command.add("-platform");
@@ -610,7 +613,7 @@ public class AirPackageUtil {
                                         FlexBundle.message("install.ios.app.title"));
   }
 
-  private static boolean scanIosDevices(final Project project, final Sdk flexSdk, final FlashRunnerParameters runnerParameters) {
+  public static boolean scanIosDevices(final Project project, final Sdk flexSdk, final FlashRunnerParameters runnerParameters) {
     final List<DeviceInfo> devices = DeviceInfo.getIosDevices(project, flexSdk);
 
     if (devices.isEmpty()) {
@@ -660,7 +663,7 @@ public class AirPackageUtil {
     }
   }
 
-  private static boolean scanAndroidDevices(final Project project, final Sdk flexSdk, final FlashRunnerParameters runnerParameters) {
+  public static boolean scanAndroidDevices(final Project project, final Sdk flexSdk, final FlashRunnerParameters runnerParameters) {
     final List<DeviceInfo> devices = DeviceInfo.getAndroidDevices(project, flexSdk);
 
     if (devices.isEmpty()) {
