@@ -7,7 +7,8 @@ import com.google.jstestdriver.idea.assertFramework.support.ChooseScopeAndCreate
 import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.VfsUtils;
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
@@ -30,22 +31,10 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
   private static final AddJstdLibraryIntentionAction ADD_JSTD_LIBRARY_INTENTION_ACTION = new AddJstdLibraryIntentionAction();
 
   @Override
-  protected boolean isSuitableMethod(@NotNull String methodName, @NotNull JSExpression[] methodArguments) {
-    if (methodArguments.length < 1) {
-      return false;
-    }
-    if (!JsPsiUtils.isStringElement(methodArguments[0])) {
-      return false;
-    }
-    if ("TestCase".equals(methodName) || "AsyncTestCase".equals(methodName)) {
-      if (methodArguments.length == 1) {
-        return true;
-      }
-      if (methodArguments.length == 2 && JsPsiUtils.isObjectElement(methodArguments[1])) {
-        return true;
-      }
-    }
-    return false;
+  protected boolean isSuitableElement(@NotNull JSFile jsFile, @NotNull JSCallExpression callExpression) {
+    JstdTestFileStructure structure = JstdTestFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
+    String name = structure.getNameByPsiElement(callExpression.getMethodExpression());
+    return name != null;
   }
 
   @Override

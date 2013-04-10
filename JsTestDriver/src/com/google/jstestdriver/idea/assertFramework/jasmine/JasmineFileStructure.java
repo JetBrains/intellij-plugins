@@ -4,9 +4,11 @@ import com.google.common.collect.Lists;
 import com.google.inject.internal.Maps;
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
 import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
+import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,6 +21,7 @@ public class JasmineFileStructure extends AbstractTestFileStructure {
 
   private final List<JasmineSuiteStructure> mySuiteStructures = Lists.newArrayList();
   private final Map<String, JasmineSuiteStructure> mySuiteMap = Maps.newHashMap();
+  private final Map<JSCallExpression, Void> myNameByCallExpressionMap = ContainerUtil.newIdentityHashMap();
 
   public JasmineFileStructure(@NotNull JSFile jsFile) {
     super(jsFile);
@@ -32,6 +35,10 @@ public class JasmineFileStructure extends AbstractTestFileStructure {
   @Override
   public boolean isEmpty() {
     return mySuiteMap.isEmpty();
+  }
+
+  public boolean containsCallExpression(@NotNull JSCallExpression callExpression) {
+    return myNameByCallExpressionMap.containsKey(callExpression);
   }
 
   public void addDescribeStructure(JasmineSuiteStructure suiteStructure) {
@@ -155,4 +162,21 @@ public class JasmineFileStructure extends AbstractTestFileStructure {
   public boolean contains(@NotNull String testCaseName, @Nullable String testMethodName) {
     return findPsiElement(testCaseName, testMethodName) != null;
   }
+
+  void postProcess() {
+    for (JasmineSuiteStructure suite : mySuiteStructures) {
+      processSuite(suite);
+    }
+  }
+
+  private void processSuite(@NotNull JasmineSuiteStructure suite) {
+    myNameByCallExpressionMap.put(suite.getEnclosingCallExpression(), null);
+    for (JasmineSuiteStructure childSuite : suite.getSuites()) {
+      processSuite(childSuite);
+    }
+    for (JasmineSpecStructure spec : suite.getSpecs()) {
+      myNameByCallExpressionMap.put(spec.getEnclosingCallExpression(), null);
+    }
+  }
+
 }

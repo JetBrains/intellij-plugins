@@ -53,7 +53,7 @@ public class QUnitFileStructureBuilder extends AbstractTestFileStructureBuilder<
     private void updateJsCallExpression(@NotNull JSCallExpression callExpression) {
       JSReferenceExpression methodExpression = ObjectUtils.tryCast(callExpression.getMethodExpression(), JSReferenceExpression.class);
       JSArgumentList argumentList = callExpression.getArgumentList();
-      if (methodExpression != null && argumentList != null) {
+      if (methodExpression != null && methodExpression.getQualifier() == null && argumentList != null) {
         String methodName = methodExpression.getReferencedName();
         JSExpression[] arguments = ObjectUtils.notNull(argumentList.getArguments(), JSExpression.EMPTY_ARRAY);
         if (arguments.length >= 1) {

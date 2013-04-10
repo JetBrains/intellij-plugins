@@ -40,13 +40,14 @@ public class JasmineFileStructureBuilder extends AbstractTestFileStructureBuilde
           handleCallExpr(null, jsCallExpression);
         }
       }
+      myFileStructure.postProcess();
       return myFileStructure;
     }
 
     private void handleCallExpr(@Nullable JasmineSuiteStructure parentSuiteStructure, @NotNull JSCallExpression callExpression) {
       JSReferenceExpression methodExpression = ObjectUtils.tryCast(callExpression.getMethodExpression(), JSReferenceExpression.class);
       JSArgumentList argumentList = callExpression.getArgumentList();
-      if (methodExpression != null && argumentList != null) {
+      if (methodExpression != null && methodExpression.getQualifier() == null && argumentList != null) {
         String methodName = methodExpression.getReferencedName();
         JSExpression[] arguments = ObjectUtils.notNull(argumentList.getArguments(), JSExpression.EMPTY_ARRAY);
         if (DESCRIBE_NAME.equals(methodName) && arguments.length == 2) {

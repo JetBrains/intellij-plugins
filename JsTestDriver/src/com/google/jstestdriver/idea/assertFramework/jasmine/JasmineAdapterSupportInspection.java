@@ -3,9 +3,9 @@ package com.google.jstestdriver.idea.assertFramework.jasmine;
 import com.google.inject.Provider;
 import com.google.jstestdriver.idea.assertFramework.jasmine.jsSrc.JasmineAdapterSrcMarker;
 import com.google.jstestdriver.idea.assertFramework.support.AbstractAddAdapterSupportInspection;
-import com.google.jstestdriver.idea.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.VfsUtils;
-import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,20 +28,9 @@ public class JasmineAdapterSupportInspection extends AbstractAddAdapterSupportIn
   }
 
   @Override
-  protected boolean isSuitableMethod(@NotNull String methodName, @NotNull JSExpression[] arguments) {
-    if (arguments.length != 2) {
-      return false;
-    }
-    if (JasmineFileStructureBuilder.DESCRIBE_NAME.equals(methodName)) {
-      return isStringAndFunction(arguments);
-    }
-    else if (JasmineFileStructureBuilder.IT_NAME.equals(methodName)) {
-      return isStringAndFunction(arguments);
-    }
-    return false;
+  protected boolean isSuitableElement(@NotNull JSFile jsFile, @NotNull JSCallExpression callExpression) {
+    JasmineFileStructure structure = JasmineFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
+    return structure.containsCallExpression(callExpression);
   }
 
-  private static boolean isStringAndFunction(@NotNull JSExpression[] args) {
-    return JsPsiUtils.isStringElement(args[0]) && JsPsiUtils.isFunctionExpressionElement(args[1]);
-  }
 }

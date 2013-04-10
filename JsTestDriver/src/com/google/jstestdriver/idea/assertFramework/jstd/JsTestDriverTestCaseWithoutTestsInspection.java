@@ -14,9 +14,11 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.util.ObjectUtils;
+import org.jetbrains.annotations.NotNull;
 
 public class JsTestDriverTestCaseWithoutTestsInspection extends JSInspection {
 
+  @NotNull
   @Override
   protected PsiElementVisitor createVisitor(ProblemsHolder holder, LocalInspectionToolSession session) {
     JSFile jsFile = ObjectUtils.tryCast(holder.getFile(), JSFile.class);

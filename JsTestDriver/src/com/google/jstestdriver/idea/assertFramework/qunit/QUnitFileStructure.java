@@ -5,6 +5,7 @@ import com.google.inject.internal.Maps;
 import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
 import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
 import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -20,7 +21,7 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
   private final List<QUnitModuleStructure> myNonDefaultModuleStructures = Lists.newArrayList();
   private final Map<String, QUnitModuleStructure> myNonDefaultModuleStructureByNameMap = Maps.newHashMap();
   private final DefaultQUnitModuleStructure myDefaultModuleStructure = new DefaultQUnitModuleStructure(this);
-  private Map<PsiElement, String> myNameByPsiElementMap;
+  private Map<JSCallExpression, String> myNameByPsiElementMap;
 
   public QUnitFileStructure(@NotNull JSFile jsFile) {
     super(jsFile);
@@ -45,7 +46,7 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
   }
 
   @Nullable
-  public String getNameByPsiElement(@NotNull PsiElement psiElement) {
+  public String getNameByPsiElement(@NotNull JSCallExpression psiElement) {
     return myNameByPsiElementMap.get(psiElement);
   }
 
@@ -174,7 +175,7 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
   }
 
   @NotNull
-  private Map<PsiElement, String> createNameByPsiElementMap() {
+  private Map<JSCallExpression, String> createNameByPsiElementMap() {
     int count = myDefaultModuleStructure.getTestCount();
     for (QUnitModuleStructure nonDefaultModuleStructure : myNonDefaultModuleStructures) {
       count += nonDefaultModuleStructure.getTestCount() + 1;
@@ -182,9 +183,9 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
     if (count == 0) {
       return Collections.emptyMap();
     }
-    Map<PsiElement, String> nameMap = new IdentityHashMap<PsiElement, String>(count);
+    Map<JSCallExpression, String> nameMap = new IdentityHashMap<JSCallExpression, String>(count);
     for (QUnitModuleStructure moduleStructure : myNonDefaultModuleStructures) {
-      PsiElement moduleElement = moduleStructure.getEnclosingCallExpression();
+      JSCallExpression moduleElement = moduleStructure.getEnclosingCallExpression();
       nameMap.put(moduleElement, moduleStructure.getName());
       handleModuleStructure(moduleStructure, nameMap);
     }
@@ -193,9 +194,9 @@ public class QUnitFileStructure extends AbstractTestFileStructure {
   }
 
   private static void handleModuleStructure(@NotNull AbstractQUnitModuleStructure moduleStructure,
-                                            @NotNull Map<PsiElement, String> nameMap) {
+                                            @NotNull Map<JSCallExpression, String> nameMap) {
     for (QUnitTestMethodStructure testMethodStructure : moduleStructure.getTestMethodStructures()) {
-      PsiElement methodElement = testMethodStructure.getCallExpression();
+      JSCallExpression methodElement = testMethodStructure.getCallExpression();
       nameMap.put(methodElement, testMethodStructure.getName());
     }
   }

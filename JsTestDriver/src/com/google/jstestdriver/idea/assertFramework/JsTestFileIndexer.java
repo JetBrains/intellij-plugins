@@ -26,7 +26,7 @@ public class JsTestFileIndexer extends JSElementVisitor {
                                           final PsiFile file) {
       JSFile jsFile = ObjectUtils.tryCast(file, JSFile.class);
       if (jsFile != null) {
-        TestFileStructurePack pack = TestFileStructureManager.createTestFileStructurePackByJsFile(jsFile);
+        TestFileStructurePack pack = TestFileStructureManager.fetchTestFileStructurePackByJsFile(jsFile);
         if (pack != null) {
           if (!pack.isEmpty()) {
             indexer.setIsTestFile();

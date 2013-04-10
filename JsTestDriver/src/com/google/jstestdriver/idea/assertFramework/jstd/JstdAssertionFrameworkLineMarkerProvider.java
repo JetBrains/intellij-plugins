@@ -17,6 +17,7 @@ import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
+import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
@@ -85,11 +86,15 @@ public class JstdAssertionFrameworkLineMarkerProvider implements LineMarkerProvi
   private static LineMarkerInfo getQUnitLineMarkerInfo(@NotNull JSFile jsFile,
                                                        @NotNull PsiElement element) {
     QUnitFileStructure qunitFileStructure = QUnitFileStructureBuilder.getInstance().fetchCachedTestFileStructure(jsFile);
-    String testElementName = qunitFileStructure.getNameByPsiElement(element);
-    if (testElementName == null) {
-      return null;
+    if (element instanceof JSCallExpression) {
+      JSCallExpression callExpression = (JSCallExpression) element;
+      String testElementName = qunitFileStructure.getNameByPsiElement(callExpression);
+      if (testElementName == null) {
+        return null;
+      }
+      return createLineMarkerFromElement(element, testElementName);
     }
-    return createLineMarkerFromElement(element, testElementName);
+    return null;
   }
 
   @Override

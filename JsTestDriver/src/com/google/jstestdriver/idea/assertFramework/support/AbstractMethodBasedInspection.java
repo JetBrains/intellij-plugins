@@ -7,7 +7,10 @@ import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.lang.javascript.inspections.JSInspection;
-import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.JSCallExpression;
+import com.intellij.lang.javascript.psi.JSElementVisitor;
+import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.util.ObjectUtils;
@@ -18,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class AbstractMethodBasedInspection extends JSInspection {
 
-  protected abstract boolean isSuitableMethod(@NotNull String methodName, @NotNull JSExpression[] methodArguments);
+  protected abstract boolean isSuitableElement(@NotNull JSFile jsFile, @NotNull JSCallExpression callExpression);
 
   protected abstract IntentionAction getFix();
 
@@ -40,32 +43,34 @@ public abstract class AbstractMethodBasedInspection extends JSInspection {
     return new JSElementVisitor() {
       @Override
       public void visitJSCallExpression(final JSCallExpression jsCallExpression) {
+        JSFile jsFile = null;
+        if (jsCallExpression != null) {
+          jsFile = ObjectUtils.tryCast(jsCallExpression.getContainingFile(), JSFile.class);
+        }
+        if (jsFile == null) {
+          return;
+        }
         JSReferenceExpression methodExpression = ObjectUtils.tryCast(jsCallExpression.getMethodExpression(), JSReferenceExpression.class);
-        JSArgumentList jsArgumentList = jsCallExpression.getArgumentList();
-        if (methodExpression != null && jsArgumentList != null) {
-          JSExpression[] arguments = ObjectUtils.notNull(jsArgumentList.getArguments(), JSExpression.EMPTY_ARRAY);
-          String methodName = methodExpression.getReferencedName();
-          if (methodName == null) {
-            return;
-          }
-          boolean suitableSymbol = isSuitableMethod(methodName, arguments);
-          if (suitableSymbol) {
-            boolean resolved = isResolved(methodExpression);
-            if (!resolved) {
-              TextRange rangeInElement = TextRange.create(0, methodExpression.getTextLength());
-              HintWrapperQuickFix fix = new HintWrapperQuickFix(
-                methodExpression,
-                rangeInElement,
-                getFix()
-              );
-              holder.registerProblem(
-                methodExpression,
-                getProblemDescription(),
-                ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                rangeInElement,
-                fix
-              );
-            }
+        if (methodExpression == null) {
+          return;
+        }
+        boolean suitableSymbol = isSuitableElement(jsFile, jsCallExpression);
+        if (suitableSymbol) {
+          boolean resolved = isResolved(methodExpression);
+          if (!resolved) {
+            TextRange rangeInElement = TextRange.create(0, methodExpression.getTextLength());
+            HintWrapperQuickFix fix = new HintWrapperQuickFix(
+              methodExpression,
+              rangeInElement,
+              getFix()
+            );
+            holder.registerProblem(
+              methodExpression,
+              getProblemDescription(),
+              ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+              rangeInElement,
+              fix
+            );
           }
         }
       }
