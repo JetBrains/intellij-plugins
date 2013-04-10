@@ -185,6 +185,8 @@
 
     <struts2.paramNameCustomConverter
         implementation="com.intellij.struts2.dom.params.custom.InterceptorRefInStackParamNameCustomConverter"/>
+    <struts2.paramNameCustomConverter
+        implementation="com.intellij.struts2.dom.params.custom.ResultParamNameCustomConverter"/>
 
     <projectService serviceInterface="com.intellij.struts2.model.constant.StrutsConstantManager"
                     serviceImplementation="com.intellij.struts2.model.constant.StrutsConstantManagerImpl"/>
