@@ -2,6 +2,7 @@ package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.util.PathUtil;
 
 import java.io.File;
 
@@ -13,6 +14,10 @@ public abstract class AdtPackageTask extends AdtTask {
   public AdtPackageTask(final Project project, final Sdk flexSdk, final String packageFilePath) {
     super(project, flexSdk);
     myPackageFilePath = packageFilePath;
+  }
+
+  protected File getProcessDir() {
+    return new File(PathUtil.getParentPath(myPackageFilePath));
   }
 
   public void start() {
