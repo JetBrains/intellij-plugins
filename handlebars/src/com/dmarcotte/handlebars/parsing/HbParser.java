@@ -8,14 +8,14 @@ import org.jetbrains.annotations.NotNull;
 
 class HbParser implements PsiParser {
 
-    @NotNull
-    public ASTNode parse(IElementType root, PsiBuilder builder) {
-        final PsiBuilder.Marker rootMarker = builder.mark();
+  @NotNull
+  public ASTNode parse(IElementType root, PsiBuilder builder) {
+    final PsiBuilder.Marker rootMarker = builder.mark();
 
-        new HbParsing(builder).parse();
+    new HbParsing(builder).parse();
 
-        rootMarker.done(root);
+    rootMarker.done(root);
 
-        return builder.getTreeBuilt();
-    }
+    return builder.getTreeBuilt();
+  }
 }

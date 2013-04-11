@@ -6,190 +6,190 @@ import com.intellij.lang.Language;
 
 public class HbCommentActionTest extends HbActionHandlerTest {
 
-    private Language myPrevCommenterLang;
+  private Language myPrevCommenterLang;
 
-    @Override
-    protected void setUp()
-            throws Exception {
-        super.setUp();
+  @Override
+  protected void setUp()
+    throws Exception {
+    super.setUp();
 
-        myPrevCommenterLang = HbConfig.getCommenterLanguage();
+    myPrevCommenterLang = HbConfig.getCommenterLanguage();
 
-        // ensure that no commenter is selected to make sure that we test defaulting to HTML comments
-        HbConfig.setCommenterLanguage(null);
-    }
+    // ensure that no commenter is selected to make sure that we test defaulting to HTML comments
+    HbConfig.setCommenterLanguage(null);
+  }
 
-    public void testInsertLineComment1() {
-        doLineCommentTest(
+  public void testInsertLineComment1() {
+    doLineCommentTest(
 
-                "{{#foo}}<caret>",
+      "{{#foo}}<caret>",
 
-                "<!--{{#foo}}<caret>-->"
-        );
-    }
+      "<!--{{#foo}}<caret>-->"
+    );
+  }
 
-    public void testInsertLineComment2() {
-        doLineCommentTest(
+  public void testInsertLineComment2() {
+    doLineCommentTest(
 
-                "{{#foo}}\n" +
-                "<caret>    {{bar}}\n" +
-                "{{/foo}}",
+      "{{#foo}}\n" +
+      "<caret>    {{bar}}\n" +
+      "{{/foo}}",
 
-                "{{#foo}}\n" +
-                "    <!--{{bar}}-->\n" +
-                "<caret>{{/foo}}"
-        );
-    }
+      "{{#foo}}\n" +
+      "    <!--{{bar}}-->\n" +
+      "<caret>{{/foo}}"
+    );
+  }
 
-    public void testInsertBlockComment1() {
-        doBlockCommentTest(
+  public void testInsertBlockComment1() {
+    doBlockCommentTest(
 
-                "{{#foo}}<caret>",
+      "{{#foo}}<caret>",
 
-                "{{#foo}}<!--<caret>-->"
-        );
-    }
+      "{{#foo}}<!--<caret>-->"
+    );
+  }
 
-    public void testInsertBlockComment2() {
-        doBlockCommentTest(
+  public void testInsertBlockComment2() {
+    doBlockCommentTest(
 
-                "{{#foo}}\n" +
-                "    <caret>{{bar}}\n" +
-                "{{/foo}",
+      "{{#foo}}\n" +
+      "    <caret>{{bar}}\n" +
+      "{{/foo}",
 
-                "{{#foo}}\n" +
-                "    <!--<caret>-->{{bar}}\n" +
-                "{{/foo}"
-        );
-    }
+      "{{#foo}}\n" +
+      "    <!--<caret>-->{{bar}}\n" +
+      "{{/foo}"
+    );
+  }
 
-    public void testInsertBlockCommentWithSelection() {
-        doBlockCommentTest(
+  public void testInsertBlockCommentWithSelection() {
+    doBlockCommentTest(
 
-                "<selection><caret>{{#foo}}" +
-                "    {{bar}}</selection>" +
-                "{{/foo}",
+      "<selection><caret>{{#foo}}" +
+      "    {{bar}}</selection>" +
+      "{{/foo}",
 
-                "<selection><!--<caret>{{#foo}}" +
-                "    {{bar}}--></selection>" +
-                "{{/foo}"
-        );
-    }
+      "<selection><!--<caret>{{#foo}}" +
+      "    {{bar}}--></selection>" +
+      "{{/foo}"
+    );
+  }
 
-    public void _testInsertNonDefaultLineComment() {
-        Language prevCommenterLanguage = HbConfig.getCommenterLanguage();
-        // TODO HbConfig.setCommenterLanguage(JavaLanguage.INSTANCE);
+  public void _testInsertNonDefaultLineComment() {
+    Language prevCommenterLanguage = HbConfig.getCommenterLanguage();
+    // TODO HbConfig.setCommenterLanguage(JavaLanguage.INSTANCE);
 
-        doLineCommentTest(
+    doLineCommentTest(
 
-                "{{#foo}}<caret>",
+      "{{#foo}}<caret>",
 
-                "//{{#foo}}<caret>"
-        );
+      "//{{#foo}}<caret>"
+    );
 
-        HbConfig.setCommenterLanguage(prevCommenterLanguage);
-    }
+    HbConfig.setCommenterLanguage(prevCommenterLanguage);
+  }
 
-    public void _testInsertNonDefaultBlockComment() {
-        Language prevCommenterLanguage = HbConfig.getCommenterLanguage();
-        // TODO HbConfig.setCommenterLanguage(JavaLanguage.INSTANCE);
+  public void _testInsertNonDefaultBlockComment() {
+    Language prevCommenterLanguage = HbConfig.getCommenterLanguage();
+    // TODO HbConfig.setCommenterLanguage(JavaLanguage.INSTANCE);
 
-        doBlockCommentTest(
+    doBlockCommentTest(
 
-                "{{#foo}}<caret>",
+      "{{#foo}}<caret>",
 
-                "{{#foo}}/*<caret>*/"
-        );
+      "{{#foo}}/*<caret>*/"
+    );
 
-        HbConfig.setCommenterLanguage(prevCommenterLanguage);
-    }
+    HbConfig.setCommenterLanguage(prevCommenterLanguage);
+  }
 
-    public void testNativeInsertLineComment1() {
-        Language prevCommenterLang = HbConfig.getCommenterLanguage();
-        HbConfig.setCommenterLanguage(HbLanguage.INSTANCE);
+  public void testNativeInsertLineComment1() {
+    Language prevCommenterLang = HbConfig.getCommenterLanguage();
+    HbConfig.setCommenterLanguage(HbLanguage.INSTANCE);
 
-        doLineCommentTest(
+    doLineCommentTest(
 
-                "{{#foo}}<caret>",
+      "{{#foo}}<caret>",
 
-                "{{!--{{#foo}}<caret>--}}"
-        );
+      "{{!--{{#foo}}<caret>--}}"
+    );
 
-        HbConfig.setCommenterLanguage(prevCommenterLang);
-    }
+    HbConfig.setCommenterLanguage(prevCommenterLang);
+  }
 
-    public void testNativeInsertLineComment2() {
-        Language prevCommenterLang = HbConfig.getCommenterLanguage();
-        HbConfig.setCommenterLanguage(HbLanguage.INSTANCE);
+  public void testNativeInsertLineComment2() {
+    Language prevCommenterLang = HbConfig.getCommenterLanguage();
+    HbConfig.setCommenterLanguage(HbLanguage.INSTANCE);
 
-        doLineCommentTest(
+    doLineCommentTest(
 
-                "{{#foo}}\n" +
-                "<caret>    {{bar}}\n" +
-                "{{/foo}}",
+      "{{#foo}}\n" +
+      "<caret>    {{bar}}\n" +
+      "{{/foo}}",
 
-                "{{#foo}}\n" +
-                "    {{!--{{bar}}--}}\n" +
-                "<caret>{{/foo}}"
-        );
+      "{{#foo}}\n" +
+      "    {{!--{{bar}}--}}\n" +
+      "<caret>{{/foo}}"
+    );
 
-        HbConfig.setCommenterLanguage(prevCommenterLang);
-    }
+    HbConfig.setCommenterLanguage(prevCommenterLang);
+  }
 
-    public void testNativeInsertBlockComment1() {
-        Language prevCommenterLang = HbConfig.getCommenterLanguage();
-        HbConfig.setCommenterLanguage(HbLanguage.INSTANCE);
+  public void testNativeInsertBlockComment1() {
+    Language prevCommenterLang = HbConfig.getCommenterLanguage();
+    HbConfig.setCommenterLanguage(HbLanguage.INSTANCE);
 
-        doBlockCommentTest(
+    doBlockCommentTest(
 
-                "{{#foo}}<caret>",
+      "{{#foo}}<caret>",
 
-                "{{#foo}}{{!--<caret>--}}"
-        );
+      "{{#foo}}{{!--<caret>--}}"
+    );
 
-        HbConfig.setCommenterLanguage(prevCommenterLang);
-    }
+    HbConfig.setCommenterLanguage(prevCommenterLang);
+  }
 
-    public void testNativeInsertBlockComment2() {
-        Language prevCommenterLang = HbConfig.getCommenterLanguage();
-        HbConfig.setCommenterLanguage(HbLanguage.INSTANCE);
+  public void testNativeInsertBlockComment2() {
+    Language prevCommenterLang = HbConfig.getCommenterLanguage();
+    HbConfig.setCommenterLanguage(HbLanguage.INSTANCE);
 
-        doBlockCommentTest(
+    doBlockCommentTest(
 
-                "{{#foo}}\n" +
-                "    <caret>{{bar}}\n" +
-                "{{/foo}",
+      "{{#foo}}\n" +
+      "    <caret>{{bar}}\n" +
+      "{{/foo}",
 
-                "{{#foo}}\n" +
-                "    {{!--<caret>--}}{{bar}}\n" +
-                "{{/foo}"
-        );
+      "{{#foo}}\n" +
+      "    {{!--<caret>--}}{{bar}}\n" +
+      "{{/foo}"
+    );
 
-        HbConfig.setCommenterLanguage(prevCommenterLang);
-    }
+    HbConfig.setCommenterLanguage(prevCommenterLang);
+  }
 
-    public void testNativeInsertBlockCommentWithSelection() {
-        Language prevCommenterLang = HbConfig.getCommenterLanguage();
-        HbConfig.setCommenterLanguage(HbLanguage.INSTANCE);
+  public void testNativeInsertBlockCommentWithSelection() {
+    Language prevCommenterLang = HbConfig.getCommenterLanguage();
+    HbConfig.setCommenterLanguage(HbLanguage.INSTANCE);
 
-        doBlockCommentTest(
+    doBlockCommentTest(
 
-                "<selection><caret>{{#foo}}" +
-                "    {{bar}}</selection>" +
-                "{{/foo}",
+      "<selection><caret>{{#foo}}" +
+      "    {{bar}}</selection>" +
+      "{{/foo}",
 
-                "<selection>{{!--<caret>{{#foo}}" +
-                "    {{bar}}--}}</selection>" +
-                "{{/foo}"
-        );
+      "<selection>{{!--<caret>{{#foo}}" +
+      "    {{bar}}--}}</selection>" +
+      "{{/foo}"
+    );
 
-        HbConfig.setCommenterLanguage(prevCommenterLang);
-    }
+    HbConfig.setCommenterLanguage(prevCommenterLang);
+  }
 
-    @Override
-    protected void tearDown()
-            throws Exception {
-        HbConfig.setCommenterLanguage(myPrevCommenterLang);
-        super.tearDown();
-    }
+  @Override
+  protected void tearDown()
+    throws Exception {
+    HbConfig.setCommenterLanguage(myPrevCommenterLang);
+    super.tearDown();
+  }
 }

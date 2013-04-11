@@ -1,20 +1,7 @@
 package com.dmarcotte.handlebars.parsing;
 
 import com.dmarcotte.handlebars.psi.HbPsiFile;
-import com.dmarcotte.handlebars.psi.impl.HbBlockWrapperImpl;
-import com.dmarcotte.handlebars.psi.impl.HbCloseBlockMustacheImpl;
-import com.dmarcotte.handlebars.psi.impl.HbCommentImpl;
-import com.dmarcotte.handlebars.psi.impl.HbDataImpl;
-import com.dmarcotte.handlebars.psi.impl.HbOpenBlockMustacheImpl;
-import com.dmarcotte.handlebars.psi.impl.HbOpenInverseBlockMustacheImpl;
-import com.dmarcotte.handlebars.psi.impl.HbParamImpl;
-import com.dmarcotte.handlebars.psi.impl.HbPartialImpl;
-import com.dmarcotte.handlebars.psi.impl.HbPartialNameImpl;
-import com.dmarcotte.handlebars.psi.impl.HbPathImpl;
-import com.dmarcotte.handlebars.psi.impl.HbPsiElementImpl;
-import com.dmarcotte.handlebars.psi.impl.HbSimpleInverseImpl;
-import com.dmarcotte.handlebars.psi.impl.HbSimpleMustacheImpl;
-import com.dmarcotte.handlebars.psi.impl.HbStatementsImpl;
+import com.dmarcotte.handlebars.psi.impl.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
@@ -28,96 +15,96 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 
 public class HbParseDefinition implements ParserDefinition {
-    @NotNull
-    public Lexer createLexer(Project project) {
-        return new HbLexer();
+  @NotNull
+  public Lexer createLexer(Project project) {
+    return new HbLexer();
+  }
+
+  public PsiParser createParser(Project project) {
+    return new HbParser();
+  }
+
+  public IFileElementType getFileNodeType() {
+    return HbTokenTypes.FILE;
+  }
+
+  @NotNull
+  public TokenSet getWhitespaceTokens() {
+    return HbTokenTypes.WHITESPACES;
+  }
+
+  @NotNull
+  public TokenSet getCommentTokens() {
+    return HbTokenTypes.COMMENTS;
+  }
+
+  @NotNull
+  public TokenSet getStringLiteralElements() {
+    return HbTokenTypes.STRING_LITERALS;
+  }
+
+  @NotNull
+  public PsiElement createElement(ASTNode node) {
+    if (node.getElementType() == HbTokenTypes.BLOCK_WRAPPER) {
+      return new HbBlockWrapperImpl(node);
     }
 
-    public PsiParser createParser(Project project) {
-        return new HbParser();
+    if (node.getElementType() == HbTokenTypes.OPEN_BLOCK_STACHE) {
+      return new HbOpenBlockMustacheImpl(node);
     }
 
-    public IFileElementType getFileNodeType() {
-        return HbTokenTypes.FILE;
+    if (node.getElementType() == HbTokenTypes.OPEN_INVERSE_BLOCK_STACHE) {
+      return new HbOpenInverseBlockMustacheImpl(node);
     }
 
-    @NotNull
-    public TokenSet getWhitespaceTokens() {
-        return HbTokenTypes.WHITESPACES;
+    if (node.getElementType() == HbTokenTypes.CLOSE_BLOCK_STACHE) {
+      return new HbCloseBlockMustacheImpl(node);
     }
 
-    @NotNull
-    public TokenSet getCommentTokens() {
-        return HbTokenTypes.COMMENTS;
+    if (node.getElementType() == HbTokenTypes.MUSTACHE) {
+      return new HbSimpleMustacheImpl(node);
     }
 
-    @NotNull
-    public TokenSet getStringLiteralElements() {
-        return HbTokenTypes.STRING_LITERALS;
+    if (node.getElementType() == HbTokenTypes.PATH) {
+      return new HbPathImpl(node);
     }
 
-    @NotNull
-    public PsiElement createElement(ASTNode node) {
-        if (node.getElementType() == HbTokenTypes.BLOCK_WRAPPER) {
-            return new HbBlockWrapperImpl(node);
-        }
-
-        if (node.getElementType() == HbTokenTypes.OPEN_BLOCK_STACHE) {
-            return new HbOpenBlockMustacheImpl(node);
-        }
-
-        if (node.getElementType() == HbTokenTypes.OPEN_INVERSE_BLOCK_STACHE) {
-            return new HbOpenInverseBlockMustacheImpl(node);
-        }
-
-        if (node.getElementType() == HbTokenTypes.CLOSE_BLOCK_STACHE) {
-            return new HbCloseBlockMustacheImpl(node);
-        }
-
-        if (node.getElementType() == HbTokenTypes.MUSTACHE) {
-            return new HbSimpleMustacheImpl(node);
-        }
-
-        if (node.getElementType() == HbTokenTypes.PATH) {
-            return new HbPathImpl(node);
-        }
-
-        if (node.getElementType() == HbTokenTypes.DATA) {
-            return new HbDataImpl(node);
-        }
-
-        if (node.getElementType() == HbTokenTypes.PARAM) {
-            return new HbParamImpl(node);
-        }
-
-        if (node.getElementType() == HbTokenTypes.PARTIAL_STACHE) {
-            return new HbPartialImpl(node);
-        }
-
-        if (node.getElementType() == HbTokenTypes.PARTIAL_NAME) {
-            return new HbPartialNameImpl(node);
-        }
-
-        if (node.getElementType() == HbTokenTypes.SIMPLE_INVERSE) {
-            return new HbSimpleInverseImpl(node);
-        }
-
-        if (node.getElementType() == HbTokenTypes.STATEMENTS) {
-            return new HbStatementsImpl(node);
-        }
-
-        if (node.getElementType() == HbTokenTypes.COMMENT) {
-            return new HbCommentImpl(node);
-        }
-
-        return new HbPsiElementImpl(node);
+    if (node.getElementType() == HbTokenTypes.DATA) {
+      return new HbDataImpl(node);
     }
 
-    public PsiFile createFile(FileViewProvider viewProvider) {
-        return new HbPsiFile(viewProvider);
+    if (node.getElementType() == HbTokenTypes.PARAM) {
+      return new HbParamImpl(node);
     }
 
-    public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
-        return SpaceRequirements.MAY;
+    if (node.getElementType() == HbTokenTypes.PARTIAL_STACHE) {
+      return new HbPartialImpl(node);
     }
+
+    if (node.getElementType() == HbTokenTypes.PARTIAL_NAME) {
+      return new HbPartialNameImpl(node);
+    }
+
+    if (node.getElementType() == HbTokenTypes.SIMPLE_INVERSE) {
+      return new HbSimpleInverseImpl(node);
+    }
+
+    if (node.getElementType() == HbTokenTypes.STATEMENTS) {
+      return new HbStatementsImpl(node);
+    }
+
+    if (node.getElementType() == HbTokenTypes.COMMENT) {
+      return new HbCommentImpl(node);
+    }
+
+    return new HbPsiElementImpl(node);
+  }
+
+  public PsiFile createFile(FileViewProvider viewProvider) {
+    return new HbPsiFile(viewProvider);
+  }
+
+  public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
+    return SpaceRequirements.MAY;
+  }
 }

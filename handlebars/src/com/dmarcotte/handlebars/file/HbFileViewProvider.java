@@ -21,76 +21,79 @@ import java.util.Arrays;
 import java.util.Set;
 
 public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider
-        implements ConfigurableTemplateLanguageFileViewProvider {
+  implements ConfigurableTemplateLanguageFileViewProvider {
 
-    private final PsiManager myManager;
-    private final VirtualFile myFile;
+  private final PsiManager myManager;
+  private final VirtualFile myFile;
 
-    public HbFileViewProvider(PsiManager manager, VirtualFile file, boolean physical) {
-        super(manager, file, physical);
+  public HbFileViewProvider(PsiManager manager, VirtualFile file, boolean physical) {
+    super(manager, file, physical);
 
-        myManager = manager;
-        myFile = file;
+    myManager = manager;
+    myFile = file;
 
-        getTemplateDataLanguage(myManager, myFile);
+    getTemplateDataLanguage(myManager, myFile);
+  }
+
+  private Language getTemplateDataLanguage(PsiManager manager, VirtualFile file) {
+    Language dataLang = TemplateDataLanguageMappings.getInstance(manager.getProject()).getMapping(file);
+    if (dataLang == null) {
+      dataLang = HbLanguage.getDefaultTemplateLang().getLanguage();
     }
 
-    private Language getTemplateDataLanguage(PsiManager manager, VirtualFile file) {
-        Language dataLang = TemplateDataLanguageMappings.getInstance(manager.getProject()).getMapping(file);
-        if(dataLang == null) {
-            dataLang = HbLanguage.getDefaultTemplateLang().getLanguage();
-        }
+    Language substituteLang = LanguageSubstitutors.INSTANCE.substituteLanguage(dataLang, file, manager.getProject());
 
-        Language substituteLang = LanguageSubstitutors.INSTANCE.substituteLanguage(dataLang, file, manager.getProject());
-
-        // only use a substituted language if it's templateable
-        if (TemplateDataLanguageMappings.getTemplateableLanguages().contains(substituteLang)) {
-            dataLang = substituteLang;
-        }
-
-        return dataLang;
+    // only use a substituted language if it's templateable
+    if (TemplateDataLanguageMappings.getTemplateableLanguages().contains(substituteLang)) {
+      dataLang = substituteLang;
     }
 
-    @NotNull
-    @Override
-    public Language getBaseLanguage() {
-        return HbLanguage.INSTANCE;
+    return dataLang;
+  }
+
+  @NotNull
+  @Override
+  public Language getBaseLanguage() {
+    return HbLanguage.INSTANCE;
+  }
+
+  @NotNull
+  @Override
+  public Language getTemplateDataLanguage() {
+    return getTemplateDataLanguage(myManager, myFile);
+  }
+
+  @NotNull
+  @Override
+  public Set<Language> getLanguages() {
+    return new THashSet<Language>(Arrays.asList(new Language[]{HbLanguage.INSTANCE, getTemplateDataLanguage(myManager, myFile)}));
+  }
+
+  @Override
+  protected MultiplePsiFilesPerDocumentFileViewProvider cloneInner(VirtualFile virtualFile) {
+    return new HbFileViewProvider(getManager(), virtualFile, false);
+  }
+
+  @Override
+  protected PsiFile createFile(@NotNull Language lang) {
+    ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang);
+    if (parserDefinition == null) {
+      return null;
     }
 
-    @NotNull
-    @Override
-    public Language getTemplateDataLanguage() {
-        return getTemplateDataLanguage(myManager, myFile);
+    Language templateDataLanguage = getTemplateDataLanguage(myManager, myFile);
+    if (lang == templateDataLanguage) {
+      PsiFileImpl file = (PsiFileImpl)parserDefinition.createFile(this);
+      file.setContentElementType(
+        new TemplateDataElementType("HB_TEMPLATE_DATA", templateDataLanguage, HbTokenTypes.CONTENT, HbTokenTypes.OUTER_ELEMENT_TYPE));
+      return file;
     }
-
-    @NotNull
-    @Override
-    public Set<Language> getLanguages() {
-        return new THashSet<Language>(Arrays.asList(new Language[] {HbLanguage.INSTANCE, getTemplateDataLanguage(myManager, myFile)}));
+    else if (lang == HbLanguage.INSTANCE) {
+      return parserDefinition.createFile(this);
     }
-
-    @Override
-    protected MultiplePsiFilesPerDocumentFileViewProvider cloneInner(VirtualFile virtualFile) {
-        return new HbFileViewProvider(getManager(), virtualFile, false);
+    else {
+      return null;
     }
-
-    @Override
-    protected PsiFile createFile(@NotNull Language lang) {
-        ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang);
-        if (parserDefinition == null) {
-            return null;
-        }
-
-        Language templateDataLanguage = getTemplateDataLanguage(myManager, myFile);
-        if (lang == templateDataLanguage) {
-            PsiFileImpl file = (PsiFileImpl) parserDefinition.createFile(this);
-            file.setContentElementType(new TemplateDataElementType("HB_TEMPLATE_DATA", templateDataLanguage, HbTokenTypes.CONTENT, HbTokenTypes.OUTER_ELEMENT_TYPE));
-            return file;
-        } else if (lang == HbLanguage.INSTANCE) {
-            return parserDefinition.createFile(this);
-        } else {
-            return null;
-        }
-    }
+  }
 }
 

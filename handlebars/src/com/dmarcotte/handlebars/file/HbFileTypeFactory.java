@@ -5,8 +5,8 @@ import com.intellij.openapi.fileTypes.FileTypeFactory;
 import org.jetbrains.annotations.NotNull;
 
 public class HbFileTypeFactory extends FileTypeFactory {
-    @Override
-    public void createFileTypes(@NotNull FileTypeConsumer consumer) {
-        consumer.consume(HbFileType.INSTANCE, HbFileType.DEFAULT_EXTENSION);
-    }
+  @Override
+  public void createFileTypes(@NotNull FileTypeConsumer consumer) {
+    consumer.consume(HbFileType.INSTANCE, HbFileType.DEFAULT_EXTENSION);
+  }
 }

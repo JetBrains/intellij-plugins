@@ -8,12 +8,12 @@ import com.intellij.navigation.ItemPresentationProviders;
 import org.jetbrains.annotations.NotNull;
 
 public class HbPsiElementImpl extends ASTWrapperPsiElement implements HbPsiElement {
-    public HbPsiElementImpl(@NotNull ASTNode astNode) {
-        super(astNode);
-    }
+  public HbPsiElementImpl(@NotNull ASTNode astNode) {
+    super(astNode);
+  }
 
-    @Override
-    public ItemPresentation getPresentation() {
-        return ItemPresentationProviders.getItemPresentation(this);
-    }
+  @Override
+  public ItemPresentation getPresentation() {
+    return ItemPresentationProviders.getItemPresentation(this);
+  }
 }

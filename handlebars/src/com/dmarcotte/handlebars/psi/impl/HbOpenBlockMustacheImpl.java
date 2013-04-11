@@ -8,26 +8,26 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class HbOpenBlockMustacheImpl extends HbBlockMustacheImpl implements HbOpenBlockMustache {
-    public HbOpenBlockMustacheImpl(@NotNull ASTNode astNode) {
-        super(astNode);
+  public HbOpenBlockMustacheImpl(@NotNull ASTNode astNode) {
+    super(astNode);
+  }
+
+  @Override
+  public HbCloseBlockMustache getPairedElement() {
+    PsiElement closeBlockElement = getParent().getLastChild();
+    if (closeBlockElement instanceof HbCloseBlockMustache) {
+      return (HbCloseBlockMustache)closeBlockElement;
     }
 
-    @Override
-    public HbCloseBlockMustache getPairedElement() {
-        PsiElement closeBlockElement = getParent().getLastChild();
-        if (closeBlockElement instanceof HbCloseBlockMustache) {
-            return  (HbCloseBlockMustache) closeBlockElement;
-        }
+    return null;
+  }
 
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public Icon getIcon(int flags) {
-        return HbIcons.OPEN_BLOCK;
-    }
+  @Nullable
+  @Override
+  public Icon getIcon(int flags) {
+    return HbIcons.OPEN_BLOCK;
+  }
 }

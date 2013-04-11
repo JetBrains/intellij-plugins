@@ -10,22 +10,22 @@ import java.util.Collection;
 
 class HbTreeElementFile extends PsiTreeElementBase<HbPsiFile> {
 
-    private final HbPsiFile myFile;
+  private final HbPsiFile myFile;
 
-    public HbTreeElementFile(@NotNull HbPsiFile psiFile) {
-        super(psiFile);
-        this.myFile = psiFile;
-    }
+  public HbTreeElementFile(@NotNull HbPsiFile psiFile) {
+    super(psiFile);
+    this.myFile = psiFile;
+  }
 
-    @NotNull
-    @Override
-    public Collection<StructureViewTreeElement> getChildrenBase() {
-        return HbTreeElement.getStructureViewTreeElements(myFile);
-    }
+  @NotNull
+  @Override
+  public Collection<StructureViewTreeElement> getChildrenBase() {
+    return HbTreeElement.getStructureViewTreeElements(myFile);
+  }
 
-    @Nullable
-    @Override
-    public String getPresentableText() {
-        return myFile.getName();
-    }
+  @Nullable
+  @Override
+  public String getPresentableText() {
+    return myFile.getName();
+  }
 }

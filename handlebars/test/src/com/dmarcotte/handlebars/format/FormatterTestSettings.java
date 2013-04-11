@@ -10,24 +10,24 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
  * with a standard set of formatter settings
  */
 public class FormatterTestSettings {
-    private final Project myProject;
-    private boolean myPrevFormatSetting;
-    private int myPrevIndentSize;
+  private final Project myProject;
+  private boolean myPrevFormatSetting;
+  private int myPrevIndentSize;
 
-    public FormatterTestSettings(Project project) {
-        myProject = project;
-    }
+  public FormatterTestSettings(Project project) {
+    myProject = project;
+  }
 
-    public void setUp()  {
-        myPrevFormatSetting = HbConfig.isFormattingEnabled();
-        HbConfig.setFormattingEnabled(true);
+  public void setUp() {
+    myPrevFormatSetting = HbConfig.isFormattingEnabled();
+    HbConfig.setFormattingEnabled(true);
 
-        myPrevIndentSize = CodeStyleSettingsManager.getSettings(myProject).getIndentOptions(StdFileTypes.HTML).INDENT_SIZE;
-        CodeStyleSettingsManager.getSettings(myProject).getIndentOptions(StdFileTypes.HTML).INDENT_SIZE = 4;
-    }
+    myPrevIndentSize = CodeStyleSettingsManager.getSettings(myProject).getIndentOptions(StdFileTypes.HTML).INDENT_SIZE;
+    CodeStyleSettingsManager.getSettings(myProject).getIndentOptions(StdFileTypes.HTML).INDENT_SIZE = 4;
+  }
 
-    public void tearDown() {
-        HbConfig.setFormattingEnabled(myPrevFormatSetting);
-        CodeStyleSettingsManager.getSettings(myProject).getIndentOptions(StdFileTypes.HTML).INDENT_SIZE = myPrevIndentSize;
-    }
+  public void tearDown() {
+    HbConfig.setFormattingEnabled(myPrevFormatSetting);
+    CodeStyleSettingsManager.getSettings(myProject).getIndentOptions(StdFileTypes.HTML).INDENT_SIZE = myPrevIndentSize;
+  }
 }

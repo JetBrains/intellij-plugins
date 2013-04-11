@@ -5,7 +5,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 
 class HbMustacheImpl extends HbPsiElementImpl implements HbMustache {
-    HbMustacheImpl(@NotNull ASTNode astNode) {
-        super(astNode);
-    }
+  HbMustacheImpl(@NotNull ASTNode astNode) {
+    super(astNode);
+  }
 }

@@ -26,14 +26,14 @@ public class HbBlockMismatchFixTest extends LightPlatformCodeInsightFixtureTestC
     // TODO
   }
 
-    @Override
-    protected String getBasePath() {
-        return "/inspections";
-    }
+  @Override
+  protected String getBasePath() {
+    return "/inspections";
+  }
 
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return HbTestUtils.BASE_TEST_DATA_PATH;
-    }
+  @NotNull
+  @Override
+  protected String getTestDataPath() {
+    return HbTestUtils.BASE_TEST_DATA_PATH;
+  }
 }

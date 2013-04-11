@@ -10,79 +10,78 @@ import static com.intellij.testFramework.PlatformTestUtil.assertTreeEqual;
 
 public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase {
 
-    private static final String ourTestFileName = "test.hbs";
+  private static final String ourTestFileName = "test.hbs";
 
-    private void doStructureViewTest(final String fileText, final String expectedTree) {
-        myFixture.configureByText(ourTestFileName, fileText);
+  private void doStructureViewTest(final String fileText, final String expectedTree) {
+    myFixture.configureByText(ourTestFileName, fileText);
 
-        myFixture.testStructureView(new Consumer<StructureViewComponent>() {
-            @Override
-            public void consume(StructureViewComponent component) {
-                JTree tree = component.getTree();
+    myFixture.testStructureView(new Consumer<StructureViewComponent>() {
+      @Override
+      public void consume(StructureViewComponent component) {
+        JTree tree = component.getTree();
 
-                // expand the whole tree
-                int rowCount = tree.getRowCount();
-                for (int i = 0; i <= rowCount; i++) {
-                    tree.expandRow(i);
-                }
+        // expand the whole tree
+        int rowCount = tree.getRowCount();
+        for (int i = 0; i <= rowCount; i++) {
+          tree.expandRow(i);
+        }
 
-                assertTreeEqual(tree, expectedTree + "\n");
-            }
-        });
+        assertTreeEqual(tree, expectedTree + "\n");
+      }
+    });
+  }
 
-    }
+  public void testNestedBlocks() throws Exception {
+    doStructureViewTest(
 
-    public void testNestedBlocks() throws Exception {
-        doStructureViewTest(
+      "{{#foo}}\n" +
+      "    {{#bar}}\n" +
+      "        {{baz}}<caret>\n" +
+      "    {{/bar}}\n" +
+      "{{/foo}}\n",
 
-                "{{#foo}}\n" +
-                "    {{#bar}}\n" +
-                "        {{baz}}<caret>\n" +
-                "    {{/bar}}\n" +
-                "{{/foo}}\n",
+      "-" + ourTestFileName + "\n" +
+      " -foo\n" +
+      "  -bar\n" +
+      "   baz"
+    );
+  }
 
-                "-"+ ourTestFileName + "\n" +
-                " -foo\n" +
-                "  -bar\n" +
-                "   baz"
-        );
-    }
+  public void testUnclosedBlocks() throws Exception {
+    doStructureViewTest(
 
-    public void testUnclosedBlocks() throws Exception {
-        doStructureViewTest(
+      "{{#foo}}\n" +
+      "{{^bar}}",
 
-                "{{#foo}}\n" +
-                "{{^bar}}",
+      "-" + ourTestFileName + "\n" +
+      " -foo\n" +
+      "  bar"
+    );
+  }
 
-                "-"+ ourTestFileName + "\n" +
-                " -foo\n" +
-                "  bar"
-        );
-    }
+  public void testAllConstructs() throws Exception {
+    doStructureViewTest(
 
-    public void testAllConstructs() throws Exception {
-        doStructureViewTest(
+      "{{#block}}\n" +
+      "{{/block}}\n" +
+      "{{^inverse}}\n" +
+      "    {{else}}\n" +
+      "{{/inverse}}\n" +
+      "{{mustache}}\n" +
+      "{{>partial}}\n" +
+      "{{@data}}\n" +
+      "{{^}}\n" +
+      "{{{unescaped}}\n",
 
-                "{{#block}}\n" +
-                "{{/block}}\n" +
-                "{{^inverse}}\n" +
-                "    {{else}}\n" +
-                "{{/inverse}}\n" +
-                "{{mustache}}\n" +
-                "{{>partial}}\n" +
-                "{{@data}}\n" +
-                "{{^}}\n" +
-                "{{{unescaped}}\n",
-
-                "-"+ ourTestFileName + "\n" +
-                " block\n" +
-                " -inverse\n" +
-                "  else\n" +
-                " mustache\n" +
-                " partial\n" +
-                " data\n" +
-                " \n" +
-                " unescaped"
-        );
-    }
+      "-" + ourTestFileName + "\n" +
+      " block\n" +
+      " -inverse\n" +
+      "  else\n" +
+      " mustache\n" +
+      " partial\n" +
+      " data\n" +
+      " \n" +
+      " unescaped"
+    );
+  }
 }

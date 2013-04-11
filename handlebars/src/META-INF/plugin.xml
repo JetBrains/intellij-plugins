@@ -217,7 +217,7 @@
   <version>0.7</version>
   <depends>com.intellij.modules.lang</depends>
   <vendor logo="/icons/handlebars_icon.png" url="https://github.com/dmarcotte">dmarcotte</vendor>
-  
+
   <idea-version since-build="110.000" until-build="128.18"/>
 
   <application-components>
@@ -233,20 +233,20 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
-    <fileTypeFactory implementation="com.dmarcotte.handlebars.file.HbFileTypeFactory" />
-    <lang.parserDefinition language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbParseDefinition" />
+    <fileTypeFactory implementation="com.dmarcotte.handlebars.file.HbFileTypeFactory"/>
+    <lang.parserDefinition language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbParseDefinition"/>
     <lang.formatter language="Handlebars" implementationClass="com.dmarcotte.handlebars.format.HbFormattingModelBuilder"/>
     <colorSettingsPage implementation="com.dmarcotte.handlebars.pages.HbColorsPage"/>
     <lang.fileViewProviderFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.file.HbFileViewProviderFactory"/>
     <lang.commenter language="Handlebars" implementationClass="com.dmarcotte.handlebars.editor.comments.HbCommenter"/>
     <braceMatcher filetype="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.editor.braces.HbBraceMatcher"/>
     <lang.foldingBuilder language="Handlebars"
-                         implementationClass="com.dmarcotte.handlebars.editor.folding.HbFoldingBuilder" />
+                         implementationClass="com.dmarcotte.handlebars.editor.folding.HbFoldingBuilder"/>
     <typedHandler implementation="com.dmarcotte.handlebars.editor.actions.HbTypedHandler"/>
     <enterHandlerDelegate implementation="com.dmarcotte.handlebars.editor.actions.HbEnterHandler"/>
     <applicationConfigurable instance="com.dmarcotte.handlebars.pages.HbConfigurationPage"/>
     <codeFoldingOptionsProvider
-        instance="com.dmarcotte.handlebars.config.HbFoldingOptionsProvider" />
+        instance="com.dmarcotte.handlebars.config.HbFoldingOptionsProvider"/>
     <lang.psiStructureViewFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.structure.HbStructureViewFactory"/>
     <annotator language="Handlebars" implementationClass="com.dmarcotte.handlebars.inspections.HbBlockMismatchInspection"/>
   </extensions>

@@ -9,9 +9,12 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class HbFileViewProviderFactory implements FileViewProviderFactory {
-    @Override
-    public FileViewProvider createFileViewProvider(@NotNull VirtualFile virtualFile, Language language, @NotNull PsiManager psiManager, boolean physical) {
-        return new HbFileViewProvider(psiManager, virtualFile, physical);
-    }
+  @Override
+  public FileViewProvider createFileViewProvider(@NotNull VirtualFile virtualFile,
+                                                 Language language,
+                                                 @NotNull PsiManager psiManager,
+                                                 boolean physical) {
+    return new HbFileViewProvider(psiManager, virtualFile, physical);
+  }
 }
 

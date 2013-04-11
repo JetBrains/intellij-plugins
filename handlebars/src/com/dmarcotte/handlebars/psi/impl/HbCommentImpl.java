@@ -5,7 +5,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 
 public class HbCommentImpl extends HbPsiElementImpl implements HbComment {
-    public HbCommentImpl(@NotNull ASTNode astNode) {
-        super(astNode);
-    }
+  public HbCommentImpl(@NotNull ASTNode astNode) {
+    super(astNode);
+  }
 }

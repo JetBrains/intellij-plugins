@@ -8,22 +8,22 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 public class HbPartialImpl extends HbMustacheImpl implements HbPartial {
-    public HbPartialImpl(@NotNull ASTNode astNode) {
-        super(astNode);
-    }
+  public HbPartialImpl(@NotNull ASTNode astNode) {
+    super(astNode);
+  }
 
-    @Override
-    public String getName() {
-        HbPartialName partialName = PsiTreeUtil.findChildOfType(this, HbPartialName.class);
-        return partialName == null ? null : partialName.getName();
-    }
+  @Override
+  public String getName() {
+    HbPartialName partialName = PsiTreeUtil.findChildOfType(this, HbPartialName.class);
+    return partialName == null ? null : partialName.getName();
+  }
 
-    @Nullable
-    @Override
-    public Icon getIcon(@IconFlags int flags) {
-        return HbIcons.OPEN_PARTIAL;
-    }
+  @Nullable
+  @Override
+  public Icon getIcon(@IconFlags int flags) {
+    return HbIcons.OPEN_PARTIAL;
+  }
 }

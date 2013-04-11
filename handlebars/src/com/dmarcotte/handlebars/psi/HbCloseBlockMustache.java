@@ -5,6 +5,6 @@ package com.dmarcotte.handlebars.psi;
  */
 public interface HbCloseBlockMustache extends HbBlockMustache {
 
-    @Override
-    HbOpenBlockMustache getPairedElement();
+  @Override
+  HbOpenBlockMustache getPairedElement();
 }

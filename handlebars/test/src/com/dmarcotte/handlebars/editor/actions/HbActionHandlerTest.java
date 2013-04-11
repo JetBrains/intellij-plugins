@@ -28,85 +28,85 @@ import org.jetbrains.annotations.NotNull;
  */
 public abstract class HbActionHandlerTest extends LightPlatformCodeInsightFixtureTestCase {
 
-    protected HbActionHandlerTest() {
-        PlatformTestCase.initPlatformLangPrefix();
-    }
+  protected HbActionHandlerTest() {
+    PlatformTestCase.initPlatformLangPrefix();
+  }
 
-    private void performWriteAction(final Project project, final Runnable action) {
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                CommandProcessor.getInstance().executeCommand(project, action, "test command", null);
-            }
-        });
-    }
+  private void performWriteAction(final Project project, final Runnable action) {
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      @Override
+      public void run() {
+        CommandProcessor.getInstance().executeCommand(project, action, "test command", null);
+      }
+    });
+  }
 
-    private void validateTestStrings(@NotNull String before, @NotNull String expected) {
-        if (!before.contains("<caret>")
-                || !expected.contains("<caret>")) {
-            throw new IllegalArgumentException("Test strings must contain \"<caret>\" to indicate caret position");
-        }
+  private void validateTestStrings(@NotNull String before, @NotNull String expected) {
+    if (!before.contains("<caret>")
+        || !expected.contains("<caret>")) {
+      throw new IllegalArgumentException("Test strings must contain \"<caret>\" to indicate caret position");
     }
+  }
 
-    /**
-     * Call this method to test behavior when the given charToType is typed at the &lt;caret&gt;.
-     * See class documentation for more info: {@link HbActionHandlerTest}
-     */
-    void doCharTest(final char charToType, @NotNull String before, @NotNull String expected) {
-        final TypedAction typedAction = EditorActionManager.getInstance().getTypedAction();
-        doExecuteActionTest(before, expected, new Runnable() {
-            @Override
-            public void run() {
-                typedAction.actionPerformed(myFixture.getEditor(), charToType, ((EditorEx) myFixture.getEditor()).getDataContext());
-            }
-        });
-    }
+  /**
+   * Call this method to test behavior when the given charToType is typed at the &lt;caret&gt;.
+   * See class documentation for more info: {@link HbActionHandlerTest}
+   */
+  void doCharTest(final char charToType, @NotNull String before, @NotNull String expected) {
+    final TypedAction typedAction = EditorActionManager.getInstance().getTypedAction();
+    doExecuteActionTest(before, expected, new Runnable() {
+      @Override
+      public void run() {
+        typedAction.actionPerformed(myFixture.getEditor(), charToType, ((EditorEx)myFixture.getEditor()).getDataContext());
+      }
+    });
+  }
 
-    /**
-     * Call this method to test behavior when Enter is typed.
-     * See class documentation for more info: {@link HbActionHandlerTest}
-     */
-    protected void doEnterTest(@NotNull String before, @NotNull String expected) {
-        final EditorActionHandler enterActionHandler = EditorActionManager.getInstance().getActionHandler(IdeActions.ACTION_EDITOR_ENTER);
-        doExecuteActionTest(before, expected, new Runnable() {
-            @Override
-            public void run() {
-                enterActionHandler.execute(myFixture.getEditor(), ((EditorEx) myFixture.getEditor()).getDataContext());
-            }
-        });
-    }
+  /**
+   * Call this method to test behavior when Enter is typed.
+   * See class documentation for more info: {@link HbActionHandlerTest}
+   */
+  protected void doEnterTest(@NotNull String before, @NotNull String expected) {
+    final EditorActionHandler enterActionHandler = EditorActionManager.getInstance().getActionHandler(IdeActions.ACTION_EDITOR_ENTER);
+    doExecuteActionTest(before, expected, new Runnable() {
+      @Override
+      public void run() {
+        enterActionHandler.execute(myFixture.getEditor(), ((EditorEx)myFixture.getEditor()).getDataContext());
+      }
+    });
+  }
 
-    /**
-     * Call this method to test behavior when the "Comment with Line Comment" action is executed.
-     * See class documentation for more info: {@link HbActionHandlerTest}
-     */
-    void doLineCommentTest(@NotNull String before, @NotNull String expected) {
-        doExecuteActionTest(before, expected, new Runnable() {
-            @Override
-            public void run() {
-                new CommentByLineCommentHandler().invoke(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile());
-            }
-        });
-    }
+  /**
+   * Call this method to test behavior when the "Comment with Line Comment" action is executed.
+   * See class documentation for more info: {@link HbActionHandlerTest}
+   */
+  void doLineCommentTest(@NotNull String before, @NotNull String expected) {
+    doExecuteActionTest(before, expected, new Runnable() {
+      @Override
+      public void run() {
+        new CommentByLineCommentHandler().invoke(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile());
+      }
+    });
+  }
 
-    /**
-     * Call this method to test behavior when the "Comment with Block Comment" action is executed.
-     * See class documentation for more info: {@link HbActionHandlerTest}
-     */
-    void doBlockCommentTest(@NotNull String before, @NotNull String expected) {
-        doExecuteActionTest(before, expected, new Runnable() {
-            @Override
-            public void run() {
-                new CommentByBlockCommentHandler().invoke(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile());
-            }
-        });
-    }
+  /**
+   * Call this method to test behavior when the "Comment with Block Comment" action is executed.
+   * See class documentation for more info: {@link HbActionHandlerTest}
+   */
+  void doBlockCommentTest(@NotNull String before, @NotNull String expected) {
+    doExecuteActionTest(before, expected, new Runnable() {
+      @Override
+      public void run() {
+        new CommentByBlockCommentHandler().invoke(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile());
+      }
+    });
+  }
 
-    private void doExecuteActionTest(@NotNull String before, @NotNull String expected, @NotNull Runnable action) {
-        validateTestStrings(before, expected);
+  private void doExecuteActionTest(@NotNull String before, @NotNull String expected, @NotNull Runnable action) {
+    validateTestStrings(before, expected);
 
-        myFixture.configureByText(HbFileType.INSTANCE, before);
-        performWriteAction(myFixture.getProject(), action);
-        myFixture.checkResult(expected);
-    }
+    myFixture.configureByText(HbFileType.INSTANCE, before);
+    performWriteAction(myFixture.getProject(), action);
+    myFixture.checkResult(expected);
+  }
 }
