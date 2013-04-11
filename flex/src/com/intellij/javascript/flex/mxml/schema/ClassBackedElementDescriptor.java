@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.index.JSTypeEvaluateManager;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
+import com.intellij.lang.javascript.inspections.actionscript.ActionScriptAnnotatingVisitor;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
@@ -824,7 +825,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       final MxmlErrorReportingClient reportingClient = new MxmlErrorReportingClient(host);
 
       if (list != null) {
-        JSAnnotatingVisitor.checkImplementedMethods(jsClass, reportingClient);
+        ActionScriptAnnotatingVisitor.checkActionScriptImplementedMethods(jsClass, reportingClient);
         for(JSReferenceExpression expr:list.getExpressions()) {
           PsiElement element = expr.resolve();
           if (element == jsClass) {
@@ -852,7 +853,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
           JSAnnotatingVisitor.ErrorReportingClient.ProblemKind.ERROR);
       }
 
-      JSAnnotatingVisitor.checkFileUnderSourceRoot(jsClass, reportingClient);
+      ActionScriptAnnotatingVisitor.checkFileUnderSourceRoot(jsClass, reportingClient);
     }
 
     if (MxmlLanguageTagsUtil.isComponentTag(tag)) {

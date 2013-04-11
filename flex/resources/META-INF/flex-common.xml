@@ -254,6 +254,7 @@
     <classInheritorsProvider implementation="com.intellij.javascript.flex.mxml.XmlBackedClassInheritorsProvider"/>
     <conditionalCompilationDefinitionsProvider
         implementation="com.intellij.lang.javascript.flex.build.JSConditionalCompilationDefinitionsProviderImpl"/>
+    <dialectAnnotator language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.inspections.actionscript.ActionScriptAnnotatingVisitor"/>
   </extensions>
 
   <application-components>
