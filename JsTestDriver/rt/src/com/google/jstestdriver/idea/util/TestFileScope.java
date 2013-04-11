@@ -55,63 +55,75 @@ public class TestFileScope {
   }
 
   @NotNull
-  public String toJstdScope() {
-    return format(true);
-  }
-
-  @NotNull
-  public String humanize() {
-    return format(false);
-  }
-
-  @NotNull
-  private String format(boolean asJstdScope) {
+  public List<String> toJstdList() {
     if (myAll) {
-      return "all";
+      return Collections.singletonList("all");
     }
-    StringBuilder buffer = new StringBuilder();
+    List<String> tests = new ArrayList<String>();
     for (Map.Entry<String, Set<String>> entry : myMethodsByCaseMap.entrySet()) {
       String testCaseName = entry.getKey();
       Set<String> testMethodNames = entry.getValue();
       if (testMethodNames.isEmpty()) {
-        append(buffer, testCaseName, null, asJstdScope);
+        String test = "^" + testCaseName + "#";
+        tests.add(test);
       }
       else {
         for (String testMethodName : entry.getValue()) {
-          append(buffer, testCaseName, testMethodName, asJstdScope);
+          String test = "^" + testCaseName + "#" + testMethodName + "$";
+          tests.add(test);
         }
       }
     }
-    return buffer.toString();
+    return tests;
+  }
+
+  @NotNull
+  public String toJstdStr() {
+    List<String> tests = toJstdList();
+    return join(tests, ",");
+  }
+
+  @NotNull
+  private List<String> toHumanList() {
+    if (myAll) {
+      return Collections.singletonList("all");
+    }
+    List<String> tests = new ArrayList<String>();
+    for (Map.Entry<String, Set<String>> entry : myMethodsByCaseMap.entrySet()) {
+      String testCaseName = entry.getKey();
+      Set<String> testMethodNames = entry.getValue();
+      if (testMethodNames.isEmpty()) {
+        tests.add(testCaseName);
+      }
+      else {
+        for (String testMethodName : entry.getValue()) {
+          tests.add(testCaseName + "." + testMethodName);
+        }
+      }
+    }
+    return tests;
+  }
+
+  @NotNull
+  public String humanize() {
+    List<String> tests = toHumanList();
+    return join(tests, ", ");
+  }
+
+  @NotNull
+  private static String join(@NotNull Collection<String> collection, @NotNull String separator) {
+    StringBuilder builder = new StringBuilder();
+    for (String str : collection) {
+      if (builder.length() > 0) {
+        builder.append(separator);
+      }
+      builder.append(str);
+    }
+    return builder.toString();
   }
 
   public boolean isAll() {
     return myAll;
-  }
-
-  private static void append(@NotNull StringBuilder buf,
-                             @NotNull String testCaseName,
-                             @Nullable String testMethodName,
-                             boolean asJstdScope) {
-    if (buf.length() > 0) {
-      buf.append(",");
-    }
-    if (asJstdScope) {
-      buf.append('^');
-    }
-    buf.append(testCaseName);
-    if (asJstdScope) {
-      buf.append("#");
-    }
-    if (testMethodName != null) {
-      if (!asJstdScope) {
-        buf.append(".");
-      }
-      buf.append(testMethodName);
-      if (asJstdScope) {
-        buf.append('$');
-      }
-    }
   }
 
   public String serialize() {
@@ -166,6 +178,26 @@ public class TestFileScope {
 
   public static TestFileScope customScope(@NotNull Map<String, Set<String>> methodsByCaseMap) {
     return new TestFileScope(false, methodsByCaseMap);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    TestFileScope that = (TestFileScope)o;
+
+    if (myAll != that.myAll) return false;
+    if (!myMethodsByCaseMap.equals(that.myMethodsByCaseMap)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = (myAll ? 1 : 0);
+    result = 31 * result + myMethodsByCaseMap.hashCode();
+    return result;
   }
 
 }

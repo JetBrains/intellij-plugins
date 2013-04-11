@@ -62,7 +62,8 @@ public class ServerStartAction extends AnAction {
   @Override
   public void update(AnActionEvent e) {
     JstdServerState jstdServerState = JstdServerState.getInstance();
-    e.getPresentation().setEnabled(!jstdServerState.isServerRunning());
+    boolean disabled = myLocalServerStarting || jstdServerState.isServerRunning();
+    e.getPresentation().setEnabled(!disabled);
   }
 
   @Override
@@ -109,7 +110,7 @@ public class ServerStartAction extends AnAction {
     if (jstdServerState.isServerRunning()) {
       return;
     }
-    setJstdLoggerConfiguration(RunnerMode.TRACE);
+    setJstdLoggerConfiguration(RunnerMode.DEBUG);
     final ServerStartupError serverStartupError;
     try {
       Pair<ServerStartupError, StandardStreamsUtil.CapturedStreams> result = StandardStreamsUtil.captureStandardStreams(

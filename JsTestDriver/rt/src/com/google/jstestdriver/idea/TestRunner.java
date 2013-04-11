@@ -99,7 +99,7 @@ public class TestRunner {
     try {
       System.setOut(nullSystemOut);
       myTreeManager.onJstdConfigRunningStarted(config);
-      String runScope = mySettings.getTestFileScope().toJstdScope();
+      String runScope = mySettings.getTestFileScope().toJstdStr();
       runTests(config, new String[]{"--dryRunFor", runScope}, true);
       runTests(config, new String[]{"--tests", runScope}, false);
     } catch (ConfigurationException ce) {
@@ -179,6 +179,7 @@ public class TestRunner {
     }
 
     builder.setFlags(toStringArray(flagArgs));
+    builder.setFlagsParser(new IntelliJFlagParser(mySettings, dryRun));
     JsTestDriver jstd = builder.build();
     jstd.runConfiguration();
     if (runCoverage) {
