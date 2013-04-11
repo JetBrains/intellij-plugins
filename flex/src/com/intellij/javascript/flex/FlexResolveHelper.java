@@ -29,8 +29,11 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.Processor;
 import com.intellij.util.Query;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collection;
 
 /**
  * @author yole
@@ -44,8 +47,8 @@ public class FlexResolveHelper implements JSResolveHelper {
 
     final ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(project).getFileIndex();
     final PsiManager manager = PsiManager.getInstance(project);
-    final FileBasedIndex.ValueProcessor<Void> processor = new FileBasedIndex.ValueProcessor<Void>() {
-      public boolean process(VirtualFile file, Void value) {
+    final Processor<VirtualFile> processor = new Processor<VirtualFile>() {
+      public boolean process(VirtualFile file) {
         VirtualFile rootForFile = projectFileIndex.getSourceRootForFile(file);
         if (rootForFile == null) return true;
 
@@ -61,11 +64,14 @@ public class FlexResolveHelper implements JSResolveHelper {
       }
     };
 
-    FileBasedIndex.getInstance().processValues(FilenameIndex.NAME, className + JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT, null,
-                                               processor, scope);
+    Collection<VirtualFile> files =
+      FilenameIndex.getVirtualFilesByName(project, className + JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT, scope);
+    ContainerUtil.process(files, processor);
+
+
     if (result.isNull()) {
-      FileBasedIndex.getInstance().processValues(FilenameIndex.NAME, className + JavaScriptSupportLoader.FXG_FILE_EXTENSION_DOT, null,
-                                                 processor, scope);
+      files = FilenameIndex.getVirtualFilesByName(project, className + JavaScriptSupportLoader.FXG_FILE_EXTENSION_DOT, scope);
+      ContainerUtil.process(files, processor);
     }
     return result.get();
   }
