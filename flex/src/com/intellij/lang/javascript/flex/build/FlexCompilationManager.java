@@ -15,6 +15,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
@@ -125,7 +126,10 @@ public class FlexCompilationManager {
 
       if (message.contains(FlexCommonUtils.OUT_OF_MEMORY) || message.contains(FlexCommonUtils.JAVA_HEAP_SPACE)) {
         myCompileContext
-          .addMessage(CompilerMessageCategory.ERROR, prefix + FlexCommonBundle.message("increase.flex.compiler.heap"), null, -1, -1);
+          .addMessage(CompilerMessageCategory.ERROR,
+                      prefix + FlexCommonBundle.message("increase.flex.compiler.heap",
+                                                        SystemInfo.isMac ? "Preferences" : "File | Settings"),
+                      null, -1, -1);
       }
     }
   }

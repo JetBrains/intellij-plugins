@@ -2,6 +2,7 @@ package com.intellij.flex.compiler;
 
 import com.intellij.flex.compiler.flex3.Flex3Handler;
 import com.intellij.flex.compiler.flex4.Flex4Handler;
+import com.intellij.ide.IdeBundle;
 import flex2.tools.VersionInfo;
 
 import java.io.*;
@@ -142,7 +143,7 @@ public class FlexCompiler implements MessageSender {
     if (sdkSpecificHandler == null) {
       logger.log(
         "Error: Flex SDK " + SDK_MAJOR_VERSION + '.' + SDK_MINOR_VERSION + '.' + SDK_REVISION_VERSION
-          + " is not supported by built-in compiler shell. Please change compiler at File | Settings | Compiler | Flex Compiler.");
+          + " is not supported by built-in compiler shell. Please change compiler at " + IdeBundle.settingsActionPath() + " | Compiler | Flex Compiler.");
       logger.log(COMPILATION_FINISHED);
       return;
     }
