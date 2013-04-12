@@ -5,6 +5,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.xdebugger.XDebuggerUtil;
+import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.frame.XExecutionStack;
 import com.intellij.xdebugger.frame.XStackFrame;
 import com.intellij.xdebugger.frame.XSuspendContext;
@@ -102,9 +103,9 @@ public class FlexSuspendContext extends XSuspendContext {
           }
         }
 
-        final FlexStackFrame flexStackFrame =
-          new FlexStackFrame(flexDebugProcess,
-                             file != null ? XDebuggerUtil.getInstance().createPosition(file, line > 0 ? line - 1 : line) : null);
+        final XSourcePosition sourcePosition = file != null ? XDebuggerUtil.getInstance().createPosition(file, line > 0 ? line - 1 : line) : null;
+        final FlexStackFrame flexStackFrame = sourcePosition != null ? new FlexStackFrame(flexDebugProcess, sourcePosition)
+                                                                     : new FlexStackFrame(flexDebugProcess, fileName, line);
         allFrames[i] = flexStackFrame;
         flexStackFrame.setScope(extractScope(stackFrame));
         flexStackFrame.setFrameIndex(i);
@@ -168,9 +169,14 @@ public class FlexSuspendContext extends XSuspendContext {
     int line = fileNameAndIndexAndLine.third;
 
     final VirtualFile file = fileName == null ? null : flexDebugProcess.findFileByNameOrId(fileName, null, fileId);
+    if (file == null) {
+      // todo find position in decompiled code
+    }
 
-    return new FlexStackFrame(flexDebugProcess,
-                              file != null ? XDebuggerUtil.getInstance().createPosition(file, line > 0 ? line - 1 : line) : null);
+    final XSourcePosition sourcePosition = file != null ? XDebuggerUtil.getInstance().createPosition(file, line > 0 ? line - 1 : line)
+                                                        : null;
+    return sourcePosition != null ? new FlexStackFrame(flexDebugProcess, sourcePosition)
+                                  : new FlexStackFrame(flexDebugProcess, fileName, line);
   }
 
   private static Trinity<String, String, Integer> getFileNameAndIndexAndLine(final String text) {

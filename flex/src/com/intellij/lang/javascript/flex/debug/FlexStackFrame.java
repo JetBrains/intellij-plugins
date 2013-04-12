@@ -39,6 +39,8 @@ public class FlexStackFrame extends XStackFrame {
 
   private final FlexDebugProcess myDebugProcess;
   @Nullable private final XSourcePosition mySourcePosition;
+  @Nullable private final String myFileNameIfSourcePositionIsNull;  // for presentation only
+  private final int myLineIfSourcePositionIsNull; // for presentation only
   @NonNls static final String DELIM = " = ";
 
   private Map<String,String> qName2IdMap;
@@ -53,6 +55,18 @@ public class FlexStackFrame extends XStackFrame {
   FlexStackFrame(final FlexDebugProcess debugProcess, final @Nullable XSourcePosition sourcePosition) {
     myDebugProcess = debugProcess;
     mySourcePosition = sourcePosition;
+    myFileNameIfSourcePositionIsNull = null;
+    myLineIfSourcePositionIsNull = -1;
+  }
+
+  /**
+   * Use this constructor only if it is not possible to find existing VirtualFile and create corresponding XSourcePosition
+   */
+  FlexStackFrame(final FlexDebugProcess debugProcess, @Nullable final String fileName, final int line) {
+    myDebugProcess = debugProcess;
+    mySourcePosition = null;
+    myFileNameIfSourcePositionIsNull = "<null>".equals(fileName) ? null : fileName;
+    myLineIfSourcePositionIsNull = line;
   }
 
   @Nullable
@@ -474,17 +488,21 @@ public class FlexStackFrame extends XStackFrame {
 
   @Override
   public void customizePresentation(final SimpleColoredComponent component) {
-    XSourcePosition position = getSourcePosition();
     component.append(myScope, SimpleTextAttributes.REGULAR_ATTRIBUTES);
-    component.append(" in ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
-    if (position != null) {
-      component.append(position.getFile().getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
-      component.append(":" + (position.getLine() + 1), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+    if (mySourcePosition != null) {
+      component.append(" in ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      component.append(mySourcePosition.getFile().getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      component.append(":" + (mySourcePosition.getLine() + 1), SimpleTextAttributes.REGULAR_ATTRIBUTES);
     }
-    else {
-      component.append("<file name is not available>", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+    else if (myFileNameIfSourcePositionIsNull != null) {
+      component.append(" in ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      component.append(myFileNameIfSourcePositionIsNull, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      if (myLineIfSourcePositionIsNull >= 0) {
+        component.append(":" + myLineIfSourcePositionIsNull, SimpleTextAttributes.REGULAR_ATTRIBUTES);
+      }
     }
+
     component.setIcon(AllIcons.Debugger.StackFrame);
   }
 
@@ -496,16 +514,15 @@ public class FlexStackFrame extends XStackFrame {
 
   public Object getEqualityObject() {
     if (myQualifiedFunctionName == null) {  // myScope is filled async
-      final XSourcePosition position = getSourcePosition();
 
-      if (position != null) {
+      if (mySourcePosition != null) {
         final FlexDebugProcess flexDebugProcess = getDebugProcess();
         final Project project = flexDebugProcess.getSession().getProject();
-        final VirtualFile file = position.getFile();
+        final VirtualFile file = mySourcePosition.getFile();
 
         final JSFunction function = ApplicationManager.getApplication().runReadAction(new NullableComputable<JSFunction>() {
           public JSFunction compute() {
-            final PsiElement element = JSDebuggerSupportUtils.getContextElement(file, position.getOffset(), project);
+            final PsiElement element = JSDebuggerSupportUtils.getContextElement(file, mySourcePosition.getOffset(), project);
             return PsiTreeUtil.getParentOfType(element, JSFunction.class);
           }
         });
