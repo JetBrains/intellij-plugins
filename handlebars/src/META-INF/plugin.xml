@@ -214,11 +214,11 @@
       </ul>
     ]]>
   </change-notes>
-  <version>0.7</version>
+  <version>0.8</version>
   <depends>com.intellij.modules.lang</depends>
   <vendor logo="/icons/handlebars_icon.png" url="https://github.com/dmarcotte">dmarcotte</vendor>
 
-  <idea-version since-build="110.000" until-build="128.18"/>
+  <idea-version since-build="130.1" until-build="131.1"/>
 
   <application-components>
     <!-- Add your application components here -->
