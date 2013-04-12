@@ -38,7 +38,7 @@ public class FlexStackFrame extends XStackFrame {
   private static final String ANONYMOUS = "<anonymous>";
 
   private final FlexDebugProcess myDebugProcess;
-  private final XSourcePosition mySourcePosition;
+  @Nullable private final XSourcePosition mySourcePosition;
   @NonNls static final String DELIM = " = ";
 
   private Map<String,String> qName2IdMap;
@@ -50,11 +50,12 @@ public class FlexStackFrame extends XStackFrame {
   static final String CLASS_MARKER = ", class='";
   private static final String CANNOT_EVALUATE_EXPRESSION = "Cannot evaluate expression: ";
 
-  FlexStackFrame(FlexDebugProcess debugProcess, final XSourcePosition sourcePosition) {
+  FlexStackFrame(final FlexDebugProcess debugProcess, final @Nullable XSourcePosition sourcePosition) {
     myDebugProcess = debugProcess;
     mySourcePosition = sourcePosition;
   }
 
+  @Nullable
   public XSourcePosition getSourcePosition() {
     return mySourcePosition;
   }
@@ -291,6 +292,8 @@ public class FlexStackFrame extends XStackFrame {
     }
 
     private void evaluateFromTypeMap() {
+      assert mySourcePosition != null;
+
       final int dotPos = expression.indexOf('.');
       final String typeName = dotPos != -1 ? expression.substring(0, dotPos):expression;
 

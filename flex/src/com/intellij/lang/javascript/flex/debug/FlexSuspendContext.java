@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.debug;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.xdebugger.XDebuggerUtil;
 import com.intellij.xdebugger.frame.XExecutionStack;
@@ -163,25 +162,12 @@ public class FlexSuspendContext extends XSuspendContext {
     // #0   HelloFlex4/get abc() at HelloFlex4.mxml#40:18
     // #0   HelloFlex4/set abc(value="Asd") at HelloFlex4.mxml#40:22
 
-    VirtualFile file = null;
-
     final Trinity<String, String, Integer> fileNameAndIndexAndLine = getFileNameAndIndexAndLine(frameText);
     final String fileName = fileNameAndIndexAndLine.first;
     final String fileId = fileNameAndIndexAndLine.second;
     int line = fileNameAndIndexAndLine.third;
 
-    if (fileName != null) {
-      file = flexDebugProcess.findFileByNameOrId(fileName, null, fileId);
-
-      if (file == null) {
-        // todo find position in decompiled code
-        final boolean noname = StringUtil.isEmpty(fileName) || fileName.equals("<null>");
-        final String text = noname ? "// File name is not available" : "// No source code for " + fileName + ":" + line;
-        file = new LightVirtualFile(noname ? "noname.as" : fileName, text);
-        ((LightVirtualFile)file).setWritable(false);
-        line = 1;
-      }
-    }
+    final VirtualFile file = fileName == null ? null : flexDebugProcess.findFileByNameOrId(fileName, null, fileId);
 
     return new FlexStackFrame(flexDebugProcess,
                               file != null ? XDebuggerUtil.getInstance().createPosition(file, line > 0 ? line - 1 : line) : null);

@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NullableComputable;
 import com.intellij.openapi.util.Pair;
@@ -36,7 +36,7 @@ import java.util.*;
 class FlexValue extends XValue {
   private FlexStackFrame myFlexStackFrame;
   private final FlexDebugProcess myDebugProcess;
-  private final XSourcePosition mySourcePosition;
+  private final @Nullable XSourcePosition mySourcePosition;
 
   private final String myName;
   private final String myExpression;
@@ -99,7 +99,7 @@ class FlexValue extends XValue {
     }
   };
 
-  static enum ValueType {
+  enum ValueType {
     This(PlatformIcons.CLASS_ICON),
     Parameter(PlatformIcons.PARAMETER_ICON),
     Variable(PlatformIcons.VARIABLE_ICON),
@@ -109,14 +109,14 @@ class FlexValue extends XValue {
 
     private @Nullable final Icon myIcon;
 
-    private ValueType(final @Nullable Icon icon) {
+    ValueType(final @Nullable Icon icon) {
       myIcon = icon;
     }
   }
 
   FlexValue(final FlexStackFrame flexStackFrame,
             final FlexDebugProcess flexDebugProcess,
-            final XSourcePosition sourcePosition,
+            final @Nullable XSourcePosition sourcePosition,
             final String name,
             final String expression,
             final String result,
@@ -400,7 +400,7 @@ class FlexValue extends XValue {
             final JSClass jsClass = mySourcePosition == null
                                     ? null
                                     : findJSClass(project,
-                                                  ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project),
+                                                  ModuleUtilCore.findModuleForFile(mySourcePosition.getFile(), project),
                                                   typeFromFlexValueResult);
             return jsClass == null ? null : NodeClassInfo.getNodeClassInfo(jsClass);
           }
@@ -463,8 +463,7 @@ class FlexValue extends XValue {
 
     if (myValueType == ValueType.Variable) {
       final PsiElement contextElement =
-        JSDebuggerSupportUtils
-          .getContextElement(mySourcePosition.getFile(), mySourcePosition.getOffset(), project);
+        JSDebuggerSupportUtils.getContextElement(mySourcePosition.getFile(), mySourcePosition.getOffset(), project);
       final JSFunction jsFunction = PsiTreeUtil.getParentOfType(contextElement, JSFunction.class);
 
       if (jsFunction != null) {
@@ -491,8 +490,7 @@ class FlexValue extends XValue {
     }
     else if (myValueType == ValueType.Parameter) {
       final PsiElement contextElement =
-        JSDebuggerSupportUtils
-          .getContextElement(mySourcePosition.getFile(), mySourcePosition.getOffset(), project);
+        JSDebuggerSupportUtils.getContextElement(mySourcePosition.getFile(), mySourcePosition.getOffset(), project);
       final JSFunction jsFunction = PsiTreeUtil.getParentOfType(contextElement, JSFunction.class);
       final JSParameterList parameterList = jsFunction == null ? null : jsFunction.getParameterList();
       final JSParameter[] parameters = parameterList == null ? JSParameter.EMPTY_ARRAY : parameterList.getParameters();
@@ -506,7 +504,7 @@ class FlexValue extends XValue {
     else if (myValueType == ValueType.Field && myParentResult != null) {
       final String typeFromFlexValueResult = getTypeAndAdditionalInfo(myParentResult).first;
       final JSClass jsClass =
-        findJSClass(project, ModuleUtil.findModuleForFile(mySourcePosition.getFile(), project), typeFromFlexValueResult);
+        findJSClass(project, ModuleUtilCore.findModuleForFile(mySourcePosition.getFile(), project), typeFromFlexValueResult);
 
       if (jsClass != null) {
         result = calcSourcePosition(JSInheritanceUtil.findMember(myName, jsClass, JSInheritanceUtil.SearchedMemberType.FieldsAndMethods,
