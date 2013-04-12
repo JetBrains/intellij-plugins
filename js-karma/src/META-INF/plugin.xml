@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<idea-plugin version="2">
+
+  <name>Karma</name>
+  <description>JavaScript Test Runner that allows running unit tests</description>
+  <version>999.999</version>
+  <vendor>JetBrains</vendor>
+  <idea-version since-build="130.0" until-build="131.0"/>
+
+  <depends>com.intellij.modules.lang</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+    <configurationType implementation="com.intellij.javascript.karma.execution.KarmaConfigurationType"/>
+    <programRunner implementation="com.intellij.javascript.karma.execution.KarmaRunProgramRunner"/>
+  </extensions>
+
+</idea-plugin>
