@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,6 +17,7 @@ package com.intellij.struts2.model.constant.contributor;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.struts2.model.constant.StrutsConstant;
+import com.intellij.struts2.model.jam.convention.StrutsConventionConstants;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,9 +31,6 @@ import java.util.List;
  * @author Yann C&eacute;bron
  */
 public class StrutsConventionPluginConstantContributor extends StrutsConstantContributorBase {
-
-  @NonNls
-  private static final String CONVENTION_PLUGIN_CLASS = "org.apache.struts2.convention.ConventionsService";
 
   @NonNls
   private static final List<StrutsConstant> CONSTANTS = Arrays.asList(
@@ -62,7 +60,7 @@ public class StrutsConventionPluginConstantContributor extends StrutsConstantCon
   @NotNull
   @Override
   protected String getRequiredPluginClassName() {
-    return CONVENTION_PLUGIN_CLASS;
+    return StrutsConventionConstants.CONVENTIONS_SERVICE;
   }
 
   @NotNull

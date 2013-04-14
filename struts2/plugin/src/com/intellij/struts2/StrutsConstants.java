@@ -33,6 +33,9 @@ public final class StrutsConstants {
   @NonNls
   public static final String STRUTS_2_1_FILTER_CLASS = "org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter";
 
+  @NonNls
+  public static final String XWORK_ACTION_CLASS = "com.opensymphony.xwork2.Action";
+
   /**
    * Spring object factory.
    */

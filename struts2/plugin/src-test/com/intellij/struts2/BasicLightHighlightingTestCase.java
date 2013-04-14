@@ -15,6 +15,7 @@
 
 package com.intellij.struts2;
 
+import com.intellij.codeInspection.InspectionProfileEntry;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.module.Module;
@@ -56,7 +57,7 @@ public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFix
    *
    * @return Inspection tools, default = none.
    */
-  protected LocalInspectionTool[] getHighlightingInspections() {
+  protected InspectionProfileEntry[] getHighlightingInspections() {
     return LocalInspectionTool.EMPTY_ARRAY;
   }
 
