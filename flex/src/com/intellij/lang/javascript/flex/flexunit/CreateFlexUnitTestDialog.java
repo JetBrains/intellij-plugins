@@ -149,7 +149,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
       public boolean includeMember(final JSAttributeListOwner member) {
         final JSAttributeList attributeList = member.getAttributeList();
         return member instanceof JSFunction &&
-               ((JSFunction)member).getKind() == JSFunction.FunctionKind.SIMPLE &&
+               ((JSFunction)member).getKind() != JSFunction.FunctionKind.CONSTRUCTOR &&
                attributeList != null &&
                attributeList.getAccessType() == JSAttributeList.AccessType.PUBLIC;
       }

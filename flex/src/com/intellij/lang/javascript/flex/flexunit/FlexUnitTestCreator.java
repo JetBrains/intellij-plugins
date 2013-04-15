@@ -22,8 +22,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.testIntegration.TestCreator;
 import com.intellij.util.Consumer;
+import gnu.trove.THashSet;
 
 import java.util.Collections;
+import java.util.Set;
 
 import static com.intellij.lang.javascript.psi.JSFunction.FunctionKind;
 
@@ -119,9 +121,15 @@ public class FlexUnitTestCreator implements TestCreator {
                                       ? "[After]\npublic function tearDown():void{\n\n}"
                                       : "[After]\npublic override function tearDown():void{\nsuper.tearDown();\n}"
                                     : "");
+
+    final Set<String> processedNames = new THashSet<String>(); // because getters and setters have same name
     for (final JSMemberInfo info : selectedMemberInfos) {
-      final String testName = "test" + capitalizeFirstCharacter(info.getMember().getName());
-      builder.append("[Test]\npublic function ").append(testName).append("():void{\n\n}");
+      final String name = info.getMember().getName();
+      if (!processedNames.contains(name)) {
+        processedNames.add(name);
+        final String testName = "test" + capitalizeFirstCharacter(name);
+        builder.append("[Test]\npublic function ").append(testName).append("():void{\n\n}");
+      }
     }
     return builder.toString();
   }
