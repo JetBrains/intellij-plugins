@@ -14,6 +14,6 @@ public class HbLanguage extends Language implements TemplateLanguage {
   }
 
   public HbLanguage() {
-    super("Handlebars", "text/x-handlebars-template");
+    super("Handlebars", "text/x-handlebars-template", "text/x-handlebars");
   }
 }
