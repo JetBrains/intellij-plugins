@@ -1,4 +1,4 @@
-FILE
+HbFile:UnclosedBlockComment.hbs
   HbStatementsImpl(STATEMENTS)
     HbSimpleMustacheImpl(MUSTACHE)
       HbPsiElementImpl([Hb] OPEN)

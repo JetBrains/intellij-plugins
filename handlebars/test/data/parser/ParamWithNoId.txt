@@ -1,4 +1,4 @@
-FILE
+HbFile:ParamWithNoId.hbs
   HbStatementsImpl(STATEMENTS)
     HbSimpleMustacheImpl(MUSTACHE)
       HbPsiElementImpl([Hb] OPEN)

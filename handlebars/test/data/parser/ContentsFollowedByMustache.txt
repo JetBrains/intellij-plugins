@@ -1,4 +1,4 @@
-FILE
+HbFile:ContentsFollowedByMustache.hbs
   HbStatementsImpl(STATEMENTS)
     PsiElement([Hb] CONTENT)('foo bar ')
     HbSimpleMustacheImpl(MUSTACHE)

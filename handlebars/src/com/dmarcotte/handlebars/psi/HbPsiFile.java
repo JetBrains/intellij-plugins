@@ -18,4 +18,9 @@ public class HbPsiFile extends PsiFileBase implements PsiFileEx {
   public FileType getFileType() {
     return HbFileType.INSTANCE;
   }
+
+  @Override
+  public String toString() {
+    return "HbFile:" + getName();
+  }
 }

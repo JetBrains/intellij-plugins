@@ -1,2 +1,2 @@
-FILE
+HbFile:Comment.hbs
   PsiComment([Hb] COMMENT)('{{! this is a comment }}')

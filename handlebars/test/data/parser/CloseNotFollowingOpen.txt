@@ -1,4 +1,4 @@
-FILE
+HbFile:CloseNotFollowingOpen.hbs
   HbStatementsImpl(STATEMENTS)
     <empty list>
   HbCloseBlockMustacheImpl(CLOSE_BLOCK_STACHE)

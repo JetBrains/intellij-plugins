@@ -1,4 +1,4 @@
-FILE
+HbFile:MustachesWithDashInPath.hbs
   HbStatementsImpl(STATEMENTS)
     HbSimpleMustacheImpl(MUSTACHE)
       HbPsiElementImpl([Hb] OPEN)

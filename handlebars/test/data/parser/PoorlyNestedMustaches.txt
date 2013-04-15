@@ -1,4 +1,4 @@
-FILE
+HbFile:PoorlyNestedMustaches.hbs
   HbStatementsImpl(STATEMENTS)
     HbBlockWrapperImpl(BLOCK_WRAPPER)
       HbOpenBlockMustacheImpl(OPEN_BLOCK_STACHE)

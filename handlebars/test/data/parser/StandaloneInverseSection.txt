@@ -1,4 +1,4 @@
-FILE
+HbFile:StandaloneInverseSection.hbs
   HbStatementsImpl(STATEMENTS)
     HbBlockWrapperImpl(BLOCK_WRAPPER)
       HbOpenInverseBlockMustacheImpl(OPEN_INVERSE_BLOCK_STACHE)

@@ -1,4 +1,4 @@
-FILE
+HbFile:Partial.hbs
   HbStatementsImpl(STATEMENTS)
     HbPartialImpl(PARTIAL_STACHE)
       HbPsiElementImpl([Hb] OPEN_PARTIAL)

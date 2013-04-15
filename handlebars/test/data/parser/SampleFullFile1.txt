@@ -1,4 +1,4 @@
-FILE
+HbFile:SampleFullFile1.hbs
   PsiComment([Hb] COMMENT)('{{! samples from http://handlebarsjs.com }}')
   HbStatementsImpl(STATEMENTS)
     PsiElement([Hb] CONTENT)('\n<body>\n    <h1>')

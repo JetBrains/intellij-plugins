@@ -1,4 +1,4 @@
-FILE
+HbFile:MustachesWithBooleanParameters.hbs
   HbStatementsImpl(STATEMENTS)
     HbSimpleMustacheImpl(MUSTACHE)
       HbPsiElementImpl([Hb] OPEN)

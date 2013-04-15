@@ -1,4 +1,4 @@
-FILE
+HbFile:SampleFullFile2.hbs
   HbStatementsImpl(STATEMENTS)
     PsiElement([Hb] CONTENT)('<div class="data">\n    <span class="stuff">\n        <a href="#">')
     HbBlockWrapperImpl(BLOCK_WRAPPER)
