@@ -521,12 +521,12 @@ public class CodeContext {
     }
 
     final ClassBackedElementDescriptor modelDescriptor =
-      new ClassBackedElementDescriptor(MxmlJSClass.MODEL_TAG_NAME, codeContext, codeContext.module.getProject(), true);
+      new ClassBackedElementDescriptor(FlexPredefinedTagNames.MODEL, codeContext, codeContext.module.getProject(), true);
     modelDescriptor.addPredefinedMemberDescriptor(
       new AnnotationBackedDescriptorImpl(FlexMxmlLanguageAttributeNames.ID, modelDescriptor, true, null, null, null));
     modelDescriptor.addPredefinedMemberDescriptor(
       new AnnotationBackedDescriptorImpl(FlexReferenceContributor.SOURCE_ATTR_NAME, modelDescriptor, true, null, null, null));
-    codeContext.putDescriptor(MxmlJSClass.MODEL_TAG_NAME, modelDescriptor, false);
+    codeContext.putDescriptor(FlexPredefinedTagNames.MODEL, modelDescriptor, false);
 
     final ClassBackedElementDescriptor bindingDescriptor =
       new ClassBackedElementDescriptor(FlexPredefinedTagNames.BINDING, codeContext, codeContext.module.getProject(), true);

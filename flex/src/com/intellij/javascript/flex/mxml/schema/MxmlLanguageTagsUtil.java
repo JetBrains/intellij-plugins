@@ -9,7 +9,7 @@ import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.MxmlLanguageInjector;
+import com.intellij.javascript.flex.mxml.MxmlLanguageInjector;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.openapi.editor.Editor;

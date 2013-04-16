@@ -1,8 +1,12 @@
-package com.intellij.lang.javascript;
+package com.intellij.javascript.flex.mxml;
 
+import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.Language;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
+import com.intellij.lang.javascript.JSLanguageInjector;
+import com.intellij.lang.javascript.JSTargetedInjector;
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
@@ -56,7 +60,7 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
             .doneInjecting();
         }
         else if("source".equals(attrName) &&
-                "Binding".equals(((XmlTag)tag).getLocalName()) &&
+                FlexPredefinedTagNames.BINDING.equals(((XmlTag)tag).getLocalName()) &&
                 JavaScriptSupportLoader.isLanguageNamespace(((XmlTag)tag).getNamespace()) &&
                 !host.textContains('{')) {
           TextRange range = new TextRange(1, host.getTextLength() - 1);
@@ -104,7 +108,7 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
             tag.getAttributeValue("source") == null) {
           JSLanguageInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, null, null);
         }
-        else if ("Style".equals(localName) && JavaScriptSupportLoader.isMxmlNs(tag.getNamespace()) && cssLanguage != null) {
+        else if (FlexPredefinedTagNames.STYLE.equals(localName) && JavaScriptSupportLoader.isMxmlNs(tag.getNamespace()) && cssLanguage != null) {
           JSLanguageInjector.injectToXmlText(registrar, host, cssLanguage, null, null);
         }
         else if (tag.getSubTags().length == 0) {

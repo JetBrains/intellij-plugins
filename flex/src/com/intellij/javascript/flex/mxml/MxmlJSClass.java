@@ -1,14 +1,17 @@
 package com.intellij.javascript.flex.mxml;
 
+import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.MxmlLanguageInjector;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
 import com.intellij.openapi.util.Condition;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
@@ -17,21 +20,43 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   @NonNls public static final String XML_TAG_NAME = "XML";
   @NonNls public static final String XMLLIST_TAG_NAME = "XMLList";
   @NonNls public static final String PRIVATE_TAG_NAME = MxmlLanguageInjector.PRIVATE_TAG_NAME;
-  @NonNls public static final String MODEL_TAG_NAME = "Model";
   private static final String OPERATION_TAG_NAME = "operation";
   private static final String HTTP_SERVICE_TAG_NAME = "HTTPService";
   private static final String WEB_SERVICE_TAG_NAME = "WebService";
   private static final String[] REQUEST_TAG_POSSIBLE_NAMESPACES =
     {JavaScriptSupportLoader.MXML_URI, JavaScriptSupportLoader.MXML_URI4, JavaScriptSupportLoader.MXML_URI6};
   private static final String REQUEST_TAG_NAME = "request";
-  private static final String[] TAGS_THAT_ALLOW_ANY_XML_CONTENT = {PRIVATE_TAG_NAME, XML_TAG_NAME, XMLLIST_TAG_NAME, MODEL_TAG_NAME};
+  private static final String[] TAGS_THAT_ALLOW_ANY_XML_CONTENT = {PRIVATE_TAG_NAME, XML_TAG_NAME, XMLLIST_TAG_NAME,
+    FlexPredefinedTagNames.MODEL};
+  @NonNls private static final String FXG_SUPER_CLASS = "spark.core.SpriteVisualElement";
+
+  private final boolean isFxgBackedClass;
 
   public MxmlJSClass(XmlTag tag) {
     super(tag);
+    final PsiFile psiFile = tag.getContainingFile();
+    isFxgBackedClass = psiFile != null && JavaScriptSupportLoader.isFxgFile(psiFile);
+  }
+
+  @Override
+  protected String getSuperClassName() {
+    if (isFxgBackedClass) {
+      return FXG_SUPER_CLASS;
+    }
+    return super.getSuperClassName();
+  }
+
+  @Nullable
+  @Override
+  public JSReferenceList getImplementsList() {
+    if (isFxgBackedClass) {
+      return null;
+    }
+    return super.getImplementsList();
   }
 
   public static boolean isFxLibraryTag(final XmlTag tag) {
-    return tag != null && LIBRARY_TAG_NAME.equals(tag.getLocalName()) && JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace());
+    return tag != null && FlexPredefinedTagNames.LIBRARY.equals(tag.getLocalName()) && JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace());
   }
 
   @Override

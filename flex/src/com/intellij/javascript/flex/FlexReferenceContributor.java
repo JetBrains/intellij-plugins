@@ -434,7 +434,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
             return ReferenceSupport.getFileRefs(element, element, 1, ReferenceSupport.LookupOptions.SCRIPT_SOURCE);
           }
 
-          if (MxmlJSClass.XML_TAG_NAME.equals(tagName) || MxmlJSClass.MODEL_TAG_NAME.equals(tagName)) {
+          if (MxmlJSClass.XML_TAG_NAME.equals(tagName) || FlexPredefinedTagNames.MODEL.equals(tagName)) {
             return ReferenceSupport.getFileRefs(element, element, 1, ReferenceSupport.LookupOptions.XML_AND_MODEL_SOURCE);
           }
 
