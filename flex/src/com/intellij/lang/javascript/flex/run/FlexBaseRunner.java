@@ -54,6 +54,7 @@ import com.intellij.openapi.roots.ui.configuration.ProjectStructureConfigurable;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
@@ -67,11 +68,15 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.navigation.Place;
 import com.intellij.util.PathUtil;
 import com.intellij.xdebugger.*;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -469,10 +474,17 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     }
 
     if (bc.getNature().isDesktopPlatform()) {
+      final AirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
+      final String descriptorPath = getAirDescriptorPath(bc, packagingOptions);
+
       if ((FlexSdkUtils.isAirSdkWithoutFlex(sdk) || StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") >= 0) &&
           FlexCommonUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
-        commandLine.addParameter("-profile");
-        commandLine.addParameter("extendedDesktop");
+
+        final String profiles = getSupportedProfiles(descriptorPath);
+        if (profiles == null || profiles.contains("extendedDesktop")) {
+          commandLine.addParameter("-profile");
+          commandLine.addParameter("extendedDesktop");
+        }
       }
 
       if (!StringUtil.isEmptyOrSpaces(adlOptions)) {
@@ -486,8 +498,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         commandLine.addParameter(FlexCompilationUtils.getPathToUnzipANE());
       }
 
-      final AirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
-      commandLine.addParameter(FileUtil.toSystemDependentName(getAirDescriptorPath(bc, packagingOptions)));
+      commandLine.addParameter(FileUtil.toSystemDependentName(descriptorPath));
       commandLine.addParameter(FileUtil.toSystemDependentName(PathUtil.getParentPath(bc.getActualOutputFilePath())));
       final String programParameters =
         params instanceof FlashRunnerParameters ? ((FlashRunnerParameters)params).getAirProgramParameters() : "";
@@ -499,14 +510,22 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       }
     }
     else {
+      final AppDescriptorForEmulator descriptorForEmulator = params instanceof FlashRunnerParameters
+                                                             ? ((FlashRunnerParameters)params).getAppDescriptorForEmulator()
+                                                             : ((FlexUnitRunnerParameters)params).getAppDescriptorForEmulator();
+      final String descriptorPath = getDescriptorForEmulatorPath(bc, descriptorForEmulator);
+
       if (params instanceof FlashRunnerParameters) {
         final FlashRunnerParameters.AirMobileRunTarget mobileRunTarget = ((FlashRunnerParameters)params).getMobileRunTarget();
         assert mobileRunTarget == FlashRunnerParameters.AirMobileRunTarget.Emulator : mobileRunTarget;
       }
 
       if (FlexCommonUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
-        commandLine.addParameter("-profile");
-        commandLine.addParameter("extendedMobileDevice");
+        final String profiles = getSupportedProfiles(descriptorPath);
+        if (profiles == null || profiles.contains("extendedMobileDevice")) {
+          commandLine.addParameter("-profile");
+          commandLine.addParameter("extendedMobileDevice");
+        }
       }
 
       final FlashRunnerParameters.Emulator emulator = params instanceof FlashRunnerParameters
@@ -552,15 +571,29 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         commandLine.addParameter(FlexCompilationUtils.getPathToUnzipANE());
       }
 
-      final AppDescriptorForEmulator descriptorForEmulator = params instanceof FlashRunnerParameters
-                                                             ? ((FlashRunnerParameters)params).getAppDescriptorForEmulator()
-                                                             : ((FlexUnitRunnerParameters)params).getAppDescriptorForEmulator();
-      final String airDescriptorPath = getDescriptorForEmulatorPath(bc, descriptorForEmulator);
-      commandLine.addParameter(FileUtil.toSystemDependentName(airDescriptorPath));
+      commandLine.addParameter(FileUtil.toSystemDependentName(descriptorPath));
       commandLine.addParameter(FileUtil.toSystemDependentName(PathUtil.getParentPath(bc.getActualOutputFilePath())));
     }
 
     return commandLine;
+  }
+
+  @Nullable
+  private static String getSupportedProfiles(final String descriptorPath) {
+    final File descriptorFile = new File(descriptorPath);
+    if (descriptorFile.isFile()) {
+      try {
+        final Document document = JDOMUtil.loadDocument(descriptorFile);
+        final Element rootElement = document.getRootElement();
+        if (rootElement != null) {
+          return rootElement.getChildTextNormalize("supportedProfiles", rootElement.getNamespace());
+        }
+      }
+      catch (JDOMException ignore) {/*ignore*/}
+      catch (IOException ignore) {/*ignore*/}
+    }
+
+    return null;
   }
 
   private static String getDescriptorForEmulatorPath(final FlexBuildConfiguration bc,
