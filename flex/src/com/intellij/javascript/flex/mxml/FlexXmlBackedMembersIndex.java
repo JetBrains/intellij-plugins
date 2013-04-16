@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.structureView.JSStructureItemPresentation;
@@ -87,7 +88,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
     XmlBackedJSClassImpl.visitScriptTagInjectedFilesForIndexing(file, new JSResolveUtil.JSInjectedFilesVisitor() {
       @Override
       protected void process(JSFile file) {
-        ResolveState state = ResolveState.initial().put(XmlBackedJSClassImpl.requestingToProcessMembers, Boolean.TRUE);
+        ResolveState state = ResolveState.initial().put(XmlBackedJSClass.PROCESS_XML_BACKED_CLASS_MEMBERS_HINT, Boolean.TRUE);
         file.processDeclarations(new ResolveProcessor(null) {
           {
             setSkipImplicitDeclarations(true);
