@@ -4,12 +4,15 @@ import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.JSResolveHelper;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
@@ -27,10 +30,10 @@ import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Processor;
 import com.intellij.util.Query;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.indexing.FileBasedIndex;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -76,8 +79,20 @@ public class FlexResolveHelper implements JSResolveHelper {
     return result.get();
   }
 
-  public boolean importClass(final PsiScopeProcessor processor, final PsiNamedElement file, final String packageQualifierText) {
+  public boolean importClass(final PsiScopeProcessor processor, final PsiNamedElement file) {
     if (file instanceof JSFunction) return true;    // there is no need to process package stuff at function level
+
+    if (file instanceof XmlBackedJSClassImpl) {
+      if (!processInlineComponentsInScope((XmlBackedJSClassImpl)file, new Processor<XmlBackedJSClass>() {
+        public boolean process(XmlBackedJSClass inlineComponent) {
+          return processor.execute(inlineComponent, ResolveState.initial());
+        }
+      })) {
+        return false;
+      }
+    }
+
+    final String packageQualifierText = JSResolveUtil.findPackageStatementQualifier(file);
     final Project project = file.getProject();
     GlobalSearchScope scope = JSResolveUtil.getResolveScope(file);
     final MxmlAndFxgFilesProcessor filesProcessor = new MxmlAndFxgFilesProcessor() {
@@ -148,6 +163,15 @@ public class FlexResolveHelper implements JSResolveHelper {
     return bc != null && (bc.getTargetPlatform() == TargetPlatform.Desktop || bc.getTargetPlatform() == TargetPlatform.Mobile);
   }
 
+  @Override
+  public boolean resolveTypeNameUsingImports(final ResolveProcessor resolveProcessor, PsiNamedElement parent) {
+    return processInlineComponentsInScope((XmlBackedJSClassImpl)parent, new Processor<XmlBackedJSClass>() {
+      public boolean process(XmlBackedJSClass inlineComponent) {
+        return resolveProcessor.execute(inlineComponent, ResolveState.initial());
+      }
+    });
+  }
+
   public static boolean processAllMxmlAndFxgFiles(final GlobalSearchScope scope,
                                                   Project project,
                                                   final MxmlAndFxgFilesProcessor processor,
@@ -207,4 +231,13 @@ public class FlexResolveHelper implements JSResolveHelper {
       }
     });
   }
+
+  private static boolean processInlineComponentsInScope(XmlBackedJSClassImpl context, Processor<XmlBackedJSClass> processor) {
+    XmlTag rootTag = ((XmlFile)context.getContainingFile()).getDocument().getRootTag();
+    boolean recursive =
+      context.getParent().getParentTag() != null && XmlBackedJSClassImpl.isComponentTag(context.getParent().getParentTag());
+    Collection<XmlBackedJSClass> components = XmlBackedJSClassImpl.getChildInlineComponents(rootTag, recursive);
+    return ContainerUtil.process(components, processor);
+  }
+
 }
