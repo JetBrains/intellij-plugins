@@ -1,6 +1,7 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.javascript.flex.mxml.MxmlJSClassProvider;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.JSResolveHelper;
@@ -239,7 +240,7 @@ public class FlexResolveHelper implements JSResolveHelper {
     XmlTag rootTag = ((XmlFile)context.getContainingFile()).getDocument().getRootTag();
     boolean recursive =
       context.getParent().getParentTag() != null && XmlBackedJSClassImpl.isComponentTag(context.getParent().getParentTag());
-    Collection<XmlBackedJSClass> components = XmlBackedJSClassImpl.getChildInlineComponents(rootTag, recursive);
+    Collection<XmlBackedJSClass> components = MxmlJSClassProvider.getChildInlineComponents(rootTag, recursive);
     return ContainerUtil.process(components, processor);
   }
 
