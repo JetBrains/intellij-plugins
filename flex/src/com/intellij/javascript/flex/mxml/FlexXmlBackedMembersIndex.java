@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSNamedElement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.structureView.JSStructureItemPresentation;
@@ -85,7 +86,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
   }
 
   private static void process(XmlFile file, final Consumer<PsiElement> consumer, boolean isPhysical) {
-    XmlBackedJSClassImpl.visitScriptTagInjectedFilesForIndexing(file, new JSResolveUtil.JSInjectedFilesVisitor() {
+    visitScriptTagInjectedFilesForIndexing(file, new JSResolveUtil.JSInjectedFilesVisitor() {
       @Override
       protected void process(JSFile file) {
         ResolveState state = ResolveState.initial().put(XmlBackedJSClass.PROCESS_XML_BACKED_CLASS_MEMBERS_HINT, Boolean.TRUE);
@@ -267,4 +268,10 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
     }
   }
 
+
+  // We use light version of visitInjectedFiles that process injections only for Script tags,
+  // all other tags / attributes need cross file resolve
+  public static void visitScriptTagInjectedFilesForIndexing(XmlFile file, final XmlBackedJSClassImpl.InjectedFileVisitor visitor, boolean physical) {
+    new XmlBackedJSClassImpl.InjectedScriptsVisitor(XmlBackedJSClassFactory.getRootTag(file), MxmlJSClassProvider.getInstance(), false, true, visitor, physical).go();
+  }
 }

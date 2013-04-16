@@ -5,6 +5,7 @@ import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.javascript.flex.mxml.MxmlJSClassProvider;
 import com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.DependencyType;
@@ -323,7 +324,7 @@ public class FlexUtils {
     String namespace = JSResolveUtil.findMxmlNamespace(rootTag);
 
     XmlBackedJSClassImpl.InjectedScriptsVisitor scriptsVisitor =
-      new XmlBackedJSClassImpl.InjectedScriptsVisitor(rootTag, false, false, false, injectedFilesVisitor, processor, true);
+      new XmlBackedJSClassImpl.InjectedScriptsVisitor(rootTag, MxmlJSClassProvider.getInstance(), false, false, injectedFilesVisitor, processor, true);
     scriptsVisitor.go();
 
     for (XmlTag s : rootTag.findSubTags("Metadata", namespace)) {
