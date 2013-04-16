@@ -72,7 +72,7 @@ public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
 
   @Override
   public boolean hasJSClass(XmlFile file) {
-    return JavaScriptSupportLoader.isFlexMxmFile(file);
+    return JavaScriptSupportLoader.isMxmlOrFxgFile(file);
   }
 
   @Override
@@ -83,7 +83,7 @@ public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
   @Override
   public XmlBackedJSClass createClassFromTag(XmlTag tag) {
     XmlFile file = (XmlFile)tag.getContainingFile();
-    if (file.getRootTag() == tag && JavaScriptSupportLoader.isFlexMxmFile(file)) {
+    if (file.getRootTag() == tag && JavaScriptSupportLoader.isMxmlOrFxgFile(file)) {
       return new MxmlJSClass(tag);
     }
     XmlTag parentTag = tag.getParentTag();
