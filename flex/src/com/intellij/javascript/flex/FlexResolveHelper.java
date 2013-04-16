@@ -165,11 +165,14 @@ public class FlexResolveHelper implements JSResolveHelper {
 
   @Override
   public boolean resolveTypeNameUsingImports(final ResolveProcessor resolveProcessor, PsiNamedElement parent) {
-    return processInlineComponentsInScope((XmlBackedJSClassImpl)parent, new Processor<XmlBackedJSClass>() {
-      public boolean process(XmlBackedJSClass inlineComponent) {
-        return resolveProcessor.execute(inlineComponent, ResolveState.initial());
-      }
-    });
+    if (parent instanceof XmlBackedJSClassImpl) {
+      return processInlineComponentsInScope((XmlBackedJSClassImpl)parent, new Processor<XmlBackedJSClass>() {
+        public boolean process(XmlBackedJSClass inlineComponent) {
+          return resolveProcessor.execute(inlineComponent, ResolveState.initial());
+        }
+      });
+    }
+    return true;
   }
 
   public static boolean processAllMxmlAndFxgFiles(final GlobalSearchScope scope,
