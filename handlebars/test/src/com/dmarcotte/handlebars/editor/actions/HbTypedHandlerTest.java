@@ -43,6 +43,10 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
     doCharTest('X', "{{#foo}<caret>", "{{#foo}X<caret>");
   }
 
+  public void testCloseDoubleBraces() {
+    doCharTest('{', "foo {<caret>", "foo {{<caret>}}");
+  }
+
   public void testInsertCloseTagForOpenBlockStache() {
     HbConfig.setAutoGenerateCloseTagEnabled(true);
     doCharTest('}', "{{#foo}<caret>", "{{#foo}}<caret>{{/foo}}");
@@ -126,11 +130,9 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
   public void testSuppressNativeBracketInsert() {
     HbConfig.setAutoGenerateCloseTagEnabled(true);
     doCharTest('{', "<caret>", "{<caret>");
-    doCharTest('{', "{<caret>", "{{<caret>");
 
     HbConfig.setAutoGenerateCloseTagEnabled(false);
     doCharTest('{', "<caret>", "{<caret>");
-    doCharTest('{', "{<caret>", "{{<caret>");
   }
 
   public void testFormatOnCloseBlockCompleted1() {
