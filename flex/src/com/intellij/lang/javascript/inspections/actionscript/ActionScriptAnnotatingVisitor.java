@@ -9,6 +9,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.javascript.*;
+import com.intellij.lang.javascript.flex.ActionScriptSmartCompletionContributor;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
@@ -20,7 +21,6 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassBase;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageStatementImpl;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
-import com.intellij.lang.javascript.psi.impl.JSSmartCompletionVariantsHandler;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
@@ -1189,10 +1189,10 @@ public class ActionScriptAnnotatingVisitor extends JSAnnotatingVisitor {
     if (type != null) {
       JSExpression methodExpression = ((JSCallExpression)expr.getParent().getParent()).getMethodExpression();
       if (methodExpression instanceof JSReferenceExpression) {
-        JSClass clazz = JSSmartCompletionVariantsHandler.findClassOfQualifier((JSReferenceExpression)methodExpression);
+        JSClass clazz = ActionScriptSmartCompletionContributor.findClassOfQualifier((JSReferenceExpression)methodExpression);
 
         if (clazz != null) {
-          Map<String,String> eventsMap = JSSmartCompletionVariantsHandler.getEventsMap(clazz);
+          Map<String,String> eventsMap = ActionScriptSmartCompletionContributor.getEventsMap(clazz);
           String qName = eventsMap.get(type);
           if (qName != null) {
             PsiElement classFromNamespace = JSClassBase.findClassFromNamespace(qName, clazz);

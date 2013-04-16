@@ -1010,7 +1010,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
       final XmlFile xmlFile = (XmlFile)jsClass.getContainingFile();
       final XmlTag rootTag = xmlFile.getRootTag();
       if (rootTag != null) {
-        for (XmlTag metadataTag : rootTag.findSubTags(XmlBackedJSClassImpl.METADATA_TAG_NAME, JavaScriptSupportLoader.MXML_URI3)) {
+        for (XmlTag metadataTag : rootTag.findSubTags(FlexPredefinedTagNames.METADATA, JavaScriptSupportLoader.MXML_URI3)) {
           JSResolveUtil.processInjectedFileForTag(metadataTag, new JSResolveUtil.JSInjectedFilesVisitor() {
             protected void process(final JSFile file) {
               for (PsiElement elt : file.getChildren()) {

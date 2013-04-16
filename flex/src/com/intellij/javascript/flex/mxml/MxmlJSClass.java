@@ -38,6 +38,10 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
     isFxgBackedClass = psiFile != null && JavaScriptSupportLoader.isFxgFile(psiFile);
   }
 
+  public static XmlTag[] findLanguageSubTags(final XmlTag tag, final String languageTagName) {
+    return tag.findSubTags(languageTagName, getLanguageNamespace(tag));
+  }
+
   @Override
   protected String getSuperClassName() {
     if (isFxgBackedClass) {

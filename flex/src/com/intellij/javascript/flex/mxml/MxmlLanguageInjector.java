@@ -104,7 +104,7 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
         final @NonNls String localName = tag.getLocalName();
 
         if ((XmlBackedJSClassImpl.SCRIPT_TAG_NAME.equals(localName) ||
-             XmlBackedJSClassImpl.METADATA_TAG_NAME.equals(localName) ) &&
+             FlexPredefinedTagNames.METADATA.equals(localName) ) &&
             tag.getAttributeValue("source") == null) {
           JSLanguageInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, null, null);
         }

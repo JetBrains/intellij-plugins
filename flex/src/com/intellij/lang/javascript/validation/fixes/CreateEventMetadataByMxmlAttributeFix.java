@@ -3,10 +3,10 @@ package com.intellij.lang.javascript.validation.fixes;
 import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
+import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
@@ -99,7 +99,7 @@ public class CreateEventMetadataByMxmlAttributeFix extends BaseCreateFix {
   private static XmlTag createOrGetMetadataTag(final XmlFile xmlFile) throws IncorrectOperationException {
     assert JavaScriptSupportLoader.isFlexMxmFile(xmlFile) : xmlFile;
     final XmlTag rootTag = XmlBackedJSClassFactory.getRootTag(xmlFile);
-    final XmlTag[] metadataTags = XmlBackedJSClassImpl.findLanguageSubTags(rootTag, XmlBackedJSClassImpl.METADATA_TAG_NAME);
+    final XmlTag[] metadataTags = MxmlJSClass.findLanguageSubTags(rootTag, FlexPredefinedTagNames.METADATA);
 
     return metadataTags.length > 0 ? metadataTags[0] : createMetadataTag(rootTag);
   }
@@ -109,7 +109,7 @@ public class CreateEventMetadataByMxmlAttributeFix extends BaseCreateFix {
     if (prefix == null) prefix = rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI);
     if (prefix == null) prefix = "";
 
-    final String qName = prefix + (prefix.isEmpty() ? "" : ":") + XmlBackedJSClassImpl.METADATA_TAG_NAME;
+    final String qName = prefix + (prefix.isEmpty() ? "" : ":") + FlexPredefinedTagNames.METADATA;
     final XmlTag newTag = XmlElementFactory.getInstance(rootTag.getProject()).createTagFromText("<" + qName + ">\n</" + qName + ">");
 
     final XmlTag[] subTags = rootTag.getSubTags();
