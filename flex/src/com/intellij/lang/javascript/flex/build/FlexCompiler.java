@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.CommonBundle;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationError;
@@ -9,7 +10,6 @@ import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.OutputType;
 import com.intellij.flex.model.bc.TargetPlatform;
-import com.intellij.ide.IdeBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -124,7 +124,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     if (flexCompilerConfiguration.USE_FCSH) {
       context.addMessage(CompilerMessageCategory.INFORMATION,
                          "FCSH tool is not supported yet. Please choose another compiler at "
-                         + IdeBundle.settingsActionPath() + " | Compiler | Flex Compiler",
+                         + CommonBundle.settingsActionPath() + " | Compiler | Flex Compiler",
                          null, -1, -1);
       return ProcessingItem.EMPTY_ARRAY;
     }
@@ -142,7 +142,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
       buf.append(FlexBundle.message(builtInCompilerShell ? "using.builtin.compiler" : "using.mxmlc.compc",
                                     flexCompilerConfiguration.MAX_PARALLEL_COMPILATIONS));
       if (flexCompilerConfiguration.PREFER_ASC_20) buf.append(FlexBundle.message("or.asc.2.0"));
-      buf.append("\n").append(FlexBundle.message("see.flex.compiler.page", IdeBundle.settingsActionPath()));
+      buf.append("\n").append(FlexBundle.message("see.flex.compiler.page", CommonBundle.settingsActionPath()));
 
       context.addMessage(CompilerMessageCategory.INFORMATION, buf.toString(), null, -1, -1);
 

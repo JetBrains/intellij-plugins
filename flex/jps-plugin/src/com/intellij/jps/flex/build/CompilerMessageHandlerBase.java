@@ -1,5 +1,6 @@
 package com.intellij.jps.flex.build;
 
+import com.intellij.CommonBundle;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
 import com.intellij.openapi.diagnostic.Logger;
@@ -157,7 +158,8 @@ public abstract class CompilerMessageHandlerBase {
 
     if (text.contains(FlexCommonUtils.OUT_OF_MEMORY) || text.contains(FlexCommonUtils.JAVA_HEAP_SPACE)) {
       myContext.processMessage(
-        new CompilerMessage(myCompilerName, BuildMessage.Kind.ERROR, FlexCommonBundle.message("increase.flex.compiler.heap")));
+        new CompilerMessage(myCompilerName, BuildMessage.Kind.ERROR,
+                            FlexCommonBundle.message("increase.flex.compiler.heap", CommonBundle.settingsActionPath())));
       myCompilationFailed = true;
     }
   }

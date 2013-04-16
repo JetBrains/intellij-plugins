@@ -1,12 +1,12 @@
 package com.intellij.lang.javascript.flex.build;
 
+import com.intellij.CommonBundle;
 import com.intellij.ProjectTopics;
 import com.intellij.execution.RunManagerEx;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.flex.FlexCommonUtils;
-import com.intellij.ide.IdeBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -471,11 +471,11 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
   private static void addOutOfMemoryMessage(final CompileContext context, final boolean willBeRestarted) {
     if (willBeRestarted) {
       context.addMessage(CompilerMessageCategory.WARNING,
-                         FlexBundle.message("fcsh.out.of.memory.and.restarted", IdeBundle.settingsActionPath()), null, -1, -1);
+                         FlexBundle.message("fcsh.out.of.memory.and.restarted", CommonBundle.settingsActionPath()), null, -1, -1);
     }
     else {
       context.addMessage(CompilerMessageCategory.ERROR,
-                         FlexCommonBundle.message("increase.flex.compiler.heap", IdeBundle.settingsActionPath()), null, -1, -1);
+                         FlexCommonBundle.message("increase.flex.compiler.heap", CommonBundle.settingsActionPath()), null, -1, -1);
     }
   }
 
