@@ -1,7 +1,6 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.psi.resolve.ActionScriptResolveScopeProvider;
 import com.intellij.openapi.vfs.VirtualFile;
 
 /**

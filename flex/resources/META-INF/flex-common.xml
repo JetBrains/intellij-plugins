@@ -159,6 +159,7 @@
         implementation="com.intellij.lang.javascript.flex.projectStructure.ui.FlexCompositeSdkProjectViewStructureProvider"/>
 
     <resolveScopeProvider implementation="com.intellij.lang.javascript.flex.MxmlResolveScopeProvider"/>
+    <resolveScopeProvider implementation="com.intellij.lang.javascript.flex.ActionScriptResolveScopeProvider"/>
 
     <statistics.usagesCollector
         implementation="com.intellij.lang.javascript.flex.projectStructure.FlashBuildConfigurationsUsagesCollector"/>
@@ -255,6 +256,7 @@
     <conditionalCompilationDefinitionsProvider
         implementation="com.intellij.lang.javascript.flex.build.JSConditionalCompilationDefinitionsProviderImpl"/>
     <dialectAnnotator language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.inspections.actionscript.ActionScriptAnnotatingVisitor"/>
+    <elementScopeProvider language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.ActionScriptResolveScopeProvider"/>
   </extensions>
 
   <application-components>
