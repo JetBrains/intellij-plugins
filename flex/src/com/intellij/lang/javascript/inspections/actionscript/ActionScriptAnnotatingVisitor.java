@@ -12,26 +12,28 @@ import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
+import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
+import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassBase;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageStatementImpl;
+import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
+import com.intellij.lang.javascript.psi.impl.JSSmartCompletionVariantsHandler;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.ui.JSFormatUtil;
-import com.intellij.lang.javascript.validation.DuplicatesCheckUtil;
-import com.intellij.lang.javascript.validation.ImplementedMethodProcessor;
-import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
-import com.intellij.lang.javascript.validation.RemoveASTNodeFix;
+import com.intellij.lang.javascript.validation.*;
 import com.intellij.lang.javascript.validation.fixes.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -50,8 +52,11 @@ import com.intellij.xml.XmlElementDescriptor;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.PropertyKey;
 
 import java.util.*;
+
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.FUNCTION_CLASS_NAME;
 
 /**
  * @author Konstantin.Ulitin
@@ -1045,5 +1050,173 @@ public class ActionScriptAnnotatingVisitor extends JSAnnotatingVisitor {
     }
 
     checkFileUnderSourceRoot(aClass, new SimpleErrorReportingClient());
+  }
+
+  @Override
+  protected void checkExpressionIsAssignableToVariable(JSVariable p,
+                                                       final JSExpression expr,
+                                                       PsiFile containingFile,
+                                                       @PropertyKey(resourceBundle = JSBundle.BUNDLE) String problemKey,
+                                                       boolean allowChangeVariableTypeFix) {
+    final JSType type = p.getType();
+    final String parameterTypeResolved = type.getResolvedTypeText();
+    Pair<Annotation, String> annotationAndExprType =
+      ValidateTypesUtil.checkExpressionIsAssignableToType(expr, type, myHolder, containingFile, problemKey,
+                                                          allowChangeVariableTypeFix ? p : null);
+
+    if (annotationAndExprType != null &&
+        p.getParent() instanceof JSParameterList &&
+        expr.getParent() instanceof JSArgumentList &&
+        !JSCommonTypeNames.VOID_TYPE_NAME.equals(annotationAndExprType.second)) {
+      JSFunction method = (JSFunction)p.getParent().getParent();
+      JSFunction topMethod = JSInheritanceUtil.findTopMethods(method).iterator().next();
+      annotationAndExprType.first.registerFix(new ChangeSignatureFix(topMethod, ((JSArgumentList)expr.getParent()).getArguments()));
+    }
+
+    PsiElement _fun;
+    if (annotationAndExprType == null &&
+        FUNCTION_CLASS_NAME.equals(parameterTypeResolved) &&
+        p instanceof JSParameter &&
+        "addEventListener".equals(((JSFunction)p.getParent().getParent()).getName()) &&
+        (( expr instanceof JSReferenceExpression &&
+           (_fun = ((JSReferenceExpression)expr).resolve()) instanceof JSFunction
+         ) ||
+         (
+           expr instanceof JSFunctionExpression &&
+           (_fun = ((JSFunctionExpression)expr).getFunction()) != null
+         )
+        )) {
+      JSFunction fun = (JSFunction)_fun;
+      JSParameterList parameterList = fun.getParameterList();
+
+      if (parameterList != null) {
+        JSParameter[] parameters = parameterList.getParameters();
+        boolean invalidArgs = parameters.length == 0;
+
+        if (!invalidArgs && parameters.length > 1) {
+          for(int i = parameters.length - 1; i > 0; --i) {
+            if (!parameters[i].isRest() && parameters[i].getInitializer() == null) {
+              invalidArgs = true;
+              break;
+            }
+          }
+        }
+
+        Computable.NotNullCachedComputable<JSParameterList> expectedParameterListForEventListener =
+          new Computable.NotNullCachedComputable<JSParameterList>() {
+            @NotNull
+            @Override
+            protected JSParameterList internalCompute() {
+              JSClass jsClass = calcNontrivialExpectedEventType(expr);
+              ASTNode treeFromText =
+                JSChangeUtil.createJSTreeFromText(
+                  expr.getProject(),
+                  "function f(event:" + (jsClass != null ? jsClass.getQualifiedName() : JSAnnotatingVisitor.FLASH_EVENT_FQN) + ") {}",
+                  JavaScriptSupportLoader.ECMA_SCRIPT_L4
+                );
+              return ((JSFunction)treeFromText.getPsi()).getParameterList();
+            }
+          };
+
+        if (invalidArgs) {
+          PsiElement expr_;
+          if (expr instanceof JSFunctionExpression) {
+            expr_ = ((JSFunctionExpression)expr).getParameterList();
+          }
+          else {
+            expr_ = expr;
+          }
+          registerProblem(
+            expr_,
+            JSBundle.message("javascript.callback.signature.mismatch"),
+            ProblemHighlightType.GENERIC_ERROR_OR_WARNING, myHolder, JSValidateTypesInspection.SHORT_NAME,
+            new ChangeSignatureFix(fun, expectedParameterListForEventListener)
+          );
+        } else {
+          final JSClass expectedEventClass = calcNontrivialExpectedEventType(expr);
+          final String actualParameterType = parameters[0].getType().getResolvedTypeText();
+
+          if (expectedEventClass == null) {
+            if (!JSResolveUtil.isAssignableType(JSAnnotatingVisitor.FLASH_EVENT_FQN, actualParameterType, parameters[0]) &&
+                !JSResolveUtil.isAssignableType(JSAnnotatingVisitor.STARLING_EVENT_FQN, actualParameterType, parameters[0])) {
+              JSAnnotatingVisitor.registerProblem(
+                expr instanceof JSFunctionExpression ? parameters[0] : expr,
+                JSBundle.message("javascript.callback.signature.mismatch"),
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, myHolder, JSValidateTypesInspection.SHORT_NAME,
+                new ChangeSignatureFix(fun, expectedParameterListForEventListener)
+              );
+            }
+          }
+          else {
+            if (!JSResolveUtil.isAssignableType(actualParameterType, expectedEventClass.getQualifiedName(), parameters[0])) {
+              JSAnnotatingVisitor.registerProblem(
+                expr instanceof JSFunctionExpression ? parameters[0] : expr,
+                JSBundle.message("javascript.callback.signature.mismatch.event.class", expectedEventClass.getQualifiedName()),
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING, myHolder, JSValidateTypesInspection.SHORT_NAME,
+                new ChangeSignatureFix(fun, expectedParameterListForEventListener)
+              );
+            }
+          }
+        }
+      }
+    }
+  }
+
+  private static @Nullable JSClass calcNontrivialExpectedEventType(JSExpression expr) {
+    JSExpression prevExpr = PsiTreeUtil.findChildOfAnyType(expr.getParent(), JSExpression.class);
+
+    String type = null;
+    JSExpression adHocQualifierExpr = null;
+
+    if (prevExpr instanceof JSReferenceExpression && prevExpr != expr) {
+      PsiElement constantRef = ((JSReferenceExpression)prevExpr).resolve();
+
+      if (constantRef instanceof JSVariable) {
+        final String initializerText = ((JSVariable)constantRef).getInitializerText();
+        if (initializerText != null &&
+            (StringUtil.startsWith(initializerText, "\'") ||
+             StringUtil.startsWith(initializerText, "\"")
+            )) {
+          type = StringUtil.stripQuotesAroundValue(initializerText);
+        }
+      }
+
+      adHocQualifierExpr = ((JSReferenceExpression)prevExpr).getQualifier();
+    } else if (prevExpr instanceof JSLiteralExpression) {
+      type = StringUtil.stripQuotesAroundValue(prevExpr.getText());
+    }
+
+    if (type != null) {
+      JSExpression methodExpression = ((JSCallExpression)expr.getParent().getParent()).getMethodExpression();
+      if (methodExpression instanceof JSReferenceExpression) {
+        JSClass clazz = JSSmartCompletionVariantsHandler.findClassOfQualifier((JSReferenceExpression)methodExpression);
+
+        if (clazz != null) {
+          Map<String,String> eventsMap = JSSmartCompletionVariantsHandler.getEventsMap(clazz);
+          String qName = eventsMap.get(type);
+          if (qName != null) {
+            PsiElement classFromNamespace = JSClassBase.findClassFromNamespace(qName, clazz);
+            if (classFromNamespace instanceof JSClass) return (JSClass)classFromNamespace;
+            // if uncomment next 2 lines then the following event listener parameter won't be highlighted with warning
+            // new Sprite().addEventListener(ErrorEvent.ERROR, function(e:AccelerometerEvent):void{})
+            //} else if (JSInheritanceUtil.isParentClass(clazz, "flash.events.EventDispatcher", true)) {
+            //  adHocQualifierExpr = null;
+          }
+        }
+      }
+    }
+
+    if (adHocQualifierExpr instanceof JSReferenceExpression) {
+      PsiElement resolve = ((JSReferenceExpression)adHocQualifierExpr).resolve();
+      if (resolve instanceof JSClass) {
+        JSClass clazz = (JSClass)resolve;
+        if (JSInheritanceUtil.isParentClass((JSClass)resolve, JSAnnotatingVisitor.FLASH_EVENT_FQN, false) ||
+            JSInheritanceUtil.isParentClass((JSClass)resolve, JSAnnotatingVisitor.STARLING_EVENT_FQN, false)) {
+          return clazz;
+        }
+      }
+    }
+
+    return null;
   }
 }
