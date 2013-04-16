@@ -74,6 +74,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDescriptorForEmulator;
@@ -115,7 +116,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final boolean isDebug = this instanceof FlexDebugRunner;
     try {
       if (runProfile instanceof RunProfileWithCompileBeforeLaunchOption) {
-        checkMakeBeforeRunEnabled(project, runProfile, isDebug);
+        checkMakeBeforeRunEnabled(project, runProfile);
       }
 
       if (runProfile instanceof RemoteFlashRunConfiguration) {
@@ -146,7 +147,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         final Module module = moduleAndConfig.first;
         final FlexBuildConfiguration bc = moduleAndConfig.second;
         if (bc.isSkipCompile()) {
-          showBCCompilationSkippedWarning(module, bc, isDebug);
+          showBCCompilationSkippedWarning(module, bc);
         }
 
         if (isDebug && SystemInfo.isMac && bc.getTargetPlatform() == TargetPlatform.Web) {
@@ -417,7 +418,10 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   public static GeneralCommandLine createAdlCommandLine(final Project project,
                                                         final BCBasedRunnerParameters params,
                                                         final FlexBuildConfiguration bc,
-                                                        final @Nullable String airRuntimePath) throws CantRunException {
+                                                        @Nullable String airRuntimePath) throws CantRunException {
+    assert params instanceof FlashRunnerParameters || params instanceof FlexUnitRunnerParameters : params;
+    assert bc.getTargetPlatform() == TargetPlatform.Desktop || bc.getTargetPlatform() == TargetPlatform.Mobile;
+
     final Module module = ModuleManager.getInstance(project).findModuleByName(params.getModuleName());
     final Sdk sdk = bc.getSdk();
 
@@ -431,6 +435,22 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final GeneralCommandLine commandLine = new GeneralCommandLine();
 
     commandLine.setExePath(FileUtil.toSystemDependentName(FlexSdkUtils.getAdlPath(sdk)));
+
+    String adlOptions;
+    if (params instanceof FlashRunnerParameters) {
+      adlOptions = bc.getTargetPlatform() == TargetPlatform.Desktop ? ((FlashRunnerParameters)params).getAdlOptions()
+                                                                    : ((FlashRunnerParameters)params).getEmulatorAdlOptions();
+    }
+    else {
+      adlOptions = bc.getTargetPlatform() == TargetPlatform.Desktop ? ""
+                                                                    : ((FlexUnitRunnerParameters)params).getEmulatorAdlOptions();
+    }
+
+    final List<String> runtimePath = FlexCommonUtils.getOptionValues(adlOptions, "runtime");
+    if (!runtimePath.isEmpty()) {
+      adlOptions = FlexCommonUtils.removeOptions(adlOptions, "runtime");
+      airRuntimePath = runtimePath.get(0);
+    }
 
     if (airRuntimePath != null) {
       commandLine.addParameter("-runtime");
@@ -449,9 +469,6 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     }
 
     if (bc.getNature().isDesktopPlatform()) {
-      final String adlOptions =
-        params instanceof FlashRunnerParameters ? ((FlashRunnerParameters)params).getAdlOptions() : "";
-
       if ((FlexSdkUtils.isAirSdkWithoutFlex(sdk) || StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") >= 0) &&
           FlexCommonUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
         commandLine.addParameter("-profile");
@@ -482,17 +499,10 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       }
     }
     else {
-      assert params instanceof FlashRunnerParameters || params instanceof FlexUnitRunnerParameters : params;
-      assert bc.getNature().isMobilePlatform() : bc.getTargetPlatform();
-
       if (params instanceof FlashRunnerParameters) {
         final FlashRunnerParameters.AirMobileRunTarget mobileRunTarget = ((FlashRunnerParameters)params).getMobileRunTarget();
         assert mobileRunTarget == FlashRunnerParameters.AirMobileRunTarget.Emulator : mobileRunTarget;
       }
-
-      final String adlOptions = params instanceof FlashRunnerParameters
-                                ? ((FlashRunnerParameters)params).getEmulatorAdlOptions()
-                                : ((FlexUnitRunnerParameters)params).getEmulatorAdlOptions();
 
       if (FlexCommonUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
         commandLine.addParameter("-profile");
@@ -545,7 +555,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       final AppDescriptorForEmulator descriptorForEmulator = params instanceof FlashRunnerParameters
                                                              ? ((FlashRunnerParameters)params).getAppDescriptorForEmulator()
                                                              : ((FlexUnitRunnerParameters)params).getAppDescriptorForEmulator();
-      final String airDescriptorPath = getDescriptorForEmulatorPath(module, bc, descriptorForEmulator);
+      final String airDescriptorPath = getDescriptorForEmulatorPath(bc, descriptorForEmulator);
       commandLine.addParameter(FileUtil.toSystemDependentName(airDescriptorPath));
       commandLine.addParameter(FileUtil.toSystemDependentName(PathUtil.getParentPath(bc.getActualOutputFilePath())));
     }
@@ -553,7 +563,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     return commandLine;
   }
 
-  private static String getDescriptorForEmulatorPath(final Module module, final FlexBuildConfiguration bc,
+  private static String getDescriptorForEmulatorPath(final FlexBuildConfiguration bc,
                                                      final AppDescriptorForEmulator appDescriptorForEmulator) throws CantRunException {
     final String airDescriptorPath;
     switch (appDescriptorForEmulator) {
@@ -579,23 +589,21 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                        : PathUtil.getFileName(packagingOptions.getCustomDescriptorPath());
   }
 
-  private static void checkMakeBeforeRunEnabled(final Project project, final RunProfile runProfile, final boolean debug) {
+  private static void checkMakeBeforeRunEnabled(final Project project, final RunProfile runProfile) {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(project);
     int count =
       RunManagerEx.getTasksCount(project, (RunConfiguration)runProfile, CompileStepBeforeRun.ID, CompileStepBeforeRunNoErrorCheck.ID);
     if (count == 0) {
       for (RunnerAndConfigurationSettings settings : runManager.getConfigurationSettings(((RunConfiguration)runProfile).getType())) {
         if (settings.getConfiguration() == runProfile) {
-          showMakeBeforeRunTurnedOffWarning(project, settings, debug);
+          showMakeBeforeRunTurnedOffWarning(project, settings);
           break;
         }
       }
     }
   }
 
-  private static void showMakeBeforeRunTurnedOffWarning(final Project project,
-                                                        final RunnerAndConfigurationSettings configuration,
-                                                        final boolean isDebug) {
+  private static void showMakeBeforeRunTurnedOffWarning(final Project project, final RunnerAndConfigurationSettings configuration) {
     final String message = FlexBundle.message("run.when.compile.before.run.turned.off");
     COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener() {
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
@@ -613,7 +621,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     }).notify(project);
   }
 
-  private static void showBCCompilationSkippedWarning(final Module module, final FlexBuildConfiguration bc, final boolean isDebug) {
+  private static void showBCCompilationSkippedWarning(final Module module, final FlexBuildConfiguration bc) {
     final String message = FlexBundle.message("run.when.ide.builder.turned.off", bc.getName(), module.getName());
     COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener() {
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
