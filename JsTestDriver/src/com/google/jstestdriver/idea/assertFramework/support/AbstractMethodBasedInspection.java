@@ -11,6 +11,7 @@ import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSElementVisitor;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.util.ObjectUtils;
@@ -37,8 +38,10 @@ public abstract class AbstractMethodBasedInspection extends JSInspection {
     if (project == null) {
       return JSElementVisitor.NOP_ELEMENT_VISITOR;
     }
-    if (!JstdSettingsUtil.areJstdConfigFilesInProject(project)) {
-      return JSElementVisitor.NOP_ELEMENT_VISITOR;
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      if (!JstdSettingsUtil.areJstdConfigFilesInProject(project)) {
+        return JSElementVisitor.NOP_ELEMENT_VISITOR;
+      }
     }
     return new JSElementVisitor() {
       @Override
