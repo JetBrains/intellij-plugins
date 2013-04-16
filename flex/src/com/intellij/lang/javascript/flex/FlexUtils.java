@@ -5,6 +5,8 @@ import com.intellij.flex.FlexCommonUtils;
 import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.flex.model.bc.LinkageType;
 import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.javascript.flex.FlexPredefinedTagNames;
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.mxml.MxmlJSClassProvider;
 import com.intellij.lang.javascript.flex.projectStructure.FlexOrderEnumerationHandler;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
@@ -41,6 +43,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlDocument;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.SystemProperties;
@@ -321,15 +324,28 @@ public class FlexUtils {
   private static void processMxmlTags(final XmlTag rootTag,
                                       final JSResolveUtil.JSInjectedFilesVisitor injectedFilesVisitor,
                                       Processor<XmlTag> processor) {
-    String namespace = JSResolveUtil.findMxmlNamespace(rootTag);
+    String namespace = findMxmlNamespace(rootTag);
 
     XmlBackedJSClassImpl.InjectedScriptsVisitor scriptsVisitor =
       new XmlBackedJSClassImpl.InjectedScriptsVisitor(rootTag, MxmlJSClassProvider.getInstance(), false, false, injectedFilesVisitor, processor, true);
     scriptsVisitor.go();
 
-    for (XmlTag s : rootTag.findSubTags("Metadata", namespace)) {
+    for (XmlTag s : rootTag.findSubTags(FlexPredefinedTagNames.METADATA, namespace)) {
       processor.process(s);
     }
+  }
+
+  private static String findMxmlNamespace(XmlTag rootTag) {
+    String namespace = "";
+
+    for(String candidateNs: MxmlJSClass.MXML_URIS) {
+      if (rootTag.getPrefixByNamespace(candidateNs) != null) {
+        namespace = candidateNs;
+      }
+
+      if (namespace.length() != 0) break;
+    }
+    return namespace;
   }
 
   public static void processMxmlTags(final XmlTag rootTag, boolean isPhysical,
@@ -538,5 +554,9 @@ public class FlexUtils {
     }
     catch (SocketException ignore) {/* ignore */}
     return "unknown";
+  }
+
+  public static boolean isMxmlNs(final String ns) {
+    return ArrayUtil.contains(ns, MxmlJSClass.MXML_URIS);
   }
 }

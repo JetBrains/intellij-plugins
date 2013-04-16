@@ -1,5 +1,6 @@
 package com.intellij.lang.javascript.flex.actions.newfile;
 
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.javascript.flex.mxml.schema.CodeContextHolder;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
@@ -57,10 +58,10 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
 
     CodeContextHolder holder = CodeContextHolder.getInstance(module.getProject());
     // ensure namespace is loaded into code context (including all the namespaces from all the libraries)
-    CodeContext.getContext(JavaScriptSupportLoader.MXML_URI4, module);
+    CodeContext.getContext(MxmlJSClass.MXML_URI4, module);
     Collection<String> namespaces = holder.getNamespaces(module);
     String[] illegalNamespaces =
-      isFlex4Template ? new String[]{JavaScriptSupportLoader.MXML_URI} : JavaScriptSupportLoader.FLEX_4_NAMESPACES;
+      isFlex4Template ? new String[]{JavaScriptSupportLoader.MXML_URI} : MxmlJSClass.FLEX_4_NAMESPACES;
     for (String namespace : namespaces) {
       if (ArrayUtil.contains(namespace, illegalNamespaces) || CodeContext.isPackageBackedNamespace(namespace)) {
         continue;

@@ -1,6 +1,7 @@
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.javascript.flex.FlexResolveHelper;
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -204,7 +205,7 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
     final Collection<String> illegalNamespaces = new ArrayList<String>();
     if (knownNamespaces != null) {
       if (ArrayUtil.contains(JavaScriptSupportLoader.MXML_URI, knownNamespaces)) {
-        ContainerUtil.addAll(illegalNamespaces, JavaScriptSupportLoader.FLEX_4_NAMESPACES);
+        ContainerUtil.addAll(illegalNamespaces, MxmlJSClass.FLEX_4_NAMESPACES);
       }
       else if (ArrayUtil.contains(JavaScriptSupportLoader.MXML_URI3, knownNamespaces)) {
         illegalNamespaces.add(JavaScriptSupportLoader.MXML_URI);
@@ -241,9 +242,9 @@ public class FlexSchemaHandler extends XmlSchemaProvider implements DumbAware {
   public static String getDefaultPrefix(@NotNull @NonNls String namespace) {
     if (JavaScriptSupportLoader.MXML_URI.equals(namespace)) return "mx";
     if (JavaScriptSupportLoader.MXML_URI3.equals(namespace)) return "fx";
-    if (JavaScriptSupportLoader.MXML_URI4.equals(namespace)) return "s";
-    if (JavaScriptSupportLoader.MXML_URI5.equals(namespace)) return "h";
-    if (JavaScriptSupportLoader.MXML_URI6.equals(namespace)) return "mx";
+    if (MxmlJSClass.MXML_URI4.equals(namespace)) return "s";
+    if (MxmlJSClass.MXML_URI5.equals(namespace)) return "h";
+    if (MxmlJSClass.MXML_URI6.equals(namespace)) return "mx";
     if ("*".equals(namespace)) return "local";
 
     namespace = FileUtil.toSystemIndependentName(namespace.toLowerCase());

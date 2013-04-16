@@ -217,7 +217,7 @@ public class MxmlLanguageTagsUtil {
         final String[] knownNamespaces = tag.knownNamespaces();
 
         boolean suggestFlex3Namespace = true;
-        for (final String flex4Namespace : FLEX_4_NAMESPACES) {
+        for (final String flex4Namespace : MxmlJSClass.FLEX_4_NAMESPACES) {
           if (ArrayUtil.contains(flex4Namespace, knownNamespaces)) {
             suggestFlex3Namespace = false;
             break;

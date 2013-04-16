@@ -8,6 +8,7 @@ import com.intellij.lang.javascript.JSLanguageInjector;
 import com.intellij.lang.javascript.JSTargetedInjector;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
+import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.openapi.util.TextRange;
@@ -108,7 +109,7 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
             tag.getAttributeValue("source") == null) {
           JSLanguageInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, null, null);
         }
-        else if (FlexPredefinedTagNames.STYLE.equals(localName) && JavaScriptSupportLoader.isMxmlNs(tag.getNamespace()) && cssLanguage != null) {
+        else if (FlexPredefinedTagNames.STYLE.equals(localName) && FlexUtils.isMxmlNs(tag.getNamespace()) && cssLanguage != null) {
           JSLanguageInjector.injectToXmlText(registrar, host, cssLanguage, null, null);
         }
         else if (tag.getSubTags().length == 0) {

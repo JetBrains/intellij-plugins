@@ -158,7 +158,7 @@ public class CodeContext {
   }
 
   public static boolean isStdNamespace(final String namespace) {
-    return JavaScriptSupportLoader.isMxmlNs(namespace);
+    return FlexUtils.isMxmlNs(namespace);
   }
 
   public static boolean isPackageBackedNamespace(final @NotNull String namespace) {

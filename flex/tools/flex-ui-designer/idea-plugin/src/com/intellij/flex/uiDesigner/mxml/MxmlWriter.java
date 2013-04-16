@@ -11,9 +11,9 @@ import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.javascript.flex.mxml.schema.MxmlBackedElementDescriptor;
-import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -375,7 +375,7 @@ public class MxmlWriter {
             }
           }
 
-          if (childTag.getNamespace().equals(JavaScriptSupportLoader.MXML_URI4) && childTag.getLocalName().equals(FlexStateElementNames.STATES)) {
+          if (childTag.getNamespace().equals(MxmlJSClass.MXML_URI4) && childTag.getLocalName().equals(FlexStateElementNames.STATES)) {
             if (childTag.getSubTags().length != 0) {
               hasStates = true;
               assert parentContext == null;

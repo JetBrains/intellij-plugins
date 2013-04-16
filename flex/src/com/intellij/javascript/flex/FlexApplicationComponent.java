@@ -4,6 +4,7 @@ import com.intellij.flex.FlexCommonUtils;
 import com.intellij.icons.AllIcons;
 import com.intellij.javaee.ResourceRegistrar;
 import com.intellij.javaee.StandardResourceProvider;
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.mxml.schema.FlexMxmlNSDescriptor;
 import com.intellij.lang.Language;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -79,7 +80,7 @@ public class FlexApplicationComponent extends FileTypeFactory implements Applica
 
   public void initComponent() {
     MetaDataRegistrar.getInstance().registerMetaData(
-      new RootTagFilter(new NamespaceFilter(JavaScriptSupportLoader.MXML_URIS)),
+      new RootTagFilter(new NamespaceFilter(MxmlJSClass.MXML_URIS)),
       FlexMxmlNSDescriptor.class
     );
   }

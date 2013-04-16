@@ -500,7 +500,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         element = element.getParent().getContainingFile(); // TODO: make this code and following loop better
       }
 
-      if (element instanceof XmlFile && JavaScriptSupportLoader.isFxgFile((PsiFile)element)) {
+      if (element instanceof XmlFile && MxmlJSClass.isFxgFile((PsiFile)element)) {
         element = XmlBackedJSClassFactory.getXmlBackedClass((XmlFile)element);
       }
 

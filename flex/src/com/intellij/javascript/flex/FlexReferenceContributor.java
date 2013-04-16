@@ -587,7 +587,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
       .registerXmlAttributeValueReferenceProvider(registrar, new String[]{"basedOn", "fromState", "toState", FlexStateElementNames.NAME, FlexStateElementNames.STATE_GROUPS},
                                                   new ScopeFilter(new ParentElementFilter(new AndFilter(XmlTagFilter.INSTANCE,
                                                                                                         new NamespaceFilter(
-                                                                                                          JavaScriptSupportLoader.MXML_URIS)),
+                                                                                                          MxmlJSClass.MXML_URIS)),
                                                                                           2)), new PsiReferenceProvider() {
           @NotNull
           public PsiReference[] getReferencesByElement(@NotNull final PsiElement element, @NotNull final ProcessingContext context) {
