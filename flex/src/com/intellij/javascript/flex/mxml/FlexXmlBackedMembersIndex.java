@@ -123,7 +123,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
       public void visitElement(PsiElement element) {
         if (element instanceof XmlTag) {
           XmlTag tag = (XmlTag)element;
-          if (tag.getAttributeValue("id") != null && XmlBackedJSClassImpl.canBeReferencedById(tag)) {
+          if (tag.getAttributeValue("id") != null && MxmlJSClass.canBeReferencedById(tag)) {
             consumer.consume(tag);
           }
         }

@@ -81,6 +81,19 @@ public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
   }
 
   @Override
+  public XmlBackedJSClass createClassFromTag(XmlTag tag) {
+    XmlFile file = (XmlFile)tag.getContainingFile();
+    if (file.getRootTag() == tag && JavaScriptSupportLoader.isFlexMxmFile(file)) {
+      return new MxmlJSClass(tag);
+    }
+    XmlTag parentTag = tag.getParentTag();
+    if (parentTag != null && XmlBackedJSClassImpl.isComponentTag(parentTag)) {
+      return new MxmlJSClass(tag);
+    }
+    return null;
+  }
+
+  @Override
   public Collection<? extends JSClass> getChildClasses(XmlFile file) {
     return getChildInlineComponents(file.getRootTag(), true);
   }

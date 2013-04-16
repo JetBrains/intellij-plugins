@@ -3,8 +3,8 @@ package com.intellij.javascript.flex.mxml.schema;
 import com.intellij.codeInsight.completion.CompletionInitializationContext;
 import com.intellij.codeInsight.daemon.Validator;
 import com.intellij.idea.LoggerFactory;
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.module.Module;
@@ -43,7 +43,7 @@ public class FlexMxmlNSDescriptor implements XmlNSDescriptor, Validator<XmlDocum
 
   @Nullable
   public XmlElementDescriptor getElementDescriptor(@NotNull final XmlTag tag) {
-    if (XmlBackedJSClassImpl.isInsideTagThatAllowsAnyXmlContent(tag)) {
+    if (MxmlJSClass.isInsideTagThatAllowsAnyXmlContent(tag)) {
       return new AnyXmlElementWithAnyChildrenDescriptor();
     }
 

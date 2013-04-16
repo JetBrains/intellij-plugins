@@ -8,6 +8,7 @@ import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.javascript.flex.mxml.FlexNameAlias;
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -142,7 +143,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
         myEnumerated = true;
         myEnumeratedValues = AUTO_NEVER;
       }
-      else if (CodeContext.FORMAT_ATTR_NAME.equals(name) && XmlBackedJSClassImpl.XML_TAG_NAME.equals(parentDescriptor.getName())) {
+      else if (CodeContext.FORMAT_ATTR_NAME.equals(name) && MxmlJSClass.XML_TAG_NAME.equals(parentDescriptor.getName())) {
         myEnumerated = true;
         myEnumeratedValues = E4X_XML;
         myEnumeratedValuesCaseSensitive = false;
@@ -676,7 +677,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   }
 
   public XmlElementDescriptor getElementDescriptor(final XmlTag childTag, XmlTag contextTag) {
-    if (XmlBackedJSClassImpl.isTagThatAllowsAnyXmlContent(contextTag)) {
+    if (MxmlJSClass.isTagThatAllowsAnyXmlContent(contextTag)) {
       return new AnyXmlElementWithAnyChildrenDescriptor();
     }
 

@@ -11,13 +11,13 @@ import com.intellij.javascript.flex.css.CssPropertyValueReference;
 import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.javascript.flex.css.FlexCssUtil;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinIntention;
 import com.intellij.lang.javascript.psi.*;
@@ -376,7 +376,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
         }
 
         final PsiElement parentParent = parent.getParent();
-        if (parentParent instanceof XmlTag && XmlBackedJSClassImpl.isInsideTagThatAllowsAnyXmlContent((XmlTag)parentParent)) {
+        if (parentParent instanceof XmlTag && MxmlJSClass.isInsideTagThatAllowsAnyXmlContent((XmlTag)parentParent)) {
           return false;
         }
 
@@ -434,7 +434,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
             return ReferenceSupport.getFileRefs(element, element, 1, ReferenceSupport.LookupOptions.SCRIPT_SOURCE);
           }
 
-          if (XmlBackedJSClassImpl.XML_TAG_NAME.equals(tagName) || XmlBackedJSClassImpl.MODEL_TAG_NAME.equals(tagName)) {
+          if (MxmlJSClass.XML_TAG_NAME.equals(tagName) || MxmlJSClass.MODEL_TAG_NAME.equals(tagName)) {
             return ReferenceSupport.getFileRefs(element, element, 1, ReferenceSupport.LookupOptions.XML_AND_MODEL_SOURCE);
           }
 

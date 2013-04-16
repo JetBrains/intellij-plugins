@@ -6,6 +6,7 @@ import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexReferenceContributor;
 import com.intellij.javascript.flex.FlexStateElementNames;
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -90,15 +91,15 @@ public class CodeContext {
       addPredefinedTags(this);
 
       // XML and XMLList language tags represent respective classes, so they must not be marked as 'predefined'
-      myNameToDescriptorsMap.put(XmlBackedJSClassImpl.XML_TAG_NAME, createXmlTagDescriptor(this, XML_CLASS));
-      myNameToDescriptorsMap.put(XmlBackedJSClassImpl.XMLLIST_TAG_NAME,
-                                 new ClassBackedElementDescriptor(XmlBackedJSClassImpl.XMLLIST_TAG_NAME, this, module.getProject(), false));
+      myNameToDescriptorsMap.put(MxmlJSClass.XML_TAG_NAME, createXmlTagDescriptor(this, XML_CLASS));
+      myNameToDescriptorsMap.put(MxmlJSClass.XMLLIST_TAG_NAME,
+                                 new ClassBackedElementDescriptor(MxmlJSClass.XMLLIST_TAG_NAME, this, module.getProject(), false));
     }
   }
 
   private void putDescriptor(final String name, final ClassBackedElementDescriptor descriptor, final boolean addGumboAttributesIfNeeded) {
     if (JavaScriptSupportLoader.isLanguageNamespace(namespace) &&
-        (XmlBackedJSClassImpl.XML_TAG_NAME.equals(name) || XmlBackedJSClassImpl.XMLLIST_TAG_NAME.equals(name))) {
+        (MxmlJSClass.XML_TAG_NAME.equals(name) || MxmlJSClass.XMLLIST_TAG_NAME.equals(name))) {
       // XML and XMLList are added in constructor
       return;
     }
@@ -400,7 +401,7 @@ public class CodeContext {
   public XmlElementDescriptor getElementDescriptor(final @NonNls String localName, final @Nullable XmlTag tag) {
     ClassBackedElementDescriptor descriptor = this == CodeContextHolder.EMPTY ? null : myNameToDescriptorsMap.get(localName);
 
-    if (tag != null && XmlBackedJSClassImpl.XML_TAG_NAME.equals(localName)
+    if (tag != null && MxmlJSClass.XML_TAG_NAME.equals(localName)
         && JavaScriptSupportLoader.isLanguageNamespace(tag.getNamespace())) {
       final String format = tag.getAttributeValue(FORMAT_ATTR_NAME);
       if (format != null && !"e4x".equalsIgnoreCase(format)) {
@@ -494,7 +495,7 @@ public class CodeContext {
 
     if (JavaScriptSupportLoader.MXML_URI3.equals(codeContext.namespace)) {
       predefinedTags.add(FlexPredefinedTagNames.DECLARATIONS);
-      predefinedTags.add(XmlBackedJSClassImpl.PRIVATE_TAG_NAME);
+      predefinedTags.add(MxmlJSClass.PRIVATE_TAG_NAME);
       predefinedTags.add(FlexPredefinedTagNames.LIBRARY);
 
       final ClassBackedElementDescriptor definitionDescriptor =
@@ -520,12 +521,12 @@ public class CodeContext {
     }
 
     final ClassBackedElementDescriptor modelDescriptor =
-      new ClassBackedElementDescriptor(XmlBackedJSClassImpl.MODEL_TAG_NAME, codeContext, codeContext.module.getProject(), true);
+      new ClassBackedElementDescriptor(MxmlJSClass.MODEL_TAG_NAME, codeContext, codeContext.module.getProject(), true);
     modelDescriptor.addPredefinedMemberDescriptor(
       new AnnotationBackedDescriptorImpl(FlexMxmlLanguageAttributeNames.ID, modelDescriptor, true, null, null, null));
     modelDescriptor.addPredefinedMemberDescriptor(
       new AnnotationBackedDescriptorImpl(FlexReferenceContributor.SOURCE_ATTR_NAME, modelDescriptor, true, null, null, null));
-    codeContext.putDescriptor(XmlBackedJSClassImpl.MODEL_TAG_NAME, modelDescriptor, false);
+    codeContext.putDescriptor(MxmlJSClass.MODEL_TAG_NAME, modelDescriptor, false);
 
     final ClassBackedElementDescriptor bindingDescriptor =
       new ClassBackedElementDescriptor(FlexPredefinedTagNames.BINDING, codeContext, codeContext.module.getProject(), true);
@@ -550,7 +551,7 @@ public class CodeContext {
 
   private static ClassBackedElementDescriptor createXmlTagDescriptor(final CodeContext codeContext, final String backedClassFqn) {
     final ClassBackedElementDescriptor xmlDescriptor =
-      new ClassBackedElementDescriptor(XmlBackedJSClassImpl.XML_TAG_NAME, backedClassFqn, codeContext, codeContext.module.getProject());
+      new ClassBackedElementDescriptor(MxmlJSClass.XML_TAG_NAME, backedClassFqn, codeContext, codeContext.module.getProject());
     xmlDescriptor.addPredefinedMemberDescriptor(
       new AnnotationBackedDescriptorImpl(FlexReferenceContributor.SOURCE_ATTR_NAME, xmlDescriptor, true, null, null, null));
     xmlDescriptor

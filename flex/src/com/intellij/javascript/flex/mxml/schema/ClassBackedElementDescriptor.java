@@ -9,6 +9,7 @@ import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexReferenceContributor;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.FlexNameAlias;
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JSBundle;
@@ -137,7 +138,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   public XmlElementDescriptor[] getElementsDescriptors(final XmlTag _context) {
-    if (XmlBackedJSClassImpl.isTagOrInsideTagThatAllowsAnyXmlContent(_context) || MxmlLanguageTagsUtil.isFxReparentTag(_context)) {
+    if (MxmlJSClass.isTagOrInsideTagThatAllowsAnyXmlContent(_context) || MxmlLanguageTagsUtil.isFxReparentTag(_context)) {
       return EMPTY_ARRAY;
     }
 
@@ -249,7 +250,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
   @Nullable
   public XmlElementDescriptor getElementDescriptor(final XmlTag childTag, final XmlTag contextTag) {
-    if (XmlBackedJSClassImpl.isTagThatAllowsAnyXmlContent(contextTag)) {
+    if (MxmlJSClass.isTagThatAllowsAnyXmlContent(contextTag)) {
       return new AnyXmlElementWithAnyChildrenDescriptor();
     }
 
@@ -520,7 +521,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
         jsClass = (JSNamedElement)JSResolveUtil.unwrapProxy(jsClass);
 
         if (visited == null || !visited.contains(jsClass)) {
-          if (!XmlBackedJSClassImpl.XML_TAG_NAME.equals(jsClass.getName()) && !XmlBackedJSClassImpl.XMLLIST_TAG_NAME.equals(jsClass.getName())) {
+          if (!MxmlJSClass.XML_TAG_NAME.equals(jsClass.getName()) && !MxmlJSClass.XMLLIST_TAG_NAME.equals(jsClass.getName())) {
             JSReferenceList extendsList = jsClass instanceof JSClass ? ((JSClass)jsClass).getExtendsList():null;
             if (extendsList != null) {
               final JSClass clazz = (JSClass)jsClass;
@@ -1058,7 +1059,7 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
   }
 
   public boolean allowElementsFromNamespace(final String namespace, final XmlTag context) {
-    if (XmlBackedJSClassImpl.isTagOrInsideTagThatAllowsAnyXmlContent(context)) {
+    if (MxmlJSClass.isTagOrInsideTagThatAllowsAnyXmlContent(context)) {
       return false;
     }
 

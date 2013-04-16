@@ -6,9 +6,9 @@ import com.intellij.codeInsight.daemon.XmlErrorMessages;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexStateElementNames;
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.lang.javascript.JSLanguageInjector;
 import com.intellij.lang.javascript.MxmlLanguageInjector;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -42,7 +42,7 @@ public class MxmlLanguageTagsUtil {
     FlexPredefinedTagNames.DECLARATIONS,
     FlexPredefinedTagNames.LIBRARY,
     FlexPredefinedTagNames.METADATA,
-    JSLanguageInjector.PRIVATE_TAG_NAME,
+    MxmlLanguageInjector.PRIVATE_TAG_NAME,
     FlexPredefinedTagNames.SCRIPT,
     FlexPredefinedTagNames.STYLE
   };
@@ -68,13 +68,13 @@ public class MxmlLanguageTagsUtil {
 
   static boolean isXmlOrXmlListTag(final XmlTag tag) {
     return tag != null &&
-           (XmlBackedJSClassImpl.XML_TAG_NAME.equals(tag.getLocalName()) ||
-            XmlBackedJSClassImpl.XMLLIST_TAG_NAME.equals(tag.getLocalName())) &&
+           (MxmlJSClass.XML_TAG_NAME.equals(tag.getLocalName()) ||
+            MxmlJSClass.XMLLIST_TAG_NAME.equals(tag.getLocalName())) &&
            (isLanguageNamespace(tag.getNamespace()));
   }
 
   static boolean isFxLibraryTag(final XmlTag tag) {
-    return XmlBackedJSClassImpl.isFxLibraryTag(tag);
+    return MxmlJSClass.isFxLibraryTag(tag);
   }
 
   static boolean isFxDefinitionTag(final XmlTag tag) {

@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.validation.fixes;
 import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -112,7 +113,7 @@ public class CreateEventMetadataByMxmlAttributeFix extends BaseCreateFix {
     final XmlTag newTag = XmlElementFactory.getInstance(rootTag.getProject()).createTagFromText("<" + qName + ">\n</" + qName + ">");
 
     final XmlTag[] subTags = rootTag.getSubTags();
-    return subTags.length > 0 && XmlBackedJSClassImpl.isFxLibraryTag(subTags[0])
+    return subTags.length > 0 && MxmlJSClass.isFxLibraryTag(subTags[0])
            ? (XmlTag)rootTag.addAfter(newTag, subTags[0])
            : rootTag.addSubTag(newTag, true);
   }
