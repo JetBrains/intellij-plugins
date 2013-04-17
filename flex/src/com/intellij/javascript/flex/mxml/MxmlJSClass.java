@@ -3,16 +3,30 @@ package com.intellij.javascript.flex.mxml;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
+import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.JSVariable;
+import com.intellij.lang.javascript.psi.ecmal4.*;
+import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
+import com.intellij.lang.javascript.psi.types.JSTypeBackedByClass;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.Key;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlElement;
+import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.OBJECT_CLASS_NAME;
 
 /**
  * @author yole
@@ -35,6 +49,47 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   private static final String[] TAGS_THAT_ALLOW_ANY_XML_CONTENT = {PRIVATE_TAG_NAME, XML_TAG_NAME, XMLLIST_TAG_NAME,
     FlexPredefinedTagNames.MODEL};
   @NonNls private static final String FXG_SUPER_CLASS = "spark.core.SpriteVisualElement";
+
+  private static Key<CachedValue<List<JSVariable>>> ourSkinComponentPredefinedVarsKey = Key.create("ourskinComponentPredefinedVarsKey");
+  private static JSResolveUtil.ImplicitVariableProvider skinComponentPredefinedVars = new JSResolveUtil.ImplicitVariableProvider() {
+    protected void doComputeVars(final List<JSVariable> vars, final XmlFile xmlFile) {
+      for (XmlTag t : xmlFile.getDocument().getRootTag().findSubTags(FlexPredefinedTagNames.METADATA, JavaScriptSupportLoader.MXML_URI3)) {
+        JSResolveUtil.processInjectedFileForTag(t, new JSResolveUtil.JSInjectedFilesVisitor() {
+          @Override
+          protected void process(JSFile file) {
+            for (PsiElement elt : file.getChildren()) {
+              if (elt instanceof JSAttributeList) {
+                JSAttribute[] hostAnnotation = ((JSAttributeList)elt).getAttributesByName("HostComponent");
+
+                if (hostAnnotation.length == 1 && vars.size() == 0) {
+                  JSAttributeNameValuePair valuePair = hostAnnotation[0].getValueByName(null);
+
+                  vars.add(
+                    new ImplicitJSVariableImpl(
+                      "hostComponent",
+                      valuePair != null ? valuePair.getSimpleValue() : OBJECT_CLASS_NAME,
+                      JSAttributeList.AccessType.PUBLIC,
+                      xmlFile
+                    )
+                  );
+                  return;
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+  };
+
+  private static JSResolveUtil.ImplicitVariableProvider inlineComponentRenderPredefinedVars = new JSResolveUtil.ImplicitVariableProvider() {
+    protected void doComputeVars(List<JSVariable> vars, XmlFile xmlFile) {
+      JSClass cls = XmlBackedJSClassFactory.getXmlBackedClass(xmlFile);
+      vars.add(new ImplicitJSVariableImpl("outerDocument", new JSTypeBackedByClass(cls), xmlFile));
+    }
+  };
+
+  private static Key<CachedValue<List<JSVariable>>> ourInlineComponentRenderPredefinedVarsKey = Key.create("ourInlineComponentRenderPredefinedVarsKey");
 
   private final boolean isFxgBackedClass;
 
@@ -67,6 +122,18 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
       return null;
     }
     return super.getImplementsList();
+  }
+
+  @Override
+  protected void processImplicitMembers(PsiScopeProcessor processor) {
+    JSResolveUtil.processImplicitVars(processor, getContainingFile(), skinComponentPredefinedVars,
+                                      ourSkinComponentPredefinedVarsKey);
+  }
+
+  @Override
+  public boolean processOuterDeclarations(PsiScopeProcessor processor) {
+    return JSResolveUtil.processImplicitVars(processor, getContainingFile(), inlineComponentRenderPredefinedVars,
+                                             ourInlineComponentRenderPredefinedVarsKey);
   }
 
   public static boolean isFxLibraryTag(final XmlTag tag) {

@@ -81,16 +81,33 @@ public class MxmlJSClassProvider extends XmlBackedJSClassProvider {
   }
 
   @Override
+  public boolean canCreateClassFromTag(XmlTag tag) {
+    return isComponentSubTag(tag);
+  }
+
+  @Override
+  public XmlTag getClassOwnerTag(XmlTag tag) {
+    if (isComponentSubTag(tag)) {
+      return tag.getParentTag().getSubTags()[0];
+    }
+    return tag;
+  }
+
+  @Override
   public XmlBackedJSClass createClassFromTag(XmlTag tag) {
     XmlFile file = (XmlFile)tag.getContainingFile();
     if (file.getRootTag() == tag && JavaScriptSupportLoader.isMxmlOrFxgFile(file)) {
       return new MxmlJSClass(tag);
     }
-    XmlTag parentTag = tag.getParentTag();
-    if (parentTag != null && XmlBackedJSClassImpl.isComponentTag(parentTag)) {
-      return new MxmlJSClass(tag);
+    if (isComponentSubTag(tag)) {
+      return new MxmlJSClass(tag.getParentTag().getSubTags()[0]);
     }
     return null;
+  }
+
+  private static boolean isComponentSubTag(XmlTag tag) {
+    XmlTag parentTag = tag.getParentTag();
+    return parentTag != null && XmlBackedJSClassImpl.isComponentTag(parentTag);
   }
 
   @Override
