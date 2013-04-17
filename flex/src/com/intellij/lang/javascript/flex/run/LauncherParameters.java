@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class LauncherParameters implements Cloneable {
 
-  public static enum LauncherType {
+  public enum LauncherType {
     OSDefault, Browser, Player
   }
 
@@ -17,16 +17,19 @@ public class LauncherParameters implements Cloneable {
   private @NotNull String myPlayerPath = SystemInfo.isMac ? "/Applications/Flash Player Debugger.app"
                                                           : SystemInfo.isWindows ? "FlashPlayerDebugger.exe"
                                                                                  : "/usr/bin/flashplayerdebugger";
+  private boolean myNewPlayerInstance = false;
 
   public LauncherParameters() {
   }
 
   public LauncherParameters(@NotNull final LauncherType launcherType,
                             @NotNull final BrowsersConfiguration.BrowserFamily browserFamily,
-                            @NotNull final String playerPath) {
+                            @NotNull final String playerPath,
+                            final boolean isNewPlayerInstance) {
     myLauncherType = launcherType;
     myBrowserFamily = browserFamily;
     myPlayerPath = playerPath;
+    myNewPlayerInstance = isNewPlayerInstance;
   }
 
   public String getPresentableText() {
@@ -48,6 +51,7 @@ public class LauncherParameters implements Cloneable {
     return myLauncherType;
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public void setLauncherType(@NotNull final LauncherType launcherType) {
     myLauncherType = launcherType;
   }
@@ -57,6 +61,7 @@ public class LauncherParameters implements Cloneable {
     return myBrowserFamily;
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public void setBrowserFamily(@NotNull final BrowsersConfiguration.BrowserFamily browserFamily) {
     myBrowserFamily = browserFamily;
   }
@@ -66,8 +71,18 @@ public class LauncherParameters implements Cloneable {
     return myPlayerPath;
   }
 
+  @SuppressWarnings("UnusedDeclaration")
   public void setPlayerPath(@NotNull final String playerPath) {
     myPlayerPath = FileUtil.toSystemIndependentName(playerPath);
+  }
+
+  public boolean isNewPlayerInstance() {
+    return myNewPlayerInstance;
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  public void setNewPlayerInstance(final boolean newPlayerInstance) {
+    myNewPlayerInstance = newPlayerInstance;
   }
 
   public LauncherParameters clone() {

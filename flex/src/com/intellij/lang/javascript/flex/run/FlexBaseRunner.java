@@ -293,7 +293,12 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       case Player:
         try {
           if (SystemInfo.isMac) {
-            Runtime.getRuntime().exec(new String[]{ExecUtil.getOpenCommandPath(), "-a", launcherParams.getPlayerPath(), urlOrPath});
+            if (launcherParams.isNewPlayerInstance()) {
+              Runtime.getRuntime().exec(new String[]{ExecUtil.getOpenCommandPath(), "-n", "-a", launcherParams.getPlayerPath(), urlOrPath});
+            }
+            else {
+              Runtime.getRuntime().exec(new String[]{ExecUtil.getOpenCommandPath(), "-a", launcherParams.getPlayerPath(), urlOrPath});
+            }
           }
           else {
             Runtime.getRuntime().exec(new String[]{launcherParams.getPlayerPath(), urlOrPath});

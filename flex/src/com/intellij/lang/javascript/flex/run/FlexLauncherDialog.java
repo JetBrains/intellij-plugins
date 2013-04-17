@@ -11,7 +11,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.IdeFocusManager;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ui.components.JBCheckBox;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,18 +20,20 @@ import java.awt.event.ActionListener;
 
 public class FlexLauncherDialog extends DialogWrapper {
   private JPanel myMainPanel;
+
   private JRadioButton myDefaultOSApplicationRadioButton;
+
   private JRadioButton myBrowserRadioButton;
-  private JRadioButton myPlayerRadioButton;
-  private TextFieldWithBrowseButton myPlayerTextWithBrowse;
   private JPanel myBrowserSelectorPanel;
   private BrowserSelector myBrowserSelector;
+
+  private JRadioButton myPlayerRadioButton;
+  private TextFieldWithBrowseButton myPlayerTextWithBrowse;
+  private JBCheckBox myNewPlayerInstanceCheckBox;
+
   private final Project myProject;
 
-  public FlexLauncherDialog(final Project project,
-                            final LauncherParameters.LauncherType launcherType,
-                            final BrowsersConfiguration.BrowserFamily browserFamily,
-                            final String playerPath) {
+  public FlexLauncherDialog(final Project project, final LauncherParameters launcherParameters) {
     super(project);
     myProject = project;
     setTitle(FlexBundle.message("launch.with.title"));
@@ -39,15 +41,10 @@ public class FlexLauncherDialog extends DialogWrapper {
     myBrowserSelector = new BrowserSelector(false);
     myBrowserSelectorPanel.add(BorderLayout.CENTER, myBrowserSelector.getMainComponent());
     initRadioButtons();
-    initPlayerTextWithBrowse();
-    initControls(launcherType, browserFamily, playerPath);
+    initControls(launcherParameters);
     updateControls();
 
     init();
-  }
-
-  public FlexLauncherDialog(final Project project, final LauncherParameters launcherParameters) {
-    this(project, launcherParameters.getLauncherType(), launcherParameters.getBrowserFamily(), launcherParameters.getPlayerPath());
   }
 
   private void initRadioButtons() {
@@ -70,7 +67,15 @@ public class FlexLauncherDialog extends DialogWrapper {
     });
   }
 
-  private void initPlayerTextWithBrowse() {
+  private void initControls(final LauncherParameters launcherParameters) {
+    final LauncherParameters.LauncherType launcherType = launcherParameters.getLauncherType();
+    myDefaultOSApplicationRadioButton.setSelected(launcherType == LauncherParameters.LauncherType.OSDefault);
+    myBrowserRadioButton.setSelected(launcherType == LauncherParameters.LauncherType.Browser);
+    myPlayerRadioButton.setSelected(launcherType == LauncherParameters.LauncherType.Player);
+
+    myBrowserSelector.setSelectedBrowser(launcherParameters.getBrowserFamily());
+
+    myPlayerTextWithBrowse.setText(FileUtil.toSystemDependentName(launcherParameters.getPlayerPath()));
     myPlayerTextWithBrowse
       .addBrowseFolderListener(null, null, myProject,
                                new FileChooserDescriptor(true, true, false, false, false, false) {
@@ -80,45 +85,30 @@ public class FlexLauncherDialog extends DialogWrapper {
                                           || !file.isDirectory();
                                  }
                                });
-  }
-
-  private void initControls(final LauncherParameters.LauncherType launcherType,
-                            final BrowsersConfiguration.BrowserFamily browserFamily,
-                            final String playerPath) {
-    myDefaultOSApplicationRadioButton.setSelected(launcherType == LauncherParameters.LauncherType.OSDefault);
-    myBrowserRadioButton.setSelected(launcherType == LauncherParameters.LauncherType.Browser);
-    myPlayerRadioButton.setSelected(launcherType == LauncherParameters.LauncherType.Player);
-    myBrowserSelector.setSelectedBrowser(browserFamily);
-    myPlayerTextWithBrowse.setText(FileUtil.toSystemDependentName(playerPath));
+    myNewPlayerInstanceCheckBox.setVisible(SystemInfo.isMac);
   }
 
   private void updateControls() {
     myBrowserSelector.getMainComponent().setEnabled(myBrowserRadioButton.isSelected());
+
     myPlayerTextWithBrowse.setEnabled(myPlayerRadioButton.isSelected());
+    myNewPlayerInstanceCheckBox.setEnabled(myPlayerRadioButton.isSelected());
   }
 
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
-  public LauncherParameters.LauncherType getLauncherType() {
-    return myPlayerRadioButton.isSelected()
-           ? LauncherParameters.LauncherType.Player
-           : myBrowserRadioButton.isSelected() ? LauncherParameters.LauncherType.Browser : LauncherParameters.LauncherType.OSDefault;
-  }
-
-  @Nullable
-  public BrowsersConfiguration.BrowserFamily getBrowserFamily() {
-    return myBrowserSelector.getSelectedBrowser();
-  }
-
-  public String getPlayerPath() {
-    return FileUtil.toSystemIndependentName(myPlayerTextWithBrowse.getText().trim());
-  }
-
   public LauncherParameters getLauncherParameters() {
-    final BrowsersConfiguration.BrowserFamily browserFamily = getBrowserFamily();
-    return new LauncherParameters(getLauncherType(), browserFamily == null ? BrowsersConfiguration.BrowserFamily.FIREFOX : browserFamily,
-                                  getPlayerPath());
+    final LauncherParameters.LauncherType launcherType = myPlayerRadioButton.isSelected()
+                                                         ? LauncherParameters.LauncherType.Player
+                                                         : myBrowserRadioButton.isSelected()
+                                                           ? LauncherParameters.LauncherType.Browser
+                                                           : LauncherParameters.LauncherType.OSDefault;
+    final BrowsersConfiguration.BrowserFamily browser = myBrowserSelector.getSelectedBrowser();
+    final BrowsersConfiguration.BrowserFamily notNullBrowser = browser == null ? BrowsersConfiguration.BrowserFamily.FIREFOX : browser;
+    final String playerPath = FileUtil.toSystemIndependentName(myPlayerTextWithBrowse.getText().trim());
+    final boolean isNewPlayerInstance = myNewPlayerInstanceCheckBox.isSelected();
+    return new LauncherParameters(launcherType, notNullBrowser, playerPath, isNewPlayerInstance);
   }
 }
