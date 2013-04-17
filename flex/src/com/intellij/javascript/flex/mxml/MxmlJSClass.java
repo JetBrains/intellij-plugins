@@ -115,6 +115,29 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
     return super.getSuperClassName();
   }
 
+  @Override
+  public String getName() {
+    XmlTag parent = getParent();
+    if (parent.getParentTag() != null && isComponentTag(parent.getParentTag())) {
+      String explicitName = getExplicitName();
+      if (explicitName != null) {
+        return explicitName;
+      }
+    }
+    return super.getName();
+  }
+
+  @Nullable
+  private String getExplicitName() {
+    XmlTag parent = getParent();
+    if (parent.getParentTag() != null) {
+      return parent.getParentTag().getAttributeValue(CLASS_NAME_ATTRIBUTE_NAME, parent.getParentTag().getNamespace());
+    }
+    else {
+      return null;
+    }
+  }
+
   @Nullable
   @Override
   public JSReferenceList getImplementsList() {
