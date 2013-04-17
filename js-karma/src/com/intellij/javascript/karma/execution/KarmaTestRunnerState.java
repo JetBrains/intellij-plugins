@@ -68,6 +68,7 @@ public class KarmaTestRunnerState extends CommandLineState {
       FRAMEWORK_NAME,
       executor
     );
+    testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
 
     SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
       FRAMEWORK_NAME,
@@ -99,7 +100,7 @@ public class KarmaTestRunnerState extends CommandLineState {
     commandLine.setExePath(nodeSettings.getInterpreterPath());
     File configFile = new File(runSettings.getConfigPath());
     commandLine.setWorkDirectory(configFile.getParentFile());
-    //commandLine.
+    //commandLine.addParameter();
     return commandLine;
   }
 
