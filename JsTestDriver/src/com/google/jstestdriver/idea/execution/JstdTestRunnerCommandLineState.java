@@ -110,6 +110,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
       JSTD_FRAMEWORK_NAME,
       executor
     );
+    testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
 
     JstdTestProxyPrinterProvider printerProvider = new JstdTestProxyPrinterProvider();
     SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
