@@ -61,15 +61,16 @@ public class AttributeElementType extends AbstractManifestStubElementType<Attrib
     return new AttributeStubImpl(parentStub, psi.getName(), psi.getValue());
   }
 
-  public void serialize(AttributeStub stub, StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull AttributeStub stub, @NotNull StubOutputStream dataStream) throws IOException {
     dataStream.writeName(stub.getName());
     dataStream.writeUTFFast(stub.getValue());
   }
 
-  public AttributeStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+  @NotNull
+  public AttributeStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new AttributeStubImpl(parentStub, dataStream.readName().toString(), dataStream.readUTFFast());
   }
 
-  public void indexStub(AttributeStub stub, IndexSink sink) {
+  public void indexStub(@NotNull AttributeStub stub, @NotNull IndexSink sink) {
   }
 }

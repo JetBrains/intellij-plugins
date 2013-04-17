@@ -62,14 +62,15 @@ public class HeaderElementType extends AbstractManifestStubElementType<HeaderStu
     return new HeaderStubImpl(parentStub, psi.getName());
   }
 
-  public void serialize(HeaderStub stub, StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull HeaderStub stub, @NotNull StubOutputStream dataStream) throws IOException {
     dataStream.writeName(stub.getName());
   }
 
-  public HeaderStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+  @NotNull
+  public HeaderStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new HeaderStubImpl(parentStub, dataStream.readName().toString());
   }
 
-  public void indexStub(HeaderStub stub, IndexSink sink) {
+  public void indexStub(@NotNull HeaderStub stub, @NotNull IndexSink sink) {
   }
 }

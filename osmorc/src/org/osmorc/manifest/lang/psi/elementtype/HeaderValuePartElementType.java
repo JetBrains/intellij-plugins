@@ -61,14 +61,15 @@ public class HeaderValuePartElementType extends AbstractManifestStubElementType<
     return new HeaderValuePartStubImpl(parentStub, psi.getUnwrappedText());
   }
 
-  public void serialize(HeaderValuePartStub stub, StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull HeaderValuePartStub stub, @NotNull StubOutputStream dataStream) throws IOException {
     dataStream.writeUTFFast(stub.getUnwrappedText());
   }
 
-  public HeaderValuePartStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+  @NotNull
+  public HeaderValuePartStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new HeaderValuePartStubImpl(parentStub, dataStream.readUTFFast());
   }
 
-  public void indexStub(HeaderValuePartStub stub, IndexSink sink) {
+  public void indexStub(@NotNull HeaderValuePartStub stub, @NotNull IndexSink sink) {
   }
 }

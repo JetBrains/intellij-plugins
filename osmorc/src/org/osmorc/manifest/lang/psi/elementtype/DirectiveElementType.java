@@ -61,15 +61,16 @@ public class DirectiveElementType extends AbstractManifestStubElementType<Direct
     return new DirectiveStubImpl(parentStub, psi.getName(), psi.getValue());
   }
 
-  public void serialize(DirectiveStub stub, StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull DirectiveStub stub, @NotNull StubOutputStream dataStream) throws IOException {
     dataStream.writeName(stub.getName());
     dataStream.writeUTFFast(stub.getValue());
   }
 
-  public DirectiveStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+  @NotNull
+  public DirectiveStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new DirectiveStubImpl(parentStub, dataStream.readName().toString(), dataStream.readUTFFast());
   }
 
-  public void indexStub(DirectiveStub stub, IndexSink sink) {
+  public void indexStub(@NotNull DirectiveStub stub, @NotNull IndexSink sink) {
   }
 }

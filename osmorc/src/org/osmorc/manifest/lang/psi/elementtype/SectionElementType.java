@@ -62,13 +62,14 @@ public class SectionElementType extends AbstractManifestStubElementType<SectionS
     return new SectionStubImpl(parentStub);
   }
 
-  public void serialize(SectionStub stub, StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull SectionStub stub, @NotNull StubOutputStream dataStream) throws IOException {
   }
 
-  public SectionStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+  @NotNull
+  public SectionStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new SectionStubImpl(parentStub);
   }
 
-  public void indexStub(SectionStub stub, IndexSink sink) {
+  public void indexStub(@NotNull SectionStub stub, @NotNull IndexSink sink) {
   }
 }

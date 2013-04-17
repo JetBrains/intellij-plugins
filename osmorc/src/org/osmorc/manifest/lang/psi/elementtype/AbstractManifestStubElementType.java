@@ -45,6 +45,7 @@ public abstract class AbstractManifestStubElementType<StubT extends StubElement,
     externalId = ETERNAL_ID_PREFIX + debugName;
   }
 
+  @NotNull
   public String getExternalId() {
     return externalId;
   }

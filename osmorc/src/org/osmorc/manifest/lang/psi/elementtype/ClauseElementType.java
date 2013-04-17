@@ -61,13 +61,14 @@ public class ClauseElementType extends AbstractManifestStubElementType<ClauseStu
     return new ClauseStubImpl(parentStub);
   }
 
-  public void serialize(ClauseStub stub, StubOutputStream dataStream) throws IOException {
+  public void serialize(@NotNull ClauseStub stub, @NotNull StubOutputStream dataStream) throws IOException {
   }
 
-  public ClauseStub deserialize(StubInputStream dataStream, StubElement parentStub) throws IOException {
+  @NotNull
+  public ClauseStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
     return new ClauseStubImpl(parentStub);
   }
 
-  public void indexStub(ClauseStub stub, IndexSink sink) {
+  public void indexStub(@NotNull ClauseStub stub, @NotNull IndexSink sink) {
   }
 }
