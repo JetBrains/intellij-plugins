@@ -2,7 +2,6 @@ package com.intellij.javascript.flex.mxml;
 
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.FlexImportSupport;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
@@ -89,7 +88,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
 
   @Override
   protected boolean resolveViaImplicitImports(ResolveProcessor processor) {
-    return FlexImportSupport.resolveTypeNameUsingImplicitImports(processor, this);
+    return MxmlImplicitImports.resolveTypeNameUsingImplicitImports(processor, this);
   }
 
   public static boolean canBeReferencedById(XmlTag tag) {

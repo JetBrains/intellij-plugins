@@ -1,21 +1,15 @@
 package com.intellij.javascript.flex;
 
-import com.intellij.flex.model.bc.TargetPlatform;
 import com.intellij.javascript.flex.mxml.MxmlJSClassProvider;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.JSResolveHelper;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentIterator;
 import com.intellij.openapi.roots.ProjectFileIndex;
@@ -155,13 +149,6 @@ public class FlexResolveHelper implements JSResolveHelper {
 
   public boolean isAdequatePlaceForImport(final PsiElement place) {
     return place instanceof CssString;
-  }
-
-  public boolean isDesktopOrMobileTargetPlatformActive(final Module module) {
-    final FlexBuildConfiguration bc = ModuleType.get(module) instanceof FlexModuleType
-                                         ? FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration()
-                                         : null;
-    return bc != null && (bc.getTargetPlatform() == TargetPlatform.Desktop || bc.getTargetPlatform() == TargetPlatform.Mobile);
   }
 
   @Override
