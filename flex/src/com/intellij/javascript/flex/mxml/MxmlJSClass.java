@@ -21,7 +21,9 @@ import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -105,6 +107,14 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
 
   public static boolean isFxgFile(final PsiFile file) {
     return JavaScriptSupportLoader.isFxgFile(file.getViewProvider().getVirtualFile());
+  }
+
+  @NotNull
+  public static String getLanguageNamespace(final XmlTag rootTag) {
+    assert JavaScriptSupportLoader.isFlexMxmFile(rootTag.getContainingFile()) : rootTag.getContainingFile();
+    return rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) != null
+           ? JavaScriptSupportLoader.MXML_URI3
+           : JavaScriptSupportLoader.MXML_URI;
   }
 
   @Override
@@ -228,5 +238,23 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   }
 
 
+  public JSFile createScriptTag() throws IncorrectOperationException {
+    final XmlTag rootTag = getParent();
 
+    if (rootTag != null) {
+      String ns = getLanguageNamespace(rootTag);
+
+      final String emptyText = "\n";
+      for (XmlTag tag : rootTag.getSubTags()) {
+        if (FlexPredefinedTagNames.SCRIPT.equals(tag.getLocalName()) && ns.equals(tag.getNamespace())) {
+          tag.getValue().setText(emptyText);
+          return findFirstScriptTag();
+        }
+      }
+
+      rootTag.add(rootTag.createChildTag(FlexPredefinedTagNames.SCRIPT, ns, CDATA_START + emptyText + CDATA_END, false));
+      return findFirstScriptTag();
+    }
+    return null;
+  }
 }
