@@ -242,6 +242,7 @@
     <lang.fileViewProviderFactory language="Handlebars" implementationClass="com.dmarcotte.handlebars.file.HbFileViewProviderFactory"/>
     <lang.commenter language="Handlebars" implementationClass="com.dmarcotte.handlebars.editor.comments.HbCommenter"/>
     <braceMatcher filetype="Handlebars/Mustache" implementationClass="com.dmarcotte.handlebars.editor.braces.HbBraceMatcher"/>
+    <completion.contributor language="Handlebars" implementationClass="com.dmarcotte.handlebars.completion.HbKeywordCompletionContributor"/>
     <lang.foldingBuilder language="Handlebars"
                          implementationClass="com.dmarcotte.handlebars.editor.folding.HbFoldingBuilder"/>
     <typedHandler implementation="com.dmarcotte.handlebars.editor.actions.HbTypedHandler"/>
