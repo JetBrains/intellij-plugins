@@ -13,6 +13,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
+import com.intellij.xml.util.XmlStringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -45,7 +46,7 @@ class ServerConfigurationForm extends AbstractRunSettingsSection {
             ApplicationManager.getApplication().invokeLater(new Runnable() {
                   @Override
                   public void run() {
-                    StringBuilder str = new StringBuilder("<html>");
+                    StringBuilder str = new StringBuilder();
                     if (serverFetchResult.isError()) {
                       str.append(buildErrorTextParagraph(serverFetchResult.getErrorMessage()));
                     } else {
@@ -62,8 +63,7 @@ class ServerConfigurationForm extends AbstractRunSettingsSection {
                       str.append(buildOKTextParagraph("Connection to " + serverInfo.getServerUrl() + " is OK, "
                           + browserMessage));
                     }
-                    str.append("</html>");
-                    myTestConnectionResult.setText(str.toString());
+                    myTestConnectionResult.setText(XmlStringUtil.wrapInHtml(str));
                     myTestConnectionButton.setEnabled(true);
                   }
                 }, currentModalityState);
