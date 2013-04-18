@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class KarmaGlobalSettingsUtil {
 
+  public static final String NODE_PACKAGE_NAME = "karma";
   private static final String KARMA_NODE_PACKAGE_DIR = "karma_support.karma_node_package_dir";
   private static final String NODE_INTERPRETER_PATH = "karma_support.node_interpreter_path";
 

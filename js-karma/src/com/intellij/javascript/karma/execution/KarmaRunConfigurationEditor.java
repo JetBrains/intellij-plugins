@@ -116,7 +116,8 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       @Nullable
       @Override
       public List<String> produce() {
-        Collection<CompletionModuleInfo> modules = NodeModuleManager.getInstance(project).collectVisibleNodeModules(project.getBaseDir());
+        NodeModuleManager manager = NodeModuleManager.getInstance(project);
+        Collection<CompletionModuleInfo> modules = manager.findModulesWithName(project.getBaseDir(), KarmaGlobalSettingsUtil.NODE_PACKAGE_NAME);
         List<String> moduleDirs = ContainerUtil.newArrayListWithExpectedSize(modules.size());
         for (CompletionModuleInfo module : modules) {
           VirtualFile dir = module.getVirtualFile();
@@ -192,7 +193,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     String karmaNodePackageDir = KarmaGlobalSettingsUtil.loadKarmaNodePackageDir();
     if (StringUtil.isEmpty(karmaNodePackageDir)) {
       NodeModuleManager manager = NodeModuleManager.getInstance(myProject);
-      ResolvedModuleInfo moduleInfo = manager.resolveModule("karma", myProject.getBaseDir());
+      ResolvedModuleInfo moduleInfo = manager.resolveModule(KarmaGlobalSettingsUtil.NODE_PACKAGE_NAME, myProject.getBaseDir());
       if (moduleInfo != null) {
         VirtualFile dir = moduleInfo.getModuleSourceRoot();
         if (dir.isDirectory()) {
