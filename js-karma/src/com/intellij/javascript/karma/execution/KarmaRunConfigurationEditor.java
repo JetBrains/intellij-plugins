@@ -1,17 +1,13 @@
 package com.intellij.javascript.karma.execution;
 
+import com.intellij.execution.configurations.PathEnvironmentVariableUtil;
 import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.lang.javascript.JavaScriptFileType;
-import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
-import com.intellij.openapi.fileChooser.FileChooserFactory;
-import com.intellij.openapi.fileChooser.PathChooserDialog;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.ComponentWithBrowseButton;
-import com.intellij.openapi.ui.TextComponentAccessor;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -19,32 +15,37 @@ import com.intellij.psi.search.ProjectScope;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.util.Function;
+import com.intellij.util.Producer;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.webcore.nodejs.NodeDetectionUtil;
 import com.intellij.webcore.nodejs.NodeUIUtil;
+import com.intellij.webcore.ui.SwingHelper;
+import com.jetbrains.nodejs.NodeModuleManager;
+import com.jetbrains.nodejs.util.CompletionModuleInfo;
+import com.jetbrains.nodejs.util.ResolvedModuleInfo;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 import java.awt.*;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Sergey Simonchik
  */
 public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfiguration> {
 
+  private final Project myProject;
   private final JComponent myRootComponent;
   private final TextFieldWithHistoryWithBrowseButton myNodeInterpreterPathTextFieldWithBrowseButton;
   private final TextFieldWithHistoryWithBrowseButton myKarmaPackageDirPathTextFieldWithBrowseButton;
   private final TextFieldWithHistoryWithBrowseButton myConfigPathTextFieldWithBrowseButton;
 
   public KarmaRunConfigurationEditor(@NotNull Project project) {
-    myConfigPathTextFieldWithBrowseButton = createConfigurationFileTextField(project);
+    myProject = project;
     JPanel panel = new JPanel(new GridBagLayout());
     panel.add(new JLabel("Node.js interpreter:"), new GridBagConstraints(
       0, 0,
@@ -62,12 +63,32 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       1.0, 0.0,
       GridBagConstraints.WEST,
       GridBagConstraints.HORIZONTAL,
-      new Insets(0, 0, 10, 0),
+      new Insets(0, 0, 7, 0),
       0, 0
     ));
+
     myKarmaPackageDirPathTextFieldWithBrowseButton = createKarmaPackageDirPathTextField(project);
-    panel.add(new JLabel("Configuration file (usually *.conf.js):"), new GridBagConstraints(
+    panel.add(new JLabel("Directory of Karma Node.js package:"), new GridBagConstraints(
       0, 2,
+      1, 1,
+      0.0, 0.0,
+      GridBagConstraints.WEST,
+      GridBagConstraints.HORIZONTAL,
+      new Insets(0, 0, 0, 0),
+      0, 0
+    ));
+    panel.add(myKarmaPackageDirPathTextFieldWithBrowseButton, new GridBagConstraints(
+      0, 3,
+      1, 1,
+      0, 0,
+      GridBagConstraints.WEST,
+      GridBagConstraints.HORIZONTAL,
+      new Insets(0, 0, 7, 0),
+      0, 0
+    ));
+
+    panel.add(new JLabel("Configuration file (usually *.conf.js):"), new GridBagConstraints(
+      0, 4,
       1, 1,
       0.0, 0.0,
       GridBagConstraints.WEST,
@@ -75,8 +96,9 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
       new Insets(0, 0, 0, 0),
       0, 0
     ));
+    myConfigPathTextFieldWithBrowseButton = createConfigurationFileTextField(project);
     panel.add(myConfigPathTextFieldWithBrowseButton, new GridBagConstraints(
-      0, 3,
+      0, 5,
       1, 1,
       1.0, 0.0,
       GridBagConstraints.WEST,
@@ -87,81 +109,42 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     myRootComponent = panel;
   }
 
-  private TextFieldWithHistoryWithBrowseButton createKarmaPackageDirPathTextField(@NotNull final Project project) {
+  private static TextFieldWithHistoryWithBrowseButton createKarmaPackageDirPathTextField(@NotNull final Project project) {
     TextFieldWithHistoryWithBrowseButton karmaPackageDirPathComponent = new TextFieldWithHistoryWithBrowseButton();
     final TextFieldWithHistory textFieldWithHistory = karmaPackageDirPathComponent.getChildComponent();
-    textFieldWithHistory.addPopupMenuListener(new PopupMenuListener() {
+    SwingHelper.addHistoryOnExpansion(textFieldWithHistory, new Producer<List<String>>() {
+      @Nullable
       @Override
-      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-        List<File> newFiles = listPossibleKarmaPackageDirs(null, null);
-        List<String> newFilePaths = ContainerUtil.map(newFiles, new Function<File, String>() {
-          @Override
-          public String fun(File file) {
-            return file.getAbsolutePath();
+      public List<String> produce() {
+        Collection<CompletionModuleInfo> modules = NodeModuleManager.getInstance(project).collectVisibleNodeModules(project.getBaseDir());
+        List<String> moduleDirs = ContainerUtil.newArrayListWithExpectedSize(modules.size());
+        for (CompletionModuleInfo module : modules) {
+          VirtualFile dir = module.getVirtualFile();
+          if (dir != null && dir.isDirectory()) {
+            moduleDirs.add(FileUtil.toSystemDependentName(dir.getPath()));
           }
-        });
-        Collections.sort(newFilePaths);
-
-        Set<String> allPaths = ContainerUtil.newLinkedHashSet();
-        allPaths.addAll(textFieldWithHistory.getHistory());
-        allPaths.addAll(newFilePaths);
-        textFieldWithHistory.setHistory(ContainerUtil.newArrayList(allPaths));
-
-        // one-time initialization
-        textFieldWithHistory.removePopupMenuListener(this);
-      }
-
-      @Override
-      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-      }
-
-      @Override
-      public void popupMenuCanceled(PopupMenuEvent e) {
+        }
+        Collections.sort(moduleDirs);
+        return moduleDirs;
       }
     });
 
-    FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
-    fileChooserDescriptor.putUserData(PathChooserDialog.NATIVE_MAC_CHOOSER_SHOW_HIDDEN_FILES, Boolean.TRUE);
-
-    karmaPackageDirPathComponent.addBrowseFolderListener(
+    SwingHelper.installFileCompletionAndBrowseDialog(
       project,
-      new ComponentWithBrowseButton.BrowseFolderActionListener<TextFieldWithHistory>(
-        KarmaBundle.message("runConfiguration.config_file.browse_dialog.title"),
-        null,
-        karmaPackageDirPathComponent,
-        project,
-        fileChooserDescriptor,
-        TextComponentAccessor.TEXT_FIELD_WITH_HISTORY_WHOLE_TEXT
-      ),
-      true
-    );
-    FileChooserFactory.getInstance().installFileCompletion(
-      textFieldWithHistory.getTextEditor(),
-      fileChooserDescriptor,
-      true,
-      project
+      karmaPackageDirPathComponent,
+      KarmaBundle.message("runConfiguration.karma_package_dir.browse_dialog.title")
     );
     return karmaPackageDirPathComponent;
-  }
-
-  private void updateKarmaPackageDirComponent(@NotNull VirtualFile projectDir) {
-    File nodeInterpreter = new File(myNodeInterpreterPathTextFieldWithBrowseButton.getChildComponent().getText());
-    if (nodeInterpreter.isFile() && nodeInterpreter.canExecute()) {
-      List<File> karmaPackageDirs = listPossibleKarmaPackageDirs(nodeInterpreter, new File(projectDir.getPath()));
-    }
-  }
-
-  private List<File> listPossibleKarmaPackageDirs(@NotNull File nodeInterpreterPath, @NotNull File projectDir) {
-    return Collections.emptyList();
   }
 
   @NotNull
   private static TextFieldWithHistoryWithBrowseButton createConfigurationFileTextField(@NotNull final Project project) {
     TextFieldWithHistoryWithBrowseButton textFieldWithHistoryWithBrowseButton = new TextFieldWithHistoryWithBrowseButton();
     final TextFieldWithHistory textFieldWithHistory = textFieldWithHistoryWithBrowseButton.getChildComponent();
-    textFieldWithHistory.addPopupMenuListener(new PopupMenuListener() {
+    SwingHelper.addHistoryOnExpansion(textFieldWithHistory, new Producer<List<String>>() {
+      @Nullable
       @Override
-      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+      public List<String> produce() {
         List<VirtualFile> newFiles = listPossibleConfigFilesInProject(project);
         List<String> newFilePaths = ContainerUtil.map(newFiles, new Function<VirtualFile, String>() {
           @Override
@@ -170,45 +153,14 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
           }
         });
         Collections.sort(newFilePaths);
-
-        Set<String> allPaths = ContainerUtil.newLinkedHashSet();
-        allPaths.addAll(textFieldWithHistory.getHistory());
-        allPaths.addAll(newFilePaths);
-        textFieldWithHistory.setHistory(ContainerUtil.newArrayList(allPaths));
-
-        // one-time initialization
-        textFieldWithHistory.removePopupMenuListener(this);
-      }
-
-      @Override
-      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-      }
-
-      @Override
-      public void popupMenuCanceled(PopupMenuEvent e) {
+        return newFilePaths;
       }
     });
 
-    FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor();
-    fileChooserDescriptor.putUserData(PathChooserDialog.NATIVE_MAC_CHOOSER_SHOW_HIDDEN_FILES, Boolean.TRUE);
-
-    textFieldWithHistoryWithBrowseButton.addBrowseFolderListener(
+    SwingHelper.installFileCompletionAndBrowseDialog(
       project,
-      new ComponentWithBrowseButton.BrowseFolderActionListener<TextFieldWithHistory>(
-        KarmaBundle.message("runConfiguration.config_file.browse_dialog.title"),
-        null,
-        textFieldWithHistoryWithBrowseButton,
-        project,
-        fileChooserDescriptor,
-        TextComponentAccessor.TEXT_FIELD_WITH_HISTORY_WHOLE_TEXT
-      ),
-      true
-    );
-    FileChooserFactory.getInstance().installFileCompletion(
-      textFieldWithHistory.getTextEditor(),
-      fileChooserDescriptor,
-      true,
-      project
+      textFieldWithHistoryWithBrowseButton,
+      KarmaBundle.message("runConfiguration.config_file.browse_dialog.title")
     );
     return textFieldWithHistoryWithBrowseButton;
   }
@@ -228,8 +180,34 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
 
   @Override
   protected void resetEditorFrom(@NotNull KarmaRunConfiguration runConfiguration) {
+    String nodeInterpreterPath = KarmaGlobalSettingsUtil.loadNodeInterpreterPath();
+    if (StringUtil.isEmpty(nodeInterpreterPath)) {
+      File nodeInterpreterFile = PathEnvironmentVariableUtil.findInPath(NodeDetectionUtil.NODE_INTERPRETER_BASE_NAME);
+      if (nodeInterpreterFile != null) {
+        nodeInterpreterPath = nodeInterpreterFile.getAbsolutePath();
+      }
+    }
+    setTextAndAddToHistory(myNodeInterpreterPathTextFieldWithBrowseButton.getChildComponent(), nodeInterpreterPath);
+
+    String karmaNodePackageDir = KarmaGlobalSettingsUtil.loadKarmaNodePackageDir();
+    if (StringUtil.isEmpty(karmaNodePackageDir)) {
+      NodeModuleManager manager = NodeModuleManager.getInstance(myProject);
+      ResolvedModuleInfo moduleInfo = manager.resolveModule("karma", myProject.getBaseDir());
+      if (moduleInfo != null) {
+        VirtualFile dir = moduleInfo.getModuleSourceRoot();
+        if (dir.isDirectory()) {
+          karmaNodePackageDir = FileUtil.toSystemDependentName(dir.getPath());
+        }
+      }
+    }
+    setTextAndAddToHistory(myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent(), karmaNodePackageDir);
     KarmaRunSettings runSettings = runConfiguration.getRunSetting();
     myConfigPathTextFieldWithBrowseButton.getChildComponent().setText(runSettings.getConfigPath());
+  }
+
+  private static void setTextAndAddToHistory(@NotNull TextFieldWithHistory textFieldWithHistory, @Nullable String text) {
+    textFieldWithHistory.setText(text);
+    textFieldWithHistory.addCurrentTextToHistory();
   }
 
   @Override
@@ -238,6 +216,10 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
     builder.setConfigPath(configPath);
     runConfiguration.setRunSettings(builder.build());
+    String karmaNodePackageDir = myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent().getText();
+    KarmaGlobalSettingsUtil.storeKarmaNodePackageDir(karmaNodePackageDir);
+    String nodeInterpreterPath = myNodeInterpreterPathTextFieldWithBrowseButton.getChildComponent().getText();
+    KarmaGlobalSettingsUtil.storeNodeInterpreterPath(nodeInterpreterPath);
   }
 
   @NotNull
