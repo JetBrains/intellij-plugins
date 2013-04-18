@@ -53,6 +53,15 @@ public class XmlObjectEvaluator {
     }
 
     @Override
+    public boolean isAlreadySorted() {
+      return false;
+    }
+
+    @Override
+    public void setAlreadySorted(boolean alreadySorted) {
+    }
+
+    @Override
     public void addChildren(@NotNull XValueChildrenList children, boolean last) {
       if (getRootNode().myCallback.isObsolete()) {
         return;
