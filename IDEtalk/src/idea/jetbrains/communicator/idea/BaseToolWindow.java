@@ -67,7 +67,7 @@ public abstract class BaseToolWindow implements ProjectComponent {
 
     createToolWindowComponent();
     myToolWindow = myToolWindowManager.registerToolWindow(getToolWindowId(), myPanel, getAnchor(), myProject, true);
-    myToolWindow.setIcon(IdetalkCoreIcons.IdeTalk.User);
+    myToolWindow.setIcon(IdetalkCoreIcons.IdeTalk.User_toolwindow);
   }
 
   public void projectClosed() {

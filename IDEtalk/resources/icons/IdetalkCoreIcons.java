@@ -24,6 +24,7 @@ public class IdetalkCoreIcons {
     public static final Icon Offline = load("/ideTalk/offline.png"); // 16x16
     public static final Icon User = load("/ideTalk/user.png"); // 16x16
     public static final Icon User_dnd = load("/ideTalk/user_dnd.png"); // 16x16
+    public static final Icon User_toolwindow = load("/ideTalk/user_toolwindow.png"); // 13x13
 
   }
   public static final Icon Message = load("/message.png"); // 17x18

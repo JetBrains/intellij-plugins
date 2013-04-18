@@ -327,16 +327,16 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     public void actionPerformed(ActionEvent e) {
       final Icon blinkingIcon = myDispatcher.getBlinkingIcon();
       if (blinkingIcon == null) {
-        myToolWindow.setIcon(IdetalkCoreIcons.IdeTalk.User);
+        myToolWindow.setIcon(IdetalkCoreIcons.IdeTalk.User_toolwindow);
       } else {
         if (System.getProperty(IDEtalkProperties.IDEA_IDE_TALK_NO_TOOLBAR_BLINK) == null) {
           myFlag = !myFlag;
         }
 
         if (myFlag) {
-          myToolWindow.setIcon(new EmptyIcon(IdetalkCoreIcons.IdeTalk.User.getIconWidth(), IdetalkCoreIcons.IdeTalk.User.getIconHeight()));
+          myToolWindow.setIcon(new EmptyIcon(13, 13));
         } else {
-          myToolWindow.setIcon(new IconSizeWrapper(IdetalkCoreIcons.IdeTalk.User, blinkingIcon));
+          myToolWindow.setIcon(new IconSizeWrapper(IdetalkCoreIcons.IdeTalk.User_toolwindow, blinkingIcon));
         }
       }
     }
