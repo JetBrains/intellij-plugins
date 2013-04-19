@@ -24,7 +24,6 @@ import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
-import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.lang.javascript.validation.*;
@@ -203,8 +202,8 @@ public class ActionScriptAnnotatingVisitor extends JSAnnotatingVisitor {
       protected void addNonimplementedFunction(final JSFunction function) {
         final ASTNode node = myJsClass.findNameIdentifier();
         if (node == null) return;
-        if (implementMethodsFix == null && !JSUtils.isTypeScript(function)) implementMethodsFix = new ImplementMethodsFix(myJsClass);
-        if (implementMethodsFix != null) implementMethodsFix.addElementToProcess(function);
+        if (implementMethodsFix == null) implementMethodsFix = new ImplementMethodsFix(myJsClass);
+        implementMethodsFix.addElementToProcess(function);
         String messageId = function.isGetProperty() ?
                            "javascript.validation.message.interface.method.not.implemented2" :
                            function.isSetProperty() ?
