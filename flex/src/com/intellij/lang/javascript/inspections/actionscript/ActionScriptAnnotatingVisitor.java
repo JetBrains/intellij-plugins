@@ -1340,6 +1340,18 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
+  protected void addCreateFromUsageFixesForCall(JSCallExpression node,
+                                                JSReferenceExpression referenceExpression,
+                                                ResolveResult[] resolveResults,
+                                                List<LocalQuickFix> quickFixes) {
+    if (canHaveImportTo(resolveResults)) {
+      quickFixes.add(new AddImportECMAScriptClassOrFunctionAction(null, referenceExpression));
+    }
+
+    super.addCreateFromUsageFixesForCall(node, referenceExpression, resolveResults, quickFixes);
+  }
+
+  @Override
   protected boolean suggestCreateVarFromUsage(JSReferenceExpression node) {
     JSExpression qualifier = node.getQualifier();
     JSClass targetClass = null;
