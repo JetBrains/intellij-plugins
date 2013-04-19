@@ -1295,11 +1295,16 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
                                             List<LocalQuickFix> fixes,
                                             boolean inTypeContext,
                                             boolean ecma) {
+    final PsiElement nodeParent = node.getParent();
     final JSExpression qualifier = node.getQualifier();
     PsiElement nameIdentifier = node.getReferenceNameElement();
     final String referencedName = nameIdentifier.getText();
 
     inTypeContext = super.addCreateFromUsageFixes(node, resolveResults, fixes, inTypeContext, ecma);
+    if (!(nodeParent instanceof JSArgumentList) && nodeParent.getParent() instanceof JSCallExpression) {
+      inTypeContext = true;
+    }
+
     if (!inTypeContext) {
       boolean getter = !(node.getParent() instanceof JSDefinitionExpression);
       String invokedName = nameIdentifier.getText();
@@ -1309,7 +1314,6 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       boolean canHaveTypeFix = false;
       JSClass contextClass = JSResolveUtil.getClassOfContext(node);
 
-      PsiElement nodeParent = node.getParent();
       if (nodeParent instanceof JSReferenceList) {
         canHaveTypeFix = true;
         fixes.add(new CreateClassOrInterfaceFix(node, contextClass.isInterface() ||
@@ -1333,5 +1337,25 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       fixes.add(new AddImportECMAScriptClassOrFunctionAction(null, node));
     }
     return inTypeContext;
+  }
+
+  @Override
+  protected boolean suggestCreateVarFromUsage(JSReferenceExpression node) {
+    JSExpression qualifier = node.getQualifier();
+    JSClass targetClass = null;
+    if (qualifier == null) {
+      targetClass = JSResolveUtil.getClassOfContext(node);
+    }
+    else if (qualifier instanceof JSReferenceExpression) {
+      final JSClass clazz = JSResolveUtil.findClassOfQualifier(qualifier, node.getContainingFile());
+      if (clazz != null) {
+        targetClass = clazz;
+      }
+    }
+
+    if (targetClass != null) {
+      return !targetClass.isInterface();
+    }
+    return true;
   }
 }
