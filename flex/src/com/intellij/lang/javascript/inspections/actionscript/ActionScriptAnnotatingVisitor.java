@@ -3,13 +3,16 @@ package com.intellij.lang.javascript.inspections.actionscript;
 import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.codeInsight.daemon.impl.quickfix.RenameElementFix;
 import com.intellij.codeInsight.daemon.impl.quickfix.RenameFileFix;
+import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.javascript.*;
+import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.flex.ActionScriptSmartCompletionContributor;
+import com.intellij.lang.javascript.flex.AddImportECMAScriptClassOrFunctionAction;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
@@ -60,7 +63,7 @@ import static com.intellij.lang.javascript.psi.JSCommonTypeNames.FUNCTION_CLASS_
 /**
  * @author Konstantin.Ulitin
  */
-public class ActionScriptAnnotatingVisitor extends JSAnnotatingVisitor {
+public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   private static final String[] EXTENSIONS_TO_CHECK = {
     JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION,
     JavaScriptSupportLoader.ECMA_SCRIPT_L4_FILE_EXTENSION2,
@@ -596,6 +599,20 @@ public class ActionScriptAnnotatingVisitor extends JSAnnotatingVisitor {
     super.visitJSReferenceExpression(node);
 
     final PsiElement parent = node.getParent();
+
+    if (node.getQualifier() == null) {
+      String nodeText = node.getText();
+      if (!(parent instanceof JSCallExpression) && JSResolveUtil.isExprInStrictTypeContext(node) &&
+          JSCommonTypeNames.VECTOR_CLASS_NAME.equals(nodeText)) {
+        myHolder.createWarningAnnotation(node, JSBundle.message("javascript.validation.message.vector.without.parameters"));
+      }
+      else if (parent instanceof JSNewExpression &&
+               JSCommonTypeNames.VECTOR_CLASS_NAME.equals(nodeText)) {
+        myHolder.createWarningAnnotation(node, JSBundle.message("javascript.validation.message.vector.without.parameters2"));
+      }
+    }
+
+
     if (parent instanceof JSNamedElement) {
       JSNamedElement namedElement = (JSNamedElement)parent;
       final ASTNode nameIdentifier = namedElement.findNameIdentifier();
@@ -1217,5 +1234,104 @@ public class ActionScriptAnnotatingVisitor extends JSAnnotatingVisitor {
     }
 
     return null;
+  }
+
+  protected void validateGetPropertyReturnType(ASTNode nameIdentifier, JSFunction function, String typeString) {
+    if (VOID_TYPE_NAME.equals(typeString)) {
+      // TODO: fix!
+      myHolder.createErrorAnnotation(
+        typeString != null ?
+        function.getReturnTypeElement() :
+        nameIdentifier.getPsi(),
+        JSBundle
+          .message("javascript.validation.message.get.method.should.be.valid.type", typeString != null ? typeString : "empty"));
+    }
+    else {
+      PsiElement element = JSResolveUtil.findParent(function);
+
+      if (element instanceof JSClass && !isBindable((JSClass)element)) {
+        JSFunction setter = ((JSClass)element).findFunctionByNameAndKind(function.getName(), JSFunction.FunctionKind.SETTER);
+
+        if (setter != null) {
+          JSParameterList setterParameterList = setter.getParameterList();
+          JSParameter[] setterParameters = setterParameterList != null ?
+                                           setterParameterList.getParameters() : JSParameter.EMPTY_ARRAY;
+
+          String setterType;
+          if (setterParameters.length == 1 &&
+              !JSCommonTypeNames.ANY_TYPE.equals(setterType = setterParameters[0].getTypeString()) &&
+              !JSCommonTypeNames.ANY_TYPE.equals(typeString) &&
+              !compatibleType(setterType, typeString, setterParameters[0], function)) {
+            PsiElement typeElement = function.getReturnTypeElement();
+
+            myHolder.createErrorAnnotation(
+              typeElement != null ? typeElement : function.findNameIdentifier().getPsi(),
+              JSBundle.message("javascript.validation.message.get.method.type.is.different.from.setter",
+                               setterType != null ? setterType : "empty")
+            );
+          }
+
+          checkAccessorAccessTypeMatch(function, setter,
+                                       "javascript.validation.message.get.method.access.type.is.different.from.setter");
+        }
+      }
+    }
+  }
+
+  protected void validateRestParameterType(JSParameter parameter) {
+    PsiElement typeElement = parameter.getTypeElement();
+    if (typeElement != null && !"Array".equals(typeElement.getText())) {
+      final Pair<ASTNode, ASTNode> nodesBefore = getNodesBefore(typeElement, JSTokenTypes.COLON);
+      myHolder.createErrorAnnotation(
+        typeElement,
+        JSBundle.message("javascript.validation.message.unexpected.type.for.rest.parameter")
+      ).registerFix(new RemoveASTNodeFix("javascript.fix.remove.type.reference", false, nodesBefore.first, nodesBefore.second));
+    }
+  }
+
+  @Override
+  protected boolean addCreateFromUsageFixes(JSReferenceExpression node,
+                                            ResolveResult[] resolveResults,
+                                            List<LocalQuickFix> fixes,
+                                            boolean inTypeContext,
+                                            boolean ecma) {
+    final JSExpression qualifier = node.getQualifier();
+    PsiElement nameIdentifier = node.getReferenceNameElement();
+    final String referencedName = nameIdentifier.getText();
+
+    inTypeContext = super.addCreateFromUsageFixes(node, resolveResults, fixes, inTypeContext, ecma);
+    if (!inTypeContext) {
+      boolean getter = !(node.getParent() instanceof JSDefinitionExpression);
+      String invokedName = nameIdentifier.getText();
+      fixes.add(new CreateJSPropertyAccessorIntentionAction(invokedName, getter));
+    }
+    if (qualifier == null) {
+      boolean canHaveTypeFix = false;
+      JSClass contextClass = JSResolveUtil.getClassOfContext(node);
+
+      PsiElement nodeParent = node.getParent();
+      if (nodeParent instanceof JSReferenceList) {
+        canHaveTypeFix = true;
+        fixes.add(new CreateClassOrInterfaceFix(node, contextClass.isInterface() ||
+                                                      node.getParent().getNode().getElementType() ==
+                                                      JSStubElementTypes.IMPLEMENTS_LIST, null, null));
+      }
+      else if (!(nodeParent instanceof JSDefinitionExpression) && resolveResults.length == 0) {
+        canHaveTypeFix = true;
+        fixes.add(new CreateClassOrInterfaceFix(node, false, null, null));
+        fixes.add(new CreateClassOrInterfaceFix(node, true, null, null));
+      }
+
+      if (!inTypeContext && JSReadWriteAccessDetector.ourInstance.getExpressionAccess(node) == ReadWriteAccessDetector.Access.Read) {
+        canHaveTypeFix = true;
+        fixes.add(new CreateJSFunctionIntentionAction(referencedName, true));
+      }
+
+      if (canHaveTypeFix) fixes.add(new AddImportECMAScriptClassOrFunctionAction(null, node));
+    }
+    else if (canHaveImportTo(resolveResults)) {
+      fixes.add(new AddImportECMAScriptClassOrFunctionAction(null, node));
+    }
+    return inTypeContext;
   }
 }
