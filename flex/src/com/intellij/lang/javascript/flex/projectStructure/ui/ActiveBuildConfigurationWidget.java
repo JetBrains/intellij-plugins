@@ -221,7 +221,7 @@ public class ActiveBuildConfigurationWidget {
     }
 
     @Override
-    public void selectionChanged(FileEditorManagerEvent event) {
+    public void selectionChanged(@NotNull FileEditorManagerEvent event) {
       update();
     }
 

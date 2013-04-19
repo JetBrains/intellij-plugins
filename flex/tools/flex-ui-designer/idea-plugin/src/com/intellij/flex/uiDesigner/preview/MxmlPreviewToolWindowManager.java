@@ -305,7 +305,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   private class MyFileEditorManagerListener extends FileEditorManagerAdapter implements Runnable {
     private boolean waitingForSmartMode;
 
-    public void selectionChanged(FileEditorManagerEvent event) {
+    public void selectionChanged(@NotNull FileEditorManagerEvent event) {
       final FileEditor newFileEditor = event.getNewEditor();
       Editor mxmlEditor = null;
       if (newFileEditor instanceof TextEditor) {
