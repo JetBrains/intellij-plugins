@@ -18,7 +18,7 @@ package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.AbstractDiagramElementManager;
 import com.intellij.diagram.presentation.DiagramState;
-import com.intellij.javascript.flex.FlexResolveHelper;
+import com.intellij.javascript.flex.resolve.FlexResolveHelper;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.*;

@@ -1,7 +1,7 @@
 package com.intellij.javascript.flex.mxml.schema;
 
-import com.intellij.javascript.flex.FlexResolveHelper;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
+import com.intellij.javascript.flex.resolve.FlexResolveHelper;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;

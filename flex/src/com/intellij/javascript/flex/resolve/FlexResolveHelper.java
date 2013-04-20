@@ -1,4 +1,4 @@
-package com.intellij.javascript.flex;
+package com.intellij.javascript.flex.resolve;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClassProvider;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
