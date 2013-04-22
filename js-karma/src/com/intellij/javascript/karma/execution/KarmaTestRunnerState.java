@@ -15,11 +15,10 @@ import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
+import com.intellij.javascript.nodejs.NodeSettings;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.testIntegration.TestLocationProvider;
-import com.jetbrains.nodejs.settings.NodeSettings;
-import com.jetbrains.nodejs.settings.NodeSettingsUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -95,7 +94,7 @@ public class KarmaTestRunnerState extends CommandLineState {
 
   @NotNull
   private static GeneralCommandLine createCommandLine(@NotNull KarmaRunSettings runSettings) {
-    NodeSettings nodeSettings = NodeSettingsUtil.getSettings();
+    NodeSettings nodeSettings = KarmaGlobalSettingsUtil.getNodeSettings();
     GeneralCommandLine commandLine = new GeneralCommandLine();
     commandLine.setExePath(nodeSettings.getInterpreterPath());
     File configFile = new File(runSettings.getConfigPath());

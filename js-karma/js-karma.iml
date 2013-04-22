@@ -9,8 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="JavaScriptLanguage" />
-    <orderEntry type="module" module-name="NodeJS" />
-    <orderEntry type="module" module-name="testRunner" />
     <orderEntry type="module" module-name="smRunner" />
     <orderEntry type="module" module-name="webide-api" />
   </component>
