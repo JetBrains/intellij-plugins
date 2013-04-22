@@ -6,7 +6,6 @@ import com.intellij.javascript.flex.mxml.schema.CodeContextHolder;
 import com.intellij.javascript.flex.mxml.schema.FlexSchemaHandler;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
 import com.intellij.openapi.module.Module;
@@ -47,7 +46,7 @@ public class NewFlexComponentAction extends NewActionScriptClassAction {
     return FlexBundle.message("new.flex.component.command.name");
   }
 
-  public static void setParentComponent(final XmlBackedJSClassImpl clazz, final String newParentQname) {
+  public static void setParentComponent(final MxmlJSClass clazz, final String newParentQname) {
     Pair<String, String> prefixAndNamespace = getPrefixAndNamespace(clazz.getParent(), newParentQname);
     clazz.setBaseComponent(newParentQname, prefixAndNamespace.first, prefixAndNamespace.second);
   }

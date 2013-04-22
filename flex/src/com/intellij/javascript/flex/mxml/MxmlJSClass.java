@@ -10,13 +10,16 @@ import com.intellij.lang.javascript.psi.resolve.ImplicitJSVariableImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.psi.types.JSTypeBackedByClass;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.CachedValue;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.xml.XmlAttribute;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
@@ -27,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.intellij.lang.javascript.psi.JSCommonTypeNames.OBJECT_CLASS_NAME;
 
@@ -51,6 +55,8 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
   private static final String[] TAGS_THAT_ALLOW_ANY_XML_CONTENT = {PRIVATE_TAG_NAME, XML_TAG_NAME, XMLLIST_TAG_NAME,
     FlexPredefinedTagNames.MODEL};
   @NonNls private static final String FXG_SUPER_CLASS = "spark.core.SpriteVisualElement";
+
+  private static final Logger LOG = Logger.getInstance(MxmlJSClass.class);
 
   private static Key<CachedValue<List<JSVariable>>> ourSkinComponentPredefinedVarsKey = Key.create("ourskinComponentPredefinedVarsKey");
   private static JSResolveUtil.ImplicitVariableProvider skinComponentPredefinedVars = new JSResolveUtil.ImplicitVariableProvider() {
@@ -93,6 +99,7 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
 
   private static Key<CachedValue<List<JSVariable>>> ourInlineComponentRenderPredefinedVarsKey = Key.create("ourInlineComponentRenderPredefinedVarsKey");
 
+  private volatile JSReferenceList myImplementsList;
   private final boolean isFxgBackedClass;
 
   public MxmlJSClass(XmlTag tag) {
@@ -154,7 +161,63 @@ public class MxmlJSClass extends XmlBackedJSClassImpl {
     if (isFxgBackedClass) {
       return null;
     }
-    return super.getImplementsList();
+    JSReferenceList refList = myImplementsList;
+
+    if (refList == null) {
+      final XmlTag rootTag = getParent();
+      myImplementsList = refList = createReferenceList(rootTag != null ? rootTag.getAttributeValue(IMPLEMENTS_ATTRIBUTE) : null);
+    }
+    return refList;
+  }
+
+  @Override
+  public void addToImplementsList(String refText) {
+    XmlAttribute attribute = getParent().getAttribute(IMPLEMENTS_ATTRIBUTE);
+    if (attribute == null) {
+      getParent().setAttribute(IMPLEMENTS_ATTRIBUTE, refText);
+    }
+    else {
+      attribute.setValue(attribute.getValue() + ", " + refText);
+    }
+    myImplementsList = null;
+  }
+
+  @Override
+  public void removeFromImplementsList(String refText) {
+    String[] refs = getImplementsList().getReferenceTexts();
+    LOG.assertTrue(ArrayUtil.contains(refText, refs));
+    XmlAttribute attribute = getParent().getAttribute(IMPLEMENTS_ATTRIBUTE);
+    if (refs.length == 1) {
+      attribute.delete();
+    }
+    else {
+      String[] newRefs = ArrayUtil.remove(refs, refText);
+      attribute.setValue(StringUtil.join(newRefs, ", "));
+    }
+    myImplementsList = null;
+  }
+
+  public void setBaseComponent(String qName, String prefix, String namespace) {
+    setBaseComponent(getParent(), qName, prefix, namespace);
+    myExtendsList = null;
+  }
+
+  public static void setBaseComponent(XmlTag rootTag, String qName, String prefix, String namespace) {
+    Map<String, String> existingPrefix2Namespace = rootTag.getLocalNamespaceDeclarations();
+    for (Map.Entry<String, String> entry : existingPrefix2Namespace.entrySet()) {
+      if (entry.getValue().equals(namespace)) {
+        rootTag.setName(entry.getKey() + ":" + StringUtil.getShortName(qName));
+        return;
+      }
+    }
+
+    int postfix = 1;
+    String uniquePrefix = prefix;
+    while (existingPrefix2Namespace.containsKey(uniquePrefix)) {
+      uniquePrefix = prefix + postfix++;
+    }
+    rootTag.setName(uniquePrefix + ":" + StringUtil.getShortName(qName));
+    rootTag.setAttribute("xmlns:" + uniquePrefix, namespace);
   }
 
   @Override

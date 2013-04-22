@@ -17,6 +17,7 @@
 package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.*;
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.javascript.flex.ECMAScriptImportOptimizer;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.ImportUtils;
@@ -847,7 +848,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
         Callable<DiagramEdge<Object>> callable = new Callable<DiagramEdge<Object>>() {
           @Override
           public DiagramEdge<Object> call() throws Exception {
-            NewFlexComponentAction.setParentComponent((XmlBackedJSClassImpl)fromClass, toClass.getQualifiedName());
+            NewFlexComponentAction.setParentComponent((MxmlJSClass)fromClass, toClass.getQualifiedName());
             return addEdgeAndRefresh(from, to, DiagramRelationships.GENERALIZATION);
           }
         };
