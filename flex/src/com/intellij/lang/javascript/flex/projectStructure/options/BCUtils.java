@@ -9,7 +9,7 @@ import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.ui.JSClassChooserDialog;
+import com.intellij.lang.javascript.psi.impl.PublicInheritorFilter;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -166,7 +166,7 @@ public class BCUtils {
     }
   }
 
-  public static JSClassChooserDialog.PublicInheritor getMainClassFilter(@NotNull Module module,
+  public static PublicInheritorFilter getMainClassFilter(@NotNull Module module,
                                                                         @Nullable FlexBuildConfiguration bc,
                                                                         final boolean rlm,
                                                                         final boolean includeTests,
@@ -176,7 +176,7 @@ public class BCUtils {
     final GlobalSearchScope filterScope = bc == null
                                           ? module.getModuleWithDependenciesAndLibrariesScope(includeTests)
                                           : FlexUtils.getModuleWithDependenciesAndLibrariesScope(module, bc, includeTests);
-    return new JSClassChooserDialog.PublicInheritor(module.getProject(), baseClass, filterScope, true, caching);
+    return new PublicInheritorFilter(module.getProject(), baseClass, filterScope, true, caching);
   }
 
   public static boolean isValidMainClass(final Module module,

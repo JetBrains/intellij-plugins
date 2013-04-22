@@ -6,9 +6,9 @@ import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.impl.PublicInheritorFilter;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
-import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -104,7 +104,7 @@ public class CreateFlexSkinDialog extends DialogWrapper {
 
   public static JSReferenceEditor createHostComponentCombo(String text, Module module) {
     final GlobalSearchScope scope = getHostComponentScope(module);
-    Condition<JSClass> filter = new JSClassChooserDialog.PublicInheritor(module.getProject(), SKINNABLE_COMPONENT_CLASS, scope, true);
+    Condition<JSClass> filter = new PublicInheritorFilter(module.getProject(), SKINNABLE_COMPONENT_CLASS, scope, true);
     return JSReferenceEditor.forClassName(text, module.getProject(), HOST_COMPONENT_RECENT_KEY, scope, null, filter,
                                           FlexBundle.message("choose.host.component"));
   }

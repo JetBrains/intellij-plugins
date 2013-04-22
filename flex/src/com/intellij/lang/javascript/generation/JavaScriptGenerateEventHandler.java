@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
+import com.intellij.lang.javascript.psi.impl.PublicInheritorFilter;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
@@ -280,7 +281,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
         final GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
         final JSClassChooserDialog dialog =
           new JSClassChooserDialog(module.getProject(), FlexBundle.message("choose.event.class.title"), scope, getEventBaseClass(),
-                                   new JSClassChooserDialog.PublicInheritor(module.getProject(),
+                                   new PublicInheritorFilter(module.getProject(),
                                                                             JSAnnotatingVisitor.FLASH_EVENT_FQN,
                                                                             scope,
                                                                             false));

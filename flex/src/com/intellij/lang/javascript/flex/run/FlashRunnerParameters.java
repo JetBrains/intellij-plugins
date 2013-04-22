@@ -426,7 +426,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
       }
 
       // no check until IDEA-83046
-      //JSClassChooserDialog.PublicInheritor mainClassFilter = BCUtils.getMainClassFilter(moduleAndBC.first, bc, false);
+      //JSClassChooserDialog.PublicInheritorFilter mainClassFilter = BCUtils.getMainClassFilter(moduleAndBC.first, bc, false);
       //if (!mainClassFilter.value((JSClass)clazz)) {
       //  throw new RuntimeConfigurationError(
       //    FlexBundle.message("main.class.is.not.a.subclass.of", myOverriddenMainClass, mainClassFilter.getSuperClassName()));

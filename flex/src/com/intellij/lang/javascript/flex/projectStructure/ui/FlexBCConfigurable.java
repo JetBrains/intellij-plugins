@@ -19,8 +19,8 @@ import com.intellij.lang.javascript.flex.projectStructure.model.impl.FlexProject
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.impl.PublicInheritorFilter;
 import com.intellij.lang.javascript.refactoring.ui.JSReferenceEditor;
-import com.intellij.lang.javascript.ui.JSClassChooserDialog;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
@@ -140,7 +140,7 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
   private final UserActivityListener myUserActivityListener;
   private boolean myFreeze;
 
-  private JSClassChooserDialog.PublicInheritor myMainClassFilter;
+  private PublicInheritorFilter myMainClassFilter;
 
   public FlexBCConfigurable(final Module module,
                             final ModifiableFlexBuildConfiguration bc,
