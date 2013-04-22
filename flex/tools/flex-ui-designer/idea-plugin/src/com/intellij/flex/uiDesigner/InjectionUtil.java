@@ -2,7 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.impl.JSFileReference;
+import com.intellij.lang.javascript.flex.JSFileReference;
 import com.intellij.lang.properties.ResourceBundleReference;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
