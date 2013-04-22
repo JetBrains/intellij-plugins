@@ -7,7 +7,6 @@ import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.properties.JSPropertiesSupport;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
@@ -46,8 +45,8 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
   }
 
   @NonNls private static final String BUNDLE_ATTR_NAME = "bundle";
-  private static final JSPropertiesSupport.PropertyReferenceInfoProvider<JSAttributeNameValuePairImpl> ourPropertyInfoProvider =
-    new JSPropertiesSupport.PropertyReferenceInfoProvider<JSAttributeNameValuePairImpl>() {
+  private static final FlexPropertiesSupport.PropertyReferenceInfoProvider<JSAttributeNameValuePairImpl> ourPropertyInfoProvider =
+    new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSAttributeNameValuePairImpl>() {
       @Nullable
       public TextRange getReferenceRange(JSAttributeNameValuePairImpl element) {
         return getValueRange(element);
@@ -63,8 +62,8 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
       }
     };
   private static final Key<JSReferenceSet> METADATA_REFERENCE_KEY = Key.create("com.intellij.lang.javascript.METADATA_REFERENCE_KEY");
-  private static final JSPropertiesSupport.BundleReferenceInfoProvider<JSAttributeNameValuePairImpl> ourBundleInfoProvider =
-    new JSPropertiesSupport.BundleReferenceInfoProvider<JSAttributeNameValuePairImpl>() {
+  private static final FlexPropertiesSupport.BundleReferenceInfoProvider<JSAttributeNameValuePairImpl> ourBundleInfoProvider =
+    new FlexPropertiesSupport.BundleReferenceInfoProvider<JSAttributeNameValuePairImpl>() {
       public TextRange getReferenceRange(JSAttributeNameValuePairImpl element) {
         return getValueRange(element);
       }
@@ -139,7 +138,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
 
     final @NonNls String parentName = ((JSAttribute)element.getParent()).getName();
     if ("ResourceBundle".equals(parentName)) {
-      return JSPropertiesSupport.getInstance().getResourceBundleReference(element, ourBundleInfoProvider);
+      return FlexPropertiesSupport.getResourceBundleReference(element, ourBundleInfoProvider);
     }
 
     if (FlexAnnotationNames.EMBED.equals(parentName)) return getPathRefs(element);
@@ -164,7 +163,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     final @NonNls String parentName = attribute.getName();
 
     if (!FlexAnnotationNames.RESOURCE.equals(parentName)) return PsiReference.EMPTY_ARRAY;
-    return JSPropertiesSupport.getInstance().getResourceBundleReference(element, ourBundleInfoProvider);
+    return FlexPropertiesSupport.getResourceBundleReference(element, ourBundleInfoProvider);
   }
 
   private static PsiReference[] getPropertyRefsCheckingParent(JSAttributeNameValuePairImpl element) {
@@ -172,7 +171,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
     final @NonNls String parentName = attribute.getName();
 
     if (!FlexAnnotationNames.RESOURCE.equals(parentName)) return PsiReference.EMPTY_ARRAY;
-    return JSPropertiesSupport.getInstance().getPropertyReferences(element, ourPropertyInfoProvider);
+    return FlexPropertiesSupport.getPropertyReferences(element, ourPropertyInfoProvider);
   }
 
   private static PsiReference[] getPathRefsCheckingParent(JSAttributeNameValuePairImpl element) {

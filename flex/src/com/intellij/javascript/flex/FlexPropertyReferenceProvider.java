@@ -1,6 +1,5 @@
 package com.intellij.javascript.flex;
 
-import com.intellij.lang.javascript.properties.JSPropertiesSupport;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl;
@@ -44,7 +43,6 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
            (qualifier instanceof JSCallExpression &&
             ((JSCallExpression)qualifier).getMethodExpression() instanceof JSReferenceExpression))) {
         final JSExpression[] args = ((JSArgumentList)parent).getArguments();
-        JSPropertiesSupport propertiesSupport = JSPropertiesSupport.getInstance();
 
         boolean propertyRef = false;
         boolean bundleRef = false;
@@ -75,13 +73,13 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
         }
 
         if (propertyRef) {
-          JSPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl> provider =
+          FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl> provider =
             isSoft ? ourSoftPropertyInfoProvider : ourPropertyInfoProvider;
 
           if (args.length > 1 && !isSoft && args[0] instanceof JSLiteralExpression) {
             final String myText = args[0].getText();
 
-            provider = new JSPropertiesSupport.PropertyReferenceInfoProvider<com.intellij.lang.javascript.psi.impl.JSLiteralExpressionImpl>() {
+            provider = new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
               public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
                 return getValueRange(element);
               }
@@ -95,10 +93,10 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
               }
             };
           }
-          Collections.addAll(result, propertiesSupport.getPropertyReferences((JSLiteralExpressionImpl)element, provider));
+          Collections.addAll(result, FlexPropertiesSupport.getPropertyReferences((JSLiteralExpressionImpl)element, provider));
         }
         else if (bundleRef) {
-          PsiReference[] reference = propertiesSupport.getResourceBundleReference((JSLiteralExpressionImpl)element,
+          PsiReference[] reference = FlexPropertiesSupport.getResourceBundleReference((JSLiteralExpressionImpl)element,
                                                                                   isSoft
                                                                                   ? ourSoftBundleInfoProvider
                                                                                   : ourBundleInfoProvider);
@@ -109,8 +107,8 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
     return result.toArray(new PsiReference[result.size()]);
   }
 
-  private static final JSPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl> ourPropertyInfoProvider =
-    new JSPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
+  private static final FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl> ourPropertyInfoProvider =
+    new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
       public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
         return getValueRange(element);
       }
@@ -124,8 +122,8 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
       }
     };
 
-  private static final JSPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl> ourSoftPropertyInfoProvider =
-    new JSPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
+  private static final FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl> ourSoftPropertyInfoProvider =
+    new FlexPropertiesSupport.PropertyReferenceInfoProvider<JSLiteralExpressionImpl>() {
       public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
         return getValueRange(element);
       }
@@ -140,8 +138,8 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
     };
 
 
-  private static final JSPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl> ourBundleInfoProvider =
-    new JSPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl>() {
+  private static final FlexPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl> ourBundleInfoProvider =
+    new FlexPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl>() {
       public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
         return getValueRange(element);
       }
@@ -151,8 +149,8 @@ public class FlexPropertyReferenceProvider extends PsiReferenceProvider {
       }
     };
 
-  private static final JSPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl> ourSoftBundleInfoProvider =
-    new JSPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl>() {
+  private static final FlexPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl> ourSoftBundleInfoProvider =
+    new FlexPropertiesSupport.BundleReferenceInfoProvider<JSLiteralExpressionImpl>() {
       public TextRange getReferenceRange(JSLiteralExpressionImpl element) {
         return getValueRange(element);
       }

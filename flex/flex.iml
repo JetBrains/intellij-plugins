@@ -31,6 +31,7 @@
     <orderEntry type="module" module-name="copyright" />
     <orderEntry type="module" module-name="jps-builders" />
     <orderEntry type="library" name="Velocity" level="project" />
+    <orderEntry type="module" module-name="properties" />
   </component>
 </module>
 
