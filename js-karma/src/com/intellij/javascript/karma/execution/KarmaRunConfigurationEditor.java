@@ -3,6 +3,8 @@ package com.intellij.javascript.karma.execution;
 import com.intellij.javascript.karma.KarmaBundle;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
+import com.intellij.javascript.nodejs.NodeSettings;
+import com.intellij.javascript.nodejs.NodeUIUtil;
 import com.intellij.lang.javascript.JavaScriptFileType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
@@ -15,9 +17,8 @@ import com.intellij.psi.search.ProjectScope;
 import com.intellij.ui.TextFieldWithHistory;
 import com.intellij.ui.TextFieldWithHistoryWithBrowseButton;
 import com.intellij.util.Function;
-import com.intellij.util.Producer;
+import com.intellij.util.NotNullProducer;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.javascript.nodejs.NodeUIUtil;
 import com.intellij.webcore.ui.SwingHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,7 +64,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     ));
 
     myKarmaPackageDirPathTextFieldWithBrowseButton = createKarmaPackageDirPathTextField(project);
-    panel.add(new JLabel("Directory of Karma Node.js package:"), new GridBagConstraints(
+    panel.add(new JLabel("Karma Node.js package:"), new GridBagConstraints(
       0, 2,
       1, 1,
       0.0, 0.0,
@@ -107,15 +108,20 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   private static TextFieldWithHistoryWithBrowseButton createKarmaPackageDirPathTextField(@NotNull final Project project) {
     TextFieldWithHistoryWithBrowseButton karmaPackageDirPathComponent = new TextFieldWithHistoryWithBrowseButton();
     final TextFieldWithHistory textFieldWithHistory = karmaPackageDirPathComponent.getChildComponent();
-    SwingHelper.addHistoryOnExpansion(textFieldWithHistory, new Producer<List<String>>() {
-      @Nullable
+    SwingHelper.addHistoryOnExpansion(textFieldWithHistory, new NotNullProducer<List<String>>() {
+      @NotNull
       @Override
       public List<String> produce() {
+        NodeSettings nodeSettings = KarmaGlobalSettingsUtil.getNodeSettings();
+        if (nodeSettings != null) {
+          nodeSettings.initGlobalNodeModulesDir();
+        }
         List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
         NodeModuleSearchUtil.findModulesWithName(modules,
-                                                 KarmaGlobalSettingsUtil.NODE_NODE_PACKAGE_NAME,
+                                                 KarmaGlobalSettingsUtil.NODE_PACKAGE_NAME,
                                                  project.getBaseDir(),
-                                                 KarmaGlobalSettingsUtil.getNodeSettings());
+                                                 nodeSettings,
+                                                 true);
         List<String> moduleDirs = ContainerUtil.newArrayListWithExpectedSize(modules.size());
         for (CompletionModuleInfo module : modules) {
           VirtualFile dir = module.getVirtualFile();
@@ -140,8 +146,8 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   private static TextFieldWithHistoryWithBrowseButton createConfigurationFileTextField(@NotNull final Project project) {
     TextFieldWithHistoryWithBrowseButton textFieldWithHistoryWithBrowseButton = new TextFieldWithHistoryWithBrowseButton();
     final TextFieldWithHistory textFieldWithHistory = textFieldWithHistoryWithBrowseButton.getChildComponent();
-    SwingHelper.addHistoryOnExpansion(textFieldWithHistory, new Producer<List<String>>() {
-      @Nullable
+    SwingHelper.addHistoryOnExpansion(textFieldWithHistory, new NotNullProducer<List<String>>() {
+      @NotNull
       @Override
       public List<String> produce() {
         List<VirtualFile> newFiles = listPossibleConfigFilesInProject(project);
