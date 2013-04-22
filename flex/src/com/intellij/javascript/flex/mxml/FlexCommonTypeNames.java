@@ -16,4 +16,7 @@ public interface FlexCommonTypeNames {
   String SPARK_APPLICATION = "spark.components.Application";
 
   String IVISUAL_ELEMENT = "mx.core.IVisualElement";
+
+  String FLASH_EVENT_FQN = "flash.events.Event";
+  String STARLING_EVENT_FQN = "starling.events.Event";
 }

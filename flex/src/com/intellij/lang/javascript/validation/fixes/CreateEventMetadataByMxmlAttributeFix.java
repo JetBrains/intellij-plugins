@@ -4,12 +4,12 @@ import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
-import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
@@ -67,7 +67,7 @@ public class CreateEventMetadataByMxmlAttributeFix extends BaseCreateFix {
       template.addTextSegment("\n");
     }
     template.addTextSegment("[Event(name=\"" + myEventName + "\", type=\"");
-    template.addVariable(new MyExpression(JSAnnotatingVisitor.FLASH_EVENT_FQN), true);
+    template.addVariable(new MyExpression(FlexCommonTypeNames.FLASH_EVENT_FQN), true);
     template.addTextSegment("\")]");
     if (!addingToMxml) {
       template.addTextSegment("\n");

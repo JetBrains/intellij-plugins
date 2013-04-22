@@ -1,23 +1,31 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.codeInsight.daemon.ImplicitUsageProvider;
+import com.intellij.javascript.flex.FlexAnnotationNames;
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitSupport;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationForm;
 import com.intellij.lang.javascript.flex.run.FlashRunConfigurationProducer;
 import com.intellij.lang.javascript.psi.JSFunction;
+import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttribute;
+import com.intellij.util.Processor;
+import org.jetbrains.annotations.NonNls;
 
 /**
  * User: Maxim.Mossienko
@@ -49,7 +57,42 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
     }
     else if (element instanceof JSVariable) {
       if (isAnnotatedByUnknownAttribute((JSAttributeListOwner)element)) return true;
+
+      if (JSResolveUtil.findParent(element) instanceof JSClass) {
+        final JSAttributeList varAttrList = ((JSVariable) element).getAttributeList();
+        if (varAttrList != null && varAttrList.findAttributeByName(FlexAnnotationNames.EMBED) != null) {
+          return true;
+        }
+      }
     }
+
+    if (element instanceof JSParameter) {
+      JSFunction function = PsiTreeUtil.getParentOfType(element, JSFunction.class);
+      if (function != null) {
+        final JSParameter[] params = function.getParameters();
+
+        if (params.length == 1 && element == params[0]) {
+          @NonNls String type = ((JSParameter)element).getTypeString();
+          if (type != null) type = JSImportHandlingUtil.resolveTypeName(type, element);
+
+          if (type != null) {
+            if (FlexCommonTypeNames.FLASH_EVENT_FQN.equals(type) ||
+                FlexCommonTypeNames.STARLING_EVENT_FQN.equals(type)) {
+              return true;
+            }
+
+            boolean b = JSResolveUtil.processHierarchy(type, element.getContainingFile(), new Processor<JSClass>() {
+              public boolean process(JSClass jsClass) {
+                return !FlexCommonTypeNames.FLASH_EVENT_FQN.equals(jsClass.getQualifiedName()) &&
+                       !FlexCommonTypeNames.STARLING_EVENT_FQN.equals(jsClass.getQualifiedName());
+              }
+            }, false);
+            if (!b) return true;
+          }
+        }
+      }
+    }
+
     return false;
   }
 

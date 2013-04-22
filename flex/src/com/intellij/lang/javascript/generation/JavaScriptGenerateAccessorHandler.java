@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.generation;
 
 import com.intellij.codeInsight.template.Template;
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -15,7 +16,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
-import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.lang.javascript.validation.fixes.CreateJSVariableIntentionAction;
 import com.intellij.lang.javascript.validation.fixes.JSAttributeListWrapper;
@@ -213,7 +213,7 @@ public class JavaScriptGenerateAccessorHandler extends BaseJSGenerateHandler {
       if ((myMode == GenerationMode.Setter || myMode == GenerationMode.GetterAndSetter) &&
           myEventBinder != null &&
           myEventBinder.isBindEvent()) {
-        ImportUtils.importAndShortenReference(JSAnnotatingVisitor.FLASH_EVENT_FQN, importContext, true, false);
+        ImportUtils.importAndShortenReference(FlexCommonTypeNames.FLASH_EVENT_FQN, importContext, true, false);
         if (myEventBinder.isCreateEventConstant()) {
           createEventConstant(project, editor, variables);
         }

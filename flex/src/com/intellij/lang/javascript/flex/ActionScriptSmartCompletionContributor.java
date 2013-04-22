@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.completion.JSLookupUtilImpl;
@@ -17,7 +18,6 @@ import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.psi.resolve.VariantsProcessor;
 import com.intellij.lang.javascript.search.JSClassSearch;
-import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -220,7 +220,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       myEventsMap = getEventsMap(clazzToProcess);
 
       final PsiElement eventClass1 = JSResolveUtil.unwrapProxy(
-        JSResolveUtil.findClassByQName(JSAnnotatingVisitor.FLASH_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression)));
+        JSResolveUtil.findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression)));
       if ((eventClass1 instanceof JSClass)) {
         setToProcessMembers(true);
         setTypeContext(false);
@@ -233,7 +233,7 @@ public class ActionScriptSmartCompletionContributor extends JSSmartCompletionCon
       }
 
       final PsiElement eventClass2 = JSResolveUtil.unwrapProxy(
-        JSResolveUtil.findClassByQName(JSAnnotatingVisitor.STARLING_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression)));
+        JSResolveUtil.findClassByQName(FlexCommonTypeNames.STARLING_EVENT_FQN, index, ModuleUtilCore.findModuleForPsiElement(expression)));
       if ((eventClass2 instanceof JSClass)) {
         setToProcessMembers(true);
         setTypeContext(false);

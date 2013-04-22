@@ -7,6 +7,7 @@ import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.javascript.*;
@@ -923,7 +924,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
               responsibleElement = ((JSReferenceExpression)params[0]).getQualifier();
             }
 
-            return responsibleElement == null ? FLASH_EVENT_FQN : responsibleElement.getText();
+            return responsibleElement == null ? FlexCommonTypeNames.FLASH_EVENT_FQN : responsibleElement.getText();
           }
         });
       }
@@ -1127,7 +1128,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
               ASTNode treeFromText =
                 JSChangeUtil.createJSTreeFromText(
                   expr.getProject(),
-                  "function f(event:" + (jsClass != null ? jsClass.getQualifiedName() : JSAnnotatingVisitor.FLASH_EVENT_FQN) + ") {}",
+                  "function f(event:" + (jsClass != null ? jsClass.getQualifiedName() : FlexCommonTypeNames.FLASH_EVENT_FQN) + ") {}",
                   JavaScriptSupportLoader.ECMA_SCRIPT_L4
                 );
               return ((JSFunction)treeFromText.getPsi()).getParameterList();
@@ -1153,8 +1154,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
           final String actualParameterType = parameters[0].getType().getResolvedTypeText();
 
           if (expectedEventClass == null) {
-            if (!JSResolveUtil.isAssignableType(JSAnnotatingVisitor.FLASH_EVENT_FQN, actualParameterType, parameters[0]) &&
-                !JSResolveUtil.isAssignableType(JSAnnotatingVisitor.STARLING_EVENT_FQN, actualParameterType, parameters[0])) {
+            if (!JSResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_EVENT_FQN, actualParameterType, parameters[0]) &&
+                !JSResolveUtil.isAssignableType(FlexCommonTypeNames.STARLING_EVENT_FQN, actualParameterType, parameters[0])) {
               JSAnnotatingVisitor.registerProblem(
                 expr instanceof JSFunctionExpression ? parameters[0] : expr,
                 JSBundle.message("javascript.callback.signature.mismatch"),
@@ -1226,8 +1227,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       PsiElement resolve = ((JSReferenceExpression)adHocQualifierExpr).resolve();
       if (resolve instanceof JSClass) {
         JSClass clazz = (JSClass)resolve;
-        if (JSInheritanceUtil.isParentClass((JSClass)resolve, JSAnnotatingVisitor.FLASH_EVENT_FQN, false) ||
-            JSInheritanceUtil.isParentClass((JSClass)resolve, JSAnnotatingVisitor.STARLING_EVENT_FQN, false)) {
+        if (JSInheritanceUtil.isParentClass((JSClass)resolve, FlexCommonTypeNames.FLASH_EVENT_FQN, false) ||
+            JSInheritanceUtil.isParentClass((JSClass)resolve, FlexCommonTypeNames.STARLING_EVENT_FQN, false)) {
           return clazz;
         }
       }

@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.generation;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.template.*;
+import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -21,7 +22,6 @@ import com.intellij.lang.javascript.psi.impl.PublicInheritorFilter;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.ui.JSClassChooserDialog;
-import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.application.ApplicationManager;
@@ -196,13 +196,13 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
   }
 
   public static boolean isEventClass(final JSClass jsClass) {
-    final PsiElement eventClass = JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(JSAnnotatingVisitor.FLASH_EVENT_FQN, jsClass));
+    final PsiElement eventClass = JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, jsClass));
     if ((eventClass instanceof JSClass) && JSInheritanceUtil.isParentClass(jsClass, (JSClass)eventClass)) {
       return true;
     }
 
     final PsiElement eventClass2 =
-      JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(JSAnnotatingVisitor.STARLING_EVENT_FQN, jsClass));
+      JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(FlexCommonTypeNames.STARLING_EVENT_FQN, jsClass));
     if ((eventClass2 instanceof JSClass) && JSInheritanceUtil.isParentClass(jsClass, (JSClass)eventClass2)) {
       return true;
     }
@@ -241,7 +241,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
       eventHandlerName = "eventHandler";
       eventHandlerName2 = "onEvent";
       methodBody = "";
-      eventClassFqn = JSAnnotatingVisitor.FLASH_EVENT_FQN;
+      eventClassFqn = FlexCommonTypeNames.FLASH_EVENT_FQN;
       userCancelled = false;
     }
 
@@ -282,7 +282,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
         final JSClassChooserDialog dialog =
           new JSClassChooserDialog(module.getProject(), FlexBundle.message("choose.event.class.title"), scope, getEventBaseClass(),
                                    new PublicInheritorFilter(module.getProject(),
-                                                                            JSAnnotatingVisitor.FLASH_EVENT_FQN,
+                                                                            FlexCommonTypeNames.FLASH_EVENT_FQN,
                                                                             scope,
                                                                             false));
         if (dialog.showDialog()) {
@@ -425,7 +425,7 @@ public class JavaScriptGenerateEventHandler extends BaseJSGenerateHandler {
     @Nullable
     private JSClass getEventBaseClass() {
       final PsiElement eventClass = JSResolveUtil
-        .unwrapProxy(JSResolveUtil.findClassByQName(JSAnnotatingVisitor.FLASH_EVENT_FQN, myJsClass));
+        .unwrapProxy(JSResolveUtil.findClassByQName(FlexCommonTypeNames.FLASH_EVENT_FQN, myJsClass));
       if (eventClass instanceof JSClass) return (JSClass)eventClass;
       return null;
     }
