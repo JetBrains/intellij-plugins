@@ -716,6 +716,8 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
           return new JSReferenceSet(element, attrValue, myRange.getStartOffset(), false, false, true).getReferences();
         }
       });
+
+    registrar.registerReferenceProvider(psiElement(JSLiteralExpression.class), new FlexPropertyReferenceProvider());
   }
 
   private static PsiReferenceProvider createReferenceProviderForTagOrAttributeExpectingJSClass(final QuickFixProvider<PsiReference> quickFixProvider) {
