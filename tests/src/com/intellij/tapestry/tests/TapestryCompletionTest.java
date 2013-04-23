@@ -58,7 +58,7 @@ public class TapestryCompletionTest extends TapestryBaseTestCase {
   public void testAttrNameInHtmlParent1() throws Throwable {
     CamelHumpMatcher.forceStartMatching(getTestRootDisposable());
     initByComponent();
-    doTestBasicCompletionVariants("t:id", "t:type", "tabindex", "target", "title", "type");
+    doTestBasicCompletionVariants("t:id", "t:type", "tabindex", "target", "title", "translate", "type");
   }
 
   public void testAttrNameInTmlParent() throws Throwable {
