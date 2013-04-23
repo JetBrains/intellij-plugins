@@ -9,14 +9,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author: Fedor.Korotkov
@@ -59,9 +57,7 @@ public class DartAnalyzerDriver {
     final GeneralCommandLine command = new GeneralCommandLine();
     command.setExePath(analyzerExecutable.getPath());
 
-    final Map<String, String> envParams = new THashMap<String, String>();
-    envParams.put("com.google.dart.sdk", sdkPath);
-    command.setEnvParams(envParams);
+    command.setEnvironment("com.google.dart.sdk", sdkPath);
 
     try {
       command.addParameter("--ignore-unrecognized-flags");

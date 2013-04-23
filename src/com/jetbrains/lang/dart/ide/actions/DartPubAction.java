@@ -35,7 +35,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLFile;
 
 import java.nio.charset.Charset;
-import java.util.Collections;
 
 /**
  * @author: Fedor.Korotkov
@@ -102,7 +101,7 @@ public class DartPubAction extends AnAction {
 
         final DartSettings dartSettings = getSettings(psiFile);
         if (dartSettings != null) {
-          command.setEnvParams(Collections.singletonMap("DART_SDK", settings.getSdkPath()));
+          command.setEnvironment("DART_SDK", settings.getSdkPath());
         }
 
         // save on disk

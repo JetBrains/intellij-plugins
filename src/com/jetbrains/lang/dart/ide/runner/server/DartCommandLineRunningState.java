@@ -19,10 +19,7 @@ import com.jetbrains.lang.dart.ide.runner.DartStackTraceMessageFiler;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
-import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 /**
  * @author: Fedor.Korotkov
@@ -63,7 +60,7 @@ public class DartCommandLineRunningState extends CommandLineState {
 
     commandLine.setExePath(dartExecutablePath);
     commandLine.setWorkDirectory(PathUtil.getParentPath(module.getModuleFilePath()));
-    commandLine.setPassParentEnvs(true);
+    commandLine.setPassParentEnvironment(true);
 
     setupUserProperties(
       module,
@@ -81,9 +78,7 @@ public class DartCommandLineRunningState extends CommandLineState {
   private void setupUserProperties(@NotNull Module module,
                                    GeneralCommandLine commandLine,
                                    @NotNull DartSettings sdk) {
-    final Map<String, String> envParams = new THashMap<String, String>();
-    envParams.put("com.google.dart.sdk", sdk.getSdkPath());
-    commandLine.setEnvParams(envParams);
+    commandLine.setEnvironment("com.google.dart.sdk", sdk.getSdkPath());
 
     commandLine.addParameter("--ignore-unrecognized-flags");
 
