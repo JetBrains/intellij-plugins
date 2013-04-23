@@ -15,13 +15,14 @@ import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
-import com.intellij.javascript.nodejs.NodeSettings;
+import com.intellij.javascript.karma.execution.javascript.KarmaJavaScriptSourcesUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.testIntegration.TestLocationProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,14 +35,20 @@ public class KarmaTestRunnerState extends CommandLineState {
 
   private final Project myProject;
   private final ExecutionEnvironment myExecutionEnvironment;
+  private final String myNodeInterpreterPath;
+  private final String myKarmaPackageDir;
   private final KarmaRunSettings myRunSettings;
 
   public KarmaTestRunnerState(@NotNull Project project,
                               @NotNull ExecutionEnvironment executionEnvironment,
+                              @NotNull String nodeInterpreterPath,
+                              @NotNull String karmaPackageDir,
                               @NotNull KarmaRunSettings runSettings) {
     super(executionEnvironment);
     myProject = project;
     myExecutionEnvironment = executionEnvironment;
+    myNodeInterpreterPath = nodeInterpreterPath;
+    myKarmaPackageDir = karmaPackageDir;
     myRunSettings = runSettings;
   }
 
@@ -93,13 +100,20 @@ public class KarmaTestRunnerState extends CommandLineState {
   }
 
   @NotNull
-  private static GeneralCommandLine createCommandLine(@NotNull KarmaRunSettings runSettings) {
-    NodeSettings nodeSettings = KarmaGlobalSettingsUtil.getNodeSettings();
+  private GeneralCommandLine createCommandLine(@NotNull KarmaRunSettings runSettings) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
-    commandLine.setExePath(nodeSettings.getInterpreterPath());
     File configFile = new File(runSettings.getConfigPath());
+    // looks like it should work with any working directory
     commandLine.setWorkDirectory(configFile.getParentFile());
-    //commandLine.addParameter();
+    commandLine.setExePath(myNodeInterpreterPath);
+    try {
+      File clientAppFile = KarmaJavaScriptSourcesUtil.getClientAppFile();
+      commandLine.addParameter(clientAppFile.getAbsolutePath());
+    }
+    catch (IOException e) {
+      throw new ExecutionException("Can't find karma client runner", e);
+    }
+    commandLine.addParameter(myKarmaPackageDir);
     return commandLine;
   }
 

@@ -24,6 +24,7 @@ import java.io.File;
 public class KarmaRunConfiguration extends RunConfigurationBase implements LocatableConfiguration, RefactoringListenerProvider {
 
   private KarmaRunSettings myRunSettings = new KarmaRunSettings.Builder().build();
+  private final ThreadLocal<GlobalSettings> myGlobalSettingsRef = new ThreadLocal<GlobalSettings>();
 
   protected KarmaRunConfiguration(@NotNull Project project, @NotNull ConfigurationFactory factory, @NotNull String name) {
     super(project, factory, name);
@@ -64,6 +65,7 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
   @Nullable
   @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
+    myGlobalSettingsRef.remove();
     try {
       checkConfiguration();
     }
@@ -73,22 +75,49 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
     catch (RuntimeConfigurationException e) {
       // does nothing
     }
-    return new KarmaTestRunnerState(getProject(), env, myRunSettings);
+    GlobalSettings globalSettings = myGlobalSettingsRef.get();
+    if (globalSettings == null) {
+      return null;
+    }
+    return new KarmaTestRunnerState(getProject(), env,
+                                    globalSettings.myNodeInterpreterPath,
+                                    globalSettings.myKarmaNodePackage,
+                                    myRunSettings);
   }
 
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
+    String nodeInterpreterPath = KarmaGlobalSettingsUtil.getNodeInterpreterPath();
+    if (nodeInterpreterPath == null || nodeInterpreterPath.trim().isEmpty()) {
+      throw new RuntimeConfigurationError("Please specify Node.js interpreter.");
+    }
+    File nodeInterpreter = new File(nodeInterpreterPath);
+    if (!nodeInterpreter.isFile() || !nodeInterpreter.canExecute() || !nodeInterpreter.isAbsolute()) {
+      throw new RuntimeConfigurationError("Incorrect Node.js interpreter path.");
+    }
+
+    String karmaPackagePath = KarmaGlobalSettingsUtil.getKarmaNodePackageDir(getProject());
+    if (karmaPackagePath == null || karmaPackagePath.trim().isEmpty()) {
+      throw new RuntimeConfigurationError("Please specify Karma Node.js package.");
+    }
+    File karmaPackageDir = new File(karmaPackagePath);
+    if (!karmaPackageDir.isDirectory() || !karmaPackageDir.isAbsolute()) {
+      throw new RuntimeConfigurationError("Incorrect Karma Node.js package.");
+    }
+
     String configPath = myRunSettings.getConfigPath();
     if (configPath.trim().isEmpty()) {
       throw new RuntimeConfigurationError("Config file path is empty.");
     }
     File configFile = new File(configPath);
     if (!configFile.exists()) {
-      throw new RuntimeConfigurationError("Specified config file '" + configPath + "' does not exist.");
+      throw new RuntimeConfigurationError("Configuration file does not exist.");
     }
     if (!configFile.isFile()) {
       throw new RuntimeConfigurationError("Specified config file path is incorrect.");
     }
+
+    myGlobalSettingsRef.set(new GlobalSettings(nodeInterpreterPath, karmaPackagePath));
   }
 
   @NotNull
@@ -134,4 +163,13 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
     return null;
   }
 
+  private static class GlobalSettings {
+    private final String myNodeInterpreterPath;
+    private final String myKarmaNodePackage;
+
+    private GlobalSettings(@NotNull String karmaNodePackage, @NotNull String nodeInterpreterPath) {
+      myKarmaNodePackage = karmaNodePackage;
+      myNodeInterpreterPath = nodeInterpreterPath;
+    }
+  }
 }
