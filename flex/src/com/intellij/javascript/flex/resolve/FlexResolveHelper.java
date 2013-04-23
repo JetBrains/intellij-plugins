@@ -163,6 +163,11 @@ public class FlexResolveHelper implements JSResolveHelper {
     return true;
   }
 
+  @Override
+  public long getResolveResultTimestamp(PsiElement candidate) {
+    return SwcCatalogXmlUtil.getTimestampFromCatalogXml(candidate);
+  }
+
   public static boolean processAllMxmlAndFxgFiles(final GlobalSearchScope scope,
                                                   Project project,
                                                   final MxmlAndFxgFilesProcessor processor,
