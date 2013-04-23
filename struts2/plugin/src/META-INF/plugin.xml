@@ -69,7 +69,7 @@
     <facetType implementation="com.intellij.struts2.facet.StrutsFacetType"/>
 
     <frameworkSupport implementation="com.intellij.struts2.facet.StrutsFrameworkSupportProvider"/>
-    <framework.detector implementation="com.intellij.struts2.facet.StrutsFacetType$StrutsFrameworkDetector"/>
+    <framework.detector implementation="com.intellij.struts2.facet.StrutsFrameworkDetector"/>
     <library.type implementation="com.intellij.struts2.facet.Struts2LibraryType"/>
 
     <psi.referenceContributor language="XML"
