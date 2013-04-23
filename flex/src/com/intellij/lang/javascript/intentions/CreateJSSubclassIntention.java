@@ -12,6 +12,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.generation.JSNamedElementNode;
 import com.intellij.lang.javascript.generation.JavaScriptImplementMethodsHandler;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
@@ -212,7 +213,9 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
       Collection<JSNamedElementNode> candidates = new ArrayList<JSNamedElementNode>();
       collectCandidates(myClass, candidates);
       ImplementMethodsFix fix = new ImplementMethodsFix(myClass);
-      fix.addElementsToProcessFrom(candidates);
+      for(JSNamedElementNode el: candidates) {
+        fix.addElementToProcess((JSFunction)el.getPsiElement());
+      }
       fix.invoke(myClass.getProject(), null, myClass.getContainingFile());
     }
   }

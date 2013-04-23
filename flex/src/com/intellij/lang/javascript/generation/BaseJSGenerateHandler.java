@@ -123,10 +123,12 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
                      final Editor editor,
                      final PsiFile file,
                      final Collection<JSNamedElementNode> selectedElements,
-                     final BaseCreateMethodsFix createMethodsFix) {
+                     final BaseCreateMethodsFix<JSNamedElement> createMethodsFix) {
     Runnable runnable = new Runnable() {
       public void run() {
-        createMethodsFix.addElementsToProcessFrom(selectedElements);
+        for(JSNamedElementNode el: selectedElements) {
+          createMethodsFix.addElementToProcess((JSNamedElement)el.getPsiElement());
+          }
         createMethodsFix.beforeInvoke(project, editor, file);
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
