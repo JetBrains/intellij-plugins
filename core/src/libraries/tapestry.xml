@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <artifacts>
-  <artifact version="5.3.3">
+  <artifact version="5.3.6">
     <item name="tapestry-core.jar" version="5.3.3"
-         url="http://repo1.maven.org/maven2/org/apache/tapestry/tapestry-core/5.3.3/tapestry-core-5.3.3.jar">
+         url="http://repo1.maven.org/maven2/org/apache/tapestry/tapestry-core/5.3.6/tapestry-core-5.3.6.jar">
       <required-class fqn="org.apache.tapestry5.corelib.components.Loop"/>
     </item>
 
-    <item name="tapestry-ioc.jar" version="5.3.3"
-         url="http://repo1.maven.org/maven2/org/apache/tapestry/tapestry-ioc/5.3.3/tapestry-ioc-5.3.3.jar">
+    <item name="tapestry-ioc.jar" version="5.3.6"
+         url="http://repo1.maven.org/maven2/org/apache/tapestry/tapestry-ioc/5.3.6/tapestry-ioc-5.3.6.jar">
       <required-class fqn="org.apache.tapestry5.ioc.Registry"/>
     </item>
-    <item name="tapestry5-annotations.jar" version="5.3.3"
-         url="http://repo1.maven.org/maven2/org/apache/tapestry/tapestry5-annotations/5.3.3/tapestry5-annotations-5.3.3.jar">
+    <item name="tapestry5-annotations.jar" version="5.3.6"
+         url="http://repo1.maven.org/maven2/org/apache/tapestry/tapestry5-annotations/5.3.6/tapestry5-annotations-5.3.6.jar">
       <required-class fqn="org.apache.tapestry5.beaneditor.Validate"/>
     </item>
 

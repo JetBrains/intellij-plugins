@@ -98,7 +98,7 @@ public class TapestryFacetType extends FacetType<TapestryFacet, TapestryFacetCon
       }
 
       TapestryFrameworkSupportProvider.setupConfiguration(configuration, facet.getModule(),
-                                                          TapestryVersion.TAPESTRY_5_3_3);
+                                                          TapestryVersion.TAPESTRY_5_3_6);
     }
   }
 }

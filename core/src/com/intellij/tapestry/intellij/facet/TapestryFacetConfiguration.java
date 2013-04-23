@@ -26,7 +26,7 @@ public class TapestryFacetConfiguration implements FacetConfiguration {
 
   public FacetEditorTab[] createEditorTabs(FacetEditorContext editorContext, FacetValidatorsManager validatorsManager) {
     FacetLibrariesValidator validator = FacetEditorsFactory.getInstance()
-        .createLibrariesValidator(getLibraryInfos(TapestryVersion.TAPESTRY_5_3_3.toString()), new TapestryLibrariesValidatorDescription(), editorContext,
+        .createLibrariesValidator(getLibraryInfos(TapestryVersion.TAPESTRY_5_3_6.toString()), new TapestryLibrariesValidatorDescription(), editorContext,
                                   validatorsManager);
 
     validatorsManager.registerValidator(validator);
