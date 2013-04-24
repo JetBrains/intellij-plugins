@@ -284,7 +284,7 @@ public class FlexBuilderUtils {
       generateAirDescriptor(context, outputConsumer, dirtyFilePaths, bc, descriptorFileName, android, ios);
     }
     else {
-      copyAndFixCustomAirDescriptor(context, outputConsumer, bc, packagingOptions.getCustomDescriptorPath());
+      copyAndFixCustomAirDescriptor(context, outputConsumer, bc, packagingOptions);
     }
   }
 
@@ -380,7 +380,8 @@ public class FlexBuilderUtils {
   private static void copyAndFixCustomAirDescriptor(final CompileContext context,
                                                     final BuildOutputConsumer outputConsumer,
                                                     final JpsFlexBuildConfiguration bc,
-                                                    final String customDescriptorPath) {
+                                                    final JpsAirPackagingOptions packagingOptions) {
+    final String customDescriptorPath = packagingOptions.getCustomDescriptorPath();
     final File descriptorTemplateFile = new File(customDescriptorPath);
     if (!descriptorTemplateFile.isFile()) {
       context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR,
@@ -416,7 +417,9 @@ public class FlexBuilderUtils {
 
 
     try {
-      final File outputFile = new File(outputFolder, descriptorTemplateFile.getName());
+      final String descriptorFileName = bc.isTempBCForCompilation() ? FlexCommonUtils.getGeneratedAirDescriptorName(bc, packagingOptions)
+                                                                    : descriptorTemplateFile.getName();
+      final File outputFile = new File(outputFolder, descriptorFileName);
       FileUtil.writeToFile(outputFile, content.getBytes("UTF-8"));
       outputConsumer.registerOutputFile(outputFile, Collections.singletonList(descriptorTemplateFile.getPath()));
     }

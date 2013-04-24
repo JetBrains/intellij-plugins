@@ -623,8 +623,9 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   private static String getAirDescriptorFileName(final FlexBuildConfiguration bc, final AirPackagingOptions packagingOptions) {
-    return packagingOptions.isUseGeneratedDescriptor() ? BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions)
-                                                       : PathUtil.getFileName(packagingOptions.getCustomDescriptorPath());
+    return packagingOptions.isUseGeneratedDescriptor() || bc.isTempBCForCompilation()
+           ? BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions)
+           : PathUtil.getFileName(packagingOptions.getCustomDescriptorPath());
   }
 
   private static void checkMakeBeforeRunEnabled(final Project project, final RunProfile runProfile) {

@@ -476,7 +476,7 @@ public class FlexCompilationUtils {
       generateAirDescriptor(module, bc, BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions), android, ios);
     }
     else {
-      copyAndFixCustomAirDescriptor(bc, packagingOptions.getCustomDescriptorPath());
+      copyAndFixCustomAirDescriptor(bc, packagingOptions);
     }
   }
 
@@ -627,7 +627,8 @@ public class FlexCompilationUtils {
   }
 
   private static void copyAndFixCustomAirDescriptor(final FlexBuildConfiguration bc,
-                                                    final String customDescriptorPath) throws FlexCompilerException {
+                                                    final AirPackagingOptions packagingOptions) throws FlexCompilerException {
+    final String customDescriptorPath = packagingOptions.getCustomDescriptorPath();
     final VirtualFile descriptorTemplateFile = LocalFileSystem.getInstance().findFileByPath(customDescriptorPath);
     if (descriptorTemplateFile == null) {
       throw new FlexCompilerException(FlexCommonBundle.message("air.descriptor.not.found", customDescriptorPath));
@@ -648,7 +649,9 @@ public class FlexCompilationUtils {
           public void run() {
             try {
               final String content = fixInitialContent(descriptorTemplateFile, PathUtil.getFileName(outputFilePath));
-              FlexUtils.addFileWithContent(descriptorTemplateFile.getName(), content, outputFolder);
+              final String descriptorFileName = bc.isTempBCForCompilation() ? BCUtils.getGeneratedAirDescriptorName(bc, packagingOptions)
+                                                                            : descriptorTemplateFile.getName();
+              FlexUtils.addFileWithContent(descriptorFileName, content, outputFolder);
             }
             catch (FlexCompilerException e) {
               exceptionRef.set(e);
