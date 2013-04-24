@@ -59,7 +59,7 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
     final TextRange textRange = blockStatement.getTextRange();
 
     if (isWithinBounds(textRange, allowedRanges)) {
-      final TextRange range = document == null ? textRange : ArrangementUtil.expandToLine(textRange, document);
+      final TextRange range = document == null ? textRange : ArrangementUtil.expandToLineIfPossible(textRange, document);
       return new ActionScriptArrangementEntry(null, STATIC_INIT, Collections.<ArrangementSettingsToken>emptySet(), range);
     }
 
@@ -74,7 +74,7 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
     final TextRange textRange = varStatement.getTextRange();
 
     if (isWithinBounds(textRange, allowedRanges)) {
-      final TextRange range = document == null ? textRange : ArrangementUtil.expandToLine(textRange, document);
+      final TextRange range = document == null ? textRange : ArrangementUtil.expandToLineIfPossible(textRange, document);
       final JSVariable[] variables = varStatement.getVariables();
 
       if (variables.length > 0) {
@@ -93,7 +93,7 @@ public class ActionScriptArrangementEntry extends DefaultArrangementEntry implem
     final TextRange textRange = function.getTextRange();
 
     if (isWithinBounds(textRange, allowedRanges)) {
-      final TextRange range = document == null ? textRange : ArrangementUtil.expandToLine(textRange, document);
+      final TextRange range = document == null ? textRange : ArrangementUtil.expandToLineIfPossible(textRange, document);
       return new ActionScriptArrangementEntry(function.getName(), getType(function), getModifiers(function), range);
     }
 
