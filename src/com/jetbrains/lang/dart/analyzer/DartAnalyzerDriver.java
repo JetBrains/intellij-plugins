@@ -57,7 +57,7 @@ public class DartAnalyzerDriver {
     final GeneralCommandLine command = new GeneralCommandLine();
     command.setExePath(analyzerExecutable.getPath());
 
-    command.setEnvironment("com.google.dart.sdk", sdkPath);
+    command.getEnvironment().put("com.google.dart.sdk", sdkPath);
 
     try {
       command.addParameter("--ignore-unrecognized-flags");

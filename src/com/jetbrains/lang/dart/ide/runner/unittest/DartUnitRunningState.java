@@ -157,7 +157,7 @@ public class DartUnitRunningState extends CommandLineState {
   }
 
   private void setupUserProperties(GeneralCommandLine commandLine) throws ExecutionException {
-    commandLine.setEnvironment("com.google.dart.sdk", myDartSettings.getSdkPath());
+    commandLine.getEnvironment().put("com.google.dart.sdk", myDartSettings.getSdkPath());
 
     commandLine.addParameter("--ignore-unrecognized-flags");
 

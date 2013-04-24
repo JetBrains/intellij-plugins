@@ -101,7 +101,7 @@ public class DartPubAction extends AnAction {
 
         final DartSettings dartSettings = getSettings(psiFile);
         if (dartSettings != null) {
-          command.setEnvironment("DART_SDK", settings.getSdkPath());
+          command.getEnvironment().put("DART_SDK", settings.getSdkPath());
         }
 
         // save on disk
