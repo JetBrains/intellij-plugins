@@ -80,13 +80,14 @@ public class BeanPropertyPathReference extends PsiReferenceBase<PsiElement>
     for (final Map.Entry<String, PsiMethod> entry : properties.entrySet()) {
       final String propertyName = entry.getKey();
 
-      final PsiMember member = entry.getValue();
-      final PsiType propertyType = PropertyUtil.getPropertyType(member);
+      final PsiMethod psiMethod = entry.getValue();
+      final PsiType propertyType = PropertyUtil.getPropertyType(psiMethod);
       assert propertyType != null;
 
       final LookupElementBuilder variant =
-        LookupElementBuilder.create(propertyName)
-          .withIcon(member.getIcon(0))
+        LookupElementBuilder.create(psiMethod, propertyName)
+          .withIcon(psiMethod.getIcon(0))
+          .withStrikeoutness(psiMethod.isDeprecated())
           .withTypeText(propertyType.getPresentableText());
       variants[i++] = variant;
     }
