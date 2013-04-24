@@ -166,16 +166,24 @@ public abstract class CompilerMessageHandlerBase {
 
   private static boolean isNotSupportedOptionFromGeneratedConfig(final String message, final String filePath) {
     final String fileName = PathUtilRt.getFileName(filePath);
-    return fileName.startsWith("idea-") && fileName.endsWith(".xml") && ("'compiler.locale' is not fully supported.".equals(message) ||
-                                                                         "'compiler.theme' is not fully supported.".equals(message) ||
-                                                                         "'compiler.preloader' is not fully supported.".equals(message));
+    return fileName.startsWith("idea-") && fileName.endsWith(".xml")
+           && ("'compiler.locale' is not fully supported.".equals(message) ||
+               "'compiler.theme' is not fully supported.".equals(message) ||
+               "'compiler.preloader' is not fully supported.".equals(message) ||
+               "'compiler.accessible' is not fully supported.".equals(message) ||
+               "'compiler.fonts.managers' is not fully supported.".equals(message) ||
+               "'static-link-runtime-shared-libraries' is not fully supported.".equals(message));
   }
 
   private void reportPreviousInfoMessage() {
     if (myPreviousUnreportedInfoMessage != null) {
       if (!myPreviousUnreportedInfoMessage.equals("<theme />") &&
           !myPreviousUnreportedInfoMessage.equals("</locale>") &&
-          !myPreviousUnreportedInfoMessage.equals("<preloader>spark.preloaders.SplashScreen</preloader>")) {
+          !myPreviousUnreportedInfoMessage.equals("<preloader>spark.preloaders.SplashScreen</preloader>") &&
+          !myPreviousUnreportedInfoMessage.equals("<accessible>true</accessible>") &&
+          !myPreviousUnreportedInfoMessage.equals("<accessible>false</accessible>") &&
+          !myPreviousUnreportedInfoMessage.equals("</managers>") &&
+          !myPreviousUnreportedInfoMessage.equals("<static-link-runtime-shared-libraries>false</static-link-runtime-shared-libraries>")) {
         myContext.processMessage(new CompilerMessage(myCompilerName, BuildMessage.Kind.INFO, myPreviousUnreportedInfoMessage));
       }
       myPreviousUnreportedInfoMessage = null;

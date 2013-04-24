@@ -154,16 +154,24 @@ public class ASC20CompilationTask extends FlexCompilationTask {
   }
 
   private boolean isNotSupportedOptionFromGeneratedConfig(final String message, final String filePath) {
-    return filePath.equals(getConfigFiles().get(0).getPath()) && ("'compiler.locale' is not fully supported.".equals(message) ||
-                                                                  "'compiler.theme' is not fully supported.".equals(message) ||
-                                                                  "'compiler.preloader' is not fully supported.".equals(message));
+    return filePath.equals(getConfigFiles().get(0).getPath())
+           && ("'compiler.locale' is not fully supported.".equals(message) ||
+               "'compiler.theme' is not fully supported.".equals(message) ||
+               "'compiler.preloader' is not fully supported.".equals(message) ||
+               "'compiler.accessible' is not fully supported.".equals(message) ||
+               "'compiler.fonts.managers' is not fully supported.".equals(message) ||
+               "'static-link-runtime-shared-libraries' is not fully supported.".equals(message));
   }
 
   private void printPreviousLine(final FlexCompilationManager compilationManager) {
     if (myPreviousUnreportedMessage != null) {
       if (!myPreviousUnreportedMessage.equals("<theme />") &&
           !myPreviousUnreportedMessage.equals("</locale>") &&
-          !myPreviousUnreportedMessage.equals("<preloader>spark.preloaders.SplashScreen</preloader>")) {
+          !myPreviousUnreportedMessage.equals("<preloader>spark.preloaders.SplashScreen</preloader>") &&
+          !myPreviousUnreportedMessage.equals("<accessible>true</accessible>") &&
+          !myPreviousUnreportedMessage.equals("<accessible>false</accessible>") &&
+          !myPreviousUnreportedMessage.equals("</managers>") &&
+          !myPreviousUnreportedMessage.equals("<static-link-runtime-shared-libraries>false</static-link-runtime-shared-libraries>")) {
         compilationManager.addMessage(this, CompilerMessageCategory.INFORMATION, myPreviousUnreportedMessage, null, -1, -1);
       }
       myPreviousUnreportedMessage = null;
