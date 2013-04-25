@@ -71,7 +71,7 @@ public class AddImportECMAScriptClassOrFunctionAction implements HintAction, Que
     myUnambiguousTheFlyMode = unambiguousTheFlyMode;
   }
 
-  public boolean showHint(final Editor editor) {
+  public boolean showHint(@NotNull final Editor editor) {
     myEditor = editor;
     final PsiElement element = myReference.getElement();
     TextRange range = InjectedLanguageManager.getInstance(element.getProject()).injectedToHost(element, element.getTextRange());
