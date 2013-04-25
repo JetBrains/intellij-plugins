@@ -1,6 +1,6 @@
 package org.jetbrains.plugins.cucumber.inspections;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.icons.AllIcons;
@@ -232,7 +232,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
   }
 
   private static void createStepDefinition(GherkinStep step, PsiFile file) {
-    if (!CodeInsightUtilBase.prepareFileForWrite(file)) {
+    if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
       return;
     }
 
