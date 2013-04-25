@@ -110,6 +110,19 @@
     </action>
   </package>
 
+
+  <!-- <result-type> ===================================================== -->
+  <package name="testResultTypeParams">
+     <result-types>
+      <result-type name="redirectAction" class="org.apache.struts2.dispatcher.ServletActionRedirectResult">
+        <param name="parse">true</param>
+        <param name="<error descr="Cannot resolve property 'INVALID_VALUE'">INVALID_VALUE</error>">something</param>
+        <param name="encode"><error descr="Cannot convert string 'INVALID_VALUE' to target class 'boolean'">INVALID_VALUE</error></param>
+      </result-type>
+    </result-types>
+  </package>
+
+
   <!-- GLOBAL-RESULT ===================================================== -->
 
   <package name="testGlobalResultParams">

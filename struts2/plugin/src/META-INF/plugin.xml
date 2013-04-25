@@ -135,6 +135,8 @@
                         implementationClass="com.intellij.struts2.dom.struts.impl.InterceptorStackImpl"/>
     <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.action.Result"
                         implementationClass="com.intellij.struts2.dom.struts.impl.ResultImpl"/>
+    <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.strutspackage.ResultType"
+                        implementationClass="com.intellij.struts2.dom.struts.impl.ResultTypeImpl"/>
     <dom.implementation interfaceClass="com.intellij.struts2.dom.struts.strutspackage.StrutsPackage"
                         implementationClass="com.intellij.struts2.dom.struts.impl.StrutsPackageImpl"/>
 

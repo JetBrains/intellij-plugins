@@ -19,6 +19,7 @@ import com.intellij.ide.presentation.Presentation;
 import com.intellij.psi.PsiClass;
 import com.intellij.struts2.Struts2PresentationProvider;
 import com.intellij.struts2.dom.ExtendableClassConverter;
+import com.intellij.struts2.dom.params.ParamsElement;
 import com.intellij.util.xml.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Presentation(typeName = "Result Type", provider = Struts2PresentationProvider.class)
 @Stubbed
-public interface ResultType extends DomElement {
+public interface ResultType extends ParamsElement {
 
   @NameValue
   @Required
