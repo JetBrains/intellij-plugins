@@ -1,6 +1,6 @@
 package com.jetbrains.lang.dart.validation.fixes;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -48,7 +48,7 @@ public abstract class FixAndIntentionAction implements LocalQuickFix, IntentionA
   }
 
   public void invoke(@NotNull final Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-    if (!CodeInsightUtilBase.prepareFileForWrite(file)) return;
+    if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
     if (myElement == null) return;
     applyFix(project, myElement, editor);
   }

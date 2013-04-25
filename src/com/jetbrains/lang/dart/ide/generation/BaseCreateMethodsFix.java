@@ -1,6 +1,6 @@
 package com.jetbrains.lang.dart.ide.generation;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -63,7 +63,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
   }
 
   public void invoke(@NotNull final Project project, final Editor editor, final PsiElement context) throws IncorrectOperationException {
-    if (!CodeInsightUtilBase.prepareFileForWrite(context.getContainingFile())) return;
+    if (!FileModificationService.getInstance().prepareFileForWrite(context.getContainingFile())) return;
     evalAnchor(editor, context);
     processElements(project, getElementsToProcess());
   }
