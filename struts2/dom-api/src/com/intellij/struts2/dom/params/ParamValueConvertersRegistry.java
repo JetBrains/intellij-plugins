@@ -12,28 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.intellij.struts2.dom.params;
 
-import com.intellij.ide.presentation.Presentation;
-import com.intellij.psi.impl.beanProperties.BeanProperty;
-import com.intellij.util.xml.*;
-
-import java.util.List;
+import com.intellij.util.xml.converters.values.GenericDomValueConvertersRegistry;
 
 /**
- * <code>param</code>
+ * Registry of all converters used by {@link ParamValueConverter}.
  *
  * @author Yann C&eacute;bron
  */
-@SuppressWarnings({"UnusedDeclaration"})
-@Presentation(typeName = "Parameter", icon = "AllIcons.Actions.Properties")
-@Convert(ParamValueConverter.class)
-public interface Param extends DomElement, GenericDomValue<String> {
+public class ParamValueConvertersRegistry extends GenericDomValueConvertersRegistry {
 
-  @Attribute(value = "name")
-  @Required
-  @NameValue
-  @Convert(ParamNameConverter.class)
-  GenericAttributeValue<List<BeanProperty>> getName();
+  private static final ParamValueConvertersRegistry INSTANCE = new ParamValueConvertersRegistry();
+
+  public static ParamValueConvertersRegistry getInstance() {
+    return INSTANCE;
+  }
+
+  private ParamValueConvertersRegistry() {
+    registerParamValueConverters();
+  }
+
+  private void registerParamValueConverters() {
+    registerDefaultConverters();
+  }
 }

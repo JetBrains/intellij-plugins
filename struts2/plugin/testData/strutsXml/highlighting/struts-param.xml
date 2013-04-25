@@ -14,9 +14,13 @@
 
     <action name="testParams" class="MyClass">
       <param name="param1">someValue</param>
-      <param name=
-      <error descr="Cannot resolve property ''">""</error>/>
+      <param name="nested.nestedString">someValue</param>
+      <param name=<error descr="Cannot resolve property ''">""</error>/>
       <param name="<error descr="Cannot resolve property 'INVALID_VALUE'">INVALID_VALUE</error>"/>
+
+      <!-- type-checking -->
+      <param name="nested.nestedBool">false</param>
+      <param name="nested.nestedInt"><error descr="Cannot convert string 'INVALID_VALUE' to target class 'int'">INVALID_VALUE</error></param>
     </action>
 
     <action name="testDuplicateParams" class="MyClass">
