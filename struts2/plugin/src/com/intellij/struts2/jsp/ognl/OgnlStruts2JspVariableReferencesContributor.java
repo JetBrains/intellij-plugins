@@ -14,11 +14,11 @@
  */
 package com.intellij.struts2.jsp.ognl;
 
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.ognl.psi.resolve.variable.OgnlVariableReference;
 import com.intellij.lang.ognl.psi.resolve.variable.OgnlVariableReferencesContributor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.jsp.JspFile;
 import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.util.Processor;
@@ -38,7 +38,7 @@ public class OgnlStruts2JspVariableReferencesContributor extends OgnlVariableRef
   public boolean process(@NotNull PsiElement element,
                          @NotNull PsiFile containingFile,
                          @NotNull Processor<OgnlVariableReference> processor) {
-    final PsiFile topLevelFile = InjectedLanguageUtil.getTopLevelFile(element);
+    final PsiFile topLevelFile = InjectedLanguageManager.getInstance(containingFile.getProject()).getTopLevelFile(element);
     if (!(topLevelFile instanceof JspFile)) {
       return true;
     }
