@@ -36,7 +36,7 @@ public class HintWrapperQuickFix implements LocalQuickFix, HintAction {
   }
 
   @Override
-  public boolean showHint(final Editor editor) {
+  public boolean showHint(@NotNull final Editor editor) {
     if (HintManager.getInstance().hasShownHintsThatWillHideByOtherHint(true)) {
       return false;
     }
