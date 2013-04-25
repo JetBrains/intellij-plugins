@@ -70,13 +70,7 @@ public class DartGlobalInspectionTool extends GlobalInspectionTool {
   }
 
   private static ProblemDescriptor computeProblemDescriptor(InspectionManager manager, AnalyzerMessage message, PsiElement element) {
-    return manager.createProblemDescriptor(
-      element,
-      message.getMessage(),
-      annotateElement(message),
-      null,
-      true
-    );
+    return manager.createProblemDescriptor(element, message.getMessage(), (LocalQuickFix)null, annotateElement(message), true);
   }
 
 
