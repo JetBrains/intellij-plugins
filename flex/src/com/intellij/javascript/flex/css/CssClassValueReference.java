@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.css;
 
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.util.TextRange;
@@ -10,7 +11,6 @@ import com.intellij.psi.css.resolve.CssElementProcessor;
 import com.intellij.psi.css.resolve.CssResolveManager;
 import com.intellij.psi.css.resolve.impl.CssResolverImpl;
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiPolyVariantCachingReference;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.HashSet;
@@ -127,7 +127,7 @@ public class CssClassValueReference extends PsiPolyVariantCachingReference imple
   private void processStyles(CssElementProcessor processor) {
     PsiFile file = myElement.getContainingFile();
     if (!(file instanceof XmlFile)) {
-      PsiElement context = InjectedLanguageUtil.getTopLevelFile(file);
+      PsiElement context = InjectedLanguageManager.getInstance(file.getProject()).getTopLevelFile(file);
       if (context instanceof XmlFile) {
         file = (XmlFile)context;
       }

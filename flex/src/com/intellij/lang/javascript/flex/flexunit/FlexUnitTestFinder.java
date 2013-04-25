@@ -1,9 +1,10 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.stubs.JSNameIndex;
@@ -16,7 +17,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.psi.stubs.StubIndex;
@@ -47,7 +47,7 @@ public class FlexUnitTestFinder implements TestFinder {
 
     PsiFile psiFile = PsiTreeUtil.getParentOfType(element, PsiFile.class, false);
     if (psiFile instanceof JSFile) {
-      psiFile = InjectedLanguageUtil.getTopLevelFile(psiFile);
+      psiFile = InjectedLanguageManager.getInstance(psiFile.getProject()).getTopLevelFile(psiFile);
     }
 
     if (psiFile instanceof JSFile) {

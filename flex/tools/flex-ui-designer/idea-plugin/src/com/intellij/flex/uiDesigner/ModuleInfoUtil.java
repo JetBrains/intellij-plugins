@@ -7,6 +7,7 @@ import com.intellij.flex.uiDesigner.mxml.MxmlUtil;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
@@ -234,7 +235,7 @@ public final class ModuleInfoUtil {
         return null;
       }
       else {
-        return new LocalStyleHolder(InjectedLanguageUtil.getTopLevelFile(cssFile).getVirtualFile(), cssWriter.write(cssFile, module));
+        return new LocalStyleHolder(InjectedLanguageManager.getInstance(cssFile.getProject()).getTopLevelFile(cssFile).getVirtualFile(), cssWriter.write(cssFile, module));
       }
     }
 

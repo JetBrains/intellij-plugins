@@ -10,6 +10,7 @@ import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.Language;
 import com.intellij.lang.css.CSSLanguage;
 import com.intellij.lang.documentation.DocumentationProvider;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -85,7 +86,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
     Module module = findModuleForPsiElement(file);
     if (module == null) {
-      file = InjectedLanguageUtil.getTopLevelFile(context);
+      file = InjectedLanguageManager.getInstance(file.getProject()).getTopLevelFile(context);
       if (file != null) {
         module = findModuleForPsiElement(file);
       }
@@ -586,7 +587,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
 
   @Nullable
   private static VirtualFile checkForQuickFixAndGetVFile(@NotNull PsiElement context) {
-    final PsiFile file = InjectedLanguageUtil.getTopLevelFile(context);
+    final PsiFile file = InjectedLanguageManager.getInstance(context.getProject()).getTopLevelFile(context);
     if (file == null) {
       return null;
     }

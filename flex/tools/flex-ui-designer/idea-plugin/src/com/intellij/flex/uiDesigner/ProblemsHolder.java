@@ -7,7 +7,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -30,8 +29,9 @@ public class ProblemsHolder {
   }
 
   private static int getLineNumber(PsiElement element) {
-    final int elementTextOffset = InjectedLanguageManager.getInstance(element.getProject()).injectedToHost(element, element.getTextOffset());
-    final PsiFile psiFile = InjectedLanguageUtil.getTopLevelFile(element);
+    InjectedLanguageManager manager = InjectedLanguageManager.getInstance(element.getProject());
+    final int elementTextOffset = manager.injectedToHost(element, element.getTextOffset());
+    final PsiFile psiFile = manager.getTopLevelFile(element);
     final Document document = PsiDocumentManager.getInstance(element.getProject()).getCachedDocument(psiFile);
     assert document != null;
     return document.getLineNumber(elementTextOffset) + 1;
