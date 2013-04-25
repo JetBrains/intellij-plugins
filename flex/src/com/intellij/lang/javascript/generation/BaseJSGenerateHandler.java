@@ -3,7 +3,7 @@
  */
 package com.intellij.lang.javascript.generation;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.ide.util.MemberChooser;
@@ -11,12 +11,12 @@ import com.intellij.lang.LanguageCodeInsightActionHandler;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
@@ -55,7 +55,7 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
   }
 
   public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
-    if (!CodeInsightUtilBase.prepareFileForWrite(file)) return;
+    if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
     final JSClass jsClass = findClass(file, editor);
     if (jsClass == null) return;
 

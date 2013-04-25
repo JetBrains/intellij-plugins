@@ -16,7 +16,7 @@
 
 package com.intellij.lang.javascript.inspections.actionscript;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -106,7 +106,7 @@ public class JSImplicitlyInternalDeclarationInspection extends JSInspection {
           public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
             PsiElement anchor = descriptor.getPsiElement();
             PsiFile containingFile = anchor.getContainingFile();
-            if (!CodeInsightUtilBase.prepareFileForWrite(containingFile)) return;
+            if (!FileModificationService.getInstance().prepareFileForWrite(containingFile)) return;
 
             JSVisibilityUtil.setVisibility((JSAttributeListOwner)anchor.getParent(), JSAttributeList.AccessType.PACKAGE_LOCAL);
           }

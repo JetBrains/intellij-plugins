@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.validation.fixes;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
@@ -47,7 +47,7 @@ public class CreateEventMetadataByMxmlAttributeFix extends BaseCreateFix {
       return; // can not resolve
     }
 
-    if (!CodeInsightUtilBase.preparePsiElementForWrite(type)) {
+    if (!FileModificationService.getInstance().preparePsiElementForWrite(type)) {
       return;
     }
 

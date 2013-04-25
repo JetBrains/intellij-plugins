@@ -16,7 +16,7 @@
 
 package com.intellij.lang.javascript.inspections.actionscript;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.MacroCallNode;
@@ -70,7 +70,7 @@ public class JSUntypedDeclarationInspection extends JSInspection {
   private static void process(final JSNamedElement node, final ProblemsHolder holder) {
     if (node.getContainingFile().getLanguage() != JavaScriptSupportLoader.ECMA_SCRIPT_L4) return;
     ASTNode nameIdentifier = node.findNameIdentifier();
-    
+
     if ((nameIdentifier != null || node instanceof JSFunction) &&
         JSPsiImplUtils.getTypeFromDeclaration(node) == null &&
         (!(node instanceof JSParameter) || !((JSParameter)node).isRest())
@@ -85,7 +85,7 @@ public class JSUntypedDeclarationInspection extends JSInspection {
       holder.registerProblem(
         (nameIdentifier != null ? nameIdentifier:node.getNode().findChildByType(JSTokenTypes.FUNCTION_KEYWORD)).getPsi(),
         JSBundle.message(
-          node instanceof JSFunction ? "js.untyped.function.problem":"js.untyped.variable.problem", 
+          node instanceof JSFunction ? "js.untyped.function.problem":"js.untyped.variable.problem",
           nameIdentifier != null ? nameIdentifier.getText():"anonymous"
         ),
         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
@@ -109,7 +109,7 @@ public class JSUntypedDeclarationInspection extends JSInspection {
     public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
       PsiElement anchor = descriptor.getPsiElement();
       final PsiFile containingFile = anchor.getContainingFile();
-      if (!CodeInsightUtilBase.prepareFileForWrite(containingFile)) return;
+      if (!FileModificationService.getInstance().prepareFileForWrite(containingFile)) return;
 
       PsiElement parent = anchor.getParent();
       if (parent instanceof JSFunction) {
@@ -136,7 +136,7 @@ public class JSUntypedDeclarationInspection extends JSInspection {
           t.addVariable("a", new MacroCallNode(MacroFactory.createMacro("complete")), new BaseCreateFix.MyExpression(defaultValue), true);
         }
       }
-      
+
       templateManager.startTemplate(textEditor, t);
     }
   }

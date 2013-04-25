@@ -1,7 +1,7 @@
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.application.options.editor.WebEditorOptions;
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.javascript.flex.css.FlexCssPropertyDescriptor;
 import com.intellij.javascript.flex.mxml.schema.AnnotationBackedDescriptorImpl;
 import com.intellij.lang.annotation.Annotation;
@@ -169,7 +169,7 @@ public class FlexMxmlColorAnnotator implements Annotator {
               .chooseColor(editor.getComponent(), FlexBundle.message("flex.choose.color.dialog.title"), currentColor);
             if (color != null && !color.equals(currentColor)) {
               final PsiFile psiFile = myAttribute.getContainingFile();
-              if (!CodeInsightUtilBase.prepareFileForWrite(psiFile)) return;
+              if (!FileModificationService.getInstance().prepareFileForWrite(psiFile)) return;
 
               final String hex = CssColorUtil.toHexColor(color);
               final String mxmlStyleHex = toCannonicalHex(hex, false);

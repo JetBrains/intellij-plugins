@@ -1,15 +1,15 @@
 package com.intellij.javascript.flex.mxml.schema;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.Validator;
 import com.intellij.codeInsight.daemon.XmlErrorMessages;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
+import com.intellij.javascript.flex.mxml.MxmlLanguageInjector;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JSBundle;
-import com.intellij.javascript.flex.mxml.MxmlLanguageInjector;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.openapi.editor.Editor;
@@ -316,7 +316,7 @@ public class MxmlLanguageTagsUtil {
     }
 
     public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-      if (!CodeInsightUtilBase.prepareFileForWrite(file)) return;
+      if (!FileModificationService.getInstance().prepareFileForWrite(file)) return;
       final int offset = removeXmlAttribute(myAttribute);
       if (offset != -1) {
         editor.getCaretModel().moveToOffset(offset);
@@ -402,7 +402,7 @@ public class MxmlLanguageTagsUtil {
     }
 
     public void invoke(final @NotNull Project project, final Editor editor, final PsiFile file) throws IncorrectOperationException {
-      if (!myRootTag.isValid() || !CodeInsightUtilBase.prepareFileForWrite(file)) return;
+      if (!myRootTag.isValid() || !FileModificationService.getInstance().prepareFileForWrite(file)) return;
 
       final Set<String> usedPrefixes = myRootTag.getLocalNamespaceDeclarations().keySet();
       int postfix = 1;
