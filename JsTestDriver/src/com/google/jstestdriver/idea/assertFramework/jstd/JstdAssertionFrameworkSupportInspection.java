@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.JSReferenceExpression;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -91,7 +92,8 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
             sources,
             new ScriptingFrameworkDescriptor(JstdLibraryUtil.LIBRARY_NAME, "1.3.5"),
             fileRequestor,
-            false
+            false,
+            DependencyScope.PROVIDED
           );
           AsyncResult<Boolean> result = dialog.showAndGetOk();
           result.doWhenDone(new AsyncResult.Handler<Boolean>() {

@@ -8,6 +8,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -42,15 +43,18 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
   private final JTextField myLibraryNameTextField;
   private final JPanel myComponent;
   private final JsLibraryHelper myLibraryHelper;
+  private final DependencyScope myDependencyScope;
 
   public ChooseScopeAndCreateLibraryDialog(@NotNull Project project,
                                            @NotNull String desiredLibraryName,
                                            @NotNull List<VirtualFile> libraryFiles,
                                            @NotNull ScriptingFrameworkDescriptor frameworkDescriptor,
                                            @Nullable VirtualFile requestor,
-                                           boolean warnAboutOutsideCode) {
+                                           boolean warnAboutOutsideCode,
+                                           @NotNull DependencyScope dependencyScope) {
     super(project);
     myProject = project;
+    myDependencyScope = dependencyScope;
     myLibraryHelper = new JsLibraryHelper(myProject, desiredLibraryName, libraryFiles, frameworkDescriptor);
 
     setTitle("Code Assistance For " + desiredLibraryName);
@@ -167,6 +171,7 @@ public class ChooseScopeAndCreateLibraryDialog extends DialogWrapper {
   private ErrorMessage createLibraryAndAssociate() {
     String libraryName = myLibraryNameTextField.getText();
     ScriptingLibraryModel libraryModel = myLibraryHelper.getOrCreateJsLibraryModel(libraryName);
+    libraryModel.setDependencyScope(myDependencyScope);
     try {
       ScriptingLibraryMappings libraryMappings = ServiceManager.getService(myProject, JSLibraryMappings.class);
       if (myModuleSelector.isProjectAssociationDialog()) {
