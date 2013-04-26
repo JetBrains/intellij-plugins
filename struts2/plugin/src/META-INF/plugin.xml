@@ -15,7 +15,9 @@
   ~ limitations under the License.
   -->
 
-<idea-plugin url="http://confluence.jetbrains.com/display/IDEADEV/Struts+2+Plugin+for+IntelliJ+IDEA" version="2">
+<idea-plugin url="http://confluence.jetbrains.com/display/IDEADEV/Struts+2+Plugin+for+IntelliJ+IDEA" version="2"
+             xmlns:xi="http://www.w3.org/2001/XInclude">
+
   <id>com.intellij.struts2</id>
   <name>Struts 2</name>
   <description>Provides full integration of Apache Struts 2.</description>
@@ -43,6 +45,8 @@
 
   <vendor url="http://strutsidea.blogspot.com" email="yann.cebron@gmail.com">Yann Cébron</vendor>
 
+  <xi:include href="/META-INF/ognl.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
   <!-- published extension points -->
   <extensionPoints>
     <extensionPoint name="constantContributor"
@@ -57,12 +61,6 @@
                     interface="com.intellij.struts2.dom.params.ParamNameConverter$ParamNameCustomConverter"/>
     <extensionPoint name="paramValueConverter"
                     interface="com.intellij.util.xml.converters.values.GenericDomValueConvertersRegistry$Provider"/>
-  </extensionPoints>
-
-  <!-- OGNL extension points -->
-  <extensionPoints>
-    <extensionPoint qualifiedName="com.intellij.ognl.variableReferencesContributor"
-                    interface="com.intellij.lang.ognl.psi.resolve.variable.OgnlVariableReferencesContributor"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -254,29 +252,6 @@
     <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibCssInlineStyleInjector"/>
     <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibJavaScriptInjector"/>
     <multiHostInjector implementation="com.intellij.struts2.jsp.TaglibOgnlInjector"/>
-
-
-    <!-- OGNL Language -->
-    <lang.parserDefinition language="OGNL"
-                           implementationClass="com.intellij.lang.ognl.OgnlParserDefinition"/>
-    <lang.formatter language="OGNL"
-                    implementationClass="com.intellij.lang.ognl.formatting.OgnlFormattingModelBuilder"/>
-
-    <lang.braceMatcher language="OGNL"
-                       implementationClass="com.intellij.lang.ognl.highlight.OgnlBraceMatcher"/>
-    <quoteHandler fileType="OGNL" className="com.intellij.lang.ognl.highlight.OgnlQuoteHandler"/>
-    <typedHandler implementation="com.intellij.lang.ognl.OgnlTypedHandler"/>
-    <completion.contributor language="OGNL"
-                            implementationClass="com.intellij.lang.ognl.completion.OgnlKeywordCompletionContributor"/>
-    <ognl.variableReferencesContributor id="default"
-        implementation="com.intellij.lang.ognl.psi.resolve.variable.OgnlDefaultVariableReferencesContributor"/>
-
-    <colorSettingsPage implementation="com.intellij.lang.ognl.highlight.OgnlColorSettingsPage"/>
-    <liveTemplateContext implementation="com.intellij.lang.ognl.template.OgnlTemplateContextType"/>
-    <defaultLiveTemplatesProvider implementation="com.intellij.lang.ognl.template.OgnlDefaultLiveTemplatesProvider"/>
-
-    <spellchecker.support language="OGNL"
-                          implementationClass="com.intellij.lang.ognl.spellchecker.OgnlSpellcheckingStrategy"/>
 
     <!-- OGNL: S2 specific -->
     <ognl.variableReferencesContributor id="s2jsp"
