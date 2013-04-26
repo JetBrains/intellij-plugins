@@ -260,7 +260,7 @@
     <elementScopeProvider language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.ActionScriptResolveScopeProvider"/>
     <xmlBackedClassProvider implementation="com.intellij.javascript.flex.mxml.MxmlJSClassProvider"/>
     <smartCompletionContributor language="ECMA Script Level 4" implementationClass="com.intellij.lang.javascript.flex.ActionScriptSmartCompletionContributor"/>
-    <typeEvaluator language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.resolve.ActionScriptTypeEvaluatorFactory"/>
+    <dialectSpecificHandlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.ActionScriptSpecificHandlersFactory"/>
   </extensions>
 
   <application-components>

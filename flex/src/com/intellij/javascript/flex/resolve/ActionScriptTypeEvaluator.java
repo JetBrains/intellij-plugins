@@ -16,7 +16,7 @@ import static com.intellij.lang.javascript.psi.JSCommonTypeNames.VECTOR_CLASS_NA
  * @author Konstantin.Ulitin
  */
 public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
-  protected ActionScriptTypeEvaluator(BaseJSSymbolProcessor.EvaluateContext context,
+  public ActionScriptTypeEvaluator(BaseJSSymbolProcessor.EvaluateContext context,
                                       BaseJSSymbolProcessor.TypeProcessor processor, boolean ecma) {
     super(context, processor, ecma);
   }
