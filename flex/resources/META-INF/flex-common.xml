@@ -263,6 +263,10 @@
     <dialectSpecificHandlersFactory language="ECMA Script Level 4" implementationClass="com.intellij.javascript.flex.ActionScriptSpecificHandlersFactory"/>
   </extensions>
 
+  <extensionPoints>
+    <extensionPoint name="breakpoint.type.provider" interface="com.intellij.lang.javascript.flex.debug.FlexBreakpointsHandler$BreakpointTypeProvider"/>
+  </extensionPoints>
+
   <application-components>
     <component>
       <implementation-class>com.intellij.javascript.flex.FlexApplicationComponent</implementation-class>

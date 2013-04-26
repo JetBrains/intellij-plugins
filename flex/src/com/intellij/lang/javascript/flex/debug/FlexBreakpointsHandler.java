@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.debug;
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.impl.scopes.ModuleWithDependenciesScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEntry;
@@ -12,10 +13,13 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiCompiledFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
+import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TObjectIntHashMap;
@@ -23,15 +27,26 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * @author Maxim.Mossienko
  *         Date: 30.01.2009
  *         Time: 9:44:23
  */
-class FlexBreakpointsHandler {
+public class FlexBreakpointsHandler {
+
+  public interface BreakpointTypeProvider {
+    Class<? extends XBreakpointType<XLineBreakpoint<XBreakpointProperties>, ?>> getBreakpointTypeClass();
+  }
+
+  private static final ExtensionPointName<BreakpointTypeProvider> BREAKPOINT_TYPE_PROVIDER_EP =
+    ExtensionPointName.create("com.intellij.flex.breakpoint.type.provider");
+
   private final FlexDebugProcess myDebugProcess;
   private int lastBreakpointId;
-  private final XBreakpointHandler<?>[] myBreakpointHandlers;
+  private final Collection<XBreakpointHandler<?>> myBreakpointHandlers;
   private final TObjectIntHashMap<XLineBreakpoint<XBreakpointProperties>> myBreakpointToIndexMap =
     new TObjectIntHashMap<XLineBreakpoint<XBreakpointProperties>>();
   private final TIntObjectHashMap<XLineBreakpoint<XBreakpointProperties>> myIndexToBreakpointMap =
@@ -40,65 +55,11 @@ class FlexBreakpointsHandler {
   FlexBreakpointsHandler(FlexDebugProcess debugProcess) {
     myDebugProcess = debugProcess;
 
-    myBreakpointHandlers = new XBreakpointHandler<?>[]{
-      new XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>>(FlexBreakpointType.class) {
-        public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
-          final XSourcePosition position = breakpoint.getSourcePosition();
-          if (position != null) {
-            if (isValidSourceBreakpoint(position)) {
-              myDebugProcess.sendCommand(new InsertBreakpointCommand(breakpoint));
-            }
-          }
-        }
-
-        private boolean isValidSourceBreakpoint(XSourcePosition position) {
-          final Project project = myDebugProcess.getSession().getProject();
-          final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-          final VirtualFile file = position.getFile();
-          final VirtualFile rootForFile = fileIndex.getSourceRootForFile(file);
-          if (rootForFile == null) {
-            return false;
-          }
-
-          final ModuleWithDependenciesScope scope = FlexUtils
-            .getModuleWithDependenciesAndLibrariesScope(myDebugProcess.getModule(), myDebugProcess.getBC(), myDebugProcess.isFlexUnit());
-          if (scope.contains(file) || isInSourcesOfLibraryInScope(fileIndex, file, scope)) {
-            return true;
-          }
-
-          final String relPath = VfsUtilCore.getRelativePath(file.getParent(), rootForFile, '.');
-          final String fqn = StringUtil.getQualifiedName(relPath, file.getNameWithoutExtension());
-          // ignore breakpoints in classes that are out of scope of debugged BC if this scope also contains class with the same fqn
-          return JSResolveUtil.findClassByQName(fqn, scope) == null;
-        }
-
-        private boolean isInSourcesOfLibraryInScope(final ProjectFileIndex fileIndex,
-                                                    final VirtualFile file,
-                                                    final GlobalSearchScope scope) {
-          if (!fileIndex.isInLibrarySource(file)) {
-            return false;
-          }
-
-          for (OrderEntry entry : fileIndex.getOrderEntriesForFile(file)) {
-            final VirtualFile[] classesRoots = entry.getFiles(OrderRootType.CLASSES);
-            for (VirtualFile root : classesRoots) {
-              if (scope.contains(root)) {
-                return true;
-              }
-            }
-          }
-
-          return false;
-        }
-
-        public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
-          final XSourcePosition position = breakpoint.getSourcePosition();
-          if (position != null && isValidSourceBreakpoint(position)) {
-            myDebugProcess.sendCommand(new RemoveBreakpointCommand(breakpoint));
-          }
-        }
-      }
-    };
+    myBreakpointHandlers = new ArrayList<XBreakpointHandler<?>>();
+    myBreakpointHandlers.add(new MyBreakpointHandler(FlexBreakpointType.class));
+    for (BreakpointTypeProvider provider : BREAKPOINT_TYPE_PROVIDER_EP.getExtensions()) {
+      myBreakpointHandlers.add(new MyBreakpointHandler(provider.getBreakpointTypeClass()));
+    }
   }
 
   void updateBreakpointStatusToInvalid(XLineBreakpoint<XBreakpointProperties> breakpoint) {
@@ -133,14 +94,83 @@ class FlexBreakpointsHandler {
   }
 
   public XBreakpointHandler<?>[] getBreakpointHandlers() {
-    return myBreakpointHandlers;
+    return myBreakpointHandlers.toArray(new XBreakpointHandler[myBreakpointHandlers.size()]);
   }
 
   XLineBreakpoint<XBreakpointProperties> getBreakpointByIndex(int breakpointId) {
     return myIndexToBreakpointMap.get(breakpointId);
   }
 
-  class InsertBreakpointCommand extends DebuggerCommand {
+  private static String getRemoveBreakpointCommandText(int breakPointIndex) {
+    return "delete " + breakPointIndex;
+  }
+
+  private class MyBreakpointHandler extends XBreakpointHandler<XLineBreakpoint<XBreakpointProperties>> {
+    private MyBreakpointHandler(@NotNull Class<? extends XBreakpointType<XLineBreakpoint<XBreakpointProperties>, ?>> breakpointTypeClass) {
+      super(breakpointTypeClass);
+    }
+
+    public void registerBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint) {
+      final XSourcePosition position = breakpoint.getSourcePosition();
+      if (position != null) {
+        if (isValidSourceBreakpoint(position)) {
+          myDebugProcess.sendCommand(new InsertBreakpointCommand(breakpoint));
+        }
+      }
+    }
+
+    private boolean isValidSourceBreakpoint(XSourcePosition position) {
+      final Project project = myDebugProcess.getSession().getProject();
+      final ProjectFileIndex fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+      final VirtualFile file = position.getFile();
+      final VirtualFile rootForFile = fileIndex.getSourceRootForFile(file);
+      if (rootForFile == null) {
+        return false;
+      }
+
+      final ModuleWithDependenciesScope scope = FlexUtils
+        .getModuleWithDependenciesAndLibrariesScope(myDebugProcess.getModule(), myDebugProcess.getBC(), myDebugProcess.isFlexUnit());
+      if (scope.contains(file) || isInSourcesOfLibraryInScope(fileIndex, file, scope)) {
+        return true;
+      }
+
+      final String relPath = VfsUtilCore.getRelativePath(file.getParent(), rootForFile, '.');
+      final String fqn = StringUtil.getQualifiedName(relPath, file.getNameWithoutExtension());
+      final PsiElement clazz = JSResolveUtil.findClassByQName(fqn, scope);
+      // ignore breakpoints in classes that are out of scope of debugged BC if this scope also contains class with the same fqn;
+      // but if resolved class is in decompiled code (library.swf inside *.swc file) then there's a chance that source file for this library
+      // is not configured properly (or it is in the unrelated Haxe module), in this case allow to set breakpoint.
+      return clazz == null || clazz.getContainingFile() instanceof PsiCompiledFile;
+    }
+
+    private boolean isInSourcesOfLibraryInScope(final ProjectFileIndex fileIndex,
+                                                final VirtualFile file,
+                                                final GlobalSearchScope scope) {
+      if (!fileIndex.isInLibrarySource(file)) {
+        return false;
+      }
+
+      for (OrderEntry entry : fileIndex.getOrderEntriesForFile(file)) {
+        final VirtualFile[] classesRoots = entry.getFiles(OrderRootType.CLASSES);
+        for (VirtualFile root : classesRoots) {
+          if (scope.contains(root)) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    public void unregisterBreakpoint(@NotNull final XLineBreakpoint<XBreakpointProperties> breakpoint, final boolean temporary) {
+      final XSourcePosition position = breakpoint.getSourcePosition();
+      if (position != null && isValidSourceBreakpoint(position)) {
+        myDebugProcess.sendCommand(new RemoveBreakpointCommand(breakpoint));
+      }
+    }
+  }
+
+  private class InsertBreakpointCommand extends DebuggerCommand {
     private @Nullable XLineBreakpoint<XBreakpointProperties> myBreakpoint; // null if this is breakpoint for 'Run To Cursor' action
     private @NotNull final XSourcePosition mySourcePosition;
 
@@ -195,10 +225,6 @@ class FlexBreakpointsHandler {
         myIndexToBreakpointMap.put(breakPointIndex, myBreakpoint);
       }
     }
-  }
-
-  private static String getRemoveBreakpointCommandText(int breakPointIndex) {
-    return "delete " + breakPointIndex;
   }
 
   class RemoveBreakpointCommand extends DebuggerCommand {
