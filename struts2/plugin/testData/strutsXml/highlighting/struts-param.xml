@@ -144,6 +144,17 @@
   </package>
 
 
+  <!-- INTERCEPTOR     =================================================== -->
+  <package name="interceptorParams">
+    <interceptors>
+      <interceptor name="validation" class="org.apache.struts2.interceptor.validation.AnnotationValidationInterceptor">
+        <param name="declarative">false</param>
+        <param name="<error descr="Cannot resolve property 'INVALID_VALUE'">INVALID_VALUE</error>">INVALID_VALUE</param>
+      </interceptor>
+    </interceptors>
+  </package>
+
+
   <!-- INTERCEPTOR-REF =================================================== -->
 
   <package name="testInterceptorRefParams">
