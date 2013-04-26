@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.dom.struts.action;
 
-import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -72,7 +71,7 @@ public class CreateActionMethodQuickFix extends LocalQuickFixAndIntentionActionO
                      @NotNull final PsiElement startPsiElement, @NotNull final PsiElement endPsiElement) {
     try {
       final PsiClass actionClass = (PsiClass) startPsiElement;
-      if (!FileModificationService.getInstance().preparePsiElementForWrite(actionClass.getContainingFile())) return;
+      //if (!FileModificationService.getInstance().preparePsiElementForWrite(actionClass.getContainingFile())) return;
 
       final PsiElementFactory elementFactory = JavaPsiFacade.getInstance(project).getElementFactory();
       PsiMethod actionMethod = elementFactory.createMethodFromText("public java.lang.String " + methodName + "() throws java.lang.Exception { return \"success\"; }",
