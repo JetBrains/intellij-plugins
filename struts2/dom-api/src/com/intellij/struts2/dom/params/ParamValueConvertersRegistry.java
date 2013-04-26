@@ -14,6 +14,7 @@
  */
 package com.intellij.struts2.dom.params;
 
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.util.xml.converters.values.GenericDomValueConvertersRegistry;
 
 /**
@@ -30,10 +31,12 @@ public class ParamValueConvertersRegistry extends GenericDomValueConvertersRegis
   }
 
   private ParamValueConvertersRegistry() {
-    registerParamValueConverters();
+    registerBuiltinValueConverters();
+
+    registerFromExtensions(ExtensionPointName.<Provider>create("com.intellij.struts2.paramValueConverter"));
   }
 
-  private void registerParamValueConverters() {
+  private void registerBuiltinValueConverters() {
     registerDefaultConverters();
   }
 }

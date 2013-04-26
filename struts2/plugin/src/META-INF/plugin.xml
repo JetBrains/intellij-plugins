@@ -55,6 +55,8 @@
                     interface="com.intellij.struts2.dom.ExtendableClassConverter$ExtendableClassConverterContributor"/>
     <extensionPoint name="paramNameCustomConverter"
                     interface="com.intellij.struts2.dom.params.ParamNameConverter$ParamNameCustomConverter"/>
+    <extensionPoint name="paramValueConverter"
+                    interface="com.intellij.util.xml.converters.values.GenericDomValueConvertersRegistry$Provider"/>
   </extensionPoints>
 
   <!-- OGNL extension points -->
