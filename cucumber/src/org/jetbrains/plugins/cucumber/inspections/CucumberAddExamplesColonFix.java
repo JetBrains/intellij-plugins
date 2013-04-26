@@ -1,6 +1,5 @@
 package org.jetbrains.plugins.cucumber.inspections;
 
-import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.project.Project;
@@ -30,9 +29,9 @@ public class CucumberAddExamplesColonFix implements LocalQuickFix {
 
     final PsiFile featureFile = examples.getContainingFile();
 
-    if (!FileModificationService.getInstance().prepareFileForWrite(featureFile)) {
-      return;
-    }
+    //if (!FileModificationService.getInstance().prepareFileForWrite(featureFile)) {
+    //  return;
+    //}
 
     final PsiElement[] elements = GherkinElementFactory.getTopLevelElements(project, ":");
     examples.getParent().addAfter(elements[0], examples);

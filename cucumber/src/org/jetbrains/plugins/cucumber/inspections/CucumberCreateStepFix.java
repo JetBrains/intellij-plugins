@@ -1,6 +1,5 @@
 package org.jetbrains.plugins.cucumber.inspections;
 
-import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.icons.AllIcons;
@@ -232,9 +231,9 @@ public class CucumberCreateStepFix implements LocalQuickFix {
   }
 
   private static void createStepDefinition(GherkinStep step, PsiFile file) {
-    if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
-      return;
-    }
+    //if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
+    //  return;
+    //}
 
     CucumberJvmExtensionPoint[] epList = CucumberJvmExtensionPoint.EP_NAME.getExtensions();
     for (CucumberJvmExtensionPoint ep : epList) {

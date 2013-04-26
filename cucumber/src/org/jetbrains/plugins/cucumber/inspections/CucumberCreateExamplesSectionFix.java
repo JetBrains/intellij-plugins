@@ -1,7 +1,6 @@
 package org.jetbrains.plugins.cucumber.inspections;
 
 import com.intellij.codeInsight.CodeInsightUtilBase;
-import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
@@ -41,9 +40,9 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
 
     final PsiFile featureFile = outline.getContainingFile();
 
-    if (!FileModificationService.getInstance().prepareFileForWrite(featureFile)) {
-      return;
-    }
+    //if (!FileModificationService.getInstance().prepareFileForWrite(featureFile)) {
+    //  return;
+    //}
 
     final String language = GherkinKeywordTable.getFeatureLanguage(featureFile);
     final GherkinKeywordTable keywordsTable = GherkinKeywordTable.getKeywordsTable(featureFile, project);
