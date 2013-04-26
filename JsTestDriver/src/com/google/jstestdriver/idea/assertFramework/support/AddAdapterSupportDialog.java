@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -269,8 +268,8 @@ public class AddAdapterSupportDialog extends DialogWrapper {
         extractedAdapterSourceFiles,
         new ScriptingFrameworkDescriptor(getAssertFrameworkAdapterName(), null),
         myFileRequestor,
-        true,
-        DependencyScope.COMPILE);
+        true
+      );
       dialog.show();
     }
   }
