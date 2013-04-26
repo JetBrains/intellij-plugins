@@ -9,7 +9,7 @@ public class GherkinLanguage extends Language {
   public static GherkinLanguage INSTANCE = new GherkinLanguage();
 
   protected GherkinLanguage() {
-    super("Gherkin", "");
+    super("Gherkin");
   }
 
   @Override
