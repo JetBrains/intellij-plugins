@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,17 +15,15 @@
 
 package com.intellij.struts2.structure;
 
-import com.intellij.ide.structureView.StructureView;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.ide.structureView.StructureViewModel;
-import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.ide.structureView.xml.XmlStructureViewBuilderProvider;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.ConstantFunction;
+import com.intellij.util.xml.DomElement;
 import com.intellij.util.xml.DomFileElement;
+import com.intellij.util.xml.DomService;
+import com.intellij.util.xml.structure.DomStructureViewBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,6 +33,9 @@ import org.jetbrains.annotations.Nullable;
  * @author Yann C&eacute;bron
  */
 abstract class BaseStructureViewBuilderProvider implements XmlStructureViewBuilderProvider {
+
+  static final ConstantFunction<DomElement, DomService.StructureViewMode> ALWAYS_SHOW =
+    new ConstantFunction<DomElement, DomService.StructureViewMode>(DomService.StructureViewMode.SHOW);
 
   /**
    * Returns the DomFileElement depending on the root tag of the implementing class.
@@ -68,27 +69,13 @@ abstract class BaseStructureViewBuilderProvider implements XmlStructureViewBuild
       return null;
     }
 
-    return new TreeBasedStructureViewBuilder() {
+    return new DomStructureViewBuilder(xmlFile, ALWAYS_SHOW) {
 
       @NotNull
-      public StructureView createStructureView(final FileEditor fileEditor, final Project project) {
-        final StructureViewModel model = createStructureViewModel();
-        StructureViewComponent view = new StructureViewComponent(fileEditor, model, project);
-        Disposer.register(view, new Disposable() {
-          @Override
-          public void dispose() {
-            model.dispose();
-          }
-        });
-        return view;
-      }
-
-      @NotNull
+      @Override
       public StructureViewModel createStructureViewModel() {
-        return new StructureViewTreeModel(xmlFile, fileElement.getRootElement(), getAlwaysPlus(), getAlwaysLeaf());
+        return new StructureViewTreeModel(xmlFile, getAlwaysPlus(), getAlwaysLeaf(), ALWAYS_SHOW);
       }
-
     };
   }
-
 }

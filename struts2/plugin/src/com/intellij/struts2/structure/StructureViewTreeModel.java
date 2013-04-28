@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,14 +17,23 @@ package com.intellij.struts2.structure;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.structureView.StructureViewModel;
-import com.intellij.ide.structureView.impl.xml.XmlStructureViewTreeModel;
-import com.intellij.ide.util.treeView.smartTree.*;
+import com.intellij.ide.structureView.StructureViewTreeElement;
+import com.intellij.ide.structureView.impl.xml.XmlFileTreeElement;
+import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
+import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
+import com.intellij.ide.util.treeView.smartTree.Filter;
+import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.psi.xml.XmlTag;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.params.Param;
+import com.intellij.util.Function;
 import com.intellij.util.ReflectionCache;
 import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.DomFileElement;
+import com.intellij.util.xml.DomManager;
+import com.intellij.util.xml.DomService;
+import com.intellij.util.xml.structure.DomStructureTreeElement;
+import com.intellij.util.xml.structure.DomStructureViewTreeModel;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,57 +41,42 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
-class StructureViewTreeModel extends XmlStructureViewTreeModel implements StructureViewModel.ElementInfoProvider {
-
-  /**
-   * Don't navigate to anything else than XmlTag.
-   */
-  private static final Class[] MY_CLASSES = new Class[]{XmlTag.class};
-
-  private final DomElement rootElement;
+class StructureViewTreeModel extends DomStructureViewTreeModel implements StructureViewModel.ElementInfoProvider {
 
   private final Class[] alwaysPlus;
   private final Class[] alwaysLeaf;
 
   StructureViewTreeModel(@NotNull final XmlFile xmlFile,
-                         @NotNull final DomElement rootElement,
                          @NotNull final Class[] alwaysPlus,
-                         @NotNull final Class[] alwaysLeaf) {
-    super(xmlFile);
-    this.rootElement = rootElement;
+                         @NotNull final Class[] alwaysLeaf,
+                         Function<DomElement, DomService.StructureViewMode> descriptor) {
+    super(xmlFile, descriptor);
     this.alwaysPlus = alwaysPlus;
     this.alwaysLeaf = alwaysLeaf;
   }
 
   @NotNull
-  public com.intellij.ide.structureView.StructureViewTreeElement getRoot() {
-    return new StructureViewTreeElement(rootElement);
-  }
-
-  @NotNull
   @Override
-  protected Class[] getSuitableClasses() {
-    return MY_CLASSES;
-  }
+  public StructureViewTreeElement getRoot() {
+    final XmlFile xmlFile = (XmlFile)getPsiFile();
+    final DomFileElement<DomElement> fileElement = DomManager.getDomManager(xmlFile.getProject()).getFileElement(xmlFile, DomElement.class);
+    if (fileElement == null) {
+      return new XmlFileTreeElement(xmlFile);
+    }
 
-  @NotNull
-  public Sorter[] getSorters() {
-    return new Sorter[]{Sorter.ALPHA_SORTER};
+    return new com.intellij.struts2.structure.StructureViewTreeElement(fileElement.getRootElement().createStableCopy());
   }
 
   @NotNull
   public Filter[] getFilters() {
     return new Filter[]{new Filter() {
       public boolean isVisible(final TreeElement treeElement) {
-        if (!(treeElement instanceof StructureViewTreeElement)) {
-          return true;
-        }
-
-        return !(((StructureViewTreeElement) treeElement).getElement() instanceof Param);
+        DomStructureTreeElement domStructureTreeElement = (DomStructureTreeElement)treeElement;
+        return !(domStructureTreeElement.getElement() instanceof Param);
       }
 
       public boolean isReverted() {
-        return true;
+        return false;
       }
 
       @NotNull
@@ -100,18 +94,18 @@ class StructureViewTreeModel extends XmlStructureViewTreeModel implements Struct
 
 
   @Override
-  public boolean isAlwaysShowsPlus(final com.intellij.ide.structureView.StructureViewTreeElement element) {
+  public boolean isAlwaysShowsPlus(final StructureViewTreeElement element) {
     return isDomElementOfKind(element, alwaysPlus);
   }
 
   @Override
-  public boolean isAlwaysLeaf(final com.intellij.ide.structureView.StructureViewTreeElement element) {
+  public boolean isAlwaysLeaf(final StructureViewTreeElement element) {
     return isDomElementOfKind(element, alwaysLeaf);
   }
 
-  private static boolean isDomElementOfKind(final com.intellij.ide.structureView.StructureViewTreeElement element,
+  private static boolean isDomElementOfKind(final StructureViewTreeElement element,
                                             final Class... kinds) {
-    final DomElement domElement = ((StructureViewTreeElement) element).getElement();
+    final DomElement domElement = ((DomStructureTreeElement)element).getElement();
     for (final Class clazz : kinds) {
       if (ReflectionCache.isInstance(domElement, clazz)) {
         return true;
@@ -119,5 +113,4 @@ class StructureViewTreeModel extends XmlStructureViewTreeModel implements Struct
     }
     return false;
   }
-
 }

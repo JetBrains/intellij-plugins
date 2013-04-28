@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,9 +24,11 @@ import com.intellij.psi.ElementDescriptionUtil;
 import com.intellij.psi.xml.XmlElement;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ConstantFunction;
 import com.intellij.util.SmartList;
-import com.intellij.util.xml.*;
+import com.intellij.util.xml.DomElement;
+import com.intellij.util.xml.DomElementVisitor;
+import com.intellij.util.xml.DomElementsNavigationManager;
+import com.intellij.util.xml.DomUtil;
 import com.intellij.util.xml.highlighting.DomElementAnnotationsManager;
 import com.intellij.util.xml.highlighting.DomElementProblemDescriptor;
 import com.intellij.util.xml.highlighting.DomElementsProblemsHolder;
@@ -45,7 +47,7 @@ class StructureViewTreeElement extends DomStructureTreeElement implements Colore
 
   StructureViewTreeElement(@NotNull final DomElement domElement) {
     super(domElement,
-          new ConstantFunction<DomElement, DomService.StructureViewMode>(DomService.StructureViewMode.SHOW),
+          BaseStructureViewBuilderProvider.ALWAYS_SHOW,
           DomElementsNavigationManager.getManager(DomUtil.getFile(domElement).getProject()).
               getDomElementsNavigateProvider(DomElementsNavigationManager.DEFAULT_PROVIDER_NAME));
   }
