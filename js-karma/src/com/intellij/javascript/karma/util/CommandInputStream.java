@@ -1,6 +1,7 @@
 package com.intellij.javascript.karma.util;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ByteArrayQueue;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
