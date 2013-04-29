@@ -24,6 +24,7 @@ import com.google.jstestdriver.*;
 import com.google.jstestdriver.config.Configuration;
 import com.google.jstestdriver.config.ConfigurationException;
 import com.google.jstestdriver.config.ParsedConfiguration;
+import com.google.jstestdriver.config.ResolvedConfiguration;
 import com.google.jstestdriver.embedded.JsTestDriverBuilder;
 import com.google.jstestdriver.hooks.PluginInitializer;
 import com.google.jstestdriver.hooks.ResourcePreProcessor;
@@ -153,7 +154,8 @@ public class TestRunner {
     builder.setServer(mySettings.getServerUrl());
 
     List<String> flagArgs = Lists.newArrayList("--captureConsole", "--server", mySettings.getServerUrl());
-    if (dryRun && JstdUtils.isJasmineTests(parsedConfiguration)) {
+    ResolvedConfiguration resolvedConfiguration = JstdConfigParsingUtils.resolveConfiguration(parsedConfiguration);
+    if (dryRun && JstdUtils.isJasmineTests(resolvedConfiguration)) {
       // https://github.com/ibolmo/jasmine-jstd-adapter/pull/21
       flagArgs.add("--reset");
     }
@@ -166,7 +168,7 @@ public class TestRunner {
       if (emptyOutputDir != null) {
         flagArgs.add("--testOutput");
         flagArgs.add(emptyOutputDir.getAbsolutePath());
-        List<String> testPaths = getTestFilePaths(parsedConfiguration);
+        List<String> testPaths = getTestFilePaths(resolvedConfiguration);
         coverageExcludedFiles = Lists.newArrayList(testPaths);
         coverageExcludedFiles.addAll(mySettings.getFilesExcludedFromCoverageRec());
         PluginInitializer coverageInitializer = getCoverageInitializer(coverageExcludedFiles);
@@ -205,8 +207,7 @@ public class TestRunner {
   }
 
   @NotNull
-  private static List<String> getTestFilePaths(@NotNull ParsedConfiguration parsedConfiguration) {
-    Configuration resolvedConfiguration = JstdConfigParsingUtils.resolveConfiguration(parsedConfiguration);
+  private static List<String> getTestFilePaths(@NotNull ResolvedConfiguration resolvedConfiguration) {
     List<FileInfo> testFileInfos = resolvedConfiguration.getTests();
     List<String> paths = Lists.newArrayListWithExpectedSize(testFileInfos.size());
     for (FileInfo fileInfo : testFileInfos) {

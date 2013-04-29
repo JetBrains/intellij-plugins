@@ -1,7 +1,7 @@
 package com.google.jstestdriver.idea.util;
 
 import com.google.jstestdriver.FileInfo;
-import com.google.jstestdriver.config.ParsedConfiguration;
+import com.google.jstestdriver.config.ResolvedConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -15,7 +15,7 @@ public class JstdUtils {
 
   private JstdUtils() {}
 
-  public static boolean isJasmineTests(@NotNull ParsedConfiguration configuration) {
+  public static boolean isJasmineTests(@NotNull ResolvedConfiguration configuration) {
     for (FileInfo info : configuration.getFilesList()) {
       File file = new File(info.getFilePath());
       if (isJasmineAdapter(file)) {
