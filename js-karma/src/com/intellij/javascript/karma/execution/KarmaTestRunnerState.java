@@ -1,9 +1,12 @@
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.*;
-import com.intellij.execution.configurations.CommandLineState;
+import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
 import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
+import com.intellij.execution.process.KillableColoredProcessHandler;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
@@ -18,7 +21,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerListener;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
-import com.intellij.javascript.karma.util.StreamCommandListener;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.testIntegration.TestLocationProvider;
@@ -26,14 +29,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Sergey Simonchik
  */
-public class KarmaTestRunnerState extends CommandLineState {
+public class KarmaTestRunnerState implements RunProfileState {
 
   private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
 
@@ -48,7 +51,6 @@ public class KarmaTestRunnerState extends CommandLineState {
                               @NotNull String nodeInterpreterPath,
                               @NotNull String karmaPackageDir,
                               @NotNull KarmaRunSettings runSettings) {
-    super(executionEnvironment);
     myProject = project;
     myExecutionEnvironment = executionEnvironment;
     myNodeInterpreterPath = nodeInterpreterPath;
@@ -59,33 +61,50 @@ public class KarmaTestRunnerState extends CommandLineState {
   @Override
   @NotNull
   public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
-    final ProcessHandler processHandler = startProcess();
-    ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment, executor);
-    consoleView.attachToProcess(processHandler);
-
+    ApplicationManager.getApplication().assertIsDispatchThread();
     File configurationFile = new File(myRunSettings.getConfigPath());
     KarmaServer server = KarmaServerRegistry.getServerByConfigurationFile(configurationFile);
     if (server == null) {
       try {
         server = new KarmaServer(new File(myNodeInterpreterPath), new File(myKarmaPackageDir), configurationFile);
-        server.addListener(new KarmaServerListener() {
-          @Override
-          public void onReady(int webServerPort, int runnerPort) {
-            @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-            PrintStream printStream = new PrintStream(processHandler.getProcessInput(), false);
-            printStream.println("Runner port:" + runnerPort);
-            printStream.flush();
-          }
-        });
+        KarmaServerRegistry.registerServer(server);
       }
       catch (IOException e) {
         throw new ExecutionException(e);
       }
     }
+    int runnerPort = -1;
+    if (server.isReady()) {
+      runnerPort = server.getRunnerPort();
+    }
+    final ProcessHandler processHandler = startProcess(runnerPort);
+    if (runnerPort == -1) {
+      server.addListener(new KarmaServerListener() {
+        @Override
+        public void onReady(int webServerPort, int runnerPort) {
+          @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+          PrintWriter pw = new PrintWriter(processHandler.getProcessInput(), false);
+          pw.print("runner port " + runnerPort + "\n");
+          pw.flush();
+        }
+      });
+    }
+    ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment, executor);
+    consoleView.attachToProcess(processHandler);
 
     DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
     executionResult.setRestartActions(new ToggleAutoTestAction());
     return executionResult;
+  }
+
+  @Override
+  public RunnerSettings getRunnerSettings() {
+    return myExecutionEnvironment.getRunnerSettings();
+  }
+
+  @Override
+  public ConfigurationPerRunnerSettings getConfigurationSettings() {
+    return myExecutionEnvironment.getConfigurationSettings();
   }
 
   private static ConsoleView createConsole(@NotNull Project project,
@@ -115,29 +134,22 @@ public class KarmaTestRunnerState extends CommandLineState {
   }
 
   @NotNull
-  @Override
-  protected ProcessHandler startProcess() throws ExecutionException {
-    GeneralCommandLine commandLine = createCommandLine(myRunSettings);
+  private ProcessHandler startProcess(int runnerPort) throws ExecutionException {
+    GeneralCommandLine commandLine = createCommandLine(myRunSettings, runnerPort);
     Process process = commandLine.createProcess();
-    KarmaTestRunnerProcess karmaProcess = new KarmaTestRunnerProcess(process);
-    karmaProcess.getInputStream().addListener(new StreamCommandListener() {
-      @Override
-      public void onCommand(@NotNull String commandName) {
-        System.out.println("Command '" + commandName + "'");
-      }
-    });
-    OSProcessHandler osProcessHandler = new OSProcessHandler(process, commandLine.getCommandLineString());
+    OSProcessHandler osProcessHandler = new KillableColoredProcessHandler(process, commandLine.getCommandLineString());
     ProcessTerminatedListener.attach(osProcessHandler);
     return osProcessHandler;
   }
 
   @NotNull
-  private GeneralCommandLine createCommandLine(@NotNull KarmaRunSettings runSettings) throws ExecutionException {
+  private GeneralCommandLine createCommandLine(@NotNull KarmaRunSettings runSettings, int runnerPort) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     File configFile = new File(runSettings.getConfigPath());
     // looks like it should work with any working directory
     commandLine.setWorkDirectory(configFile.getParentFile());
     commandLine.setExePath(myNodeInterpreterPath);
+    //commandLine.addParameter("--debug-brk=5858");
     try {
       File clientAppFile = KarmaJavaScriptSourcesLocator.getClientAppFile();
       commandLine.addParameter(clientAppFile.getAbsolutePath());
@@ -145,7 +157,10 @@ public class KarmaTestRunnerState extends CommandLineState {
     catch (IOException e) {
       throw new ExecutionException("Can't find karma client runner", e);
     }
-    commandLine.addParameter(myKarmaPackageDir);
+    commandLine.addParameter("--karmaPackageDir=" + myKarmaPackageDir);
+    if (runnerPort != -1) {
+      commandLine.addParameter("--runnerPort=" + String.valueOf(runnerPort));
+    }
     return commandLine;
   }
 
@@ -156,4 +171,5 @@ public class KarmaTestRunnerState extends CommandLineState {
       return Collections.emptyList();
     }
   }
+
 }

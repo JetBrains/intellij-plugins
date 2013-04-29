@@ -11,8 +11,8 @@ import java.io.IOException;
  */
 public class KarmaJavaScriptSourcesLocator {
 
-  private static final String SERVER_APP_FILE = "js_reporter/karma-server.js";
-  private static final String CLIENT_APP_FILE = "js_reporter/karma-client.js";
+  private static final String SERVER_APP_FILE = "js_reporter/intellijServer.js";
+  private static final String CLIENT_APP_FILE = "js_reporter/intellijRunner.js";
 
   private KarmaJavaScriptSourcesLocator() {}
 

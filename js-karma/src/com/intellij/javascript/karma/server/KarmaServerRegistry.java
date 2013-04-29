@@ -20,6 +20,11 @@ public class KarmaServerRegistry {
     return myServers.get(path);
   }
 
+  public static void registerServer(@NotNull KarmaServer karmaServer) {
+    String path = karmaServer.getConfigurationFile().getAbsolutePath();
+    myServers.put(path, karmaServer);
+  }
+
   public static void serverTerminated(@NotNull KarmaServer server) {
     String path = server.getConfigurationFile().getAbsolutePath();
     myServers.remove(path);

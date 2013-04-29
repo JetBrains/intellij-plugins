@@ -167,7 +167,7 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
     private final String myNodeInterpreterPath;
     private final String myKarmaNodePackage;
 
-    private GlobalSettings(@NotNull String karmaNodePackage, @NotNull String nodeInterpreterPath) {
+    private GlobalSettings(@NotNull String nodeInterpreterPath, @NotNull String karmaNodePackage) {
       myKarmaNodePackage = karmaNodePackage;
       myNodeInterpreterPath = nodeInterpreterPath;
     }
