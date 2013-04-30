@@ -20,7 +20,7 @@ public class CucumberJavaScenarioRunConfigurationProducer extends CucumberJavaFe
     final String programParameters = configuration.getProgramParameters();
     final GherkinStepsHolder scenario = PsiTreeUtil.getParentOfType(mySourceElement, GherkinScenario.class, GherkinScenarioOutline.class);
     if (scenario != null) {
-      configuration.setProgramParameters(programParameters + " --name \"" + scenario.getScenarioName() + "\"");
+      configuration.setProgramParameters(programParameters + " --name \"" + scenario.getScenarioName().replaceAll("\\\"", "\\\\\"") + "\"");
     }
   }
 
