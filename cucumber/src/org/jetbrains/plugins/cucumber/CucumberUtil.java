@@ -1,5 +1,6 @@
 package org.jetbrains.plugins.cucumber;
 
+import com.intellij.openapi.util.text.StringUtil;
 import org.apache.oro.text.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -111,5 +112,26 @@ public class CucumberUtil {
       }
     }
     return result;
+  }
+
+  public static String getFeatureFileOrFolderNameFromParameters(@NotNull String parameters) {
+    String featureFile = null;
+    parameters = parameters.trim();
+    if (parameters.startsWith("\"")) {
+      int secondQuoteIndex = parameters.indexOf('"', 1);
+      if (secondQuoteIndex > 0) {
+        featureFile = parameters.substring(1, secondQuoteIndex);
+      } else {
+        return null;
+      }
+    }
+    if (featureFile == null) {
+      String[] tokens = parameters.split(" ");
+      if (tokens.length > 0) {
+        featureFile = tokens[0];
+      }
+    }
+
+    return StringUtil.isEmpty(featureFile) ? null : featureFile;
   }
 }
