@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <idea-plugin version="2">
-
   <id>cucumber</id>
   <name>Base Cucumber</name>
 
@@ -9,6 +8,7 @@
 
   <version>1.0</version>
   <depends>com.intellij.modules.xml</depends>
+  <idea-version since-build="123.0" until-build="131.0"/>
   <vendor>JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
