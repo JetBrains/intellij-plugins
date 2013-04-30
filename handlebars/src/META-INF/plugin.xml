@@ -234,7 +234,6 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <fileTypeFactory implementation="com.dmarcotte.handlebars.file.HbFileTypeFactory"/>
-    <lang.substitutor language="HTML" implementationClass="com.dmarcotte.handlebars.HbLanguageSubstitutor"/>
     <html.scriptContentProvider language="Handlebars" implementationClass="com.dmarcotte.handlebars.HbScriptContentProvider"/>
     <lang.parserDefinition language="Handlebars" implementationClass="com.dmarcotte.handlebars.parsing.HbParseDefinition"/>
     <lang.formatter language="Handlebars" implementationClass="com.dmarcotte.handlebars.format.HbFormattingModelBuilder"/>
