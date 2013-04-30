@@ -12,17 +12,29 @@ function inherit(child, parent) {
 
 
 function Tree(configFilePath, write) {
-  this.configFileNode = new TestSuiteNode(this, 1, null, path.basename(configFilePath), 'config');
+  this.configFileNode = new TestSuiteNode(this, 1, null, path.basename(configFilePath), 'config', 'locationHint');
   this.write = write;
   this.nextId = 2;
 }
 
-function Node(tree, id, parentNode, name, type) {
+/**
+ * Node class is a base class for TestSuiteNode and TestNode classes.
+ *
+ * @param {Tree} tree test tree
+ * @param {Number} id this node ID. It should be unique among all node IDs that belong to the same tree.
+ * @param {Node} parentNode parent node
+ * @param {String} name node name (it could be a suite/spec name)
+ * @param {String} type node type (e.g. 'config', 'browser')
+ * @param {String} locationHint string that is used by IDE to navigate to the source code
+ * @constructor
+ */
+function Node(tree, id, parentNode, name, type, locationHint) {
   this.tree = tree;
   this.id = id;
   this.parentNode = parentNode;
   this.name = name;
   this.type = type;
+  this.locationHint = locationHint;
   this.isFinished = false;
 }
 
@@ -61,6 +73,9 @@ Node.prototype.getStartMessage = function () {
   var parentNodeId = this.parentNode ? this.parentNode.id : 0;
   text += "' parentNodeId='" + parentNodeId;
   text += "' name='" + escapeStr(this.name);
+  if (this.type != null) {
+    text += "' nodeType='" + this.type
+  }
   text += "']";
   return text;
 };
@@ -76,8 +91,10 @@ Node.prototype.getFinishMessage = function () {
   return text;
 };
 
-function TestSuiteNode(tree, id, parentNode, name, type) {
-  Node.call(this, tree, id, parentNode, name, type);
+// class TestSuiteNode extends Node
+
+function TestSuiteNode(tree, id, parentNode, name, type, locationHint) {
+  Node.call(this, tree, id, parentNode, name, type, locationHint);
   this.children = [];
   this.lookupMap = {};
 }
@@ -109,6 +126,16 @@ TestSuiteNode.prototype.addChild = function (childName, isChildSuite) {
 };
 
 
+/**
+ * TestNode class that represents a spec node.
+ *
+ * @param {Tree} tree test tree
+ * @param {Number} id this node ID. It should be unique among all node IDs that belong to the same tree.
+ * @param {TestSuiteNode} parentNode parent node
+ * @param {String} name node name (for example, it could be a spec name)
+ * @param {String} type node type (e.g. 'config', 'browser')
+ * @constructor
+ */
 function TestNode(tree, id, parentNode, name, type) {
   Node.call(this, tree, id, parentNode, name, type);
 }
@@ -158,64 +185,5 @@ TestNode.prototype.getExtraFinishMessageParameters = function () {
 };
 
 
-var escapeCharCode = (function () {
-  var obj = {};
-
-  function addMapping(fromChar, toChar) {
-    if (fromChar.length !== 1 || toChar.length !== 1) {
-      throw Error('String length should be 1');
-    }
-    var fromCharCode = fromChar.charCodeAt(0);
-    if (typeof obj[fromCharCode] === 'undefined') {
-      obj[fromCharCode] = toChar;
-    }
-    else {
-      throw Error('Bad mapping');
-    }
-  }
-
-  addMapping('\n', 'n');
-  addMapping('\r', 'r');
-  addMapping('\u0085', 'x');
-  addMapping('\u2028', 'l');
-  addMapping('\u2029', 'p');
-  addMapping('|', '|');
-  addMapping('\'', '\'');
-  addMapping('[', '[');
-  addMapping(']', ']');
-
-  return function (charCode) {
-    return obj[charCode];
-  };
-}());
-
-function isEscapingNeeded(str) {
-  var len = str.length;
-  for (var i = 0; i < len; i++) {
-    if (escapeCharCode(str.charCodeAt(i))) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function escapeStr(str) {
-  if (!isEscapingNeeded(str)) {
-    return str;
-  }
-  var res = '',
-    len = str.length;
-  for (var i = 0; i < len.length; i++) {
-    var escaped = escapeCharCode(str.charCodeAt(i));
-    if (escaped) {
-      res += '|';
-      res += escaped;
-    }
-    else {
-      res += str.charAt(i);
-    }
-  }
-  return res;
-}
 
 module.exports = Tree;
