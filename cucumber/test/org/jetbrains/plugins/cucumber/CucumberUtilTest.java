@@ -3,30 +3,24 @@ package org.jetbrains.plugins.cucumber;
 
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.jetbrains.plugins.cucumber.CucumberUtil.isAlphabetCharOrSpace;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class CucumberUtilTest {
-
   @Test
-  public void supportCharactersFromTheLatinAlphabet() throws Exception {
-    //assertThat(isAlphabetCharOrSpace('a'), is(true));
-    //assertThat(isAlphabetCharOrSpace('K'), is(true));
+  public void testFeatureOrFolderNameGetterPositiveScenarios() {
+    String featureFilePath = CucumberUtil.getFeatureFileOrFolderNameFromParameters("\"C:/projects/java-calculator/src/test/resources/cucumber/examples/java/calculator/shopping testcase.feature\" --format org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome");
+    assertEquals("C:/projects/java-calculator/src/test/resources/cucumber/examples/java/calculator/shopping testcase.feature", featureFilePath);
+
+    featureFilePath = CucumberUtil.getFeatureFileOrFolderNameFromParameters("C:/projects/java-calculator/src/test/resources/cucumber/examples/java/calculator/shopping.feature --format org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome");
+    assertEquals("C:/projects/java-calculator/src/test/resources/cucumber/examples/java/calculator/shopping.feature", featureFilePath);
   }
 
   @Test
-  public void supportCharactersFromTheRussianAlphabet() throws Exception {
-    //assertThat(isAlphabetCharOrSpace('ц'), is(true));
-  }
+  public void testFeatureOrFolderNameGetterNegativeScenarios() {
+    String featureFilePath = CucumberUtil.getFeatureFileOrFolderNameFromParameters("\"C:/projects/java --format org.jetbrains.plugins.cucumber.java.run.CucumberJvmSMFormatter --monochrome");
+    assertEquals(null, featureFilePath);
 
-  @Test
-  public void supportSpace() throws Exception {
-    assertThat(isAlphabetCharOrSpace(' '), is(true));
-  }
-
-  @Test
-  public void supportGermanUmlauts() throws Exception {
-    //assertThat(isAlphabetCharOrSpace('ä'), is(true));
+    featureFilePath = CucumberUtil.getFeatureFileOrFolderNameFromParameters("");
+    assertEquals(null, featureFilePath);
   }
 }

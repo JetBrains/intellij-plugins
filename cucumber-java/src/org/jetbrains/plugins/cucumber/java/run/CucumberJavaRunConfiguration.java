@@ -22,6 +22,7 @@ import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
+import org.jetbrains.plugins.cucumber.CucumberUtil;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaBundle;
 
 import java.io.File;
@@ -127,18 +128,12 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
 
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
-    final String[] parameters = getProgramParameters().split(" ");
-    if (parameters.length > 0) {
-      final String fileToRun = parameters[0];
-      if (!(new File(fileToRun)).exists()) {
-        throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.file.doesnt.exist"));
-      }
-    }
-    else {
+    final String featureFileOrFolder = CucumberUtil.getFeatureFileOrFolderNameFromParameters(getProgramParameters());
+    if (featureFileOrFolder == null) {
       throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.specify.file"));
-    }
-
-    if (StringUtil.isEmpty(getGlue())) {
+    } else if (!(new File(featureFileOrFolder)).exists()) {
+      throw new RuntimeConfigurationException(CucumberBundle.message("cucumber.run.error.file.doesnt.exist"));
+    } else if (StringUtil.isEmpty(getGlue())) {
       throw new RuntimeConfigurationException(CucumberJavaBundle.message("cucumber.java.run.configuration.glue.mustnt.be.empty"));
     }
 
