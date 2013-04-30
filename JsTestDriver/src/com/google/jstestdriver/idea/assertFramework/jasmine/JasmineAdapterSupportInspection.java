@@ -4,6 +4,8 @@ import com.google.inject.Provider;
 import com.google.jstestdriver.idea.assertFramework.jasmine.jsSrc.JasmineAdapterSrcMarker;
 import com.google.jstestdriver.idea.assertFramework.support.AbstractAddAdapterSupportInspection;
 import com.google.jstestdriver.idea.util.VfsUtils;
+import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
+import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.vfs.VirtualFile;

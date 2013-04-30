@@ -1,8 +1,10 @@
 package com.google.jstestdriver.idea.assertFramework;
 
-import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineFileStructureBuilder;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructureBuilder;
-import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructureBuilder;
+import com.intellij.javascript.testFramework.AbstractTestFileStructure;
+import com.intellij.javascript.testFramework.AbstractTestFileStructureBuilder;
+import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
+import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;

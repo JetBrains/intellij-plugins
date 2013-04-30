@@ -6,7 +6,7 @@ import com.google.jstestdriver.idea.assertFramework.codeInsight.JsGeneratorUtils
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestCaseStructure;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructure;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructureBuilder;
-import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSArgumentList;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSExpression;

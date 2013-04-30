@@ -2,7 +2,7 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
+import com.intellij.javascript.testFramework.JstdRunElement;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
 import com.intellij.openapi.util.TextRange;

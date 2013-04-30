@@ -1,7 +1,7 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.common.collect.Maps;
-import com.google.jstestdriver.idea.assertFramework.Annotation;
+import com.intellij.javascript.testFramework.Annotation;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;

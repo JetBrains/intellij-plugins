@@ -1,8 +1,8 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.common.collect.Maps;
-import com.google.jstestdriver.idea.JsTestDriverTestUtils;
-import com.google.jstestdriver.idea.assertFramework.Annotation;
+import com.intellij.javascript.testFramework.Annotation;
+import com.intellij.javascript.testFramework.JsTestCommonTestUtil;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunctionExpression;
 import com.intellij.lang.javascript.psi.JSProperty;
@@ -60,7 +60,7 @@ class MarkedTestStructure {
       throw new RuntimeException("Start offset has not been specified for id:" + myId + ", component: " + componentName + ", " + annotation);
     }
     TextRange textRange = TextRange.create(startOffset, annotation.getTextRange().getStartOffset());
-    PsiElement psiElement = JsTestDriverTestUtils.findExactPsiElement(jsFile, textRange);
+    PsiElement psiElement = JsTestCommonTestUtil.findExactPsiElement(jsFile, textRange);
     if (myPsiElementByComponentNameMap.containsKey(componentName)) {
       throw new RuntimeException("Component is already there");
     }

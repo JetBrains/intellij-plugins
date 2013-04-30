@@ -1,11 +1,11 @@
 package com.google.jstestdriver.idea.execution;
 
 import com.google.jstestdriver.idea.assertFramework.JsTestFileByTestNameIndex;
-import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineFileStructure;
-import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineFileStructureBuilder;
-import com.google.jstestdriver.idea.assertFramework.qunit.DefaultQUnitModuleStructure;
-import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructure;
-import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructureBuilder;
+import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
+import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
+import com.intellij.javascript.testFramework.qunit.DefaultQUnitModuleStructure;
+import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
+import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;

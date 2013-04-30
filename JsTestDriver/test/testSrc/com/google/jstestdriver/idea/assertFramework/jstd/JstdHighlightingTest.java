@@ -1,6 +1,6 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
-import com.google.jstestdriver.idea.JsTestDriverTestUtils;
+import com.google.jstestdriver.idea.JstdTestRoot;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.lang.javascript.JSDaemonAnalyzerTestCase;
 
@@ -28,7 +28,7 @@ public class JstdHighlightingTest extends JSDaemonAnalyzerTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return JsTestDriverTestUtils.getTestDataDir().getAbsolutePath();
+    return JstdTestRoot.getTestDataDir().getAbsolutePath();
   }
 
   public void testJstdTestCaseQuickFixAvailable() throws Exception {

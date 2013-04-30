@@ -3,7 +3,7 @@ package com.google.jstestdriver.idea.assertFramework.qunit.codeInsight;
 import com.google.jstestdriver.idea.assertFramework.codeInsight.AbstractJsGenerateAction;
 import com.google.jstestdriver.idea.assertFramework.codeInsight.GenerateActionContext;
 import com.google.jstestdriver.idea.assertFramework.codeInsight.JsGeneratorUtils;
-import com.google.jstestdriver.idea.assertFramework.qunit.*;
+import com.intellij.javascript.testFramework.qunit.*;
 import com.intellij.lang.javascript.psi.JSArgumentList;
 import com.intellij.lang.javascript.psi.JSObjectLiteralExpression;
 import org.jetbrains.annotations.NotNull;

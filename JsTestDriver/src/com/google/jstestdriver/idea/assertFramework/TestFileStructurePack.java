@@ -1,5 +1,7 @@
 package com.google.jstestdriver.idea.assertFramework;
 
+import com.intellij.javascript.testFramework.AbstractTestFileStructure;
+import com.intellij.javascript.testFramework.JstdRunElement;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;

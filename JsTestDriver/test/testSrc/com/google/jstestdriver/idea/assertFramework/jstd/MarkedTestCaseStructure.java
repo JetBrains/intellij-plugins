@@ -1,15 +1,13 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.jstestdriver.idea.JsTestDriverTestUtils;
-import com.google.jstestdriver.idea.assertFramework.Annotation;
+import com.intellij.javascript.testFramework.Annotation;
+import com.intellij.javascript.testFramework.JsTestCommonTestUtil;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 
 import java.util.List;
-import java.util.Map;
 
 class MarkedTestCaseStructure {
   static final String KEY_ID = "id";
@@ -43,7 +41,7 @@ class MarkedTestCaseStructure {
       throw new RuntimeException("End annotation is already encountered");
     }
     int endPosition = textRange.getStartOffset();
-    myPsiElement = JsTestDriverTestUtils.findExactPsiElement(jsFile, TextRange.create(myStartPosition, endPosition));
+    myPsiElement = JsTestCommonTestUtil.findExactPsiElement(jsFile, TextRange.create(myStartPosition, endPosition));
   }
 
   public void addTestStructureInfo(MarkedTestStructure markedTestStructure) {

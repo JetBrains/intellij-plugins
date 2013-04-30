@@ -4,6 +4,8 @@ import com.google.inject.Provider;
 import com.google.jstestdriver.idea.assertFramework.qunit.jsSrc.QUnitAdapterSrcMarker;
 import com.google.jstestdriver.idea.assertFramework.support.AbstractAddAdapterSupportInspection;
 import com.google.jstestdriver.idea.util.VfsUtils;
+import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
+import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.vfs.VirtualFile;

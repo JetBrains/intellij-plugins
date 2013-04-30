@@ -1,7 +1,7 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
-import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructureBuilder;
-import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.intellij.javascript.testFramework.AbstractTestFileStructureBuilder;
+import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;

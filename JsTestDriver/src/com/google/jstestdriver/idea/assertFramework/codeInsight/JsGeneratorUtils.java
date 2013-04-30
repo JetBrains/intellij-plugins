@@ -1,6 +1,6 @@
 package com.google.jstestdriver.idea.assertFramework.codeInsight;
 
-import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.codeInsight.template.impl.TemplateImpl;

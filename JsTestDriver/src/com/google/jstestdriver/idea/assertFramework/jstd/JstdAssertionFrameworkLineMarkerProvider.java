@@ -1,8 +1,8 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.jstestdriver.idea.assertFramework.library.JstdLibraryUtil;
-import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructure;
-import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructureBuilder;
+import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
+import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.google.jstestdriver.idea.debug.JstdDebugProgramRunner;
 import com.google.jstestdriver.idea.execution.JstdRuntimeConfigurationProducer;
 import com.intellij.codeHighlighting.Pass;

@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.util;
 
+import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.DocumentFragment;
 import com.intellij.openapi.util.TextRange;

@@ -1,6 +1,6 @@
 package com.google.jstestdriver.idea.execution;
 
-import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
+import com.intellij.javascript.testFramework.JstdRunElement;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
 import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.config.JstdConfigFileUtils;

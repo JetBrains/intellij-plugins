@@ -1,6 +1,6 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
-import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSFunctionExpression;
 import com.intellij.lang.javascript.psi.JSProperty;

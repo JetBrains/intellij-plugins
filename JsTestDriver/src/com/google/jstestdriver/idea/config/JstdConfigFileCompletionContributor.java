@@ -15,7 +15,7 @@
  */
 package com.google.jstestdriver.idea.config;
 
-import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupItem;
 import com.intellij.openapi.editor.Document;

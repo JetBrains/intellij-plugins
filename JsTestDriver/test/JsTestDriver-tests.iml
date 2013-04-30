@@ -15,6 +15,7 @@
     <orderEntry type="library" name="JUnit4" level="project" />
     <orderEntry type="module" module-name="JavaScript-tests" />
     <orderEntry type="module" module-name="JsTestDriver-rt" />
+    <orderEntry type="module" module-name="js-test-common-test" />
   </component>
 </module>
 

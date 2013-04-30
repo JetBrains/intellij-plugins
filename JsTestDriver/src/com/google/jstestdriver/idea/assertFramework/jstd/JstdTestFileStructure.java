@@ -2,9 +2,9 @@ package com.google.jstestdriver.idea.assertFramework.jstd;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.jstestdriver.idea.assertFramework.AbstractTestFileStructure;
-import com.google.jstestdriver.idea.assertFramework.JstdRunElement;
-import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.intellij.javascript.testFramework.AbstractTestFileStructure;
+import com.intellij.javascript.testFramework.JstdRunElement;
+import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.JSDefinitionExpression;
 import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.JSFile;

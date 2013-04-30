@@ -1,7 +1,8 @@
 package com.google.jstestdriver.idea.assertFramework.jstd;
 
-import com.google.jstestdriver.idea.AbstractJsPsiTestCase;
-import com.google.jstestdriver.idea.JsTestDriverTestUtils;
+import com.google.jstestdriver.idea.JstdTestRoot;
+import com.intellij.javascript.testFramework.AbstractJsPsiTestCase;
+import com.intellij.javascript.testFramework.JsTestCommonTestUtil;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSProperty;
 import com.intellij.psi.PsiElement;
@@ -55,7 +56,7 @@ public class JstdStructureTest extends AbstractJsPsiTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return JsTestDriverTestUtils.getTestDataDir().getAbsolutePath() + "/assertFramework/jstd/structure/";
+    return JstdTestRoot.getTestDataDir().getAbsolutePath() + "/assertFramework/jstd/structure/";
   }
 
   @Override

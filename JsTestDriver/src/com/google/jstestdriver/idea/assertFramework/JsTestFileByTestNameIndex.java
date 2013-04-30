@@ -1,12 +1,12 @@
 package com.google.jstestdriver.idea.assertFramework;
 
-import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineFileStructure;
-import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineFileStructureBuilder;
-import com.google.jstestdriver.idea.assertFramework.jasmine.JasmineSuiteStructure;
-import com.google.jstestdriver.idea.assertFramework.qunit.DefaultQUnitModuleStructure;
-import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructure;
-import com.google.jstestdriver.idea.assertFramework.qunit.QUnitFileStructureBuilder;
-import com.google.jstestdriver.idea.assertFramework.qunit.QUnitTestMethodStructure;
+import com.intellij.javascript.testFramework.jasmine.JasmineSuiteStructure;
+import com.intellij.javascript.testFramework.qunit.DefaultQUnitModuleStructure;
+import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
+import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
+import com.intellij.javascript.testFramework.qunit.QUnitTestMethodStructure;
+import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
+import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.vfs.VirtualFile;

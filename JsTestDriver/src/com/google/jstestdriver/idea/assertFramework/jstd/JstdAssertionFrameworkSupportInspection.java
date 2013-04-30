@@ -4,13 +4,12 @@ import com.google.jstestdriver.idea.assertFramework.jstd.jsSrc.JstdDefaultAssert
 import com.google.jstestdriver.idea.assertFramework.library.JstdLibraryUtil;
 import com.google.jstestdriver.idea.assertFramework.support.AbstractMethodBasedInspection;
 import com.google.jstestdriver.idea.assertFramework.support.ChooseScopeAndCreateLibraryDialog;
-import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.google.jstestdriver.idea.util.JstdResolveUtil;
 import com.google.jstestdriver.idea.util.VfsUtils;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.lang.javascript.psi.JSCallExpression;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -20,6 +19,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.ui.UIUtil;
 import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +49,7 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
 
   @Override
   protected boolean isResolved(@NotNull JSReferenceExpression methodExpression) {
-    if (JsPsiUtils.isResolvedToFunction(methodExpression)) {
+    if (JstdResolveUtil.isResolvedToFunction(methodExpression)) {
       return true;
     }
     VirtualFile virtualFile = PsiUtilCore.getVirtualFile(methodExpression);
@@ -80,7 +80,7 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
 
     @Override
     public void invoke(@NotNull final Project project, Editor editor, final PsiFile file) throws IncorrectOperationException {
-      ApplicationManager.getApplication().invokeLater(new Runnable() {
+      UIUtil.invokeLaterIfNeeded(new Runnable() {
         @Override
         public void run() {
           List<VirtualFile> sources = getLibrarySourceFiles();

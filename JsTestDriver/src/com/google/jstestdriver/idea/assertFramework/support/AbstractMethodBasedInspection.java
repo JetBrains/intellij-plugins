@@ -1,7 +1,8 @@
 package com.google.jstestdriver.idea.assertFramework.support;
 
 import com.google.jstestdriver.idea.execution.JstdSettingsUtil;
-import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.google.jstestdriver.idea.util.JstdResolveUtil;
+import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -81,7 +82,7 @@ public abstract class AbstractMethodBasedInspection extends JSInspection {
   }
 
   protected boolean isResolved(JSReferenceExpression methodExpression) {
-    return JsPsiUtils.isResolvedToFunction(methodExpression);
+    return JstdResolveUtil.isResolvedToFunction(methodExpression);
   }
 
 }

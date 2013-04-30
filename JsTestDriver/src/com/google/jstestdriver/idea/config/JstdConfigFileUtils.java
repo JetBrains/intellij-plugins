@@ -16,7 +16,7 @@
 package com.google.jstestdriver.idea.config;
 
 import com.google.common.collect.Lists;
-import com.google.jstestdriver.idea.util.JsPsiUtils;
+import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.google.jstestdriver.idea.util.PsiElementFragment;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.DocumentFragment;
