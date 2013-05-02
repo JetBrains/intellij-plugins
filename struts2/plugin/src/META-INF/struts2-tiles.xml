@@ -4,6 +4,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
 
+    <multiHostInjector implementation="com.intellij.struts2.tiles.TilesOgnlInjector"/>
+
     <!-- Provide Tiles-model configured via StrutsTilesListener in web.xml -->
     <struts.tilesModelProvider implementation="com.intellij.struts2.tiles.Struts2TilesModelProvider"/>
 
