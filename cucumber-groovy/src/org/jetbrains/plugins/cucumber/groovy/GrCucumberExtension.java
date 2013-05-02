@@ -163,10 +163,10 @@ public class GrCucumberExtension implements CucumberJvmExtensionPoint {
   @NotNull
   @Override
   public Collection<String> getGlues(@NotNull GherkinFile file, Set<String> gluesFromOtherFiles) {
-    final Set<String> glues = ContainerUtil.newHashSet();
-    if (gluesFromOtherFiles != null) {
-      glues.addAll(gluesFromOtherFiles);
+    if (gluesFromOtherFiles == null) {
+      gluesFromOtherFiles = ContainerUtil.newHashSet();
     }
+    final Set<String> glues = gluesFromOtherFiles;
 
     file.accept(new GherkinRecursiveElementVisitor() {
       @Override
