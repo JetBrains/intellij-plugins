@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE validators PUBLIC
+    "-//OpenSymphony Group//XWork Validator 1.0.2//EN"
+    "http://www.opensymphony.com/xwork/xwork-validator-1.0.2.dtd">
+
+<validators>
+
+  <validator type="required">
+    <param name="validatorParam">value</param>
+    <message>anything</message>
+  </validator>
+
+  <field name="myField">
+    <field-validator type="fieldexpression">
+      <param name="expression">ANYTHING_FIX_ME</param>
+      <message>anything</message>
+    </field-validator>
+  </field>
+
+
+</validators>
