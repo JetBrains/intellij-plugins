@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+
+  <bean class="java.lang.String" name="myBean"/>
+  <constant name="myConstant" value="1"/>
+
+  <include file="struts2.xml"/>
+
+  <package name="myPackage" strict-method-invocation="true">
+
+    <action name="myAction" class="MyClass">
+      <result>resultPath</result>
+      <param name="paramName">paramValue</param>
+    </action>
+
+  </package>
+
+</struts>

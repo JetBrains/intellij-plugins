@@ -43,6 +43,8 @@ import org.jetbrains.annotations.NotNull;
  */
 class StructureViewTreeModel extends DomStructureViewTreeModel implements StructureViewModel.ElementInfoProvider {
 
+  static final String HIDE_PARAMS_ID = StrutsBundle.message("structure.view.filter.params");
+
   private final Class[] alwaysPlus;
   private final Class[] alwaysLeaf;
 
@@ -87,7 +89,7 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
 
       @NotNull
       public String getName() {
-        return StrutsBundle.message("structure.view.filter.params");
+        return HIDE_PARAMS_ID;
       }
     }};
   }
