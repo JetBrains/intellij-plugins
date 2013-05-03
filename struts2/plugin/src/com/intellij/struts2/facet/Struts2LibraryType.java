@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,16 +15,8 @@
 
 package com.intellij.struts2.facet;
 
-import com.intellij.facet.frameworks.LibrariesDownloadAssistant;
-import com.intellij.facet.ui.libraries.LibraryInfo;
 import com.intellij.framework.library.DownloadableLibraryTypeBase;
-import com.intellij.util.download.DownloadableFileService;
-import com.intellij.util.download.DownloadableFileSetDescription;
-import com.intellij.util.download.DownloadableFileSetVersions;
 import icons.Struts2Icons;
-import org.jetbrains.annotations.NotNull;
-
-import java.net.URL;
 
 /**
  * Support for Struts 2 library setup in project settings.
@@ -38,24 +30,11 @@ public class Struts2LibraryType extends DownloadableLibraryTypeBase {
   private static final String GROUP_ID = "struts2";
 
   public Struts2LibraryType() {
-    super("Struts 2", "struts2", GROUP_ID, Struts2Icons.Action, getLibrariesUrl());
+    super("Struts 2", "struts2", GROUP_ID, Struts2Icons.Action, Struts2LibraryType.class.getResource("struts2.xml"));
   }
 
   @Override
   public String[] getDetectionClassNames() {
     return new String[]{STRUTS_VERSION_CLASS};
   }
-
-  public static DownloadableFileSetVersions<DownloadableFileSetDescription> getVersions() {
-    return DownloadableFileService.getInstance().createFileSetVersions(null, getLibrariesUrl());
-  }
-
-  public static LibraryInfo[] getLibraryInfo(@NotNull final DownloadableFileSetDescription version) {
-    return LibrariesDownloadAssistant.getLibraryInfos(getLibrariesUrl(), version.getVersionString());
-  }
-
-  private static URL getLibrariesUrl() {
-    return Struts2LibraryType.class.getResource("struts2.xml");
-  }
-
 }

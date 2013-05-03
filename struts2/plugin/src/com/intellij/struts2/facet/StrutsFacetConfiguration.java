@@ -97,7 +97,7 @@ public class StrutsFacetConfiguration implements FacetConfiguration, Modificatio
     validatorsManager.registerValidator(validator);
 
     return new FacetEditorTab[]{new FileSetConfigurationTab(this, editorContext),
-                                new FeaturesConfigurationTab(this, editorContext, validator)};
+                                new FeaturesConfigurationTab(this)};
   }
 
   public void readExternal(final Element element) throws InvalidDataException {
