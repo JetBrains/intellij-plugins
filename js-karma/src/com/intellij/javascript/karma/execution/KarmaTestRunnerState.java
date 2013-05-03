@@ -7,7 +7,6 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.execution.process.KillableColoredProcessHandler;
-import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -73,22 +72,7 @@ public class KarmaTestRunnerState implements RunProfileState {
         throw new ExecutionException(e);
       }
     }
-    int runnerPort = -1;
-    if (server.isReady()) {
-      runnerPort = server.getRunnerPort();
-    }
-    final ProcessHandler processHandler = startProcess(runnerPort);
-    if (runnerPort == -1) {
-      server.addListener(new KarmaServerListener() {
-        @Override
-        public void onReady(int webServerPort, int runnerPort) {
-          @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-          PrintWriter pw = new PrintWriter(processHandler.getProcessInput(), false);
-          pw.print("runner port " + runnerPort + "\n");
-          pw.flush();
-        }
-      });
-    }
+    ProcessHandler processHandler = startProcess(server);
     ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment, executor);
     consoleView.attachToProcess(processHandler);
 
@@ -134,29 +118,45 @@ public class KarmaTestRunnerState implements RunProfileState {
   }
 
   @NotNull
-  private ProcessHandler startProcess(int runnerPort) throws ExecutionException {
-    GeneralCommandLine commandLine = createCommandLine(myRunSettings, runnerPort);
+  private ProcessHandler startProcess(@NotNull KarmaServer server) throws ExecutionException {
+    int runnerPort = -1;
+    if (server.isReady()) {
+      runnerPort = server.getRunnerPort();
+    }
+    File clientAppFile;
+    try {
+      clientAppFile = server.getClientAppFile();
+    }
+    catch (IOException e) {
+      throw new ExecutionException("Can't find karma-intellij test runner", e);
+    }
+    GeneralCommandLine commandLine = createCommandLine(runnerPort, clientAppFile);
     Process process = commandLine.createProcess();
-    OSProcessHandler osProcessHandler = new KillableColoredProcessHandler(process, commandLine.getCommandLineString());
-    ProcessTerminatedListener.attach(osProcessHandler);
-    return osProcessHandler;
+    final ProcessHandler processHandler = new KillableColoredProcessHandler(process, commandLine.getCommandLineString());
+    ProcessTerminatedListener.attach(processHandler);
+    if (runnerPort == -1) {
+      server.addListener(new KarmaServerListener() {
+        @Override
+        public void onReady(int webServerPort, int runnerPort) {
+          @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+          PrintWriter pw = new PrintWriter(processHandler.getProcessInput(), false);
+          pw.print("runner port " + runnerPort + "\n");
+          pw.flush();
+        }
+      });
+    }
+    return processHandler;
   }
 
   @NotNull
-  private GeneralCommandLine createCommandLine(@NotNull KarmaRunSettings runSettings, int runnerPort) throws ExecutionException {
+  private GeneralCommandLine createCommandLine(int runnerPort, @NotNull File clientAppFile) throws ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
-    File configFile = new File(runSettings.getConfigPath());
+    File configFile = new File(myRunSettings.getConfigPath());
     // looks like it should work with any working directory
     commandLine.setWorkDirectory(configFile.getParentFile());
     commandLine.setExePath(myNodeInterpreterPath);
     //commandLine.addParameter("--debug-brk=5858");
-    try {
-      File clientAppFile = KarmaJavaScriptSourcesLocator.getClientAppFile();
-      commandLine.addParameter(clientAppFile.getAbsolutePath());
-    }
-    catch (IOException e) {
-      throw new ExecutionException("Can't find karma client runner", e);
-    }
+    commandLine.addParameter(clientAppFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaPackageDir);
     if (runnerPort != -1) {
       commandLine.addParameter("--runnerPort=" + String.valueOf(runnerPort));

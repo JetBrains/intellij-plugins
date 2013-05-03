@@ -65,7 +65,6 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
   @Nullable
   @Override
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-    myGlobalSettingsRef.remove();
     try {
       checkConfiguration();
     }
@@ -87,7 +86,16 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
 
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
+    myGlobalSettingsRef.remove();
     String nodeInterpreterPath = KarmaGlobalSettingsUtil.getNodeInterpreterPath();
+    String karmaPackagePath = KarmaGlobalSettingsUtil.getKarmaNodePackageDir(getProject());
+    check(nodeInterpreterPath, karmaPackagePath);
+    if (nodeInterpreterPath != null && karmaPackagePath != null) {
+      myGlobalSettingsRef.set(new GlobalSettings(nodeInterpreterPath, karmaPackagePath));
+    }
+  }
+
+  private void check(@Nullable String nodeInterpreterPath, @Nullable String karmaPackagePath) throws RuntimeConfigurationError {
     if (nodeInterpreterPath == null || nodeInterpreterPath.trim().isEmpty()) {
       throw new RuntimeConfigurationError("Please specify Node.js interpreter.");
     }
@@ -96,7 +104,6 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
       throw new RuntimeConfigurationError("Incorrect Node.js interpreter path.");
     }
 
-    String karmaPackagePath = KarmaGlobalSettingsUtil.getKarmaNodePackageDir(getProject());
     if (karmaPackagePath == null || karmaPackagePath.trim().isEmpty()) {
       throw new RuntimeConfigurationError("Please specify Karma Node.js package.");
     }
@@ -116,8 +123,6 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
     if (!configFile.isFile()) {
       throw new RuntimeConfigurationError("Specified config file path is incorrect.");
     }
-
-    myGlobalSettingsRef.set(new GlobalSettings(nodeInterpreterPath, karmaPackagePath));
   }
 
   @NotNull

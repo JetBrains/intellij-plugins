@@ -6,6 +6,7 @@ import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
 import com.intellij.javascript.nodejs.NodeSettings;
 import com.intellij.javascript.nodejs.NodeUIUtil;
 import com.intellij.lang.javascript.JavaScriptFileType;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
@@ -108,6 +109,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   private static TextFieldWithHistoryWithBrowseButton createKarmaPackageDirPathTextField(@NotNull final Project project) {
     TextFieldWithHistoryWithBrowseButton karmaPackageDirPathComponent = new TextFieldWithHistoryWithBrowseButton();
     final TextFieldWithHistory textFieldWithHistory = karmaPackageDirPathComponent.getChildComponent();
+    textFieldWithHistory.setHistorySize(-1);
     SwingHelper.addHistoryOnExpansion(textFieldWithHistory, new NotNullProducer<List<String>>() {
       @NotNull
       @Override
@@ -137,7 +139,8 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     SwingHelper.installFileCompletionAndBrowseDialog(
       project,
       karmaPackageDirPathComponent,
-      KarmaBundle.message("runConfiguration.karma_package_dir.browse_dialog.title")
+      KarmaBundle.message("runConfiguration.karma_package_dir.browse_dialog.title"),
+      FileChooserDescriptorFactory.createSingleFolderDescriptor()
     );
     return karmaPackageDirPathComponent;
   }
@@ -146,6 +149,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
   private static TextFieldWithHistoryWithBrowseButton createConfigurationFileTextField(@NotNull final Project project) {
     TextFieldWithHistoryWithBrowseButton textFieldWithHistoryWithBrowseButton = new TextFieldWithHistoryWithBrowseButton();
     final TextFieldWithHistory textFieldWithHistory = textFieldWithHistoryWithBrowseButton.getChildComponent();
+    textFieldWithHistory.setHistorySize(-1);
     SwingHelper.addHistoryOnExpansion(textFieldWithHistory, new NotNullProducer<List<String>>() {
       @NotNull
       @Override
@@ -165,7 +169,8 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     SwingHelper.installFileCompletionAndBrowseDialog(
       project,
       textFieldWithHistoryWithBrowseButton,
-      KarmaBundle.message("runConfiguration.config_file.browse_dialog.title")
+      KarmaBundle.message("runConfiguration.config_file.browse_dialog.title"),
+      FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
     );
     return textFieldWithHistoryWithBrowseButton;
   }

@@ -2,8 +2,10 @@ package com.intellij.javascript.karma.server;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.*;
-import com.intellij.javascript.karma.execution.KarmaJavaScriptSourcesLocator;
+import com.intellij.execution.process.KillableColoredProcessHandler;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -32,6 +34,7 @@ public class KarmaServer implements Disposable {
   private final List<KarmaServerListener> myListeners = ContainerUtil.createEmptyCOWList();
   private final File myConfigurationFile;
   private final KillableColoredProcessHandler myProcessHandler;
+  private final File myKarmaIntellijDir;
   private boolean myTerminated = false;
   private volatile int myWebServerPort = -1;
   private volatile int myRunnerPort = -1;
@@ -41,9 +44,20 @@ public class KarmaServer implements Disposable {
   public KarmaServer(@NotNull File nodeInterpreter,
                      @NotNull File karmaPackageDir,
                      @NotNull File configurationFile) throws IOException {
+    /* 'nodeInterpreter', 'karmaPackageDir' and 'configurationFile'
+        are already checked in KarmaRunConfiguration.checkConfiguration */
     myConfigurationFile = configurationFile;
-    myProcessHandler = startServer(nodeInterpreter, karmaPackageDir, configurationFile);
+    myKarmaIntellijDir = findKarmaIntellijDir(karmaPackageDir);
+    myProcessHandler = startServer(nodeInterpreter, configurationFile);
     Disposer.register(ApplicationManager.getApplication(), this);
+  }
+
+  private static File findKarmaIntellijDir(@NotNull File karmaPackageDir) throws IOException {
+    File dir = new File(karmaPackageDir.getParentFile(), "karma-intellij");
+    if (!dir.isDirectory()) {
+      throw new IOException("Can't find " + dir.getAbsolutePath());
+    }
+    return dir;
   }
 
   @NotNull
@@ -52,24 +66,13 @@ public class KarmaServer implements Disposable {
   }
 
   private KillableColoredProcessHandler startServer(@NotNull File nodeInterpreter,
-                                                    @NotNull File karmaPackageDir,
                                                     @NotNull File configurationFile) throws IOException {
-    if (!nodeInterpreter.isFile() || !nodeInterpreter.canExecute()) {
-      throw new IOException("Node interpreter isn't executable file");
-    }
-    if (!karmaPackageDir.isDirectory()) {
-      throw new IOException("Karma directory is illegal");
-    }
-    if (!configurationFile.isFile()) {
-      throw new IOException("Configuration file is illegal");
-    }
     GeneralCommandLine commandLine = new GeneralCommandLine();
     commandLine.setPassParentEnvironment(true);
     commandLine.setWorkDirectory(configurationFile.getParentFile());
     commandLine.setExePath(nodeInterpreter.getAbsolutePath());
-    File serverFile = KarmaJavaScriptSourcesLocator.getServerAppFile();
+    File serverFile = getServerAppFile();
     commandLine.addParameter(serverFile.getAbsolutePath());
-    commandLine.addParameter("--karmaPackageDir=" + karmaPackageDir.getAbsolutePath());
     commandLine.addParameter("--configFile=" + configurationFile.getAbsolutePath());
 
     try {
@@ -100,6 +103,24 @@ public class KarmaServer implements Disposable {
     }
   }
 
+  @NotNull
+  private File getServerAppFile() throws IOException {
+    return getAppFile("intellijServer.js");
+  }
+
+  @NotNull
+  public File getClientAppFile() throws IOException {
+    return getAppFile("intellijRunner.js");
+  }
+
+  private File getAppFile(@NotNull String baseName) throws IOException {
+    File file = new File(myKarmaIntellijDir, "lib" + File.separatorChar + baseName);
+    if (!file.isFile()) {
+      throw new IOException("Can't find " + file);
+    }
+    return file;
+  }
+
   private void handleStdout(@NotNull String text) {
     if (myWebServerPort == -1) {
       myWebServerPort = parseWebServerPort(text);
@@ -128,7 +149,7 @@ public class KarmaServer implements Disposable {
   }
 
   private static int parseWebServerPort(@NotNull String text) {
-    String webServerPrefix = "INFO [karma]: Karma server started at ";
+    String webServerPrefix = "INFO [karma]: Karma v0.9.2 server started at ";
     if (text.startsWith(webServerPrefix)) {
       Matcher m = WEB_SERVER_URL_PATTERN.matcher(text.substring(webServerPrefix.length()));
       if (m.find()) {
