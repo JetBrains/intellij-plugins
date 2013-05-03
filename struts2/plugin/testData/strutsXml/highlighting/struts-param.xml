@@ -28,6 +28,10 @@
       <param name="<error descr="Parameter with such name already exists">param1</error>">someValue2</param>
     </action>
 
+    <action name="testParamValueWithExpressionIsSkipped" class="MyClass">
+      <param name="nested.nestedBool">${true}</param>
+    </action>
+
   </package>
 
 

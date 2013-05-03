@@ -38,6 +38,12 @@ public class ParamValueConverter extends WrappingConverter {
       return null;
     }
 
+    // skip values containing expressions
+    final String text = domElement.getRawText();
+    if (text.contains("${")) {
+      return null;
+    }
+
     final List<BeanProperty> beanProperties = param.getName().getValue();
     if (beanProperties == null || beanProperties.isEmpty()) {
       return null;
