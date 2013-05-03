@@ -36,6 +36,7 @@ class StrutsStructureViewTest extends LightCodeInsightFixtureTestCase {
     myFixture.testStructureView(new Consumer<StructureViewComponent>() {
       @Override
       public void consume(StructureViewComponent component) {
+        component.setActionActive(StructureViewTreeModel.HIDE_PARAMS_ID, false)
         TreeUtil.expandAll(component.getTree())
 
         PlatformTestUtil.assertTreeEqual(component.getTree(), """-struts-structure.xml
