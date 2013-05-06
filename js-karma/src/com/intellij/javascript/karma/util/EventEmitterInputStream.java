@@ -15,10 +15,10 @@ import java.util.List;
 /**
 * @author Sergey Simonchik
 */
-public class CommandInputStream extends InputStream {
+public class EventEmitterInputStream extends InputStream {
 
   private static final char NL = '\n';
-  private static final String PREFIX = "##intellij-command[";
+  private static final String PREFIX = "##intellij-event[";
   private static final String SUFFIX = "]";
   private static final String SUFFIX_WITH_NL = SUFFIX + NL;
 
@@ -27,18 +27,18 @@ public class CommandInputStream extends InputStream {
   private final ByteArrayQueue myByteQueue = new ByteArrayQueue(8192);
   private final char[] myCharBuffer = new char[8192];
   private final StringBuilder myCurrentLine = new StringBuilder();
-  private final List<StreamCommandListener> myListeners = ContainerUtil.createEmptyCOWList();
+  private final List<StreamEventListener> myListeners = ContainerUtil.createEmptyCOWList();
   private boolean skipLF = false;
 
 
-  public CommandInputStream(@NotNull InputStream inputStream,
-                            @NotNull Charset charset) {
+  public EventEmitterInputStream(@NotNull InputStream inputStream,
+                                 @NotNull Charset charset) {
     //noinspection IOResourceOpenedButNotSafelyClosed
     myReader = new InputStreamReader(inputStream, charset);
     myCharset = charset;
   }
 
-  public void addListener(@NotNull StreamCommandListener listener) {
+  public void addListener(@NotNull StreamEventListener listener) {
     myListeners.add(listener);
   }
 
@@ -62,22 +62,20 @@ public class CommandInputStream extends InputStream {
     }
   }
 
-  private void handleNextChar(int chCode) {
-    if (skipLF && chCode != NL) {
+  private void handleNextChar(char ch) {
+    if (skipLF && ch != NL) {
       myCurrentLine.append('\r');
     }
-    if (chCode == '\r') {
+    if (ch == '\r') {
       skipLF = true;
     }
     else {
       skipLF = false;
-      if (chCode != -1) {
-        myCurrentLine.append(chCode);
-      }
+      myCurrentLine.append(ch);
     }
-    if (chCode == NL || chCode == -1) {
+    if (ch == NL || ch == -1) {
       String line = myCurrentLine.toString();
-      if (!handleLineAsCommand(line)) {
+      if (!handleLineAsEvent(line)) {
         byte[] buf = line.getBytes(myCharset);
         myByteQueue.addAll(buf);
       }
@@ -85,13 +83,13 @@ public class CommandInputStream extends InputStream {
     }
   }
 
-  private boolean handleLineAsCommand(@NotNull String line) {
+  private boolean handleLineAsEvent(@NotNull String line) {
     if (line.startsWith(PREFIX)) {
       final String suffix = StringUtil.endsWithChar(line, NL) ? SUFFIX_WITH_NL : SUFFIX;
       if (line.endsWith(suffix)) {
-        String commandName = line.substring(PREFIX.length(), line.length() - suffix.length());
-        for (StreamCommandListener listener : myListeners) {
-          listener.onCommand(commandName);
+        String eventText = line.substring(PREFIX.length(), line.length() - suffix.length());
+        for (StreamEventListener listener : myListeners) {
+          listener.on(eventText);
         }
         return true;
       }
@@ -103,8 +101,11 @@ public class CommandInputStream extends InputStream {
   public int read() throws IOException {
     while (myByteQueue.isEmpty()) {
       int chCode = myReader.read();
-      handleNextChar((char) chCode);
-      if (chCode == -1) {
+      if (chCode != -1) {
+        handleNextChar((char) chCode);
+      }
+      else {
+        handleNextChar(NL);
         break;
       }
     }
@@ -116,12 +117,20 @@ public class CommandInputStream extends InputStream {
 
   @Override
   public int read(byte[] b) throws IOException {
-    return super.read(b);
+    return read(b, 0, b.length);
   }
 
   @Override
   public int read(byte[] b, int off, int len) throws IOException {
-    return super.read(b, off, len);
+    readAvailable();
+    int i = off;
+    int cnt = 0;
+    while (cnt < len && !myByteQueue.isEmpty()) {
+      b[i] = (byte) myByteQueue.poll();
+      i++;
+      cnt++;
+    }
+    return cnt;
   }
 
   @Override
@@ -146,4 +155,5 @@ public class CommandInputStream extends InputStream {
   public boolean markSupported() {
     return false;
   }
+
 }

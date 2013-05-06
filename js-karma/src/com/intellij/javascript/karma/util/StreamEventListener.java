@@ -5,6 +5,6 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author Sergey Simonchik
  */
-public interface StreamCommandListener {
-  void onCommand(@NotNull String commandName);
+public interface StreamEventListener {
+  void on(@NotNull String eventText);
 }

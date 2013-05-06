@@ -2,10 +2,8 @@ package com.intellij.javascript.karma.server;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.KillableColoredProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
-import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.execution.process.*;
+import com.intellij.javascript.karma.util.EventEmitterProcess;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -16,8 +14,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
@@ -26,7 +23,7 @@ import java.util.regex.Pattern;
 /**
  * @author Sergey Simonchik
  */
-public class KarmaServer implements Disposable {
+public class KarmaServer {
 
   private static final Pattern WEB_SERVER_URL_PATTERN = Pattern.compile("^http://([^:]+):(\\d+)(/.*)$");
   private static final Logger LOG = Logger.getInstance(KarmaServer.class);
@@ -35,7 +32,6 @@ public class KarmaServer implements Disposable {
   private final File myConfigurationFile;
   private final KillableColoredProcessHandler myProcessHandler;
   private final File myKarmaIntellijDir;
-  private boolean myTerminated = false;
   private volatile int myWebServerPort = -1;
   private volatile int myRunnerPort = -1;
   private final AtomicBoolean myIsReady = new AtomicBoolean(false);
@@ -49,7 +45,12 @@ public class KarmaServer implements Disposable {
     myConfigurationFile = configurationFile;
     myKarmaIntellijDir = findKarmaIntellijDir(karmaPackageDir);
     myProcessHandler = startServer(nodeInterpreter, configurationFile);
-    Disposer.register(ApplicationManager.getApplication(), this);
+    Disposer.register(ApplicationManager.getApplication(), new Disposable() {
+      @Override
+      public void dispose() {
+        myProcessHandler.destroyProcess();
+      }
+    });
   }
 
   private static File findKarmaIntellijDir(@NotNull File karmaPackageDir) throws IOException {
@@ -76,8 +77,14 @@ public class KarmaServer implements Disposable {
     commandLine.addParameter("--configFile=" + configurationFile.getAbsolutePath());
 
     try {
-      Process process = commandLine.createProcess();
-      KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(process, commandLine.getCommandLineString(), CharsetToolkit.UTF8_CHARSET);
+      LOG.info("Starting karma server: " + commandLine.getCommandLineString());
+      Process originalProcess = commandLine.createProcess();
+      Process eventEmitterProcess = new EventEmitterProcess(originalProcess);
+      KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(
+        eventEmitterProcess,
+        commandLine.getCommandLineString(),
+        CharsetToolkit.UTF8_CHARSET
+      );
 
       processHandler.addProcessListener(new ProcessAdapter() {
         @Override
@@ -90,12 +97,12 @@ public class KarmaServer implements Disposable {
 
         @Override
         public void processTerminated(ProcessEvent event) {
-          myTerminated = true;
           KarmaServerRegistry.serverTerminated(KarmaServer.this);
         }
       });
       processHandler.startNotify();
       processHandler.setShouldDestroyProcessRecursively(true);
+      ProcessTerminatedListener.attach(processHandler);
       return processHandler;
     }
     catch (ExecutionException e) {
@@ -179,10 +186,6 @@ public class KarmaServer implements Disposable {
     }
   }
 
-  public boolean isTerminated() {
-    return myTerminated;
-  }
-
   public void addListener(@NotNull KarmaServerListener listener) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     myListeners.add(listener);
@@ -199,8 +202,8 @@ public class KarmaServer implements Disposable {
     return myRunnerPort;
   }
 
-  @Override
-  public void dispose() {
-    myProcessHandler.destroyProcess();
+  @NotNull
+  public KillableColoredProcessHandler getProcessHandler() {
+    return myProcessHandler;
   }
 }

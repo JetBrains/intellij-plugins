@@ -10,6 +10,8 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.karma.server.KarmaServerLogComponent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -40,9 +42,18 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
     FileDocumentManager.getInstance().saveAllDocuments();
     ExecutionResult executionResult = state.execute(executor, this);
     if (executionResult == null) return null;
+    KarmaServer karmaServer = null;
+    if (state instanceof KarmaTestRunnerState) {
+      karmaServer = ((KarmaTestRunnerState) state).getKarmaServer();
+    }
 
     final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
-    return contentBuilder.showRunContent(contentToReuse);
+    RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
+    if (karmaServer != null) {
+      KarmaServerLogComponent logComponent = new KarmaServerLogComponent(project, karmaServer);
+      contentBuilder.addAdditionalTabComponent(logComponent, karmaServer.getConfigurationFile().getAbsolutePath());
+    }
+    return descriptor;
   }
 
 }

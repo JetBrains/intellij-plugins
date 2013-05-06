@@ -44,6 +44,7 @@ public class KarmaTestRunnerState implements RunProfileState {
   private final String myNodeInterpreterPath;
   private final String myKarmaPackageDir;
   private final KarmaRunSettings myRunSettings;
+  private KarmaServer myKarmaServer;
 
   public KarmaTestRunnerState(@NotNull Project project,
                               @NotNull ExecutionEnvironment executionEnvironment,
@@ -72,6 +73,7 @@ public class KarmaTestRunnerState implements RunProfileState {
         throw new ExecutionException(e);
       }
     }
+    myKarmaServer = server;
     ProcessHandler processHandler = startProcess(server);
     ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment, executor);
     consoleView.attachToProcess(processHandler);
@@ -79,6 +81,10 @@ public class KarmaTestRunnerState implements RunProfileState {
     DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
     executionResult.setRestartActions(new ToggleAutoTestAction());
     return executionResult;
+  }
+
+  public KarmaServer getKarmaServer() {
+    return myKarmaServer;
   }
 
   @Override

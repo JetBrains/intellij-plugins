@@ -1,6 +1,5 @@
-package com.intellij.javascript.karma.execution;
+package com.intellij.javascript.karma.util;
 
-import com.intellij.javascript.karma.util.CommandInputStream;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,26 +8,25 @@ import java.io.*;
 /**
  * @author Sergey Simonchik
  */
-public class KarmaServerProcess extends Process {
+public class EventEmitterProcess extends Process {
 
   private final Process myProcess;
-  private final CommandInputStream myFilteringInputStream;
-  private final OutputStream myOutputStream;
+  private final EventEmitterInputStream myFilteringInputStream;
 
-  public KarmaServerProcess(@NotNull Process process) {
+  public EventEmitterProcess(@NotNull Process process) {
     myProcess = process;
     InputStream inputStream = process.getInputStream();
-    myFilteringInputStream = new CommandInputStream(inputStream, CharsetToolkit.UTF8_CHARSET);
-    myOutputStream = process.getOutputStream();
+    //noinspection IOResourceOpenedButNotSafelyClosed
+    myFilteringInputStream = new EventEmitterInputStream(inputStream, CharsetToolkit.UTF8_CHARSET);
   }
 
   @Override
   public OutputStream getOutputStream() {
-    return myOutputStream;
+    return myProcess.getOutputStream();
   }
 
   @Override
-  public CommandInputStream getInputStream() {
+  public EventEmitterInputStream getInputStream() {
     return myFilteringInputStream;
   }
 
