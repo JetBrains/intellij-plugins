@@ -1,4 +1,9 @@
 <?xml version="1.0"?>
+<!--
+  Created with IntelliJ IDEA.
+  User: ${USER}
+  Date: ${DATE}
+  Time: ${TIME}
+-->
 <${Superclass} xmlns:fx="http://ns.adobe.com/mxml/2009">
-<!-- To change this template use File | Settings | File Templates. -->
 </${Superclass}>
