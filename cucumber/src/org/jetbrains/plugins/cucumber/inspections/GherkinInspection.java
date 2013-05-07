@@ -1,8 +1,6 @@
 package org.jetbrains.plugins.cucumber.inspections;
 
-import com.intellij.codeInspection.CustomSuppressableInspectionTool;
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.SuppressIntentionAction;
+import com.intellij.codeInspection.*;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,13 +10,15 @@ import org.jetbrains.plugins.cucumber.inspections.suppress.GherkinSuppressionUti
 /**
  * @author Roman.Chernyatchik
  */
-public abstract class GherkinInspection extends LocalInspectionTool implements CustomSuppressableInspectionTool {
+public abstract class GherkinInspection extends LocalInspectionTool implements BatchSuppressableTool {
   @NotNull
   public String getGroupDisplayName() {
     return CucumberBundle.message("cucumber.inspection.group.name");
   }
 
-  public SuppressIntentionAction[] getSuppressActions(@Nullable final PsiElement element) {
+  @NotNull
+  @Override
+  public SuppressQuickFix[] getBatchSuppressActions(@Nullable PsiElement element) {
     return GherkinSuppressionUtil.getDefaultSuppressActions(element, getShortName());
   }
 

@@ -1,6 +1,6 @@
 package org.jetbrains.plugins.cucumber.spellchecker;
 
-import com.intellij.codeInspection.SuppressIntentionAction;
+import com.intellij.codeInspection.SuppressQuickFix;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
@@ -36,7 +36,7 @@ public class GherkinSpellcheckerStrategy extends SuppressibleSpellcheckingStrate
   }
 
   @Override
-  public SuppressIntentionAction[] getSuppressActions(@NotNull final PsiElement element, @NotNull final String name) {
+  public SuppressQuickFix[] getSuppressActions(@NotNull final PsiElement element, @NotNull final String name) {
     return GherkinSuppressionUtil.getDefaultSuppressActions(element, name);
   }
 

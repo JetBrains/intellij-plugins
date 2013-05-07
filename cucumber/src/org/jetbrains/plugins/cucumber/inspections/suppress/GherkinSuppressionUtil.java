@@ -1,6 +1,6 @@
 package org.jetbrains.plugins.cucumber.inspections.suppress;
 
-import com.intellij.codeInspection.SuppressIntentionAction;
+import com.intellij.codeInspection.SuppressQuickFix;
 import com.intellij.codeInspection.SuppressionUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
@@ -27,9 +27,9 @@ public class GherkinSuppressionUtil {
   private GherkinSuppressionUtil() {
   }
 
-  public static SuppressIntentionAction[] getDefaultSuppressActions(@Nullable final PsiElement element,
+  public static SuppressQuickFix[] getDefaultSuppressActions(@Nullable final PsiElement element,
                                                                     @NotNull final String actionShortName) {
-    return new SuppressIntentionAction[]{
+    return new SuppressQuickFix[]{
       new GherkinSuppressForStepCommentFix(actionShortName),
       new GherkinSuppressForScenarioCommentFix(actionShortName),
       new GherkinSuppressForFeatureCommentFix(actionShortName),
