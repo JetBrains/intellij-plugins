@@ -12,6 +12,7 @@
     <orderEntry type="module" module-name="JavaScriptLanguage" />
     <orderEntry type="module" module-name="smRunner" />
     <orderEntry type="module" module-name="webide-api" />
+    <orderEntry type="library" name="Guava" level="project" />
   </component>
 </module>
 

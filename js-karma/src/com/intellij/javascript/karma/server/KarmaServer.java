@@ -3,7 +3,8 @@ package com.intellij.javascript.karma.server;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.*;
-import com.intellij.javascript.karma.util.EventEmitterReader;
+import com.intellij.javascript.karma.util.ProcessEventStore;
+import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -14,7 +15,8 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
@@ -31,7 +33,8 @@ public class KarmaServer {
   private final List<KarmaServerListener> myListeners = ContainerUtil.createEmptyCOWList();
   private final File myConfigurationFile;
   private final KillableColoredProcessHandler myProcessHandler;
-  private final File myKarmaIntellijDir;
+  private final ProcessEventStore myProcessEventStore;
+  private final File myKarmaIntellijPackageDir;
   private volatile int myWebServerPort = -1;
   private volatile int myRunnerPort = -1;
   private final AtomicBoolean myIsReady = new AtomicBoolean(false);
@@ -43,17 +46,38 @@ public class KarmaServer {
     /* 'nodeInterpreter', 'karmaPackageDir' and 'configurationFile'
         are already checked in KarmaRunConfiguration.checkConfiguration */
     myConfigurationFile = configurationFile;
-    myKarmaIntellijDir = findKarmaIntellijDir(karmaPackageDir);
-    myProcessHandler = startServer(nodeInterpreter, configurationFile);
+    myKarmaIntellijPackageDir = findKarmaIntellijPackageDir(karmaPackageDir);
+    try {
+      myProcessHandler = startServer(nodeInterpreter, configurationFile);
+    }
+    catch (ExecutionException e) {
+      throw new IOException("Can not create karma server process", e);
+    }
+    myProcessEventStore = new ProcessEventStore(myProcessHandler);
+    myProcessEventStore.addStreamEventListener(new StreamEventListener() {
+      @Override
+      public void on(@NotNull String eventText) {
+        System.out.println("Got " + eventText);
+      }
+    });
+    myProcessEventStore.startNotify();
     Disposer.register(ApplicationManager.getApplication(), new Disposable() {
       @Override
       public void dispose() {
-        myProcessHandler.destroyProcess();
+        ScriptRunnerUtil.terminateProcess(myProcessHandler, 500, null);
       }
     });
   }
 
-  private static File findKarmaIntellijDir(@NotNull File karmaPackageDir) throws IOException {
+  /**
+   * 'karma-intellij' directory contains installed node module 'karma-intellij'
+   * Source code: https://github.com/karma-runner/karma-intellij
+   *
+   * @param karmaPackageDir 'karma' package directory
+   * @return 'karma-intellij' directory
+   * @throws IOException in case of any I/O troubles
+   */
+  private static File findKarmaIntellijPackageDir(@NotNull File karmaPackageDir) throws IOException {
     File dir = new File(karmaPackageDir.getParentFile(), "karma-intellij");
     if (!dir.isDirectory()) {
       throw new IOException("Can't find " + dir.getAbsolutePath());
@@ -67,7 +91,7 @@ public class KarmaServer {
   }
 
   private KillableColoredProcessHandler startServer(@NotNull File nodeInterpreter,
-                                                    @NotNull File configurationFile) throws IOException {
+                                                    @NotNull File configurationFile) throws IOException, ExecutionException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     commandLine.setPassParentEnvironment(true);
     commandLine.setWorkDirectory(configurationFile.getParentFile());
@@ -76,43 +100,36 @@ public class KarmaServer {
     commandLine.addParameter(serverFile.getAbsolutePath());
     commandLine.addParameter("--configFile=" + configurationFile.getAbsolutePath());
 
-    try {
-      LOG.info("Starting karma server: " + commandLine.getCommandLineString());
-      final Process process = commandLine.createProcess();
-      KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(
-        process,
-        commandLine.getCommandLineString(),
-        CharsetToolkit.UTF8_CHARSET
-      ) {
-        @Override
-        protected Reader createProcessOutReader() {
-          Reader reader = new InputStreamReader(process.getInputStream(), CharsetToolkit.UTF8_CHARSET);
-          return new EventEmitterReader(reader);
-        }
-      };
+    LOG.info("Starting karma server: " + commandLine.getCommandLineString());
+    final Process process = commandLine.createProcess();
+    KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(
+      process,
+      commandLine.getCommandLineString(),
+      CharsetToolkit.UTF8_CHARSET
+    );
 
-      processHandler.addProcessListener(new ProcessAdapter() {
-        @Override
-        public void onTextAvailable(ProcessEvent event, Key outputType) {
-          String text = event.getText().trim();
-          if (text != null && outputType == ProcessOutputTypes.STDOUT) {
-            handleStdout(text);
-          }
+    processHandler.addProcessListener(new ProcessAdapter() {
+      @Override
+      public void onTextAvailable(ProcessEvent event, Key outputType) {
+        String text = event.getText().trim();
+        if (text != null && outputType == ProcessOutputTypes.STDOUT) {
+          handleStdout(text);
         }
+      }
 
-        @Override
-        public void processTerminated(ProcessEvent event) {
-          KarmaServerRegistry.serverTerminated(KarmaServer.this);
-        }
-      });
-      ProcessTerminatedListener.attach(processHandler);
-      processHandler.setShouldDestroyProcessRecursively(true);
-      processHandler.startNotify();
-      return processHandler;
-    }
-    catch (ExecutionException e) {
-      throw new IOException("Can not create karma server process", e);
-    }
+      @Override
+      public void processTerminated(ProcessEvent event) {
+        KarmaServerRegistry.serverTerminated(KarmaServer.this);
+      }
+    });
+    ProcessTerminatedListener.attach(processHandler);
+    processHandler.setShouldDestroyProcessRecursively(true);
+    return processHandler;
+  }
+
+  @NotNull
+  public ProcessEventStore getProcessEventStore() {
+    return myProcessEventStore;
   }
 
   @NotNull
@@ -126,7 +143,7 @@ public class KarmaServer {
   }
 
   private File getAppFile(@NotNull String baseName) throws IOException {
-    File file = new File(myKarmaIntellijDir, "lib" + File.separatorChar + baseName);
+    File file = new File(myKarmaIntellijPackageDir, "lib" + File.separatorChar + baseName);
     if (!file.isFile()) {
       throw new IOException("Can't find " + file);
     }
@@ -207,8 +224,4 @@ public class KarmaServer {
     return myRunnerPort;
   }
 
-  @NotNull
-  public KillableColoredProcessHandler getProcessHandler() {
-    return myProcessHandler;
-  }
 }
