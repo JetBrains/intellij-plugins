@@ -1,21 +1,18 @@
 package com.intellij.javascript.karma.util;
 
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.ByteArrayQueue;
+import com.intellij.util.containers.CharArrayQueue;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.charset.Charset;
 import java.util.List;
 
 /**
 * @author Sergey Simonchik
 */
-public class EventEmitterInputStream extends InputStream {
+public class EventEmitterReader extends Reader {
 
   private static final char NL = '\n';
   private static final String PREFIX = "##intellij-event[";
@@ -23,19 +20,14 @@ public class EventEmitterInputStream extends InputStream {
   private static final String SUFFIX_WITH_NL = SUFFIX + NL;
 
   private final Reader myReader;
-  private final Charset myCharset;
-  private final ByteArrayQueue myByteQueue = new ByteArrayQueue(8192);
+  private final CharArrayQueue myCharQueue = new CharArrayQueue(8192);
   private final char[] myCharBuffer = new char[8192];
   private final StringBuilder myCurrentLine = new StringBuilder();
   private final List<StreamEventListener> myListeners = ContainerUtil.createEmptyCOWList();
-  private boolean skipLF = false;
+  private boolean mySkipLF = false;
 
-
-  public EventEmitterInputStream(@NotNull InputStream inputStream,
-                                 @NotNull Charset charset) {
-    //noinspection IOResourceOpenedButNotSafelyClosed
-    myReader = new InputStreamReader(inputStream, charset);
-    myCharset = charset;
+  public EventEmitterReader(@NotNull Reader reader) {
+    myReader = reader;
   }
 
   public void addListener(@NotNull StreamEventListener listener) {
@@ -43,9 +35,9 @@ public class EventEmitterInputStream extends InputStream {
   }
 
   @Override
-  public int available() throws IOException {
+  public boolean ready() throws IOException {
     readAvailable();
-    return myByteQueue.size();
+    return !myCharQueue.isEmpty();
   }
 
   /**
@@ -63,21 +55,20 @@ public class EventEmitterInputStream extends InputStream {
   }
 
   private void handleNextChar(char ch) {
-    if (skipLF && ch != NL) {
+    if (mySkipLF && ch != NL) {
       myCurrentLine.append('\r');
     }
     if (ch == '\r') {
-      skipLF = true;
+      mySkipLF = true;
     }
     else {
-      skipLF = false;
+      mySkipLF = false;
       myCurrentLine.append(ch);
     }
-    if (ch == NL || ch == -1) {
+    if (ch == NL) {
       String line = myCurrentLine.toString();
       if (!handleLineAsEvent(line)) {
-        byte[] buf = line.getBytes(myCharset);
-        myByteQueue.addAll(buf);
+        myCharQueue.add(line);
       }
       myCurrentLine.setLength(0);
     }
@@ -99,7 +90,7 @@ public class EventEmitterInputStream extends InputStream {
 
   @Override
   public int read() throws IOException {
-    while (myByteQueue.isEmpty()) {
+    while (myCharQueue.isEmpty()) {
       int chCode = myReader.read();
       if (chCode != -1) {
         handleNextChar((char) chCode);
@@ -109,24 +100,24 @@ public class EventEmitterInputStream extends InputStream {
         break;
       }
     }
-    if (myByteQueue.isEmpty()) {
+    if (myCharQueue.isEmpty()) {
       return -1;
     }
-    return myByteQueue.poll();
+    return myCharQueue.poll();
   }
 
   @Override
-  public int read(byte[] b) throws IOException {
-    return read(b, 0, b.length);
+  public int read(char[] cbuf) throws IOException {
+    return read(cbuf, 0, cbuf.length);
   }
 
   @Override
-  public int read(byte[] b, int off, int len) throws IOException {
+  public int read(char[] cbuf, int off, int len) throws IOException {
     readAvailable();
     int i = off;
     int cnt = 0;
-    while (cnt < len && !myByteQueue.isEmpty()) {
-      b[i] = (byte) myByteQueue.poll();
+    while (cnt < len && !myCharQueue.isEmpty()) {
+      cbuf[i] = (char) myCharQueue.poll();
       i++;
       cnt++;
     }
@@ -144,10 +135,10 @@ public class EventEmitterInputStream extends InputStream {
   }
 
   @Override
-  public synchronized void mark(int readlimit) {}
+  public void mark(int readlimit) {}
 
   @Override
-  public synchronized void reset() throws IOException {
+  public void reset() throws IOException {
     throw new IOException("mark/reset not supported");
   }
 

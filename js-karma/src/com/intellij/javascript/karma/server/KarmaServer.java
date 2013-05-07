@@ -3,7 +3,7 @@ package com.intellij.javascript.karma.server;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.*;
-import com.intellij.javascript.karma.util.EventEmitterProcess;
+import com.intellij.javascript.karma.util.EventEmitterReader;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -78,13 +78,18 @@ public class KarmaServer {
 
     try {
       LOG.info("Starting karma server: " + commandLine.getCommandLineString());
-      Process originalProcess = commandLine.createProcess();
-      Process eventEmitterProcess = new EventEmitterProcess(originalProcess);
+      final Process process = commandLine.createProcess();
       KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(
-        eventEmitterProcess,
+        process,
         commandLine.getCommandLineString(),
         CharsetToolkit.UTF8_CHARSET
-      );
+      ) {
+        @Override
+        protected Reader createProcessOutReader() {
+          Reader reader = new InputStreamReader(process.getInputStream(), CharsetToolkit.UTF8_CHARSET);
+          return new EventEmitterReader(reader);
+        }
+      };
 
       processHandler.addProcessListener(new ProcessAdapter() {
         @Override
@@ -100,9 +105,9 @@ public class KarmaServer {
           KarmaServerRegistry.serverTerminated(KarmaServer.this);
         }
       });
-      processHandler.startNotify();
-      processHandler.setShouldDestroyProcessRecursively(true);
       ProcessTerminatedListener.attach(processHandler);
+      processHandler.setShouldDestroyProcessRecursively(true);
+      processHandler.startNotify();
       return processHandler;
     }
     catch (ExecutionException e) {
