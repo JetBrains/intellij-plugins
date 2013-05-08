@@ -1,7 +1,7 @@
 package com.google.jstestdriver.idea.execution;
 
-import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
-import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
+import com.intellij.javascript.testFramework.TestFileStructureManager;
+import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;

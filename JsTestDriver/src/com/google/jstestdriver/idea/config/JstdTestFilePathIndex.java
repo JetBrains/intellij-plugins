@@ -9,7 +9,6 @@ import com.google.jstestdriver.config.YamlParser;
 import com.google.jstestdriver.hooks.FileParsePostProcessor;
 import com.google.jstestdriver.model.BasePaths;
 import com.google.jstestdriver.util.DisplayPathSanitizer;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,8 +28,6 @@ import java.util.*;
  * @author Sergey Simonchik
  */
 public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void> {
-
-  private static final Logger LOG = Logger.getInstance(JstdTestFilePathIndex.class);
 
   private static final ID<String, Void> KEY = ID.create("jstd.jsFile.path");
 
@@ -65,8 +62,7 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
             try {
               return doIndexConfigFile(reader, basePaths);
             }
-            catch (Exception e) {
-              LOG.info("Can't index JsTD config file: " + file.getPath(), e);
+            catch (Exception ignored) {
             }
             finally {
               try {

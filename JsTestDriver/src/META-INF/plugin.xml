@@ -21,10 +21,6 @@
   <vendor>Google, JetBrains</vendor>
   <idea-version since-build="130.0" until-build="131.0"/>
 
-  <extensionPoints>
-    <extensionPoint qualifiedName="com.google.jstestdriver.idea.jsCallTemplate" interface="com.google.jstestdriver.idea.assertFramework.codeInsight.JsCallTemplateContextProvider"/>
-  </extensionPoints>
-
   <depends>com.intellij.modules.lang</depends>
 
   <depends optional="true" config-file="jstd-yaml.xml">org.jetbrains.plugins.yaml</depends>
@@ -46,7 +42,7 @@
     <applicationService serviceImplementation="com.google.jstestdriver.idea.server.JstdServerState"/>
     <projectService serviceImplementation="com.google.jstestdriver.idea.server.ui.JstdToolWindowManager"/>
     <fileBasedIndex implementation="com.google.jstestdriver.idea.config.JstdTestFilePathIndex"/>
-    <fileBasedIndex implementation="com.google.jstestdriver.idea.assertFramework.JsTestFileByTestNameIndex"/>
+    <fileBasedIndex implementation="com.intellij.javascript.testFramework.JsTestFileByTestNameIndex"/>
     <toolWindow id="JsTestDriver Server"
                 anchor="bottom"
                 secondary="true"

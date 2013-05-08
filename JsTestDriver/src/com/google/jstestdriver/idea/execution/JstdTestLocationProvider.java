@@ -1,6 +1,6 @@
 package com.google.jstestdriver.idea.execution;
 
-import com.google.jstestdriver.idea.assertFramework.JsTestFileByTestNameIndex;
+import com.intellij.javascript.testFramework.JsTestFileByTestNameIndex;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
 import com.intellij.javascript.testFramework.qunit.DefaultQUnitModuleStructure;

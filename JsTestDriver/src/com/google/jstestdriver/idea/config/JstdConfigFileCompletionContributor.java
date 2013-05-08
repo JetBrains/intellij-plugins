@@ -110,7 +110,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
     PsiElement element = parameters.getPosition();
     YAMLDocument yamlDocument = ObjectUtils.tryCast(element.getParent(), YAMLDocument.class);
     if (yamlDocument == null) {
-      yamlDocument = JstdConfigFileUtils.getVerifiedHierarchyHead(
+      yamlDocument = JsPsiUtils.getVerifiedHierarchyHead(
         element.getParent(),
         new Class[]{YAMLKeyValue.class},
         YAMLDocument.class
@@ -131,7 +131,7 @@ public class JstdConfigFileCompletionContributor extends CompletionContributor {
                                                               @NotNull CompletionResultSet result,
                                                               @NotNull BipartiteString caretBipartiteElementText) {
     PsiElement element = parameters.getPosition();
-    YAMLKeyValue keyValue = JstdConfigFileUtils.getVerifiedHierarchyHead(
+    YAMLKeyValue keyValue = JsPsiUtils.getVerifiedHierarchyHead(
       element.getParent(),
       new Class[]{
         YAMLSequence.class,

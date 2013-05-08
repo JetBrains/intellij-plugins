@@ -23,6 +23,5 @@ public class JsTestDriverIcons {
 
   }
   public static final Icon JsTestDriver = load("/com/google/jstestdriver/idea/icons/JsTestDriver.png"); // 16x16
-  public static final Icon JsTestFile = load("/com/google/jstestdriver/idea/icons/JsTestFile.png"); // 16x16
   public static final Icon ToolWindowTestDriver = load("/com/google/jstestdriver/idea/icons/toolWindowTestDriver.png"); // 13x13
 }

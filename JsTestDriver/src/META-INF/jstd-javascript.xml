@@ -15,11 +15,6 @@
 -->
 <idea-plugin version="2">
 
-  <extensions defaultExtensionNs="com.google.jstestdriver.idea">
-    <jsCallTemplate implementation="com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight.JasmineSuiteCallTemplateContextProvider"/>
-    <jsCallTemplate implementation="com.google.jstestdriver.idea.assertFramework.jasmine.codeInsight.JasmineSpecCallTemplateContextProvider"/>
-  </extensions>
-
   <extensions defaultExtensionNs="com.intellij">
     <localInspection groupPath="JavaScript"
                      groupName="JsTestDriver"
@@ -55,14 +50,15 @@
     />
 
     <languageInjector implementation="com.google.jstestdriver.idea.assertFramework.jstd.JstdFixtureHtmlLanguageInjector"/>
-    <!--<completion.contributor order="first" language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.codeInsight.FilteringCompletionContributor"/>-->
-    <iconProvider implementation="com.google.jstestdriver.idea.assertFramework.JsTestDriverIconProvider" order="before nodejs"/>
     <codeInsight.lineMarkerProvider language="JavaScript" implementationClass="com.google.jstestdriver.idea.assertFramework.jstd.JstdAssertionFrameworkLineMarkerProvider"/>
     <implicitUsageProvider implementation="com.google.jstestdriver.idea.assertFramework.jstd.JstdImplicitUsageProvider"/>
   </extensions>
 
-  <extensions defaultExtensionNs="JavaScript">
-    <customFileIndexerFactory implementation="com.google.jstestdriver.idea.assertFramework.JsTestFileIndexer$Factory"/>
-  </extensions>
+  <actions>
+    <action id="JstdCreateTestAction" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateNewTestAction"/>
+    <action id="JstdCreateSetupAction" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateSetupAction"/>
+    <action id="JstdCreateTearDownAction"
+            class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateTearDownAction"/>
+  </actions>
 
 </idea-plugin>

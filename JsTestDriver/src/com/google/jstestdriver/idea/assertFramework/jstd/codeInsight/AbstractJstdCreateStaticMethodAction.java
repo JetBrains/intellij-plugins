@@ -1,8 +1,8 @@
 package com.google.jstestdriver.idea.assertFramework.jstd.codeInsight;
 
-import com.google.jstestdriver.idea.assertFramework.codeInsight.AbstractJsGenerateAction;
-import com.google.jstestdriver.idea.assertFramework.codeInsight.GenerateActionContext;
-import com.google.jstestdriver.idea.assertFramework.codeInsight.JsGeneratorUtils;
+import com.intellij.javascript.testFramework.codeInsight.AbstractJsGenerateAction;
+import com.intellij.javascript.testFramework.codeInsight.GenerateActionContext;
+import com.intellij.javascript.testFramework.codeInsight.JsGeneratorUtils;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestCaseStructure;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructure;
 import com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructureBuilder;

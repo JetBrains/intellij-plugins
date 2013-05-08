@@ -129,16 +129,6 @@ public class JstdConfigFileUtils {
     return PsiElementFragment.create(sequence, textRangeInSequence);
   }
 
-  public static <K> K getVerifiedHierarchyHead(PsiElement psiElement, Class<?>[] hierarchyClasses, Class<K> headHierarchyClass) {
-    for (Class<?> clazz : hierarchyClasses) {
-      if (!clazz.isInstance(psiElement)) {
-        return null;
-      }
-      psiElement = psiElement.getParent();
-    }
-    return ObjectUtils.tryCast(psiElement, headHierarchyClass);
-  }
-
   public static boolean isJstdConfigFile(@NotNull VirtualFile virtualFile) {
     FileType fileType = virtualFile.getFileType();
     return fileType == JstdConfigFileType.INSTANCE;

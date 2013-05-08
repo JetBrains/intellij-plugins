@@ -1,7 +1,7 @@
 package com.google.jstestdriver.idea.execution.settings.ui;
 
-import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
-import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
+import com.intellij.javascript.testFramework.TestFileStructureManager;
+import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.util.SwingUtils;
 import com.google.jstestdriver.idea.util.TextChangeListener;

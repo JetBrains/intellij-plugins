@@ -1,8 +1,8 @@
 package com.google.jstestdriver.idea.execution;
 
 import com.google.jstestdriver.BrowserInfo;
-import com.google.jstestdriver.idea.assertFramework.TestFileStructureManager;
-import com.google.jstestdriver.idea.assertFramework.TestFileStructurePack;
+import com.intellij.javascript.testFramework.TestFileStructureManager;
+import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
 import com.google.jstestdriver.idea.execution.settings.ServerType;
 import com.google.jstestdriver.idea.execution.settings.TestType;
