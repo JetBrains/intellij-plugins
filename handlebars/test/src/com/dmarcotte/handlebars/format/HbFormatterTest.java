@@ -17,8 +17,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
-import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 
@@ -27,10 +27,10 @@ import java.io.File;
 /**
  * Base class for Handlebars formatter tests.  Based on com.intellij.psi.formatter.java.AbstractJavaFormatterTest.
  */
-public abstract class HbFormatterTest extends LightPlatformTestCase implements HbFormattingModelBuilderTest {
+public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTestCase implements HbFormattingModelBuilderTest {
   private static final String TEST_DATA_PATH = new File(HbTestUtils.BASE_TEST_DATA_PATH, "formatter").getAbsolutePath();
 
-  private final FormatterTestSettings formatterTestSettings = new FormatterTestSettings(getProject());
+  private FormatterTestSettings formatterTestSettings;
 
   protected HbFormatterTest() {
     PlatformTestCase.initPlatformLangPrefix();
@@ -41,6 +41,7 @@ public abstract class HbFormatterTest extends LightPlatformTestCase implements H
     throws Exception {
     super.setUp();
 
+    formatterTestSettings = new FormatterTestSettings(getProject());
     formatterTestSettings.setUp();
   }
 
@@ -158,7 +159,7 @@ public abstract class HbFormatterTest extends LightPlatformTestCase implements H
                                      final String beforeText,
                                      String textAfter,
                                      LanguageFileType templateDataLanguageType) {
-    PsiFile baseFile = createFile("A.hbs", beforeText);
+    PsiFile baseFile = myFixture.configureByText("A.hbs", beforeText);
 
     VirtualFile virtualFile = baseFile.getVirtualFile();
     assert virtualFile != null;
@@ -182,7 +183,7 @@ public abstract class HbFormatterTest extends LightPlatformTestCase implements H
     assertEquals("Reformat Code failed", prepareText(textAfter), prepareText(file.getText()));
   }
 
-  private static String prepareText(String actual) {
+  private String prepareText(String actual) {
     if (actual.startsWith("\n")) {
       actual = actual.substring(1);
     }
