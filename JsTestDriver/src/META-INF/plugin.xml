@@ -42,7 +42,6 @@
     <applicationService serviceImplementation="com.google.jstestdriver.idea.server.JstdServerState"/>
     <projectService serviceImplementation="com.google.jstestdriver.idea.server.ui.JstdToolWindowManager"/>
     <fileBasedIndex implementation="com.google.jstestdriver.idea.config.JstdTestFilePathIndex"/>
-    <fileBasedIndex implementation="com.intellij.javascript.testFramework.JsTestFileByTestNameIndex"/>
     <toolWindow id="JsTestDriver Server"
                 anchor="bottom"
                 secondary="true"
