@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  Created with IntelliJ IDEA.
-  User: ${USER}
-  Date: ${DATE}
-  Time: ${TIME}
+  Created by ${USER} on ${DATE}.
 -->
 <${Superclass} xmlns:mx="http://www.adobe.com/2006/mxml">
 </${Superclass}>
