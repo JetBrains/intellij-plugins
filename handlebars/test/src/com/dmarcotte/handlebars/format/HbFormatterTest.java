@@ -54,6 +54,16 @@ public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTes
   }
 
   /**
+   * Passes {@link com.intellij.testFramework.UsefulTestCase#getTestName(boolean)}
+   * as a parameter to {@link #doFileBasedTest(java.lang.String)}
+   *
+   * @throws Exception
+   */
+  void doFileBasedTest() throws Exception {
+    doFileBasedTest(getTestName(false) + ".hbs");
+  }
+
+  /**
    * Call this to run the formatter on a test file in the {@link #TEST_DATA_PATH} directory.
    * <p/>
    * The test will validate the results against a file of the same name with "_expected" appended.

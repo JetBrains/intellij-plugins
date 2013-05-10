@@ -4,14 +4,14 @@ import com.intellij.openapi.fileTypes.StdFileTypes;
 
 public class HbFormatterSampleFileTest extends HbFormatterTest {
 
-  public void testSampleFile1()
+  public void testContactsSampleFile()
     throws Exception {
-    doFileBasedTest("TodosSampleFile.hbs");
+    doFileBasedTest();
   }
 
-  public void testSampleFile2()
+  public void testTodosSampleFile()
     throws Exception {
-    doFileBasedTest("ContactsSampleFile.hbs");
+    doFileBasedTest();
   }
 
   /**
