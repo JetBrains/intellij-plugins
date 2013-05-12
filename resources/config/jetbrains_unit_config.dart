@@ -23,10 +23,10 @@ class JetBrainsUnitConfig extends Configuration {
     _createGroups();
     testCases.forEach((TestCase testCase){
       printTCMessage('testStarted', {
-        'name' : getName(testCase),
-        'parentNodeId' : group2id[testCase.currentGroup],
-        'nodeId' : (testCase.id + 1),
-        'nodeType' : 'test'
+          'name' : getName(testCase),
+          'parentNodeId' : group2id[testCase.currentGroup],
+          'nodeId' : (testCase.id + 1),
+          'nodeType' : 'test'
       });
     });
   }
@@ -80,10 +80,10 @@ class JetBrainsUnitConfig extends Configuration {
     }
 
     if (scope == 'GROUP') {
-      _filter(testCases, (TestCase testCase) => testCase.currentGroup.contains(name));
+      filterTests((TestCase testCase) => testCase.currentGroup.contains(name));
     }
     else if (scope == 'METHOD') {
-      _filter(testCases, (TestCase testCase) => getName(testCase) == name);
+      filterTests((TestCase testCase) => getName(testCase) == name);
     }
   }
 
@@ -105,8 +105,8 @@ class JetBrainsUnitConfig extends Configuration {
       case 'fail': messageName = 'testFailed'; break;
     }
     printTCMessage(messageName, {
-      'nodeId' : (testCase.id + 1),
-      'message': '${testCase.message}\n${testCase.stackTrace}'
+        'nodeId' : (testCase.id + 1),
+        'message': '${testCase.message}\n${testCase.stackTrace}'
     });
   }
 
