@@ -3,10 +3,9 @@ package com.intellij.lang.javascript.generation;
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.util.JSChangeUtilEx;
 import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.openapi.editor.Editor;
@@ -36,7 +35,7 @@ public class JavaScriptGenerateConstructorHandler extends BaseJSGenerateHandler 
         @NonNls String functionText = "public function " + jsClass.getName() + "(";
         @NonNls String initialization = "";
         boolean first = true;
-        final String semicolon = JSChangeUtil.getSemicolon(project);
+        final String semicolon = JSChangeUtilEx.getSemicolon(project);
 
         Set<JSVariable> toProcess = getElementsToProcess();
         Iterator<JSVariable> variableIterator = toProcess.iterator();

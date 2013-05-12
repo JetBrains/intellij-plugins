@@ -9,6 +9,7 @@ import com.intellij.lang.javascript.psi.JSVarStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
+import com.intellij.lang.javascript.psi.util.JSChangeUtilEx;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
 import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -56,7 +57,7 @@ public class JSCreateFieldAction extends NewJSMemberActionBase {
         if (StringUtil.isNotEmpty(d.getInitializer())) {
           var.append("=").append(d.getInitializer());
         }
-        var.append(JSChangeUtil.getSemicolon(clazz.getProject()));
+        var.append(JSChangeUtilEx.getSemicolon(clazz.getProject()));
 
         JSVarStatement varStatement = (JSVarStatement)JSChangeUtil.createStatementFromText(clazz.getProject(), var.toString(),
                                                                                            JavaScriptSupportLoader.ECMA_SCRIPT_L4).getPsi();

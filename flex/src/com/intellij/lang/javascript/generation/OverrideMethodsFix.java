@@ -5,8 +5,8 @@ import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSParameterList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.util.JSChangeUtilEx;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.lang.javascript.validation.fixes.JSAttributeListWrapper;
 import com.intellij.psi.PsiElement;
@@ -59,7 +59,7 @@ public class OverrideMethodsFix extends BaseCreateMethodsFix<JSFunction> {
       functionText.append(")");
     }
 
-    functionText.append(JSChangeUtil.getSemicolon(func.getProject())).append("}");
+    functionText.append(JSChangeUtilEx.getSemicolon(func.getProject())).append("}");
     return functionText.toString();
   }
 
