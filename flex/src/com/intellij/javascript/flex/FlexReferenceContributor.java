@@ -25,6 +25,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
 import com.intellij.lang.javascript.flex.ReferenceSupport;
+import com.intellij.lang.javascript.psi.impl.JSTextReference;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.validation.fixes.CreateClassIntentionWithCallback;
 import com.intellij.lang.javascript.validation.fixes.CreateClassOrInterfaceFix;
@@ -753,14 +754,33 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
         if (trimmedValueAndRange.first.indexOf('{') != -1 || trimmedValueAndRange.first.indexOf('@') != -1) return PsiReference.EMPTY_ARRAY;
 
         final JSReferenceSet jsReferenceSet =
-          new JSReferenceSet(element, trimmedValueAndRange.first, trimmedValueAndRange.second.getStartOffset(), false, false, true);
+          new JSReferenceSet(element, trimmedValueAndRange.first, trimmedValueAndRange.second.getStartOffset(), false, false, true) {
+            @Override
+            protected JSTextReference createTextReference(String s, int offset, boolean methodRef) {
+              return new MyJSTextReference(this, s, offset, methodRef, quickFixProvider);
+            }
+          };
         if (SKIN_CLASS_ATTR_NAME.equals(name)) {
           jsReferenceSet.setBaseClassFqns(Collections.singletonList(UI_COMPONENT_FQN));
         }
-        jsReferenceSet.setQuickFixProvider(quickFixProvider);
         return jsReferenceSet.getReferences();
       }
     };
+  }
+
+  private static class MyJSTextReference extends JSTextReference implements QuickFixProvider {
+    private final QuickFixProvider<PsiReference> myQuickFixProvider;
+
+    MyJSTextReference(JSReferenceSet set, String s, int offset, boolean methodRef, QuickFixProvider<PsiReference> quickFixProvider) {
+      super(set, s, offset, methodRef);
+      myQuickFixProvider = quickFixProvider;
+    }
+
+    public void registerQuickfix(final HighlightInfo info, final PsiReference reference) {
+      if (myQuickFixProvider != null) {
+        myQuickFixProvider.registerQuickfix(info, reference);
+      }
+    }
   }
 
   public static boolean isClassReferenceType(final String type) {
