@@ -12,6 +12,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +28,8 @@ import java.util.regex.Pattern;
  */
 public class KarmaServer {
 
-  private static final Pattern WEB_SERVER_URL_PATTERN = Pattern.compile("^http://([^:]+):(\\d+)(/.*)$");
+  private static final Pattern WEB_SERVER_LINE_PATTERN = Pattern.compile("^INFO \\[.*\\]: Karma v(.+) server started at http://[^:]+:(\\d+)/.*$");
+  private static final Pattern BROWSER_CONNECTED_LINE_PATTERN = Pattern.compile("^INFO \\[.*\\]: Connected on socket id \\S*$");
   private static final Logger LOG = Logger.getInstance(KarmaServer.class);
 
   private final List<KarmaServerListener> myListeners = ContainerUtil.createEmptyCOWList();
@@ -37,6 +39,7 @@ public class KarmaServer {
   private final File myKarmaIntellijPackageDir;
   private volatile int myWebServerPort = -1;
   private volatile int myRunnerPort = -1;
+  private volatile boolean myBrowserConnected = false;
   private final AtomicBoolean myIsReady = new AtomicBoolean(false);
   private boolean myOnReadyFired = false;
 
@@ -48,7 +51,15 @@ public class KarmaServer {
     myConfigurationFile = configurationFile;
     myKarmaIntellijPackageDir = findKarmaIntellijPackageDir(karmaPackageDir);
     try {
+      long start = System.nanoTime();
+      try {
+        Thread.sleep(1000);
+      }
+      catch (InterruptedException e) {
+
+      }
       myProcessHandler = startServer(nodeInterpreter, configurationFile);
+      System.out.printf("Starting server takes: %.2f ms\n", (System.nanoTime() - start) / 1000000.0);
     }
     catch (ExecutionException e) {
       throw new IOException("Can not create karma server process", e);
@@ -157,7 +168,10 @@ public class KarmaServer {
     if (myRunnerPort == -1) {
       myRunnerPort = parseRunnerPort(text);
     }
-    if (myWebServerPort != -1 && myRunnerPort != -1) {
+    if (!myBrowserConnected) {
+      myBrowserConnected = parseBrowserConnected(text);
+    }
+    if (myWebServerPort != -1 && myRunnerPort != -1 && myBrowserConnected) {
       fireOnReady(myWebServerPort, myRunnerPort);
     }
   }
@@ -178,20 +192,28 @@ public class KarmaServer {
   }
 
   private static int parseWebServerPort(@NotNull String text) {
-    String webServerPrefix = "INFO [karma]: Karma v0.9.2 server started at ";
-    if (text.startsWith(webServerPrefix)) {
-      Matcher m = WEB_SERVER_URL_PATTERN.matcher(text.substring(webServerPrefix.length()));
-      if (m.find()) {
-        String portStr = m.group(2);
-        try {
-          return Integer.parseInt(portStr);
-        }
-        catch (NumberFormatException e) {
-          LOG.info("Can't parse web server port from '" + text + "'");
-        }
+    Matcher m = WEB_SERVER_LINE_PATTERN.matcher(text);
+    if (m.find()) {
+      String karmaVersionStr = m.group(1);
+      SemVer semVer = SemVer.parseFromText(karmaVersionStr);
+      if (semVer == null) {
+        LOG.warn("Can't parse sem ver from '" + karmaVersionStr + "'");
+        return -1;
+      }
+      String portStr = m.group(2);
+      try {
+        return Integer.parseInt(portStr);
+      }
+      catch (NumberFormatException e) {
+        LOG.info("Can't parse web server port from '" + text + "'");
       }
     }
     return -1;
+  }
+
+  private static boolean parseBrowserConnected(@NotNull String text) {
+    Matcher m = BROWSER_CONNECTED_LINE_PATTERN.matcher(text);
+    return m.matches();
   }
 
   private void fireOnReady(final int webServerPort, final int runnerPort) {

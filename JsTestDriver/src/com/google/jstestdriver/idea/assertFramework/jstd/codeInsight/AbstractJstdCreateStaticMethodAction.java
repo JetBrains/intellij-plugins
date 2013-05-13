@@ -29,7 +29,7 @@ public abstract class AbstractJstdCreateStaticMethodAction extends AbstractJsGen
   }
 
   @Nullable
-  private Runnable buildGenerator(GenerateActionContext context, @NotNull JstdTestFileStructure fileStructure) {
+  private Runnable buildGenerator(@NotNull GenerateActionContext context, @NotNull JstdTestFileStructure fileStructure) {
     if (fileStructure.getTestCaseCount() == 0) {
       return null;
     }

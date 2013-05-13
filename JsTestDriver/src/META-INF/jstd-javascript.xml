@@ -55,10 +55,12 @@
   </extensions>
 
   <actions>
-    <action id="JstdCreateTestAction" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateNewTestAction"/>
-    <action id="JstdCreateSetupAction" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateSetupAction"/>
-    <action id="JstdCreateTearDownAction"
-            class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateTearDownAction"/>
+    <group id="JstdGenerateCodeInsideGroup">
+      <action id="JstdCreateTestAction" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateNewTestAction"/>
+      <action id="JstdCreateSetupAction" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateSetupAction"/>
+      <action id="JstdCreateTearDownAction" class="com.google.jstestdriver.idea.assertFramework.jstd.codeInsight.JstdGenerateTearDownAction"/>
+      <add-to-group group-id="GenerateGroup" anchor="first"/>
+    </group>
   </actions>
 
 </idea-plugin>
