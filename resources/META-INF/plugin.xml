@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <name>Dart</name>
   <description>Support for Dart programming language</description>
-  <version>0.5.1</version>
+  <version>0.5.2</version>
   <vendor>JetBrains</vendor>
   <idea-version since-build="130.1"/>
   <depends>com.intellij.modules.xml</depends>
