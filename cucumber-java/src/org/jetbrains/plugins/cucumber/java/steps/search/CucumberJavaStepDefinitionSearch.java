@@ -1,6 +1,8 @@
 package org.jetbrains.plugins.cucumber.java.steps.search;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiElement;
@@ -34,10 +36,16 @@ public class CucumberJavaStepDefinitionSearch implements QueryExecutor<PsiRefere
       return true;
     }
 
+    final Ref<PsiAnnotation> stepAnnotation = new Ref<PsiAnnotation>();
+    ApplicationManager.getApplication().runReadAction(new Runnable() {
+      @Override
+      public void run() {
+        stepAnnotation.set(CucumberJavaUtil.getCucumberStepAnnotation(method));
+      }
+    });
 
-    final PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation(method);
-    assert stepAnnotation != null;
-    final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation);
+    assert stepAnnotation.get() != null;
+    final String regexp = CucumberJavaUtil.getPatternFromStepDefinition(stepAnnotation.get());
     if (regexp == null) {
       return true;
     }
