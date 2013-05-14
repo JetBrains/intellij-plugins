@@ -17,7 +17,7 @@ import java.util.List;
 * @author yole, Andrey Vokin
 */
 public abstract class AbstractStepDefinition {
-  private static final String ourEscapePattern = "(\\$\\w+|#\\{.+\\})";
+  private static final String ourEscapePattern = "(\\$\\w+|#\\{.+?\\})";
 
   private static final String CUCUMBER_START_PREFIX = "\\A";
 
