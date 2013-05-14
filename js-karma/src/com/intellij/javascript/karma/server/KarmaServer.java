@@ -51,15 +51,7 @@ public class KarmaServer {
     myConfigurationFile = configurationFile;
     myKarmaIntellijPackageDir = findKarmaIntellijPackageDir(karmaPackageDir);
     try {
-      long start = System.nanoTime();
-      try {
-        Thread.sleep(1000);
-      }
-      catch (InterruptedException e) {
-
-      }
       myProcessHandler = startServer(nodeInterpreter, configurationFile);
-      System.out.printf("Starting server takes: %.2f ms\n", (System.nanoTime() - start) / 1000000.0);
     }
     catch (ExecutionException e) {
       throw new IOException("Can not create karma server process", e);
