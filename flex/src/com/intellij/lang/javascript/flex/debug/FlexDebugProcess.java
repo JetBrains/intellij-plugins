@@ -18,8 +18,9 @@ import com.intellij.lang.javascript.flex.actions.airpackage.DeviceInfo;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitConnection;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunnerParameters;
 import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
-import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
+import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
+import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
 import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
@@ -40,7 +41,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.util.NullableComputable;
@@ -805,7 +807,9 @@ public class FlexDebugProcess extends XDebugProcess {
     }
 
     // [3]
-    final GlobalSearchScope bcScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, myFlexUnit);
+    final GlobalSearchScope bcScopeBase = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, myFlexUnit);
+    final GlobalSearchScope bcScope = uniteWithLibrarySourcesOfBC(bcScopeBase, myModule, myBC, new THashSet<FlexBuildConfiguration>());
+
     Collection<VirtualFile> files = getFilesByName(getSession().getProject(), bcScope, fileName);
 
     VirtualFile file = getFileMatchingPackageName(getSession().getProject(), files, packageName);
@@ -924,6 +928,46 @@ public class FlexDebugProcess extends XDebugProcess {
       }
     }
     return null;
+  }
+
+  private static GlobalSearchScope uniteWithLibrarySourcesOfBC(GlobalSearchScope scope,
+                                                               final Module module,
+                                                               final FlexBuildConfiguration bc,
+                                                               final Collection<FlexBuildConfiguration> processedConfigurations) {
+    if (!processedConfigurations.add(bc)) return scope;
+
+    final Collection<VirtualFile> libSourceRoots = new THashSet<VirtualFile>();
+
+    final Sdk sdk = bc.getSdk();
+    if (sdk != null) {
+      Collections.addAll(libSourceRoots, sdk.getRootProvider().getFiles(OrderRootType.SOURCES));
+    }
+
+    for (final DependencyEntry entry : bc.getDependencies().getEntries()) {
+      if (entry instanceof BuildConfigurationEntry) {
+        final Module otherModule = ((BuildConfigurationEntry)entry).findModule();
+        final FlexBuildConfiguration otherBC = ((BuildConfigurationEntry)entry).findBuildConfiguration();
+        if (otherModule != null && otherBC != null) {
+          scope = uniteWithLibrarySourcesOfBC(scope, otherModule, otherBC, processedConfigurations);
+        }
+      }
+      else if (entry instanceof ModuleLibraryEntry) {
+        final LibraryOrderEntry orderEntry =
+          FlexProjectRootsUtil.findOrderEntry((ModuleLibraryEntry)entry, ModuleRootManager.getInstance(module));
+        if (orderEntry != null) {
+          Collections.addAll(libSourceRoots, orderEntry.getFiles(OrderRootType.SOURCES));
+        }
+      }
+      else if (entry instanceof SharedLibraryEntry) {
+        final Library library = FlexProjectRootsUtil.findOrderEntry(module.getProject(), (SharedLibraryEntry)entry);
+        if (library != null) {
+          Collections.addAll(libSourceRoots, library.getFiles(OrderRootType.SOURCES));
+        }
+      }
+    }
+
+    return libSourceRoots.isEmpty() ? scope
+                                    : scope.uniteWith(new LibrarySourcesSearchScope(module.getProject(), libSourceRoots));
   }
 
   private void handleProbablyUnexpectedStop(final String s) {
