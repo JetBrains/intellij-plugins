@@ -78,7 +78,8 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
     if (globalSettings == null) {
       return null;
     }
-    return new KarmaTestRunnerState(getProject(), env,
+    return new KarmaTestRunnerState(getProject(),
+                                    env,
                                     globalSettings.myNodeInterpreterPath,
                                     globalSettings.myKarmaNodePackage,
                                     myRunSettings);

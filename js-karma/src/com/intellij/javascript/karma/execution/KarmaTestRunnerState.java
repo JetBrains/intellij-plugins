@@ -17,6 +17,7 @@ import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ConsoleView;
+import com.intellij.execution.ui.ExecutionConsoleEx;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerListener;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
@@ -36,8 +37,6 @@ import java.util.List;
  * @author Sergey Simonchik
  */
 public class KarmaTestRunnerState implements RunProfileState {
-
-  private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
 
   private final Project myProject;
   private final ExecutionEnvironment myExecutionEnvironment;
@@ -74,11 +73,16 @@ public class KarmaTestRunnerState implements RunProfileState {
       }
     }
     myKarmaServer = server;
-    ProcessHandler processHandler = startProcess(server);
-    ConsoleView consoleView = createConsole(myProject, myExecutionEnvironment, executor);
-    consoleView.attachToProcess(processHandler);
 
-    DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
+    KarmaTestTreeConsole testTreeConsole = new KarmaTestTreeConsole(myProject,
+                                                                    myExecutionEnvironment,
+                                                                    executor,
+                                                                    myKarmaServer,
+                                                                    myNodeInterpreterPath,
+                                                                    myRunSettings);
+
+    ProcessHandler processHandler = testTreeConsole.getProcessHandler();
+    DefaultExecutionResult executionResult = new DefaultExecutionResult(testTreeConsole, processHandler);
     executionResult.setRestartActions(new ToggleAutoTestAction());
     return executionResult;
   }
@@ -97,85 +101,5 @@ public class KarmaTestRunnerState implements RunProfileState {
     return myExecutionEnvironment.getConfigurationSettings();
   }
 
-  private static ConsoleView createConsole(@NotNull Project project,
-                                           @NotNull ExecutionEnvironment env,
-                                           Executor executor)
-    throws ExecutionException {
-    KarmaRunConfiguration runConfiguration = (KarmaRunConfiguration) env.getRunProfile();
-    TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(
-      new RuntimeConfigurationProducer.DelegatingRuntimeConfiguration<KarmaRunConfiguration>(runConfiguration),
-      FRAMEWORK_NAME,
-      executor
-    );
-    testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
-
-    SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
-      FRAMEWORK_NAME,
-      testConsoleProperties,
-      env.getRunnerSettings(),
-      env.getConfigurationSettings(),
-      new KarmaTestLocationProvider(),
-      true,
-      null
-    );
-
-    Disposer.register(project, smtConsoleView);
-    return smtConsoleView;
-  }
-
-  @NotNull
-  private ProcessHandler startProcess(@NotNull KarmaServer server) throws ExecutionException {
-    int runnerPort = -1;
-    if (server.isReady()) {
-      runnerPort = server.getRunnerPort();
-    }
-    File clientAppFile;
-    try {
-      clientAppFile = server.getClientAppFile();
-    }
-    catch (IOException e) {
-      throw new ExecutionException("Can't find karma-intellij test runner", e);
-    }
-    GeneralCommandLine commandLine = createCommandLine(runnerPort, clientAppFile);
-    Process process = commandLine.createProcess();
-    final ProcessHandler processHandler = new KillableColoredProcessHandler(process, commandLine.getCommandLineString());
-    ProcessTerminatedListener.attach(processHandler);
-    if (runnerPort == -1) {
-      server.addListener(new KarmaServerListener() {
-        @Override
-        public void onReady(int webServerPort, int runnerPort) {
-          @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-          PrintWriter pw = new PrintWriter(processHandler.getProcessInput(), false);
-          pw.print("runner port " + runnerPort + "\n");
-          pw.flush();
-        }
-      });
-    }
-    return processHandler;
-  }
-
-  @NotNull
-  private GeneralCommandLine createCommandLine(int runnerPort, @NotNull File clientAppFile) throws ExecutionException {
-    GeneralCommandLine commandLine = new GeneralCommandLine();
-    File configFile = new File(myRunSettings.getConfigPath());
-    // looks like it should work with any working directory
-    commandLine.setWorkDirectory(configFile.getParentFile());
-    commandLine.setExePath(myNodeInterpreterPath);
-    //commandLine.addParameter("--debug-brk=5858");
-    commandLine.addParameter(clientAppFile.getAbsolutePath());
-    commandLine.addParameter("--karmaPackageDir=" + myKarmaPackageDir);
-    if (runnerPort != -1) {
-      commandLine.addParameter("--runnerPort=" + String.valueOf(runnerPort));
-    }
-    return commandLine;
-  }
-
-  private static class KarmaTestLocationProvider implements TestLocationProvider {
-    @NotNull
-    @Override
-    public List<Location> getLocation(@NotNull String protocolId, @NotNull String locationData, Project project) {
-      return Collections.emptyList();
-    }
-  }
 
 }
