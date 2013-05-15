@@ -11,6 +11,7 @@ import com.intellij.psi.stubs.BinaryFileStubBuilder;
 import com.intellij.psi.stubs.PsiFileStub;
 import com.intellij.psi.stubs.PsiFileStubImpl;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.util.indexing.FileContent;
 
 import java.io.ByteArrayInputStream;
 
@@ -27,8 +28,8 @@ public class SwfFileStubBuilder implements BinaryFileStubBuilder {
            file.getPath().endsWith(JarFileSystem.JAR_SEPARATOR + file.getName());
   }
 
-  public StubElement buildStubTree(final VirtualFile file, final byte[] content, final Project project) {
-    return buildFileStub(file, content);
+  public StubElement buildStubTree(FileContent fileContent) {
+    return buildFileStub(fileContent.getFile(), fileContent.getContent());
   }
 
   static PsiFileStub buildFileStub(VirtualFile file, byte[] content) {
