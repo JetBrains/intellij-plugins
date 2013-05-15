@@ -698,7 +698,7 @@ public class FlexDebugProcess extends XDebugProcess {
       }
 
       String id = line.substring(0, spaceIndex);
-      String fullPath = line.substring(spaceIndex + 1, commaPos).replace(File.separatorChar, '/');
+      String fullPath = FileUtil.toSystemIndependentName(line.substring(spaceIndex + 1, commaPos));
 
       int markerIndex = fullPath.indexOf("/frameworks/projects/");
       if (markerIndex != -1 && fullPath.indexOf(SRC_PATH_ELEMENT, markerIndex) > 0) {
