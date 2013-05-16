@@ -34,11 +34,13 @@ public class KarmaServerLogComponent implements ComponentWithActions {
 
   private final ProcessEventStore myProcessEventStore;
   private final ConsoleView myConsole;
+  private final KarmaServer myKarmaServer;
   private ActionGroup myActionGroup;
 
   public KarmaServerLogComponent(@NotNull Project project,
                                  @NotNull RunContentDescriptor descriptor,
                                  @NotNull KarmaServer karmaServer) {
+    myKarmaServer = karmaServer;
     myProcessEventStore = karmaServer.getProcessEventStore();
     GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     TextConsoleBuilder builder = TextConsoleBuilderFactory.getInstance().createBuilder(project, scope);
@@ -111,11 +113,13 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     Content consoleContent = ui.createContent("KarmaServer",
                                               this,
                                               "Karma Server",
-                                              AllIcons.Debugger.Console,
+                                              null,
                                               myConsole.getPreferredFocusableComponent());
     consoleContent.setCloseable(false);
     ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
-    ui.selectAndFocus(consoleContent, false, false);
+    if (!myKarmaServer.isReady()) {
+      ui.selectAndFocus(consoleContent, false, false);
+    }
   }
 
 }

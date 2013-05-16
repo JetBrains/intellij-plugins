@@ -20,6 +20,13 @@ public class DelegatingProcessHandler extends ProcessHandler {
 
   private final AtomicReference<ProcessHandler> myDelegateRef = new AtomicReference<ProcessHandler>(null);
   private volatile boolean myDestroyed = false;
+  private volatile boolean myStartNotified = false;
+
+  @Override
+  public void startNotify() {
+    myStartNotified = true;
+    super.startNotify();
+  }
 
   @Override
   protected void destroyProcessImpl() {
@@ -55,6 +62,9 @@ public class DelegatingProcessHandler extends ProcessHandler {
 
   public void setDelegate(@NotNull ProcessHandler delegate) {
     if (myDelegateRef.compareAndSet(null, delegate)) {
+      if (myStartNotified) {
+        delegate.startNotify();
+      }
       if (myDestroyed) {
         delegate.destroyProcess();
       }

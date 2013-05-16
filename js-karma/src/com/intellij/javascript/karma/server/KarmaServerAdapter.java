@@ -3,7 +3,7 @@ package com.intellij.javascript.karma.server;
 /**
  * @author Sergey Simonchik
  */
-public class KarmaServerAdapter implements KarmaServerListener {
+public abstract class KarmaServerAdapter implements KarmaServerListener {
 
   @Override
   public void onReady(int webServerPort, int runnerPort) {}

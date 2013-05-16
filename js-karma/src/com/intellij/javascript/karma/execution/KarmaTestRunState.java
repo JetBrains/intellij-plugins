@@ -23,7 +23,7 @@ import java.io.IOException;
 /**
  * @author Sergey Simonchik
  */
-public class KarmaTestRunnerState implements RunProfileState {
+public class KarmaTestRunState implements RunProfileState {
 
   private final Project myProject;
   private final ExecutionEnvironment myExecutionEnvironment;
@@ -32,11 +32,11 @@ public class KarmaTestRunnerState implements RunProfileState {
   private final KarmaRunSettings myRunSettings;
   private KarmaServer myKarmaServer;
 
-  public KarmaTestRunnerState(@NotNull Project project,
-                              @NotNull ExecutionEnvironment executionEnvironment,
-                              @NotNull String nodeInterpreterPath,
-                              @NotNull String karmaPackageDir,
-                              @NotNull KarmaRunSettings runSettings) {
+  public KarmaTestRunState(@NotNull Project project,
+                           @NotNull ExecutionEnvironment executionEnvironment,
+                           @NotNull String nodeInterpreterPath,
+                           @NotNull String karmaPackageDir,
+                           @NotNull KarmaRunSettings runSettings) {
     myProject = project;
     myExecutionEnvironment = executionEnvironment;
     myNodeInterpreterPath = nodeInterpreterPath;
@@ -86,6 +86,5 @@ public class KarmaTestRunnerState implements RunProfileState {
   public ConfigurationPerRunnerSettings getConfigurationSettings() {
     return myExecutionEnvironment.getConfigurationSettings();
   }
-
 
 }
