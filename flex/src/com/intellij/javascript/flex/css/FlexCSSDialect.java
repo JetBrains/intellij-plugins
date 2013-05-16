@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * User: anna
@@ -23,7 +24,7 @@ public class FlexCSSDialect extends CssDialect {
   }
 
   @Override
-  public boolean isDefault(Module module) {
+  public boolean isDefault(@NotNull Module module) {
     return ModuleType.get(module) == FlexModuleType.getInstance();
   }
 
