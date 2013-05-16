@@ -9,6 +9,9 @@ import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.Language;
 import com.intellij.lang.css.CSSLanguage;
+import com.intellij.lang.css.CssDialect;
+import com.intellij.lang.css.CssDialectMappings;
+import com.intellij.lang.css.CssDialectsConfigurable;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -43,7 +46,6 @@ import com.intellij.psi.css.descriptor.CssPseudoSelectorDescriptorStub;
 import com.intellij.psi.css.impl.CssTermTypes;
 import com.intellij.psi.css.impl.util.references.HtmlCssClassOrIdReference;
 import com.intellij.psi.css.impl.util.scheme.CssElementDescriptorProviderImpl;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
@@ -534,7 +536,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     if (dialect == CssDialect.CLASSIC) {
       final CssPropertyDescriptor flexDescriptor = getPropertyDescriptor(propertyName, context);
       if (flexDescriptor != null) {
-        return new LocalQuickFix[]{new MySwitchToCssDialectQuickFix(CssDialect.FLEX, vFile)};
+        return new LocalQuickFix[]{new MySwitchToCssDialectQuickFix(FlexCSSDialect.getInstance(), vFile)};
       }
     }
     else {
@@ -567,7 +569,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     final CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
     if (dialect == CssDialect.CLASSIC) {
       if (isPossibleSelector(selectorName, context)) {
-        return new LocalQuickFix[]{new MySwitchToCssDialectQuickFix(CssDialect.FLEX, vFile)};
+        return new LocalQuickFix[]{new MySwitchToCssDialectQuickFix(FlexCSSDialect.getInstance(), vFile)};
       }
     }
     else {
