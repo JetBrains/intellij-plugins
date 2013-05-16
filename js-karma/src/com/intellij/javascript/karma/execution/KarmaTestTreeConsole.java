@@ -14,14 +14,23 @@ import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.ExecutionConsoleEx;
 import com.intellij.execution.ui.RunnerLayoutUi;
+import com.intellij.execution.ui.layout.PlaceInGrid;
+import com.intellij.icons.AllIcons;
 import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.karma.server.KarmaServerAdapter;
 import com.intellij.javascript.karma.server.KarmaServerListener;
+import com.intellij.javascript.karma.util.DelegatingProcessHandler;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.ActionCallback;
+import com.intellij.openapi.util.AsyncResult;
+import com.intellij.openapi.util.BusyObject;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.testIntegration.TestLocationProvider;
+import com.intellij.ui.content.Content;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,56 +48,78 @@ public class KarmaTestTreeConsole implements ExecutionConsoleEx {
   private static final Logger LOG = Logger.getInstance(KarmaTestTreeConsole.class);
   private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
 
-  private final Project myProject;
   private final ExecutionEnvironment myEnvironment;
   private final Executor myExecutor;
   private final KarmaServer myKarmaServer;
   private final String myNodeInterpreterPath;
   private final KarmaRunSettings myRunSettings;
   private final SMTRunnerConsoleView mySmtConsoleView;
-  private final ProcessHandler myProcessHandler;
+  private final ProcessHandlerInfo myProcessHandlerInfo;
 
-  public KarmaTestTreeConsole(@NotNull Project project,
-                              @NotNull ExecutionEnvironment environment,
+  public KarmaTestTreeConsole(@NotNull ExecutionEnvironment environment,
                               @NotNull Executor executor,
                               @NotNull KarmaServer karmaServer,
                               @NotNull String nodeInterpreterPath,
                               @NotNull KarmaRunSettings runSettings) throws ExecutionException {
-    myProject = project;
     myEnvironment = environment;
     myExecutor = executor;
     myKarmaServer = karmaServer;
     myNodeInterpreterPath = nodeInterpreterPath;
     myRunSettings = runSettings;
     mySmtConsoleView = createConsole();
-    myProcessHandler = createProcessHandler(karmaServer);
+    myProcessHandlerInfo = createProcessHandler(karmaServer);
   }
 
   @Override
-  public void buildUi(RunnerLayoutUi layoutUi) {
-    if (myKarmaServer.isReady()) {
-
+  public void buildUi(final RunnerLayoutUi ui) {
+    if (myProcessHandlerInfo.myProcessHandler instanceof DelegatingProcessHandler) {
+      myKarmaServer.addListener(new KarmaServerAdapter() {
+        @Override
+        public void onReady(int webServerPort, int runnerPort) {
+          addTabOn(ui);
+        }
+      });
     }
+    else {
+      addTabOn(ui);
+    }
+  }
+
+  private void addTabOn(@NotNull RunnerLayoutUi ui) {
+    Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
+                                              getComponent(),
+                                              "Tests Result",
+                                              AllIcons.Debugger.Console,
+                                              getPreferredFocusableComponent());
+    consoleContent.setBusyObject(new BusyObject() {
+      @Override
+      public ActionCallback getReady(@NotNull Object requestor) {
+        return myProcessHandlerInfo.myOsProcessHandlerAsyncResult;
+      }
+    });
+    consoleContent.setCloseable(false);
+    ui.addContent(consoleContent, 0, PlaceInGrid.bottom, false);
   }
 
   @Nullable
   @Override
   public String getExecutionConsoleId() {
-    return FRAMEWORK_NAME;
+    return ExecutionConsole.CONSOLE_CONTENT_ID;
   }
 
   @Override
   public JComponent getComponent() {
-    return null;
+    return mySmtConsoleView.getComponent();
   }
 
   @Override
   public JComponent getPreferredFocusableComponent() {
-    return null;
+    return mySmtConsoleView.getPreferredFocusableComponent();
   }
 
   @Override
   public void dispose() {
+    Disposer.dispose(mySmtConsoleView);
   }
 
   @NotNull
@@ -101,7 +132,7 @@ public class KarmaTestTreeConsole implements ExecutionConsoleEx {
     );
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
 
-    SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
+    return SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
       FRAMEWORK_NAME,
       testConsoleProperties,
       myEnvironment.getRunnerSettings(),
@@ -110,13 +141,10 @@ public class KarmaTestTreeConsole implements ExecutionConsoleEx {
       true,
       null
     );
-
-    Disposer.register(myProject, smtConsoleView);
-    return smtConsoleView;
   }
 
   @NotNull
-  private ProcessHandler createProcessHandler(@NotNull KarmaServer server) throws ExecutionException {
+  private ProcessHandlerInfo createProcessHandler(@NotNull KarmaServer server) throws ExecutionException {
     final File clientAppFile;
     try {
       clientAppFile = server.getClientAppFile();
@@ -126,23 +154,31 @@ public class KarmaTestTreeConsole implements ExecutionConsoleEx {
     }
     if (server.isReady()) {
       int runnerPort = server.getRunnerPort();
-      return createOSProcessHandler(runnerPort, clientAppFile);
+      OSProcessHandler processHandler = createOSProcessHandler(runnerPort, clientAppFile);
+      return new ProcessHandlerInfo(processHandler, new AsyncResult.Done<OSProcessHandler>(processHandler));
     }
-    final FakeProcessHandler fakeProcessHandler = new FakeProcessHandler();
+    final AsyncResult<OSProcessHandler> asyncResult = new AsyncResult<OSProcessHandler>();
+    final DelegatingProcessHandler delegatingProcessHandler = new DelegatingProcessHandler();
     server.addListener(new KarmaServerListener() {
       @Override
       public void onReady(int webServerPort, int runnerPort) {
         try {
           OSProcessHandler osProcessHandler = createOSProcessHandler(runnerPort, clientAppFile);
-          fakeProcessHandler.setPeer(osProcessHandler);
+          delegatingProcessHandler.setDelegate(osProcessHandler);
+          asyncResult.setDone(osProcessHandler);
         }
         catch (ExecutionException e) {
           LOG.warn(e);
           // TODO handle
         }
       }
+
+      @Override
+      public void onTerminated(int exitCode) {
+        delegatingProcessHandler.onDelegateTerminated(exitCode);
+      }
     });
-    return fakeProcessHandler;
+    return new ProcessHandlerInfo(delegatingProcessHandler, asyncResult);
   }
 
   @NotNull
@@ -151,6 +187,7 @@ public class KarmaTestTreeConsole implements ExecutionConsoleEx {
     Process process = commandLine.createProcess();
     OSProcessHandler processHandler = new KillableColoredProcessHandler(process, commandLine.getCommandLineString());
     ProcessTerminatedListener.attach(processHandler);
+    mySmtConsoleView.attachToProcess(processHandler);
     return processHandler;
   }
 
@@ -169,7 +206,18 @@ public class KarmaTestTreeConsole implements ExecutionConsoleEx {
 
   @NotNull
   public ProcessHandler getProcessHandler() {
-    return myProcessHandler;
+    return myProcessHandlerInfo.myProcessHandler;
+  }
+
+  private static class ProcessHandlerInfo {
+    private final AsyncResult<OSProcessHandler> myOsProcessHandlerAsyncResult;
+    private final ProcessHandler myProcessHandler;
+
+    private ProcessHandlerInfo(@NotNull ProcessHandler processHandler,
+                               @NotNull AsyncResult<OSProcessHandler> osProcessHandlerAsyncResult) {
+      myProcessHandler = processHandler;
+      myOsProcessHandlerAsyncResult = osProcessHandlerAsyncResult;
+    }
   }
 
   private static class KarmaTestLocationProvider implements TestLocationProvider {

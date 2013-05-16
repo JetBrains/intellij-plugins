@@ -1,4 +1,4 @@
-package com.intellij.javascript.karma.execution;
+package com.intellij.javascript.karma.util;
 
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
@@ -14,24 +14,29 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @author Sergey Simonchik
  */
-public class FakeProcessHandler extends ProcessHandler {
+public class DelegatingProcessHandler extends ProcessHandler {
 
-  private static final Logger LOG = Logger.getInstance(FakeProcessHandler.class);
-  private final AtomicReference<ProcessHandler> myPeerRef = new AtomicReference<ProcessHandler>(null);
+  private static final Logger LOG = Logger.getInstance(DelegatingProcessHandler.class);
+
+  private final AtomicReference<ProcessHandler> myDelegateRef = new AtomicReference<ProcessHandler>(null);
   private volatile boolean myDestroyed = false;
 
   @Override
   protected void destroyProcessImpl() {
-    ProcessHandler peer = myPeerRef.get();
+    myDestroyed = true;
+    ProcessHandler peer = myDelegateRef.get();
     if (peer != null) {
       peer.destroyProcess();
     }
-    myDestroyed = true;
+  }
+
+  public void onDelegateTerminated(int exitCode) {
+    notifyProcessTerminated(exitCode);
   }
 
   @Override
   protected void detachProcessImpl() {
-    ProcessHandler peer = myPeerRef.get();
+    ProcessHandler peer = myDelegateRef.get();
     if (peer != null) {
       peer.detachProcess();
     }
@@ -48,15 +53,15 @@ public class FakeProcessHandler extends ProcessHandler {
     return null;
   }
 
-  public void setPeer(@NotNull ProcessHandler peer) {
-    if (myPeerRef.compareAndSet(null, peer)) {
+  public void setDelegate(@NotNull ProcessHandler delegate) {
+    if (myDelegateRef.compareAndSet(null, delegate)) {
       if (myDestroyed) {
-        peer.detachProcess();
+        delegate.destroyProcess();
       }
-      peer.addProcessListener(new ProcessListener() {
+      delegate.addProcessListener(new ProcessListener() {
         @Override
         public void startNotified(ProcessEvent event) {
-          // this event has already been emitted
+          // this event has already been fired
         }
 
         @Override
@@ -76,7 +81,8 @@ public class FakeProcessHandler extends ProcessHandler {
       });
     }
     else {
-      LOG.error("Can't set peer twice");
+      LOG.error("Delegate has been already set");
     }
   }
+
 }

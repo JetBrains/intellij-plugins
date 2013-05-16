@@ -123,6 +123,7 @@ public class KarmaServer {
       @Override
       public void processTerminated(ProcessEvent event) {
         KarmaServerRegistry.serverTerminated(KarmaServer.this);
+        fireOnTerminated(event.getExitCode());
       }
     });
     ProcessTerminatedListener.attach(processHandler);
@@ -220,6 +221,17 @@ public class KarmaServer {
         }
       });
     }
+  }
+
+  private void fireOnTerminated(final int exitCode) {
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        for (KarmaServerListener listener : myListeners) {
+          listener.onTerminated(exitCode);
+        }
+      }
+    });
   }
 
   public void addListener(@NotNull KarmaServerListener listener) {

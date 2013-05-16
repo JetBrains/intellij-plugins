@@ -8,12 +8,19 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
+import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
+import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunnerLayoutUi;
+import com.intellij.execution.ui.layout.PlaceInGrid;
+import com.intellij.icons.AllIcons;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComponentWithActions;
+import com.intellij.ui.content.Content;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,13 +54,31 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
       karmaServer = ((KarmaTestRunnerState) state).getKarmaServer();
     }
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
+    final MyRunContentBuilder contentBuilder = new MyRunContentBuilder(project, this, executor, executionResult, env);
     RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
+    if (contentToReuse != null) {
+      System.out.println("content to reuse");
+    }
     if (karmaServer != null) {
-      KarmaServerLogComponent logComponent = new KarmaServerLogComponent(project, karmaServer);
-      contentBuilder.addAdditionalTabComponent(logComponent, karmaServer.getConfigurationFile().getAbsolutePath());
+      KarmaServerLogComponent logComponent = new KarmaServerLogComponent(project, descriptor, karmaServer);
+      logComponent.installOn(contentBuilder.getUi());
     }
     return descriptor;
   }
 
+  private static class MyRunContentBuilder extends RunContentBuilder {
+
+    public MyRunContentBuilder(@NotNull Project project,
+                               ProgramRunner runner,
+                               Executor executor,
+                               ExecutionResult executionResult,
+                               @NotNull ExecutionEnvironment environment) {
+      super(project, runner, executor, executionResult, environment);
+    }
+
+    @Override
+    public RunnerLayoutUi getUi() {
+      return super.getUi();
+    }
+  }
 }

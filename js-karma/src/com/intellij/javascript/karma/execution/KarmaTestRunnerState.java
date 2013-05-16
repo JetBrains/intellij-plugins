@@ -1,37 +1,24 @@
 package com.intellij.javascript.karma.execution;
 
-import com.intellij.execution.*;
+import com.intellij.execution.DefaultExecutionResult;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.ExecutionResult;
+import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
-import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RunnerSettings;
-import com.intellij.execution.junit.RuntimeConfigurationProducer;
-import com.intellij.execution.process.KillableColoredProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
-import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
-import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
-import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
-import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.ExecutionConsoleEx;
 import com.intellij.javascript.karma.server.KarmaServer;
-import com.intellij.javascript.karma.server.KarmaServerListener;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.testIntegration.TestLocationProvider;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Sergey Simonchik
@@ -60,7 +47,6 @@ public class KarmaTestRunnerState implements RunProfileState {
   @Override
   @NotNull
   public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
-    ApplicationManager.getApplication().assertIsDispatchThread();
     File configurationFile = new File(myRunSettings.getConfigPath());
     KarmaServer server = KarmaServerRegistry.getServerByConfigurationFile(configurationFile);
     if (server == null) {
@@ -74,12 +60,12 @@ public class KarmaTestRunnerState implements RunProfileState {
     }
     myKarmaServer = server;
 
-    KarmaTestTreeConsole testTreeConsole = new KarmaTestTreeConsole(myProject,
-                                                                    myExecutionEnvironment,
+    KarmaTestTreeConsole testTreeConsole = new KarmaTestTreeConsole(myExecutionEnvironment,
                                                                     executor,
                                                                     myKarmaServer,
                                                                     myNodeInterpreterPath,
                                                                     myRunSettings);
+    Disposer.register(myProject, testTreeConsole);
 
     ProcessHandler processHandler = testTreeConsole.getProcessHandler();
     DefaultExecutionResult executionResult = new DefaultExecutionResult(testTreeConsole, processHandler);

@@ -5,4 +5,5 @@ package com.intellij.javascript.karma.server;
  */
 public interface KarmaServerListener {
   void onReady(int webServerPort, int runnerPort);
+  void onTerminated(int exitCode);
 }
