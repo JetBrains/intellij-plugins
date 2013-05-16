@@ -60,7 +60,7 @@ public class KarmaTestRunState implements RunProfileState {
     }
     myKarmaServer = server;
 
-    KarmaTestTreeConsole testTreeConsole = new KarmaTestTreeConsole(myExecutionEnvironment,
+    KarmaTestRunConsole testTreeConsole = new KarmaTestRunConsole(myExecutionEnvironment,
                                                                     executor,
                                                                     myKarmaServer,
                                                                     myNodeInterpreterPath,

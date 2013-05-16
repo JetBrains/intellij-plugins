@@ -25,14 +25,16 @@ import com.intellij.javascript.karma.server.KarmaServerListener;
 import com.intellij.javascript.karma.util.DelegatingProcessHandler;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.PanelWithText;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.testIntegration.TestLocationProvider;
+import com.intellij.ui.ColorUtil;
 import com.intellij.ui.content.Content;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -41,9 +43,9 @@ import java.util.List;
 /**
  * @author Sergey Simonchik
  */
-public class KarmaTestTreeConsole implements ExecutionConsoleEx {
+public class KarmaTestRunConsole implements ExecutionConsoleEx {
 
-  private static final Logger LOG = Logger.getInstance(KarmaTestTreeConsole.class);
+  private static final Logger LOG = Logger.getInstance(KarmaTestRunConsole.class);
   private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
 
   private final ExecutionEnvironment myEnvironment;
@@ -54,11 +56,11 @@ public class KarmaTestTreeConsole implements ExecutionConsoleEx {
   private final SMTRunnerConsoleView mySmtConsoleView;
   private final ProcessHandler myProcessHandler;
 
-  public KarmaTestTreeConsole(@NotNull ExecutionEnvironment environment,
-                              @NotNull Executor executor,
-                              @NotNull KarmaServer karmaServer,
-                              @NotNull String nodeInterpreterPath,
-                              @NotNull KarmaRunSettings runSettings) throws ExecutionException {
+  public KarmaTestRunConsole(@NotNull ExecutionEnvironment environment,
+                             @NotNull Executor executor,
+                             @NotNull KarmaServer karmaServer,
+                             @NotNull String nodeInterpreterPath,
+                             @NotNull KarmaRunSettings runSettings) throws ExecutionException {
     myEnvironment = environment;
     myExecutor = executor;
     myKarmaServer = karmaServer;
@@ -77,7 +79,7 @@ public class KarmaTestTreeConsole implements ExecutionConsoleEx {
       preferredFocusableComponent = mySmtConsoleView.getPreferredFocusableComponent();
     }
     else {
-      component = new PanelWithText("Karma server is not ready");
+      component = createStubComponent();
       preferredFocusableComponent = null;
     }
     final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
@@ -124,6 +126,15 @@ public class KarmaTestTreeConsole implements ExecutionConsoleEx {
   @Override
   public void dispose() {
     Disposer.dispose(mySmtConsoleView);
+  }
+
+  @NotNull
+  private static JComponent createStubComponent() {
+    JLabel label = new JLabel("Karma server is not ready", SwingConstants.CENTER);
+    label.setOpaque(true);
+    Color treeBg = UIManager.getColor("Tree.background");
+    label.setBackground(ColorUtil.toAlpha(treeBg, 180));
+    return label;
   }
 
   @NotNull
