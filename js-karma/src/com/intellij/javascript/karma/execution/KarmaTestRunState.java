@@ -30,7 +30,6 @@ public class KarmaTestRunState implements RunProfileState {
   private final String myNodeInterpreterPath;
   private final String myKarmaPackageDir;
   private final KarmaRunSettings myRunSettings;
-  private KarmaServer myKarmaServer;
 
   public KarmaTestRunState(@NotNull Project project,
                            @NotNull ExecutionEnvironment executionEnvironment,
@@ -58,23 +57,20 @@ public class KarmaTestRunState implements RunProfileState {
         throw new ExecutionException(e);
       }
     }
-    myKarmaServer = server;
+    KarmaServer karmaServer = server;
 
-    KarmaTestRunConsole testTreeConsole = new KarmaTestRunConsole(myExecutionEnvironment,
-                                                                    executor,
-                                                                    myKarmaServer,
-                                                                    myNodeInterpreterPath,
-                                                                    myRunSettings);
+    KarmaTestRunConsole testTreeConsole = new KarmaTestRunConsole(myProject,
+                                                                  myExecutionEnvironment,
+                                                                  executor,
+                                                                  karmaServer,
+                                                                  myNodeInterpreterPath,
+                                                                  myRunSettings);
     Disposer.register(myProject, testTreeConsole);
 
     ProcessHandler processHandler = testTreeConsole.getProcessHandler();
     DefaultExecutionResult executionResult = new DefaultExecutionResult(testTreeConsole, processHandler);
     executionResult.setRestartActions(new ToggleAutoTestAction());
     return executionResult;
-  }
-
-  public KarmaServer getKarmaServer() {
-    return myKarmaServer;
   }
 
   @Override

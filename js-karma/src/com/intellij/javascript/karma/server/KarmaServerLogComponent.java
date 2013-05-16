@@ -7,10 +7,8 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
-import com.intellij.icons.AllIcons;
 import com.intellij.javascript.karma.util.ProcessEventStore;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPlaces;
@@ -18,7 +16,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithActions;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.content.Content;
@@ -38,7 +35,6 @@ public class KarmaServerLogComponent implements ComponentWithActions {
   private ActionGroup myActionGroup;
 
   public KarmaServerLogComponent(@NotNull Project project,
-                                 @NotNull RunContentDescriptor descriptor,
                                  @NotNull KarmaServer karmaServer) {
     myKarmaServer = karmaServer;
     myProcessEventStore = karmaServer.getProcessEventStore();
@@ -55,7 +51,6 @@ public class KarmaServerLogComponent implements ComponentWithActions {
       }
     };
     myProcessEventStore.addProcessListener(processListener);
-    Disposer.register(descriptor, myConsole);
   }
 
   @Nullable

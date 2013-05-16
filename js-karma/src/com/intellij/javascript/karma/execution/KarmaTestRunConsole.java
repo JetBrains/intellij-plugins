@@ -16,20 +16,21 @@ import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.ExecutionConsoleEx;
+import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerAdapter;
 import com.intellij.javascript.karma.server.KarmaServerListener;
-import com.intellij.javascript.karma.util.DelegatingProcessHandler;
+import com.intellij.javascript.karma.server.KarmaServerLogComponent;
+import com.intellij.javascript.karma.util.NopProcessHandler;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.testIntegration.TestLocationProvider;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.content.Content;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,6 +49,7 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
   private static final Logger LOG = Logger.getInstance(KarmaTestRunConsole.class);
   private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
 
+  private final Project myProject;
   private final ExecutionEnvironment myEnvironment;
   private final Executor myExecutor;
   private final KarmaServer myKarmaServer;
@@ -55,12 +57,15 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
   private final KarmaRunSettings myRunSettings;
   private final SMTRunnerConsoleView mySmtConsoleView;
   private final ProcessHandler myProcessHandler;
+  private RunContentDescriptor myRunContentDescriptor;
 
-  public KarmaTestRunConsole(@NotNull ExecutionEnvironment environment,
+  public KarmaTestRunConsole(@NotNull Project project,
+                             @NotNull ExecutionEnvironment environment,
                              @NotNull Executor executor,
                              @NotNull KarmaServer karmaServer,
                              @NotNull String nodeInterpreterPath,
                              @NotNull KarmaRunSettings runSettings) throws ExecutionException {
+    myProject = project;
     myEnvironment = environment;
     myExecutor = executor;
     myKarmaServer = karmaServer;
@@ -105,6 +110,9 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
         }
       });
     }
+
+    KarmaServerLogComponent logComponent = new KarmaServerLogComponent(myProject, myKarmaServer);
+    logComponent.installOn(ui);
   }
 
   @Nullable
@@ -171,13 +179,16 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
       int runnerPort = server.getRunnerPort();
       return createOSProcessHandler(runnerPort, clientAppFile);
     }
-    final DelegatingProcessHandler delegatingProcessHandler = new DelegatingProcessHandler();
+    final NopProcessHandler nopProcessHandler = new NopProcessHandler();
     server.addListener(new KarmaServerListener() {
       @Override
       public void onReady(int webServerPort, int runnerPort) {
         try {
           OSProcessHandler osProcessHandler = createOSProcessHandler(runnerPort, clientAppFile);
-          delegatingProcessHandler.setDelegate(osProcessHandler);
+          if (myRunContentDescriptor != null) {
+            myRunContentDescriptor.setProcessHandler(osProcessHandler);
+          }
+          osProcessHandler.startNotify();
         }
         catch (ExecutionException e) {
           LOG.warn(e);
@@ -187,20 +198,20 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
 
       @Override
       public void onTerminated(int exitCode) {
-        delegatingProcessHandler.onDelegateTerminated(exitCode);
+        nopProcessHandler.destroyProcess();
       }
     });
-    return delegatingProcessHandler;
+    return nopProcessHandler;
   }
 
   @NotNull
   private OSProcessHandler createOSProcessHandler(int runnerPort, @NotNull File clientAppFile) throws ExecutionException {
     GeneralCommandLine commandLine = createCommandLine(runnerPort, clientAppFile);
     Process process = commandLine.createProcess();
-    OSProcessHandler processHandler = new KillableColoredProcessHandler(process, commandLine.getCommandLineString());
-    ProcessTerminatedListener.attach(processHandler);
-    mySmtConsoleView.attachToProcess(processHandler);
-    return processHandler;
+    OSProcessHandler osProcessHandler = new KillableColoredProcessHandler(process, commandLine.getCommandLineString());
+    ProcessTerminatedListener.attach(osProcessHandler);
+    mySmtConsoleView.attachToProcess(osProcessHandler);
+    return osProcessHandler;
   }
 
   @NotNull
@@ -219,6 +230,10 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
   @NotNull
   public ProcessHandler getProcessHandler() {
     return myProcessHandler;
+  }
+
+  public void setRunContentDescriptor(@NotNull RunContentDescriptor descriptor) {
+    myRunContentDescriptor = descriptor;
   }
 
   private static class KarmaTestLocationProvider implements TestLocationProvider {
