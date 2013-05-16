@@ -67,7 +67,9 @@ public class KarmaServer {
     Disposer.register(ApplicationManager.getApplication(), new Disposable() {
       @Override
       public void dispose() {
-        ScriptRunnerUtil.terminateProcess(myProcessHandler, 500, null);
+        if (!myProcessHandler.isProcessTerminated()) {
+          ScriptRunnerUtil.terminateProcessHandler(myProcessHandler, 500, null);
+        }
       }
     });
   }
