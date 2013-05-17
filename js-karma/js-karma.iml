@@ -13,6 +13,7 @@
     <orderEntry type="module" module-name="smRunner" />
     <orderEntry type="module" module-name="webide-api" />
     <orderEntry type="library" name="Guava" level="project" />
+    <orderEntry type="module" module-name="js-test-common" />
   </component>
 </module>
 

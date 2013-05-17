@@ -155,15 +155,18 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
     );
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
 
-    return SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
+    KarmaProxyPrinterProvider printerProvider = new KarmaProxyPrinterProvider();
+    SMTRunnerConsoleView consoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
       FRAMEWORK_NAME,
       testConsoleProperties,
       myEnvironment.getRunnerSettings(),
       myEnvironment.getConfigurationSettings(),
       new KarmaTestLocationProvider(),
       true,
-      null
+      printerProvider
     );
+    printerProvider.setConsoleView(consoleView);
+    return consoleView;
   }
 
   @NotNull

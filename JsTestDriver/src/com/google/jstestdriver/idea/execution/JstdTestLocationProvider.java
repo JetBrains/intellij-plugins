@@ -6,10 +6,10 @@ import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder
 import com.intellij.javascript.testFramework.qunit.DefaultQUnitModuleStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
-import com.google.jstestdriver.idea.util.EscapeUtils;
 import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
 import com.intellij.execution.testframework.sm.FileUrlProvider;
+import com.intellij.javascript.testFramework.util.EscapeUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
