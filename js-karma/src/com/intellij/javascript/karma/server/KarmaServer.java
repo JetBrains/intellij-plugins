@@ -3,6 +3,7 @@ package com.intellij.javascript.karma.server;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.*;
+import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.util.ProcessEventStore;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.openapi.Disposable;
@@ -15,6 +16,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +44,7 @@ public class KarmaServer {
   private volatile boolean myBrowserConnected = false;
   private final AtomicBoolean myIsReady = new AtomicBoolean(false);
   private boolean myOnReadyFired = false;
+  private KarmaConfig myKarmaConfig;
 
   public KarmaServer(@NotNull File nodeInterpreter,
                      @NotNull File karmaPackageDir,
@@ -59,8 +62,10 @@ public class KarmaServer {
     myProcessEventStore = new ProcessEventStore(myProcessHandler);
     myProcessEventStore.addStreamEventListener(new StreamEventListener() {
       @Override
-      public void on(@NotNull String eventText) {
-        System.out.println("Got " + eventText);
+      public void on(@NotNull String eventType, @NotNull String eventBody) {
+        if ("config".equals(eventType)) {
+          myKarmaConfig = KarmaConfig.parseFromJson(eventBody);
+        }
       }
     });
     myProcessEventStore.startNotify();
@@ -252,4 +257,8 @@ public class KarmaServer {
     return myRunnerPort;
   }
 
+  @Nullable
+  public KarmaConfig getKarmaConfig() {
+    return myKarmaConfig;
+  }
 }

@@ -6,5 +6,5 @@ import org.jetbrains.annotations.NotNull;
  * @author Sergey Simonchik
  */
 public interface StreamEventListener {
-  void on(@NotNull String eventText);
+  void on(@NotNull String eventType, @NotNull String eventBody);
 }

@@ -1,8 +1,9 @@
-package com.intellij.javascript.karma.execution;
+package com.intellij.javascript.karma.tree;
 
 import com.intellij.execution.testframework.Printer;
 import com.intellij.execution.testframework.sm.runner.TestProxyPrinterProvider;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
+import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.testFramework.util.EscapeUtils;
 import com.intellij.javascript.testFramework.util.StacktracePrinter;
 import org.jetbrains.annotations.NotNull;
@@ -17,23 +18,29 @@ import java.util.List;
 public class KarmaProxyPrinterProvider implements TestProxyPrinterProvider {
 
   private BaseTestsOutputConsoleView myConsoleView;
+  private KarmaConfig myKarmaConfig;
+
+  public KarmaProxyPrinterProvider(@NotNull KarmaConfig karmaConfig) {
+    myKarmaConfig = karmaConfig;
+  }
 
   @Override
-  public Printer getPrinterByType(@NotNull String nodeType, @Nullable String arguments) {
+  public Printer getPrinterByType(@NotNull String nodeType, @NotNull String nodeName, @Nullable String arguments) {
     BaseTestsOutputConsoleView consoleView = myConsoleView;
     if (consoleView == null) {
       return null;
     }
-    if ("browser".equals(nodeType) && arguments != null) {
-      List<String> args = EscapeUtils.split(arguments, ',');
-      if (args.size() == 2) {
-        File basePath = new File(args.get(0));
-        String browserName = args.get(1);
-        if (basePath.isAbsolute() && basePath.isDirectory()) {
-          return new StacktracePrinter(consoleView, basePath, browserName);
-        }
-      }
+    if ("browser".equals(nodeType)) {
+      //return getBrowserPrinter(nodeName);
     }
+    if ("browserError".equals(nodeType)) {
+      return new BrowserErrorPrinter(myConsoleView, myKarmaConfig);
+    }
+    return null;
+  }
+
+  @NotNull
+  private Printer getBrowserPrinter(@NotNull String browserName) {
     return null;
   }
 

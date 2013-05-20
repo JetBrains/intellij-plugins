@@ -50,9 +50,14 @@ public class ProcessEventStore {
   private boolean handleLineAsEvent(@NotNull String line) {
     if (line.startsWith(PREFIX)) {
       if (line.endsWith(SUFFIX)) {
-        String eventText = line.substring(PREFIX.length(), line.length() - SUFFIX.length());
+        int colonInd = line.indexOf(':');
+        if (colonInd == -1) {
+           return false;
+        }
+        String eventType = line.substring(PREFIX.length(), colonInd);
+        String eventBody = line.substring(colonInd + 1, line.length() - SUFFIX.length());
         for (StreamEventListener listener : myStdoutStreamEventListeners) {
-          listener.on(eventText);
+          listener.on(eventType, eventBody);
         }
         return true;
       }

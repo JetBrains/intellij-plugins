@@ -274,7 +274,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
     private BaseTestsOutputConsoleView myConsoleView;
 
     @Override
-    public Printer getPrinterByType(@NotNull String nodeType, @Nullable String arguments) {
+    public Printer getPrinterByType(@NotNull String nodeType, @NotNull String nodeName, @Nullable String arguments) {
       BaseTestsOutputConsoleView consoleView = myConsoleView;
       if (consoleView == null) {
         return null;
