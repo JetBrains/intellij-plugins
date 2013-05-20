@@ -154,9 +154,10 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
       FRAMEWORK_NAME,
       myExecutor
     );
+    testConsoleProperties.setUsePredefinedMessageFilter(false);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
 
-    KarmaProxyPrinterProvider printerProvider = new KarmaProxyPrinterProvider(myKarmaServer.getKarmaConfig());
+    KarmaProxyPrinterProvider printerProvider = new KarmaProxyPrinterProvider(myProject, myKarmaServer);
     SMTRunnerConsoleView consoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
       FRAMEWORK_NAME,
       testConsoleProperties,

@@ -44,7 +44,7 @@ public class KarmaServer {
   private volatile boolean myBrowserConnected = false;
   private final AtomicBoolean myIsReady = new AtomicBoolean(false);
   private boolean myOnReadyFired = false;
-  private KarmaConfig myKarmaConfig;
+  private volatile KarmaConfig myKarmaConfig;
 
   public KarmaServer(@NotNull File nodeInterpreter,
                      @NotNull File karmaPackageDir,
