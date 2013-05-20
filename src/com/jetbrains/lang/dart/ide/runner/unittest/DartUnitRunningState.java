@@ -233,7 +233,7 @@ public class DartUnitRunningState extends CommandLineState {
     private BaseTestsOutputConsoleView myConsoleView;
 
     @Override
-    public Printer getPrinterByType(@NotNull String nodeType, @Nullable String arguments) {
+    public Printer getPrinterByType(@NotNull String nodeType, @NotNull String nodeName, @Nullable String arguments) {
       return new DartPrinter(myConsoleView);
     }
 
