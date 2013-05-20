@@ -465,7 +465,7 @@ public class FlexStackFrame extends XStackFrame {
       return eval(expression, myDebugProcess);
     }
 
-    public void evaluate(@NotNull final String expression, final XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition) {
+    public void evaluate(@NotNull final String expression, @NotNull final XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition) {
       final EvaluateCommand command = new EvaluateCommand(expression, callback);
       myDebugProcess.sendCommand(command);
     }
