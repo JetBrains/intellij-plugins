@@ -60,6 +60,10 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     SamsungGalaxyS("Samsung Galaxy S", "SamsungGalaxyS", 233, "AND", 480, 762, 480, 800),
     SamsungGalaxyTab("Samsung Galaxy Tab", "SamsungGalaxyTab", 168, "AND", 600, 986, 600, 1024),
 
+    OtherAndroidDevice("Other Android device...", null, 0, "AND", 0, 0, 0, 0),
+    OtherIOSDevice("Other iOS Device...", null, 0, "IOS", 0, 0, 0, 0),
+
+    // kept in enum for compatibility, but not used anywhere any more. Changed to OtherAndroidDevice if loaded.
     Other("Other...", null, 0, null, 0, 0, 0, 0),
 
     // Following values are kept in enum for compatibility, but not shown in UI any more.
@@ -70,7 +74,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     WQVGA("WQVGA", "WQVGA", 0, null, 240, 400, 240, 400),
     WVGA("WVGA", "WVGA", 0, null, 480, 800, 480, 800);
 
-    public static final EnumSet<Emulator> ALL_EMULATORS = EnumSet.range(Emulator.values()[0], Other);
+    public static final EnumSet<Emulator> ALL_EMULATORS = EnumSet.range(Emulator.values()[0], OtherIOSDevice);
 
     public final String name;
     public final @Nullable String adlAlias; // null means that screen size parameters are set by user explicitly
@@ -82,7 +86,7 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     public final int fullScreenHeight;
 
     Emulator(String name,
-             String adlAlias,
+             @Nullable String adlAlias,
              final int screenDPI,
              final @Nullable String versionPlatform,
              int screenWidth,
@@ -235,6 +239,10 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     if (Emulator.ALL_EMULATORS.contains(emulator)) {
       myEmulator = emulator;
     }
+    else if (emulator == Emulator.Other) {
+      myEmulator = Emulator.OtherAndroidDevice;
+    }
+    // else keep default myEmulator = Emulator.NexusOne
   }
 
   public int getScreenWidth() {
