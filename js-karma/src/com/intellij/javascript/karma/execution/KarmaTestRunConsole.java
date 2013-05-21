@@ -24,7 +24,7 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerAdapter;
 import com.intellij.javascript.karma.server.KarmaServerListener;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
-import com.intellij.javascript.karma.tree.KarmaProxyPrinterProvider;
+import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.karma.util.NopProcessHandler;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -157,18 +157,16 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
     testConsoleProperties.setUsePredefinedMessageFilter(false);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
 
-    KarmaProxyPrinterProvider printerProvider = new KarmaProxyPrinterProvider(myKarmaServer);
-    SMTRunnerConsoleView consoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
+    Project project = testConsoleProperties.getProject();
+    return SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
       FRAMEWORK_NAME,
       testConsoleProperties,
       myEnvironment.getRunnerSettings(),
       myEnvironment.getConfigurationSettings(),
       new KarmaTestLocationProvider(),
       true,
-      printerProvider
+      new KarmaTestProxyFilterProvider(project, myKarmaServer)
     );
-    printerProvider.setConsoleView(consoleView);
-    return consoleView;
   }
 
   @NotNull

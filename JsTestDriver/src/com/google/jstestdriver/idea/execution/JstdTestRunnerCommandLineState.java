@@ -110,7 +110,6 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
     testConsoleProperties.setUsePredefinedMessageFilter(false);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
 
-    JstdTestProxyPrinterProvider printerProvider = new JstdTestProxyPrinterProvider();
     SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
       JSTD_FRAMEWORK_NAME,
       testConsoleProperties,
@@ -118,9 +117,8 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
       env.getConfigurationSettings(),
       new JstdTestLocationProvider(),
       true,
-      printerProvider
+      new JstdTestProxyFilterProvider(testConsoleProperties.getProject())
     );
-    printerProvider.setConsoleView(smtConsoleView);
 
     Disposer.register(project, smtConsoleView);
     return smtConsoleView;

@@ -1,10 +1,9 @@
 package com.intellij.javascript.karma.tree;
 
+import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
 import com.intellij.javascript.karma.KarmaConfig;
-import com.intellij.javascript.testFramework.util.LineWithHyperlink;
-import com.intellij.javascript.testFramework.util.LineWithHyperlinkProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -18,33 +17,21 @@ import java.util.regex.Pattern;
 /**
  * @author Sergey Simonchik
  */
-public class KarmaBrowserErrorLineWithHyperlinkProvider implements LineWithHyperlinkProvider {
+public class KarmaBrowserErrorFilter implements Filter {
 
   private static final Pattern LINE_PATTERN = Pattern.compile("^\\s*at (http://localhost:\\d+/base/([^?]+)?.*)$");
 
+  private final Project myProject;
   private final KarmaConfig myConfig;
 
-  public KarmaBrowserErrorLineWithHyperlinkProvider(@NotNull KarmaConfig config) {
+  public KarmaBrowserErrorFilter(@NotNull Project project, @NotNull KarmaConfig config) {
+    myProject = project;
     myConfig = config;
-  }
-
-  private File findFile(@NotNull String path) {
-    String basePath = myConfig.getBasePath();
-    if (basePath != null) {
-      File baseDir = new File(basePath);
-      if (baseDir.isDirectory()) {
-        File file = new File(baseDir, path);
-        if (file.isFile()) {
-          return file;
-        }
-      }
-    }
-    return null;
   }
 
   @Nullable
   @Override
-  public LineWithHyperlink getLineWithHyperlink(@NotNull Project project, @NotNull String line) {
+  public Result applyFilter(String line, int entireLength) {
     //at http://localhost:9876/base/spec/personSpec.js?1368878723000:22
     Matcher m = LINE_PATTERN.matcher(line);
     if (m.find()) {
@@ -55,8 +42,23 @@ public class KarmaBrowserErrorLineWithHyperlinkProvider implements LineWithHyper
         VirtualFile virtualFile = VfsUtil.findFileByIoFile(file, false);
         if (virtualFile != null) {
           int lineNumber = getLineFrom(m.group(1));
-          HyperlinkInfo link = new OpenFileHyperlinkInfo(project, virtualFile, lineNumber == -1 ? -1 : lineNumber - 1);
-          return new LineWithHyperlink(hyperlinkStartInd, hyperlinkEndInd, link);
+          lineNumber = Math.max(-1, lineNumber - 1);
+          HyperlinkInfo link = new OpenFileHyperlinkInfo(myProject, virtualFile, lineNumber);
+          return new Filter.Result(hyperlinkStartInd, hyperlinkEndInd, link);
+        }
+      }
+    }
+    return null;
+  }
+
+  private File findFile(@NotNull String path) {
+    String basePath = myConfig.getBasePath();
+    if (basePath != null) {
+      File baseDir = new File(basePath);
+      if (baseDir.isDirectory()) {
+        File file = new File(baseDir, path);
+        if (file.isFile()) {
+          return file;
         }
       }
     }

@@ -1,0 +1,64 @@
+package com.intellij.javascript.karma.tree;
+
+import com.intellij.execution.filters.Filter;
+import com.intellij.execution.testframework.sm.runner.TestProxyFilterProvider;
+import com.intellij.javascript.karma.KarmaConfig;
+import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.testFramework.util.BrowserStacktraceFilter;
+import com.intellij.openapi.project.Project;
+import com.intellij.util.Function;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+
+/**
+ * @author Sergey Simonchik
+ */
+public class KarmaTestProxyFilterProvider implements TestProxyFilterProvider {
+
+  private final Project myProject;
+  private final KarmaServer myKarmaServer;
+
+  public KarmaTestProxyFilterProvider(@NotNull Project project, @NotNull KarmaServer karmaServer) {
+    myProject = project;
+    myKarmaServer = karmaServer;
+  }
+
+  @Nullable
+  @Override
+  public Filter getFilter(@NotNull String nodeType, @NotNull String nodeName, @Nullable String nodeArguments) {
+    if ("browser".equals(nodeType)) {
+      return getBrowserFilter(nodeName);
+    }
+    if ("browserError".equals(nodeType)) {
+      return getBrowserErrorFilter();
+    }
+    return null;
+  }
+
+  @NotNull
+  private Filter getBrowserFilter(@NotNull String browserName) {
+    Function<String, File> fileFinder = new Function<String, File>() {
+      @Override
+      public File fun(String s) {
+        File file = new File(s);
+        if (file.isFile() && file.isAbsolute()) {
+          return file;
+        }
+        return null;
+      }
+    };
+    return new BrowserStacktraceFilter(myProject, browserName, fileFinder);
+  }
+
+  @Nullable
+  private Filter getBrowserErrorFilter() {
+    KarmaConfig karmaConfig = myKarmaServer.getKarmaConfig();
+    if (karmaConfig != null) {
+      return new KarmaBrowserErrorFilter(myProject, karmaConfig);
+    }
+    return null;
+  }
+
+}
