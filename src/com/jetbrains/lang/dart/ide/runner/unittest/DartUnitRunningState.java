@@ -17,7 +17,6 @@ import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
-import com.intellij.execution.testframework.sm.runner.TestProxyPrinterProvider;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.testframework.ui.TestsOutputConsolePrinter;
@@ -98,7 +97,6 @@ public class DartUnitRunningState extends CommandLineState {
       executor
     );
 
-    DartTestProxyPrinterProvider printerProvider = new DartTestProxyPrinterProvider();
     SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
       DART_FRAMEWORK_NAME,
       testConsoleProperties,
@@ -106,9 +104,11 @@ public class DartUnitRunningState extends CommandLineState {
       env.getConfigurationSettings(),
       new DartTestLocationProvider(),
       true,
-      printerProvider
+      null
     );
-    printerProvider.setConsoleView(smtConsoleView);
+    testConsoleProperties.setUsePredefinedMessageFilter(false);
+    Filter filter = new DartStackTraceMessageFiler(testConsoleProperties.getProject(), myUnitParameters.getFilePath());
+    smtConsoleView.addMessageFilter(filter);
 
     final Project project = env.getProject();
     assert project != null;
@@ -229,56 +229,4 @@ public class DartUnitRunningState extends CommandLineState {
     return ResourceUtil.loadText(resource);
   }
 
-  private class DartTestProxyPrinterProvider implements TestProxyPrinterProvider {
-    private BaseTestsOutputConsoleView myConsoleView;
-
-    @Override
-    public Printer getPrinterByType(@NotNull String nodeType, @NotNull String nodeName, @Nullable String arguments) {
-      return new DartPrinter(myConsoleView);
-    }
-
-    public void setConsoleView(@NotNull BaseTestsOutputConsoleView consoleView) {
-      myConsoleView = consoleView;
-    }
-  }
-
-  private class DartPrinter extends TestsOutputConsolePrinter {
-    // #0      DefaultFailureHandler.fail (file:///C:/dart/dart-sdk/lib/unittest/expect.dart:85:5)
-    final Pattern tracePattern = Pattern.compile("(#[0-9]+\\s+)(.*)\\s+\\((.*):(\\d+):(\\d+)\\)");
-    private final BaseTestsOutputConsoleView myConsoleView;
-
-    public DartPrinter(final BaseTestsOutputConsoleView consoleView) {
-      super(consoleView, consoleView.getProperties(), null);
-      myConsoleView = consoleView;
-    }
-
-    @Override
-    public void print(String text, ConsoleViewContentType contentType) {
-      final StringReader reader = new StringReader(StringUtil.unescapeStringCharacters(text));
-      final Scanner sc = new Scanner(reader);
-      while (sc.hasNext()) {
-        final String line = sc.nextLine();
-        if (!tryResolveStackLink(line, contentType)) {
-          super.print(line + "\n", contentType);
-        }
-      }
-    }
-
-    private boolean tryResolveStackLink(String line, ConsoleViewContentType contentType) {
-      Filter.Result result = DartStackTraceMessageFiler.parseLine(
-        line,
-        myConsoleView.getProperties().getProject(),
-        myUnitParameters.getFilePath()
-      );
-      if (result == null) {
-        return false;
-      }
-      String prefix = line.substring(0, result.highlightStartOffset);
-      String name = line.substring(result.highlightStartOffset, result.highlightEndOffset);
-      super.print(prefix, contentType);
-      super.printHyperlink(name, result.hyperlinkInfo);
-      super.print("\n", contentType);
-      return true;
-    }
-  }
 }
