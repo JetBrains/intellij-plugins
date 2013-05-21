@@ -28,16 +28,12 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
-import com.intellij.execution.testframework.Printer;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
-import com.intellij.execution.testframework.sm.runner.TestProxyPrinterProvider;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
-import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.ui.ConsoleView;
-import com.intellij.javascript.testFramework.util.StacktracePrinter;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -111,6 +107,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
       JSTD_FRAMEWORK_NAME,
       executor
     );
+    testConsoleProperties.setUsePredefinedMessageFilter(false);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
 
     JstdTestProxyPrinterProvider printerProvider = new JstdTestProxyPrinterProvider();
@@ -268,38 +265,5 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
       paths.add(config.getPath());
     }
     return EscapeUtils.join(paths, ',');
-  }
-
-  private static class JstdTestProxyPrinterProvider implements TestProxyPrinterProvider {
-    private BaseTestsOutputConsoleView myConsoleView;
-
-    @Override
-    public Printer getPrinterByType(@NotNull String nodeType, @NotNull String nodeName, @Nullable String arguments) {
-      BaseTestsOutputConsoleView consoleView = myConsoleView;
-      if (consoleView == null) {
-        return null;
-      }
-      if ("browser".equals(nodeType) && arguments != null) {
-        List<String> args = EscapeUtils.split(arguments, ',');
-        if (args.size() == 2) {
-          File basePath = new File(args.get(0));
-          String browserName = args.get(1);
-          if (basePath.isAbsolute() && basePath.isDirectory()) {
-            return new StacktracePrinter(consoleView, basePath, browserName);
-          }
-        }
-      }
-      if ("browserError".equals(nodeType) && arguments != null) {
-        File basePath = new File(arguments);
-        if (basePath.isDirectory() && basePath.isAbsolute()) {
-          return new JsErrorPrinter(consoleView, basePath);
-        }
-      }
-      return null;
-    }
-
-    public void setConsoleView(@NotNull BaseTestsOutputConsoleView consoleView) {
-      myConsoleView = consoleView;
-    }
   }
 }

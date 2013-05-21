@@ -21,11 +21,10 @@ import java.util.regex.Pattern;
 public class KarmaBrowserErrorLineWithHyperlinkProvider implements LineWithHyperlinkProvider {
 
   private static final Pattern LINE_PATTERN = Pattern.compile("^\\s*at (http://localhost:\\d+/base/([^?]+)?.*)$");
-  private final Project myProject;
+
   private final KarmaConfig myConfig;
 
-  public KarmaBrowserErrorLineWithHyperlinkProvider(@NotNull Project project, @NotNull KarmaConfig config) {
-    myProject = project;
+  public KarmaBrowserErrorLineWithHyperlinkProvider(@NotNull KarmaConfig config) {
     myConfig = config;
   }
 
@@ -45,7 +44,7 @@ public class KarmaBrowserErrorLineWithHyperlinkProvider implements LineWithHyper
 
   @Nullable
   @Override
-  public LineWithHyperlink getLineWithHyperlink(@NotNull String line) {
+  public LineWithHyperlink getLineWithHyperlink(@NotNull Project project, @NotNull String line) {
     //at http://localhost:9876/base/spec/personSpec.js?1368878723000:22
     Matcher m = LINE_PATTERN.matcher(line);
     if (m.find()) {
@@ -56,7 +55,7 @@ public class KarmaBrowserErrorLineWithHyperlinkProvider implements LineWithHyper
         VirtualFile virtualFile = VfsUtil.findFileByIoFile(file, false);
         if (virtualFile != null) {
           int lineNumber = getLineFrom(m.group(1));
-          HyperlinkInfo link = new OpenFileHyperlinkInfo(myProject, virtualFile, lineNumber == -1 ? -1 : lineNumber - 1);
+          HyperlinkInfo link = new OpenFileHyperlinkInfo(project, virtualFile, lineNumber == -1 ? -1 : lineNumber - 1);
           return new LineWithHyperlink(hyperlinkStartInd, hyperlinkEndInd, link);
         }
       }

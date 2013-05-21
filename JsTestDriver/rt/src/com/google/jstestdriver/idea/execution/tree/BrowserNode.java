@@ -2,10 +2,7 @@ package com.google.jstestdriver.idea.execution.tree;
 
 import com.google.jstestdriver.idea.execution.tc.TCAttribute;
 import com.google.jstestdriver.idea.execution.tc.TCMessage;
-import com.google.jstestdriver.idea.util.EscapeUtils;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 
 /**
  * @author Sergey Simonchik
@@ -38,8 +35,7 @@ public class BrowserNode extends AbstractSuiteNode<TestCaseNode> {
     String basePath = getParent().getAbsoluteBasePath();
     if (basePath != null) {
       message.addAttribute(TCAttribute.NODE_TYPE, "browser");
-      String args = EscapeUtils.join(Arrays.asList(basePath, getName()), ',');
-      message.addAttribute(TCAttribute.NODE_ARGS, args);
+      message.addAttribute(TCAttribute.NODE_ARGS, basePath);
     }
     return message;
   }

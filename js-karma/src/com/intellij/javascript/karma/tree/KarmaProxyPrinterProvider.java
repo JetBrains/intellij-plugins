@@ -3,14 +3,11 @@ package com.intellij.javascript.karma.tree;
 import com.intellij.execution.testframework.Printer;
 import com.intellij.execution.testframework.sm.runner.TestProxyPrinterProvider;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
-import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.testFramework.util.BrowserStacktraceLineWithHyperlinkProvider;
 import com.intellij.javascript.testFramework.util.HyperlinkPrinter;
 import com.intellij.javascript.testFramework.util.LineWithHyperlinkProvider;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,19 +19,10 @@ import java.io.File;
  */
 public class KarmaProxyPrinterProvider implements TestProxyPrinterProvider {
 
-  private static final Condition<ConsoleViewContentType> ERROR_CONTENT_TYPE = new Condition<ConsoleViewContentType>() {
-    @Override
-    public boolean value(ConsoleViewContentType contentType) {
-      return contentType == ConsoleViewContentType.ERROR_OUTPUT;
-    }
-  };
-
-  private final Project myProject;
   private final KarmaServer myKarmaServer;
   private BaseTestsOutputConsoleView myConsoleView;
 
-  public KarmaProxyPrinterProvider(@NotNull Project project, @NotNull KarmaServer karmaServer) {
-    myProject = project;
+  public KarmaProxyPrinterProvider(@NotNull KarmaServer karmaServer) {
     myKarmaServer = karmaServer;
   }
 
@@ -65,16 +53,16 @@ public class KarmaProxyPrinterProvider implements TestProxyPrinterProvider {
         return null;
       }
     };
-    LineWithHyperlinkProvider provider = new BrowserStacktraceLineWithHyperlinkProvider(myProject, browserName, fileFinder);
-    return new HyperlinkPrinter(myConsoleView, ERROR_CONTENT_TYPE, provider);
+    LineWithHyperlinkProvider provider = new BrowserStacktraceLineWithHyperlinkProvider(browserName, fileFinder);
+    return new HyperlinkPrinter(myConsoleView, HyperlinkPrinter.ERROR_CONTENT_TYPE, provider);
   }
 
   @Nullable
   private Printer getBrowserErrorPrinter() {
     KarmaConfig karmaConfig = myKarmaServer.getKarmaConfig();
     if (karmaConfig != null) {
-      LineWithHyperlinkProvider provider = new KarmaBrowserErrorLineWithHyperlinkProvider(myProject, karmaConfig);
-      return new HyperlinkPrinter(myConsoleView, ERROR_CONTENT_TYPE, provider);
+      LineWithHyperlinkProvider provider = new KarmaBrowserErrorLineWithHyperlinkProvider(karmaConfig);
+      return new HyperlinkPrinter(myConsoleView, HyperlinkPrinter.ERROR_CONTENT_TYPE, provider);
     }
     return null;
   }
