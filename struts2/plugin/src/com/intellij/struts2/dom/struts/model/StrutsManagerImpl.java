@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,9 @@
 package com.intellij.struts2.dom.struts.model;
 
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.facet.StrutsFacet;
@@ -59,6 +61,12 @@ public class StrutsManagerImpl extends StrutsManager {
     return myStrutsModelFactory.getCombinedModel(module);
   }
 
+  @Nullable
+  @Override
+  public StrutsModel getCombinedModel(@NotNull PsiElement psiElement) {
+    return getCombinedModel(ModuleUtilCore.findModuleForPsiElement(psiElement));
+  }
+
   @NotNull
   public Set<StrutsFileSet> getAllConfigFileSets(@NotNull final Module module) {
     if (module.isDisposed()) {
@@ -71,5 +79,4 @@ public class StrutsManagerImpl extends StrutsManager {
     }
     return Collections.emptySet();
   }
-
 }

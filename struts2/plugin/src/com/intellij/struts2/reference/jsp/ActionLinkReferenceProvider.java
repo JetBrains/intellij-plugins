@@ -18,7 +18,6 @@ import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.javaee.web.CustomServletReferenceAdapter;
 import com.intellij.javaee.web.ServletMappingInfo;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
@@ -57,8 +56,7 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
                                             final String text,
                                             @Nullable final ServletMappingInfo info,
                                             final boolean soft) {
-    final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject()).
-      getCombinedModel(ModuleUtilCore.findModuleForPsiElement(psiElement));
+    final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject()).getCombinedModel(psiElement);
 
     if (strutsModel == null) {
       return PsiReference.EMPTY_ARRAY;
@@ -87,7 +85,7 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
                                      @NotNull final PsiElement psiElement,
                                      final ServletMappingInfo servletMappingInfo) {
     final StrutsManager strutsManager = StrutsManager.getInstance(psiElement.getProject());
-    if (strutsManager.getCombinedModel(ModuleUtilCore.findModuleForPsiElement(psiElement)) == null) {
+    if (strutsManager.getCombinedModel(psiElement) == null) {
       return null;
     }
 

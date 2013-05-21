@@ -16,7 +16,6 @@
 package com.intellij.struts2.model.jam;
 
 import com.intellij.jam.JamAttributeElement;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -46,7 +45,7 @@ public final class StrutsJamUtils {
     }
 
     final StrutsManager instance = StrutsManager.getInstance(value.getProject());
-    return instance.getCombinedModel(ModuleUtilCore.findModuleForPsiElement(value));
+    return instance.getCombinedModel(value);
   }
 
 }

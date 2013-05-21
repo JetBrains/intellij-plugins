@@ -18,7 +18,6 @@ package com.intellij.struts2.reference.jsp;
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.*;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -47,7 +46,7 @@ public class NamespaceReferenceProvider extends PsiReferenceProvider {
                                                @NotNull final ProcessingContext context) {
 
     final StrutsManager strutsManager = StrutsManager.getInstance(psiElement.getProject());
-    final StrutsModel strutsModel = strutsManager.getCombinedModel(ModuleUtilCore.findModuleForPsiElement(psiElement));
+    final StrutsModel strutsModel = strutsManager.getCombinedModel(psiElement);
     if (strutsModel == null) {
       return PsiReference.EMPTY_ARRAY;
     }

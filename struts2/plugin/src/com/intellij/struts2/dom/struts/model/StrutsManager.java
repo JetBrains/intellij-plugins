@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,6 +19,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyKey;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.facet.ui.StrutsFileSet;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,6 @@ public abstract class StrutsManager {
    * Checks whether the given file is a valid <code>struts.xml</code> file.
    *
    * @param xmlFile File to check.
-   *
    * @return <code>true</code> if yes, <code>false</code> otherwise.
    */
   public abstract boolean isStruts2ConfigFile(@NotNull XmlFile xmlFile);
@@ -53,9 +53,7 @@ public abstract class StrutsManager {
    * Gets the model using the given file.
    *
    * @param file File to resolve context.
-   *
    * @return <code>null</code> if no model available.
-   *
    * @see com.intellij.util.xml.model.impl.DomModelFactory#getModelByConfigFile(com.intellij.psi.xml.XmlFile)
    */
   @Nullable
@@ -65,9 +63,7 @@ public abstract class StrutsManager {
    * Gets all models.
    *
    * @param module Module.
-   *
    * @return List of all models.
-   *
    * @see com.intellij.util.xml.model.impl.DomModelFactory#getAllModels(com.intellij.openapi.util.UserDataHolder)
    */
   @NotNull
@@ -77,22 +73,26 @@ public abstract class StrutsManager {
    * Gets the combined model.
    *
    * @param module Module.
-   *
    * @return Combined model.
-   *
-   * @see com.intellij.util.xml.model.impl.DomModelFactory#getCombinedModel(com.intellij.openapi.util.UserDataHolder) 
+   * @see com.intellij.util.xml.model.impl.DomModelFactory#getCombinedModel(com.intellij.openapi.util.UserDataHolder)
    */
   @Nullable
   public abstract StrutsModel getCombinedModel(@Nullable final Module module);
 
   /**
+   * @param psiElement To determine module.
+   * @return Combined model
+   * @see #getCombinedModel(com.intellij.openapi.module.Module)
+   */
+  @Nullable
+  public abstract StrutsModel getCombinedModel(@NotNull final PsiElement psiElement);
+
+  /**
    * Gets all configured filesets from current facet setup.
    *
    * @param module Module to get filesets for.
-   *
    * @return All configured filesets (can be empty).
    */
   @NotNull
   public abstract Set<StrutsFileSet> getAllConfigFileSets(@NotNull final Module module);
-
 }

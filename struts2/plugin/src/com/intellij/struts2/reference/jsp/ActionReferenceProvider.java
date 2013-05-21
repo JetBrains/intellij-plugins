@@ -17,7 +17,6 @@ package com.intellij.struts2.reference.jsp;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -52,7 +51,7 @@ public class ActionReferenceProvider extends PsiReferenceProvider {
   public PsiReference[] getReferencesByElement(@NotNull final PsiElement psiElement,
                                                @NotNull final ProcessingContext context) {
     final StrutsManager strutsManager = StrutsManager.getInstance(psiElement.getProject());
-    final StrutsModel strutsModel = strutsManager.getCombinedModel(ModuleUtilCore.findModuleForPsiElement(psiElement));
+    final StrutsModel strutsModel = strutsManager.getCombinedModel(psiElement);
     if (strutsModel == null) {
       return PsiReference.EMPTY_ARRAY;
     }

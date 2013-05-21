@@ -250,7 +250,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
         strutsManager.isStruts2ConfigFile((XmlFile) psiFile)) {
       model = strutsManager.getModelByFile((XmlFile) psiFile);
     } else {
-      model = strutsManager.getCombinedModel(ModuleUtilCore.findModuleForPsiElement(psiFile));
+      model = strutsManager.getCombinedModel(psiFile);
     }
     return model;
   }

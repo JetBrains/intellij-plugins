@@ -15,7 +15,6 @@
 
 package com.intellij.struts2.reference.jsp;
 
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
@@ -72,7 +71,7 @@ public class ActionPropertyReferenceProvider extends PsiReferenceProvider {
     }
 
     final StrutsManager strutsManager = StrutsManager.getInstance(psiElement.getProject());
-    final StrutsModel strutsModel = strutsManager.getCombinedModel(ModuleUtilCore.findModuleForPsiElement(psiElement));
+    final StrutsModel strutsModel = strutsManager.getCombinedModel(psiElement);
     if (strutsModel == null) {
       return PsiReference.EMPTY_ARRAY;
     }

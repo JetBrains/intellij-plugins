@@ -18,7 +18,6 @@ package com.intellij.struts2.gotosymbol;
 import com.intellij.codeInsight.navigation.DomGotoRelatedItem;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.navigation.GotoRelatedProvider;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -60,7 +59,7 @@ public class GotoRelatedActionProvider extends GotoRelatedProvider {
     }
 
     final StrutsManager strutsManager = StrutsManager.getInstance(psiElement.getProject());
-    final StrutsModel strutsModel = strutsManager.getCombinedModel(ModuleUtilCore.findModuleForPsiElement(psiElement));
+    final StrutsModel strutsModel = strutsManager.getCombinedModel(psiElement);
     if (strutsModel == null) {
       return Collections.emptyList();
     }
