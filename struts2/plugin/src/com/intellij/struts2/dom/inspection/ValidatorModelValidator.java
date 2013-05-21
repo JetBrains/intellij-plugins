@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,7 @@ import com.intellij.openapi.compiler.util.InspectionValidatorUtil;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -73,7 +73,7 @@ public class ValidatorModelValidator extends ValidatorBase {
         final PsiFile psiFile = psiManager.findFile(file);
         if (psiFile instanceof XmlFile &&
             validatorManager.isValidatorsFile((XmlFile) psiFile)) {
-          final Module module = ModuleUtil.findModuleForFile(file, project);
+          final Module module = ModuleUtilCore.findModuleForFile(file, project);
           if (module != null &&
               enabledForModule.get(module)) {
             files.add(file);

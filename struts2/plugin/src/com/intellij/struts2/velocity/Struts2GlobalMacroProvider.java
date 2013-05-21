@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,7 @@
 package com.intellij.struts2.velocity;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -42,7 +42,7 @@ public class Struts2GlobalMacroProvider extends VtlGlobalMacroProvider {
   @NotNull
   @Override
   public Collection<VtlMacro> getGlobalMacros(@NotNull final VtlFile vtlFile) {
-    final Module module = ModuleUtil.findModuleForPsiElement(vtlFile);
+    final Module module = ModuleUtilCore.findModuleForPsiElement(vtlFile);
     if (module == null) {
       return Collections.emptySet();
     }

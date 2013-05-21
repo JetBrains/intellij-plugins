@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,7 @@ import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.javaee.web.CustomServletReferenceAdapter;
 import com.intellij.javaee.web.ServletMappingInfo;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
@@ -58,7 +58,7 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
                                             @Nullable final ServletMappingInfo info,
                                             final boolean soft) {
     final StrutsModel strutsModel = StrutsManager.getInstance(psiElement.getProject()).
-      getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
+      getCombinedModel(ModuleUtilCore.findModuleForPsiElement(psiElement));
 
     if (strutsModel == null) {
       return PsiReference.EMPTY_ARRAY;
@@ -87,7 +87,7 @@ public class ActionLinkReferenceProvider extends CustomServletReferenceAdapter {
                                      @NotNull final PsiElement psiElement,
                                      final ServletMappingInfo servletMappingInfo) {
     final StrutsManager strutsManager = StrutsManager.getInstance(psiElement.getProject());
-    if (strutsManager.getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement)) == null) {
+    if (strutsManager.getCombinedModel(ModuleUtilCore.findModuleForPsiElement(psiElement)) == null) {
       return null;
     }
 

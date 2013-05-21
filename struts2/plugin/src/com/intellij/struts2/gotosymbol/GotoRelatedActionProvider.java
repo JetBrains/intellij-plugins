@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,7 +18,7 @@ package com.intellij.struts2.gotosymbol;
 import com.intellij.codeInsight.navigation.DomGotoRelatedItem;
 import com.intellij.navigation.GotoRelatedItem;
 import com.intellij.navigation.GotoRelatedProvider;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -60,7 +60,7 @@ public class GotoRelatedActionProvider extends GotoRelatedProvider {
     }
 
     final StrutsManager strutsManager = StrutsManager.getInstance(psiElement.getProject());
-    final StrutsModel strutsModel = strutsManager.getCombinedModel(ModuleUtil.findModuleForPsiElement(psiElement));
+    final StrutsModel strutsModel = strutsManager.getCombinedModel(ModuleUtilCore.findModuleForPsiElement(psiElement));
     if (strutsModel == null) {
       return Collections.emptyList();
     }

@@ -15,7 +15,7 @@
 package com.intellij.struts2.graph.fileEditor;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
@@ -56,7 +56,7 @@ public class Struts2GraphFileEditorProvider extends PerspectiveFileEditorProvide
       return false;
     }
 
-    final Module module = ModuleUtil.findModuleForFile(file, project);
+    final Module module = ModuleUtilCore.findModuleForFile(file, project);
     if (module == null) {
       return false;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,7 @@ import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -79,7 +79,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
     }
 
     // short exit if Struts Facet not present
-    final Module module = ModuleUtil.findModuleForPsiElement(clazz);
+    final Module module = ModuleUtilCore.findModuleForPsiElement(clazz);
     if (module == null ||
         StrutsFacet.getInstance(module) == null) {
       return false;
@@ -161,7 +161,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
     final PackageWrapper targetPackage =
         new PackageWrapper(manager, StringUtil.getPackageName(actionClassQualifiedName));
 
-    final Module module = ModuleUtil.findModuleForPsiElement(actionClass);
+    final Module module = ModuleUtilCore.findModuleForPsiElement(actionClass);
     assert module != null;
     final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots(false);
     final VirtualFile sourceRoot = sourceRoots.length == 1 ? sourceRoots[0] :
@@ -197,7 +197,7 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
     final Project project = actionClass.getProject();
     final List<Action> actions = getActionsForClazz(project,
                                                     actionClass,
-                                                    ModuleUtil.findModuleForPsiElement(actionClass));
+                                                    ModuleUtilCore.findModuleForPsiElement(actionClass));
 
     final List<XmlFile> files = ValidatorManager.getInstance(project).findValidationFilesFor(actionClass);
     return ContainerUtil.filter(actions, new Condition<Action>() {

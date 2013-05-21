@@ -1,5 +1,5 @@
 /*
- * Copyright 2007 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +21,7 @@ import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeId;
 import com.intellij.javaee.web.facet.WebFacet;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +64,7 @@ public class StrutsFacet extends Facet<StrutsFacetConfiguration> {
    */
   @Nullable
   public static StrutsFacet getInstance(@NotNull final PsiElement element) {
-    final Module module = ModuleUtil.findModuleForPsiElement(element);
+    final Module module = ModuleUtilCore.findModuleForPsiElement(element);
     return module != null ? getInstance(module) : null;
   }
 

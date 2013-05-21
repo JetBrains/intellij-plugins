@@ -23,7 +23,7 @@ import com.intellij.freemarker.psi.variables.FtlLightVariable;
 import com.intellij.freemarker.psi.variables.FtlPsiType;
 import com.intellij.freemarker.psi.variables.FtlVariable;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.paths.PathReference;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.jsp.JspManager;
@@ -55,7 +55,7 @@ public class Struts2GlobalVariableProvider extends FtlGlobalVariableProvider {
 
   @NotNull
   public List<? extends FtlVariable> getGlobalVariables(final FtlFile file) {
-    final Module module = ModuleUtil.findModuleForPsiElement(file);
+    final Module module = ModuleUtilCore.findModuleForPsiElement(file);
     if (module == null) {
       return Collections.emptyList();
     }

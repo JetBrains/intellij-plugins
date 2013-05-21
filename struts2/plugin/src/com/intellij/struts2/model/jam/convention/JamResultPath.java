@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,7 @@ import com.intellij.lang.properties.IProperty;
 import com.intellij.lang.properties.PropertiesUtil;
 import com.intellij.lang.properties.psi.PropertiesFile;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiAnnotationMemberValue;
@@ -67,7 +67,7 @@ public abstract class JamResultPath extends CommonModelElement.PsiBase implement
         return Collections.emptyList();
       }
 
-      final Module module = ModuleUtil.findModuleForPsiElement(annotationMemberValue);
+      final Module module = ModuleUtilCore.findModuleForPsiElement(annotationMemberValue);
       if (module == null) {
         return Collections.emptyList();
       }

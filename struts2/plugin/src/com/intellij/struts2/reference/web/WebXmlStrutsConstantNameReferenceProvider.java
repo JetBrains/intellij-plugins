@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,7 +14,7 @@
 package com.intellij.struts2.reference.web;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceBase;
@@ -57,7 +57,7 @@ public class WebXmlStrutsConstantNameReferenceProvider extends PsiReferenceProvi
 
     @NotNull
     public Object[] getVariants() {
-      final Module module = ModuleUtil.findModuleForPsiElement(myElement);
+      final Module module = ModuleUtilCore.findModuleForPsiElement(myElement);
       if (module == null) {
         return ArrayUtil.EMPTY_OBJECT_ARRAY;
       }

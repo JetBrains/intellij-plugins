@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,7 +16,7 @@
 package com.intellij.struts2.model.jam;
 
 import com.intellij.jam.JamAttributeElement;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.PsiElement;
 import com.intellij.struts2.dom.struts.model.StrutsManager;
 import com.intellij.struts2.dom.struts.model.StrutsModel;
@@ -46,7 +46,7 @@ public final class StrutsJamUtils {
     }
 
     final StrutsManager instance = StrutsManager.getInstance(value.getProject());
-    return instance.getCombinedModel(ModuleUtil.findModuleForPsiElement(value));
+    return instance.getCombinedModel(ModuleUtilCore.findModuleForPsiElement(value));
   }
 
 }

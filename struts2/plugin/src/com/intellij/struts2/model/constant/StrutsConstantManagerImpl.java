@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,7 +24,7 @@ import com.intellij.lang.properties.IProperty;
 import com.intellij.lang.properties.PropertiesUtil;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
@@ -98,7 +98,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
   @Nullable
   public <T> Converter<T> findConverter(@NotNull final PsiElement context,
                                         @NotNull final StrutsConstantKey<T> strutsConstantKey) {
-    final Module module = ModuleUtil.findModuleForPsiElement(context);
+    final Module module = ModuleUtilCore.findModuleForPsiElement(context);
     if (module == null) {
       return null;
     }
@@ -156,7 +156,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
                                        @NotNull final StrutsModel strutsModel,
                                        @NotNull @NonNls final String name) {
     final Project project = context.getProject();
-    final Module module = ModuleUtil.findModuleForPsiElement(context);
+    final Module module = ModuleUtilCore.findModuleForPsiElement(context);
     assert module != null : context;
 
     // collect all properties with matching key
@@ -171,7 +171,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
         return virtualFile != null &&
                virtualFile.getFileSystem() instanceof JarFileSystem &&
                StringUtil.endsWith(virtualFile.getPath(), STRUTS_DEFAULT_PROPERTIES) &&
-               ModuleUtil.moduleContainsFile(module, virtualFile, true);
+               ModuleUtilCore.moduleContainsFile(module, virtualFile, true);
       }
     });
     if (strutsDefaultProperty != null) {
@@ -204,7 +204,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
         final VirtualFile virtualFile = property.getPropertiesFile().getVirtualFile();
         return virtualFile != null &&
                Comparing.equal(virtualFile.getName(), STRUTS_PROPERTIES_FILENAME) &&
-               ModuleUtil.moduleContainsFile(module, virtualFile, false);
+               ModuleUtilCore.moduleContainsFile(module, virtualFile, false);
       }
     });
     if (strutsProperty != null) {
@@ -250,7 +250,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
         strutsManager.isStruts2ConfigFile((XmlFile) psiFile)) {
       model = strutsManager.getModelByFile((XmlFile) psiFile);
     } else {
-      model = strutsManager.getCombinedModel(ModuleUtil.findModuleForPsiElement(psiFile));
+      model = strutsManager.getCombinedModel(ModuleUtilCore.findModuleForPsiElement(psiFile));
     }
     return model;
   }
