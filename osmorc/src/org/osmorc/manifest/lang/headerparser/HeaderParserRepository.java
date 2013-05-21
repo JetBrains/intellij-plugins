@@ -27,8 +27,8 @@ package org.osmorc.manifest.lang.headerparser;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.util.text.LevenshteinDistance;
 import com.intellij.psi.PsiElement;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.headerparser.impl.AbstractHeaderParserImpl;
 import org.osmorc.manifest.lang.psi.Header;
@@ -81,9 +81,9 @@ public class HeaderParserRepository {
           return new ArrayList<HeaderNameMatch>();
         }
         else {
+          int dist = new LevenshteinDistance().calculateMetrics(headerName, headerParserProvider.getHeaderName());
           result.add(
-            new HeaderNameMatch(StringUtils.getLevenshteinDistance(headerName, headerParserProvider.getHeaderName()),
-                                headerParserProvider));
+            new HeaderNameMatch(dist, headerParserProvider));
         }
       }
     }
