@@ -1,10 +1,7 @@
 package com.intellij.javascript.flex.css;
 
 import com.intellij.codeInsight.documentation.DocumentationManager;
-import com.intellij.codeInsight.intention.HighPriorityAction;
-import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.javascript.flex.mxml.schema.CodeContext;
 import com.intellij.lang.Language;
@@ -15,7 +12,6 @@ import com.intellij.lang.css.CssDialectsConfigurable;
 import com.intellij.lang.documentation.DocumentationProvider;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
@@ -25,10 +21,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassImpl;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.openapi.command.undo.BasicUndoableAction;
-import com.intellij.openapi.command.undo.UndoManager;
-import com.intellij.openapi.command.undo.UnexpectedUndoException;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.module.Module;
@@ -50,7 +42,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.indexing.FileBasedIndex;
@@ -536,7 +527,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     if (dialect == CssDialect.CLASSIC) {
       final CssPropertyDescriptor flexDescriptor = getPropertyDescriptor(propertyName, context);
       if (flexDescriptor != null) {
-        return new LocalQuickFix[]{new MySwitchToCssDialectQuickFix(FlexCSSDialect.getInstance(), vFile)};
+        return new LocalQuickFix[]{new SwitchToCssDialectQuickFix(FlexCSSDialect.getInstance())};
       }
     }
     else {
@@ -545,7 +536,7 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
       if (classicCssDescriptorProvider != null) {
         final CssPropertyDescriptor classicDescriptor = classicCssDescriptorProvider.getPropertyDescriptor(propertyName, context);
         if (classicDescriptor != null) {
-          return new LocalQuickFix[]{new MySwitchToCssDialectQuickFix(CssDialect.CLASSIC, vFile)};
+          return new LocalQuickFix[]{new SwitchToCssDialectQuickFix(CssDialect.CLASSIC)};
         }
       }
     }
@@ -569,14 +560,14 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     final CssDialect dialect = CssDialectMappings.getInstance(context.getProject()).getMapping(vFile);
     if (dialect == CssDialect.CLASSIC) {
       if (isPossibleSelector(selectorName, context)) {
-        return new LocalQuickFix[]{new MySwitchToCssDialectQuickFix(FlexCSSDialect.getInstance(), vFile)};
+        return new LocalQuickFix[]{new SwitchToCssDialectQuickFix(FlexCSSDialect.getInstance())};
       }
     }
     else {
       final CssElementDescriptorProviderImpl classicCssDescriptorProvider =
         CssElementDescriptorProvider.EP_NAME.findExtension(CssElementDescriptorProviderImpl.class);
       if (classicCssDescriptorProvider != null && classicCssDescriptorProvider.isPossibleSelector(selectorName, context)) {
-        return new LocalQuickFix[]{new MySwitchToCssDialectQuickFix(CssDialect.CLASSIC, vFile)};
+        return new LocalQuickFix[]{new SwitchToCssDialectQuickFix(CssDialect.CLASSIC)};
       }
     }
     return LocalQuickFix.EMPTY_ARRAY;
@@ -605,72 +596,5 @@ public class FlexCssElementDescriptorProvider extends CssElementDescriptorProvid
     }
 
     return vFile;
-  }
-
-  private static class MySwitchToCssDialectQuickFix implements LocalQuickFix, IntentionAction, HighPriorityAction {
-    private final CssDialect myDialect;
-    private final VirtualFile myVirtualFile;
-
-    private MySwitchToCssDialectQuickFix(CssDialect dialect, VirtualFile virtualFile) {
-      myDialect = dialect;
-      myVirtualFile = virtualFile;
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-      return FlexBundle.message("switch.to.css.dialect.quickfix.name", myVirtualFile.getName(), myDialect.getDisplayName());
-    }
-
-    @NotNull
-    @Override
-    public String getText() {
-      return getName();
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-      return getName();
-    }
-
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-      return true;
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
-      doApplyFix(project);
-    }
-
-    @Override
-    public boolean startInWriteAction() {
-      return false;
-    }
-
-    @Override
-    public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
-      doApplyFix(project);
-    }
-
-    private void doApplyFix(final Project project) {
-      final CssDialectMappings mappings = CssDialectMappings.getInstance(project);
-      final CssDialect oldDialect = mappings.getMapping(myVirtualFile);
-
-      UndoManager.getInstance(project).undoableActionPerformed(new BasicUndoableAction() {
-        @Override
-        public void undo() throws UnexpectedUndoException {
-          CssDialectMappings.getInstance(project).setMapping(myVirtualFile, oldDialect);
-        }
-
-        @Override
-        public void redo() throws UnexpectedUndoException {
-          CssDialectMappings.getInstance(project).setMapping(myVirtualFile, myDialect);
-        }
-      });
-
-      mappings.setMapping(myVirtualFile, myDialect);
-    }
   }
 }
