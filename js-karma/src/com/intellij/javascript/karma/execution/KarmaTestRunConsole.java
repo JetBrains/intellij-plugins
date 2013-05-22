@@ -2,7 +2,6 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.Location;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.execution.process.KillableColoredProcessHandler;
@@ -29,7 +28,6 @@ import com.intellij.javascript.karma.util.NopProcessHandler;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.testIntegration.TestLocationProvider;
 import com.intellij.ui.ColorUtil;
 import com.intellij.ui.content.Content;
 import org.jetbrains.annotations.NotNull;
@@ -39,8 +37,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Sergey Simonchik
@@ -157,15 +153,14 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
     testConsoleProperties.setUsePredefinedMessageFilter(false);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
 
-    Project project = testConsoleProperties.getProject();
     return SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
       FRAMEWORK_NAME,
       testConsoleProperties,
       myEnvironment.getRunnerSettings(),
       myEnvironment.getConfigurationSettings(),
-      new KarmaTestLocationProvider(),
+      new KarmaTestLocationProvider(myProject),
       true,
-      new KarmaTestProxyFilterProvider(project, myKarmaServer)
+      new KarmaTestProxyFilterProvider(myProject, myKarmaServer)
     );
   }
 
@@ -238,13 +233,4 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
   public void setRunContentDescriptor(@NotNull RunContentDescriptor descriptor) {
     myRunContentDescriptor = descriptor;
   }
-
-  private static class KarmaTestLocationProvider implements TestLocationProvider {
-    @NotNull
-    @Override
-    public List<Location> getLocation(@NotNull String protocolId, @NotNull String locationData, Project project) {
-      return Collections.emptyList();
-    }
-  }
-
 }
