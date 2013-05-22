@@ -1,7 +1,7 @@
 class A {
-  static get f => <caret>;
+  static get foo => <caret>;
 }
 
 main() {
-  print(A.f);
+  print(A.foo);
 }

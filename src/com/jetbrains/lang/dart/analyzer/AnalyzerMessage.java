@@ -29,7 +29,14 @@ public class AnalyzerMessage {
   private final String message;
   private final String subSystem;
 
-  protected AnalyzerMessage(@NotNull VirtualFile file, int line, int offset, int length, Type type, String system, String code, String message) {
+  protected AnalyzerMessage(@NotNull VirtualFile file,
+                            int line,
+                            int offset,
+                            int length,
+                            Type type,
+                            String system,
+                            String code,
+                            String message) {
     virtualFile = file;
     this.line = line;
     this.offset = offset;
@@ -115,7 +122,7 @@ public class AnalyzerMessage {
       if (sourceUrl.startsWith("file:")) {
         sourceUrl = VfsUtilCore.pathToUrl(sourceUrl.substring("file:".length()));
       }
-      VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl(sourceUrl);
+      VirtualFile virtualFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(sourceUrl));
       if (virtualFile == null && !ApplicationManager.getApplication().isUnitTestMode() && sourceUrl.contains(libraryRootPath)) {
         //see http://code.google.com/p/dart/issues/detail?id=3391
         virtualFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(libraryRootPath));

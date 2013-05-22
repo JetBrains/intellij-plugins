@@ -84,7 +84,7 @@ public class DartSettings {
   }
 
   public String getAnalyzerPath() {
-    return VfsUtilCore.pathToUrl(sdkPath) + "/bin/" + (SystemInfo.isWindows ? "dart_analyzer.bat" : "dart_analyzer");
+    return VfsUtilCore.pathToUrl(sdkPath) + "/bin/" + (SystemInfo.isWindows ? "dartanalyzer.bat" : "dartanalyzer");
   }
 
   @Nullable

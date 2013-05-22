@@ -10,102 +10,105 @@ public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
   }
 
   public void testCannotBeResolved1$CreateDartGetterSetterAction() throws Throwable {
-    doTest("cannot resolve hole");
+    doTest("Undefined name 'hole'");
   }
 
   public void testCannotBeResolved1$CreateFieldAction() throws Throwable {
-    doTest("cannot resolve hole");
+    doTest("Undefined name 'hole'");
   }
 
   public void testCannotBeResolved1$CreateGlobalDartGetterSetterAction() throws Throwable {
-    doTest("cannot resolve hole");
+    doTest("Undefined name 'hole'");
   }
 
   public void testCannotBeResolved1$CreateGlobalVariableAction() throws Throwable {
-    doTest("cannot resolve hole");
+    doTest("Undefined name 'hole'");
   }
 
   public void testCannotBeResolved1$CreateLocalVariableAction() throws Throwable {
-    doTest("cannot resolve hole");
+    doTest("Undefined name 'hole'");
   }
 
   public void testCannotBeResolved2() throws Throwable {
-    doTest("cannot resolve noField");
+    doTest("There is no such setter 'noField' in 'A'");
   }
 
   public void testCannotBeResolved3() throws Throwable {
-    doTest("cannot resolve f");
+    doTest("There is no such getter 'foo' in 'A'");
   }
 
   public void testCannotBeResolved4() throws Throwable {
-    doTest("cannot resolve f");
+    doTest("There is no such setter 'foo' in 'A'");
   }
 
   public void testCannotBeResolved5() throws Throwable {
-    doTest("cannot resolve Unknown");
+    doTest("Undefined name 'Unknown'");
   }
 
   public void testCannotBeResolved6$CreateDartGetterSetterAction() throws Throwable {
-    doTest("cannot resolve unknown");
+    doTest("Undefined name 'unknown'");
   }
 
   public void testCannotBeResolved6$CreateGlobalDartGetterSetterAction() throws Throwable {
-    doTest("cannot resolve unknown");
+    doTest("Undefined name 'unknown'");
   }
 
   public void testCannotBeResolved6$CreateGlobalVariableAction() throws Throwable {
-    doTest("cannot resolve unknown");
+    doTest("Undefined name 'unknown'");
   }
 
   public void testCannotBeResolved7$CreateDartGetterSetterAction() throws Throwable {
-    doTest("cannot resolve unknown");
+    doTest("Undefined name 'unknown'");
   }
 
   public void testCannotBeResolved7$CreateGlobalDartGetterSetterAction() throws Throwable {
-    doTest("cannot resolve unknown");
+    doTest("Undefined name 'unknown'");
   }
 
   public void testCannotBeResolved8() throws Throwable {
-    doTest("cannot resolve Unknown");
+    doTest("Undefined name 'Unknown'");
   }
 
-  public void testConcreteClassHasUnimplementedMembers1() throws Throwable {
+  public void ConcreteClassHasUnimplementedMembers1() throws Throwable {
+    // https://code.google.com/p/dart/issues/detail?id=10755
     doTest("Concrete class A has unimplemented member(s)");
   }
 
-  public void testConcreteClassHasUnimplementedMembers2() throws Throwable {
+  public void ConcreteClassHasUnimplementedMembers2() throws Throwable {
+    // https://code.google.com/p/dart/issues/detail?id=10755
     doTest("Concrete class A has unimplemented member(s)");
   }
 
   public void testFieldHasNoGetter1() throws Throwable {
-    doTest("Field 'bar' has no getter");
+    doTest("There is no such getter 'bar' in 'Foo'");
   }
 
-  public void testFieldHasNoSetter1() throws Throwable {
+  public void FieldHasNoSetter1() throws Throwable {
+    // https://code.google.com/p/dart/issues/detail?id=10756
     doTest("Field 'bar' has no setter");
   }
 
   public void testInterfaceHasNoMethodNamed1() throws Throwable {
-    doTest("\"A\" has no method named \"foo\"");
+    doTest("The method 'foo' is not defined for the class 'A'");
   }
 
   public void testInterfaceHasNoMethodNamed2() throws Throwable {
-    doTest("\"A\" has no method named \"foo\"");
+    doTest("The method 'foo' is not defined for the class 'A'");
   }
 
   public void testInterfaceHasNoMethodNamed3() throws Throwable {
-    doTest("\"A\" has no method named \"operator +\"");
+    doTest("There is no such operator '+' in 'A'");
   }
 
   public void testNoSuchType1() throws Throwable {
-    doTest("no such type \"Foo\"");
+    doTest("Undefined class 'Foo'");
   }
 
   public void testNoSuchType2() throws Throwable {
-    doTest("no such type \"Foo\"");
+    doTest("Undefined class 'Foo'");
   }
 
   public void testNotAMember1() throws Throwable {
-    doTest("\"result\" is not a member of Adder");
+    doTest("There is no such getter 'result' in 'Adder'");
   }
 }

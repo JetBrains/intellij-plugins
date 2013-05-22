@@ -1,13 +1,13 @@
 class A {
-  static set f(Foo value) {
+  static set foo(Foo value) {
     <caret>
   }
 
-  static get f => 239;
+  static get foo => 239;
 }
 
 main() {
-  A.f = new Foo();
+  A.foo = new Foo();
 }
 
 class Foo {}

@@ -2,5 +2,5 @@ class A {
 }
 
 main() {
-  print(A.f);
+  print(A.foo);
 }

@@ -111,6 +111,9 @@ public enum DartComponentType {
 
   @Nullable
   public static DartComponentType typeOf(@Nullable PsiElement element) {
+    if (element instanceof DartComponentName) {
+      return typeOf(element.getParent());
+    }
     if ((element instanceof DartComponent && PsiTreeUtil.getParentOfType(element, DartNormalFormalParameter.class, false) != null) ||
         element instanceof DartNormalFormalParameter) {
       return PARAMETER;

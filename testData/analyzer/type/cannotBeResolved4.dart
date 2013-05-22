@@ -2,5 +2,5 @@ class A {
 }
 
 main() {
-  A.f = 0;
+  A.foo = 0;
 }

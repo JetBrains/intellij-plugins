@@ -6,13 +6,11 @@ import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -37,41 +35,13 @@ public class DartAnalyzerDriver {
 
   @Nullable
   public List<AnalyzerMessage> analyze() {
-    // incremental mode is broken at the moment
-    // https://code.google.com/p/dart/issues/detail?id=9743
-    return analyze(false);
-  }
-
-  @Nullable
-  public List<AnalyzerMessage> analyze(boolean incremental) {
-    final File tmp = new File(FileUtil.getTempDirectory(), "dart-out");
-    if (!tmp.exists()) {
-      tmp.mkdir();
-      tmp.deleteOnExit();
-    }
-    return analyze(tmp.getPath(), incremental);
-  }
-
-  @Nullable
-  public List<AnalyzerMessage> analyze(@Nullable String workPath, boolean incremental) {
     final GeneralCommandLine command = new GeneralCommandLine();
     command.setExePath(analyzerExecutable.getPath());
 
     command.getEnvironment().put("com.google.dart.sdk", sdkPath);
 
     try {
-      command.addParameter("--ignore-unrecognized-flags");
-      command.addParameter("--type-checks-for-inferred-types");
-      command.addParameter("--error_format");
-      command.addParameter("machine");
-      command.addParameter("--resolve-on-parse-error");
-      if (incremental) {
-        command.addParameter("--incremental");
-      }
-      if (workPath != null) {
-        command.addParameter("--work");
-        command.addParameter(workPath);
-      }
+      command.addParameter("--machine");
 
       final VirtualFile packages = DartResolveUtil.findPackagesFolder(libraryRoot, myProject);
       if (packages != null && packages.isDirectory()) {

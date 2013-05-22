@@ -2,7 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-#library('libraries');
+library libraries;
 
 /**
  * A bit flag used by [LibraryInfo] indicating that a library is used by dart2js
@@ -20,9 +20,15 @@ const int VM_PLATFORM = 2;
  * and extract the necessary information without executing it
  * while other tools can access via execution.
  */
-const Map<String, LibraryInfo> LIBRARIES = const <LibraryInfo> {
-  "core": const LibraryInfo("core/core.dart"),
-  "collection": const LibraryInfo("collection/collection.dart")
+const Map<String, LibraryInfo> LIBRARIES = const {
+
+  "collection": const LibraryInfo(
+      "collection/collection.dart",
+      dart2jsPatchPath: "_internal/compiler/implementation/lib/collection_patch.dart"),
+
+  "core": const LibraryInfo(
+      "core/core.dart",
+      dart2jsPatchPath: "_internal/compiler/implementation/lib/core_patch.dart")
 };
 
 /**
@@ -37,7 +43,8 @@ class LibraryInfo {
 
   /**
    * The category in which the library should appear in the editor
-   * (e.g. "Common", "Client", "Server", ...).
+   * (e.g. "Shared", "Client", "Server", ...).
+   * If a category is not specified it defaults to "Shared".
    */
   final String category;
 
@@ -71,17 +78,17 @@ class LibraryInfo {
    * The implication is that these libraries are less commonly used
    * and that tools like Dart Editor should not show these libraries
    * in a list of all libraries unless the user specifically asks the tool to
-   * do so. (E.g. "coreimpl" contains implementation for the "core" library).
+   * do so.
    */
   final bool implementation;
 
-  const LibraryInfo(this.path, [
-           this.category = "Shared",
-           this.dart2jsPath,
-           this.dart2jsPatchPath,
-           this.implementation = false,
-           this.documented = true,
-           this.platforms = DART2JS_PLATFORM | VM_PLATFORM]);
+  const LibraryInfo(this.path, {
+                    this.category: "Shared",
+                    this.dart2jsPath,
+                    this.dart2jsPatchPath,
+                    this.implementation: false,
+                    this.documented: true,
+                    this.platforms: DART2JS_PLATFORM | VM_PLATFORM});
 
   bool get isDart2jsLibrary => (platforms & DART2JS_PLATFORM) != 0;
   bool get isVmLibrary => (platforms & VM_PLATFORM) != 0;

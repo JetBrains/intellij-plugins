@@ -53,6 +53,8 @@ public class CreateDartOperatorAction extends CreateDartMethodAction {
 
     template.addVariable(DartPresentableUtil.getExpression(aClass.getName()), true);
     template.addTextSegment(" ");
+    template.addTextSegment("operator");
+    template.addTextSegment(" ");
     template.addTextSegment(myFunctionName);
     template.addTextSegment("(");
     if (references.length > 1) {

@@ -6,7 +6,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.jetbrains.lang.dart.DartComponentType;
-import com.jetbrains.lang.dart.psi.DartNamedElement;
 import org.jetbrains.annotations.NotNull;
 
 /**

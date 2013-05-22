@@ -116,11 +116,11 @@ public class DartExternalAnnotator extends ExternalAnnotator<DartAnalyzerDriver,
     }
 
     List<? extends IntentionAction> fixes = null;
-    if ("RESOLVER".equals(message.getSubSystem())) {
+    if ("STATIC_WARNING".equals(message.getSubSystem())) {
       DartResolverErrorCode code = DartResolverErrorCode.findError(message.getErrorCode());
       fixes = code == null ? Collections.<IntentionAction>emptyList() : code.getFixes(file, startOffset, message);
     }
-    else if ("STATIC_TYPE".equals(message.getSubSystem())) {
+    else if ("STATIC_TYPE_WARNING".equals(message.getSubSystem())) {
       DartTypeErrorCode code = DartTypeErrorCode.findError(message.getErrorCode());
       fixes = code == null ? Collections.<IntentionAction>emptyList() : code.getFixes(file, startOffset, message);
     }

@@ -30,6 +30,12 @@ abstract public class DartAnalyzerTestBase extends JavaCodeInsightFixtureTestCas
     );
   }
 
+  @Override
+  public void tearDown() throws Exception {
+    super.tearDown();
+    System.setProperty("com.google.dart.sdk", "");
+  }
+
   protected DartSettings getDartSettings() {
     return new DartSettings(PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/sdk"));
   }
@@ -93,6 +99,6 @@ abstract public class DartAnalyzerTestBase extends JavaCodeInsightFixtureTestCas
     VirtualFile analyzer = settings.getAnalyzer();
     assertNotNull(analyzer);
     DartAnalyzerDriver analyzerDriver = new DartAnalyzerDriver(myFixture.getProject(), analyzer, settings.getSdkPath(), virtualFile);
-    return analyzerDriver.analyze(false);
+    return analyzerDriver.analyze();
   }
 }

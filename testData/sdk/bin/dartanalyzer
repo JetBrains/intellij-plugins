@@ -1,5 +1,5 @@
 #!/bin/bash --posix
-# Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
+# Copyright (c) 2013, the Dart project authors.  Please see the AUTHORS file
 # for details. All rights reserved. Use of this source code is governed by a
 # BSD-style license that can be found in the LICENSE file.
 
@@ -46,12 +46,12 @@ if [ $FOUND_SDK = 0 ] ; then
   fi
 fi
 
-if [ -f $DART_SDK_HOME/util/analyzer/dart_analyzer.jar ] ; then
-  DART_ANALYZER_LIBS=$DART_SDK_HOME/util/analyzer
-elif [ -f $DART_ANALYZER_HOME/util/analyzer/dart_analyzer.jar ] ; then
-  DART_ANALYZER_LIBS=$DART_ANALYZER_HOME/util/analyzer
+if [ -f $DART_SDK_HOME/util/dartanalyzer/dartanalyzer.jar ] ; then
+  DART_ANALYZER_LIBS=$DART_SDK_HOME/util/dartanalyzer
+elif [ -f $DART_ANALYZER_HOME/util/dartanalyzer/dartanalyzer.jar ] ; then
+  DART_ANALYZER_LIBS=$DART_ANALYZER_HOME/util/dartanalyzer
 else
-  echo "Configuration problem. Couldn't find dart_analyzer.jar."
+  echo "Configuration problem. Couldn't find dartanalyzer.jar."
   exit 1
 fi
 
@@ -75,5 +75,5 @@ else
   fi
 fi
 
-exec java $EXTRA_JVMARGS $DART_JVMARGS -ea -classpath "$DART_ANALYZER_LIBS/dart_analyzer.jar:$DART_ANALYZER_LIBS/args4j/2.0.12/args4j-2.0.12.jar:$DART_ANALYZER_LIBS/guava/r13/guava-13.0.1.jar:$DART_ANALYZER_LIBS/json/r2_20080312/json.jar" \
-  com.google.dart.compiler.DartCompiler ${DART_SDK} $@
+exec java $EXTRA_JVMARGS $DART_JVMARGS -ea -jar \
+  "$DART_ANALYZER_LIBS/dartanalyzer.jar" ${DART_SDK} $@

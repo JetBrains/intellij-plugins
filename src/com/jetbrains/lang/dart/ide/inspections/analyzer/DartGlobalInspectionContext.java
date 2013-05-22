@@ -92,7 +92,7 @@ public class DartGlobalInspectionContext implements GlobalInspectionContextExten
       return;
     }
 
-    libraryRoot2Errors.put(libraryRoot, analyzerDriver.analyze(false));
+    libraryRoot2Errors.put(libraryRoot, analyzerDriver.analyze());
   }
 
   private static void setIndicatorText(String text) {

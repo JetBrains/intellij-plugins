@@ -11,7 +11,6 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -96,7 +95,7 @@ public class DartCompiler implements CompileTask {
 
     final String outputUrl = CompilerModuleExtension.getInstance(module).getCompilerOutputUrl();
     final DartAnalyzerDriver analyzerDriver = new DartAnalyzerDriver(module.getProject(), analyzerExecutable, sdk.getHomePath(), libraryRoot);
-    List<AnalyzerMessage> messages = analyzerDriver.analyze(VfsUtilCore.urlToPath(outputUrl), false);
+    List<AnalyzerMessage> messages = analyzerDriver.analyze();
 
     if (messages != null && messages.isEmpty()) {
       return true;

@@ -1,10 +1,10 @@
 class Foo {
-  Bar get bar => null;
-}
+   Bar get bar => null;
+ }
 
-class Bar {}
+ class Bar {}
 
-main() {
-  var foo = new Foo();
-  foo.bar = new Bar();
-}
+ main() {
+   var foo = new Foo();
+   foo.bar = new Bar();
+ }

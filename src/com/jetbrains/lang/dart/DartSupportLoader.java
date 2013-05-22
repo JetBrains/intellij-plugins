@@ -2,8 +2,6 @@ package com.jetbrains.lang.dart;
 
 import com.intellij.ide.highlighter.HtmlFileHighlighter;
 import com.intellij.ide.highlighter.XmlFileHighlighter;
-import com.intellij.lexer.HtmlHighlightingLexer;
-import com.intellij.lexer.HtmlLexer;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.tree.IElementType;

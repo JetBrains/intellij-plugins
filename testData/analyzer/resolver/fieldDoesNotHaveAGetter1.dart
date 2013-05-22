@@ -1,7 +1,7 @@
 class A {
-  static set f(x) {}
+  static set foo(x) {}
 }
 
 main() {
-  print(A.f);
+  print(A.foo);
 }

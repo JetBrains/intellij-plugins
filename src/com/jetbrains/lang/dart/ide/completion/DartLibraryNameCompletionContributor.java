@@ -6,14 +6,16 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.patterns.StandardPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartId;
+import com.jetbrains.lang.dart.psi.DartLibraryId;
+import com.jetbrains.lang.dart.psi.DartPathOrLibraryReference;
+import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

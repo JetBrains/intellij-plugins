@@ -13,7 +13,53 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.jetbrains.lang.dart.validation.fixes.DartFixesUtil.findFixesForUnresolved;
+import static com.jetbrains.lang.dart.validation.fixes.DartFixesUtil.isStaticContext;
+
 public enum DartResolverErrorCode {
+  UNDEFINED_IDENTIFIER {
+    @NotNull
+    @Override
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+      return findFixesForUnresolved(file, startOffset);
+    }
+  }, UNDEFINED_CLASS {
+    @NotNull
+    @Override
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+      // Undefined class '%s'
+      String className = DartPresentableUtil.findLastQuotedWord(message.getMessage());
+      return className == null ? Collections.<IntentionAction>emptyList() : Arrays.asList(new CreateDartClassAction(className));
+    }
+  },
+  UNDEFINED_GETTER {
+    @NotNull
+    @Override
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+      String name = DartPresentableUtil.findFirstQuotedWord(message.getMessage());
+      return name == null ?
+             Collections.<IntentionAction>emptyList() :
+             Arrays.asList(new CreateDartGetterSetterAction(name, true, isStaticContext(file, startOffset)));
+    }
+  },
+  UNDEFINED_SETTER {
+    @NotNull
+    @Override
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+      String name = DartPresentableUtil.findFirstQuotedWord(message.getMessage());
+      return name == null ?
+             Collections.<IntentionAction>emptyList() :
+             Arrays.asList(new CreateDartGetterSetterAction(name, false, isStaticContext(file, startOffset)));
+    }
+  }, UNDEFINED_OPERATOR {
+    @NotNull
+    @Override
+    public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
+      // There is no such operator '' in 'A'
+      String operator = DartPresentableUtil.findFirstQuotedWord(message.getMessage());
+      return operator == null ? Collections.<IntentionAction>emptyList() : Arrays.asList(new CreateDartOperatorAction(operator));
+    }
+  },
   CANNOT_RESOLVE_METHOD {
     @NotNull
     @Override

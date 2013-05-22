@@ -1,9 +1,9 @@
 class A {
-  static get f => 239;
+  static get foo => 239;
 }
 
 main() {
-  A.f = new Foo();
+  A.foo = new Foo();
 }
 
 class Foo {}

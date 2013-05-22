@@ -1,9 +1,9 @@
 class A {
-  static set f(value) {
+  static set foo(value) {
     <caret>
   }
 }
 
 main() {
-  A.f = 0;
+  A.foo = 0;
 }

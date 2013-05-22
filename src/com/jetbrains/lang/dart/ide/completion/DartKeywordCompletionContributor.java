@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.patterns.PsiElementPattern;
@@ -16,7 +17,6 @@ import com.intellij.util.ProcessingContext;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
-import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartCodeGenerateUtil;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;

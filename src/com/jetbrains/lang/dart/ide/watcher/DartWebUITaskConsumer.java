@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.watcher;
 
-import com.intellij.ide.macro.FileDirMacro;
 import com.intellij.ide.macro.FileDirPathFromParentMacro;
 import com.intellij.ide.macro.FileNameMacro;
 import com.intellij.ide.macro.FilePathMacro;

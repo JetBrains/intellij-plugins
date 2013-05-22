@@ -23,7 +23,10 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.psi.*;
-import com.jetbrains.lang.dart.util.*;
+import com.jetbrains.lang.dart.util.DartControlFlow;
+import com.jetbrains.lang.dart.util.DartElementGenerator;
+import com.jetbrains.lang.dart.util.DartRefactoringUtil;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

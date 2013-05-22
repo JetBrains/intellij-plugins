@@ -10,34 +10,36 @@ public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
   }
 
   public void testCannotResolveMethod1() throws Throwable {
-    doTest("cannot resolve method 'foo'");
+    doTest("The FUNCTION 'foo' is not defined");
   }
 
   public void testCannotResolveMethod2() throws Throwable {
-    doTest("cannot resolve method 'add'");
+    doTest("The FUNCTION 'add' is not defined");
   }
 
   public void testCannotResolveMethod3() throws Throwable {
-    doTest("cannot resolve method 'add'");
+    doTest("The FUNCTION 'add' is not defined");
   }
 
   public void testCannotResolveMethodInClass1() throws Throwable {
-    doTest("cannot resolve method 'bar' in class 'Foo'");
+    doTest("The method 'bar' is not defined for the class 'Foo'");
   }
 
   public void testFieldDoesNotHaveAGetter1() throws Throwable {
-    doTest("Field does not have a getter");
+    doTest("There is no such getter 'foo' in 'A'");
   }
 
   public void testFieldDoesNotHaveASetter1() throws Throwable {
-    doTest("Field does not have a setter");
+    doTest("There is no such setter 'foo' in 'A'");
   }
 
-  public void testNotAStaticField() throws Throwable {
+  public void NotAStaticField() throws Throwable {
+    // https://code.google.com/p/dart/issues/detail?id=10754
     doTest("\"bar\" is not a static field");
   }
 
-  public void testNotAStaticMethod() throws Throwable {
+  public void NotAStaticMethod() throws Throwable {
+    // https://code.google.com/p/dart/issues/detail?id=10754
     doTest("\"bar\" is not a static method");
   }
 }
