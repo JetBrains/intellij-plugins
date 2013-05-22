@@ -235,7 +235,8 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
     return myEmulator;
   }
 
-  public void setEmulator(@NotNull final Emulator emulator) {
+  // parameter can be null if there's some new enum constant in workspace.xml (like OtherAndroidDevice), but user downgraded IntelliJ IDEA
+  public void setEmulator(@SuppressWarnings("NullableProblems") final Emulator emulator) {
     if (Emulator.ALL_EMULATORS.contains(emulator)) {
       myEmulator = emulator;
     }
