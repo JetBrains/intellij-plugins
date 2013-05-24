@@ -91,12 +91,12 @@ public class DartGlobalInspectionTool extends GlobalInspectionTool {
   private static ProblemHighlightType annotateElement(AnalyzerMessage message) {
     switch (message.getType()) {
       case INFO:
-        return ProblemHighlightType.INFO;
+        return ProblemHighlightType.WEAK_WARNING;
       case WARNING:
         return ProblemHighlightType.WEAK_WARNING;
       case ERROR:
         return ProblemHighlightType.ERROR;
     }
-    return ProblemHighlightType.INFO;
+    return ProblemHighlightType.WEAK_WARNING;
   }
 }
