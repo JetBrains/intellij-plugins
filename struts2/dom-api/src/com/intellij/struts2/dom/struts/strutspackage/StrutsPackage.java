@@ -31,7 +31,6 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-@SuppressWarnings({"UnusedDeclaration"})
 @Namespace(StrutsDomConstants.STRUTS_NAMESPACE_KEY)
 @Stubbed
 @Presentation(typeName = "Struts Package", provider = Struts2PresentationProvider.class)

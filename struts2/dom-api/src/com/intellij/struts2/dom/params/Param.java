@@ -26,7 +26,6 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-@SuppressWarnings({"UnusedDeclaration"})
 @Presentation(typeName = "Parameter", icon = "AllIcons.Actions.Properties")
 @Convert(ParamValueConverter.class)
 public interface Param extends DomElement, GenericDomValue<String> {

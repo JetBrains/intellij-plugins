@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NonNls;
  *
  * @author Yann C&eacute;bron
  */
-@SuppressWarnings({"UnusedDeclaration"})
 @Convert(StrutsPathReferenceConverter.class)
 @Presentation(typeName = "Result", icon = "AllIcons.Vcs.Arrow_right", provider = Struts2PresentationProvider.class)
 public interface Result extends HasResultType, ParamsElement, GenericDomValue<PathReference> {

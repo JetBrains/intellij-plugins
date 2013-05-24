@@ -23,7 +23,6 @@ import com.intellij.util.xml.*;
  *
  * @author Yann C&eacute;bron
  */
-@SuppressWarnings({"UnusedDeclaration"})
 @Stubbed
 @Presentation(typeName = "Constant", icon = "AllIcons.Nodes.Parameter")
 public interface Constant extends DomElement {

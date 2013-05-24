@@ -27,7 +27,6 @@ import java.util.List;
  *
  * @author Yann C&eacute;bron
  */
-@SuppressWarnings({"UnusedDeclaration"})
 @Stubbed
 public interface ResultTypes extends DomElement {
 
