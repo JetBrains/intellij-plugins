@@ -4,11 +4,8 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ProgramRunner;
-import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
@@ -35,20 +32,6 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
     return new KarmaRunConfigurationEditor(getProject());
   }
 
-  @SuppressWarnings("deprecation")
-  @Nullable
-  @Override
-  public JDOMExternalizable createRunnerSettings(ConfigurationInfoProvider provider) {
-    return null;
-  }
-
-  @SuppressWarnings("deprecation")
-  @Nullable
-  @Override
-  public SettingsEditor<JDOMExternalizable> getRunnerSettingsEditor(ProgramRunner runner) {
-    return null;
-  }
-
   @Override
   public void readExternal(Element element) throws InvalidDataException {
     super.readExternal(element);
@@ -71,7 +54,7 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e.getMessage());
     }
-    catch (RuntimeConfigurationException e) {
+    catch (RuntimeConfigurationException ignored) {
       // does nothing
     }
     GlobalSettings globalSettings = myGlobalSettingsRef.get();

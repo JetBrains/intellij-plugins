@@ -24,7 +24,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
@@ -59,18 +58,6 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
     return new JstdRunConfigurationEditor(getProject());
   }
 
-  @SuppressWarnings({"deprecation", "UnnecessaryFullyQualifiedName"})
-  @Override
-  public com.intellij.openapi.util.JDOMExternalizable createRunnerSettings(ConfigurationInfoProvider provider) {
-    return null;
-  }
-
-  @SuppressWarnings({"deprecation", "UnnecessaryFullyQualifiedName"})
-  @Override
-  public SettingsEditor<com.intellij.openapi.util.JDOMExternalizable> getRunnerSettingsEditor(ProgramRunner runner) {
-    return null;
-  }
-
   @Override
   @NotNull
   public JstdTestRunnerCommandLineState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
@@ -93,7 +80,7 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e.getMessage());
     }
-    catch (RuntimeConfigurationException e) {
+    catch (RuntimeConfigurationException ignored) {
       // does nothing
     }
     return new JstdTestRunnerCommandLineState(getProject(), env, myRunSettings, coverageFilePath, debug);
