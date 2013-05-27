@@ -4,13 +4,11 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -27,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * @author: Fedor.Korotkov
  */
 public class DartUnitRunConfiguration extends RunConfigurationBase implements LocatableConfiguration {
-  private DartUnitRunnerParameters myRunnerParameters = new DartUnitRunnerParameters();
+  private final DartUnitRunnerParameters myRunnerParameters = new DartUnitRunnerParameters();
 
   protected DartUnitRunConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
     super(project, factory, name);
@@ -40,16 +38,6 @@ public class DartUnitRunConfiguration extends RunConfigurationBase implements Lo
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new DartUnitConfigurationEditorForm(getProject());
-  }
-
-  @Override
-  public JDOMExternalizable createRunnerSettings(ConfigurationInfoProvider provider) {
-    return null;
-  }
-
-  @Override
-  public SettingsEditor<JDOMExternalizable> getRunnerSettingsEditor(ProgramRunner runner) {
-    return null;
   }
 
   @Override
@@ -83,11 +71,13 @@ public class DartUnitRunConfiguration extends RunConfigurationBase implements Lo
     }
   }
 
+  @Override
   public void writeExternal(final Element element) throws WriteExternalException {
     super.writeExternal(element);
     XmlSerializer.serializeInto(myRunnerParameters, element);
   }
 
+  @Override
   public void readExternal(final Element element) throws InvalidDataException {
     super.readExternal(element);
     XmlSerializer.deserializeInto(myRunnerParameters, element);
