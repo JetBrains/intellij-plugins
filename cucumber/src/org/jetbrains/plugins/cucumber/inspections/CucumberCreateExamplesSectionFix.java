@@ -1,6 +1,6 @@
 package org.jetbrains.plugins.cucumber.inspections;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -81,7 +81,7 @@ public class CucumberCreateExamplesSectionFix implements LocalQuickFix {
     assert fakeExampleSection != null;
 
     GherkinExamplesBlockImpl addedSection = (GherkinExamplesBlockImpl)outline.add(fakeExampleSection);
-    addedSection = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(addedSection);
+    addedSection = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(addedSection);
     final GherkinTable table = addedSection.getTable();
     assert table != null;
     final GherkinTableRow headerRow = table.getHeaderRow();

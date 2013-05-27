@@ -1,6 +1,6 @@
 package org.jetbrains.plugins.cucumber.groovy.steps;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.template.*;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
@@ -89,7 +89,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
 
     GrMethodCall methodCall = (GrMethodCall)((GroovyFile)file).addStatementBefore(element, null);
     GrReferenceAdjuster.shortenReferences(methodCall);
-    methodCall = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(methodCall);
+    methodCall = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(methodCall);
 
     PsiDocumentManager.getInstance(project).commitAllDocuments();
 

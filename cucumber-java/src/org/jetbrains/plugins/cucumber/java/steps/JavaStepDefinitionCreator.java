@@ -1,6 +1,6 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateBuilder;
 import com.intellij.codeInsight.template.TemplateBuilderFactory;
@@ -80,7 +80,7 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
     if (clazz != null) {
       PsiDocumentManager.getInstance(project).commitAllDocuments();
       PsiMethod addedElement = (PsiMethod)clazz.add(element);
-      addedElement = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(addedElement);
+      addedElement = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(addedElement);
       JavaCodeStyleManager.getInstance(project).shortenClassReferences(addedElement);
       final TemplateBuilder builder = TemplateBuilderFactory.getInstance().createTemplateBuilder(addedElement);
 
