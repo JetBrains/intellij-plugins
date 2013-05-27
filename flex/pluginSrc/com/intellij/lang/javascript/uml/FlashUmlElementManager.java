@@ -45,7 +45,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.ElementBase;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.ui.SimpleColoredText;
 import com.intellij.ui.SimpleTextAttributes;
@@ -56,9 +56,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 
 public class FlashUmlElementManager extends AbstractDiagramElementManager<Object> {
@@ -174,7 +172,7 @@ public class FlashUmlElementManager extends AbstractDiagramElementManager<Object
           }
         });
       }
-      return PsiUtilBase.toPsiElementArray(elements);
+      return PsiUtilCore.toPsiElementArray(elements);
     }
     return PsiElement.EMPTY_ARRAY;
   }

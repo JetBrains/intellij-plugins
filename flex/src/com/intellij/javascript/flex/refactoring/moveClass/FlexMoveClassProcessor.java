@@ -19,7 +19,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiUtilBase;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor;
@@ -171,7 +171,7 @@ public class FlexMoveClassProcessor extends MoveFilesOrDirectoriesProcessor {
   private class FlexMoveClassUsageViewDescriptor extends BaseUsageViewDescriptor {
 
     public FlexMoveClassUsageViewDescriptor() {
-      super(PsiUtilBase.toPsiElementArray(myElements));
+      super(PsiUtilCore.toPsiElementArray(myElements));
     }
 
     @Override
