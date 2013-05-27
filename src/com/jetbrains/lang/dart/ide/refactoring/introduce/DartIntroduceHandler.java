@@ -1,6 +1,6 @@
 package com.jetbrains.lang.dart.ide.refactoring.introduce;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
 import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.lang.ASTNode;
@@ -357,7 +357,7 @@ public abstract class DartIntroduceHandler implements RefactoringActionHandler {
 
     declaration = performReplace(declaration, operation);
     if (declaration != null) {
-      declaration = CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(declaration);
+      declaration = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(declaration);
     }
     return declaration;
   }
