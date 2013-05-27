@@ -18,15 +18,11 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.*;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
@@ -46,29 +42,25 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
     super(project, factory, name);
   }
 
+  @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new FlexUnitRunConfigurationForm(getProject());
   }
 
-  public JDOMExternalizable createRunnerSettings(final ConfigurationInfoProvider provider) {
-    return null;
-  }
-
-  public SettingsEditor<JDOMExternalizable> getRunnerSettingsEditor(final ProgramRunner runner) {
-    return null;
-  }
-
+  @Override
   public void readExternal(final Element element) throws InvalidDataException {
     super.readExternal(element);
     myRunnerParameters = new FlexUnitRunnerParameters();
     XmlSerializer.deserializeInto(myRunnerParameters, element);
   }
 
+  @Override
   public void writeExternal(final Element element) throws WriteExternalException {
     super.writeExternal(element);
     XmlSerializer.serializeInto(myRunnerParameters, element);
   }
 
+  @Override
   public FlexUnitRunConfiguration clone() {
     final FlexUnitRunConfiguration clone = (FlexUnitRunConfiguration)super.clone();
     clone.myRunnerParameters = myRunnerParameters.clone();
@@ -80,6 +72,7 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
     return myRunnerParameters;
   }
 
+  @Override
   public String suggestedName() {
     switch (myRunnerParameters.getScope()) {
       case Class:
@@ -96,11 +89,13 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
     }
   }
 
+  @Override
   public boolean isGeneratedName() {
     return getName().startsWith(ExecutionBundle.message("run.configuration.unnamed.name.prefix")) ||
            Comparing.equal(getName(), suggestedName());
   }
 
+  @Override
   @NotNull
   public Module[] getModules() {
     final Module module = ModuleManager.getInstance(getProject()).findModuleByName(myRunnerParameters.getModuleName());
@@ -112,6 +107,7 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
     }
   }
 
+  @Override
   public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
     final FlexBuildConfiguration bc;
     try {
@@ -126,6 +122,7 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
 
       final FlashRunConfiguration.AirRunState airRunState =
         new FlashRunConfiguration.AirRunState(getProject(), env, myRunnerParameters) {
+          @NotNull
           @Override
           public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
             final ProcessHandler processHandler = startProcess();
@@ -140,15 +137,17 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
     return FlexBaseRunner.EMPTY_RUN_STATE;
   }
 
+  @Override
   public void checkConfiguration() throws RuntimeConfigurationError {
     myRunnerParameters.check(getProject());
   }
 
+  @Override
   public RefactoringElementListener getRefactoringElementListener(final PsiElement element) {
     final FlexUnitRunnerParameters params = getRunnerParameters();
     final Module module = ModuleManager.getInstance(getProject()).findModuleByName(params.getModuleName());
     if (!(element instanceof PsiDirectoryContainer) && !(element instanceof JSPackage) && !(element instanceof JSPackageStatement)
-        && (module == null || !module.equals(ModuleUtil.findModuleForPsiElement(element)))) {
+        && (module == null || !module.equals(ModuleUtilCore.findModuleForPsiElement(element)))) {
       return null;
     }
 

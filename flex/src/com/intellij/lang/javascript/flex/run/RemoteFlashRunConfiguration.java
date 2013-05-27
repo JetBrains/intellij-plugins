@@ -5,7 +5,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -13,7 +12,6 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
-import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.XmlSerializer;
@@ -30,22 +28,16 @@ public class RemoteFlashRunConfiguration extends RunConfigurationBase implements
     super(project, factory, name);
   }
 
+  @Override
   public RemoteFlashRunConfiguration clone() {
     final RemoteFlashRunConfiguration clone = (RemoteFlashRunConfiguration)super.clone();
     clone.myRunnerParameters = myRunnerParameters.clone();
     return clone;
   }
 
+  @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new RemoteFlashRunConfigurationForm(getProject());
-  }
-
-  public JDOMExternalizable createRunnerSettings(final ConfigurationInfoProvider provider) {
-    return null;
-  }
-
-  public SettingsEditor<JDOMExternalizable> getRunnerSettingsEditor(final ProgramRunner runner) {
-    return null;
   }
 
   @Override
@@ -61,6 +53,7 @@ public class RemoteFlashRunConfiguration extends RunConfigurationBase implements
     XmlSerializer.serializeInto(myRunnerParameters, element);
   }
 
+  @Override
   public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
     try {
       myRunnerParameters.checkAndGetModuleAndBC(getProject());
@@ -72,6 +65,7 @@ public class RemoteFlashRunConfiguration extends RunConfigurationBase implements
     return FlexBaseRunner.EMPTY_RUN_STATE;
   }
 
+  @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
     myRunnerParameters.checkAndGetModuleAndBC(getProject());
   }
@@ -92,10 +86,12 @@ public class RemoteFlashRunConfiguration extends RunConfigurationBase implements
     }
   }
 
+  @Override
   public boolean isGeneratedName() {
     return getName().startsWith(ExecutionBundle.message("run.configuration.unnamed.name.prefix")) || getName().equals(suggestedName());
   }
 
+  @Override
   public String suggestedName() {
     final String bcName = myRunnerParameters.getBCName();
     return StringUtil.isEmptyOrSpaces(bcName) ? DEFAULT_NAME : (DEFAULT_NAME + " (" + bcName + ")");

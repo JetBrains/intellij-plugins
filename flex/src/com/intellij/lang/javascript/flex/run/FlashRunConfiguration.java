@@ -9,7 +9,6 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.flex.model.bc.BuildConfigurationNature;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider;
@@ -21,15 +20,15 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.*;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
-import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
@@ -54,22 +53,16 @@ public class FlashRunConfiguration extends RunConfigurationBase
     super(project, factory, name);
   }
 
+  @Override
   public FlashRunConfiguration clone() {
     final FlashRunConfiguration clone = (FlashRunConfiguration)super.clone();
     clone.myRunnerParameters = myRunnerParameters.clone();
     return clone;
   }
 
+  @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new FlashRunConfigurationForm(getProject());
-  }
-
-  public JDOMExternalizable createRunnerSettings(final ConfigurationInfoProvider provider) {
-    return null;
-  }
-
-  public SettingsEditor<JDOMExternalizable> getRunnerSettingsEditor(final ProgramRunner runner) {
-    return null;
   }
 
   @Override
@@ -85,6 +78,7 @@ public class FlashRunConfiguration extends RunConfigurationBase
     XmlSerializer.serializeInto(myRunnerParameters, element);
   }
 
+  @Override
   public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
     final FlexBuildConfiguration config;
     try {
@@ -105,6 +99,7 @@ public class FlashRunConfiguration extends RunConfigurationBase
     return FlexBaseRunner.EMPTY_RUN_STATE;
   }
 
+  @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
     myRunnerParameters.check(getProject());
   }
@@ -114,6 +109,7 @@ public class FlashRunConfiguration extends RunConfigurationBase
     return myRunnerParameters;
   }
 
+  @Override
   @NotNull
   public Module[] getModules() {
     final Module module = ModuleManager.getInstance(getProject()).findModuleByName(myRunnerParameters.getModuleName());
@@ -125,15 +121,18 @@ public class FlashRunConfiguration extends RunConfigurationBase
     }
   }
 
+  @Override
   public boolean isGeneratedName() {
     return getName().startsWith(ExecutionBundle.message("run.configuration.unnamed.name.prefix")) ||
            Comparing.equal(getName(), suggestedName());
   }
 
+  @Override
   public String suggestedName() {
     return myRunnerParameters.suggestName();
   }
 
+  @Override
   public RefactoringElementListener getRefactoringElementListener(final PsiElement element) {
     if (!myRunnerParameters.isOverrideMainClass()) {
       return null;
@@ -142,7 +141,7 @@ public class FlashRunConfiguration extends RunConfigurationBase
     final Module module = ModuleManager.getInstance(getProject()).findModuleByName(myRunnerParameters.getModuleName());
 
     if (!(element instanceof PsiDirectoryContainer) && !(element instanceof JSPackage) && !(element instanceof JSPackageStatement)
-        && (module == null || !module.equals(ModuleUtil.findModuleForPsiElement(element)))) {
+        && (module == null || !module.equals(ModuleUtilCore.findModuleForPsiElement(element)))) {
       return null;
     }
 
@@ -183,6 +182,7 @@ public class FlashRunConfiguration extends RunConfigurationBase
       myRunnerParameters = runnerParameters;
     }
 
+    @Override
     @NotNull
     protected OSProcessHandler startProcess() throws ExecutionException {
       final FlexBuildConfiguration bc;
@@ -221,6 +221,7 @@ public class FlashRunConfiguration extends RunConfigurationBase
 
       if (needToRemoveAirRuntimeDir && airRuntimeDirForFlexmojosSdk != null) {
         processHandler.addProcessListener(new ProcessAdapter() {
+          @Override
           public void processTerminated(final ProcessEvent event) {
             FlexUtils.removeFileLater(airRuntimeDirForFlexmojosSdk);
           }

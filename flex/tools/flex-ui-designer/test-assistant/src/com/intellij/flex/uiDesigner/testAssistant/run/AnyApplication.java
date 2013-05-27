@@ -5,14 +5,12 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl;
-import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.util.SystemProperties;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +25,7 @@ public class AnyApplication implements ConfigurationType {
 
   AnyApplication() {
     factory = new ConfigurationFactory(this) {
+      @Override
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new AnyApplicationConfiguration(project, this, "");
       }
@@ -69,16 +68,6 @@ public class AnyApplication implements ConfigurationType {
     @Override
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
       return new UnknownSettingsEditor();
-    }
-
-    @Override
-    public JDOMExternalizable createRunnerSettings(ConfigurationInfoProvider provider) {
-      return null;
-    }
-
-    @Override
-    public SettingsEditor<JDOMExternalizable> getRunnerSettingsEditor(ProgramRunner runner) {
-      return null;
     }
 
     @Override
@@ -134,17 +123,21 @@ public class AnyApplication implements ConfigurationType {
       myPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 50, 0));
     }
 
+    @Override
     protected void resetEditorFrom(final AnyApplicationConfiguration s) {
     }
 
+    @Override
     protected void applyEditorTo(final AnyApplicationConfiguration s) throws ConfigurationException {
     }
 
+    @Override
     @NotNull
     protected JComponent createEditor() {
       return myPanel;
     }
 
+    @Override
     protected void disposeEditor() {
     }
   }
