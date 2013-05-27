@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NonNls;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings("SpellCheckingInspection")
 public final class StrutsConstants {
 
   private StrutsConstants() {

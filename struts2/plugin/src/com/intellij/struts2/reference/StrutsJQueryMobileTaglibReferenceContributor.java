@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Johannes Geppert
  */
+@SuppressWarnings("SpellCheckingInspection")
 public class StrutsJQueryMobileTaglibReferenceContributor extends StrutsJQueryTaglibReferenceContributorBase {
 
   private static final String[] BUTTON_TAGS =

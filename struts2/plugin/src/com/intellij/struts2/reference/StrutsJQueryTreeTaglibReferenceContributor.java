@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Johannes Geppert
  */
+@SuppressWarnings("SpellCheckingInspection")
 public class StrutsJQueryTreeTaglibReferenceContributor extends StrutsJQueryTaglibReferenceContributorBase {
 
   private static final String TREE = "tree";

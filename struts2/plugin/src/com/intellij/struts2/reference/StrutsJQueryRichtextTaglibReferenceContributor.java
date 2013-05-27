@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings("SpellCheckingInspection")
 public class StrutsJQueryRichtextTaglibReferenceContributor extends StrutsJQueryTaglibReferenceContributorBase {
 
   private static final String CKEDITOR = "ckeditor";

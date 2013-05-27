@@ -42,6 +42,7 @@ import static com.intellij.patterns.XmlPatterns.xmlTag;
  *
  * @author Yann C&eacute;bron
  */
+@SuppressWarnings("SpellCheckingInspection")
 public class TaglibJavaScriptInjector implements MultiHostInjector, DumbAware {
 
   private static final ElementPattern<XmlAttributeValue> JS_ATTRIBUTE_PATTERN =
