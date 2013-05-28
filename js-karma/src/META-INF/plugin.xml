@@ -10,6 +10,7 @@
   <category>HTML/JavaScript Development</category>
 
   <depends>com.intellij.modules.lang</depends>
+  <depends>JavaScript</depends>
 
   <!--<depends optional="true" config-file="karma-debug.xml">JavaScriptDebugger</depends>-->
 
