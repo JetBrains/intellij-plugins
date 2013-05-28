@@ -3,18 +3,21 @@ package com.jetbrains.lang.dart.ide;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
+import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
+import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.codeInsight.template.impl.actions.ListTemplatesAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 
 /**
  * @author: Fedor.Korotkov
  */
-public class DartLiveTemplatesTest extends LightCodeInsightFixtureTestCase {
+public class DartLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
     return FileUtil.toSystemDependentName("/plugins/Dart/testData/liveTemplates/");
@@ -27,6 +30,10 @@ public class DartLiveTemplatesTest extends LightCodeInsightFixtureTestCase {
     final LookupImpl lookup = (LookupImpl)LookupManager.getActiveLookup(editor);
     assertNotNull(lookup);
     lookup.finishLookup(Lookup.NORMAL_SELECT_CHAR);
+    TemplateState template = TemplateManagerImpl.getTemplateState(editor);
+    if (template != null) {
+      Disposer.dispose(template);
+    }
   }
 
   private void doTest() throws Exception {
