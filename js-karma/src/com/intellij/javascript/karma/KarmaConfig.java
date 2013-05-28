@@ -56,15 +56,10 @@ public class KarmaConfig {
     for (JsonElement fileElement : filesArray) {
       if (fileElement.isJsonObject()) {
         JsonObject object = fileElement.getAsJsonObject();
-
-        //String pattern = getAsString()
-        JsonElement patternElement = object.get("pattern");
-        //Entry entry = new Entry(o);
-      }
-      if (fileElement.isJsonPrimitive()) {
-        JsonPrimitive primitive = fileElement.getAsJsonPrimitive();
-        if (primitive.isString()) {
-          files.add(primitive.getAsString());
+        String pattern = getAsString(object.get("pattern"));
+        Boolean included = getAsBoolean(object.get("included"));
+        if (pattern != null && Boolean.TRUE.equals(included)) {
+          files.add(pattern);
         }
       }
     }
@@ -83,45 +78,14 @@ public class KarmaConfig {
   }
 
   @Nullable
-  private static Boolean getAsBoolean(@NotNull JsonElement element) {
-    if (element.isJsonPrimitive()) {
+  private static Boolean getAsBoolean(@Nullable JsonElement element) {
+    if (element != null && element.isJsonPrimitive()) {
       JsonPrimitive primitive = element.getAsJsonPrimitive();
       if (primitive.isBoolean()) {
         return primitive.getAsBoolean();
       }
     }
     return null;
-  }
-
-  private static class Entry {
-    private final String myPattern;
-    private final boolean myServed;
-    private final boolean myIncluded;
-    private final boolean myWatched;
-
-    private Entry(@NotNull String pattern, boolean served, boolean included, boolean watched) {
-      myPattern = pattern;
-      myServed = served;
-      myIncluded = included;
-      myWatched = watched;
-    }
-
-    @NotNull
-    private String getPattern() {
-      return myPattern;
-    }
-
-    private boolean isServed() {
-      return myServed;
-    }
-
-    private boolean isIncluded() {
-      return myIncluded;
-    }
-
-    private boolean isWatched() {
-      return myWatched;
-    }
   }
 
 }

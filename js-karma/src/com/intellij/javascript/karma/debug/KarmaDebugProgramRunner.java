@@ -23,6 +23,7 @@ import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugProcess;
@@ -112,19 +113,34 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     if (karmaConfig != null) {
       File basePath = new File(karmaConfig.getBasePath());
       for (String path : karmaConfig.getFiles()) {
-        String suffix = "/**/*.js";
-        if (path.equals(suffix)) {
-          String res = path.substring(0, path.length() - suffix.length());
-          VirtualFile vFile = VfsUtil.findFileByIoFile(new File(basePath, res), false);
-          if (vFile != null) {
-            String key = "http://localhost:" + karmaServer.getWebServerPort() + "/base/" + res;
-            mappings.put(key, vFile);
-          }
-        }
+        addMapping(mappings, karmaServer.getWebServerPort(), path, basePath);
       }
     }
     System.out.println("Mappings: " + mappings);
     return new RemoteDebuggingFileFinder(mappings, false);
+  }
+
+  private static void addMapping(@NotNull BiMap<String, VirtualFile> mappings,
+                                 int webServerPort,
+                                 @NotNull String filePath,
+                                 @NotNull File basePath) {
+    String suffix = "/**/";
+    int startInd = filePath.indexOf(suffix);
+    if (startInd != -1) {
+      String res = filePath.substring(0, startInd);
+      File f = new File(res);
+      if (!f.isAbsolute()) {
+        f = new File(basePath, res);
+      }
+      else {
+        res = FileUtil.getRelativePath(basePath.getAbsolutePath(), res, '/');
+      }
+      VirtualFile vFile = VfsUtil.findFileByIoFile(f, false);
+      if (vFile != null) {
+        String key = "http://localhost:" + webServerPort + "/base/" + res;
+        mappings.put(key, vFile);
+      }
+    }
   }
 
   private static <C> JSDebugEngine<C> getChromeDebugEngine() {
