@@ -26,6 +26,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassBase;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageStatementImpl;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
@@ -1350,6 +1351,25 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
     }
 
     super.addCreateFromUsageFixesForCall(node, referenceExpression, resolveResults, quickFixes);
+  }
+
+  private static boolean canHaveImportTo(ResolveResult[] resolveResults) {
+    if (resolveResults.length == 0) return true;
+    for (ResolveResult r : resolveResults) {
+      if (!r.isValidResult()) {
+        if (r instanceof JSResolveResult &&
+            ((JSResolveResult)r).getResolveProblemKey() == JSResolveResult.QUALIFIED_NAME_IS_NOT_IMPORTED) {
+          return true;
+        }
+        continue;
+      }
+      PsiElement element = r.getElement();
+      if (element instanceof JSClass) return true;
+      if (element instanceof JSFunction) {
+        if (((JSFunction)element).isConstructor()) return true;
+      }
+    }
+    return false;
   }
 
   @Override
