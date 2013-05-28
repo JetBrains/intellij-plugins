@@ -58,16 +58,16 @@ public class KarmaTestRunState implements RunProfileState {
         throw new ExecutionException(e);
       }
     }
-    KarmaRunSession testTreeConsole = new KarmaRunSession(myProject,
-                                                                  myExecutionEnvironment,
-                                                                  executor,
-                                                                  server,
-                                                                  myNodeInterpreterPath,
-                                                                  myRunSettings);
-    SMTRunnerConsoleView smtRunnerConsoleView = testTreeConsole.getSmtConsoleView();
+    KarmaRunSession runSession = new KarmaRunSession(myProject,
+                                                     myExecutionEnvironment,
+                                                     executor,
+                                                     server,
+                                                     myNodeInterpreterPath,
+                                                     myRunSettings);
+    SMTRunnerConsoleView smtRunnerConsoleView = runSession.getSmtConsoleView();
     Disposer.register(myProject, smtRunnerConsoleView);
 
-    ProcessHandler processHandler = testTreeConsole.getProcessHandler();
+    ProcessHandler processHandler = runSession.getProcessHandler();
     DefaultExecutionResult executionResult = new DefaultExecutionResult(smtRunnerConsoleView, processHandler);
     executionResult.setRestartActions(new ToggleAutoTestAction());
     return executionResult;

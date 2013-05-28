@@ -89,7 +89,7 @@ public class KarmaRunSession {
   private ProcessHandler createProcessHandler(@NotNull KarmaServer server) throws ExecutionException {
     final File clientAppFile;
     try {
-      clientAppFile = server.getClientAppFile();
+      clientAppFile = server.getKarmaJsSourcesLocator().getClientAppFile();
     }
     catch (IOException e) {
       throw new ExecutionException("Can't find karma-intellij test runner", e);
@@ -142,7 +142,7 @@ public class KarmaRunSession {
     commandLine.setExePath(myNodeInterpreterPath);
     //commandLine.addParameter("--debug-brk=5858");
     commandLine.addParameter(clientAppFile.getAbsolutePath());
-    commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getKarmaPackageDir());
+    commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getKarmaJsSourcesLocator().getKarmaPackageDir());
     commandLine.addParameter("--runnerPort=" + runnerPort);
     return commandLine;
   }
