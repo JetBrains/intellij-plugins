@@ -5,10 +5,8 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.refactoring.MultiFileTestCase;
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor;
@@ -44,9 +42,7 @@ public class DartMoveTest extends MultiFileTestCase {
         for (String s : toMove) {
           final VirtualFile child = VfsUtil.findRelativeFile(s, rootDir);
           assertNotNull("Neither class nor file " + s + " not found", child);
-          PsiElement file = myPsiManager.findFile(child);
-          if (file == null) file = JavaPsiFacade.getInstance(myProject).findPackage(s);
-          files.add(file);
+          files.add(myPsiManager.findFile(child));
         }
         final VirtualFile child1 = VfsUtil.findRelativeFile(targetDirName, rootDir);
         assertNotNull("Target dir " + targetDirName + " not found", child1);
