@@ -7,7 +7,7 @@
       <a href="http://handlebarsjs.com/">Handlebars</a> and <a href="http://mustache.github.com/">Mustache</a> template support
     ]]>
   </description>
-  <category>Custom Languages</category>
+  <category>HTML/JavaScript Development</category>
   <version>0.8</version>
   <depends>com.intellij.modules.lang</depends>
   <vendor logo="/icons/handlebars_icon.png" url="https://github.com/dmarcotte">dmarcotte</vendor>

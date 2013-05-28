@@ -7,6 +7,7 @@
   ]]></description>
   <vendor>JetBrains</vendor>
   <idea-version since-build="130.0" until-build="131.0"/>
+  <category>HTML/JavaScript Development</category>
 
   <depends>com.intellij.modules.lang</depends>
 
