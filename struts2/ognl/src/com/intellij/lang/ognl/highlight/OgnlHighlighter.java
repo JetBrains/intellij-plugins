@@ -22,7 +22,6 @@ import com.intellij.lang.ognl.psi.OgnlTokenGroups;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.HighlighterColors;
-import com.intellij.openapi.editor.JspHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.StringEscapesTokenTypes;
@@ -55,7 +54,7 @@ public class OgnlHighlighter extends SyntaxHighlighterBase {
   }
 
   public static final TextAttributesKey BACKGROUND = TextAttributesKey.createTextAttributesKey(
-    "OGNL.BACKGROUND", JspHighlighterColors.JSP_ACTION_AND_DIRECTIVE_BACKGROUND);
+    "OGNL.BACKGROUND", DefaultLanguageHighlighterColors.TEMPLATE_LANGUAGE_COLOR);
 
   public static final TextAttributesKey EXPRESSION_BOUNDS = TextAttributesKey.createTextAttributesKey(
     "OGNL.EXPRESSION", DefaultLanguageHighlighterColors.KEYWORD);
