@@ -1,13 +1,12 @@
 package com.jetbrains.lang.dart.completion.base;
 
 import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.CharFilter;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.UsefulTestCase;
-import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.Scanner;
 /**
  * @author: Fedor.Korotkov
  */
-abstract public class DartCompletionTestBase extends JavaCodeInsightFixtureTestCase {
+abstract public class DartCompletionTestBase extends CodeInsightFixtureTestCase {
   enum CheckType {EQUALS, INCLUDES, EXCLUDES}
 
   private final String myPath;
@@ -40,8 +39,8 @@ abstract public class DartCompletionTestBase extends JavaCodeInsightFixtureTestC
   }
 
   @Override
-  protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/") + myPath;
+  protected String getBasePath() {
+    return FileUtil.toSystemDependentName("/plugins/Dart/testData/") + myPath;
   }
 
   protected void doTest() throws Throwable {

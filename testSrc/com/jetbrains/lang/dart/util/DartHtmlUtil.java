@@ -3,7 +3,7 @@ package com.jetbrains.lang.dart.util;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 
@@ -26,7 +26,7 @@ public class DartHtmlUtil {
            "</html>";
   }
 
-  public static PsiFile createHtmlAndConfigureFixture(final JavaCodeInsightTestFixture myFixture, String... fileNames) throws IOException {
+  public static PsiFile createHtmlAndConfigureFixture(final CodeInsightTestFixture myFixture, String... fileNames) throws IOException {
     List<VirtualFile> virtualFileList = ContainerUtil.map(fileNames, new Function<String, VirtualFile>() {
       @Override
       public VirtualFile fun(String name) {

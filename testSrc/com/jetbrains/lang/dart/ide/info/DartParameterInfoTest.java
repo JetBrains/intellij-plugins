@@ -3,7 +3,7 @@ package com.jetbrains.lang.dart.ide.info;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
-import com.intellij.testFramework.LightCodeInsightTestCase;
+import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import com.intellij.testFramework.utils.parameterInfo.MockCreateParameterInfoContext;
 import com.intellij.testFramework.utils.parameterInfo.MockParameterInfoUIContext;
 import com.intellij.testFramework.utils.parameterInfo.MockUpdateParameterInfoContext;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author: Fedor.Korotkov
  */
-public class DartParameterInfoTest extends LightCodeInsightTestCase {
+public class DartParameterInfoTest extends LightPlatformCodeInsightTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {

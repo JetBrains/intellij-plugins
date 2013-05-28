@@ -2,18 +2,16 @@ package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.codeInsight.navigation.GotoImplementationHandler;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
-import com.jetbrains.lang.dart.util.DartHtmlUtil;
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 
 /**
  * @author: Fedor.Korotkov
  */
-public class DartGotoImplementationTest extends JavaCodeInsightFixtureTestCase {
+public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
   @Override
-  protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/gotoImplementation/");
+  protected String getBasePath() {
+    return FileUtil.toSystemDependentName("/plugins/Dart/testData/gotoImplementation/");
   }
 
   protected void doTest(int expectedLength) throws Throwable {

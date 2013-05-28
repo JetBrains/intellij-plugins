@@ -5,7 +5,7 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import junit.framework.Assert;
 
@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class DartSdkTestUtil {
-  public static void configFakeSdk(JavaCodeInsightTestFixture fixture) {
+  public static void configFakeSdk(CodeInsightTestFixture fixture) {
     String sdkHome = PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/sdk/");
 
     final File targetFile = new File(fixture.getTempDirPath() + "/dart-sdk");

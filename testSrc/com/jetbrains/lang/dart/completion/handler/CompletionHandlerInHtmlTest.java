@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.completion.handler;
 
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 
 /**
@@ -8,8 +7,8 @@ import com.intellij.openapi.util.io.FileUtil;
  */
 public class CompletionHandlerInHtmlTest extends CompletionHandlerTestBase {
   @Override
-  protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/completion/handler/html/");
+  protected String getBasePath() {
+    return FileUtil.toSystemDependentName("/plugins/Dart/testData/completion/handler/html/");
   }
 
   @Override

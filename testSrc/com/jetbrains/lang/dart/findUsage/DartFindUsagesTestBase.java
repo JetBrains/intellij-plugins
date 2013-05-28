@@ -1,10 +1,9 @@
 package com.jetbrains.lang.dart.findUsage;
 
 import com.intellij.openapi.actionSystem.DataProvider;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.PsiElementUsageTarget;
 import com.intellij.usages.UsageTarget;
@@ -13,10 +12,10 @@ import org.jetbrains.annotations.NonNls;
 
 import java.util.Collection;
 
-abstract public class DartFindUsagesTestBase extends JavaCodeInsightFixtureTestCase {
+abstract public class DartFindUsagesTestBase extends CodeInsightFixtureTestCase {
   @Override
-  protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/findUsages/");
+  protected String getBasePath() {
+    return FileUtil.toSystemDependentName("/plugins/Dart/testData/findUsages/");
   }
 
   protected void doTest(int size) throws Throwable {

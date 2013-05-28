@@ -4,14 +4,14 @@ import com.intellij.codeInsight.generation.surroundWith.SurroundWithHandler;
 import com.intellij.lang.surroundWith.Surrounder;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.LightCodeInsightTestCase;
+import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import com.jetbrains.lang.dart.ide.surroundWith.statement.DartWithIfElseSurrounder;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author: Fedor.Korotkov
  */
-public class DartSurroundWithInHtmlTest extends LightCodeInsightTestCase {
+public class DartSurroundWithInHtmlTest extends LightPlatformCodeInsightTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {

@@ -2,9 +2,9 @@ package com.jetbrains.lang.dart.completion.handler;
 
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupManager;
-import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 
-public abstract class CompletionHandlerTestBase extends JavaCodeInsightFixtureTestCase {
+public abstract class CompletionHandlerTestBase extends CodeInsightFixtureTestCase {
   protected void doTest() {
     doTest(CompletionType.BASIC);
   }

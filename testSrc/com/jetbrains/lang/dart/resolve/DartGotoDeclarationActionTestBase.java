@@ -1,19 +1,18 @@
 package com.jetbrains.lang.dart.resolve;
 
 import com.intellij.codeInsight.TargetElementUtilBase;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 
 import java.io.IOException;
 import java.util.Collection;
 
-abstract public class DartGotoDeclarationActionTestBase extends JavaCodeInsightFixtureTestCase {
+abstract public class DartGotoDeclarationActionTestBase extends CodeInsightFixtureTestCase {
   @Override
-  protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/goto/");
+  protected String getBasePath() {
+    return FileUtil.toSystemDependentName("/plugins/Dart/testData/goto/");
   }
 
   protected void doTest(int expectedSize) throws IOException {
