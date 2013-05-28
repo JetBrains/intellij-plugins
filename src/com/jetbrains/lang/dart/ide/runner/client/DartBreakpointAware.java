@@ -8,7 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PairProcessor;
 import com.intellij.util.PlatformUtils;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.module.DartModuleType;
+import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
 
 public class DartBreakpointAware implements PairProcessor<VirtualFile, Project> {
   @Override
@@ -27,7 +27,7 @@ public class DartBreakpointAware implements PairProcessor<VirtualFile, Project> 
     Module module = ModuleUtilCore.findModuleForFile(file, project);
     if (module != null) {
       // dart file not in dart module.
-      return ModuleType.get(module) == DartModuleType.getInstance();
+      return ModuleType.get(module) instanceof DartModuleTypeBase;
     }
     return false;
   }

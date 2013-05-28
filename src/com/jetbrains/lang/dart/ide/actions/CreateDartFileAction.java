@@ -19,7 +19,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.module.DartModuleType;
+import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
 import com.jetbrains.lang.dart.util.DartFileTemplateUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +39,7 @@ public class CreateDartFileAction extends CreateFromTemplateAction<PsiFile> {
   protected boolean isAvailable(DataContext dataContext) {
     final Module module = LangDataKeys.MODULE.getData(dataContext);
     final ModuleType moduleType = module == null ? null : ModuleType.get(module);
-    final boolean isWebOrDartModule = moduleType instanceof WebModuleTypeBase || moduleType instanceof DartModuleType;
+    final boolean isWebOrDartModule = moduleType instanceof WebModuleTypeBase || moduleType instanceof DartModuleTypeBase;
     return super.isAvailable(dataContext) && isWebOrDartModule;
   }
 

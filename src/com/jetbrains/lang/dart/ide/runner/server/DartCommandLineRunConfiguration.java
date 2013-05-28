@@ -17,7 +17,7 @@ import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.module.DartModuleType;
+import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -77,7 +77,7 @@ public class DartCommandLineRunConfiguration extends ModuleBasedConfiguration<Ru
       @Override
       public boolean value(Module module) {
         ModuleType moduleType = ModuleType.get(module);
-        return moduleType == DartModuleType.getInstance() || moduleType instanceof WebModuleTypeBase;
+        return moduleType instanceof DartModuleTypeBase || moduleType instanceof WebModuleTypeBase;
       }
     });
   }

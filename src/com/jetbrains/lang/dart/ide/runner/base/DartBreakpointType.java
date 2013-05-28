@@ -13,7 +13,7 @@ import com.intellij.xdebugger.breakpoints.ui.XBreakpointGroupingRule;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.module.DartModuleType;
+import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class DartBreakpointType extends XLineBreakpointType<XBreakpointPropertie
       Module module = ModuleUtilCore.findModuleForFile(file, project);
       if (module != null) {
         // only in dart module.
-        return ModuleType.get(module) == DartModuleType.getInstance();
+        return ModuleType.get(module) instanceof DartModuleTypeBase;
       }
     }
     return false;

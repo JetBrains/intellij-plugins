@@ -3,7 +3,6 @@ package com.jetbrains.lang.dart.ide.module;
 import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.ide.util.projectWizard.ProjectJdkForModuleStep;
 import com.intellij.ide.util.projectWizard.WizardContext;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.jetbrains.lang.dart.DartBundle;
@@ -14,7 +13,7 @@ import javax.swing.*;
 /**
  * @author: Fedor.Korotkov
  */
-public class DartModuleType extends ModuleType<DartModuleBuilder> {
+public class DartModuleType extends DartModuleTypeBase<DartModuleBuilder> {
   private static final String MODULE_TYPE_ID = "DART_MODULE";
 
   public DartModuleType() {

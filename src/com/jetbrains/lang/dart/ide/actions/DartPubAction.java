@@ -25,7 +25,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.module.DartModuleType;
+import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
@@ -170,7 +170,7 @@ public class DartPubAction extends AnAction {
     if (ModuleType.get(module) instanceof WebModuleTypeBase) {
       settings = DartSettingsUtil.getSettings();
     }
-    else if (ModuleType.get(module) instanceof DartModuleType) {
+    else if (ModuleType.get(module) instanceof DartModuleTypeBase) {
       assert module != null;
       final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
       final Sdk sdk = moduleRootManager.getSdk();

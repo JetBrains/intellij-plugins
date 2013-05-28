@@ -26,7 +26,7 @@ import com.intellij.webcore.ScriptingFrameworkDescriptor;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.module.DartModuleType;
+import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
 import gnu.trove.THashMap;
@@ -193,7 +193,7 @@ public class DartSettings {
     if (shouldTakeWebSettings(module) || ApplicationManager.getApplication().isUnitTestMode()) {
       settings = DartSettingsUtil.getSettings();
     }
-    else if (module != null && ModuleType.get(module) instanceof DartModuleType) {
+    else if (module != null && ModuleType.get(module) instanceof DartModuleTypeBase) {
       final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
       final Sdk sdk = moduleRootManager.getSdk();
       settings = new DartSettings(StringUtil.notNullize(sdk == null ? null : sdk.getHomePath()));

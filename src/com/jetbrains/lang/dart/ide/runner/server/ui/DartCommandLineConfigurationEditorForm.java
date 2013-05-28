@@ -17,7 +17,7 @@ import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.module.DartModuleType;
+import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,7 +70,7 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
 
     final Module[] modules = ModuleManager.getInstance(configuration.getProject()).getModules();
     for (final Module module : modules) {
-      if (ModuleType.get(module) == DartModuleType.getInstance()) {
+      if (ModuleType.get(module) instanceof DartModuleTypeBase) {
         myComboModules.addItem(module);
       }
     }
