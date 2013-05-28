@@ -90,6 +90,7 @@
   _DEFAULT_ CDATA "spark.components.supportClasses.SkinnableComponent"
 >
 <!ELEMENT IconFile EMPTY>
+<!ELEMENT Inline EMPTY>
 <!ELEMENT Inspectable EMPTY>
 <!ATTLIST Inspectable
   arrayType CDATA "Object"
@@ -176,6 +177,7 @@
 
   id CDATA #IMPLIED
   type CDATA #IMPLIED
+  auto (true|false) #IMPLIED
 >
 
 <!ELEMENT Autowire EMPTY>
