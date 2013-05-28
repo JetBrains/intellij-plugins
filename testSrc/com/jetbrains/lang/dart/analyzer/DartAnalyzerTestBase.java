@@ -9,7 +9,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.annotator.DartExternalAnnotator;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.util.List;
 
-abstract public class DartAnalyzerTestBase extends JavaCodeInsightFixtureTestCase {
+abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
 
   @Override
   public void setUp() throws Exception {

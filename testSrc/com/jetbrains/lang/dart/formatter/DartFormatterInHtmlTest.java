@@ -1,14 +1,13 @@
 package com.jetbrains.lang.dart.formatter;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
 import junit.framework.Assert;
@@ -19,12 +18,12 @@ import java.io.FileWriter;
 /**
  * @author: Fedor.Korotkov
  */
-public class DartFormatterInHtmlTest extends JavaCodeInsightFixtureTestCase {
+public class DartFormatterInHtmlTest extends CodeInsightFixtureTestCase {
   protected CommonCodeStyleSettings myTestStyleSettings;
 
   @Override
-  protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/formatter/html");
+  protected String getBasePath() {
+    return FileUtil.toSystemDependentName("/plugins/Dart/testData/formatter/html");
   }
 
   @Override

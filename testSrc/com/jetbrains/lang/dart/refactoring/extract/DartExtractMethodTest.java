@@ -1,18 +1,17 @@
 package com.jetbrains.lang.dart.refactoring.extract;
 
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.refactoring.extract.DartExtractMethodHandler;
 import com.jetbrains.lang.dart.util.DartSdkTestUtil;
 
 /**
  * @author: Fedor.Korotkov
  */
-public class DartExtractMethodTest extends JavaCodeInsightFixtureTestCase {
+public class DartExtractMethodTest extends CodeInsightFixtureTestCase {
   @Override
-  protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/refactoring/extractMethod/");
+  protected String getBasePath() {
+    return FileUtil.toSystemDependentName("/plugins/Dart/testData/refactoring/extractMethod/");
   }
 
   private void doTest() throws Throwable {

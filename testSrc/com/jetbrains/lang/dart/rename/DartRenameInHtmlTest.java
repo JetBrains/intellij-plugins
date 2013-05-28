@@ -1,16 +1,15 @@
 package com.jetbrains.lang.dart.rename;
 
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.fixtures.JavaCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 
 /**
  * @author: Fedor.Korotkov
  */
-public class DartRenameInHtmlTest extends JavaCodeInsightFixtureTestCase {
+public class DartRenameInHtmlTest extends CodeInsightFixtureTestCase {
   @Override
-  protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/rename/html");
+  protected String getBasePath() {
+    return FileUtil.toSystemDependentName("/plugins/Dart/testData/rename/html");
   }
 
   public void doTest(String newName, String... additionalFiles) {
