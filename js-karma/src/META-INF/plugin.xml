@@ -2,8 +2,9 @@
 <idea-plugin version="2">
 
   <name>Karma</name>
-  <description>JavaScript Test Runner that allows running unit tests</description>
-  <version>999.999</version>
+  <description><![CDATA[
+  Integration with <a href="http://karma-runner.github.io/">Karma</a>, a spectacular test runner for JavaScript
+  ]]></description>
   <vendor>JetBrains</vendor>
   <idea-version since-build="130.0" until-build="131.0"/>
 
