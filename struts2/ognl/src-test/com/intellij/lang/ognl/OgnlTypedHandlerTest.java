@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,12 +15,12 @@
 
 package com.intellij.lang.ognl;
 
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlTypedHandlerTest extends LightCodeInsightFixtureTestCase {
+public class OgnlTypedHandlerTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testTypeExpressionPrefix() {
     myFixture.configureByText(OgnlFileType.INSTANCE,

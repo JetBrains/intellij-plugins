@@ -17,7 +17,7 @@ package com.intellij.lang.ognl.completion;
 
 import com.intellij.lang.ognl.OgnlFileType;
 import com.intellij.lang.ognl.OgnlTestUtils;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 
 import java.util.Arrays;
 
@@ -26,7 +26,7 @@ import java.util.Arrays;
  *
  * @author Yann C&eacute;bron
  */
-abstract class OgnlCompletionTestCase extends LightCodeInsightFixtureTestCase {
+abstract class OgnlCompletionTestCase extends LightPlatformCodeInsightFixtureTestCase {
 
   protected void doTest(final String ognlExpression,
                         final String... expectedCompletionItems) throws Throwable {

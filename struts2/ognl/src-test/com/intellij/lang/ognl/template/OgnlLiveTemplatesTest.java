@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,12 +22,12 @@ import com.intellij.codeInsight.template.impl.actions.ListTemplatesAction;
 import com.intellij.lang.ognl.OgnlFileType;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 
 /**
  * @author Yann C&eacute;bron
  */
-public class OgnlLiveTemplatesTest extends LightCodeInsightFixtureTestCase {
+public class OgnlLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCase {
 
   public void testIn() {
     doTest("a in<caret>",
