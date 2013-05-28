@@ -1,27 +1,25 @@
 package com.jetbrains.lang.dart.completion.editor;
 
-import com.intellij.codeInsight.completion.LightFixtureCompletionTestCase;
+import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 
 /**
  * @author: Fedor.Korotkov
  */
-public class DartTabCompletionTest extends LightFixtureCompletionTestCase {
+public class DartTabCompletionTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getTestDataPath() {
     return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/completion/tab");
   }
 
-  @Override
-  protected void complete() {
-    super.complete();
-    selectItem(myItems[0], '\t');
-  }
-
   public void doTest() {
-    configureByFile(getTestName(true) + ".dart");
-    checkResultByFile(getTestName(true) + "_expected.dart");
+    myFixture.configureByFile(getTestName(true) + ".dart");
+    myFixture.complete(CompletionType.BASIC);
+    myFixture.finishLookup(Lookup.REPLACE_SELECT_CHAR);
+    myFixture.checkResultByFile(getTestName(true) + "_expected.dart");
   }
 
   public void testExpression1() {
