@@ -218,7 +218,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
       Collections.singletonList(new ArrangementGroupingRule(GROUP_PROPERTY_FIELD_WITH_GETTER_SETTER));
     final List<StdArrangementMatchRule> matchRules = getDefaultMatchRules();
 
-    return new StdArrangementSettings(groupingRules, matchRules);
+    return new StdRulePriorityAwareSettings(groupingRules, matchRules);
   }
 
   public static List<StdArrangementMatchRule> getDefaultMatchRules() {
