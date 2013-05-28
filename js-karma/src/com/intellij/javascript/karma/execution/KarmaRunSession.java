@@ -13,37 +13,25 @@ import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
-import com.intellij.execution.ui.ExecutionConsole;
-import com.intellij.execution.ui.ExecutionConsoleEx;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.execution.ui.RunnerLayoutUi;
-import com.intellij.execution.ui.layout.PlaceInGrid;
-import com.intellij.icons.AllIcons;
 import com.intellij.javascript.karma.server.KarmaServer;
-import com.intellij.javascript.karma.server.KarmaServerAdapter;
 import com.intellij.javascript.karma.server.KarmaServerListener;
-import com.intellij.javascript.karma.server.KarmaServerLogComponent;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.karma.util.NopProcessHandler;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.ColorUtil;
-import com.intellij.ui.content.Content;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
 /**
  * @author Sergey Simonchik
  */
-public class KarmaTestRunConsole implements ExecutionConsoleEx {
+public class KarmaRunSession {
 
-  private static final Logger LOG = Logger.getInstance(KarmaTestRunConsole.class);
+  private static final Logger LOG = Logger.getInstance(KarmaRunSession.class);
   private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
 
   private final Project myProject;
@@ -56,12 +44,12 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
   private final ProcessHandler myProcessHandler;
   private RunContentDescriptor myRunContentDescriptor;
 
-  public KarmaTestRunConsole(@NotNull Project project,
-                             @NotNull ExecutionEnvironment environment,
-                             @NotNull Executor executor,
-                             @NotNull KarmaServer karmaServer,
-                             @NotNull String nodeInterpreterPath,
-                             @NotNull KarmaRunSettings runSettings) throws ExecutionException {
+  public KarmaRunSession(@NotNull Project project,
+                         @NotNull ExecutionEnvironment environment,
+                         @NotNull Executor executor,
+                         @NotNull KarmaServer karmaServer,
+                         @NotNull String nodeInterpreterPath,
+                         @NotNull KarmaRunSettings runSettings) throws ExecutionException {
     myProject = project;
     myEnvironment = environment;
     myExecutor = executor;
@@ -70,76 +58,6 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
     myRunSettings = runSettings;
     mySmtConsoleView = createSMTRunnerConsoleView();
     myProcessHandler = createProcessHandler(karmaServer);
-  }
-
-  @Override
-  public void buildUi(final RunnerLayoutUi ui) {
-    boolean serverReady = myKarmaServer.isReady();
-    final JComponent component, preferredFocusableComponent;
-    if (serverReady) {
-      component = mySmtConsoleView.getComponent();
-      preferredFocusableComponent = mySmtConsoleView.getPreferredFocusableComponent();
-    }
-    else {
-      component = createStubComponent();
-      preferredFocusableComponent = null;
-    }
-    final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
-                                                    component,
-                                                    "Test Run",
-                                                    AllIcons.Debugger.Console,
-                                                    preferredFocusableComponent);
-    consoleContent.setCloseable(false);
-    ui.addContent(consoleContent, 0, PlaceInGrid.bottom, false);
-    if (serverReady) {
-      ui.selectAndFocus(consoleContent, false, false);
-    }
-
-    if (!serverReady) {
-      myKarmaServer.addListener(new KarmaServerAdapter() {
-        @Override
-        public void onReady(int webServerPort, int runnerPort) {
-          ui.removeContent(consoleContent, false);
-          consoleContent.setComponent(mySmtConsoleView.getComponent());
-          consoleContent.setPreferredFocusableComponent(mySmtConsoleView.getPreferredFocusableComponent());
-          ui.addContent(consoleContent, 0, PlaceInGrid.bottom, false);
-          ui.selectAndFocus(consoleContent, false, false);
-        }
-      });
-    }
-
-    KarmaServerLogComponent logComponent = new KarmaServerLogComponent(myProject, myKarmaServer);
-    logComponent.installOn(ui);
-  }
-
-  @Nullable
-  @Override
-  public String getExecutionConsoleId() {
-    return null;
-  }
-
-  @Override
-  public JComponent getComponent() {
-    return mySmtConsoleView.getComponent();
-  }
-
-  @Override
-  public JComponent getPreferredFocusableComponent() {
-    return mySmtConsoleView.getPreferredFocusableComponent();
-  }
-
-  @Override
-  public void dispose() {
-    Disposer.dispose(mySmtConsoleView);
-  }
-
-  @NotNull
-  private static JComponent createStubComponent() {
-    JLabel label = new JLabel("Karma server is not ready", SwingConstants.CENTER);
-    label.setOpaque(true);
-    Color treeBg = UIManager.getColor("Tree.background");
-    label.setBackground(ColorUtil.toAlpha(treeBg, 180));
-    return label;
   }
 
   @NotNull
@@ -153,15 +71,18 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
     testConsoleProperties.setUsePredefinedMessageFilter(false);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
 
-    return SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
-      FRAMEWORK_NAME,
-      testConsoleProperties,
-      myEnvironment.getRunnerSettings(),
-      myEnvironment.getConfigurationSettings(),
-      new KarmaTestLocationProvider(myProject),
-      true,
-      new KarmaTestProxyFilterProvider(myProject, myKarmaServer)
-    );
+    KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties,
+                                                        myEnvironment,
+                                                        SMTestRunnerConnectionUtil.getSplitterPropertyName(FRAMEWORK_NAME),
+                                                        myKarmaServer,
+                                                        this);
+    Disposer.register(myProject, consoleView);
+    SMTestRunnerConnectionUtil.initConsoleView(consoleView,
+                                               FRAMEWORK_NAME,
+                                               new KarmaTestLocationProvider(myProject),
+                                               true,
+                                               new KarmaTestProxyFilterProvider(myProject, myKarmaServer));
+    return consoleView;
   }
 
   @NotNull
@@ -221,6 +142,7 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
     commandLine.setExePath(myNodeInterpreterPath);
     //commandLine.addParameter("--debug-brk=5858");
     commandLine.addParameter(clientAppFile.getAbsolutePath());
+    commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getKarmaPackageDir());
     commandLine.addParameter("--runnerPort=" + runnerPort);
     return commandLine;
   }
@@ -232,5 +154,15 @@ public class KarmaTestRunConsole implements ExecutionConsoleEx {
 
   public void setRunContentDescriptor(@NotNull RunContentDescriptor descriptor) {
     myRunContentDescriptor = descriptor;
+  }
+
+  @NotNull
+  public KarmaServer getKarmaServer() {
+    return myKarmaServer;
+  }
+
+  @NotNull
+  public SMTRunnerConsoleView getSmtConsoleView() {
+    return mySmtConsoleView;
   }
 }

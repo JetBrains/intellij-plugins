@@ -2,12 +2,9 @@ package com.intellij.javascript.karma;
 
 import com.google.common.collect.Sets;
 import com.google.gson.*;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.Set;
 
@@ -20,9 +17,9 @@ public class KarmaConfig {
   private static final String FILES_NAME = "files";
 
   private final String myBasePath;
-  private Set<VirtualFile> myFiles;
+  private Set<String> myFiles;
 
-  public KarmaConfig(@Nullable String basePath, @NotNull Set<VirtualFile> files) {
+  public KarmaConfig(@Nullable String basePath, @NotNull Set<String> files) {
     myBasePath = basePath;
     myFiles = files;
   }
@@ -33,7 +30,7 @@ public class KarmaConfig {
   }
 
   @NotNull
-  public Set<VirtualFile> getFiles() {
+  public Set<String> getFiles() {
     return myFiles;
   }
 
@@ -42,42 +39,89 @@ public class KarmaConfig {
     JsonElement jsonElement = jsonParser.parse(jsonText);
     if (jsonElement.isJsonObject()) {
       JsonObject rootObject = jsonElement.getAsJsonObject();
-      String basePath = buildBasePath(rootObject.get(BASE_PATH_NAME));
-      Set<VirtualFile> files = buildFileSet(rootObject.get(FILES_NAME));
+      String basePath = getAsString(rootObject.get(BASE_PATH_NAME));
+      Set<String> files = buildFileSet(rootObject.get(FILES_NAME));
       return new KarmaConfig(basePath, files);
     }
     return null;
   }
 
-  @Nullable
-  private static String buildBasePath(@Nullable JsonElement basePathElement) {
-    if (basePathElement == null || !basePathElement.isJsonPrimitive()) {
-      return null;
-    }
-    JsonPrimitive basePathPrimitive = basePathElement.getAsJsonPrimitive();
-    if (basePathPrimitive.isString()) {
-      return basePathPrimitive.getAsString();
-    }
-    return null;
-  }
-
   @NotNull
-  private static Set<VirtualFile> buildFileSet(@Nullable JsonElement filesElement) {
+  private static Set<String> buildFileSet(@Nullable JsonElement filesElement) {
     if (filesElement == null || !filesElement.isJsonArray()) {
       return Collections.emptySet();
     }
     JsonArray filesArray = filesElement.getAsJsonArray();
-    Set<VirtualFile> files = Sets.newHashSetWithExpectedSize(filesArray.size());
-    for (JsonElement element : filesArray) {
-      if (element.isJsonPrimitive()) {
-        JsonPrimitive primitive = element.getAsJsonPrimitive();
+    Set<String> files = Sets.newHashSetWithExpectedSize(filesArray.size());
+    for (JsonElement fileElement : filesArray) {
+      if (fileElement.isJsonObject()) {
+        JsonObject object = fileElement.getAsJsonObject();
+
+        //String pattern = getAsString()
+        JsonElement patternElement = object.get("pattern");
+        //Entry entry = new Entry(o);
+      }
+      if (fileElement.isJsonPrimitive()) {
+        JsonPrimitive primitive = fileElement.getAsJsonPrimitive();
         if (primitive.isString()) {
-          File file = new File(primitive.getAsString());
-          files.add(VfsUtil.findFileByIoFile(file, false));
+          files.add(primitive.getAsString());
         }
       }
     }
     return files;
+  }
+
+  @Nullable
+  private static String getAsString(@Nullable JsonElement element) {
+    if (element != null && element.isJsonPrimitive()) {
+      JsonPrimitive primitive = element.getAsJsonPrimitive();
+      if (primitive.isString()) {
+        return primitive.getAsString();
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  private static Boolean getAsBoolean(@NotNull JsonElement element) {
+    if (element.isJsonPrimitive()) {
+      JsonPrimitive primitive = element.getAsJsonPrimitive();
+      if (primitive.isBoolean()) {
+        return primitive.getAsBoolean();
+      }
+    }
+    return null;
+  }
+
+  private static class Entry {
+    private final String myPattern;
+    private final boolean myServed;
+    private final boolean myIncluded;
+    private final boolean myWatched;
+
+    private Entry(@NotNull String pattern, boolean served, boolean included, boolean watched) {
+      myPattern = pattern;
+      myServed = served;
+      myIncluded = included;
+      myWatched = watched;
+    }
+
+    @NotNull
+    private String getPattern() {
+      return myPattern;
+    }
+
+    private boolean isServed() {
+      return myServed;
+    }
+
+    private boolean isIncluded() {
+      return myIncluded;
+    }
+
+    private boolean isWatched() {
+      return myWatched;
+    }
   }
 
 }

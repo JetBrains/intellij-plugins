@@ -12,7 +12,6 @@ import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,17 +40,15 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
     FileDocumentManager.getInstance().saveAllDocuments();
     ExecutionResult executionResult = state.execute(executor, this);
     if (executionResult == null) return null;
-
     RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
     RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
     if (contentToReuse != null) {
       System.out.println("content to reuse");
     }
-    KarmaTestRunConsole testRunConsole = ObjectUtils.tryCast(executionResult.getExecutionConsole(), KarmaTestRunConsole.class);
-    if (testRunConsole != null) {
-      testRunConsole.setRunContentDescriptor(descriptor);
+    KarmaConsoleView console = KarmaConsoleView.get(executionResult);
+    if (console != null) {
+      console.getKarmaRunSession().setRunContentDescriptor(descriptor);
     }
-
     return descriptor;
   }
 

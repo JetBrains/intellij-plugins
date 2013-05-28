@@ -15,6 +15,9 @@
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="module" module-name="js-test-common" />
     <orderEntry type="library" name="gson" level="project" />
+    <orderEntry type="module" module-name="JavaScriptDebugger" />
+    <orderEntry type="module" module-name="xml" />
+    <orderEntry type="module" module-name="xdebugger-api" />
   </component>
 </module>
 

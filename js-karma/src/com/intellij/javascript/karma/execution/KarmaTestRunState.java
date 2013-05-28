@@ -11,6 +11,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
+import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.openapi.project.Project;
@@ -57,18 +58,17 @@ public class KarmaTestRunState implements RunProfileState {
         throw new ExecutionException(e);
       }
     }
-    KarmaServer karmaServer = server;
-
-    KarmaTestRunConsole testTreeConsole = new KarmaTestRunConsole(myProject,
+    KarmaRunSession testTreeConsole = new KarmaRunSession(myProject,
                                                                   myExecutionEnvironment,
                                                                   executor,
-                                                                  karmaServer,
+                                                                  server,
                                                                   myNodeInterpreterPath,
                                                                   myRunSettings);
-    Disposer.register(myProject, testTreeConsole);
+    SMTRunnerConsoleView smtRunnerConsoleView = testTreeConsole.getSmtConsoleView();
+    Disposer.register(myProject, smtRunnerConsoleView);
 
     ProcessHandler processHandler = testTreeConsole.getProcessHandler();
-    DefaultExecutionResult executionResult = new DefaultExecutionResult(testTreeConsole, processHandler);
+    DefaultExecutionResult executionResult = new DefaultExecutionResult(smtRunnerConsoleView, processHandler);
     executionResult.setRestartActions(new ToggleAutoTestAction());
     return executionResult;
   }

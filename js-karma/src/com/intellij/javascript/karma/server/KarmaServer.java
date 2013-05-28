@@ -12,6 +12,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.UIUtil;
@@ -39,6 +40,7 @@ public class KarmaServer {
   private final KillableColoredProcessHandler myProcessHandler;
   private final ProcessEventStore myProcessEventStore;
   private final File myKarmaIntellijPackageDir;
+  private final File myKarmaPackageDir;
   private volatile int myWebServerPort = -1;
   private volatile int myRunnerPort = -1;
   private volatile boolean myBrowserConnected = false;
@@ -52,6 +54,7 @@ public class KarmaServer {
     /* 'nodeInterpreter', 'karmaPackageDir' and 'configurationFile'
         are already checked in KarmaRunConfiguration.checkConfiguration */
     myConfigurationFile = configurationFile;
+    myKarmaPackageDir = karmaPackageDir;
     myKarmaIntellijPackageDir = findKarmaIntellijPackageDir(karmaPackageDir);
     try {
       myProcessHandler = startServer(nodeInterpreter, configurationFile);
@@ -89,10 +92,27 @@ public class KarmaServer {
    */
   private static File findKarmaIntellijPackageDir(@NotNull File karmaPackageDir) throws IOException {
     File dir = new File(karmaPackageDir.getParentFile(), "karma-intellij");
-    if (!dir.isDirectory()) {
-      throw new IOException("Can't find " + dir.getAbsolutePath());
+    if (dir.isDirectory()) {
+      return dir;
     }
-    return dir;
+    File jsReporterDir = getBundledJsReporterDir();
+    if (!jsReporterDir.isDirectory()) {
+      throw new RuntimeException("Can't find bundled version of karma-intellij node module!");
+    }
+    return new File(jsReporterDir, "karma-intellij");
+  }
+
+  private static File getBundledJsReporterDir() {
+    String jarPath = PathUtil.getJarPathForClass(KarmaServer.class);
+    if (!jarPath.endsWith(".jar")) {
+      return new File(jarPath, "js_reporter");
+    }
+    File jarFile = new File(jarPath);
+    if (!jarFile.isFile()) {
+      throw new RuntimeException("jar file cannot be null");
+    }
+    File pluginBaseDir = jarFile.getParentFile().getParentFile();
+    return new File(pluginBaseDir, "js_reporter");
   }
 
   @NotNull
@@ -108,6 +128,7 @@ public class KarmaServer {
     commandLine.setExePath(nodeInterpreter.getAbsolutePath());
     File serverFile = getServerAppFile();
     commandLine.addParameter(serverFile.getAbsolutePath());
+    commandLine.addParameter("--karmaPackageDir=" + myKarmaPackageDir.getAbsolutePath());
     commandLine.addParameter("--configFile=" + configurationFile.getAbsolutePath());
 
     LOG.info("Starting karma server: " + commandLine.getCommandLineString());
@@ -151,6 +172,11 @@ public class KarmaServer {
   @NotNull
   public File getClientAppFile() throws IOException {
     return getAppFile("intellijRunner.js");
+  }
+
+  @NotNull
+  public File getKarmaPackageDir() {
+    return myKarmaPackageDir;
   }
 
   private File getAppFile(@NotNull String baseName) throws IOException {
@@ -260,5 +286,9 @@ public class KarmaServer {
   @Nullable
   public KarmaConfig getKarmaConfig() {
     return myKarmaConfig;
+  }
+
+  public int getWebServerPort() {
+    return myWebServerPort;
   }
 }
