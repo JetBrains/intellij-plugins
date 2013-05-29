@@ -10,7 +10,6 @@ import com.intellij.tapestry.core.TapestryConstants;
 import com.intellij.tapestry.core.TapestryProject;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.model.presentation.*;
-import com.intellij.tapestry.core.model.presentation.components.DummyTapestryParameter;
 import com.intellij.tapestry.intellij.TapestryModuleSupportLoader;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
 import com.intellij.tapestry.psi.TmlFile;
@@ -27,7 +26,10 @@ import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Alexey Chmutov
@@ -194,7 +196,8 @@ class DescriptorUtil {
         return new TapestryParameterDescriptor(component, parameter, namespacePrefix);
       }
     };
-    final List<XmlElementDescriptor> result = ContainerUtil.map(component.getParameters().values(), mapping);
+    final List<XmlElementDescriptor> result =
+      new ArrayList<XmlElementDescriptor>(ContainerUtil.map(component.getParameters().values(), mapping));
     for (Mixin mixin : mixins) {
       result.addAll(ContainerUtil.map(mixin.getParameters().values(), mapping));
     }
