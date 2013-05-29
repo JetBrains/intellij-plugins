@@ -2,11 +2,10 @@ package com.jetbrains.lang.dart.ide;
 
 import com.intellij.conversion.*;
 import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
+import com.intellij.javascript.debugger.execution.JavaScriptDebuggerConfigurationSettings;
 import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-
-import static com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration.JavaScriptDebuggerConfigurationSettings;
 
 public class DartRunConfigurationConverterProvider extends ConverterProvider {
   protected DartRunConfigurationConverterProvider() {
