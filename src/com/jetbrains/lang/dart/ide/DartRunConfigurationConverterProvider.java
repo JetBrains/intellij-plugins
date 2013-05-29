@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.intellij.javascript.debugger.execution.JavaScriptDebugConfigurationBase.JavaScriptDebuggerConfigurationSettings;
+import static com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration.JavaScriptDebuggerConfigurationSettings;
 
 public class DartRunConfigurationConverterProvider extends ConverterProvider {
   protected DartRunConfigurationConverterProvider() {
