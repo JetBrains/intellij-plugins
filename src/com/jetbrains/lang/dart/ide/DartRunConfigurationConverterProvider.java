@@ -1,13 +1,10 @@
 package com.jetbrains.lang.dart.ide;
 
 import com.intellij.conversion.*;
-import com.intellij.javascript.debugger.JSDebuggerBundle;
+import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
 import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
-import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 import static com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration.JavaScriptDebuggerConfigurationSettings;
 
@@ -64,46 +61,38 @@ public class DartRunConfigurationConverterProvider extends ConverterProvider {
 
   private static void convertLocal(Element element) {
     element.setAttribute("type", JavascriptDebugConfigurationType.getTypeInstance().getId());
-    element.setAttribute("factoryName", JSDebuggerBundle.message("javascript.debug.configuration.local"));
     element.setAttribute("singleton", "true");
-    JavaScriptDebuggerConfigurationSettings settings =
-      new JavaScriptDebuggerConfigurationSettings();
-    settings.setEngineId("chrome");
-    List options = element.getChildren("option");
-    for (Object obj : options) {
-      assert obj instanceof Element;
+    element.removeAttribute("factoryName");
+    JavaScriptDebuggerConfigurationSettings settings = new JavaScriptDebuggerConfigurationSettings();
+    for (Object obj : element.getChildren("option")) {
       if ("fileUrl".equals(((Element)obj).getAttributeValue("name"))) {
-        settings.setFileUrl(((Element)obj).getAttributeValue("value"));
+        settings.uri = ((Element)obj).getAttributeValue("value");
       }
     }
     element.removeContent();
-    element.addContent(XmlSerializer.serialize(settings));
+    JavaScriptDebugConfiguration.serialize(settings, element);
   }
 
   private static void convertRemote(Element element) {
     element.setAttribute("type", JavascriptDebugConfigurationType.getTypeInstance().getId());
-    element.setAttribute("factoryName", JSDebuggerBundle.message("javascript.debug.configuration.remote"));
     element.setAttribute("singleton", "true");
+    element.removeAttribute("factoryName");
     JavaScriptDebuggerConfigurationSettings settings = new JavaScriptDebuggerConfigurationSettings();
-    settings.setEngineId("chrome");
-    List options = element.getChildren("option");
     Element mappings = null;
-    for (Object obj : options) {
-      assert obj instanceof Element;
+    for (Object obj : element.getChildren("option")) {
       if ("fileUrl".equals(((Element)obj).getAttributeValue("name"))) {
-        settings.setFileUrl(((Element)obj).getAttributeValue("value"));
+        settings.uri = ((Element)obj).getAttributeValue("value");
       }
       else if ("mappings".equals(((Element)obj).getAttributeValue("name"))) {
         mappings = (Element)obj;
       }
     }
     element.removeContent();
-    Element remoteSettings = XmlSerializer.serialize(settings);
-    element.addContent(remoteSettings);
+    JavaScriptDebugConfiguration.serialize(settings, element);
     if (mappings != null) {
       Element list = mappings.getChild("list");
       if (list != null) {
-        remoteSettings.addContent(list.removeContent());
+        element.addContent(list.removeContent());
       }
     }
   }

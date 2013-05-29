@@ -1,8 +1,4 @@
-<configuration default="false" name="Dart" type="JavascriptDebugSession" factoryName="Remote" singleton="true">
-  <JSRemoteDebuggerConfigurationSettings>
-    <option name="engineId" value="chrome"/>
-    <option name="fileUrl" value="http://localhost:8500/test/index.html"/>
-    <mapping local-file="$PROJECT_DIR$" url="http://localhost:8500/test1"/>
-    <mapping local-file="$PROJECT_DIR$" url="http://localhost:8500/test2"/>
-  </JSRemoteDebuggerConfigurationSettings>
+<configuration default="false" name="Dart" type="JavascriptDebugType" singleton="true" uri="http://localhost:8500/test/index.html">
+  <mapping local-file="$PROJECT_DIR$" url="http://localhost:8500/test1"/>
+  <mapping local-file="$PROJECT_DIR$" url="http://localhost:8500/test2"/>
 </configuration>

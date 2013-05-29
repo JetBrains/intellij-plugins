@@ -1,6 +1,2 @@
-<configuration default="false" name="solar" type="JavascriptDebugSession" factoryName="Local" singleton="true">
-  <JSDebuggerConfigurationSettings>
-    <option name="engineId" value="chrome"/>
-    <option name="fileUrl" value="file://$PROJECT_DIR$/solar/solar.html"/>
-  </JSDebuggerConfigurationSettings>
+<configuration default="false" name="solar" type="JavascriptDebugType" singleton="true" uri="file://$PROJECT_DIR$/solar/solar.html">
 </configuration>
