@@ -2,14 +2,14 @@ package com.jetbrains.lang.dart.ide;
 
 import com.intellij.conversion.*;
 import com.intellij.javascript.debugger.JSDebuggerBundle;
-import com.intellij.javascript.debugger.execution.JavaScriptDebugConfigurationBase;
 import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
-import com.intellij.javascript.debugger.execution.RemoteJavaScriptDebugConfiguration;
 import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import static com.intellij.javascript.debugger.execution.JavaScriptDebugConfigurationBase.JavaScriptDebuggerConfigurationSettings;
 
 public class DartRunConfigurationConverterProvider extends ConverterProvider {
   protected DartRunConfigurationConverterProvider() {
@@ -40,7 +40,7 @@ public class DartRunConfigurationConverterProvider extends ConverterProvider {
           }
 
           @Override
-          public void process(RunManagerSettings settings) throws CannotConvertException {
+          public void process(RunManagerSettings settings) {
             for (Element element : settings.getRunConfigurations()) {
               if (DartRunConfigurationConverterProvider.isConversionNeeded(element)) {
                 converter(element);
@@ -66,8 +66,8 @@ public class DartRunConfigurationConverterProvider extends ConverterProvider {
     element.setAttribute("type", JavascriptDebugConfigurationType.getTypeInstance().getId());
     element.setAttribute("factoryName", JSDebuggerBundle.message("javascript.debug.configuration.local"));
     element.setAttribute("singleton", "true");
-    JavaScriptDebugConfigurationBase.JavaScriptDebuggerConfigurationSettings settings =
-      new JavaScriptDebugConfigurationBase.JavaScriptDebuggerConfigurationSettings();
+    JavaScriptDebuggerConfigurationSettings settings =
+      new JavaScriptDebuggerConfigurationSettings();
     settings.setEngineId("chrome");
     List options = element.getChildren("option");
     for (Object obj : options) {
@@ -84,8 +84,7 @@ public class DartRunConfigurationConverterProvider extends ConverterProvider {
     element.setAttribute("type", JavascriptDebugConfigurationType.getTypeInstance().getId());
     element.setAttribute("factoryName", JSDebuggerBundle.message("javascript.debug.configuration.remote"));
     element.setAttribute("singleton", "true");
-    RemoteJavaScriptDebugConfiguration.JavaScriptRemoteDebuggerConfigurationSettings settings =
-      new RemoteJavaScriptDebugConfiguration.JavaScriptRemoteDebuggerConfigurationSettings();
+    JavaScriptDebuggerConfigurationSettings settings = new JavaScriptDebuggerConfigurationSettings();
     settings.setEngineId("chrome");
     List options = element.getChildren("option");
     Element mappings = null;
