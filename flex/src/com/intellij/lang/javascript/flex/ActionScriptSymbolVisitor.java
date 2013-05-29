@@ -4,7 +4,10 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.index.JSNamespace;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.index.JSSymbolVisitor;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
+import com.intellij.lang.javascript.psi.ecmal4.JSAttributeListOwner;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassProvider;
+import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
 
@@ -28,5 +31,17 @@ public class ActionScriptSymbolVisitor extends JSSymbolVisitor {
     if (JavaScriptSupportLoader.isFlexMxmFile(myFile) || processAllTags) {
       myNamedTagsAreMembersOfDocument = false;
     }
+  }
+
+  @Override
+  protected boolean updateNsFromAttributeList(JSAttributeListOwner node) {
+    final JSAttributeList attributeList = node.getAttributeList();
+    if (attributeList != null) {
+      final String ns = attributeList.getNamespace();
+      if (ResolveProcessor.AS3_NAMESPACE.equals(ns)) return false;
+      if (ns != null) myNamespace = getNestedNsWithName(ns, myNamespace);
+      myAccessType = attributeList.getAccessType();
+    }
+    return true;
   }
 }
