@@ -1,5 +1,7 @@
 package com.google.jstestdriver.idea.execution;
 
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
+import com.intellij.execution.configurations.RuntimeConfiguration;
 import com.intellij.javascript.testFramework.JstdRunElement;
 import com.intellij.javascript.testFramework.TestFileStructureManager;
 import com.intellij.javascript.testFramework.TestFileStructurePack;
@@ -75,6 +77,10 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
 
   @Override
   protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
+    RuntimeConfiguration original = context.getOriginalConfiguration(null);
+    if (original != null && !ConfigurationTypeUtil.equals(original.getType(), JstdConfigurationType.getInstance())) {
+      return null;
+    }
     long startTimeNano = System.nanoTime();
     @SuppressWarnings({"unchecked"})
     RunSettingsContext runSettingsContext = buildRunSettingsContext(location);
