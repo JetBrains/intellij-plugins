@@ -71,6 +71,7 @@ class FlexValue extends XValue {
   );
 
   private static final Comparator<XValue> ourArrayElementsComparator = new Comparator<XValue>() {
+    @Override
     public int compare(XValue o1, XValue o2) {
       if (o1 instanceof FlexValue && o2 instanceof FlexValue) {
         String name = ((FlexValue)o1).myName;
@@ -209,6 +210,7 @@ class FlexValue extends XValue {
     final FlexStackFrame.EvaluateCommand command =
       myFlexStackFrame.new EvaluateCommand(myExpression + ".fixed", new XDebuggerEvaluator.XEvaluationCallback() {
 
+        @Override
         public void evaluated(@NotNull XValue result) {
           if (!node.isObsolete()) {
             final String resultText = ((FlexValue)result).myResult;
@@ -218,6 +220,7 @@ class FlexValue extends XValue {
           }
         }
 
+        @Override
         public void errorOccurred(@NotNull String errorMessage) {
         }
       });
@@ -229,6 +232,7 @@ class FlexValue extends XValue {
     final FlexStackFrame.EvaluateCommand command =
       myFlexStackFrame.new EvaluateCommand(myExpression + ".length", new XDebuggerEvaluator.XEvaluationCallback() {
 
+        @Override
         public void evaluated(@NotNull XValue result) {
           if (!node.isObsolete()) {
             final String resultText = ((FlexValue)result).myResult;
@@ -240,6 +244,7 @@ class FlexValue extends XValue {
           }
         }
 
+        @Override
         public void errorOccurred(@NotNull String errorMessage) {
         }
       });
@@ -249,6 +254,7 @@ class FlexValue extends XValue {
 
   private static void setXmlListPresentation(final XValueNode node, final String value, final FlexValue flexValue) {
     node.setFullValueEvaluator(new XFullValueEvaluator() {
+      @Override
       public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
         new XmlObjectEvaluator(flexValue, callback).startEvaluation();
       }
@@ -288,6 +294,7 @@ class FlexValue extends XValue {
         }
 
         node.setFullValueEvaluator(new XFullValueEvaluator() {
+          @Override
           public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
             new XmlObjectEvaluator(flexValue, callback).startEvaluation();
           }
@@ -309,10 +316,12 @@ class FlexValue extends XValue {
     final FlexStackFrame.EvaluateCommand
       command = myFlexStackFrame.new EvaluateCommand(myExpression + ".toXMLString()", new XDebuggerEvaluator.XEvaluationCallback() {
 
+      @Override
       public void evaluated(@NotNull XValue result) {
         setResult(((FlexValue)result).myResult, node, type, true);
       }
 
+      @Override
       public void errorOccurred(@NotNull String errorMessage) {
         setResult(errorMessage, node, type, true);
       }
@@ -350,6 +359,7 @@ class FlexValue extends XValue {
       final String unquoted = quoted || doubleQuoted ? fullValue.substring(1, fullValue.length() - 1) : fullValue;
       node.setFullValueEvaluator(
         new XFullValueEvaluator() {
+          @Override
           public void startEvaluation(@NotNull XFullValueEvaluationCallback callback) {
             callback.evaluated(unquoted, isXml ? XmlObjectEvaluator.MONOSPACED_FONT : null);
           }
@@ -365,6 +375,7 @@ class FlexValue extends XValue {
       @Override
       public void setValue(@NotNull String _expression, @NotNull final XModificationCallback callback) {
         FlexStackFrame.EvaluateCommand command = myFlexStackFrame.new EvaluateCommand(myExpression + "=" + _expression, null) {
+          @Override
           protected void dispatchResult(String s) {
             super.dispatchResult(s);
             callback.valueModified();
@@ -394,6 +405,7 @@ class FlexValue extends XValue {
         final LinkedHashMap<String, FlexValue> fieldNameToFlexValueMap = new LinkedHashMap<String, FlexValue>(tokenizer.countTokens());
 
         final NodeClassInfo nodeClassInfo = ApplicationManager.getApplication().runReadAction(new NullableComputable<NodeClassInfo>() {
+          @Override
           @Nullable
           public NodeClassInfo compute() {
             final Project project = myDebugProcess.getSession().getProject();
@@ -452,6 +464,7 @@ class FlexValue extends XValue {
     myDebugProcess.sendCommand(command);
   }
 
+  @Override
   public void computeSourcePosition(@NotNull final XNavigatable navigatable) {
     if (mySourcePosition == null) {
       navigatable.setSourcePosition(null);
@@ -469,12 +482,14 @@ class FlexValue extends XValue {
       if (jsFunction != null) {
         final Ref<JSVariable> varRef = new Ref<JSVariable>();
         jsFunction.accept(new JSElementVisitor() {
+          @Override
           public void visitJSElement(final JSElement node) {
             if (varRef.isNull()) {
               node.acceptChildren(this);
             }
           }
 
+          @Override
           public void visitJSVariable(final JSVariable node) {
             if (myName.equals(node.getName())) {
               varRef.set(node);
@@ -632,6 +647,7 @@ class FlexValue extends XValue {
         node.setPresentation((Icon)null, null, "", nodeName, true);
       }
 
+      @Override
       public void computeChildren(@NotNull final XCompositeNode node) {
         for (final XValueChildrenList list : listsToWrap) {
           node.addChildren(list, false);
