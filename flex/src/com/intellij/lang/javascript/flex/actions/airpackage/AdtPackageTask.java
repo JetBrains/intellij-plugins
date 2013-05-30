@@ -2,9 +2,12 @@ package com.intellij.lang.javascript.flex.actions.airpackage;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.util.KeyValue;
 import com.intellij.util.PathUtil;
+import com.intellij.util.net.HttpConfigurable;
 
 import java.io.File;
+import java.util.List;
 
 public abstract class AdtPackageTask extends AdtTask {
 
@@ -14,6 +17,17 @@ public abstract class AdtPackageTask extends AdtTask {
   public AdtPackageTask(final Project project, final Sdk flexSdk, final String packageFilePath) {
     super(project, flexSdk);
     myPackageFilePath = packageFilePath;
+  }
+
+  protected List<String> createCommandLine() {
+    final List<String> command = super.createCommandLine();
+    final List<KeyValue<String, String>> proxySettings = HttpConfigurable.getJvmPropertiesList(false, null);
+
+    int i = 1; // after java executable
+    for (KeyValue<String, String> proxySetting : proxySettings) {
+      command.add(i++, "-D" + proxySetting.getKey() + "=" + proxySetting.getValue());
+    }
+    return command;
   }
 
   protected File getProcessDir() {
