@@ -22,7 +22,7 @@ public class RemoteFlashRunConfiguration extends RunConfigurationBase implements
 
   private static final String DEFAULT_NAME = "Remote debug";
 
-  private BCBasedRunnerParameters myRunnerParameters = new BCBasedRunnerParameters();
+  private RemoteFlashRunnerParameters myRunnerParameters = new RemoteFlashRunnerParameters();
 
   public RemoteFlashRunConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
     super(project, factory, name);
@@ -43,7 +43,7 @@ public class RemoteFlashRunConfiguration extends RunConfigurationBase implements
   @Override
   public void readExternal(final Element element) throws InvalidDataException {
     super.readExternal(element);
-    myRunnerParameters = new BCBasedRunnerParameters();
+    myRunnerParameters = new RemoteFlashRunnerParameters();
     XmlSerializer.deserializeInto(myRunnerParameters, element);
   }
 
@@ -71,7 +71,7 @@ public class RemoteFlashRunConfiguration extends RunConfigurationBase implements
   }
 
   @NotNull
-  public BCBasedRunnerParameters getRunnerParameters() {
+  public RemoteFlashRunnerParameters getRunnerParameters() {
     return myRunnerParameters;
   }
 

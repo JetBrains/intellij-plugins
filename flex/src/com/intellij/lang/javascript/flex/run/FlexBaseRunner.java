@@ -83,6 +83,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AppDescriptorForEmulator;
+import static com.intellij.lang.javascript.flex.run.RemoteFlashRunnerParameters.RemoteDebugTarget;
 
 /**
  * User: Maxim.Mossienko
@@ -125,8 +126,43 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       }
 
       if (runProfile instanceof RemoteFlashRunConfiguration) {
-        final BCBasedRunnerParameters params = ((RemoteFlashRunConfiguration)runProfile).getRunnerParameters();
+        final RemoteFlashRunnerParameters params = ((RemoteFlashRunConfiguration)runProfile).getRunnerParameters();
         final Pair<Module, FlexBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
+
+        if (params.getDebugTransport() == FlashRunnerParameters.AirMobileDebugTransport.USB) {
+          final Sdk sdk = moduleAndBC.second.getSdk();
+          assert sdk != null;
+
+          if (params.getRemoteDebugTarget() == RemoteDebugTarget.AndroidDevice) {
+            if (!AirPackageUtil.startAdbServer(project, sdk) ||
+                !AirPackageUtil.scanAndroidDevices(project, sdk, params) ||
+                !AirPackageUtil.androidForwardTcpPort(project, sdk, params.getDeviceInfo(), params.getUsbDebugPort())) {
+              return null;
+            }
+          }
+          else if (params.getRemoteDebugTarget() == RemoteDebugTarget.iOSDevice) {
+            final String adtVersion = AirPackageUtil.getAdtVersion(project, sdk);
+
+            if (!AirPackageUtil.checkAdtVersionForPackaging(project, adtVersion, "3.4", sdk.getName(),
+                                                            FlexBundle.message("air.ios.debug.via.usb.requires.3.4"))) {
+              return null;
+            }
+            if (!AirPackageUtil.scanIosDevices(project, sdk, params)) {
+              return null;
+            }
+
+            final DeviceInfo device = params.getDeviceInfo();
+            final int deviceHandle = device == null ? -1 : device.IOS_HANDLE;
+            if (deviceHandle < 0) {
+              return null;
+            }
+
+            if (!AirPackageUtil.iosForwardTcpPort(project, sdk, params.getUsbDebugPort(), deviceHandle)) {
+              return null;
+            }
+          }
+        }
+
         return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, executor, contentToReuse, env);
       }
 
@@ -218,11 +254,15 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   }
 
   private static void iosStopForwardTcpPortIfNeeded(final FlexBuildConfiguration bc, final BCBasedRunnerParameters params) {
-    if (bc.getTargetPlatform() == TargetPlatform.Mobile &&
-        params instanceof FlashRunnerParameters &&
-        ((FlashRunnerParameters)params).getMobileRunTarget() == FlashRunnerParameters.AirMobileRunTarget.iOSDevice &&
-        ((FlashRunnerParameters)params).getDebugTransport() == FlashRunnerParameters.AirMobileDebugTransport.USB) {
-
+    if (params instanceof RemoteFlashRunnerParameters &&
+        ((RemoteFlashRunnerParameters)params).getRemoteDebugTarget() == RemoteDebugTarget.iOSDevice &&
+        ((RemoteFlashRunnerParameters)params).getDebugTransport() == FlashRunnerParameters.AirMobileDebugTransport.USB) {
+      AirPackageUtil.iosStopForwardTcpPort(bc.getSdk(), ((RemoteFlashRunnerParameters)params).getUsbDebugPort());
+    }
+    else if (bc.getTargetPlatform() == TargetPlatform.Mobile &&
+             params instanceof FlashRunnerParameters &&
+             ((FlashRunnerParameters)params).getMobileRunTarget() == FlashRunnerParameters.AirMobileRunTarget.iOSDevice &&
+             ((FlashRunnerParameters)params).getDebugTransport() == FlashRunnerParameters.AirMobileDebugTransport.USB) {
       AirPackageUtil.iosStopForwardTcpPort(bc.getSdk(), ((FlashRunnerParameters)params).getUsbDebugPort());
     }
   }

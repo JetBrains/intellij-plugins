@@ -141,8 +141,6 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
   private @NotNull String myDebuggerSdkRaw = FlexSdkComboBoxWithBrowseButton.BC_SDK_KEY;
 
-  private @Nullable DeviceInfo myDeviceInfo;
-
   public boolean isOverrideMainClass() {
     return myOverrideMainClass;
   }
@@ -348,16 +346,6 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
 
   public void setDebuggerSdkRaw(final @NotNull String debuggerSdkRaw) {
     myDebuggerSdkRaw = debuggerSdkRaw;
-  }
-
-  @Transient
-  @Nullable
-  public DeviceInfo getDeviceInfo() {
-    return myDeviceInfo;
-  }
-
-  public void setDeviceInfo(@Nullable final DeviceInfo deviceInfo) {
-    myDeviceInfo = deviceInfo;
   }
 
   public void check(final Project project) throws RuntimeConfigurationError {

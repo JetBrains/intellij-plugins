@@ -6,6 +6,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.actions.ExternalTask;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
+import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -593,27 +594,27 @@ public class AirPackageUtil {
                                            final FlashRunnerParameters runnerParameters,
                                            final String ipaPath) {
     return ExternalTask.runWithProgress(new AdtTask(project, flexSdk) {
-             protected void appendAdtOptions(final List<String> command) {
-               command.add("-installApp");
-               command.add("-platform");
-               command.add("ios");
-               //command.add("-platformsdk");
-               //command.add(iOSSdkPath);
+      protected void appendAdtOptions(final List<String> command) {
+        command.add("-installApp");
+        command.add("-platform");
+        command.add("ios");
+        //command.add("-platformsdk");
+        //command.add(iOSSdkPath);
 
-               final DeviceInfo device = runnerParameters.getDeviceInfo();
-               if (device != null) {
-                 command.add("-device");
-                 command.add(String.valueOf(device.IOS_HANDLE));
-               }
+        final DeviceInfo device = runnerParameters.getDeviceInfo();
+        if (device != null) {
+          command.add("-device");
+          command.add(String.valueOf(device.IOS_HANDLE));
+        }
 
-               command.add("-package");
-               command.add(ipaPath);
-             }
-           }, FlexBundle.message("installing.0", ipaPath.substring(ipaPath.lastIndexOf('/') + 1)),
+        command.add("-package");
+        command.add(ipaPath);
+      }
+    }, FlexBundle.message("installing.0", ipaPath.substring(ipaPath.lastIndexOf('/') + 1)),
                                         FlexBundle.message("install.ios.app.title"));
   }
 
-  public static boolean scanIosDevices(final Project project, final Sdk flexSdk, final FlashRunnerParameters runnerParameters) {
+  public static boolean scanIosDevices(final Project project, final Sdk flexSdk, final BCBasedRunnerParameters runnerParameters) {
     final List<DeviceInfo> devices = DeviceInfo.getIosDevices(project, flexSdk);
 
     if (devices.isEmpty()) {
@@ -663,7 +664,7 @@ public class AirPackageUtil {
     }
   }
 
-  public static boolean scanAndroidDevices(final Project project, final Sdk flexSdk, final FlashRunnerParameters runnerParameters) {
+  public static boolean scanAndroidDevices(final Project project, final Sdk flexSdk, final BCBasedRunnerParameters runnerParameters) {
     final List<DeviceInfo> devices = DeviceInfo.getAndroidDevices(project, flexSdk);
 
     if (devices.isEmpty()) {

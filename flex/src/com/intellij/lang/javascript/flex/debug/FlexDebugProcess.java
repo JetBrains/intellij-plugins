@@ -21,10 +21,7 @@ import com.intellij.lang.javascript.flex.flexunit.SwfPolicyFileConnection;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
 import com.intellij.lang.javascript.flex.projectStructure.options.FlexProjectRootsUtil;
-import com.intellij.lang.javascript.flex.run.BCBasedRunnerParameters;
-import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
-import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
-import com.intellij.lang.javascript.flex.run.LauncherParameters;
+import com.intellij.lang.javascript.flex.run.*;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkComboBoxWithBrowseButton;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType;
@@ -41,7 +38,10 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.LibraryOrderEntry;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -88,6 +88,7 @@ import java.util.*;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileDebugTransport;
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
+import static com.intellij.lang.javascript.flex.run.RemoteFlashRunnerParameters.RemoteDebugTarget;
 
 /**
  * @author Maxim.Mossienko
@@ -108,7 +109,7 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private final Module myModule;
   private final FlexBuildConfiguration myBC;
-  private final boolean myFlexUnit;
+  private final BCBasedRunnerParameters myRunnerParameters;
   protected final String myAppSdkHome;
   private final String myDebuggerSdkHome;
   private final String myDebuggerVersion;
@@ -179,7 +180,6 @@ public class FlexDebugProcess extends XDebugProcess {
 
   private boolean suspended;
   private boolean fdbWaitingForPlayerStateReached;
-  private final boolean connectToRunningFlashPlayerMode;
   private boolean startupDone;
   private ConsoleView myConsoleView;
   private FlexUnitConnection myFlexUnitConnection;
@@ -190,9 +190,10 @@ public class FlexDebugProcess extends XDebugProcess {
                           final BCBasedRunnerParameters params) throws IOException {
     super(session);
     myModule = ModuleManager.getInstance(session.getProject()).findModuleByName(params.getModuleName());
-    LOG.assertTrue(myModule != null);
     myBC = bc;
-    myFlexUnit = params instanceof FlexUnitRunnerParameters;
+    myRunnerParameters = params;
+
+    LOG.assertTrue(myModule != null);
 
     final Sdk sdk = bc.getSdk();
     LOG.assertTrue(sdk != null);
@@ -217,10 +218,17 @@ public class FlexDebugProcess extends XDebugProcess {
       fdbLaunchCommand.add(String.valueOf(((FlashRunnerParameters)params).getUsbDebugPort()));
     }
 
+    if (params instanceof RemoteFlashRunnerParameters &&
+        (((RemoteFlashRunnerParameters)params).getRemoteDebugTarget() == RemoteDebugTarget.AndroidDevice ||
+         ((RemoteFlashRunnerParameters)params).getRemoteDebugTarget() == RemoteDebugTarget.iOSDevice) &&
+        ((RemoteFlashRunnerParameters)params).getDebugTransport() == AirMobileDebugTransport.USB) {
+      fdbLaunchCommand.add("-p");
+      fdbLaunchCommand.add(String.valueOf(((RemoteFlashRunnerParameters)params).getUsbDebugPort()));
+    }
+
     fdbProcess = launchFdb(fdbLaunchCommand);
 
     if (params instanceof FlashRunnerParameters) {
-      connectToRunningFlashPlayerMode = false;
       final FlashRunnerParameters appParams = (FlashRunnerParameters)params;
 
       switch (bc.getTargetPlatform()) {
@@ -260,7 +268,6 @@ public class FlexDebugProcess extends XDebugProcess {
       }
     }
     else if (params instanceof FlexUnitRunnerParameters) {
-      connectToRunningFlashPlayerMode = false;
       final FlexUnitRunnerParameters flexUnitParams = (FlexUnitRunnerParameters)params;
       openFlexUnitConnections(flexUnitParams.getSocketPolicyPort(), flexUnitParams.getPort());
       if (bc.getTargetPlatform() == TargetPlatform.Web) {
@@ -271,7 +278,7 @@ public class FlexDebugProcess extends XDebugProcess {
       }
     }
     else {
-      connectToRunningFlashPlayerMode = true;
+      // Flash Remote Debug run configuration
       sendCommand(new StartDebuggingCommand());
     }
 
@@ -289,7 +296,7 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   public boolean isFlexUnit() {
-    return myFlexUnit;
+    return myRunnerParameters instanceof FlexUnitRunnerParameters;
   }
 
   public static Sdk getDebuggerSdk(final String sdkRaw, final Sdk bcSdk) {
@@ -807,7 +814,7 @@ public class FlexDebugProcess extends XDebugProcess {
     }
 
     // [3]
-    final GlobalSearchScope bcScopeBase = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, myFlexUnit);
+    final GlobalSearchScope bcScopeBase = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, isFlexUnit());
     final GlobalSearchScope bcScope = uniteWithLibrarySourcesOfBC(bcScopeBase, myModule, myBC, new THashSet<FlexBuildConfiguration>());
 
     Collection<VirtualFile> files = getFilesByName(getSession().getProject(), bcScope, fileName);
@@ -827,7 +834,7 @@ public class FlexDebugProcess extends XDebugProcess {
   @Nullable
   private VirtualFile findFile(final String fileName) {
     // [4]
-    final GlobalSearchScope bcScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, myFlexUnit);
+    final GlobalSearchScope bcScope = FlexUtils.getModuleWithDependenciesAndLibrariesScope(myModule, myBC, isFlexUnit());
     Collection<VirtualFile> files = getFilesByName(getSession().getProject(), bcScope, fileName);
 
     if (files.isEmpty()) {
@@ -1553,19 +1560,25 @@ public class FlexDebugProcess extends XDebugProcess {
   }
 
   protected void notifyFdbWaitingForPlayerStateReached() {
-    if (connectToRunningFlashPlayerMode) {
+    if (myRunnerParameters instanceof RemoteFlashRunnerParameters) {
+      final RemoteDebugTarget remoteDebugTarget = ((RemoteFlashRunnerParameters)myRunnerParameters).getRemoteDebugTarget();
+      final AirMobileDebugTransport mobileDebugTransport = ((RemoteFlashRunnerParameters)myRunnerParameters).getDebugTransport();
+      final int usbDebugPort = ((RemoteFlashRunnerParameters)myRunnerParameters).getUsbDebugPort();
+
+      final String message;
+
+      if (remoteDebugTarget == RemoteDebugTarget.Computer) {
+        message = FlexBundle.message("remote.flash.debug.computer", FlexUtils.getOwnIpAddress());
+      }
+      else {
+        final String device = remoteDebugTarget == RemoteDebugTarget.AndroidDevice ? "Android" : "iOS";
+        message = mobileDebugTransport == AirMobileDebugTransport.Network
+                  ? FlexBundle.message("remote.flash.debug.mobile.network", device, FlexUtils.getOwnIpAddress())
+                  : FlexBundle.message("remote.flash.debug.mobile.usb", device, String.valueOf(usbDebugPort));
+      }
       ApplicationManager.getApplication().invokeLater(new Runnable() {
         public void run() {
-          final ToolWindowManager manager = ToolWindowManager.getInstance(getSession().getProject());
-
-          final HyperlinkAdapter h = new HyperlinkAdapter() {
-            protected void hyperlinkActivated(final HyperlinkEvent e) {
-              manager.notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, FlexBundle.message("remote.flash.debug.details",
-                                                                                               FlexUtils.getOwnIpAddress()));
-            }
-          };
-
-          manager.notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, FlexBundle.message("remote.flash.debugger.waiting"), null, h);
+          ToolWindowManager.getInstance(getSession().getProject()).notifyByBalloon(ToolWindowId.DEBUG, MessageType.INFO, message);
         }
       });
     }
@@ -1639,11 +1652,9 @@ public class FlexDebugProcess extends XDebugProcess {
       else {
         startupDone = (s.contains("Player connected; session starting."));
         if (startupDone) {
-          if (connectToRunningFlashPlayerMode) {
-            final Balloon balloon = ToolWindowManager.getInstance(getSession().getProject()).getToolWindowBalloon(ToolWindowId.DEBUG);
-            if (balloon != null) {
-              balloon.hide();
-            }
+          final Balloon balloon = ToolWindowManager.getInstance(getSession().getProject()).getToolWindowBalloon(ToolWindowId.DEBUG);
+          if (balloon != null) {
+            balloon.hide();
           }
 
           getSession().rebuildViews();

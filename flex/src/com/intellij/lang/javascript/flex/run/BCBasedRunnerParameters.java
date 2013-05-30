@@ -4,6 +4,7 @@ import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.flex.FlexCommonBundle;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.actions.airpackage.DeviceInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfigurationManager;
 import com.intellij.openapi.module.Module;
@@ -12,13 +13,17 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 public class BCBasedRunnerParameters implements Cloneable {
   @NotNull private String myModuleName = "";
   @NotNull private String myBCName = "";
+
+  @Nullable private DeviceInfo myDeviceInfo;
 
   @NotNull
   public String getModuleName() {
@@ -36,6 +41,16 @@ public class BCBasedRunnerParameters implements Cloneable {
 
   public void setBCName(@NotNull final String BCName) {
     myBCName = BCName;
+  }
+
+  @Transient
+  @Nullable
+  public DeviceInfo getDeviceInfo() {
+    return myDeviceInfo;
+  }
+
+  public void setDeviceInfo(@Nullable final DeviceInfo deviceInfo) {
+    myDeviceInfo = deviceInfo;
   }
 
   public Pair<Module, FlexBuildConfiguration> checkAndGetModuleAndBC(final Project project) throws RuntimeConfigurationError {
