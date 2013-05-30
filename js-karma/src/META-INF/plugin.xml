@@ -18,6 +18,15 @@
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <configurationType implementation="com.intellij.javascript.karma.execution.KarmaConfigurationType"/>
     <programRunner implementation="com.intellij.javascript.karma.execution.KarmaRunProgramRunner"/>
+    <psi.referenceContributor language="JavaScript" implementation="com.intellij.javascript.karma.config.KarmaConfigReferenceContributor"/>
+    <localInspection groupPath="JavaScript"
+                     groupName="Unit testing"
+                     displayName="Karma configuration file"
+                     shortName="KarmaConfigFile"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     implementationClass="com.intellij.javascript.karma.config.KarmaConfigFileInspection"
+    />
   </extensions>
 
 </idea-plugin>
