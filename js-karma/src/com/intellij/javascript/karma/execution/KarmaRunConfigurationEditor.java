@@ -197,7 +197,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     setTextAndAddToHistory(myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent(), karmaNodePackageDir);
 
     KarmaRunSettings runSettings = runConfiguration.getRunSetting();
-    myConfigPathTextFieldWithBrowseButton.getChildComponent().setText(runSettings.getConfigPath());
+    setTextAndAddToHistory(myConfigPathTextFieldWithBrowseButton.getChildComponent(), runSettings.getConfigPath());
   }
 
   private static void setTextAndAddToHistory(@NotNull TextFieldWithHistory textFieldWithHistory, @Nullable String text) {
