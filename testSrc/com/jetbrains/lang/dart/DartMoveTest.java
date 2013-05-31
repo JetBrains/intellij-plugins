@@ -26,20 +26,19 @@ public class DartMoveTest extends LightPlatformCodeInsightFixtureTestCase {
 
   //Both names are relative to root directory
   private void doTest(String toMove, final String targetDirName) throws Exception {
-    myFixture.copyDirectoryToProject(getTestName(true) + "/before", "");
     doTest(new String[]{toMove}, targetDirName);
   }
 
   //Both names are relative to root directory
   private void doTest(final String[] toMove, final String targetDirName) throws Exception {
-
+    myFixture.copyDirectoryToProject(getTestName(true) + "/before", getTestName(true));
     Collection<PsiElement> files = new ArrayList<PsiElement>();
     for (String s : toMove) {
-      final VirtualFile child = myFixture.findFileInTempDir(s);
+      final VirtualFile child = myFixture.findFileInTempDir(getTestName(true) + "/" + s);
       assertNotNull("Neither class nor file " + s + " not found", child);
       files.add(myFixture.getPsiManager().findFile(child));
     }
-    final VirtualFile child1 = myFixture.findFileInTempDir(targetDirName);
+    final VirtualFile child1 = myFixture.findFileInTempDir(getTestName(true) + "/" + targetDirName);
     assertNotNull("Target dir " + targetDirName + " not found", child1);
     final PsiDirectory targetDirectory = myFixture.getPsiManager().findDirectory(child1);
     assertNotNull(targetDirectory);
@@ -48,15 +47,15 @@ public class DartMoveTest extends LightPlatformCodeInsightFixtureTestCase {
                                         false, true, null, null).run();
     FileDocumentManager.getInstance().saveAllDocuments();
 
-    VirtualFile after = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getTestName(true) + "/after");
-    PlatformTestUtil.assertDirectoriesEqual(after, myFixture.findFileInTempDir(""));
-  }
-
-  public void testMoveFile1() throws Exception {
-    doTest("Foo.dart", "bar");
+    VirtualFile expected = LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + getTestName(true) + "/after");
+    PlatformTestUtil.assertDirectoriesEqual(expected, myFixture.findFileInTempDir(getTestName(true)));
   }
 
   public void testMoveFile2() throws Exception {
     doTest("bar/Foo.dart", "");
+  }
+
+  public void testMoveFile1() throws Exception {
+    doTest("Foo.dart", "bar");
   }
 }
