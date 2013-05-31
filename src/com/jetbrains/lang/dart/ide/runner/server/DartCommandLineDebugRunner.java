@@ -17,7 +17,6 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-import com.jetbrains.lang.dart.ide.runner.base.DartBreakpointType;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +44,7 @@ public class DartCommandLineDebugRunner extends DefaultProgramRunner {
                                            ExecutionEnvironment env) throws ExecutionException {
     final DartCommandLineRunConfiguration configuration = (DartCommandLineRunConfiguration)env.getRunProfile();
     FileDocumentManager.getInstance().saveAllDocuments();
-    final Module module = configuration.getConfigurationModule().getModule();
+    final Module module = configuration.getModule();
 
     final String filePath = configuration.getFilePath();
     assert filePath != null;
@@ -67,7 +66,7 @@ public class DartCommandLineDebugRunner extends DefaultProgramRunner {
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
           try {
-            return new DartCommandLineDebugProcess(session, debuggingPort, executionResult, DartBreakpointType.class);
+            return new DartCommandLineDebugProcess(session, debuggingPort, executionResult);
           }
           catch (IOException e) {
             throw new ExecutionException(e.getMessage(), e);

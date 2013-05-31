@@ -55,7 +55,7 @@ public class DartCommandLineRunner extends DefaultProgramRunner {
                                            RunContentDescriptor contentToReuse,
                                            ExecutionEnvironment env) throws ExecutionException {
     final DartCommandLineRunConfiguration configuration = (DartCommandLineRunConfiguration)env.getRunProfile();
-    final Module module = configuration.getConfigurationModule().getModule();
+    final Module module = configuration.getModule();
 
     final String filePath = configuration.getFilePath();
     assert filePath != null;

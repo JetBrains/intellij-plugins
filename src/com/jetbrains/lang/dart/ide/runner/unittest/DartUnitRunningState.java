@@ -12,16 +12,12 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
-import com.intellij.execution.testframework.Printer;
 import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.autotest.ToggleAutoTestAction;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
-import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
-import com.intellij.execution.testframework.ui.TestsOutputConsolePrinter;
 import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -39,15 +35,13 @@ import com.jetbrains.lang.dart.ide.runner.DartStackTraceMessageFiler;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.URL;
-import java.util.Scanner;
-import java.util.regex.Pattern;
 
 /**
  * @author: Fedor.Korotkov
@@ -157,7 +151,9 @@ public class DartUnitRunningState extends CommandLineState {
   }
 
   private void setupUserProperties(GeneralCommandLine commandLine) throws ExecutionException {
-    commandLine.getEnvironment().put("com.google.dart.sdk", myDartSettings.getSdkPath());
+    if (myDartSettings != null) {
+      commandLine.getEnvironment().put("com.google.dart.sdk", myDartSettings.getSdkPath());
+    }
 
     commandLine.addParameter("--ignore-unrecognized-flags");
 
@@ -214,19 +210,18 @@ public class DartUnitRunningState extends CommandLineState {
   private String getUnitPath(String path) {
     VirtualFile libRoot = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(path));
     VirtualFile packagesFolder = DartResolveUtil.findPackagesFolder(libRoot, getEnvironment().getProject());
-    if (packagesFolder != null && packagesFolder.findChild("unittest") != null) {
+    if (myDartSettings == null || (packagesFolder != null && packagesFolder.findChild("unittest") != null)) {
       return "package:unittest/unittest.dart";
     }
     return pathToDartUrl(StringUtil.notNullize(myDartSettings.getSdkPath()) + "/pkg/unittest/unittest.dart");
   }
 
-  private static String pathToDartUrl(String path) {
-    return VfsUtilCore.pathToUrl(path).replace("file://", "file:///");
+  private static String pathToDartUrl(@NonNls @NotNull String path) {
+    return VfsUtilCore.pathToUrl(path);
   }
 
   private static String getRunnerCode() throws IOException {
     final URL resource = ResourceUtil.getResource(DartUnitRunningState.class, "/config", UNIT_CONFIG_FILE_NAME);
     return ResourceUtil.loadText(resource);
   }
-
 }

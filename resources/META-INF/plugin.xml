@@ -1,4 +1,5 @@
 <idea-plugin version="2">
+  <id>com.jetbrains.lang.dart</id>
   <name>Dart</name>
   <description>Support for Dart programming language</description>
   <version>999.999</version>
@@ -135,6 +136,10 @@
     </component>
   </project-components>
 
+  <extensionPoints>
+    <extensionPoint name="debugger.breakpoint.class.provider" interface="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineBreakpointTypeProvider"/>
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <fileTypeFactory implementation="com.jetbrains.lang.dart.DartFileTypeFactory"/>
@@ -234,6 +239,15 @@
 
     <codeInspection.InspectionExtension id="dartGlobalInspection"
                                         implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartInspectionExtensionsFactory"/>
+
+    <!--command line-->
+    <moduleConfigurationEditorProvider
+        implementation="com.jetbrains.lang.dart.ide.projectStructure.DartModuleConfigurationEditorProvider"/>
+    <configurationType implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfigurationType"/>
+    <configurationProducer implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer"/>
+
+    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunner"/>
+    <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugRunner"/>
 
     <!--unit test-->
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.unittest.DartUnitRunConfigurationType"/>

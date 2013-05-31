@@ -17,7 +17,6 @@ import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpointHandler;
 import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
-import com.intellij.xdebugger.breakpoints.XBreakpointType;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider;
 import com.jetbrains.lang.dart.ide.runner.base.DartDebuggerEditorsProvider;
@@ -99,12 +98,11 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
   public DartCommandLineDebugProcess(@NotNull XDebugSession session,
                                      int debuggingPort,
-                                     ExecutionResult executionResult,
-                                     Class<? extends XBreakpointType<XLineBreakpoint<XBreakpointProperties>, ?>> breakpointTypeClass)
+                                     ExecutionResult executionResult)
     throws IOException {
     super(session);
 
-    myBreakpointsHandler = new DartCommandLineBreakpointsHandler(this, breakpointTypeClass);
+    myBreakpointsHandler = new DartCommandLineBreakpointsHandler(this);
     myExecutionResult = executionResult;
     startCommandProcessingThread(debuggingPort);
   }
@@ -249,8 +247,43 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
 
   private void handlePaused(JsonElement paramsElement) {
     final JsonArray callFrames = paramsElement.getAsJsonObject().getAsJsonArray("callFrames");
-    List<DartStackFrame> frames = DartStackFrame.fromJson(this, callFrames);
-    getSession().positionReached(new DartSuspendContext(this, frames));
+    if (callFrames != null) {
+      final List<DartStackFrame> frames = DartStackFrame.fromJson(this, callFrames);
+      DartStackFrame.requestLines(this, frames, new Runnable() {
+        @Override
+        public void run() {
+          getSession().positionReached(new DartSuspendContext(DartCommandLineDebugProcess.this, frames));
+        }
+      });
+    }
+    else {
+      sendSimpleCommand("getStackTrace", new AbstractResponseToRequestHandler<JsonResponse>() {
+        @Override
+        public boolean processResponse(JsonResponse response) {
+          JsonObject result = response.getJsonObject().getAsJsonObject().getAsJsonObject("result");
+          final JsonArray callFrames = result == null ? null : result.getAsJsonArray("callFrames");
+          final List<DartStackFrame> frames = callFrames == null ?
+                                              new ArrayList<DartStackFrame>() :
+                                              DartStackFrame.fromJson(DartCommandLineDebugProcess.this, callFrames);
+          DartStackFrame.requestLines(DartCommandLineDebugProcess.this, frames, new Runnable() {
+            @Override
+            public void run() {
+              getSession().positionReached(new DartSuspendContext(DartCommandLineDebugProcess.this, frames));
+            }
+          });
+          return true;
+        }
+      });
+    }
+  }
+
+  private void initLines(List<DartStackFrame> frames, Runnable runnable) {
+    for (DartStackFrame stackFrame : frames) {
+      JsonObject command = getCommandObject("getLineNumberTable");
+      command.addProperty("url", stackFrame.getFileUrl());
+      sendCommand(command);
+    }
+    runnable.run();
   }
 
   private void sendEnableLibrary(int id, @Nullable AbstractResponseToRequestHandler<JsonResponse> requestHandler) {
@@ -267,10 +300,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
   private void handleBreakpointResolved(JsonElement paramsElement) {
     final int breakpointId = getBreakpointId(paramsElement);
     XLineBreakpoint<XBreakpointProperties> breakpoint = myBreakpointsHandler.getBreakpointById(breakpointId);
-    if (breakpoint != null) {
-      getSession().breakpointReached(breakpoint, null, new DartSuspendContext(this));
-    }
-    else {
+    if (breakpoint == null) {
       resume();
     }
   }
@@ -291,7 +321,7 @@ public class DartCommandLineDebugProcess extends XDebugProcess {
     return myBreakpointsHandler.getBreakpointHandlers();
   }
 
-  private static JsonObject getCommandObject(String commandName) {
+  public static JsonObject getCommandObject(String commandName) {
     JsonObject command = new JsonObject();
     command.addProperty("command", commandName);
     return command;

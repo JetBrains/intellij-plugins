@@ -2,9 +2,6 @@ package com.jetbrains.lang.dart.ide.runner.server.ui;
 
 import com.intellij.ide.util.TreeFileChooser;
 import com.intellij.ide.util.TreeFileChooserFactory;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
@@ -13,11 +10,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.ui.RawCommandLineEditor;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.DartFileType;
-import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfiguration;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +28,6 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   private TextFieldWithBrowseButton myFileField;
   private RawCommandLineEditor myVMOptions;
   private RawCommandLineEditor myArguments;
-  private JComboBox myComboModules;
 
   public DartCommandLineConfigurationEditorForm(final Project project) {
     myFileField.getButton().addActionListener(new ActionListener() {
@@ -65,26 +59,6 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     myFileField.setText(FileUtil.toSystemDependentName(StringUtil.notNullize(configuration.getFilePath())));
     myArguments.setText(StringUtil.notNullize(configuration.getArguments()));
     myVMOptions.setText(StringUtil.notNullize(configuration.getVMOptions()));
-
-    myComboModules.removeAllItems();
-
-    final Module[] modules = ModuleManager.getInstance(configuration.getProject()).getModules();
-    for (final Module module : modules) {
-      if (ModuleType.get(module) instanceof DartModuleTypeBase) {
-        myComboModules.addItem(module);
-      }
-    }
-    myComboModules.setSelectedItem(configuration.getConfigurationModule().getModule());
-
-    myComboModules.setRenderer(new ListCellRendererWrapper() {
-      @Override
-      public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        if (value instanceof Module) {
-          final Module module = (Module)value;
-          setText(module.getName());
-        }
-      }
-    });
   }
 
   @Override
@@ -92,11 +66,6 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
     configuration.setFilePath(StringUtil.nullize(FileUtil.toSystemIndependentName(myFileField.getText()), true));
     configuration.setArguments(StringUtil.nullize(myArguments.getText(), true));
     configuration.setVMOptions(StringUtil.nullize(myVMOptions.getText(), true));
-    configuration.setModule(getSelectedModule());
-  }
-
-  private Module getSelectedModule() {
-    return (Module)myComboModules.getSelectedItem();
   }
 
   @NotNull

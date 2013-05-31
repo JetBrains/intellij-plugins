@@ -39,7 +39,7 @@ public class DartCompiler implements CompileTask {
   }
 
   private static boolean run(CompileContext context, DartCommandLineRunConfiguration configuration) {
-    final Module module = configuration.getConfigurationModule().getModule();
+    final Module module = configuration.getModule();
     if (module == null) {
       context.addMessage(CompilerMessageCategory.ERROR,
                          DartBundle.message("no.module.for.run.configuration", configuration.getName()), null, -1, -1);
@@ -94,7 +94,8 @@ public class DartCompiler implements CompileTask {
     }
 
     final String outputUrl = CompilerModuleExtension.getInstance(module).getCompilerOutputUrl();
-    final DartAnalyzerDriver analyzerDriver = new DartAnalyzerDriver(module.getProject(), analyzerExecutable, sdk.getHomePath(), libraryRoot);
+    final DartAnalyzerDriver analyzerDriver =
+      new DartAnalyzerDriver(module.getProject(), analyzerExecutable, sdk.getHomePath(), libraryRoot);
     List<AnalyzerMessage> messages = analyzerDriver.analyze();
 
     if (messages != null && messages.isEmpty()) {

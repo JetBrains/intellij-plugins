@@ -82,7 +82,7 @@ public class DartUnitDebugRunner extends DefaultProgramRunner {
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
           try {
-            return new DartCommandLineDebugProcess(session, debuggingPort, executionResult, breakPointType);
+            return new DartCommandLineDebugProcess(session, debuggingPort, executionResult);
           }
           catch (IOException e) {
             throw new ExecutionException(e.getMessage(), e);

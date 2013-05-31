@@ -34,7 +34,7 @@ public class DartExecutionStack extends XExecutionStack {
   @Override
   public void computeStackFrames(final int firstFrameIndex, final XStackFrameContainer container) {
     if (!myStackFrames.isEmpty()) {
-      addStackFrames(container, firstFrameIndex);
+      addStackFrames(container, firstFrameIndex - 1);
       return;
     }
     myDebugProcess.sendSimpleCommand("getStackTrace", new AbstractResponseToRequestHandler<JsonResponse>() {
@@ -44,8 +44,9 @@ public class DartExecutionStack extends XExecutionStack {
           final JsonObject result = response.getJsonObject().getAsJsonObject("result");
           myStackFrames.clear();
           myStackFrames.addAll(DartStackFrame.fromJson(myDebugProcess, result.getAsJsonArray("callFrames")));
+          DartStackFrame.requestLines(myDebugProcess, myStackFrames, null);
         }
-        addStackFrames(container, firstFrameIndex);
+        addStackFrames(container, firstFrameIndex - 1);
         return true;
       }
     });

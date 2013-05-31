@@ -6,7 +6,6 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.configurations.LocatableConfiguration;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -59,7 +58,6 @@ public class DartCommandLineRuntimeConfigurationProducer extends RuntimeConfigur
       return false;
     }
     configuration.setFilePath(FileUtil.toSystemIndependentName(virtualFile.getPath()));
-    configuration.setModule(ModuleUtilCore.findModuleForFile(virtualFile, psiFile.getProject()));
     return true;
   }
 

@@ -2,35 +2,34 @@ package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.*;
+import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.configurations.RuntimeConfiguration;
+import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.WebModuleTypeBase;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
 import com.jetbrains.lang.dart.ide.runner.server.ui.DartCommandLineConfigurationEditorForm;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-
 /**
  * @author: Fedor.Korotkov
  */
-public class DartCommandLineRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule>
+public class DartCommandLineRunConfiguration extends RuntimeConfiguration
   implements RunConfigurationWithSuppressedDefaultRunAction {
-  private final DartCommandLineRunConfigurationType myConfigurationType;
   @Nullable
   private String myFilePath = null;
   @Nullable
@@ -39,8 +38,7 @@ public class DartCommandLineRunConfiguration extends ModuleBasedConfiguration<Ru
   private String myArguments = null;
 
   public DartCommandLineRunConfiguration(String name, Project project, DartCommandLineRunConfigurationType configurationType) {
-    super(name, new RunConfigurationModule(project), configurationType.getConfigurationFactories()[0]);
-    myConfigurationType = configurationType;
+    super(name, project, configurationType.getConfigurationFactories()[0]);
   }
 
   @Nullable
@@ -70,23 +68,6 @@ public class DartCommandLineRunConfiguration extends ModuleBasedConfiguration<Ru
     myArguments = arguments;
   }
 
-  @Override
-  public Collection<Module> getValidModules() {
-    Module[] modules = ModuleManager.getInstance(getProject()).getModules();
-    return ContainerUtil.filter(modules, new Condition<Module>() {
-      @Override
-      public boolean value(Module module) {
-        ModuleType moduleType = ModuleType.get(module);
-        return moduleType instanceof DartModuleTypeBase || moduleType instanceof WebModuleTypeBase;
-      }
-    });
-  }
-
-  @Override
-  protected ModuleBasedConfiguration createInstance() {
-    return new DartCommandLineRunConfiguration(getName(), getProject(), myConfigurationType);
-  }
-
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new DartCommandLineConfigurationEditorForm(getProject());
   }
@@ -94,11 +75,33 @@ public class DartCommandLineRunConfiguration extends ModuleBasedConfiguration<Ru
   @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
     super.checkConfiguration();
-    final RunConfigurationModule configurationModule = getConfigurationModule();
-    final Module module = configurationModule.getModule();
+    final Module module = findModule();
     if (module == null) {
       throw new RuntimeConfigurationException(DartBundle.message("dart.run.no.module", getName()));
     }
+  }
+
+  @Nullable
+  public Module getModule() {
+    try {
+      return findModule();
+    }
+    catch (RuntimeConfigurationException e) {
+      return null;
+    }
+  }
+
+  @Nullable
+  private Module findModule() throws RuntimeConfigurationException {
+    if (myFilePath == null) {
+      return null;
+    }
+    String fileUrl = VfsUtilCore.pathToUrl(FileUtil.toSystemIndependentName(myFilePath));
+    VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(fileUrl);
+    if (file == null) {
+      throw new RuntimeConfigurationException("Can't find module for " + myFilePath);
+    }
+    return ModuleUtilCore.findModuleForFile(file, getProject());
   }
 
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
@@ -108,13 +111,11 @@ public class DartCommandLineRunConfiguration extends ModuleBasedConfiguration<Ru
 
   public void writeExternal(final Element element) throws WriteExternalException {
     super.writeExternal(element);
-    writeModule(element);
     XmlSerializer.serializeInto(this, element);
   }
 
   public void readExternal(final Element element) throws InvalidDataException {
     super.readExternal(element);
-    readModule(element);
     XmlSerializer.deserializeInto(this, element);
   }
 }
