@@ -25,13 +25,17 @@ function addBrowserErrorNode(tree, browser, error) {
   browserErrorNode.writeFinishMessage();
 }
 
-function getOrCreateLowerSuiteNode(browserNode, suiteNames) {
+function getOrCreateLowerSuiteNode(browserNode, suiteNames, write) {
   var node = browserNode
     , len = suiteNames.length;
   for (var i = 0; i < len; i++) {
     var suiteName = suiteNames[i];
     if (suiteName == null) {
-      throw Error("Suite name is null!");
+      suiteNames.splice(i, 1);
+      var message = "[Karma bug found] Suite name is null. Please file an issue in the https://github.com/karma-runner/karma/issues";
+      console.error(message);
+      write(message + '\n');
+      continue;
     }
     var nextNode = node.lookupMap[suiteName];
     if (!nextNode) {
@@ -90,7 +94,7 @@ function IntellijReporter(formatError) {
 
   this.onSpecComplete = function (browser, result) {
     var browserNode = getOrCreateBrowserNode(tree, browser);
-    var suiteNode = getOrCreateLowerSuiteNode(browserNode, result.suite);
+    var suiteNode = getOrCreateLowerSuiteNode(browserNode, result.suite, write);
     var specNode = createSpecNode(suiteNode, result.suite, result.description);
     var status;
     if (result.success) {
