@@ -17,6 +17,7 @@ import com.intellij.lang.javascript.flex.AddImportECMAScriptClassOrFunctionActio
 import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
+import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
@@ -1390,5 +1391,29 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       return !targetClass.isInterface();
     }
     return true;
+  }
+
+  @Override
+  protected void checkFunction(JSCallExpression node, PsiElement element) {
+    super.checkFunction(node, element);
+    if (element instanceof JSClass) {
+      if (node instanceof JSNewExpression || node.getMethodExpression() instanceof JSSuperExpression) {
+        final JSArgumentList argumentList = node.getArgumentList();
+        final JSExpression[] expressions = argumentList != null ? argumentList.getArguments() : JSExpression.EMPTY_ARRAY;
+        if (expressions.length > 0) {
+          final CreateConstructorFix fix = CreateConstructorFix.createIfApplicable(node);
+          registerProblem(
+            ValidateTypesUtil.getPlaceForSignatureProblem(node, argumentList),
+            JSBundle.message("javascript.invalid.number.of.parameters", "0"),
+            ValidateTypesUtil.getHighlightTypeForTypeOrSignatureProblem(node), myHolder, JSCheckFunctionSignaturesInspection.SHORT_NAME,
+            fix != null ? new LocalQuickFix[]{fix} : LocalQuickFix.EMPTY_ARRAY);
+          return;
+        }
+        checkCallParameters(node, null);
+      }
+      else {
+        ValidateTypesUtil.reportProblemIfNotOneParameter(node, myHolder);
+      }
+    }
   }
 }
