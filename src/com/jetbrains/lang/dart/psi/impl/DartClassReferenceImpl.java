@@ -95,7 +95,7 @@ public class DartClassReferenceImpl extends DartExpressionImpl implements DartRe
       }
     }
 
-    if(this instanceof DartAsExpression) {
+    if (this instanceof DartAsExpression) {
       return DartResolveUtil.resolveClassByType(((DartAsExpression)this).getType());
     }
 

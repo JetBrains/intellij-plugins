@@ -344,7 +344,10 @@ public class DartSpacingProcessor {
     }
 
     boolean isBraces = type1 == LBRACE || type2 == RBRACE;
-    if ((isBraces && elementType != NAMED_FORMAL_PARAMETERS) || BLOCKS.contains(type1) || FUNCTION_DEFINITION.contains(type1) || COMMENTS.contains(type1)) {
+    if ((isBraces && elementType != NAMED_FORMAL_PARAMETERS) ||
+        BLOCKS.contains(type1) ||
+        FUNCTION_DEFINITION.contains(type1) ||
+        COMMENTS.contains(type1)) {
       return addLineBreak();
     }
 

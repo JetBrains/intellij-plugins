@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class DartLanguageInjector implements LanguageInjector {
   @Override
   public void getLanguagesToInject(@NotNull PsiLanguageInjectionHost host, @NotNull InjectedLanguagePlaces injectionPlacesRegistrar) {
-    if(host instanceof DartEmbeddedContent) {
+    if (host instanceof DartEmbeddedContent) {
       injectionPlacesRegistrar.addPlace(
         DartLanguage.INSTANCE,
         TextRange.create(0, host.getTextLength()),

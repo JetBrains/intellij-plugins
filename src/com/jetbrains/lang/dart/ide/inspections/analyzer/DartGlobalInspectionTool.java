@@ -37,9 +37,9 @@ public class DartGlobalInspectionTool extends GlobalInspectionTool {
   }
 
   protected void processMessage(AnalyzerMessage message,
-                              GlobalInspectionContext globalContext,
-                              InspectionManager manager,
-                              ProblemDescriptionsProcessor problemDescriptionsProcessor) {
+                                GlobalInspectionContext globalContext,
+                                InspectionManager manager,
+                                ProblemDescriptionsProcessor problemDescriptionsProcessor) {
     final PsiFile psiFile = PsiManager.getInstance(globalContext.getProject()).findFile(message.getVirtualFile());
     final ProblemDescriptor descriptor = computeProblemDescriptor(manager, psiFile, message);
     if (descriptor != null && psiFile != null) {

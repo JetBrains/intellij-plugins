@@ -147,7 +147,7 @@ public class DartSettingsUI {
         }
         else {
           mySetupLabel.setText(
-              DartBundle.message("dart.sdk.setup", DartSdkUtil.getSdkVersion(FileUtil.toSystemDependentName(myPathChooser.getText())))
+            DartBundle.message("dart.sdk.setup", DartSdkUtil.getSdkVersion(FileUtil.toSystemDependentName(myPathChooser.getText())))
           );
           mySetupScopeLabel.setHyperlinkText(DartBundle.message("dart.sdk.edit.usage.scope"));
         }

@@ -137,7 +137,7 @@ public class DartControlFlow {
 
     @Override
     public void visitElement(PsiElement element) {
-      if(element instanceof DartType) {
+      if (element instanceof DartType) {
         // ignore types
         return;
       }

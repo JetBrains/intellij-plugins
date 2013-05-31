@@ -15,6 +15,7 @@ public class DartRenameInHtmlTest extends CodeInsightFixtureTestCase {
   public void doTest(String newName, String... additionalFiles) {
     myFixture.testRename(getTestName(false) + ".html", getTestName(false) + "After.html", newName, additionalFiles);
   }
+
   public void testLibrary1() throws Throwable {
     doTest("otherLib", "myLibPart.dart");
     myFixture.checkResultByFile("myLibPart.dart", "myLibPartAfter.dart", true);

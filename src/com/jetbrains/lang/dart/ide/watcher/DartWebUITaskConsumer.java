@@ -59,7 +59,7 @@ public class DartWebUITaskConsumer extends BackgroundTaskConsumer {
     super.additionalConfiguration(project, file, options);
 
     VirtualFile buildFile = file != null ? file.getVirtualFile() : null;
-    if(buildFile == null) {
+    if (buildFile == null) {
       return;
     }
 

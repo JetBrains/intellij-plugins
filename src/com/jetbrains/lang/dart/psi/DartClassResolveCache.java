@@ -37,7 +37,8 @@ public class DartClassResolveCache {
   }
 
   private static <K, V> ConcurrentWeakHashMap<K, V> createWeakMap() {
-    return new ConcurrentWeakHashMap<K, V>(7, 0.75f, Runtime.getRuntime().availableProcessors(), ContainerUtil.<ConcurrentWeakHashMap.Key<K,V>>canonicalStrategy());
+    return new ConcurrentWeakHashMap<K, V>(7, 0.75f, Runtime.getRuntime().availableProcessors(),
+                                           ContainerUtil.<ConcurrentWeakHashMap.Key<K, V>>canonicalStrategy());
   }
 
   public void put(@NotNull DartClass dartClass, @NotNull DartClassResolveResult result) {

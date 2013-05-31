@@ -53,7 +53,7 @@ public class DartPsiImplUtil {
   @Nullable
   public static PsiElement getLibraryPrefix(@NotNull DartImportStatement resourceStatement) {
     final DartComponentName componentName = resourceStatement.getComponentName();
-    if(componentName != null) {
+    if (componentName != null) {
       return componentName;
     }
     final DartExpression[] childrenOfType = PsiTreeUtil.getChildrenOfType(resourceStatement, DartExpression.class);

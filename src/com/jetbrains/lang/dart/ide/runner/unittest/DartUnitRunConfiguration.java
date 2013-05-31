@@ -66,7 +66,7 @@ public class DartUnitRunConfiguration extends RunConfigurationBase implements Lo
     if (path == null || VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(path)) == null) {
       throw new RuntimeConfigurationException("Can't find file: " + path);
     }
-    if(!FileUtilRt.extensionEquals(path, DartFileType.DEFAULT_EXTENSION)){
+    if (!FileUtilRt.extensionEquals(path, DartFileType.DEFAULT_EXTENSION)) {
       throw new RuntimeConfigurationException("Not a Dart file");
     }
   }

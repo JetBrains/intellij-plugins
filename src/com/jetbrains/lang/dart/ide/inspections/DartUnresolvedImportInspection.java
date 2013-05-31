@@ -51,7 +51,7 @@ public class DartUnresolvedImportInspection extends LocalInspectionTool {
   public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull final InspectionManager manager, final boolean isOnTheFly) {
     final List<ProblemDescriptor> result = new ArrayList<ProblemDescriptor>();
     for (PsiElement root : DartResolveUtil.findDartRoots(file)) {
-      root.acceptChildren(new DartRecursiveVisitor(){
+      root.acceptChildren(new DartRecursiveVisitor() {
         @Override
         public void visitPathOrLibraryReference(@NotNull DartPathOrLibraryReference pathOrLibraryReference) {
           String pathOrLibraryReferenceText = StringUtil.unquoteString(pathOrLibraryReference.getText());
@@ -59,7 +59,7 @@ public class DartUnresolvedImportInspection extends LocalInspectionTool {
             return;
           }
           for (PsiReference reference : pathOrLibraryReference.getReferences()) {
-            if(reference instanceof FileReference && reference.resolve() == null) {
+            if (reference instanceof FileReference && reference.resolve() == null) {
               result.add(manager.createProblemDescriptor(
                 reference.getElement(),
                 reference.getRangeInElement(),

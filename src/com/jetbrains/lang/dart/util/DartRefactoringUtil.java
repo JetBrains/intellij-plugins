@@ -117,7 +117,7 @@ public class DartRefactoringUtil {
 
     if (element1 != null && element2 != null) {
       PsiElement commonParent = PsiTreeUtil.findCommonParent(element1, element2);
-      if(commonParent instanceof DartExpression) {
+      if (commonParent instanceof DartExpression) {
         return new PsiElement[]{commonParent};
       }
     }

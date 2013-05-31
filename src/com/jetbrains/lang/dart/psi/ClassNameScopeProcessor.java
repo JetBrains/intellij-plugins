@@ -13,26 +13,26 @@ import java.util.Set;
  * @author: Fedor.Korotkov
  */
 public class ClassNameScopeProcessor implements PsiScopeProcessor {
-    private final Set<DartComponentName> result;
+  private final Set<DartComponentName> result;
 
-    public ClassNameScopeProcessor(Set<DartComponentName> result) {
-      this.result = result;
-    }
+  public ClassNameScopeProcessor(Set<DartComponentName> result) {
+    this.result = result;
+  }
 
-    @Override
-    public boolean execute(@NotNull PsiElement element, ResolveState state) {
-      if (element instanceof DartComponentName && element.getParent() instanceof DartClass) {
-        result.add((DartComponentName)element);
-      }
-      return true;
+  @Override
+  public boolean execute(@NotNull PsiElement element, ResolveState state) {
+    if (element instanceof DartComponentName && element.getParent() instanceof DartClass) {
+      result.add((DartComponentName)element);
     }
+    return true;
+  }
 
-    @Override
-    public <T> T getHint(@NotNull Key<T> hintKey) {
-      return null;
-    }
+  @Override
+  public <T> T getHint(@NotNull Key<T> hintKey) {
+    return null;
+  }
 
-    @Override
-    public void handleEvent(Event event, @Nullable Object associated) {
-    }
+  @Override
+  public void handleEvent(Event event, @Nullable Object associated) {
+  }
 }

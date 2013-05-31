@@ -43,7 +43,7 @@ public abstract class DartQNamedElementImpl extends DartPsiCompositeElementImpl 
   public String getName() {
     StringBuilder name = new StringBuilder();
     for (DartId id : getIds()) {
-      if(name.length() > 0) {
+      if (name.length() > 0) {
         name.append('.');
       }
       name.append(id.getText());

@@ -28,7 +28,6 @@ public class DartMoveTest extends LightPlatformCodeInsightFixtureTestCase {
   private void doTest(String toMove, final String targetDirName) throws Exception {
     myFixture.copyDirectoryToProject(getTestName(true) + "/before", "");
     doTest(new String[]{toMove}, targetDirName);
-
   }
 
   //Both names are relative to root directory

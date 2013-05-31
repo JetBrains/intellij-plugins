@@ -82,7 +82,6 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
           }
         });
       }
-
     }
     return new ArrayList<DartComponentName>(result);
   }

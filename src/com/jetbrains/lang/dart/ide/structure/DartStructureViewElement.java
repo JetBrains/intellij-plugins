@@ -75,7 +75,8 @@ public class DartStructureViewElement implements StructureViewTreeElement, Sorta
       if (superClass.getDartClass() != null) {
         result.add(new DartStructureViewElement(superClass.getDartClass()));
       }
-      List<DartClassResolveResult> implementsAndMixinsList = DartResolveUtil.resolveClassesByTypes(DartResolveUtil.getImplementsAndMixinsList(dartClass));
+      List<DartClassResolveResult> implementsAndMixinsList =
+        DartResolveUtil.resolveClassesByTypes(DartResolveUtil.getImplementsAndMixinsList(dartClass));
       for (DartClassResolveResult superInterface : implementsAndMixinsList) {
         if (superInterface.getDartClass() == null) {
           continue;

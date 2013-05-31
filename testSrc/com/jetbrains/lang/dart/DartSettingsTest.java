@@ -14,7 +14,7 @@ public class DartSettingsTest extends LightPlatformCodeInsightFixtureTestCase {
   }
 
   public void testLibraries() throws Throwable {
-    Map<String,String> libs = DartSettings.computeData(myFixture.configureByFile("libraries.dart"));
+    Map<String, String> libs = DartSettings.computeData(myFixture.configureByFile("libraries.dart"));
     assertEquals("html/dartium/html_dartium.dart", libs.get("html"));
   }
 }

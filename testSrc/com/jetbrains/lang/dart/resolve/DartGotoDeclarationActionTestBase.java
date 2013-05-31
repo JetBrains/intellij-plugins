@@ -21,7 +21,6 @@ abstract public class DartGotoDeclarationActionTestBase extends CodeInsightFixtu
 
   protected void doTest(int expectedSize, String... files) throws IOException {
     doTest(myFixture.configureByFiles(files), expectedSize);
-
   }
 
   protected void doTest(PsiFile[] files, int expectedSize) {
