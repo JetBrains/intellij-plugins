@@ -282,17 +282,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     }
 
 
-    final String flexUnitTempDirPath;
-    if (CompilerWorkspaceConfiguration.getInstance(context.getProject()).useOutOfProcessBuild()) {
-      flexUnitTempDirPath = FlexCommonUtils.getTempFlexConfigsDirPath(PathManager.getSystemPath() + "/" +
-                                                                      BuildManager.SYSTEM_ROOT + "/" + BuildManager.TEMP_DIR_NAME) +
-                            "/" + FlexCommonUtils.getFlexUnitTempDirName(myProject.getName());
-    }
-    else {
-      flexUnitTempDirPath = FlexCommonUtils.getPathToFlexUnitTempDirectory(myProject.getName());
-    }
-
-    final File tmpDir = new File(flexUnitTempDirPath);
+    final File tmpDir = new File(FlexCommonUtils.getPathToFlexUnitTempDirectory(myProject.getName()));
     boolean ok = true;
     if (tmpDir.isFile()) ok &= FileUtil.delete(tmpDir);
     if (!tmpDir.isDirectory()) ok &= tmpDir.mkdirs();

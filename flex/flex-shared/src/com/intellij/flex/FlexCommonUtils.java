@@ -145,7 +145,7 @@ public class FlexCommonUtils {
   }
 
   public static String getPathToFlexUnitTempDirectory(final String projectName) {
-    return getTempFlexConfigsDirPath() + "/" + getFlexUnitTempDirName(projectName);
+    return PathManager.getSystemPath() + "/tmp/" + getFlexUnitTempDirName(projectName);
   }
 
   public static String getFlexUnitTempDirName(final String projectName) {
@@ -1160,6 +1160,11 @@ public class FlexCommonUtils {
       for (final File file : filesToDelete) {
         FileUtil.delete(file);
       }
+    }
+
+    final File flexUnitDir = new File(getPathToFlexUnitTempDirectory(projectName));
+    if (flexUnitDir.isDirectory() && flexUnitDir.list().length == 0) {
+      FileUtil.delete(flexUnitDir);
     }
   }
 }
