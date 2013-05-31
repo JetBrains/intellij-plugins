@@ -5,12 +5,12 @@ import com.intellij.execution.PsiLocation;
 import com.intellij.javascript.testFramework.JsTestFileByTestNameIndex;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
+import com.intellij.javascript.testFramework.qunit.DefaultQUnitModuleStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
 import com.intellij.javascript.testFramework.util.EscapeUtils;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -91,8 +91,17 @@ public class KarmaTestLocationProvider implements TestLocationProvider {
       testName = path.get(path.size() - 1);
     }
     PsiElement psiElement = findJasmineElement(suiteNames, testName);
-    if (psiElement == null && !suiteNames.isEmpty()) {
-      psiElement = findQUnitElement(suiteNames.get(0), testName);
+    if (psiElement == null) {
+      String moduleName = null;
+      if (suiteNames.size() == 0) {
+        moduleName = DefaultQUnitModuleStructure.NAME;
+      }
+      else if (suiteNames.size() == 1) {
+        moduleName = suiteNames.get(0);
+      }
+      if (moduleName != null) {
+        psiElement = findQUnitElement(moduleName, testName);
+      }
     }
     if (psiElement != null) {
       return PsiLocation.fromPsiElement(psiElement);
