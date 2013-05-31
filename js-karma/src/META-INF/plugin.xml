@@ -27,6 +27,7 @@
                      level="WARNING"
                      implementationClass="com.intellij.javascript.karma.config.KarmaConfigFileInspection"
     />
+    <configurationProducer implementation="com.intellij.javascript.karma.execution.KarmaRunConfigurationProducer"/>
   </extensions>
 
 </idea-plugin>
