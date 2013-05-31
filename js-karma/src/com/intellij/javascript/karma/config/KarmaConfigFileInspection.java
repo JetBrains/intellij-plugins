@@ -33,22 +33,34 @@ public class KarmaConfigFileInspection extends JSInspection {
                                       @NotNull ProblemsHolder holder) {
     PsiFileSystemItem fileItem = resolve(ref);
     if (fileItem == null) {
-      holder.registerProblemForReference(
-        ref,
-        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-        ref.getUnresolvedMessagePattern()
-      );
+      if (!ref.isPatternUsed()) {
+        holder.registerProblemForReference(
+          ref,
+          ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+          ref.getUnresolvedMessagePattern()
+        );
+      }
     }
     else {
-      KarmaConfigFileReference.FileType fileType = ref.getRequiredFileType();
-      if (fileType != null && ref.isLast()) {
-        if (fileType == KarmaConfigFileReference.FileType.DIRECTORY
-            && !fileItem.isDirectory()) {
-          holder.registerProblemForReference(
-            ref,
-            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-            "Directory is expected"
-          );
+      if (ref.isLast()) {
+        KarmaConfigFileReference.FileType fileType = ref.getExpectedFileType();
+        if (fileType == KarmaConfigFileReference.FileType.DIRECTORY) {
+          if (!fileItem.isDirectory()) {
+            holder.registerProblemForReference(
+              ref,
+              ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+              "Directory expected"
+            );
+          }
+        }
+        if (fileType == KarmaConfigFileReference.FileType.FILE) {
+          if (fileItem.isDirectory()) {
+            holder.registerProblemForReference(
+              ref,
+              ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+              "File/Pattern expected"
+            );
+          }
         }
       }
     }
