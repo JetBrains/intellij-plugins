@@ -1,1 +1,0 @@
-foo() => <selection>bat + man() + 239</selection>;

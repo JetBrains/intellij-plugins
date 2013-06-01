@@ -1,9 +1,0 @@
-class TestMock implements Test {
-
-  get foo() {
-  }
-}
-
-interface Test {
-  get foo();
-}

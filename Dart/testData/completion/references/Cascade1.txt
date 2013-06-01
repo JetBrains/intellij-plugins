@@ -1,4 +1,0 @@
-BASIC 1 INCLUDES
-test1
-test2
-test3

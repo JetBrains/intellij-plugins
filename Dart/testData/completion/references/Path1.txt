@@ -1,4 +1,0 @@
-BASIC 1 EXCLUDES
-class
-set
-get

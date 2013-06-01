@@ -1,4 +1,0 @@
-class StaticMethodHelper {
-  static foo(){
-  }
-}

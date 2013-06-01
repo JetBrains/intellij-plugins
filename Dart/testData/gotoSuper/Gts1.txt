@@ -1,8 +1,0 @@
-class Gts1 extends Resizable {
-}
-class <caret>Resizable implements IResizable {
-  resize() {}
-}
-interface IResizable {
-  resize();
-}

@@ -1,6 +1,0 @@
-class Getter1 {
-  int _foo;
-
-  int get foo => _foo;
-
-}
