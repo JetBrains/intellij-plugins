@@ -1,0 +1,3 @@
+main(){
+  pri<caret>nt();
+}

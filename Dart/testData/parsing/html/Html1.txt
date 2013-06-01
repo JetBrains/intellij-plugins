@@ -1,0 +1,76 @@
+HtmlFile:Html1.html
+  PsiElement(HTML_DOCUMENT)
+    PsiElement(XML_PROLOG)
+      <empty list>
+    HtmlTag:html
+      XmlToken:XML_START_TAG_START('<')
+      XmlToken:XML_NAME('html')
+      XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n  ')
+      HtmlTag:body
+        XmlToken:XML_START_TAG_START('<')
+        XmlToken:XML_NAME('body')
+        XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n    ')
+        HtmlTag:script
+          XmlToken:XML_START_TAG_START('<')
+          XmlToken:XML_NAME('script')
+          PsiWhiteSpace(' ')
+          PsiElement(XML_ATTRIBUTE)
+            XmlToken:XML_NAME('type')
+            XmlToken:XML_EQ('=')
+            PsiElement(XML_ATTRIBUTE_VALUE)
+              XmlToken:XML_ATTRIBUTE_VALUE_START_DELIMITER('"')
+              XmlToken:XML_ATTRIBUTE_VALUE_TOKEN('application/dart')
+              XmlToken:XML_ATTRIBUTE_VALUE_END_DELIMITER('"')
+          XmlToken:XML_TAG_END('>')
+          DART_EMBEDDED_CONTENT
+            PsiWhiteSpace('\n      ')
+            LIBRARY_STATEMENT
+              PsiElement(library)('library')
+              PsiWhiteSpace(' ')
+              QUALIFIED_COMPONENT_NAME
+                ID
+                  PsiElement(IDENTIFIER)('test')
+              PsiElement(;)(';')
+            PsiWhiteSpace('\n\n      ')
+            SOURCE_STATEMENT
+              PsiElement(part)('part')
+              PsiWhiteSpace(' ')
+              PATH_OR_LIBRARY_REFERENCE
+                STRING_LITERAL_EXPRESSION
+                  PsiElement(OPEN_QUOTE)(''')
+                  PsiElement(REGULAR_STRING_PART)('test2.dart')
+                  PsiElement(CLOSING_QUOTE)(''')
+              PsiElement(;)(';')
+            PsiWhiteSpace('\n\n      ')
+            FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
+              COMPONENT_NAME
+                ID
+                  PsiElement(IDENTIFIER)('foo')
+              FORMAL_PARAMETER_LIST
+                PsiElement(()('(')
+                PsiElement())(')')
+              PsiWhiteSpace(' ')
+              FUNCTION_BODY
+                PsiElement(=>)('=>')
+                PsiWhiteSpace(' ')
+                LITERAL_EXPRESSION
+                  PsiElement(null)('null')
+                PsiElement(;)(';')
+            PsiWhiteSpace('\n    ')
+          XmlToken:XML_END_TAG_START('</')
+          XmlToken:XML_NAME('script')
+          XmlToken:XML_TAG_END('>')
+        XmlText
+          PsiWhiteSpace('\n  ')
+        XmlToken:XML_END_TAG_START('</')
+        XmlToken:XML_NAME('body')
+        XmlToken:XML_TAG_END('>')
+      XmlText
+        PsiWhiteSpace('\n')
+      XmlToken:XML_END_TAG_START('</')
+      XmlToken:XML_NAME('html')
+      XmlToken:XML_TAG_END('>')

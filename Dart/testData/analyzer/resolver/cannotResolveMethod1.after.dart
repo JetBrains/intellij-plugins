@@ -1,0 +1,7 @@
+foo() {
+  <caret>
+}
+
+main() {
+  foo();
+}

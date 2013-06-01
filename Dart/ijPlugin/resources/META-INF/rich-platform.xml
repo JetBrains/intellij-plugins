@@ -1,0 +1,17 @@
+<idea-plugin version="2">
+  <project-components>
+    <component>
+      <implementation-class>com.jetbrains.lang.dart.compilation.DartCompilerHandler</implementation-class>
+      <skipForDefaultProject/>
+    </component>
+  </project-components>
+  <extensions defaultExtensionNs="com.intellij">
+    <sdkType implementation="com.jetbrains.lang.dart.ide.DartSdkType"/>
+    <moduleType id="DART_MODULE" implementationClass="com.jetbrains.lang.dart.ide.module.DartModuleType"/>
+
+    <xdebugger.breakpointType implementation="com.jetbrains.lang.dart.ide.runner.base.DartBreakpointType"/>
+  </extensions>
+  <extensions defaultExtensionNs="com.jetbrains">
+    <lang.dart.debugger.breakpoint.class.provider  implementation="com.jetbrains.lang.dart.ide.runner.base.DartBreakpointTypeProvider"/>
+  </extensions>
+</idea-plugin>

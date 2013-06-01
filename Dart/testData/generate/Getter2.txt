@@ -1,0 +1,6 @@
+class Getter2 {
+  var _foo;
+
+  get foo => _foo;
+
+}

@@ -1,0 +1,4 @@
+<configuration default="false" name="Dart" type="JavascriptDebugType" singleton="true" uri="http://localhost:8500/test/index.html">
+  <mapping local-file="$PROJECT_DIR$" url="http://localhost:8500/test1"/>
+  <mapping local-file="$PROJECT_DIR$" url="http://localhost:8500/test2"/>
+</configuration>

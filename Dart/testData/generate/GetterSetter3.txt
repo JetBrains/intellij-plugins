@@ -1,0 +1,11 @@
+class GetterSetter3 {
+  int _foo;
+
+  bar1() => null;
+
+  int get foo => _foo;
+
+  set foo(int value) => _foo = value;
+
+  bar2() {}
+}

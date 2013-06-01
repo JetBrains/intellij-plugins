@@ -1,0 +1,16 @@
+WARNING|STATIC_TYPE|MISSING_ARGUMENT|file:/Users/fedorkorotkov/workspaces/dart-painter/src/painter.dart/objects.dart|38|15|14|missing argument of type Point2D
+    37:         }
+    38:         print(new BrushEnd() + 239);
+                      ~~~~~~~~~~~~~~
+WARNING|STATIC_TYPE|INTERFACE_HAS_NO_METHOD_NAMED|file:/Users/fedorkorotkov/workspaces/dart-painter/src/painter.dart/objects.dart|38|30|1|"BrushEnd" has no method named "operator +"
+    37:         }
+    38:         print(new BrushEnd() + 239);
+                                     ~
+WARNING|STATIC_TYPE|TYPE_NOT_ASSIGNMENT_COMPATIBLE|file:/Users/fedorkorotkov/workspaces/dart-painter/src/painter.dart/objects.dart|62|32|13|'Point2D' is not assignable to 'num'
+    61:     updateParameters(Point2D mouse, num dt) {
+    62:         _speed = _speed + dt * _acceleration;
+                                       ~~~~~~~~~~~~~
+WARNING|STATIC_TYPE|TYPE_NOT_ASSIGNMENT_COMPATIBLE|file:/Users/fedorkorotkov/workspaces/dart-painter/src/painter.dart/objects.dart|62|27|18|'num' is not assignable to 'Point2D'
+    61:     updateParameters(Point2D mouse, num dt) {
+    62:         _speed = _speed + dt * _acceleration;
+                                  ~~~~~~~~~~~~~~~~~~

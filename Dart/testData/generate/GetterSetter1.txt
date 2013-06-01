@@ -1,0 +1,13 @@
+class GetterSetter1 {
+  int _foo;
+  string _bar;
+
+  int get foo => _foo;
+
+  set foo(int value) => _foo = value;
+
+  string get bar => _bar;
+
+  set bar(string value) => _bar = value;
+
+}

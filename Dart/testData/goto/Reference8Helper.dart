@@ -1,0 +1,3 @@
+class Bar {
+  String test;
+}

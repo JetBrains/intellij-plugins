@@ -1,0 +1,3 @@
+class MainClassAfter {
+  MainClassAfter main;
+}

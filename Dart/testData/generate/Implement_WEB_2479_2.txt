@@ -1,0 +1,13 @@
+class Animal {
+  abstract void speak(String say);
+}
+
+class Dog implements Animal {
+  
+  void speak(String say) {
+  }
+
+  String name;
+
+  Dog(this.name);
+}

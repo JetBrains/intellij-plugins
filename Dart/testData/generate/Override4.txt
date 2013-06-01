@@ -1,0 +1,12 @@
+class I {
+  get foo => null;
+  set foo(x){}
+}
+
+class Foo extends I {
+
+  set foo(x) {
+  }
+
+  get foo() => 239;
+}

@@ -1,0 +1,8 @@
+<idea-plugin version="2">
+  <actions>
+    <action id="Dart.pub" class="com.jetbrains.lang.dart.ide.actions.DartPubAction"
+            text="Dart pub" description="Install / Update Dart packages">
+      <add-to-group group-id="CutCopyPasteGroup" anchor="last"/>
+    </action>
+  </actions>
+</idea-plugin>

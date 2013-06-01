@@ -1,0 +1,9 @@
+class TestMock implements Test {
+
+  get foo() {
+  }
+}
+
+class Test {
+  get foo() => 239;
+}
