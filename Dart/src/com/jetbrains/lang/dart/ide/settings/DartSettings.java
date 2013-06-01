@@ -255,7 +255,7 @@ public class DartSettings {
     final Processor<File> fileProcessor = new Processor<File>() {
       @Override
       public boolean process(File file) {
-        if (file.isFile() && file.getName().endsWith("" + DartFileType.DEFAULT_EXTENSION)) {
+        if (file.isFile() && file.getName().endsWith("." + DartFileType.DEFAULT_EXTENSION)) {
           result.add(file);
         }
         return true;

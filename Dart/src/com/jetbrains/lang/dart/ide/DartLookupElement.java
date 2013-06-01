@@ -47,7 +47,7 @@ public class DartLookupElement extends LookupElement {
     if (completeConstructor) {
       final DartClass dartClass = PsiTreeUtil.getParentOfType(myComponentName, DartClass.class);
       assert dartClass != null;
-      return dartClass.getName() + "" + result;
+      return dartClass.getName() + "." + result;
     }
     return StringUtil.notNullize(result);
   }

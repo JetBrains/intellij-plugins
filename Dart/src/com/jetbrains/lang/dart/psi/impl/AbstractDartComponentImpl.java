@@ -114,7 +114,7 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
           if (dartClass == null) {
             return name;
           }
-          return StringUtil.isEmpty(name) ? dartClass.getName() : dartClass.getName() + "" + name;
+          return StringUtil.isEmpty(name) ? dartClass.getName() : dartClass.getName() + "." + name;
         }
         return name;
       }

@@ -163,7 +163,7 @@ public interface DartTokenTypes {
   IElementType DIV = new DartElementType("/");
   IElementType DIV_EQ = new DartElementType("/=");
   IElementType DO = new DartElementType("do");
-  IElementType DOT = new DartElementType("");
+  IElementType DOT = new DartElementType(".");
   IElementType ELSE = new DartElementType("else");
   IElementType EQ = new DartElementType("=");
   IElementType EQ_EQ = new DartElementType("==");
