@@ -10,6 +10,7 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 import junit.framework.Assert;
 
 import java.io.FileNotFoundException;
@@ -21,15 +22,10 @@ import java.io.FileWriter;
 public class DartFormatterInHtmlTest extends CodeInsightFixtureTestCase {
   protected CommonCodeStyleSettings myTestStyleSettings;
 
-  @Override
-  protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/plugins/Dart/testData/formatter/html");
-  }
 
   @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    setTestStyleSettings();
+  protected String getBasePath() {
+    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/formatter/html");
   }
 
   private void setTestStyleSettings() {

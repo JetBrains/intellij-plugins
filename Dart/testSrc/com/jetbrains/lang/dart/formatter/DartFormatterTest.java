@@ -10,6 +10,7 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartLanguage;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 import junit.framework.Assert;
 
 import java.io.FileNotFoundException;
@@ -23,7 +24,7 @@ public class DartFormatterTest extends CodeInsightFixtureTestCase {
 
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/plugins/Dart/testData/formatter/");
+    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/formatter/");
   }
 
   @Override
@@ -57,7 +58,7 @@ public class DartFormatterTest extends CodeInsightFixtureTestCase {
   }
 
   private void doTest() throws Exception {
-    myFixture.configureByFile(getTestName(false) + "" + DartFileType.DEFAULT_EXTENSION);
+    myFixture.configureByFile(getTestName(false) + "." + DartFileType.DEFAULT_EXTENSION);
     ApplicationManager.getApplication().runWriteAction(new Runnable() {
       @Override
       public void run() {

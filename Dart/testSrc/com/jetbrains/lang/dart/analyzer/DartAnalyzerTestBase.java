@@ -14,6 +14,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.annotator.DartExternalAnnotator;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -37,7 +38,7 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
   }
 
   protected DartSettings getDartSettings() {
-    return new DartSettings(PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/sdk"));
+    return new DartSettings(FileUtil.toSystemDependentName(DartTestUtils.BASE_TEST_DATA_PATH + "/sdk"));
   }
 
   void doTest(String message, String... additionalFiles) throws IOException {

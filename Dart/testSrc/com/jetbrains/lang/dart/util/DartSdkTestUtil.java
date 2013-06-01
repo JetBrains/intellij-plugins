@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class DartSdkTestUtil {
   public static void configFakeSdk(CodeInsightTestFixture fixture) {
-    String sdkHome = PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/sdk/");
+    String sdkHome = DartTestUtils.BASE_TEST_DATA_PATH +  FileUtil.toSystemDependentName("/sdk/");
 
     final File targetFile = new File(fixture.getTempDirPath() + "/dart-sdk");
     try {

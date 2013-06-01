@@ -19,6 +19,7 @@ import com.intellij.psi.xml.XmlChildRole;
 import com.intellij.testFramework.ParsingTestCase;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartScriptContentProvider;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 
 /**
  * @author: Fedor.Korotkov
@@ -49,7 +50,7 @@ public class DartInHtmlParsingTest extends ParsingTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/");
+    return DartTestUtils.BASE_TEST_DATA_PATH;
   }
 
   public void testHtml1() throws Throwable {

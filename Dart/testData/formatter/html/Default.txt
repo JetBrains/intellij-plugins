@@ -4,7 +4,7 @@
     #import('superLib');
 
     class Foo {
-        // comment
+// comment
         Array<Array<Int>> tmp;
 
         function foo(int x, z) {

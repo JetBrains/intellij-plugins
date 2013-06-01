@@ -4,6 +4,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.refactoring.extract.DartExtractMethodHandler;
 import com.jetbrains.lang.dart.util.DartSdkTestUtil;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 
 /**
  * @author: Fedor.Korotkov
@@ -11,7 +12,7 @@ import com.jetbrains.lang.dart.util.DartSdkTestUtil;
 public class DartExtractMethodTest extends CodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/plugins/Dart/testData/refactoring/extractMethod/");
+    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/refactoring/extractMethod/");
   }
 
   private void doTest() throws Throwable {

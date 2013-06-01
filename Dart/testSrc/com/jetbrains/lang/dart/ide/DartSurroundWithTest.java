@@ -8,6 +8,7 @@ import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import com.jetbrains.lang.dart.ide.surroundWith.expression.DartWithNotParenthesisExpressionSurrounder;
 import com.jetbrains.lang.dart.ide.surroundWith.expression.DartWithParenthesisExpressionSurrounder;
 import com.jetbrains.lang.dart.ide.surroundWith.statement.*;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,7 +18,7 @@ public class DartSurroundWithTest extends LightPlatformCodeInsightTestCase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/surroundWith/");
+    return DartTestUtils.BASE_TEST_DATA_PATH + FileUtil.toSystemDependentName("/surroundWith/");
   }
 
   private void doTest(final Surrounder handler) throws Exception {

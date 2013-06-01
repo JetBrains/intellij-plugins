@@ -3,6 +3,8 @@ package com.jetbrains.lang.dart.analyzer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.jetbrains.lang.dart.util.DartTestUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,7 +19,7 @@ import java.util.Scanner;
 abstract public class AnalyzerMessageParsingTest extends CodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/plugins/Dart/testData/analyzer/parsing");
+    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/analyzer/parsing");
   }
 
   public void doTest() throws Throwable {

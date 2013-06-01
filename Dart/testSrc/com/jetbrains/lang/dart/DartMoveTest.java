@@ -10,6 +10,7 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,9 +21,8 @@ import java.util.Collection;
 public class DartMoveTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/plugins/Dart/testData/move/");
+    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/move/");
   }
-
 
   //Both names are relative to root directory
   private void doTest(String toMove, final String targetDirName) throws Exception {

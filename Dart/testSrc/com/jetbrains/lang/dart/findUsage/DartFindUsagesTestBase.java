@@ -8,14 +8,16 @@ import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.PsiElementUsageTarget;
 import com.intellij.usages.UsageTarget;
 import com.intellij.usages.UsageTargetUtil;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.Collection;
 
 abstract public class DartFindUsagesTestBase extends CodeInsightFixtureTestCase {
+
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/plugins/Dart/testData/findUsages/");
+    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/findUsages/");
   }
 
   protected void doTest(int size) throws Throwable {

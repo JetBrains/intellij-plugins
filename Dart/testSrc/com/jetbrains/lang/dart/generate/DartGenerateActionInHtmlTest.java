@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.generate;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.lang.dart.ide.generation.CreateGetterSetterFix;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,7 +13,7 @@ public class DartGenerateActionInHtmlTest extends DartGenerateActionTestBase {
   @NotNull
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/generate/html/");
+    return DartTestUtils.BASE_TEST_DATA_PATH + FileUtil.toSystemDependentName("/generate/html/");
   }
 
   @Override

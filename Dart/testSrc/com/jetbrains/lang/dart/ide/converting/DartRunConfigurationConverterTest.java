@@ -6,6 +6,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightPlatformTestCase;
 import com.intellij.testFramework.PlatformTestCase;
 import com.jetbrains.lang.dart.ide.DartRunConfigurationConverterProvider;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 import org.jdom.Document;
 import org.jdom.Element;
 
@@ -17,7 +18,7 @@ public class DartRunConfigurationConverterTest extends LightPlatformTestCase {
   }
 
   private static String getBaseDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/converter/");
+    return DartTestUtils.BASE_TEST_DATA_PATH +  FileUtil.toSystemDependentName("/converter/");
   }
 
   public void doTest(String oldFileName, String newFileName) throws Exception {

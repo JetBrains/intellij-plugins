@@ -1,11 +1,12 @@
 package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.openapi.util.io.FileUtil;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 
 public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/plugins/Dart/testData/analyzer/resolver");
+    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/analyzer/resolver");
   }
 
   public void testCannotResolveMethod1() throws Throwable {

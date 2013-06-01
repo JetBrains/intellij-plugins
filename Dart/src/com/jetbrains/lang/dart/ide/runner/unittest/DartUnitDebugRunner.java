@@ -9,7 +9,6 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.javascript.debugger.breakpoints.JavaScriptBreakpointType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
@@ -20,10 +19,6 @@ import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-import com.intellij.xdebugger.breakpoints.XBreakpointProperties;
-import com.intellij.xdebugger.breakpoints.XBreakpointType;
-import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
-import com.jetbrains.lang.dart.ide.runner.base.DartBreakpointType;
 import com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugProcess;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
@@ -72,10 +67,6 @@ public class DartUnitDebugRunner extends DefaultProgramRunner {
 
     final DartUnitRunningState dartUnitRunningState = new DartUnitRunningState(env, parameters, dartSettings, debuggingPort);
     final ExecutionResult executionResult = dartUnitRunningState.execute(executor, this);
-
-    // debug unit tests for web module
-    final Class<? extends XBreakpointType<XLineBreakpoint<XBreakpointProperties>, ?>> breakPointType =
-      DartSettings.shouldTakeWebSettings(module) ? JavaScriptBreakpointType.class : DartBreakpointType.class;
 
     final XDebugSession debugSession =
       XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {

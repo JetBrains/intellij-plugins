@@ -5,6 +5,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.ParsingTestCase;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartParserDefinition;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 
 /**
  * @author: Fedor.Korotkov
@@ -16,7 +17,7 @@ public class DartParsingTest extends ParsingTestCase {
 
   @Override
   protected String getTestDataPath() {
-    return PathManager.getHomePath() + FileUtil.toSystemDependentName("/plugins/Dart/testData/");
+    return DartTestUtils.BASE_TEST_DATA_PATH;
   }
 
   @Override

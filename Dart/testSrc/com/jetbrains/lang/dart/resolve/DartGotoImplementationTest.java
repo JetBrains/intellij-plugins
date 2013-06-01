@@ -4,6 +4,7 @@ import com.intellij.codeInsight.navigation.GotoImplementationHandler;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 
 /**
  * @author: Fedor.Korotkov
@@ -11,7 +12,7 @@ import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/plugins/Dart/testData/gotoImplementation/");
+    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/gotoImplementation/");
   }
 
   protected void doTest(int expectedLength) throws Throwable {

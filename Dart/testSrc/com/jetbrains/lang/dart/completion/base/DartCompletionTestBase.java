@@ -7,6 +7,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ abstract public class DartCompletionTestBase extends CodeInsightFixtureTestCase 
 
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/plugins/Dart/testData/") + myPath;
+    return DartTestUtils.RELATIVE_TEST_DATA_PATH + "/" + myPath;
   }
 
   protected void doTest() throws Throwable {

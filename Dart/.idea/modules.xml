@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Dart-plugin.iml" filepath="$PROJECT_DIR$/Dart-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Dart-plugin-ij/Dart-plugin-ij.iml" filepath="$PROJECT_DIR$/Dart-plugin-ij/Dart-plugin-ij.iml" />
+    </modules>
+  </component>
+</project>
+

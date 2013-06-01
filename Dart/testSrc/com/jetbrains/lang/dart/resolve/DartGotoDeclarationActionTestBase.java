@@ -5,6 +5,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -12,7 +13,7 @@ import java.util.Collection;
 abstract public class DartGotoDeclarationActionTestBase extends CodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/plugins/Dart/testData/goto/");
+    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/goto/");
   }
 
   protected void doTest(int expectedSize) throws IOException {

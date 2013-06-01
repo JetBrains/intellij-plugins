@@ -13,6 +13,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
+import com.jetbrains.lang.dart.util.DartTestUtils;
 
 /**
  * @author: Fedor.Korotkov
@@ -20,7 +21,7 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 public class DartLiveTemplatesTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName("/plugins/Dart/testData/liveTemplates/");
+    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/liveTemplates/");
   }
 
   public static void expandTemplate(final Editor editor) {
