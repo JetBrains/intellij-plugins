@@ -20,8 +20,13 @@ import java.util.Collection;
  */
 public class DartMoveTest extends LightPlatformCodeInsightFixtureTestCase {
   @Override
+  protected String getTestDataPath() {
+    return DartTestUtils.BASE_TEST_DATA_PATH + getBasePath();
+  }
+
+  @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/move/");
+    return FileUtil.toSystemDependentName("/move/");
   }
 
   //Both names are relative to root directory

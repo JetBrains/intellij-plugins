@@ -4,7 +4,6 @@ import com.intellij.codeInsight.daemon.impl.AnnotationHolderImpl;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationSession;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -21,7 +20,6 @@ import java.io.IOException;
 import java.util.List;
 
 abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
-
   @Override
   public void setUp() throws Exception {
     super.setUp();

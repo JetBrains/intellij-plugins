@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.ide.converting;
 
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightPlatformTestCase;

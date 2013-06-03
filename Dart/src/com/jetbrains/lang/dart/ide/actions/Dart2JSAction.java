@@ -62,7 +62,7 @@ public class Dart2JSAction extends AnAction {
     final DartSettings settings = DartSettingsUtil.getSettings();
     final VirtualFile dart2js = settings.getDart2JS();
     if (dart2js == null) {
-      Messages.showOkCancelDialog(e.getProject(), DartBundle.message("dart.sdk.bad.dart2js.path", settings.getDart2JSPath()),
+      Messages.showOkCancelDialog(e.getProject(), DartBundle.message("dart.sdk.bad.dart2js.path", settings.getDart2JSUrl()),
                                   DartBundle.message("dart.warning"),
                                   icons.DartIcons.Dart_16);
       return;

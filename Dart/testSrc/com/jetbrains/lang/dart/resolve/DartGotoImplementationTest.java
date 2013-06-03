@@ -3,16 +3,15 @@ package com.jetbrains.lang.dart.resolve;
 import com.intellij.codeInsight.navigation.GotoImplementationHandler;
 import com.intellij.codeInsight.navigation.GotoTargetHandler;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.jetbrains.lang.dart.util.DartTestUtils;
+import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 
 /**
  * @author: Fedor.Korotkov
  */
-public class DartGotoImplementationTest extends CodeInsightFixtureTestCase {
+public class DartGotoImplementationTest extends DartCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/gotoImplementation/");
+    return FileUtil.toSystemDependentName("/gotoImplementation/");
   }
 
   protected void doTest(int expectedLength) throws Throwable {

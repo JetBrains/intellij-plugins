@@ -84,7 +84,7 @@ public class DartPubAction extends AnAction {
     final VirtualFile dartPub = settings == null ? null : settings.getPub();
     if (dartPub == null) {
       Messages.showOkCancelDialog(e.getProject(),
-                                  DartBundle.message("dart.sdk.bad.dartpub.path", settings != null ? settings.getPubPath() : ""),
+                                  DartBundle.message("dart.sdk.bad.dartpub.path", settings != null ? settings.getPubUrl() : ""),
                                   DartBundle.message("dart.warning"),
                                   DartIcons.Dart_16);
       return;

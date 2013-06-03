@@ -11,8 +11,13 @@ import com.jetbrains.lang.dart.util.DartTestUtils;
  */
 public class DartIntroduceVariableTest extends DartIntroduceTestBase {
   @Override
+  protected String getTestDataPath() {
+    return DartTestUtils.BASE_TEST_DATA_PATH + getBasePath();
+  }
+
+  @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/refactoring/introduceVariable/");
+    return FileUtil.toSystemDependentName("/refactoring/introduceVariable/");
   }
 
   @Override

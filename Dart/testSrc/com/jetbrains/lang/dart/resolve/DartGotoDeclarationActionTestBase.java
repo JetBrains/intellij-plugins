@@ -4,16 +4,21 @@ import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
-import com.jetbrains.lang.dart.util.DartTestUtils;
+import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
+import com.jetbrains.lang.dart.util.DartSdkTestUtil;
 
 import java.io.IOException;
 import java.util.Collection;
 
-abstract public class DartGotoDeclarationActionTestBase extends CodeInsightFixtureTestCase {
+abstract public class DartGotoDeclarationActionTestBase extends DartCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/goto/");
+    return FileUtil.toSystemDependentName("/goto/");
+  }
+
+  public void doTestWithSDK(int expectedSize) throws Throwable {
+    DartSdkTestUtil.configFakeSdk(myFixture);
+    doTest(expectedSize);
   }
 
   protected void doTest(int expectedSize) throws IOException {

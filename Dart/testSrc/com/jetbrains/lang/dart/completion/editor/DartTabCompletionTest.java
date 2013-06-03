@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.completion.editor;
 
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.Lookup;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.util.DartTestUtils;

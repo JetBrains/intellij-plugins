@@ -42,14 +42,14 @@ import java.util.*;
  */
 public class DartSettings {
   private static final Key<Pair<Long, Map<String, String>>> LIBRARIES_TIME_AND_MAP_KEY = Key.create("dart.internal.libraries");
-  private final String sdkPath;
+  private final String sdkUrl;
 
   public DartSettings(String path) {
-    sdkPath = path;
+    sdkUrl = StringUtil.isEmpty(VirtualFileManager.extractProtocol(path)) ? VfsUtil.pathToUrl(path) : path;
   }
 
   public String getSdkPath() {
-    return sdkPath;
+    return VfsUtil.urlToPath(sdkUrl);
   }
 
   @Override
@@ -59,50 +59,50 @@ public class DartSettings {
 
     DartSettings settings = (DartSettings)o;
 
-    if (sdkPath != null ? !sdkPath.equals(settings.sdkPath) : settings.sdkPath != null) return false;
+    if (sdkUrl != null ? !sdkUrl.equals(settings.sdkUrl) : settings.sdkUrl != null) return false;
 
     return true;
   }
 
   @Override
   public int hashCode() {
-    return sdkPath != null ? sdkPath.hashCode() : 0;
+    return sdkUrl != null ? sdkUrl.hashCode() : 0;
   }
 
   @Nullable
   public VirtualFile getCompiler() {
-    return VirtualFileManager.getInstance().findFileByUrl(getCompilerPath());
+    return VirtualFileManager.getInstance().findFileByUrl(getCompilerUrl());
   }
 
-  public String getCompilerPath() {
-    return VfsUtilCore.pathToUrl(sdkPath) + "/bin/dart";
+  public String getCompilerUrl() {
+    return sdkUrl + "/bin/dart";
   }
 
   @Nullable
   public VirtualFile getAnalyzer() {
-    return VirtualFileManager.getInstance().findFileByUrl(getAnalyzerPath());
+    return VirtualFileManager.getInstance().findFileByUrl(getAnalyzerUrl());
   }
 
-  public String getAnalyzerPath() {
-    return VfsUtilCore.pathToUrl(sdkPath) + "/bin/" + (SystemInfo.isWindows ? "dartanalyzer.bat" : "dartanalyzer");
+  public String getAnalyzerUrl() {
+    return sdkUrl + "/bin/" + (SystemInfo.isWindows ? "dartanalyzer.bat" : "dartanalyzer");
   }
 
   @Nullable
   public VirtualFile getDart2JS() {
-    return VirtualFileManager.getInstance().findFileByUrl(getDart2JSPath());
+    return VirtualFileManager.getInstance().findFileByUrl(getDart2JSUrl());
   }
 
-  public String getDart2JSPath() {
-    return VfsUtilCore.pathToUrl(sdkPath) + "/bin/" + (SystemInfo.isWindows ? "dart2js.bat" : "dart2js");
+  public String getDart2JSUrl() {
+    return sdkUrl + "/bin/" + (SystemInfo.isWindows ? "dart2js.bat" : "dart2js");
   }
 
   @Nullable
   public VirtualFile getPub() {
-    return VirtualFileManager.getInstance().findFileByUrl(getPubPath());
+    return VirtualFileManager.getInstance().findFileByUrl(getPubUrl());
   }
 
-  public String getPubPath() {
-    return VfsUtilCore.pathToUrl(sdkPath) + "/bin/" + (SystemInfo.isWindows ? "pub.bat" : "pub");
+  public String getPubUrl() {
+    return sdkUrl + "/bin/" + (SystemInfo.isWindows ? "pub.bat" : "pub");
   }
 
   @Nullable
@@ -121,11 +121,11 @@ public class DartSettings {
 
   @Nullable
   public VirtualFile getLib() {
-    return VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(getLibPath()));
+    return VirtualFileManager.getInstance().findFileByUrl(getLibUrl());
   }
 
-  public String getLibPath() {
-    return getSdkPath() + "/lib/";
+  public String getLibUrl() {
+    return sdkUrl + "/lib/";
   }
 
   @NotNull
@@ -182,7 +182,7 @@ public class DartSettings {
 
   @Nullable
   public VirtualFile getConfigFile() {
-    String path = VfsUtilCore.pathToUrl(sdkPath) + "/lib/_internal/libraries.dart";
+    String path = sdkUrl + "/lib/_internal/libraries.dart";
     return VirtualFileManager.getInstance().findFileByUrl(path);
   }
 

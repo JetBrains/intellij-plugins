@@ -63,7 +63,7 @@ public class DartSettingsUI {
           if (!SystemInfo.isWindows && getSettings().getAnalyzer() == null) {
             Messages.showErrorDialog(
               myProject,
-              DartBundle.message("dart.sdk.bad.analyzer.path", getSettings().getAnalyzerPath()),
+              DartBundle.message("dart.sdk.bad.analyzer.path", getSettings().getAnalyzerUrl()),
               DartBundle.message("dart.warning")
             );
           }

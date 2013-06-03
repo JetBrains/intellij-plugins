@@ -1,22 +1,31 @@
 package com.jetbrains.lang.dart.refactoring.extract;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.jetbrains.lang.dart.DartCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.ide.refactoring.extract.DartExtractMethodHandler;
 import com.jetbrains.lang.dart.util.DartSdkTestUtil;
-import com.jetbrains.lang.dart.util.DartTestUtils;
 
 /**
  * @author: Fedor.Korotkov
  */
-public class DartExtractMethodTest extends CodeInsightFixtureTestCase {
+public class DartExtractMethodTest extends DartCodeInsightFixtureTestCase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/refactoring/extractMethod/");
+    return FileUtil.toSystemDependentName("/refactoring/extractMethod/");
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    DartSdkTestUtil.configFakeSdk(myFixture, "../../sdk");
+  }
+
+  @Override
+  protected void tearDown() throws Exception {
+    super.tearDown();
   }
 
   private void doTest() throws Throwable {
-    DartSdkTestUtil.configFakeSdk(myFixture);
     myFixture.configureByFile(getTestName(true) + ".dart");
     doTestImpl();
   }

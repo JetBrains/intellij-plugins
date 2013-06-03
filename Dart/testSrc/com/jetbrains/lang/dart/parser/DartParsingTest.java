@@ -1,7 +1,5 @@
 package com.jetbrains.lang.dart.parser;
 
-import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.ParsingTestCase;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.DartParserDefinition;

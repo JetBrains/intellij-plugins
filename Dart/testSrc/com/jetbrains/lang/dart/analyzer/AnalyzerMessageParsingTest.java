@@ -4,7 +4,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.util.DartTestUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;

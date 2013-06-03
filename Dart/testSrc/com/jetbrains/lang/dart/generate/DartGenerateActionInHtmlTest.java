@@ -1,6 +1,5 @@
 package com.jetbrains.lang.dart.generate;
 
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.jetbrains.lang.dart.ide.generation.CreateGetterSetterFix;
 import com.jetbrains.lang.dart.util.DartTestUtils;

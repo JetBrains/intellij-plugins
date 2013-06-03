@@ -25,7 +25,7 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
   public void testLibrary1() throws Throwable {
     myFixture.addFileToProject("pubspec.yaml", "");
     myFixture.copyFileToProject("packages/foo/Foo.dart");
-    myFixture.configureByText("library1.dart", "import 'package:foo/foo.dart' show B<caret>");
+    myFixture.configureByText("library1.dart", "import 'package:foo/Foo.dart' show B<caret>");
     doTestVariantsInner(getTestName(false) + ".txt");
   }
 
@@ -229,17 +229,17 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
   }
 
   public void testTest10() throws Throwable {
-    DartSdkTestUtil.configFakeSdk(myFixture);
+    DartSdkTestUtil.configFakeSdk(myFixture, "../../sdk");
     doTest();
   }
 
   public void testWEB_6447() throws Throwable {
-    DartSdkTestUtil.configFakeSdk(myFixture);
+    DartSdkTestUtil.configFakeSdk(myFixture, "../../sdk");
     doTest();
   }
 
   public void testWEB_6480() throws Throwable {
-    DartSdkTestUtil.configFakeSdk(myFixture);
+    DartSdkTestUtil.configFakeSdk(myFixture, "../../sdk");
     doTest();
   }
 }
