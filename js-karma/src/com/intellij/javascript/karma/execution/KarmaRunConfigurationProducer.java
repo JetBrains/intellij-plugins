@@ -58,7 +58,7 @@ public class KarmaRunConfigurationProducer extends RuntimeConfigurationProducer 
     KarmaRunSettings settings = new KarmaRunSettings.Builder().setConfigPath(path).build();
     runConfiguration.setRunSettings(settings);
 
-    String name = vFile.getName();
+    String name = runConfiguration.suggestedName();
     runConfiguration.setName(name);
     runnerSettings.setName(name);
 
