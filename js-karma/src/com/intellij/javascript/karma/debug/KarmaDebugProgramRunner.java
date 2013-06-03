@@ -22,8 +22,9 @@ import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.xdebugger.XDebugProcess;
@@ -72,6 +73,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     if (debugEngine == null) {
       throw new ExecutionException("No debuggable browser found");
     }
+    FileDocumentManager.getInstance().saveAllDocuments();
     if (!debugEngine.prepareDebugger(project)) {
       return null;
     }
@@ -112,35 +114,15 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     KarmaConfig karmaConfig = karmaServer.getKarmaConfig();
     if (karmaConfig != null) {
       File basePath = new File(karmaConfig.getBasePath());
-      for (String path : karmaConfig.getFiles()) {
-        addMapping(mappings, karmaServer.getWebServerPort(), path, basePath);
+      VirtualFile vBasePath = VfsUtil.findFileByIoFile(basePath, false);
+      if (vBasePath != null && vBasePath.isValid()) {
+        mappings.put("http://localhost:" + karmaServer.getWebServerPort() + "/base",
+                     vBasePath);
       }
     }
-    System.out.println("Mappings: " + mappings);
+    mappings.put("http://localhost:" + karmaServer.getWebServerPort() + "/absolute",
+                 LocalFileSystem.getInstance().getRoot());
     return new RemoteDebuggingFileFinder(mappings, false);
-  }
-
-  private static void addMapping(@NotNull BiMap<String, VirtualFile> mappings,
-                                 int webServerPort,
-                                 @NotNull String filePath,
-                                 @NotNull File basePath) {
-    String suffix = "/**/";
-    int startInd = filePath.indexOf(suffix);
-    if (startInd != -1) {
-      String res = filePath.substring(0, startInd);
-      File f = new File(res);
-      if (!f.isAbsolute()) {
-        f = new File(basePath, res);
-      }
-      else {
-        res = FileUtil.getRelativePath(basePath.getAbsolutePath(), res, '/');
-      }
-      VirtualFile vFile = VfsUtil.findFileByIoFile(f, false);
-      if (vFile != null) {
-        String key = "http://localhost:" + webServerPort + "/base/" + res;
-        mappings.put(key, vFile);
-      }
-    }
   }
 
   private static <C> JSDebugEngine<C> getChromeDebugEngine() {
