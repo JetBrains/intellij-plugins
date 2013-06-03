@@ -88,14 +88,14 @@ else
             log(@message_factory.create_test_ignored(test_name, exception_msg, backtrace))
           end
         end
-        # todo: replace these checks with failed?/error_occurred? when they will be available
+        # todo: replace this check with failed? when it will be available
         if not result.passed? and result.failure.class == Assertion
           self.failures += 1
           with_result(result) do |exception_msg, backtrace|
             log(@message_factory.create_test_failed(test_name, exception_msg, backtrace))
           end
         end
-        if not result.passed? and result.failure.class == UnexpectedError
+        if result.error?
           self.errors += 1
           with_result(result) do |exception_msg, backtrace|
             log(@message_factory.create_test_error(test_name, exception_msg, backtrace))
