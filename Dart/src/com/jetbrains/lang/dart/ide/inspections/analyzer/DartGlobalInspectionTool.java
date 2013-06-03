@@ -9,16 +9,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.jetbrains.lang.dart.analyzer.AnalyzerMessage;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class DartGlobalInspectionTool extends GlobalInspectionTool {
   @Override
-  public void runInspection(AnalysisScope scope,
-                            final InspectionManager manager,
-                            final GlobalInspectionContext globalContext,
-                            final ProblemDescriptionsProcessor problemDescriptionsProcessor) {
+  public void runInspection(@NotNull AnalysisScope scope,
+                            @NotNull final InspectionManager manager,
+                            @NotNull final GlobalInspectionContext globalContext,
+                            @NotNull final ProblemDescriptionsProcessor problemDescriptionsProcessor) {
     final DartGlobalInspectionContext inspectionContext = globalContext.getExtension(DartGlobalInspectionContext.KEY);
     if (inspectionContext == null) {
       return;
