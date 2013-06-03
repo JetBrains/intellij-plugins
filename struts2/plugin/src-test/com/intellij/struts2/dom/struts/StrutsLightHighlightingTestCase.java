@@ -40,8 +40,7 @@ public abstract class StrutsLightHighlightingTestCase extends BasicLightHighligh
    */
   protected void performHighlightingTest(@NonNls final String... strutsXmlFileNames) {
     createStrutsFileSet(strutsXmlFileNames);
-    final long duration = myFixture.testHighlighting(true, false, false, strutsXmlFileNames);
-//    System.out.println(strutsXmlFileNames[0] + " = " + duration);
+    myFixture.testHighlighting(true, false, false, strutsXmlFileNames);
   }
 
   /**

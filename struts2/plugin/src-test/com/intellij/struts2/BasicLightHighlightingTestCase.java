@@ -42,6 +42,7 @@ import java.util.Set;
  */
 public abstract class BasicLightHighlightingTestCase extends LightCodeInsightFixtureTestCase {
 
+  @NonNls
   public static final String TEST_DATA_PATH = "/contrib/struts2/plugin/testData/";
 
   private static final LightProjectDescriptor STRUTS =

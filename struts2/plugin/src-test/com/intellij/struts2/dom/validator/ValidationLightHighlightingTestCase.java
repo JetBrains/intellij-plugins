@@ -40,8 +40,7 @@ abstract class ValidationLightHighlightingTestCase extends BasicLightHighlightin
    * @throws Throwable On any errors.
    */
   protected void performHighlightingTest(@NonNls final String validationXmlFileName) {
-    final long duration = myFixture.testHighlighting(true, false, false, validationXmlFileName);
-    //System.out.println(validationXmlFileName + " = " + duration);
+    myFixture.testHighlighting(true, false, false, validationXmlFileName);
   }
 
   /**

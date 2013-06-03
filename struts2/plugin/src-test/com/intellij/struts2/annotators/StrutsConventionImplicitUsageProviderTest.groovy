@@ -22,6 +22,7 @@ import com.intellij.struts2.Struts2ProjectDescriptorBuilder
 import com.intellij.struts2.StrutsConstants
 import com.intellij.struts2.model.jam.convention.StrutsConventionConstants
 import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.annotations.NotNull
 
 /**
  * @author Yann C&eacute;bron
@@ -33,11 +34,13 @@ class StrutsConventionImplicitUsageProviderTest extends BasicLightHighlightingTe
     .withStrutsFacet()
     .withLibrary("struts2-convention-plugin", "struts2-convention-plugin-" + STRUTS2_VERSION + ".jar");
 
+  @NotNull
   @Override
   protected String getTestDataLocation() {
     return ""
   }
 
+  @NotNull
   @Override
   protected LightProjectDescriptor getProjectDescriptor() {
     return getTestName(false).contains("Convention") ? CONVENTION : super.getProjectDescriptor()
