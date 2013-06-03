@@ -74,8 +74,8 @@ public class StrutsPackageExtendsResolveConverterImpl extends StrutsPackageExten
     return strutsPackage != null ? strutsPackage.getXmlTag() : null;
   }
 
-  private Collection<StrutsPackage> removeCurrentElementFromVariants(final ConvertContext context,
-                                                                     final Collection<StrutsPackage> allVariants) {
+  private static Collection<StrutsPackage> removeCurrentElementFromVariants(final ConvertContext context,
+                                                                            final Collection<StrutsPackage> allVariants) {
     final StrutsPackage currentElement = (StrutsPackage)DomUtil.getDomElement(context.getTag());
     assert currentElement != null : "currentElement was null for " + context.getTag();
     final GenericDomValue currentNameElement = currentElement.getGenericInfo().getNameDomElement(currentElement);
