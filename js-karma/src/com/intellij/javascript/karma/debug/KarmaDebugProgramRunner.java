@@ -80,11 +80,11 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     if (executionResult == null) {
       return null;
     }
-    KarmaConsoleView testRunConsole = KarmaConsoleView.get(executionResult);
-    if (testRunConsole == null) {
-      throw new RuntimeException("KarmaRunSession was expected!");
+    KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult);
+    if (consoleView == null) {
+      throw new RuntimeException("KarmaConsoleView was expected!");
     }
-    KarmaServer karmaServer = testRunConsole.getKarmaRunSession().getKarmaServer();
+    KarmaServer karmaServer = consoleView.getKarmaRunSession().getKarmaServer();
 
     final Connection connection = debugEngine.openConnection(false);
     final String url = "http://localhost:" + karmaServer.getWebServerPort();
@@ -101,7 +101,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     ((JSDebugProcess)session.getDebugProcess()).getConnection().queueRequest(new Runnable() {
       @Override
       public void run() {
-        resumeJstdClientRunning(executionResult.getProcessHandler());
+        resumeTestRunning(executionResult.getProcessHandler());
       }
     });
     return session.getRunContentDescriptor();
@@ -153,12 +153,12 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     return null;
   }
 
-  private static void resumeJstdClientRunning(@NotNull ProcessHandler processHandler) {
+  private static void resumeTestRunning(@NotNull ProcessHandler processHandler) {
     if (processHandler instanceof OSProcessHandler) {
       // process's input stream will be closed on process termination
       @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "ConstantConditions"})
       PrintWriter writer = new PrintWriter(processHandler.getProcessInput());
-      writer.println("debug-session-started");
+      writer.print("resume-test-running\n");
       writer.flush();
     }
   }

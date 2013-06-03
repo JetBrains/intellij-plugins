@@ -24,24 +24,27 @@ import java.io.IOException;
 /**
  * @author Sergey Simonchik
  */
-public class KarmaTestRunState implements RunProfileState {
+public class KarmaRunProfileState implements RunProfileState {
 
   private final Project myProject;
   private final ExecutionEnvironment myExecutionEnvironment;
   private final String myNodeInterpreterPath;
   private final String myKarmaPackageDir;
   private final KarmaRunSettings myRunSettings;
+  private final boolean myDebug;
 
-  public KarmaTestRunState(@NotNull Project project,
-                           @NotNull ExecutionEnvironment executionEnvironment,
-                           @NotNull String nodeInterpreterPath,
-                           @NotNull String karmaPackageDir,
-                           @NotNull KarmaRunSettings runSettings) {
+  public KarmaRunProfileState(@NotNull Project project,
+                              @NotNull ExecutionEnvironment executionEnvironment,
+                              @NotNull String nodeInterpreterPath,
+                              @NotNull String karmaPackageDir,
+                              @NotNull KarmaRunSettings runSettings,
+                              boolean debug) {
     myProject = project;
     myExecutionEnvironment = executionEnvironment;
     myNodeInterpreterPath = nodeInterpreterPath;
     myKarmaPackageDir = karmaPackageDir;
     myRunSettings = runSettings;
+    myDebug = debug;
   }
 
   @Override
@@ -58,12 +61,13 @@ public class KarmaTestRunState implements RunProfileState {
         throw new ExecutionException(e);
       }
     }
-    KarmaRunSession runSession = new KarmaRunSession(myProject,
-                                                     myExecutionEnvironment,
-                                                     executor,
-                                                     server,
-                                                     myNodeInterpreterPath,
-                                                     myRunSettings);
+    KarmaExecutionSession runSession = new KarmaExecutionSession(myProject,
+                                                                 myExecutionEnvironment,
+                                                                 executor,
+                                                                 server,
+                                                                 myNodeInterpreterPath,
+                                                                 myRunSettings,
+                                                                 myDebug);
     SMTRunnerConsoleView smtRunnerConsoleView = runSession.getSmtConsoleView();
     Disposer.register(myProject, smtRunnerConsoleView);
 

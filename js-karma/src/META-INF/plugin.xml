@@ -12,7 +12,7 @@
   <depends>com.intellij.modules.lang</depends>
   <depends>JavaScript</depends>
 
-  <!--<depends optional="true" config-file="karma-debug.xml">JavaScriptDebugger</depends>-->
+  <depends optional="true" config-file="karma-debug.xml">JavaScriptDebugger</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>

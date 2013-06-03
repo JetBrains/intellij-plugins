@@ -27,13 +27,13 @@ import java.awt.*;
 public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionConsoleEx {
 
   private final KarmaServer myKarmaServer;
-  private final KarmaRunSession myRunSession;
+  private final KarmaExecutionSession myRunSession;
 
   public KarmaConsoleView(@NotNull TestConsoleProperties consoleProperties,
                           @NotNull ExecutionEnvironment env,
                           @Nullable String splitterProperty,
                           @NotNull KarmaServer karmaServer,
-                          @NotNull KarmaRunSession runSession) {
+                          @NotNull KarmaExecutionSession runSession) {
     super(consoleProperties, env.getRunnerSettings(), env.getConfigurationSettings(), splitterProperty);
     myKarmaServer = karmaServer;
     myRunSession = runSession;
@@ -95,7 +95,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   }
 
   @NotNull
-  public KarmaRunSession getKarmaRunSession() {
+  public KarmaExecutionSession getKarmaRunSession() {
     return myRunSession;
   }
 

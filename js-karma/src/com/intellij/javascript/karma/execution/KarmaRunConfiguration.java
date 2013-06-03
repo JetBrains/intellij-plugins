@@ -3,6 +3,7 @@ package com.intellij.javascript.karma.execution;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
+import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
@@ -61,11 +62,12 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
     if (globalSettings == null) {
       return null;
     }
-    return new KarmaTestRunState(getProject(),
+    return new KarmaRunProfileState(getProject(),
                                  env,
                                  globalSettings.myNodeInterpreterPath,
                                  globalSettings.myKarmaNodePackage,
-                                 myRunSettings);
+                                 myRunSettings,
+                                 executor.equals(DefaultDebugExecutor.getDebugExecutorInstance()));
   }
 
   @Override

@@ -29,9 +29,9 @@ import java.io.IOException;
 /**
  * @author Sergey Simonchik
  */
-public class KarmaRunSession {
+public class KarmaExecutionSession {
 
-  private static final Logger LOG = Logger.getInstance(KarmaRunSession.class);
+  private static final Logger LOG = Logger.getInstance(KarmaExecutionSession.class);
   private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
 
   private final Project myProject;
@@ -42,14 +42,16 @@ public class KarmaRunSession {
   private final KarmaRunSettings myRunSettings;
   private final SMTRunnerConsoleView mySmtConsoleView;
   private final ProcessHandler myProcessHandler;
+  private final boolean myDebug;
   private RunContentDescriptor myRunContentDescriptor;
 
-  public KarmaRunSession(@NotNull Project project,
-                         @NotNull ExecutionEnvironment environment,
-                         @NotNull Executor executor,
-                         @NotNull KarmaServer karmaServer,
-                         @NotNull String nodeInterpreterPath,
-                         @NotNull KarmaRunSettings runSettings) throws ExecutionException {
+  public KarmaExecutionSession(@NotNull Project project,
+                               @NotNull ExecutionEnvironment environment,
+                               @NotNull Executor executor,
+                               @NotNull KarmaServer karmaServer,
+                               @NotNull String nodeInterpreterPath,
+                               @NotNull KarmaRunSettings runSettings,
+                               boolean debug) throws ExecutionException {
     myProject = project;
     myEnvironment = environment;
     myExecutor = executor;
@@ -57,6 +59,7 @@ public class KarmaRunSession {
     myNodeInterpreterPath = nodeInterpreterPath;
     myRunSettings = runSettings;
     mySmtConsoleView = createSMTRunnerConsoleView();
+    myDebug = debug;
     myProcessHandler = createProcessHandler(karmaServer);
   }
 
@@ -144,6 +147,9 @@ public class KarmaRunSession {
     commandLine.addParameter(clientAppFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getKarmaJsSourcesLocator().getKarmaPackageDir());
     commandLine.addParameter("--runnerPort=" + runnerPort);
+    if (myDebug) {
+      commandLine.addParameter("--debug=true");
+    }
     return commandLine;
   }
 
