@@ -185,7 +185,7 @@ public class FlashUmlDataModel extends DiagramDataModel<Object> {
     final JSClass fromClass = (JSClass)source;
     final JSClass toClass = (JSClass)target;
 
-    if (JSRefactoringUtil.isInLibrary(fromClass) || JSResolveUtil.isObjectClass(toClass)) {
+    if (JSRefactoringUtil.isInLibrary(fromClass)) {
       return;
     }
 
