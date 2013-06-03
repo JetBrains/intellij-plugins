@@ -1,10 +1,10 @@
 package com.intellij.lang.javascript.generation;
 
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
-import com.intellij.lang.javascript.psi.util.JSChangeUtilEx;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -43,7 +43,7 @@ class JavaScriptGenerateToStringHandler extends BaseJSGenerateHandler {
                                       "function toString():String {\nreturn " +
                                       (needOverride[0] ? "super.toString()" : "\"" + jsClass.getName());
 
-        final String semicolon = JSChangeUtilEx.getSemicolon(project);
+        final String semicolon = JSCodeStyleSettings.getSemicolon(file);
 
         boolean first = true;
 

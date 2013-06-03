@@ -1,12 +1,12 @@
 package com.intellij.lang.javascript.generation;
 
+import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.JSParameterList;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.util.JSChangeUtilEx;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.lang.javascript.validation.fixes.JSAttributeListWrapper;
 import com.intellij.psi.PsiElement;
@@ -59,7 +59,7 @@ public class OverrideMethodsFix extends BaseCreateMethodsFix<JSFunction> {
       functionText.append(")");
     }
 
-    functionText.append(JSChangeUtilEx.getSemicolon(func.getProject())).append("}");
+    functionText.append(JSCodeStyleSettings.getSemicolon(func.getContainingFile())).append("}");
     return functionText.toString();
   }
 

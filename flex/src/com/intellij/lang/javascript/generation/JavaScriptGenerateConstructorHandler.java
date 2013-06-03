@@ -5,7 +5,6 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.util.JSChangeUtilEx;
 import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.openapi.editor.Editor;
@@ -35,7 +34,7 @@ public class JavaScriptGenerateConstructorHandler extends BaseJSGenerateHandler 
         @NonNls String functionText = "public function " + jsClass.getName() + "(";
         @NonNls String initialization = "";
         boolean first = true;
-        final String semicolon = JSChangeUtilEx.getSemicolon(project);
+        final String semicolon = JSCodeStyleSettings.getSemicolon(file);
 
         Set<JSVariable> toProcess = getElementsToProcess();
         Iterator<JSVariable> variableIterator = toProcess.iterator();
