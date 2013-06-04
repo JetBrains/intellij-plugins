@@ -27,6 +27,8 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
       "com.google.dart.sdk",
       getDartSettings().getSdkPath()
     );
+    // todo: hack to remove
+    myFixture.setTestDataPath(DartTestUtils.BASE_TEST_DATA_PATH + getBasePath());
   }
 
   @Override

@@ -6,7 +6,7 @@ import com.jetbrains.lang.dart.util.DartTestUtils;
 public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/analyzer/resolver");
+    return "/analyzer/resolver";
   }
 
   public void testCannotResolveMethod1() throws Throwable {

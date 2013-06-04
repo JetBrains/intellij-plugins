@@ -2,7 +2,7 @@ package com.jetbrains.lang.dart.analyzer;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.jetbrains.lang.dart.util.DartTestUtils;
 
 import java.io.File;
@@ -15,10 +15,15 @@ import java.util.Scanner;
 /**
  * @author: Fedor.Korotkov
  */
-abstract public class AnalyzerMessageParsingTest extends CodeInsightFixtureTestCase {
+public class AnalyzerMessageParsingTest extends LightPlatformCodeInsightFixtureTestCase {
+  @Override
+  protected String getTestDataPath() {
+    return DartTestUtils.BASE_TEST_DATA_PATH + getBasePath();
+  }
+
   @Override
   protected String getBasePath() {
-    return FileUtil.toSystemDependentName(DartTestUtils.RELATIVE_TEST_DATA_PATH + "/analyzer/parsing");
+    return "/analyzer/parsing";
   }
 
   public void doTest() throws Throwable {
