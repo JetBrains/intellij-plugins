@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.lang.ognl.OgnlTypes.*;
 import static com.intellij.lang.parser.GeneratedParserUtilBase.*;
 
-@SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
+@SuppressWarnings({"ALL"})
 public class OgnlParser implements PsiParser {
 
   public static Logger LOG_ = Logger.getInstance("com.intellij.lang.ognl.parser.OgnlParser");
@@ -94,17 +94,14 @@ public class OgnlParser implements PsiParser {
   }
 
   private static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
-    TokenSet.create(BINARY_EXPRESSION, CONDITIONAL_EXPRESSION, EXPRESSION, INDEXED_EXPRESSION,
+    create_token_set_(BINARY_EXPRESSION, CONDITIONAL_EXPRESSION, EXPRESSION, INDEXED_EXPRESSION,
       LITERAL_EXPRESSION, METHOD_CALL_EXPRESSION, NEW_EXPRESSION, PARENTHESIZED_EXPRESSION,
       REFERENCE_EXPRESSION, SEQUENCE_EXPRESSION, UNARY_EXPRESSION, VARIABLE_ASSIGNMENT_EXPRESSION,
       VARIABLE_EXPRESSION),
   };
 
   public static boolean type_extends_(IElementType child_, IElementType parent_) {
-    for (TokenSet set : EXTENDS_SETS_) {
-      if (set.contains(child_) && set.contains(parent_)) return true;
-    }
-    return false;
+    return type_extends_impl_(EXTENDS_SETS_, child_, parent_);
   }
 
   /* ********************************************************** */
@@ -535,24 +532,9 @@ public class OgnlParser implements PsiParser {
     boolean result_ = false;
     Marker marker_ = builder_.mark();
     enterErrorRecordingSection(builder_, level_, _SECTION_NOT_, null);
-    result_ = !rootRecover_0(builder_, level_ + 1);
+    result_ = !consumeToken(builder_, EXPRESSION_END);
     marker_.rollbackTo();
     result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_NOT_, null);
-    return result_;
-  }
-
-  // (EXPRESSION_END)
-  private static boolean rootRecover_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "rootRecover_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = builder_.mark();
-    result_ = consumeToken(builder_, EXPRESSION_END);
-    if (!result_) {
-      marker_.rollbackTo();
-    }
-    else {
-      marker_.drop();
-    }
     return result_;
   }
 
