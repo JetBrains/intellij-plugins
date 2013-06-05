@@ -128,7 +128,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
   @Override
   public void visitJSAttributeNameValuePair(final JSAttributeNameValuePair attributeNameValuePair) {
-    final boolean ok = checkReferences(attributeNameValuePair, ProblemKind.ERROR);
+    final boolean ok = checkReferences(attributeNameValuePair);
 
     if (!ok) return;
 
@@ -193,7 +193,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
   @Override
   public void visitJSIncludeDirective(final JSIncludeDirective includeDirective) {
-    checkReferences(includeDirective, ProblemKind.ERROR);
+    checkReferences(includeDirective);
   }
 
   @Override
