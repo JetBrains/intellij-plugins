@@ -12,8 +12,8 @@ import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
+import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.ide.browsers.BrowsersConfiguration;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
@@ -27,6 +27,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.xdebugger.XDebugProcess;
 import com.intellij.xdebugger.XDebugProcessStarter;
 import com.intellij.xdebugger.XDebugSession;
@@ -36,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.Set;
 
 /**
  * @author Sergey Simonchik
@@ -45,7 +47,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
   @NotNull
   @Override
   public String getRunnerId() {
-    return "KarmaJsTestRunnerDebug";
+    return "KarmaJavaScriptTestRunnerDebug";
   }
 
   @Override
@@ -55,29 +57,12 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
 
   @Nullable
   @Override
-  protected RunContentDescriptor doExecute(Project project,
+  protected RunContentDescriptor doExecute(final Project project,
                                            Executor executor,
                                            RunProfileState state,
                                            RunContentDescriptor contentToReuse,
                                            ExecutionEnvironment env) throws ExecutionException {
-    return startSession(project, executor, state, contentToReuse, env);
-  }
-
-  @Nullable
-  private <Connection> RunContentDescriptor startSession(@NotNull Project project,
-                                                         @NotNull Executor executor,
-                                                         RunProfileState state,
-                                                         @Nullable RunContentDescriptor contentToReuse,
-                                                         @NotNull ExecutionEnvironment env) throws ExecutionException {
-    final JSDebugEngine<Connection> debugEngine = getChromeDebugEngine();
-    if (debugEngine == null) {
-      throw new ExecutionException("No debuggable browser found");
-    }
     FileDocumentManager.getInstance().saveAllDocuments();
-    if (!debugEngine.prepareDebugger(project)) {
-      return null;
-    }
-
     final ExecutionResult executionResult = state.execute(executor, this);
     if (executionResult == null) {
       return null;
@@ -86,19 +71,50 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     if (consoleView == null) {
       throw new RuntimeException("KarmaConsoleView was expected!");
     }
-    KarmaServer karmaServer = consoleView.getKarmaRunSession().getKarmaServer();
 
+    final KarmaServer karmaServer = consoleView.getKarmaRunSession().getKarmaServer();
+    if (karmaServer.isReady() && karmaServer.hasCapturedBrowsers()) {
+      return doStart(project, karmaServer, executionResult, contentToReuse, env);
+    }
+    RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
+    final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
+    karmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
+      @Override
+      public void run() {
+        descriptor.getRestarter().run();
+      }
+    });
+    return descriptor;
+  }
+
+  private <Connection> RunContentDescriptor doStart(
+    @NotNull final Project project,
+    @NotNull KarmaServer karmaServer,
+    @NotNull final ExecutionResult executionResult,
+    @Nullable RunContentDescriptor contentToReuse,
+    @NotNull ExecutionEnvironment env) throws ExecutionException {
+    final JSDebugEngine<Connection> debugEngine = getDebugEngine(karmaServer.getCapturedBrowsers());
+    if (debugEngine == null) {
+      throw new ExecutionException("No debuggable browser found");
+    }
+    if (!debugEngine.prepareDebugger(project)) {
+      return null;
+    }
     final Connection connection = debugEngine.openConnection(false);
     final String url = "http://localhost:" + karmaServer.getWebServerPort();
 
     final DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
-    XDebugSession session = XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
-      @NotNull
-      public XDebugProcess start(@NotNull final XDebugSession session) {
-        return debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
+    XDebugSession session = XDebuggerManager.getInstance(project).startSession(
+      this,
+      env,
+      contentToReuse,
+      new XDebugProcessStarter() {
+        @NotNull
+        public XDebugProcess start(@NotNull final XDebugSession session) {
+          return debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
+        }
       }
-    });
-
+    );
     // must be here, after all breakpoints were queued
     ((JSDebugProcess)session.getDebugProcess()).getConnection().queueRequest(new Runnable() {
       @Override
@@ -125,14 +141,23 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     return new RemoteDebuggingFileFinder(mappings, false);
   }
 
-  private static <C> JSDebugEngine<C> getChromeDebugEngine() {
+  @Nullable
+  private static <C> JSDebugEngine<C> getDebugEngine(@NotNull Set<String> capturedBrowsers) {
+    //noinspection unchecked
     JSDebugEngine<C>[] engines = (JSDebugEngine<C>[])JSDebugEngine.getEngines();
+    Set<JSDebugEngine<C>> capturedEngines = ContainerUtil.newHashSet();
     for (JSDebugEngine<C> engine : engines) {
-      if (engine.getBrowserFamily() == BrowsersConfiguration.BrowserFamily.CHROME) {
-        return engine;
+      for (String capturedBrowserName : capturedBrowsers) {
+        if (capturedBrowserName.contains(engine.getBrowserFamily().getName())) {
+          capturedEngines.add(engine);
+          break;
+        }
       }
     }
-    return null;
+    if (capturedEngines.isEmpty()) {
+      return null;
+    }
+    return capturedEngines.iterator().next();
   }
 
   private static void resumeTestRunning(@NotNull ProcessHandler processHandler) {

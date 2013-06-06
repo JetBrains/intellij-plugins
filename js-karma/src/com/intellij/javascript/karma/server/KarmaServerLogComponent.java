@@ -111,7 +111,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
                                               null,
                                               myConsole.getPreferredFocusableComponent());
     consoleContent.setCloseable(false);
-    ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
+    ui.addContent(consoleContent, 3, PlaceInGrid.bottom, false);
     if (!myKarmaServer.isReady()) {
       ui.selectAndFocus(consoleContent, false, false);
     }

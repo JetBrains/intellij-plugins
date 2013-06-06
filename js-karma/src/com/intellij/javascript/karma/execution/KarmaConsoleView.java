@@ -3,28 +3,27 @@ package com.intellij.javascript.karma.execution;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.testframework.TestConsoleProperties;
+import com.intellij.execution.testframework.sm.runner.SMTestProxy;
+import com.intellij.execution.testframework.sm.runner.ui.SMRootTestProxyFormatter;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.execution.testframework.sm.runner.ui.TestTreeRenderer;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.ExecutionConsoleEx;
+import com.intellij.execution.ui.LayoutAwareExecutionConsole;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.karma.server.KarmaServer;
-import com.intellij.javascript.karma.server.KarmaServerAdapter;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
-import com.intellij.ui.ColorUtil;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
-
 /**
 * @author Sergey Simonchik
 */
-public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionConsoleEx {
+public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionConsoleEx, LayoutAwareExecutionConsole {
 
   private final KarmaServer myKarmaServer;
   private final KarmaExecutionSession myRunSession;
@@ -41,42 +40,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
   @Override
   public void buildUi(final RunnerLayoutUi ui) {
-    boolean serverReady = myKarmaServer.isReady();
-    final JComponent component, preferredFocusableComponent;
-    if (serverReady) {
-      component = getComponent();
-      preferredFocusableComponent = getPreferredFocusableComponent();
-    }
-    else {
-      component = createStubComponent();
-      preferredFocusableComponent = null;
-    }
-    final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
-                                                    component,
-                                                    "Test Run",
-                                                    AllIcons.Debugger.Console,
-                                                    preferredFocusableComponent);
-    consoleContent.setCloseable(false);
-    ui.addContent(consoleContent, 0, PlaceInGrid.bottom, false);
-    if (serverReady) {
-      ui.selectAndFocus(consoleContent, false, false);
-    }
-
-    if (!serverReady) {
-      myKarmaServer.addListener(new KarmaServerAdapter() {
-        @Override
-        public void onReady(int webServerPort, int runnerPort) {
-          ui.removeContent(consoleContent, false);
-          consoleContent.setComponent(getComponent());
-          consoleContent.setPreferredFocusableComponent(getPreferredFocusableComponent());
-          ui.addContent(consoleContent, 0, PlaceInGrid.bottom, false);
-          ui.selectAndFocus(consoleContent, false, false);
-        }
-      });
-    }
-
-    KarmaServerLogComponent logComponent = new KarmaServerLogComponent(getProperties().getProject(), myKarmaServer);
-    logComponent.installOn(ui);
+    buildContent(ui);
   }
 
   @Nullable
@@ -86,12 +50,51 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   }
 
   @NotNull
-  private static JComponent createStubComponent() {
-    JLabel label = new JLabel("Karma server is not ready", SwingConstants.CENTER);
-    label.setOpaque(true);
-    Color treeBg = UIManager.getColor("Tree.background");
-    label.setBackground(ColorUtil.toAlpha(treeBg, 180));
-    return label;
+  @Override
+  public Content buildContent(@NotNull final RunnerLayoutUi ui) {
+    ui.getOptions().setMinimizeActionEnabled(false);
+    boolean readyToRun = myKarmaServer.isReady() && myKarmaServer.hasCapturedBrowsers();
+    final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
+                                                    getComponent(),
+                                                    "Test Run",
+                                                    AllIcons.Debugger.Console,
+                                                    getPreferredFocusableComponent());
+
+    consoleContent.setCloseable(false);
+    ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
+    if (readyToRun) {
+      ui.selectAndFocus(consoleContent, false, false);
+    }
+    else {
+      final TestTreeRenderer testTreeRenderer = ObjectUtils.tryCast(
+        getResultsViewer().getTreeView().getCellRenderer(),
+        TestTreeRenderer.class
+      );
+      if (testTreeRenderer != null) {
+        testTreeRenderer.setAdditionalRootFormatter(new SMRootTestProxyFormatter() {
+          @Override
+          public void format(@NotNull SMTestProxy.SMRootTestProxy testProxy, @NotNull TestTreeRenderer renderer) {
+            if (testProxy.isLeaf()) {
+              renderer.clear();
+              renderer.append("Waiting for browser capturing...");
+            }
+          }
+        });
+      }
+      myKarmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
+        @Override
+        public void run() {
+          ui.selectAndFocus(consoleContent, false, false);
+          if (testTreeRenderer != null) {
+            testTreeRenderer.removeAdditionalRootFormatter();
+          }
+        }
+      });
+    }
+
+    KarmaServerLogComponent logComponent = new KarmaServerLogComponent(getProperties().getProject(), myKarmaServer);
+    logComponent.installOn(ui);
+    return consoleContent;
   }
 
   @NotNull
@@ -103,4 +106,5 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   public static KarmaConsoleView get(@NotNull ExecutionResult result) {
     return ObjectUtils.tryCast(result.getExecutionConsole(), KarmaConsoleView.class);
   }
+
 }

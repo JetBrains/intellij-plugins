@@ -15,7 +15,7 @@ import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.karma.server.KarmaServer;
-import com.intellij.javascript.karma.server.KarmaServerListener;
+import com.intellij.javascript.karma.server.KarmaServerAdapter;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.karma.util.NopProcessHandler;
 import com.intellij.openapi.diagnostic.Logger;
@@ -89,7 +89,7 @@ public class KarmaExecutionSession {
   }
 
   @NotNull
-  private ProcessHandler createProcessHandler(@NotNull KarmaServer server) throws ExecutionException {
+  private ProcessHandler createProcessHandler(@NotNull final KarmaServer server) throws ExecutionException {
     final File clientAppFile;
     try {
       clientAppFile = server.getKarmaJsSourcesLocator().getClientAppFile();
@@ -102,20 +102,25 @@ public class KarmaExecutionSession {
       return createOSProcessHandler(runnerPort, clientAppFile);
     }
     final NopProcessHandler nopProcessHandler = new NopProcessHandler();
-    server.addListener(new KarmaServerListener() {
+    server.addListener(new KarmaServerAdapter() {
       @Override
-      public void onReady(int webServerPort, int runnerPort) {
-        try {
-          OSProcessHandler osProcessHandler = createOSProcessHandler(runnerPort, clientAppFile);
-          if (myRunContentDescriptor != null) {
-            myRunContentDescriptor.setProcessHandler(osProcessHandler);
+      public void onReady(int webServerPort, final int runnerPort) {
+        server.doWhenReadyWithCapturedBrowser(new Runnable() {
+          @Override
+          public void run() {
+            try {
+              OSProcessHandler osProcessHandler = createOSProcessHandler(runnerPort, clientAppFile);
+              if (myRunContentDescriptor != null) {
+                myRunContentDescriptor.setProcessHandler(osProcessHandler);
+              }
+              osProcessHandler.startNotify();
+            }
+            catch (ExecutionException e) {
+              LOG.warn(e);
+              // TODO handle
+            }
           }
-          osProcessHandler.startNotify();
-        }
-        catch (ExecutionException e) {
-          LOG.warn(e);
-          // TODO handle
-        }
+        });
       }
 
       @Override

@@ -12,6 +12,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.util.containers.ConcurrentHashMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
 import com.intellij.util.ui.UIUtil;
@@ -21,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,8 +33,6 @@ import java.util.regex.Pattern;
  */
 public class KarmaServer {
 
-  private static final Pattern WEB_SERVER_LINE_PATTERN = Pattern.compile("^INFO \\[.*\\]: Karma v(.+) server started at http://[^:]+:(\\d+)/.*$");
-  private static final Pattern BROWSER_CONNECTED_LINE_PATTERN = Pattern.compile("^INFO \\[.*\\]: Connected on socket id \\S*$");
   private static final Logger LOG = Logger.getInstance(KarmaServer.class);
 
   private final List<KarmaServerListener> myListeners = ContainerUtil.createEmptyCOWList();
@@ -39,11 +40,14 @@ public class KarmaServer {
   private final KillableColoredProcessHandler myProcessHandler;
   private final ProcessEventStore myProcessEventStore;
   private final KarmaJsSourcesLocator myKarmaJsSourcesLocator;
-  private volatile int myWebServerPort = -1;
-  private volatile int myRunnerPort = -1;
-  private volatile boolean myBrowserConnected = false;
-  private final AtomicBoolean myIsReady = new AtomicBoolean(false);
-  private boolean myOnReadyFired = false;
+  private final KarmaServerState myState;
+
+  private final AtomicBoolean myOnReadyFired = new AtomicBoolean(false);
+  private boolean myOnReadyExecuted = false;
+
+  // accessed in EDT only
+  private final List<Runnable> myDoListWhenReadyWithCapturedBrowser = ContainerUtil.newArrayList();
+
   private volatile KarmaConfig myKarmaConfig;
 
   public KarmaServer(@NotNull File nodeInterpreter,
@@ -53,6 +57,7 @@ public class KarmaServer {
         are already checked in KarmaRunConfiguration.checkConfiguration */
     myConfigurationFile = configurationFile;
     myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(karmaPackageDir);
+    myState = new KarmaServerState(this);
     try {
       myProcessHandler = startServer(nodeInterpreter, configurationFile);
     }
@@ -110,19 +115,12 @@ public class KarmaServer {
 
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
-      public void onTextAvailable(ProcessEvent event, Key outputType) {
-        String text = event.getText().trim();
-        if (text != null && outputType == ProcessOutputTypes.STDOUT) {
-          handleStdout(text);
-        }
-      }
-
-      @Override
       public void processTerminated(ProcessEvent event) {
         KarmaServerRegistry.serverTerminated(KarmaServer.this);
         fireOnTerminated(event.getExitCode());
       }
     });
+    processHandler.addProcessListener(myState);
     ProcessTerminatedListener.attach(processHandler);
     processHandler.setShouldDestroyProcessRecursively(true);
     return processHandler;
@@ -133,70 +131,16 @@ public class KarmaServer {
     return myProcessEventStore;
   }
 
-  private void handleStdout(@NotNull String text) {
-    if (myWebServerPort == -1) {
-      myWebServerPort = parseWebServerPort(text);
-    }
-    if (myRunnerPort == -1) {
-      myRunnerPort = parseRunnerPort(text);
-    }
-    if (!myBrowserConnected) {
-      myBrowserConnected = parseBrowserConnected(text);
-    }
-    if (myWebServerPort != -1 && myRunnerPort != -1 && myBrowserConnected) {
-      fireOnReady(myWebServerPort, myRunnerPort);
-    }
-  }
-
-  private static int parseRunnerPort(@NotNull String text) {
-    String prefix = "INFO [karma]: To run via this server, use \"karma run --runner-port ";
-    String suffix = "\"";
-    if (text.startsWith(prefix) && text.endsWith(suffix)) {
-      String str = text.substring(prefix.length(), text.length() - suffix.length());
-      try {
-        return Integer.parseInt(str);
-      }
-      catch (NumberFormatException e) {
-        LOG.info("Can't parse runner port from '" + text + "'");
-      }
-    }
-    return -1;
-  }
-
-  private static int parseWebServerPort(@NotNull String text) {
-    Matcher m = WEB_SERVER_LINE_PATTERN.matcher(text);
-    if (m.find()) {
-      String karmaVersionStr = m.group(1);
-      SemVer semVer = SemVer.parseFromText(karmaVersionStr);
-      if (semVer == null) {
-        LOG.warn("Can't parse sem ver from '" + karmaVersionStr + "'");
-        return -1;
-      }
-      String portStr = m.group(2);
-      try {
-        return Integer.parseInt(portStr);
-      }
-      catch (NumberFormatException e) {
-        LOG.info("Can't parse web server port from '" + text + "'");
-      }
-    }
-    return -1;
-  }
-
-  private static boolean parseBrowserConnected(@NotNull String text) {
-    Matcher m = BROWSER_CONNECTED_LINE_PATTERN.matcher(text);
-    return m.matches();
-  }
-
-  private void fireOnReady(final int webServerPort, final int runnerPort) {
-    if (myIsReady.compareAndSet(false, true)) {
+  void fireOnReady(final int webServerPort, final int runnerPort) {
+    if (myOnReadyFired.compareAndSet(false, true)) {
       UIUtil.invokeLaterIfNeeded(new Runnable() {
         @Override
         public void run() {
           for (KarmaServerListener listener : myListeners) {
             listener.onReady(webServerPort, runnerPort);
           }
-          myOnReadyFired = true;
+          myOnReadyExecuted = true;
+          processWhenReadyWithCapturedBrowserQueue();
         }
       });
     }
@@ -213,20 +157,37 @@ public class KarmaServer {
     });
   }
 
+  /**
+   * @param task will be called in EDT
+   */
+  public void doWhenReadyWithCapturedBrowser(@NotNull final Runnable task) {
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        if (myOnReadyFired.get() && hasCapturedBrowsers()) {
+          task.run();
+        }
+        else {
+          myDoListWhenReadyWithCapturedBrowser.add(task);
+        }
+      }
+    });
+  }
+
   public void addListener(@NotNull KarmaServerListener listener) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     myListeners.add(listener);
-    if (myOnReadyFired) {
-      listener.onReady(myWebServerPort, myRunnerPort);
+    if (myOnReadyExecuted) {
+      listener.onReady(myState.myWebServerPort, myState.myRunnerPort);
     }
   }
 
   public boolean isReady() {
-    return myIsReady.get();
+    return myOnReadyFired.get();
   }
 
   public int getRunnerPort() {
-    return myRunnerPort;
+    return myState.myRunnerPort;
   }
 
   @Nullable
@@ -235,6 +196,181 @@ public class KarmaServer {
   }
 
   public int getWebServerPort() {
-    return myWebServerPort;
+    return myState.myWebServerPort;
   }
+
+  public boolean hasCapturedBrowsers() {
+    return myState.hasCapturedBrowser();
+  }
+
+  private void fireOnBrowserConnected(@NotNull final String browserName) {
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        for (KarmaServerListener listener : myListeners) {
+          listener.onBrowserConnected(browserName);
+        }
+        processWhenReadyWithCapturedBrowserQueue();
+      }
+    });
+  }
+
+  private void processWhenReadyWithCapturedBrowserQueue() {
+    if (myDoListWhenReadyWithCapturedBrowser.isEmpty()) {
+      return;
+    }
+    if (myOnReadyFired.get() && hasCapturedBrowsers()) {
+      List<Runnable> tasks = ContainerUtil.newArrayList(myDoListWhenReadyWithCapturedBrowser);
+      for (Runnable task : tasks) {
+        task.run();
+      }
+    }
+  }
+
+  private void fireOnBrowserDisconnected(@NotNull final String browserName) {
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        for (KarmaServerListener listener : myListeners) {
+          listener.onBrowserDisconnected(browserName);
+        }
+      }
+    });
+  }
+
+  @NotNull
+  public Set<String> getCapturedBrowsers() {
+    return myState.myCapturedBrowsers.keySet();
+  }
+
+  public static class KarmaServerState implements ProcessListener {
+
+    private static final Pattern WEB_SERVER_LINE_PATTERN = Pattern.compile("^INFO \\[.*\\]: Karma v(.+) server started at http://[^:]+:(\\d+)/.*$");
+    private static final Pattern BROWSER_CONNECTED_LINE_PATTERN = Pattern.compile(
+      "^INFO \\[([^\\]]*)]: Connected on socket id \\S*$"
+    );
+    private static final Pattern BROWSER_DISCONNECTED_LINE_PATTERN = Pattern.compile(
+      "^WARN \\[([^\\]]*)]: Disconnected$"
+    );
+    private static final Logger LOG = Logger.getInstance(KarmaServerState.class);
+
+    private final KarmaServer myKarmaServer;
+
+    private final ConcurrentMap<String, Integer> myCapturedBrowsers = new ConcurrentHashMap<String, Integer>();
+    private volatile int myWebServerPort = -1;
+    private volatile int myRunnerPort = -1;
+
+    public KarmaServerState(@NotNull KarmaServer karmaServer) {
+      myKarmaServer = karmaServer;
+    }
+
+    @Override
+    public void startNotified(ProcessEvent event) {
+    }
+
+    @Override
+    public void processTerminated(ProcessEvent event) {
+    }
+
+    @Override
+    public void processWillTerminate(ProcessEvent event, boolean willBeDestroyed) {
+    }
+
+    @Override
+    public void onTextAvailable(ProcessEvent event, Key outputType) {
+      String text = event.getText();
+      if (text.endsWith("\n")) {
+        text = text.substring(0, text.length() - 1);
+        if (outputType == ProcessOutputTypes.STDOUT) {
+          handleStdout(text);
+        }
+      }
+    }
+
+    private void handleStdout(@NotNull String text) {
+      if (myWebServerPort == -1) {
+        myWebServerPort = parseWebServerPort(text);
+      }
+      if (myRunnerPort == -1) {
+        myRunnerPort = parseRunnerPort(text);
+      }
+      if (myWebServerPort != -1 && myRunnerPort != -1) {
+        myKarmaServer.fireOnReady(myWebServerPort, myRunnerPort);
+      }
+      handleBrowserEvents(text);
+    }
+
+    private static int parseWebServerPort(@NotNull String text) {
+      Matcher m = WEB_SERVER_LINE_PATTERN.matcher(text);
+      if (m.find()) {
+        String karmaVersionStr = m.group(1);
+        SemVer semVer = SemVer.parseFromText(karmaVersionStr);
+        if (semVer == null) {
+          LOG.warn("Can't parse sem ver from '" + karmaVersionStr + "'");
+          return -1;
+        }
+        String portStr = m.group(2);
+        try {
+          return Integer.parseInt(portStr);
+        }
+        catch (NumberFormatException e) {
+          LOG.warn("Can't parse web server port from '" + text + "'");
+        }
+      }
+      return -1;
+    }
+
+    private static int parseRunnerPort(@NotNull String text) {
+      String prefix = "INFO [karma]: To run via this server, use \"karma run --runner-port ";
+      String suffix = "\"";
+      if (text.startsWith(prefix) && text.endsWith(suffix)) {
+        String str = text.substring(prefix.length(), text.length() - suffix.length());
+        try {
+          return Integer.parseInt(str);
+        }
+        catch (NumberFormatException e) {
+          LOG.warn("Can't parse runner port from '" + text + "'");
+        }
+      }
+      return -1;
+    }
+
+    private void handleBrowserEvents(@NotNull String text) {
+      Matcher matcherConnected = BROWSER_CONNECTED_LINE_PATTERN.matcher(text);
+      if (matcherConnected.find()) {
+        String browserName = matcherConnected.group(1);
+        Integer cnt = myCapturedBrowsers.get(browserName);
+        if (cnt == null) {
+          cnt = 0;
+        }
+        myCapturedBrowsers.put(browserName, cnt + 1);
+        myKarmaServer.fireOnBrowserConnected(browserName);
+      }
+      else {
+        Matcher matcherDisconnected = BROWSER_DISCONNECTED_LINE_PATTERN.matcher(text);
+        if (matcherDisconnected.find()) {
+          String browserName = matcherDisconnected.group(1);
+          Integer cnt = myCapturedBrowsers.get(browserName);
+          if (cnt == null) {
+            LOG.warn("Too many disconnections for '" + browserName + "'");
+          }
+          else {
+            cnt--;
+            if (cnt == 0) {
+              myCapturedBrowsers.remove(browserName);
+            }
+            else {
+              myCapturedBrowsers.put(browserName, cnt);
+            }
+            myKarmaServer.fireOnBrowserDisconnected(browserName);
+          }
+        }
+      }
+    }
+
+    public boolean hasCapturedBrowser() {
+      return !myCapturedBrowsers.isEmpty();
+    }
+  }
+
 }
