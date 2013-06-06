@@ -31,13 +31,6 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
 
   private static final ID<String, Void> KEY = ID.create("jstd.jsFile.path");
 
-  private static final FileBasedIndex.InputFilter JSTD_CONFIG_FILE_INPUT_FILTER = new FileBasedIndex.InputFilter() {
-    @Override
-    public boolean acceptInput(final VirtualFile file) {
-      return JstdConfigFileType.INSTANCE == file.getFileType();
-    }
-  };
-
   private final KeyDescriptor<String> myKeyDescriptor = new EnumeratorStringDescriptor();
 
   @NotNull
@@ -90,7 +83,7 @@ public class JstdTestFilePathIndex extends FileBasedIndexExtension<String, Void>
 
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
-    return JSTD_CONFIG_FILE_INPUT_FILTER;
+    return new DefaultFileTypeSpecificInputFilter(JstdConfigFileType.INSTANCE);
   }
 
   @Override
