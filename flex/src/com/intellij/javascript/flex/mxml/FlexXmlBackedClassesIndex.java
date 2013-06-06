@@ -26,12 +26,6 @@ import java.util.Map;
 public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<String> {
   private static final int INDEX_VERSION = 4;
   private final EnumeratorStringDescriptor myKeyDescriptor = new EnumeratorStringDescriptor();
-  private final FileBasedIndex.InputFilter myInputFilter = new FileBasedIndex.InputFilter() {
-    @Override
-    public boolean acceptInput(VirtualFile file) {
-      return JavaScriptSupportLoader.isMxmlOrFxgFile(file);
-    }
-  };
 
   @Override
   @NotNull
@@ -71,7 +65,12 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
 
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
-    return myInputFilter;
+    return new DefaultFileTypeSpecificInputFilter(JavaScriptSupportLoader.getMxmlFileType()) {
+      @Override
+      public boolean acceptInput(VirtualFile file) {
+        return JavaScriptSupportLoader.isMxmlOrFxgFile(file);
+      }
+    };
   }
 
   @Override
@@ -91,8 +90,7 @@ public abstract class FlexXmlBackedClassesIndex extends ScalarIndexExtension<Str
     for (VirtualFile file : files) {
       PsiFile psifile = psiManager.findFile(file);
       if (!(psifile instanceof XmlFile)) continue;
-      XmlFile xmlFile = (XmlFile)psifile;
-      if (xmlFile != null) classes.addAll(XmlBackedJSClassImpl.getClasses(xmlFile));
+      classes.addAll(XmlBackedJSClassImpl.getClasses((XmlFile)psifile));
     }
 
     if (FlexNameAlias.CONTAINER_TYPE_NAME.equals(name)) {

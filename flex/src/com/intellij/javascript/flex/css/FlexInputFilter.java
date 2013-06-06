@@ -6,14 +6,15 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.indexing.FileBasedIndex;
+import com.intellij.util.indexing.DefaultFileTypeSpecificInputFilter;
 
 /**
 * @author Eugene.Kudelevsky
 */
-class FlexInputFilter implements FileBasedIndex.InputFilter {
+class FlexInputFilter extends DefaultFileTypeSpecificInputFilter {
 
   private FlexInputFilter() {
+    super(ActionScriptFileType.INSTANCE, FlexApplicationComponent.SWF_FILE_TYPE, JavaScriptSupportLoader.getMxmlFileType());
   }
 
   private static class FlexInputFilterHolder {
@@ -27,7 +28,7 @@ class FlexInputFilter implements FileBasedIndex.InputFilter {
   public boolean acceptInput(final VirtualFile file) {
     FileType type = file.getFileType();
     if (type == ActionScriptFileType.INSTANCE ||
-        (type == FlexApplicationComponent.SWF_FILE_TYPE && file.getPath().endsWith(JarFileSystem.JAR_SEPARATOR + file.getName()))) {
+        (type == FlexApplicationComponent.SWF_FILE_TYPE && file.getFileSystem() instanceof JarFileSystem)) {
       return true;
     }
 

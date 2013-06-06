@@ -47,12 +47,6 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
 
   public static final ID<String, Void> NAME = ID.create("FlexXmlBackedMembersIndex");
   private final EnumeratorStringDescriptor myKeyDescriptor = new EnumeratorStringDescriptor();
-  private final FileBasedIndex.InputFilter myInputFilter = new FileBasedIndex.InputFilter() {
-    @Override
-    public boolean acceptInput(VirtualFile file) {
-      return JavaScriptSupportLoader.isMxmlOrFxgFile(file);
-    }
-  };
 
   @Override
   @NotNull
@@ -97,10 +91,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
 
           @Override
           public boolean execute(@NotNull PsiElement element, ResolveState state) {
-            if (element instanceof JSFunction) {
-              consumer.consume(element);
-            }
-            else if (element instanceof JSVariable) {
+            if (element instanceof JSFunction || element instanceof JSVariable) {
               consumer.consume(element);
             }
             return true;
@@ -139,7 +130,12 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
 
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
-    return myInputFilter;
+    return new DefaultFileTypeSpecificInputFilter(JavaScriptSupportLoader.getMxmlFileType()) {
+      @Override
+      public boolean acceptInput(VirtualFile file) {
+        return JavaScriptSupportLoader.isMxmlOrFxgFile(file);
+      }
+    };
   }
 
   @Override
@@ -153,8 +149,7 @@ public class FlexXmlBackedMembersIndex extends ScalarIndexExtension<String> {
   }
 
   public static Collection<String> getSymbolNames(Project project) {
-    Collection<String> result = FileBasedIndex.getInstance().getAllKeys(NAME, project);
-    return result;
+    return FileBasedIndex.getInstance().getAllKeys(NAME, project);
   }
 
   public static Collection<NavigationItem> getItemsByName(final String name, Project project) {
