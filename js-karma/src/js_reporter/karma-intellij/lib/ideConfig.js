@@ -1,8 +1,10 @@
 var join = require('path').join;
 var argv = process.argv;
-var RUNNER_PORT = 'runnerPort';
-var CONFIG_FILE = 'configFile';
-var KARMA_PACKAGE_DIR = 'karmaPackageDir';
+
+var RUNNER_PORT_KEY = 'runnerPort';
+var CONFIG_FILE_KEY = 'configFile';
+var KARMA_PACKAGE_DIR_KEY = 'karmaPackageDir';
+var DEBUG_KEY = 'debug';
 
 function parseArguments() {
   var options = {};
@@ -24,7 +26,7 @@ function parseArguments() {
 var options = parseArguments();
 
 function getKarmaPackageDir() {
-  var karmaPackageDir = options[KARMA_PACKAGE_DIR];
+  var karmaPackageDir = options[KARMA_PACKAGE_DIR_KEY];
   if (!karmaPackageDir) {
     throw Error("Karma package dir isn't specified.");
   }
@@ -37,7 +39,7 @@ exports.requireKarmaModule = function(moduleName) {
 };
 
 exports.getConfigFile = function() {
-  var configFile = options[CONFIG_FILE];
+  var configFile = options[CONFIG_FILE_KEY];
   if (!configFile) {
     throw Error("Config file isn't specified.");
   }
@@ -45,10 +47,15 @@ exports.getConfigFile = function() {
 };
 
 exports.getRunnerPort = function() {
-  var runnerPortStr = options[RUNNER_PORT] || '';
+  var runnerPortStr = options[RUNNER_PORT_KEY] || '';
   var runnerPort = parseInt(runnerPortStr, 10);
   if (isNaN(runnerPort)) {
     return undefined;
   }
   return runnerPort;
+};
+
+exports.isDebug = function() {
+  var debugStr = options[DEBUG_KEY];
+  return 'true' === debugStr;
 };
