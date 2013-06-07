@@ -10,6 +10,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -19,10 +20,12 @@ import org.jetbrains.annotations.Nullable;
  * @author Sergey Simonchik
  */
 public class KarmaRunProgramRunner extends GenericProgramRunner {
+  private static final Logger LOG = Logger.getInstance(KarmaRunProgramRunner.class);
+
   @NotNull
   @Override
   public String getRunnerId() {
-    return "KarmaJsTestRunnerRun";
+    return "KarmaJavaScriptTestRunnerRun";
   }
 
   @Override
@@ -39,16 +42,17 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
                                            ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
     ExecutionResult executionResult = state.execute(executor, this);
-    if (executionResult == null) return null;
-    RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
-    RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
-    if (contentToReuse != null) {
-      System.out.println("content to reuse");
+    if (executionResult == null) {
+      return null;
     }
     KarmaConsoleView console = KarmaConsoleView.get(executionResult);
-    if (console != null) {
-      console.getKarmaRunSession().setRunContentDescriptor(descriptor);
+    if (console == null) {
+      LOG.error("Can't get KarmaConsoleView from executionResult!");
+      return null;
     }
+    RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
+    RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
+    console.getKarmaExecutionSession().setRunContentDescriptor(descriptor);
     return descriptor;
   }
 

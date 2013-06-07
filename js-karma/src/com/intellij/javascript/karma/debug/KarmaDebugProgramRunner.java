@@ -72,9 +72,9 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
       throw new RuntimeException("KarmaConsoleView was expected!");
     }
 
-    final KarmaServer karmaServer = consoleView.getKarmaRunSession().getKarmaServer();
+    final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (karmaServer.isReady() && karmaServer.hasCapturedBrowsers()) {
-      return doStart(project, karmaServer, executionResult, contentToReuse, env);
+      return doStart(project, karmaServer, consoleView, executionResult, contentToReuse, env);
     }
     RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
@@ -87,12 +87,12 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     return descriptor;
   }
 
-  private <Connection> RunContentDescriptor doStart(
-    @NotNull final Project project,
-    @NotNull KarmaServer karmaServer,
-    @NotNull final ExecutionResult executionResult,
-    @Nullable RunContentDescriptor contentToReuse,
-    @NotNull ExecutionEnvironment env) throws ExecutionException {
+  private <Connection> RunContentDescriptor doStart(@NotNull final Project project,
+                                                    @NotNull KarmaServer karmaServer,
+                                                    @NotNull final KarmaConsoleView consoleView,
+                                                    @NotNull final ExecutionResult executionResult,
+                                                    @Nullable RunContentDescriptor contentToReuse,
+                                                    @NotNull ExecutionEnvironment env) throws ExecutionException {
     final JSDebugEngine<Connection> debugEngine = getDebugEngine(karmaServer.getCapturedBrowsers());
     if (debugEngine == null) {
       throw new ExecutionException("No debuggable browser found");
@@ -112,7 +112,9 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
         @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) {
-          return debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
+          XDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
+          debugProcess.setLayoutCustomizer(consoleView);
+          return debugProcess;
         }
       }
     );

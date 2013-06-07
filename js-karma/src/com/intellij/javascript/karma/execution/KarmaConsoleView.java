@@ -9,38 +9,38 @@ import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.testframework.sm.runner.ui.TestTreeRenderer;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.ExecutionConsoleEx;
-import com.intellij.execution.ui.LayoutAwareExecutionConsole;
 import com.intellij.execution.ui.RunnerLayoutUi;
-import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ObjectUtils;
+import com.intellij.xdebugger.ui.XDebugLayoutCustomizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
 * @author Sergey Simonchik
 */
-public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionConsoleEx, LayoutAwareExecutionConsole {
+public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionConsoleEx, XDebugLayoutCustomizer {
 
   private final KarmaServer myKarmaServer;
-  private final KarmaExecutionSession myRunSession;
+  private final KarmaExecutionSession myExecutionSession;
 
   public KarmaConsoleView(@NotNull TestConsoleProperties consoleProperties,
                           @NotNull ExecutionEnvironment env,
                           @Nullable String splitterProperty,
                           @NotNull KarmaServer karmaServer,
-                          @NotNull KarmaExecutionSession runSession) {
+                          @NotNull KarmaExecutionSession executionSession) {
     super(consoleProperties, env.getRunnerSettings(), env.getConfigurationSettings(), splitterProperty);
     myKarmaServer = karmaServer;
-    myRunSession = runSession;
+    myExecutionSession = executionSession;
   }
 
   @Override
   public void buildUi(final RunnerLayoutUi ui) {
-    buildContent(ui);
+    createConsoleContent(this, ui);
+    registerAdditionalContent(ui);
   }
 
   @Nullable
@@ -51,7 +51,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
   @NotNull
   @Override
-  public Content buildContent(@NotNull final RunnerLayoutUi ui) {
+  public Content createConsoleContent(@NotNull ExecutionConsole console, @NotNull final RunnerLayoutUi ui) {
     ui.getOptions().setMinimizeActionEnabled(false);
     boolean readyToRun = myKarmaServer.isReady() && myKarmaServer.hasCapturedBrowsers();
     final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
@@ -61,7 +61,6 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
                                                     getPreferredFocusableComponent());
 
     consoleContent.setCloseable(false);
-    ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
     if (readyToRun) {
       ui.selectAndFocus(consoleContent, false, false);
     }
@@ -91,15 +90,18 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
         }
       });
     }
-
-    KarmaServerLogComponent logComponent = new KarmaServerLogComponent(getProperties().getProject(), myKarmaServer);
-    logComponent.installOn(ui);
     return consoleContent;
   }
 
+  @Override
+  public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
+    KarmaServerLogComponent logComponent = new KarmaServerLogComponent(getProperties().getProject(), myKarmaServer);
+    logComponent.installOn(ui);
+  }
+
   @NotNull
-  public KarmaExecutionSession getKarmaRunSession() {
-    return myRunSession;
+  public KarmaExecutionSession getKarmaExecutionSession() {
+    return myExecutionSession;
   }
 
   @Nullable
