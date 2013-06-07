@@ -97,32 +97,30 @@ public class KarmaExecutionSession {
     catch (IOException e) {
       throw new ExecutionException("Can't find karma-intellij test runner", e);
     }
-    if (server.isReady()) {
-      int runnerPort = server.getRunnerPort();
-      return createOSProcessHandler(runnerPort, clientAppFile);
+    if (server.isReady() && server.hasCapturedBrowsers()) {
+      return createOSProcessHandler(server.getRunnerPort(), clientAppFile);
     }
     final NopProcessHandler nopProcessHandler = new NopProcessHandler();
-    server.addListener(new KarmaServerAdapter() {
+    server.doWhenReadyWithCapturedBrowser(new Runnable() {
       @Override
-      public void onReady(int webServerPort, final int runnerPort) {
-        server.doWhenReadyWithCapturedBrowser(new Runnable() {
-          @Override
-          public void run() {
-            try {
-              OSProcessHandler osProcessHandler = createOSProcessHandler(runnerPort, clientAppFile);
-              if (myRunContentDescriptor != null) {
-                myRunContentDescriptor.setProcessHandler(osProcessHandler);
-              }
-              osProcessHandler.startNotify();
-            }
-            catch (ExecutionException e) {
-              LOG.warn(e);
-              // TODO handle
-            }
+      public void run() {
+        if (nopProcessHandler.isProcessTerminated()) {
+          return;
+        }
+        try {
+          OSProcessHandler osProcessHandler = createOSProcessHandler(server.getRunnerPort(), clientAppFile);
+          if (myRunContentDescriptor != null) {
+            myRunContentDescriptor.setProcessHandler(osProcessHandler);
           }
-        });
+          osProcessHandler.startNotify();
+        }
+        catch (ExecutionException e) {
+          LOG.warn(e);
+          // TODO handle
+        }
       }
-
+    });
+    server.addListener(new KarmaServerAdapter() {
       @Override
       public void onTerminated(int exitCode) {
         nopProcessHandler.destroyProcess();

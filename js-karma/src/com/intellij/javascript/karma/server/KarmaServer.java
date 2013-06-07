@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +47,7 @@ public class KarmaServer {
   private boolean myOnReadyExecuted = false;
 
   // accessed in EDT only
-  private final List<Runnable> myDoListWhenReadyWithCapturedBrowser = ContainerUtil.newArrayList();
+  private final List<Runnable> myDoListWhenReadyWithCapturedBrowser = new CopyOnWriteArrayList<Runnable>();
 
   private volatile KarmaConfig myKarmaConfig;
 
@@ -221,6 +222,7 @@ public class KarmaServer {
     }
     if (myOnReadyFired.get() && hasCapturedBrowsers()) {
       List<Runnable> tasks = ContainerUtil.newArrayList(myDoListWhenReadyWithCapturedBrowser);
+      myDoListWhenReadyWithCapturedBrowser.clear();
       for (Runnable task : tasks) {
         task.run();
       }

@@ -7,14 +7,18 @@ import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.execution.testframework.sm.runner.ui.SMRootTestProxyFormatter;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.execution.testframework.sm.runner.ui.TestTreeRenderer;
+import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.ExecutionConsoleEx;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.ui.content.Content;
+import com.intellij.util.Alarm;
 import com.intellij.util.ObjectUtils;
 import com.intellij.xdebugger.ui.XDebugLayoutCustomizer;
 import org.jetbrains.annotations.NotNull;
@@ -82,9 +86,21 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
           }
         });
       }
+      final Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, consoleContent);
+      alarm.addRequest(new Runnable() {
+        @Override
+        public void run() {
+          if (myKarmaServer.isReady() && !myKarmaServer.hasCapturedBrowsers()) {
+            print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
+            String url = "http://localhost:" + myKarmaServer.getWebServerPort();
+            printHyperlink(url + "\n", new OpenUrlHyperlinkInfo(url));
+          }
+        }
+      }, 2000, ModalityState.any());
       myKarmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
         @Override
         public void run() {
+          alarm.cancelAllRequests();
           ui.selectAndFocus(consoleContent, false, false);
           if (testTreeRenderer != null) {
             testTreeRenderer.removeAdditionalRootFormatter();
