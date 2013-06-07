@@ -105,6 +105,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
 
     final RemoteDebuggingFileFinder fileFinder = new JstdDebuggableFileFinderProvider(new File(runConfiguration.getRunSettings().getConfigFile())).provideFileFinder();
     XDebugSession session = XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
+      @Override
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
         return debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);

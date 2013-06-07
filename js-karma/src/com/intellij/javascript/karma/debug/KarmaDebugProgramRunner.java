@@ -109,6 +109,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
       env,
       contentToReuse,
       new XDebugProcessStarter() {
+        @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) {
           return debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
@@ -129,6 +130,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     BiMap<String, VirtualFile> mappings = HashBiMap.create();
     KarmaConfig karmaConfig = karmaServer.getKarmaConfig();
     if (karmaConfig != null) {
+      @SuppressWarnings("ConstantConditions")
       File basePath = new File(karmaConfig.getBasePath());
       VirtualFile vBasePath = VfsUtil.findFileByIoFile(basePath, false);
       if (vBasePath != null && vBasePath.isValid()) {
