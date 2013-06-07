@@ -18,7 +18,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClass;
 import com.intellij.spring.SpringManager;
 import com.intellij.spring.contexts.model.SpringModel;
-import com.intellij.spring.model.xml.beans.SpringBeanPointer;
+import com.intellij.spring.model.SpringBeanPointer;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.util.xml.ConvertContext;
 import com.intellij.util.xml.DomJavaUtil;

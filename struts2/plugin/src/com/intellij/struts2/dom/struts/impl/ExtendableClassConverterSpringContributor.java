@@ -25,7 +25,7 @@ import com.intellij.spring.SpringManager;
 import com.intellij.spring.contexts.model.SpringModel;
 import com.intellij.spring.facet.SpringFacet;
 import com.intellij.spring.model.converters.SpringBeanConverterUtil;
-import com.intellij.spring.model.xml.beans.SpringBeanPointer;
+import com.intellij.spring.model.SpringBeanPointer;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.StrutsConstants;
 import com.intellij.struts2.dom.ExtendableClassConverter;
