@@ -10,6 +10,7 @@ import com.intellij.execution.testframework.sm.runner.ui.TestTreeRenderer;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.ExecutionConsoleEx;
 import com.intellij.execution.ui.RunnerLayoutUi;
+import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
@@ -39,7 +40,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
   @Override
   public void buildUi(final RunnerLayoutUi ui) {
-    createConsoleContent(this, ui);
+    registerConsoleContent(this, ui);
     registerAdditionalContent(ui);
   }
 
@@ -51,7 +52,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
   @NotNull
   @Override
-  public Content createConsoleContent(@NotNull ExecutionConsole console, @NotNull final RunnerLayoutUi ui) {
+  public Content registerConsoleContent(@NotNull ExecutionConsole console, @NotNull final RunnerLayoutUi ui) {
     ui.getOptions().setMinimizeActionEnabled(false);
     boolean readyToRun = myKarmaServer.isReady() && myKarmaServer.hasCapturedBrowsers();
     final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
@@ -59,6 +60,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
                                                     "Test Run",
                                                     AllIcons.Debugger.Console,
                                                     getPreferredFocusableComponent());
+    ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
 
     consoleContent.setCloseable(false);
     if (readyToRun) {
