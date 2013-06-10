@@ -38,7 +38,7 @@ import com.intellij.struts2.facet.StrutsFacet;
 import com.intellij.struts2.model.constant.StrutsConstantHelper;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.xml.XmlExtension;
+import com.intellij.xml.XmlNamespaceHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -138,10 +138,10 @@ public class HardcodedActionUrlInspection extends XmlSuppressableInspectionTool 
         String prefix = rootTag.getPrefixByNamespace(StrutsConstants.TAGLIB_STRUTS_UI_URI);
 
         if (StringUtil.isEmpty(prefix)) {
-          XmlExtension extension = XmlExtension.getExtension(jspFile);
+          XmlNamespaceHelper extension = XmlNamespaceHelper.getHelper(jspFile);
           prefix = ExtendedTagInsertHandler.suggestPrefix(jspFile, StrutsConstants.TAGLIB_STRUTS_UI_URI);
-          XmlExtension.Runner<String, IncorrectOperationException> after =
-            new XmlExtension.Runner<String, IncorrectOperationException>() {
+          XmlNamespaceHelper.Runner<String, IncorrectOperationException> after =
+            new XmlNamespaceHelper.Runner<String, IncorrectOperationException>() {
               @Override
               public void run(String param) throws IncorrectOperationException {
                 wrapValue(param, value, url, inline);
