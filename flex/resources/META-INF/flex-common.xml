@@ -246,6 +246,8 @@
       <className>com.intellij.lang.javascript.intentions.CreateGetterAndSetterIntention</className>
       <category>ActionScript</category>
     </intentionAction>
+
+    <xml.undefinedElementFixProvider implementation="com.intellij.javascript.flex.mxml.schema.FlexUndefinedElementFixProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="JavaScript">
