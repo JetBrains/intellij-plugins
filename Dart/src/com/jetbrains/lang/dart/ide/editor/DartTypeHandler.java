@@ -10,7 +10,9 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
-import com.jetbrains.lang.dart.psi.*;
+import com.jetbrains.lang.dart.psi.DartComponentName;
+import com.jetbrains.lang.dart.psi.DartPsiCompositeElement;
+import com.jetbrains.lang.dart.psi.DartType;
 import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,14 +28,15 @@ public class DartTypeHandler extends TypedHandlerDelegate {
                                 Editor editor,
                                 PsiFile file,
                                 FileType fileType) {
+    int offset = editor.getCaretModel().getOffset();
     if (c == '<') {
-      myAfterTypeOrComponentName = checkAfterTypeOrComponentName(file, editor.getCaretModel().getOffset());
+      myAfterTypeOrComponentName = checkAfterTypeOrComponentName(file, offset);
     }
     else if (c == '{') {
-      myAfterDollar = checkAfterDollarInString(file, editor.getCaretModel().getOffset());
+      myAfterDollar = checkAfterDollarInString(file, offset);
     }
-    else if (c == '\'' || c == '"') {
-      myCompleteStringLiteral = !checkInStringLiteral(file, editor.getCaretModel().getOffset());
+    else if ((c == '\'' || c == '"') && isDartContext(file.findElementAt(offset-1))) {
+      myCompleteStringLiteral = !checkInStringLiteral(file, offset);
     }
     return super.beforeCharTyped(c, project, editor, file, fileType);
   }
@@ -47,7 +50,11 @@ public class DartTypeHandler extends TypedHandlerDelegate {
   private static boolean checkAfterDollarInString(PsiFile file, int offset) {
     PsiElement at = file.findElementAt(offset - 1);
     final String text = at != null ? at.getText() : "";
-    return text.endsWith("$") && PsiTreeUtil.getParentOfType(at, DartPsiCompositeElement.class) != null;
+    return text.endsWith("$") && isDartContext(at);
+  }
+
+  private static boolean isDartContext(PsiElement at) {
+    return PsiTreeUtil.getParentOfType(at, DartPsiCompositeElement.class) != null;
   }
 
   private static boolean checkInStringLiteral(PsiFile file, int offset) {
