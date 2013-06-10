@@ -22,7 +22,7 @@ import com.intellij.psi.impl.source.xml.XmlAttributeImpl;
 import com.intellij.psi.xml.*;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.xml.XmlExtension;
+import com.intellij.xml.XmlNamespaceHelper;
 import com.intellij.xml.util.XmlTagUtil;
 import com.intellij.xml.util.XmlUtil;
 import org.jetbrains.annotations.NotNull;
@@ -412,7 +412,7 @@ public class MxmlLanguageTagsUtil {
         nsPrefix = myDefaultPrefix + postfix++;
       }
 
-      XmlExtension.getExtension(file).insertNamespaceDeclaration((XmlFile)file, editor, Collections.singleton(myNamespace), nsPrefix, null);
+      XmlNamespaceHelper.getHelper(file).insertNamespaceDeclaration((XmlFile)file, editor, Collections.singleton(myNamespace), nsPrefix, null);
     }
   }
 }
