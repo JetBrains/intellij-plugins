@@ -146,7 +146,8 @@ public class DartInheritanceIndex extends FileBasedIndexExtension<String, List<D
           continue;
         }
         final Collection<VirtualFile> files =
-          DartIndexUtil.getContainingFiles(DART_INHERITANCE_INDEX, currentClassName, GlobalSearchScope.allScope(context.getProject()));
+          FileBasedIndex.getInstance()
+            .getContainingFiles(DART_INHERITANCE_INDEX, currentClassName, GlobalSearchScope.allScope(context.getProject()));
         for (VirtualFile virtualFile : files) {
           PsiFile psiFile = dartClass.getManager().findFile(virtualFile);
           for (PsiElement root : DartResolveUtil.findDartRoots(psiFile)) {

@@ -10,10 +10,7 @@ import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author: Fedor.Korotkov
@@ -65,8 +62,8 @@ public class DartComponentIndex extends FileBasedIndexExtension<String, DartComp
     if (componentName == null) {
       return Collections.emptyList();
     }
-    return new ArrayList<VirtualFile>(DartIndexUtil.getContainingFiles(DART_COMPONENT_INDEX, componentName,
-                                                                       GlobalSearchScope.allScope(project)));
+    return new ArrayList<VirtualFile>(
+      FileBasedIndex.getInstance().getContainingFiles(DART_COMPONENT_INDEX, componentName, GlobalSearchScope.allScope(project)));
   }
 
   private static class MyDataIndexer implements DataIndexer<String, DartComponentInfo, FileContent> {

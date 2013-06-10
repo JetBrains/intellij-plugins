@@ -64,7 +64,7 @@ public class DartClassIndex extends ScalarIndexExtension<String> {
 
   public static List<DartComponentName> getItemsByName(String name, Project project, GlobalSearchScope searchScope) {
     final Collection<VirtualFile> files =
-      DartIndexUtil.getContainingFiles(DART_CLASS_INDEX, name, searchScope);
+      FileBasedIndex.getInstance().getContainingFiles(DART_CLASS_INDEX, name, searchScope);
     final Set<DartComponentName> result = new THashSet<DartComponentName>();
     for (VirtualFile vFile : files) {
       // sym link

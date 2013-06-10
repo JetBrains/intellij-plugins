@@ -70,11 +70,11 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
   }
 
   private static Collection<VirtualFile> findSingleLibraryClass(Project project, String libraryName) {
-    return DartIndexUtil.getContainingFiles(DART_LIBRARY_INDEX, libraryName, GlobalSearchScope.allScope(project));
+    return FileBasedIndex.getInstance().getContainingFiles(DART_LIBRARY_INDEX, libraryName, GlobalSearchScope.allScope(project));
   }
 
   public static Collection<VirtualFile> findSingleLibraryClass(String libraryName, GlobalSearchScope scope) {
-    return DartIndexUtil.getContainingFiles(DART_LIBRARY_INDEX, libraryName, scope);
+    return FileBasedIndex.getInstance().getContainingFiles(DART_LIBRARY_INDEX, libraryName, scope);
   }
 
   @NotNull

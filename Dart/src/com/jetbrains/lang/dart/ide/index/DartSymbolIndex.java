@@ -67,7 +67,7 @@ public class DartSymbolIndex extends ScalarIndexExtension<String> {
 
   public static List<DartComponentName> getItemsByName(final String name, Project project, GlobalSearchScope searchScope) {
     final Collection<VirtualFile> files =
-      DartIndexUtil.getContainingFiles(DART_SYMBOL_INDEX, name, searchScope);
+      FileBasedIndex.getInstance().getContainingFiles(DART_SYMBOL_INDEX, name, searchScope);
     final Set<DartComponentName> result = new THashSet<DartComponentName>();
     for (VirtualFile vFile : files) {
       final PsiFile psiFile = PsiManager.getInstance(project).findFile(vFile);

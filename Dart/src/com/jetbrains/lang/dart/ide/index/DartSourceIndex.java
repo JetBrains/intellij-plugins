@@ -56,7 +56,7 @@ public class DartSourceIndex extends ScalarIndexExtension<String> {
   public static List<VirtualFile> findLibraries(final PsiElement context,
                                                 @NotNull String fileName,
                                                 @NotNull final GlobalSearchScope scope) {
-    return new ArrayList<VirtualFile>(DartIndexUtil.getContainingFiles(DART_SOURCE_INDEX, fileName, scope));
+    return new ArrayList<VirtualFile>(FileBasedIndex.getInstance().getContainingFiles(DART_SOURCE_INDEX, fileName, scope));
   }
 
   private static class MyDataIndexer implements DataIndexer<String, Void, FileContent> {

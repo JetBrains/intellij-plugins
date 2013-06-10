@@ -3,17 +3,11 @@ package com.jetbrains.lang.dart.ide.index;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.XmlRecursiveElementVisitor;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.FileContent;
-import com.intellij.util.indexing.ID;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartControlFlowUtil;
@@ -21,26 +15,14 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class DartIndexUtil {
   // inc when change parser
   public static int BASE_VERSION = 1;
-
-  public static <K, V> Collection<VirtualFile> getContainingFiles(@NotNull ID<K, V> indexId,
-                                                                  @NotNull K dataKey,
-                                                                  @NotNull GlobalSearchScope filter) {
-    // symlinks
-    return new THashSet<VirtualFile>(ContainerUtil.map(
-      FileBasedIndex.getInstance().getContainingFiles(indexId, dataKey, filter),
-      new Function<VirtualFile, VirtualFile>() {
-
-        @Override
-        public VirtualFile fun(VirtualFile file) {
-          return file.getCanonicalFile();
-        }
-      }));
-  }
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 
