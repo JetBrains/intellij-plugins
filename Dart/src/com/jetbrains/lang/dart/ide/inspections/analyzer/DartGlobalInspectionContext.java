@@ -103,7 +103,7 @@ public class DartGlobalInspectionContext implements GlobalInspectionContextExten
   }
 
   @Override
-  public void performPostRunActivities(List<InspectionProfileEntry> inspections, GlobalInspectionContext context) {
+  public void performPostRunActivities(@NotNull List<InspectionProfileEntry> inspections, GlobalInspectionContext context) {
   }
 
   @Override
