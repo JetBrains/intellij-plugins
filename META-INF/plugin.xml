@@ -42,20 +42,27 @@
     </project-components>
 
     <actions>
-        <action id="GotoAngularAction"
+<!--        <action id="GotoAngularAction"
                 class="org.angularjs.GotoAngularAction"
                 text="Go to Angular"
                 description="Navigate to Angular code">
             <keyboard-shortcut keymap="$default"
-                               first-keystroke="ctrl 1"/>
-            <keyboard-shortcut keymap="Mac OS X" first-keystroke="ctrl 1"/>
-            <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="ctrl 1"/>
-        </action>
+                               first-keystroke="ctrl l"/>
+            <keyboard-shortcut keymap="Mac OS X" first-keystroke="ctrl l"/>
+            <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="ctrl l"/>
+        </action>-->
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
         <xml.attributeDescriptorsProvider implementation="org.angularjs.AngularJSCustomAttributeDescriptorsProvider"/>
         <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
         <typedHandler implementation="org.angularjs.AngularBracesInterpolationTypedHandler"/>
+        <applicationConfigurable instance="org.angularjs.AngularJSConfig"/>
+        <!--<completion.contributor language="HTML" implementationClass="org.angularjs.AngularCompletionContributor"/>-->
+<!--
+        <localInspection language="JavaScript" groupPath="JavaScript" displayName="AngularDisplayName" groupName="AngularGroup" shortName="AngularShortName"
+        enabledByDefault="true" level="WARNING"
+        implementationClass="org.angularjs.AngularInspection"/>
+-->
     </extensions>
 </idea-plugin>

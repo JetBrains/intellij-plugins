@@ -100,7 +100,6 @@ public class GotoAngularAction extends GotoActionBase {
             protected ChooseByNameFilter<Object> createFilter(@NotNull ChooseByNamePopup popup) {
                 popup.setSearchInAnyPlace(true);
                 popup.setShowListForEmptyPattern(true);
-                popup.setSearchInAnyPlace(true);
                 popup.setMaximumListSizeLimit(255);
                 return super.createFilter(popup);
             }

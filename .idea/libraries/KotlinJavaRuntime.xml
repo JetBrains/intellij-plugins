@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="KotlinRuntime">
+  <library name="KotlinJavaRuntime">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/lib/kotlin-runtime.jar!/" />
     </CLASSES>
