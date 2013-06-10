@@ -1,5 +1,6 @@
 package com.intellij.javascript.flex.mxml.schema;
 
+import com.intellij.codeInsight.daemon.IdeValidationHost;
 import com.intellij.codeInsight.daemon.Validator;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.ide.IconProvider;
@@ -1114,7 +1115,12 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
     public void reportError(final ASTNode nameIdentifier, final String s, ProblemKind kind, final IntentionAction... fixes) {
       final ValidationHost.ErrorType errorType = kind == ProblemKind.ERROR ? ValidationHost.ErrorType.ERROR: ValidationHost.ErrorType.WARNING;
-      myHost.addMessage(nameIdentifier.getPsi(), s, errorType, fixes);
+      if (myHost instanceof IdeValidationHost) {
+        ((IdeValidationHost) myHost).addMessageWithFixes(nameIdentifier.getPsi(), s, errorType, fixes);
+      }
+      else {
+        myHost.addMessage(nameIdentifier.getPsi(), s, errorType);
+      }
     }
   }
 

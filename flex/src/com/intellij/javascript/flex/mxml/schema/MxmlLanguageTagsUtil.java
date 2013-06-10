@@ -1,6 +1,7 @@
 package com.intellij.javascript.flex.mxml.schema;
 
 import com.intellij.codeInsight.FileModificationService;
+import com.intellij.codeInsight.daemon.IdeValidationHost;
 import com.intellij.codeInsight.daemon.Validator;
 import com.intellij.codeInsight.daemon.XmlErrorMessages;
 import com.intellij.codeInsight.intention.IntentionAction;
@@ -266,31 +267,40 @@ public class MxmlLanguageTagsUtil {
                                       final String message,
                                       final Validator.ValidationHost host,
                                       final IntentionAction... intentionActions) {
+
+    PsiElement target = element;
+    PsiElement secondaryTarget = null;
+
     if (element instanceof XmlAttributeValue) {
       final ASTNode node = element.getNode();
       final ASTNode value = node == null ? null : XmlChildRole.ATTRIBUTE_VALUE_VALUE_FINDER.findChild(node);
       if (value instanceof PsiElement) {
-        host.addMessage((PsiElement)value, message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
-      }
-      else {
-        host.addMessage(element, message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
+        target = (PsiElement) value;
       }
     }
     else if (element instanceof XmlAttributeImpl) {
-      host.addMessage(((XmlAttributeImpl)element).getNameElement(), message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
+      target = ((XmlAttributeImpl)element).getNameElement();
     }
     else if (element instanceof XmlTag) {
-      final XmlToken startingTag = XmlTagUtil.getStartTagNameElement((XmlTag)element);
-      if (startingTag != null) {
-        host.addMessage(startingTag, message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
+      target = XmlTagUtil.getStartTagNameElement((XmlTag)element);
+      secondaryTarget = XmlTagUtil.getEndTagNameElement((XmlTag)element);
+    }
+
+    if (host instanceof IdeValidationHost) {
+      if (target != null) {
+        ((IdeValidationHost)host).addMessageWithFixes(target, message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
       }
-      final XmlToken closingTag = XmlTagUtil.getEndTagNameElement((XmlTag)element);
-      if (closingTag != null) {
-        host.addMessage(closingTag, message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
+      if (secondaryTarget != null) {
+        ((IdeValidationHost)host).addMessageWithFixes(secondaryTarget, message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
       }
     }
     else {
-      host.addMessage(element, message, Validator.ValidationHost.ErrorType.ERROR, intentionActions);
+      if (target != null) {
+        host.addMessage(target, message, Validator.ValidationHost.ErrorType.ERROR);
+      }
+      if (secondaryTarget != null) {
+        host.addMessage(secondaryTarget, message, Validator.ValidationHost.ErrorType.ERROR);
+      }
     }
   }
 
