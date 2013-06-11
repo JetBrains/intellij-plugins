@@ -48,7 +48,7 @@ public class DartGlobalInspectionContext implements GlobalInspectionContextExten
 
 
   @Override
-  public void performPreRunActivities(List<Tools> globalTools, List<Tools> localTools, GlobalInspectionContext context) {
+  public void performPreRunActivities(@NotNull List<Tools> globalTools, @NotNull List<Tools> localTools, @NotNull GlobalInspectionContext context) {
     final Project project = context.getProject();
     AnalysisScope scope = context.getRefManager().getScope();
     SearchScope searchScope = scope == null ? GlobalSearchScope.EMPTY_SCOPE : scope.toSearchScope();
