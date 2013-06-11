@@ -184,7 +184,8 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
     );
 
     final JSTypeSource source;
-    processor.setInstanceAccess(qualifierType != null && (source = qualifierType.getSource()) != null && source.isStrictlyInstanceType());
+    processor.setAccessingStaticOrInstance(qualifierType != null && (source = qualifierType.getSource()) != null ?
+                                           source.isStaticOrInstance() : JSTypeSource.StaticOrInstance.UNKNOWN);
 
     boolean inDefinition = false;
     boolean allowOnlyCompleteMatches = localResolve && localProcessor.isEncounteredDynamicClasses();

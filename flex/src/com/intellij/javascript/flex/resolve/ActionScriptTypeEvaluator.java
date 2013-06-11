@@ -71,7 +71,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
           }
         }
         addType(JSTypeUtils.createType(text, new JSTypeSource(methodExpr, JSTypeSourceFactory
-          .sourceFileLanguage(methodExpr.getContainingFile()), false, true)), methodExpr);
+          .sourceFileLanguage(methodExpr.getContainingFile()), false, JSTypeSource.StaticOrInstance.INSTANCE)), methodExpr);
       }
     }
   }
