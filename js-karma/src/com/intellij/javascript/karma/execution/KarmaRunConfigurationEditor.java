@@ -106,7 +106,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     myRootComponent = panel;
   }
 
-  private static TextFieldWithHistoryWithBrowseButton createKarmaPackageDirPathTextField(@NotNull final Project project) {
+  private TextFieldWithHistoryWithBrowseButton createKarmaPackageDirPathTextField(@NotNull final Project project) {
     TextFieldWithHistoryWithBrowseButton karmaPackageDirPathComponent = new TextFieldWithHistoryWithBrowseButton();
     final TextFieldWithHistory textFieldWithHistory = karmaPackageDirPathComponent.getChildComponent();
     textFieldWithHistory.setHistorySize(-1);
@@ -119,9 +119,13 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
           nodeSettings.initGlobalNodeModulesDir();
         }
         List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
+        VirtualFile requester = KarmaGlobalSettingsUtil.getRequester(
+          myProject,
+          myConfigPathTextFieldWithBrowseButton.getChildComponent().getText()
+        );
         NodeModuleSearchUtil.findModulesWithName(modules,
                                                  KarmaGlobalSettingsUtil.NODE_PACKAGE_NAME,
-                                                 project.getBaseDir(),
+                                                 requester,
                                                  nodeSettings,
                                                  true);
         List<String> moduleDirs = ContainerUtil.newArrayListWithExpectedSize(modules.size());
@@ -190,13 +194,14 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
 
   @Override
   protected void resetEditorFrom(@NotNull KarmaRunConfiguration runConfiguration) {
+    KarmaRunSettings runSettings = runConfiguration.getRunSetting();
+
     String nodeInterpreterPath = KarmaGlobalSettingsUtil.getNodeInterpreterPath();
     setTextAndAddToHistory(myNodeInterpreterPathTextFieldWithBrowseButton.getChildComponent(), nodeInterpreterPath);
 
-    String karmaNodePackageDir = KarmaGlobalSettingsUtil.getKarmaNodePackageDir(myProject);
+    String karmaNodePackageDir = KarmaGlobalSettingsUtil.getKarmaNodePackageDir(myProject, runSettings.getConfigPath());
     setTextAndAddToHistory(myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent(), karmaNodePackageDir);
 
-    KarmaRunSettings runSettings = runConfiguration.getRunSetting();
     setTextAndAddToHistory(myConfigPathTextFieldWithBrowseButton.getChildComponent(), runSettings.getConfigPath());
   }
 

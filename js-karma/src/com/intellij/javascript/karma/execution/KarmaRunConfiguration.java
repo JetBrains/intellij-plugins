@@ -74,7 +74,7 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
   public void checkConfiguration() throws RuntimeConfigurationException {
     myGlobalSettingsRef.remove();
     String nodeInterpreterPath = KarmaGlobalSettingsUtil.getNodeInterpreterPath();
-    String karmaPackagePath = KarmaGlobalSettingsUtil.getKarmaNodePackageDir(getProject());
+    String karmaPackagePath = KarmaGlobalSettingsUtil.getKarmaNodePackageDir(getProject(), myRunSettings.getConfigPath());
     check(nodeInterpreterPath, karmaPackagePath);
     if (nodeInterpreterPath != null && karmaPackagePath != null) {
       myGlobalSettingsRef.set(new GlobalSettings(nodeInterpreterPath, karmaPackagePath));

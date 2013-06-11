@@ -6,6 +6,7 @@ import com.intellij.javascript.nodejs.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -30,14 +31,15 @@ public class KarmaGlobalSettingsUtil {
   }
 
   @Nullable
-  public static String getKarmaNodePackageDir(@NotNull Project project) {
+  public static String getKarmaNodePackageDir(@NotNull Project project, @Nullable String configFilePath) {
     PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
     String karmaNodePackageDir = propertiesComponent.getValue(KARMA_NODE_PACKAGE_DIR);
     if (StringUtil.isEmpty(karmaNodePackageDir)) {
       List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
+      VirtualFile requester = getRequester(project, configFilePath);
       NodeModuleSearchUtil.findModulesWithName(modules,
                                                NODE_PACKAGE_NAME,
-                                               project.getBaseDir(),
+                                               requester,
                                                getNodeSettings(),
                                                true);
       for (CompletionModuleInfo module : modules) {
@@ -49,6 +51,19 @@ public class KarmaGlobalSettingsUtil {
       }
     }
     return karmaNodePackageDir;
+  }
+
+  @Nullable
+  public static VirtualFile getRequester(@NotNull Project project, @Nullable String configFilePath) {
+    VirtualFile requester = null;
+    File configFile = new File(configFilePath);
+    if (configFile.isFile()) {
+      requester = VfsUtil.findFileByIoFile(configFile, false);
+    }
+    if (requester == null || !requester.isValid()) {
+      requester = project.getBaseDir();
+    }
+    return requester;
   }
 
   public static void storeNodeInterpreterPath(@NotNull String nodeInterpreterPath) {
