@@ -16,6 +16,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ObjectUtils;
 import cucumber.runtime.groovy.GroovySnippet;
@@ -30,7 +31,6 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.groovy.GroovyFileType;
 import org.jetbrains.plugins.groovy.actions.GroovyTemplatesFactory;
 import org.jetbrains.plugins.groovy.annotator.intentions.QuickfixUtil;
-import org.jetbrains.plugins.groovy.lang.GrReferenceAdjuster;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock;
@@ -88,7 +88,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
     final GrMethodCall element = buildStepDefinitionByStep(step);
 
     GrMethodCall methodCall = (GrMethodCall)((GroovyFile)file).addStatementBefore(element, null);
-    GrReferenceAdjuster.shortenReferences(methodCall);
+    JavaCodeStyleManager.getInstance(project).shortenClassReferences(methodCall);
     methodCall = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(methodCall);
 
     PsiDocumentManager.getInstance(project).commitAllDocuments();
