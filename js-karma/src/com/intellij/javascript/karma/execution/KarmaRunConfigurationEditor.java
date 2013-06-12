@@ -217,7 +217,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     builder.setConfigPath(configPath);
     runConfiguration.setRunSettings(builder.build());
     String karmaNodePackageDir = myKarmaPackageDirPathTextFieldWithBrowseButton.getChildComponent().getText();
-    KarmaGlobalSettingsUtil.storeKarmaNodePackageDir(karmaNodePackageDir);
+    KarmaGlobalSettingsUtil.storeKarmaPackageDir(myProject, karmaNodePackageDir);
     String nodeInterpreterPath = myNodeInterpreterPathTextFieldWithBrowseButton.getChildComponent().getText();
     KarmaGlobalSettingsUtil.storeNodeInterpreterPath(nodeInterpreterPath);
   }

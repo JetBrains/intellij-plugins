@@ -21,36 +21,45 @@ import java.util.List;
 public class KarmaGlobalSettingsUtil {
 
   public static final String NODE_PACKAGE_NAME = "karma";
-  private static final String KARMA_NODE_PACKAGE_DIR = "karma_support.karma_node_package_dir";
-  private static final String NODE_INTERPRETER_PATH = "karma_support.node_interpreter_path";
+  private static final String KARMA_PACKAGE_DIR__KEY = "karma_support.karma_node_package_dir";
+  private static final String NODE_INTERPRETER_PATH__KEY = "karma_support.node_interpreter_path";
   private static volatile NodeSettings CURRENT_NODE_SETTINGS = null;
 
-  public static void storeKarmaNodePackageDir(@NotNull String karmaNodePackageDir) {
-    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
-    propertiesComponent.setValue(KARMA_NODE_PACKAGE_DIR, karmaNodePackageDir);
+  public static void storeKarmaPackageDir(@NotNull Project project, @NotNull String karmaPackageDir) {
+    KarmaPackageDirSetting karmaPackageDirSetting = KarmaPackageDirSetting.getInstance(project);
+    karmaPackageDirSetting.setPackageDir(karmaPackageDir);
+    storeApplicationSetting(KARMA_PACKAGE_DIR__KEY, karmaPackageDir);
   }
 
   @Nullable
   public static String getKarmaNodePackageDir(@NotNull Project project, @Nullable String configFilePath) {
-    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
-    String karmaNodePackageDir = propertiesComponent.getValue(KARMA_NODE_PACKAGE_DIR);
-    if (StringUtil.isEmpty(karmaNodePackageDir)) {
-      List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
-      VirtualFile requester = getRequester(project, configFilePath);
-      NodeModuleSearchUtil.findModulesWithName(modules,
-                                               NODE_PACKAGE_NAME,
-                                               requester,
-                                               getNodeSettings(),
-                                               true);
-      for (CompletionModuleInfo module : modules) {
-        VirtualFile moduleRoot = module.getVirtualFile();
-        if (moduleRoot != null && moduleRoot.isValid() && moduleRoot.isDirectory()) {
-          karmaNodePackageDir = FileUtil.toSystemDependentName(moduleRoot.getPath());
-          break;
-        }
+    KarmaPackageDirSetting karmaPackageDirSetting = KarmaPackageDirSetting.getInstance(project);
+    String karmaPackageDir = karmaPackageDirSetting.getPackageDir();
+    if (StringUtil.isEmpty(karmaPackageDir)) {
+      karmaPackageDir = findKarmaPackageDir(project, configFilePath);
+    }
+    if (StringUtil.isEmpty(karmaPackageDir)) {
+      karmaPackageDir = getApplicationSetting(KARMA_PACKAGE_DIR__KEY);
+    }
+    return karmaPackageDir;
+  }
+
+  @Nullable
+  private static String findKarmaPackageDir(@NotNull Project project, @Nullable String configFilePath) {
+    List<CompletionModuleInfo> modules = ContainerUtil.newArrayList();
+    VirtualFile requester = getRequester(project, configFilePath);
+    NodeModuleSearchUtil.findModulesWithName(modules,
+                                             NODE_PACKAGE_NAME,
+                                             requester,
+                                             getNodeSettings(),
+                                             true);
+    for (CompletionModuleInfo module : modules) {
+      VirtualFile moduleRoot = module.getVirtualFile();
+      if (moduleRoot != null && moduleRoot.isValid() && moduleRoot.isDirectory()) {
+        return FileUtil.toSystemDependentName(moduleRoot.getPath());
       }
     }
-    return karmaNodePackageDir;
+    return null;
   }
 
   @Nullable
@@ -67,15 +76,13 @@ public class KarmaGlobalSettingsUtil {
   }
 
   public static void storeNodeInterpreterPath(@NotNull String nodeInterpreterPath) {
-    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
-    propertiesComponent.setValue(NODE_INTERPRETER_PATH, nodeInterpreterPath);
+    storeApplicationSetting(NODE_INTERPRETER_PATH__KEY, nodeInterpreterPath);
     CURRENT_NODE_SETTINGS = null;
   }
 
   @Nullable
   public static String getNodeInterpreterPath() {
-    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
-    String nodeInterpreterPath = propertiesComponent.getValue(NODE_INTERPRETER_PATH);
+    String nodeInterpreterPath = getApplicationSetting(NODE_INTERPRETER_PATH__KEY);
     if (StringUtil.isEmpty(nodeInterpreterPath)) {
       File nodeInterpreterFile = PathEnvironmentVariableUtil.findInPath(NodeDetectionUtil.NODE_INTERPRETER_BASE_NAME);
       if (nodeInterpreterFile != null) {
@@ -96,6 +103,17 @@ public class KarmaGlobalSettingsUtil {
       }
     }
     return nodeSettings;
+  }
+
+  @Nullable
+  private static String getApplicationSetting(@NotNull String key) {
+    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+    return propertiesComponent.getValue(key);
+  }
+
+  private static void storeApplicationSetting(@NotNull String key, @NotNull String value) {
+    PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+    propertiesComponent.setValue(key, value);
   }
 
 }
