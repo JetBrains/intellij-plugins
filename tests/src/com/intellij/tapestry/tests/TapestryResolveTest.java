@@ -52,7 +52,7 @@ public class TapestryResolveTest extends TapestryBaseTestCase {
   public void testHtml5TagName() throws Throwable {
     final ExternalResourceManagerEx manager = ExternalResourceManagerEx.getInstanceEx();
     final String doctype = manager.getDefaultHtmlDoctype(myFixture.getProject());
-    manager.setDefaultHtmlDoctype(Html5SchemaProvider.HTML5_SCHEMA_LOCATION, myFixture.getProject());
+    manager.setDefaultHtmlDoctype(Html5SchemaProvider.getHtml5SchemaLocation(), myFixture.getProject());
     try {
       addComponentToProject("Count");
       initByComponent();
