@@ -14,7 +14,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.psi.types.JSTypeParser;
-import com.intellij.lang.javascript.psi.types.JSTypeSource;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
@@ -182,10 +181,6 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
       ref,
       BaseJSSymbolProcessor.MatchMode.Strict
     );
-
-    final JSTypeSource source;
-    processor.setAccessingStaticOrInstance(qualifierType != null && (source = qualifierType.getSource()) != null ?
-                                           source.isStaticOrInstance() : JSTypeSource.StaticOrInstance.UNKNOWN);
 
     boolean inDefinition = false;
     boolean allowOnlyCompleteMatches = localResolve && localProcessor.isEncounteredDynamicClasses();
