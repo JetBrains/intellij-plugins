@@ -13,7 +13,7 @@ import com.intellij.lang.xml.XMLParserDefinition;
 import com.intellij.lang.xml.XmlASTFactory;
 import com.intellij.lexer.HtmlEmbeddedTokenTypesProvider;
 import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.psi.xml.XmlChildRole;
+import com.intellij.psi.xml.StartTagEndTokenProvider;
 import com.intellij.testFramework.ParsingTestCase;
 import com.jetbrains.lang.dart.DartLanguage;
 import com.jetbrains.lang.dart.DartScriptContentProvider;
@@ -37,8 +37,8 @@ public class DartInHtmlParsingTest extends ParsingTestCase {
     addExplicitExtension(LanguageASTFactory.INSTANCE, HTMLLanguage.INSTANCE, new XmlASTFactory());
     addExplicitExtension(LanguageASTFactory.INSTANCE, XMLLanguage.INSTANCE, new XmlASTFactory());
     addExplicitExtension(LanguageASTFactory.INSTANCE, DTDLanguage.INSTANCE, new XmlASTFactory());
-    registerExtensionPoint(new ExtensionPointName<XmlChildRole.StartTagEndTokenProvider>("com.intellij.xml.startTagEndToken"),
-                           XmlChildRole.StartTagEndTokenProvider.class);
+    registerExtensionPoint(new ExtensionPointName<StartTagEndTokenProvider>("com.intellij.xml.startTagEndToken"),
+                           StartTagEndTokenProvider.class);
     registerExtensionPoint(new ExtensionPointName<HtmlEmbeddedTokenTypesProvider>("com.intellij.html.embeddedTokenTypesProvider"),
                            HtmlEmbeddedTokenTypesProvider.class);
     registerExtensionPoint(new ExtensionPointName<HtmlInlineScriptTokenTypesProvider>("com.intellij.html.inlineScriptTokenTypesProvider"),
