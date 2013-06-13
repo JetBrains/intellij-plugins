@@ -41,6 +41,7 @@ public class DartGlobalInspectionContext implements GlobalInspectionContextExten
     return libraryRoot2Errors;
   }
 
+  @NotNull
   @Override
   public Key<DartGlobalInspectionContext> getID() {
     return KEY;
@@ -103,7 +104,7 @@ public class DartGlobalInspectionContext implements GlobalInspectionContextExten
   }
 
   @Override
-  public void performPostRunActivities(@NotNull List<InspectionProfileEntry> inspections, GlobalInspectionContext context) {
+  public void performPostRunActivities(@NotNull List<InspectionProfileEntry> inspections, @NotNull GlobalInspectionContext context) {
   }
 
   @Override
