@@ -4,7 +4,6 @@ import com.intellij.lang.javascript.JSConditionalCompilationDefinitionsProvider;
 import com.intellij.lang.javascript.JSElementTypes;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.JSConditionalCompileVariableReference;
@@ -167,21 +166,12 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
     return results;
   }
 
-  protected ResolveResult[] doOldResolve(final JSReferenceExpression ref,
-                                         final PsiFile containingFile,
-                                         final String referencedName,
-                                         final PsiElement parent,
-                                         final JSExpression qualifier,
-                                         final boolean localResolve,
-                                         final ResolveProcessor localProcessor,
-                                         final JSType qualifierType) {
-    final WalkUpResolveProcessor processor = new WalkUpResolveProcessor(
-      referencedName, null,
-      containingFile,
-      ref,
-      BaseJSSymbolProcessor.MatchMode.Strict
-    );
-
+  @Override
+  protected void prepareProcessor(PsiElement parent,
+                                  JSType qualifierType,
+                                  WalkUpResolveProcessor processor,
+                                  boolean localResolve,
+                                  ResolveProcessor localProcessor, JSExpression qualifier) {
     boolean inDefinition = false;
     boolean allowOnlyCompleteMatches = localResolve && localProcessor.isEncounteredDynamicClasses();
 
@@ -198,24 +188,11 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
     }
     processor.setSkipDefinitions(inDefinition);
     if (localProcessor != null) processor.addLocalResults(localProcessor.getResultsAsResolveResults());
+  }
 
-    JavaScriptIndex instance = JavaScriptIndex.getInstance(containingFile.getProject());
-    instance.processAllSymbols(processor);
-
-    ResolveResult[] results = processor.getResults();
-    if (results.length == 0) {
-      if (inDefinition) {
-        return new ResolveResult[] { new JSResolveResult(parent) };
-      } else {
-        if (processor.getLimitingScope() != null) {
-          processor.resetLimitingScope();
-          instance.processAllSymbols(processor);
-          results = processor.getResults();
-        }
-      }
-    }
-
-    return results;
+  @Override
+  protected ResolveResult[] getResultsForDefinition(JSReferenceExpression ref, PsiElement parent, JSExpression qualifier) {
+    return new ResolveResult[] { new JSResolveResult(parent) };
   }
 
   private static boolean isConditionalVariableReference(PsiElement currentParent, JSReferenceExpressionImpl thisElement) {
