@@ -15,8 +15,9 @@ class DesignerApplication extends ComponentManagerImpl implements AreaInstance, 
     super(ApplicationManager.getApplication());
   }
 
+  @NotNull
   @Override
-  public <T> T[] getExtensions(ExtensionPointName<T> extensionPointName) {
+  public <T> T[] getExtensions(@NotNull ExtensionPointName<T> extensionPointName) {
     return Extensions.getArea(this).getExtensionPoint(extensionPointName).getExtensions();
   }
 
