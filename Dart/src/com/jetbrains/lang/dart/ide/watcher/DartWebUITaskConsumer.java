@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.watcher;
 
+import com.intellij.ide.macro.FileDirMacro;
 import com.intellij.ide.macro.FileDirPathFromParentMacro;
 import com.intellij.ide.macro.FileNameMacro;
 import com.intellij.ide.macro.FilePathMacro;
@@ -41,10 +42,7 @@ public class DartWebUITaskConsumer extends BackgroundTaskConsumer {
     options.setScopeName(PsiBundle.message("psi.search.scope.project"));
 
     options.setArguments("--out=$" + new FilePathMacro().getName() + "$.js $" + new FilePathMacro().getName() + "$");
-    if (dartExecutable != null) {
-      options.setWorkingDir(dartExecutable.getParent().getPath());
-    }
-
+    options.setWorkingDir("$" + new FileDirMacro().getName() + "$");
     options.setOutput("$" + new FileNameMacro().getName() + "$.js:$" +
                       new FileNameMacro().getName() + "$.js.map:$" +
                       new FileNameMacro().getName() + "$.js.deps");

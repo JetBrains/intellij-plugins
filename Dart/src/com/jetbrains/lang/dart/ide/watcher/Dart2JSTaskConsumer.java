@@ -1,5 +1,6 @@
 package com.jetbrains.lang.dart.ide.watcher;
 
+import com.intellij.ide.macro.FileDirMacro;
 import com.intellij.ide.macro.FileNameMacro;
 import com.intellij.ide.macro.FilePathMacro;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -35,9 +36,7 @@ public class Dart2JSTaskConsumer extends BackgroundTaskConsumer {
     options.setScopeName(PsiBundle.message("psi.search.scope.project"));
 
     options.setArguments("--out=$" + new FilePathMacro().getName() + "$.js $" + new FilePathMacro().getName() + "$");
-    if (dart2JS != null) {
-      options.setWorkingDir(dart2JS.getParent().getPath());
-    }
+    options.setWorkingDir("$" + new FileDirMacro().getName() + "$");
 
     options.setOutput("$" + new FileNameMacro().getName() + "$.js:$" +
                       new FileNameMacro().getName() + "$.js.map:$" +
