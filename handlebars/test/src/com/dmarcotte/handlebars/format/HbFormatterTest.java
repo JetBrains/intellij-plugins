@@ -16,6 +16,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
@@ -41,7 +42,7 @@ public abstract class HbFormatterTest extends LightPlatformCodeInsightFixtureTes
     throws Exception {
     super.setUp();
 
-    formatterTestSettings = new FormatterTestSettings(getProject());
+    formatterTestSettings = new FormatterTestSettings(CodeStyleSettingsManager.getSettings(getProject()));
     formatterTestSettings.setUp();
   }
 

@@ -12,9 +12,12 @@ import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.DocumentBasedFormattingModel;
+import com.intellij.psi.formatter.FormattingDocumentModelImpl;
+import com.intellij.psi.formatter.xml.HtmlPolicy;
 import com.intellij.psi.formatter.xml.SyntheticBlock;
 import com.intellij.psi.templateLanguages.SimpleTemplateLanguageFormattingModelBuilder;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.xml.XmlTag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +34,8 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
                                                            @Nullable Alignment alignment,
                                                            @Nullable List<DataLanguageBlockWrapper> foreignChildren,
                                                            @NotNull CodeStyleSettings codeStyleSettings) {
-    return new HandlebarsBlock(this, codeStyleSettings, node, foreignChildren);
+    final FormattingDocumentModelImpl documentModel = FormattingDocumentModelImpl.createOn(node.getPsi().getContainingFile());
+    return new HandlebarsBlock(this, codeStyleSettings, node, foreignChildren, new HtmlPolicy(codeStyleSettings, documentModel));
   }
 
   /**
@@ -78,9 +82,12 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
 
   private static class HandlebarsBlock extends TemplateLanguageBlock {
 
+    private HtmlPolicy myHtmlPolicy;
+
     HandlebarsBlock(@NotNull TemplateLanguageBlockFactory blockFactory, @NotNull CodeStyleSettings settings,
-                    @NotNull ASTNode node, @Nullable List<DataLanguageBlockWrapper> foreignChildren) {
+                    @NotNull ASTNode node, @Nullable List<DataLanguageBlockWrapper> foreignChildren, HtmlPolicy htmlPolicy) {
       super(blockFactory, settings, node, foreignChildren);
+      myHtmlPolicy = htmlPolicy;
     }
 
     /**
@@ -137,11 +144,11 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
      * <p/>
      * <pre>
      * &lt;div>
-     * {{#foo}}
-     * [hb_indent]BEGIN_STATEMENTS
-     * [hb_indent][tl_indent]TEMPLATE_STUFF
-     * [hb_indent]END_STATEMENTS
-     * {{/foo}}
+     * [tl_indent]{{#foo}}
+     *            [hb_indent]BEGIN_STATEMENTS
+     *            [tl_indent][hb_indent]TEMPLATE_STUFF
+     *            [hb_indent]END_STATEMENTS
+     * [tl_indent]{{/foo}}
      * &lt;/div>
      * </pre>
      * So to behave correctly in both situations, we indent STATEMENTS from the "outside" anytime we're not wrapped
@@ -158,9 +165,21 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
       if (HbPsiUtil.isNonRootStatementsElement(myNode.getPsi())) {
         // we're computing the indent for a non-root STATEMENTS:
         //      if it's not contained in a foreign block, indent!
-        if (hasOnlyHbLanguageParents()) {
+        DataLanguageBlockWrapper foreignBlockParent = getForeignBlockParent(false);
+        if (foreignBlockParent == null) {
           return Indent.getNormalIndent();
         }
+
+        // otherwise, only indent if our foreign parent isn't indenting us
+        if (foreignBlockParent.getNode() instanceof XmlTag) {
+          XmlTag xmlTag = (XmlTag) foreignBlockParent.getNode();
+          if (!myHtmlPolicy.indentChildrenOf(xmlTag)) {
+            // no indent from xml parent, add our own
+            return Indent.getNormalIndent();
+          }
+        }
+
+        return Indent.getNoneIndent();
       }
 
       if (myNode.getTreeParent() != null
@@ -175,7 +194,13 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
       }
 
       // any element that is the direct descendant of a foreign block gets an indent
-      if (getRealBlockParent() instanceof DataLanguageBlockWrapper) {
+      // (unless that foreign element has been configured to not indent its children)
+      DataLanguageBlockWrapper foreignParent = getForeignBlockParent(true);
+      if (foreignParent != null) {
+        if (foreignParent.getNode() instanceof XmlTag
+            && !myHtmlPolicy.indentChildrenOf((XmlTag) foreignParent.getNode())) {
+          return Indent.getNoneIndent();
+        }
         return Indent.getNormalIndent();
       }
 
@@ -233,40 +258,27 @@ public class HbFormattingModelBuilder extends TemplateLanguageFormattingModelBui
       }
     }
 
-    private boolean hasOnlyHbLanguageParents() {
+    /**
+     * Returns this block's first "real" foreign block parent if it exists, and null otherwise.  (By "real" here, we mean that this method
+     * skips SyntheticBlock blocks inserted by the template formatter)
+     *
+     * @param immediate Pass true to only check for an immediate foreign parent, false to look up the hierarchy.
+     */
+    private DataLanguageBlockWrapper getForeignBlockParent(boolean immediate) {
+      DataLanguageBlockWrapper foreignBlockParent = null;
       BlockWithParent parent = getParent();
-      boolean hasOnlyHbLanguageParents = true;
 
       while (parent != null) {
-        if (parent instanceof DataLanguageBlockWrapper) {
-          hasOnlyHbLanguageParents = false;
+        if (parent instanceof DataLanguageBlockWrapper && !(((DataLanguageBlockWrapper)parent).getOriginal() instanceof SyntheticBlock)) {
+          foreignBlockParent = (DataLanguageBlockWrapper) parent;
+          break;
+        } else if (immediate && parent instanceof HandlebarsBlock) {
           break;
         }
         parent = parent.getParent();
       }
 
-      return hasOnlyHbLanguageParents;
-    }
-
-    /**
-     * The template formatting system inserts a lot of block wrappers of type
-     * "Synthetic Block".  To decide when to indent, we need to get our hands on
-     * the "Real" parent.
-     *
-     * @return The first non-synthetic parent block
-     */
-    private BlockWithParent getRealBlockParent() {
-      // if we can follow the chain of synthetic parent blocks, and if we end up
-      // at a real DataLanguage block (i.e. the synthetic blocks didn't lead to an HbBlock),
-      // we're a child of a templated language node and need an indent
-      BlockWithParent parent = getParent();
-      while (parent instanceof DataLanguageBlockWrapper
-             && ((DataLanguageBlockWrapper)parent).getOriginal() instanceof SyntheticBlock) {
-        parent = parent.getParent();
-      }
-
-
-      return parent;
+      return foreignBlockParent;
     }
   }
 }

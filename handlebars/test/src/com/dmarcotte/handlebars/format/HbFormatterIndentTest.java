@@ -2,6 +2,7 @@ package com.dmarcotte.handlebars.format;
 
 import com.dmarcotte.handlebars.config.HbConfig;
 import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 
 public class HbFormatterIndentTest extends HbFormatterTest {
@@ -258,6 +259,75 @@ public class HbFormatterIndentTest extends HbFormatterTest {
       "        </div>\n" +
       "    </div>\n" +
       "{{/foo}}"
+    );
+  }
+
+  public void testFormattingInsideDoNotIndentElems1() {
+
+    CodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject());
+    settings.HTML_DO_NOT_INDENT_CHILDREN_OF = "body";
+
+    doStringBasedTest(
+
+      "<body>\n" +
+      "{{#foo}}\n" +
+      "<div></div>\n" +
+      "{{/foo}}\n" +
+      "</body>",
+
+      "<body>\n" +
+      "{{#foo}}\n" +
+      "    <div></div>\n" +
+      "{{/foo}}\n" +
+      "</body>"
+    );
+  }
+
+  public void testFormattingInsideDoNotIndentElems2() {
+
+    CodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject());
+    settings.HTML_DO_NOT_INDENT_CHILDREN_OF = "body";
+
+    doStringBasedTest(
+
+      "<body>\n" +
+      "{{foo}}\n" +
+      "<div></div>\n" +
+      "</body>",
+
+      "<body>\n" +
+      "{{foo}}\n" +
+      "<div></div>\n" +
+      "</body>"
+    );
+  }
+
+  public void testFormattingInsideNestedDoNotIndentElems() {
+
+    CodeStyleSettings settings = CodeStyleSettingsManager.getSettings(getProject());
+    settings.HTML_DO_NOT_INDENT_CHILDREN_OF = "span";
+
+    doStringBasedTest(
+
+      "<span>\n" +
+      "{{#foo}}\n" +
+      "<span>\n" +
+      "{{^bar}}\n" +
+      "<span></span>\n" +
+      "{{/bar}}\n" +
+      "</span>\n" +
+      "{{/foo}}\n" +
+      "</span>",
+
+      "<span>\n" +
+      "{{#foo}}\n" +
+      "    <span>\n" +
+      "    {{^bar}}\n" +
+      "        <span></span>\n" +
+      "    {{/bar}}\n" +
+      "    </span>\n" +
+      "{{/foo}}\n" +
+      "</span>"
     );
   }
 }
