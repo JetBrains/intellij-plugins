@@ -5,7 +5,7 @@ OgnlFile:MissingParameter.ognl
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('Integer')
-  PsiElement(()('(')
-  PsiErrorElement:')', ',' or <expression> expected, got '}'
-    <empty list>
+    PsiElement(()('(')
+    PsiErrorElement:')', ',' or <expression> expected, got '}'
+      <empty list>
   PsiElement(EXPRESSION_END)('}')

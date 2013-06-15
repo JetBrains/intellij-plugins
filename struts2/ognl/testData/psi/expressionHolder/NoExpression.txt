@@ -3,5 +3,3 @@ OgnlFile:NoExpression.ognl
   PsiErrorElement:<expression> expected, got '}'
     <empty list>
   PsiElement(EXPRESSION_END)('}')
-  PsiErrorElement:unexpected end of file
-    <empty list>

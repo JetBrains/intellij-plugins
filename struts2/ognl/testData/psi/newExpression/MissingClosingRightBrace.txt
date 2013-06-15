@@ -5,8 +5,8 @@ OgnlFile:MissingClosingRightBrace.ognl
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('int')
-  PsiElement([)('[')
-  PsiElement(INTEGER_LITERAL)('1')
-  PsiErrorElement:<operator>, '?' or ']' expected, got '}'
-    <empty list>
+    PsiElement([)('[')
+    PsiElement(INTEGER_LITERAL)('1')
+    PsiErrorElement:<operator>, '?' or ']' expected, got '}'
+      <empty list>
   PsiElement(EXPRESSION_END)('}')

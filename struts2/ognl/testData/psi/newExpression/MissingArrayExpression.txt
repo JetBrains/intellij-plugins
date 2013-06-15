@@ -5,7 +5,7 @@ OgnlFile:MissingArrayExpression.ognl
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('int')
-  PsiElement([)('[')
-  PsiErrorElement:<expression> or ']' expected, got '}'
-    <empty list>
+    PsiElement([)('[')
+    PsiErrorElement:<expression> or ']' expected, got '}'
+      <empty list>
   PsiElement(EXPRESSION_END)('}')
