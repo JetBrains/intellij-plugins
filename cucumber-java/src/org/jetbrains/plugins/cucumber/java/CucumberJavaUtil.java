@@ -77,23 +77,29 @@ public class CucumberJavaUtil {
     return false;
   }
 
-  public static boolean isStepDefinition(@NotNull final PsiMethod method) {
-    PsiAnnotation stepAnnotation = getCucumberStepAnnotation(method);
-    if (stepAnnotation != null && stepAnnotation.getParameterList().getAttributes().length > 0) {
-      final PsiElement annotationValue = stepAnnotation.getParameterList().getAttributes()[0].getValue();
-      if (annotationValue != null) {
-        final PsiElement patternLiteral = annotationValue.getFirstChild();
-        if (patternLiteral != null) {
-          final String patternContainer = patternLiteral.getText();
-          if (patternContainer.length() > 2 &&
-              patternContainer.charAt(0) == '"' &&
-              patternContainer.charAt(patternContainer.length() - 1) == '"') {
-            return true;
-          }
+  @Nullable
+  public static PsiAnnotationMemberValue getAnnotationValue(@NotNull final PsiAnnotation stepAnnotation) {
+    final PsiNameValuePair[] attributes = stepAnnotation.getParameterList().getAttributes();
+    PsiNameValuePair valuePair = null;
+    if (attributes.length > 0) {
+      for (int i = 1; i < attributes.length; i++) {
+        PsiNameValuePair pair = attributes[i];
+        final String pairName = pair.getName();
+        if (pairName != null && pairName.equals("value")) {
+          valuePair = pair;
+          break;
         }
       }
+      if (valuePair == null) {
+        valuePair = attributes[0];
+      }
     }
-    return false;
+    return valuePair != null ? valuePair.getValue() : null;
+  }
+
+  public static boolean isStepDefinition(@NotNull final PsiMethod method) {
+    final PsiAnnotation stepAnnotation = getCucumberStepAnnotation(method);
+    return stepAnnotation != null && getAnnotationValue(stepAnnotation) != null;
   }
 
   public static boolean isHook(@NotNull final PsiMethod method) {
