@@ -218,7 +218,7 @@ public class StrutsConstantManagerImpl extends StrutsConstantManager {
     }
     final WebApp webApp = webFacet.getRoot();
     if (webApp == null) {
-      return value; // should not happen in real projects..
+      return value; // no web.xml
     }
 
     final Filter filter = ContainerUtil.find(webApp.getFilters(), WEB_XML_STRUTS_FILTER_CONDITION);
