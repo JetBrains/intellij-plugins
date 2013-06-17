@@ -15,6 +15,7 @@ import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
 import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.karma.server.KarmaServerAdapter;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.ui.content.Content;
@@ -71,6 +72,12 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       ui.selectAndFocus(consoleContent, false, false);
     }
     else {
+      myKarmaServer.addListener(new KarmaServerAdapter() {
+        @Override
+        public void onReady(int webServerPort, int runnerPort) {
+          ui.selectAndFocus(consoleContent, false, false);
+        }
+      });
       final TestTreeRenderer testTreeRenderer = ObjectUtils.tryCast(
         getResultsViewer().getTreeView().getCellRenderer(),
         TestTreeRenderer.class
@@ -101,7 +108,6 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
         @Override
         public void run() {
           alarm.cancelAllRequests();
-          ui.selectAndFocus(consoleContent, false, false);
           if (testTreeRenderer != null) {
             testTreeRenderer.removeAdditionalRootFormatter();
           }
