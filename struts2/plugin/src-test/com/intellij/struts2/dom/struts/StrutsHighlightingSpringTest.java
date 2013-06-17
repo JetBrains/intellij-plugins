@@ -20,7 +20,6 @@ import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.spring.facet.SpringFacet;
-import com.intellij.spring.facet.SpringFacetType;
 import com.intellij.spring.facet.SpringFileSet;
 import com.intellij.struts2.Struts2ProjectDescriptorBuilder;
 import com.intellij.testFramework.LightProjectDescriptor;
@@ -133,8 +132,8 @@ public class StrutsHighlightingSpringTest extends StrutsLightHighlightingTestCas
     return new WriteCommandAction<SpringFacet>(myFixture.getProject()) {
       @Override
       protected void run(final Result<SpringFacet> result) throws Throwable {
-        final SpringFacetType springFacetType = SpringFacetType.getInstance();
-        final SpringFacet facet = FacetManager.getInstance(myModule).addFacet(springFacetType, "spring", null);
+        final SpringFacet facet = FacetManager.getInstance(myModule)
+          .addFacet(SpringFacet.getSpringFacetType(), "spring", null);
         result.setResult(facet);
       }
     }.execute().throwException().getResultObject();
