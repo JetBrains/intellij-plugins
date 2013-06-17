@@ -136,12 +136,14 @@ public class StrutsFrameworkSupportProvider extends FacetBasedFrameworkSupportPr
           strutsFacetConfiguration.getFileSets().add(fileSet);
 
 
-          // create filter & mapping in web.xml
+          // create filter & mapping in web.xml (if present)
           new WriteCommandAction.Simple(modifiableRootModel.getProject()) {
             protected void run() throws Throwable {
               final WebFacet webFacet = strutsFacet.getWebFacet();
               final WebApp webApp = webFacet.getRoot();
-              assert webApp != null;
+              if (webApp == null) {
+                return;
+              }
 
               final Filter strutsFilter = webApp.addFilter();
               strutsFilter.getFilterName().setStringValue("struts2");
