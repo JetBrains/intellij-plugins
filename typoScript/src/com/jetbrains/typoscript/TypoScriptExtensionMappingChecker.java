@@ -120,11 +120,10 @@ public class TypoScriptExtensionMappingChecker implements ApplicationComponent {
     }
   }
 
-  @SuppressWarnings("deprecation")
   private void doFixAssociation(@NotNull Map<FileNameMatcher, FileType> fileNames) {
     for (Map.Entry<FileNameMatcher, FileType> entry : fileNames.entrySet()) {
       myFileTypeManager.removeAssociation(entry.getValue(), entry.getKey());
+      myFileTypeManager.associate(TypoScriptFileType.INSTANCE, entry.getKey());
     }
-    myFileTypeManager.registerFileType(TypoScriptFileType.INSTANCE, new ArrayList<FileNameMatcher>(fileNames.keySet()));
   }
 }
