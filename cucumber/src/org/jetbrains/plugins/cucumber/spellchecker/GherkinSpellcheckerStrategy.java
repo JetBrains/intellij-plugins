@@ -6,6 +6,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.spellchecker.quickfixes.AcceptWordAsCorrect;
+import com.intellij.spellchecker.quickfixes.ChangeTo;
 import com.intellij.spellchecker.quickfixes.SpellCheckerQuickFix;
 import com.intellij.spellchecker.tokenizer.SpellcheckingStrategy;
 import com.intellij.spellchecker.tokenizer.SuppressibleSpellcheckingStrategy;
@@ -46,6 +47,6 @@ public class GherkinSpellcheckerStrategy extends SuppressibleSpellcheckingStrate
                                                 @NotNull TextRange textRange,
                                                 boolean useRename,
                                                 String wordWithTypo) {
-    return new SpellCheckerQuickFix[]{new AcceptWordAsCorrect(wordWithTypo)};
+    return new SpellCheckerQuickFix[]{new ChangeTo(wordWithTypo), new AcceptWordAsCorrect(wordWithTypo)};
   }
 }
