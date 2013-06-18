@@ -26,10 +26,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * User: Andrey.Vokin
@@ -127,16 +124,21 @@ public class CucumberJavaExtension implements CucumberJvmExtensionPoint {
                                        @NotNull final List<PsiDirectory> newStepDefinitionsRoots,
                                        @NotNull final Set<String> processedStepDirectories) {
 
-    final ContentEntry[] contentEntries = ModuleRootManager.getInstance(module).getContentEntries();
-    for (final ContentEntry contentEntry : contentEntries) {
-      final SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
-      for (SourceFolder sf : sourceFolders) {
-        // ToDo: check if inside test folder
-        VirtualFile sfDirectory = sf.getFile();
-        if (sfDirectory != null && sfDirectory.isDirectory()) {
-          PsiDirectory sourceRoot = PsiDirectoryFactory.getInstance(module.getProject()).createDirectory(sfDirectory);
-          if (!processedStepDirectories.contains(sourceRoot.getVirtualFile().getPath())) {
-            newStepDefinitionsRoots.add(sourceRoot);
+    final ModuleRootManager mrm = ModuleRootManager.getInstance(module);
+    final List<Module> modules = new ArrayList<Module>(Arrays.asList(mrm.getDependencies()));
+    modules.add(module);
+
+    for (Module mod : modules) {
+      final ContentEntry[] contentEntries = ModuleRootManager.getInstance(mod).getContentEntries();
+      for (final ContentEntry contentEntry : contentEntries) {
+        final SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
+        for (SourceFolder sf : sourceFolders) {
+          VirtualFile sfDirectory = sf.getFile();
+          if (sfDirectory != null && sfDirectory.isDirectory()) {
+            PsiDirectory sourceRoot = PsiDirectoryFactory.getInstance(module.getProject()).createDirectory(sfDirectory);
+            if (!processedStepDirectories.contains(sourceRoot.getVirtualFile().getPath())) {
+              newStepDefinitionsRoots.add(sourceRoot);
+            }
           }
         }
       }
