@@ -7,6 +7,7 @@ import com.intellij.psi.PsiJavaFile;
 import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import java.util.List;
 
@@ -15,11 +16,13 @@ import java.util.List;
  * Date: 3/25/13
  */
 public class CucumberGotoRelatedFileTest extends LightPlatformCodeInsightFixtureTestCase {
+  @SuppressWarnings("JUnitTestCaseWithNonTrivialConstructors")
   public CucumberGotoRelatedFileTest() {
     PlatformTestCase.autodetectPlatformPrefix();
   }
 
   public void testGotoRelated() {
+    CucumberStepsIndex.getInstance(getProject()).reset();
     myFixture.copyDirectoryToProject("gotoRelated", "");
     myFixture.configureByFile("gotoRelated/test.feature");
     List<GotoRelatedItem> items = GotoRelatedFileAction.getItems(myFixture.getFile(), myFixture.getEditor(), null);

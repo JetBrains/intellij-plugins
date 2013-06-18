@@ -4,6 +4,7 @@ import com.intellij.testFramework.PlatformTestCase;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.plugins.cucumber.inspections.CucumberStepInspection;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaTestUtil;
+import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 /**
  * User: Andrey.Vokin
@@ -19,6 +20,7 @@ public class CucumberHighlightingTest extends LightPlatformCodeInsightFixtureTes
   }
 
   protected void doTest() {
+    CucumberStepsIndex.getInstance(getProject()).reset();
     myFixture.enableInspections(new CucumberStepInspection());
     myFixture.copyDirectoryToProject(getTestName(true), "");
     myFixture.configureByFile(getTestName(true) + "/test.feature");
