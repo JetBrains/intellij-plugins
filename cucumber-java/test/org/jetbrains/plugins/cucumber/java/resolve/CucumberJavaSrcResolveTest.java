@@ -12,4 +12,12 @@ public class CucumberJavaSrcResolveTest extends BaseCucumberJavaResolveTest {
   public void testResolveToStepWithStringConcatenation() throws Exception {
     doTest("stepResolveStringConcatenation", "subt<caret>ract", "I_subtract_from");
   }
+
+  public void testResolveToStepWithTimeout() throws Exception {
+    doTest("resolveToStepWithTimeout", "subt<caret>ract", "I_subtract_from");
+  }
+
+  public void testStrictStartAndEndRegexOptions() throws Exception {
+    doTest("strictStartAndEndRegexOptions", "I have sh<caret>ort step", "I_have_short_step");
+  }
 }

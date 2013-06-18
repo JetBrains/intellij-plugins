@@ -20,16 +20,14 @@ public class JavaStepDefinition extends AbstractStepDefinition {
 
     PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation(method);
     assert stepAnnotation != null;
-    if (stepAnnotation.getParameterList().getAttributes().length > 0) {
-      final PsiElement annotationValue = stepAnnotation.getParameterList().getAttributes()[0].getValue();
-      if (annotationValue != null) {
-        final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(method.getProject()).getConstantEvaluationHelper();
-        final Object constantValue = evaluationHelper.computeConstantExpression(annotationValue, false);
-        if (constantValue != null) {
-          String patternText = constantValue.toString();
-          if (patternText.length() > 1) {
-            pattern = patternText.substring(1, patternText.length() - 1).replace("\\\\", "\\").replace("\\\"", "\"");
-          }
+    final PsiElement annotationValue = CucumberJavaUtil.getAnnotationValue(stepAnnotation);
+    if (annotationValue != null) {
+      final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(method.getProject()).getConstantEvaluationHelper();
+      final Object constantValue = evaluationHelper.computeConstantExpression(annotationValue, false);
+      if (constantValue != null) {
+        String patternText = constantValue.toString();
+        if (patternText.length() > 1) {
+          pattern = patternText.replace("\\\\", "\\").replace("\\\"", "\"");
         }
       }
     }
