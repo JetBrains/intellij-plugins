@@ -70,8 +70,7 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
             text = JSImportHandlingUtil.resolveTypeName(text, methodExpr);
           }
         }
-        addType(JSTypeUtils.createType(text, new JSTypeSource(methodExpr, JSTypeSourceFactory
-          .sourceFileLanguage(methodExpr.getContainingFile()), false, JSTypeSource.StaticOrInstance.INSTANCE)), methodExpr);
+        addType(JSTypeUtils.createType(text, JSTypeSourceFactory.createTypeSource(methodExpr, false, JSTypeSource.StaticOrInstance.INSTANCE)), methodExpr);
       }
     }
   }
