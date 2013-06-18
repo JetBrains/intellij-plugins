@@ -12,7 +12,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
 import com.intellij.lang.javascript.psi.ecmal4.JSReferenceList;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.*;
-import com.intellij.lang.javascript.psi.types.JSTypeParser;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
@@ -132,13 +131,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
         return localProcessor.getResultsAsResolveResults();
       }
     } else {
-      final JSReferenceExpressionImpl.QualifiedItemProcessor processor = new JSReferenceExpressionImpl.QualifiedItemProcessor(referencedName, containingFile, ref) {
-        @Override
-        public void process(@NotNull JSType type, @NotNull BaseJSSymbolProcessor.EvaluateContext evaluateContext, PsiElement source) {
-          qualifierType.set(JSTypeParser.addUnionOption(qualifierType.get(), type));
-          super.process(type, evaluateContext, source);
-        }
-      };
+      final JSReferenceExpressionImpl.QualifiedItemProcessor processor = new JSReferenceExpressionImpl.QualifiedItemProcessor(referencedName, containingFile, ref);
       processor.setTypeContext(JSResolveUtil.isExprInTypeContext(ref));
       JSTypeEvaluator.evaluateTypes(qualifier, containingFile, processor);
 
@@ -157,7 +150,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
     }
 
     ResolveResult[] results =
-      doOldResolve(ref, containingFile, referencedName, parent, qualifier, localResolve, localProcessor, qualifierType.get());
+      resolveFromIndices(ref, containingFile, referencedName, parent, qualifier, localResolve, localProcessor, qualifierType.get());
 
     if (results.length == 0 && localProcessor.isEncounteredXmlLiteral()) {
       return dummyResult(ref);
