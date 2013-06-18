@@ -5,6 +5,7 @@ var RUNNER_PORT_KEY = 'runnerPort';
 var CONFIG_FILE_KEY = 'configFile';
 var KARMA_PACKAGE_DIR_KEY = 'karmaPackageDir';
 var DEBUG_KEY = 'debug';
+var COVERAGE_TEMP_DIR = 'coverageTempDir';
 
 function parseArguments() {
   var options = {};
@@ -58,4 +59,8 @@ exports.getRunnerPort = function() {
 exports.isDebug = function() {
   var debugStr = options[DEBUG_KEY];
   return 'true' === debugStr;
+};
+
+exports.getCoverageTempDirPath = function() {
+  return options[COVERAGE_TEMP_DIR];
 };
