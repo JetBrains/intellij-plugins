@@ -72,6 +72,11 @@ public class KarmaServer {
         if ("config".equals(eventType)) {
           myKarmaConfig = KarmaConfig.parseFromJson(eventBody);
         }
+        else if ("coverage".equals(eventType)) {
+          if ("done".equals(eventBody)) {
+            System.out.println("Coverage done");
+          }
+        }
       }
     });
     myProcessEventStore.startNotify();
@@ -259,6 +264,7 @@ public class KarmaServer {
     private final KarmaServer myKarmaServer;
 
     private final ConcurrentMap<String, Integer> myCapturedBrowsers = new ConcurrentHashMap<String, Integer>();
+    private final StringBuilder myBuffer = new StringBuilder();
     private volatile int myWebServerPort = -1;
     private volatile int myRunnerPort = -1;
 
@@ -280,12 +286,17 @@ public class KarmaServer {
 
     @Override
     public void onTextAvailable(ProcessEvent event, Key outputType) {
-      String text = event.getText();
-      if (text.endsWith("\n")) {
-        text = text.substring(0, text.length() - 1);
-        if (outputType == ProcessOutputTypes.STDOUT) {
-          handleStdout(text);
+      if (outputType != ProcessOutputTypes.SYSTEM && outputType != ProcessOutputTypes.STDOUT) {
+        myBuffer.append(event.getText());
+        int startInd = 0;
+        for (int i = 0; i < myBuffer.length(); i++) {
+          if (myBuffer.charAt(i) == '\n') {
+            String line = myBuffer.substring(startInd, i);
+            handleStdout(line);
+            startInd = i + 1;
+          }
         }
+        myBuffer.delete(0, startInd);
       }
     }
 

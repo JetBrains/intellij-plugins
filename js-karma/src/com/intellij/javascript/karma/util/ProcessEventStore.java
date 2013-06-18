@@ -31,7 +31,7 @@ public class ProcessEventStore {
     myProcessHandler.addProcessListener(new ProcessAdapter() {
       @Override
       public void onTextAvailable(ProcessEvent event, Key outputType) {
-        if (outputType == ProcessOutputTypes.STDOUT) {
+        if (outputType != ProcessOutputTypes.SYSTEM && outputType != ProcessOutputTypes.STDERR) {
           if (handleLineAsEvent(event.getText())) {
             return;
           }
