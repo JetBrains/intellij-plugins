@@ -1,12 +1,11 @@
 package com.intellij.javascript.karma.execution;
 
-import com.intellij.execution.DefaultExecutionResult;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
+import com.intellij.coverage.CoverageExecutor;
+import com.intellij.execution.*;
 import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RunnerSettings;
+import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
@@ -31,20 +30,31 @@ public class KarmaRunProfileState implements RunProfileState {
   private final String myNodeInterpreterPath;
   private final String myKarmaPackageDir;
   private final KarmaRunSettings myRunSettings;
-  private final boolean myDebug;
+  private final KarmaExecutionType myExecutionType;
 
   public KarmaRunProfileState(@NotNull Project project,
                               @NotNull ExecutionEnvironment executionEnvironment,
                               @NotNull String nodeInterpreterPath,
                               @NotNull String karmaPackageDir,
                               @NotNull KarmaRunSettings runSettings,
-                              boolean debug) {
+                              @NotNull Executor executor) {
     myProject = project;
     myExecutionEnvironment = executionEnvironment;
     myNodeInterpreterPath = nodeInterpreterPath;
     myKarmaPackageDir = karmaPackageDir;
     myRunSettings = runSettings;
-    myDebug = debug;
+    myExecutionType = findExecutionType(executor);
+  }
+
+  @NotNull
+  private static KarmaExecutionType findExecutionType(@NotNull Executor executor) {
+    if (executor.equals(DefaultDebugExecutor.getDebugExecutorInstance())) {
+      return KarmaExecutionType.DEBUG;
+    }
+    if (executor.equals(ExecutorRegistry.getInstance().getExecutorById(CoverageExecutor.EXECUTOR_ID))) {
+      return KarmaExecutionType.COVERAGE;
+    }
+    return KarmaExecutionType.RUN;
   }
 
   @Override
@@ -67,7 +77,7 @@ public class KarmaRunProfileState implements RunProfileState {
                                                               server,
                                                               myNodeInterpreterPath,
                                                               myRunSettings,
-                                                              myDebug);
+                                                              myExecutionType);
     SMTRunnerConsoleView smtRunnerConsoleView = session.getSmtConsoleView();
     Disposer.register(myProject, smtRunnerConsoleView);
 

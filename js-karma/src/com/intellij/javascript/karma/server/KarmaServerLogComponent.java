@@ -1,8 +1,7 @@
 package com.intellij.javascript.karma.server;
 
 import com.intellij.execution.actions.StopProcessAction;
-import com.intellij.execution.filters.TextConsoleBuilder;
-import com.intellij.execution.filters.TextConsoleBuilderFactory;
+import com.intellij.execution.filters.TextConsoleBuilderImpl;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.ui.ConsoleView;
@@ -39,7 +38,10 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     myKarmaServer = karmaServer;
     myProcessEventStore = karmaServer.getProcessEventStore();
     GlobalSearchScope scope = GlobalSearchScope.allScope(project);
-    TextConsoleBuilder builder = TextConsoleBuilderFactory.getInstance().createBuilder(project, scope);
+    TextConsoleBuilderImpl builder = new TextConsoleBuilderImpl(project, scope);
+    builder.setUsePredefinedMessageFilter(false);
+    // TODO extract NodeJSStacktraceFilter
+    //builder.addFilter(new NodeJSStacktraceFilter());
     myConsole = builder.getConsole();
     if (myConsole == null) {
       throw new RuntimeException("Console shouldn't be null!");

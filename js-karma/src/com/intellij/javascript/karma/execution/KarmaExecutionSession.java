@@ -42,7 +42,7 @@ public class KarmaExecutionSession {
   private final KarmaRunSettings myRunSettings;
   private final SMTRunnerConsoleView mySmtConsoleView;
   private final ProcessHandler myProcessHandler;
-  private final boolean myDebug;
+  private final KarmaExecutionType myExecutionType;
   private RunContentDescriptor myRunContentDescriptor;
 
   public KarmaExecutionSession(@NotNull Project project,
@@ -51,7 +51,7 @@ public class KarmaExecutionSession {
                                @NotNull KarmaServer karmaServer,
                                @NotNull String nodeInterpreterPath,
                                @NotNull KarmaRunSettings runSettings,
-                               boolean debug) throws ExecutionException {
+                               @NotNull KarmaExecutionType executionType) throws ExecutionException {
     myProject = project;
     myEnvironment = environment;
     myExecutor = executor;
@@ -59,7 +59,7 @@ public class KarmaExecutionSession {
     myNodeInterpreterPath = nodeInterpreterPath;
     myRunSettings = runSettings;
     mySmtConsoleView = createSMTRunnerConsoleView();
-    myDebug = debug;
+    myExecutionType = executionType;
     myProcessHandler = createProcessHandler(karmaServer);
   }
 
@@ -101,25 +101,28 @@ public class KarmaExecutionSession {
       return createOSProcessHandler(server.getRunnerPort(), clientAppFile);
     }
     final NopProcessHandler nopProcessHandler = new NopProcessHandler();
-    server.doWhenReadyWithCapturedBrowser(new Runnable() {
-      @Override
-      public void run() {
-        if (nopProcessHandler.isProcessTerminated()) {
-          return;
-        }
-        try {
-          OSProcessHandler osProcessHandler = createOSProcessHandler(server.getRunnerPort(), clientAppFile);
-          if (myRunContentDescriptor != null) {
-            myRunContentDescriptor.setProcessHandler(osProcessHandler);
+    if (myExecutionType == KarmaExecutionType.RUN) {
+      // TODO move it to KarmaRunRunner
+      server.doWhenReadyWithCapturedBrowser(new Runnable() {
+        @Override
+        public void run() {
+          if (nopProcessHandler.isProcessTerminated()) {
+            return;
           }
-          osProcessHandler.startNotify();
+          try {
+            OSProcessHandler osProcessHandler = createOSProcessHandler(server.getRunnerPort(), clientAppFile);
+            if (myRunContentDescriptor != null) {
+              myRunContentDescriptor.setProcessHandler(osProcessHandler);
+            }
+            osProcessHandler.startNotify();
+          }
+          catch (ExecutionException e) {
+            LOG.warn(e);
+            // TODO handle
+          }
         }
-        catch (ExecutionException e) {
-          LOG.warn(e);
-          // TODO handle
-        }
-      }
-    });
+      });
+    }
     server.addListener(new KarmaServerAdapter() {
       @Override
       public void onTerminated(int exitCode) {
@@ -150,7 +153,7 @@ public class KarmaExecutionSession {
     commandLine.addParameter(clientAppFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getKarmaJsSourcesLocator().getKarmaPackageDir());
     commandLine.addParameter("--runnerPort=" + runnerPort);
-    if (myDebug) {
+    if (myExecutionType == KarmaExecutionType.DEBUG) {
       commandLine.addParameter("--debug=true");
     }
     return commandLine;

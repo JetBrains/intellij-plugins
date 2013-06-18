@@ -4,6 +4,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.*;
 import com.intellij.javascript.karma.KarmaConfig;
+import com.intellij.javascript.karma.coverage.KarmaCoverageSession;
 import com.intellij.javascript.karma.util.ProcessEventStore;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.openapi.Disposable;
@@ -11,7 +12,10 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ConcurrentHashMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.SemVer;
@@ -21,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -45,6 +50,8 @@ public class KarmaServer {
 
   private final AtomicBoolean myOnReadyFired = new AtomicBoolean(false);
   private boolean myOnReadyExecuted = false;
+  private volatile KarmaCoverageSession myActiveCoverageSession;
+  private final File myCoverageTempDir;
 
   // accessed in EDT only
   private final List<Runnable> myDoListWhenReadyWithCapturedBrowser = new CopyOnWriteArrayList<Runnable>();
@@ -54,6 +61,7 @@ public class KarmaServer {
   public KarmaServer(@NotNull File nodeInterpreter,
                      @NotNull File karmaPackageDir,
                      @NotNull File configurationFile) throws IOException {
+    myCoverageTempDir = FileUtil.createTempDirectory("karma-intellij-coverage-", null);
     /* 'nodeInterpreter', 'karmaPackageDir' and 'configurationFile'
         are already checked in KarmaRunConfiguration.checkConfiguration */
     myConfigurationFile = configurationFile;
@@ -72,9 +80,11 @@ public class KarmaServer {
         if ("config".equals(eventType)) {
           myKarmaConfig = KarmaConfig.parseFromJson(eventBody);
         }
-        else if ("coverage".equals(eventType)) {
-          if ("done".equals(eventBody)) {
-            System.out.println("Coverage done");
+        else if ("coverage-finished".equals(eventType)) {
+          KarmaCoverageSession coverageSession = myActiveCoverageSession;
+          myActiveCoverageSession = null;
+          if (coverageSession != null && coverageSession.getCoverageFilePath().equals(eventBody)) {
+            coverageSession.onCoverageSessionFinished();
           }
         }
       }
@@ -110,6 +120,7 @@ public class KarmaServer {
     commandLine.addParameter(serverFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaJsSourcesLocator.getKarmaPackageDir().getAbsolutePath());
     commandLine.addParameter("--configFile=" + configurationFile.getAbsolutePath());
+    commandLine.addParameter("--coverageTempDir=" + myCoverageTempDir.getAbsolutePath());
 
     LOG.info("Starting karma server: " + commandLine.getCommandLineString());
     final Process process = commandLine.createProcess();
@@ -248,6 +259,24 @@ public class KarmaServer {
   @NotNull
   public Set<String> getCapturedBrowsers() {
     return myState.myCapturedBrowsers.keySet();
+  }
+
+  public void startCoverageSession(@NotNull KarmaCoverageSession coverageSession) {
+    // clear directory
+    if (myCoverageTempDir.isDirectory()) {
+      File[] children = ObjectUtils.notNull(myCoverageTempDir.listFiles(), ArrayUtil.EMPTY_FILE_ARRAY);
+      for (File child : children) {
+        FileUtil.delete(child);
+      }
+    }
+    else {
+      FileUtil.createDirectory(myCoverageTempDir);
+    }
+    myActiveCoverageSession = coverageSession;
+    @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+    PrintWriter pw = new PrintWriter(myProcessHandler.getProcessInput(), false);
+    pw.print("write coverage to " + coverageSession.getCoverageFilePath() + "\n");
+    pw.flush();
   }
 
   public static class KarmaServerState implements ProcessListener {

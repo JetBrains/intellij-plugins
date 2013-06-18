@@ -14,6 +14,9 @@
 
   <depends optional="true" config-file="karma-debug.xml">JavaScriptDebugger</depends>
 
+  <depends optional="true" config-file="karma-coverage.xml">Coverage</depends>
+  <depends optional="true" config-file="karma-coverage.xml">com.intellij.modules.coverage</depends>
+
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <configurationType implementation="com.intellij.javascript.karma.execution.KarmaConfigurationType"/>

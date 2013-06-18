@@ -63,11 +63,11 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
       return null;
     }
     return new KarmaRunProfileState(getProject(),
-                                 env,
-                                 globalSettings.myNodeInterpreterPath,
-                                 globalSettings.myKarmaNodePackage,
-                                 myRunSettings,
-                                 executor.equals(DefaultDebugExecutor.getDebugExecutorInstance()));
+                                    env,
+                                    globalSettings.myNodeInterpreterPath,
+                                    globalSettings.myKarmaNodePackage,
+                                    myRunSettings,
+                                    executor);
   }
 
   @Override

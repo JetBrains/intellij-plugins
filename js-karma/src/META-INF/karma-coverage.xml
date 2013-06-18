@@ -1,0 +1,10 @@
+<idea-plugin version="2">
+
+  <extensions defaultExtensionNs="com.intellij">
+    <programRunner implementation="com.intellij.javascript.karma.coverage.KarmaCoverageProgramRunner"/>
+    <coverageEngine implementation="com.intellij.javascript.karma.coverage.KarmaCoverageEngine"/>
+    <coverageRunner implementation="com.intellij.javascript.karma.coverage.KarmaCoverageRunner"/>
+    <projectService serviceImplementation="com.intellij.javascript.karma.coverage.KarmaCoverageAnnotator"/>
+  </extensions>
+
+</idea-plugin>

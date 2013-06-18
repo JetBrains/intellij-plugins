@@ -18,6 +18,7 @@
     <orderEntry type="module" module-name="JavaScriptDebugger" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="xdebugger-api" />
+    <orderEntry type="module" module-name="coverage-common" />
   </component>
 </module>
 
