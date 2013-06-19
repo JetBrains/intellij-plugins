@@ -45,6 +45,8 @@ public class CucumberCompletionContributor extends CompletionContributor {
 
   private static final int SCENARIO_KEYWORD_PRIORITY = 70;
   private static final int SCENARIO_OUTLINE_KEYWORD_PRIORITY = 60;
+  public static final String POSSIBLE_GROUP_REGEX = "\\(([^)]*)\\)\\?";
+  public static final String PARAMETERS_REGEX = "<string>|<number>";
 
   public CucumberCompletionContributor() {
     final PsiElementPattern.Capture<PsiElement> inScenario = psiElement().inside(psiElement().withElementType(GherkinElementTypes.SCENARIOS));
@@ -178,21 +180,36 @@ public class CucumberCompletionContributor extends CompletionContributor {
         for (Map.Entry<String, String> group : GROUP_TYPE_MAP.entrySet()) {
           text = StringUtil.replace(text, group.getKey(), group.getValue());
         }
-        result.addElement(LookupElementBuilder.create(text).withInsertHandler(new StepInsertHandler()));
+
+        final List<TextRange> ranges = new ArrayList<TextRange>();
+
+        Pattern p = Pattern.compile(POSSIBLE_GROUP_REGEX);
+        Matcher m = p.matcher(text);
+        while (m.find()) {
+          ranges.add(new TextRange(m.start(), m.end() - 3));
+          text = m.replaceAll("$1");
+          m = p.matcher(text);
+        }
+
+        final Pattern pattern = Pattern.compile(PARAMETERS_REGEX);
+        m = pattern.matcher(text);
+        while (m.find()) {
+          ranges.add(new TextRange(m.start(), m.end()));
+        }
+
+        result.addElement(LookupElementBuilder.create(text).withInsertHandler(new StepInsertHandler(ranges)));
       }
     }
   }
 
   private static class StepInsertHandler implements InsertHandler<LookupElement> {
-    public void handleInsert(final InsertionContext context, LookupElement item) {
-      final String lookupString = item.getLookupString();
-      final Pattern pattern = Pattern.compile("<string>|<number>");
-      final Matcher m = pattern.matcher(lookupString);
+    private List<TextRange> ranges;
 
-      final List<TextRange> ranges = new ArrayList<TextRange>();
-      while (m.find()) {
-        ranges.add(new TextRange(m.start(), m.end()));
-      }
+    private StepInsertHandler(List<TextRange> ranges) {
+      this.ranges = ranges;
+    }
+
+    public void handleInsert(final InsertionContext context, LookupElement item) {
 
       if (!ranges.isEmpty()) {
         final PsiElement element = context.getFile().findElementAt(context.getStartOffset());
