@@ -9,7 +9,6 @@ import com.intellij.execution.impl.RunDialog;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
-import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.ui.ExecutionConsole;
@@ -95,20 +94,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   public static final NotificationGroup COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup(
     FlexBundle.message("check.flash.app.compiled.before.launch.notification.group"), ToolWindowId.RUN, false);
 
-  public static final RunProfileState EMPTY_RUN_STATE = new RunProfileState() {
-    public ExecutionResult execute(final Executor executor, @NotNull final ProgramRunner runner) throws ExecutionException {
-      return null;
-    }
-
-    public RunnerSettings getRunnerSettings() {
-      return null;
-    }
-
-    public ConfigurationPerRunnerSettings getConfigurationSettings() {
-      return null;
-    }
-  };
-
+  @Override
   @Nullable
   protected RunContentDescriptor doExecute(final Project project,
                                            final Executor executor,
@@ -217,6 +203,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                                                     final ExecutionEnvironment env) throws ExecutionException {
     final XDebugSession debugSession =
       XDebuggerManager.getInstance(module.getProject()).startSession(this, env, contentToReuse, new XDebugProcessStarter() {
+        @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
           try {
@@ -245,6 +232,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       });
 
     debugSession.addSessionListener(new XDebugSessionAdapter() {
+      @Override
       public void sessionStopped() {
         iosStopForwardTcpPortIfNeeded(bc, params);
       }
@@ -315,6 +303,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
       case Browser:
         final Runnable runnable1 = new Runnable() {
+          @Override
           public void run() {
             UrlOpener.launchBrowser(launcherParams.getBrowserFamily(),
                                     BrowserUtil.isAbsoluteURL(urlOrPath) ? urlOrPath : VfsUtilCore.pathToUrl(urlOrPath));
@@ -348,6 +337,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         }
         catch (final IOException e) {
           final Runnable runnable2 = new Runnable() {
+            @Override
             public void run() {
               Messages.showErrorDialog(FlexBundle.message("cant.launch", urlOrPath, launcherParams.getPlayerPath(), e.getMessage()),
                                        CommonBundle.getErrorTitle());
@@ -426,7 +416,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       try {
         return FlexUtils.findXMLElement(descriptorFile.getInputStream(), "<application><id>");
       }
-      catch (IOException e) {/*ignore*/}
+      catch (IOException ignored) {/*ignore*/}
     }
     return null;
   }
@@ -438,7 +428,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       try {
         return FlexUtils.findXMLElement(descriptorFile.getInputStream(), "<application><name>");
       }
-      catch (IOException e) {/*ignore*/}
+      catch (IOException ignored) {/*ignore*/}
     }
     return null;
   }
@@ -510,6 +500,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final Collection<VirtualFile> aneFiles = FlexCompilationUtils.getANEFiles(ModuleRootManager.getInstance(module), bc.getDependencies());
     if (!aneFiles.isEmpty()) {
       ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
+        @Override
         public void run() {
           final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
           if (indicator != null) indicator.setIndeterminate(true);
@@ -685,6 +676,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   private static void showMakeBeforeRunTurnedOffWarning(final Project project, final RunnerAndConfigurationSettings configuration) {
     final String message = FlexBundle.message("run.when.compile.before.run.turned.off");
     COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener() {
+      @Override
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           notification.expire();
@@ -703,6 +695,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   private static void showBCCompilationSkippedWarning(final Module module, final FlexBuildConfiguration bc) {
     final String message = FlexBundle.message("run.when.ide.builder.turned.off", bc.getName(), module.getName());
     COMPILE_BEFORE_LAUNCH_NOTIFICATION_GROUP.createNotification("", message, NotificationType.WARNING, new NotificationListener() {
+      @Override
       public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
           notification.expire();
@@ -710,6 +703,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
           if ("BuildConfiguration".equals(event.getDescription())) {
             final ProjectStructureConfigurable projectStructureConfigurable = ProjectStructureConfigurable.getInstance(module.getProject());
             ShowSettingsUtil.getInstance().editConfigurable(module.getProject(), projectStructureConfigurable, new Runnable() {
+              @Override
               public void run() {
                 Place p = FlexBuildConfigurationsExtension.getInstance().getConfigurator().getPlaceFor(module, bc.getName());
                 projectStructureConfigurable.navigateTo(p, true);
@@ -741,6 +735,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     final Sdk sdkForDebugger = FlexDebugProcess.getDebuggerSdk(params.getDebuggerSdkRaw(), sdk);
     if (!FlexSdkUtils.isAirSdkWithoutFlex(sdk) && StringUtil.compareVersionNumbers(sdkForDebugger.getVersionString(), "4") < 0) {
       final HyperlinkListener listener = new HyperlinkAdapter() {
+        @Override
         protected void hyperlinkActivated(final HyperlinkEvent e) {
           if ("RunConfiguration".equals(e.getDescription())) {
             final RunnerAndConfigurationSettings[] allConfigurations =

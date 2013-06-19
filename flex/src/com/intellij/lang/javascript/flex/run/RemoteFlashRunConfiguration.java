@@ -3,6 +3,7 @@ package com.intellij.lang.javascript.flex.run;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
+import com.intellij.execution.configuration.EmptyRunProfileState;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.lang.javascript.flex.FlexModuleType;
@@ -62,7 +63,7 @@ public class RemoteFlashRunConfiguration extends RunConfigurationBase implements
       throw new ExecutionException(e.getMessage());
     }
 
-    return FlexBaseRunner.EMPTY_RUN_STATE;
+    return EmptyRunProfileState.INSTANCE;
   }
 
   @Override

@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.execution.*;
+import com.intellij.execution.configuration.EmptyRunProfileState;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.process.ProcessHandler;
@@ -18,7 +19,10 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackage;
 import com.intellij.lang.javascript.psi.ecmal4.JSPackageStatement;
-import com.intellij.openapi.module.*;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
@@ -134,7 +138,7 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
       return airRunState;
     }
 
-    return FlexBaseRunner.EMPTY_RUN_STATE;
+    return EmptyRunProfileState.INSTANCE;
   }
 
   @Override
