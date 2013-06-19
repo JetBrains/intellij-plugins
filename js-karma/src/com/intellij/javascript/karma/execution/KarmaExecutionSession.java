@@ -13,12 +13,10 @@ import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
-import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerAdapter;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.karma.util.NopProcessHandler;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +29,6 @@ import java.io.IOException;
  */
 public class KarmaExecutionSession {
 
-  private static final Logger LOG = Logger.getInstance(KarmaExecutionSession.class);
   private static final String FRAMEWORK_NAME = "KarmaJavaScriptTestRunner";
 
   private final Project myProject;
@@ -43,7 +40,6 @@ public class KarmaExecutionSession {
   private final SMTRunnerConsoleView mySmtConsoleView;
   private final ProcessHandler myProcessHandler;
   private final KarmaExecutionType myExecutionType;
-  private RunContentDescriptor myRunContentDescriptor;
 
   public KarmaExecutionSession(@NotNull Project project,
                                @NotNull ExecutionEnvironment environment,
@@ -101,28 +97,6 @@ public class KarmaExecutionSession {
       return createOSProcessHandler(server.getRunnerPort(), clientAppFile);
     }
     final NopProcessHandler nopProcessHandler = new NopProcessHandler();
-    if (myExecutionType == KarmaExecutionType.RUN) {
-      // TODO move it to KarmaRunRunner
-      server.doWhenReadyWithCapturedBrowser(new Runnable() {
-        @Override
-        public void run() {
-          if (nopProcessHandler.isProcessTerminated()) {
-            return;
-          }
-          try {
-            OSProcessHandler osProcessHandler = createOSProcessHandler(server.getRunnerPort(), clientAppFile);
-            if (myRunContentDescriptor != null) {
-              myRunContentDescriptor.setProcessHandler(osProcessHandler);
-            }
-            osProcessHandler.startNotify();
-          }
-          catch (ExecutionException e) {
-            LOG.warn(e);
-            // TODO handle
-          }
-        }
-      });
-    }
     server.addListener(new KarmaServerAdapter() {
       @Override
       public void onTerminated(int exitCode) {
@@ -162,10 +136,6 @@ public class KarmaExecutionSession {
   @NotNull
   public ProcessHandler getProcessHandler() {
     return myProcessHandler;
-  }
-
-  public void setRunContentDescriptor(@NotNull RunContentDescriptor descriptor) {
-    myRunContentDescriptor = descriptor;
   }
 
   @NotNull

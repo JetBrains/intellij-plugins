@@ -10,6 +10,7 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -45,14 +46,23 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
     if (executionResult == null) {
       return null;
     }
-    KarmaConsoleView console = KarmaConsoleView.get(executionResult);
-    if (console == null) {
+    KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult);
+    if (consoleView == null) {
       LOG.error("Can't get KarmaConsoleView from executionResult!");
       return null;
     }
     RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
-    RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
-    console.getKarmaExecutionSession().setRunContentDescriptor(descriptor);
+    final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
+
+    final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
+    if (!karmaServer.isReady() || !karmaServer.hasCapturedBrowsers()) {
+      karmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
+        @Override
+        public void run() {
+          descriptor.getRestarter().run();
+        }
+      });
+    }
     return descriptor;
   }
 
