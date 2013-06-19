@@ -80,11 +80,11 @@ Node.prototype.getStartMessage = function () {
   text += " nodeId='" + this.id;
   var parentNodeId = this.parentNode ? this.parentNode.id : 0;
   text += "' parentNodeId='" + parentNodeId;
-  text += "' name='" + escapeUtil.attributeValueEscapse(this.name);
+  text += "' name='" + escapeUtil.attributeValueEscape(this.name);
   if (this.type != null) {
     text += "' nodeType='" + this.type;
     if (this.locationHint != null) {
-      text += "' locationHint='" + escapeUtil.attributeValueEscapse(this.type + '://' + this.locationHint);
+      text += "' locationHint='" + escapeUtil.attributeValueEscape(this.type + '://' + this.locationHint);
     }
   }
   text += "']";
@@ -214,7 +214,7 @@ TestNode.prototype.getExtraFinishMessageParameters = function () {
     params += " error='yes'";
   }
   if (this.failureMsg) {
-    params += " message='" + escapeUtil.attributeValueEscapse(this.failureMsg) + "'";
+    params += " message='" + escapeUtil.attributeValueEscape(this.failureMsg) + "'";
   }
   return params.length === 0 ? null : params;
 };

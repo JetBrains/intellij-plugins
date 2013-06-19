@@ -58,7 +58,7 @@ function attributeValueEscape(str) {
   return res;
 }
 
-exports.attributeValueEscapse = attributeValueEscape;
+exports.attributeValueEscape = attributeValueEscape;
 
 /**
  * @param {Array} list
