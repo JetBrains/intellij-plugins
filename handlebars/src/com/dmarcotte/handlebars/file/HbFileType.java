@@ -8,24 +8,17 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileTypes.*;
-import com.intellij.openapi.fileTypes.ex.FileTypeIdentifiableByVirtualFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.newvfs.FileAttribute;
-import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.psi.templateLanguages.TemplateDataLanguageMappings;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.nio.charset.Charset;
 
-public class HbFileType extends LanguageFileType implements TemplateLanguageFileType, FileTypeIdentifiableByVirtualFile {
-  private static final FileAttribute HANDLEBARS_ATTRIBUTE = new FileAttribute("is.handlebars", 1, true);
+public class HbFileType extends LanguageFileType implements TemplateLanguageFileType {
   public static final LanguageFileType INSTANCE = new HbFileType();
 
   @NonNls
@@ -90,48 +83,5 @@ public class HbFileType extends LanguageFileType implements TemplateLanguageFile
       associatedFileType = HbLanguage.getDefaultTemplateLang();
     }
     return associatedFileType;
-  }
-
-  @Override
-  public boolean isMyFileType(VirtualFile file) {
-    return hasHbAttribute(file);
-  }
-
-  public static boolean hasHbAttribute(@Nullable VirtualFile file) {
-    if (!(file instanceof NewVirtualFile) || !file.isValid()) {
-      return false;
-    }
-    try {
-      DataInputStream inputStream = HANDLEBARS_ATTRIBUTE.readAttribute(file);
-      try {
-        return inputStream != null && inputStream.readBoolean();
-      }
-      finally {
-        if (inputStream != null) {
-          inputStream.close();
-        }
-      }
-    }
-    catch (IOException e) {
-      return false;
-    }
-  }
-
-  public static void markAsHbFile(@Nullable VirtualFile file, boolean value) {
-    if (!(file instanceof NewVirtualFile) || !file.isValid()) {
-      return;
-    }
-    DataOutputStream outputStream = HANDLEBARS_ATTRIBUTE.writeAttribute(file);
-    try {
-      try {
-        outputStream.writeBoolean(value);
-      }
-      finally {
-        outputStream.close();
-      }
-    }
-    catch (IOException e) {
-      // ignore
-    }
   }
 }
