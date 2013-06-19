@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -77,8 +78,8 @@ public class KarmaServer {
     myProcessEventStore.addStreamEventListener(new StreamEventListener() {
       @Override
       public void on(@NotNull String eventType, @NotNull String eventBody) {
-        if ("config".equals(eventType)) {
-          myKarmaConfig = KarmaConfig.parseFromJson(eventBody);
+        if ("basePath".equals(eventType)) {
+          myKarmaConfig = new KarmaConfig(eventBody, Collections.<String>emptySet());
         }
         else if ("coverage-finished".equals(eventType)) {
           KarmaCoverageSession coverageSession = myActiveCoverageSession;
