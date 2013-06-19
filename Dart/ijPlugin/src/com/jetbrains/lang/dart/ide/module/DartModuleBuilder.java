@@ -9,6 +9,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.projectRoots.SdkTypeId;
 import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.jetbrains.lang.dart.ide.DartSdkType;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,9 +35,14 @@ public class DartModuleBuilder extends JavaModuleBuilder implements SourcePathsB
 
   @Override
   public void moduleCreated(@NotNull Module module) {
-    final CompilerModuleExtension model = (CompilerModuleExtension)CompilerModuleExtension.getInstance(module).getModifiableModel(true);
-    model.setCompilerOutputPath(model.getCompilerOutputUrl());
-    model.inheritCompilerOutputPath(false);
-    model.commit();
+    ModifiableRootModel modifiableModel = ModuleRootManager.getInstance(module).getModifiableModel();
+    try {
+      CompilerModuleExtension extension = modifiableModel.getModuleExtension(CompilerModuleExtension.class);
+      extension.setCompilerOutputPath(extension.getCompilerOutputUrl());
+      extension.inheritCompilerOutputPath(false);
+    }
+    finally {
+      modifiableModel.commit();
+    }
   }
 }
