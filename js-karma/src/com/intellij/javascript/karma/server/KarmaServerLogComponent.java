@@ -9,6 +9,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.javascript.karma.util.ProcessEventStore;
+import com.intellij.javascript.nodejs.BaseNodeJSFilter;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -40,8 +41,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     TextConsoleBuilderImpl builder = new TextConsoleBuilderImpl(project, scope);
     builder.setUsePredefinedMessageFilter(false);
-    // TODO extract NodeJSStacktraceFilter
-    //builder.addFilter(new NodeJSStacktraceFilter());
+    builder.addFilter(new BaseNodeJSFilter(project));
     myConsole = builder.getConsole();
     if (myConsole == null) {
       throw new RuntimeException("Console shouldn't be null!");
