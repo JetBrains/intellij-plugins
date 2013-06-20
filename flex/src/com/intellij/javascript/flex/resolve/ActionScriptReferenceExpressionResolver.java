@@ -82,7 +82,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
     final Ref<JSType> qualifierType = Ref.create(null);
     if (localResolve) {
       final PsiElement topParent = JSResolveUtil.getTopReferenceParent(parent);
-      localProcessor = new ResolveProcessor(referencedName, ref) {
+      localProcessor = new SinkResolveProcessor(referencedName, ref) {
         @Override
         public boolean needPackages() {
           if (parent instanceof JSReferenceExpression && topParent instanceof JSImportStatement) {

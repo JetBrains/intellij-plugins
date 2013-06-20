@@ -12,13 +12,17 @@ import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.flex.*;
+import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
+import com.intellij.lang.javascript.flex.FlexBundle;
+import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
+import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
 import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
@@ -493,7 +497,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
         final PsiElement grandParent = attributeListOwner.getParent();
 
         if (grandParent instanceof JSClass) {
-          final ResolveProcessor processor = new ResolveProcessor((attributeListOwner).getName());
+          final ResolveProcessor processor = new SinkResolveProcessor((attributeListOwner).getName());
           processor.setToProcessHierarchy(false);
           grandParent.processDeclarations(processor, ResolveState.initial(), grandParent, attributeListOwner);
 
