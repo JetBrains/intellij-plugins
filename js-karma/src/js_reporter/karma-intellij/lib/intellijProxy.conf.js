@@ -12,6 +12,11 @@ function copy(obj) {
   return out;
 }
 
+function isString(value) {
+  var toString = {}.toString;
+  return typeof value === 'string' || toString.call(value) === '[object String]';
+}
+
 module.exports = function(karma) {
   var config = {};
 
@@ -45,7 +50,18 @@ module.exports = function(karma) {
   // specify runner port to have runner port info dumped to standard output
   config.runnerPort = constants.DEFAULT_RUNNER_PORT + 1;
 
-  config.basePath = path.resolve(path.dirname(originalConfigPath), config.basePath);
+  var basePath = config.basePath || '';
+  if (isString(originalConfigPath)) {
+    // resolve basePath
+    basePath = path.resolve(path.dirname(originalConfigPath), basePath);
+  }
+  else {
+    // TODO is 'else' possible?
+    basePath = path.resolve(basePath || '.');
+  }
+
+  process.stdout.write('##intellij-event[basePath:' + basePath + ']\n');
+  config.basePath = basePath;
 
   karma.configure(config);
 };

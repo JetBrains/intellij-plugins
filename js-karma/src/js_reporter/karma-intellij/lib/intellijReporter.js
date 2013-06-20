@@ -62,9 +62,7 @@ function createSpecNode(suiteNode, suiteNames, specName) {
   return specNode;
 }
 
-function IntellijReporter(formatError, config) {
-  process.stdout.write('##intellij-event[basePath:' + config.basePath + ']\n');
-
+function IntellijReporter(formatError) {
   BaseReporter.call(this, formatError, false);
   this.adapters = [];
 
@@ -122,7 +120,7 @@ function IntellijReporter(formatError, config) {
   };
 }
 
-IntellijReporter.$inject = ['formatError', 'config'];
+IntellijReporter.$inject = ['formatError'];
 
 module.exports = {
   'reporter:intellij' : ['type', IntellijReporter]

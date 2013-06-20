@@ -17,13 +17,7 @@ if (ideCfg.isDebug()) {
   var listener = function(data) {
     text += data;
     var lines = text.split('\n');
-    var resume = false;
-    lines.forEach(function (line) {
-      if (line === RESUME_TEST_RUNNING_MESSAGE) {
-        resume = true;
-      }
-    });
-    if (resume) {
+    if (lines.indexOf(RESUME_TEST_RUNNING_MESSAGE) >= 0) {
       process.stdin.removeListener('data', listener);
       process.stdin.pause();
       process.stdin.destroy();
