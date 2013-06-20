@@ -196,7 +196,7 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
   }
 
   @Override
-  public boolean validateNewStepDefinitionFileName(@NotNull String fileName) {
+  public boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String fileName) {
     return true;
   }
 

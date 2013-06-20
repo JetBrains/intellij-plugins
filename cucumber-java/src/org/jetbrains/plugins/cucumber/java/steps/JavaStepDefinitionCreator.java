@@ -114,7 +114,7 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
   }
 
   @Override
-  public boolean validateNewStepDefinitionFileName(@NotNull String name) {
+  public boolean validateNewStepDefinitionFileName(@NotNull final Project project, @NotNull final String name) {
     if(name.length() == 0) return false;
     if (! Character.isJavaIdentifierStart(name.charAt(0))) return false;
     for (int i = 1; i < name.length(); i++) {

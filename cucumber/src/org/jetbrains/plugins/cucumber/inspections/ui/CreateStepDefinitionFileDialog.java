@@ -128,7 +128,7 @@ public class CreateStepDefinitionFileDialog extends DialogWrapper {
     Project project = myModel.getDirectory().getProject();
     boolean fileNameIsOk = fileName != null &&
                            CucumberStepsIndex.getInstance(project)
-                             .validateNewStepDefinitionFileName(fileName, myModel.getSelectedFileType());
+                             .validateNewStepDefinitionFileName(myModel.getDirectory(), fileName, myModel.getSelectedFileType());
 
     if (!fileNameIsOk) {
       setErrorText(CucumberBundle.message("cucumber.quick.fix.create.step.file.error.incorrect.file.name"));

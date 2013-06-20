@@ -161,10 +161,10 @@ public class CucumberStepsIndex {
     return ep.getStepDefinitionCreator().createStepDefinitionContainer(dir, fileNameWithoutExtension);
   }
 
-  public boolean validateNewStepDefinitionFileName(@NotNull final String fileName, @NotNull final FileType fileType) {
+  public boolean validateNewStepDefinitionFileName(@NotNull final PsiDirectory directory, @NotNull final String fileName, @NotNull final FileType fileType) {
     final CucumberJvmExtensionPoint ep = myExtensionMap.get(fileType);
     assert ep != null;
-    return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(fileName);
+    return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(directory.getProject(), fileName);
   }
 
   public boolean isStepLikeFile(PsiElement child, PsiElement parent) {
