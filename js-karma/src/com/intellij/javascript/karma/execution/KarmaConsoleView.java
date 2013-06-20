@@ -30,16 +30,16 @@ import org.jetbrains.annotations.Nullable;
 */
 public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionConsoleEx, XDebugLayoutCustomizer {
 
-  private final KarmaServer myKarmaServer;
+  private final KarmaServer myServer;
   private final KarmaExecutionSession myExecutionSession;
 
   public KarmaConsoleView(@NotNull TestConsoleProperties consoleProperties,
                           @NotNull ExecutionEnvironment env,
                           @Nullable String splitterProperty,
-                          @NotNull KarmaServer karmaServer,
+                          @NotNull KarmaServer server,
                           @NotNull KarmaExecutionSession executionSession) {
     super(consoleProperties, env.getRunnerSettings(), env.getConfigurationSettings(), splitterProperty);
-    myKarmaServer = karmaServer;
+    myServer = server;
     myExecutionSession = executionSession;
   }
 
@@ -59,7 +59,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   @Override
   public Content registerConsoleContent(@NotNull ExecutionConsole console, @NotNull final RunnerLayoutUi ui) {
     ui.getOptions().setMinimizeActionEnabled(false);
-    boolean readyToRun = myKarmaServer.isReady() && myKarmaServer.hasCapturedBrowsers();
+    boolean readyToRun = myServer.isReady() && myServer.hasCapturedBrowsers();
     final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
                                                     getComponent(),
                                                     "Test Run",
@@ -68,12 +68,12 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
 
     consoleContent.setCloseable(false);
-    final KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this);
+    final KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this, myServer);
     if (readyToRun) {
       ui.selectAndFocus(consoleContent, false, false);
     }
     else {
-      myKarmaServer.addListener(new KarmaServerAdapter() {
+      myServer.addListener(new KarmaServerAdapter() {
         @Override
         public void onReady(int webServerPort, int runnerPort) {
           ui.selectAndFocus(consoleContent, false, false);
@@ -83,20 +83,20 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       alarm.addRequest(new Runnable() {
         @Override
         public void run() {
-          if (myKarmaServer.isReady() && !myKarmaServer.hasCapturedBrowsers()) {
+          if (myServer.isReady() && !myServer.hasCapturedBrowsers()) {
             print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
-            String url = "http://localhost:" + myKarmaServer.getWebServerPort();
+            String url = "http://localhost:" + myServer.getWebServerPort();
             printHyperlink(url + "\n", new OpenUrlHyperlinkInfo(url));
           }
         }
       }, 1000, ModalityState.any());
-      myKarmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
+      myServer.doWhenReadyWithCapturedBrowser(new Runnable() {
         @Override
         public void run() {
           alarm.cancelAllRequests();
         }
       });
-      myKarmaServer.addListener(new KarmaServerAdapter() {
+      myServer.addListener(new KarmaServerAdapter() {
         @Override
         public void onTerminated(int exitCode) {
           alarm.cancelAllRequests();
@@ -110,7 +110,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
   @Override
   public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
-    KarmaServerLogComponent logComponent = new KarmaServerLogComponent(getProperties().getProject(), myKarmaServer);
+    KarmaServerLogComponent logComponent = new KarmaServerLogComponent(getProperties().getProject(), myServer);
     logComponent.installOn(ui);
   }
 
@@ -126,29 +126,32 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
   private static class KarmaRootTestProxyFormatter implements SMRootTestProxyFormatter {
 
-    private final TestTreeRenderer myTestTreeRenderer;
+    private final TestTreeRenderer myRenderer;
+    private final KarmaServer myServer;
 
-    private KarmaRootTestProxyFormatter(@NotNull SMTRunnerConsoleView consoleView) {
-      myTestTreeRenderer = ObjectUtils.tryCast(
+    private KarmaRootTestProxyFormatter(@NotNull SMTRunnerConsoleView consoleView,
+                                        @NotNull KarmaServer server) {
+      myRenderer = ObjectUtils.tryCast(
         consoleView.getResultsViewer().getTreeView().getCellRenderer(),
         TestTreeRenderer.class
       );
-      if (myTestTreeRenderer != null) {
-        myTestTreeRenderer.setAdditionalRootFormatter(this);
+      if (myRenderer != null) {
+        myRenderer.setAdditionalRootFormatter(this);
       }
+      myServer = server;
     }
 
     @Override
     public void format(@NotNull SMTestProxy.SMRootTestProxy testProxy, @NotNull TestTreeRenderer renderer) {
-      if (testProxy.isLeaf()) {
+      if (testProxy.isLeaf() && myServer.isReady() && !myServer.hasCapturedBrowsers()) {
         renderer.clear();
         renderer.append("Waiting for browser capturing...");
       }
     }
 
     public void uninstall() {
-      if (myTestTreeRenderer != null) {
-        myTestTreeRenderer.removeAdditionalRootFormatter();
+      if (myRenderer != null) {
+        myRenderer.removeAdditionalRootFormatter();
       }
     }
   }

@@ -122,6 +122,11 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     ((JSDebugProcess)session.getDebugProcess()).getConnection().queueRequest(new Runnable() {
       @Override
       public void run() {
+        try {
+          Thread.sleep(200);
+        }
+        catch (InterruptedException ignored) {
+        }
         resumeTestRunning(executionResult.getProcessHandler());
       }
     });
