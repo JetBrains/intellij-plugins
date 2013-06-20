@@ -68,6 +68,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
 
     consoleContent.setCloseable(false);
+    final KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this);
     if (readyToRun) {
       ui.selectAndFocus(consoleContent, false, false);
     }
@@ -78,21 +79,6 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
           ui.selectAndFocus(consoleContent, false, false);
         }
       });
-      final TestTreeRenderer testTreeRenderer = ObjectUtils.tryCast(
-        getResultsViewer().getTreeView().getCellRenderer(),
-        TestTreeRenderer.class
-      );
-      if (testTreeRenderer != null) {
-        testTreeRenderer.setAdditionalRootFormatter(new SMRootTestProxyFormatter() {
-          @Override
-          public void format(@NotNull SMTestProxy.SMRootTestProxy testProxy, @NotNull TestTreeRenderer renderer) {
-            if (testProxy.isLeaf()) {
-              renderer.clear();
-              renderer.append("Waiting for browser capturing...");
-            }
-          }
-        });
-      }
       final Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, consoleContent);
       alarm.addRequest(new Runnable() {
         @Override
@@ -103,14 +89,19 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
             printHyperlink(url + "\n", new OpenUrlHyperlinkInfo(url));
           }
         }
-      }, 2000, ModalityState.any());
+      }, 1000, ModalityState.any());
       myKarmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
         @Override
         public void run() {
           alarm.cancelAllRequests();
-          if (testTreeRenderer != null) {
-            testTreeRenderer.removeAdditionalRootFormatter();
-          }
+        }
+      });
+      myKarmaServer.addListener(new KarmaServerAdapter() {
+        @Override
+        public void onTerminated(int exitCode) {
+          alarm.cancelAllRequests();
+          rootFormatter.uninstall();
+          print("Karma server finished with exited code " + exitCode + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
         }
       });
     }
@@ -131,6 +122,35 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   @Nullable
   public static KarmaConsoleView get(@NotNull ExecutionResult result) {
     return ObjectUtils.tryCast(result.getExecutionConsole(), KarmaConsoleView.class);
+  }
+
+  private static class KarmaRootTestProxyFormatter implements SMRootTestProxyFormatter {
+
+    private final TestTreeRenderer myTestTreeRenderer;
+
+    private KarmaRootTestProxyFormatter(@NotNull SMTRunnerConsoleView consoleView) {
+      myTestTreeRenderer = ObjectUtils.tryCast(
+        consoleView.getResultsViewer().getTreeView().getCellRenderer(),
+        TestTreeRenderer.class
+      );
+      if (myTestTreeRenderer != null) {
+        myTestTreeRenderer.setAdditionalRootFormatter(this);
+      }
+    }
+
+    @Override
+    public void format(@NotNull SMTestProxy.SMRootTestProxy testProxy, @NotNull TestTreeRenderer renderer) {
+      if (testProxy.isLeaf()) {
+        renderer.clear();
+        renderer.append("Waiting for browser capturing...");
+      }
+    }
+
+    public void uninstall() {
+      if (myTestTreeRenderer != null) {
+        myTestTreeRenderer.removeAdditionalRootFormatter();
+      }
+    }
   }
 
 }

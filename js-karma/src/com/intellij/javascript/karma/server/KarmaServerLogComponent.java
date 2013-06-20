@@ -106,17 +106,25 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     return false;
   }
 
-  public void installOn(@NotNull RunnerLayoutUi ui) {
-    Content consoleContent = ui.createContent("KarmaServer",
-                                              this,
-                                              "Karma Server",
-                                              null,
-                                              myConsole.getPreferredFocusableComponent());
+  public void installOn(@NotNull final RunnerLayoutUi ui) {
+    final Content consoleContent = ui.createContent("KarmaServer",
+                                                    this,
+                                                    "Karma Server",
+                                                    null,
+                                                    myConsole.getPreferredFocusableComponent());
     consoleContent.setCloseable(false);
     ui.addContent(consoleContent, 4, PlaceInGrid.bottom, false);
     if (!myKarmaServer.isReady()) {
       ui.selectAndFocus(consoleContent, false, false);
     }
+    myKarmaServer.addListener(new KarmaServerAdapter() {
+      @Override
+      public void onTerminated(int exitCode) {
+        if (!ui.isDisposed()) {
+          ui.selectAndFocus(consoleContent, false, false);
+        }
+      }
+    });
   }
 
 }

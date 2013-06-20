@@ -42,6 +42,7 @@ public class KarmaServer {
 
   private static final Logger LOG = Logger.getInstance(KarmaServer.class);
 
+  // accessed in EDT only
   private final List<KarmaServerListener> myListeners = ContainerUtil.createEmptyCOWList();
   private final File myConfigurationFile;
   private final KillableColoredProcessHandler myProcessHandler;
@@ -133,9 +134,16 @@ public class KarmaServer {
 
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
-      public void processTerminated(ProcessEvent event) {
+      public void processTerminated(final ProcessEvent event) {
         KarmaServerRegistry.serverTerminated(KarmaServer.this);
-        fireOnTerminated(event.getExitCode());
+        UIUtil.invokeLaterIfNeeded(new Runnable() {
+          @Override
+          public void run() {
+            myDoListWhenReadyWithCapturedBrowser.clear();
+            fireOnTerminated(event.getExitCode());
+            myListeners.clear();
+          }
+        });
       }
     });
     processHandler.addProcessListener(myState);
@@ -165,18 +173,13 @@ public class KarmaServer {
   }
 
   private void fireOnTerminated(final int exitCode) {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        for (KarmaServerListener listener : myListeners) {
-          listener.onTerminated(exitCode);
-        }
-      }
-    });
+    for (KarmaServerListener listener : myListeners) {
+      listener.onTerminated(exitCode);
+    }
   }
 
   /**
-   * @param task will be called in EDT
+   * Executes {@code} task in EDT when the server is ready and has at least one captured browser.
    */
   public void doWhenReadyWithCapturedBrowser(@NotNull final Runnable task) {
     UIUtil.invokeLaterIfNeeded(new Runnable() {
