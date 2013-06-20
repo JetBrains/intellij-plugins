@@ -26,10 +26,7 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassBase;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageStatementImpl;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
-import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
-import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
+import com.intellij.lang.javascript.psi.resolve.*;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.lang.javascript.validation.*;
@@ -331,7 +328,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
         final Ref<JSFunction> set = new Ref<JSFunction>();
         boolean b = JSResolveUtil.iterateType(node, parent, qName, new JSResolveUtil.OverrideHandler() {
-          public boolean process(final ResolveProcessor processor, final PsiElement scope, final String className) {
+          public boolean process(final SinkResolveProcessor processor, final PsiElement scope, final String className) {
             //noinspection StringEquality
             if (qName == className || qName != null && qName.equals(className)) return true;
             JSFunction value = (JSFunction)processor.getResult();

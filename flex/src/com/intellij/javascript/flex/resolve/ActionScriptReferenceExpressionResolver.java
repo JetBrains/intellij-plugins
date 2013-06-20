@@ -78,7 +78,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
       return ResolveResult.EMPTY_ARRAY;
     }
 
-    ResolveProcessor localProcessor;
+    SinkResolveProcessor localProcessor;
     final Ref<JSType> qualifierType = Ref.create(null);
     if (localResolve) {
       final PsiElement topParent = JSResolveUtil.getTopReferenceParent(parent);
@@ -164,7 +164,7 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
                                   JSType qualifierType,
                                   WalkUpResolveProcessor processor,
                                   boolean localResolve,
-                                  ResolveProcessor localProcessor, JSExpression qualifier) {
+                                  SinkResolveProcessor localProcessor, JSExpression qualifier) {
     boolean inDefinition = false;
     boolean allowOnlyCompleteMatches = localResolve && localProcessor.isEncounteredDynamicClasses();
 

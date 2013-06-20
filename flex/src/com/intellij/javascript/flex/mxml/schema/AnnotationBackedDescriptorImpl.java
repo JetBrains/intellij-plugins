@@ -497,7 +497,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
         final PsiElement grandParent = attributeListOwner.getParent();
 
         if (grandParent instanceof JSClass) {
-          final ResolveProcessor processor = new SinkResolveProcessor((attributeListOwner).getName());
+          final SinkResolveProcessor processor = new SinkResolveProcessor((attributeListOwner).getName());
           processor.setToProcessHierarchy(false);
           grandParent.processDeclarations(processor, ResolveState.initial(), grandParent, attributeListOwner);
 
