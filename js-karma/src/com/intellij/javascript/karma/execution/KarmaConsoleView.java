@@ -1,8 +1,11 @@
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionResult;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.testframework.TestConsoleProperties;
+import com.intellij.execution.testframework.TestTreeView;
 import com.intellij.execution.testframework.sm.runner.SMTestProxy;
 import com.intellij.execution.testframework.sm.runner.ui.SMRootTestProxyFormatter;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
@@ -105,6 +108,12 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
         }
       });
     }
+    myExecutionSession.getProcessHandler().addProcessListener(new ProcessAdapter() {
+      @Override
+      public void processTerminated(ProcessEvent event) {
+        rootFormatter.uninstall();
+      }
+    });
     return consoleContent;
   }
 
@@ -128,13 +137,12 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
     private final TestTreeRenderer myRenderer;
     private final KarmaServer myServer;
+    private final TestTreeView myTreeView;
 
     private KarmaRootTestProxyFormatter(@NotNull SMTRunnerConsoleView consoleView,
                                         @NotNull KarmaServer server) {
-      myRenderer = ObjectUtils.tryCast(
-        consoleView.getResultsViewer().getTreeView().getCellRenderer(),
-        TestTreeRenderer.class
-      );
+      myTreeView = consoleView.getResultsViewer().getTreeView();
+      myRenderer = ObjectUtils.tryCast(myTreeView.getCellRenderer(), TestTreeRenderer.class);
       if (myRenderer != null) {
         myRenderer.setAdditionalRootFormatter(this);
       }
@@ -152,6 +160,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     public void uninstall() {
       if (myRenderer != null) {
         myRenderer.removeAdditionalRootFormatter();
+        myTreeView.repaint();
       }
     }
   }
