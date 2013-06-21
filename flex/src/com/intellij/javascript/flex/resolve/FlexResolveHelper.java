@@ -1,13 +1,18 @@
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.javascript.flex.mxml.MxmlJSClassProvider;
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
+import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.flex.JSResolveHelper;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSFunction;
-import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClass;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
+import com.intellij.lang.javascript.psi.JSReferenceExpression;
+import com.intellij.lang.javascript.psi.ecmal4.*;
+import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
+import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
+import com.intellij.lang.javascript.psi.resolve.JSImportHandlingUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.openapi.project.Project;
@@ -16,6 +21,7 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -24,6 +30,7 @@ import com.intellij.psi.css.CssString;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.search.FilenameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.Processor;
@@ -166,6 +173,60 @@ public class FlexResolveHelper implements JSResolveHelper {
   @Override
   public long getResolveResultTimestamp(PsiElement candidate) {
     return SwcCatalogXmlUtil.getTimestampFromCatalogXml(candidate);
+  }
+
+  @Override
+  public JSReferenceExpression bindReferenceToElement(JSReferenceExpression ref,
+                                                      String qName,
+                                                      String newName, boolean justMakeQualified, PsiNamedElement element) {
+    PsiFile file;
+    if (qName != null &&
+        (element instanceof XmlBackedJSClass ||
+         (element instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)element)) ||
+         (file = element.getContainingFile()) == null ||
+         file.getLanguage().isKindOf(JavaScriptSupportLoader.ECMA_SCRIPT_L4))) {
+      boolean qualify;
+      boolean doImport;
+
+      if (justMakeQualified ||
+          ref.getParent() instanceof JSImportStatement ||
+          element instanceof PsiDirectoryContainer ||
+          (ref.getParent() instanceof JSReferenceList && ref.getContainingFile().getContext() instanceof XmlAttributeValue)) {
+        qualify = true;
+        doImport = false;
+      }
+      else {
+        doImport = JSImportHandlingUtil.evaluateImportStatus(newName, ref) == JSImportHandlingUtil.ImportStatus.ABSENT &&
+                   JSImportHandlingUtil.evaluateImportStatus(ref.getReferencedName(), ref) == JSImportHandlingUtil.ImportStatus.ABSENT;
+        JSQualifiedNamedElement qualifiedElement = null;
+
+        if (element instanceof JSQualifiedNamedElement) {
+          qualifiedElement = (JSQualifiedNamedElement)element;
+        }
+        else if (element instanceof JSFile) {
+          qualifiedElement = JSPsiImplUtils.findQualifiedElement((JSFile)element);
+        }
+        else if (element instanceof XmlFile) {
+          qualifiedElement = XmlBackedJSClassFactory.getXmlBackedClass(((XmlFile)element));
+        }
+        assert qualifiedElement != null:qualifiedElement.getClass();
+        // at this moment package declaration is out of date so element has it's original qName
+        qualify = ImportUtils.shortReferenceIsAmbiguousOrUnequal(newName, ref, qualifiedElement.getQualifiedName(), null);
+      }
+
+      if (qualify) {
+        ASTNode newChild = JSChangeUtil.createExpressionFromText(ref.getProject(), qName);
+        ref.getParent().getNode().replaceChild(ref.getNode(), newChild);
+        ref = (JSReferenceExpression)newChild.getPsi();
+      }
+      if (doImport && qName.indexOf('.') != -1 && !StringUtil.getPackageName(qName).equals(JSResolveUtil.getPackageNameFromPlace(ref))) {
+        final SmartPsiElementPointer<JSReferenceExpression> refPointer =
+          SmartPointerManager.getInstance(ref.getProject()).createSmartPsiElementPointer(ref);
+        ImportUtils.doImport(ref, qName, false);
+        ref = refPointer.getElement();
+      }
+    }
+    return ref;
   }
 
   public static boolean processAllMxmlAndFxgFiles(final GlobalSearchScope scope,
