@@ -21,23 +21,12 @@ import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceHelper;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class FlexFileReferenceHelper extends FileReferenceHelper {
-  @Nullable
-  public PsiFileSystemItem findRoot(final Project project, @NotNull final VirtualFile file) {
-    return null;
-  }
-
-  @NotNull
-  public Collection<PsiFileSystemItem> getRoots(@NotNull final Module module) {
-    return Collections.emptyList();
-  }
-
   @NotNull
   public Collection<PsiFileSystemItem> getContexts(final Project project, @NotNull final VirtualFile file) {
     return Collections.emptyList();
