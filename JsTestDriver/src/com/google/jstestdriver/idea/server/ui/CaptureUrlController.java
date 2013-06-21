@@ -17,7 +17,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.event.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.text.MessageFormat;
 
 /**
  * @author Sergey Simonchik
@@ -81,8 +80,7 @@ public class CaptureUrlController {
       @Override
       public void serverStateChanged(boolean started) {
         if (started) {
-          String serverUrl = MessageFormat.format("http://{0}:{1,number,###}/capture",
-                                                  getHostName(), JstdToolWindowPanel.serverPort);
+          String serverUrl = "http://127.0.0.1:" + JstdToolWindowPanel.serverPort + "/capture";
           myCaptureUrlTextField.setText(serverUrl);
           myCaptureUrlTextField.requestFocusInWindow();
           myCaptureUrlTextField.selectAll();

@@ -36,7 +36,7 @@ class ServerConfigurationForm extends AbstractRunSettingsSection {
     myTestConnectionButton.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        String serverUrl = myAtAddressRadioButton.isSelected() ? myServerAddress.getText() : "http://localhost:" + JstdToolWindowPanel.serverPort;
+        String serverUrl = myAtAddressRadioButton.isSelected() ? myServerAddress.getText() : "http://127.0.0.1:" + JstdToolWindowPanel.serverPort;
         myTestConnectionButton.setEnabled(false);
         myTestConnectionResult.setText("Connecting to " + serverUrl + " ...");
         final ModalityState currentModalityState = ModalityState.current();

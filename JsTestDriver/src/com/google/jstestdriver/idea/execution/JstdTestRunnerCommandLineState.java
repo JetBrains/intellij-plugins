@@ -182,7 +182,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
   public Map<TestRunner.ParameterKey, String> createParameterMap() throws ExecutionException {
     Map<TestRunner.ParameterKey, String> parameters = Maps.newLinkedHashMap();
     String serverUrl = myRunSettings.getServerType() == ServerType.INTERNAL ?
-                       "http://localhost:" + JstdToolWindowPanel.serverPort :
+                       "http://127.0.0.1:" + JstdToolWindowPanel.serverPort :
                        myRunSettings.getServerAddress();
     parameters.put(TestRunner.ParameterKey.SERVER_URL, serverUrl);
     TestType testType = myRunSettings.getTestType();

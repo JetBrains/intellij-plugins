@@ -93,7 +93,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     final String url;
     final Connection connection = debugEngine.openConnection(false);
     if (debugEngine.getBrowserFamily().equals(BrowsersConfiguration.BrowserFamily.CHROME)) {
-      url = "http://localhost:" + JstdToolWindowPanel.serverPort + debugBrowserInfo.getCapturedBrowserUrl();
+      url = "http://127.0.0.1:" + JstdToolWindowPanel.serverPort + debugBrowserInfo.getCapturedBrowserUrl();
     }
     else {
       url = null;
