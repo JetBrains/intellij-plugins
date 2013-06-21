@@ -20,7 +20,6 @@
     <orderEntry type="module" module-name="dom-impl" />
     <orderEntry type="module" module-name="web-openapi" />
     <orderEntry type="module" module-name="web-impl" />
-    <orderEntry type="module" module-name="spring-core" />
     <orderEntry type="module" module-name="graph-openapi" />
     <orderEntry type="module" module-name="JavaScriptLanguage" />
     <orderEntry type="module" module-name="jetgroovy" />
@@ -39,6 +38,7 @@
     <orderEntry type="module" module-name="css-api" />
     <orderEntry type="module" module-name="dom-tests" scope="TEST" />
     <orderEntry type="module" module-name="jsp-base-impl" />
+    <orderEntry type="module" module-name="spring-api" />
   </component>
 </module>
 
