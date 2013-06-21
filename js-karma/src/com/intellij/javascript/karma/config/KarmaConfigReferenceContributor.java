@@ -1,5 +1,6 @@
 package com.intellij.javascript.karma.config;
 
+import com.intellij.javascript.testFramework.util.JsPsiUtils;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.SystemInfo;
@@ -67,10 +68,10 @@ public class KarmaConfigReferenceContributor extends PsiReferenceContributor {
     if (literalExpression.isQuotedLiteral()) {
       JSArrayLiteralExpression arrayLiteralExpression = ObjectUtils.tryCast(literalExpression.getParent(), JSArrayLiteralExpression.class);
       if (arrayLiteralExpression != null) {
-        JSAssignmentExpression assignmentExpression = ObjectUtils.tryCast(arrayLiteralExpression.getParent(), JSAssignmentExpression.class);
-        if (assignmentExpression != null) {
-          JSDefinitionExpression lOperand = ObjectUtils.tryCast(assignmentExpression.getLOperand(), JSDefinitionExpression.class);
-          return lOperand != null && FILES_VAR_NAME.equals(lOperand.getName());
+        JSProperty property = ObjectUtils.tryCast(arrayLiteralExpression.getParent(), JSProperty.class);
+        if (property != null) {
+          String name = JsPsiUtils.getPropertyName(property);
+          return FILES_VAR_NAME.equals(name);
         }
       }
     }
