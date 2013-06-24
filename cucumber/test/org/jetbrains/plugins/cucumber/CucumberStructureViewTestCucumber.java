@@ -52,7 +52,7 @@ public class CucumberStructureViewTestCucumber extends CodeInsightFixtureTestCas
 
     TreeBasedStructureViewBuilder
       builder = (TreeBasedStructureViewBuilder)StructureViewBuilder.PROVIDER.getStructureViewBuilder(fileType, myFile, getProject());
-    final StructureViewModel structureViewModel = builder.createStructureViewModel();
+    final StructureViewModel structureViewModel = builder.createStructureViewModel(getEditor());
 
     Object[] children = structureViewModel.getRoot().getChildren();
     structureViewModel.dispose();
