@@ -2,7 +2,7 @@ package com.jetbrains.lang.dart.ide.inspections.analyzer;
 
 import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInspection.GlobalInspectionContext;
-import com.intellij.codeInspection.InspectionProfileEntry;
+import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.ex.Tools;
 import com.intellij.codeInspection.lang.GlobalInspectionContextExtension;
 import com.intellij.openapi.application.ApplicationManager;
@@ -104,7 +104,7 @@ public class DartGlobalInspectionContext implements GlobalInspectionContextExten
   }
 
   @Override
-  public void performPostRunActivities(@NotNull List<InspectionProfileEntry> inspections, @NotNull GlobalInspectionContext context) {
+  public void performPostRunActivities(@NotNull List<InspectionToolWrapper> inspections, @NotNull GlobalInspectionContext context) {
   }
 
   @Override
