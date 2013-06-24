@@ -6,10 +6,14 @@ import com.intellij.ide.structureView.xml.XmlStructureViewBuilderProvider;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
-import com.intellij.lang.javascript.index.*;
+import com.intellij.lang.javascript.index.JSIndexEntry;
+import com.intellij.lang.javascript.index.JSNamedElementProxy;
+import com.intellij.lang.javascript.index.JSNamespace;
+import com.intellij.lang.javascript.index.JavaScriptIndex;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.structureView.JSStructureViewElement;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.ResolveState;
@@ -19,6 +23,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +35,16 @@ import java.util.List;
  */
 public class FlexStructureViewProvider implements XmlStructureViewBuilderProvider {
 
+  @Override
   public StructureViewBuilder createStructureViewBuilder(@NotNull final XmlFile file) {
     if (!JavaScriptSupportLoader.isFlexMxmFile(file)) return null;
 
     return new TreeBasedStructureViewBuilder() {
+      @Override
       @NotNull
-      public StructureViewModel createStructureViewModel() {
-        return new XmlStructureViewTreeModel(file) {
+      public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
+        return new XmlStructureViewTreeModel(file, editor) {
+          @Override
           @NotNull
           public Sorter[] getSorters() {
             return Sorter.EMPTY_ARRAY;
