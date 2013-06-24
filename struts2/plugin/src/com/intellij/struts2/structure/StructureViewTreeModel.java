@@ -23,6 +23,7 @@ import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
 import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
 import com.intellij.ide.util.treeView.smartTree.Filter;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.StrutsBundle;
 import com.intellij.struts2.dom.params.Param;
@@ -35,6 +36,7 @@ import com.intellij.util.xml.DomService;
 import com.intellij.util.xml.structure.DomStructureTreeElement;
 import com.intellij.util.xml.structure.DomStructureViewTreeModel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Defines the sorters, filters etc. available for structure view.
@@ -49,10 +51,11 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
   private final Class[] alwaysLeaf;
 
   StructureViewTreeModel(@NotNull final XmlFile xmlFile,
+                         @Nullable Editor editor,
                          @NotNull final Class[] alwaysPlus,
                          @NotNull final Class[] alwaysLeaf,
                          Function<DomElement, DomService.StructureViewMode> descriptor) {
-    super(xmlFile, descriptor);
+    super(xmlFile, descriptor, editor);
     this.alwaysPlus = alwaysPlus;
     this.alwaysLeaf = alwaysLeaf;
   }
@@ -69,24 +72,29 @@ class StructureViewTreeModel extends DomStructureViewTreeModel implements Struct
     return new com.intellij.struts2.structure.StructureViewTreeElement(fileElement.getRootElement().createStableCopy());
   }
 
+  @Override
   @NotNull
   public Filter[] getFilters() {
     return new Filter[]{new Filter() {
+      @Override
       public boolean isVisible(final TreeElement treeElement) {
         DomStructureTreeElement domStructureTreeElement = (DomStructureTreeElement)treeElement;
         return !(domStructureTreeElement.getElement() instanceof Param);
       }
 
+      @Override
       public boolean isReverted() {
         return false;
       }
 
+      @Override
       @NotNull
       public ActionPresentation getPresentation() {
         return new ActionPresentationData(StrutsBundle.message("structure.view.filter.params"),
                                           StrutsBundle.message("structure.view.filter.params"), AllIcons.Actions.Properties);
       }
 
+      @Override
       @NotNull
       public String getName() {
         return HIDE_PARAMS_ID;

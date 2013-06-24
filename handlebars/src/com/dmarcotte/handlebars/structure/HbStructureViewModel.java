@@ -5,16 +5,17 @@ import com.dmarcotte.handlebars.psi.HbMustache;
 import com.dmarcotte.handlebars.psi.HbPsiFile;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.structureView.TextEditorBasedStructureViewModel;
+import com.intellij.openapi.editor.Editor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 class HbStructureViewModel extends TextEditorBasedStructureViewModel {
-
   private final HbPsiFile myFile;
   // classes which we construct structure view nodes for
   static final Class[] ourSuitableClasses = new Class[]{HbBlockWrapper.class, HbMustache.class};
 
-  public HbStructureViewModel(@NotNull HbPsiFile psiFile) {
-    super(psiFile);
+  public HbStructureViewModel(@NotNull HbPsiFile psiFile, @Nullable Editor editor) {
+    super(editor, psiFile);
     this.myFile = psiFile;
   }
 

@@ -18,6 +18,7 @@ package com.intellij.struts2.structure;
 import com.intellij.ide.structureView.StructureViewBuilder;
 import com.intellij.ide.structureView.StructureViewModel;
 import com.intellij.ide.structureView.xml.XmlStructureViewBuilderProvider;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.ConstantFunction;
 import com.intellij.util.xml.DomElement;
@@ -60,6 +61,7 @@ abstract class BaseStructureViewBuilderProvider implements XmlStructureViewBuild
    */
   protected abstract Class[] getAlwaysLeaf();
 
+  @Override
   @Nullable
   public StructureViewBuilder createStructureViewBuilder(@NotNull final XmlFile xmlFile) {
 
@@ -73,8 +75,8 @@ abstract class BaseStructureViewBuilderProvider implements XmlStructureViewBuild
 
       @NotNull
       @Override
-      public StructureViewModel createStructureViewModel() {
-        return new StructureViewTreeModel(xmlFile, getAlwaysPlus(), getAlwaysLeaf(), ALWAYS_SHOW);
+      public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
+        return new StructureViewTreeModel(xmlFile, editor, getAlwaysPlus(), getAlwaysLeaf(), ALWAYS_SHOW);
       }
     };
   }

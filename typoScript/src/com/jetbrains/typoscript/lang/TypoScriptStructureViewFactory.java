@@ -19,13 +19,16 @@ import com.intellij.ide.structureView.*;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
 import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.PlatformIcons;
 import com.jetbrains.typoscript.lang.psi.*;
+import icons.TypoScriptIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -40,9 +43,10 @@ public class TypoScriptStructureViewFactory implements PsiStructureViewFactory {
   public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
 
     return new TreeBasedStructureViewBuilder() {
+      @Override
       @NotNull
-      public StructureViewModel createStructureViewModel() {
-        return new Model(psiFile);
+      public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
+        return new Model(psiFile, editor);
       }
 
       @Override
@@ -53,9 +57,8 @@ public class TypoScriptStructureViewFactory implements PsiStructureViewFactory {
   }
 
   private static class Model extends StructureViewModelBase implements StructureViewModel.ElementInfoProvider {
-
-    public Model(@NotNull PsiFile psiFile) {
-      super(psiFile, new Element(psiFile));
+    public Model(@NotNull PsiFile psiFile, @Nullable Editor editor) {
+      super(psiFile, editor, new Element(psiFile));
       withSuitableClasses(SUITABLE_CLASSES);
     }
 
@@ -132,15 +135,15 @@ public class TypoScriptStructureViewFactory implements PsiStructureViewFactory {
         return myElement.getIcon(0);
       }
       else if (myElement instanceof IncludeStatementElement) {
-        return icons.TypoScriptIcons.Include_ts;
+        return TypoScriptIcons.Include_ts;
       }
       else if (myElement instanceof ConditionElement) {
-        return icons.TypoScriptIcons.Condition_ts;
+        return TypoScriptIcons.Condition_ts;
       }
       else if (myElement instanceof CodeBlock) {
         return PlatformIcons.FOLDER_ICON;
       }
-      return icons.TypoScriptIcons.Property_ts;
+      return TypoScriptIcons.Property_ts;
     }
 
     @Override
