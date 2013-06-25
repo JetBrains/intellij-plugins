@@ -1,8 +1,8 @@
 <idea-plugin version="2">
-  <name>Flash UI Designer</name>
+  <name>MXML Design Preview</name>
   <description>Provides editing support for Flex or Flash UI</description>
   <id>com.intellij.flex.uiDesigner</id>
-  <version>0.9.3</version>
+  <version>0.9.4</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
   <idea-version since-build="130.555"/>
 
