@@ -8,6 +8,7 @@ import com.intellij.codeInspection.lang.RefManagerExtension;
 import com.intellij.codeInspection.reference.RefManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 public class DartInspectionExtensionsFactory extends InspectionExtensionsFactory {
   @Override
@@ -36,7 +37,7 @@ public class DartInspectionExtensionsFactory extends InspectionExtensionsFactory
   }
 
   @Override
-  public boolean isProjectConfiguredToRunInspections(Project project, boolean online) {
+  public boolean isProjectConfiguredToRunInspections(@NotNull Project project, boolean online) {
     return true;
   }
 }
