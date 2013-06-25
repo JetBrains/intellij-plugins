@@ -1,5 +1,4 @@
 <idea-plugin version="2">
-  <id>com.jetbrains.lang.dart</id>
   <name>Dart</name>
   <description>Support for Dart programming language</description>
   <version>999.999</version>
