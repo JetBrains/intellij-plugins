@@ -76,7 +76,10 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private TextFieldWithBrowseButton myUrlOrFileTextWithBrowse;
 
   private JPanel myWebOptionsPanel;
+  private JLabel myLauncherParametersLabel;
   private TextFieldWithBrowseButton myLauncherParametersTextWithBrowse;
+  private JLabel mySdkForDebuggingLabel;
+  private FlexSdkComboBoxWithBrowseButton mySdkForDebuggingCombo;
   private JCheckBox myRunTrustedCheckBox;
 
   private JPanel myDesktopOptionsPanel;
@@ -105,11 +108,10 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   private JRadioButton myDebugOverNetworkRadioButton;
   private JRadioButton myDebugOverUSBRadioButton;
   private JTextField myUsbDebugPortTextField;
-  private JBLabel myAdlOptionsLabel;
+  private JBLabel myEmulatorAdlOptionsLabel;
   private RawCommandLineEditor myEmulatorAdlOptionsEditor;
   private JLabel myAppDescriptorForEmulatorLabel;
   private JComboBox myAppDescriptorForEmulatorCombo;
-  private FlexSdkComboBoxWithBrowseButton mySdkForDebuggingCombo;
 
   private final Project myProject;
 
@@ -125,6 +127,9 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
     initRadioButtons();
     initLaunchWithTextWithBrowse();
     initMobileControls();
+
+    mySdkForDebuggingLabel.setLabelFor(mySdkForDebuggingCombo.getChildComponent());
+    myEmulatorAdlOptionsLabel.setLabelFor(myEmulatorAdlOptionsEditor.getTextField());
   }
 
   private void initBCCombo() {
@@ -211,6 +216,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
   }
 
   private void initLaunchWithTextWithBrowse() {
+    myLauncherParametersTextWithBrowse.getButton().setMnemonic(myLauncherParametersLabel.getDisplayedMnemonic());
     myLauncherParametersTextWithBrowse.getTextField().setEditable(false);
     myLauncherParametersTextWithBrowse.addActionListener(new ActionListener() {
       public void actionPerformed(final ActionEvent e) {
@@ -379,7 +385,7 @@ public class FlashRunConfigurationForm extends SettingsEditor<FlashRunConfigurat
 
       myFastPackagingCheckBox.setEnabled(myOnIOSDeviceRadioButton.isSelected());
 
-      myAdlOptionsLabel.setEnabled(runOnEmulator);
+      myEmulatorAdlOptionsLabel.setEnabled(runOnEmulator);
       myEmulatorAdlOptionsEditor.setEnabled(runOnEmulator);
       myAppDescriptorForEmulatorLabel.setEnabled(app && runOnEmulator);
       myAppDescriptorForEmulatorCombo.setEnabled(app && runOnEmulator);

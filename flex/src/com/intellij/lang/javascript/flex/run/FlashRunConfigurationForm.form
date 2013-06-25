@@ -82,13 +82,13 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="419f2" class="javax.swing.JLabel">
+              <component id="419f2" class="javax.swing.JLabel" binding="myLauncherParametersLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <labelFor value="87731"/>
-                  <text value="Lau&amp;nch with:"/>
+                  <text value="Launch &amp;with:"/>
                 </properties>
               </component>
             </children>
@@ -115,13 +115,12 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="1c76d" class="javax.swing.JLabel">
+              <component id="1c76d" class="javax.swing.JLabel" binding="mySdkForDebuggingLabel">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <labelFor value="87731"/>
-                  <text value="Use de&amp;bugger from SDK:"/>
+                  <text value="Use &amp;debugger from SDK:"/>
                 </properties>
               </component>
             </children>
@@ -196,7 +195,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Em&amp;ulator:"/>
+              <text value="&amp;Emulator:"/>
             </properties>
           </component>
           <component id="e9f66" class="javax.swing.JRadioButton" binding="myOnAndroidDeviceRadioButton" default-binding="true">
@@ -227,7 +226,7 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <labelFor value="7d7ca"/>
+                  <labelFor value="32678"/>
                   <text value="Sc&amp;reen:"/>
                 </properties>
               </component>
@@ -258,7 +257,7 @@
                   <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <labelFor value="a67c8"/>
+                  <labelFor value="a39f0"/>
                   <text value="  &amp;Full:"/>
                 </properties>
               </component>
@@ -290,7 +289,7 @@
                 </constraints>
                 <properties>
                   <labelFor value="14c81"/>
-                  <text value="pp&amp;i:"/>
+                  <text value="&amp;ppi:"/>
                 </properties>
               </component>
               <component id="14c81" class="javax.swing.JTextField" binding="myScreenDpi">
@@ -319,7 +318,7 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="&amp;iOS Simulator, SDK:"/>
+                  <text value="iOS Simu&amp;lator, SDK:"/>
                 </properties>
               </component>
               <component id="1659c" class="com.intellij.openapi.ui.TextFieldWithBrowseButton" binding="myIOSSimulatorSdkTextWithBrowse">
@@ -343,7 +342,7 @@
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="iO&amp;S device"/>
+                  <text value="iOS &amp;device"/>
                 </properties>
               </component>
               <component id="c93ca" class="javax.swing.JCheckBox" binding="myFastPackagingCheckBox" default-binding="true">
@@ -351,7 +350,7 @@
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="fas&amp;t packaging"/>
+                  <text value="fast pac&amp;kaging"/>
                 </properties>
               </component>
               <hspacer id="b9ce0">
@@ -403,7 +402,7 @@
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="US&amp;B, port:"/>
+                      <text value="&amp;USB, port:"/>
                     </properties>
                   </component>
                   <component id="9ad6e" class="javax.swing.JTextField" binding="myUsbDebugPortTextField">
@@ -431,13 +430,12 @@
               <text value="Debug on device over: "/>
             </properties>
           </component>
-          <component id="b6e79" class="com.intellij.ui.components.JBLabel" binding="myAdlOptionsLabel">
+          <component id="b6e79" class="com.intellij.ui.components.JBLabel" binding="myEmulatorAdlOptionsLabel">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <labelFor value="9caaf"/>
-              <text value="ADL &amp;options (emulator):"/>
+              <text value="AD&amp;L options (emulator):"/>
             </properties>
           </component>
           <component id="99e4a" class="com.intellij.ui.RawCommandLineEditor" binding="myEmulatorAdlOptionsEditor">
@@ -456,7 +454,7 @@
             </constraints>
             <properties>
               <labelFor value="c51b1"/>
-              <text value="A&amp;pp descriptor (emulator):"/>
+              <text value="App descript&amp;or (emulator):"/>
             </properties>
           </component>
           <component id="c51b1" class="javax.swing.JComboBox" binding="myAppDescriptorForEmulatorCombo">
