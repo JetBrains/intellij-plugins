@@ -6,8 +6,10 @@
     <change-notes><![CDATA[
         <html>
         <dl>
+            <dt>0.1.7</dt>
+            <dd>Focusing on WebStorm 7 compatibility</dd>
             <dt>0.1.6</dt>
-            <dd>Adding navigation and auto-closing {{</dd>
+            <dd>Adding navigation, auto-closing {{, attribute autocomplete on all elements, and "jump to docs"</dd>
             <dt>0.1.5</dt>
             <dd>Adding "href" and "disabled" to the descriptors list</dd>
             <dt>0.1.4</dt>
@@ -29,7 +31,7 @@
 
 
     <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Build+Number+Ranges for description -->
-    <idea-version since-build="107.105"/>
+    <idea-version since-build="130.000"/>
 
     <depends>JavaScript</depends>
     <depends>com.intellij.modules.platform</depends>
@@ -42,7 +44,7 @@
     </project-components>
 
     <actions>
-<!--        <action id="GotoAngularAction"
+        <action id="GotoAngularAction"
                 class="org.angularjs.GotoAngularAction"
                 text="Go to Angular"
                 description="Navigate to Angular code">
@@ -50,15 +52,21 @@
                                first-keystroke="ctrl l"/>
             <keyboard-shortcut keymap="Mac OS X" first-keystroke="ctrl l"/>
             <keyboard-shortcut keymap="Mac OS X 10.5+" first-keystroke="ctrl l"/>
-        </action>-->
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <xml.attributeDescriptorsProvider implementation="org.angularjs.AngularJSCustomAttributeDescriptorsProvider"/>
+        <!--<xml.attributeDescriptorsProvider implementation="org.angularjs.AngularJSCustomAttributeDescriptorsProvider"/>-->
         <defaultLiveTemplatesProvider implementation="org.angularjs.AngularJSTemplatesProvider"/>
+
         <typedHandler implementation="org.angularjs.AngularBracesInterpolationTypedHandler"/>
-        <applicationConfigurable instance="org.angularjs.AngularJSConfig"/>
-        <!--<completion.contributor language="HTML" implementationClass="org.angularjs.AngularCompletionContributor"/>-->
+        <!--<applicationConfigurable instance="org.angularjs.AngularJSConfig"/>-->
+        <completion.contributor language="HTML" implementationClass="org.angularjs.DirectiveCompletionContributor"/>
+        <intentionAction>
+            <className>org.angularjs.OpenInDocsIntention</className>
+            <category>HTML</category>
+            <descriptionDirectoryName>HTML</descriptionDirectoryName>
+        </intentionAction>
 <!--
         <localInspection language="JavaScript" groupPath="JavaScript" displayName="AngularDisplayName" groupName="AngularGroup" shortName="AngularShortName"
         enabledByDefault="true" level="WARNING"

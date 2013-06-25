@@ -34,7 +34,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.util.PsiUtil;
+import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.Usage;
 import com.intellij.usages.UsageInfo2UsageAdapter;
@@ -43,7 +43,9 @@ import com.intellij.util.CommonProcessors;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class GotoAngularAction extends GotoActionBase {
     private static final int MODULE_METHODS = 0;
@@ -141,7 +143,7 @@ public class GotoAngularAction extends GotoActionBase {
                                 String s = foundString.toString();
                                 String regExMatch = FindManager.getInstance(project).getStringToReplace(s, findModel, textOffset, document.getText());
                                 System.out.println(regExMatch);
-                                PsiElement element = PsiUtil.getElementAtOffset(((UsageInfo2UsageAdapter) result).getUsageInfo().getFile(), textOffset + 1);
+                                PsiElement element = PsiUtilBase.getElementAtOffset(((UsageInfo2UsageAdapter) result).getUsageInfo().getFile(), textOffset + 1);
                                 String elementText = element.getText();
                                 System.out.println(elementText + ": " + regExMatch + " - " + s);
                                 //hack to block weird css matches (I have no idea how many edge cases I'll have :/ )
@@ -185,7 +187,7 @@ public class GotoAngularAction extends GotoActionBase {
 
         PsiDirectory directory = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
         FindInProjectUtil.findUsages(findModel, directory, project,
-                true, new AdapterProcessor<UsageInfo, Usage>(collectProcessor, UsageInfo2UsageAdapter.CONVERTER));
+                true, new AdapterProcessor<UsageInfo, Usage>(collectProcessor, UsageInfo2UsageAdapter.CONVERTER), FindInProjectUtil.setupProcessPresentation(project, true, FindInProjectUtil.setupViewPresentation(true, findModel)));
 
 
         return collectProcessor.getResults();

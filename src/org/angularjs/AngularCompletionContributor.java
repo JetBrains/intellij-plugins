@@ -8,18 +8,17 @@ import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
 import com.intellij.find.impl.FindInProjectUtil;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Segment;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
-import com.intellij.psi.PsiNameHelper;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
-import com.intellij.psi.util.PsiUtil;
+import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.Usage;
 import com.intellij.usages.UsageInfo2UsageAdapter;
@@ -57,7 +56,7 @@ public class AngularCompletionContributor extends CompletionContributor {
 
         PsiDirectory directory = PsiManager.getInstance(project).findDirectory(project.getBaseDir());
         FindInProjectUtil.findUsages(findModel, directory, project,
-                true, new AdapterProcessor<UsageInfo, Usage>(collectProcessor, UsageInfo2UsageAdapter.CONVERTER));
+                true, new AdapterProcessor<UsageInfo, Usage>(collectProcessor, UsageInfo2UsageAdapter.CONVERTER), FindInProjectUtil.setupProcessPresentation(project, true, FindInProjectUtil.setupViewPresentation(true, findModel)));
 
 
         final Collection<Usage> usages = collectProcessor.getResults();
@@ -84,8 +83,8 @@ public class AngularCompletionContributor extends CompletionContributor {
                                 String s = foundString.toString();
                                 String regExMatch = FindManager.getInstance(project).getStringToReplace(s, findModel, textOffset, document.getText());
                                 System.out.println(regExMatch);
-                                PsiElement element = PsiUtil.getElementAtOffset(((UsageInfo2UsageAdapter) r).getUsageInfo().getFile(), textOffset + 1);
-                                PsiElement propElement = PsiUtil.getElementAtOffset(((UsageInfo2UsageAdapter) r).getUsageInfo().getFile(), textOffset + 1 + "$scope".length());
+                                PsiElement element = PsiUtilBase.getElementAtOffset(((UsageInfo2UsageAdapter) r).getUsageInfo().getFile(), textOffset + 1);
+                                PsiElement propElement = PsiUtilBase.getElementAtOffset(((UsageInfo2UsageAdapter) r).getUsageInfo().getFile(), textOffset + 1 + "$scope".length());
                                 String elementText = element.getText();
                                 System.out.println(elementText + ": " + regExMatch + " - " + s);
 
