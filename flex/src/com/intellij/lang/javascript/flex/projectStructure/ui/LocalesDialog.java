@@ -6,9 +6,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.CheckBoxList;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.ListSpeedSearch;
+import com.intellij.util.Function;
 import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,13 +70,26 @@ public class LocalesDialog extends DialogWrapper {
     }).length > 0;
   }
 
+  @Nullable
+  public JComponent getPreferredFocusedComponent() {
+    return myCheckBoxList;
+  }
+
   private void createUIComponents() {
     myCheckBoxList = new CheckBoxList() {
       protected void adjustRendering(final JCheckBox checkBox, final boolean selected, final boolean hasFocus) {
         final String locale = checkBox.getText();
-        checkBox.setForeground(mySdkLocales.contains(locale) ? UIUtil.getListForeground(selected) : Color.red);
+        checkBox.setForeground(mySdkLocales.contains(locale) ? UIUtil.getListForeground(selected) : JBColor.RED);
       }
     };
+
+    myCheckBoxList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+    new ListSpeedSearch(myCheckBoxList, new Function<Object, String>() {
+      public String fun(final Object o) {
+        return ((JCheckBox)o).getText();
+      }
+    });
   }
 
   protected JComponent createCenterPanel() {
