@@ -3,6 +3,7 @@ package cucumber.examples.java.calculator;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
+import cucumber.annotation.en.And;
 
 import java.util.List;
 

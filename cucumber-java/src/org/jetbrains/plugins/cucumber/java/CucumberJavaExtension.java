@@ -2,17 +2,21 @@ package org.jetbrains.plugins.cucumber.java;
 
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.module.JavaModuleType;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.SourceFolder;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
+import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.search.searches.AllClassesSearch;
+import com.intellij.psi.search.searches.AnnotatedElementsSearch;
+import com.intellij.util.Query;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,6 +37,9 @@ import java.util.*;
  * Date: 7/16/12
  */
 public class CucumberJavaExtension implements CucumberJvmExtensionPoint {
+
+  public static final String CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION = "cucumber.runtime.java.StepDefAnnotation";
+
   @Override
   public boolean isStepLikeFile(@NotNull final PsiElement child, @NotNull final PsiElement parent) {
     if (child instanceof PsiJavaFile) {
@@ -99,30 +106,57 @@ public class CucumberJavaExtension implements CucumberJvmExtensionPoint {
 
   @Override
   public List<PsiElement> resolveStep(@NotNull final PsiElement element) {
-    final CucumberStepsIndex index = CucumberStepsIndex.getInstance(element.getProject());
+    final Module module = ModuleUtilCore.findModuleForPsiElement(element);
+    if (module == null) {
+      return Collections.emptyList();
+    }
+    if (!(element instanceof GherkinStep)) {
+      return Collections.emptyList();
+    }
+    final GherkinStep step = (GherkinStep)element;
 
-    if (element instanceof GherkinStep) {
-      final GherkinStep step = (GherkinStep)element;
-      final List<PsiElement> result = new ArrayList<PsiElement>();
-      final Set<String> substitutedNameList = step.getSubstitutedNameList();
-      if (substitutedNameList.size() > 0) {
-        for (String s : substitutedNameList) {
-          final AbstractStepDefinition definition = index.findStepDefinition(element.getContainingFile(), s);
-          if (definition != null) {
-            result.add(definition.getElement());
+    final GlobalSearchScope dependenciesScope = module.getModuleWithDependenciesAndLibrariesScope(true);
+
+    Collection<PsiClass> stepDefAnnotationCandidates = JavaFullClassNameIndex.getInstance().get(
+      CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION.hashCode(), module.getProject(), dependenciesScope);
+
+    PsiClass stepDefAnnotationClass = null;
+    for (PsiClass candidate : stepDefAnnotationCandidates) {
+      if (CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION.equals(candidate.getQualifiedName())) {
+        stepDefAnnotationClass = candidate;
+        break;
+      }
+    }
+    if (stepDefAnnotationClass == null) {
+      return Collections.emptyList();
+    }
+
+    final List<PsiElement> result = new ArrayList<PsiElement>();
+    final Query<PsiClass> stepDefAnnotations = AnnotatedElementsSearch.searchPsiClasses(stepDefAnnotationClass, dependenciesScope);
+    for (PsiClass annotationClass : stepDefAnnotations) {
+      final Query<PsiMethod> javaStepDefinitions = AnnotatedElementsSearch.searchPsiMethods(annotationClass, dependenciesScope);
+      for (PsiMethod stepDefMethod : javaStepDefinitions) {
+        final JavaStepDefinition stepDef = new JavaStepDefinition(stepDefMethod);
+
+        final Set<String> substitutedNameList = step.getSubstitutedNameList();
+        if (substitutedNameList.size() > 0) {
+          for (String s : substitutedNameList) {
+            if (stepDef.matches(s)) {
+              result.add(stepDef.getElement());
+            }
           }
         }
-        return result;
       }
     }
 
-    return new ArrayList<PsiElement>();
+    return result;
   }
 
   @Override
   public void findRelatedStepDefsRoots(@NotNull final Module module, @NotNull final PsiFile featureFile,
                                        @NotNull final List<PsiDirectory> newStepDefinitionsRoots,
                                        @NotNull final Set<String> processedStepDirectories) {
+
 
     final ModuleRootManager mrm = ModuleRootManager.getInstance(module);
     final List<Module> modules = new ArrayList<Module>(Arrays.asList(mrm.getDependencies()));
