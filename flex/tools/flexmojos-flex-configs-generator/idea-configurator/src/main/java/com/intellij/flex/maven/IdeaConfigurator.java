@@ -30,6 +30,8 @@ public class IdeaConfigurator implements FlexConfigGenerator {
   @SuppressWarnings("StaticNonFinalField")
   protected static String sharedFontsSerPath;
 
+  private boolean staticLinkRuntimeSharedLibrariesSpecified;
+
   public IdeaConfigurator(MavenSession session, File outputDirectory) {
     this.session = session;
     this.outputDirectory = outputDirectory;
@@ -60,6 +62,9 @@ public class IdeaConfigurator implements FlexConfigGenerator {
 
   @Override
   public String postGenerate(MavenProject project) throws IOException {
+    if (!staticLinkRuntimeSharedLibrariesSpecified) {
+      out.append("\n<static-link-runtime-shared-libraries>false</static-link-runtime-shared-libraries>");
+    }
     out.append("\n</flex-config>");
     final String configFile = getConfigFilePath(project, classifier);
     Utils.write(out, new File(outputDirectory, configFile));
@@ -105,6 +110,11 @@ public class IdeaConfigurator implements FlexConfigGenerator {
 
       if ((methodName.equals("getFixedLiteralVector") || methodName.equals("getHeadlessServer")) && !((Boolean)value)) {
         continue;
+      }
+
+      // http://youtrack.jetbrains.com/issue/IDEA-108572
+      if (!staticLinkRuntimeSharedLibrariesSpecified && methodName.equals("getStaticLinkRuntimeSharedLibraries")) {
+        staticLinkRuntimeSharedLibrariesSpecified = true;
       }
 
       if (!parentTagWritten) {
