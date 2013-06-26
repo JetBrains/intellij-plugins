@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
-import com.intellij.compiler.CompilerWorkspaceConfiguration;
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.compiler.server.BuildManager;
 import com.intellij.execution.configurations.RunConfiguration;
@@ -16,10 +15,10 @@ import com.intellij.lang.javascript.index.JSPackageIndexInfo;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileTask;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -55,6 +54,18 @@ public class FlexUnitPrecompileTask implements CompileTask {
 
   public FlexUnitPrecompileTask(Project project) {
     myProject = project;
+  }
+
+  // in case of external build this path is returned by FlexCommonUtils.getPathToFlexUnitTempDirectory()
+  public static String getPathToFlexUnitTempDirectory(final Project project) {
+    final BuildManager buildManager = BuildManager.getInstance();
+    final File projectSystemDir = buildManager.getProjectSystemDirectory(project);
+    if (projectSystemDir == null) {
+      Logger.getInstance(FlexUnitPrecompileTask.class.getName()).error(project);
+      return "";
+    }
+
+    return projectSystemDir + "/tmp";
   }
 
   public boolean execute(CompileContext context) {
@@ -282,7 +293,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
     }
 
 
-    final File tmpDir = new File(FlexCommonUtils.getPathToFlexUnitTempDirectory(myProject.getName()));
+    final File tmpDir = new File(getPathToFlexUnitTempDirectory(myProject));
     boolean ok = true;
     if (tmpDir.isFile()) ok &= FileUtil.delete(tmpDir);
     if (!tmpDir.isDirectory()) ok &= tmpDir.mkdirs();

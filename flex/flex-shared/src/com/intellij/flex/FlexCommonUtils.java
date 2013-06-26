@@ -27,6 +27,7 @@ import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.cmdline.ProjectDescriptor;
 import org.jetbrains.jps.incremental.Utils;
 import org.jetbrains.jps.model.JpsElement;
 import org.jetbrains.jps.model.JpsProject;
@@ -142,14 +143,6 @@ public class FlexCommonUtils {
   public static String getTempFlexConfigsDirPath(final String tempDirPath) {
     return FileUtil.toSystemIndependentName(tempDirPath) + "/" +
            "IntelliJ_IDEA"; //ApplicationNamesInfo.getInstance().getFullProductName().replace(' ', '_');
-  }
-
-  public static String getPathToFlexUnitTempDirectory(final String projectName) {
-    return PathManager.getSystemPath() + "/tmp/" + getFlexUnitTempDirName(projectName);
-  }
-
-  public static String getFlexUnitTempDirName(final String projectName) {
-    return "flexunit-" + Integer.toHexString((SystemProperties.getUserName() + projectName).hashCode()).toUpperCase();
   }
 
   /**
@@ -644,10 +637,6 @@ public class FlexCommonUtils {
       folder = "/flex/lib/";
     }
     return FileUtil.toSystemDependentName(PathManager.getHomePath() + folder + filename);
-  }
-
-  public static String getPathToFlexUnitMainClass(final String projectName, final BuildConfigurationNature nature, final String mainClass) {
-    return getPathToFlexUnitTempDirectory(projectName) + "/" + mainClass + getFlexUnitLauncherExtension(nature);
   }
 
   public static Collection<String> getFlexUnitSupportLibNames(final BuildConfigurationNature nature,
@@ -1150,9 +1139,7 @@ public class FlexCommonUtils {
 
     final File[] filesToDelete = dir.listFiles(new FilenameFilter() {
       public boolean accept(final File file, final String name) {
-        return file.isDirectory() && name.equals(getFlexUnitTempDirName(projectName)) ||
-               // PlatformUtils.getPlatformPrefix().toLowerCase()
-               name.startsWith("idea-" + hash1) && name.endsWith(".xml");
+        return name.startsWith("idea-" + hash1) && name.endsWith(".xml"); // PlatformUtils.getPlatformPrefix().toLowerCase()
       }
     });
 
@@ -1160,11 +1147,6 @@ public class FlexCommonUtils {
       for (final File file : filesToDelete) {
         FileUtil.delete(file);
       }
-    }
-
-    final File flexUnitDir = new File(getPathToFlexUnitTempDirectory(projectName));
-    if (flexUnitDir.isDirectory() && flexUnitDir.list().length == 0) {
-      FileUtil.delete(flexUnitDir);
     }
   }
 }

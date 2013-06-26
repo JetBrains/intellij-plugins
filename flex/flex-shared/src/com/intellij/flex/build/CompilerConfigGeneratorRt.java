@@ -22,8 +22,8 @@ import gnu.trove.THashSet;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.cmdline.ProjectDescriptor;
 import org.jetbrains.jps.incremental.Utils;
-import org.jetbrains.jps.indices.IgnoredFileIndex;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.java.compiler.JpsCompilerExcludes;
@@ -53,13 +53,13 @@ public class CompilerConfigGeneratorRt {
   private final boolean myFlexmojos;
   private final JpsFlexModuleOrProjectCompilerOptions myModuleLevelCompilerOptions;
   private final JpsFlexModuleOrProjectCompilerOptions myProjectLevelCompilerOptions;
-  private final IgnoredFileIndex myIgnoredFileIndex;
+  private final ProjectDescriptor myProjectDescriptor;
 
   private CompilerConfigGeneratorRt(final @NotNull JpsFlexBuildConfiguration bc,
                                     final @NotNull JpsFlexModuleOrProjectCompilerOptions moduleLevelCompilerOptions,
                                     final @NotNull JpsFlexModuleOrProjectCompilerOptions projectLevelCompilerOptions,
-                                    final IgnoredFileIndex ignoredFileIndex) throws IOException {
-    myIgnoredFileIndex = ignoredFileIndex;
+                                    final @NotNull ProjectDescriptor projectDescriptor) throws IOException {
+    myProjectDescriptor = projectDescriptor;
     myModule = bc.getModule();
     myBC = bc;
     myFlexUnit = FlexCommonUtils.isFlexUnitBC(myBC);
@@ -73,13 +73,14 @@ public class CompilerConfigGeneratorRt {
     myProjectLevelCompilerOptions = projectLevelCompilerOptions;
   }
 
-  public static File getOrCreateConfigFile(final JpsFlexBuildConfiguration bc, final IgnoredFileIndex ignoredFileIndex) throws IOException {
+  public static File getOrCreateConfigFile(final JpsFlexBuildConfiguration bc,
+                                           final ProjectDescriptor projectDescriptor) throws IOException {
     final CompilerConfigGeneratorRt generator =
       new CompilerConfigGeneratorRt(bc,
                                     bc.getModule().getProperties().getModuleLevelCompilerOptions(),
                                     JpsFlexProjectLevelCompilerOptionsExtension
                                       .getProjectLevelCompilerOptions(bc.getModule().getProject()),
-                                    ignoredFileIndex);
+                                    projectDescriptor);
     String text = generator.generateConfigFileText();
 
     if (bc.isTempBCForCompilation()) {
@@ -414,8 +415,7 @@ public class CompilerConfigGeneratorRt {
 
       final Collection<String> flexUnitLibNames = FlexCommonUtils
         .getFlexUnitSupportLibNames(myBC.getNature(), myBC.getDependencies().getComponentSet(),
-                                    FlexCommonUtils
-                                      .getPathToFlexUnitMainClass(myModule.getProject().getName(), myBC.getNature(), myBC.getMainClass()));
+                                    getPathToFlexUnitMainClass(myProjectDescriptor, myBC.getNature(), myBC.getMainClass()));
       for (String libName : flexUnitLibNames) {
         final String libPath = FlexCommonUtils.getPathToBundledJar(libName);
         final String flexUnitSwcUrl = JpsPathUtil.pathToUrl(FileUtil.toSystemIndependentName(libPath));
@@ -598,8 +598,7 @@ public class CompilerConfigGeneratorRt {
 
       final String pathToMainClassFile = myCSS ? myBC.getMainClass()
                                                : myFlexUnit
-                                                 ? FlexCommonUtils.getPathToFlexUnitMainClass(myModule.getProject().getName(),
-                                                                                              myBC.getNature(), myBC.getMainClass())
+                                                 ? getPathToFlexUnitMainClass(myProjectDescriptor, myBC.getNature(), myBC.getMainClass())
                                                  : FlexCommonUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
 
       if (pathToMainClassFile.isEmpty() && info.getMainClass(myModule) == null && !Utils.IS_TEST_MODE) {
@@ -623,7 +622,7 @@ public class CompilerConfigGeneratorRt {
     for (String path : myBC.getCompilerOptions().getFilesToIncludeInSWC()) {
       final File fileOrDir = new File(path);
       if (excludes.isExcluded(fileOrDir)) continue;
-      if (myIgnoredFileIndex.isIgnored(fileOrDir.getName())) continue;
+      if (myProjectDescriptor.getIgnoredFileIndex().isIgnored(fileOrDir.getName())) continue;
 
       final String baseRelativePath =
         StringUtil.notNullize(FlexCommonUtils.getPathRelativeToSourceRoot(myModule, fileOrDir.getPath()), fileOrDir.getName());
@@ -631,7 +630,7 @@ public class CompilerConfigGeneratorRt {
       if (fileOrDir.isDirectory()) {
         processFilesRecursively(fileOrDir, new Processor<File>() {
           public boolean process(final File file) {
-            if (myIgnoredFileIndex.isIgnored(file.getName())) return false;
+            if (myProjectDescriptor.getIgnoredFileIndex().isIgnored(file.getName())) return false;
 
             if (!file.isDirectory() &&
                 !FlexCommonUtils.isSourceFile(file.getName()) &&
@@ -793,7 +792,7 @@ public class CompilerConfigGeneratorRt {
       if (srcFolder.isDirectory()) {
         processFilesRecursively(srcFolder, new Processor<File>() {
           public boolean process(final File file) {
-            if (myIgnoredFileIndex.isIgnored(file.getName())) return false;
+            if (myProjectDescriptor.getIgnoredFileIndex().isIgnored(file.getName())) return false;
             if (file.isDirectory()) return true;
             if (!FlexCommonUtils.isSourceFile(file.getName())) return true;
             if (excludes.isExcluded(file)) return true;
@@ -856,5 +855,16 @@ public class CompilerConfigGeneratorRt {
       }
     }
     return true;
+  }
+
+  // This method is used by external build process. At IDE side FlexUnitPrecompileTask.getPathToFlexUnitTempDirectory() is used
+  private static String getPathToFlexUnitTempDirectory(final ProjectDescriptor projectDescriptor) {
+    return FileUtil.toSystemIndependentName(projectDescriptor.dataManager.getDataPaths().getDataStorageRoot().getPath()) + "/tmp";
+  }
+
+  private static String getPathToFlexUnitMainClass(final ProjectDescriptor projectDescriptor,
+                                                   final BuildConfigurationNature nature,
+                                                   final String mainClass) {
+    return getPathToFlexUnitTempDirectory(projectDescriptor) + "/" + mainClass + FlexCommonUtils.getFlexUnitLauncherExtension(nature);
   }
 }

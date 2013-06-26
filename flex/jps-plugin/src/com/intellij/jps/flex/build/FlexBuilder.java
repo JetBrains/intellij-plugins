@@ -24,6 +24,7 @@ import org.jetbrains.jps.builders.BuildOutputConsumer;
 import org.jetbrains.jps.builders.BuildRootDescriptor;
 import org.jetbrains.jps.builders.DirtyFilesHolder;
 import org.jetbrains.jps.builders.FileProcessor;
+import org.jetbrains.jps.cmdline.ProjectDescriptor;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ProjectBuildException;
 import org.jetbrains.jps.incremental.StopBuildException;
@@ -31,7 +32,6 @@ import org.jetbrains.jps.incremental.TargetBuilder;
 import org.jetbrains.jps.incremental.messages.BuildMessage;
 import org.jetbrains.jps.incremental.messages.CompilerMessage;
 import org.jetbrains.jps.incremental.messages.ProgressMessage;
-import org.jetbrains.jps.indices.IgnoredFileIndex;
 import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.library.sdk.JpsSdk;
 import org.jetbrains.jps.model.module.JpsModule;
@@ -288,7 +288,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     final String compilerName = FlexBuilderUtils.getCompilerName(bc);
 
     try {
-      final List<File> configFiles = createConfigFiles(bc, context.getProjectDescriptor().getIgnoredFileIndex());
+      final List<File> configFiles = createConfigFiles(bc, context.getProjectDescriptor());
       final String outputFilePath = bc.getActualOutputFilePath();
 
       if (!ensureCanCreateFile(new File(outputFilePath))) {
@@ -328,9 +328,9 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
   }
 
   private static List<File> createConfigFiles(final JpsFlexBuildConfiguration bc,
-                                              final IgnoredFileIndex ignoredFileIndex) throws IOException {
+                                              final ProjectDescriptor projectDescriptor) throws IOException {
     final ArrayList<File> configFiles = new ArrayList<File>(2);
-    configFiles.add(CompilerConfigGeneratorRt.getOrCreateConfigFile(bc, ignoredFileIndex));
+    configFiles.add(CompilerConfigGeneratorRt.getOrCreateConfigFile(bc, projectDescriptor));
 
     final String additionalConfigFilePath = bc.getCompilerOptions().getAdditionalConfigFilePath();
     if (!bc.isTempBCForCompilation() && !additionalConfigFilePath.isEmpty()) {
@@ -358,7 +358,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     final boolean asc20 = bc.isPureAs() &&
                           FlexCommonUtils.containsASC20(sdk.getHomePath()) &&
                           (JpsFlexCompilerProjectExtension.getInstance(bc.getModule().getProject()).PREFER_ASC_20 ||
-                          FlexCommonUtils.isAirSdkWithoutFlex(sdk));
+                           FlexCommonUtils.isAirSdkWithoutFlex(sdk));
     final boolean builtIn = !asc20 &&
                             JpsFlexCompilerProjectExtension.getInstance(bc.getModule().getProject()).USE_BUILT_IN_COMPILER &&
                             builtInCompilerHandler.canBeUsedForSdk(sdk.getHomePath());

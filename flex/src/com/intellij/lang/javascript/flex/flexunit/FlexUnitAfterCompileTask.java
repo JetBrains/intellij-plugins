@@ -24,5 +24,10 @@ public class FlexUnitAfterCompileTask implements CompileTask {
         }
       }
     }
+
+    final File tmpDir = new File(FlexUnitPrecompileTask.getPathToFlexUnitTempDirectory(context.getProject()));
+    if (tmpDir.isDirectory() && tmpDir.list().length == 0) {
+      FileUtil.delete(tmpDir);
+    }
   }
 }

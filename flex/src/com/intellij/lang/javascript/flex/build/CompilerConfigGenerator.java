@@ -9,6 +9,7 @@ import com.intellij.flex.model.sdk.RslUtil;
 import com.intellij.javascript.flex.FlexApplicationComponent;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
+import com.intellij.lang.javascript.flex.flexunit.FlexUnitPrecompileTask;
 import com.intellij.lang.javascript.flex.projectStructure.FlexProjectLevelCompilerOptionsHolder;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.FlexBuildConfiguration;
@@ -24,6 +25,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
@@ -429,8 +431,7 @@ public class CompilerConfigGenerator {
     if (myFlexUnit) {
       final Collection<String> flexUnitLibNames = FlexCommonUtils
         .getFlexUnitSupportLibNames(myBC.getNature(), myBC.getDependencies().getComponentSet(),
-                                    FlexCommonUtils
-                                      .getPathToFlexUnitMainClass(myModule.getProject().getName(), myBC.getNature(), myBC.getMainClass()));
+                                    getPathToFlexUnitMainClass(myModule.getProject(), myBC.getNature(), myBC.getMainClass()));
       for (String libName : flexUnitLibNames) {
         final String libPath = FlexCommonUtils.getPathToBundledJar(libName);
         final VirtualFile file = LocalFileSystem.getInstance().findFileByPath(libPath);
@@ -597,8 +598,7 @@ public class CompilerConfigGenerator {
       final String pathToMainClassFile = myCSS
                                          ? myBC.getMainClass()
                                          : myFlexUnit
-                                           ? FlexCommonUtils.getPathToFlexUnitMainClass(myModule.getProject().getName(), myBC.getNature(),
-                                                                                        myBC.getMainClass())
+                                           ? getPathToFlexUnitMainClass(myModule.getProject(), myBC.getNature(), myBC.getMainClass())
                                            : FlexUtils.getPathToMainClassFile(myBC.getMainClass(), myModule);
 
       if (pathToMainClassFile.isEmpty() && info.getMainClass(myModule) == null && !ApplicationManager.getApplication().isUnitTestMode()) {
@@ -859,5 +859,12 @@ public class CompilerConfigGenerator {
                }
              }
            });
+  }
+
+  private static String getPathToFlexUnitMainClass(final Project project,
+                                                   final BuildConfigurationNature nature,
+                                                   final String mainClass) {
+    return FlexUnitPrecompileTask.getPathToFlexUnitTempDirectory(project) +
+           "/" + mainClass + FlexCommonUtils.getFlexUnitLauncherExtension(nature);
   }
 }
