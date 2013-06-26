@@ -54,16 +54,19 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     super(Collections.singletonList(FlexBuildTargetType.INSTANCE));
   }
 
+  @Override
   @NotNull
   public String getPresentableName() {
     return "Flash Compiler";
   }
 
+  @Override
   public void buildStarted(final CompileContext context) {
     super.buildStarted(context);
     myBuiltInCompilerHandler = new JpsBuiltInFlexCompilerHandler(context.getProjectDescriptor().getProject());
   }
 
+  @Override
   public void buildFinished(final CompileContext context) {
     LOG.assertTrue(myBuiltInCompilerHandler.getActiveCompilationsNumber() == 0,
                    myBuiltInCompilerHandler.getActiveCompilationsNumber() + " Flex compilation(s) are not finished!");
@@ -75,6 +78,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     super.buildFinished(context);
   }
 
+  @Override
   public void build(@NotNull final FlexBuildTarget buildTarget,
                     @NotNull final DirtyFilesHolder<BuildRootDescriptor, FlexBuildTarget> holder,
                     @NotNull final BuildOutputConsumer outputConsumer,
@@ -82,6 +86,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     final Collection<String> dirtyFilePaths = new ArrayList<String>();
 
     holder.processDirtyFiles(new FileProcessor<BuildRootDescriptor, FlexBuildTarget>() {
+      @Override
       public boolean apply(final FlexBuildTarget target, final File file, final BuildRootDescriptor root) throws IOException {
         assert target == buildTarget;
         dirtyFilePaths.add(file.getPath());
@@ -405,6 +410,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     final List<String> mxmlcOrCompc = Collections.singletonList(bc.getOutputType() == OutputType.Library ? "compc" : "mxmlc");
     final List<String> command = buildCommand(mxmlcOrCompc, configFiles, bc);
     final String plainCommand = StringUtil.join(command, new Function<String, String>() {
+      @Override
       public String fun(final String s) {
         return s.indexOf(' ') >= 0 && !(s.startsWith("\"") && s.endsWith("\"")) ? '\"' + s + '\"' : s;
       }
@@ -416,6 +422,7 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
     context.processMessage(new CompilerMessage(compilerName, BuildMessage.Kind.INFO, plainCommand));
 
     final BuiltInCompilerListener listener = new BuiltInCompilerListener(context, compilerName, new Runnable() {
+      @Override
       public void run() {
         semaphore.up();
       }
@@ -494,15 +501,18 @@ public class FlexBuilder extends TargetBuilder<BuildRootDescriptor, FlexBuildTar
       myOnCompilationFinishedRunnable = onCompilationFinishedRunnable;
     }
 
+    @Override
     public void textAvailable(final String text) {
       handleText(text);
     }
 
+    @Override
     public void compilationFinished() {
       registerCompilationFinished();
       myOnCompilationFinishedRunnable.run();
     }
 
+    @Override
     protected void onCancelled() {
       compilationFinished();
     }
