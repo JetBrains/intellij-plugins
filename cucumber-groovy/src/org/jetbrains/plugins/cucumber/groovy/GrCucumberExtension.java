@@ -1,27 +1,18 @@
 package org.jetbrains.plugins.cucumber.groovy;
 
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
-import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinition;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinRecursiveElementVisitor;
@@ -30,7 +21,6 @@ import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 import org.jetbrains.plugins.groovy.GroovyFileType;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 
 import java.util.*;
@@ -51,21 +41,6 @@ public class GrCucumberExtension implements CucumberJvmExtensionPoint {
 
   @NotNull
   @Override
-  public List<AbstractStepDefinition> getStepDefinitions(@NotNull PsiFile psiFile) {
-    final List<AbstractStepDefinition> newDefs = new ArrayList<AbstractStepDefinition>();
-    if (psiFile instanceof GroovyFile) {
-      GrStatement[] statements = ((GroovyFile)psiFile).getStatements();
-      for (GrStatement statement : statements) {
-        if (GrCucumberUtil.isStepDefinition(statement)) {
-          newDefs.add(GrStepDefinition.getStepDefinition((GrMethodCall)statement));
-        }
-      }
-    }
-    return newDefs;
-  }
-
-  @NotNull
-  @Override
   public FileType getStepFileType() {
     return GroovyFileType.GROOVY_FILE_TYPE;
   }
@@ -80,25 +55,6 @@ public class GrCucumberExtension implements CucumberJvmExtensionPoint {
   @Override
   public String getDefaultStepFileName() {
     return "StepDef";
-  }
-
-  @Override
-  public void collectAllStepDefsProviders(@NotNull List<VirtualFile> providers, @NotNull Project project) {
-    final Module[] modules = ModuleManager.getInstance(project).getModules();
-    for (Module module : modules) {
-      if (ModuleType.get(module) instanceof JavaModuleType) {
-        final VirtualFile[] roots = ModuleRootManager.getInstance(module).getContentRoots();
-        ContainerUtil.addAll(providers, roots);
-      }
-    }
-  }
-
-  @Override
-  public void loadStepDefinitionRootsFromLibraries(@NotNull Module module,
-                                                   List<PsiDirectory> newAbstractStepDefinitionsRoots,
-                                                   @NotNull Set<String> processedStepDirectories) {
-    //todo
-
   }
 
   @Override
@@ -121,27 +77,6 @@ public class GrCucumberExtension implements CucumberJvmExtensionPoint {
     }
 
     return Collections.emptyList();
-  }
-
-  @Override
-  public void findRelatedStepDefsRoots(Module module,
-                                       PsiFile featureFile,
-                                       List<PsiDirectory> newStepDefinitionsRoots,
-                                       Set<String> processedStepDirectories) {
-    final ContentEntry[] contentEntries = ModuleRootManager.getInstance(module).getContentEntries();
-    for (final ContentEntry contentEntry : contentEntries) {
-      final SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
-      for (SourceFolder sf : sourceFolders) {
-        // ToDo: check if inside test folder
-        VirtualFile sfDirectory = sf.getFile();
-        if (sfDirectory != null && sfDirectory.isDirectory()) {
-          PsiDirectory sourceRoot = PsiDirectoryFactory.getInstance(module.getProject()).createDirectory(sfDirectory);
-          if (!processedStepDirectories.contains(sourceRoot.getVirtualFile().getPath())) {
-            newStepDefinitionsRoots.add(sourceRoot);
-          }
-        }
-      }
-    }
   }
 
   @Nullable
@@ -179,5 +114,25 @@ public class GrCucumberExtension implements CucumberJvmExtensionPoint {
     });
 
     return glues;
+  }
+
+  @Override
+  public List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, @NotNull Module module) {
+    return null;
+  }
+
+  @Override
+  public void flush() {
+
+  }
+
+  @Override
+  public void reset() {
+
+  }
+
+  @Override
+  public void init(@NotNull Project project) {
+
   }
 }

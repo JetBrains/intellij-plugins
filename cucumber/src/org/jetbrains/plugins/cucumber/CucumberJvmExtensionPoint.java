@@ -9,6 +9,7 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
@@ -36,17 +37,11 @@ public interface CucumberJvmExtensionPoint {
   boolean isWritableStepLikeFile(@NotNull final PsiElement child, @NotNull final PsiElement parent);
 
   /**
-   * Parses psiFile and creates list of step definition
-   * @param psiFile file to parse
-   * @return list of step definitions
-   */
-  @NotNull List<AbstractStepDefinition> getStepDefinitions(@NotNull final PsiFile psiFile);
-
-  /**
    * Provides type of step definition file
    * @return FileType
    */
-  @NotNull FileType getStepFileType();
+  @NotNull
+  FileType getStepFileType();
 
 
   @NotNull
@@ -59,17 +54,7 @@ public interface CucumberJvmExtensionPoint {
   @NotNull String getDefaultStepFileName();
 
 
-  void collectAllStepDefsProviders(@NotNull final List<VirtualFile> providers, @NotNull final Project project);
-
-  void loadStepDefinitionRootsFromLibraries(@NotNull Module module, final List<PsiDirectory> newAbstractStepDefinitionsRoots,
-                                            @NotNull final Set<String> processedStepDirectories);
-
   List<PsiElement> resolveStep(@NotNull final PsiElement step);
-
-  void findRelatedStepDefsRoots(Module module,
-                                final PsiFile featureFile,
-                                final List<PsiDirectory> newAbstractStepDefinitionsRoots,
-                                final Set<String> processedStepDirectories);
 
   /**
    * Infers all 'glue' parameters for the file which it can find out.
@@ -77,4 +62,12 @@ public interface CucumberJvmExtensionPoint {
    */
   @NotNull
   Collection<String> getGlues(@NotNull GherkinFile file, Set<String> gluesFromOtherFiles);
+
+  List<AbstractStepDefinition> loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module);
+
+  void flush();
+
+  void reset();
+
+  void init(@NotNull final Project project);
 }
