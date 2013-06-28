@@ -44,7 +44,8 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
 
   @NotNull
   @Override
-  public JSResolveUtil.Resolver<JSReferenceExpressionImpl> getReferenceExpressionResolver() {
-    return ActionScriptReferenceExpressionResolver.INSTANCE;
+  public JSResolveUtil.Resolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(JSReferenceExpressionImpl referenceExpression,
+                                                                                             PsiFile containingFile) {
+    return new ActionScriptReferenceExpressionResolver(referenceExpression, containingFile);
   }
 }

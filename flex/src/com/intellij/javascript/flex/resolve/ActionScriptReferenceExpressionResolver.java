@@ -19,60 +19,52 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Konstantin.Ulitin
  */
 public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressionResolver implements JSResolveUtil.Resolver<JSReferenceExpressionImpl> {
-  public static final ActionScriptReferenceExpressionResolver INSTANCE = new ActionScriptReferenceExpressionResolver();
-
-  private ActionScriptReferenceExpressionResolver() {
-    super();
+  public ActionScriptReferenceExpressionResolver(JSReferenceExpressionImpl expression, PsiFile file) {
+    super(expression, file);
   }
 
-  public ResolveResult[] doResolve(@NotNull final JSReferenceExpressionImpl ref, PsiFile containingFile) {
-    String referencedName = ref.getReferencedName();
-    if (referencedName == null) return ResolveResult.EMPTY_ARRAY;
+  public ResolveResult[] doResolve() {
+    if (myReferencedName == null) return ResolveResult.EMPTY_ARRAY;
 
-    final PsiElement parent = ref.getParent();
-    final JSExpression qualifier = ref.getResolveQualifier();
-    final boolean localResolve = JSReferenceExpressionImpl.isLocalResolveQualifier(qualifier);
-
-    PsiElement currentParent = JSResolveUtil.getTopReferenceParent(parent);
-    if (JSResolveUtil.isSelfReference(currentParent, ref)) {
-      if (!(currentParent instanceof JSPackageStatement) || parent == currentParent) {
+    PsiElement currentParent = JSResolveUtil.getTopReferenceParent(myParent);
+    if (JSResolveUtil.isSelfReference(currentParent, myRef)) {
+      if (!(currentParent instanceof JSPackageStatement) || myParent == currentParent) {
         return new ResolveResult[] { new JSResolveResult( currentParent) };
       }
     }
 
-    if (isConditionalVariableReference(currentParent, ref)) {
-      if (ModuleUtilCore.findModuleForPsiElement(ref) == null) {
+    if (isConditionalVariableReference(currentParent, myRef)) {
+      if (ModuleUtilCore.findModuleForPsiElement(myRef) == null) {
         // do not red highlight conditional compiler definitions in 3rd party library/SDK source code
-        return new ResolveResult[]{new JSResolveResult(ref)};
+        return new ResolveResult[]{new JSResolveResult(myRef)};
       }
       else {
-        return resolveConditionalCompilationVariable(ref);
+        return resolveConditionalCompilationVariable(myRef);
       }
     }
 
-    if (ref.isAttributeReference()) {
-      return dummyResult(ref);
+    if (myRef.isAttributeReference()) {
+      return dummyResult(myRef);
     }
 
-    if(JSCommonTypeNames.ANY_TYPE.equals(referencedName)) {
-      if (currentParent instanceof JSImportStatement && qualifier instanceof JSReferenceExpression)
-        return ((JSReferenceExpression)qualifier).multiResolve(false);
-      if (parent instanceof JSE4XNamespaceReference) return dummyResult(ref);
+    if(JSCommonTypeNames.ANY_TYPE.equals(myReferencedName)) {
+      if (currentParent instanceof JSImportStatement && myQualifier instanceof JSReferenceExpression)
+        return ((JSReferenceExpression)myQualifier).multiResolve(false);
+      if (myParent instanceof JSE4XNamespaceReference) return dummyResult(myRef);
     }
 
     // nonqualified items in implements list in mxml
-    if (parent instanceof JSReferenceList &&
-        parent.getNode().getElementType() == JSElementTypes.IMPLEMENTS_LIST &&
-        ref.getQualifier() == null &&
-        containingFile instanceof JSFile &&
-        XmlBackedJSClassImpl.isImplementsAttribute((JSFile)containingFile)) {
-      PsiElement byQName = JSResolveUtil.findClassByQName(ref.getText(), ref);
+    if (myParent instanceof JSReferenceList &&
+        myParent.getNode().getElementType() == JSElementTypes.IMPLEMENTS_LIST &&
+        myRef.getQualifier() == null &&
+        myContainingFile instanceof JSFile &&
+        XmlBackedJSClassImpl.isImplementsAttribute((JSFile)myContainingFile)) {
+      PsiElement byQName = JSResolveUtil.findClassByQName(myRef.getText(), myRef);
       // for some reason Flex compiler allows to implement non-public interface in default package, so let's not check access type here
       if (byQName != null) return new ResolveResult[] {new JSResolveResult(byQName)};
       return ResolveResult.EMPTY_ARRAY;
@@ -80,12 +72,12 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
 
     SinkResolveProcessor localProcessor;
     final Ref<JSType> qualifierType = Ref.create(null);
-    if (localResolve) {
-      final PsiElement topParent = JSResolveUtil.getTopReferenceParent(parent);
-      localProcessor = new SinkResolveProcessor(referencedName, ref) {
+    if (myLocalResolve) {
+      final PsiElement topParent = JSResolveUtil.getTopReferenceParent(myParent);
+      localProcessor = new SinkResolveProcessor(myReferencedName, myRef) {
         @Override
         public boolean needPackages() {
-          if (parent instanceof JSReferenceExpression && topParent instanceof JSImportStatement) {
+          if (myParent instanceof JSReferenceExpression && topParent instanceof JSImportStatement) {
             return true;
           }
           return super.needPackages();
@@ -93,10 +85,10 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
       };
 
       localProcessor.setToProcessHierarchy(true);
-      JSReferenceExpressionImpl.doProcessLocalDeclarations(ref, qualifier, localProcessor, true, false, null);
+      JSReferenceExpressionImpl.doProcessLocalDeclarations(myRef, myQualifier, localProcessor, true, false, null);
 
       PsiElement jsElement = localProcessor.getResult();
-      if (qualifier instanceof JSThisExpression &&
+      if (myQualifier instanceof JSThisExpression &&
           localProcessor.processingEncounteredAnyTypeAccess() &&
           jsElement != null  // this is from ecma script closure, proceed it in JavaScript way
         ) {
@@ -104,17 +96,17 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
         jsElement = null;
       }
 
-      if (qualifier == null) {
-        final JSReferenceExpression namespaceReference = JSReferenceExpressionImpl.getNamespaceReference(ref);
+      if (myQualifier == null) {
+        final JSReferenceExpression namespaceReference = JSReferenceExpressionImpl.getNamespaceReference(myRef);
         ResolveResult[] resolveResultsAsConditionalCompilationVariable = null;
 
-        if (namespaceReference != null && (namespaceReference == ref || namespaceReference.resolve() == namespaceReference)) {
-          if (jsElement == null && ModuleUtilCore.findModuleForPsiElement(ref) == null) {
+        if (namespaceReference != null && (namespaceReference == myRef || namespaceReference.resolve() == namespaceReference)) {
+          if (jsElement == null && ModuleUtilCore.findModuleForPsiElement(myRef) == null) {
             // do not red highlight conditional compiler definitions in 3rd party library/SDK source code
-            return new ResolveResult[]{new JSResolveResult(ref)};
+            return new ResolveResult[]{new JSResolveResult(myRef)};
           }
 
-          resolveResultsAsConditionalCompilationVariable = resolveConditionalCompilationVariable(ref);
+          resolveResultsAsConditionalCompilationVariable = resolveConditionalCompilationVariable(myRef);
         }
 
         if (resolveResultsAsConditionalCompilationVariable != null &&
@@ -125,18 +117,21 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
       }
 
       if (jsElement != null ||
-          localProcessor.isEncounteredDynamicClasses() && qualifier == null ||
+          localProcessor.isEncounteredDynamicClasses() && myQualifier == null ||
           !localProcessor.processingEncounteredAnyTypeAccess() && !localProcessor.isEncounteredDynamicClasses()
         ) {
         return localProcessor.getResultsAsResolveResults();
       }
     } else {
-      final JSReferenceExpressionImpl.QualifiedItemProcessor processor = new JSReferenceExpressionImpl.QualifiedItemProcessor(referencedName, containingFile, ref);
-      processor.setTypeContext(JSResolveUtil.isExprInTypeContext(ref));
-      JSTypeEvaluator.evaluateTypes(qualifier, containingFile, processor);
+      final JSReferenceExpressionImpl.QualifiedItemProcessor processor = new JSReferenceExpressionImpl.QualifiedItemProcessor(
+        myReferencedName,
+                                                                                                                              myContainingFile,
+                                                                                                                              myRef);
+      processor.setTypeContext(JSResolveUtil.isExprInTypeContext(myRef));
+      JSTypeEvaluator.evaluateTypes(myQualifier, myContainingFile, processor);
 
       if (processor.resolved == JSReferenceExpressionImpl.QualifiedItemProcessor.TypeResolveState.PrefixUnknown) {
-        return dummyResult(ref);
+        return dummyResult(myRef);
       }
 
       if (processor.resolved == JSReferenceExpressionImpl.QualifiedItemProcessor.TypeResolveState.Resolved ||
@@ -150,29 +145,27 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
     }
 
     ResolveResult[] results =
-      resolveFromIndices(ref, containingFile, referencedName, parent, qualifier, localResolve, localProcessor, qualifierType.get());
+      resolveFromIndices(localProcessor, qualifierType.get());
 
     if (results.length == 0 && localProcessor.isEncounteredXmlLiteral()) {
-      return dummyResult(ref);
+      return dummyResult(myRef);
     }
 
     return results;
   }
 
   @Override
-  protected void prepareProcessor(PsiElement parent,
-                                  JSType qualifierType,
+  protected void prepareProcessor(JSType qualifierType,
                                   WalkUpResolveProcessor processor,
-                                  boolean localResolve,
-                                  SinkResolveProcessor localProcessor, JSExpression qualifier) {
+                                  SinkResolveProcessor localProcessor) {
     boolean inDefinition = false;
-    boolean allowOnlyCompleteMatches = localResolve && localProcessor.isEncounteredDynamicClasses();
+    boolean allowOnlyCompleteMatches = myLocalResolve && localProcessor.isEncounteredDynamicClasses();
 
-    if (parent instanceof JSDefinitionExpression) {
+    if (myParent instanceof JSDefinitionExpression) {
       inDefinition = true;
-      if (localResolve && localProcessor.processingEncounteredAnyTypeAccess()) allowOnlyCompleteMatches = false;
+      if (myLocalResolve && localProcessor.processingEncounteredAnyTypeAccess()) allowOnlyCompleteMatches = false;
       else allowOnlyCompleteMatches = true;
-    } else if (qualifier instanceof JSThisExpression && localProcessor.processingEncounteredAnyTypeAccess()) {
+    } else if (myQualifier instanceof JSThisExpression && localProcessor.processingEncounteredAnyTypeAccess()) {
       processor.allowPartialResults();
     }
 
@@ -184,8 +177,8 @@ public class ActionScriptReferenceExpressionResolver extends JSReferenceExpressi
   }
 
   @Override
-  protected ResolveResult[] getResultsForDefinition(JSReferenceExpression ref, PsiElement parent, JSExpression qualifier) {
-    return new ResolveResult[] { new JSResolveResult(parent) };
+  protected ResolveResult[] getResultsForDefinition() {
+    return new ResolveResult[] { new JSResolveResult(myParent) };
   }
 
   private static boolean isConditionalVariableReference(PsiElement currentParent, JSReferenceExpressionImpl thisElement) {
