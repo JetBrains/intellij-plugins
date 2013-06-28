@@ -15,7 +15,6 @@ import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 
 import java.util.*;
 
@@ -23,7 +22,7 @@ import java.util.*;
  * User: Andrey.Vokin
  * Date: 6/26/13
  */
-public abstract class NotIndexedCucumberExtension implements CucumberJvmExtensionPoint {
+public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtension {
   private Project myProject;
 
   protected final List<AbstractStepDefinition> myStepDefinitions = new ArrayList<AbstractStepDefinition>();
@@ -34,7 +33,7 @@ public abstract class NotIndexedCucumberExtension implements CucumberJvmExtensio
 
   private final CucumberPsiTreeListener myCucumberPsiTreeListener = new CucumberPsiTreeListener();
 
-  public void init(final Project project) {
+  public void init(@NotNull final Project project) {
     myProject = project;
     myUpdateQueue.setPassThrough(false);
 
@@ -163,9 +162,13 @@ public abstract class NotIndexedCucumberExtension implements CucumberJvmExtensio
     // find step definitions in current folder
     for (PsiFile file : dir.getFiles()) {
       final VirtualFile virtualFile = file.getVirtualFile();
-      boolean isStepFile = writableOnly ? isWritableStepLikeFile(file, file.getParent()) : isStepLikeFile(file, file.getParent());
-      if (isStepFile && virtualFile != null) {
-        result.add(file);
+
+      final PsiDirectory parent = file.getParent();
+      if (parent != null) {
+        boolean isStepFile = writableOnly ? isWritableStepLikeFile(file, parent) : isStepLikeFile(file, parent);
+        if (isStepFile && virtualFile != null) {
+          result.add(file);
+        }
       }
     }
     // process subfolders
@@ -180,7 +183,9 @@ public abstract class NotIndexedCucumberExtension implements CucumberJvmExtensio
     // New step definitions folders roots
     final List<PsiDirectory> notLoadedStepDefinitionsRoots = new ArrayList<PsiDirectory>();
     try {
-      findRelatedStepDefsRoots(module, featureFile, notLoadedStepDefinitionsRoots, myProcessedStepDirectories);
+      if (featureFile != null) {
+        findRelatedStepDefsRoots(module, featureFile, notLoadedStepDefinitionsRoots, myProcessedStepDirectories);
+      }
       loadStepDefinitionRootsFromLibraries(module, notLoadedStepDefinitionsRoots, myProcessedStepDirectories);
     }
     catch (ProcessCanceledException e) {
@@ -219,6 +224,26 @@ public abstract class NotIndexedCucumberExtension implements CucumberJvmExtensio
 
     synchronized (myStepDefinitions) {
       return new ArrayList<AbstractStepDefinition>(myStepDefinitions);
+    }
+  }
+
+  protected static void addStepDefsRootIfNecessary(final VirtualFile root,
+                                                @NotNull final List<PsiDirectory> newStepDefinitionsRoots,
+                                                @NotNull final Set<String> processedStepDirectories,
+                                                @NotNull final Project project) {
+    if (root == null || !root.isValid()) {
+      return;
+    }
+    final String path = root.getPath();
+    if (processedStepDirectories.contains(path)) {
+      return;
+    }
+
+    final PsiDirectory rootPathDir = PsiManager.getInstance(project).findDirectory(root);
+    if (rootPathDir != null && rootPathDir.isValid()) {
+      if (!newStepDefinitionsRoots.contains(rootPathDir)) {
+        newStepDefinitionsRoots.add(rootPathDir);
+      }
     }
   }
 

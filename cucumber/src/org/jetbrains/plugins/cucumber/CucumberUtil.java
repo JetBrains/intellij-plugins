@@ -104,6 +104,8 @@ public class CucumberUtil {
             result = sb.toString();
           }
         }
+      } else {
+        sb = new StringBuilder();
       }
     }
     if (sb.length() > 0) {

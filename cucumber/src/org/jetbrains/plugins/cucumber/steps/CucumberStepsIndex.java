@@ -11,7 +11,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,11 +24,11 @@ import java.util.*;
 public class CucumberStepsIndex {
   private static final Logger LOG = Logger.getInstance(CucumberStepsIndex.class.getName());
 
+  private final Map<FileType, CucumberJvmExtensionPoint> myExtensionMap;
+
   public static CucumberStepsIndex getInstance(Project project) {
     return ServiceManager.getService(project, CucumberStepsIndex.class);
   }
-
-  private final Map<FileType, CucumberJvmExtensionPoint> myExtensionMap;
 
   public CucumberStepsIndex(final Project project) {
     myExtensionMap = new HashMap<FileType, CucumberJvmExtensionPoint>();
@@ -41,7 +40,7 @@ public class CucumberStepsIndex {
   }
 
   /**
-   * Creates file that will contain step definitions
+   * Creates a file that will contain step definitions
    *
    * @param dir                      container for created file
    * @param fileNameWithoutExtension name of the file with out "." and extension
@@ -68,7 +67,6 @@ public class CucumberStepsIndex {
   }
 
 
-  // ToDo move to base class for all extensions
   @Nullable
   public AbstractStepDefinition findStepDefinition(final @NotNull PsiFile featureFile, final String stepName) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
@@ -134,26 +132,6 @@ public class CucumberStepsIndex {
   public void findRelatedStepDefsRoots(@Nullable final PsiFile featureFile, @NotNull final Module module,
                                        final List<PsiDirectory> newStepDefinitionsRoots,
                                        final Set<String> processedStepDirectories) {
-  }
-
-  public static void addStepDefsRootIfNecessary(final VirtualFile root,
-                                                @NotNull final List<PsiDirectory> newStepDefinitionsRoots,
-                                                @NotNull final Set<String> processedStepDirectories,
-                                                @NotNull final Project project) {
-    if (root == null || !root.isValid()) {
-      return;
-    }
-    final String path = root.getPath();
-    if (processedStepDirectories.contains(path)) {
-      return;
-    }
-
-    final PsiDirectory rootPathDir = PsiManager.getInstance(project).findDirectory(root);
-    if (rootPathDir != null && rootPathDir.isValid()) {
-      if (!newStepDefinitionsRoots.contains(rootPathDir)) {
-        newStepDefinitionsRoots.add(rootPathDir);
-      }
-    }
   }
 
   public void reset() {

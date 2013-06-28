@@ -10,32 +10,32 @@ import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
-import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.searches.AnnotatedElementsSearch;
 import com.intellij.util.PathUtil;
-import com.intellij.util.Query;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinition;
 import org.jetbrains.plugins.cucumber.groovy.steps.GrStepDefinitionCreator;
-import org.jetbrains.plugins.cucumber.java.steps.JavaStepDefinition;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinRecursiveElementVisitor;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
-import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 import org.jetbrains.plugins.cucumber.steps.NotIndexedCucumberExtension;
 import org.jetbrains.plugins.groovy.GroovyFileType;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Max Medvedev
@@ -67,28 +67,6 @@ public class GrCucumberExtension extends NotIndexedCucumberExtension {
   @Override
   public String getDefaultStepFileName() {
     return "StepDef";
-  }
-
-  @Override
-  public List<PsiElement> resolveStep(@NotNull PsiElement element) {
-    final CucumberStepsIndex index = CucumberStepsIndex.getInstance(element.getProject());
-
-    if (element instanceof GherkinStep) {
-      final GherkinStep step = (GherkinStep)element;
-      final List<PsiElement> result = new ArrayList<PsiElement>();
-      final Set<String> substitutedNameList = step.getSubstitutedNameList();
-      if (substitutedNameList.size() > 0) {
-        for (String s : substitutedNameList) {
-          final AbstractStepDefinition definition = index.findStepDefinition(element.getContainingFile(), s);
-          if (definition != null) {
-            result.add(definition.getElement());
-          }
-        }
-        return result;
-      }
-    }
-
-    return Collections.emptyList();
   }
 
   @Nullable
