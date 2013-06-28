@@ -16,7 +16,6 @@ import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
-import org.jetbrains.plugins.cucumber.CucumberUtil;
 
 import java.util.*;
 
@@ -30,23 +29,15 @@ public class CucumberStepsIndex {
     return ServiceManager.getService(project, CucumberStepsIndex.class);
   }
 
-  // ToDo: remove. Use myExtensionMap's values instead
-  private final CucumberJvmExtensionPoint[] myExtensionList;
-
   private final Map<FileType, CucumberJvmExtensionPoint> myExtensionMap;
 
   public CucumberStepsIndex(final Project project) {
-    myExtensionList = Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME);
     myExtensionMap = new HashMap<FileType, CucumberJvmExtensionPoint>();
 
-    for (CucumberJvmExtensionPoint e : myExtensionList) {
+    for (CucumberJvmExtensionPoint e : Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME)) {
       e.init(project);
       myExtensionMap.put(e.getStepFileType(), e);
     }
-  }
-
-  public int getExtensionCount() {
-    return myExtensionList.length;
   }
 
   /**
@@ -76,32 +67,8 @@ public class CucumberStepsIndex {
     return ep.getStepDefinitionCreator().validateNewStepDefinitionFileName(directory.getProject(), fileName);
   }
 
-  public boolean isStepLikeFile(PsiElement child, PsiElement parent) {
-    if (child instanceof PsiFile) {
-      final PsiFile file = (PsiFile)child;
-      CucumberJvmExtensionPoint ep = myExtensionMap.get(file.getFileType());
-      return ep != null && ep.isStepLikeFile(file, parent);
-    }
 
-    return false;
-  }
-
-  private boolean isWritableStepLikeFile(PsiElement child, PsiElement parent) {
-    if (child instanceof PsiFile) {
-      final PsiFile file = (PsiFile)child;
-      CucumberJvmExtensionPoint ep = myExtensionMap.get(file.getFileType());
-      return ep != null && ep.isWritableStepLikeFile(file, parent);
-    }
-
-    return false;
-  }
-
-  public void reset() {
-    for (CucumberJvmExtensionPoint e : myExtensionMap.values()) {
-      e.reset();
-    }
-  }
-
+  // ToDo move to base class for all extensions
   @Nullable
   public AbstractStepDefinition findStepDefinition(final @NotNull PsiFile featureFile, final String stepName) {
     final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
@@ -116,21 +83,7 @@ public class CucumberStepsIndex {
     return null;
   }
 
-  @NotNull
-  public Set<AbstractStepDefinition> findStepDefinitionsByPartOfName(@NotNull final Module module, @NotNull final String word) {
-    final List<AbstractStepDefinition> allSteps = loadStepsFor(null, module);
-    final Set<AbstractStepDefinition> result = new HashSet<AbstractStepDefinition>();
-    for (AbstractStepDefinition stepDefinition : allSteps) {
-      if (CucumberUtil.isPatternRelatedToPartOfName(stepDefinition.getPattern(), word)) {
-        if (!result.contains(stepDefinition)) {
-          result.add(stepDefinition);
-        }
-      }
-    }
-    return result;
-  }
-
-  // ToDo: use binary search here
+   // ToDo: use binary search here
   public List<AbstractStepDefinition> findStepDefinitionsByPattern(@NotNull final String pattern, @NotNull final Module module) {
     final List<AbstractStepDefinition> allSteps = loadStepsFor(null, module);
     final List<AbstractStepDefinition> result = new ArrayList<AbstractStepDefinition>();
@@ -141,13 +94,6 @@ public class CucumberStepsIndex {
       }
     }
     return result;
-  }
-
-  // ToDo: remove
-  @Nullable
-  public PsiElement findStep(PsiFile featureFile, String stepName) {
-    final AbstractStepDefinition definition = findStepDefinition(featureFile, stepName);
-    return definition != null ? definition.getElement() : null;
   }
 
   public List<AbstractStepDefinition> getAllStepDefinitions(@NotNull final PsiFile featureFile) {
@@ -179,7 +125,7 @@ public class CucumberStepsIndex {
   private List<AbstractStepDefinition> loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module) {
     ArrayList<AbstractStepDefinition> result = new ArrayList<AbstractStepDefinition>();
 
-    for (CucumberJvmExtensionPoint extension : myExtensionList) {
+    for (CucumberJvmExtensionPoint extension : myExtensionMap.values()) {
       result.addAll(extension.loadStepsFor(featureFile, module));
     }
     return result;
@@ -210,6 +156,12 @@ public class CucumberStepsIndex {
     }
   }
 
+  public void reset() {
+    for (CucumberJvmExtensionPoint e : myExtensionMap.values()) {
+      e.reset();
+    }
+  }
+
   public void flush() {
     for (CucumberJvmExtensionPoint e : myExtensionMap.values()) {
       e.flush();
@@ -218,5 +170,29 @@ public class CucumberStepsIndex {
 
   public Map<FileType, CucumberJvmExtensionPoint> getExtensionMap() {
     return myExtensionMap;
+  }
+
+  public int getExtensionCount() {
+    return myExtensionMap.size();
+  }
+
+  private boolean isStepLikeFile(PsiElement child, PsiElement parent) {
+    if (child instanceof PsiFile) {
+      final PsiFile file = (PsiFile)child;
+      CucumberJvmExtensionPoint ep = myExtensionMap.get(file.getFileType());
+      return ep != null && ep.isStepLikeFile(file, parent);
+    }
+
+    return false;
+  }
+
+  private boolean isWritableStepLikeFile(PsiElement child, PsiElement parent) {
+    if (child instanceof PsiFile) {
+      final PsiFile file = (PsiFile)child;
+      CucumberJvmExtensionPoint ep = myExtensionMap.get(file.getFileType());
+      return ep != null && ep.isWritableStepLikeFile(file, parent);
+    }
+
+    return false;
   }
 }

@@ -11,6 +11,7 @@ import org.jetbrains.plugins.cucumber.psi.GherkinFeature;
 import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.psi.GherkinStepsHolder;
+import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
 import java.util.ArrayList;
@@ -49,10 +50,11 @@ public class CucumberGoToRelatedProvider extends GotoRelatedProvider {
       final List<PsiFile> resultFiles = new ArrayList<PsiFile>();
       final List<GotoRelatedItem> result = new ArrayList<GotoRelatedItem>();
       for (GherkinStep step : steps) {
-        final PsiElement stepDef = index.findStep(gherkinFile, step.getSubstitutedName());
+        AbstractStepDefinition stepDef = index.findStepDefinition(gherkinFile, step.getSubstitutedName());
+        final PsiElement stepDefMethod = stepDef != null ? stepDef.getElement() : null;
 
-        if (stepDef != null) {
-          final PsiFile stepDefFile = stepDef.getContainingFile();
+        if (stepDefMethod != null) {
+          final PsiFile stepDefFile = stepDefMethod.getContainingFile();
           if (!resultFiles.contains(stepDefFile)) {
             resultFiles.add(stepDefFile);
             result.add(new GotoRelatedItem(stepDefFile, "Step definition file"));
