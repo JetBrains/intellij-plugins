@@ -19,13 +19,14 @@ public class DartFlexLexer extends FlexAdapter {
   }
 
   @Override
-  public void advance() {
+  public void locateToken() {
     try {
-      super.advance();
+      super.locateToken();
     }
     catch (Error e) {
       final Attachment attachment = new Attachment("error.dart", getBufferSequence().toString());
       LOG.error(LogMessageEx.createEvent(e.getMessage(), ExceptionUtil.getThrowableText(e), attachment));
+      throw new Error(e);
     }
   }
 }
