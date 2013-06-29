@@ -1,43 +1,27 @@
-var ideCfg = require('./ideConfig.js')
-  , constants = ideCfg.requireKarmaModule('lib/constants.js')
-  , originalConfigPath = ideCfg.getConfigFile()
+var cli = require('./intellijCli.js')
+  , constants = cli.requireKarmaModule('lib/constants.js')
+  , originalConfigPath = cli.getConfigFile()
   , originalConfigFunc = require(originalConfigPath)
   , path = require('path');
-
-function copy(obj) {
-  var out = {};
-  Object.keys(obj).forEach(function(key) {
-    out[key] = obj[key];
-  });
-  return out;
-}
 
 function isString(value) {
   var toString = {}.toString;
   return typeof value === 'string' || toString.call(value) === '[object String]';
 }
 
-module.exports = function(karma) {
-  var config = {};
-
-  var karmaStub = copy(karma);
-  karmaStub.configure = function(originalConfig) {
-    config = copy(originalConfig);
-  };
-
-  originalConfigFunc(karmaStub);
+module.exports = function(config) {
+  originalConfigFunc(config);
 
   var plugins = config.plugins || [];
   var reporters = config.reporters || [];
 
   var coverageEnabled = plugins.indexOf('karma-coverage') >= 0 && reporters.indexOf('coverage') >= 0;
 
-  plugins.push(require.resolve('./intellijReporter.js'));
+  plugins.push(require.resolve('./intellijPlugin.js'));
   // reset 'reporters' to remove 'progress' and other reporters that aren't necessary
   reporters = ['intellij'];
 
   if (coverageEnabled) {
-    plugins.push(require.resolve('./intellijCoverageReporter.js'));
     reporters.push('coverage');
     reporters.push('intellijCoverage');
   }
@@ -62,6 +46,4 @@ module.exports = function(karma) {
 
   process.stdout.write('##intellij-event[basePath:' + basePath + ']\n');
   config.basePath = basePath;
-
-  karma.configure(config);
 };

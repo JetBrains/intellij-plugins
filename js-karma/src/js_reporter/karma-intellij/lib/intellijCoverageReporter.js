@@ -1,4 +1,4 @@
-var ideConfig = require("./ideConfig.js")
+var cli = require("./intellijCli.js")
   , fs = require('fs')
   , path = require('path')
   , EventEmitter = require('events').EventEmitter;
@@ -59,7 +59,7 @@ function IntellijCoverageReporter(someKarmaCoverageReporter, config, helper, log
   var rootConfig = {
     coverageReporter : {
       type : 'lcovonly',
-      dir : ideConfig.getCoverageTempDirPath()
+      dir : cli.getCoverageTempDirPath()
     },
     basePath : config.basePath
   };
@@ -117,6 +117,4 @@ function IntellijCoverageReporter(someKarmaCoverageReporter, config, helper, log
 
 IntellijCoverageReporter.$inject = ['reporter:coverage', 'config', 'helper', 'logger'];
 
-module.exports = {
-  'reporter:intellijCoverage' : ['type', IntellijCoverageReporter]
-};
+module.exports = IntellijCoverageReporter;

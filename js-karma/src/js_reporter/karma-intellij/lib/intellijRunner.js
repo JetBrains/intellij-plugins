@@ -1,16 +1,16 @@
-var ideCfg = require('./ideConfig');
+var cli = require('./intellijCli');
 var RESUME_TEST_RUNNING_MESSAGE = 'resume-test-running';
 
 function runTests() {
-  var runner = ideCfg.requireKarmaModule('lib/runner.js');
-  var runnerPort = ideCfg.getRunnerPort();
+  var runner = cli.requireKarmaModule('lib/runner.js');
+  var runnerPort = cli.getRunnerPort();
   runner.run(
     { runnerPort: runnerPort },
     function() {}
   );
 }
 
-if (ideCfg.isDebug()) {
+if (cli.isDebug()) {
   process.stdin.resume();
   process.stdin.setEncoding('utf8');
   var text = '';

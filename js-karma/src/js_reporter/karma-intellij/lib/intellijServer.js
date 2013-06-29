@@ -1,8 +1,6 @@
-var ideCfg = require('./ideConfig.js')
-  , server = ideCfg.requireKarmaModule('lib/server.js');
+var cli = require('./intellijCli.js')
+  , server = cli.requireKarmaModule('lib/server.js');
 
-var cliOptions = {
-  configFile: require.resolve('./intellijProxy.conf.js')
-};
-
-server.start(cliOptions);
+server.start({
+  configFile: require.resolve('./intellij.conf.js')
+});

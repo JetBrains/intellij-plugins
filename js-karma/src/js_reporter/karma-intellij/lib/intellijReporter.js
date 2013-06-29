@@ -1,10 +1,8 @@
-var ideCfg = require("./ideConfig.js")
-  , BaseReporter = ideCfg.requireKarmaModule('lib/reporters/Base.js')
-  , escapeUtil = require('./escapeUtil.js');
-
-var util = require('util');
-
-var Tree = require('./tree.js');
+var cli = require("./intellijCli.js")
+  , BaseReporter = cli.requireKarmaModule('lib/reporters/Base.js')
+  , escapeUtil = require('./escapeUtil.js')
+  , util = require('util')
+  , Tree = require('./tree.js');
 
 function getOrCreateBrowserNode(tree, browser) {
   var configFileNode = tree.configFileNode;
@@ -76,7 +74,7 @@ function IntellijReporter(formatError) {
   var tree;
 
   this.onRunStart = function (browsers) {
-    tree = new Tree(ideCfg.getConfigFile(), write);
+    tree = new Tree(cli.getConfigFile(), write);
   };
 
   this.onBrowserError = function (browser, error) {
@@ -122,6 +120,4 @@ function IntellijReporter(formatError) {
 
 IntellijReporter.$inject = ['formatError'];
 
-module.exports = {
-  'reporter:intellij' : ['type', IntellijReporter]
-};
+module.exports = IntellijReporter;
