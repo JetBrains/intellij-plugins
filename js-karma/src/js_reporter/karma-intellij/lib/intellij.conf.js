@@ -1,16 +1,30 @@
 var cli = require('./intellijCli.js')
   , constants = cli.requireKarmaModule('lib/constants.js')
-  , originalConfigPath = cli.getConfigFile()
-  , originalConfigFunc = require(originalConfigPath)
-  , path = require('path');
+  , originalConfigPath = cli.getConfigFile();
 
 function isString(value) {
   var toString = {}.toString;
   return typeof value === 'string' || toString.call(value) === '[object String]';
 }
 
+function setBasePath(config) {
+  var path = require('path');
+  var basePath = config.basePath || '';
+  // copy paste from 'normalizeConfig' in karma/lib/config.js
+  if (isString(originalConfigPath)) {
+    // resolve basePath
+    basePath = path.resolve(path.dirname(originalConfigPath), basePath);
+  }
+  else {
+    // TODO is 'else' possible?
+    basePath = path.resolve(basePath || '.');
+  }
+  config.basePath = basePath;
+}
+
 module.exports = function(config) {
-  originalConfigFunc(config);
+  var originalConfigModule = require(originalConfigPath);
+  originalConfigModule(config);
 
   var plugins = config.plugins || [];
   var reporters = config.reporters || [];
@@ -34,16 +48,6 @@ module.exports = function(config) {
   // specify runner port to have runner port info dumped to standard output
   config.runnerPort = constants.DEFAULT_RUNNER_PORT + 1;
 
-  var basePath = config.basePath || '';
-  if (isString(originalConfigPath)) {
-    // resolve basePath
-    basePath = path.resolve(path.dirname(originalConfigPath), basePath);
-  }
-  else {
-    // TODO is 'else' possible?
-    basePath = path.resolve(basePath || '.');
-  }
-
-  process.stdout.write('##intellij-event[basePath:' + basePath + ']\n');
-  config.basePath = basePath;
+  setBasePath(config);
+  process.stdout.write('##intellij-event[basePath:' + config.basePath + ']\n');
 };
