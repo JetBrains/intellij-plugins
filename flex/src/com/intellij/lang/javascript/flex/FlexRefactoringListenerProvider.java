@@ -13,7 +13,7 @@ import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
 import com.intellij.openapi.util.text.StringUtil;
@@ -35,9 +35,10 @@ import java.util.Collection;
 
 public class FlexRefactoringListenerProvider implements RefactoringElementListenerProvider {
 
+  @Override
   @Nullable
   public RefactoringElementListener getListener(final PsiElement element) {
-    final Module module = ModuleUtil.findModuleForPsiElement(element);
+    final Module module = ModuleUtilCore.findModuleForPsiElement(element);
     if (element instanceof PsiDirectoryContainer || element instanceof JSPackage || element instanceof JSPackageStatement) {
       final String packageName = getPackageName(element);
       return StringUtil.isEmpty(packageName) ? null : new PackageRefactoringListener(element.getProject(), module, packageName);
@@ -90,7 +91,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
   }
 
   private static class PackageRefactoringListener extends RefactoringElementAdapter {
-    private @NotNull Project myProject;
+    private @NotNull final Project myProject;
     private @Nullable final Module myModule;
     private final String myOldPackageName;
     private String myNewPackageName;
@@ -101,6 +102,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
       myOldPackageName = oldPackageName;
     }
 
+    @Override
     public void elementRenamedOrMoved(@NotNull final PsiElement newElement) {
       final String newPackageName = getPackageName(newElement);
       if (newPackageName != null) {
@@ -166,6 +168,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
 
           if (changed) {
             FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
+              @Override
               public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
                 configuration.setRLMs(newRLMs);
               }
@@ -186,6 +189,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
       myOldClassName = oldClassName;
     }
 
+    @Override
     public void elementRenamedOrMoved(@NotNull final PsiElement newElement) {
       final JSClass newClass = getJSClass(newElement);
       if (newClass != null) {
@@ -232,6 +236,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
 
           if (changed) {
             FlexProjectConfigurationEditor.makeNonStructuralModification(bc, new Consumer<NonStructuralModifiableBuildConfiguration>() {
+              @Override
               public void consume(final NonStructuralModifiableBuildConfiguration configuration) {
                 configuration.setRLMs(newRLMs);
               }
@@ -247,11 +252,12 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
     protected final String myOldFilePath;
     protected String myNewFilePath;
 
-    public FileRefactoringListener(final Module module, final String oldFilePath) {
+    public FileRefactoringListener(@NotNull final Module module, final String oldFilePath) {
       myModule = module;
       myOldFilePath = oldFilePath;
     }
 
+    @Override
     public void elementRenamedOrMoved(@NotNull final PsiElement newElement) {
       final VirtualFile file = newElement instanceof PsiFile ? ((PsiFile)newElement).getVirtualFile() : null;
       if (file != null) {
@@ -275,6 +281,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
       super(module, oldFilePath);
     }
 
+    @Override
     protected void filePathChanged(final String oldFilePath, final String newFilePath) {
       for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
         if (BCUtils.canHaveRLMsAndRuntimeStylesheets(bc)) {
@@ -311,6 +318,7 @@ public class FlexRefactoringListenerProvider implements RefactoringElementListen
       super(module, oldFilePath);
     }
 
+    @Override
     protected void filePathChanged(final String oldFilePath, final String newFilePath) {
       for (FlexBuildConfiguration bc : FlexBuildConfigurationManager.getInstance(myModule).getBuildConfigurations()) {
         if (bc.getCompilerOptions().getAdditionalConfigFilePath().equals(oldFilePath)) {
