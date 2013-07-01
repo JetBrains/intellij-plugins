@@ -5,20 +5,17 @@ import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
+import com.intellij.refactoring.listeners.UndoRefactoringElementAdapter;
+import com.jetbrains.javascript.debugger.JsFileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class JstdRunConfigurationRefactoringHandler {
-
   @Nullable
   public static RefactoringElementListener getRefactoringElementListener(@NotNull JstdRunConfiguration configuration,
                                                                          @Nullable PsiElement element) {
-    if (element == null) {
-      return null;
-    }
-    VirtualFile fileAtElement = toVirtualFile(element);
+    VirtualFile fileAtElement = JsFileUtil.toVirtualFile(element);
     if (fileAtElement == null) {
       return null;
     }
@@ -42,17 +39,7 @@ public class JstdRunConfigurationRefactoringHandler {
     return null;
   }
 
-  @Nullable
-  private static VirtualFile toVirtualFile(@NotNull PsiElement element) {
-    if (element instanceof PsiFileSystemItem) {
-      PsiFileSystemItem psiFileSystemItem = (PsiFileSystemItem) element;
-      return psiFileSystemItem.getVirtualFile();
-    }
-    return null;
-  }
-
-  private static class FilePathRefactoringElementListener implements RefactoringElementListener {
-
+  private static class FilePathRefactoringElementListener extends UndoRefactoringElementAdapter {
     private final JstdRunConfiguration myConfiguration;
     private final boolean myIsConfigFile;
     private final boolean myIsJsTestFile;
@@ -69,17 +56,8 @@ public class JstdRunConfigurationRefactoringHandler {
     }
 
     @Override
-    public void elementMoved(@NotNull PsiElement newElement) {
-      refactorIt(newElement);
-    }
-
-    @Override
-    public void elementRenamed(@NotNull PsiElement newElement) {
-      refactorIt(newElement);
-    }
-
-    private void refactorIt(PsiElement newElement) {
-      VirtualFile newFile = toVirtualFile(newElement);
+    protected void refactored(@NotNull PsiElement element, @Nullable String oldQualifiedName) {
+      VirtualFile newFile = JsFileUtil.toVirtualFile(element);
       if (newFile != null) {
         String newPath = FileUtil.toSystemDependentName(newFile.getPath());
         JstdRunSettings.Builder settingsBuilder = new JstdRunSettings.Builder(myConfiguration.getRunSettings());
@@ -103,7 +81,5 @@ public class JstdRunConfigurationRefactoringHandler {
         myConfiguration.setName(myConfiguration.resetGeneratedName());
       }
     }
-
   }
-
 }
