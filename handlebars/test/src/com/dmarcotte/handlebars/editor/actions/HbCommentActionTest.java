@@ -3,6 +3,7 @@ package com.dmarcotte.handlebars.editor.actions;
 import com.dmarcotte.handlebars.HbLanguage;
 import com.dmarcotte.handlebars.config.HbConfig;
 import com.intellij.lang.Language;
+import com.intellij.lang.javascript.JavascriptLanguage;
 
 public class HbCommentActionTest extends HbActionHandlerTest {
 
@@ -76,9 +77,9 @@ public class HbCommentActionTest extends HbActionHandlerTest {
     );
   }
 
-  public void _testInsertNonDefaultLineComment() {
+  public void testInsertNonDefaultLineComment() {
     Language prevCommenterLanguage = HbConfig.getCommenterLanguage();
-    // TODO HbConfig.setCommenterLanguage(JavaLanguage.INSTANCE);
+    HbConfig.setCommenterLanguage(JavascriptLanguage.INSTANCE);
 
     doLineCommentTest(
 
@@ -90,9 +91,9 @@ public class HbCommentActionTest extends HbActionHandlerTest {
     HbConfig.setCommenterLanguage(prevCommenterLanguage);
   }
 
-  public void _testInsertNonDefaultBlockComment() {
+  public void testInsertNonDefaultBlockComment() {
     Language prevCommenterLanguage = HbConfig.getCommenterLanguage();
-    // TODO HbConfig.setCommenterLanguage(JavaLanguage.INSTANCE);
+    HbConfig.setCommenterLanguage(JavascriptLanguage.INSTANCE);
 
     doBlockCommentTest(
 

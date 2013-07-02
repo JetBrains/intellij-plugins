@@ -12,6 +12,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="xml" />
+    <orderEntry type="module" module-name="javascript-openapi" scope="TEST" />
   </component>
 </module>
 

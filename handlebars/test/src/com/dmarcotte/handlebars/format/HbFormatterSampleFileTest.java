@@ -1,6 +1,6 @@
 package com.dmarcotte.handlebars.format;
 
-import com.intellij.openapi.fileTypes.StdFileTypes;
+import com.intellij.lang.javascript.JavaScriptFileType;
 
 public class HbFormatterSampleFileTest extends HbFormatterTest {
 
@@ -19,8 +19,8 @@ public class HbFormatterSampleFileTest extends HbFormatterTest {
    *
    * @throws Exception
    */
-  public void _testSampleFileWithCustomTemplateDataLang()
+  public void testSampleFileWithCustomTemplateDataLang()
     throws Exception {
-    doFileBasedTest("JavaSampleFile.hbs", StdFileTypes.JAVA);
+    doFileBasedTest("JSSampleFile.hbs", JavaScriptFileType.INSTANCE);
   }
 }
