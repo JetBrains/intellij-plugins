@@ -22,6 +22,7 @@ import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -81,7 +83,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     karmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
       @Override
       public void run() {
-        descriptor.getRestarter().run();
+        KarmaUtil.restart(descriptor);
       }
     });
     return descriptor;
@@ -151,7 +153,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
   }
 
   @Nullable
-  private static <C> JSDebugEngine<C> getDebugEngine(@NotNull Set<String> capturedBrowsers) {
+  private static <C> JSDebugEngine<C> getDebugEngine(@NotNull Collection<String> capturedBrowsers) {
     //noinspection unchecked
     JSDebugEngine<C>[] engines = (JSDebugEngine<C>[])JSDebugEngine.getEngines();
     Set<JSDebugEngine<C>> capturedEngines = ContainerUtil.newHashSet();

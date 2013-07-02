@@ -1,6 +1,6 @@
 var cli = require("./intellijCli.js")
   , BaseReporter = cli.requireKarmaModule('lib/reporters/Base.js')
-  , escapeUtil = require('./escapeUtil.js')
+  , intellijUtil = require('./intellijUtil.js')
   , util = require('util')
   , Tree = require('./tree.js');
 
@@ -37,7 +37,7 @@ function getOrCreateLowerSuiteNode(browserNode, suiteNames, write) {
     }
     var nextNode = node.lookupMap[suiteName];
     if (!nextNode) {
-      var locationHint = escapeUtil.joinList(suiteNames, 0, i + 1, '.');
+      var locationHint = intellijUtil.joinList(suiteNames, 0, i + 1, '.');
       nextNode = node.addChild(suiteName, true, 'suite', locationHint);
       node.lookupMap[suiteName] = nextNode;
       nextNode.writeStartMessage();
@@ -54,13 +54,66 @@ function createSpecNode(suiteNode, suiteNames, specName) {
   }
   var names = suiteNames.slice();
   names.push(specName);
-  var locationHint = escapeUtil.joinList(names, 0, names.length, '.');
+  var locationHint = intellijUtil.joinList(names, 0, names.length, '.');
   specNode = suiteNode.addChild(specName, false, 'test', locationHint);
   specNode.writeStartMessage();
   return specNode;
 }
 
-function IntellijReporter(formatError) {
+function FileListTracker(globalEmitter) {
+  var currentFilesPromise = null;
+  globalEmitter.on('file_list_modified', function(filesPromise) {
+    currentFilesPromise = filesPromise;
+  });
+  this.dumpFiles = function() {
+    if (currentFilesPromise) {
+      currentFilesPromise.then(function(files) {
+        if (files) {
+          intellijUtil.sendIntellijEvent('servedFiles', files.served);
+        }
+        currentFilesPromise = null;
+      });
+    }
+  };
+}
+
+function sendBrowserEvents(eventType, connectionId2BrowserNameObjA, connectionId2BrowserNameObjB) {
+  for (var connectionId in connectionId2BrowserNameObjA) {
+    if (connectionId2BrowserNameObjA.hasOwnProperty(connectionId)) {
+      if (!connectionId2BrowserNameObjB.hasOwnProperty(connectionId)) {
+        var event = {id: connectionId, name: connectionId2BrowserNameObjA[connectionId]};
+        intellijUtil.sendIntellijEvent(eventType, event);
+      }
+    }
+  }
+}
+
+function startBrowsersTracking(globalEmitter) {
+  var oldConnectionId2BrowserNameObj = {};
+  globalEmitter.on('browsers_change', function(capturedBrowsers) {
+    if (!capturedBrowsers.forEach) {
+      // filter out events from Browser object
+      return;
+    }
+    var newConnectionId2BrowserNameObj = {};
+    var proceed = true;
+    capturedBrowsers.forEach(function(newBrowser) {
+      if (!newBrowser.id || !newBrowser.name || newBrowser.id === newBrowser.name) {
+        proceed = false;
+      }
+      newConnectionId2BrowserNameObj[newBrowser.id] = newBrowser.name;
+    });
+    if (proceed) {
+      sendBrowserEvents('browserConnected', newConnectionId2BrowserNameObj, oldConnectionId2BrowserNameObj);
+      sendBrowserEvents('browserDisconnected', oldConnectionId2BrowserNameObj, newConnectionId2BrowserNameObj);
+      oldConnectionId2BrowserNameObj = newConnectionId2BrowserNameObj;
+    }
+  });
+}
+
+function IntellijReporter(formatError, globalEmitter) {
+  var fileListManager = new FileListTracker(globalEmitter);
+  startBrowsersTracking(globalEmitter);
   BaseReporter.call(this, formatError, false);
   this.adapters = [];
 
@@ -75,6 +128,7 @@ function IntellijReporter(formatError) {
 
   this.onRunStart = function (browsers) {
     tree = new Tree(cli.getConfigFile(), write);
+    fileListManager.dumpFiles();
   };
 
   this.onBrowserError = function (browser, error) {
@@ -118,6 +172,6 @@ function IntellijReporter(formatError) {
   };
 }
 
-IntellijReporter.$inject = ['formatError'];
+IntellijReporter.$inject = ['formatError', 'emitter'];
 
 module.exports = IntellijReporter;

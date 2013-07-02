@@ -12,7 +12,7 @@ import com.intellij.util.containers.ConcurrentHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -125,8 +125,8 @@ public class KarmaServerState implements ProcessListener {
   }
 
   @NotNull
-  public Set<String> getCapturedBrowsers() {
-    return myCapturedBrowsers.keySet();
+  public Collection<String> getCapturedBrowsers() {
+    return myCapturedBrowsers.values();
   }
 
   public int getWebServerPort() {

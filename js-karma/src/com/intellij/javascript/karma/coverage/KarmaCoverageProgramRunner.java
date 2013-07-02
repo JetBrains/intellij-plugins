@@ -16,6 +16,7 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.UIUtil;
@@ -69,7 +70,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     karmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
       @Override
       public void run() {
-        descriptor.getRestarter().run();
+        KarmaUtil.restart(descriptor);
       }
     });
     return descriptor;

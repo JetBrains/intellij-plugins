@@ -1,5 +1,5 @@
 var path = require('path')
-  , escapeUtil = require('./escapeUtil.js');
+  , intellijUtil = require('./intellijUtil.js');
 
 function inherit(child, parent) {
   function F() {
@@ -80,11 +80,11 @@ Node.prototype.getStartMessage = function () {
   text += " nodeId='" + this.id;
   var parentNodeId = this.parentNode ? this.parentNode.id : 0;
   text += "' parentNodeId='" + parentNodeId;
-  text += "' name='" + escapeUtil.attributeValueEscape(this.name);
+  text += "' name='" + intellijUtil.attributeValueEscape(this.name);
   if (this.type != null) {
     text += "' nodeType='" + this.type;
     if (this.locationHint != null) {
-      text += "' locationHint='" + escapeUtil.attributeValueEscape(this.type + '://' + this.locationHint);
+      text += "' locationHint='" + intellijUtil.attributeValueEscape(this.type + '://' + this.locationHint);
     }
   }
   text += "']";
@@ -214,7 +214,7 @@ TestNode.prototype.getExtraFinishMessageParameters = function () {
     params += " error='yes'";
   }
   if (this.failureMsg) {
-    params += " message='" + escapeUtil.attributeValueEscape(this.failureMsg) + "'";
+    params += " message='" + intellijUtil.attributeValueEscape(this.failureMsg) + "'";
   }
   return params.length === 0 ? null : params;
 };

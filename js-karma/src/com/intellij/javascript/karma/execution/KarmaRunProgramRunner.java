@@ -11,6 +11,7 @@ import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -59,7 +60,7 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
       karmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
         @Override
         public void run() {
-          descriptor.getRestarter().run();
+          KarmaUtil.restart(descriptor);
         }
       });
     }

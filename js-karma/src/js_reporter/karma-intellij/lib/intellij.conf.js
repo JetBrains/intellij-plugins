@@ -1,4 +1,5 @@
 var cli = require('./intellijCli.js')
+  , intellijUtil = require('./intellijUtil.js')
   , constants = cli.requireKarmaModule('lib/constants.js')
   , originalConfigPath = cli.getConfigFile();
 
@@ -10,16 +11,7 @@ function isString(value) {
 function setBasePath(config) {
   var path = require('path');
   var basePath = config.basePath || '';
-  // copy paste from 'normalizeConfig' in karma/lib/config.js
-  if (isString(originalConfigPath)) {
-    // resolve basePath
-    basePath = path.resolve(path.dirname(originalConfigPath), basePath);
-  }
-  else {
-    // TODO is 'else' possible?
-    basePath = path.resolve(basePath || '.');
-  }
-  config.basePath = basePath;
+  config.basePath = path.resolve(path.dirname(originalConfigPath), basePath);
 }
 
 module.exports = function(config) {
@@ -44,10 +36,11 @@ module.exports = function(config) {
   config.reporters = reporters;
 
   config.singleRun = false;
+  var originalAutoWatch = config.autoWatch;
   config.autoWatch = false;
   // specify runner port to have runner port info dumped to standard output
   config.runnerPort = constants.DEFAULT_RUNNER_PORT + 1;
 
   setBasePath(config);
-  process.stdout.write('##intellij-event[basePath:' + config.basePath + ']\n');
+  intellijUtil.sendIntellijEvent('configFile', {basePath: config.basePath, autoWatch: originalAutoWatch});
 };

@@ -26,9 +26,9 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -290,7 +290,7 @@ public class KarmaServer {
   }
 
   @NotNull
-  public Set<String> getCapturedBrowsers() {
+  public Collection<String> getCapturedBrowsers() {
     return myState.getCapturedBrowsers();
   }
 

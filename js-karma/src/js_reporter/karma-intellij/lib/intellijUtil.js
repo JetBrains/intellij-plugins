@@ -58,8 +58,6 @@ function attributeValueEscape(str) {
   return res;
 }
 
-exports.attributeValueEscape = attributeValueEscape;
-
 /**
  * @param {Array} list
  * @param {Number} fromInclusive
@@ -74,8 +72,7 @@ function joinList(list, fromInclusive, toExclusive, delimiterChar) {
   if (delimiterChar.length !== 1) {
     throw Error('Delimiter is expected to be a character, but "' + delimiterChar + '" received');
   }
-  var len = list.length
-    , addDelimiter = false
+  var addDelimiter = false
     , escapeChar = '\\'
     , escapeCharCode = escapeChar.charCodeAt(0)
     , delimiterCharCode = delimiterChar.charCodeAt(0)
@@ -103,4 +100,15 @@ function joinList(list, fromInclusive, toExclusive, delimiterChar) {
   return result;
 }
 
+/**
+ * Sends event to the IDE through standard output of karma server process.
+ * @param {String} eventType
+ * @param {Object} eventBody
+ */
+function sendIntellijEvent(eventType, eventBody) {
+  process.stdout.write('##intellij-event[' + eventType + ':' + JSON.stringify(eventBody) + ']\n');
+}
+
+exports.attributeValueEscape = attributeValueEscape;
 exports.joinList = joinList;
+exports.sendIntellijEvent = sendIntellijEvent;

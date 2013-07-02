@@ -1,4 +1,5 @@
-var cli = require("./intellijCli.js")
+var cli = require('./intellijCli.js')
+  , intellijUtil = require('./intellijUtil.js')
   , fs = require('fs')
   , path = require('path')
   , EventEmitter = require('events').EventEmitter;
@@ -42,7 +43,7 @@ function extractLcovInfoFile(coverageDir, outLcovFilePath) {
                   first = false;
                   copyFile(lcovFilePath, outLcovFilePath, function(err) {
                     if (!err) {
-                      process.stdout.write('##intellij-event[coverage-finished:' + outLcovFilePath + ']\n');
+                      intellijUtil.sendIntellijEvent('coverageFinished', outLcovFilePath);
                     }
                   });
                 }
