@@ -23,19 +23,25 @@ import java.util.Set;
 public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider
   implements ConfigurableTemplateLanguageFileViewProvider {
 
-  private final PsiManager myManager;
-  private final VirtualFile myFile;
+  private final Language myTemplateDataLanguage;
 
   public HbFileViewProvider(PsiManager manager, VirtualFile file, boolean physical) {
-    super(manager, file, physical);
-
-    myManager = manager;
-    myFile = file;
-
-    getTemplateDataLanguage(myManager, myFile);
+    this(manager, file, physical, getTemplateDataLanguage(manager, file));
   }
 
-  private Language getTemplateDataLanguage(PsiManager manager, VirtualFile file) {
+  public HbFileViewProvider(PsiManager manager, VirtualFile file, boolean physical, Language templateDataLanguage) {
+    super(manager, file, physical);
+
+    myTemplateDataLanguage = templateDataLanguage;
+  }
+
+  @Override
+  public boolean supportsIncrementalReparse(@NotNull Language rootLanguage) {
+    return false;
+  }
+
+  @NotNull
+  private static Language getTemplateDataLanguage(PsiManager manager, VirtualFile file) {
     Language dataLang = TemplateDataLanguageMappings.getInstance(manager.getProject()).getMapping(file);
     if (dataLang == null) {
       dataLang = HbLanguage.getDefaultTemplateLang().getLanguage();
@@ -60,18 +66,18 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
   @NotNull
   @Override
   public Language getTemplateDataLanguage() {
-    return getTemplateDataLanguage(myManager, myFile);
+    return myTemplateDataLanguage;
   }
 
   @NotNull
   @Override
   public Set<Language> getLanguages() {
-    return new THashSet<Language>(Arrays.asList(new Language[]{HbLanguage.INSTANCE, getTemplateDataLanguage(myManager, myFile)}));
+    return new THashSet<Language>(Arrays.asList(new Language[]{HbLanguage.INSTANCE, myTemplateDataLanguage}));
   }
 
   @Override
   protected MultiplePsiFilesPerDocumentFileViewProvider cloneInner(VirtualFile virtualFile) {
-    return new HbFileViewProvider(getManager(), virtualFile, false);
+    return new HbFileViewProvider(getManager(), virtualFile, false, myTemplateDataLanguage);
   }
 
   @Override
@@ -81,11 +87,10 @@ public class HbFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvi
       return null;
     }
 
-    Language templateDataLanguage = getTemplateDataLanguage(myManager, myFile);
-    if (lang == templateDataLanguage) {
+    if (lang == myTemplateDataLanguage) {
       PsiFileImpl file = (PsiFileImpl)parserDefinition.createFile(this);
       file.setContentElementType(
-        new TemplateDataElementType("HB_TEMPLATE_DATA", templateDataLanguage, HbTokenTypes.CONTENT, HbTokenTypes.OUTER_ELEMENT_TYPE));
+        new TemplateDataElementType("HB_TEMPLATE_DATA", myTemplateDataLanguage, HbTokenTypes.CONTENT, HbTokenTypes.OUTER_ELEMENT_TYPE));
       return file;
     }
     else if (lang == HbLanguage.INSTANCE) {
