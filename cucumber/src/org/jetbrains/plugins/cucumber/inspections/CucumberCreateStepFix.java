@@ -8,8 +8,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
@@ -25,10 +23,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashMap;
-import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberBundle;
@@ -36,6 +32,7 @@ import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
 import org.jetbrains.plugins.cucumber.StepDefinitionCreator;
 import org.jetbrains.plugins.cucumber.inspections.model.CreateStepDefinitionFileModel;
 import org.jetbrains.plugins.cucumber.inspections.ui.CreateStepDefinitionFileDialog;
+import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 import org.jetbrains.plugins.cucumber.steps.CucumberStepsIndex;
 
@@ -57,14 +54,11 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     return getName();
   }
 
-  public static Set<PsiFile> getStepDefinitionContainers(final PsiFile featureFile) {
-    final List<PsiDirectory> stepDefsRoots = new ArrayList<PsiDirectory>();
-    final Module module = ObjectUtils.assertNotNull(ModuleUtilCore.findModuleForPsiElement(featureFile));
-    CucumberStepsIndex.getInstance(featureFile.getProject())
-      .findRelatedStepDefsRoots(featureFile, module, stepDefsRoots, new HashSet<String>());
+  public static Set<PsiFile> getStepDefinitionContainers(final GherkinFile featureFile) {
+    final Set<PsiDirectory> stepDefRoots = CucumberStepsIndex.getInstance(featureFile.getProject()).findStepDefsRoots(featureFile);
 
     final Set<PsiFile> stepDefs = ContainerUtil.newHashSet();
-    for (PsiDirectory root : stepDefsRoots) {
+    for (PsiDirectory root : stepDefRoots) {
       stepDefs.addAll(CucumberStepsIndex.getInstance(featureFile.getProject()).gatherStepDefinitionsFilesFromDirectory(root, true));
     }
     return stepDefs.isEmpty() ? Collections.<PsiFile>emptySet() : stepDefs;
@@ -72,7 +66,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
 
   public void applyFix(@NotNull final Project project, @NotNull ProblemDescriptor descriptor) {
     final GherkinStep step = (GherkinStep)descriptor.getPsiElement();
-    final PsiFile featureFile = step.getContainingFile();
+    final GherkinFile featureFile = (GherkinFile)step.getContainingFile();
     // TODO + step defs files from other content roots
     final List<PsiFile> files = ContainerUtil.newArrayList(getStepDefinitionContainers(featureFile));
     if (files.size() > 0) {

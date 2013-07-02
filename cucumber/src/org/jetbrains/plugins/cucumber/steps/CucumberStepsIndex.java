@@ -15,6 +15,7 @@ import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
+import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 
 import java.util.*;
 
@@ -129,11 +130,12 @@ public class CucumberStepsIndex {
     return result;
   }
 
-  public void findRelatedStepDefsRoots(@Nullable final PsiFile featureFile, @NotNull final Module module,
-                                       final List<PsiDirectory> newStepDefinitionsRoots,
-                                       final Set<String> processedStepDirectories) {
-
-
+  public Set<PsiDirectory> findStepDefsRoots(@Nullable final GherkinFile featureFile) {
+    Set<PsiDirectory> result = new HashSet<PsiDirectory>();
+    for (CucumberJvmExtensionPoint ep: myExtensionMap.values()) {
+      result.addAll(ep.findStepDefsRoots(featureFile));
+    }
+    return result;
   }
 
   public void reset() {

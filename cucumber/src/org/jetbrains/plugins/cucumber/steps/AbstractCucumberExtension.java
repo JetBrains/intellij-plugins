@@ -3,15 +3,14 @@ package org.jetbrains.plugins.cucumber.steps;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.cucumber.CucumberJvmExtensionPoint;
+import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 import org.jetbrains.plugins.cucumber.psi.GherkinStep;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * User: Andrey.Vokin
@@ -58,5 +57,10 @@ public abstract class AbstractCucumberExtension implements CucumberJvmExtensionP
 
   @Override
   public void init(@NotNull Project project) {
+  }
+
+  @Override
+  public Set<PsiDirectory> findStepDefsRoots(GherkinFile file) {
+    return Collections.emptySet();
   }
 }
