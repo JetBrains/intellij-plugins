@@ -86,7 +86,7 @@ public class CucumberStepsIndex {
     final List<AbstractStepDefinition> allSteps = loadStepsFor(null, module);
     final List<AbstractStepDefinition> result = new ArrayList<AbstractStepDefinition>();
     for (AbstractStepDefinition stepDefinition : allSteps) {
-      final String elementText = stepDefinition.getElementText();
+      final String elementText = stepDefinition.getCucumberRegex();
       if (elementText != null && elementText.equals(pattern)) {
         result.add(stepDefinition);
       }
@@ -132,6 +132,8 @@ public class CucumberStepsIndex {
   public void findRelatedStepDefsRoots(@Nullable final PsiFile featureFile, @NotNull final Module module,
                                        final List<PsiDirectory> newStepDefinitionsRoots,
                                        final Set<String> processedStepDirectories) {
+
+
   }
 
   public void reset() {

@@ -23,12 +23,8 @@ import java.util.List;
  * @author Max Medvedev
  */
 public class GrStepDefinition extends AbstractStepDefinition implements PomNamedTarget {
-  private String myText;
-
   public GrStepDefinition(GrMethodCall stepDefinition) {
     super(stepDefinition);
-
-    myText = GrCucumberUtil.getStepDefinitionPatternText(stepDefinition);
   }
 
   public static GrStepDefinition getStepDefinition(final GrMethodCall statement) {
@@ -59,14 +55,18 @@ public class GrStepDefinition extends AbstractStepDefinition implements PomNamed
     return Collections.emptyList();
   }
 
+  @Nullable
   @Override
-  public String getElementText() {
-    return myText;
+  protected String getCucumberRegexFromElement(PsiElement element) {
+    if (!(element instanceof GrMethodCall)) {
+      return null;
+    }
+    return GrCucumberUtil.getStepDefinitionPatternText((GrMethodCall)element);
   }
 
   @Override
   public String getName() {
-    return myText;
+    return getCucumberRegex();
   }
 
   @Override

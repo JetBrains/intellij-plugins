@@ -1,6 +1,7 @@
 package org.jetbrains.plugins.cucumber.java.steps;
 
 import com.intellij.psi.*;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.cucumber.java.CucumberJavaUtil;
 import org.jetbrains.plugins.cucumber.steps.AbstractStepDefinition;
 
@@ -13,24 +14,8 @@ import java.util.List;
  * Date: 7/16/12
  */
 public class JavaStepDefinition extends AbstractStepDefinition {
-  private String pattern;
-
   public JavaStepDefinition(PsiMethod method) {
     super(method);
-
-    PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation(method);
-    assert stepAnnotation != null;
-    final PsiElement annotationValue = CucumberJavaUtil.getAnnotationValue(stepAnnotation);
-    if (annotationValue != null) {
-      final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(method.getProject()).getConstantEvaluationHelper();
-      final Object constantValue = evaluationHelper.computeConstantExpression(annotationValue, false);
-      if (constantValue != null) {
-        String patternText = constantValue.toString();
-        if (patternText.length() > 1) {
-          pattern = patternText.replace("\\\\", "\\").replace("\\\"", "\"");
-        }
-      }
-    }
   }
 
   @Override
@@ -47,8 +32,28 @@ public class JavaStepDefinition extends AbstractStepDefinition {
     return Collections.emptyList();
   }
 
+  @Nullable
   @Override
-  public String getElementText() {
-    return pattern;
+  protected String getCucumberRegexFromElement(PsiElement element) {
+    if (!(element instanceof PsiMethod)) {
+      return null;
+    }
+
+    String result = null;
+    PsiAnnotation stepAnnotation = CucumberJavaUtil.getCucumberStepAnnotation((PsiMethod)element);
+    assert stepAnnotation != null;
+    final PsiElement annotationValue = CucumberJavaUtil.getAnnotationValue(stepAnnotation);
+    if (annotationValue != null) {
+      final PsiConstantEvaluationHelper evaluationHelper = JavaPsiFacade.getInstance(element.getProject()).getConstantEvaluationHelper();
+      final Object constantValue = evaluationHelper.computeConstantExpression(annotationValue, false);
+      if (constantValue != null) {
+        String patternText = constantValue.toString();
+        if (patternText.length() > 1) {
+          result = patternText.replace("\\\\", "\\").replace("\\\"", "\"");
+        }
+      }
+    }
+
+    return result;
   }
 }

@@ -167,7 +167,7 @@ public class CucumberCompletionContributor extends CompletionContributor {
     result = result.withPrefixMatcher(new PlainPrefixMatcher(result.getPrefixMatcher().getPrefix()));
     final List<AbstractStepDefinition> definitions = CucumberStepsIndex.getInstance(file.getProject()).getAllStepDefinitions(file);
     for (AbstractStepDefinition definition : definitions) {
-      String text = definition.getElementText();
+      String text = definition.getCucumberRegex();
       if (text != null) {
         // trim regexp line start/end markers
         if (text.startsWith("^")) {
