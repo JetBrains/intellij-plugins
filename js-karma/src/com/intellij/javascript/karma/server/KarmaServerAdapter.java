@@ -13,10 +13,4 @@ public abstract class KarmaServerAdapter implements KarmaServerListener {
   @Override
   public void onTerminated(int exitCode) {}
 
-  @Override
-  public void onBrowserConnected(@NotNull String browserName) {}
-
-  @Override
-  public void onBrowserDisconnected(@NotNull String browserName) {}
-
 }

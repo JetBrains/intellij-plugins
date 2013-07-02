@@ -14,14 +14,12 @@ import java.util.Set;
 public class KarmaConfig {
 
   private static final String BASE_PATH_NAME = "basePath";
-  private static final String FILES_NAME = "files";
 
   private final String myBasePath;
   private Set<String> myFiles;
 
-  public KarmaConfig(@Nullable String basePath, @NotNull Set<String> files) {
+  public KarmaConfig(@Nullable String basePath) {
     myBasePath = basePath;
-    myFiles = files;
   }
 
   @Nullable
@@ -34,14 +32,12 @@ public class KarmaConfig {
     return myFiles;
   }
 
-  public static KarmaConfig parseFromJson(@NotNull String jsonText) {
-    JsonParser jsonParser = new JsonParser();
-    JsonElement jsonElement = jsonParser.parse(jsonText);
+  @Nullable
+  public static KarmaConfig parseFromJson(@NotNull JsonElement jsonElement) {
     if (jsonElement.isJsonObject()) {
       JsonObject rootObject = jsonElement.getAsJsonObject();
       String basePath = getAsString(rootObject.get(BASE_PATH_NAME));
-      Set<String> files = buildFileSet(rootObject.get(FILES_NAME));
-      return new KarmaConfig(basePath, files);
+      return new KarmaConfig(basePath);
     }
     return null;
   }
