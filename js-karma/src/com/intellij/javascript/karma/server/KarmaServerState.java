@@ -9,7 +9,6 @@ import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.util.containers.ConcurrentHashMap;
-import com.intellij.util.text.SemVer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +22,7 @@ import java.util.regex.Pattern;
 */
 public class KarmaServerState implements ProcessListener {
 
-  private static final Pattern WEB_SERVER_LINE_PATTERN = Pattern.compile("^INFO \\[.*\\]: Karma v(.+) server started at http://[^:]+:(\\d+)/.*$");
+  private static final Pattern WEB_SERVER_LINE_PATTERN = Pattern.compile("^INFO \\[.*\\]: Karma.+server started at http://[^:]+:(\\d+)/.*$");
   private static final Logger LOG = Logger.getInstance(KarmaServerState.class);
   private static final String BROWSER_CONNECTED_EVENT_TYPE = "browserConnected";
   private static final String BROWSER_DISCONNECTED_EVENT_TYPE = "browserDisconnected";
@@ -83,13 +82,7 @@ public class KarmaServerState implements ProcessListener {
   private static int parseWebServerPort(@NotNull String text) {
     Matcher m = WEB_SERVER_LINE_PATTERN.matcher(text);
     if (m.find()) {
-      String karmaVersionStr = m.group(1);
-      SemVer semVer = SemVer.parseFromText(karmaVersionStr);
-      if (semVer == null) {
-        LOG.warn("Can't parse sem ver from '" + karmaVersionStr + "'");
-        return -1;
-      }
-      String portStr = m.group(2);
+      String portStr = m.group(1);
       try {
         return Integer.parseInt(portStr);
       }
