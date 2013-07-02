@@ -8,7 +8,6 @@ import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSElement;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -17,6 +16,7 @@ import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSNamespaceDeclaration;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSFileImpl;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.structureView.JSStructureViewElement;
@@ -25,6 +25,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Iconable;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -48,6 +49,7 @@ import static com.intellij.lang.javascript.flex.presentation.FlexStructureViewPr
  * Time: 11:13:40
  */
 public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAware {
+  @Override
   public Collection<AbstractTreeNode> modify(AbstractTreeNode parent, Collection<AbstractTreeNode> children, ViewSettings settings) {
     List<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
     if (parent instanceof SwfQualifiedNamedElementNode || parent instanceof FlexFileNode) {
@@ -105,6 +107,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
     return null;
   }
 
+  @Override
   public Object getData(Collection<AbstractTreeNode> selected, String dataName) {
     return null;
   }
@@ -199,15 +202,18 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
       myElement = element;
     }
 
+    @Override
     public boolean contains(@NotNull final VirtualFile file) {
       return false;
     }
 
+    @Override
     @NotNull
     public Collection<? extends AbstractTreeNode> getChildren() {
       return Collections.emptyList();
     }
 
+    @Override
     protected void update(final PresentationData presentation) {
       final ItemPresentation p = myElement.getPresentation();
 
@@ -217,24 +223,28 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
       presentation.addText(" ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
       final String location = presentation.getLocationString();
-      if (location != null && location.length() > 0) {
+      if (!StringUtil.isEmpty(location)) {
         presentation.addText(" (" + location + ")", SimpleTextAttributes.GRAY_ATTRIBUTES);
       }
     }
 
+    @Override
     public VirtualFile getVirtualFile() {
       final Object value = getValue();
       return value instanceof PsiElement && ((PsiElement)value).isValid() ? ((PsiElement)value).getContainingFile().getVirtualFile() : null;
     }
 
+    @Override
     public boolean canNavigate() {
       return myElement.canNavigate();
     }
 
+    @Override
     public boolean canNavigateToSource() {
       return myElement.canNavigateToSource();
     }
 
+    @Override
     public void navigate(final boolean requestFocus) {
       myElement.navigate(requestFocus);
     }
