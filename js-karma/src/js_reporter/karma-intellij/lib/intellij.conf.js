@@ -18,22 +18,19 @@ module.exports = function(config) {
   var originalConfigModule = require(originalConfigPath);
   originalConfigModule(config);
 
-  var plugins = config.plugins || [];
-  var reporters = config.reporters || [];
-
-  var coverageEnabled = plugins.indexOf('karma-coverage') >= 0 && reporters.indexOf('coverage') >= 0;
-
-  plugins.push(require.resolve('./intellijPlugin.js'));
-  // reset 'reporters' to remove 'progress' and other reporters that aren't necessary
-  reporters = ['intellij'];
-
+  var originalReporters = config.reporters || [];
+  var coverageEnabled = originalReporters.indexOf('coverage') >= 0;
+  // Is resetting 'reporters' list safe?
+  var reporters = ['intellij'];
   if (coverageEnabled) {
     reporters.push('coverage');
     reporters.push('intellijCoverage');
   }
-
-  config.plugins = plugins;
   config.reporters = reporters;
+
+  var plugins = config.plugins || [];
+  plugins.push(require.resolve('./intellijPlugin.js'));
+  config.plugins = plugins;
 
   config.singleRun = false;
   var originalAutoWatch = config.autoWatch;

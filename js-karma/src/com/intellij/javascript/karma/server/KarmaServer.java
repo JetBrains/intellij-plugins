@@ -133,6 +133,12 @@ public class KarmaServer {
         }
       }
     });
+    myProcessHandler.addProcessListener(new ProcessAdapter() {
+      @Override
+      public void processTerminated(ProcessEvent event) {
+        FileUtil.asyncDelete(myCoverageTempDir);
+      }
+    });
   }
 
   @NotNull
