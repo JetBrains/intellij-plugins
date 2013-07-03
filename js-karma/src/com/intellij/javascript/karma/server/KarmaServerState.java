@@ -2,15 +2,14 @@ package com.intellij.javascript.karma.server;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessListener;
 import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.javascript.karma.util.GsonUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.util.containers.ConcurrentHashMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentMap;
@@ -137,20 +136,6 @@ public class KarmaServerState implements ProcessListener {
     return myRunnerPort;
   }
 
-  @Nullable
-  private static String getStringProperty(@NotNull JsonObject jsonObject, @NotNull String propertyName) {
-    JsonElement jsonElement = jsonObject.get(propertyName);
-    if (jsonElement != null) {
-      if (jsonElement.isJsonPrimitive()) {
-        JsonPrimitive primitive = jsonElement.getAsJsonPrimitive();
-        if (primitive.isString()) {
-          return primitive.getAsString();
-        }
-      }
-    }
-    return null;
-  }
-
   private class BrowserEventHandler implements StreamEventHandler {
 
     private final String myEventType;
@@ -169,8 +154,8 @@ public class KarmaServerState implements ProcessListener {
     public void handle(@NotNull JsonElement eventBody) {
       if (eventBody.isJsonObject()) {
         JsonObject event = eventBody.getAsJsonObject();
-        String id = getStringProperty(event, "id");
-        String name = getStringProperty(event, "name");
+        String id = GsonUtil.getStringProperty(event, "id");
+        String name = GsonUtil.getStringProperty(event, "name");
         if (id != null && name != null) {
           handleBrowsersChange(myEventType, id, name);
         }
@@ -180,4 +165,5 @@ public class KarmaServerState implements ProcessListener {
       }
     }
   }
+
 }

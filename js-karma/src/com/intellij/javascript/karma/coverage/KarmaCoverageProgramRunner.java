@@ -17,16 +17,22 @@ import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Sergey Simonchik
  */
 public class KarmaCoverageProgramRunner extends GenericProgramRunner {
 
+  private static final Logger LOG = Logger.getInstance(KarmaCoverageProgramRunner.class);
   private static final String COVERAGE_RUNNER_ID = KarmaCoverageProgramRunner.class.getSimpleName();
 
   @NotNull
@@ -86,14 +92,22 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     final KarmaRunConfiguration runConfiguration = (KarmaRunConfiguration) env.getRunProfile();
     CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     CoverageHelper.resetCoverageSuit(runConfiguration);
-    String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
+    final String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
+    RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
+    final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
     if (coverageFilePath != null) {
-      karmaServer.startCoverageSession(new KarmaCoverageSession(coverageFilePath) {
-        @Override
-        public void onCoverageSessionFinished() {
+      karmaServer.startCoverageSession(new KarmaCoverageSession() {
+        public void onCoverageSessionFinished(@NotNull final File lcovFile) {
           UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override
             public void run() {
+              try {
+                FileUtil.copy(lcovFile, new File(coverageFilePath));
+              }
+              catch (IOException e) {
+                LOG.error("Can't copy files from " + lcovFile.getAbsolutePath() + " to " + coverageFilePath, e);
+                return;
+              }
               RunnerSettings runnerSettings = env.getRunnerSettings();
               if (runnerSettings != null) {
                 KarmaCoverageRunner coverageRunner = CoverageRunner.getInstance(KarmaCoverageRunner.class);
@@ -105,8 +119,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
         }
       });
     }
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
-    return contentBuilder.showRunContent(contentToReuse);
+    return descriptor;
   }
 
 }

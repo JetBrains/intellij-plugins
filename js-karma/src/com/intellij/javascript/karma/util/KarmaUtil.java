@@ -12,15 +12,19 @@ public class KarmaUtil {
   private KarmaUtil() {
   }
 
+  public static boolean isActiveDescriptor(@NotNull RunContentDescriptor descriptor) {
+    ProcessHandler processHandler = descriptor.getProcessHandler();
+    return processHandler != null
+      && processHandler.isStartNotified()
+      && !processHandler.isProcessTerminating()
+      && !processHandler.isProcessTerminated();
+  }
+
   public static void restart(@NotNull RunContentDescriptor descriptor) {
     Runnable restarter = descriptor.getRestarter();
-    ProcessHandler processHandler = descriptor.getProcessHandler();
-    if (restarter != null && processHandler != null) {
-      if (processHandler.isStartNotified() && !processHandler.isProcessTerminating() && !processHandler.isProcessTerminated()) {
-        restarter.run();
-      }
+    if (restarter != null && isActiveDescriptor(descriptor)) {
+      restarter.run();
     }
-
   }
 
 }

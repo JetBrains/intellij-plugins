@@ -2,12 +2,12 @@ package com.intellij.javascript.karma.server;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.*;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.coverage.KarmaCoverageSession;
+import com.intellij.javascript.karma.util.GsonUtil;
 import com.intellij.javascript.karma.util.ProcessEventStore;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.openapi.Disposable;
@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -85,14 +84,9 @@ public class KarmaServer {
       public void handle(@NotNull JsonElement eventBody) {
         KarmaCoverageSession coverageSession = myActiveCoverageSession;
         myActiveCoverageSession = null;
-        if (coverageSession != null && eventBody.isJsonPrimitive()) {
-          JsonPrimitive primitive = eventBody.getAsJsonPrimitive();
-          if (primitive.isString()) {
-            String path = primitive.getAsString();
-            if (coverageSession.getCoverageFilePath().equals(path)) {
-              coverageSession.onCoverageSessionFinished();
-            }
-          }
+        if (coverageSession != null) {
+          String path = GsonUtil.asString(eventBody);
+          coverageSession.onCoverageSessionFinished(new File(path));
         }
       }
     });
@@ -306,9 +300,6 @@ public class KarmaServer {
       FileUtil.createDirectory(myCoverageTempDir);
     }
     myActiveCoverageSession = coverageSession;
-    @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-    PrintWriter pw = new PrintWriter(myProcessHandler.getProcessInput(), false);
-    pw.print("write coverage to " + coverageSession.getCoverageFilePath() + "\n");
-    pw.flush();
   }
+
 }

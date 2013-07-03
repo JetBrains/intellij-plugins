@@ -2,22 +2,13 @@ package com.intellij.javascript.karma.coverage;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+
 /**
  * @author Sergey Simonchik
  */
-public abstract class KarmaCoverageSession {
+public interface KarmaCoverageSession {
 
-  private final String myCoverageFilePath;
-
-  public KarmaCoverageSession(@NotNull String coverageFilePath) {
-    myCoverageFilePath = coverageFilePath;
-  }
-
-  @NotNull
-  public String getCoverageFilePath() {
-    return myCoverageFilePath;
-  }
-
-  public abstract void onCoverageSessionFinished();
+  void onCoverageSessionFinished(@NotNull File lcovFile);
 
 }
