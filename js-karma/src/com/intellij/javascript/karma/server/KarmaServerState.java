@@ -53,7 +53,7 @@ public class KarmaServerState implements ProcessListener {
 
   @Override
   public void onTextAvailable(ProcessEvent event, Key outputType) {
-    if (outputType != ProcessOutputTypes.SYSTEM && outputType != ProcessOutputTypes.STDOUT) {
+    if (outputType != ProcessOutputTypes.SYSTEM && outputType != ProcessOutputTypes.STDERR) {
       myBuffer.append(event.getText());
       int startInd = 0;
       for (int i = 0; i < myBuffer.length(); i++) {
