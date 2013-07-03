@@ -11,7 +11,10 @@ import java.io.File;
  */
 public class JstdUtils {
 
-  private static final String JASMINE_ADAPTER_PREFIX = "JasmineAdapter".toLowerCase();
+  private static final String[] JASMINE_ADAPTER_PREFIXES = new String[] {
+    "JasmineAdapter".toLowerCase(),
+    "jasmine-adapter".toLowerCase()
+  };
 
   private JstdUtils() {}
 
@@ -27,7 +30,14 @@ public class JstdUtils {
 
   private static boolean isJasmineAdapter(@NotNull File file) {
     String fileName = file.getName().toLowerCase();
-    return fileName.startsWith(JASMINE_ADAPTER_PREFIX) && fileName.endsWith(".js");
+    if (fileName.endsWith(".js")) {
+      for (String prefix : JASMINE_ADAPTER_PREFIXES) {
+        if (fileName.startsWith(prefix)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
 }
