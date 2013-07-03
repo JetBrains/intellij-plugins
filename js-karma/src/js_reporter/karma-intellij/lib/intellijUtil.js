@@ -43,8 +43,8 @@ function attributeValueEscape(str) {
   if (!isAttributeValueEscapingNeeded(str)) {
     return str;
   }
-  var res = '',
-    len = str.length;
+  var res = ''
+    , len = str.length;
   for (var i = 0; i < len; i++) {
     var escaped = doEscapeCharCode(str.charCodeAt(i));
     if (escaped) {
@@ -67,7 +67,7 @@ function attributeValueEscape(str) {
  */
 function joinList(list, fromInclusive, toExclusive, delimiterChar) {
   if (list.length === 0) {
-    return "";
+    return '';
   }
   if (delimiterChar.length !== 1) {
     throw Error('Delimiter is expected to be a character, but "' + delimiterChar + '" received');

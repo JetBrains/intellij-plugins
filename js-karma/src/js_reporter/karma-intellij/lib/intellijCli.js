@@ -1,14 +1,14 @@
 var join = require('path').join;
-var argv = process.argv;
 
-var RUNNER_PORT_KEY = 'runnerPort';
-var CONFIG_FILE_KEY = 'configFile';
-var KARMA_PACKAGE_DIR_KEY = 'karmaPackageDir';
-var DEBUG_KEY = 'debug';
-var COVERAGE_TEMP_DIR = 'coverageTempDir';
+var RUNNER_PORT_KEY = 'runnerPort'
+  , CONFIG_FILE_KEY = 'configFile'
+  , KARMA_PACKAGE_DIR_KEY = 'karmaPackageDir'
+  , DEBUG_KEY = 'debug'
+  , COVERAGE_TEMP_DIR = 'coverageTempDir';
 
 function parseArguments() {
-  var options = {};
+  var argv = process.argv
+    , options = {};
   for (var i = 2; i < argv.length; i++) {
     var arg = argv[i];
     if (arg.indexOf('--') !== 0) {
@@ -34,33 +34,39 @@ function getKarmaPackageDir() {
   return karmaPackageDir;
 }
 
-exports.requireKarmaModule = function(moduleName) {
+function requireKarmaModule(moduleName) {
   var karmaPath = getKarmaPackageDir();
   return require(join(karmaPath, moduleName));
-};
+}
 
-exports.getConfigFile = function() {
+function getConfigFile() {
   var configFile = options[CONFIG_FILE_KEY];
   if (!configFile) {
     throw Error("Config file isn't specified.");
   }
   return configFile;
-};
+}
 
-exports.getRunnerPort = function() {
+function getRunnerPort() {
   var runnerPortStr = options[RUNNER_PORT_KEY] || '';
   var runnerPort = parseInt(runnerPortStr, 10);
   if (isNaN(runnerPort)) {
     return undefined;
   }
   return runnerPort;
-};
+}
 
-exports.isDebug = function() {
+function isDebug() {
   var debugStr = options[DEBUG_KEY];
   return 'true' === debugStr;
-};
+}
 
-exports.getCoverageTempDirPath = function() {
+function getCoverageTempDirPath() {
   return options[COVERAGE_TEMP_DIR];
-};
+}
+
+exports.requireKarmaModule = requireKarmaModule;
+exports.getConfigFile = getConfigFile;
+exports.getRunnerPort = getRunnerPort;
+exports.isDebug = isDebug;
+exports.getCoverageTempDirPath = getCoverageTempDirPath;
