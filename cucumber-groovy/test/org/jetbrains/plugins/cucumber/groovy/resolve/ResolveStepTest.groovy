@@ -83,7 +83,7 @@ Given(~'I have entered (\\\\d+) into (.*) calculator') { int number, String igno
     calc.push number
 }
 
-Given(~'(\\\\d+) into the') {->
+Given(~'^(\\\\d+) into the$') {->
     throw new RuntimeException("should never get here since we're running with --guess")
 }
 }
