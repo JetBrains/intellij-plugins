@@ -1,19 +1,11 @@
 package org.jetbrains.plugins.cucumber.groovy;
 
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.module.JavaModuleType;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.SourceFolder;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.file.PsiDirectoryFactory;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -95,11 +87,6 @@ public class GrCucumberExtension extends NotIndexedCucumberExtension {
     });
 
     return glues;
-  }
-
-  @Override
-  protected Set<PsiDirectory> findStepDefsRoots(@NotNull GherkinFile file) {
-    return Collections.emptySet();
   }
 
   @Override

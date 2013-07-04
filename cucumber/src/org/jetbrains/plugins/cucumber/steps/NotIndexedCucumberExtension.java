@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.steps;
 import com.intellij.ProjectTopics;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootEvent;
@@ -122,7 +123,20 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
     return stepDefs.isEmpty() ? Collections.<PsiFile>emptySet() : stepDefs;
   }
 
-  protected abstract Set<PsiDirectory> findStepDefsRoots(@NotNull GherkinFile file);
+  protected Set<PsiDirectory> findStepDefsRoots(@NotNull final GherkinFile featureFile) {
+    final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
+
+    final VirtualFile file = featureFile.getVirtualFile();
+    if (file == null || module == null) {
+      return Collections.emptySet();
+    }
+
+    final List<PsiDirectory> result = new ArrayList<PsiDirectory>();
+    findRelatedStepDefsRoots(module, featureFile, result, new HashSet<String>());
+
+    return new HashSet<PsiDirectory>(result);
+  }
+
 
   private void createWatcher(final PsiFile file) {
     myCucumberPsiTreeListener.addChangesWatcher(file, new CucumberPsiTreeListener.ChangesWatcher() {
