@@ -33,7 +33,7 @@ public class CucumberJavaCompletionTest extends CucumberCodeInsightTestCase {
 
   private void doTestVariants() throws Throwable {
     myFixture.copyDirectoryToProject(getTestName(true), "");
-    myCompletionTester.doTestVariantsInner(getTestName(false) + File.separator + getTestName(false) + ".feature", GherkinFileType.INSTANCE);
+    myCompletionTester.doTestVariantsInner(getTestName(true) + File.separator + getTestName(true) + ".feature", GherkinFileType.INSTANCE);
   }
 
   @Override

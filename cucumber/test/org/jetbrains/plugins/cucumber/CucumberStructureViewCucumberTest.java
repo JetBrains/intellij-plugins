@@ -16,7 +16,7 @@ import java.io.File;
  * User: Andrey.Vokin
  * Date: 1/10/13
  */
-public class CucumberStructureViewTestCucumber extends CodeInsightFixtureTestCase {
+public class CucumberStructureViewCucumberTest extends CodeInsightFixtureTestCase {
   private static final String BASE_PATH = "/structureView/";
 
   private VirtualFile myFile;
@@ -41,7 +41,7 @@ public class CucumberStructureViewTestCucumber extends CodeInsightFixtureTestCas
   }
 
   protected Object[] doSimpleTest() throws Exception {
-    final String relatedPath = BASE_PATH + getTestName(false) + ".feature";
+    final String relatedPath = BASE_PATH + getTestName(true) + ".feature";
     myFile =  LocalFileSystem.getInstance().findFileByPath(getTestDataPath() + relatedPath.replace(File.separatorChar, '/'));
     myFixture.copyFileToProject(relatedPath);
     return getTopLevelItems();
