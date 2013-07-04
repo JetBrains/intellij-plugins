@@ -81,7 +81,7 @@ public class GrCucumberUtil {
         if (argumentList == null) return null;
 
         GroovyPsiElement[] arguments = argumentList.getAllArguments();
-        if (arguments.length != 1) return null;
+        if (arguments.length == 0 || arguments.length > 2) return null;
 
         GroovyPsiElement arg = arguments[0];
         if (!(arg instanceof GrUnaryExpression && ((GrUnaryExpression)arg).getOperationTokenType() == GroovyTokenTypes.mBNOT)) return null;

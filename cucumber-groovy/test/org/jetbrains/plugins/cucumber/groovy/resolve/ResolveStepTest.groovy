@@ -90,6 +90,29 @@ Given(~'^(\\\\d+) into the$') {->
 ''')
   }
 
+  void testMethodWithTimeoutParameter() {
+    doTest(
+'''
+Feature: Division
+  Scenario: More numbers
+    Given calcula<caret>tor
+''',
+'''
+package calc
+
+import cucumber.runtime.PendingException
+
+this.metaClass.mixin(cucumber.runtime.groovy.Hooks)
+this.metaClass.mixin(cucumber.runtime.groovy.EN)
+
+Given(~'calculator', 1000) {->
+    calc.push number
+}
+
+'''
+    )
+  }
+
   void doTest(String feature, String stepDef) {
     myFixture.with {
       CucumberStepsIndex.getInstance(project).reset();
