@@ -25,6 +25,7 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -138,17 +139,24 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
   private static DebuggableFileFinder getDebuggableFileFinder(@NotNull KarmaServer karmaServer) {
     BiMap<String, VirtualFile> mappings = HashBiMap.create();
     KarmaConfig karmaConfig = karmaServer.getKarmaConfig();
+    String urlPrefix = "http://localhost:" + karmaServer.getWebServerPort();
     if (karmaConfig != null) {
       @SuppressWarnings("ConstantConditions")
       File basePath = new File(karmaConfig.getBasePath());
       VirtualFile vBasePath = VfsUtil.findFileByIoFile(basePath, false);
       if (vBasePath != null && vBasePath.isValid()) {
-        mappings.put("http://localhost:" + karmaServer.getWebServerPort() + "/base",
-                     vBasePath);
+        mappings.put(urlPrefix + "/base", vBasePath);
       }
     }
-    mappings.put("http://localhost:" + karmaServer.getWebServerPort() + "/absolute",
-                 LocalFileSystem.getInstance().getRoot());
+    VirtualFile root = LocalFileSystem.getInstance().getRoot();
+    if (SystemInfo.isWindows) {
+      for (VirtualFile child : root.getChildren()) {
+        mappings.put(urlPrefix + "/absolute" + child.getName(), child);
+      }
+    }
+    else {
+      mappings.put(urlPrefix + "/absolute", root);
+    }
     return new RemoteDebuggingFileFinder(mappings, false);
   }
 
