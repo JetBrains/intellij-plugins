@@ -80,5 +80,5 @@ public interface CucumberJvmExtensionPoint {
 
   void init(@NotNull final Project project);
 
-  Set<PsiDirectory> findStepDefsRoots(GherkinFile file);
+  Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull final GherkinFile file);
 }

@@ -10,11 +10,13 @@ import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.cucumber.psi.GherkinFile;
 
 import java.util.*;
 
@@ -108,6 +110,19 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
 
     Disposer.register(project, connection);
   }
+
+  @Override
+  public Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
+    final Set<PsiDirectory> stepDefRoots = findStepDefsRoots(featureFile);
+
+    final Set<PsiFile> stepDefs = ContainerUtil.newHashSet();
+    for (PsiDirectory root : stepDefRoots) {
+      stepDefs.addAll(gatherStepDefinitionsFilesFromDirectory(root, true));
+    }
+    return stepDefs.isEmpty() ? Collections.<PsiFile>emptySet() : stepDefs;
+  }
+
+  protected abstract Set<PsiDirectory> findStepDefsRoots(@NotNull GherkinFile file);
 
   private void createWatcher(final PsiFile file) {
     myCucumberPsiTreeListener.addChangesWatcher(file, new CucumberPsiTreeListener.ChangesWatcher() {

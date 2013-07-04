@@ -3,6 +3,7 @@ package org.jetbrains.plugins.cucumber.java;
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -118,6 +119,22 @@ public class CucumberJavaExtension extends AbstractCucumberExtension {
       for (PsiMethod stepDefMethod : javaStepDefinitions) {
         result.add(new JavaStepDefinition(stepDefMethod));
       }
+    }
+    return result;
+  }
+
+  @Override
+  public Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull GherkinFile featureFile) {
+    final Module module = ModuleUtilCore.findModuleForPsiElement(featureFile);
+    if (module == null) {
+      return Collections.emptySet();
+    }
+
+    List<AbstractStepDefinition> stepDefs = loadStepsFor(featureFile, module);
+
+    Set<PsiFile> result = new HashSet<PsiFile>();
+    for (AbstractStepDefinition stepDef : stepDefs) {
+      result.add(stepDef.getElement().getContainingFile());
     }
     return result;
   }

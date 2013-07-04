@@ -130,10 +130,10 @@ public class CucumberStepsIndex {
     return result;
   }
 
-  public Set<PsiDirectory> findStepDefsRoots(@Nullable final GherkinFile featureFile) {
-    Set<PsiDirectory> result = new HashSet<PsiDirectory>();
+  public Set<PsiFile> getStepDefinitionContainers(@Nullable final GherkinFile featureFile) {
+    Set<PsiFile> result = new HashSet<PsiFile>();
     for (CucumberJvmExtensionPoint ep: myExtensionMap.values()) {
-      result.addAll(ep.findStepDefsRoots(featureFile));
+      result.addAll(ep.getStepDefinitionContainers(featureFile));
     }
     return result;
   }

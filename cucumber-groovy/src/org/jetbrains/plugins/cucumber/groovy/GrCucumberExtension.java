@@ -32,10 +32,7 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement;
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Max Medvedev
@@ -98,6 +95,11 @@ public class GrCucumberExtension extends NotIndexedCucumberExtension {
     });
 
     return glues;
+  }
+
+  @Override
+  protected Set<PsiDirectory> findStepDefsRoots(@NotNull GherkinFile file) {
+    return Collections.emptySet();
   }
 
   @Override
