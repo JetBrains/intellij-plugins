@@ -40,4 +40,10 @@ public interface StepDefinitionCreator {
 
   @NotNull
   public String getStepDefinitionFilePath(@NotNull final PsiFile file);
+
+  /**
+   * Provides default name of step definition file
+   * @return String representing default name of step definition file
+   */
+  @NotNull String getDefaultStepFileName();
 }

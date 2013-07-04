@@ -4,7 +4,6 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -52,13 +51,6 @@ public interface CucumberJvmExtensionPoint {
 
   @NotNull
   StepDefinitionCreator getStepDefinitionCreator();
-
-  /**
-   * Provides default name of step definition file
-   * @return String representing default name of step definition file
-   */
-  @NotNull String getDefaultStepFileName();
-
 
   /**
    * Provide resolving of step

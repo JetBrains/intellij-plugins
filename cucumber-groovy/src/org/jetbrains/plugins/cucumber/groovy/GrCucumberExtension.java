@@ -63,12 +63,6 @@ public class GrCucumberExtension extends NotIndexedCucumberExtension {
     return new GrStepDefinitionCreator();
   }
 
-  @NotNull
-  @Override
-  public String getDefaultStepFileName() {
-    return "StepDef";
-  }
-
   @Nullable
   public String getGlue(@NotNull GherkinStep step) {
     for (PsiReference ref : step.getReferences()) {

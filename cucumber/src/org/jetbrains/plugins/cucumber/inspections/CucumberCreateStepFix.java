@@ -208,7 +208,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     Map<FileType, String> supportedFileTypesAndDefaultFileNames = new HashMap<FileType, String>();
     Map<FileType, PsiDirectory> fileTypeToDefaultDirectoryMap = new HashMap<FileType, PsiDirectory>();
     for (CucumberJvmExtensionPoint e : Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME)) {
-      supportedFileTypesAndDefaultFileNames.put(e.getStepFileType(), e.getDefaultStepFileName());
+      supportedFileTypesAndDefaultFileNames.put(e.getStepFileType(), e.getStepDefinitionCreator().getDefaultStepFileName());
       fileTypeToDefaultDirectoryMap.put(e.getStepFileType(), e.getStepDefinitionCreator().getDefaultStepDefinitionFolder(step));
     }
 

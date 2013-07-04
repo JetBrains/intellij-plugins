@@ -222,4 +222,10 @@ public class GrStepDefinitionCreator implements StepDefinitionCreator {
     }
     return file.getName();
   }
+
+  @NotNull
+  @Override
+  public String getDefaultStepFileName() {
+    return "StepDef";
+  }
 }

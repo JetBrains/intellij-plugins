@@ -45,6 +45,8 @@ import java.util.ArrayList;
  * Date: 8/1/12
  */
 public class JavaStepDefinitionCreator implements StepDefinitionCreator {
+  public static final String STEP_DEFINITION_SUFFIX = "MyStepdefs";
+
   @NotNull
   @Override
   public PsiFile createStepDefinitionContainer(@NotNull PsiDirectory dir, @NotNull String name) {
@@ -195,6 +197,12 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
       }
     }
     return file.getName();
+  }
+
+  @NotNull
+  @Override
+  public String getDefaultStepFileName() {
+    return STEP_DEFINITION_SUFFIX;
   }
 
   private static PsiMethod buildStepDefinitionByStep(@NotNull final GherkinStep step) {

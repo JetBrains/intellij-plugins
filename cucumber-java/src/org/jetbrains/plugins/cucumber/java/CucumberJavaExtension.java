@@ -28,7 +28,6 @@ import java.util.*;
  */
 public class CucumberJavaExtension extends AbstractCucumberExtension {
   public static final String CUCUMBER_RUNTIME_JAVA_STEP_DEF_ANNOTATION = "cucumber.runtime.java.StepDefAnnotation";
-  public static final String STEP_DEFINITION_SUFFIX = "MyStepdefs";
 
   @Override
   public boolean isStepLikeFile(@NotNull final PsiElement child, @NotNull final PsiElement parent) {
@@ -53,12 +52,6 @@ public class CucumberJavaExtension extends AbstractCucumberExtension {
   @Override
   public StepDefinitionCreator getStepDefinitionCreator() {
     return new JavaStepDefinitionCreator();
-  }
-
-  @NotNull
-  @Override
-  public String getDefaultStepFileName() {
-    return STEP_DEFINITION_SUFFIX;
   }
 
   @NotNull
