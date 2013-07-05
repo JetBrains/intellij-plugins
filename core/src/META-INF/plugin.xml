@@ -6,7 +6,6 @@
   <vendor>JetBrains</vendor>
   <description>Provides Tapestry 5.1 integration.</description>
 
-  <depends>IntentionPowerPack</depends>
   <depends>com.intellij.javaee</depends>
   <category>Web/JavaEE Technologies</category>
 
