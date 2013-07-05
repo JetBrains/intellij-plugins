@@ -1,5 +1,6 @@
 package com.intellij.javascript.karma.server;
 
+import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.intellij.execution.ExecutionException;
@@ -28,7 +29,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -38,22 +38,23 @@ public class KarmaServer {
 
   private static final Logger LOG = Logger.getInstance(KarmaServer.class);
 
-  // accessed in EDT only
-  private final List<KarmaServerListener> myListeners = ContainerUtil.createEmptyCOWList();
   private final File myConfigurationFile;
   private final KillableColoredProcessHandler myProcessHandler;
   private final ProcessEventStore myProcessEventStore;
   private final KarmaJsSourcesLocator myKarmaJsSourcesLocator;
   private final KarmaServerState myState;
 
+  // accessed in EDT only
   private final AtomicBoolean myOnReadyFired = new AtomicBoolean(false);
   private boolean myOnReadyExecuted = false;
+  private Integer myExitCode = null;
+  private final List<KarmaServerReadyListener> myDoListWhenReady = Lists.newCopyOnWriteArrayList();
+  private final List<KarmaServerTerminatedListener> myDoListWhenTerminated = Lists.newCopyOnWriteArrayList();
+  private final List<Runnable> myDoListWhenReadyWithCapturedBrowser = Lists.newCopyOnWriteArrayList();
+
   private volatile KarmaCoverageSession myActiveCoverageSession;
   private final Map<String, StreamEventHandler> myHandlers = ContainerUtil.newConcurrentMap();
   private final File myCoverageTempDir;
-
-  // accessed in EDT only
-  private final List<Runnable> myDoListWhenReadyWithCapturedBrowser = new CopyOnWriteArrayList<Runnable>();
 
   private volatile KarmaConfig myKarmaConfig;
 
@@ -110,7 +111,8 @@ public class KarmaServer {
         try {
           JsonParser jsonParser = new JsonParser();
           jsonElement = jsonParser.parse(eventBody);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.warn("Cannot parse message from karma server:" +
                    " (eventType: " + eventType + ", eventBody: " + eventBody + ")");
           return;
@@ -131,12 +133,6 @@ public class KarmaServer {
         if (!myProcessHandler.isProcessTerminated()) {
           ScriptRunnerUtil.terminateProcessHandler(myProcessHandler, 500, null);
         }
-      }
-    });
-    myProcessHandler.addProcessListener(new ProcessAdapter() {
-      @Override
-      public void processTerminated(ProcessEvent event) {
-        FileUtil.asyncDelete(myCoverageTempDir);
       }
     });
   }
@@ -178,13 +174,14 @@ public class KarmaServer {
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(final ProcessEvent event) {
+        FileUtil.asyncDelete(myCoverageTempDir);
         KarmaServerRegistry.serverTerminated(KarmaServer.this);
         UIUtil.invokeLaterIfNeeded(new Runnable() {
           @Override
           public void run() {
+            myDoListWhenReady.clear();
             myDoListWhenReadyWithCapturedBrowser.clear();
             fireOnTerminated(event.getExitCode());
-            myListeners.clear();
           }
         });
       }
@@ -205,10 +202,12 @@ public class KarmaServer {
       UIUtil.invokeLaterIfNeeded(new Runnable() {
         @Override
         public void run() {
-          for (KarmaServerListener listener : myListeners) {
+          myOnReadyExecuted = true;
+          List<KarmaServerReadyListener> listeners = ContainerUtil.newArrayList(myDoListWhenReady);
+          myDoListWhenReady.clear();
+          for (KarmaServerReadyListener listener : listeners) {
             listener.onReady(webServerPort, runnerPort);
           }
-          myOnReadyExecuted = true;
           processWhenReadyWithCapturedBrowserQueue();
         }
       });
@@ -216,9 +215,44 @@ public class KarmaServer {
   }
 
   private void fireOnTerminated(final int exitCode) {
-    for (KarmaServerListener listener : myListeners) {
+    myExitCode = exitCode;
+    for (KarmaServerTerminatedListener listener : myDoListWhenTerminated) {
       listener.onTerminated(exitCode);
     }
+  }
+
+  /**
+   * Executes {@code} task in EDT when the server is ready
+   */
+  public void doWhenReady(@NotNull final KarmaServerReadyListener readyCallback) {
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        if (myOnReadyExecuted) {
+          readyCallback.onReady(myState.getWebServerPort(), myState.getRunnerPort());
+        }
+        else {
+          myDoListWhenReady.add(readyCallback);
+        }
+      }
+    });
+  }
+
+  /**
+   * Executes {@code} task in EDT when the server is ready
+   */
+  public void doWhenTerminated(@NotNull final KarmaServerTerminatedListener terminationCallback) {
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        if (myExitCode != null) {
+          terminationCallback.onTerminated(myExitCode);
+        }
+        else {
+          myDoListWhenTerminated.add(terminationCallback);
+        }
+      }
+    });
   }
 
   /**
@@ -236,14 +270,6 @@ public class KarmaServer {
         }
       }
     });
-  }
-
-  public void addListener(@NotNull KarmaServerListener listener) {
-    ApplicationManager.getApplication().assertIsDispatchThread();
-    myListeners.add(listener);
-    if (myOnReadyExecuted) {
-      listener.onReady(myState.getWebServerPort(), myState.getRunnerPort());
-    }
   }
 
   public boolean isReady() {

@@ -117,7 +117,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     if (!myKarmaServer.isReady()) {
       ui.selectAndFocus(consoleContent, false, false);
     }
-    myKarmaServer.addListener(new KarmaServerAdapter() {
+    myKarmaServer.doWhenTerminated(new KarmaServerTerminatedListener() {
       @Override
       public void onTerminated(int exitCode) {
         if (!ui.isDisposed()) {

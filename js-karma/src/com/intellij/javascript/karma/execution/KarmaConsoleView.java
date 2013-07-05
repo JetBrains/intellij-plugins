@@ -17,9 +17,7 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
-import com.intellij.javascript.karma.server.KarmaServer;
-import com.intellij.javascript.karma.server.KarmaServerAdapter;
-import com.intellij.javascript.karma.server.KarmaServerLogComponent;
+import com.intellij.javascript.karma.server.*;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
@@ -76,7 +74,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       ui.selectAndFocus(consoleContent, false, false);
     }
     else {
-      myServer.addListener(new KarmaServerAdapter() {
+      myServer.doWhenReady(new KarmaServerReadyListener() {
         @Override
         public void onReady(int webServerPort, int runnerPort) {
           ui.selectAndFocus(consoleContent, false, false);
@@ -99,7 +97,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
           alarm.cancelAllRequests();
         }
       });
-      myServer.addListener(new KarmaServerAdapter() {
+      myServer.doWhenTerminated(new KarmaServerTerminatedListener() {
         @Override
         public void onTerminated(int exitCode) {
           alarm.cancelAllRequests();

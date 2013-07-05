@@ -14,7 +14,7 @@ import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.karma.server.KarmaServer;
-import com.intellij.javascript.karma.server.KarmaServerAdapter;
+import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
 import com.intellij.javascript.karma.util.NopProcessHandler;
 import com.intellij.openapi.project.Project;
@@ -98,7 +98,7 @@ public class KarmaExecutionSession {
       return createOSProcessHandler(server.getRunnerPort(), clientAppFile);
     }
     final NopProcessHandler nopProcessHandler = new NopProcessHandler();
-    server.addListener(new KarmaServerAdapter() {
+    server.doWhenTerminated(new KarmaServerTerminatedListener() {
       @Override
       public void onTerminated(int exitCode) {
         nopProcessHandler.destroyProcess();

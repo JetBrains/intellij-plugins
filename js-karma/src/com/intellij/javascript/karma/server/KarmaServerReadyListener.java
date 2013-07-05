@@ -3,7 +3,6 @@ package com.intellij.javascript.karma.server;
 /**
  * @author Sergey Simonchik
  */
-public interface KarmaServerListener {
+public interface KarmaServerReadyListener {
   void onReady(int webServerPort, int runnerPort);
-  void onTerminated(int exitCode);
 }
