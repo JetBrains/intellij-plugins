@@ -132,7 +132,7 @@ public class HbTypedHandler extends TypedHandlerDelegate {
 
     HbOpenBlockMustache openTag = HbPsiUtil.findParentOpenTagElement(elementAtCaret);
 
-    if (openTag != null && openTag.getPairedElement() == null && openTag.getChildren().length > 1) {
+    if (openTag != null && openTag.getChildren().length > 1) {
       HbMustacheName mustacheName = PsiTreeUtil.findChildOfType(openTag, HbMustacheName.class);
 
       if (mustacheName != null) {

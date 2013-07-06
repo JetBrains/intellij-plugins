@@ -52,10 +52,12 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
     HbConfig.setAutoGenerateCloseTagEnabled(true);
     doCharTest('}', "foo {{#bar<caret>", "foo {{#bar}}<caret>{{/bar}}");
     doCharTest('}', "foo {{^bar<caret>", "foo {{^bar}}<caret>{{/bar}}");
+    doCharTest('}', "foo {{#bar}}{{#baz<caret>{{/bar}}", "foo {{#bar}}{{#baz}}<caret>{{/baz}}{{/bar}}");
 
     HbConfig.setAutoGenerateCloseTagEnabled(false);
     doCharTest('}', "foo {{#bar<caret>", "foo {{#bar}}<caret>");
     doCharTest('}', "foo {{^bar<caret>", "foo {{^bar}}<caret>");
+    doCharTest('}', "foo {{#bar}}{{#baz<caret>{{/bar}}", "foo {{#bar}}{{#baz}}<caret>{{/bar}}");
   }
 
   public void testCloseTripleBraces() {
@@ -78,6 +80,11 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
     doCharTest('}', "{{#foo}<caret>", "{{#foo}}<caret>");
     doCharTest('}', "{{#foo bar baz}<caret>", "{{#foo bar baz}}<caret>");
     doCharTest('}', "{{#foo bar baz bat=\"bam\"}<caret>", "{{#foo bar baz bat=\"bam\"}}<caret>");
+  }
+
+  public void testInsertCloseTagForNestedBlocks() {
+    HbConfig.setAutoGenerateCloseTagEnabled(true);
+    doCharTest('}', "{{#foo}}{{#bar}<caret>{{/foo}}", "{{#foo}}{{#bar}}<caret>{{/bar}}{{/foo}}");
   }
 
   public void testInsertCloseTagForOpenInverseStache() {
@@ -113,11 +120,6 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
   public void testNoInsertCloseTagForExtraStaches() {
     HbConfig.setAutoGenerateCloseTagEnabled(true);
     doCharTest('}', "{{#foo}}<caret>", "{{#foo}}}<caret>");
-  }
-
-  public void testNoInsertCloseTagForAlreadyClosedStaches() {
-    HbConfig.setAutoGenerateCloseTagEnabled(true);
-    doCharTest('}', "{{#foo}<caret>{{/foo}}", "{{#foo}}<caret>{{/foo}}");
   }
 
   public void testRegularStache() {
