@@ -1,7 +1,7 @@
 // We base our lexer directly on the official handlebars.l lexer definition,
 // making some modifications to account for Jison/JFlex syntax and functionality differences
 //
-// Revision ported: https://github.com/wycats/handlebars.js/commit/da2aabe7bdc75e29178d920332fad9de183de8a0#src/handlebars.l
+// Revision ported: https://github.com/wycats/handlebars.js/commit/58a0b4f17d5338793c92cf4d104e9c44cc485c5b#src/handlebars.l
 
 package com.dmarcotte.handlebars.parsing;
 
@@ -123,7 +123,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   "{{^" { return HbTokenTypes.OPEN_INVERSE; }
   // NOTE: a standard Handlebars lexer would check for "{{else" here.  We instead want to lex it as two tokens to highlight the "{{" and the "else" differently.  See where we make an HbTokens.ELSE below.
   "{{{" { return HbTokenTypes.OPEN_UNESCAPED; }
-  "{{&" { return HbTokenTypes.OPEN_UNESCAPED; }
+  "{{&" { return HbTokenTypes.OPEN; }
   "{{!" { yypushback(3); yypopState(); yypushState(comment); }
   "{{" { return HbTokenTypes.OPEN; }
   "=" { return HbTokenTypes.EQUALS; }
@@ -131,7 +131,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   ".." { return HbTokenTypes.ID; }
   [\/.] { return HbTokenTypes.SEP; }
   [\t \n\x0B\f\r]* { return HbTokenTypes.WHITE_SPACE; }
-  "}}}" { yypopState(); return HbTokenTypes.CLOSE; }
+  "}}}" { yypopState(); return HbTokenTypes.CLOSE_UNESCAPED; }
   "}}" { yypopState(); return HbTokenTypes.CLOSE; }
   \"([^\"\\]|\\.)*\" { return HbTokenTypes.STRING; }
   '([^'\\]|\\.)*' { return HbTokenTypes.STRING; }

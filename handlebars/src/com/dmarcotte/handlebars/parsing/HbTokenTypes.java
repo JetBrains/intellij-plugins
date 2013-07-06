@@ -46,6 +46,7 @@ public class HbTokenTypes {
   public static final IElementType DATA = new HbElementType("DATA", "hb.parsing.element.expected.data");
   public static final IElementType SEP = new HbElementType("SEP", "hb.parsing.element.expected.separator");
   public static final IElementType CLOSE = new HbElementType("CLOSE", "hb.parsing.element.expected.close");
+  public static final IElementType CLOSE_UNESCAPED = new HbElementType("CLOSE_UNESCAPED", "hb.parsing.element.expected.close.unescaped");
   public static final IElementType ELSE = new HbElementType("ELSE", "");
   public static final IElementType BOOLEAN = new HbElementType("BOOLEAN", "hb.parsing.element.expected.boolean");
   public static final IElementType INTEGER = new HbElementType("INTEGER", "hb.parsing.element.expected.integer");

@@ -64,7 +64,7 @@ public class HbLexerFreeFormTest extends HbLexerTest {
 
   public void testSimpleUnescaped() {
     TokenizerResult result = tokenize("{{{partialId}}}");
-    result.shouldMatchTokenTypes(OPEN_UNESCAPED, ID, CLOSE);
+    result.shouldMatchTokenTypes(OPEN_UNESCAPED, ID, CLOSE_UNESCAPED);
     result.shouldMatchTokenContent("{{{", "partialId", "}}}");
   }
 
@@ -87,7 +87,7 @@ public class HbLexerFreeFormTest extends HbLexerTest {
 
   public void testRegularMustacheFollowedByUnescaped() {
     TokenizerResult result = tokenize("{{reg}}{{{unesc}}}");
-    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, OPEN_UNESCAPED, ID, CLOSE);
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, OPEN_UNESCAPED, ID, CLOSE_UNESCAPED);
     result.shouldMatchTokenContent("{{", "reg", "}}", "{{{", "unesc", "}}}");
   }
 

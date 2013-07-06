@@ -25,6 +25,7 @@ public class HbBraceMatcher implements BraceMatcher {
     LEFT_BRACES.add(HbTokenTypes.OPEN_INVERSE);
 
     RIGHT_BRACES.add(HbTokenTypes.CLOSE);
+    RIGHT_BRACES.add(HbTokenTypes.CLOSE_UNESCAPED);
   }
 
   @Override

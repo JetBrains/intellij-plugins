@@ -286,26 +286,25 @@ class HbParsing {
 
   /**
    * mustache
-   * : OPEN inMustache CLOSE { $$ = new yy.MustacheNode($2[0], $2[1]); }
-   * | OPEN_UNESCAPED inMustache CLOSE { $$ = new yy.MustacheNode($2[0], $2[1], true); }
+   * : OPEN inMustache CLOSE
+   * | OPEN_UNESCAPED inMustache CLOSE_UNESCAPED
    * ;
    */
   private void parseMustache(PsiBuilder builder) {
     PsiBuilder.Marker mustacheMarker = builder.mark();
     if (builder.getTokenType() == OPEN) {
       parseLeafToken(builder, OPEN);
+      parseInMustache(builder);
+      parseLeafTokenGreedy(builder, CLOSE);
     }
     else if (builder.getTokenType() == OPEN_UNESCAPED) {
       parseLeafToken(builder, OPEN_UNESCAPED);
+      parseInMustache(builder);
+      parseLeafTokenGreedy(builder, CLOSE_UNESCAPED);
     }
     else {
       throw new ShouldNotHappenException();
     }
-
-    parseInMustache(builder);
-    // whether our parseInMustache hit trouble or not, we absolutely must have
-    // a CLOSE token, so let's find it
-    parseLeafTokenGreedy(builder, CLOSE);
 
     mustacheMarker.done(MUSTACHE);
   }

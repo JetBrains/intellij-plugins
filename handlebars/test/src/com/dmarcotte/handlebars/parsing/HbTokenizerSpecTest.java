@@ -86,7 +86,7 @@ public class HbTokenizerSpecTest extends HbLexerTest {
    */
   public void testEscapedEscapeCharOnTripleStash() {
     TokenizerResult result = tokenize("{{foo}} \\\\{{{bar}}} {{baz}}");
-    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, WHITE_SPACE, CONTENT, OPEN_UNESCAPED, ID, CLOSE, WHITE_SPACE, OPEN, ID, CLOSE);
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, WHITE_SPACE, CONTENT, OPEN_UNESCAPED, ID, CLOSE_UNESCAPED, WHITE_SPACE, OPEN, ID, CLOSE);
 
     result.shouldBeToken(4, CONTENT, "\\\\");
     result.shouldBeToken(6, ID, "bar");
