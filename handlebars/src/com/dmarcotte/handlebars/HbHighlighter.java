@@ -4,22 +4,17 @@ import com.dmarcotte.handlebars.parsing.HbLexer;
 import com.dmarcotte.handlebars.parsing.HbTokenTypes;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.editor.SyntaxHighlighterColors;
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * @author max
- */
 public class HbHighlighter extends SyntaxHighlighterBase {
   private static final Map<IElementType, TextAttributesKey> keys1;
   private static final Map<IElementType, TextAttributesKey> keys2;
@@ -31,43 +26,42 @@ public class HbHighlighter extends SyntaxHighlighterBase {
 
   private static final TextAttributesKey MUSTACHES = TextAttributesKey.createTextAttributesKey(
     "HANDLEBARS.MUSTACHES",
-    new TextAttributes(null, null, null, null, 1)
+    DefaultLanguageHighlighterColors.BRACES
   );
 
   private static final TextAttributesKey IDENTIFIERS = TextAttributesKey.createTextAttributesKey(
     "HANDLEBARS.IDENTIFIERS",
-    SyntaxHighlighterColors.KEYWORD.getDefaultAttributes()
+    DefaultLanguageHighlighterColors.KEYWORD
   );
 
   private static final TextAttributesKey COMMENTS = TextAttributesKey.createTextAttributesKey(
     "HANDLEBARS.COMMENTS",
-    SyntaxHighlighterColors.DOC_COMMENT.getDefaultAttributes()
+    DefaultLanguageHighlighterColors.BLOCK_COMMENT
   );
 
   private static final TextAttributesKey OPERATORS = TextAttributesKey.createTextAttributesKey(
     "HANDLEBARS.OPERATORS",
-    SyntaxHighlighterColors.OPERATION_SIGN.getDefaultAttributes()
+    DefaultLanguageHighlighterColors.OPERATION_SIGN
   );
 
   private static final TextAttributesKey VALUES = TextAttributesKey.createTextAttributesKey(
     "HANDLEBARS.VALUES",
-    SyntaxHighlighterColors.NUMBER.getDefaultAttributes()
+    DefaultLanguageHighlighterColors.NUMBER
   );
 
   private static final TextAttributesKey STRINGS = TextAttributesKey.createTextAttributesKey(
     "HANDLEBARS.STRINGS",
-    SyntaxHighlighterColors.STRING.getDefaultAttributes()
+    DefaultLanguageHighlighterColors.STRING
   );
 
   private static final TextAttributesKey DATA_PREFIX = TextAttributesKey.createTextAttributesKey(
     "HANDLEBARS.DATA_PREFIX",
-    SyntaxHighlighterColors.NUMBER.getDefaultAttributes()
+    DefaultLanguageHighlighterColors.KEYWORD
   );
 
-  @SuppressWarnings("UseJBColor") // TODO port to JBColor when we stop supporting IDEA 11
   private static final TextAttributesKey ESCAPE = TextAttributesKey.createTextAttributesKey(
     "HANDLEBARS.ESCAPE",
-    new TextAttributes(Color.BLUE, null, null, null, 0)
+    DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE
   );
 
   static {
