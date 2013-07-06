@@ -46,7 +46,20 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
 
   public void testCloseDoubleBraces() {
     doCharTest('}', "foo {{bar<caret>", "foo {{bar}}<caret>");
+    doCharTest('}', "foo {{&bar<caret>", "foo {{&bar}}<caret>");
+    doCharTest('}', "foo {{/bar<caret>", "foo {{/bar}}<caret>");
+
+    HbConfig.setAutoGenerateCloseTagEnabled(true);
     doCharTest('}', "foo {{#bar<caret>", "foo {{#bar}}<caret>{{/bar}}");
+    doCharTest('}', "foo {{^bar<caret>", "foo {{^bar}}<caret>{{/bar}}");
+
+    HbConfig.setAutoGenerateCloseTagEnabled(false);
+    doCharTest('}', "foo {{#bar<caret>", "foo {{#bar}}<caret>");
+    doCharTest('}', "foo {{^bar<caret>", "foo {{^bar}}<caret>");
+  }
+
+  public void testCloseTripleBraces() {
+    doCharTest('}', "foo {{{bar<caret>", "foo {{{bar}}}<caret>");
   }
 
   public void testInsertCloseTagForOpenBlockStache() {
@@ -126,7 +139,7 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
 
   /**
    * Our typed handler relies on looking a couple of characters back
-   * make sure we're well bahaved when there are none
+   * make sure we're well behaved when there are none.
    */
   public void testFirstCharTyped() {
     HbConfig.setAutoGenerateCloseTagEnabled(true);

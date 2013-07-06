@@ -67,25 +67,47 @@ public class HbTypedHandler extends TypedHandlerDelegate {
     }
 
     String previousChar = editor.getDocument().getText(new TextRange(offset - 2, offset - 1));
+    boolean closeBraceCompleted = false;
 
     if (provider instanceof HbFileViewProvider) {
       if (c == '}' && !previousChar.equals("}")) {
-        // seems like we can complete the second brace
+        // we may be able to complete the second brace
         PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
         PsiElement elementAt = provider.findElementAt(offset - 1, HbLanguage.class);
         ASTNode node = elementAt != null ? elementAt.getNode() : null;
         if (node != null && node.getElementType() == HbTokenTypes.INVALID) {
-          // yes we can!
-          previousChar = "}";
-          editor.getDocument().insertString(offset, previousChar);
-          editor.getCaretModel().moveToOffset(++offset);
+          // we should be looking at the beginning of a close brace.  Find its matching open brace and auto-complete based on its type
+          PsiElement mustache = PsiTreeUtil.findFirstParent(elementAt, new Condition<PsiElement>() {
+            @Override
+            public boolean value(PsiElement psiElement) {
+              return psiElement instanceof HbMustache;
+            }
+          });
+
+          if (mustache != null) {
+            String braceCompleter;
+
+            if (mustache.getFirstChild().getNode().getElementType() == HbTokenTypes.OPEN_UNESCAPED) {
+              // add "}}" to complete the CLOSE_UNESCAPED
+              braceCompleter = "}}";
+            } else {
+              // add "}" to complete the CLOSE
+              braceCompleter = "}";
+            }
+
+            editor.getDocument().insertString(offset, braceCompleter);
+            offset = offset + braceCompleter.length();
+            editor.getCaretModel().moveToOffset(offset);
+            closeBraceCompleted = true;
+          }
         }
       }
-      // if we're looking at a close stache, we may have some business too attend to
-      if (c == '}' && previousChar.equals("}")) {
-        autoInsertCloseTag(project, offset, editor, provider);
-        adjustMustacheFormatting(project, offset, editor, file, provider);
-      }
+    }
+
+    // if we just completed a close brace or the user just typed one, we may have some business to attend to
+    if (closeBraceCompleted || (c == '}' && previousChar.equals("}"))) {
+      autoInsertCloseTag(project, offset, editor, provider);
+      adjustMustacheFormatting(project, offset, editor, file, provider);
     }
 
     return Result.CONTINUE;
@@ -143,7 +165,7 @@ public class HbTypedHandler extends TypedHandlerDelegate {
     // run the formatter if the user just completed typing a SIMPLE_INVERSE or a CLOSE_BLOCK_STACHE
     if (closeOrSimpleInverseParent != null) {
       // grab the current caret position (AutoIndentLinesHandler is about to mess with it)
-      PsiDocumentManager.getInstance(project).commitAllDocuments();
+      PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
       CaretModel caretModel = editor.getCaretModel();
       CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(project);
       codeStyleManager.adjustLineIndent(file, editor.getDocument().getLineStartOffset(caretModel.getLogicalPosition().line));

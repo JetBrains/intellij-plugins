@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class HbSimpleInverseImpl extends HbMustacheImpl implements HbSimpleInverse {
+public class HbSimpleInverseImpl extends HbPlainMustacheImpl implements HbSimpleInverse {
   public HbSimpleInverseImpl(@NotNull ASTNode astNode) {
     super(astNode);
   }

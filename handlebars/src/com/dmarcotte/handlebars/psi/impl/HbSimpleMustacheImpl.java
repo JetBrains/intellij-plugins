@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class HbSimpleMustacheImpl extends HbMustacheImpl implements HbSimpleMustache {
+public class HbSimpleMustacheImpl extends HbPlainMustacheImpl implements HbSimpleMustache {
   public HbSimpleMustacheImpl(@NotNull ASTNode astNode) {
     super(astNode);
   }

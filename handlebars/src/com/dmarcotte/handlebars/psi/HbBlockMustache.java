@@ -3,7 +3,7 @@ package com.dmarcotte.handlebars.psi;
 /**
  * Base type for all mustaches which define blocks (openBlock, openInverseBlock, closeBlock... others in the future?)
  */
-public interface HbBlockMustache extends HbPsiElement {
+public interface HbBlockMustache extends HbMustache {
 
   /**
    * Returns the {@link HbMustacheName} element for this block. i.e. the element wrapping "foo.bar" in

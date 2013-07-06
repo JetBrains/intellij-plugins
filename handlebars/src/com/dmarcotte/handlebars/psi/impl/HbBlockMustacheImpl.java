@@ -7,7 +7,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-abstract class HbBlockMustacheImpl extends HbPsiElementImpl implements HbBlockMustache {
+abstract class HbBlockMustacheImpl extends HbMustacheImpl implements HbBlockMustache {
   protected HbBlockMustacheImpl(@NotNull ASTNode astNode) {
     super(astNode);
   }

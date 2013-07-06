@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class HbPartialImpl extends HbMustacheImpl implements HbPartial {
+public class HbPartialImpl extends HbPlainMustacheImpl implements HbPartial {
   public HbPartialImpl(@NotNull ASTNode astNode) {
     super(astNode);
   }

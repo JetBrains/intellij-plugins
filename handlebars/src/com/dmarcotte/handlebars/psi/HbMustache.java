@@ -1,7 +1,7 @@
 package com.dmarcotte.handlebars.psi;
 
 /**
- * Base element for non-block Mustaches
+ * Base for all mustache-based expressions
  */
 public interface HbMustache extends HbPsiElement {
 }
