@@ -143,10 +143,12 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
     HbConfig.setAutoGenerateCloseTagEnabled(true);
     doCharTest('{', "<caret>", "{<caret>");
     doCharTest('{', "{<caret>", "{{<caret>");
+    doCharTest('{', "{{<caret>", "{{{<caret>");
 
     HbConfig.setAutoGenerateCloseTagEnabled(false);
     doCharTest('{', "<caret>", "{<caret>");
     doCharTest('{', "{<caret>", "{{<caret>");
+    doCharTest('{', "{{<caret>", "{{{<caret>");
   }
 
   public void testFormatOnCloseBlockCompleted1() {
