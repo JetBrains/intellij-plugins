@@ -15,6 +15,11 @@ public class HbSimpleInverseImpl extends HbMustacheImpl implements HbSimpleInver
     super(astNode);
   }
 
+  /**
+   * Uses "else" as the name for this element if the "else" syntax is used,
+   * and uses no name (i.e. the "{^}" icon is the representative) in the simple
+   * inverse case
+   */
   @Override
   public String getName() {
     ASTNode elseNode = getElseNode();

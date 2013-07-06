@@ -312,8 +312,8 @@ class HbParsing {
 
   /**
    * partial
-   * : OPEN_PARTIAL PARTIAL_NAME CLOSE { $$ = new yy.PartialNode($2); }
-   * | OPEN_PARTIAL PARTIAL_NAME path CLOSE { $$ = new yy.PartialNode($2, $3); }
+   * : OPEN_PARTIAL partialName CLOSE { $$ = new yy.PartialNode($2); }
+   * | OPEN_PARTIAL partialName path CLOSE { $$ = new yy.PartialNode($2, $3); }
    * ;
    */
   private void parsePartial(PsiBuilder builder) {
@@ -321,7 +321,7 @@ class HbParsing {
 
     parseLeafToken(builder, OPEN_PARTIAL);
 
-    parseLeafToken(builder, PARTIAL_NAME);
+    parsePartialName(builder);
 
     // parse the optional path
     PsiBuilder.Marker optionalPathMarker = builder.mark();
@@ -599,6 +599,49 @@ class HbParsing {
     return parseLeafToken(builder, ID)
            && parseLeafToken(builder, EQUALS)
            && parseParam(builder);
+  }
+
+  /**
+   * partialName
+   * : path
+   * | STRING
+   * | INTEGER
+   * ;
+   */
+  private boolean parsePartialName(PsiBuilder builder) {
+    PsiBuilder.Marker partialNameMarker = builder.mark();
+
+    PsiBuilder.Marker pathMarker = builder.mark();
+    if (parsePath(builder)) {
+      pathMarker.drop();
+      partialNameMarker.done(PARTIAL_NAME);
+      return true;
+    } else {
+      pathMarker.rollbackTo();
+    }
+
+    PsiBuilder.Marker stringMarker = builder.mark();
+    if (parseLeafToken(builder, STRING)) {
+      stringMarker.drop();
+      partialNameMarker.done(PARTIAL_NAME);
+      return true;
+    }
+    else {
+      stringMarker.rollbackTo();
+    }
+
+    PsiBuilder.Marker integerMarker = builder.mark();
+    if (parseLeafToken(builder, INTEGER)) {
+      integerMarker.drop();
+      partialNameMarker.done(PARTIAL_NAME);
+      return true;
+    }
+    else {
+      integerMarker.rollbackTo();
+    }
+
+    partialNameMarker.error(HbBundle.message("hb.parsing.expected.partial.name"));
+    return false;
   }
 
   /**

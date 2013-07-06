@@ -58,7 +58,7 @@ public class HbLexerFreeFormTest extends HbLexerTest {
 
   public void testSimplePartial() {
     TokenizerResult result = tokenize("{{>partialId}}");
-    result.shouldMatchTokenTypes(OPEN_PARTIAL, PARTIAL_NAME, CLOSE);
+    result.shouldMatchTokenTypes(OPEN_PARTIAL, ID, CLOSE);
     result.shouldMatchTokenContent("{{>", "partialId", "}}");
   }
 

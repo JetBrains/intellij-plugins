@@ -4,7 +4,7 @@ import com.dmarcotte.handlebars.HbIcons;
 import com.dmarcotte.handlebars.psi.HbPartial;
 import com.dmarcotte.handlebars.psi.HbPartialName;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,8 +17,13 @@ public class HbPartialImpl extends HbMustacheImpl implements HbPartial {
 
   @Override
   public String getName() {
-    HbPartialName partialName = PsiTreeUtil.findChildOfType(this, HbPartialName.class);
-    return partialName == null ? null : partialName.getName();
+    for (PsiElement childElement : getChildren()) {
+      if (childElement instanceof HbPartialName) {
+        return ((HbPartialName)childElement).getName();
+      }
+    }
+
+    return null;
   }
 
   @Nullable

@@ -1,7 +1,7 @@
 // We base our lexer directly on the official handlebars.l lexer definition,
 // making some modifications to account for Jison/JFlex syntax and functionality differences
 //
-// Revision ported: https://github.com/wycats/handlebars.js/commit/822a8911ecd4ffe822fd82afbf7b24704e79f787#src/handlebars.l
+// Revision ported: https://github.com/wycats/handlebars.js/commit/da2aabe7bdc75e29178d920332fad9de183de8a0#src/handlebars.l
 
 package com.dmarcotte.handlebars.parsing;
 
@@ -117,7 +117,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 
 <mu> {
 
-  "{{>" { yypushState(par); return HbTokenTypes.OPEN_PARTIAL; }
+  "{{>" { return HbTokenTypes.OPEN_PARTIAL; }
   "{{#" { return HbTokenTypes.OPEN_BLOCK; }
   "{{/" { return HbTokenTypes.OPEN_ENDBLOCK; }
   "{{^" { return HbTokenTypes.OPEN_INVERSE; }
@@ -153,10 +153,6 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   // dm todo delete old: [a-zA-Z0-9_$-]+/[=}\t \n\x0B\f\r\/.] { return HbTokenTypes.ID; }
   // TODO handlesbars.l extracts the id from within the square brackets.  Fix it to match handlebars.l?
   "["[^\]]*"]" { return HbTokenTypes.ID; }
-}
-
-<par> {
-    [a-zA-Z0-9_$-/]+ { yypopState(); return HbTokenTypes.PARTIAL_NAME; }
 }
 
 <comment> {

@@ -18,10 +18,13 @@ public class HbSimpleMustacheImpl extends HbMustacheImpl implements HbSimpleMust
     super(astNode);
   }
 
+  /**
+   * Uses the name of the first path or data to represent this mustache,
+   * following the grammar defined in {@link com.dmarcotte.handlebars.parsing.HbParsing#parseInMustache}
+   */
   @Override
   public String getName() {
     for (PsiElement childElement : getChildren()) {
-      // use the name of the first path or data to represent this mustache
       if (childElement instanceof HbPath
           || childElement instanceof HbData) {
         return ((HbPsiElement)childElement).getName();

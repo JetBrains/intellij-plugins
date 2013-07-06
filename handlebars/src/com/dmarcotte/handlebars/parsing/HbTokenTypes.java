@@ -22,6 +22,7 @@ public class HbTokenTypes {
   public static final IElementType PATH = new HbCompositeElementType("PATH");
   public static final IElementType PARAM = new HbCompositeElementType("PARAM");
   public static final IElementType PARTIAL_STACHE = new HbCompositeElementType("PARTIAL_STACHE");
+  public static final IElementType PARTIAL_NAME = new HbCompositeElementType("PARTIAL_NAME");
   public static final IElementType SIMPLE_INVERSE = new HbCompositeElementType("SIMPLE_INVERSE");
   public static final IElementType STATEMENTS = new HbCompositeElementType("STATEMENTS");
 
@@ -40,7 +41,6 @@ public class HbTokenTypes {
   public static final IElementType OPEN_UNESCAPED = new HbElementType("OPEN_UNESCAPED", "hb.parsing.element.expected.open_unescaped");
   public static final IElementType EQUALS = new HbElementType("EQUALS", "hb.parsing.element.expected.equals");
   public static final IElementType ID = new HbElementType("ID", "hb.parsing.element.expected.id");
-  public static final IElementType PARTIAL_NAME = new HbElementType("PARTIAL_NAME", "hb.parsing.element.expected.partial.name");
   public static final IElementType DATA_PREFIX = new HbElementType("DATA_PREFIX", "hb.parsing.element.expected.data");
   public static final IElementType DATA = new HbElementType("DATA", "hb.parsing.element.expected.data");
   public static final IElementType SEP = new HbElementType("SEP", "hb.parsing.element.expected.separator");
