@@ -1,7 +1,7 @@
 // We base our lexer directly on the official handlebars.l lexer definition,
 // making some modifications to account for Jison/JFlex syntax and functionality differences
 //
-// Revision ported: https://github.com/wycats/handlebars.js/commit/9e4b59e815b1f557c31fe5abc36b9be8aa0cf34a#src/handlebars.l
+// Revision ported: https://github.com/wycats/handlebars.js/commit/c1020a01309723b00ef21525d7f8093efb4d0d93#src/handlebars.l
 
 package com.dmarcotte.handlebars.parsing;
 
@@ -140,7 +140,17 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   "true"/["}"\t \n\x0B\f\r] { return HbTokenTypes.BOOLEAN; }
   "false"/["}"\t \n\x0B\f\r] { return HbTokenTypes.BOOLEAN; }
   \-?[0-9]+/[}\t \n\x0B\f\r]  { return HbTokenTypes.INTEGER; }
-  [a-zA-Z0-9_$-]+/[=}\t \n\x0B\f\r\/.] { return HbTokenTypes.ID; }
+  /*
+    ID is the inverse of control characters.
+    Control characters ranges:
+      [\\t \n\x0B\f\r]          Whitespace
+      [!"#%-,\./]   !, ", #, %, &, ', (, ), *, +, ,, ., /,  Exceptions in range: $, -
+      [;->@]        ;, <, =, >, @,                          Exceptions in range: :, ?
+      [\[-\^`]      [, \, ], ^, `,                          Exceptions in range: _
+      [\{-~]        {, |, }, ~
+    */
+  [^\t \n\x0B\f\r!\"#%-,\.\/;->@\[-\^`\{-~]+/[=}\t \n\x0B\f\r\/.]   { return HbTokenTypes.ID; }
+  // dm todo delete old: [a-zA-Z0-9_$-]+/[=}\t \n\x0B\f\r\/.] { return HbTokenTypes.ID; }
   // TODO handlesbars.l extracts the id from within the square brackets.  Fix it to match handlebars.l?
   "["[^\]]*"]" { return HbTokenTypes.ID; }
 }
