@@ -384,21 +384,19 @@ class HbParsing {
 
   /**
    * inMustache
-   * : path params hash { $$ = [[$1].concat($2), $3]; }
-   * | path params { $$ = [[$1].concat($2), null]; }
-   * | path hash { $$ = [[$1], $2]; }
-   * | path { $$ = [[$1], null]; }
-   * | DATA { $$ = [[new yy.DataNode($1)], null]; }
+   * : path params hash
+   * | path params
+   * | path hash
+   * | path
+   * | dataName
    * ;
    */
   private boolean parseInMustache(PsiBuilder builder) {
     PsiBuilder.Marker inMustacheMarker = builder.mark();
 
     if (!parsePath(builder)) {
-      // not a path, try to parse DATA
-      if (builder.getTokenType() == DATA_PREFIX
-          && parseLeafToken(builder, DATA_PREFIX)
-          && parseLeafToken(builder, HbTokenTypes.DATA)) {
+      // not a path, try to parse dataName
+      if (parseDataName(builder)) {
         inMustacheMarker.drop();
         return true;
       }
@@ -481,7 +479,7 @@ class HbParsing {
    * | STRING
    * | INTEGER
    * | BOOLEAN
-   * | DATA
+   * | dataName
    * ;
    */
   private boolean parseParam(PsiBuilder builder) {
@@ -523,7 +521,7 @@ class HbParsing {
     }
 
     PsiBuilder.Marker dataMarker = builder.mark();
-    if (parseLeafToken(builder, DATA_PREFIX) && parseLeafToken(builder, DATA)) {
+    if (parseDataName(builder)) {
       dataMarker.drop();
       paramMarker.done(PARAM);
       return true;
@@ -590,6 +588,7 @@ class HbParsing {
    * | ID EQUALS STRING
    * | ID EQUALS INTEGER
    * | ID EQUALS BOOLEAN
+   * | ID EQUALS dataName
    * ;
    * <p/>
    * Refactored to:
@@ -600,6 +599,30 @@ class HbParsing {
     return parseLeafToken(builder, ID)
            && parseLeafToken(builder, EQUALS)
            && parseParam(builder);
+  }
+
+  /**
+   * dataName
+   *  : DATA path
+   *  ;
+   */
+  private boolean parseDataName(PsiBuilder builder) {
+    PsiBuilder.Marker prefixMarker = builder.mark();
+    if (parseLeafToken(builder, HbTokenTypes.DATA_PREFIX)) {
+      prefixMarker.drop();
+    } else {
+      prefixMarker.rollbackTo();
+      return false;
+    }
+
+    PsiBuilder.Marker dataMarker = builder.mark();
+    if (parsePath(builder)) {
+      dataMarker.done(DATA);
+      return true;
+    }
+
+    dataMarker.rollbackTo();
+    return false;
   }
 
   /**

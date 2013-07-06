@@ -1,7 +1,7 @@
 // We base our lexer directly on the official handlebars.l lexer definition,
 // making some modifications to account for Jison/JFlex syntax and functionality differences
 //
-// Revision ported: https://github.com/wycats/handlebars.js/commit/c1020a01309723b00ef21525d7f8093efb4d0d93#src/handlebars.l
+// Revision ported: https://github.com/wycats/handlebars.js/commit/822a8911ecd4ffe822fd82afbf7b24704e79f787#src/handlebars.l
 
 package com.dmarcotte.handlebars.parsing;
 
@@ -135,7 +135,7 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   "}}" { yypopState(); return HbTokenTypes.CLOSE; }
   \"([^\"\\]|\\.)*\" { return HbTokenTypes.STRING; }
   '([^'\\]|\\.)*' { return HbTokenTypes.STRING; }
-  "@" { yypushState(data); return HbTokenTypes.DATA_PREFIX; }
+  "@" { return HbTokenTypes.DATA_PREFIX; }
   "else"/["}"\t \n\x0B\f\r] { return HbTokenTypes.ELSE; } // create a custom token for "else" so that we can highlight it independently of the "{{" but still parse it as an inverse operator
   "true"/["}"\t \n\x0B\f\r] { return HbTokenTypes.BOOLEAN; }
   "false"/["}"\t \n\x0B\f\r] { return HbTokenTypes.BOOLEAN; }
@@ -172,11 +172,6 @@ WhiteSpace = {LineTerminator} | [ \t\f]
   // lex unclosed comments so that we can give better errors
   "{{!--"!([^]*"--}}"[^]*) { yypopState(); return HbTokenTypes.UNCLOSED_COMMENT; }
   "{{!"[^"--"]!([^]*"}}"[^]*) { yypopState(); return HbTokenTypes.UNCLOSED_COMMENT; }
-}
-
-<data> {
-  [a-zA-Z]+ { yypopState(); return HbTokenTypes.DATA; }
-  "}}" { yypushback(2); yypopState(); } // stop looking for data id when we hit a close stache
 }
 
 {WhiteSpace}+ { return HbTokenTypes.WHITE_SPACE; }

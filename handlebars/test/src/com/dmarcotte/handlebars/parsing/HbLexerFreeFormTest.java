@@ -143,6 +143,6 @@ public class HbLexerFreeFormTest extends HbLexerTest {
 
     result = tokenize("{{ @%foo  }}");
 
-    result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, DATA_PREFIX, INVALID, DATA, WHITE_SPACE, CLOSE);
+    result.shouldMatchTokenTypes(OPEN, WHITE_SPACE, DATA_PREFIX, INVALID, ID, WHITE_SPACE, CLOSE);
   }
 }
