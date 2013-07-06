@@ -2,9 +2,7 @@ package com.dmarcotte.handlebars.psi.impl;
 
 import com.dmarcotte.handlebars.HbIcons;
 import com.dmarcotte.handlebars.parsing.HbTokenTypes;
-import com.dmarcotte.handlebars.psi.HbData;
-import com.dmarcotte.handlebars.psi.HbPath;
-import com.dmarcotte.handlebars.psi.HbPsiElement;
+import com.dmarcotte.handlebars.psi.HbMustacheName;
 import com.dmarcotte.handlebars.psi.HbSimpleMustache;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
@@ -18,16 +16,11 @@ public class HbSimpleMustacheImpl extends HbMustacheImpl implements HbSimpleMust
     super(astNode);
   }
 
-  /**
-   * Uses the name of the first path or data to represent this mustache,
-   * following the grammar defined in {@link com.dmarcotte.handlebars.parsing.HbParsing#parseInMustache}
-   */
   @Override
   public String getName() {
     for (PsiElement childElement : getChildren()) {
-      if (childElement instanceof HbPath
-          || childElement instanceof HbData) {
-        return ((HbPsiElement)childElement).getName();
+      if (childElement instanceof HbMustacheName) {
+        return ((HbMustacheName)childElement).getName();
       }
     }
 

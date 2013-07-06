@@ -4,7 +4,10 @@ import com.dmarcotte.handlebars.HbLanguage;
 import com.dmarcotte.handlebars.config.HbConfig;
 import com.dmarcotte.handlebars.file.HbFileViewProvider;
 import com.dmarcotte.handlebars.parsing.HbTokenTypes;
-import com.dmarcotte.handlebars.psi.*;
+import com.dmarcotte.handlebars.psi.HbCloseBlockMustache;
+import com.dmarcotte.handlebars.psi.HbMustacheName;
+import com.dmarcotte.handlebars.psi.HbPsiUtil;
+import com.dmarcotte.handlebars.psi.HbSimpleInverse;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.CaretModel;
@@ -76,13 +79,11 @@ public class HbTypedHandler extends TypedHandlerDelegate {
     PsiElement openTag = HbPsiUtil.findParentOpenTagElement(elementAtCaret);
 
     if (openTag != null && openTag.getChildren().length > 1) {
-      // we've got an open block type stache... find its "name" (its first path element)
-      HbPsiElement pathElem = (HbPsiElement)openTag.getChildren()[1];
+      HbMustacheName mustacheName = PsiTreeUtil.findChildOfType(openTag, HbMustacheName.class);
 
-      if (pathElem != null
-          && pathElem instanceof HbPath) {
+      if (mustacheName != null) {
         // insert the corresponding close tag
-        editor.getDocument().insertString(offset, "{{/" + pathElem.getText() + "}}");
+        editor.getDocument().insertString(offset, "{{/" + mustacheName.getText() + "}}");
       }
     }
   }

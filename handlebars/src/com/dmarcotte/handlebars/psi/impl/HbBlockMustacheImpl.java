@@ -1,7 +1,7 @@
 package com.dmarcotte.handlebars.psi.impl;
 
 import com.dmarcotte.handlebars.psi.HbBlockMustache;
-import com.dmarcotte.handlebars.psi.HbPath;
+import com.dmarcotte.handlebars.psi.HbMustacheName;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -14,14 +14,14 @@ abstract class HbBlockMustacheImpl extends HbPsiElementImpl implements HbBlockMu
 
   @Override
   @Nullable
-  public HbPath getBlockMainPath() {
-    return PsiTreeUtil.findChildOfType(this, HbPath.class);
+  public HbMustacheName getBlockMustacheName() {
+    return PsiTreeUtil.findChildOfType(this, HbMustacheName.class);
   }
 
   @Override
   @Nullable
   public String getName() {
-    HbPath mainPath = getBlockMainPath();
+    HbMustacheName mainPath = getBlockMustacheName();
     return mainPath == null ? null : mainPath.getName();
   }
 }

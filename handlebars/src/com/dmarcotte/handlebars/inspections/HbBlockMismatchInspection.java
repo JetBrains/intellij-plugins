@@ -2,8 +2,8 @@ package com.dmarcotte.handlebars.inspections;
 
 import com.dmarcotte.handlebars.HbBundle;
 import com.dmarcotte.handlebars.psi.HbCloseBlockMustache;
+import com.dmarcotte.handlebars.psi.HbMustacheName;
 import com.dmarcotte.handlebars.psi.HbOpenBlockMustache;
-import com.dmarcotte.handlebars.psi.HbPath;
 import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -15,34 +15,34 @@ public class HbBlockMismatchInspection implements Annotator {
   public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (element instanceof HbOpenBlockMustache) {
       HbOpenBlockMustache openBlockMustache = (HbOpenBlockMustache)element;
-      HbPath openBlockMainPath = openBlockMustache.getBlockMainPath();
+      HbMustacheName openBlockMustacheName = openBlockMustache.getBlockMustacheName();
 
       HbCloseBlockMustache closeBlockMustache = openBlockMustache.getPairedElement();
       if (closeBlockMustache != null) {
-        HbPath closeBlockMainPath = closeBlockMustache.getBlockMainPath();
+        HbMustacheName closeBlockMustacheName = closeBlockMustache.getBlockMustacheName();
 
-        if (openBlockMainPath == null || closeBlockMainPath == null) {
+        if (openBlockMustacheName == null || closeBlockMustacheName == null) {
           return;
         }
 
-        String openBlockName = openBlockMainPath.getName();
-        String closeBlockName = closeBlockMainPath.getName();
+        String openBlockName = openBlockMustacheName.getName();
+        String closeBlockName = closeBlockMustacheName.getName();
         if (!openBlockName.equals(closeBlockName)) {
           Annotation openBlockAnnotation
-            = holder.createErrorAnnotation(openBlockMainPath,
+            = holder.createErrorAnnotation(openBlockMustacheName,
                                            HbBundle.message("hb.block.mismatch.inspection.open.block", openBlockName, closeBlockName));
           openBlockAnnotation.registerFix(new HbBlockMismatchFix(closeBlockName, openBlockName, true));
           openBlockAnnotation.registerFix(new HbBlockMismatchFix(openBlockName, closeBlockName, false));
 
           Annotation closeBlockAnnotation
-            = holder.createErrorAnnotation(closeBlockMainPath,
+            = holder.createErrorAnnotation(closeBlockMustacheName,
                                            HbBundle.message("hb.block.mismatch.inspection.close.block", openBlockName, closeBlockName));
           closeBlockAnnotation.registerFix(new HbBlockMismatchFix(openBlockName, closeBlockName, false));
           closeBlockAnnotation.registerFix(new HbBlockMismatchFix(closeBlockName, openBlockName, true));
         }
       }
       else {
-        holder.createErrorAnnotation(openBlockMainPath,
+        holder.createErrorAnnotation(openBlockMustacheName,
                                      HbBundle.message("hb.block.mismatch.inspection.missing.end.block", openBlockMustache.getName()));
       }
     }
@@ -51,11 +51,11 @@ public class HbBlockMismatchInspection implements Annotator {
       HbCloseBlockMustache closeBlockMustache = (HbCloseBlockMustache)element;
       PsiElement openBlockElement = closeBlockMustache.getPairedElement();
       if (openBlockElement == null) {
-        HbPath closeBlockMainPath = closeBlockMustache.getBlockMainPath();
-        if (closeBlockMainPath == null) {
+        HbMustacheName closeBlockMustacheName = closeBlockMustache.getBlockMustacheName();
+        if (closeBlockMustacheName == null) {
           return;
         }
-        holder.createErrorAnnotation(closeBlockMainPath,
+        holder.createErrorAnnotation(closeBlockMustacheName,
                                      HbBundle.message("hb.block.mismatch.inspection.missing.start.block", closeBlockMustache.getName()));
       }
     }

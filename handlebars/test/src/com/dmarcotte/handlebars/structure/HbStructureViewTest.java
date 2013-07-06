@@ -79,7 +79,7 @@ public class HbStructureViewTest extends LightPlatformCodeInsightFixtureTestCase
       "  else\n" +
       " mustache\n" +
       " partial\n" +
-      " data\n" +
+      " @data\n" +
       " \n" +
       " unescaped"
     );

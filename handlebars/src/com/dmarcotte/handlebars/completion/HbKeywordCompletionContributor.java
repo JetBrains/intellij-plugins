@@ -1,7 +1,7 @@
 package com.dmarcotte.handlebars.completion;
 
 import com.dmarcotte.handlebars.parsing.HbTokenTypes;
-import com.dmarcotte.handlebars.psi.HbPath;
+import com.dmarcotte.handlebars.psi.HbMustacheName;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.ASTNode;
@@ -20,7 +20,7 @@ public class HbKeywordCompletionContributor extends CompletionContributor {
              protected void addCompletions(@NotNull CompletionParameters parameters,
                                            ProcessingContext context,
                                            @NotNull CompletionResultSet result) {
-               PsiElement position = PsiTreeUtil.getParentOfType(parameters.getPosition(), HbPath.class);
+               PsiElement position = PsiTreeUtil.getParentOfType(parameters.getPosition(), HbMustacheName.class);
                PsiElement prevSibling = position != null ? position.getPrevSibling() : null;
                ASTNode prevSiblingNode = prevSibling != null ? prevSibling.getNode() : null;
                if (prevSiblingNode != null && prevSiblingNode.getElementType() == HbTokenTypes.OPEN_BLOCK) {

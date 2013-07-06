@@ -65,6 +65,10 @@ public class HbParseDefinition implements ParserDefinition {
       return new HbSimpleMustacheImpl(node);
     }
 
+    if (node.getElementType() == HbTokenTypes.MUSTACHE_NAME) {
+      return new HbMustacheNameImpl(node);
+    }
+
     if (node.getElementType() == HbTokenTypes.PATH) {
       return new HbPathImpl(node);
     }

@@ -276,10 +276,10 @@ class HbParsing {
       return false;
     }
 
-    if (parsePath(builder)) {
-      parseLeafToken(builder, CLOSE);
-    }
-
+    PsiBuilder.Marker mustacheNameMark = builder.mark();
+    parsePath(builder);
+    mustacheNameMark.done(HbTokenTypes.MUSTACHE_NAME);
+    parseLeafTokenGreedy(builder, CLOSE);
     closeBlockMarker.done(CLOSE_BLOCK_STACHE);
     return true;
   }
@@ -393,18 +393,23 @@ class HbParsing {
    */
   private boolean parseInMustache(PsiBuilder builder) {
     PsiBuilder.Marker inMustacheMarker = builder.mark();
+    PsiBuilder.Marker mustacheNameMarker = builder.mark();
 
     if (!parsePath(builder)) {
       // not a path, try to parse dataName
       if (parseDataName(builder)) {
+        mustacheNameMarker.done(HbTokenTypes.MUSTACHE_NAME);
         inMustacheMarker.drop();
         return true;
       }
       else {
+        mustacheNameMarker.drop();
         inMustacheMarker.error(HbBundle.message("hb.parsing.expected.path.or.data"));
         return false;
       }
     }
+
+    mustacheNameMarker.done(HbTokenTypes.MUSTACHE_NAME);
 
     // try to extend the 'path' we found to 'path hash'
     PsiBuilder.Marker hashMarker = builder.mark();
@@ -797,14 +802,14 @@ class HbParsing {
       while (!builder.eof()
              && builder.getTokenType() != expectedToken
              && !RECOVERY_SET.contains(builder.getTokenType())) {
-        builder.advanceLexer();
+          builder.advanceLexer();
       }
 
       recordLeafTokenError(expectedToken, unexpectedTokensMarker);
     }
 
-    if (builder.getTokenType() == expectedToken) {
-      parseLeafToken(builder, expectedToken);
+    if (!builder.eof() && builder.getTokenType() == expectedToken) {
+       parseLeafToken(builder, expectedToken);
     }
   }
 
