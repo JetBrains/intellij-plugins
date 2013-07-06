@@ -150,7 +150,6 @@ WhiteSpace = {LineTerminator} | [ \t\f]
       [\{-~]        {, |, }, ~
     */
   [^\t \n\x0B\f\r!\"#%-,\.\/;->@\[-\^`\{-~]+/[=}\t \n\x0B\f\r\/.]   { return HbTokenTypes.ID; }
-  // dm todo delete old: [a-zA-Z0-9_$-]+/[=}\t \n\x0B\f\r\/.] { return HbTokenTypes.ID; }
   // TODO handlesbars.l extracts the id from within the square brackets.  Fix it to match handlebars.l?
   "["[^\]]*"]" { return HbTokenTypes.ID; }
 }
