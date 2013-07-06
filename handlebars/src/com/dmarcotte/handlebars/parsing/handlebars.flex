@@ -1,7 +1,7 @@
 // We base our lexer directly on the official handlebars.l lexer definition,
 // making some modifications to account for Jison/JFlex syntax and functionality differences
 //
-// Revision ported: https://github.com/wycats/handlebars.js/commit/a927a9b0adc39660f0794b9b210c9db2f7ddecd9#src/handlebars.l
+// Revision ported: https://github.com/wycats/handlebars.js/commit/9e4b59e815b1f557c31fe5abc36b9be8aa0cf34a#src/handlebars.l
 
 package com.dmarcotte.handlebars.parsing;
 
@@ -62,14 +62,18 @@ WhiteSpace = {LineTerminator} | [ \t\f]
             yypushback(1);
           }
 
-          if (yylength() > 0 && yytext().toString().substring(yylength() - 1, yylength()).equals("\\")) {
+          // inspect the characters leading up to this mustache for escaped characters
+          if (yylength() > 1 && yytext().subSequence(yylength() - 2, yylength()).toString().equals("\\\\")) {
+            yypushback(2); // put the escaped escape char back
+            yypushState(emu);
+          } else if (yylength() > 0 && yytext().toString().substring(yylength() - 1, yylength()).equals("\\")) {
             yypushback(1); // put the escape char back
             yypushState(emu);
           } else {
             yypushState(mu);
           }
 
-          // we stray from the Handlebars grammar a bit here since we need our WHITE_SPACE more clearly delineated
+          // we stray from the handlebars.js lexer here since we need our WHITE_SPACE more clearly delineated
           //    and we need to avoid creating extra tokens for empty strings (makes the parser and formatter happier)
           if (!yytext().toString().equals("")) {
               if (yytext().toString().trim().length() == 0) {
@@ -86,6 +90,10 @@ WhiteSpace = {LineTerminator} | [ \t\f]
 
 <emu> {
     "\\" { return HbTokenTypes.ESCAPE_CHAR; }
+    "\\\\" {
+        yypopState();
+        return HbTokenTypes.CONTENT;
+    }
     "{{"~"{{" { // grab everything up to the next open stache
           // backtrack over any stache characters at the end of this string
           while (yylength() > 0 && yytext().subSequence(yylength() - 1, yylength()).toString().equals("{")) {

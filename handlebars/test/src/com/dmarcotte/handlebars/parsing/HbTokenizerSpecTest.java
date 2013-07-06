@@ -56,6 +56,43 @@ public class HbTokenizerSpecTest extends HbLexerTest {
   }
 
   /**
+   * supports escaping escape character
+   */
+  public void testEscapingEscapeCharacter() {
+    TokenizerResult result = tokenize("{{foo}} \\\\{{bar}} \\\\{{baz}}");
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, WHITE_SPACE, CONTENT, OPEN, ID, CLOSE, WHITE_SPACE, CONTENT, OPEN, ID, CLOSE);
+
+    result.shouldBeToken(4, CONTENT, "\\\\");
+    result.shouldBeToken(6, ID, "bar");
+    result.shouldBeToken(9, CONTENT, "\\\\");
+    result.shouldBeToken(11, ID, "baz");
+  }
+
+  /**
+   * supports mixed escaped delimiters and escaped escape characters
+   */
+  public void testMixedEscapedDelimitersAndEscapedEscapes() {
+    TokenizerResult result = tokenize("{{foo}} \\\\{{bar}} \\{{baz}}");
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, WHITE_SPACE, CONTENT, OPEN, ID, CLOSE, WHITE_SPACE, ESCAPE_CHAR, CONTENT);
+
+    result.shouldBeToken(4, CONTENT, "\\\\");
+    result.shouldBeToken(5, OPEN, "{{");
+    result.shouldBeToken(6, ID, "bar");
+    result.shouldBeToken(10, CONTENT, "{{baz}}");
+  }
+
+  /**
+   * supports escaped escape character on a triple stash
+   */
+  public void testEscapedEscapeCharOnTripleStash() {
+    TokenizerResult result = tokenize("{{foo}} \\\\{{{bar}}} {{baz}}");
+    result.shouldMatchTokenTypes(OPEN, ID, CLOSE, WHITE_SPACE, CONTENT, OPEN_UNESCAPED, ID, CLOSE, WHITE_SPACE, OPEN, ID, CLOSE);
+
+    result.shouldBeToken(4, CONTENT, "\\\\");
+    result.shouldBeToken(6, ID, "bar");
+  }
+
+  /**
    * tokenizes a simple path
    */
   public void testSimplePath() {
