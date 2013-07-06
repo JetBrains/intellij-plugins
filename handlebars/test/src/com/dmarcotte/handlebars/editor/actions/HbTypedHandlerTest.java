@@ -97,6 +97,16 @@ public class HbTypedHandlerTest extends HbActionHandlerTest {
     doCharTest('}', "{{#foo.bar.[baz bat]}<caret>", "{{#foo.bar.[baz bat]}}<caret>{{/foo.bar.[baz bat]}}");
   }
 
+  public void testNoInsertCloseTagForExtraStaches() {
+    HbConfig.setAutoGenerateCloseTagEnabled(true);
+    doCharTest('}', "{{#foo}}<caret>", "{{#foo}}}<caret>");
+  }
+
+  public void testNoInsertCloseTagForAlreadyClosedStaches() {
+    HbConfig.setAutoGenerateCloseTagEnabled(true);
+    doCharTest('}', "{{#foo}<caret>{{/foo}}", "{{#foo}}<caret>{{/foo}}");
+  }
+
   public void testRegularStache() {
     // ensure that nothing special happens for regular 'staches, whether autoGenerateCloseTag is enabled or not
 

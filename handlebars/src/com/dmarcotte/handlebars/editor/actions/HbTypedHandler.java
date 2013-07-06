@@ -4,10 +4,7 @@ import com.dmarcotte.handlebars.HbLanguage;
 import com.dmarcotte.handlebars.config.HbConfig;
 import com.dmarcotte.handlebars.file.HbFileViewProvider;
 import com.dmarcotte.handlebars.parsing.HbTokenTypes;
-import com.dmarcotte.handlebars.psi.HbCloseBlockMustache;
-import com.dmarcotte.handlebars.psi.HbMustacheName;
-import com.dmarcotte.handlebars.psi.HbPsiUtil;
-import com.dmarcotte.handlebars.psi.HbSimpleInverse;
+import com.dmarcotte.handlebars.psi.*;
 import com.intellij.codeInsight.editorActions.TypedHandlerDelegate;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.CaretModel;
@@ -76,9 +73,13 @@ public class HbTypedHandler extends TypedHandlerDelegate {
 
     PsiElement elementAtCaret = provider.findElementAt(offset - 1, HbLanguage.class);
 
-    PsiElement openTag = HbPsiUtil.findParentOpenTagElement(elementAtCaret);
+    if (elementAtCaret == null || elementAtCaret.getNode().getElementType() != HbTokenTypes.CLOSE) {
+      return;
+    }
 
-    if (openTag != null && openTag.getChildren().length > 1) {
+    HbOpenBlockMustache openTag = HbPsiUtil.findParentOpenTagElement(elementAtCaret);
+
+    if (openTag != null && openTag.getPairedElement() == null && openTag.getChildren().length > 1) {
       HbMustacheName mustacheName = PsiTreeUtil.findChildOfType(openTag, HbMustacheName.class);
 
       if (mustacheName != null) {
