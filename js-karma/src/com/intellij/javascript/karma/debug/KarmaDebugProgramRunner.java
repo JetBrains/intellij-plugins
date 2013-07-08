@@ -8,8 +8,6 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
-import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
@@ -17,7 +15,6 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
-import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
@@ -38,7 +35,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Set;
 
@@ -103,8 +99,8 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     if (!debugEngine.prepareDebugger(project)) {
       return null;
     }
-    final Connection connection = debugEngine.openConnection(false);
-    final String url = "http://localhost:" + karmaServer.getWebServerPort();
+    final Connection connection = debugEngine.openConnection(true);
+    final String url = "http://localhost:" + karmaServer.getWebServerPort() + "/debug.html";
 
     final DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
     XDebugSession session = XDebuggerManager.getInstance(project).startSession(
@@ -121,18 +117,6 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
         }
       }
     );
-    // must be here, after all breakpoints were queued
-    ((JSDebugProcess)session.getDebugProcess()).getConnection().queueRequest(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          Thread.sleep(200);
-        }
-        catch (InterruptedException ignored) {
-        }
-        resumeTestRunning(executionResult.getProcessHandler());
-      }
-    });
     return session.getRunContentDescriptor();
   }
 
@@ -177,16 +161,6 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
       return null;
     }
     return capturedEngines.iterator().next();
-  }
-
-  private static void resumeTestRunning(@NotNull ProcessHandler processHandler) {
-    if (processHandler instanceof OSProcessHandler) {
-      // process's input stream will be closed on process termination
-      @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "ConstantConditions"})
-      PrintWriter writer = new PrintWriter(processHandler.getProcessInput());
-      writer.print("resume-test-running\n");
-      writer.flush();
-    }
   }
 
 }

@@ -69,7 +69,9 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
 
     consoleContent.setCloseable(false);
-    final KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this, myServer);
+    final KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this,
+                                                                                      myServer,
+                                                                                      myExecutionSession.isDebug());
     if (readyToRun) {
       ui.selectAndFocus(consoleContent, false, false);
     }
@@ -101,7 +103,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
         @Override
         public void onTerminated(int exitCode) {
           alarm.cancelAllRequests();
-          rootFormatter.uninstall();
+          rootFormatter.onServerProcessTerminated();
           print("Karma server finished with exited code " + exitCode + "\n", ConsoleViewContentType.SYSTEM_OUTPUT);
         }
       });
@@ -109,7 +111,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     myExecutionSession.getProcessHandler().addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(ProcessEvent event) {
-        rootFormatter.uninstall();
+        rootFormatter.onTestRunProcessTerminated();
       }
     });
     return consoleContent;
@@ -136,30 +138,46 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     private final TestTreeRenderer myRenderer;
     private final KarmaServer myServer;
     private final TestTreeView myTreeView;
+    private final boolean myDebug;
+    private boolean myTestRunProcessTerminated = false;
+    private boolean myServerProcessTerminated = false;
 
     private KarmaRootTestProxyFormatter(@NotNull SMTRunnerConsoleView consoleView,
-                                        @NotNull KarmaServer server) {
+                                        @NotNull KarmaServer server,
+                                        boolean debug) {
       myTreeView = consoleView.getResultsViewer().getTreeView();
       myRenderer = ObjectUtils.tryCast(myTreeView.getCellRenderer(), TestTreeRenderer.class);
       if (myRenderer != null) {
         myRenderer.setAdditionalRootFormatter(this);
       }
       myServer = server;
+      myDebug = debug;
     }
 
     @Override
     public void format(@NotNull SMTestProxy.SMRootTestProxy testProxy, @NotNull TestTreeRenderer renderer) {
-      if (testProxy.isLeaf() && myServer.isReady() && !myServer.hasCapturedBrowsers()) {
-        renderer.clear();
-        renderer.append("Waiting for browser capturing...");
+      if (testProxy.isLeaf()) {
+        if (myDebug) {
+          renderer.clear();
+          renderer.append("Test tree is not available in a debug session");
+        }
+        if (!myTestRunProcessTerminated && !myServerProcessTerminated) {
+          if (myServer.isReady() && !myServer.hasCapturedBrowsers()) {
+            renderer.clear();
+            renderer.append("Waiting for browser capturing...");
+          }
+        }
       }
     }
 
-    public void uninstall() {
-      if (myRenderer != null) {
-        myRenderer.removeAdditionalRootFormatter();
-        myTreeView.repaint();
-      }
+    private void onTestRunProcessTerminated() {
+      myTestRunProcessTerminated = true;
+      myTreeView.repaint();
+    }
+
+    private void onServerProcessTerminated() {
+      myServerProcessTerminated = true;
+      myTreeView.repaint();
     }
   }
 

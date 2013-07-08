@@ -85,17 +85,23 @@ public class KarmaExecutionSession {
     return consoleView;
   }
 
+  public boolean isDebug() {
+    return myExecutionType == KarmaExecutionType.DEBUG;
+  }
+
   @NotNull
   private ProcessHandler createProcessHandler(@NotNull final KarmaServer server) throws ExecutionException {
-    final File clientAppFile;
-    try {
-      clientAppFile = server.getKarmaJsSourcesLocator().getClientAppFile();
-    }
-    catch (IOException e) {
-      throw new ExecutionException("Can't find karma-intellij test runner", e);
-    }
-    if (server.isReady() && server.hasCapturedBrowsers()) {
-      return createOSProcessHandler(server.getRunnerPort(), clientAppFile);
+    if (!isDebug()) {
+      final File clientAppFile;
+      try {
+        clientAppFile = server.getKarmaJsSourcesLocator().getClientAppFile();
+      }
+      catch (IOException e) {
+        throw new ExecutionException("Can't find karma-intellij test runner", e);
+      }
+      if (server.isReady() && server.hasCapturedBrowsers()) {
+        return createOSProcessHandler(server.getRunnerPort(), clientAppFile);
+      }
     }
     final NopProcessHandler nopProcessHandler = new NopProcessHandler();
     server.doWhenTerminated(new KarmaServerTerminatedListener() {
@@ -128,7 +134,7 @@ public class KarmaExecutionSession {
     commandLine.addParameter(clientAppFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getKarmaJsSourcesLocator().getKarmaPackageDir());
     commandLine.addParameter("--runnerPort=" + runnerPort);
-    if (myExecutionType == KarmaExecutionType.DEBUG) {
+    if (isDebug()) {
       commandLine.addParameter("--debug=true");
     }
     return commandLine;
