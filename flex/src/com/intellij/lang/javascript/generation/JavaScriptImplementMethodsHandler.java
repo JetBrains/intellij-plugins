@@ -7,7 +7,7 @@ import com.intellij.featureStatistics.ProductivityFeatureNames;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.lang.javascript.validation.ImplementedMethodProcessor;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.lang.javascript.validation.fixes.ImplementMethodsFix;
 
@@ -15,7 +15,7 @@ import java.util.Collection;
 
 public class JavaScriptImplementMethodsHandler extends BaseJSGenerateHandler {
   protected void collectCandidates(final JSClass clazz, final Collection<JSNamedElementNode> candidates) {
-    for(JSFunction fun:JSInheritanceUtil.collectFunctionsToImplement(clazz)) {
+    for(JSFunction fun: ImplementedMethodProcessor.collectFunctionsToImplement(clazz)) {
       candidates.add(new JSNamedElementNode(fun));
     }
   }
