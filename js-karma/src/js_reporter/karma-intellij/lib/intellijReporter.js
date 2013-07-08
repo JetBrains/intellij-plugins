@@ -116,6 +116,7 @@ function IntellijReporter(formatError, globalEmitter) {
   startBrowsersTracking(globalEmitter);
   BaseReporter.call(this, formatError, false);
   this.adapters = [];
+  var totalTestCount, uncheckedBrowserCount;
 
   var that = this;
   var write = function (msg) {
@@ -127,8 +128,13 @@ function IntellijReporter(formatError, globalEmitter) {
   var tree;
 
   this.onRunStart = function (browsers) {
+    totalTestCount = 0;
+    uncheckedBrowserCount = browsers.length;
     tree = new Tree(cli.getConfigFile(), write);
     fileListManager.dumpFiles();
+    process.nextTick(function() {
+      tree.write('##teamcity[enteredTheMatrix]\n');
+    });
   };
 
   this.onBrowserError = function (browser, error) {
@@ -146,6 +152,14 @@ function IntellijReporter(formatError, globalEmitter) {
 
   this.onSpecComplete = function (browser, result) {
     var browserNode = getOrCreateBrowserNode(tree, browser);
+    if (typeof browserNode.visited === 'undefined') {
+      browserNode.visited = true;
+      totalTestCount += browser.lastResult.total;
+      uncheckedBrowserCount--;
+      if (uncheckedBrowserCount === 0) {
+        tree.write('##teamcity[testCount count=\'' + totalTestCount + '\']\n')
+      }
+    }
     var suiteNode = getOrCreateLowerSuiteNode(browserNode, result.suite, write);
     var specNode = createSpecNode(suiteNode, result.suite, result.description);
     var status;
