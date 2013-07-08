@@ -10,6 +10,7 @@ import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.Annotation;
+import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
 import com.intellij.lang.javascript.flex.ActionScriptSmartCompletionContributor;
@@ -26,7 +27,12 @@ import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSClassBase;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageStatementImpl;
 import com.intellij.lang.javascript.psi.impl.JSChangeUtil;
-import com.intellij.lang.javascript.psi.resolve.*;
+import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
+import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
+import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
+import com.intellij.lang.javascript.psi.types.JSTypeImpl;
+import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
 import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.lang.javascript.validation.*;
@@ -41,6 +47,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlAttributeValue;
@@ -59,6 +66,7 @@ import org.jetbrains.annotations.PropertyKey;
 import java.util.*;
 
 import static com.intellij.lang.javascript.psi.JSCommonTypeNames.FUNCTION_CLASS_NAME;
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.NUMBER_CLASS_NAME;
 
 /**
  * @author Konstantin.Ulitin
@@ -1412,5 +1420,49 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         ValidateTypesUtil.reportProblemIfNotOneParameter(node, myHolder);
       }
     }
+  }
+
+  @Override
+  public void visitJSBinaryExpression(JSBinaryExpression node) {
+    super.visitJSBinaryExpression(node);
+
+    IElementType sign = node.getOperationSign();
+    JSExpression lOperand = node.getLOperand();
+    if (lOperand == null) return;
+    final JSExpression rOperand = node.getROperand();
+    if (rOperand == null) return;
+
+    if (sign == JSTokenTypes.AS_KEYWORD || sign == JSTokenTypes.IS_KEYWORD) {
+      if (rOperand instanceof JSReferenceExpression) {
+        ResolveResult[] results = ((JSReferenceExpression)rOperand).multiResolve(false);
+        PsiElement resolve;
+        if (results.length > 0 && ((resolve=results[0].getElement()) instanceof JSVariable || resolve instanceof JSFunction)) {
+          checkIfProperTypeReference(myHolder, rOperand);
+        }
+      }
+      else {
+        checkIfProperTypeReference(myHolder, rOperand);
+      }
+    }
+    else if (JSTokenTypes.MULTIPLICATIVE_OPERATIONS.contains(sign) ||
+               JSTokenTypes.SHIFT_OPERATIONS.contains(sign) ||
+               sign == JSTokenTypes.MINUS) {
+      final PsiFile containingFile = node.getContainingFile();
+      final JSType numberType = JSTypeImpl.createType(NUMBER_CLASS_NAME, JSTypeSourceFactory.createTypeSource(lOperand, true));
+      ValidateTypesUtil.checkExpressionIsAssignableToType(lOperand, numberType, myHolder, containingFile,
+                                                          "javascript.expression.type.implicitly.coerced.to.unrelated.type", null);
+      ValidateTypesUtil.checkExpressionIsAssignableToType(rOperand, numberType, myHolder, containingFile,
+                                                          "javascript.expression.type.implicitly.coerced.to.unrelated.type", null);
+    }
+  }
+
+  private static void checkIfProperTypeReference(AnnotationHolder holder, JSExpression rOperand) {
+    ValidateTypesUtil.checkTypeIs(
+      rOperand,
+      rOperand,
+      holder,
+      "Class",
+      "javascript.binary.operand.type.mismatch"
+    );
   }
 }
