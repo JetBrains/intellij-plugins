@@ -11,7 +11,7 @@
 
     <xdebugger.breakpointType implementation="com.jetbrains.lang.dart.ide.runner.base.DartBreakpointType"/>
   </extensions>
-  <extensions defaultExtensionNs="com.jetbrains">
+  <extensions defaultExtensionNs="Dart">
     <lang.dart.debugger.breakpoint.class.provider  implementation="com.jetbrains.lang.dart.ide.runner.base.DartBreakpointTypeProvider"/>
   </extensions>
 </idea-plugin>

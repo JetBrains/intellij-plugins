@@ -10,7 +10,7 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
  */
 public interface DartCommandLineBreakpointTypeProvider {
   ExtensionPointName<DartCommandLineBreakpointTypeProvider> EP_NAME =
-    ExtensionPointName.create("com.jetbrains.lang.dart.debugger.breakpoint.class.provider");
+    ExtensionPointName.create("Dart.debugger.breakpoint.class.provider");
 
   Class<? extends XBreakpointType<XLineBreakpoint<XBreakpointProperties>, ?>> provideBreakpointClass();
 }
