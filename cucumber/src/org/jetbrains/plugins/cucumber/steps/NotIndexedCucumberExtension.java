@@ -26,8 +26,6 @@ import java.util.*;
  * Date: 6/26/13
  */
 public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtension {
-  private Project myProject;
-
   protected final List<AbstractStepDefinition> myStepDefinitions = new ArrayList<AbstractStepDefinition>();
 
   private final Set<String> myProcessedStepDirectories = new HashSet<String>();
@@ -37,7 +35,6 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
   private final CucumberPsiTreeListener myCucumberPsiTreeListener = new CucumberPsiTreeListener();
 
   public void init(@NotNull final Project project) {
-    myProject = project;
     myUpdateQueue.setPassThrough(false);
 
     PsiManager.getInstance(project).addPsiTreeChangeListener(myCucumberPsiTreeListener);
@@ -82,13 +79,13 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
       public void beforeRootsChange(ModuleRootEvent event) {
         myPreviousStepDefsProviders.clear();
 
-        collectAllStepDefsProviders(myPreviousStepDefsProviders, myProject);
+        collectAllStepDefsProviders(myPreviousStepDefsProviders, project);
       }
 
       public void rootsChanged(ModuleRootEvent event) {
         // compare new and previous content roots
         final List<VirtualFile> newStepDefsProviders = new ArrayList<VirtualFile>();
-        collectAllStepDefsProviders(newStepDefsProviders, myProject);
+        collectAllStepDefsProviders(newStepDefsProviders, project);
 
         if (!compareRoots(newStepDefsProviders)) {
           // clear caches on roots changed
@@ -143,7 +140,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
       public void onChange(PsiElement parentPsiElement) {
         myUpdateQueue.queue(new Update(file) {
           public void run() {
-            if (!myProject.isDisposed()) {
+            if (!file.getProject().isDisposed()) {
               reloadAbstractStepDefinitions(file);
             }
           }
@@ -154,7 +151,7 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
 
   private void reloadAbstractStepDefinitions(final PsiFile file) {
     // Do not commit document if file was deleted
-    final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(myProject);
+    final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(file.getProject());
     final Document document = psiDocumentManager.getDocument(file);
     if (document != null) {
       psiDocumentManager.commitDocument(document);
