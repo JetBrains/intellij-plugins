@@ -133,6 +133,7 @@ public class JstdTestLocationProvider implements TestLocationProvider {
   private static PsiElement findTestFromQUnitDefaultModule(@NotNull Project project,
                                                            @NotNull String testMethodName) {
     GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    testMethodName = StringUtil.trimStart(testMethodName, "test ");
     String key = JsTestFileByTestNameIndex.getQUnitTestNameKey(testMethodName);
     List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
     List<VirtualFile> validJsTestVirtualFiles = filterVirtualFiles(jsTestVirtualFiles);
