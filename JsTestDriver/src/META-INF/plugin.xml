@@ -32,6 +32,10 @@
 
   <depends optional="true" config-file="jstd-javascript-debugger.xml">JavaScriptDebugger</depends>
 
+  <extensions defaultExtensionNs="JavaScript">
+    <testFileStructureBuilderProvider implementation="com.google.jstestdriver.idea.assertFramework.jstd.JstdTestFileStructureBuilderProvider"/>
+  </extensions>
+
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <fileTypeFactory implementation="com.google.jstestdriver.idea.config.JstdConfigFileTypeFactory"/>

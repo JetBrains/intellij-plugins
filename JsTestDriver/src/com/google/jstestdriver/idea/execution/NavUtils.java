@@ -25,21 +25,15 @@ public class NavUtils {
                                            @NotNull String testCaseName,
                                            @Nullable String testMethodName) {
     PsiFile psiFile = PsiManager.getInstance(project).findFile(jsTestVirtualFile);
-    if (psiFile instanceof JSFile) {
-      PsiElement element = findPsiElementInJsFile((JSFile)psiFile, testCaseName, testMethodName);
-      return element;
+    if (!(psiFile instanceof JSFile)) {
+      return null;
     }
-    return null;
-  }
-
-  @Nullable
-  private static PsiElement findPsiElementInJsFile(@NotNull JSFile jsFile,
-                                                   @NotNull String testCaseName,
-                                                   @Nullable String testMethodName) {
+    JSFile jsFile = (JSFile) psiFile;
     TestFileStructurePack pack = TestFileStructureManager.fetchTestFileStructurePackByJsFile(jsFile);
     if (pack != null) {
       return pack.findPsiElement(testCaseName, testMethodName);
     }
     return null;
   }
+
 }
