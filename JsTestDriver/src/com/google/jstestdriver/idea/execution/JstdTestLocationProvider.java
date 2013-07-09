@@ -1,9 +1,12 @@
 package com.google.jstestdriver.idea.execution;
 
+import com.google.common.collect.Maps;
 import com.intellij.javascript.testFramework.AbstractTestFileStructure;
 import com.intellij.javascript.testFramework.JsTestFileByTestNameIndex;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
+import com.intellij.javascript.testFramework.jasmine.JasmineSpecStructure;
+import com.intellij.javascript.testFramework.jasmine.JasmineSuiteStructure;
 import com.intellij.javascript.testFramework.qunit.DefaultQUnitModuleStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
@@ -31,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author Sergey Simonchik
@@ -151,7 +155,7 @@ public class JstdTestLocationProvider implements TestLocationProvider {
                                                            @NotNull String testMethodName) {
     GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
     testMethodName = refineQUnitTestMethodName(testMethodName);
-    String key = JsTestFileByTestNameIndex.getQUnitTestNameKey(testMethodName);
+    String key = JsTestFileByTestNameIndex.createQUnitKeyForTestFromDefaultModule(testMethodName);
     List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
     List<VirtualFile> validJsTestVirtualFiles = filterVirtualFiles(jsTestVirtualFiles);
 
@@ -174,21 +178,64 @@ public class JstdTestLocationProvider implements TestLocationProvider {
   private static PsiElement findJasmineTestLocation(@NotNull Project project,
                                                     @NotNull String testCaseName,
                                                     @Nullable String testMethodName) {
-    GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
-    List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(testCaseName, scope);
-    List<VirtualFile> validJsTestVirtualFiles = filterVirtualFiles(jsTestVirtualFiles);
-
-    for (VirtualFile jsTestVirtualFile : validJsTestVirtualFiles) {
-      PsiFile psiFile = PsiManager.getInstance(project).findFile(jsTestVirtualFile);
-      if (psiFile instanceof JSFile) {
-        JSFile jsFile = (JSFile) psiFile;
-        JasmineFileStructureBuilder builder = JasmineFileStructureBuilder.getInstance();
-        JasmineFileStructure jasmineFileStructure = builder.fetchCachedTestFileStructure(jsFile);
-        PsiElement element = jasmineFileStructure.findPsiElement(testCaseName, testMethodName);
-        if (element != null && element.isValid()) {
-          return element;
+    VirtualFile file = findJasmineTestFileSource(project, testCaseName);
+    if (file == null) {
+      return null;
+    }
+    PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+    if (psiFile instanceof JSFile) {
+      JSFile jsFile = (JSFile) psiFile;
+      JasmineFileStructureBuilder builder = JasmineFileStructureBuilder.getInstance();
+      JasmineFileStructure jasmineFileStructure = builder.fetchCachedTestFileStructure(jsFile);
+      Map<String, JasmineSuiteStructure> map = Maps.newHashMap();
+      for (JasmineSuiteStructure suite : jasmineFileStructure.getSuites()) {
+        visitSuite("", map, suite);
+      }
+      JasmineSuiteStructure suite = map.get(testCaseName);
+      if (suite != null) {
+        if (testMethodName == null) {
+          return suite.getEnclosingCallExpression();
+        }
+        JasmineSpecStructure spec = suite.getInnerSpecByName(testMethodName);
+        if (spec != null) {
+          return spec.getEnclosingCallExpression();
         }
       }
+    }
+    return null;
+  }
+
+  private static void visitSuite(@NotNull String prefix,
+                                 @NotNull Map<String, JasmineSuiteStructure> map,
+                                 @NotNull JasmineSuiteStructure suite) {
+    final String joinedSuitesName;
+    if (prefix.isEmpty()) {
+      joinedSuitesName = suite.getName();
+    }
+    else {
+      joinedSuitesName = prefix + " " + suite.getName();
+    }
+    map.put(joinedSuitesName, suite);
+    for (JasmineSuiteStructure child : suite.getSuites()) {
+      visitSuite(joinedSuitesName, map, child);
+    }
+  }
+
+  @Nullable
+  private static VirtualFile findJasmineTestFileSource(@NotNull Project project, @NotNull String joinedSuites) {
+    GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
+    joinedSuites += ' ';
+    int lastSpaceInd = joinedSuites.indexOf(' ');
+    while (lastSpaceInd >= 0) {
+      String topLevelSuiteName = joinedSuites.substring(0, lastSpaceInd);
+      String key = JsTestFileByTestNameIndex.createJasmineKey(Collections.singletonList(topLevelSuiteName));
+      List<VirtualFile> files = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
+      for (VirtualFile file : files) {
+        if (file.isValid()) {
+          return file;
+        }
+      }
+      lastSpaceInd = joinedSuites.indexOf(' ', lastSpaceInd + 1);
     }
     return null;
   }

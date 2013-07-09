@@ -4,6 +4,7 @@ import com.google.jstestdriver.TestResult;
 import com.google.jstestdriver.idea.execution.TestPath;
 import com.google.jstestdriver.idea.execution.tc.TC;
 import com.google.jstestdriver.idea.execution.tc.TCAttribute;
+import com.google.jstestdriver.idea.execution.tc.TCCommand;
 import com.google.jstestdriver.idea.execution.tc.TCMessage;
 import com.google.jstestdriver.idea.util.TestFileScope;
 import org.jetbrains.annotations.NotNull;
@@ -103,6 +104,23 @@ public class TreeManager {
       }
       testFailedMessage.addIntAttribute(TCAttribute.TEST_DURATION, durationMillis);
       printTCMessage(testFailedMessage);
+    }
+  }
+
+  public void reportTotalTestCount() {
+    ConfigNode configNode = myCurrentJstdConfigNode;
+    if (configNode != null) {
+      int testCount = 0;
+      for (BrowserNode browserNode : configNode.getChildren()) {
+        for (TestCaseNode testCaseNode : browserNode.getChildren()) {
+          testCount += testCaseNode.getChildren().size();
+        }
+      }
+      if (testCount > 0) {
+        TCMessage tcMessage = new TCMessage(TCCommand.TEST_COUNT);
+        tcMessage.addAttribute(TCAttribute.TEST_COUNT, String.valueOf(testCount));
+        printTCMessage(tcMessage);
+      }
     }
   }
 
@@ -209,7 +227,7 @@ public class TreeManager {
   }
 
   public void printTCMessage(@NotNull TCMessage message) {
-    myOutStream.println(message.getText());
+    myOutStream.print(message.getText() + "\n");
   }
 
   public void reportRootError(@NotNull String message) {

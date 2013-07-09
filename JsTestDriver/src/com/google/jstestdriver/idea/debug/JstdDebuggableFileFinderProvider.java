@@ -85,7 +85,7 @@ public class JstdDebuggableFileFinderProvider {
       if (StringUtil.isNotEmpty(displayPath) && file.isFile()) {
         VirtualFile virtualFile = fileSystem.findFileByIoFile(file);
         if (virtualFile != null) {
-          String remotePath = "http://127.0.0.1:9876/test/" + displayPath;
+          String remotePath = "http://127.0.0.1:9876/test/" + StringUtil.trimStart(displayPath, "/");
           mappings.put(remotePath, virtualFile);
         }
       }

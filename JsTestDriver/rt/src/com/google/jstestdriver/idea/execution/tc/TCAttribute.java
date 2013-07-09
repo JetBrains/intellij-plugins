@@ -21,6 +21,7 @@ public enum TCAttribute {
   PARENT_NODE_ID("parentNodeId"),
   NODE_TYPE("nodeType"),
   NODE_ARGS("nodeArgs"),
+  TEST_COUNT("count")
   ;
 
   private final String myName;

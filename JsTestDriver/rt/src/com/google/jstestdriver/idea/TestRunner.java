@@ -102,6 +102,7 @@ public class TestRunner {
       myTreeManager.onJstdConfigRunningStarted(config);
       String runScope = mySettings.getTestFileScope().toJstdStr();
       runTests(config, new String[]{"--dryRunFor", runScope}, true);
+      myTreeManager.reportTotalTestCount();
       runTests(config, new String[]{"--tests", runScope}, false);
     } catch (ConfigurationException ce) {
       exception = ce;

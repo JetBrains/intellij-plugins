@@ -12,7 +12,8 @@ public enum TCCommand {
   TEST_FINISHED("testFinished"),
   TEST_STDOUT("testStdOut"),
   TEST_STDERR("testStdErr"),
-  TEST_FAILED("testFailed")
+  TEST_FAILED("testFailed"),
+  TEST_COUNT("testCount")
   ;
 
   private final String myName;
