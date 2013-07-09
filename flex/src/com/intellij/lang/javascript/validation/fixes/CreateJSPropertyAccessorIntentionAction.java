@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.template.Template;
 import com.intellij.lang.javascript.psi.JSReferenceExpression;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.openapi.util.text.StringUtil;
 
@@ -45,7 +45,7 @@ public class CreateJSPropertyAccessorIntentionAction extends CreateJSFunctionInt
   protected void addBody(Template template, JSReferenceExpression refExpr, PsiFile file) {
     String varName = refExpr.getReferencedName();
     String paramName = varName;
-    varName = JSResolveUtil.transformAccessorNameToPropertyName(varName, file.getProject());
+    varName = JSRefactoringUtil.transformAccessorNameToPropertyName(varName, file.getProject());
 
     if (varName.equals(paramName)) {
       varName = StringUtil.fixVariableNameDerivedFromPropertyName(varName);

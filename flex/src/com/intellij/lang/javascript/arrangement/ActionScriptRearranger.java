@@ -5,7 +5,7 @@ import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.impl.JSPsiImplUtils;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.Pair;
@@ -157,7 +157,7 @@ public class ActionScriptRearranger implements Rearranger<ActionScriptArrangemen
         final ActionScriptArrangementEntry varEntry = mapEntry.getValue();
 
         if (StringUtil.startsWith(jsVar.getName(), codeStyleSettings.FIELD_PREFIX)) {
-          final String propertyName = JSResolveUtil.transformVarNameToAccessorName(jsVar.getName(), jsClass.getProject());
+          final String propertyName = JSRefactoringUtil.transformVarNameToAccessorName(jsVar.getName(), jsClass.getProject());
 
           JSFunction getterOrSetter = jsClass.findFunctionByNameAndKind(propertyName, JSFunction.FunctionKind.GETTER);
           if (getterOrSetter == null) getterOrSetter = jsClass.findFunctionByNameAndKind(propertyName, JSFunction.FunctionKind.SETTER);

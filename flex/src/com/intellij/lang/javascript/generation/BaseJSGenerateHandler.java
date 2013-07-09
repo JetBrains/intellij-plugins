@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
+import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
@@ -283,7 +284,7 @@ public abstract class BaseJSGenerateHandler implements LanguageCodeInsightAction
         }
 
         final String name = namedElement.getName();
-        final String accessorName = JSResolveUtil.transformVarNameToAccessorName(name, codeStyleSettings);
+        final String accessorName = JSRefactoringUtil.transformVarNameToAccessorName(name, codeStyleSettings);
         if (/*!name.equals(accessorName) &&*/ !candidatesMap.containsKey(accessorName)) candidatesMap.put(accessorName, namedElement);
         return true;
       }

@@ -11,7 +11,7 @@ import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.lang.javascript.psi.JSVarStatement;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -60,7 +60,7 @@ public abstract class CreateAccessorIntentionBase extends PsiElementBaseIntentio
     final String varName = variable == null ? null : variable.getName();
     if (jsClass != null && StringUtil.isNotEmpty(varName)) {
       setText(FlexBundle.message(getMessageKey(), varName));
-      final String accessorName = JSResolveUtil.transformVarNameToAccessorName(varName, project);
+      final String accessorName = JSRefactoringUtil.transformVarNameToAccessorName(varName, project);
       return isAvailableFor(jsClass, accessorName);
     }
     return false;

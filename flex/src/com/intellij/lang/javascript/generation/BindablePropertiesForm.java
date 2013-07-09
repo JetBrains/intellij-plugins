@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.generation;
 
 import com.intellij.lang.javascript.formatter.JSCodeStyleSettings;
-import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
@@ -74,7 +74,7 @@ public class BindablePropertiesForm implements EventBinder {
 
   public String getEventName(final String parameterName) {
     return replaceTokens(myEventTextField.getText().trim(),
-                         JSResolveUtil.transformVarNameToAccessorName(parameterName, myCodeStyleSettings));
+                         JSRefactoringUtil.transformVarNameToAccessorName(parameterName, myCodeStyleSettings));
   }
 
   public boolean isCreateEventConstant() {
@@ -83,7 +83,7 @@ public class BindablePropertiesForm implements EventBinder {
 
   public String getEventConstantName(final String parameterName) {
     return replaceTokens(myEventConstantTextField.getText().trim(),
-                         JSResolveUtil.transformVarNameToAccessorName(parameterName, myCodeStyleSettings));
+                         JSRefactoringUtil.transformVarNameToAccessorName(parameterName, myCodeStyleSettings));
   }
 
   private static String replaceTokens(final String s, final String parameterName) {

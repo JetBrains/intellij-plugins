@@ -5,6 +5,7 @@ import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
+import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.javascript.validation.JSAnnotatingVisitor;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.openapi.editor.Editor;
@@ -49,7 +50,7 @@ public class JavaScriptGenerateConstructorHandler extends BaseJSGenerateHandler 
           first = false;
 
           final String name = var.getName();
-          String parameterName = JSResolveUtil.transformVarNameToAccessorName(name, codeStyleSettings);
+          String parameterName = JSRefactoringUtil.transformVarNameToAccessorName(name, codeStyleSettings);
 
           final String typeString = var.getTypeString();
           functionText += parameterName + (typeString != null ? ":" + typeString : "");

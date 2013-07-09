@@ -16,6 +16,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.refactoring.JSVisibilityUtil;
+import com.intellij.lang.javascript.refactoring.util.JSRefactoringUtil;
 import com.intellij.lang.javascript.validation.fixes.BaseCreateMethodsFix;
 import com.intellij.lang.javascript.validation.fixes.CreateJSVariableIntentionAction;
 import com.intellij.lang.javascript.validation.fixes.JSAttributeListWrapper;
@@ -136,7 +137,7 @@ public class JavaScriptGenerateAccessorHandler extends BaseJSGenerateHandler {
         }
 
         public String getEventName(final String parameterName) {
-          return JSResolveUtil.transformVarNameToAccessorName(parameterName, jsClass.getProject()) + "Changed";
+          return JSRefactoringUtil.transformVarNameToAccessorName(parameterName, jsClass.getProject()) + "Changed";
         }
 
         public boolean isCreateEventConstant() {
@@ -144,7 +145,7 @@ public class JavaScriptGenerateAccessorHandler extends BaseJSGenerateHandler {
         }
 
         public String getEventConstantName(final String parameterName) {
-          return JSResolveUtil.transformVarNameToAccessorName(parameterName, jsClass.getProject()).toUpperCase() + "_CHANGED_EVENT";
+          return JSRefactoringUtil.transformVarNameToAccessorName(parameterName, jsClass.getProject()).toUpperCase() + "_CHANGED_EVENT";
         }
       };
     }
@@ -324,7 +325,7 @@ public class JavaScriptGenerateAccessorHandler extends BaseJSGenerateHandler {
 
     @Override
     protected void fixName(JSVariable jsVariable) {
-      String newName = JSResolveUtil.transformVarNameToAccessorName(super.buildName(jsVariable), codeStyleSettings);
+      String newName = JSRefactoringUtil.transformVarNameToAccessorName(super.buildName(jsVariable), codeStyleSettings);
       String varName = jsVariable.getName();
       
       if (newName.equals(varName) && 
@@ -350,7 +351,7 @@ public class JavaScriptGenerateAccessorHandler extends BaseJSGenerateHandler {
 
     @Override
     protected String buildName(final JSVariable fun) {
-      return JSResolveUtil.transformVarNameToAccessorName(super.buildName(fun), codeStyleSettings);
+      return JSRefactoringUtil.transformVarNameToAccessorName(super.buildName(fun), codeStyleSettings);
     }
 
     protected String buildParameterList(final JSParameterList parameterList, final JSVariable fun, MultiMap<String, String> types) {
