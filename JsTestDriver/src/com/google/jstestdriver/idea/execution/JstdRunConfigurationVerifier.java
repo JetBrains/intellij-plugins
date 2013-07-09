@@ -1,6 +1,7 @@
 package com.google.jstestdriver.idea.execution;
 
 import com.google.jstestdriver.BrowserInfo;
+import com.google.jstestdriver.idea.assertFramework.JstdTestMethodNameRefiner;
 import com.intellij.javascript.testFramework.TestFileStructureManager;
 import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
@@ -126,7 +127,7 @@ public class JstdRunConfigurationVerifier {
     }
     TestFileStructurePack pack = TestFileStructureManager.fetchTestFileStructurePackByJsFile(jsFile);
     if (pack != null) {
-      boolean found = pack.contains(runSettings.getTestCaseName(), null);
+      boolean found = pack.contains(runSettings.getTestCaseName(), null, JstdTestMethodNameRefiner.INSTANCE);
       if (!found) {
         throw new RuntimeConfigurationWarning("Can't find test case with name '" + runSettings.getTestCaseName() + "'.");
       }
@@ -142,7 +143,9 @@ public class JstdRunConfigurationVerifier {
       throw new RuntimeConfigurationError("Test method name is empty.");
     }
     if (pack != null) {
-      boolean found = pack.contains(runSettings.getTestCaseName(), runSettings.getTestMethodName());
+      boolean found = pack.contains(runSettings.getTestCaseName(),
+                                    runSettings.getTestMethodName(),
+                                    JstdTestMethodNameRefiner.INSTANCE);
       if (!found) {
         throw new RuntimeConfigurationWarning("Can't find test method with name '" + runSettings.getTestMethodName() + "'.");
       }

@@ -1,7 +1,10 @@
 package com.google.jstestdriver.idea.execution;
 
 import com.google.common.collect.Maps;
-import com.intellij.javascript.testFramework.AbstractTestFileStructure;
+import com.google.jstestdriver.idea.assertFramework.JstdTestMethodNameRefiner;
+import com.intellij.execution.Location;
+import com.intellij.execution.PsiLocation;
+import com.intellij.execution.testframework.sm.FileUrlProvider;
 import com.intellij.javascript.testFramework.JsTestFileByTestNameIndex;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
@@ -10,11 +13,7 @@ import com.intellij.javascript.testFramework.jasmine.JasmineSuiteStructure;
 import com.intellij.javascript.testFramework.qunit.DefaultQUnitModuleStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructure;
 import com.intellij.javascript.testFramework.qunit.QUnitFileStructureBuilder;
-import com.intellij.execution.Location;
-import com.intellij.execution.PsiLocation;
-import com.intellij.execution.testframework.sm.FileUrlProvider;
 import com.intellij.javascript.testFramework.util.EscapeUtils;
-import com.intellij.javascript.testFramework.util.TestMethodNameRefiner;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -123,16 +122,7 @@ public class JstdTestLocationProvider implements TestLocationProvider {
           jsTestVirtualFile,
           testCaseName,
           testMethodName,
-          new TestMethodNameRefiner() {
-            @NotNull
-            @Override
-            public String refine(@NotNull AbstractTestFileStructure structure, @NotNull String testMethodName) {
-              if (structure instanceof QUnitFileStructure) {
-                return refineQUnitTestMethodName(testMethodName);
-              }
-              return testMethodName;
-            }
-          }
+          JstdTestMethodNameRefiner.INSTANCE
         );
       }
     }
@@ -145,16 +135,11 @@ public class JstdTestLocationProvider implements TestLocationProvider {
     return null;
   }
 
-  @NotNull
-  private static String refineQUnitTestMethodName(@NotNull String testMethodName) {
-    return StringUtil.trimStart(testMethodName, "test ");
-  }
-
   @Nullable
   private static PsiElement findTestFromQUnitDefaultModule(@NotNull Project project,
                                                            @NotNull String testMethodName) {
     GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
-    testMethodName = refineQUnitTestMethodName(testMethodName);
+    testMethodName = StringUtil.trimStart(testMethodName, "test ");
     String key = JsTestFileByTestNameIndex.createQUnitKeyForTestFromDefaultModule(testMethodName);
     List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
     List<VirtualFile> validJsTestVirtualFiles = filterVirtualFiles(jsTestVirtualFiles);
