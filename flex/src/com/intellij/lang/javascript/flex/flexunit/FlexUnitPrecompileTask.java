@@ -65,7 +65,7 @@ public class FlexUnitPrecompileTask implements CompileTask {
       return "";
     }
 
-    return projectSystemDir + "/tmp";
+    return FileUtil.toSystemIndependentName(projectSystemDir.getPath()) + "/tmp";
   }
 
   public boolean execute(CompileContext context) {
