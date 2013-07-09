@@ -2,6 +2,7 @@ package com.google.jstestdriver.idea.execution;
 
 import com.intellij.javascript.testFramework.TestFileStructureManager;
 import com.intellij.javascript.testFramework.TestFileStructurePack;
+import com.intellij.javascript.testFramework.util.TestMethodNameRefiner;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -23,7 +24,8 @@ public class NavUtils {
   public static PsiElement findPsiLocation(@NotNull Project project,
                                            @NotNull VirtualFile jsTestVirtualFile,
                                            @NotNull String testCaseName,
-                                           @Nullable String testMethodName) {
+                                           @Nullable String testMethodName,
+                                           @Nullable TestMethodNameRefiner testMethodNameRefiner) {
     PsiFile psiFile = PsiManager.getInstance(project).findFile(jsTestVirtualFile);
     if (!(psiFile instanceof JSFile)) {
       return null;
@@ -31,7 +33,7 @@ public class NavUtils {
     JSFile jsFile = (JSFile) psiFile;
     TestFileStructurePack pack = TestFileStructureManager.fetchTestFileStructurePackByJsFile(jsFile);
     if (pack != null) {
-      return pack.findPsiElement(testCaseName, testMethodName);
+      return pack.findPsiElement(testCaseName, testMethodName, testMethodNameRefiner);
     }
     return null;
   }

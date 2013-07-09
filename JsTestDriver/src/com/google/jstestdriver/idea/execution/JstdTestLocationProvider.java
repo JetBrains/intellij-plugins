@@ -1,5 +1,6 @@
 package com.google.jstestdriver.idea.execution;
 
+import com.intellij.javascript.testFramework.AbstractTestFileStructure;
 import com.intellij.javascript.testFramework.JsTestFileByTestNameIndex;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructure;
 import com.intellij.javascript.testFramework.jasmine.JasmineFileStructureBuilder;
@@ -10,6 +11,7 @@ import com.intellij.execution.Location;
 import com.intellij.execution.PsiLocation;
 import com.intellij.execution.testframework.sm.FileUrlProvider;
 import com.intellij.javascript.testFramework.util.EscapeUtils;
+import com.intellij.javascript.testFramework.util.TestMethodNameRefiner;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -106,9 +108,9 @@ public class JstdTestLocationProvider implements TestLocationProvider {
       if (jsTestVirtualFile == null || !jsTestVirtualFile.isValid()) {
         return null;
       }
-      String name = jsTestVirtualFile.getName().toLowerCase();
-      if (testMethodName != null && testCaseName.equals(DefaultQUnitModuleStructure.NAME)
-          && StringUtil.startsWithIgnoreCase(name, "QUnitAdapter")) {
+      if (testMethodName != null
+          && testCaseName.equals(DefaultQUnitModuleStructure.NAME)
+          && StringUtil.startsWithIgnoreCase(jsTestVirtualFile.getName(), "QUnitAdapter")) {
         psiElement = findTestFromQUnitDefaultModule(project, testMethodName);
       }
       else {
@@ -116,7 +118,17 @@ public class JstdTestLocationProvider implements TestLocationProvider {
           project,
           jsTestVirtualFile,
           testCaseName,
-          testMethodName
+          testMethodName,
+          new TestMethodNameRefiner() {
+            @NotNull
+            @Override
+            public String refine(@NotNull AbstractTestFileStructure structure, @NotNull String testMethodName) {
+              if (structure instanceof QUnitFileStructure) {
+                return refineQUnitTestMethodName(testMethodName);
+              }
+              return testMethodName;
+            }
+          }
         );
       }
     }
@@ -129,11 +141,16 @@ public class JstdTestLocationProvider implements TestLocationProvider {
     return null;
   }
 
+  @NotNull
+  private static String refineQUnitTestMethodName(@NotNull String testMethodName) {
+    return StringUtil.trimStart(testMethodName, "test ");
+  }
+
   @Nullable
   private static PsiElement findTestFromQUnitDefaultModule(@NotNull Project project,
                                                            @NotNull String testMethodName) {
     GlobalSearchScope scope = GlobalSearchScope.projectScope(project);
-    testMethodName = StringUtil.trimStart(testMethodName, "test ");
+    testMethodName = refineQUnitTestMethodName(testMethodName);
     String key = JsTestFileByTestNameIndex.getQUnitTestNameKey(testMethodName);
     List<VirtualFile> jsTestVirtualFiles = JsTestFileByTestNameIndex.findJsTestFilesByNameInScope(key, scope);
     List<VirtualFile> validJsTestVirtualFiles = filterVirtualFiles(jsTestVirtualFiles);
