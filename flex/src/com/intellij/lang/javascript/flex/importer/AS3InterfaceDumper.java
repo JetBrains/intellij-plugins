@@ -1,6 +1,6 @@
 package com.intellij.lang.javascript.flex.importer;
 
-import com.intellij.lang.javascript.ECMAL4LanguageDialect;
+import com.intellij.lang.javascript.dialects.ECMAL4LanguageDialect;
 import com.intellij.lang.javascript.JSFlexAdapter;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lexer.Lexer;

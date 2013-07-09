@@ -1,7 +1,7 @@
 package com.intellij.javascript.flex.compiled;
 
 import com.intellij.javascript.flex.FlexApplicationComponent;
-import com.intellij.lang.javascript.ECMAL4ParserDefinition;
+import com.intellij.lang.javascript.dialects.ECMAL4ParserDefinition;
 import com.intellij.lang.javascript.types.JSFileElementType;
 import com.intellij.psi.tree.IFileElementType;
 
