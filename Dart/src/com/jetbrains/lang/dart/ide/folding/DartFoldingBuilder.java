@@ -29,7 +29,9 @@ public class DartFoldingBuilder implements FoldingBuilder {
     boolean isBlock = node.getElementType() == DartTokenTypes.BLOCK || node.getElementType() == DartTokenTypes.CLASS_BODY;
     if (isBlock && !node.getTextRange().isEmpty()) {
       final TextRange range = node.getTextRange();
-      list.add(new FoldingDescriptor(node, range));
+      if (range.getLength() > 1) {
+        list.add(new FoldingDescriptor(node, range));
+      }
     }
     for (ASTNode child : node.getChildren(null)) {
       buildFolding(child, list);
