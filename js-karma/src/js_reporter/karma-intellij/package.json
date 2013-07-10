@@ -2,7 +2,7 @@
   "name": "karma-intellij",
   "version": "0.0.1",
   "description": "A Karma plugin. Reporter for WebStorm and other IntelliJ IDEs.",
-  "main": "lib/intellijPlugin.js",
+  "main": "lib/fakePlugin.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/karma-runner/karma-intellij.git"
