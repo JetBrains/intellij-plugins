@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex;
 
-import com.intellij.codeInsight.daemon.impl.HighlightInfo;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.javascript.flex.FlexAnnotationNames;
 import com.intellij.lang.ASTNode;
@@ -37,7 +36,7 @@ public class FlexFileReferenceHelper extends FileReferenceHelper {
   }
 
   @NotNull
-  public List<? extends LocalQuickFix> registerFixes(final HighlightInfo info, final FileReference reference) {
+  public List<? extends LocalQuickFix> registerFixes(final FileReference reference) {
     final PsiElement element = reference.getElement();
     if (!(reference instanceof JSFileReference) || !(element instanceof JSAttributeNameValuePair)) return Collections.emptyList();
 
