@@ -1465,4 +1465,8 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       "javascript.binary.operand.type.mismatch"
     );
   }
+
+  public void visitJSThisExpression(final JSThisExpression node) {
+    checkClassReferenceInStaticContext(node, "javascript.validation.message.this.referenced.from.static.context");
+  }
 }
