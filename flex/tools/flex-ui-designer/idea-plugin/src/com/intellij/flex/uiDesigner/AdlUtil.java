@@ -161,20 +161,16 @@ final class AdlUtil {
            (!SystemInfo.isMac || checkMacRuntimeVersion(runtimePath));
   }
 
-  static boolean checkAdl(String adlPath) throws IOException {
+  static boolean checkAdl(String adlPath) {
     return !StringUtil.isEmpty(adlPath) && new File(adlPath).exists();
   }
 
   // http://kb2.adobe.com/cps/407/kb407625.html
   @Nullable
   static String findInstalledRuntime() throws IOException {
-    if (SystemInfo.isMac) {
-      String runtime = MAC_AIR_RUNTIME_DEFAULT_PATH;
-      if (checkMacRuntimeVersion(runtime)) {
-        return runtime;
-      }
+    if (SystemInfo.isMac && checkMacRuntimeVersion(MAC_AIR_RUNTIME_DEFAULT_PATH)) {
+      return MAC_AIR_RUNTIME_DEFAULT_PATH;
     }
-
     return null;
   }
 

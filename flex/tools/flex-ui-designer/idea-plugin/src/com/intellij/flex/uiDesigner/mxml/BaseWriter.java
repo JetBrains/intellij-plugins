@@ -5,8 +5,6 @@ import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.javascript.flex.FlexMxmlLanguageAttributeNames;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-
 final class BaseWriter extends PrimitiveWriter {
   private static final int EMPTY_CLASS_OR_PROPERTY_NAME = 0;
   
@@ -91,7 +89,7 @@ final class BaseWriter extends PrimitiveWriter {
     return rootScope.referenceCounter++;
   }
 
-  public void writeMessageHeader(ProjectComponentReferenceCounter projectComponentReferenceCounter) throws IOException {
+  public void writeMessageHeader(ProjectComponentReferenceCounter projectComponentReferenceCounter) {
     final ByteRange range = blockOut.startRange();
 
     if (projectComponentReferenceCounter.total.isEmpty()) {

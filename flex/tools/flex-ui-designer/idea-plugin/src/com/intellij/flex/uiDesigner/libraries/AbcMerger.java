@@ -7,7 +7,10 @@ import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TObjectProcedure;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -32,6 +35,7 @@ class AbcMerger extends AbcTranscoder {
     this.definitionMap = definitionMap;
     this.definitionProcessor = definitionProcessor;
 
+    //noinspection IOResourceOpenedButNotSafelyClosed
     out = new FileOutputStream(outFile);
     channel = out.getChannel();
     channel.position(SwfUtil.getWrapHeaderLength());
@@ -240,7 +244,7 @@ class AbcMerger extends AbcTranscoder {
     buffer.putShort(idPosition, (short)info.newId);
   }
 
-  private void processDefineSprite(int spriteTagLength) throws IOException {
+  private void processDefineSprite(int spriteTagLength) {
     buffer.mark();
     buffer.position(buffer.position() + 4);
     final int endPosition = buffer.position() + spriteTagLength;
@@ -285,6 +289,7 @@ class AbcMerger extends AbcTranscoder {
     skipTag(length);
   }
 
+  @Override
   protected void doAbc2(int length) throws IOException {
     final Definition definition = definitionMap.get(transientNameString);
     // may be overloaded (i.e. new definition with high timestamp exists)
@@ -316,6 +321,7 @@ class AbcMerger extends AbcTranscoder {
     }
   }
 
+  @Override
   protected void processSymbolClass(final int length) throws IOException {
     processExportAssets(length, true);
   }

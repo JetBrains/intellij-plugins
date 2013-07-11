@@ -157,20 +157,20 @@ public class LibrarySorter {
     final List<Library> libraries;
 
     // only if restored from cache
-    final String[] libraryPathes;
+    final String[] libraryPaths;
 
     int id;
 
     SortResult(@Nullable THashMap<CharSequence, Definition> definitionMap, List<Library> libraries) {
       this.definitionMap = definitionMap;
       this.libraries = libraries;
-      libraryPathes = null;
+      libraryPaths = null;
     }
 
-    SortResult(@Nullable THashMap<CharSequence, Definition> definitionMap, String[] libraryPathes) {
+    SortResult(@Nullable THashMap<CharSequence, Definition> definitionMap, String[] libraryPaths) {
       this.definitionMap = definitionMap;
       libraries = null;
-      this.libraryPathes = libraryPathes;
+      this.libraryPaths = libraryPaths;
     }
   }
 }

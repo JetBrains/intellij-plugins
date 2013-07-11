@@ -3,6 +3,7 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.flex.uiDesigner.io.IOUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -16,12 +17,13 @@ public class Reader extends DataInputStream {
   @SuppressWarnings("UnusedDeclaration")
   static class InputStreamDumper extends InputStream {
     final FileOutputStream fileOut;
-    private InputStream in;
+    private final InputStream in;
 
     InputStreamDumper(InputStream in) {
       this.in = in;
 
       try {
+        //noinspection IOResourceOpenedButNotSafelyClosed
         fileOut = new FileOutputStream(new File("/Users/develar/clientOut"));
       }
       catch (FileNotFoundException e) {
@@ -43,7 +45,7 @@ public class Reader extends DataInputStream {
     }
 
     @Override
-    public int read(byte[] b) throws IOException {
+    public int read(@NotNull byte[] b) throws IOException {
       byte[] bytes = new byte[b.length];
       int length = super.read(bytes);
       fileOut.write(bytes, 0, length);
@@ -52,7 +54,7 @@ public class Reader extends DataInputStream {
     }
 
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
+    public int read(@NotNull byte[] b, int off, int len) throws IOException {
       byte[] bytes = new byte[len];
       int length = super.read(bytes, off, len);
       fileOut.write(bytes, 0, length);

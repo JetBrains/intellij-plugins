@@ -4,6 +4,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.text.CharArrayUtil;
 import gnu.trove.TObjectHashingStrategy;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -181,9 +182,9 @@ abstract public class AbcTranscoder extends SwfTranscoder {
   }
 
   protected static final class TransientString implements CharSequence {
-    protected final char[] chars = new char[256];
-    protected int length;
-    protected int hash;
+    private final char[] chars = new char[256];
+    private int length;
+    private int hash;
 
     @Override
     public int length() {
@@ -220,6 +221,7 @@ abstract public class AbcTranscoder extends SwfTranscoder {
       return CharArrayUtil.equals(chars, 0, chars.length, name, 0, name.length);
     }
 
+    @NotNull
     @Override
     public String toString() {
       return new String(chars, 0, length);

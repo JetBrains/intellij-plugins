@@ -52,7 +52,7 @@ public final class ProjectWindowBounds {
              ? new Rectangle(parsePwV(d, X), parsePwV(d, Y), parsePwV(d, W), parsePwV(d, H))
              : null;
     }
-    catch (NumberFormatException e) {
+    catch (NumberFormatException ignored) {
       return null;
     }
   }

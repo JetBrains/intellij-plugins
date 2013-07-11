@@ -6,7 +6,7 @@ import com.intellij.lang.javascript.flex.JSFileReference;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.properties.ResourceBundleReference;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.ModuleFileIndex;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -108,7 +108,7 @@ public final class InjectionUtil {
     final PsiReference[] references = element.getReferences();
     final PsiPolyVariantReference fileReference;
     int i = references.length - 1;
-    // injection in mxml has com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeNameValuePairImpl$NameReference as last reference
+    // injection in mxml has JSAttributeNameValuePairImpl$NameReference as last reference
     while (true) {
       final PsiReference reference = i < 0 ? null : references[i];
       if (reference instanceof JSFileReference || reference instanceof ResourceBundleReference) {
@@ -156,12 +156,13 @@ public final class InjectionUtil {
     // find equal files
     for (ResolveResult resolveResult : resolveResults) {
       PsiElement resolvedElement = resolveResult.getElement();
+      assert resolvedElement != null;
       if (manager.getTopLevelFile(resolvedElement).equals(currentTopLevelFile)) {
         return (PsiFileSystemItem)resolvedElement;
       }
     }
 
-    final Module module = ModuleUtil.findModuleForPsiElement(element);
+    final Module module = ModuleUtilCore.findModuleForPsiElement(element);
     if (module != null) {
       final ModuleFileIndex fileIndex = ModuleRootManager.getInstance(module).getFileIndex();
       // return if is local file

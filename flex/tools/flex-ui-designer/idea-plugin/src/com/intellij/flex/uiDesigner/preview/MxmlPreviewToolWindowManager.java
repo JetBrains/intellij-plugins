@@ -75,6 +75,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     project.getMessageBus().connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new MyFileEditorManagerListener());
   }
 
+  @Override
   public void projectClosed() {
     if (toolWindowForm == null) {
       return;
@@ -118,15 +119,18 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     }
   }
 
+  @Override
   @NotNull
   @NonNls
   public String getComponentName() {
     return "MxmlPreviewToolWindowManager";
   }
 
+  @Override
   public void initComponent() {
   }
 
+  @Override
   public void disposeComponent() {
   }
 
@@ -208,7 +212,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       }
 
       @Override
-      public void errorOccured() {
+      public void errorOccurred() {
       }
     });
   }
@@ -305,6 +309,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   private class MyFileEditorManagerListener extends FileEditorManagerAdapter implements Runnable {
     private boolean waitingForSmartMode;
 
+    @Override
     public void selectionChanged(@NotNull FileEditorManagerEvent event) {
       final FileEditor newFileEditor = event.getNewEditor();
       Editor mxmlEditor = null;

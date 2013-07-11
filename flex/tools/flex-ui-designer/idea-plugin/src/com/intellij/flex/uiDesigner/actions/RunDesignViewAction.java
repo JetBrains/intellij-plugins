@@ -48,6 +48,7 @@ public class RunDesignViewAction extends DumbAwareAction {
     return false;
   }
 
+  @Override
   public void update(final AnActionEvent event) {
     final boolean popupPlace = ActionPlaces.isPopupPlace(event.getPlace());
     final boolean enabled = isEnabled(event.getDataContext(), popupPlace) && !DesignerApplicationManager.getInstance().isInitialRendering();

@@ -134,8 +134,8 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
     }
     else if (filesProcessing && name.equals("path")) {
       if (value.startsWith(LOCALE_PREFIX) && value.endsWith(LibraryManager.PROPERTIES_EXTENSION)) {
-        final int vlength = value.length();
-        final int secondSlashPosition = StringUtil.lastIndexOf(value, '/', LOCALE_PREFIX_LENGTH + 2, vlength - PROPERTIES_EXTENSION_LENGTH - 1);
+        final int vLength = value.length();
+        final int secondSlashPosition = StringUtil.lastIndexOf(value, '/', LOCALE_PREFIX_LENGTH + 2, vLength - PROPERTIES_EXTENSION_LENGTH - 1);
         final String locale = value.substring(LOCALE_PREFIX_LENGTH, secondSlashPosition);
         @SuppressWarnings("ConstantConditions")
         THashSet<String> bundles = library.library.resourceBundles.get(locale);
@@ -143,7 +143,7 @@ class CatalogXmlBuilder extends IXMLBuilderAdapter {
           bundles = new THashSet<String>();
           library.library.resourceBundles.put(locale, bundles);
         }
-        bundles.add(value.substring(secondSlashPosition + 1, vlength - PROPERTIES_EXTENSION_LENGTH));
+        bundles.add(value.substring(secondSlashPosition + 1, vLength - PROPERTIES_EXTENSION_LENGTH));
       }
     }
   }

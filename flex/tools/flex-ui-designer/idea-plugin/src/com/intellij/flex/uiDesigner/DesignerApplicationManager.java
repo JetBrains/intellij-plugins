@@ -6,9 +6,9 @@ import com.intellij.flex.uiDesigner.preview.MxmlPreviewToolWindowManager;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexUtils;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.flex.sdk.FlexSdkUtils;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -24,7 +24,7 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.help.HelpManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.ModuleAdapter;
@@ -249,7 +249,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
               return;
             }
 
-            Module module = ModuleUtil.findModuleForFile(file, project);
+            Module module = ModuleUtilCore.findModuleForFile(file, project);
             if (module != null) {
               renderDocument(module, (XmlFile)psiFile, debug, result);
             }
@@ -273,7 +273,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
           if (syncTimestamp) {
             info.documentModificationStamp = document.getModificationStamp();
           }
-          ApplicationManager.getApplication().getMessageBus().syncPublisher(DesignerApplicationManager.MESSAGE_TOPIC).documentRendered(info);
+          ApplicationManager.getApplication().getMessageBus().syncPublisher(MESSAGE_TOPIC).documentRendered(info);
         }
       }
     };
@@ -455,7 +455,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
     });
 
-    // unregisted module is more complicated — we cannot just remove all document factories which belong to project as in case of close project
+    // unregistered module is more complicated — we cannot just remove all document factories which belong to project as in case of close project
     // we must remove all document factories belong to module and all dependents (dependent may be from another module, so, we process moduleRemoved synchronous
     // one by one)
     connection.subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
@@ -561,12 +561,12 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
           //noinspection BusyWait
           Thread.sleep(5);
         }
-        catch (InterruptedException e) {
+        catch (InterruptedException ignored) {
           renderResult.setRejected();
           return false;
         }
 
-        if (indicator.isCanceled() || DesignerApplicationManager.getInstance().isApplicationClosed()) {
+        if (indicator.isCanceled() || getInstance().isApplicationClosed()) {
           renderResult.setRejected();
           return false;
         }
@@ -578,7 +578,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
   public interface DocumentRenderedListener {
     void documentRendered(DocumentInfo info);
-    void errorOccured();
+    void errorOccurred();
   }
 
   private class MyPsiTreeChangeAdapter extends PsiTreeChangeAdapter {
@@ -590,18 +590,22 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       updateQueue = new MergingUpdateQueue("FlashUIDesigner.update", 100, true, null);
     }
 
+    @Override
     public void childrenChanged(@NotNull PsiTreeChangeEvent event) {
       //update(event);
     }
 
+    @Override
     public void childRemoved(@NotNull PsiTreeChangeEvent event) {
       update(event);
     }
 
+    @Override
     public void childAdded(@NotNull PsiTreeChangeEvent event) {
       update(event);
     }
 
+    @Override
     public void childReplaced(@NotNull PsiTreeChangeEvent event) {
       update(event);
     }

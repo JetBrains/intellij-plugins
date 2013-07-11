@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import org.jetbrains.io.Identifiable;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.io.Identifiable;
 
 import java.util.List;
 
@@ -18,6 +18,7 @@ public class LibrarySet implements Identifiable {
     this.items = items;
   }
 
+  @Override
   public int getId() {
     return id;
   }

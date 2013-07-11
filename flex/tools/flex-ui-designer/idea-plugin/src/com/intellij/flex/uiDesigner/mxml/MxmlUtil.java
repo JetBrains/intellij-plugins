@@ -32,11 +32,12 @@ public final class MxmlUtil {
   static final String UNKNOWN_COMPONENT_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownComponent";
   static final String UNKNOWN_ITEM_RENDERER_CLASS_NAME = "com.intellij.flex.uiDesigner.flex.UnknownItemRenderer";
 
-  public static Document getDocumentAndWaitIfNotComitted(PsiFile psiFile) {
+  public static Document getDocumentAndWaitIfNotCommitted(PsiFile psiFile) {
     Application application = ApplicationManager.getApplication();
     LogMessageUtil.LOG.assertTrue(application.isUnitTestMode() || !application.isReadAccessAllowed());
     PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(psiFile.getProject());
     Document document = psiDocumentManager.getDocument(psiFile);
+    assert document != null;
     if (!psiDocumentManager.isCommitted(document)) {
       final Semaphore semaphore = new Semaphore();
       semaphore.down();

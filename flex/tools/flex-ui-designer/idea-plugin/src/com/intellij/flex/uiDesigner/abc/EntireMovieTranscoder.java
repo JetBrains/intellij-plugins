@@ -4,7 +4,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.TIntArrayList;
 import org.jetbrains.annotations.TestOnly;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class EntireMovieTranscoder extends MovieTranscoder {
   // Sprite ID and FrameCount
@@ -43,7 +45,7 @@ public class EntireMovieTranscoder extends MovieTranscoder {
     buffer.putShort(swfHeaderEnd - 2, (short)1);
 
     int initialStartPosition = swfHeaderEnd;
-    int fileAttributesFullLength = 0;
+    int fileAttributesFullLength;
     int tagStart;
     int fileLength = buffer.capacity();
     analyze:

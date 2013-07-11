@@ -11,7 +11,7 @@ import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.util.AsyncResult;
@@ -106,7 +106,7 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
             List<LocalStyleHolder> list = ModuleInfoUtil.collectLocalStyle(moduleInfo, flexLibrarySet.getVersion(), stringWriter,
                                                                            problemsHolder, projectComponentReferenceCounter,
                                                                            flexLibrarySet.assetCounterInfo.demanded);
-            // todo we should't create list, we should check while collecting
+            // todo we shouldn't create list, we should check while collecting
             boolean hasChanges = true;
             if (list.size() == oldList.size()) {
               int diff = list.size();
@@ -166,7 +166,7 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
           // if onlyStyle and we didn't find changed local style sources, so, it is new style source — we must collect style sources for appropriate module
           Project p = ProjectUtil.guessProjectForFile(file);
           if (p != null) {
-            ModuleInfo info = client.getRegisteredModules().getNullableInfo(ModuleUtil.findModuleForFile(file, p));
+            ModuleInfo info = client.getRegisteredModules().getNullableInfo(ModuleUtilCore.findModuleForFile(file, p));
             if (info != null) {
               localStyleSources.put(info, Collections.<LocalStyleHolder>emptyList());
             }
@@ -192,7 +192,7 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
         continue;
       }
 
-      final Module module = ModuleUtil.findModuleForFile(file, project);
+      final Module module = ModuleUtilCore.findModuleForFile(file, project);
       if (module == null) {
         continue;
       }

@@ -9,15 +9,15 @@ import com.intellij.flex.uiDesigner.libraries.*;
 import com.intellij.flex.uiDesigner.mxml.MxmlWriter;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.javascript.flex.mxml.FlexCommonTypeNames;
-import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
+import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.AsyncResult;
@@ -620,7 +620,7 @@ public class Client implements Disposable {
   public boolean registerDocumentReferences(List<XmlFile> files, @Nullable Module module, ProblemsHolder problemsHolder) {
     for (XmlFile file : files) {
       VirtualFile virtualFile = file.getViewProvider().getVirtualFile();
-      Module documentModule = ModuleUtil.findModuleForFile(virtualFile, file.getProject());
+      Module documentModule = ModuleUtilCore.findModuleForFile(virtualFile, file.getProject());
       assert documentModule != null;
       if (module != documentModule && !isModuleRegistered(documentModule)) {
         try {
@@ -738,7 +738,7 @@ public class Client implements Disposable {
     out.writeShort(id);
   }
 
-  private static enum ClientMethod {
+  private enum ClientMethod {
     openProject, closeProject, registerLibrarySet, registerModule, unregisterModule, registerDocumentFactory, updateDocumentFactory, renderDocument, renderDocumentsAndDependents,
     initStringRegistry, updateStringRegistry, fillImageClassPool, fillSwfClassPool, fillViewClassPool,
     selectComponent, getDocumentImage, updatePropertyOrStyle, updateLocalStyleHolders;

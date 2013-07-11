@@ -108,12 +108,13 @@ public class AbcFilter extends AbcTranscoder {
     }
   }
 
+  @Override
   protected void processEnd(int length) throws IOException {
     buffer.position(lastWrittenPosition);
     channel.write(buffer);
   }
 
-  private void processFileAttributes(int length) throws IOException {
+  private void processFileAttributes(int length) {
     buffer.put(buffer.position(), (byte)104); // HasMetadata = false
     buffer.position(buffer.position() + length);
   }
@@ -229,10 +230,12 @@ public class AbcFilter extends AbcTranscoder {
     return numSymbols;
   }
 
+  @Override
   protected void doAbc2(int length) throws IOException {
     decoders.add(new Decoder(createBufferWrapper(length), transientNameString.charAt(0) == '_' ? transientNameString.cloneChars() : null));
   }
 
+  @Override
   protected BufferWrapper createBufferWrapper(int length) {
     final int off = 4 + transientNameString.length() + 1;
     return new BufferWrapper(buffer.array(), buffer.position() + off, length - off);
@@ -245,6 +248,7 @@ public class AbcFilter extends AbcTranscoder {
     encoder.writeDoAbc(channel, asTag);
   }
 
+  @Override
   protected void skipTag(int tagLength) throws IOException {
     writeDataBeforeTag(tagLength);
 

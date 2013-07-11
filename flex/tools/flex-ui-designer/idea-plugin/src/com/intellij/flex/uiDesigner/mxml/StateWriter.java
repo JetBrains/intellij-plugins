@@ -135,7 +135,7 @@ class StateWriter {
   }
 
   public void includeInOrExcludeFrom(XmlAttributeValue xmlAttributeValue, Context parentContext, DynamicObjectContext context, boolean excludeFrom) {
-    // currently, all references in includeIn/exludeFrom attribute value are StateReference, so, we skip instanceof StateReference
+    // currently, all references in includeIn/excludeFrom attribute value are StateReference, so, we skip instanceof StateReference
     final PsiReference[] references = xmlAttributeValue.getReferences();
     assert context.includeInStates.isEmpty();
     if (excludeFrom) {
@@ -272,7 +272,7 @@ class StateWriter {
     try {
       propertyKind = valueWriter.write(descriptor, valueProvider, out, writer, false, context);
     }
-    catch (InvalidPropertyException invalidProperty) {
+    catch (InvalidPropertyException ignored) {
       // todo handle invalidProperty for state
       throw new UnsupportedOperationException("");
     }
@@ -295,9 +295,9 @@ class StateWriter {
     return true;
   }
 
-  public StaticObjectContext createContextForStaticBackSibling(boolean allowIncludeInExludeFrom, int referencePosition, @Nullable Context parentContext) {
+  public StaticObjectContext createContextForStaticBackSibling(boolean allowIncludeInExcludeFrom, int referencePosition, @Nullable Context parentContext) {
     assert referencePosition != -1;
-    if (allowIncludeInExludeFrom) {
+    if (allowIncludeInExcludeFrom) {
       assert parentContext != null;
       int backSiblingId = (writer.isIdPreallocated() && !parentContext.ownerIsDynamic()) ? writer.getPreallocatedId() : -1;
       // reset due to new backsibling

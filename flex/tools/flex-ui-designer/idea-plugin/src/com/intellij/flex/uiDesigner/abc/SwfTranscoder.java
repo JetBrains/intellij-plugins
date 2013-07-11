@@ -47,14 +47,14 @@ abstract class SwfTranscoder extends AbcEncoder {
       final Inflater inflater = INFLATER.get();
       try {
         inflater.setInput(data);
-        byte[] uncomressedData = new byte[uncompressedBodyLength];
+        byte[] uncompressedData = new byte[uncompressedBodyLength];
         try {
-          inflater.inflate(uncomressedData);
+          inflater.inflate(uncompressedData);
         }
         catch (DataFormatException e) {
           throw new ZipException(e.getMessage() != null ? e.getMessage() : "Invalid ZLIB data format");
         }
-        data = uncomressedData;
+        data = uncompressedData;
       }
       finally {
         inflater.reset();
@@ -106,6 +106,7 @@ abstract class SwfTranscoder extends AbcEncoder {
   protected int skipAbcName(final int start) {
     int end = start;
     byte[] array = buffer.array();
+    //noinspection StatementWithEmptyBody
     while (array[++end] != 0) {
     }
 

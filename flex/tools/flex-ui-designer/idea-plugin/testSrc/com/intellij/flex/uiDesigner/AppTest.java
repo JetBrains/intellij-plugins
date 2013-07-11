@@ -51,7 +51,7 @@ public class AppTest extends AppTestBase {
       }
 
       @Override
-      public void errorOccured() {
+      public void errorOccurred() {
         fail.set(true);
         semaphore.up();
       }

@@ -151,14 +151,14 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
   }
 
   private static void flipDefinition(Definition definition, Map<CharSequence, Definition> definitionMap, String name) {
-    // don't remove old entry from map, it may be requred before we inject
+    // don't remove old entry from map, it may be required before we inject
     int i = name.indexOf(':');
     String newName = name.substring(0, i + 1) + OVERLOADED_AND_BACKED_CLASS_MARK + name.substring(i + 2);
     definitionMap.put(newName, definition);
     //definition.name = newName;
   }
 
-  private static void changeAbcName(final String name, ByteBuffer buffer) throws IOException {
+  private static void changeAbcName(final String name, ByteBuffer buffer) {
     final int oldPosition = buffer.position();
     buffer.position(buffer.position() + 4 + name.length() + 1 /* null-terminated string */);
     parseCPoolAndRename(name.substring(name.indexOf(':') + 1), buffer);
@@ -169,7 +169,7 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     buffer.position(oldPosition);
   }
 
-  private static void parseCPoolAndRename(String from, ByteBuffer buffer) throws IOException {
+  private static void parseCPoolAndRename(String from, ByteBuffer buffer) {
     buffer.position(buffer.position() + 4);
 
     int n = AbcUtil.readU32(buffer);
@@ -292,8 +292,8 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
     public boolean methodTraitName(int name, int traitKind, DataBuffer in, Encoder encoder) {
       if (changeAccessModifier != null && !changeAccessModifier.isEmpty() && isNotOverridenMethod(traitKind)) {
         for (int i = 0, size = changeAccessModifier.size(); i < size; i++) {
-          String mname = changeAccessModifier.get(i);
-          if (encoder.changeAccessModifier(mname, name, in)) {
+          String mName = changeAccessModifier.get(i);
+          if (encoder.changeAccessModifier(mName, name, in)) {
             if (changeAccessModifier.size() == 1) {
               changeAccessModifier = null;
             }
@@ -349,7 +349,7 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
   }
 
   private static class VarAccessModifier extends AbcModifierBase {
-    private String[] fieldNames;
+    private final String[] fieldNames;
 
     private VarAccessModifier(String ...fieldNames) {
       this.fieldNames = fieldNames;

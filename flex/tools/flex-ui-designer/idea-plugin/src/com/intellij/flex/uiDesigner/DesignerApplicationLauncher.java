@@ -91,6 +91,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
     semaphore.up();
   }
 
+  @Override
   protected boolean doRun(@NotNull final ProgressIndicator indicator)
     throws IOException, java.util.concurrent.ExecutionException, InterruptedException, TimeoutException {
     final List<AdlRunConfiguration> adlRunConfigurations;

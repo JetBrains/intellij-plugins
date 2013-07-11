@@ -92,6 +92,7 @@ abstract class Context implements MxmlObjectReferenceProvider {
     return id;
   }
 
+  @Override
   public MxmlObjectReference getMxmlObjectReference() {
     if (mxmlObjectReference == null) {
       mxmlObjectReference = new MxmlObjectReference(getOrAllocateId());

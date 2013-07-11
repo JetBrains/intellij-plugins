@@ -65,7 +65,7 @@ public class PrimitiveWriter {
           out.writeAmfUInt(v);
           return;
         }
-        catch (NumberFormatException e) {
+        catch (NumberFormatException ignored) {
           // Why themeColor for theme halo valid for any other theme? But it is compiler behavior, see
           // example http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/spark/components/Form.html
           // or our test EmbedSwfAndImageFromCss

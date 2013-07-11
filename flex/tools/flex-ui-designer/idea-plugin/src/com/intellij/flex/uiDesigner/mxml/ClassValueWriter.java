@@ -4,18 +4,18 @@ import com.intellij.flex.uiDesigner.io.PrimitiveAmfOutputStream;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 
 class ClassValueWriter extends AbstractPrimitiveValueWriter {
-  private final JSClass jsClas;
+  private final JSClass jsClass;
 
-  public ClassValueWriter(JSClass jsClas) {
-    this.jsClas = jsClas;
+  public ClassValueWriter(JSClass jsClass) {
+    this.jsClass = jsClass;
   }
   
-  public JSClass getJsClas() {
-    return jsClas;
+  public JSClass getJsClass() {
+    return jsClass;
   }
 
   @Override
   protected void doWrite(PrimitiveAmfOutputStream out, BaseWriter writer, boolean isStyle) {
-    writer.classReference(jsClas.getQualifiedName());
+    writer.classReference(jsClass.getQualifiedName());
   }
 }

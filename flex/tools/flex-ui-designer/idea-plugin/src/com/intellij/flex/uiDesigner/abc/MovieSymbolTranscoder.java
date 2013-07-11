@@ -6,7 +6,9 @@ import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -110,7 +112,7 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
 
     exportedSymbol.newId = usedPlacedObjects.size() + 1;
 
-    fileLength += exportedSymbol.filelength();
+    fileLength += exportedSymbol.fileLength();
     return exportedSymbol;
   }
 
@@ -168,7 +170,7 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
     int flags = buffer.get();
     int objectIdPosition = -1;
     if ((flags & HAS_CLIP_ACTION) != 0) {
-      flags = flags &~ HAS_CLIP_ACTION;
+      flags &= ~HAS_CLIP_ACTION;
       int bufferPosition = buffer.position();
       buffer.put(bufferPosition - 1, (byte)flags);
 
@@ -225,7 +227,7 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
       referredObject.used = true;
       if (referredObject.tagType == TagTypes.DefineSprite) {
         processDefineSprite(referredObject);
-        fileLength += referredObject.filelength();
+        fileLength += referredObject.fileLength();
       }
       else if (bounds == null) {
         findBounds(referredObject);
@@ -344,6 +346,7 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
         }
         
         if (b != symbolName[k++]) {
+          //noinspection StatementWithEmptyBody
           while (data[j++] != 0) {
           }
 
@@ -388,7 +391,7 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
       return length + (start - tagStart);
     }
 
-    public int filelength() {
+    public int fileLength() {
       if (positions == null) {
         // we encode length as provided, just copy bytes
         return computeFullLengthAsProvided();

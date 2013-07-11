@@ -177,7 +177,7 @@ class PropertyProcessor implements ValueWriter {
     ValueWriter valueWriter = injectedASWriter.processProperty(valueProvider, descriptor.getName(), descriptor.getType(), isStyle, mxmlObjectReferenceProvider);
     if (valueWriter instanceof ClassValueWriter && isSkinClass(descriptor)) {
       SkinProjectClassValueWriter skinProjectClassValueWriter = getSkinProjectClassValueWriter(
-        getProjectComponentFactoryId(((ClassValueWriter)valueWriter).getJsClas()));
+        getProjectComponentFactoryId(((ClassValueWriter)valueWriter).getJsClass()));
       if (skinProjectClassValueWriter != null) {
         return skinProjectClassValueWriter;
       }

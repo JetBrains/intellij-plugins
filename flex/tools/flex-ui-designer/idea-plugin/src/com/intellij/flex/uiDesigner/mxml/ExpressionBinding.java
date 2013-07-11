@@ -298,7 +298,7 @@ class ExpressionBinding extends Binding {
       try {
         valueReferenceResolver.getValueReference(hostObjectId).write(out, writer, valueReferenceResolver);
       }
-      catch (IllegalStateException e) {
+      catch (IllegalStateException ignored) {
         // getValueReference throws IllegalStateException if value reference is null
         throw new UnsupportedOperationException(expression.getText());
       }

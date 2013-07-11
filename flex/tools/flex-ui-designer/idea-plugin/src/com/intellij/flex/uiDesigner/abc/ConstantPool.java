@@ -60,6 +60,7 @@ final class NSPool extends PoolPart {
     super(poolPartLength);
   }
 
+  @Override
   ByteArray createByteArray() {
     return new NS();
   }
@@ -69,6 +70,7 @@ final class NS extends ByteArray {
   int nsKind = 0;
   int index = 0;
 
+  @Override
   void init() {
     int originalPos = data.position();
     data.seek(start);
@@ -92,6 +94,7 @@ final class NS extends ByteArray {
     hash = (int)((num >> 32) ^ num);
   }
 
+  @Override
   void clear() {
     super.clear();
     nsKind = 0;
@@ -120,6 +123,7 @@ final class NSSPool extends PoolPart {
     super(poolPartLength);
   }
 
+  @Override
   ByteArray createByteArray() {
     return new NSS();
   }
@@ -128,6 +132,7 @@ final class NSSPool extends PoolPart {
     private int[] set;
     private int size;
 
+    @Override
     void init() {
       int originalPos = data.position();
       data.seek(start);
@@ -150,6 +155,7 @@ final class NSSPool extends PoolPart {
       hash = (int)((num >> 32) ^ num);
     }
 
+    @Override
     void clear() {
       super.clear();
       size = 0;
@@ -182,6 +188,7 @@ final class MultiNamePool extends PoolPart {
     super(poolPartLength);
   }
 
+  @Override
   ByteArray createByteArray() {
     return new MultinameByteArray();
   }
@@ -190,6 +197,7 @@ final class MultiNamePool extends PoolPart {
 final class MultinameByteArray extends ByteArray {
   int constKind = 0, index1 = 1, index2 = 1;
 
+  @Override
   void init() {
     data.seek(start);
     constKind = data.readU8();
@@ -245,6 +253,7 @@ final class MultinameByteArray extends ByteArray {
     }
   }
 
+  @Override
   void clear() {
     super.clear();
     constKind = 0;

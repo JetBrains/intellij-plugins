@@ -78,7 +78,7 @@ public class MxmlWriter {
 
   @Nullable
   public Pair<ProjectComponentReferenceCounter, List<RangeMarker>> write(XmlFile psiFile) throws IOException {
-    document = MxmlUtil.getDocumentAndWaitIfNotComitted(psiFile);
+    document = MxmlUtil.getDocumentAndWaitIfNotCommitted(psiFile);
     final AccessToken token = ReadAction.start();
     try {
       final VirtualFile virtualFile = psiFile.getVirtualFile();
@@ -143,7 +143,7 @@ public class MxmlWriter {
 
   private boolean processElements(final XmlTag tag,
                                   @Nullable final Context parentContext,
-                                  final boolean allowIncludeInExludeFrom,
+                                  final boolean allowIncludeInExcludeFrom,
                                   final int dataPosition,
                                   final int referencePosition,
                                   final boolean writeLocation,
@@ -182,7 +182,7 @@ public class MxmlWriter {
           if (descriptor.hasIdType()) {
             processObjectWithExplicitId(attribute.getValue(), context);
           }
-          else if (allowIncludeInExludeFrom) {
+          else if (allowIncludeInExcludeFrom) {
             String name = descriptor.getName();
             boolean excludeFrom = false;
             if (name.equals(FlexStateElementNames.INCLUDE_IN) || (excludeFrom = name.equals(FlexStateElementNames.EXCLUDE_FROM))) {
@@ -255,7 +255,7 @@ public class MxmlWriter {
       }
     }
     else if (context == tagAttributeProcessContext) {
-      context = stateWriter.createContextForStaticBackSibling(allowIncludeInExludeFrom, referencePosition, parentContext);
+      context = stateWriter.createContextForStaticBackSibling(allowIncludeInExcludeFrom, referencePosition, parentContext);
       stateWriter.finalizeStateSpecificAttributesForStaticContext((StaticObjectContext)context, parentContext, this);
       if (tagAttributeProcessContext.isCssRulesetDefined()) {
         context.markCssRulesetDefined();
@@ -301,7 +301,7 @@ public class MxmlWriter {
   boolean processTagChildren(final XmlTag tag, @NotNull final Context context, @Nullable final Context parentContext,
                           final boolean propertiesExpected, @Nullable PropertyKind propertyKind) {
     int lengthPosition = propertyKind != null && propertyKind.isList() ? out.allocateShort() : 0;
-    int explicitContentOccured = -1;
+    int explicitContentOccurred = -1;
     int validAndStaticChildrenCount = 0;
     final XmlTagChild[] children = tag.getValue().getChildren();
 
@@ -338,13 +338,13 @@ public class MxmlWriter {
             continue;
           }
           
-          if (explicitContentOccured == 1) {
+          if (explicitContentOccurred == 1) {
             LOG.warn("Default content already processed, skip " + child);
             continue;
           }
 
-          if (propertiesExpected && explicitContentOccured == -1) {
-            explicitContentOccured = 0;
+          if (propertiesExpected && explicitContentOccurred == -1) {
+            explicitContentOccurred = 0;
             final PropertyKind defaultPropertyKind = processDefaultProperty(tag, valueProviderFactory.create(childTag), classBackedDescriptor,
                                                                             children.length, context);
             if (defaultPropertyKind == null) {
@@ -367,9 +367,9 @@ public class MxmlWriter {
         else if (propertiesExpected && descriptor instanceof AnnotationBackedDescriptor) {
           AnnotationBackedDescriptor annotationBackedDescriptor = (AnnotationBackedDescriptor)descriptor;
           // explicit content after contiguous child elements serving as the default property value
-          // skip invalid, contiguous child elements already processed and explicit content (i.e. AnnotationBackedDescriptor, property childTag) was occured
-          if (explicitContentOccured == 0) {
-            explicitContentOccured = 1;
+          // skip invalid, contiguous child elements already processed and explicit content (i.e. AnnotationBackedDescriptor, property childTag) was occurred
+          if (explicitContentOccurred == 0) {
+            explicitContentOccurred = 1;
             if (propertyKind != null && propertyKind.isList()) {
               endList(validAndStaticChildrenCount, lengthPosition);
             }
@@ -391,7 +391,7 @@ public class MxmlWriter {
         }
       }
       else if (child instanceof XmlText && !MxmlUtil.containsOnlyWhitespace(child)) {
-        if (explicitContentOccured == 1) {
+        if (explicitContentOccurred == 1) {
           LOG.warn("Default content already processed, skip '" + child.getText().trim() + "'");
           continue;
         }
@@ -401,12 +401,12 @@ public class MxmlWriter {
           continue;
         }
 
-        if (propertiesExpected && explicitContentOccured == -1) {
-          explicitContentOccured = 0;
+        if (propertiesExpected && explicitContentOccurred == -1) {
+          explicitContentOccurred = 0;
           final XmlElementValueProvider valueProvider = valueProviderFactory.create((XmlText)child);
           final PropertyKind defaultPropertyKind = processDefaultProperty(tag, valueProvider, null, children.length, context);
           if (defaultPropertyKind == PropertyKind.IGNORE) {
-            explicitContentOccured = -1;
+            explicitContentOccurred = -1;
             continue;
           }
           else if (defaultPropertyKind == null) {
@@ -504,11 +504,11 @@ public class MxmlWriter {
 
   private boolean processClassBackedSubTag(final XmlTag tag, final ClassBackedElementDescriptor descriptor, @Nullable final Context parentContext,
                                            final boolean isListItem) {
-    final boolean allowIncludeInExludeFrom = hasStates && isListItem && parentContext != null;
+    final boolean allowIncludeInExcludeFrom = hasStates && isListItem && parentContext != null;
     final Trinity<Integer,String,Condition<AnnotationBackedDescriptor>> effectiveClassInfo;
     final String effectiveClassName;
     try {
-      if (propertyProcessor.writeTagIfFx(tag, descriptor.getQualifiedName(), out, parentContext, allowIncludeInExludeFrom)) {
+      if (propertyProcessor.writeTagIfFx(tag, descriptor.getQualifiedName(), out, parentContext, allowIncludeInExcludeFrom)) {
         return true;
       }
 
@@ -542,14 +542,14 @@ public class MxmlWriter {
       writer.documentReference(effectiveClassInfo.first);
     }
 
-    return processElements(tag, parentContext, allowIncludeInExludeFrom, childDataPosition, out.allocateClearShort(),
+    return processElements(tag, parentContext, allowIncludeInExcludeFrom, childDataPosition, out.allocateClearShort(),
                            JSResolveUtil.isAssignableType(FlexCommonTypeNames.IVISUAL_ELEMENT, descriptor.getQualifiedName(),
                                                           descriptor.getDeclaration()) ||
                            JSResolveUtil.isAssignableType(FlexCommonTypeNames.FLASH_DISPLAY_OBJECT, descriptor.getQualifiedName(),
                                                           descriptor.getDeclaration()), effectiveClassInfo.third);
   }
 
-  boolean processMxmlVector(XmlTag tag, @Nullable Context parentContext, boolean allowIncludeInExludeFrom) {
+  boolean processMxmlVector(XmlTag tag, @Nullable Context parentContext, boolean allowIncludeInExcludeFrom) {
     final XmlAttribute typeAttribute = tag.getAttribute("type");
     final String type;
     if (typeAttribute == null || StringUtil.isEmpty((type = typeAttribute.getDisplayValue()))) {
@@ -560,16 +560,17 @@ public class MxmlWriter {
     final XmlAttribute fixedAttribute = tag.getAttribute("fixed");
     out.write(AmfExtendedTypes.MXML_VECTOR);
     writer.classOrPropertyName(type);
-    out.write(fixedAttribute != null && fixedAttribute.getDisplayValue().charAt(0) == 't');
-    processTagChildren(tag, processIdAttributeOfFxTag(tag, parentContext, allowIncludeInExludeFrom), parentContext, false, PropertyKind.VECTOR);
+    String displayValue = fixedAttribute == null ? null : StringUtil.nullize(fixedAttribute.getDisplayValue());
+    out.write(displayValue != null && displayValue.charAt(0) == 't');
+    processTagChildren(tag, processIdAttributeOfFxTag(tag, parentContext, allowIncludeInExcludeFrom), parentContext, false, PropertyKind.VECTOR);
     return true;
   }
 
-  StaticObjectContext processIdAttributeOfFxTag(XmlTag tag, @Nullable Context parentContext, boolean allowIncludeInExludeFrom) {
+  StaticObjectContext processIdAttributeOfFxTag(XmlTag tag, @Nullable Context parentContext, boolean allowIncludeInExcludeFrom) {
     final StaticObjectContext context;
     final int referencePosition = out.allocateClearShort();
     if (hasStates) {
-      context = stateWriter.createContextForStaticBackSibling(allowIncludeInExludeFrom, referencePosition, parentContext);
+      context = stateWriter.createContextForStaticBackSibling(allowIncludeInExcludeFrom, referencePosition, parentContext);
     }
     else {
       context = writer.createStaticContext(parentContext, referencePosition);
@@ -583,6 +584,7 @@ public class MxmlWriter {
       }
       else {
         // IDEA-73516
+        //noinspection ConstantConditions
         injectedASWriter.putMxmlObjectReference(id, context.getMxmlObjectReference());
       }
     }
@@ -774,7 +776,7 @@ public class MxmlWriter {
       else {
         writer.property(propertyProcessor.getName());
       }
-      // parentContext required only for process tag chilrent, for attribute it can be null
+      // parentContext required only for process tag children, for attribute it can be null
       return valueWriter.write(descriptor, valueProvider, out, writer, propertyProcessor.isStyle(), parentContext);
     }
     catch (RuntimeException e) {

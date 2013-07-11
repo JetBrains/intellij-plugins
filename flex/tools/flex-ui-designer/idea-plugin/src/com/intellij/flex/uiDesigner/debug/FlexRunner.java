@@ -4,7 +4,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.configurations.RuntimeConfigurationError;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
@@ -46,6 +45,7 @@ public class FlexRunner extends GenericProgramRunner {
     this.buildConfiguration = buildConfiguration;
   }
 
+  @Override
   protected RunContentDescriptor doExecute(final Project project, final Executor executor, final RunProfileState state,
                                            final RunContentDescriptor contentToReuse, final ExecutionEnvironment env)
       throws ExecutionException {
@@ -53,6 +53,7 @@ public class FlexRunner extends GenericProgramRunner {
 
     RunContentDescriptor runContentDescriptor = XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse,
       new XDebugProcessStarter() {
+        @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) throws ExecutionException {
           try {
@@ -61,9 +62,6 @@ public class FlexRunner extends GenericProgramRunner {
               : new MyFlexDebugProcess(callback, session, buildConfiguration, parameters);
           }
           catch (IOException e) {
-            throw new ExecutionException(e.getMessage(), e);
-          }
-          catch (RuntimeConfigurationError e) {
             throw new ExecutionException(e.getMessage(), e);
           }
           finally {
@@ -95,7 +93,7 @@ public class FlexRunner extends GenericProgramRunner {
     private final Callback callback;
 
     public MyFlexDebugProcess(Callback callback, XDebugSession session, FlexBuildConfiguration buildConfiguration,
-                              BCBasedRunnerParameters parameters) throws IOException, RuntimeConfigurationError {
+                              BCBasedRunnerParameters parameters) throws IOException {
       super(session, buildConfiguration, parameters);
       this.callback = callback;
     }
@@ -115,7 +113,7 @@ public class FlexRunner extends GenericProgramRunner {
 
   private static class MyFlexDebugProcessAbleToResolveFileDebugId extends MyFlexDebugProcess {
     public MyFlexDebugProcessAbleToResolveFileDebugId(Callback callback, XDebugSession session, FlexBuildConfiguration buildConfiguration, BCBasedRunnerParameters parameters)
-      throws IOException, RuntimeConfigurationError {
+      throws IOException {
       super(callback, session, buildConfiguration, parameters);
     }
 
@@ -209,7 +207,8 @@ public class FlexRunner extends GenericProgramRunner {
       if (fullPath == null) {
         for (Project project : ProjectManager.getInstance().getOpenProjects()) {
           for (Library library : ProjectLibraryTable.getInstance(project).getLibraries()) {
-            if (library.getName().contains(libName)) {
+            String libraryName = library.getName();
+            if (libraryName != null && libraryName.contains(libName)) {
               String[] urls = library.getUrls(OrderRootType.SOURCES);
               assert urls.length == 1;
               fullPath = urls[0];

@@ -254,6 +254,7 @@ public final class ModuleInfoUtil {
         return cssFile;
       }
 
+      @Override
       public void visit(@NotNull PsiFile injectedPsi, @NotNull List<PsiLanguageInjectionHost.Shred> places) {
         assert !visited;
         visited = true;

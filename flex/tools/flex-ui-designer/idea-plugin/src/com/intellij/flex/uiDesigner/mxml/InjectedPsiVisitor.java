@@ -41,7 +41,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
 
   private final ProblemsHolder problemsHolder;
 
-  public InjectedPsiVisitor(PsiElement host, String expectedType, ProblemsHolder problemsHolder) {
+  public InjectedPsiVisitor(PsiElement host, @Nullable String expectedType, ProblemsHolder problemsHolder) {
     this.host = host;
     this.expectedType = expectedType;
     this.problemsHolder = problemsHolder;
@@ -59,6 +59,7 @@ class InjectedPsiVisitor implements PsiLanguageInjectionHost.InjectedPsiVisitor 
     return invalidPropertyException;
   }
 
+  @Override
   public void visit(@NotNull PsiFile injectedPsi, @NotNull List<Shred> places) {
     // todo <s:Label text="{demandSelectedTO.journalist.nom} {demandSelectedTO.journalist.prenom}"/>
     // will be called 2 — first for {demandSelectedTO.journalist.nom} and second for {demandSelectedTO.journalist.prenom}

@@ -46,7 +46,7 @@ class Definition {
     }
   }
 
-  static interface ResolvedState {
+  interface ResolvedState {
     int UNKNOWN = 0;
     int YES = 1;
     int NO = -1;

@@ -48,6 +48,7 @@ import java.util.List;
 public class SocketInputHandlerImpl extends SocketInputHandler {
   protected static final Logger LOG = Logger.getInstance(SocketInputHandlerImpl.class.getName());
 
+  @Override
   public Reader getReader() {
     return reader;
   }
@@ -81,6 +82,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   protected void createReader(InputStream inputStream) {
+    //noinspection IOResourceOpenedButNotSafelyClosed
     reader = new Reader(new BufferedInputStream(inputStream));
   }
 
@@ -221,6 +223,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     }
   }
 
+  @Override
   public void unregisterDocumentFactories() throws IOException {
     DocumentFactoryManager.getInstance().unregister(reader.readIntArray());
   }
@@ -416,6 +419,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       }
     }
 
+    @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
     final FileOutputStream fileOut = new FileOutputStream(resultFile);
     final AccessToken token = ReadAction.start();
     try {
@@ -427,13 +431,14 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     }
   }
 
-  private static PropertiesFile getResourceBundleFromModuleSource(Module module, final String bundleName) throws IOException {
+  private static PropertiesFile getResourceBundleFromModuleSource(Module module, final String bundleName) {
     final AccessToken token = ReadAction.start();
     try {
       final PsiManager psiManager = PsiManager.getInstance(module.getProject());
       final List<VirtualFile> result = new ArrayList<VirtualFile>();
       FileBasedIndex.getInstance().processValues(FileTypeIndex.NAME, PropertiesFileType.INSTANCE, null,
                                                  new FileBasedIndex.ValueProcessor<Void>() {
+                                                   @Override
                                                    public boolean process(VirtualFile file, Void value) {
                                                      if (file.getNameWithoutExtension().equals(bundleName)) {
                                                        result.add(file);
@@ -474,6 +479,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
       return;
     }
 
+    //noinspection IOResourceOpenedButNotSafelyClosed
     final AmfOutputStream amfOut = new AmfOutputStream(new ByteArrayOutputStreamEx(4 * 1024));
     amfOut.writeShort(sourceId + 1);
     // todo Embed, ClassReference, but idea doesn't support it too
@@ -528,6 +534,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
                                      ? EmbedSwfManager.getInstance().getInfo(assetId)
                                      : EmbedImageManager.getInstance().getInfo(assetId);
     final ByteArrayOutputStreamEx byteOut = new ByteArrayOutputStreamEx(1024);
+    //noinspection IOResourceOpenedButNotSafelyClosed
     final PrimitiveAmfOutputStream out = new PrimitiveAmfOutputStream(byteOut);
     Client.writeVirtualFile(assetInfo.file, out);
     out.writeNullableString(assetInfo instanceof SwfAssetInfo ? ((SwfAssetInfo)assetInfo).symbolName : null);
@@ -562,7 +569,7 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   private void showError() throws IOException {
-    ApplicationManager.getApplication().getMessageBus().syncPublisher(DesignerApplicationManager.MESSAGE_TOPIC).errorOccured();
+    ApplicationManager.getApplication().getMessageBus().syncPublisher(DesignerApplicationManager.MESSAGE_TOPIC).errorOccurred();
     
     String userMessage = reader.readUTF();
     final String technicalMessage = reader.readUTF();

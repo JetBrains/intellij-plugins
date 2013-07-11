@@ -96,9 +96,9 @@ class LibrariesData {
     @Override
     public SortResult read(DataInput in) throws IOException {
       int librariesSize = in.readShort();
-      String[] libraryPathes = new String[librariesSize];
+      String[] libraryPaths = new String[librariesSize];
       while (librariesSize-- > 0) {
-        libraryPathes[librariesSize] = in.readUTF();
+        libraryPaths[librariesSize] = in.readUTF();
       }
 
       int size = in.readInt();
@@ -113,7 +113,7 @@ class LibrariesData {
         map = null;
       }
 
-      return new SortResult(map, libraryPathes);
+      return new SortResult(map, libraryPaths);
     }
   }
 }

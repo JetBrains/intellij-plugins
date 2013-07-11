@@ -21,7 +21,7 @@ public final class LogMessageUtil {
            : FlashUIDesignerBundle.message("problem.opening.0", file.getName());
   }
 
-  public static String createBaloonText(@Nullable VirtualFile file) {
+  public static String createBalloonText(@Nullable VirtualFile file) {
     return file == null
            ? FlashUIDesignerBundle.message("problem.opening.mxml.document")
            : FlashUIDesignerBundle.message("problem.opening.balloon.text", file.getName());
@@ -39,7 +39,7 @@ public final class LogMessageUtil {
   }
 
   public static IdeaLoggingEvent createEvent(String userMessage, String technicalMessage, @Nullable VirtualFile file) {
-    return LogMessageEx.createEvent(userMessage, technicalMessage, createMxmlTitle(file), createBaloonText(file), createAttachment(file));
+    return LogMessageEx.createEvent(userMessage, technicalMessage, createMxmlTitle(file), createBalloonText(file), createAttachment(file));
   }
 
   public static IdeaLoggingEvent createEvent(Throwable e, @Nullable VirtualFile file) {

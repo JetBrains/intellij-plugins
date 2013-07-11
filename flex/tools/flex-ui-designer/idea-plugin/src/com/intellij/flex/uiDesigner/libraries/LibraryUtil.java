@@ -20,6 +20,7 @@ import java.util.zip.ZipInputStream;
 
 final class LibraryUtil {
   public static Pair<CharArrayReader, ByteArrayInputStream> openSwc(final File in) throws IOException {
+    //noinspection IOResourceOpenedButNotSafelyClosed
     return openSwc(new BufferedInputStream(new FileInputStream(in)));
   }
 
@@ -76,7 +77,7 @@ final class LibraryUtil {
     return getDefinitions(IOUtil.getCharArrayReader(file.getInputStream(), (int)file.getLength()));
   }
 
-  public static Set<CharSequence> getDefinitions(Reader reader) throws IOException {
+  public static Set<CharSequence> getDefinitions(Reader reader) {
     final THashSet<CharSequence> set = new THashSet<CharSequence>(512, AbcTranscoder.HASHING_STRATEGY);
     NanoXmlUtil.parse(reader, new NanoXmlUtil.IXMLBuilderAdapter() {
       private boolean processingDef;
