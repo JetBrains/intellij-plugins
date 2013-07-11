@@ -52,7 +52,7 @@ public class LibrarySorter {
     return items;
   }
 
-  public SortResult sort(final List<Library> libraries, File outFile, Condition<String> isExternal, boolean returnDefinitionMap) throws IOException {
+  public SortResult sort(List<Library> libraries, File outFile, Condition<String> isExternal, boolean returnDefinitionMap) throws IOException {
     final THashMap<CharSequence, Definition> definitionMap = new THashMap<CharSequence, Definition>(libraries.size() * 128, AbcTranscoder.HASHING_STRATEGY);
     final List<LibrarySetItem> unsortedItems = collectItems(libraries, definitionMap, isExternal);
     final AbcMerger abcMerger = new AbcMerger(definitionMap, outFile, definitionProcessor);
@@ -92,8 +92,7 @@ public class LibrarySorter {
         }
       });
 
-      final Encoder encoder = new Encoder();
-      abcMerger.end(decoders, encoder);
+      abcMerger.end(decoders, new Encoder());
       return new SortResult(returnDefinitionMap ? definitionMap : null, resourceOrStyleHolders);
     }
     finally {

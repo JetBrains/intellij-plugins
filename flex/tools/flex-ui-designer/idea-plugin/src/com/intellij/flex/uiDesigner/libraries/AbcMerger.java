@@ -170,6 +170,10 @@ class AbcMerger extends AbcTranscoder {
       case TagTypes.DefineFont3:
       case TagTypes.DefineText:
       case TagTypes.DefineEditText:
+      case TagTypes.DefineButton:
+      case TagTypes.DefineButton2:
+      case TagTypes.DefineMorphShape:
+      case TagTypes.DefineMorphShape2:
         // character id after header
         characterIdPosition = buffer.position();
         break;

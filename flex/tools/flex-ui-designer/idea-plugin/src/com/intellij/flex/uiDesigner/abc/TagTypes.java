@@ -3,11 +3,14 @@ package com.intellij.flex.uiDesigner.abc;
 public interface TagTypes {
   int End = 0;
   int DefineBinaryData = 87;
+
   int DefineBitsJPEG2 = 21;
   int DefineBitsJPEG3 = 35;
   int DefineBitsJPEG4 = 90;
+
   int DefineBitsLossless = 20;
   int DefineBitsLossless2 = 36;
+
   int SymbolClass = 76;
   int FileAttributes = 69;
   int ExportAssets = 56;
@@ -23,12 +26,18 @@ public interface TagTypes {
   int Metadata = 77;
   int ShowFrame = 1;
 
+  int DefineButton = 7;
+  int DefineButton2 = 34;
+
   int DefineShape = 2;
   int DefineShape2 = 22;
   int DefineShape3 = 32;
   int DefineShape4 = 83;
 
   int DefineSprite = 39;
+
+  int DefineMorphShape = 46;
+  int DefineMorphShape2 = 84;
 
   int PlaceObject = 4;
   int PlaceObject2 = 26;

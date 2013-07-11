@@ -1,11 +1,12 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.flex.uiDesigner.AssetCounter;
-import org.jetbrains.io.Info;
 import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.io.Info;
 
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class Library extends Info<VirtualFile> {
   // en_US => {"layout", "components"}
   public final Map<String, THashSet<String>> resourceBundles = new THashMap<String, THashSet<String>>();
 
-  Library(VirtualFile file) {
+  Library(@NotNull VirtualFile file) {
     super(file);
   }
 

@@ -17,6 +17,10 @@ public final class DebugPathManager {
 
   static {
     ideaHome = PathManager.getHomePathFor(DebugPathManager.class);
+    if (ideaHome == null) {
+      ideaHome = PathManager.getHomePath();
+    }
+
     Application app = ApplicationManager.getApplication();
     if (app == null) {
       // running ComplementSwfBuilder

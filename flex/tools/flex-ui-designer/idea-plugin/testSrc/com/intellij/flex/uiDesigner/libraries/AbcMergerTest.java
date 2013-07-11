@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.CharArrayReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Set;
 
 public class AbcMergerTest {
@@ -47,5 +48,21 @@ public class AbcMergerTest {
     }));
 
     abcMerger.process(data.second);
+    abcMerger.close();
+  }
+
+  @Test
+  public void merge2() throws IOException {
+    final Set<CharSequence> globalDefinitions = LibraryUtil.getDefinitions(LibraryUtil.getTestGlobalLibrary(false));
+
+    LibrarySorter librarySorter = new LibrarySorter();
+    librarySorter.sort(Arrays.<Library>asList(new LightLibrary(new File(DesignerTests.getTestDataPath(), "lib/IDEA-104608/IpgVideoPlayerAssets.swc")), new LightLibrary(new File(DesignerTests.getTestDataPath(), "lib/IDEA-104608/IpgVptLoaderAssets.swc"))),
+                       File.createTempFile("test", ""),
+                       new Condition<String>() {
+                         @Override
+                         public boolean value(String name) {
+                           return globalDefinitions.contains(name);
+                         }
+                       }, false);
   }
 }

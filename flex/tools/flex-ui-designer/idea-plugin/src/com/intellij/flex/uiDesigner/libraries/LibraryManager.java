@@ -265,10 +265,10 @@ public class LibraryManager implements Disposable {
         data.librarySets.put(key, result);
       }
       else {
-        final String[] libraryPathes = result.libraryPaths;
-        final List<Library> filteredLibraries = new ArrayList<Library>(libraryPathes.length);
+        final String[] libraryPaths = result.libraryPaths;
+        final List<Library> filteredLibraries = new ArrayList<Library>(libraryPaths.length);
         for (Library library : libraries) {
-          if (ArrayUtil.indexOf(libraryPathes, library.getFile().getPath()) != -1) {
+          if (ArrayUtil.indexOf(libraryPaths, library.getFile().getPath()) != -1) {
             filteredLibraries.add(library);
           }
         }

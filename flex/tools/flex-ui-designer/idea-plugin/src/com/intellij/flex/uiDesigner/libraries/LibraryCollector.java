@@ -63,6 +63,7 @@ class LibraryCollector {
     return globalLibrary;
   }
 
+  @SuppressWarnings("SpellCheckingInspection")
   private static boolean isAutomationOrUselessLibrary(String name) {
     return name.startsWith("qtp") || name.startsWith("automation")
            || name.equals("flex.swc") /* flex.swc is only aggregation library */
@@ -140,7 +141,6 @@ class LibraryCollector {
     else {
       final String sdkHomePath = sdk.getHomePath();
       LogMessageUtil.LOG.assertTrue(sdkHomePath != null && sdkHomePath.contains("flex"), sdkHomePath + " must be path to maven repo and contains 'flex'");
-      assert sdkHomePath != null;
       flexmojosSdkHomePath = sdkHomePath.substring(0, sdkHomePath.indexOf("flex"));
     }
 
