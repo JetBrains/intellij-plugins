@@ -34,12 +34,6 @@ public class AbcFilterTest {
   }
 
   @Test
-  public void replaceExportsToSymbolClass() throws IOException {
-    filter.filter(new File(TEST_LIB_DIR, "MinimalComps_0_9_10.swf"), out, null);
-    assertThat(out.length(), 252500);
-  }
-
-  @Test
   public void merge() throws IOException {
     filter.filter(new File(TEST_LIB_DIR, "MinimalComps_0_9_10.swf"), out, null);
     assertThat(out.length(), 252500);
