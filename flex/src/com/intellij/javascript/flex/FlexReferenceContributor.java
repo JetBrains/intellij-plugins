@@ -1,9 +1,6 @@
 package com.intellij.javascript.flex;
 
 import com.intellij.codeInsight.daemon.EmptyResolveMessageProvider;
-import com.intellij.codeInsight.daemon.QuickFixProvider;
-import com.intellij.codeInsight.daemon.impl.HighlightInfo;
-import com.intellij.codeInsight.daemon.impl.quickfix.QuickFixAction;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixProvider;
 import com.intellij.javascript.flex.css.CssClassValueReference;
@@ -18,13 +15,13 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.FlexModuleType;
+import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexComponentFix;
 import com.intellij.lang.javascript.flex.actions.newfile.CreateFlexSkinIntention;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeNameValuePair;
 import com.intellij.lang.javascript.psi.impl.JSReferenceSet;
-import com.intellij.lang.javascript.flex.ReferenceSupport;
 import com.intellij.lang.javascript.psi.impl.JSTextReference;
 import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.validation.fixes.CreateClassIntentionWithCallback;
@@ -480,8 +477,10 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
       }
     };
 
-    final QuickFixProvider<PsiReference> quickFixProvider = new QuickFixProvider<PsiReference>() {
-      public void registerQuickfix(final HighlightInfo info, final PsiReference reference) {
+    final Function<PsiReference, LocalQuickFix[]> quickFixProvider = new Function<PsiReference, LocalQuickFix[]>() {
+      @Nullable
+      @Override
+      public LocalQuickFix[] fun(PsiReference reference) {
         final PsiElement element = reference.getElement();
 
         final String classFqn = getTrimmedValueAndRange((XmlElement)element).first;
@@ -518,9 +517,8 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
               }
             }
           });
-
-          QuickFixAction.registerQuickFixAction(info, intention);
         }
+        return intentions;
       }
     };
 
@@ -722,7 +720,7 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
     registrar.registerReferenceProvider(psiElement(JSAttributeNameValuePair.class), new FlexAttributeReferenceProvider());
   }
 
-  private static PsiReferenceProvider createReferenceProviderForTagOrAttributeExpectingJSClass(final QuickFixProvider<PsiReference> quickFixProvider) {
+  private static PsiReferenceProvider createReferenceProviderForTagOrAttributeExpectingJSClass(final Function<PsiReference, LocalQuickFix[]> quickFixProvider) {
     return new PsiReferenceProvider() {
       @NotNull
       public PsiReference[] getReferencesByElement(@NotNull final PsiElement element,
@@ -768,18 +766,20 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
     };
   }
 
-  private static class MyJSTextReference extends JSTextReference implements QuickFixProvider {
-    private final QuickFixProvider<PsiReference> myQuickFixProvider;
+  private static class MyJSTextReference extends JSTextReference implements LocalQuickFixProvider {
+    private final Function<PsiReference, LocalQuickFix[]> myQuickFixProvider;
 
-    MyJSTextReference(JSReferenceSet set, String s, int offset, boolean methodRef, QuickFixProvider<PsiReference> quickFixProvider) {
+    MyJSTextReference(JSReferenceSet set, String s, int offset, boolean methodRef, Function<PsiReference, LocalQuickFix[]> quickFixProvider) {
       super(set, s, offset, methodRef);
       myQuickFixProvider = quickFixProvider;
     }
 
-    public void registerQuickfix(final HighlightInfo info, final PsiReference reference) {
+    @Override
+    public LocalQuickFix[] getQuickFixes() {
       if (myQuickFixProvider != null) {
-        myQuickFixProvider.registerQuickfix(info, reference);
+        return myQuickFixProvider.fun(this);
       }
+      return super.getQuickFixes();
     }
   }
 

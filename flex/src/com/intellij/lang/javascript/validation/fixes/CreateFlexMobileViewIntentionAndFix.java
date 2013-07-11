@@ -1,18 +1,15 @@
 package com.intellij.lang.javascript.validation.fixes;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public class CreateFlexMobileViewIntentionAndFix extends CreateMxmlFileIntentionBase implements LocalQuickFix {
+public class CreateFlexMobileViewIntentionAndFix extends CreateMxmlFileIntentionBase {
   private final boolean myAskForPackage;
 
   @NotNull
@@ -30,15 +27,6 @@ public class CreateFlexMobileViewIntentionAndFix extends CreateMxmlFileIntention
            "<s:View xmlns:fx=\"http://ns.adobe.com/mxml/2009\" xmlns:s=\"library://ns.adobe.com/flex/spark\">\n" +
            "\n" +
            "</s:View>\n";
-  }
-
-  @NotNull
-  public String getName() {
-    return getText();
-  }
-
-  public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
-    invoke(project, null, myElement.getContainingFile());
   }
 
   protected Pair<String, PsiDirectory> getFileTextAndDir(final @NotNull Module module) {

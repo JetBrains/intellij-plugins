@@ -1,6 +1,7 @@
 package com.intellij.lang.javascript.validation.fixes;
 
 import com.intellij.codeInsight.CodeInsightBundle;
+import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.ide.util.PlatformPackageUtil;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
@@ -58,6 +59,15 @@ public abstract class CreateMxmlFileIntentionBase implements CreateClassIntentio
 
   public void setCreatedClassFqnConsumer(final Consumer<String> consumer) {
     myCreatedClassFqnConsumer = consumer;
+  }
+
+  @NotNull
+  public String getName() {
+    return getText();
+  }
+
+  public void applyFix(@NotNull final Project project, @NotNull final ProblemDescriptor descriptor) {
+    invoke(project, null, myElement.getContainingFile());
   }
 
   public void invoke(@NotNull final Project project, final @Nullable Editor editor, final PsiFile file) throws IncorrectOperationException {
