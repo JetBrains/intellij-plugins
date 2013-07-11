@@ -132,7 +132,7 @@ public class CreateJSSubclassIntention extends PsiElementBaseIntentionAction {
     if (!(parent instanceof JSPackageStatement)) return;
     final JSPackageStatement jsPackageStatement = (JSPackageStatement)parent;
 
-    final String defaultTemplateName = JavaScriptSupportLoader.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME;
+    final String defaultTemplateName = CreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME;
 
     final String className;
     final String packageName;

@@ -96,7 +96,7 @@ public class FlexUnitTestCreator implements TestCreator {
 
     CommandProcessor.getInstance().executeCommand(project, new Runnable() {
       public void run() {
-        CreateClassOrInterfaceFix.createClass(JavaScriptSupportLoader.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, testClassName,
+        CreateClassOrInterfaceFix.createClass(CreateClassOrInterfaceFix.ACTION_SCRIPT_CLASS_WITH_SUPERS_TEMPLATE_NAME, testClassName,
                                               packageName, superClass, Collections.<String>emptyList(), targetDirectory,
                                               CodeInsightBundle.message("intention.create.test"), true,
                                               Collections.<String, Object>emptyMap(),
