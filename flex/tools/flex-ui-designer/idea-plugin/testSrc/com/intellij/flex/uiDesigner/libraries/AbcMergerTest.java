@@ -27,13 +27,25 @@ public class AbcMergerTest {
 
   @Test
   public void merge() throws IOException {
-    doTest(new LightLibrary(new File(DesignerTests.getTestDataPath(), "lib/MinimalComps_0_9_10.swc")));
+    doTest(createLibrary("MinimalComps_0_9_10.swc"));
   }
 
   @Test
   public void merge2() throws IOException {
-    doTest(new LightLibrary(new File(DesignerTests.getTestDataPath(), "lib/IDEA-104608/IpgVideoPlayerAssets.swc")),
-           new LightLibrary(new File(DesignerTests.getTestDataPath(), "lib/IDEA-104608/IpgVptLoaderAssets.swc")));
+    doTest(createLibrary("as3commons-logging-1.1.1.swc"),
+           createLibrary("as3corelib-0.93.swc"),
+           createLibrary("swiz-framework-v1.4.0.swc"),
+           createLibrary("ds_release.swc"));
+  }
+
+  private static LightLibrary createLibrary(String path) throws IOException {
+    return new LightLibrary((new File(DesignerTests.getTestDataPath(), "lib/" + path)));
+  }
+
+  @Test
+  public void mergeAwareOfDefineButton2() throws IOException {
+    doTest(createLibrary("IDEA-104608/IpgVideoPlayerAssets.swc"),
+           createLibrary("IDEA-104608/IpgVptLoaderAssets.swc"));
   }
 
   private void doTest(Library... libraries) throws IOException {
