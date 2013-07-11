@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 abstract class MxmlTestBase extends AppTestBase {
-  private static int TIMEOUT = Boolean.valueOf(System.getProperty("fud.test.debug")) ? 0 : 8;
+  private static final int TIMEOUT = Boolean.valueOf(System.getProperty("fud.test.debug")) ? 0 : 8;
 
   protected static final String SPARK_COMPONENTS_FILE = "SparkComponents.mxml";
 
