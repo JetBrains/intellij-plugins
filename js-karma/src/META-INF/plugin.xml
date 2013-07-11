@@ -6,8 +6,10 @@
   Integration with <a href="http://karma-runner.github.io/">Karma</a>, a spectacular test runner for JavaScript
   ]]></description>
   <vendor>JetBrains</vendor>
-  <idea-version since-build="130.0" until-build="131.0"/>
   <category>HTML/JavaScript Development</category>
+
+  <version>999.999</version>
+  <idea-version since-build="130.1179" until-build="131.0"/>
 
   <depends>com.intellij.modules.lang</depends>
   <depends>JavaScript</depends>
@@ -33,5 +35,11 @@
     <configurationProducer implementation="com.intellij.javascript.karma.execution.KarmaRunConfigurationProducer"/>
     <projectService serviceImplementation="com.intellij.javascript.karma.execution.KarmaPackageDirSetting"/>
   </extensions>
+
+  <change-notes>
+    <![CDATA[
+Plugin version: ${version}
+  ]]>
+  </change-notes>
 
 </idea-plugin>
