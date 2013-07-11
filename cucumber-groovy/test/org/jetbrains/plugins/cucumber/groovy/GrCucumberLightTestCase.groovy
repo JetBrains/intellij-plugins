@@ -27,7 +27,9 @@ abstract class GrCucumberLightTestCase extends LightGroovyTestCase {
       modifiableModel.commit()
     }
 
-    protected GrCucumberLightProjectDescriptor() {}
+    protected GrCucumberLightProjectDescriptor() {
+      super(org.jetbrains.plugins.groovy.util.TestUtils.mockGroovy2_1LibraryName)
+    }
 
     public static final INSTANCE = new GrCucumberLightProjectDescriptor()
   }
