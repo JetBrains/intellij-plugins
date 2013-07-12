@@ -165,5 +165,9 @@ public class InjectedASTest extends BaseTestCase {
     setState(A);
     assertThat(app.getElementAt(2), m);
   }
+
+  public function IndexedPropertyAccess():void {
+    // todo
+  }
 }
 }

@@ -221,7 +221,7 @@ class ExpressionBinding extends Binding {
     }
     else if (expressionQualifier != null && !(expressionQualifier instanceof JSThisExpression)) {
       // we can skip "this."
-      throw new IllegalArgumentException("unknown qualifier " + expressionQualifier.toString() + " " + expression.getText());
+      throw new UnsupportedOperationException("unknown qualifier " + expressionQualifier.toString() + " " + expression.getText());
     }
     else {
       qualifier = null;
