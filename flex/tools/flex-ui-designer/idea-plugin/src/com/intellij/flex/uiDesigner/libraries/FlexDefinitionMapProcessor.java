@@ -62,22 +62,13 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
   }
 
   private void inject(THashMap<CharSequence, Definition> definitionMap, AbcMerger abcMerger) throws IOException {
-    final Pair<CharArrayReader, ByteArrayInputStream> data;
-    if (DebugPathManager.IS_DEV) {
-      data = LibraryUtil.openSwc(createAbcFile(DebugPathManager.getFudHome() + "/flex-injection/target", version));
-    }
-    else {
-      URL resource = getClass().getClassLoader().getResource(generateInjectionName(version));
-      assert resource != null;
-      data = LibraryUtil.openSwc(resource.openStream());
-    }
-    
     final THashSet<String> overloadedMasked = new THashSet<String>(FlexDefinitionProcessor.OVERLOADED.length);
     for (String origin : FlexDefinitionProcessor.OVERLOADED) {
       int index = origin.indexOf(':') + 1;
       overloadedMasked.add(origin.substring(0, index) + FlexDefinitionProcessor.OVERLOADED_AND_BACKED_CLASS_MARK + origin.substring(index + 1));
     }
 
+    Pair<CharArrayReader, ByteArrayInputStream> data = getInjection();
     final Set<CharSequence> ownDefinitions = LibraryUtil.getDefinitions(data.first);
     NanoXmlUtil.parse(data.first, new CatalogXmlBuilder(definitionMap, new Condition<String>() {
       @Override
@@ -92,5 +83,18 @@ class FlexDefinitionMapProcessor implements DefinitionMapProcessor {
     }
     ));
     abcMerger.process(data.second);
+  }
+
+  private Pair<CharArrayReader, ByteArrayInputStream> getInjection() throws IOException {
+    if (DebugPathManager.IS_DEV) {
+      File file = createAbcFile(DebugPathManager.getFudHome() + "/flex-injection/target", version);
+      if (file.exists()) {
+        return LibraryUtil.openSwc(file);
+      }
+    }
+
+    URL resource = getClass().getClassLoader().getResource(generateInjectionName(version));
+    assert resource != null;
+    return LibraryUtil.openSwc(resource.openStream());
   }
 }

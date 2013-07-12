@@ -55,7 +55,7 @@ public class LibrarySorterTest extends MxmlTestBase {
       public Void fun(ModifiableRootModel model, VirtualFile file, List<String> libs) {
         libs.add(flexSdkRootPath + "/frameworks/libs/framework.swc");
         libs.add("MinimalComps_0_9_10.swc");
-        libs.add(getFudHome() + "/test-data-helper/target/test-data-helper.swc");
+        libs.add(DebugPathManager.resolveTestArtifactPath("test-data-helper.swc"));
         return null;
       }
     };

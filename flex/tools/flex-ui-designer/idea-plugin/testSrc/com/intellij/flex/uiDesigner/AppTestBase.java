@@ -108,6 +108,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     }
 
     JSTestUtils.modifyBuildConfiguration(module, new Consumer<ModifiableFlexBuildConfiguration>() {
+      @Override
       public void consume(final ModifiableFlexBuildConfiguration bc) {
         bc.setNature(new BuildConfigurationNature(targetPlatform, false, getOutputType()));
         bc.getDependencies().setSdkEntry(Factory.createSdkEntry(sdkName));
@@ -184,6 +185,7 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     return configureByFiles(null, files, null);
   }
 
+  @Override
   protected VirtualFile[] configureByFiles(@Nullable VirtualFile rawProjectRoot,
                                            VirtualFile[] files,
                                            @Nullable VirtualFile[] auxiliaryFiles) throws Exception {
@@ -220,9 +222,8 @@ abstract class AppTestBase extends FlashUIDesignerBaseTestCase {
     }
     else {
       client = (TestClient)Client.getInstance();
-      final ProblemsHolder problemsHolder = new ProblemsHolder();
-      ProjectComponentReferenceCounter projectComponentReferenceCounter =
-        LibraryManager.getInstance().registerModule(myModule, problemsHolder, isRequireLocalStyleHolder());
+      ProblemsHolder problemsHolder = new ProblemsHolder();
+      ProjectComponentReferenceCounter projectComponentReferenceCounter = LibraryManager.getInstance().registerModule(myModule, problemsHolder, isRequireLocalStyleHolder());
       assertTrue(problemsHolder.isEmpty());
       assertAfterInitLibrarySets(projectComponentReferenceCounter.unregistered);
     }

@@ -5,15 +5,19 @@ import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.util.TripleFunction;
 import gnu.trove.THashSet;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+@SuppressWarnings("TestMethodWithIncorrectSignature")
 @Flex(version="4.5")
 public class MxmlTest extends MxmlTestBase {
   @Flex(platform=TargetPlatform.Mobile, version="4.6")
@@ -41,7 +45,7 @@ public class MxmlTest extends MxmlTestBase {
     moduleInitializer = new TripleFunction<ModifiableRootModel, VirtualFile, List<String>, Void>() {
       @Override
       public Void fun(ModifiableRootModel model, VirtualFile sourceDir, List<String> libs) {
-        libs.add(getFudHome() + "/test-data-helper/target/test-data-helper.swc");
+        libs.add(DebugPathManager.resolveTestArtifactPath("test-data-helper.swc"));
         final VirtualFile assetsDir = DesignerTests.getFile("assets");
         model.addContentEntry(assetsDir).addSourceFolder(assetsDir, false);
 
@@ -58,6 +62,7 @@ public class MxmlTest extends MxmlTestBase {
         expectedProblems.add(new ProblemDescriptor("Unsupported embed asset type \"@Embed(source='/jazz.mp3')\"", sourceDir.findFileByRelativePath("Embed.mxml"), 3));
 
         file = sourceDir.findFileByRelativePath("InvalidColorNameOrNumericValue.mxml");
+        //noinspection SpellCheckingInspection
         expectedProblems.add(new ProblemDescriptor("Invalid color name invalidcolorname", file, 2));
         expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 3));
         expectedProblems.add(new ProblemDescriptor("Invalid numeric value", file, 4));
@@ -140,6 +145,7 @@ public class MxmlTest extends MxmlTestBase {
         auxiliaryFiles = new VirtualFile[auxiliaryFiles.length + strings.length - 1];
         System.arraycopy(pair.getSecond(), 0, auxiliaryFiles, 0, pair.getSecond().length);
         for (int i = 1, j = pair.getSecond().length, n = strings.length; i < n; i++) {
+          //noinspection AssignmentToForLoopParameter
           auxiliaryFiles[j++] = getSource(strings[i] + ".mxml");
         }
       }
@@ -148,29 +154,29 @@ public class MxmlTest extends MxmlTestBase {
     }
   }
 
-  private static void collectMxmlFiles(ArrayList<VirtualFile> files, ArrayList<VirtualFile> auxFiles, VirtualFile parent) {
-    for (VirtualFile file : parent.getChildren()) {
-      final String name = file.getName();
-      if (name.charAt(0) == '.') {
-        // skip
+  private static void collectMxmlFiles(final ArrayList<VirtualFile> files, final ArrayList<VirtualFile> auxFiles, VirtualFile parent) {
+    VfsUtilCore.visitChildrenRecursively(parent, new VirtualFileVisitor<Object>() {
+      @Override
+      public boolean visitFile(@NotNull VirtualFile file) {
+        String name = file.getName();
+        //noinspection StatementWithEmptyBody
+        if (name.charAt(0) == '.') {
+          // skip
+        }
+        else if (name.startsWith("Aux")) {
+          auxFiles.add(file);
+        }
+        else if (name.endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT) &&
+                 !name.startsWith("T.") &&
+                 !name.startsWith("TestApp.") &&
+                 !name.startsWith("MigLayoutExample.") &&
+                 !name.startsWith("ResourceDirective.") &&
+                 !name.startsWith("GenericMxmlSupport.")) {
+          files.add(file);
+        }
+        return file.isDirectory();
       }
-      else if (name.startsWith("Aux")) {
-        auxFiles.add(file);
-      }
-      else if (name.endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT) &&
-               !name.startsWith("T.") &&
-               !name.startsWith("TestApp.") &&
-               !name.startsWith("MigLayoutExample.") &&
-               !name.startsWith("ResourceDirective.") &&
-               //!name.startsWith("ProjectMxmlComponentAsParentWithDefaultProperty.") &&
-               !name.startsWith("GenericMxmlSupport.")) {
-        files.add(file);
-      }
-
-      if (file.isDirectory()) {
-        collectMxmlFiles(files, auxFiles, file);
-      }
-    }
+    });
   }
 
   private static class VirtualFileComparator implements Comparator<VirtualFile> {

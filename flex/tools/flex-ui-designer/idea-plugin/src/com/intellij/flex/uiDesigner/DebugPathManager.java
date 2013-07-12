@@ -3,6 +3,9 @@ package com.intellij.flex.uiDesigner;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
 
 public final class DebugPathManager {
   private static final String FLEX_TOOLS_FLEX_UI_DESIGNER = "/flex/tools/flex-ui-designer";
@@ -53,5 +56,39 @@ public final class DebugPathManager {
 
   public static String getTestDataPath() {
     return fudHome + "/idea-plugin/testData";
+  }
+
+  public static String resolveTestArtifactPath(String path) {
+    return resolveTestArtifactPath(path, null);
+  }
+
+  public static String resolveTestArtifactPath(String path, @Nullable String mavenPath) {
+    boolean isTestArtifact = mavenPath == null;
+    if (isTestArtifact) {
+      String mavenSubFolder;
+      if (path.equals("test-data-helper.swc")) {
+        mavenSubFolder = "test-data-helper";
+      }
+      else {
+        mavenSubFolder = "test-plugin";
+      }
+      mavenPath = mavenSubFolder + "/target/" + path;
+    }
+
+    File file = new File(getFudHome(), mavenPath);
+    if (!file.exists()) {
+      String parent;
+      if (isTestArtifact) {
+        parent = getIdeaHome() + "/out/flex-ui-designer";
+      }
+      else {
+        parent = PathManager.getResourceRoot(DebugPathManager.class, "/" + DebugPathManager.class.getName().replace('.', '/') + ".class");
+      }
+      file = new File(parent, path);
+      if (!file.exists()) {
+        throw new IllegalStateException("Cannot find " + file.getPath());
+      }
+    }
+    return file.getPath();
   }
 }

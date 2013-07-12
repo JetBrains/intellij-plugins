@@ -216,6 +216,9 @@ class ExpressionBinding extends Binding {
     if (expressionQualifier instanceof JSReferenceExpression) {
       qualifier = (JSReferenceExpression)expressionQualifier;
     }
+    else if (expressionQualifier instanceof JSIndexedPropertyAccessExpression) {
+      qualifier = (JSReferenceExpression)((JSIndexedPropertyAccessExpression)expressionQualifier).getQualifier();
+    }
     else if (expressionQualifier != null && !(expressionQualifier instanceof JSThisExpression)) {
       // we can skip "this."
       throw new IllegalArgumentException("unknown qualifier " + expressionQualifier.toString() + " " + expression.getText());

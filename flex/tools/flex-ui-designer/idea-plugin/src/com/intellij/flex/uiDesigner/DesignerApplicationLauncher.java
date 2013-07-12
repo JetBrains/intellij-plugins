@@ -94,13 +94,11 @@ public class DesignerApplicationLauncher extends DocumentTask {
   @Override
   protected boolean doRun(@NotNull final ProgressIndicator indicator)
     throws IOException, java.util.concurrent.ExecutionException, InterruptedException, TimeoutException {
-    final List<AdlRunConfiguration> adlRunConfigurations;
     indicator.setText(FlashUIDesignerBundle.message("copying.app.files"));
 
     copyAppFiles();
     indicator.setText(FlashUIDesignerBundle.message("finding.suitable.air.runtime"));
-    adlRunConfigurations = getSuitableAdlRunConfigurations();
-
+    List<AdlRunConfiguration> adlRunConfigurations = getSuitableAdlRunConfigurations();
     if (adlRunConfigurations.isEmpty()) {
       notifyNoSuitableSdkToLaunch();
       return false;
@@ -124,12 +122,12 @@ public class DesignerApplicationLauncher extends DocumentTask {
     arguments.add(Integer.toString(messageSocketManager.listen()));
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       arguments.add("-p");
-      arguments.add(DebugPathManager.getFudHome() + "/test-plugin/target/test-1.0-SNAPSHOT.swf");
+      arguments.add(DebugPathManager.resolveTestArtifactPath("test-1.0-SNAPSHOT.swf"));
     }
 
     AdlProcessHandler adlProcessHandler = null;
     final Ref<Boolean> found = new Ref<Boolean>(true);
-    for (final AdlRunConfiguration adlRunConfiguration : adlRunConfigurations) {
+    for (AdlRunConfiguration adlRunConfiguration : adlRunConfigurations) {
       found.set(true);
       adlRunConfiguration.arguments = arguments;
       try {
@@ -320,7 +318,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
 
   private static void copyAppFiles() throws IOException {
     @SuppressWarnings("unchecked")
-    final Pair<String, String>[] files = new Pair[]{
+    Pair<String, String>[] files = new Pair[]{
       new Pair("designer-air2.6.swf", "main-loader/target/main-loader-1.0-SNAPSHOT-air2.6.swf"),
       new Pair("designer-air3.0.swf", "main-loader/target/main-loader-1.0-SNAPSHOT.swf"),
       new Pair("descriptor-air2.6.xml", "main/resources/descriptor-air2.6.xml"),
@@ -328,14 +326,12 @@ public class DesignerApplicationLauncher extends DocumentTask {
     };
 
     if (DebugPathManager.IS_DEV) {
-      final String homePath = DebugPathManager.getFudHome();
-      final File home = new File(homePath);
       for (Pair<String, String> file : files) {
-        IOUtil.saveStream(new URL("file://" + home + "/" + file.second), new File(DesignerApplicationManager.APP_DIR, file.first));
+        IOUtil.saveStream(new URL("file://" + DebugPathManager.resolveTestArtifactPath(file.first, file.second)), new File(DesignerApplicationManager.APP_DIR, file.first));
       }
     }
     else {
-      final ClassLoader classLoader = DesignerApplicationLauncher.class.getClassLoader();
+      ClassLoader classLoader = DesignerApplicationLauncher.class.getClassLoader();
       //noinspection unchecked
       for (Pair<String, String> file : files) {
         IOUtil.saveStream(classLoader.getResource(file.first), new File(DesignerApplicationManager.APP_DIR, file.first));

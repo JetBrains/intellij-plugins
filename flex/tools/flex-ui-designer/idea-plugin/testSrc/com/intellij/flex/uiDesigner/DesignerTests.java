@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.TripleFunction;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.IndexableFileSet;
+import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -136,10 +137,11 @@ public final class DesignerTests {
     return toFiles;
   }
 
-  @SuppressWarnings("ConstantConditions")
   @NotNull
   public static VirtualFile getFile(String path) {
-    return path.charAt(0) == '/' ? LocalFileSystem.getInstance().findFileByPath(path) : getTestDataDir().findFileByRelativePath(path);
+    VirtualFile file = path.charAt(0) == '/' ? LocalFileSystem.getInstance().findFileByPath(path) : getTestDataDir().findFileByRelativePath(path);
+    Assert.assertNotNull(file);
+    return file;
   }
 
   @NotNull

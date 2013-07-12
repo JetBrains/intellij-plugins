@@ -59,7 +59,9 @@ public class LibraryManager implements Disposable {
 
   @Override
   public void dispose() {
-    data.close();
+    if (data != null) {
+      data.close();
+    }
   }
 
   public void unregister(final int[] ids) {

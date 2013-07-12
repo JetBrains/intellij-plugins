@@ -86,7 +86,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
   public static <T> T getService(@NotNull Class<T> serviceClass) {
     //noinspection unchecked
-    return (T)getInstance().application.getPicoContainer().getComponentInstance(serviceClass.getName());
+    return (T)getApplication().getPicoContainer().getComponentInstance(serviceClass.getName());
   }
 
   public static DesignerApplicationManager getInstance() {
