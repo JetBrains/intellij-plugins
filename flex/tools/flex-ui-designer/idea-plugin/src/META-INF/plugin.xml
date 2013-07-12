@@ -1,8 +1,8 @@
 <idea-plugin version="2">
   <name>MXML Design Preview</name>
-  <description>Provides instant preview of MXML components. Properties and style inspector.</description>
+  <description>Provides instant preview of MXML components (Flex or Flash). Properties and style inspector.</description>
   <id>com.intellij.flex.uiDesigner</id>
-  <version>1.0</version>
+  <version>1.1.130</version>
   <vendor url="http://www.jetbrains.com">JetBrains</vendor>
   <idea-version since-build="130.1030"/>
 
