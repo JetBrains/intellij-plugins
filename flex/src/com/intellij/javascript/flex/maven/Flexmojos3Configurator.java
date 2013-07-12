@@ -48,12 +48,9 @@ import java.util.regex.Pattern;
 import static com.intellij.javascript.flex.maven.RuntimeModulesGenerateConfigTask.RLMInfo;
 
 public class Flexmojos3Configurator {
-  private static final String FLEX_COMPILER_GROUP_ID = "com.adobe.flex";
+  private static final String FLEX_COMPILER_ADOBE_GROUP_ID = "com.adobe.flex";
+  private static final String FLEX_COMPILER_APACHE_GROUP_ID = "org.apache.flex";
   private static final String FLEX_COMPILER_ARTIFACT_ID = "compiler";
-
-  private static final String FLEX_FRAMEWORK_GROUP_ID = "com.adobe.flex.framework";
-  private static final String FLEX_FRAMEWORK_ARTIFACT_ID = "flex-framework";
-  private static final String AIR_FRAMEWORK_ARTIFACT_ID = "air-framework";
 
   private static final Pattern[] ADDITIONAL_JAR_NAME_PATTERNS_TO_INCLUDE_IN_FLEXMOJOS_SDK_CLASSPATH =
     {Pattern.compile("afe"), Pattern.compile("aglj[0-9]+"), Pattern.compile("flex-fontkit"), Pattern.compile("license"),
@@ -409,9 +406,7 @@ public class Flexmojos3Configurator {
   }
 
   private void setupSdk(final ModifiableFlexBuildConfiguration bc) {
-    final MavenId flexCompilerId = new MavenId(FLEX_COMPILER_GROUP_ID, FLEX_COMPILER_ARTIFACT_ID, getFlexCompilerPomVersion());
-
-    final String path = getArtifactFilePath(myMavenProject, flexCompilerId, MavenConstants.TYPE_POM);
+    final String path = getArtifactFilePath(myMavenProject, getFlexCompilerMavenId(), MavenConstants.TYPE_POM);
     final Sdk flexSdk = FlexSdkUtils.createOrGetSdk(FlexmojosSdkType.getInstance(), path);
     if (flexSdk != null) {
       ensureSdkHasRequiredAdditionalJarPaths(flexSdk);
@@ -419,32 +414,48 @@ public class Flexmojos3Configurator {
     }
   }
 
-  private String getFlexCompilerPomVersion() {
+  private MavenId getFlexCompilerMavenId() {
     for (final MavenId mavenId : myFlexmojosPlugin.getDependencies()) {
-      if (FLEX_COMPILER_GROUP_ID.equals(mavenId.getGroupId()) && FLEX_COMPILER_ARTIFACT_ID.equals(mavenId.getArtifactId())) {
-        final String version = mavenId.getVersion();
-        if (version != null) return version;
+      if (FLEX_COMPILER_ARTIFACT_ID.equals(mavenId.getArtifactId()) &&
+          (FLEX_COMPILER_ADOBE_GROUP_ID.equals(mavenId.getGroupId()) || FLEX_COMPILER_APACHE_GROUP_ID.equals(mavenId.getGroupId()))) {
+        return mavenId;
       }
     }
 
     for (final MavenArtifact mavenArtifact : myMavenProject.getDependencies()) {
-      if (FLEX_FRAMEWORK_GROUP_ID.equals(mavenArtifact.getGroupId()) &&
-          (FLEX_FRAMEWORK_ARTIFACT_ID.equals(mavenArtifact.getArtifactId()) ||
-           AIR_FRAMEWORK_ARTIFACT_ID.equals(mavenArtifact.getArtifactId()))) {
-        return mavenArtifact.getVersion();
+      if ("com.adobe.flex".equals(mavenArtifact.getGroupId()) && "framework".equals(mavenArtifact.getArtifactId())
+          ||
+          "com.adobe.flex.framework".equals(mavenArtifact.getGroupId()) &&
+          ("flex-framework".equals(mavenArtifact.getArtifactId()) ||
+           "air-framework".equals(mavenArtifact.getArtifactId()))) {
+        return new MavenId(FLEX_COMPILER_ADOBE_GROUP_ID, FLEX_COMPILER_ARTIFACT_ID, mavenArtifact.getVersion());
+      }
+      if ("org.apache.flex".equals(mavenArtifact.getGroupId()) && "framework".equals(mavenArtifact.getArtifactId())
+          ||
+          "org.apache.flex.framework".equals(mavenArtifact.getGroupId()) &&
+          ("flex-framework".equals(mavenArtifact.getArtifactId()) ||
+           "common-framework".equals(mavenArtifact.getArtifactId()))) {
+        return new MavenId(FLEX_COMPILER_APACHE_GROUP_ID, FLEX_COMPILER_ARTIFACT_ID, mavenArtifact.getVersion());
       }
     }
 
     // correct flexmojos-maven-plugin resolving and taking version from 'flex.sdk.version' property value is rather expensive, so version is hardcoded
+    final String version;
     final String pluginVersion = myFlexmojosPlugin.getVersion();
-    if (pluginVersion != null && pluginVersion.startsWith("4.")) {
-      return pluginVersion.startsWith("4.0-RC") || StringUtil.compareVersionNumbers(pluginVersion, "4.1") >= 0
-             ? "4.5.1.21328"
-             : "4.5.0.18623";
+
+    if (StringUtil.compareVersionNumbers(pluginVersion, "5") >= 0) {
+      version = "4.6.0.23201";
+    }
+    else if (StringUtil.compareVersionNumbers(pluginVersion, "4.1") >= 0 || pluginVersion != null && pluginVersion.startsWith("4.0-RC")) {
+      version = "4.5.1.21328";
+    }
+    else if (StringUtil.compareVersionNumbers(pluginVersion, "4") >= 0) {
+      version = "4.5.0.18623";
     }
     else {
-      return "3.2.0.3958";
+      version = "3.2.0.3958";
     }
+    return new MavenId(FLEX_COMPILER_ADOBE_GROUP_ID, FLEX_COMPILER_ARTIFACT_ID, version);
   }
 
   private static String getArtifactFilePath(final MavenProject mavenProject, final MavenId mavenId, final String type) {

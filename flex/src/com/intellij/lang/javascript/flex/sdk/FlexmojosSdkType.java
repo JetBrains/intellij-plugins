@@ -4,6 +4,7 @@ import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.projectRoots.*;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import icons.FlexIcons;
 import org.jdom.Element;
@@ -13,7 +14,8 @@ import javax.swing.*;
 
 public class FlexmojosSdkType extends SdkType {
 
-  static final String COMPILER_POM_PATTERN = ".+/com/adobe/flex/compiler/.+/compiler-.+\\.pom";
+  static final String COMPILER_POM_PATTERN_1 = ".+/com/adobe/flex/compiler/.+/compiler-.+\\.pom";
+  static final String COMPILER_POM_PATTERN_2 = ".+/org/apache/flex/compiler/.+/compiler-.+\\.pom";
 
   public FlexmojosSdkType() {
     super("Flexmojos SDK Type");
@@ -27,8 +29,9 @@ public class FlexmojosSdkType extends SdkType {
     return null;
   }
 
-  public boolean isValidSdkHome(final String path) {
-    return path.replace('\\', '/').matches(COMPILER_POM_PATTERN);
+  public boolean isValidSdkHome(final String _path) {
+    final String path = FileUtil.toSystemIndependentName(_path);
+    return path.matches(COMPILER_POM_PATTERN_1) || path.matches(COMPILER_POM_PATTERN_2);
   }
 
   public FileChooserDescriptor getHomeChooserDescriptor() {

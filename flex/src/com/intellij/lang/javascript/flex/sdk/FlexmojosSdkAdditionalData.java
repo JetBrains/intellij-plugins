@@ -82,8 +82,17 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
 
   void setup(final VirtualFile compilerPomFile) {
     final String compilerPomPath = compilerPomFile.getPath();
-    if (!compilerPomPath.matches(FlexmojosSdkType.COMPILER_POM_PATTERN)) return;
-    final String repositoryRootPath = compilerPomPath.substring(0, compilerPomPath.indexOf("/com/adobe/flex/compiler"));
+    final String repositoryRootPath;
+
+    if (compilerPomPath.matches(FlexmojosSdkType.COMPILER_POM_PATTERN_1)) {
+      repositoryRootPath = compilerPomPath.substring(0, compilerPomPath.indexOf("/com/adobe/flex/compiler"));
+    }
+    else if (compilerPomPath.matches(FlexmojosSdkType.COMPILER_POM_PATTERN_2)) {
+      repositoryRootPath = compilerPomPath.substring(0, compilerPomPath.indexOf("/org/apache/flex/compiler"));
+    }
+    else {
+      return;
+    }
 
     setupFlexCompilerClasspath(compilerPomFile, repositoryRootPath);
 
@@ -117,7 +126,8 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
       return;
     }
     final String exeType = SystemInfo.isWindows ? "exe" : "uexe";
-    final String adlPath = FileUtil.toSystemDependentName(MessageFormat.format(ADL_ARTIFACT_PATTERN, repositoryRootPath, version, exeType));
+    final String adlPath = FileUtil.toSystemIndependentName(
+      MessageFormat.format(ADL_ARTIFACT_PATTERN, repositoryRootPath, version, exeType));
     final VirtualFile adlFile = LocalFileSystem.getInstance().findFileByPath(adlPath);
     if (adlFile != null && !adlFile.isDirectory()) {
       myAdlPath = adlPath;
@@ -125,13 +135,13 @@ public class FlexmojosSdkAdditionalData implements SdkAdditionalData {
       final String classifier = SystemInfo.isWindows ? "win" : "mac";
       final String zipType = "zip";
       myAirRuntimePath = FileUtil
-        .toSystemDependentName(MessageFormat.format(AIR_RUNTIME_ARTIFACT_PATTERN, repositoryRootPath, version, classifier, zipType));
+        .toSystemIndependentName(MessageFormat.format(AIR_RUNTIME_ARTIFACT_PATTERN, repositoryRootPath, version, classifier, zipType));
     }
     else {
       final Sdk sdk = findSimilarSdk(version);
       if (sdk != null) {
-        myAdlPath = FileUtil.toSystemDependentName(sdk.getHomePath() + FlexSdkUtils.ADL_RELATIVE_PATH);
-        myAirRuntimePath = FileUtil.toSystemDependentName(sdk.getHomePath() + FlexSdkUtils.AIR_RUNTIME_RELATIVE_PATH);
+        myAdlPath = FileUtil.toSystemIndependentName(sdk.getHomePath() + FlexSdkUtils.ADL_RELATIVE_PATH);
+        myAirRuntimePath = FileUtil.toSystemIndependentName(sdk.getHomePath() + FlexSdkUtils.AIR_RUNTIME_RELATIVE_PATH);
       }
     }
   }
