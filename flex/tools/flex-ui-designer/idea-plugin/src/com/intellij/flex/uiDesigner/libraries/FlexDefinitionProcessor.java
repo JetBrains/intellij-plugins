@@ -323,7 +323,8 @@ class FlexDefinitionProcessor implements DefinitionProcessor {
           return index != -2;
         }
       }
-      else if (skipSetter != null && isSetter(traitKind) && encoder.clearMethodBody(skipSetter, name, in, methodInfo)) {
+
+      if (skipSetter != null && isSetter(traitKind) && encoder.clearMethodBody(skipSetter, name, in, methodInfo)) {
         skipSetter = null;
         // false, clearMethodBody just put it to map for deferred processing
         return false;
