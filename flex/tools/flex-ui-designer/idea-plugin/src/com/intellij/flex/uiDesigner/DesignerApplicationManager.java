@@ -240,10 +240,12 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
           @Override
           protected void doRun() {
+            assert project != null;
             if (project.isDisposed()) {
               return;
             }
 
+            assert file != null;
             PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
             if (!(psiFile instanceof XmlFile)) {
               return;

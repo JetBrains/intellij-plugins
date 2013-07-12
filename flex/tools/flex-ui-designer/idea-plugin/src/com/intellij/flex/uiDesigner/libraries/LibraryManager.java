@@ -53,7 +53,7 @@ public class LibraryManager implements Disposable {
 
   private LibrariesData data;
 
-  public LibraryManager() throws IOException {
+  public LibraryManager() {
     appDir = DesignerApplicationManager.APP_DIR;
   }
 
@@ -289,7 +289,7 @@ public class LibraryManager implements Disposable {
         for (int i = 0, librariesSize = libraries.size(); i < librariesSize; i++) {
           Library library = libraries.get(i);
           technicalMessage += " " + library.getFile().getPath();
-          attachments[i] = new Attachment(library.getCatalogFile());
+          attachments[i] = new Attachment(library.getFile());
         }
       }
       catch (Throwable innerE) {
