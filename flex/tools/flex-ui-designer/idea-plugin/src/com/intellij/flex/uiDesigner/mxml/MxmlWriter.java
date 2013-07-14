@@ -45,7 +45,7 @@ import java.util.List;
 import static com.intellij.flex.uiDesigner.mxml.PropertyProcessor.PropertyKind;
 
 public class MxmlWriter {
-  static final Logger LOG = Logger.getInstance(MxmlWriter.class.getName());
+  static final Logger LOG = Logger.getInstance(MxmlWriter.class);
 
   private final PrimitiveAmfOutputStream out;
 
@@ -141,6 +141,7 @@ public class MxmlWriter {
     }
   }
 
+  @SuppressWarnings("StatementWithEmptyBody")
   private boolean processElements(final XmlTag tag,
                                   @Nullable final Context parentContext,
                                   final boolean allowIncludeInExcludeFrom,

@@ -48,6 +48,7 @@ import com.intellij.psi.css.CssFile;
 import com.intellij.psi.xml.XmlComment;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.ui.AppUIUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.Processor;
 import com.intellij.util.concurrency.QueueProcessor;
@@ -106,28 +107,19 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     LOG.assertTrue(application != null);
     final DesignerApplication disposedApp = application;
     application = null;
-
-    final Application ideaApp = ApplicationManager.getApplication();
-    Runnable runnable = new Runnable() {
+    AppUIUtil.invokeOnEdt(new Runnable() {
       @Override
       public void run() {
         Disposer.dispose(disposedApp);
       }
-    };
-
-    if (ideaApp.isDispatchThread()) {
-      runnable.run();
-    }
-    else {
-      ideaApp.invokeLater(runnable, ideaApp.getDisposed());
-    }
+    });
   }
 
-  void setApplication(DesignerApplication application) {
-    LOG.assertTrue(this.application == null);
-    Disposer.register(ApplicationManager.getApplication(), application);
-    installEP(SERVICES, application);
-    this.application = application;
+  void setApplication(DesignerApplication newApp) {
+    LOG.assertTrue(application == null);
+    Disposer.register(ApplicationManager.getApplication(), newApp);
+    installEP(SERVICES, newApp);
+    application = newApp;
   }
 
   public boolean isInitialRendering() {
