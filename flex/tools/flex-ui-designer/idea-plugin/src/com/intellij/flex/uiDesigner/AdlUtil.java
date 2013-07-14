@@ -29,7 +29,6 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.StringBuilderSpinAllocator;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,16 +58,8 @@ final class AdlUtil {
     "The main application content file is not a valid SWF or HTML file."};
 
   public static String describeAdlExit(int exitCode) {
-    final String exitCodeDescription = exitCode < ADL_EXIT_CODE_TO_TEXT.length ? ADL_EXIT_CODE_TO_TEXT[exitCode] : "Unknown exit code.";
-    final StringBuilder stringBuilder = StringBuilderSpinAllocator.alloc();
-    try {
-      stringBuilder.append("ADL exited with error code ").append(exitCode).append(". ").append(exitCodeDescription).append(" OS: ").append(
-        SystemInfo.OS_NAME);
-      return stringBuilder.toString();
-    }
-    finally {
-      StringBuilderSpinAllocator.dispose(stringBuilder);
-    }
+    String exitCodeDescription = exitCode < ADL_EXIT_CODE_TO_TEXT.length ? ADL_EXIT_CODE_TO_TEXT[exitCode] : "Unknown exit code.";
+    return "ADL exited with error code " + exitCode + ". " + exitCodeDescription + " OS: " + SystemInfo.OS_NAME;
   }
 
   // http://kb2.adobe.com/cps/407/kb407625.html

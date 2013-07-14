@@ -295,13 +295,12 @@ public class Client implements Disposable {
   }
 
   /**
-   * final, full render document — responsible for handle problemsHolder and assetCounter — you must don't do it
+   * final, full render document — responsible for handle problemsHolder and assetCounter — you must not do it
    */
   public AsyncResult<DocumentInfo> renderDocument(Module module, XmlFile psiFile, ProblemsHolder problemsHolder) {
-    final AsyncResult<DocumentInfo> result = new AsyncResult<DocumentInfo>();
-
-    final VirtualFile virtualFile = psiFile.getVirtualFile();
+    VirtualFile virtualFile = psiFile.getVirtualFile();
     final int factoryId = registerDocumentFactoryIfNeed(module, psiFile, virtualFile, false, problemsHolder);
+    final AsyncResult<DocumentInfo> result = new AsyncResult<DocumentInfo>();
     if (factoryId == -1) {
       result.setRejected();
       return result;

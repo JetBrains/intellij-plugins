@@ -1,8 +1,6 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.AppTopics;
-import org.jetbrains.io.Info;
-import org.jetbrains.io.InfoMap;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
@@ -18,6 +16,8 @@ import com.intellij.psi.xml.XmlFile;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.io.Info;
+import org.jetbrains.io.InfoMap;
 
 import java.util.List;
 
@@ -50,19 +50,21 @@ public class DocumentFactoryManager {
     @Override
     public void beforeAllDocumentsSaving() {
       final Document[] unsavedDocuments = FileDocumentManager.getInstance().getUnsavedDocuments();
-      if (unsavedDocuments.length > 0) {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-              @Override
-              public void run() {
-                DesignerApplicationManager.getInstance().renderDocumentsAndCheckLocalStyleModification(unsavedDocuments);
-              }
-            });
-          }
-        });
+      if (unsavedDocuments.length <= 0) {
+        return;
       }
+
+      ApplicationManager.getApplication().invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+            @Override
+            public void run() {
+              DesignerApplicationManager.getInstance().renderDocumentsAndCheckLocalStyleModification(unsavedDocuments);
+            }
+          });
+        }
+      });
     }
   }
 

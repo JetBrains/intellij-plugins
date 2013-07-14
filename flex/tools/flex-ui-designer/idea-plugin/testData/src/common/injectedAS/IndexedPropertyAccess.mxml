@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<s:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark" width="850" height="420">
+<Group xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns="library://ns.adobe.com/flex/spark" width="850" height="420">
   <fx:Script><![CDATA[
     import mx.collections.ArrayCollection;
 
@@ -18,5 +18,5 @@
     }
     ]]></fx:Script>
 
-  <s:Label text="{dataNCOER[selectedHistoryIndex]}"/>
-</s:Panel>
+  <Label text="{dataNCOER[selectedHistoryIndex]}"/>
+</Group>

@@ -13,6 +13,7 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.*;
 import com.intellij.openapi.components.ServiceDescriptor;
 import com.intellij.openapi.components.ServiceManager;
@@ -437,12 +438,12 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return rootTag != null && rootTag.getPrefixByNamespace(JavaScriptSupportLoader.MXML_URI3) != null;
   }
 
-  public void projectRegistered(final Project project) {
-    PsiManager.getInstance(project).addPsiTreeChangeListener(new MyPsiTreeChangeAdapter(project), project);
+  public void projectRegistered(Project project) {
+    PsiManager.getInstance(project).addPsiTreeChangeListener(new MyPsiTreeChangeListener(project), project);
   }
 
-  void attachProjectAndModuleListeners(DesignerApplication designerApplication) {
-    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(designerApplication);
+  void attachProjectAndModuleListeners(Disposable parentDisposable) {
+    MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(parentDisposable);
     connection.subscribe(ProjectManager.TOPIC, new ProjectManagerAdapter() {
       @Override
       public void projectClosed(Project project) {
@@ -536,7 +537,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         return false;
       }
 
-      final AsyncResult<DocumentInfo> renderResult = client.renderDocument(module, psiFile, problemsHolder);
+      AsyncResult<DocumentInfo> renderResult = client.renderDocument(module, psiFile, problemsHolder);
       if (renderResult.isRejected()) {
         return false;
       }
@@ -583,18 +584,13 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     void errorOccurred();
   }
 
-  private class MyPsiTreeChangeAdapter extends PsiTreeChangeAdapter {
+  private class MyPsiTreeChangeListener extends PsiTreeChangeAdapter {
     private final MxmlPreviewToolWindowManager previewToolWindowManager;
     private final MergingUpdateQueue updateQueue;
 
-    public MyPsiTreeChangeAdapter(Project project) {
+    public MyPsiTreeChangeListener(Project project) {
       previewToolWindowManager = project.getComponent(MxmlPreviewToolWindowManager.class);
       updateQueue = new MergingUpdateQueue("FlashUIDesigner.update", 100, true, null);
-    }
-
-    @Override
-    public void childrenChanged(@NotNull PsiTreeChangeEvent event) {
-      //update(event);
     }
 
     @Override
@@ -612,11 +608,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       update(event);
     }
 
-    @Override
-    public void propertyChanged(@NotNull PsiTreeChangeEvent event) {
-    }
-
-    private void update(final PsiTreeChangeEvent event) {
+    private void update(PsiTreeChangeEvent event) {
       PsiFile psiFile = event.getFile();
       if (psiFile == null || event.getParent() instanceof XmlComment) {
         return;

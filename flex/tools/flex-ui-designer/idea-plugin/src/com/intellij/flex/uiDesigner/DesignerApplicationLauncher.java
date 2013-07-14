@@ -190,7 +190,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
       return false;
     }
 
-    final ProjectComponentReferenceCounter projectComponentReferenceCounter = initializeThread.get(DebugPathManager.IS_DEV ? 999 : 60, TimeUnit.SECONDS);
+    ProjectComponentReferenceCounter projectComponentReferenceCounter = initializeThread.get(DebugPathManager.IS_DEV ? 999 : 60, TimeUnit.SECONDS);
     indicator.checkCanceled();
 
     final DesignerApplication application = DesignerApplicationManager.getApplication();
