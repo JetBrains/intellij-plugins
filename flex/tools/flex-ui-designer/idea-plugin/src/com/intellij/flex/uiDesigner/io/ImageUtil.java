@@ -12,6 +12,7 @@ public final class ImageUtil {
   private static final int MAX_BUFFER_LENGTH = 12288;
 
   private static final ThreadLocal<byte[]> BUFFER = new ThreadLocal<byte[]>() {
+    @Override
     protected byte[] initialValue() {
       return new byte[MAX_BUFFER_LENGTH];
     }
@@ -23,7 +24,7 @@ public final class ImageUtil {
     try {
       pixelGrabber.grabPixels();
     }
-    catch (InterruptedException e) {
+    catch (InterruptedException ignored) {
       throw new IOException("Failed to grab pixels for image " + file.getPresentableUrl());
     }
 
@@ -46,6 +47,7 @@ public final class ImageUtil {
       byteBuffer[bufferLength++] = (byte)(pixel & 0xff);
 
       if (bufferLength == MAX_BUFFER_LENGTH) {
+        //noinspection ConstantConditions
         out.write(byteBuffer, 0, bufferLength);
         bufferLength = 0;
       }

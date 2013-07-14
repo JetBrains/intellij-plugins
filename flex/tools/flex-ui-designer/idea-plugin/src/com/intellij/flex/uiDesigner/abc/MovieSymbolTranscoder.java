@@ -21,15 +21,15 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
   private byte[] symbolName;
 
   private TIntObjectHashMap<PlacedObject> placedObjects;
-  // we cannot mark placedObject as used and iterate exisiting map (placedObjects) — order of items in map is not predictable,
+  // we cannot mark placedObject as used and iterate existing map (placedObjects) — order of items in map is not predictable,
   // but we must write placed object in the same order as it was read
   private List<PlacedObject> usedPlacedObjects;
 
   // symbolName — utf8 bytes
-  @SuppressWarnings("UnusedDeclaration")
   @TestOnly
   public void transcode(File in, File out, byte[] symbolName) throws IOException {
     this.symbolName = symbolName;
+    //noinspection IOResourceOpenedButNotSafelyClosed
     transcode(new FileInputStream(in), in.length(), out, false);
   }
 
@@ -273,26 +273,27 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
       encodeTagHeader(object.tagType, object.actualLength);
       buffer.putShort((short)object.newId);
       out.write(data, 0, buffer.position());
-      writeSparceBytes(positions, object.start + 2, object.start + object.length);
+      writeSparseBytes(positions, object.start + 2, object.start + object.length);
     }
   }
 
   private void decodeColorTransform() throws IOException {
     syncBits();
     boolean hasAdd = readBit();
+    @SuppressWarnings("SpellCheckingInspection")
     boolean hasMult = readBit();
-    int nbits = readUBits(4);
+    int nBits = readUBits(4);
     if (hasMult) {
-      readSBits(nbits);
-      readSBits(nbits);
-      readSBits(nbits);
-      readSBits(nbits);
+      readSBits(nBits);
+      readSBits(nBits);
+      readSBits(nBits);
+      readSBits(nBits);
     }
     if (hasAdd) {
-      readSBits(nbits);
-      readSBits(nbits);
-      readSBits(nbits);
-      readSBits(nbits);
+      readSBits(nBits);
+      readSBits(nBits);
+      readSBits(nBits);
+      readSBits(nBits);
     }
   }
 

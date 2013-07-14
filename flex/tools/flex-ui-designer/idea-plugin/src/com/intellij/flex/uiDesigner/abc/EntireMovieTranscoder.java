@@ -17,8 +17,10 @@ public class EntireMovieTranscoder extends MovieTranscoder {
   private short frameCount;
   private int swfHeaderEnd;
 
+  @SuppressWarnings("UnusedDeclaration")
   @TestOnly
   public void transcode(File in, File out) throws IOException {
+    //noinspection IOResourceOpenedButNotSafelyClosed
     transcode(new FileInputStream(in), in.length(), out, false);
   }
 
@@ -105,7 +107,7 @@ public class EntireMovieTranscoder extends MovieTranscoder {
       out.write(data, initialStartPosition, data.length - initialStartPosition);
     }
     else {
-      writeSparceBytes(ignoredBytesPositions, initialStartPosition, data.length);
+      writeSparseBytes(ignoredBytesPositions, initialStartPosition, data.length);
     }
 
     out.write(symbolOwnClassAbc);

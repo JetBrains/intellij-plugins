@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +11,7 @@ public class EmbedImageManager extends EmbedAssetManager<ImageAssetInfo> {
 
   public int add(@NotNull VirtualFile file, @Nullable String mimeType, @NotNull AssetCounter assetCounter) {
     for (ImageAssetInfo asset : assets) {
-      if (Comparing.equal(asset.file, file)) {
+      if (asset.file.equals(file)) {
         return asset.id;
       }
     }
@@ -26,7 +25,7 @@ public class EmbedImageManager extends EmbedAssetManager<ImageAssetInfo> {
   @SuppressWarnings("MethodOverloadsMethodOfSuperclass")
   public void remove(@NotNull VirtualFile file) {
     for (ImageAssetInfo asset : assets) {
-      if (Comparing.equal(asset.file, file)) {
+      if (asset.file.equals(file)) {
         remove(asset.id);
       }
     }

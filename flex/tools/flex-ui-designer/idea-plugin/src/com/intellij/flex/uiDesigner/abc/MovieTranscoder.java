@@ -31,8 +31,8 @@ abstract class MovieTranscoder extends SwfTranscoder {
   }
 
   protected void transcode(InputStream inputStream, long inputLength, File outFile, boolean writeBounds) throws IOException {
-    out = new DataOutputStream(new BufferedOutputStream(transcode(inputStream, inputLength, outFile)));
     data = buffer.array();
+    out = new DataOutputStream(new BufferedOutputStream(transcode(inputStream, inputLength, outFile)));
     try {
       transcode(writeBounds);
     }
@@ -91,7 +91,7 @@ abstract class MovieTranscoder extends SwfTranscoder {
     out.writeInt(bounds.height);
   }
 
-  protected void writeSparceBytes(TIntArrayList positions, final int start, final int end) throws IOException {
+  protected void writeSparseBytes(TIntArrayList positions, final int start, final int end) throws IOException {
     final int maxI = positions.size() - 1;
     int prevOffset = start;
     int i = 0;

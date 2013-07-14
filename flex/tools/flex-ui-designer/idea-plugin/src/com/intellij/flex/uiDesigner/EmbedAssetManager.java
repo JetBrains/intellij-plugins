@@ -1,8 +1,8 @@
 package com.intellij.flex.uiDesigner;
 
-import org.jetbrains.io.IdPool;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.io.IdPool;
 
 import java.util.ArrayList;
 

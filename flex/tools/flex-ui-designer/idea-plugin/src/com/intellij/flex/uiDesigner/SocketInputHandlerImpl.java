@@ -516,36 +516,34 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   private void getSwfData() throws IOException {
     initResultFile();
 
-    final SwfAssetInfo assetInfo = EmbedSwfManager.getInstance().getInfo(reader.readUnsignedShort());
+    SwfAssetInfo assetInfo = EmbedSwfManager.getInstance().getInfo(reader.readUnsignedShort());
     if (assetInfo.symbolName == null) {
       new EntireMovieTranscoder().transcode(assetInfo.file, resultFile);
     }
     else {
-      //noinspection ConstantConditions
       new MovieSymbolTranscoder().transcode(assetInfo.file, resultFile, assetInfo.symbolName);
     }
   }
 
-  private void getAssetInfo(final boolean isSwf) throws IOException {
+  private void getAssetInfo(boolean isSwf) throws IOException {
     initResultFile();
 
-    final int assetId = reader.readUnsignedShort();
-    final EmbedAssetInfo assetInfo = isSwf
-                                     ? EmbedSwfManager.getInstance().getInfo(assetId)
-                                     : EmbedImageManager.getInstance().getInfo(assetId);
-    final ByteArrayOutputStreamEx byteOut = new ByteArrayOutputStreamEx(1024);
+    int assetId = reader.readUnsignedShort();
+    EmbedAssetInfo assetInfo = isSwf
+                               ? EmbedSwfManager.getInstance().getInfo(assetId)
+                               : EmbedImageManager.getInstance().getInfo(assetId);
+    ByteArrayOutputStreamEx byteOut = new ByteArrayOutputStreamEx(1024);
     //noinspection IOResourceOpenedButNotSafelyClosed
-    final PrimitiveAmfOutputStream out = new PrimitiveAmfOutputStream(byteOut);
+    PrimitiveAmfOutputStream out = new PrimitiveAmfOutputStream(byteOut);
     Client.writeVirtualFile(assetInfo.file, out);
     out.writeNullableString(assetInfo instanceof SwfAssetInfo ? ((SwfAssetInfo)assetInfo).symbolName : null);
 
-    final FileOutputStream fileOut = new FileOutputStream(resultFile);
+    FileOutputStream fileOut = new FileOutputStream(resultFile);
     try {
       byteOut.writeTo(fileOut);
     }
     catch (IOException e) {
-      final String userMessage = FlashUIDesignerBundle.message("problem.opening.0", assetInfo.file.getName());
-      LOG.error(LogMessageUtil.createEvent(userMessage, ExceptionUtil.getThrowableText(e), assetInfo.file));
+      LOG.error(LogMessageUtil.createEvent(FlashUIDesignerBundle.message("problem.opening.0", assetInfo.file.getName()), ExceptionUtil.getThrowableText(e), assetInfo.file));
       fileOut.getChannel().truncate(0);
     }
     finally {

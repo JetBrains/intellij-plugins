@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner;
 
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,13 +11,13 @@ public class EmbedSwfManager extends EmbedAssetManager<SwfAssetInfo> {
 
   public int add(@NotNull VirtualFile file, @Nullable String symbolName, @NotNull AssetCounter assetCounter) {
     for (SwfAssetInfo asset : assets) {
-      if (Comparing.equal(asset.file, file) && (symbolName == null ? asset.symbolName == null : symbolName.equals(asset.symbolName))) {
+      if (asset.file.equals(file) && (symbolName == null ? asset.symbolName == null : symbolName.equals(asset.symbolName))) {
         return asset.id;
       }
     }
 
     assetCounter.swfCount++;
-    final int id = idPool.allocate();
+    int id = idPool.allocate();
     add(new SwfAssetInfo(file, symbolName, id));
     return id;
   }
