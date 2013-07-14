@@ -66,6 +66,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     toolWindowUpdateAlarm = new Alarm();
   }
 
+  @Nullable
   public VirtualFile getServedFile() {
     return toolWindowVisible && toolWindowForm != null ? toolWindowForm.getFile() : null;
   }

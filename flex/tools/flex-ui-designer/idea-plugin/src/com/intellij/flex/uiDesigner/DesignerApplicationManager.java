@@ -37,7 +37,6 @@ import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.util.AsyncResult;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -584,7 +583,7 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     void errorOccurred();
   }
 
-  private class MyPsiTreeChangeListener extends PsiTreeChangeAdapter {
+  private static class MyPsiTreeChangeListener extends PsiTreeChangeAdapter {
     private final MxmlPreviewToolWindowManager previewToolWindowManager;
     private final MergingUpdateQueue updateQueue;
 
@@ -614,9 +613,9 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         return;
       }
 
-      if (isApplicationClosed()) {
-        if (Comparing.equal(psiFile.getViewProvider().getVirtualFile(), previewToolWindowManager.getServedFile())) {
-          IncrementalDocumentSynchronizer.initialRender(DesignerApplicationManager.this, (XmlFile)psiFile);
+      if (getInstance().isApplicationClosed()) {
+        if (psiFile.getViewProvider().getVirtualFile().equals(previewToolWindowManager.getServedFile())) {
+          IncrementalDocumentSynchronizer.initialRender(getInstance(), (XmlFile)psiFile);
         }
         return;
       }
