@@ -44,7 +44,7 @@ public class AppTest extends AppTestBase {
     ((MySocketInputHandler)SocketInputHandler.getInstance()).semaphore = semaphore;
 
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(myModule);
-    connection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationManager.DocumentRenderedListener() {
+    connection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DocumentRenderedListener() {
       @Override
       public void documentRendered(DocumentInfo info) {
         semaphore.up();

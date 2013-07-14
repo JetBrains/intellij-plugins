@@ -53,7 +53,7 @@ abstract class DocumentTask extends Task.Backgroundable {
         result = doRun(indicator);
       }
       catch (ProcessCanceledException ignored) {
-        // Don't log ProcessCanceledException
+        // don't log ProcessCanceledException
       }
       catch (Throwable e) {
         error = e;
@@ -61,7 +61,6 @@ abstract class DocumentTask extends Task.Backgroundable {
 
       if (!result || indicator.isCanceled()) {
         problemsHolder.disableLog();
-
         processErrorOrCancel();
       }
 

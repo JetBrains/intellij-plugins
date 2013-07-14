@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.preview;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +13,7 @@ class MxmlPreviewToolWindowForm {
 
   final AtomicBoolean waitingForGetDocument = new AtomicBoolean();
 
-  public MxmlPreviewToolWindowForm(Project project, MxmlPreviewToolWindowManager mxmlPreviewToolWindowManager) {
+  public MxmlPreviewToolWindowForm() {
   }
 
   public JPanel getContentPanel() {

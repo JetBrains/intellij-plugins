@@ -39,6 +39,7 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
 
   ComplexRenderAction(Document[] documents, boolean onlyStyle, boolean reportProblems) {
     super(null, null, new AsyncResult<List<DocumentFactoryManager.DocumentInfo>>());
+
     this.documents = documents;
     this.onlyStyle = onlyStyle;
     this.reportProblems = reportProblems;

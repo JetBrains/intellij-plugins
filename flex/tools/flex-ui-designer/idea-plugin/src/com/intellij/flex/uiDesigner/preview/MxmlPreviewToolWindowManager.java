@@ -136,7 +136,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
   }
 
   private void initToolWindow() {
-    toolWindowForm = new MxmlPreviewToolWindowForm(project, this);
+    toolWindowForm = new MxmlPreviewToolWindowForm();
     String toolWindowId = FlashUIDesignerBundle.message("mxml.preview.tool.window.title");
     toolWindow = ToolWindowManager.getInstance(project).registerToolWindow(toolWindowId, false, ToolWindowAnchor.RIGHT, project, false);
     toolWindow.setIcon(PlatformIcons.UI_FORM_ICON);
@@ -153,7 +153,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     ((ToolWindowManagerEx)ToolWindowManager.getInstance(project)).addToolWindowManagerListener(new ToolWindowManagerAdapter() {
       @Override
       public void stateChanged() {
-        //noinspection ConstantConditions
         if (project.isDisposed() || toolWindow == null || !toolWindow.isAvailable()) {
           return;
         }
@@ -193,7 +192,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     contentManager.setSelectedContent(content, true);
 
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(project);
-    connection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DesignerApplicationManager.DocumentRenderedListener() {
+    connection.subscribe(DesignerApplicationManager.MESSAGE_TOPIC, new DocumentRenderedListener() {
       private boolean isApplicable(DocumentFactoryManager.DocumentInfo info) {
         return toolWindowVisible &&
                toolWindowForm.getFile() != null &&
@@ -214,6 +213,12 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
       @Override
       public void errorOccurred() {
+        UIUtil.invokeLaterIfNeeded(new Runnable() {
+          @Override
+          public void run() {
+            render(false);
+          }
+        });
       }
     });
   }
@@ -276,8 +281,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     result.doWhenDone(new QueuedAsyncResultHandler<BufferedImage>() {
       @Override
       protected boolean isExpired() {
-        //noinspection ConstantConditions
-        return toolWindowForm == null || !Comparing.equal(toolWindowForm.getFile(), file);
+        return toolWindowForm == null || !file.equals(toolWindowForm.getFile());
       }
 
       @Override
@@ -350,8 +354,8 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     @Override
     public void run() {
       waitingForSmartMode = false;
-      final AccessToken token = ReadAction.start();
       final Editor selectedTextEditor;
+      final AccessToken token = ReadAction.start();
       try {
         selectedTextEditor = fileEditorManager.getSelectedTextEditor();
       }

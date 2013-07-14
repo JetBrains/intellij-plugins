@@ -44,7 +44,7 @@ import static com.intellij.flex.uiDesigner.AdlUtil.*;
 
 public class DesignerApplicationLauncher extends DocumentTask {
   private boolean debug;
-  private Future<ProjectComponentReferenceCounter> initializeThread;
+  private Future<ProjectComponentReferenceCounter> initializeTask;
 
   private final Semaphore semaphore = new Semaphore();
 
@@ -79,9 +79,9 @@ public class DesignerApplicationLauncher extends DocumentTask {
 
   @Override
   protected void processErrorOrCancel() {
-    if (initializeThread != null) {
-      initializeThread.cancel(true);
-      initializeThread = null;
+    if (initializeTask != null) {
+      initializeTask.cancel(true);
+      initializeTask = null;
     }
 
     if (!DesignerApplicationManager.getInstance().isApplicationClosed()) {
@@ -190,7 +190,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
       return false;
     }
 
-    ProjectComponentReferenceCounter projectComponentReferenceCounter = initializeThread.get(DebugPathManager.IS_DEV ? 999 : 60, TimeUnit.SECONDS);
+    ProjectComponentReferenceCounter projectComponentReferenceCounter = initializeTask.get(DebugPathManager.IS_DEV ? 999 : 60, TimeUnit.SECONDS);
     indicator.checkCanceled();
 
     final DesignerApplication application = DesignerApplicationManager.getApplication();
@@ -340,7 +340,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
   }
 
   private void runInitializeLibrariesAndModuleThread() {
-    initializeThread = ApplicationManager.getApplication().executeOnPooledThread(new Callable<ProjectComponentReferenceCounter>() {
+    initializeTask = ApplicationManager.getApplication().executeOnPooledThread(new Callable<ProjectComponentReferenceCounter>() {
       @Nullable
       @Override
       public ProjectComponentReferenceCounter call() {
@@ -362,7 +362,7 @@ public class DesignerApplicationLauncher extends DocumentTask {
           return LibraryManager.getInstance().registerModule(module, problemsHolder);
         }
         catch (Throwable e) {
-          if (initializeThread == null || initializeThread.isCancelled()) {
+          if (initializeTask == null || initializeTask.isCancelled()) {
             return null;
           }
 

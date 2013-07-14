@@ -570,11 +570,6 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     }
   }
 
-  public interface DocumentRenderedListener {
-    void documentRendered(DocumentInfo info);
-    void errorOccurred();
-  }
-
   private static class MyPsiTreeChangeListener extends PsiTreeChangeAdapter {
     private final MxmlPreviewToolWindowManager previewToolWindowManager;
     private final MergingUpdateQueue updateQueue;
