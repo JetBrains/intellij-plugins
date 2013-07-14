@@ -2,6 +2,7 @@ package org.jetbrains.io;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.util.Consumer;
 import gnu.trove.THashMap;
 import gnu.trove.TObjectObjectProcedure;
 import gnu.trove.TObjectProcedure;
@@ -66,7 +67,11 @@ public class InfoMap<E,I extends Info<E>> implements Disposable {
   }
 
   public void remove(int[] ids) {
-    elements.retainEntries(new RetainCondition<E, I>(ids));
+    remove(ids, null);
+  }
+
+  public void remove(int[] ids, @Nullable Consumer<I> removedValueConsumer) {
+    elements.retainEntries(new RetainCondition<E, I>(ids, removedValueConsumer));
   }
 
   public void remove(TObjectObjectProcedure<E, I> filter) {

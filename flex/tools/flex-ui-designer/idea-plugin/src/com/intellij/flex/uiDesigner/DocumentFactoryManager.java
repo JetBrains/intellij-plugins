@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.Consumer;
 import gnu.trove.TObjectObjectProcedure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +35,12 @@ public class DocumentFactoryManager {
   }
 
   public void unregister(final int[] ids) {
-    files.remove(ids);
+    files.remove(ids, new Consumer<DocumentInfo>() {
+      @Override
+      public void consume(DocumentInfo info) {
+        info.disposeRangeMarkers();
+      }
+    });
   }
 
   public void unregister(final Project project) {
@@ -144,7 +150,18 @@ public class DocumentFactoryManager {
     }
 
     public void setRangeMarkers(List<RangeMarker> rangeMarkers) {
+      disposeRangeMarkers();
       this.rangeMarkers = rangeMarkers;
+    }
+
+    public void disposeRangeMarkers() {
+      if (rangeMarkers == null || rangeMarkers.isEmpty()) {
+        return;
+      }
+
+      for (RangeMarker rangeMarker : rangeMarkers) {
+        rangeMarker.dispose();
+      }
     }
 
     @Override
