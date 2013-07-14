@@ -4,6 +4,8 @@ import com.intellij.flex.uiDesigner.FlashUIDesignerBundle;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.ui.LoadingDecorator;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBLayeredPane;
+import com.intellij.ui.components.JBLoadingPanel;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.util.ui.AbstractLayoutManager;
 import com.intellij.util.ui.AsyncProcessIcon;
@@ -13,7 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-class MxmlPreviewPanel extends JPanel implements Disposable {
+class MxmlPreviewPanel extends JBLayeredPane implements Disposable {
   private static final double EPS = 0.0000001;
   private static final double MAX_ZOOM_FACTOR = 2.0;
   private static final double ZOOM_STEP = 1.25;
@@ -24,6 +26,7 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
   private boolean zoomToFit = true;
 
   private final LoadingDecorator loadingDecorator;
+  private JLabel cannotRenderText;
 
   private final JPanel imagePanel = new JPanel() {
     @Override
@@ -52,16 +55,14 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
     loadingDecorator = new LoadingDecorator(imageWrapper, this, 1000) {
       @Override
       protected NonOpaquePanel customizeLoadingLayer(JPanel parent, JLabel text, AsyncProcessIcon icon) {
-        final NonOpaquePanel panel = super.customizeLoadingLayer(parent, text, icon);
-        final Font font = text.getFont();
-        text.setFont(font.deriveFont(font.getStyle(), font.getSize() + 6));
-        text.setForeground(new JBColor(new Color(0, 0, 0, 150), JBColor.foreground()));
+        NonOpaquePanel panel = super.customizeLoadingLayer(parent, text, icon);
+        JBLoadingPanel.customizeStatusText(text);
         return panel;
       }
     };
     loadingDecorator.setLoadingText(FlashUIDesignerBundle.message("rendering"));
 
-    add(loadingDecorator.getComponent());
+    add(loadingDecorator.getComponent(), 0, JLayeredPane.DEFAULT_LAYER);
   }
 
   @Override
@@ -80,9 +81,27 @@ class MxmlPreviewPanel extends JPanel implements Disposable {
     return image;
   }
 
-  public void setImage(@Nullable final BufferedImage image) {
+  public void setImage(@Nullable BufferedImage image) {
     this.image = image;
+    clearCannotRender();
     doRevalidate();
+  }
+
+  public void clearCannotRender() {
+    if (cannotRenderText != null) {
+      remove(cannotRenderText);
+      cannotRenderText = null;
+    }
+  }
+
+  public void showCannotRender() {
+    if (cannotRenderText != null) {
+      return;
+    }
+
+    cannotRenderText = new JLabel(FlashUIDesignerBundle.message("cannot.render"), SwingConstants.CENTER);
+    JBLoadingPanel.customizeStatusText(cannotRenderText);
+    add(cannotRenderText, 1, JLayeredPane.MODAL_LAYER);
   }
 
   private void doRevalidate() {

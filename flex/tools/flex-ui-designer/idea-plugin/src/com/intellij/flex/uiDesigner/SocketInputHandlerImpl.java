@@ -569,22 +569,18 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
   }
 
   private void showError() throws IOException {
-    ApplicationManager.getApplication().getMessageBus().syncPublisher(DesignerApplicationManager.MESSAGE_TOPIC).errorOccurred();
-    
-    String userMessage = reader.readUTF();
-    final String technicalMessage = reader.readUTF();
-    final VirtualFile file;
-    if (reader.readBoolean()) {
-      file = DocumentFactoryManager.getInstance().getFile(reader.readUnsignedShort());
+    try {
+      ApplicationManager.getApplication().getMessageBus().syncPublisher(DesignerApplicationManager.MESSAGE_TOPIC).errorOccurred();
     }
-    else {
-      file = null;
+    finally {
+      String userMessage = reader.readUTF();
+      String technicalMessage = reader.readUTF();
+      VirtualFile file = reader.readBoolean() ? DocumentFactoryManager.getInstance().getFile(reader.readUnsignedShort()) : null;
+      if (StringUtil.isEmpty(userMessage)) {
+        userMessage = technicalMessage;
+      }
+      LOG.error(LogMessageUtil.createEvent(userMessage, technicalMessage, file));
     }
-
-    if (StringUtil.isEmpty(userMessage)) {
-      userMessage = technicalMessage;
-    }
-    LOG.error(LogMessageUtil.createEvent(userMessage, technicalMessage, file));
   }
 
   private void logWarning() throws IOException {

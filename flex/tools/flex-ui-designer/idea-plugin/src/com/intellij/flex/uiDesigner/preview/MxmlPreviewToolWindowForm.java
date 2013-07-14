@@ -4,14 +4,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 class MxmlPreviewToolWindowForm {
   private VirtualFile file;
   private JPanel contentPanel;
   private MxmlPreviewPanel previewPanel;
 
-  final AtomicBoolean waitingForGetDocument = new AtomicBoolean();
+  volatile boolean waitingForGetDocument;
 
   public MxmlPreviewToolWindowForm() {
   }
@@ -25,7 +24,7 @@ class MxmlPreviewToolWindowForm {
   }
 
   public void setFile(@Nullable VirtualFile value) {
-    waitingForGetDocument.set(false);
+    waitingForGetDocument = false;
     file = value;
   }
 

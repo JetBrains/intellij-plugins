@@ -175,7 +175,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
             }
           }
 
-          render();
+          render(true, false);
         }
         else {
           propertiesComponent.unsetValue(SETTINGS_TOOL_WINDOW_VISIBLE);
@@ -201,11 +201,11 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
       @Override
       public void documentRendered(DocumentFactoryManager.DocumentInfo info) {
-        if (isApplicable(info) && !toolWindowForm.waitingForGetDocument.get()) {
+        if (isApplicable(info) && !toolWindowForm.waitingForGetDocument) {
           UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override
             public void run() {
-              render(false);
+              render(false, false);
             }
           });
         }
@@ -213,12 +213,6 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
       @Override
       public void errorOccurred() {
-        UIUtil.invokeLaterIfNeeded(new Runnable() {
-          @Override
-          public void run() {
-            render(false);
-          }
-        });
       }
     });
   }
@@ -231,19 +225,18 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
 
     try {
       final VirtualFile virtualFile = toolWindowForm.getFile();
-      BufferedImage image = IOUtil.readImage(file,
-                                             new Processor<DataInputStream>() {
-                                               @Override
-                                               public boolean process(DataInputStream in) {
-                                                 try {
-                                                   return in.readLong() == virtualFile.getTimeStamp() &&
-                                                          in.readUTF().equals(virtualFile.getUrl());
-                                                 }
-                                                 catch (IOException e) {
-                                                   throw new RuntimeException(e);
-                                                 }
-                                               }
-                                             });
+      BufferedImage image = IOUtil.readImage(file, new Processor<DataInputStream>() {
+        @Override
+        public boolean process(DataInputStream in) {
+          try {
+            return in.readLong() == virtualFile.getTimeStamp() &&
+                   in.readUTF().equals(virtualFile.getUrl());
+          }
+          catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        }
+      });
       if (image != null) {
         toolWindowForm.getPreviewPanel().setImage(image);
         return true;
@@ -256,11 +249,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     return false;
   }
 
-  private void render() {
-    render(true);
-  }
-
-  private void render(final boolean isSlow) {
+  private void render(final boolean isSlow, final boolean clearPreviousOnError) {
     if (!toolWindowVisible) {
       return;
     }
@@ -270,14 +259,17 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
       return;
     }
 
+    toolWindowForm.getPreviewPanel().clearCannotRender();
+
     if (isSlow) {
       toolWindowForm.getPreviewPanel().getLoadingDecorator().startLoading(false);
       loadingDecoratorStarted++;
     }
 
-    toolWindowForm.waitingForGetDocument.set(true);
-    @SuppressWarnings("ConstantConditions")
-    AsyncResult<BufferedImage> result = DesignerApplicationManager.getInstance().getDocumentImage((XmlFile)PsiManager.getInstance(project).findFile(file));
+    toolWindowForm.waitingForGetDocument = true;
+    XmlFile xmlFile = (XmlFile)PsiManager.getInstance(project).findFile(file);
+    LogMessageUtil.LOG.assertTrue(xmlFile != null);
+    AsyncResult<BufferedImage> result = DesignerApplicationManager.getInstance().getDocumentImage(xmlFile);
     result.doWhenDone(new QueuedAsyncResultHandler<BufferedImage>() {
       @Override
       protected boolean isExpired() {
@@ -298,10 +290,25 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     result.doWhenProcessed(new Runnable() {
       @Override
       public void run() {
-        toolWindowForm.waitingForGetDocument.set(false);
+        toolWindowForm.waitingForGetDocument = false;
         if (isSlow && --loadingDecoratorStarted == 0 && toolWindowForm != null) {
           toolWindowForm.getPreviewPanel().getLoadingDecorator().stopLoading();
         }
+      }
+    });
+
+    result.doWhenRejected(new Runnable() {
+      @Override
+      public void run() {
+        if (clearPreviousOnError) {
+          toolWindowForm.getPreviewPanel().setImage(null);
+        }
+        UIUtil.invokeLaterIfNeeded(new Runnable() {
+          @Override
+          public void run() {
+            toolWindowForm.getPreviewPanel().showCannotRender();
+          }
+        });
       }
     });
   }
@@ -374,7 +381,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
     toolWindowUpdateAlarm.addRequest(new Runnable() {
       @Override
       public void run() {
-        if (!project.isOpen() || project.isDisposed()) {
+        if (project.isDisposed() || !project.isOpen()) {
           return;
         }
 
@@ -399,7 +406,7 @@ public class MxmlPreviewToolWindowManager implements ProjectComponent {
         }
 
         if (toolWindowVisible) {
-          render();
+          render(true, true);
         }
       }
     }, 300);

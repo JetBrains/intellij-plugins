@@ -9,7 +9,7 @@ import com.intellij.util.ExceptionUtil;
 import org.jetbrains.annotations.Nullable;
 
 public final class LogMessageUtil {
-  public static final Logger LOG = Logger.getInstance(DesignerApplicationManager.class.getName());
+  public static final Logger LOG = Logger.getInstance(DesignerApplicationManager.class);
 
   public static StringBuilder appendLineNumber(StringBuilder builder, ProblemDescriptor problemDescriptor) {
     return builder.append(" (line: ").append(problemDescriptor.getLineNumber()).append(')');
