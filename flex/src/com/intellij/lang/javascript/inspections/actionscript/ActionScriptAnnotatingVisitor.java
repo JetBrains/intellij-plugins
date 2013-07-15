@@ -19,6 +19,7 @@ import com.intellij.lang.javascript.flex.ImportUtils;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
 import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
+import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.*;
@@ -31,6 +32,7 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveResult;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.SinkResolveProcessor;
+import com.intellij.lang.javascript.psi.types.JSPrimitiveTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.lang.javascript.refactoring.changeSignature.JSMethodDescriptor;
@@ -1468,5 +1470,29 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
 
   public void visitJSThisExpression(final JSThisExpression node) {
     checkClassReferenceInStaticContext(node, "javascript.validation.message.this.referenced.from.static.context");
+  }
+
+  @Override
+  protected void checkNewExpressionReference(JSReferenceExpression referenceExpression, ResolveResult[] results) {
+    PsiElement toCheck = results[0].getElement();
+    if (toCheck instanceof JSFunction && ((JSFunction)toCheck).isConstructor()) {
+      toCheck = toCheck.getParent(); // TODO: there is no need once our stubs for interface will lose constructors for interfaces
+    }
+
+    if (toCheck instanceof JSClass && ((JSClass)toCheck).isInterface()) {
+      final PsiElement referenceNameElement = referenceExpression.getReferenceNameElement();
+
+      registerProblem(referenceNameElement,
+                      JSBundle.message("javascript.interface.can.not.be.instantiated.message"),
+                      getUnresolvedReferenceHighlightType(referenceExpression), myHolder, JSUnresolvedFunctionInspection.SHORT_NAME);
+    }
+  }
+
+  @Override
+  protected boolean isCallableType(boolean inNewExpression, JSType type) {
+    final String typeText = type.getTypeText();
+    return "Class".equals(typeText) ||
+           inNewExpression && (type instanceof JSPrimitiveTypeImpl.JSObjectType) ||
+           JSTypeUtils.hasFunctionType(type);
   }
 }
