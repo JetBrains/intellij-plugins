@@ -1,6 +1,6 @@
 package com.intellij.flex.uiDesigner.libraries;
 
-import com.intellij.diagnostic.errordialog.Attachment;
+import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.flex.uiDesigner.FlashUIDesignerBundle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

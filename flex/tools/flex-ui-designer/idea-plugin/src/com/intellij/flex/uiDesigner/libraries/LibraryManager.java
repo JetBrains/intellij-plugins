@@ -1,7 +1,8 @@
 package com.intellij.flex.uiDesigner.libraries;
 
 import com.intellij.ProjectTopics;
-import com.intellij.diagnostic.errordialog.Attachment;
+import com.intellij.diagnostic.AttachmentFactory;
+import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.flex.uiDesigner.*;
 import com.intellij.flex.uiDesigner.io.StringRegistry;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet.ContainsCondition;
@@ -291,7 +292,7 @@ public class LibraryManager implements Disposable {
         for (int i = 0, librariesSize = libraries.size(); i < librariesSize; i++) {
           Library library = libraries.get(i);
           technicalMessage += " " + library.getFile().getPath();
-          attachments[i] = new Attachment(library.getFile());
+          attachments[i] = AttachmentFactory.createAttachment(library.getFile());
         }
       }
       catch (Throwable innerE) {

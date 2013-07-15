@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.diagnostic.LogMessageEx;
-import com.intellij.diagnostic.errordialog.Attachment;
+import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.flex.uiDesigner.libraries.InitException;
 import com.intellij.flex.uiDesigner.mxml.ProjectComponentReferenceCounter;
 import com.intellij.openapi.Disposable;

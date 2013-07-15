@@ -1,7 +1,8 @@
 package com.intellij.flex.uiDesigner;
 
+import com.intellij.diagnostic.AttachmentFactory;
 import com.intellij.diagnostic.LogMessageEx;
-import com.intellij.diagnostic.errordialog.Attachment;
+import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,7 +30,7 @@ public final class LogMessageUtil {
 
   @Nullable
   public static Attachment createAttachment(@Nullable VirtualFile file) {
-    return file == null ? null : new Attachment(file);
+    return file == null ? null : AttachmentFactory.createAttachment(file);
   }
 
   public static IdeaLoggingEvent createEvent(String userMessage, Throwable e, ProblemDescriptor problemDescriptor) {

@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.presentation;
 
 import com.intellij.diagnostic.LogMessageEx;
-import com.intellij.diagnostic.errordialog.Attachment;
+import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.ide.projectView.ProjectViewNode;
 import com.intellij.ide.projectView.SelectableTreeStructureProvider;
 import com.intellij.ide.projectView.ViewSettings;
