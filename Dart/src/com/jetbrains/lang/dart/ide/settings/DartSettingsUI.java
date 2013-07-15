@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.webcore.libraries.ScriptingLibraryMappings;
 import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.intellij.webcore.libraries.ui.ScriptingContextsConfigurable;
 import com.jetbrains.lang.dart.DartBundle;
@@ -101,7 +102,7 @@ public class DartSettingsUI {
       @Override
       public void actionPerformed(ActionEvent e) {
         final JSLibraryManager libraryManager = JSLibraryManager.getInstance(myProject);
-        final JSLibraryMappings libraryMappings = libraryManager.getLibraryMappings();
+        final ScriptingLibraryMappings libraryMappings = libraryManager.getLibraryMappings();
         final String libName = DartBundle.message("dart.sdk.name");
         if (libraryMappings.isAssociatedWithProject(libName)) {
           libraryMappings.disassociateWithProject(libName);
