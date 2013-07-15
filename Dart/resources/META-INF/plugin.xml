@@ -136,7 +136,8 @@
   </project-components>
 
   <extensionPoints>
-    <extensionPoint name="debugger.breakpoint.class.provider" interface="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineBreakpointTypeProvider"/>
+    <extensionPoint name="debugger.breakpoint.class.provider"
+                    interface="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineBreakpointTypeProvider"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -290,6 +291,12 @@
     <action id="Generate.GetSetAccessor.Dart" class="com.jetbrains.lang.dart.ide.generation.DartGenerateGetterSetterAction"
             text="Getter and Setter">
       <add-to-group anchor="after" relative-to-action="Generate.SetAccessor.Dart" group-id="GenerateGroup"/>
+    </action>
+    <action class="com.jetbrains.lang.dart.ide.actions.ShowDartSettingsAction"
+            id="ShowDartSettingsAction"
+            description="Dart settings"
+            text="Dart Settings">
+      <add-to-group group-id="MainToolBarSettings" anchor="last"/>
     </action>
   </actions>
 </idea-plugin>
