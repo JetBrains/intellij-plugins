@@ -569,6 +569,13 @@ public class MxmlReader implements DocumentReader {
       case AmfExtendedTypes.PROJECT_CLASS_REFERENCE:
         return readProjectClassReference();
 
+      case AmfExtendedTypes.SWF:
+        var image:Object = new (module.getClass("spark.components.Image"));
+        image.source = EmbedSwfManager(module.project.getComponent(EmbedSwfManager)).get(AmfUtil.readUInt29(input),
+                                                                                         module.getClassPool(FlexLibrarySet.SWF_POOL),
+                                                                                         module.project);
+        return image;
+
       default:
         throw new ArgumentError("unknown property type " + amfType);
     }    

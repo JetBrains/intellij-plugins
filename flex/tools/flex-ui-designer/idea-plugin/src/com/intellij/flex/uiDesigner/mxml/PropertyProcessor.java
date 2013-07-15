@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.mxml;
 
 import com.google.common.base.CharMatcher;
+import com.intellij.flex.uiDesigner.EmbedSwfManager;
 import com.intellij.flex.uiDesigner.InjectionUtil;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
 import com.intellij.flex.uiDesigner.io.Amf3Types;
@@ -17,11 +18,13 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.xml.*;
 import com.intellij.util.StringBuilderSpinAllocator;
@@ -131,7 +134,7 @@ class PropertyProcessor implements ValueWriter {
                                       PrimitiveAmfOutputStream out,
                                       BaseWriter writer,
                                       boolean isStyle,
-                                      Context parentContext) throws InvalidPropertyException {
+                                      Context parentContext) {
               writeNonProjectClassFactory(MxmlUtil.UNKNOWN_ITEM_RENDERER_CLASS_NAME);
               return PRIMITIVE;
             }
@@ -164,11 +167,10 @@ class PropertyProcessor implements ValueWriter {
 
   public ValueWriter processXmlTextAsDefaultPropertyWithComplexType(XmlElementValueProvider valueProvider, XmlTag parent, Context context)
     throws InvalidPropertyException {
-    @SuppressWarnings("ConstantConditions")
-    final AnnotationBackedDescriptor defaultPropertyDescriptor = ((ClassBackedElementDescriptor)parent.getDescriptor())
-      .getDefaultPropertyDescriptor();
-    assert defaultPropertyDescriptor != null;
-
+    ClassBackedElementDescriptor classBackedElementDescriptor = (ClassBackedElementDescriptor)parent.getDescriptor();
+    LOG.assertTrue(classBackedElementDescriptor != null);
+    AnnotationBackedDescriptor defaultPropertyDescriptor = classBackedElementDescriptor.getDefaultPropertyDescriptor();
+    LOG.assertTrue(defaultPropertyDescriptor != null);
     return processInjected(valueProvider, defaultPropertyDescriptor, defaultPropertyDescriptor.isStyle(), context);
   }
 
@@ -413,12 +415,13 @@ class PropertyProcessor implements ValueWriter {
     return true;
   }
 
-  boolean writeTagIfFx(XmlTag tag, String type, PrimitiveAmfOutputStream out, @Nullable Context parentContext,
-                       boolean allowIncludeInExcludeFrom) throws InvalidPropertyException {
+  boolean writeTagIfFxOrFxg(XmlTag tag, XmlElementDescriptor descriptor, @Nullable Context parentContext, boolean allowIncludeInExcludeFrom, PrimitiveAmfOutputStream out) throws InvalidPropertyException {
+    String type = descriptor.getQualifiedName();
     // AS-110
-    if (!JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace()) ||
-      type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) ||
-      type.equals(AsCommonTypeNames.DATE)) {
+    if (!JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace())) {
+      return writeIfFxg(tag, descriptor, parentContext, allowIncludeInExcludeFrom, out);
+    }
+    else if (type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) || type.equals(AsCommonTypeNames.DATE)) {
       return false;
     }
 
@@ -452,11 +455,28 @@ class PropertyProcessor implements ValueWriter {
       out.writeAmfUtf(tag.getValue().getText());
     }
     else {
-      final boolean result = writeIfPrimitive(mxmlWriter.valueProviderFactory.create(tag), type, out, null, false, true);
+      boolean result = writeIfPrimitive(mxmlWriter.valueProviderFactory.create(tag), type, out, null, false, true);
       LOG.assertTrue(result);
     }
 
     return true;
+  }
+
+  private boolean writeIfFxg(XmlTag tag, XmlElementDescriptor descriptor, Context parentContext, boolean allowIncludeInExcludeFrom, PrimitiveAmfOutputStream out) {
+    if (descriptor instanceof ClassBackedElementDescriptor) {
+      PsiElement declaration = descriptor.getDeclaration();
+      PsiFile psiFile = declaration.getContainingFile();
+      VirtualFile virtualFile = psiFile.getVirtualFile();
+      MxmlWriter.LOG.assertTrue(virtualFile != null);
+      if (JavaScriptSupportLoader.isFxgFile(virtualFile)) {
+        out.write(AmfExtendedTypes.REFERABLE);
+        mxmlWriter.processIdAttributeOfFxTag(tag, parentContext, allowIncludeInExcludeFrom);
+        out.write(AmfExtendedTypes.SWF);
+        out.writeUInt29(EmbedSwfManager.getInstance().add(virtualFile, EmbedSwfManager.FXG_MARKER, writer.getAssetCounter()));
+        return true;
+      }
+    }
+    return false;
   }
 
   boolean writeIfPrimitive(XmlElementValueProvider valueProvider, String type, PrimitiveAmfOutputStream out, @Nullable AnnotationBackedDescriptor descriptor,
@@ -498,7 +518,7 @@ class PropertyProcessor implements ValueWriter {
         throw new InvalidPropertyException(exceptionElement, "invalid.class.value");
       }
 
-      final Module module = ModuleUtil.findModuleForPsiElement(valueProvider.getElement());
+      final Module module = ModuleUtilCore.findModuleForPsiElement(valueProvider.getElement());
       if (module != null) {
         jsClass = (JSClass)JSResolveUtil.unwrapProxy(JSResolveUtil.findClassByQName(trimmed, module.getModuleWithDependenciesAndLibrariesScope(false)));
       }
@@ -523,6 +543,7 @@ class PropertyProcessor implements ValueWriter {
     }
   }
 
+  @SuppressWarnings("StatementWithEmptyBody")
   @Override
   public PropertyKind write(AnnotationBackedDescriptor descriptor, XmlElementValueProvider valueProvider, PrimitiveAmfOutputStream out,
                             BaseWriter writer, boolean isStyle, @Nullable Context parentContext) throws InvalidPropertyException {
@@ -738,7 +759,7 @@ class PropertyProcessor implements ValueWriter {
         final XmlTag childTag = tag.getSubTags()[0];
         final XmlElementDescriptor childTagDescriptor = childTag.getDescriptor();
         LOG.assertTrue(childTagDescriptor != null);
-        if (writeTagIfFx(childTag, childTagDescriptor.getQualifiedName(), out, parentContext, false)) {
+        if (writeTagIfFxOrFxg(childTag, childTagDescriptor, parentContext, false, out)) {
           return null;
         }
         else {
@@ -773,6 +794,7 @@ class PropertyProcessor implements ValueWriter {
       return;
     }
 
+    //noinspection UnusedCatchParameter
     try {
       out.writeAmfInt(Integer.parseInt(s));
     }

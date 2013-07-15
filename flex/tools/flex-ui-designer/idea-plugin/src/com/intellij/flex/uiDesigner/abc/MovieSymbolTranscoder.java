@@ -16,8 +16,7 @@ import java.util.List;
 
 import static com.intellij.flex.uiDesigner.abc.PlaceObjectFlags.*;
 
-public class MovieSymbolTranscoder extends MovieTranscoder {
-  private int fileLength;
+public class MovieSymbolTranscoder extends SymbolTranscoderBase {
   private byte[] symbolName;
 
   private TIntObjectHashMap<PlacedObject> placedObjects;
@@ -35,7 +34,7 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
 
   public void transcode(@NotNull VirtualFile in, @NotNull File out, @NotNull String symbolName) throws IOException {
     this.symbolName = symbolName.getBytes();
-    transcode(in.getInputStream(), in.getLength(), out, true);
+    transcode(in, out);
   }
 
   @Override
@@ -44,14 +43,16 @@ public class MovieSymbolTranscoder extends MovieTranscoder {
 
     final PlacedObject exportedSymbol = transcode();
     buffer.position(exportedSymbol.start + 2);
-    final byte[] symbolOwnClassAbc = getSymbolOwnClassAbc(buffer.getShort());
-    fileLength += symbolOwnClassAbc.length;
 
     if (writeBounds) {
       writeMovieBounds();
     }
 
-    SwfUtil.header(fileLength, out, buffer);
+    final byte[] symbolOwnClassAbc = getSymbolOwnClassAbc(buffer.getShort());
+    fileLength += symbolOwnClassAbc.length;
+
+    SwfUtil.header(fileLength, out);
+
     writeUsedPlacedObjects();
     writePlacedObject(exportedSymbol);
     out.write(symbolOwnClassAbc);

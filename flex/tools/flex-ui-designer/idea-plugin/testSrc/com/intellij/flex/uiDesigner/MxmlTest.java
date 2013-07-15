@@ -163,7 +163,7 @@ public class MxmlTest extends MxmlTestBase {
         if (name.charAt(0) == '.') {
           // skip
         }
-        else if (name.startsWith("Aux")) {
+        else if (name.startsWith("Aux") || name.endsWith(JavaScriptSupportLoader.FXG_FILE_EXTENSION_DOT)) {
           auxFiles.add(file);
         }
         else if (name.endsWith(JavaScriptSupportLoader.MXML_FILE_EXTENSION_DOT) &&

@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.flex.uiDesigner.abc.EntireMovieTranscoder;
+import com.intellij.flex.uiDesigner.abc.FxgTranscoder;
 import com.intellij.flex.uiDesigner.abc.MovieSymbolTranscoder;
 import com.intellij.flex.uiDesigner.io.*;
 import com.intellij.flex.uiDesigner.libraries.LibraryManager;
@@ -519,6 +520,9 @@ public class SocketInputHandlerImpl extends SocketInputHandler {
     SwfAssetInfo assetInfo = EmbedSwfManager.getInstance().getInfo(reader.readUnsignedShort());
     if (assetInfo.symbolName == null) {
       new EntireMovieTranscoder().transcode(assetInfo.file, resultFile);
+    }
+    else if (assetInfo.symbolName == EmbedSwfManager.FXG_MARKER) {
+      new FxgTranscoder().transcode(assetInfo.file, resultFile);
     }
     else {
       new MovieSymbolTranscoder().transcode(assetInfo.file, resultFile, assetInfo.symbolName);

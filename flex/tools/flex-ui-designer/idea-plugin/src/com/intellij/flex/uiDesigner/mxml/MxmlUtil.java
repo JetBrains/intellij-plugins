@@ -2,7 +2,6 @@ package com.intellij.flex.uiDesigner.mxml;
 
 import com.intellij.flex.uiDesigner.DocumentFactoryManager;
 import com.intellij.flex.uiDesigner.InvalidPropertyException;
-import com.intellij.flex.uiDesigner.LogMessageUtil;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.AnnotationBackedDescriptor;
@@ -25,6 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import static com.intellij.flex.uiDesigner.mxml.MxmlWriter.LOG;
+
 public final class MxmlUtil {
   private static final Pattern FLEX_SDK_ABSTRACT_CLASSES = Pattern.compile("^(mx|spark)\\.(.*)?Base$");
   private static final Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> NON_PROJECT_CLASS = new Trinity<Integer, String, Condition<AnnotationBackedDescriptor>>(-1, null, null);
@@ -34,10 +35,10 @@ public final class MxmlUtil {
 
   public static Document getDocumentAndWaitIfNotCommitted(PsiFile psiFile) {
     Application application = ApplicationManager.getApplication();
-    LogMessageUtil.LOG.assertTrue(application.isUnitTestMode() || !application.isReadAccessAllowed());
+    LOG.assertTrue(application.isUnitTestMode() || !application.isReadAccessAllowed());
     PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(psiFile.getProject());
     Document document = psiDocumentManager.getDocument(psiFile);
-    assert document != null;
+    LOG.assertTrue(document != null);
     if (!psiDocumentManager.isCommitted(document)) {
       final Semaphore semaphore = new Semaphore();
       semaphore.down();
@@ -59,7 +60,7 @@ public final class MxmlUtil {
       return false;
     }
 
-    final String ns = attribute.getNamespace();
+    String ns = attribute.getNamespace();
     return ns.isEmpty() || ns.equals(JavaScriptSupportLoader.MXML_URI3);
   }
 
@@ -68,14 +69,14 @@ public final class MxmlUtil {
   }
 
   static boolean containsOnlyWhitespace(XmlTagChild child) {
-    final PsiElement firstChild = child.getFirstChild();
+    PsiElement firstChild = child.getFirstChild();
     return firstChild == child.getLastChild() && (firstChild == null || firstChild instanceof PsiWhiteSpace);
   }
 
   @Nullable
   public static PsiLanguageInjectionHost getInjectedHost(XmlTag tag) {
     // support <tag>{v}...</tag> or <tag>__PsiWhiteSpace__{v}...</tag>
-    // <tag><span>ssss</span> {v}...</tag> is not supported
+    // <tag><span>text</span> {v}...</tag> is not supported
     for (XmlTagChild child : tag.getValue().getChildren()) {
       if (child instanceof XmlText) {
         //noinspection CastConflictsWithInstanceof
@@ -101,7 +102,7 @@ public final class MxmlUtil {
     PsiFile psiFile = declaration.getContainingFile();
     VirtualFile virtualFile = psiFile.getVirtualFile();
     ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(psiFile.getProject()).getFileIndex();
-    assert virtualFile != null;
+    LOG.assertTrue(virtualFile != null);
     if (!projectFileIndex.isInSourceContent(virtualFile)) {
       return NON_PROJECT_CLASS;
     }

@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class EmbedSwfManager extends EmbedAssetManager<SwfAssetInfo> {
+  public static final String FXG_MARKER = "\u200B";
+
   public static EmbedSwfManager getInstance() {
     return DesignerApplicationManager.getService(EmbedSwfManager.class);
   }

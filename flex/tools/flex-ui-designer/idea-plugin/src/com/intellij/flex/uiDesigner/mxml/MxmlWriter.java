@@ -508,7 +508,7 @@ public class MxmlWriter {
     final Trinity<Integer,String,Condition<AnnotationBackedDescriptor>> effectiveClassInfo;
     final String effectiveClassName;
     try {
-      if (propertyProcessor.writeTagIfFx(tag, descriptor.getQualifiedName(), out, parentContext, allowIncludeInExcludeFrom)) {
+      if (propertyProcessor.writeTagIfFxOrFxg(tag, descriptor, parentContext, allowIncludeInExcludeFrom, out)) {
         return true;
       }
 
@@ -576,9 +576,9 @@ public class MxmlWriter {
       context = writer.createStaticContext(parentContext, referencePosition);
     }
 
-    final XmlAttribute idAttribute = tag.getAttribute("id");
+    XmlAttribute idAttribute = tag.getAttribute("id");
     if (idAttribute != null) {
-      final String id = idAttribute.getDisplayValue();
+      String id = idAttribute.getDisplayValue();
       if (StringUtil.isEmpty(id)) {
         LOG.warn("Skip id attribute of " + tag + ", id is empty");
       }

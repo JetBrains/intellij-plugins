@@ -1,6 +1,5 @@
 package com.intellij.flex.uiDesigner.abc;
 
-import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.TIntArrayList;
 import org.jetbrains.annotations.TestOnly;
 
@@ -22,10 +21,6 @@ public class EntireMovieTranscoder extends MovieTranscoder {
   public void transcode(File in, File out) throws IOException {
     //noinspection IOResourceOpenedButNotSafelyClosed
     transcode(new FileInputStream(in), in.length(), out, false);
-  }
-
-  public void transcode(VirtualFile in, File out) throws IOException {
-    transcode(in.getInputStream(), in.getLength(), out, true);
   }
 
   @Override

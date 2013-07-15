@@ -1,11 +1,13 @@
 package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.flex.uiDesigner.DesignerTests;
+import com.intellij.openapi.util.io.FileUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import static com.intellij.flex.uiDesigner.MatcherAssert.assertThat;
@@ -37,5 +39,14 @@ public class AbcFilterTest {
   public void merge() throws IOException {
     filter.filter(new File(TEST_LIB_DIR, "MinimalComps_0_9_10.swf"), out, null);
     assertThat(out.length(), 252500);
+  }
+
+  @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+  @Test
+  public void fxg() throws IOException {
+    File fxgFile = new File(DesignerTests.getTestDataPath(), "src/common/star.fxg");
+    new FxgTranscoder().transcode(new FileInputStream(fxgFile), fxgFile.length(), out, false);
+
+    FileUtil.copy(out, new File("/Users/develar/test.swf"));
   }
 }

@@ -48,7 +48,7 @@ public class AbcFilter extends AbcTranscoder {
   private void filter(InputStream inputStream, long inputLength, File outFile, @Nullable Condition<CharSequence> abcNameFilter)
     throws IOException {
     final boolean onlyABC = outFile.getPath().endsWith(".abc");
-    final FileOutputStream out = transcode(inputStream, inputLength, outFile);
+    final FileOutputStream out = readSourceAndCreateFileOut(inputStream, inputLength, outFile);
     channel = out.getChannel();
     if (!onlyABC) {
       channel.position(PARTIAL_HEADER_LENGTH);

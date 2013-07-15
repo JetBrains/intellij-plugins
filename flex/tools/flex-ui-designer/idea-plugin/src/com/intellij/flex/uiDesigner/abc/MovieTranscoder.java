@@ -1,6 +1,7 @@
 package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.flex.uiDesigner.io.IOUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import gnu.trove.TIntArrayList;
 
 import java.awt.*;
@@ -30,9 +31,15 @@ abstract class MovieTranscoder extends SwfTranscoder {
     return length < 63 ? 2 : 6;
   }
 
+  public void transcode(VirtualFile in, File out) throws IOException {
+    transcode(in.getInputStream(), in.getLength(), out, true);
+  }
+
+  @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
   protected void transcode(InputStream inputStream, long inputLength, File outFile, boolean writeBounds) throws IOException {
+    out = new DataOutputStream(new BufferedOutputStream(readSourceAndCreateFileOut(inputStream, inputLength, outFile)));
     data = buffer.array();
-    out = new DataOutputStream(new BufferedOutputStream(transcode(inputStream, inputLength, outFile)));
+
     try {
       transcode(writeBounds);
     }
@@ -65,23 +72,20 @@ abstract class MovieTranscoder extends SwfTranscoder {
   }
 
   protected static byte[] getSymbolOwnClassAbc(short frameCount) throws IOException {
-    byte[] symbolOwnClassAbc;
     if (frameCount > 1) {
       if (MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC == null) {
         MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC = IOUtil.getResourceBytes("MSymbolOwnClass.abc");
         MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC[21] = '_'; // replace M => _
       }
-      symbolOwnClassAbc = MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC;
+      return MOVIE_CLIP_SYMBOL_OWN_CLASS_ABC;
     }
     else {
       if (SPRITE_SYMBOL_OWN_CLASS_ABC == null) {
         SPRITE_SYMBOL_OWN_CLASS_ABC = IOUtil.getResourceBytes("SSymbolOwnClass.abc");
         SPRITE_SYMBOL_OWN_CLASS_ABC[21] = '_'; // replace S => _
       }
-      symbolOwnClassAbc = SPRITE_SYMBOL_OWN_CLASS_ABC;
+      return SPRITE_SYMBOL_OWN_CLASS_ABC;
     }
-
-    return symbolOwnClassAbc;
   }
 
   protected void writeMovieBounds() throws IOException {

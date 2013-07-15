@@ -21,26 +21,26 @@ abstract class SwfTranscoder extends AbcEncoder {
 
   private final byte[] partialHeader = new byte[PARTIAL_HEADER_LENGTH];
 
-  protected FileOutputStream transcode(InputStream inputStream, long inputLength, File outFile) throws IOException {
-    transcode(inputStream, inputLength);
+  protected FileOutputStream readSourceAndCreateFileOut(InputStream inputStream, long inputLength, File outFile) throws IOException {
+    readSource(inputStream, inputLength);
     return new FileOutputStream(outFile);
   }
 
-  // inputStream will be closed
-  protected void transcode(InputStream inputStream, long inputLength) throws IOException {
+  // in will be closed
+  protected void readSource(InputStream in, long inputLength) throws IOException {
     final int uncompressedBodyLength;
     final boolean compressed;
     byte[] data;
     try {
-      int n = inputStream.read(partialHeader);
+      int n = in.read(partialHeader);
       assert n == PARTIAL_HEADER_LENGTH;
       uncompressedBodyLength = (partialHeader[4] & 0xFF | (partialHeader[5] & 0xFF) << 8 |
                                 (partialHeader[6] & 0xFF) << 16 | partialHeader[7] << 24) - PARTIAL_HEADER_LENGTH;
       compressed = partialHeader[0] == 0x43;
-      data = FileUtil.loadBytes(inputStream, compressed ? (int)inputLength - PARTIAL_HEADER_LENGTH : uncompressedBodyLength);
+      data = FileUtil.loadBytes(in, compressed ? (int)inputLength - PARTIAL_HEADER_LENGTH : uncompressedBodyLength);
     }
     finally {
-      inputStream.close();
+      in.close();
     }
 
     if (compressed) {

@@ -49,6 +49,19 @@
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
     <orderEntry type="module" module-name="properties" />
     <orderEntry type="module" module-name="compiler-openapi" />
+    <orderEntry type="module-library">
+      <library name="fxg-utils">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/lib/fxg-tools.jar!/" />
+          <root url="jar://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/lib/swf-utils.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../flex-sdk/modules/fxgutils/src/java" />
+          <root url="file://$MODULE_DIR$/../../flex-sdk/modules/swfutils/src/java" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>
 

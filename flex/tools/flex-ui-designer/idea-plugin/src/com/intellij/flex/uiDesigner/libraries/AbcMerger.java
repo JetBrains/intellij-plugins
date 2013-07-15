@@ -63,7 +63,7 @@ class AbcMerger extends AbcTranscoder {
   }
 
   public void process(InputStream in, int length) throws IOException {
-    transcode(in, length);
+    readSource(in, length);
     processTags(null);
     library = null;
 

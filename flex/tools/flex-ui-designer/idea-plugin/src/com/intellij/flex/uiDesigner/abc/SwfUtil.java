@@ -31,11 +31,15 @@ public final class SwfUtil {
     return SWF_HEADER_P1.length + 4 + SWF_HEADER_P2.length;
   }
 
-  public static void header(int length, OutputStream out, ByteBuffer buffer) throws IOException {
+  public static void header(int length, OutputStream out) throws IOException {
     out.write(SWF_HEADER_P1);
-    // write length
-    buffer.putInt(0, length);
-    out.write(buffer.array(), 0, 4);
+
+    // write length, littleEndian
+    out.write(0xFF & length);
+    out.write(0xFF & (length >> 8));
+    out.write(0xFF & (length >> 16));
+    out.write(0xFF & (length >> 24));
+
     out.write(SWF_HEADER_P2);
   }
 
@@ -61,18 +65,18 @@ public final class SwfUtil {
     out.write(SWF_FOOTER);
   }
 
-  public static void footer(ByteBuffer byteBuffer) throws IOException {
+  public static void footer(ByteBuffer byteBuffer) {
     byteBuffer.put(SWF_FOOTER);
   }
 
-  public static Encoder mergeDoAbc(List<Decoder> decoders) throws IOException {
+  public static Encoder mergeDoAbc(List<Decoder> decoders) {
     final Encoder encoder = new Encoder();
     encoder.configure(decoders, null);
     mergeDoAbc(decoders, encoder);
     return encoder;
   }
 
-  public static void mergeDoAbc(List<Decoder> decoders, Encoder encoder) throws IOException {
+  public static void mergeDoAbc(List<Decoder> decoders, Encoder encoder) {
     //final long time = System.currentTimeMillis();
 
     encoder.enablePeepHole();

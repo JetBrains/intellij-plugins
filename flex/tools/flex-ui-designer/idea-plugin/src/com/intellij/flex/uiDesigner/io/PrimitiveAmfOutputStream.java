@@ -19,6 +19,7 @@ public class PrimitiveAmfOutputStream extends OutputStream {
     this.out = out;
   }
 
+  @Override
   public void close() throws IOException {
     flush();
     out.close();
@@ -110,26 +111,26 @@ public class PrimitiveAmfOutputStream extends OutputStream {
   }
 
   public final void writeAmfUtf(final CharSequence s, final boolean shiftLength, final int beginIndex, final int endIndex) {
-    int utflen = 0;
+    int utfLen = 0;
     int c;
 
     for (int i = beginIndex; i < endIndex; i++) {
       c = s.charAt(i);
       if (c >= 0x0001 && c <= 0x007F) {
-        utflen++;
+        utfLen++;
       }
       else if (c > 0x07FF) {
-        utflen += 3;
+        utfLen += 3;
       }
       else {
-        utflen += 2;
+        utfLen += 2;
       }
     }
 
-    writeUInt29(shiftLength ? ((utflen << 1) | 1) : utflen);
+    writeUInt29(shiftLength ? ((utfLen << 1) | 1) : utfLen);
 
     int count = out.size();
-    final byte[] bytes = out.getBuffer(utflen);
+    final byte[] bytes = out.getBuffer(utfLen);
     for (int i = beginIndex; i < endIndex; i++) {
       c = s.charAt(i);
       if (c <= 0x007F) {
@@ -218,18 +219,22 @@ public class PrimitiveAmfOutputStream extends OutputStream {
     }
   }
 
+  @Override
   public final void write(int b) {
     out.write(b);
   }
 
+  @Override
   public final void write(byte[] b) {
     out.write(b, 0, b.length);
   }
 
+  @Override
   public final void write(byte[] b, int off, int len) {
     out.write(b, off, len);
   }
 
+  @Override
   public void flush() throws IOException {
     out.flush();
   }
