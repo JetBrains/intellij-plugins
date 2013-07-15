@@ -19,7 +19,7 @@ import com.intellij.lang.javascript.psi.resolve.JSInheritanceUtil;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -43,8 +43,8 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
 
     if (element instanceof JSClass) {
       JSClass clazz = (JSClass)element;
-      Module module = ModuleUtil.findModuleForPsiElement(clazz);
-      if (ModuleType.get(module) != FlexModuleType.getInstance()) return false;
+      final Module module = ModuleUtilCore.findModuleForPsiElement(clazz);
+      if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return false;
       if (FlashRunConfigurationProducer.isAcceptedMainClass(clazz, module)) return true;
       if (JSInheritanceUtil.isParentClass(clazz, FlashRunConfigurationForm.MODULE_BASE_CLASS_NAME)) return true;
 
@@ -59,7 +59,7 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
       if (isAnnotatedByUnknownAttribute((JSAttributeListOwner)element)) return true;
 
       if (JSResolveUtil.findParent(element) instanceof JSClass) {
-        final JSAttributeList varAttrList = ((JSVariable) element).getAttributeList();
+        final JSAttributeList varAttrList = ((JSVariable)element).getAttributeList();
         if (varAttrList != null && varAttrList.findAttributeByName(FlexAnnotationNames.EMBED) != null) {
           return true;
         }
@@ -97,7 +97,7 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
   }
 
   private static boolean isTestMethod(JSFunction function) {
-    Module moduleForPsiElement = ModuleUtil.findModuleForPsiElement(function);
+    Module moduleForPsiElement = ModuleUtilCore.findModuleForPsiElement(function);
     FlexUnitSupport flexUnitSupport = FlexUnitSupport.getSupport(moduleForPsiElement);
     if (flexUnitSupport != null && flexUnitSupport.isTestMethod(function)) return true;
     return false;
