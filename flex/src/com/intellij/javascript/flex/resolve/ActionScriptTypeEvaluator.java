@@ -1,6 +1,8 @@
 package com.intellij.javascript.flex.resolve;
 
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
+import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSPackageWrapper;
 import com.intellij.lang.javascript.psi.resolve.*;
@@ -9,6 +11,7 @@ import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
+import com.intellij.psi.util.PsiTreeUtil;
 
 import static com.intellij.lang.javascript.psi.JSCommonTypeNames.VECTOR_CLASS_NAME;
 
@@ -77,5 +80,22 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
 
   private static boolean isNotValidType(String text) {
     return text.indexOf('[') != -1 || text.indexOf('(') != -1 || text.indexOf('{') != -1;
+  }
+
+  @Override
+  protected void addTypeFromClass(JSReferenceExpression expression, PsiElement parent, PsiElement resolveResult) {
+    if (resolveResult instanceof JSFunction) {
+      resolveResult = resolveResult.getParent();
+    }
+    String psiElementType = parent instanceof JSReferenceExpression ||
+                            JSResolveUtil.isExprInStrictTypeContext(expression) ||
+                            PsiTreeUtil.getChildOfType(expression, JSE4XNamespaceReference.class) != null || // TODO avoid it
+                            parent instanceof JSCallExpression ?
+                            ((JSClass)resolveResult).getQualifiedName():"Class";
+    psiElementType  = ResolveProcessor.fixGenericTypeName(psiElementType);
+    if (VECTOR_CLASS_NAME.equals(psiElementType)) {
+      psiElementType = JSImportHandlingUtil.resolveTypeName(expression.getText(), expression); // to avoid loosing generics
+    }
+    addType(psiElementType, resolveResult);
   }
 }
