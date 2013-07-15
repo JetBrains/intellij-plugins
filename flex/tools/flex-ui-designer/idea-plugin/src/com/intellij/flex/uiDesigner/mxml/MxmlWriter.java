@@ -81,8 +81,8 @@ public class MxmlWriter {
     document = MxmlUtil.getDocumentAndWaitIfNotCommitted(psiFile);
     final AccessToken token = ReadAction.start();
     try {
-      final VirtualFile virtualFile = psiFile.getVirtualFile();
-      assert virtualFile != null;
+      VirtualFile virtualFile = psiFile.getVirtualFile();
+      LOG.assertTrue(virtualFile != null);
       problemsHolder.setCurrentFile(virtualFile);
 
       XmlTag tag = psiFile.getRootTag();
@@ -97,11 +97,10 @@ public class MxmlWriter {
 
       final Trinity<Integer, String, Condition<AnnotationBackedDescriptor>> effectiveClassInfo;
       try {
-        final PsiElement declaration = descriptor.getDeclaration();
+        PsiElement declaration = descriptor.getDeclaration();
         if (declaration == null) {
           return null;
         }
-
         effectiveClassInfo = MxmlUtil.computeEffectiveClass(tag, declaration, projectComponentReferenceCounter, true);
       }
       catch (InvalidPropertyException e) {

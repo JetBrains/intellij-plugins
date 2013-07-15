@@ -5,7 +5,6 @@ import com.intellij.lang.xml.XMLParserDefinition;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.xml.XmlFileImpl;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 
 /**
@@ -21,7 +20,7 @@ public class MxmlParserDefinition extends XMLParserDefinition{
   }
 
   public static class MxmlFile extends XmlFileImpl {
-    private static IFileElementType MXML_FILE = new IFileElementType("MXML_FILE", MxmlFileType.LANGUAGE);
+    private static final IFileElementType MXML_FILE = new IFileElementType("MXML_FILE", MxmlFileType.LANGUAGE);
 
     public MxmlFile(FileViewProvider viewProvider) {
       super(viewProvider, MXML_FILE);

@@ -414,7 +414,7 @@ class PropertyProcessor implements ValueWriter {
   }
 
   boolean writeTagIfFx(XmlTag tag, String type, PrimitiveAmfOutputStream out, @Nullable Context parentContext,
-                       boolean allowIncludeInExludeFrom) throws InvalidPropertyException {
+                       boolean allowIncludeInExcludeFrom) throws InvalidPropertyException {
     // AS-110
     if (!JavaScriptSupportLoader.MXML_URI3.equals(tag.getNamespace()) ||
       type.equals(JSCommonTypeNames.OBJECT_CLASS_NAME) ||
@@ -425,12 +425,12 @@ class PropertyProcessor implements ValueWriter {
     if (JSCommonTypeNames.ARRAY_CLASS_NAME.equals(type)) {
       // see valArr in EmbedSwfAndImageFromCss
       out.write(AmfExtendedTypes.MXML_ARRAY);
-      mxmlWriter.processTagChildren(tag, mxmlWriter.processIdAttributeOfFxTag(tag, parentContext, allowIncludeInExludeFrom), parentContext,
+      mxmlWriter.processTagChildren(tag, mxmlWriter.processIdAttributeOfFxTag(tag, parentContext, allowIncludeInExcludeFrom), parentContext,
                                     false, ARRAY);
       return true;
     }
     else if (CodeContext.AS3_VEC_VECTOR_QUALIFIED_NAME.equals(type)) {
-      return mxmlWriter.processMxmlVector(tag, parentContext, allowIncludeInExludeFrom);
+      return mxmlWriter.processMxmlVector(tag, parentContext, allowIncludeInExcludeFrom);
     }
 
     final boolean isXml;
@@ -447,7 +447,7 @@ class PropertyProcessor implements ValueWriter {
       isXml = false;
     }
 
-    mxmlWriter.processIdAttributeOfFxTag(tag, parentContext, allowIncludeInExludeFrom);
+    mxmlWriter.processIdAttributeOfFxTag(tag, parentContext, allowIncludeInExcludeFrom);
     if (isXml) {
       out.writeAmfUtf(tag.getValue().getText());
     }

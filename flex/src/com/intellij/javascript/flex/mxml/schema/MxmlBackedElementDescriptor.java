@@ -18,6 +18,7 @@ public class MxmlBackedElementDescriptor extends ClassBackedElementDescriptor {
     file = _file;
   }
 
+  @Override
   @Nullable
   public PsiElement getDeclaration() {
     return file.isValid() ? PsiManager.getInstance(project).findFile(file) : null;
