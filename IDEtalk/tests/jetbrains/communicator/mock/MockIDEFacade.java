@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.mock;
 
+import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.diff.Diff;
 import jetbrains.communicator.commands.FindUsersCommand;
 import jetbrains.communicator.commands.SendMessageInvoker;
@@ -38,7 +39,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
 
 /**
  * @author Kir Maximov
@@ -56,12 +56,7 @@ public class MockIDEFacade implements IDEFacade {
   private String myProjectId;
   private String myProjectName;
   private boolean myAnswer;
-  private static final ExecutorService ourExecutorService = Executors.newCachedThreadPool(new ThreadFactory() {
-    @Override
-    public Thread newThread(final Runnable r) {
-      return new Thread(r, "IDETalk pooled thread");
-    }
-  });
+  private static final ExecutorService ourExecutorService = Executors.newCachedThreadPool(ConcurrencyUtil.newNamedThreadFactory("IDETalk pooled thread"));
 
   public MockIDEFacade() {
     myDataDir = null;
