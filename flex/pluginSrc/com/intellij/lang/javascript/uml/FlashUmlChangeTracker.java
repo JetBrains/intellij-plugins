@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.uml;
 
 import com.intellij.diagram.ChangeTracker;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.javascript.JSLanguageInjector;
+import com.intellij.lang.javascript.JSInjectionController;
 import com.intellij.lang.javascript.JSTokenTypes;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
@@ -263,7 +263,7 @@ public class FlashUmlChangeTracker extends ChangeTracker<JSClass, JSNamedElement
       super.visitElement(element);
       if (element instanceof XmlText || element instanceof XmlAttributeValue) {
         final XmlTag parentTag = PsiTreeUtil.getParentOfType(element, XmlTag.class); // actually we need just any tag here
-        JSLanguageInjector.getLanguagesToInjectStatic(
+        JSInjectionController.getLanguagesToInjectStatic(
           new XmlBackedJSClassImpl.InjectedScriptsVisitor.MyRegistrar(parentTag, new JSResolveUtil.JSInjectedFilesVisitor() {
             @Override
             protected void process(JSFile file) {
