@@ -1,11 +1,13 @@
 package com.intellij.lang.javascript.flex;
 
+import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.ResolveProcessor;
 import com.intellij.lang.javascript.psi.types.JSCompositeTypeImpl;
 import com.intellij.lang.javascript.psi.types.JSTypeSourceFactory;
+import com.intellij.lang.javascript.validation.ValidateTypesUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 
@@ -55,11 +57,21 @@ public class ActionScriptExpectedTypeEvaluator extends ExpectedTypeEvaluator {
   }
 
   protected void evaluateIndexedAccessType(JSIndexedPropertyAccessExpression node) {
-    if (JSTypeUtils.isASDictionaryAccess(node)) {
+    if (isASDictionaryAccess(node)) {
       myType = JSCommonTypeNames.OBJECT_CLASS_NAME;
     }
     else {
       myResult = JSCompositeTypeImpl.createType(JSTypeSourceFactory.createTypeSource(myScope, true), "int", "uint");
     }
+  }
+
+  private static boolean isASDictionaryAccess(final JSIndexedPropertyAccessExpression expression) {
+    if (expression.getContainingFile().getLanguage() != JavaScriptSupportLoader.ECMA_SCRIPT_L4) return false;
+
+    final JSExpression qualifier = expression.getQualifier();
+    final PsiElement resolve = qualifier instanceof JSReferenceExpression ? ((JSReferenceExpression)qualifier).resolve() : null;
+    final String type = resolve instanceof JSVariable ? ((JSVariable)resolve).getTypeString() : null;
+
+    return type != null && JSResolveUtil.isAssignableType(ValidateTypesUtil.FLASH_UTILS_DICTIONARY, type, expression);
   }
 }
