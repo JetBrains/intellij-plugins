@@ -6,7 +6,6 @@ import com.intellij.flex.uiDesigner.libraries.LibraryManager;
 import com.intellij.flex.uiDesigner.libraries.LibrarySet;
 
 import flash.display.BitmapData;
-import flash.display.DisplayObject;
 import flash.filesystem.File;
 import flash.filesystem.FileMode;
 import flash.filesystem.FileStream;
@@ -241,7 +240,7 @@ public class Server implements ResourceBundleProvider {
 
   public var moduleForGetResourceBundle:Module;
 
-  private function findResourceBundle(bundles:Vector.<ResourceBundle>, locale:String, bundleName:String):ResourceBundle {
+  private static function findResourceBundle(bundles:Vector.<ResourceBundle>, locale:String, bundleName:String):ResourceBundle {
     if (bundles == null) {
       return null;
     }
@@ -255,8 +254,9 @@ public class Server implements ResourceBundleProvider {
     return null;
   }
 
-  private function findResourceBundle2(librarySet:LibrarySet, locale:String, bundleName:String):ResourceBundle {
+  private static function findResourceBundle2(librarySet:LibrarySet, locale:String, bundleName:String):ResourceBundle {
     var resourceBundle:ResourceBundle;
+    //noinspection AssignmentToFunctionParameterJS
     do {
       resourceBundle = findResourceBundle(librarySet.resourceBundles, locale, bundleName);
     }
