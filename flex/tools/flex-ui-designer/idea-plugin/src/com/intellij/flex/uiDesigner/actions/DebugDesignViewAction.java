@@ -13,7 +13,8 @@ public class DebugDesignViewAction extends RunDesignViewAction {
   public void update(AnActionEvent event) {
     if (Registry.is("show.flex.debug.design.view")) {
       super.update(event);
-    } else {
+    }
+    else {
       event.getPresentation().setVisible(false);
     }
   }

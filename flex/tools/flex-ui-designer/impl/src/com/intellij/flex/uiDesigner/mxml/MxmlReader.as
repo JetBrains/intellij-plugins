@@ -26,6 +26,7 @@ import com.intellij.flex.uiDesigner.io.AmfUtil;
 import com.intellij.flex.uiDesigner.libraries.FlexLibrarySet;
 
 import flash.display.DisplayObjectContainer;
+import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 import flash.utils.IDataInput;
 import flash.utils.Proxy;
@@ -570,11 +571,15 @@ public class MxmlReader implements DocumentReader {
         return readProjectClassReference();
 
       case AmfExtendedTypes.SWF:
-        var image:Object = new (module.getClass("spark.components.Image"));
-        image.source = EmbedSwfManager(module.project.getComponent(EmbedSwfManager)).get(AmfUtil.readUInt29(input),
-                                                                                         module.getClassPool(FlexLibrarySet.SWF_POOL),
-                                                                                         module.project);
-        return image;
+        var assetClass:Class = EmbedSwfManager(module.project.getComponent(EmbedSwfManager)).get(AmfUtil.readUInt29(input),
+                                                                                                 module.getClassPool(FlexLibrarySet.SWF_POOL),
+                                                                                                 module.project);
+        var wrapper:Object = new (module.getClass("spark.core.SpriteVisualElement"));
+        wrapper.addChild(new assetClass());
+        var bounds:Rectangle = assetClass["bounds"];
+        wrapper.width = bounds.right;
+        wrapper.height = bounds.bottom;
+        return wrapper;
 
       default:
         throw new ArgumentError("unknown property type " + amfType);

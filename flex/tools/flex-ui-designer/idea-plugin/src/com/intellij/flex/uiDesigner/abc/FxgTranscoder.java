@@ -9,6 +9,8 @@ import flash.swf.Tag;
 import flash.swf.TagEncoder;
 import flash.swf.tags.*;
 import flash.swf.types.ImportRecord;
+import flash.swf.types.Matrix;
+import flash.swf.types.Rect;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,11 +33,6 @@ public class FxgTranscoder extends SymbolTranscoderBase {
 
   @Override
   protected void transcode(boolean writeBounds) throws IOException {
-    if (writeBounds) {
-      bounds = new Rectangle(0, 0, 200, 200);
-      writeMovieBounds();
-    }
-
     fileLength = SYMBOL_CLASS_TAG_FULL_LENGTH + SwfUtil.getWrapLength();
 
     FXG2SWFTranscoder transcoder = new FXG2SWFTranscoder();
@@ -43,6 +40,12 @@ public class FxgTranscoder extends SymbolTranscoderBase {
     MyTagEncoder tagEncoder = new MyTagEncoder();
     define(spriteDefinition, new THashSet<Tag>(), tagEncoder);
     fileLength += tagEncoder.getWriter().getPos();
+
+    bounds = computeBounds(spriteDefinition, null, null);
+
+    if (writeBounds) {
+      writeMovieBounds();
+    }
 
     final byte[] symbolOwnClassAbc = getSymbolOwnClassAbc((short)1);
     fileLength += symbolOwnClassAbc.length;
@@ -53,6 +56,39 @@ public class FxgTranscoder extends SymbolTranscoderBase {
     out.write(symbolOwnClassAbc);
     writeSymbolClass(tagEncoder.getDictionary().getId(spriteDefinition));
     SwfUtil.footer(out);
+  }
+
+  private static Rectangle computeBounds(Tag tag, @Nullable Rectangle computedBounds, @Nullable Matrix matrix) {
+    if (tag instanceof PlaceObject) {
+      PlaceObject placeTag = (PlaceObject)tag;
+      computedBounds = computeBounds(placeTag.ref, computedBounds, placeTag.hasMatrix() ? placeTag.matrix : null);
+    }
+    else if (tag instanceof DefineShape) {
+      Rect shapeBounds = ((DefineShape)tag).bounds;
+      Rectangle rectangle = new Rectangle(shapeBounds.xMin, shapeBounds.yMin, shapeBounds.getWidth(), shapeBounds.getHeight());
+
+      if (matrix != null) {
+        rectangle.x += matrix.translateX;
+        rectangle.y += matrix.translateY;
+        if (matrix.hasScale) {
+          rectangle.width *= matrix.scaleX / 65536;
+          rectangle.height *= matrix.scaleY / 65536;
+        }
+      }
+
+      if (computedBounds == null) {
+        computedBounds = rectangle;
+      }
+      else {
+        computedBounds = computedBounds.union(rectangle);
+      }
+    }
+    else if (tag instanceof DefineSprite) {
+      for (Tag subTag : ((DefineSprite)tag).tagList.tags) {
+        computedBounds = computeBounds(subTag, computedBounds, null);
+      }
+    }
+    return computedBounds;
   }
 
   private static final class MyTagEncoder extends TagEncoder {

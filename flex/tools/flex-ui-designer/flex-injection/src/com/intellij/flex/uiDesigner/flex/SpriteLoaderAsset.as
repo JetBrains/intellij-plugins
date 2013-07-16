@@ -10,7 +10,7 @@ public class SpriteLoaderAsset extends SpriteAsset {
   public function SpriteLoaderAsset(myClass:Class, symbolClass:Class, bounds:Rectangle) {
     if (symbolClass == null) {
       SpriteAssetInitializer.addPendingClient(myClass, this);
-      graphics.drawRect(0, 0, bounds.width, bounds.height);
+      graphics.drawRect(0, 0, bounds.right, bounds.bottom);
     }
     else {
       createContent(symbolClass);
