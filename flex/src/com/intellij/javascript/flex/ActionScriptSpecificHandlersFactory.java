@@ -5,10 +5,13 @@ import com.intellij.javascript.flex.resolve.ActionScriptReferenceExpressionResol
 import com.intellij.javascript.flex.resolve.ActionScriptTypeEvaluator;
 import com.intellij.lang.javascript.completion.JSCompletionKeywordsContributor;
 import com.intellij.lang.javascript.dialects.JSDialectSpecificHandlersFactory;
+import com.intellij.lang.javascript.flex.ActionScriptExpectedTypeEvaluator;
 import com.intellij.lang.javascript.flex.ActionScriptSymbolVisitor;
 import com.intellij.lang.javascript.index.JSNamespace;
 import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.index.JSSymbolVisitor;
+import com.intellij.lang.javascript.psi.ExpectedTypeEvaluator;
+import com.intellij.lang.javascript.psi.JSExpression;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
@@ -47,5 +50,11 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
   public JSResolveUtil.Resolver<JSReferenceExpressionImpl> createReferenceExpressionResolver(JSReferenceExpressionImpl referenceExpression,
                                                                                              PsiFile containingFile) {
     return new ActionScriptReferenceExpressionResolver(referenceExpression, containingFile);
+  }
+
+  @NotNull
+  @Override
+  public ExpectedTypeEvaluator newExpectedTypeEvaluator(JSExpression parent) {
+    return new ActionScriptExpectedTypeEvaluator(parent);
   }
 }
