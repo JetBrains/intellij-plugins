@@ -294,8 +294,9 @@ public class MxmlReader implements DocumentReader {
           break;
 
         case AmfExtendedTypes.SWF:
-          propertyHolder[propertyName] = EmbedSwfManager(module.project.getComponent(EmbedSwfManager)).
-                  get(AmfUtil.readUInt29(input), module.getClassPool(FlexLibrarySet.SWF_POOL), module.project);
+          propertyHolder[propertyName] = EmbedSwfManager(module.project.getComponent(EmbedSwfManager)).get(AmfUtil.readUInt29(input),
+                                                                                                           module.getClassPool(FlexLibrarySet.SWF_POOL),
+                                                                                                           module.project);
           if (cssDeclaration != null) {
             cssDeclaration.type = CssPropertyType.EMBED;
           }
