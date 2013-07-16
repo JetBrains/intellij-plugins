@@ -5,14 +5,26 @@ import flash.geom.Rectangle;
 
 import mx.core.SpriteAsset;
 
+/**
+ * see star.fxg
+ * wrapping sprite width: 200
+ * shape width 200, but x = 20
+ * so, component is cropped. I cannot find any other way except just stupid solution "graphics.drawRect"
+ */
+
 [Abstract]
 public class SpriteLoaderAsset extends SpriteAsset {
+  private var bounds:Rectangle;
+
   public function SpriteLoaderAsset(myClass:Class, symbolClass:Class, bounds:Rectangle) {
+    this.bounds = bounds;
+
     if (symbolClass == null) {
       SpriteAssetInitializer.addPendingClient(myClass, this);
       graphics.drawRect(0, 0, bounds.right, bounds.bottom);
     }
     else {
+      graphics.drawRect(0, 0, bounds.right, bounds.bottom);
       createContent(symbolClass);
     }
 
@@ -20,7 +32,7 @@ public class SpriteLoaderAsset extends SpriteAsset {
   }
 
   public final function symbolClassAvailable(symbolClass:Class):void {
-    graphics.clear();
+    //graphics.clear();
     createContent(symbolClass);
   }
 

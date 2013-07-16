@@ -82,6 +82,9 @@ public class CommonTest extends BaseTestCase {
 
   public function FxgAsComponent():void {
   }
+
+  public function FxgAsSource():void {
+  }
   
   public function ResourceDirective():void {
     assertThat(app, [{text: "Label"}, {text: ""}]);

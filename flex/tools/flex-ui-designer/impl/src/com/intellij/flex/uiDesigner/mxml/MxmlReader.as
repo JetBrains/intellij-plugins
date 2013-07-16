@@ -577,9 +577,6 @@ public class MxmlReader implements DocumentReader {
                                                                                                  module.project);
         var wrapper:Object = new (module.getClass("spark.core.SpriteVisualElement"));
         wrapper.addChild(new assetClass());
-        var bounds:Rectangle = assetClass["bounds"];
-        wrapper.width = bounds.right;
-        wrapper.height = bounds.bottom;
         return wrapper;
 
       default:

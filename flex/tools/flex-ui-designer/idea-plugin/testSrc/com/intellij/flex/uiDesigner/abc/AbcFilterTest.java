@@ -1,7 +1,6 @@
 package com.intellij.flex.uiDesigner.abc;
 
 import com.intellij.flex.uiDesigner.DesignerTests;
-import com.intellij.openapi.util.io.FileUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +46,6 @@ public class AbcFilterTest {
     File fxgFile = new File(DesignerTests.getTestDataPath(), "src/common/star.fxg");
     new FxgTranscoder().transcode(new FileInputStream(fxgFile), fxgFile.length(), out, false);
 
-    FileUtil.copy(out, new File("/Users/develar/test.swf"));
+    //FileUtil.copy(out, new File("/Users/develar/test.swf"));
   }
 }
