@@ -14,7 +14,6 @@
     <orderEntry type="module" module-name="yaml" />
     <orderEntry type="module" module-name="xdebugger-api" />
     <orderEntry type="module" module-name="smRunner" />
-    <orderEntry type="module" module-name="webide-api" />
     <orderEntry type="library" name="jcip" level="project" />
     <orderEntry type="module" module-name="xml" />
     <orderEntry type="module" module-name="coverage-common" />
@@ -23,6 +22,7 @@
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="js-test-common" />
+    <orderEntry type="module" module-name="webide-impl" />
   </component>
 </module>
 

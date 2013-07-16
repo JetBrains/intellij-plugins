@@ -16,7 +16,6 @@
     <orderEntry type="module" module-name="core-impl" />
     <orderEntry type="module" module-name="testFramework" scope="TEST" />
     <orderEntry type="module" module-name="JavaScriptLanguage" />
-    <orderEntry type="module" module-name="webide-api" />
     <orderEntry type="module" module-name="xdebugger-api" />
     <orderEntry type="module" module-name="ChromeConnector" />
     <orderEntry type="module" module-name="JavaScriptDebugger" />
@@ -30,6 +29,7 @@
     <orderEntry type="module" module-name="copyright" />
     <orderEntry type="module" module-name="fileWatcher" />
     <orderEntry type="module" module-name="lang-impl" />
+    <orderEntry type="module" module-name="webide-impl" />
   </component>
 </module>
 
