@@ -13,15 +13,13 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.javascript.*;
 import com.intellij.lang.javascript.findUsages.JSReadWriteAccessDetector;
-import com.intellij.lang.javascript.flex.ActionScriptSmartCompletionContributor;
-import com.intellij.lang.javascript.flex.AddImportECMAScriptClassOrFunctionAction;
-import com.intellij.lang.javascript.flex.ImportUtils;
-import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
+import com.intellij.lang.javascript.flex.*;
 import com.intellij.lang.javascript.highlighting.JSSemanticHighlightingUtil;
 import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspection;
 import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
 import com.intellij.lang.javascript.psi.*;
+import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
@@ -40,6 +38,9 @@ import com.intellij.lang.javascript.ui.JSFormatUtil;
 import com.intellij.lang.javascript.validation.*;
 import com.intellij.lang.javascript.validation.fixes.*;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleType;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Computable;
@@ -918,6 +919,14 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   @Nullable
   @Override
   protected LocalQuickFix getPreferredQuickFixForUnresolvedRef(final PsiElement nameIdentifier) {
+    final Module module = ModuleUtilCore.findModuleForPsiElement(nameIdentifier);
+    if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return null;
+
+    final String conditionalCompilerDefinitionName = getPotentialConditionalCompilerDefinitionName(nameIdentifier);
+    if (conditionalCompilerDefinitionName != null) {
+      return new DeclareConditionalCompilerDefinitionFix(module, conditionalCompilerDefinitionName);
+    }
+
     final JSCallExpression callExpression = PsiTreeUtil.getParentOfType(nameIdentifier, JSCallExpression.class);
     if (callExpression == null) return null;
 
@@ -958,6 +967,32 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
       }
     }
 
+    return null;
+  }
+
+  @Nullable
+  private static String getPotentialConditionalCompilerDefinitionName(final PsiElement identifier) {
+    final PsiElement parent1 = identifier.getParent();
+    final PsiElement parent2 = parent1 == null ? null : parent1.getParent();
+    final PsiElement parent3 = parent2 == null ? null : parent2.getParent();
+    if (parent1 instanceof JSReferenceExpression && ((JSReferenceExpression)parent1).getQualifier() == null &&
+        parent2 instanceof JSE4XNamespaceReference &&
+        parent3 instanceof JSReferenceExpression && ((JSReferenceExpression)parent3).getQualifier() == null) {
+      return getNormalizedConditionalCompilerDefinitionName(parent3.getText());
+    }
+    return null;
+  }
+
+  @Nullable
+  private static String getNormalizedConditionalCompilerDefinitionName(final String name) {
+    final int colonsIndex = name.indexOf("::");
+    if (colonsIndex > 0) {
+      final String first = name.substring(0, colonsIndex).trim();
+      final String second = name.substring(colonsIndex + "::".length()).trim();
+      if (StringUtil.isJavaIdentifier(first) && StringUtil.isJavaIdentifier(second)) {
+        return first + "::" + second;
+      }
+    }
     return null;
   }
 

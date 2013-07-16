@@ -1,17 +1,20 @@
 package com.intellij.lang.javascript.flex.projectStructure.ui;
 
+import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.lang.javascript.flex.FlexUtils;
 import com.intellij.lang.javascript.flex.build.AddRemoveTableRowsDialog;
-import com.intellij.flex.model.bc.CompilerOptionInfo;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.TableUtil;
 import com.intellij.util.ui.AbstractTableCellEditor;
+import com.intellij.util.ui.update.UiNotifyConnector;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -22,12 +25,20 @@ import static com.intellij.flex.model.bc.CompilerOptionInfo.ListElementType;
 import static com.intellij.lang.javascript.flex.projectStructure.ui.CompilerOptionsConfigurable.ExtensionAwareFileChooserDescriptor;
 
 public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilder> {
-  private CompilerOptionInfo myInfo;
+  private final CompilerOptionInfo myInfo;
 
   public RepeatableValueDialog(final Project project,
                                final String title,
                                final List<StringBuilder> value,
                                final CompilerOptionInfo info) {
+    this(project, title, value, info, null);
+  }
+
+  public RepeatableValueDialog(final Project project,
+                               final String title,
+                               final List<StringBuilder> value,
+                               final CompilerOptionInfo info,
+                               final @Nullable String autoAddedConditionalCompilerDefinition) {
     super(project, title, value);
     assert info.TYPE == CompilerOptionInfo.OptionType.List;
     myInfo = info;
@@ -53,6 +64,28 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
         return FileUtil.toSystemIndependentName(myTextWithBrowse.getText().trim());
       }
     });
+
+    if (autoAddedConditionalCompilerDefinition != null) {
+      assert "compiler.define".equals(info.ID) && info.LIST_ELEMENTS.length == 2 : info.ID;
+      getCurrentList().add(new StringBuilder(autoAddedConditionalCompilerDefinition).append(CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR));
+
+      UiNotifyConnector.doWhenFirstShown(myTable, new Runnable() {
+        public void run() {
+          final int rowCount = myTable.getRowCount();
+          if (rowCount > 0) {
+            myTable.addRowSelectionInterval(rowCount - 1, rowCount - 1);
+
+            // todo this doesn't work because editing is immediately stopped in JBTable.columnMarginChanged()
+            TableUtil.editCellAt(myTable, rowCount - 1, myInfo.LIST_ELEMENTS.length - 1);
+          }
+        }
+      });
+    }
+  }
+
+  @Nullable
+  public JComponent getPreferredFocusedComponent() {
+    return myTable;
   }
 
   protected TableModelBase createTableModel() {
@@ -138,5 +171,32 @@ public class RepeatableValueDialog extends AddRemoveTableRowsDialog<StringBuilde
     }
 
     return false;
+  }
+
+  @Nullable
+  protected ValidationInfo doValidate() {
+    if ("compiler.define".equals(myInfo.ID)) {
+      for (StringBuilder builder : getCurrentList()) {
+        final List<String> strings = StringUtil.split(builder.toString(), CompilerOptionInfo.LIST_ENTRY_PARTS_SEPARATOR, true, false);
+        assert strings.size() == 2 : builder;
+
+        final String name = strings.get(0);
+        final String value = strings.get(1);
+
+        if (name.isEmpty()) {
+          return new ValidationInfo("Missing constant name");
+        }
+        final int colonIndex = name.indexOf("::");
+        if (colonIndex <= 0) {
+          return new ValidationInfo("Incorrect name: " + name);
+        }
+
+        if (value.isEmpty()) {
+          return new ValidationInfo("Constant " + name + " has empty value");
+        }
+      }
+    }
+
+    return null;
   }
 }

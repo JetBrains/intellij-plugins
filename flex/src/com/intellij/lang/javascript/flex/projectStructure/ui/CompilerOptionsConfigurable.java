@@ -75,10 +75,12 @@ import static com.intellij.lang.javascript.flex.projectStructure.model.CompilerO
 
 public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptions> implements Place.Navigator {
   public static final String TAB_NAME = FlexBundle.message("bc.tab.compiler.options.display.name");
+  public static final String CONDITIONAL_COMPILER_DEFINITION_NAME = "FlexCompilerOptions.ConditionalCompilerDefinitionName";
 
   public enum Location {
     AdditonalConfigFile("additional-config-file"),
-    FilesToIncludeInSwc("files-to-include-in-swc");
+    FilesToIncludeInSwc("files-to-include-in-swc"),
+    ConditionalCompilerDefinition("doesn't matter");
 
     public final String errorId;
 
@@ -813,10 +815,10 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
   }
 
   @Nullable
-  private static DefaultMutableTreeNode findChildNodeWithInfo(final DefaultMutableTreeNode node,
+  private static DefaultMutableTreeNode findChildNodeWithInfo(final DefaultMutableTreeNode rootNode,
                                                               final CompilerOptionInfo info) {
-    for (int i = 0; i < node.getChildCount(); i++) {
-      final DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)node.getChildAt(i);
+    for (int i = 0; i < rootNode.getChildCount(); i++) {
+      final DefaultMutableTreeNode childNode = (DefaultMutableTreeNode)rootNode.getChildAt(i);
       if (info.equals(childNode.getUserObject())) {
         return childNode;
       }
@@ -877,6 +879,7 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     private final Project myProject;
     private CompilerOptionInfo myInfo;
     private String myValue;
+    private String myAddedConditionalCompilerDefinition = null;
 
     private RepeatableValueEditor(final Project project) {
       myProject = project;
@@ -907,7 +910,8 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
           }
           else {
             final RepeatableValueDialog dialog =
-              new RepeatableValueDialog(myProject, StringUtil.capitalizeWords(myInfo.DISPLAY_NAME, true), buffers, myInfo);
+              new RepeatableValueDialog(myProject, StringUtil.capitalizeWords(myInfo.DISPLAY_NAME, true), buffers, myInfo,
+                                        myAddedConditionalCompilerDefinition);
             dialog.show();
 
             if (dialog.isOK()) {
@@ -926,7 +930,12 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
     public void setInfoAndValue(final CompilerOptionInfo info, final String value) {
       myInfo = info;
       myValue = value;
+      myAddedConditionalCompilerDefinition = null;
       setText(getPresentableSummary(value, info));
+    }
+
+    public void setAutoAddConditionalCompilerDefinition(final String ccdName) {
+      myAddedConditionalCompilerDefinition = ccdName;
     }
 
     public String getValue() {
@@ -1004,8 +1013,30 @@ public class CompilerOptionsConfigurable extends NamedConfigurable<CompilerOptio
         switch ((Location)location) {
           case AdditonalConfigFile:
             return IdeFocusManager.findInstance().requestFocus(myConfigFileTextWithBrowse.getChildComponent(), true);
+
           case FilesToIncludeInSwc:
             return IdeFocusManager.findInstance().requestFocus(myIncludeInSWCField.getChildComponent(), true);
+
+          case ConditionalCompilerDefinition:
+            final DefaultMutableTreeNode root = (DefaultMutableTreeNode)myTreeTable.getTree().getModel().getRoot();
+            final CompilerOptionInfo info = CompilerOptionInfo.getOptionInfo("compiler.define");
+            final DefaultMutableTreeNode node = findChildNodeWithInfo(root, info);
+
+            if (node != null) {
+              myTreeTable.clearSelection();
+              myTreeTable.addSelectedPath(TreeUtil.getPath(root, node));
+
+              final Object ccdName = place.getPath(CONDITIONAL_COMPILER_DEFINITION_NAME);
+              if (ccdName instanceof String) {
+                TableUtil.editCellAt(myTreeTable, myTreeTable.getSelectedRow(), 1);
+                final Component editor = myTreeTable.getEditorComponent();
+                if (editor instanceof RepeatableValueEditor) {
+                  ((RepeatableValueEditor)editor).setAutoAddConditionalCompilerDefinition((String)ccdName);
+                  ((RepeatableValueEditor)editor).getButton().doClick();
+                }
+              }
+            }
+            break;
         }
       }
     }
