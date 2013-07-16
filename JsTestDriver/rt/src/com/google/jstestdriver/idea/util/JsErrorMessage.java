@@ -84,6 +84,9 @@ public class JsErrorMessage {
     }
     String pathAndOther = text.substring(prefix.length());
     int filePathEndInd = findFilePathEndColonIndex(pathAndOther, basePath);
+    if (filePathEndInd < 0) {
+      return null;
+    }
     String filePath = pathAndOther.substring(0, filePathEndInd);
     File file = resolveFile(filePath, basePath);
     if (file == null) {

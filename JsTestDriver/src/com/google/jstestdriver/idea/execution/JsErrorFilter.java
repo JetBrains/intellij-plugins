@@ -4,6 +4,7 @@ import com.google.jstestdriver.idea.util.JsErrorMessage;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -18,6 +19,8 @@ import java.io.File;
  */
 public class JsErrorFilter implements Filter {
 
+  private static final Logger LOG = Logger.getInstance(JsErrorFilter.class);
+
   private final Project myProject;
   private final File myBasePath;
 
@@ -29,7 +32,13 @@ public class JsErrorFilter implements Filter {
   @Nullable
   @Override
   public Result applyFilter(String line, int entireLength) {
-    JsErrorMessage message = JsErrorMessage.parseFromText(line, myBasePath);
+    JsErrorMessage message;
+    try {
+      message = JsErrorMessage.parseFromText(line, myBasePath);
+    } catch (Exception e) {
+      LOG.error("Can't parse error message from '" + line + "'", e);
+      return null;
+    }
     if (message == null) {
       return null;
     }
