@@ -211,7 +211,7 @@ public class FlexResolveHelper implements JSResolveHelper {
         }
         assert qualifiedElement != null:qualifiedElement.getClass();
         // at this moment package declaration is out of date so element has it's original qName
-        qualify = ImportUtils.shortReferenceIsAmbiguousOrUnequal(newName, ref, qualifiedElement.getQualifiedName(), null);
+        qualify = JSResolveUtil.shortReferenceIsAmbiguousOrUnequal(newName, ref, qualifiedElement.getQualifiedName(), null);
       }
 
       if (qualify) {
