@@ -51,6 +51,7 @@ public class ActionScriptResolveScopeProvider extends JSElementResolveScopeProvi
     return null;
   }
 
+  @NotNull
   @Override
   public GlobalSearchScope getElementResolveScope(@NotNull PsiElement element) {
     final GlobalSearchScope tempScope = JSInheritanceUtil.getEnforcedScope();
