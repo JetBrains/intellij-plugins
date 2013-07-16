@@ -20,6 +20,7 @@ import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
 import com.intellij.lang.javascript.psi.*;
 import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
+import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
@@ -68,8 +69,7 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.*;
 
-import static com.intellij.lang.javascript.psi.JSCommonTypeNames.FUNCTION_CLASS_NAME;
-import static com.intellij.lang.javascript.psi.JSCommonTypeNames.NUMBER_CLASS_NAME;
+import static com.intellij.lang.javascript.psi.JSCommonTypeNames.*;
 
 /**
  * @author Konstantin.Ulitin
@@ -1508,26 +1508,62 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
   }
 
   @Override
-  protected void checkNewExpressionReference(JSReferenceExpression referenceExpression, ResolveResult[] results) {
-    PsiElement toCheck = results[0].getElement();
-    if (toCheck instanceof JSFunction && ((JSFunction)toCheck).isConstructor()) {
-      toCheck = toCheck.getParent(); // TODO: there is no need once our stubs for interface will lose constructors for interfaces
-    }
-
-    if (toCheck instanceof JSClass && ((JSClass)toCheck).isInterface()) {
-      final PsiElement referenceNameElement = referenceExpression.getReferenceNameElement();
-
-      registerProblem(referenceNameElement,
-                      JSBundle.message("javascript.interface.can.not.be.instantiated.message"),
-                      getUnresolvedReferenceHighlightType(referenceExpression), myHolder, JSUnresolvedFunctionInspection.SHORT_NAME);
-    }
-  }
-
-  @Override
   protected boolean isCallableType(boolean inNewExpression, JSType type) {
     final String typeText = type.getTypeText();
     return "Class".equals(typeText) ||
            inNewExpression && (type instanceof JSPrimitiveTypeImpl.JSObjectType) ||
            JSTypeUtils.hasFunctionType(type);
+  }
+
+  @Override
+  protected boolean processMethodExpressionResolveResult(JSCallExpression callExpression, JSReferenceExpression methodExpression, PsiElement resolveResult, JSType type) {
+    if (callExpression instanceof JSNewExpression) {
+      if (resolveResult instanceof JSFunction && ((JSFunction)resolveResult).isConstructor()) {
+        resolveResult = resolveResult.getParent(); // TODO: there is no need once our stubs for interface will lose constructors for interfaces
+      }
+
+      if (resolveResult instanceof JSClass && ((JSClass)resolveResult).isInterface()) {
+        final PsiElement referenceNameElement = methodExpression.getReferenceNameElement();
+
+        registerProblem(referenceNameElement,
+                        JSBundle.message("javascript.interface.can.not.be.instantiated.message"),
+                        getUnresolvedReferenceHighlightType(methodExpression), myHolder, JSUnresolvedFunctionInspection.SHORT_NAME);
+        return false;
+      }
+    }
+    final JSArgumentList argumentList = callExpression.getArgumentList();
+    if (argumentList instanceof JSE4XFilterQueryArgumentList &&
+        (type != JSType.NO_TYPE && type != JSType.ANY || resolveResult instanceof JSFunction && ((JSFunction)resolveResult).isGetProperty())) {
+      checkE4XFilterQuery(callExpression, type.getTypeText(), myHolder, argumentList);
+      return false;
+    }
+    return true;
+  }
+
+  private static void checkE4XFilterQuery(JSCallExpression node, String type, AnnotationHolder holder, JSArgumentList argumentList) {
+    if (!JSResolveUtil.isAssignableType("XML", type, argumentList) &&
+        !JSResolveUtil.isAssignableType("XMLList", type, argumentList)
+      ) {
+      JSAnnotatingVisitor.registerProblem(
+        node.getMethodExpression(),
+        JSBundle.message("javascript.invalid.e4x.filter.query.receiver", type),
+        ValidateTypesUtil.getHighlightTypeForTypeOrSignatureProblem(node),
+        holder,
+        JSValidateTypesInspection.SHORT_NAME
+      );
+      return;
+    }
+    ValidateTypesUtil.reportProblemIfNotOneParameter(node, holder);
+    JSExpression[] arguments = argumentList.getArguments();
+
+    if (arguments.length >= 1) {
+      ValidateTypesUtil.checkExpressionIsAssignableToType(
+        arguments[0],
+        BOOLEAN_CLASS_NAME,
+        holder,
+        argumentList.getContainingFile(),
+        "javascript.argument.type.mismatch",
+        null);
+    }
   }
 }
