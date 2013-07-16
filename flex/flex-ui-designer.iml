@@ -56,10 +56,7 @@
           <root url="jar://$MODULE_DIR$/tools/flex-ui-designer/idea-plugin/lib/swf-utils.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../flex-sdk/modules/fxgutils/src/java" />
-          <root url="file://$MODULE_DIR$/../../flex-sdk/modules/swfutils/src/java" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
   </component>
