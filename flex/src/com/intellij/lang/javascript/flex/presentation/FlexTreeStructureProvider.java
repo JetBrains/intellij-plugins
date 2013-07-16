@@ -7,6 +7,7 @@ import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.PsiFileNode;
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
+import com.intellij.lang.javascript.DialectDetector;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.XmlBackedJSClassImpl;
 import com.intellij.lang.javascript.psi.JSElement;
@@ -18,7 +19,6 @@ import com.intellij.lang.javascript.psi.ecmal4.JSNamespaceDeclaration;
 import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.ecmal4.XmlBackedJSClassFactory;
 import com.intellij.lang.javascript.psi.impl.JSFileImpl;
-import com.intellij.lang.javascript.psi.util.JSUtils;
 import com.intellij.lang.javascript.structureView.JSStructureViewElement;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.project.DumbAware;
@@ -76,7 +76,7 @@ public class FlexTreeStructureProvider implements TreeStructureProvider, DumbAwa
     else {
       for (final AbstractTreeNode child : children) {
         Object o = child.getValue();
-        if (o instanceof JSFileImpl && JSUtils.isActionScript((PsiFile)o) ||
+        if (o instanceof JSFileImpl && DialectDetector.isActionScript((PsiFile)o) ||
             o instanceof XmlFile && JavaScriptSupportLoader.isFlexMxmFile((PsiFile)o)) {
           result.add(new FlexFileNode((PsiFile)o, ((ProjectViewNode)parent).getSettings()));
           continue;
