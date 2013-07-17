@@ -73,7 +73,7 @@ public class FlexUtils {
   private FlexUtils() {
   }
 
-  public static FileChooserDescriptor createFileChooserDescriptor(final @Nullable String... allowedExtensions) {
+  public static FileChooserDescriptor createFileChooserDescriptor(@Nullable final String... allowedExtensions) {
     return allowedExtensions == null
            ? new FileChooserDescriptor(true, false, true, true, false, false)
            : new FileChooserDescriptor(true, false, true, true, false, false) {
@@ -131,7 +131,19 @@ public class FlexUtils {
     }
   }
 
-  public static VirtualFile addFileWithContent(final @NonNls String fileName, final @NonNls String fileContent, final VirtualFile dir)
+  public static VirtualFile addFileWithContent(@NonNls final String fileName, byte[] fileContent, final VirtualFile dir)
+    throws IOException {
+    VirtualFile file = dir.findChild(fileName);
+    if (file == null) {
+      file = dir.createChildData(FlexUtils.class, fileName);
+    }
+    else if (SystemInfo.isWindows) {
+      file.rename(FlexUtils.class, fileName); // ensure the right case
+    }
+    file.setBinaryContent(fileContent);
+    return file;
+  }
+  public static VirtualFile addFileWithContent(@NonNls final String fileName, @NonNls final String fileContent, final VirtualFile dir)
     throws IOException {
     VirtualFile data = dir.findChild(fileName);
     if (data == null) {
@@ -145,7 +157,7 @@ public class FlexUtils {
   }
 
   @Nullable
-  public static Sdk getSdkForActiveBC(final @NotNull Module module) {
+  public static Sdk getSdkForActiveBC(@NotNull final Module module) {
     return ModuleType.get(module) instanceof FlexModuleType
            ? FlexBuildConfigurationManager.getInstance(module).getActiveConfiguration().getSdk()
            : null;
@@ -162,7 +174,7 @@ public class FlexUtils {
    * @return map, keys are XML elements listed in <code>xmlElements</code>,
    *         values are all entries of respective element (may be empty list)
    */
-  public static Map<String, List<String>> findXMLElements(final @NotNull InputStream xmlInputStream, final List<String> xmlElements) {
+  public static Map<String, List<String>> findXMLElements(@NotNull final InputStream xmlInputStream, final List<String> xmlElements) {
     final Map<String, List<String>> resultMap = new HashMap<String, List<String>>();
     for (final String element : xmlElements) {
       resultMap.put(element, new ArrayList<String>());
@@ -213,7 +225,7 @@ public class FlexUtils {
    */
 
   @Nullable
-  public static String findXMLElement(final @NotNull InputStream xmlInputStream, final String xmlElement) {
+  public static String findXMLElement(@NotNull final InputStream xmlInputStream, final String xmlElement) {
     final Ref<String> result = new Ref<String>();
 
     NanoXmlUtil.parse(xmlInputStream, new NanoXmlUtil.IXMLBuilderAdapter() {
@@ -250,7 +262,7 @@ public class FlexUtils {
   }
 
   @Nullable
-  public static String getMacExecutable(final @NotNull String appFolderPath) {
+  public static String getMacExecutable(@NotNull final String appFolderPath) {
     try {
       final String text = FileUtil.loadFile(new File(appFolderPath + "/Contents/Info.plist"));
       Matcher m = INFO_PLIST_EXECUTABLE_PATTERN.matcher(text);
@@ -279,7 +291,7 @@ public class FlexUtils {
     }
   }
 
-  public static String getFlexCompilerWorkDirPath(final Project project, final @Nullable Sdk flexSdk) {
+  public static String getFlexCompilerWorkDirPath(final Project project, @Nullable final Sdk flexSdk) {
     final VirtualFile baseDir = project.getBaseDir();
     return FlexSdkUtils.isFlex2Sdk(flexSdk) || FlexSdkUtils.isFlex3_0Sdk(flexSdk)
            ? FlexCommonUtils.getTempFlexConfigsDirPath() //avoid problems with spaces in temp dir path (fcsh from Flex SDK 2 is not patched)
@@ -304,7 +316,7 @@ public class FlexUtils {
     return "";
   }
 
-  public static void removeFileLater(final @NotNull VirtualFile file) {
+  public static void removeFileLater(@NotNull final VirtualFile file) {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       public void run() {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -381,7 +393,7 @@ public class FlexUtils {
     }
   }
 
-  public static String replacePathMacros(final @NotNull String text, final @NotNull Module module, final String sdkRootPath) {
+  public static String replacePathMacros(@NotNull final String text, @NotNull final Module module, final String sdkRootPath) {
     final StringBuilder builder = new StringBuilder(text);
     int startIndex;
     int endIndex = 0;
