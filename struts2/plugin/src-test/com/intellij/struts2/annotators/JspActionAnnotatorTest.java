@@ -15,7 +15,7 @@
 
 package com.intellij.struts2.annotators;
 
-import com.intellij.openapi.editor.markup.GutterIconRenderer;
+import com.intellij.codeInsight.daemon.GutterMark;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.struts2.BasicLightHighlightingTestCase;
@@ -57,7 +57,7 @@ public class JspActionAnnotatorTest extends BasicLightHighlightingTestCase {
    */
   private void checkGutterActionMethodTargetElements(@NonNls final String jspFile,
                                                      @NonNls final String... expectedActionNames) {
-    final GutterIconRenderer gutterIconRenderer = myFixture.findGutter(jspFile);
+    final GutterMark gutterIconRenderer = myFixture.findGutter(jspFile);
     assertNotNull(gutterIconRenderer);
     AnnotatorTestUtils.checkGutterTargets(gutterIconRenderer, new Function<PsiElement, String>() {
       @Override

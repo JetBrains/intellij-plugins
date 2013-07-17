@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.annotators;
 
+import com.intellij.codeInsight.daemon.GutterMark;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -54,7 +55,7 @@ public class ActionJavaAnnotatorTest extends BasicLightHighlightingTestCase {
   private void checkGutterTargetElements(@NonNls final String javaFile,
                                          final Function<PsiElement, String> nameResolveFunction,
                                          @NonNls final String... expectedNames) {
-    final GutterIconRenderer renderer = myFixture.findGutter(javaFile);
+    final GutterMark renderer = myFixture.findGutter(javaFile);
     assertNotNull(renderer);
 
     AnnotatorTestUtils.checkGutterTargets(renderer, nameResolveFunction, expectedNames);

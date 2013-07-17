@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.annotators;
 
+import com.intellij.codeInsight.daemon.GutterMark;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.navigation.NavigationGutterIconRenderer;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
@@ -46,7 +47,7 @@ class AnnotatorTestUtils {
    * @param resultValueFunction Function to transform target to expected name.
    * @param expectedValues      Expected names.
    */
-  static void checkGutterTargets(@NotNull final GutterIconRenderer renderer,
+  static void checkGutterTargets(@NotNull final GutterMark renderer,
                                  @NotNull final Function<PsiElement, String> resultValueFunction,
                                  final String... expectedValues) {
     final LineMarkerInfo lineMarkerInfo = ((LineMarkerInfo.LineMarkerGutterIconRenderer) renderer).getLineMarkerInfo();
