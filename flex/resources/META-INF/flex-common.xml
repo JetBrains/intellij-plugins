@@ -91,7 +91,7 @@
     <css.classOrIdUsagesProvider implementation="com.intellij.javascript.flex.css.FlexClassOrIdUsagesProvider"/>
     <css.dialect implementation="com.intellij.javascript.flex.css.FlexCSSDialect"/>
     <projectConfigurable instance="com.intellij.lang.javascript.flex.build.FlexCompilerProjectConfigurable" id="flex.compiler"
-                         displayName="Flex Compiler" parentId="project.propCompiler"/>
+                         displayName="ActionScript &amp; Flex Compiler" parentId="project.propCompiler"/>
 
     <importFilteringRule implementation="com.intellij.lang.javascript.flex.ImportFilteringRule"/>
     <enterHandlerDelegate implementation="com.intellij.lang.javascript.flex.MxmlEnterHandler"/>
