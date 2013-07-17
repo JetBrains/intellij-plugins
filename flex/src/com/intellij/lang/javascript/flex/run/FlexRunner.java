@@ -28,7 +28,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -73,16 +75,34 @@ public class FlexRunner extends FlexBaseRunner {
           case Emulator:
             return standardLaunch(module.getProject(), executor, state, contentToReuse, environment);
           case AndroidDevice:
-            final String androidAppId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
+            final String androidDescriptorPath = getAirDescriptorPath(bc, bc.getAndroidPackagingOptions());
+            final String androidAppId = getApplicationId(androidDescriptorPath);
+
+            if (androidAppId == null) {
+              Messages.showErrorDialog(module.getProject(),
+                                       FlexBundle.message("failed.to.read.app.id", FileUtil.toSystemDependentName(androidDescriptorPath)),
+                                       FlexBundle.message("error.title"));
+              return null;
+            }
+
             if (packAndInstallToAndroidDevice(module, bc, runnerParameters, androidAppId, false)) {
               launchOnAndroidDevice(module.getProject(), bc.getSdk(), runnerParameters.getDeviceInfo(), androidAppId, false);
             }
             return null;
           case iOSSimulator:
             final String adtVersionSimulator = AirPackageUtil.getAdtVersion(module.getProject(), bc.getSdk());
-            final String iosAppId = getApplicationId(getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
-            if (packAndInstallToIOSSimulator(module, bc, runnerParameters, adtVersionSimulator, iosAppId, false)) {
-              launchOnIosSimulator(module.getProject(), bc.getSdk(), iosAppId, runnerParameters.getIOSSimulatorSdkPath(), false);
+
+            final String iosSimulatorDescriptorPath = getAirDescriptorPath(bc, bc.getIosPackagingOptions());
+            final String iosSimulatorAppId = getApplicationId(iosSimulatorDescriptorPath);
+
+            if (iosSimulatorAppId == null) {
+              Messages.showErrorDialog(module.getProject(), FlexBundle.message("failed.to.read.app.id",
+                                                                               FileUtil.toSystemDependentName(iosSimulatorDescriptorPath)),
+                                       FlexBundle.message("error.title"));
+              return null;
+            }
+            if (packAndInstallToIOSSimulator(module, bc, runnerParameters, adtVersionSimulator, iosSimulatorAppId, false)) {
+              launchOnIosSimulator(module.getProject(), bc.getSdk(), iosSimulatorAppId, runnerParameters.getIOSSimulatorSdkPath(), false);
             }
             return null;
           case iOSDevice:
@@ -161,7 +181,8 @@ public class FlexRunner extends FlexBaseRunner {
 
     launchWithSelectedApplication(swfFilePath, params.getLauncherParameters());
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, new DefaultExecutionResult(console, processHandler), env);
+    final RunContentBuilder contentBuilder =
+      new RunContentBuilder(project, this, executor, new DefaultExecutionResult(console, processHandler), env);
     Disposer.register(project, contentBuilder);
     return contentBuilder.showRunContent(contentToReuse);
   }

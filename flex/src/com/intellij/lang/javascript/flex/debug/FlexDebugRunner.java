@@ -9,6 +9,7 @@ import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.flex.model.bc.TargetPlatform;
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
 import com.intellij.lang.javascript.flex.actions.airpackage.DeviceInfo;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
@@ -18,11 +19,12 @@ import com.intellij.lang.javascript.flex.run.FlashRunConfiguration;
 import com.intellij.lang.javascript.flex.run.FlashRunnerParameters;
 import com.intellij.lang.javascript.flex.run.FlexBaseRunner;
 import com.intellij.lang.javascript.flex.run.RemoteFlashRunConfiguration;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,8 +36,6 @@ import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMob
  * Time: 8:16:33 PM
  */
 public class FlexDebugRunner extends FlexBaseRunner {
-
-  private static final Logger LOG = Logger.getInstance(FlexDebugRunner.class.getName());
 
   public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
     return DefaultDebugExecutor.EXECUTOR_ID.equals(executorId) &&
@@ -95,7 +95,15 @@ public class FlexDebugRunner extends FlexBaseRunner {
         case Emulator:
           break;
         case AndroidDevice:
-          final String androidAppId = getApplicationId(getAirDescriptorPath(bc, bc.getAndroidPackagingOptions()));
+          final String androidDescriptorPath = getAirDescriptorPath(bc, bc.getAndroidPackagingOptions());
+          final String androidAppId = getApplicationId(androidDescriptorPath);
+
+          if (androidAppId == null) {
+            Messages.showErrorDialog(project,
+                                     FlexBundle.message("failed.to.read.app.id", FileUtil.toSystemDependentName(androidDescriptorPath)),
+                                     FlexBundle.message("error.title"));
+            return null;
+          }
 
           if (!packAndInstallToAndroidDevice(module, bc, runnerParameters, androidAppId, true)) {
             return null;
@@ -110,7 +118,16 @@ public class FlexDebugRunner extends FlexBaseRunner {
           break;
         case iOSSimulator:
           final String adtVersionSimulator = AirPackageUtil.getAdtVersion(module.getProject(), bc.getSdk());
-          final String iosSimulatorAppId = getApplicationId(getAirDescriptorPath(bc, bc.getIosPackagingOptions()));
+
+          final String iosSimulatorDescriptorPath = getAirDescriptorPath(bc, bc.getIosPackagingOptions());
+          final String iosSimulatorAppId = getApplicationId(iosSimulatorDescriptorPath);
+
+          if (iosSimulatorAppId == null) {
+            Messages.showErrorDialog(project, FlexBundle.message("failed.to.read.app.id",
+                                                                 FileUtil.toSystemDependentName(iosSimulatorDescriptorPath)),
+                                     FlexBundle.message("error.title"));
+            return null;
+          }
 
           if (!packAndInstallToIOSSimulator(module, bc, runnerParameters, adtVersionSimulator, iosSimulatorAppId, true)) {
             return null;
