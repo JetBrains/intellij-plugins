@@ -34,12 +34,11 @@ import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.roots.CompilerModuleExtension;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -53,40 +52,29 @@ import org.osmorc.util.OrderedProperties;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class which wraps bnd and integrates it into IntellIJ.
+ * Class which wraps bnd and integrates it into IntelliJ.
  * <p/>
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id:$
  */
 public class BndWrapper {
-
-
   /**
    * Wraps an existing jar file using bnd's analyzer. This class will check and use any applying bundlification rules
    * for this library that have been set up in Osmorcs library bundlification dialog.
-   * <p/>
-   *
-   * @param module
-   * @param compileContext a compile context
-   * @param sourceJarUrl   the URL to the source jar file
-   * @param outputPath     the path where to place the bundled library.
-   * @return the URL to the bundled library.
    */
   @Nullable
-  public String wrapLibrary(Module module, @NotNull CompileContext compileContext, final String sourceJarUrl, String outputPath) {
+  public String wrapLibrary(Module module, @NotNull CompileContext compileContext, final String sourceJarUrl, File targetDir) {
     String messagePrefix = "[" + module.getName() + "] ";
     try {
-      File targetDir = new File(outputPath);
-      File sourceFile = new File(VfsUtil.urlToPath(sourceJarUrl));
+      File sourceFile = new File(VfsUtilCore.urlToPath(sourceJarUrl));
       if (!sourceFile.exists()) {
         compileContext.addMessage(CompilerMessageCategory.WARNING, messagePrefix +
                                                                    "The library " +
@@ -126,13 +114,13 @@ public class BndWrapper {
       if (!targetFile.exists() || targetFile.lastModified() < sourceFile.lastModified() ||
           targetFile.lastModified() < lastModified) {
         if (doWrap(module, compileContext, sourceFile, targetFile, additionalProperties)) {
-          return VfsUtil.pathToUrl(targetFile.getCanonicalPath());
+          return VfsUtilCore.pathToUrl(targetFile.getCanonicalPath());
         }
       }
       else {
         // Fixes IDEADEV-39099. When the wrapper does not return anything the library is not regarded
         // as a bundle.
-        return VfsUtil.pathToUrl(targetFile.getCanonicalPath());
+        return VfsUtilCore.pathToUrl(targetFile.getCanonicalPath());
       }
     }
     catch (final Exception e) {
@@ -167,7 +155,7 @@ public class BndWrapper {
                          @NotNull Map<String, String> properties) throws Exception {
     final String messagePrefix = "[" + module.getName() + "][Library " + inputJar.getName() + "] ";
 
-    String sourceFileUrl = VfsUtil.pathToUrl(inputJar.getPath());
+    String sourceFileUrl = VfsUtilCore.pathToUrl(inputJar.getPath());
     Analyzer analyzer = new ReportingAnalyzer(compileContext, sourceFileUrl);
     analyzer.setPedantic(false);
     analyzer.setJar(inputJar);
@@ -204,7 +192,7 @@ public class BndWrapper {
       version = Analyzer.cleanupVersion(version);
       analyzer.setProperty(Constants.BUNDLE_VERSION, version);
     }
-    Manifest mf = analyzer.calcManifest();
+    analyzer.calcManifest();
     Jar jar = analyzer.getJar();
     final File f = FileUtil.createTempFile("tmpbnd", ".jar");
     jar.write(f);
@@ -281,90 +269,44 @@ public class BndWrapper {
     return result.get();
   }
 
-
   /**
    * Builds the jar file for the given module. This is called inside a compile run.
-   *
-   * @param module          the module to be built.
-   * @param compileContext  the current compile context. this is used for issuing error messages.
-   * @param classPathUrls   a list of urls comprising the classpath. this is given to bnd, so it can pull classes and resources from there.
-   * @param outputPath      the output path, that is the full path name of the jar file to be created.
-   * @param buildProperties a list of properties containing bnd configuration values.
-   * @return true if the build succeeded, false otherwise.
    */
-  public static boolean build(@NotNull Module module, @NotNull CompileContext compileContext,
-                              @NotNull String[] classPathUrls, @NotNull String outputPath,
-                              @NotNull Map<String, String> buildProperties) {
+  public static boolean build(@NotNull Module module,
+                              @NotNull CompileContext compileContext,
+                              @NotNull File bndFile,
+                              @NotNull List<String> classPathUrls,
+                              @NotNull String outputPath) throws Exception {
+    String prefix = "[" + module.getName() + "] ";
 
-    String messagePrefix = "[" + module.getName() + "] ";
-    File[] classPathEntries = new File[classPathUrls.length];
-    for (int i = 0; i < classPathUrls.length; i++) {
-      String classPathUrl = classPathUrls[i];
-      classPathEntries[i] = new File(VfsUtil.urlToPath(classPathUrl));
-    }
-
-    // build a bnd file here containing all accumulated settings.
-    File bndFile;
-    try {
-      bndFile = makeBndFile(module, buildProperties, compileContext);
-    }
-    catch (IOException e) {
-      compileContext
-        .addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Problem when generating bnd file " + e.getMessage(), null, 0, 0);
-      return false;
-    }
-
-    File outFile = new File(outputPath);
-    try {
-      return doBuild(module, compileContext, bndFile, classPathEntries, outFile);
-    }
-    catch (Exception e) {
-      compileContext.addMessage(CompilerMessageCategory.ERROR, messagePrefix + "Unexpected error: " + e.getMessage(), null, 0, 0);
-      return false;
-    }
-  }
-
-  private static boolean doBuild(@NotNull Module module,
-                                 @NotNull CompileContext compileContext,
-                                 @NotNull File bndFile,
-                                 @NotNull File[] classpath,
-                                 @NotNull File output)
-    throws Exception {
-    String messagePrefix = "[" + module.getName() + "] ";
-    ReportingBuilder builder = new ReportingBuilder(compileContext, VfsUtil.pathToUrl(bndFile.getPath()), module);
+    ReportingBuilder builder = new ReportingBuilder(compileContext, VfsUtilCore.pathToUrl(bndFile.getPath()), module);
     builder.setPedantic(false);
     builder.setProperties(bndFile);
 
-    // FIX for IDEADEV-39089
-    // am not really sure if this is a good idea all the time but then again what use is building a bundle without exports in 90% of the cases?
-    //if (builder.getProperty(Constants.EXPORT_PACKAGE) == null) {
-    //    builder.setProperty(Constants.EXPORT_PACKAGE, "*");
-    //}
-    builder.setClasspath(classpath);
-    // XXX: seems to be a new bug in bnd, when calling build(), begin is not called, therefore the ignores dont work..
-    // so i have overridden it and calling it manually here..
-    builder.begin();
+    File[] classPath = new File[classPathUrls.size()];
+    for (int i = 0; i < classPathUrls.size(); i++) {
+      classPath[i] = new File(VfsUtilCore.urlToPath(classPathUrls.get(i)));
+    }
+    builder.setClasspath(classPath);
 
     // Check if the manifest version is missing (IDEADEV-41174)
     String manifest = builder.getProperty(aQute.lib.osgi.Constants.MANIFEST);
     if (manifest != null) {
       File manifestFile = builder.getFile(manifest);
-      if (manifestFile != null && manifestFile.exists() && manifestFile.canRead()) {
+      if (manifestFile != null && manifestFile.canRead()) {
         Properties props = new Properties();
         FileInputStream fileInputStream = new FileInputStream(manifestFile);
         try {
           props.load(fileInputStream);
-          final String value = props.getProperty(Attributes.Name.MANIFEST_VERSION.toString());
-          if (value == null || value.length() == 0 || value.trim().length() == 0) {
-            compileContext.addMessage(CompilerMessageCategory.WARNING,
-                                      messagePrefix +
-                                      "Your manifest does not contain a Manifest-Version entry. This will produce an empty manifest in the resulting bundle.",
-                                      VfsUtil.pathToUrl(manifestFile.getAbsolutePath()), 0, 0);
+          String value = props.getProperty(Attributes.Name.MANIFEST_VERSION.toString());
+          if (StringUtil.isEmptyOrSpaces(value)) {
+            String message = "Your manifest does not contain a Manifest-Version entry. This may produce an empty manifest in the resulting bundle.";
+            compileContext.addMessage(CompilerMessageCategory.WARNING, prefix + message, VfsUtilCore.pathToUrl(manifestFile.getAbsolutePath()), 0, 0);
           }
         }
         catch (Exception ex) {
-          compileContext.addMessage(CompilerMessageCategory.INFORMATION, messagePrefix + "There was a problem reading your manifest.",
-                                    VfsUtil.pathToUrl(manifestFile.getAbsolutePath()), 0, 0);
+          String message = "There was a problem reading your manifest.";
+          compileContext.addMessage(CompilerMessageCategory.WARNING, prefix + message, VfsUtilCore.pathToUrl(manifestFile.getAbsolutePath()), 0, 0);
         }
         finally {
           fileInputStream.close();
@@ -372,89 +314,49 @@ public class BndWrapper {
       }
     }
 
+    File output = new File(outputPath);
     Jar jar = builder.build();
     jar.setName(output.getName());
     jar.write(output);
     builder.close();
+
     return true;
   }
 
   /**
    * Generates a bnd file from the given contents map and returns it.
-   *
-   * @param module         the module for which the file should be built. The file will be placed in the output path of the module.
-   * @param contents       the contents of the file
-   * @param compileContext a compile context.
-   * @return the generated file
-   * @throws IOException in case creation of the file fails.
    */
   @NotNull
-  private static File makeBndFile(@NotNull Module module, @NotNull Map<String, String> contents, @NotNull CompileContext compileContext)
-    throws IOException {
-    final String outputPath = getOutputPath(module, compileContext);
-    if (outputPath == null) {
-      throw new IOException("Unable to determine module output path for module " + module.getName());
-    }
-    OrderedProperties props = OrderedProperties.fromMap(contents);
-    File tmpFile = FileUtil.createTempFile(new File(outputPath), "osmorc", ".bnd", true);
-    // create one
+  public static File makeBndFile(@NotNull Module module,
+                                 @NotNull Map<String, String> contents,
+                                 @NotNull File outputDir) throws IOException {
+    File tmpFile = FileUtil.createTempFile(outputDir, "osmorc.", ".bnd", true);
+
     BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tmpFile));
     try {
-      props.store(bos,
-                  "Bnd file generated by Osmorc for build of Module " + module.getName() + " in project " + module.getProject().getName());
+      OrderedProperties props = OrderedProperties.fromMap(contents);
+      String comments = "Bnd file generated by Osmorc for build of module " + module.getName() + " in project " + module.getProject().getName();
+      props.store(bos, comments);
     }
     finally {
       bos.close();
     }
+
     tmpFile.deleteOnExit();
     return tmpFile;
   }
 
   /**
-   * Tries to determine the compiler output path of the given module
-   *
-   * @param m       the module
-   * @param context the compile context
-   * @return the compiler output path or null, if it cannot be determined.
+   * Creates Osmorc output dir relative to a module's one.
    */
   @Nullable
-  static String getOutputPath(final @NotNull Module m, @NotNull CompileContext context) {
-    final CompilerModuleExtension extension = CompilerModuleExtension.getInstance(m);
-    if (extension == null) {
-      context.addMessage(CompilerMessageCategory.WARNING, "Unable to determine the compiler output path for module " + m.getName(),
-                         null, 0, 0);
+  public static File getOutputDir(@NotNull File moduleOutputDir, @NotNull CompileContext context) {
+    File outputDir = new File(moduleOutputDir.getParent(), "bundles");
+    if (!outputDir.exists() && !outputDir.mkdirs()) {
+      String message = "Could not create output directory: " + outputDir + ". Please check file permissions.";
+      context.addMessage(CompilerMessageCategory.ERROR, message, null, 0, 0);
       return null;
     }
-    VirtualFile moduleCompilerOutputPath = extension.getCompilerOutputPath();
-
-    String path;
-    if (moduleCompilerOutputPath == null) {
-      // get the url
-      String outputPathUrl = extension.getCompilerOutputUrl();
-
-      // create the paths
-      // FIX  	 IDEADEV-40112
-      File f = new File(VfsUtil.urlToPath(outputPathUrl));
-      if (!f.exists() && !f.mkdirs()) {
-        context.addMessage(CompilerMessageCategory.ERROR, "Cannot create compiler output path!", null, 0, 0);
-        return null;
-      }
-
-      path = f.getParentFile().getPath() + File.separator + "bundles";
-    }
-    else {
-      path = moduleCompilerOutputPath.getParent().getPath() + File.separator + "bundles";
-    }
-
-    File f = new File(path);
-    if (!f.exists()) {
-      if (!f.mkdirs()) {
-        context
-          .addMessage(CompilerMessageCategory.ERROR, "Could not create output path: " + path + " Please check file permissions.", null, 0,
-                      0);
-        return null;
-      }
-    }
-    return path;
+    return outputDir;
   }
 }

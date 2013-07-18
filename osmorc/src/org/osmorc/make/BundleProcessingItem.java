@@ -29,31 +29,39 @@ import com.intellij.openapi.compiler.ValidityState;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.facet.OsmorcFacet;
 
 /**
  * ProcessingItem which represents a single bundle. Any module that has an osmorc facet is treated as a bundle
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id$
  */
 class BundleProcessingItem implements FileProcessingCompiler.ProcessingItem {
+  private final Module myModule;
+  private final OsmorcFacet myFacet;
 
-  public BundleProcessingItem(Module module) {
-    _module = module;
+  public BundleProcessingItem(@NotNull Module module, @NotNull OsmorcFacet facet) {
+    myModule = module;
+    myFacet = facet;
   }
 
   @NotNull
+  @Override
   public VirtualFile getFile() {
-    return _module.getModuleFile();
+    //noinspection ConstantConditions
+    return myModule.getModuleFile();
   }
 
+  @Override
   public ValidityState getValidityState() {
-    return new BundleValidityState(_module);
+    return new BundleValidityState(myModule);
   }
 
   public Module getModule() {
-    return _module;
+    return myModule;
   }
 
-  private final Module _module;
+  public OsmorcFacet getFacet() {
+    return myFacet;
+  }
 }

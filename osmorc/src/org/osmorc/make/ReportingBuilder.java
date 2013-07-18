@@ -30,7 +30,7 @@ import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.idea.maven.model.MavenPlugin;
@@ -44,20 +44,19 @@ import org.osmorc.manifest.BundleManifest;
 import java.text.MessageFormat;
 
 /**
- * Created by IntelliJ IDEA. User: kork Date: Jul 20, 2009 Time: 9:51:18 PM To change this template use File | Settings
- * | File Templates.
+ * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
+ * @since Jul 20, 2009
  */
 class ReportingBuilder extends Builder {
   private final CompileContext myContext;
-  private String mySourceFileName;
-  private String myMessagePrefix;
+  private final String mySourceFileName;
+  private final String myMessagePrefix;
 
   public ReportingBuilder(CompileContext context, String sourceFileName, Module module) {
-    super();
     myContext = context;
-    OsmorcFacet facet = OsmorcFacet.getInstance(module);
-    mySourceFileName = sourceFileName;
+
     // link back to the original manifest if it's manually edited
+    OsmorcFacet facet = OsmorcFacet.getInstance(module);
     if (facet != null) {
       OsmorcFacetConfiguration configuration = facet.getConfiguration();
       if (configuration.isManifestManuallyEdited()) {
@@ -67,7 +66,7 @@ class ReportingBuilder extends Builder {
           PsiFile manifestFile = bundleManifest.getManifestFile();
           VirtualFile virtualFile = manifestFile.getVirtualFile();
           if (virtualFile != null) {
-            mySourceFileName = VfsUtil.pathToUrl(virtualFile.getPath());
+            sourceFileName = VfsUtilCore.pathToUrl(virtualFile.getPath());
           }
         }
       }
@@ -79,41 +78,37 @@ class ReportingBuilder extends Builder {
           MavenPlugin plugin = project.findPlugin("org.apache.felix", "maven-bundle-plugin");
           if (plugin != null) {
             // ok it's imported from maven, link warnings/errors back to pom.xml
-            mySourceFileName = VfsUtil.pathToUrl(project.getPath());
+            sourceFileName = VfsUtilCore.pathToUrl(project.getPath());
           }
         }
       }
     }
+    mySourceFileName = sourceFileName;
+
     myMessagePrefix = "[" + module.getName() + "] ";
   }
 
-
   @Override
   public void error(String s, Object... objects) {
-    myContext.addMessage(CompilerMessageCategory.ERROR, MessageFormat.format(myMessagePrefix + s, objects), mySourceFileName, 0, 0);
+    String message = MessageFormat.format(myMessagePrefix + s, objects);
+    myContext.addMessage(CompilerMessageCategory.ERROR, message, mySourceFileName, 0, 0);
   }
 
   @Override
   public void error(String s, Throwable throwable, Object... objects) {
-    myContext.addMessage(CompilerMessageCategory.ERROR,
-                         MessageFormat.format(myMessagePrefix + s, objects) + "(" + throwable.getMessage() + ")",
-                         mySourceFileName, 0, 0);
+    String message = MessageFormat.format(myMessagePrefix + s, objects) + "(" + throwable.getMessage() + ")";
+    myContext.addMessage(CompilerMessageCategory.ERROR, message, mySourceFileName, 0, 0);
   }
 
   @Override
   public void warning(String s, Object... objects) {
-    myContext.addMessage(CompilerMessageCategory.WARNING, MessageFormat.format(myMessagePrefix + s, objects), mySourceFileName, 0, 0);
+    String message = MessageFormat.format(myMessagePrefix + s, objects);
+    myContext.addMessage(CompilerMessageCategory.WARNING, message, mySourceFileName, 0, 0);
   }
 
   @Override
   public void progress(String s, Object... objects) {
-    myContext.addMessage(CompilerMessageCategory.INFORMATION, MessageFormat.format(myMessagePrefix + s, objects), mySourceFileName, 0, 0);
-  }
-
-  /**
-   * Overridden to make it public.
-   */
-  public void begin() {
-    super.begin();
+    String message = MessageFormat.format(myMessagePrefix + s, objects);
+    myContext.addMessage(CompilerMessageCategory.INFORMATION, message, mySourceFileName, 0, 0);
   }
 }
