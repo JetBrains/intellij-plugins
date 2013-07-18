@@ -102,5 +102,3 @@ class MyServiceMessageFactoryDelegate
     FACTORY.create_test_reported_attached
   end
 end
-
-ServiceMessageFactoryProvider.get_instance.delegate = MyServiceMessageFactoryDelegate.new
