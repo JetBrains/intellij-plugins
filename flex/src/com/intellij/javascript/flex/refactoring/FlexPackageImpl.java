@@ -59,7 +59,7 @@ public class FlexPackageImpl extends PsiPackageBase implements NavigationItem, J
     return new FlexPackageImpl(manager, qName);
   }
 
-  protected Collection<PsiDirectory> getAllDirectories() {
+  protected Collection<PsiDirectory> getAllDirectories(boolean includeLibrarySources) {
     if (myDirectories == null) {
       CachedValueProvider<Collection<PsiDirectory>> provider = new CachedValueProvider<Collection<PsiDirectory>>() {
         public Result<Collection<PsiDirectory>> compute() {
