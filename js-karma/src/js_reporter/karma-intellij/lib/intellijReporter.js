@@ -152,22 +152,22 @@ function IntellijReporter(formatError, globalEmitter) {
 
   this.onSpecComplete = function (browser, result) {
     var browserNode = getOrCreateBrowserNode(tree, browser);
-    if (typeof browserNode.visited === 'undefined') {
-      browserNode.visited = true;
+    if (typeof browserNode.checkedForTotalTestCount === 'undefined') {
+      browserNode.checkedForTotalTestCount = true;
       totalTestCount += browser.lastResult.total;
       uncheckedBrowserCount--;
       if (uncheckedBrowserCount === 0) {
-        tree.write('##teamcity[testCount count=\'' + totalTestCount + '\']\n')
+        tree.write('##teamcity[testCount count=\'' + totalTestCount + '\']\n');
       }
     }
     var suiteNode = getOrCreateLowerSuiteNode(browserNode, result.suite, write);
     var specNode = createSpecNode(suiteNode, result.suite, result.description);
     var status;
-    if (result.success) {
-      status = 0;
-    }
-    else if (result.skipped) {
+    if (result.skipped) {
       status = 1;
+    }
+    else if (result.success) {
+      status = 0;
     }
     else {
       status = 2;
