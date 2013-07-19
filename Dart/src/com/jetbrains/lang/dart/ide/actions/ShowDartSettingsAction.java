@@ -7,7 +7,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.PlatformUtils;
-import com.jetbrains.lang.dart.ide.settings.DartSettingsConfigurable;
+import com.jetbrains.lang.dart.DartBundle;
 import icons.DartIcons;
 
 /**
@@ -17,7 +17,7 @@ public class ShowDartSettingsAction extends AnAction {
   public void actionPerformed(AnActionEvent anActionEvent) {
     Project project = anActionEvent.getData(PlatformDataKeys.PROJECT);
     if (project != null) {
-      ShowSettingsUtil.getInstance().showSettingsDialog(project, DartSettingsConfigurable.class);
+      ShowSettingsUtil.getInstance().showSettingsDialog(project, DartBundle.message("dart.title"));
     }
   }
 

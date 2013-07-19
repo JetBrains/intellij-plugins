@@ -9,4 +9,13 @@
                          bundle="com.jetbrains.lang.dart.DartBundle"
                          nonDefaultProject="true"/>
   </extensions>
+
+  <actions>
+    <action class="com.jetbrains.lang.dart.ide.actions.ShowDartSettingsAction"
+            id="ShowDartSettingsAction"
+            description="Dart settings"
+            text="Dart Settings">
+      <add-to-group group-id="MainToolBarSettings" anchor="last"/>
+    </action>
+  </actions>
 </idea-plugin>
