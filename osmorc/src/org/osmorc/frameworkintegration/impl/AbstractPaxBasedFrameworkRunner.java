@@ -88,22 +88,23 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
     if (definition != null) {
       version = definition.getVersion();
     }
-    if (version != null && version.length() > 0) {
+    if (!StringUtil.isEmptyOrSpaces(version)) {
       commandLineParameters.add("--v=" + version);
     }
 
     for (SelectedBundle bundle : bundlesToInstall) {
-      String prefix = CachingBundleInfoProvider.isExploded(bundle.getBundleUrl()) ? "scan-bundle:" : "";
-      if (bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
+      String bundleUrl = bundle.getBundleUrl();
+      String prefix = CachingBundleInfoProvider.isExploded(bundleUrl) ? "scan-bundle:" : "";
+      if (bundle.isStartAfterInstallation() && !CachingBundleInfoProvider.isFragmentBundle(bundleUrl)) {
         int bundleStartLevel = bundle.isDefaultStartLevel() ? getRunConfiguration().getDefaultStartLevel() : bundle.getStartLevel();
-        commandLineParameters.add(prefix + bundle.getBundleUrl() + "@" + bundleStartLevel);
+        commandLineParameters.add(prefix + bundleUrl + "@" + bundleStartLevel);
       }
       else {
-        if (CachingBundleInfoProvider.isFragmentBundle(bundle.getBundleUrl())) {
-          commandLineParameters.add(prefix + bundle.getBundleUrl() + "@nostart");
+        if (CachingBundleInfoProvider.isFragmentBundle(bundleUrl)) {
+          commandLineParameters.add(prefix + bundleUrl + "@nostart");
         }
         else {
-          commandLineParameters.add(prefix + bundle.getBundleUrl());
+          commandLineParameters.add(prefix + bundleUrl);
         }
       }
     }

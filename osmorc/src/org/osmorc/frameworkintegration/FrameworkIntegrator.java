@@ -36,30 +36,26 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface FrameworkIntegrator {
-
   /**
-   * @return the display name of the framework
+   * Creates the display name of the framework
    */
   @NotNull
   String getDisplayName();
 
   /**
-   * @return the {@link org.osmorc.frameworkintegration.FrameworkInstanceManager} that controls data about a specific
-   *         framework instance.
+   * Creates the {@link org.osmorc.frameworkintegration.FrameworkInstanceManager} that controls data about a specific framework instance.
    */
   @NotNull
   FrameworkInstanceManager getFrameworkInstanceManager();
 
   /**
-   * @return the framework runnner which is used to get runtime specific information about a framework.
+   * Creates the framework runner which is used to get runtime specific information about a framework.
    */
   @NotNull
   FrameworkRunner createFrameworkRunner();
 
   /**
    * Creates an editor for framework specific run properties.
-   *
-   * @return an editor for framework specific run properties.
    */
   @Nullable
   FrameworkRunPropertiesEditor createRunPropertiesEditor();
