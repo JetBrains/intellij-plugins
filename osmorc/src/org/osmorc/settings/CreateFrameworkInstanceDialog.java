@@ -49,7 +49,6 @@ import java.awt.event.ActionListener;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class CreateFrameworkInstanceDialog extends DialogWrapper implements PanelWithAnchor {
-
   private JPanel myMainPanel;
   private JComboBox myIntegratorComboBox;
   private JTextField myNameTextField;
@@ -64,16 +63,14 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper implements Pane
   private JBLabel myFolderLabel;
   private JBLabel myProfilesLabel;
   private JButton myDownloadButton;
-  private JCheckBox myClearFolderBeforeDowloadCheckBox;
+  private JCheckBox myClearFolderBeforeDownloadCheckBox;
   private JComponent myAnchor;
 
   private void createUIComponents() {
     myErrorText = new MyErrorText();
   }
 
-
-  public CreateFrameworkInstanceDialog(FrameworkIntegratorRegistry frameworkIntegratorRegistry,
-                                       String frameworkInstanceName) {
+  public CreateFrameworkInstanceDialog(FrameworkIntegratorRegistry frameworkIntegratorRegistry, String frameworkInstanceName) {
     super(true);
     setTitle("OSGi Framework Instance");
     setModal(true);
@@ -176,7 +173,7 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper implements Pane
     myFolderLabel.setEnabled(isDownload);
     myComboBox1.setEnabled(isDownload);
     myProfilesLabel.setEnabled(isDownload);
-    myClearFolderBeforeDowloadCheckBox.setEnabled(isDownload);
+    myClearFolderBeforeDownloadCheckBox.setEnabled(isDownload);
 
 
     final FrameworkIntegrator integrator = (FrameworkIntegrator)myIntegratorComboBox.getSelectedItem();
@@ -259,10 +256,9 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper implements Pane
    * Downloads the selected framework.
    */
   private void downloadFramework() {
-
     PaxFrameworkDownloader paxFrameworkDownloader =
       new PaxFrameworkDownloader(getIntegratorName().toLowerCase(), getVersion(), myTargetFolder.getText().trim(), "",
-                                 myClearFolderBeforeDowloadCheckBox.isSelected(), new PaxFrameworkDownloader.DownloaderCallback() {
+                                 myClearFolderBeforeDownloadCheckBox.isSelected(), new PaxFrameworkDownloader.DownloaderCallback() {
         @Override
         public void downloadFinished(boolean successful, @Nullable final String errorMessage) {
           if (!successful) {

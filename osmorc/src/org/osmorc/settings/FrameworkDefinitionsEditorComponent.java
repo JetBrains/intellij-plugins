@@ -22,16 +22,12 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.settings;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
-import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.frameworkintegration.FrameworkInstanceManager;
-import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 
 import javax.swing.*;
@@ -65,22 +61,25 @@ public class FrameworkDefinitionsEditorComponent {
 
     myFrameworkInstancesPanel.add(
       ToolbarDecorator.createDecorator(myFrameworkInstances)
-      .setAddAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          addFrameworkInstance();
-        }
-      }).setRemoveAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          removeFrameworkInstance();
-        }
-      }).setEditAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          editFrameworkInstance();
-        }
-      }).disableUpDownActions().createPanel(), BorderLayout.CENTER);
+        .setAddAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            addFrameworkInstance();
+          }
+        })
+        .setRemoveAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            removeFrameworkInstance();
+          }
+        })
+        .setEditAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            editFrameworkInstance();
+          }
+        })
+        .disableUpDownActions().createPanel(), BorderLayout.CENTER);
 
     ToolbarDecorator.findEditButton(myFrameworkInstancesPanel).addCustomUpdater(new AnActionButtonUpdater() {
       @Override
@@ -116,16 +115,7 @@ public class FrameworkDefinitionsEditorComponent {
   }
 
   private void addFrameworkInstance() {
-    //String selectedFrameworkInstanceForProject = getProjectSettingsWorkingCopy().getFrameworkInstanceName();
-    //FrameworkInstanceDefinition frameworkInstanceDefinition =
-    //        getApplicationSettingsWorkingCopy().getFrameworkInstance(selectedFrameworkInstanceForProject);
-    //
-    String frameworkInstanceNameForCreation = null;
-    //if (frameworkInstanceDefinition == null) {
-    //    frameworkInstanceNameForCreation = selectedFrameworkInstanceForProject;
-    //}
-
-    CreateFrameworkInstanceDialog dialog = new CreateFrameworkInstanceDialog(myFrameworkIntegratorRegistry, frameworkInstanceNameForCreation);
+    CreateFrameworkInstanceDialog dialog = new CreateFrameworkInstanceDialog(myFrameworkIntegratorRegistry, null);
     dialog.pack();
     dialog.show();
 
@@ -135,12 +125,12 @@ public class FrameworkDefinitionsEditorComponent {
       instanceDefinition.setFrameworkIntegratorName(dialog.getIntegratorName());
       instanceDefinition.setBaseFolder(dialog.getBaseFolder());
       instanceDefinition.setVersion(dialog.getVersion());
+      //noinspection unchecked
       myModel.addElement(instanceDefinition);
       myModified = true;
       myFrameworkInstances.setSelectedValue(instanceDefinition, true);
     }
   }
-
 
   private void removeFrameworkInstance() {
     FrameworkInstanceDefinition selectedFrameworkInstance = this.mySelectedFrameworkInstance;
@@ -175,6 +165,7 @@ public class FrameworkDefinitionsEditorComponent {
       frameworkInstanceDefinition.setFrameworkIntegratorName(dialog.getIntegratorName());
       frameworkInstanceDefinition.setBaseFolder(dialog.getBaseFolder());
       frameworkInstanceDefinition.setVersion(dialog.getVersion());
+      //noinspection unchecked
       myModel.add(index, frameworkInstanceDefinition);
       // fire settings change.
       myModified = true;
@@ -182,21 +173,10 @@ public class FrameworkDefinitionsEditorComponent {
     }
   }
 
-  @Nullable
-  private FrameworkInstanceManager getFrameworkInstanceManager(FrameworkInstanceDefinition instanceDefinition) {
-    FrameworkIntegrator frameworkIntegrator = myFrameworkIntegratorRegistry.findIntegratorByInstanceDefinition(instanceDefinition);
-    if (frameworkIntegrator != null) {
-      return frameworkIntegrator.getFrameworkInstanceManager();
-    }
-    else {
-      return null;
-    }
-  }
-
-
   public void resetTo(ApplicationSettings settings) {
     myModel.clear();
     for (FrameworkInstanceDefinition frameworkInstanceDefinition : settings.getFrameworkInstanceDefinitions()) {
+      //noinspection unchecked
       myModel.addElement(frameworkInstanceDefinition);
     }
     myModified = false;
@@ -219,9 +199,5 @@ public class FrameworkDefinitionsEditorComponent {
 
   public boolean isModified() {
     return myModified;
-  }
-
-  public void dispose() {
-
   }
 }

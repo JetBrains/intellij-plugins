@@ -24,6 +24,7 @@
  */
 package org.osmorc.frameworkintegration;
 
+import com.intellij.openapi.extensions.ExtensionPointName;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
@@ -36,8 +37,10 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface FrameworkIntegrator {
+  ExtensionPointName<FrameworkIntegrator> EP_NAME = ExtensionPointName.create("Osmorc.frameworkIntegrator");
+
   /**
-   * Creates the display name of the framework
+   * Returns the display name of the framework.
    */
   @NotNull
   String getDisplayName();

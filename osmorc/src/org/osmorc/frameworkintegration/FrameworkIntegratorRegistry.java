@@ -24,45 +24,36 @@
  */
 package org.osmorc.frameworkintegration;
 
-import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.Extensions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
 public class FrameworkIntegratorRegistry {
-  public FrameworkIntegratorRegistry() {
-    _frameworkIntegrators =
-      Extensions.getExtensions(new ExtensionPointName<FrameworkIntegrator>("Osmorc.frameworkIntegrator"));
+  public static FrameworkIntegratorRegistry getInstance() {
+    return ServiceManager.getService(FrameworkIntegratorRegistry.class);
   }
 
+  @NotNull
   public FrameworkIntegrator[] getFrameworkIntegrators() {
-    FrameworkIntegrator[] result = new FrameworkIntegrator[_frameworkIntegrators.length];
-    System.arraycopy(_frameworkIntegrators, 0, result, 0, _frameworkIntegrators.length);
-    return result;
+    return Extensions.getExtensions(FrameworkIntegrator.EP_NAME);
   }
 
   @Nullable
-  public FrameworkIntegrator findIntegratorByName(@NotNull final String name) {
-    FrameworkIntegrator result = null;
-
-    for (FrameworkIntegrator frameworkIntegrator : _frameworkIntegrators) {
+  public FrameworkIntegrator findIntegratorByName(@NotNull String name) {
+    for (FrameworkIntegrator frameworkIntegrator : getFrameworkIntegrators()) {
       if (frameworkIntegrator.getDisplayName().equals(name)) {
-        result = frameworkIntegrator;
-        break;
+        return frameworkIntegrator;
       }
     }
-
-    return result;
+    return null;
   }
 
   @Nullable
-  public FrameworkIntegrator findIntegratorByInstanceDefinition(
-    @NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition) {
-    return findIntegratorByName(frameworkInstanceDefinition.getFrameworkIntegratorName());
+  public FrameworkIntegrator findIntegratorByInstanceDefinition(@NotNull FrameworkInstanceDefinition definition) {
+    return findIntegratorByName(definition.getFrameworkIntegratorName());
   }
-
-  private final FrameworkIntegrator[] _frameworkIntegrators;
 }

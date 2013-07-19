@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.settings;
 
 import com.intellij.openapi.options.Configurable;
@@ -33,60 +32,69 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 
 import javax.swing.*;
-import java.awt.*;
-
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class ApplicationSettingsEditor implements SearchableConfigurable, Configurable.Composite {
-  public ApplicationSettingsEditor(FrameworkIntegratorRegistry registry) {
-    this.frameworkDefinitionsEditor = new FrameworkDefinitionsEditor(registry);
-    this.libraryBundlingEditor = new LibraryBundlingEditor();
+  private FrameworkDefinitionsEditorComponent myComponent;
+  private Configurable[] myConfigurables;
+
+  public ApplicationSettingsEditor() {
+    myConfigurables = new Configurable[]{new LibraryBundlingEditor()};
   }
 
   @Nls
+  @Override
   public String getDisplayName() {
     return "OSGi";
   }
 
+  @Override
   public String getHelpTopic() {
     return null;
   }
 
   @NotNull
+  @Override
   public String getId() {
     return "osmorc.ide.settings";
   }
 
+  @Override
   public Runnable enableSearch(String option) {
     return null;
   }
 
+  @Override
   public JComponent createComponent() {
-    JPanel result = new JPanel(new BorderLayout());
-    result.add(new JLabel("Please select one of the options in the settings tree.", JLabel.CENTER), BorderLayout.CENTER);
-    return result;
+    myComponent = new FrameworkDefinitionsEditorComponent(FrameworkIntegratorRegistry.getInstance());
+    return myComponent.getMainPanel();
   }
 
+  @Override
   public boolean isModified() {
-    return false;
+    return myComponent.isModified();
   }
 
+  @Override
   public void apply() throws ConfigurationException {
+    myComponent.applyTo(ApplicationSettings.getInstance());
   }
 
+  @Override
   public void reset() {
+    myComponent.resetTo(ApplicationSettings.getInstance());
   }
 
+  @Override
   public void disposeUIResources() {
+    myComponent = null;
   }
 
+  @Override
   public Configurable[] getConfigurables() {
-    return new Configurable[]{frameworkDefinitionsEditor, libraryBundlingEditor};
+    return myConfigurables;
   }
-
-  private FrameworkDefinitionsEditor frameworkDefinitionsEditor;
-  private LibraryBundlingEditor libraryBundlingEditor;
 }
