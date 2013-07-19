@@ -9,17 +9,18 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" scope="TEST">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/hamcrest-library-1.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module" module-name="lang-api" />
     <orderEntry type="module" module-name="openapi" />
+    <orderEntry type="module" module-name="dom-openapi" />
+    <orderEntry type="module" module-name="maven" />
+    <orderEntry type="module" module-name="idea" />
+    <orderEntry type="module" module-name="compiler-openapi" />
+    <orderEntry type="module" module-name="execution-openapi" />
+    <orderEntry type="module" module-name="execution-impl" />
+    <orderEntry type="module" module-name="compiler-openapi" />
+    <orderEntry type="module" module-name="execution-openapi" />
+    <orderEntry type="module" module-name="execution-impl" />
+    <orderEntry type="module" module-name="debugger-impl" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
@@ -40,18 +41,6 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="dom-openapi" />
-    <orderEntry type="module" module-name="maven" />
-    <orderEntry type="module" module-name="idea" />
-    <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
-    <orderEntry type="module" module-name="compiler-openapi" />
-    <orderEntry type="module" module-name="execution-openapi" />
-    <orderEntry type="module" module-name="execution-impl" />
-    <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
-    <orderEntry type="module" module-name="compiler-openapi" />
-    <orderEntry type="module" module-name="execution-openapi" />
-    <orderEntry type="module" module-name="execution-impl" />
-    <orderEntry type="module" module-name="debugger-impl" />
     <orderEntry type="module-library">
       <library name="bundlor-1.0.0">
         <CLASSES>
@@ -137,7 +126,27 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/pax-runner.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/plexus-utils-3.0.10.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/felix-utils.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
+    <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
+    <orderEntry type="module-library" scope="TEST">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/hamcrest-library-1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

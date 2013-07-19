@@ -25,6 +25,7 @@
 
 package org.osmorc.frameworkintegration.impl;
 
+import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.DebuggingRunnerData;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.openapi.application.PathManager;
@@ -32,6 +33,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.*;
@@ -40,7 +42,6 @@ import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -157,8 +158,8 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
 
 
   @NotNull
-  public List<VirtualFile> getFrameworkStarterLibraries() {
-    final List<VirtualFile> result = new ArrayList<VirtualFile>();
+  public List<String> getFrameworkStarterLibraries() throws ExecutionException {
+    final List<String> result = ContainerUtil.newArrayList();
 
     FrameworkInstanceDefinition definition = getRunConfiguration().getInstanceToUse();
     FrameworkIntegratorRegistry registry = ServiceManager.getService(getProject(), FrameworkIntegratorRegistry.class);
@@ -174,7 +175,7 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
                                               @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
             for (VirtualFile virtualFile : jarFiles) {
               if (starterClasspathPattern == null || starterClasspathPattern.matcher(virtualFile.getName()).matches()) {
-                result.add(virtualFile);
+                result.add(FileUtil.toSystemDependentName(virtualFile.getPath()));
               }
             }
           }

@@ -47,8 +47,7 @@ import com.intellij.openapi.projectRoots.JdkUtil;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.PathsList;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
@@ -88,7 +87,7 @@ public class OsgiRunState extends JavaCommandLineState {
 
     if (configuration.isUseAlternativeJre()) {
       String path = configuration.getAlternativeJrePath();
-      if (path == null || "".equals(path) || !JdkUtil.checkForJre(path)) {
+      if (StringUtil.isEmpty(path) || !JdkUtil.checkForJre(path)) {
         this.jdkForRun = null;
       }
       else {
@@ -121,22 +120,22 @@ public class OsgiRunState extends JavaCommandLineState {
     // only add JDK classes to the classpath
     // the rest is is to be provided by bundles
     params.configureByProject(project, JavaParameters.JDK_ONLY, jdkForRun);
-    PathsList classpath = params.getClassPath();
-    for (VirtualFile libraryFile : runner.getFrameworkStarterLibraries()) {
-      classpath.add(libraryFile);
-    }
+    params.getClassPath().addAll(runner.getFrameworkStarterLibraries());
 
     if (runConfiguration.isIncludeAllBundlesInClassPath()) {
       SelectedBundle[] bundles = getSelectedBundles();
-      for (SelectedBundle bundle : bundles) {
-        String bundlePath = bundle.getBundleUrl();
-        bundlePath = bundlePath.substring(FILE_URL_PREFIX.length());
-        if (bundlePath.indexOf(':') < 0 && bundlePath.charAt(0) != '/') {
-          bundlePath = "/" + bundlePath;
+      if (bundles != null) {
+        for (SelectedBundle bundle : bundles) {
+          String bundlePath = bundle.getBundleUrl();
+          if (bundlePath != null) {
+            bundlePath = bundlePath.substring(FILE_URL_PREFIX.length());
+            if (bundlePath.indexOf(':') < 0 && bundlePath.charAt(0) != '/') {
+              bundlePath = "/" + bundlePath;
+            }
+            bundlePath = bundlePath.replace('/', File.separatorChar);
+            params.getClassPath().add(bundlePath);
+          }
         }
-        bundlePath = bundlePath.replace('/', File.separatorChar);
-
-        classpath.add(bundlePath);
       }
     }
 

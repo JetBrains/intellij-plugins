@@ -1,9 +1,29 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+ * Modified for usage within IntelliJ IDEA.
+ */
 package org.osmorc.facet.maven;
 
 import aQute.lib.osgi.Analyzer;
 import aQute.lib.osgi.Constants;
+import com.intellij.openapi.util.text.StringUtil;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -38,7 +58,6 @@ public class LocalPackageCollector {
       DirectoryScanner scanner = new DirectoryScanner();
       scanner.setBasedir(outputDirectory);
       scanner.setIncludes(new String[] {"**/*.class"});
-
       scanner.addDefaultExcludes();
       scanner.scan();
 
@@ -48,33 +67,33 @@ public class LocalPackageCollector {
       }
     }
 
-    StringBuilder exportedPkgs = new StringBuilder();
-    StringBuilder privatePkgs = new StringBuilder();
+    StringBuilder exportedPackages = new StringBuilder();
+    StringBuilder privatePackages = new StringBuilder();
 
-    boolean noprivatePackages = "!*".equals(analyzer.getProperty(Constants.PRIVATE_PACKAGE));
+    boolean noPrivatePackages = "!*".equals(analyzer.getProperty(Constants.PRIVATE_PACKAGE));
 
     for (Object aPackage : packages) {
       String pkg = (String)aPackage;
 
       // mark all source packages as private by default (can be overridden by export list)
-      if (privatePkgs.length() > 0) {
-        privatePkgs.append(';');
+      if (privatePackages.length() > 0) {
+        privatePackages.append(';');
       }
-      privatePkgs.append(pkg);
+      privatePackages.append(pkg);
 
       // we can't export the default package (".") and we shouldn't export internal packages
-      if (noprivatePackages || !(".".equals(pkg) || pkg.contains(".internal") || pkg.contains(".impl"))) {
-        if (exportedPkgs.length() > 0) {
-          exportedPkgs.append(';');
+      if (noPrivatePackages || !(".".equals(pkg) || pkg.contains(".internal") || pkg.contains(".impl"))) {
+        if (exportedPackages.length() > 0) {
+          exportedPackages.append(';');
         }
-        exportedPkgs.append(pkg);
+        exportedPackages.append(pkg);
       }
     }
 
     if (analyzer.getProperty(Constants.EXPORT_PACKAGE) == null) {
       if (analyzer.getProperty(Constants.EXPORT_CONTENTS) == null) {
-        // no -Fexportcontents overriding the exports, so use our computed list
-        analyzer.setProperty(Constants.EXPORT_PACKAGE, exportedPkgs + ";-split-package:=merge-first");
+        // no -exportcontents overriding the exports, so use our computed list
+        analyzer.setProperty(Constants.EXPORT_PACKAGE, exportedPackages + ";-split-package:=merge-first");
       }
       else {
         // leave Export-Package empty (but non-null) as we have -exportcontents
@@ -84,15 +103,15 @@ public class LocalPackageCollector {
     else {
       String exported = analyzer.getProperty(Constants.EXPORT_PACKAGE);
       if (exported.contains(LOCAL_PACKAGES)) {
-        String newExported = StringUtils.replace(exported, LOCAL_PACKAGES, exportedPkgs.toString());
+        String newExported = StringUtil.replace(exported, LOCAL_PACKAGES, exportedPackages.toString());
         analyzer.setProperty(Constants.EXPORT_PACKAGE, newExported);
       }
     }
 
     String internal = analyzer.getProperty(Constants.PRIVATE_PACKAGE);
     if (internal == null) {
-      if (privatePkgs.length() > 0) {
-        analyzer.setProperty(Constants.PRIVATE_PACKAGE, privatePkgs + ";-split-package:=merge-first");
+      if (privatePackages.length() > 0) {
+        analyzer.setProperty(Constants.PRIVATE_PACKAGE, privatePackages + ";-split-package:=merge-first");
       }
       else {
         // if there are really no private packages then use "!*" as this will keep the Bnd Tool happy
@@ -100,7 +119,7 @@ public class LocalPackageCollector {
       }
     }
     else if (internal.contains(LOCAL_PACKAGES)) {
-      String newInternal = StringUtils.replace(internal, LOCAL_PACKAGES, privatePkgs.toString());
+      String newInternal = StringUtil.replace(internal, LOCAL_PACKAGES, privatePackages.toString());
       analyzer.setProperty(Constants.PRIVATE_PACKAGE, newInternal);
     }
   }

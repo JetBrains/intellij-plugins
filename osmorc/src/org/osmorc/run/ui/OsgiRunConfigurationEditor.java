@@ -36,7 +36,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.CompilerProjectExtension;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.ui.PanelWithAnchor;
 import com.intellij.ui.RawCommandLineEditor;
@@ -72,10 +72,32 @@ import java.util.List;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
- * @version $Id$
  */
-public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfiguration> implements BundleSelectionAction.Context,
-                                                                                                PanelWithAnchor {
+public class OsgiRunConfigurationEditor
+       extends SettingsEditor<OsgiRunConfiguration>
+       implements BundleSelectionAction.Context, PanelWithAnchor {
+
+  private OsgiRunConfiguration osgiRunConfiguration;
+  private RawCommandLineEditor vmParams;
+  private JButton addButton;
+  private JButton removeButton;
+  private JComboBox frameworkInstances;
+  private JPanel additionalFrameworkPropertiesPanel;
+  private JTable modulesList;
+  private JTabbedPane root;
+  private JCheckBox includeAllBundlesInClassPath;
+  private JRadioButton osmorcControlledRadioButton;
+  private JRadioButton userDefinedRadioButton;
+  private TextFieldWithBrowseButton workingDirField;
+  private RawCommandLineEditor programParameters;
+  private JButton frameworkSpecificButton;
+  private AlternativeJREPanel alternativeJREPanel;
+  private JSpinner myFrameworkStartLevel;
+  private JSpinner myDefaultStartLevel;
+  private JBLabel myProgramParametersLabel;
+  private final Project project;
+  private FrameworkRunPropertiesEditor currentFrameworkRunPropertiesEditor;
+
   private final DefaultActionGroup frameworkSpecificBundleSelectionActions;
   private JComponent anchor;
 
@@ -84,10 +106,10 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     myFrameworkStartLevel.setModel(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
     JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)myFrameworkStartLevel.getEditor();
     editor.getTextField().setFormatterFactory(new DefaultFormatterFactory(new JSpinnerCellEditor.MyNumberFormatter("Auto")));
-    DefaultComboBoxModel cbmodel = new DefaultComboBoxModel(registry.getFrameworkInstanceDefinitions().toArray());
-
     myDefaultStartLevel.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
-    frameworkInstances.setModel(cbmodel);
+
+    //noinspection unchecked
+    frameworkInstances.setModel(new DefaultComboBoxModel(registry.getFrameworkInstanceDefinitions().toArray()));
     frameworkInstances.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         onFrameworkChange();
@@ -251,7 +273,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     vmParams.setText(osgiRunConfiguration.getVmParameters());
     programParameters.setText(osgiRunConfiguration.getProgramParameters());
     frameworkInstances.setSelectedItem(osgiRunConfiguration.getInstanceToUse());
-    includeAllBundlesinClassPath.setSelected(osgiRunConfiguration.isIncludeAllBundlesInClassPath());
+    includeAllBundlesInClassPath.setSelected(osgiRunConfiguration.isIncludeAllBundlesInClassPath());
 
     if (currentFrameworkRunPropertiesEditor != null) {
       currentFrameworkRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
@@ -280,7 +302,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
       if (extension != null) {
         final VirtualFilePointer outputDirPointer = extension.getCompilerOutputPointer();
         if (outputDirPointer != null) {
-          workingDirField.setText(VfsUtil.urlToPath(outputDirPointer.getUrl() + "/run.osgi/"));
+          workingDirField.setText(VfsUtilCore.urlToPath(outputDirPointer.getUrl() + "/run.osgi/"));
         }
       }
     }
@@ -296,7 +318,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     osgiRunConfiguration.setBundlesToDeploy(modules);
     osgiRunConfiguration.setVmParameters(vmParams.getText());
     osgiRunConfiguration.setProgramParameters(programParameters.getText());
-    osgiRunConfiguration.setIncludeAllBundlesInClassPath(includeAllBundlesinClassPath.isSelected());
+    osgiRunConfiguration.setIncludeAllBundlesInClassPath(includeAllBundlesInClassPath.isSelected());
     osgiRunConfiguration.setWorkingDir(workingDirField.getText().replace('\\', '/'));
     osgiRunConfiguration.setUseAlternativeJre(alternativeJREPanel.isPathEnabled());
     osgiRunConfiguration.setAlternativeJrePath(alternativeJREPanel.getPath());
@@ -325,27 +347,6 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
   protected void disposeEditor() {
   }
-
-  private OsgiRunConfiguration osgiRunConfiguration;
-  private RawCommandLineEditor vmParams;
-  private JButton addButton;
-  private JButton removeButton;
-  private JComboBox frameworkInstances;
-  private JPanel additionalFrameworkPropertiesPanel;
-  private JTable modulesList;
-  private JTabbedPane root;
-  private JCheckBox includeAllBundlesinClassPath;
-  private JRadioButton osmorcControlledRadioButton;
-  private JRadioButton userDefinedRadioButton;
-  private TextFieldWithBrowseButton workingDirField;
-  private RawCommandLineEditor programParameters;
-  private JButton frameworkSpecificButton;
-  private AlternativeJREPanel alternativeJREPanel;
-  private JSpinner myFrameworkStartLevel;
-  private JSpinner myDefaultStartLevel;
-  private JBLabel myProgramParametersLabel;
-  private final Project project;
-  private FrameworkRunPropertiesEditor currentFrameworkRunPropertiesEditor;
 
   @Override
   public JComponent getAnchor() {
@@ -467,5 +468,3 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     }
   }
 }
-
-

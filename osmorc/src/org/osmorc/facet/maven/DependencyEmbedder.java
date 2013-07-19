@@ -1,4 +1,3 @@
-package org.osmorc.facet.maven;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,20 +15,19 @@ package org.osmorc.facet.maven;
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- */
-
-/**
+ *
  * Modified for usage within IntelliJ IDEA.
  */
+package org.osmorc.facet.maven;
 
 import aQute.lib.osgi.Analyzer;
-import org.codehaus.plexus.util.StringUtils;
+import aQute.lib.osgi.Constants;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-
 
 /**
  * Add BND directives to embed selected dependencies inside a bundle
@@ -43,72 +41,56 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
   public static final String EMBED_STRIP_GROUP = "Embed-StripGroup";
   public static final String EMBED_STRIP_VERSION = "Embed-StripVersion";
   public static final String EMBED_TRANSITIVE = "Embed-Transitive";
-
   public static final String EMBEDDED_ARTIFACTS = "Embedded-Artifacts";
-
-  private static final String MAVEN_DEPENDENCIES = "{maven-dependencies}";
+  public static final String MAVEN_DEPENDENCIES = "{maven-dependencies}";
 
   private String myEmbedDirectory;
   private String myEmbedStripGroup;
   private String myEmbedStripVersion;
-
-
-  /**
-   * Inlined paths.
-   */
-  private final LinkedHashSet<String> myInlinedPaths;
-
-  /**
-   * Embedded artifacts.
-   */
+  private final LinkedHashSet<String> myInlinePaths;
   private final Collection<MavenArtifact> myEmbeddedArtifacts;
-
 
   public DependencyEmbedder(Collection<MavenArtifact> dependencyArtifacts) {
     super(dependencyArtifacts);
-
-
-    myInlinedPaths = new LinkedHashSet<String>();
+    myInlinePaths = new LinkedHashSet<String>();
     myEmbeddedArtifacts = new LinkedHashSet<MavenArtifact>();
   }
 
-
   public void processHeaders(Analyzer analyzer) throws DependencyEmbedderException {
-    StringBuffer includeResource = new StringBuffer();
-    StringBuffer bundleClassPath = new StringBuffer();
-    StringBuffer embeddedArtifacts = new StringBuffer();
+    StringBuilder includeResource = new StringBuilder();
+    StringBuilder bundleClassPath = new StringBuilder();
+    StringBuilder embeddedArtifacts = new StringBuilder();
 
-    myInlinedPaths.clear();
+    myInlinePaths.clear();
     myEmbeddedArtifacts.clear();
 
     String embedDependencyHeader = analyzer.getProperty(EMBED_DEPENDENCY);
-    if (StringUtils.isNotEmpty(embedDependencyHeader)) {
+    if (StringUtil.isNotEmpty(embedDependencyHeader)) {
       myEmbedDirectory = analyzer.getProperty(EMBED_DIRECTORY);
       myEmbedStripGroup = analyzer.getProperty(EMBED_STRIP_GROUP, "true");
       myEmbedStripVersion = analyzer.getProperty(EMBED_STRIP_VERSION);
 
       processInstructions(embedDependencyHeader);
 
-      for (String myInlinedPath : myInlinedPaths) {
-        inlineDependency(myInlinedPath, includeResource);
+      for (String inlinePath : myInlinePaths) {
+        inlineDependency(inlinePath, includeResource);
       }
-      for (MavenArtifact m_embeddedArtifact : myEmbeddedArtifacts) {
-        embedDependency(m_embeddedArtifact, includeResource, bundleClassPath, embeddedArtifacts);
+      for (MavenArtifact embeddedArtifact : myEmbeddedArtifacts) {
+        embedDependency(embeddedArtifact, includeResource, bundleClassPath, embeddedArtifacts);
       }
     }
 
-    if (analyzer.getProperty(Analyzer.WAB) == null && bundleClassPath.length() > 0) {
+    if (analyzer.getProperty(Constants.WAB) == null && bundleClassPath.length() > 0) {
       // set explicit default before merging dependency classpath
-      if (analyzer.getProperty(Analyzer.BUNDLE_CLASSPATH) == null) {
-        analyzer.setProperty(Analyzer.BUNDLE_CLASSPATH, ".");
+      if (analyzer.getProperty(Constants.BUNDLE_CLASSPATH) == null) {
+        analyzer.setProperty(Constants.BUNDLE_CLASSPATH, ".");
       }
     }
 
-    appendDependencies(analyzer, Analyzer.INCLUDE_RESOURCE, includeResource.toString());
-    appendDependencies(analyzer, Analyzer.BUNDLE_CLASSPATH, bundleClassPath.toString());
+    appendDependencies(analyzer, Constants.INCLUDE_RESOURCE, includeResource.toString());
+    appendDependencies(analyzer, Constants.BUNDLE_CLASSPATH, bundleClassPath.toString());
     appendDependencies(analyzer, EMBEDDED_ARTIFACTS, embeddedArtifacts.toString());
   }
-
 
   @Override
   protected void processDependencies(Collection<MavenArtifact> dependencies, String inline) {
@@ -117,32 +99,30 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
     }
     else {
       for (Object dependency : dependencies) {
-        addInlinedPaths((MavenArtifact)dependency, inline, myInlinedPaths);
+        addInlinePaths((MavenArtifact)dependency, inline, myInlinePaths);
       }
     }
   }
 
-
-  private static void addInlinedPaths(MavenArtifact dependency, String inline, Collection<String> inlinedPaths) {
+  private static void addInlinePaths(MavenArtifact dependency, String inline, Collection<String> inlinePaths) {
     File path = dependency.getFile();
     if (path.exists()) {
       if ("true".equalsIgnoreCase(inline) || inline.length() == 0) {
-        inlinedPaths.add(path.getPath());
+        inlinePaths.add(path.getPath());
       }
       else {
         String[] filters = inline.split("\\|");
         for (String filter : filters) {
           if (filter.length() > 0) {
-            inlinedPaths.add(path + "!/" + filter);
+            inlinePaths.add(path + "!/" + filter);
           }
         }
       }
     }
   }
 
-
-  private void embedDependency(MavenArtifact dependency, StringBuffer includeResource, StringBuffer bundleClassPath,
-                               StringBuffer embeddedArtifacts) {
+  private void embedDependency(MavenArtifact dependency, StringBuilder includeResource, StringBuilder bundleClassPath,
+                               StringBuilder embeddedArtifacts) {
     File sourceFile = dependency.getFile();
     if (sourceFile.exists()) {
       String embedDirectory = myEmbedDirectory;
@@ -158,12 +138,12 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
       targetFileName.append(dependency.getArtifactId());
       if (!Boolean.valueOf(myEmbedStripVersion).booleanValue()) {
         targetFileName.append('-').append(dependency.getVersion());
-        if (StringUtils.isNotEmpty(dependency.getClassifier())) {
+        if (StringUtil.isNotEmpty(dependency.getClassifier())) {
           targetFileName.append('-').append(dependency.getClassifier());
         }
       }
       String extension = dependency.getExtension();
-      if (StringUtils.isNotEmpty(extension)) {
+      if (StringUtil.isNotEmpty(extension)) {
         targetFileName.append('.').append(extension);
       }
 
@@ -198,14 +178,13 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
       embeddedArtifacts.append("g=\"").append(dependency.getGroupId()).append('"');
       embeddedArtifacts.append(";a=\"").append(dependency.getArtifactId()).append('"');
       embeddedArtifacts.append(";v=\"").append(dependency.getVersion()).append('"');
-      if (StringUtils.isNotEmpty(dependency.getClassifier())) {
+      if (StringUtil.isNotEmpty(dependency.getClassifier())) {
         embeddedArtifacts.append(";c=\"").append(dependency.getClassifier()).append('"');
       }
     }
   }
 
-
-  private static void inlineDependency(String path, StringBuffer includeResource) {
+  private static void inlineDependency(String path, StringBuilder includeResource) {
     if (includeResource.length() > 0) {
       includeResource.append(',');
     }
@@ -214,37 +193,24 @@ public final class DependencyEmbedder extends AbstractDependencyFilter {
     includeResource.append(path);
   }
 
-
-  public Collection<String> getInlinedPaths() {
-    return myInlinedPaths;
-  }
-
-
-  public Collection<MavenArtifact> getEmbeddedArtifacts() {
-    return myEmbeddedArtifacts;
-  }
-
-
   private static void appendDependencies(Analyzer analyzer, String directiveName, String mavenDependencies) {
-    /*
-    * similar algorithm to {maven-resources} but default behaviour here is to append rather than override
-    */
+    // similar algorithm to {maven-resources} but default behaviour here is to append rather than override
     final String instruction = analyzer.getProperty(directiveName);
-    if (StringUtils.isNotEmpty(instruction)) {
+    if (StringUtil.isNotEmpty(instruction)) {
       if (instruction.contains(MAVEN_DEPENDENCIES)) {
-        // if there are no embeddded dependencies, we do a special treatment and replace
-        // every occurance of MAVEN_DEPENDENCIES and a following comma with an empty string
+        // if there are no embedded dependencies, we do a special treatment and replace
+        // every occurrence of MAVEN_DEPENDENCIES and a following comma with an empty string
         if (mavenDependencies.length() == 0) {
           String cleanInstruction = ImporterUtil.removeTagFromInstruction(instruction, MAVEN_DEPENDENCIES);
           analyzer.setProperty(directiveName, cleanInstruction);
         }
         else {
-          String mergedInstruction = StringUtils.replace(instruction, MAVEN_DEPENDENCIES, mavenDependencies);
+          String mergedInstruction = StringUtil.replace(instruction, MAVEN_DEPENDENCIES, mavenDependencies);
           analyzer.setProperty(directiveName, mergedInstruction);
         }
       }
       else if (mavenDependencies.length() > 0) {
-        if (Analyzer.INCLUDE_RESOURCE.equalsIgnoreCase(directiveName)) {
+        if (Constants.INCLUDE_RESOURCE.equalsIgnoreCase(directiveName)) {
           // dependencies should be prepended so they can be overwritten by local resources
           analyzer.setProperty(directiveName, mavenDependencies + ',' + instruction);
         }

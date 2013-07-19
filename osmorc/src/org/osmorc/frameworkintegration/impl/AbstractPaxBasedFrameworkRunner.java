@@ -27,10 +27,8 @@ package org.osmorc.frameworkintegration.impl;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.ParametersList;
-import com.intellij.ide.plugins.PluginManager;
-import com.intellij.openapi.extensions.PluginId;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.application.PluginPathManager;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.net.HttpConfigurable;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +38,7 @@ import org.osmorc.run.ExternalVMFrameworkRunner;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -49,54 +47,41 @@ import java.util.regex.Pattern;
  * various frameworks.
  *
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id:$
  */
-public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties> extends AbstractFrameworkRunner<P>
-  implements ExternalVMFrameworkRunner {
-  private static final String PaxRunnerLib = "pax-runner.jar";
+public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties>
+                extends AbstractFrameworkRunner<P>
+                implements ExternalVMFrameworkRunner {
+
+  public static final String PaxRunnerLib = "pax-runner.jar";
   public static final String PaxRunnerMainClass = "org.ops4j.pax.runner.Run";
 
-
-  protected AbstractPaxBasedFrameworkRunner() {
-  }
-
+  protected AbstractPaxBasedFrameworkRunner() { }
 
   @NotNull
   @Override
-  public final List<VirtualFile> getFrameworkStarterLibraries() {
+  public final List<String> getFrameworkStarterLibraries() throws ExecutionException {
     return getPaxLibraries();
   }
 
-  public static List<VirtualFile> getPaxLibraries() {
-    // pax does it's own magic, so the only lib we need, is the pax lib.
-    // XXX: ask anton if there is some better way to do this..
-    @SuppressWarnings({"ConstantConditions"}) final String paxLib =
-      PluginManager.getPlugin(PluginId.getId("Osmorc")).getPath().getPath() + "/lib/" + PaxRunnerLib;
-    List<VirtualFile> libs = new ArrayList<VirtualFile>(1);
-    VirtualFile path = LocalFileSystem.getInstance().findFileByPath(paxLib);
-    if (path == null) {
-      // hmm not good... try get it from the classpath - this is a hack...
-      String[] classpath = System.getProperty("java.class.path").split(File.pathSeparator);
-      for (String s : classpath) {
-        if (s.contains(PaxRunnerLib)) {
-          path = LocalFileSystem.getInstance().findFileByPath(s);
-          if (path != null) {
-            libs.add(path);
-            break;
-          }
-        }
-      }
+  public static List<String> getPaxLibraries() throws ExecutionException {
+    File pluginHome = PluginPathManager.getPluginHome("Osmorc");
+    if (!pluginHome.isDirectory()) {
+      pluginHome = PluginPathManager.getPluginHome("osmorc");
     }
-    else {
-      libs.add(path);
+
+    File paxLib = new File(pluginHome, "lib/" + PaxRunnerLib);
+    if (!paxLib.exists()) {
+      throw new ExecutionException("PAX Runner (" + paxLib + ") missing");
     }
-    return libs;
+
+    return Collections.singletonList(paxLib.getPath());
   }
 
-
+  @Override
   public void fillCommandLineParameters(@NotNull ParametersList commandLineParameters, @NotNull SelectedBundle[] bundlesToInstall) {
     commandLineParameters.add("--p=" + getOsgiFrameworkName().toLowerCase());
     commandLineParameters.add("--nologo=true");
+
     // Use the selected version if specified.
     FrameworkInstanceDefinition definition = getRunConfiguration().getInstanceToUse();
     String version = null;
@@ -122,7 +107,8 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
         }
       }
     }
-    final P frameworkProperties = getFrameworkProperties();
+
+    P frameworkProperties = getFrameworkProperties();
     String bootDelegation = frameworkProperties.getBootDelegation();
     if (bootDelegation != null && !(bootDelegation.trim().length() == 0)) {
       commandLineParameters.add("--bd=" + bootDelegation);
@@ -153,12 +139,14 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
     commandLineParameters.add("--executor=inProcess");
     commandLineParameters.add("--keepOriginalUrls");
     commandLineParameters.add("--skipInvalidBundles");
-    final String additionalProgramParams = getRunConfiguration().getProgramParameters();
-    if (additionalProgramParams != null && !"".equals(additionalProgramParams)) {
+
+    String additionalProgramParams = getRunConfiguration().getProgramParameters();
+    if (!StringUtil.isEmptyOrSpaces(additionalProgramParams)) {
       commandLineParameters.addParametersString(additionalProgramParams);
     }
   }
 
+  @Override
   public void fillVmParameters(ParametersList vmParameters, @NotNull SelectedBundle[] bundlesToInstall) {
     vmParameters.addAll(HttpConfigurable.convertArguments(HttpConfigurable.getJvmPropertiesList(false, null)));
 
@@ -168,6 +156,7 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
     addAdditionalTargetVMProperties(vmParameters, bundlesToInstall);
   }
 
+  @Override
   public void runCustomInstallationSteps(@NotNull SelectedBundle[] bundlesToInstall) throws ExecutionException {
     // nothing to do here either...
   }
@@ -180,9 +169,8 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
   @NotNull
   protected abstract String getOsgiFrameworkName();
 
-
   /**
-   * Returns a list of additional VM parameters that should be given to the VM that is launched by PAX. For convencience this method
+   * Returns a list of additional VM parameters that should be given to the VM that is launched by PAX. For convenience this method
    * will return the empty string in this base class, so overriding classes do not need to call super.
    *
    * @param vmParameters
@@ -193,14 +181,14 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
                                                  @NotNull SelectedBundle[] urlsOfBundlesToInstall) {
   }
 
-
   @NotNull
   @NonNls
+  @Override
   public final String getMainClass() {
     return PaxRunnerMainClass;
   }
 
-
+  @Override
   protected final Pattern getFrameworkStarterClasspathPattern() {
     return null;
   }

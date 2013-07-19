@@ -29,7 +29,6 @@ import com.intellij.execution.configurations.ParametersList;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
@@ -56,13 +55,13 @@ public interface FrameworkRunner extends Disposable {
   void init(Project project, OsgiRunConfiguration runConfiguration, RunnerSettings runnerSettings);
 
   /**
-   * Returns the virtual files for all library jars and directories that need to be placed into the classpath in order
+   * Returns paths for all library jars and directories that need to be placed into the classpath in order
    * to start the framework.
    *
    * @return a list containing all needed library virtual files.
    */
   @NotNull
-  List<VirtualFile> getFrameworkStarterLibraries();
+  List<String> getFrameworkStarterLibraries() throws ExecutionException;
 
   /**
    * Fills a map with vm parameters that should be set on the launched java VM.

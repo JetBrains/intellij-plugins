@@ -1,11 +1,31 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+ * Modified for usage within IntelliJ IDEA.
+ */
 package org.osmorc.facet.maven;
 
 import aQute.lib.osgi.Analyzer;
 import aQute.lib.osgi.Constants;
 import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenResource;
 import org.jetbrains.idea.maven.project.MavenProject;
@@ -21,15 +41,14 @@ public class ResourceCollector {
   private static final String MAVEN_RESOURCES = "{maven-resources}";
   private static final String[] DEFAULT_INCLUDES = {"**/**"};
 
-
   public static void includeMavenResources(@NotNull MavenProject currentProject, @NotNull Analyzer analyzer) {
     // pass maven resource paths onto BND analyzer
     final String mavenResourcePaths = getMavenResourcePaths(currentProject);
-    final String includeResource = (String)analyzer.getProperty(Constants.INCLUDE_RESOURCE);
+    final String includeResource = analyzer.getProperty(Constants.INCLUDE_RESOURCE);
     if (includeResource != null) {
       if (includeResource.contains(MAVEN_RESOURCES)) {
         // if there is no maven resource path, we do a special treatment and replace
-        // every occurance of MAVEN_RESOURCES and a following comma with an empty string
+        // every occurrence of MAVEN_RESOURCES and a following comma with an empty string
         if (mavenResourcePaths.length() == 0) {
           String cleanedResource = ImporterUtil.removeTagFromInstruction(includeResource, MAVEN_RESOURCES);
           if (cleanedResource.length() > 0) {
@@ -40,8 +59,7 @@ public class ResourceCollector {
           }
         }
         else {
-          String combinedResource = StringUtils
-            .replace(includeResource, MAVEN_RESOURCES, mavenResourcePaths);
+          String combinedResource = StringUtil.replace(includeResource, MAVEN_RESOURCES, mavenResourcePaths);
           analyzer.setProperty(Constants.INCLUDE_RESOURCE, combinedResource);
         }
       }
@@ -57,10 +75,7 @@ public class ResourceCollector {
     }
   }
 
-
   private static String getMavenResourcePaths(@NotNull MavenProject currentProject) {
-    final String basePath = currentProject.getDirectory();
-
     Set<String> pathSet = new LinkedHashSet<String>();
     for (MavenResource resource : getMavenResources(currentProject)) {
       final String sourcePath = resource.getDirectory();

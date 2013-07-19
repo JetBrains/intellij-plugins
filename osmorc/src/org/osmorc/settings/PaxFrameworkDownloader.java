@@ -13,8 +13,6 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.PathsList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.impl.AbstractPaxBasedFrameworkRunner;
@@ -23,7 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Helper class which downloads an OSGi fraemwork using PAX Runner.
+ * Helper class which downloads an OSGi framework using PAX Runner.
  */
 public class PaxFrameworkDownloader {
   private static final Logger LOG = Logger.getInstance("#org.osmorc.settings.PaxFrameworkDownloader");
@@ -105,10 +103,7 @@ public class PaxFrameworkDownloader {
     }
     parameters.setJdk(sdk);
     parameters.setMainClass(AbstractPaxBasedFrameworkRunner.PaxRunnerMainClass);
-    PathsList classpath = parameters.getClassPath();
-    for (VirtualFile libraryFile : AbstractPaxBasedFrameworkRunner.getPaxLibraries()) {
-      classpath.add(libraryFile);
-    }
+    parameters.getClassPath().addAll(AbstractPaxBasedFrameworkRunner.getPaxLibraries());
 
     ParametersList parametersList = parameters.getProgramParametersList();
     parametersList.add("--p=" + myFrameworkType);
@@ -176,7 +171,7 @@ public class PaxFrameworkDownloader {
     /**
      * This is called when the download is finished.
      *
-     * @param successful   true if the download was successfull
+     * @param successful   true if the download was successful
      * @param errorMessage the error message, if any. this is null when the download was not successful.
      */
     void downloadFinished(boolean successful, @Nullable String errorMessage);

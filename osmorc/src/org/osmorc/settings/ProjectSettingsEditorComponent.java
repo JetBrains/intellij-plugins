@@ -222,7 +222,6 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
     if (projectFrameworkInstance == null && frameworkInstanceName != null) {
       projectFrameworkInstance = new FrameworkInstanceDefinition();
       projectFrameworkInstance.setName(frameworkInstanceName);
-      projectFrameworkInstance.setDefined(false);
       myFrameworkInstance.addItem(projectFrameworkInstance);
     }
     myFrameworkInstance.setSelectedItem(projectFrameworkInstance);
