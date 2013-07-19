@@ -91,9 +91,8 @@ public class IntellijJavaTypeCreator implements IJavaTypeCreator {
      * {@inheritDoc}
      */
     public boolean ensureClassImport(final IJavaClassType baseClass, final IJavaClassType type) {
-        if (!ImportUtils
-          .nameCanBeImported(type.getFullyQualifiedName(), ((IntellijJavaClassType)baseClass).getPsiClass().getContainingFile())) {
-          return false;
+        if (!ImportUtils.nameCanBeImported(type.getFullyQualifiedName(), ((IntellijJavaClassType) baseClass).getPsiClass().getContainingFile())) {
+            return false;
         }
 
         final PsiImportList importList = ((PsiJavaFile) ((IntellijJavaClassType) baseClass).getPsiClass().getContainingFile()).getImportList();
