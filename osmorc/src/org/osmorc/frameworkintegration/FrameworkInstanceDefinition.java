@@ -24,7 +24,7 @@
  */
 package org.osmorc.frameworkintegration;
 
-import com.intellij.util.xmlb.annotations.Transient;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -34,36 +34,8 @@ public class FrameworkInstanceDefinition {
   private String myFrameworkIntegratorName;
   private String myName;
   private String myBaseFolder;
-  private boolean myDefined = true;
   private String myVersion;
   private boolean myDownloadedByPaxRunner;
-
-  public FrameworkInstanceDefinition() {
-  }
-
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-
-    FrameworkInstanceDefinition that = (FrameworkInstanceDefinition)o;
-
-    return myName.equals(that.myName);
-  }
-
-  public int hashCode() {
-    return myName.hashCode();
-  }
-
-  public String toString() {
-    String descriptionPart = myName != null ? myName : "undefined";
-    String frameworkIntegratorNamePart = myFrameworkIntegratorName != null ? myFrameworkIntegratorName : "undefined";
-    String versionPart = myVersion != null && myVersion.length() > 0 ? " [" + myVersion + "]" : " [latest]";
-    return descriptionPart + " (" + frameworkIntegratorNamePart + ")" + versionPart;
-  }
 
   public String getBaseFolder() {
     return myBaseFolder;
@@ -97,20 +69,39 @@ public class FrameworkInstanceDefinition {
     myVersion = version;
   }
 
-  @Transient
-  public boolean isDefined() {
-    return myDefined;
-  }
-
-  public void setDefined(boolean defined) {
-    myDefined = defined;
-  }
-
   public boolean isDownloadedByPaxRunner() {
     return myDownloadedByPaxRunner;
   }
 
   public void setDownloadedByPaxRunner(boolean downloadedByPaxRunner) {
     myDownloadedByPaxRunner = downloadedByPaxRunner;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    FrameworkInstanceDefinition that = (FrameworkInstanceDefinition)o;
+
+    if (!myName.equals(that.myName)) return false;
+    if (myVersion != null ? !myVersion.equals(that.myVersion) : that.myVersion != null) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = myName.hashCode();
+    result = 31 * result + (myVersion != null ? myVersion.hashCode() : 0);
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    String description = myName != null ? myName : "undefined";
+    String frameworkIntegrator = myFrameworkIntegratorName != null ? myFrameworkIntegratorName : "undefined";
+    String version = !StringUtil.isEmptyOrSpaces(myVersion) ? " [" + myVersion + "]" : " [latest]";
+    return description + " (" + frameworkIntegrator + ")" + version;
   }
 }
