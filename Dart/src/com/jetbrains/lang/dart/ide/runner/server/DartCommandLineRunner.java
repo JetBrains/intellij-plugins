@@ -33,7 +33,7 @@ public class DartCommandLineRunner extends DefaultProgramRunner {
     }
 
     public ConfigurationPerRunnerSettings getConfigurationSettings() {
-      return new ConfigurationPerRunnerSettings(DART_RUNNER_ID, null);
+      return new ConfigurationPerRunnerSettings(null);
     }
   };
 
