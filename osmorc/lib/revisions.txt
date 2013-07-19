@@ -1,2 +1,0 @@
-pax-runner.jar -> 1.7.3  (manually patched)
-biz.aQute.bndlib.jar -> 1.44.0
