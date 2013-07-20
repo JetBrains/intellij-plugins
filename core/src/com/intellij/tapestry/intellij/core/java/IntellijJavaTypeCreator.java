@@ -6,16 +6,16 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.codeStyle.VariableKind;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
+import com.intellij.psi.codeStyle.VariableKind;
 import com.intellij.psi.util.ClassUtil;
-import com.intellij.util.IncorrectOperationException;
 import com.intellij.tapestry.core.java.IJavaAnnotation;
 import com.intellij.tapestry.core.java.IJavaClassType;
 import com.intellij.tapestry.core.java.IJavaField;
 import com.intellij.tapestry.core.java.IJavaTypeCreator;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
-import com.siyeh.ipp.psiutils.ImportUtils;
+import com.intellij.util.IncorrectOperationException;
+import com.siyeh.ig.psiutils.ImportUtils;
 
 import java.util.Map;
 
@@ -91,8 +91,9 @@ public class IntellijJavaTypeCreator implements IJavaTypeCreator {
      * {@inheritDoc}
      */
     public boolean ensureClassImport(final IJavaClassType baseClass, final IJavaClassType type) {
-        if (!ImportUtils.nameCanBeImported(type.getFullyQualifiedName(), ((IntellijJavaClassType) baseClass).getPsiClass().getContainingFile())) {
-            return false;
+        if (!ImportUtils
+          .nameCanBeImported(type.getFullyQualifiedName(), ((IntellijJavaClassType)baseClass).getPsiClass().getContainingFile())) {
+          return false;
         }
 
         final PsiImportList importList = ((PsiJavaFile) ((IntellijJavaClassType) baseClass).getPsiClass().getContainingFile()).getImportList();
