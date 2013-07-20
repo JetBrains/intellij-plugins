@@ -283,11 +283,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   }
 
   @SuppressWarnings({"deprecation"})
-  public JDOMExternalizable createRunnerSettings(final ConfigurationInfoProvider configurationInfoProvider) {
-    return null;
-  }
-
-  @SuppressWarnings({"deprecation"})
   public SettingsEditor<JDOMExternalizable> getRunnerSettingsEditor(final ProgramRunner runner) {
     return null;
   }
