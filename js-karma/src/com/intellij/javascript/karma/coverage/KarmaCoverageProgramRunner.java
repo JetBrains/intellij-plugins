@@ -46,9 +46,8 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     return CoverageExecutor.EXECUTOR_ID.equals(executorId) && profile instanceof KarmaRunConfiguration;
   }
 
-  @SuppressWarnings({"deprecation", "UnnecessaryFullyQualifiedName"})
   @Override
-  public com.intellij.openapi.util.JDOMExternalizable createConfigurationData(final ConfigurationInfoProvider settingsProvider) {
+  public RunnerSettings createConfigurationData(final ConfigurationInfoProvider settingsProvider) {
     return new CoverageRunnerData();
   }
 

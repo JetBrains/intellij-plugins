@@ -11,6 +11,7 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.configurations.coverage.CoverageEnabledConfiguration;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
@@ -39,9 +40,8 @@ public class JstdCoverageProgramRunner extends GenericProgramRunner {
     return CoverageExecutor.EXECUTOR_ID.equals(executorId) && profile instanceof JstdRunConfiguration;
   }
 
-  @SuppressWarnings({"deprecation", "UnnecessaryFullyQualifiedName"})
   @Override
-  public com.intellij.openapi.util.JDOMExternalizable createConfigurationData(final ConfigurationInfoProvider settingsProvider) {
+  public RunnerSettings createConfigurationData(final ConfigurationInfoProvider settingsProvider) {
     return new CoverageRunnerData();
   }
 

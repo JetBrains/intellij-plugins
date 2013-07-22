@@ -44,8 +44,8 @@ public class OsgiDebuggerRunner extends GenericDebuggerRunner {
     if (runState.requiresRemoteDebugger()) {
       // this is actually copied from the default, but well
       String myDebugPort = null;
-      if (myRunnerSettings.getData() instanceof DebuggingRunnerData) {
-        myDebugPort = ((DebuggingRunnerData)myRunnerSettings.getData()).getDebugPort();
+      if (myRunnerSettings instanceof DebuggingRunnerData) {
+        myDebugPort = ((DebuggingRunnerData)myRunnerSettings).getDebugPort();
         if (myDebugPort.length() == 0) {
           try {
             myDebugPort = DebuggerUtils.getInstance().findAvailableDebugAddress(true);
@@ -53,9 +53,9 @@ public class OsgiDebuggerRunner extends GenericDebuggerRunner {
           catch (ExecutionException e) {
             logger.error(e);
           }
-          ((DebuggingRunnerData)myRunnerSettings.getData()).setDebugPort(myDebugPort);
+          ((DebuggingRunnerData)myRunnerSettings).setDebugPort(myDebugPort);
         }
-        ((DebuggingRunnerData)myRunnerSettings.getData()).setLocal(false);
+        ((DebuggingRunnerData)myRunnerSettings).setLocal(false);
       }
       final RemoteConnection connection = new RemoteConnection(true, "127.0.0.1", myDebugPort, true);
       return attachVirtualMachine(project, executor, state, contentToReuse, env, connection, false);
