@@ -24,26 +24,18 @@
  */
 package org.osmorc.frameworkintegration;
 
+import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class FrameworkInstanceDefinition {
+public class FrameworkInstanceDefinition extends UserDataHolderBase {
   private String myFrameworkIntegratorName;
   private String myName;
-  private String myBaseFolder;
   private String myVersion;
-  private boolean myDownloadedByPaxRunner;
-
-  public String getBaseFolder() {
-    return myBaseFolder;
-  }
-
-  public void setBaseFolder(String baseFolder) {
-    myBaseFolder = baseFolder;
-  }
+  private String myBaseFolder;
 
   public String getFrameworkIntegratorName() {
     return myFrameworkIntegratorName;
@@ -69,12 +61,12 @@ public class FrameworkInstanceDefinition {
     myVersion = version;
   }
 
-  public boolean isDownloadedByPaxRunner() {
-    return myDownloadedByPaxRunner;
+  public String getBaseFolder() {
+    return myBaseFolder;
   }
 
-  public void setDownloadedByPaxRunner(boolean downloadedByPaxRunner) {
-    myDownloadedByPaxRunner = downloadedByPaxRunner;
+  public void setBaseFolder(String baseFolder) {
+    myBaseFolder = baseFolder;
   }
 
   @Override

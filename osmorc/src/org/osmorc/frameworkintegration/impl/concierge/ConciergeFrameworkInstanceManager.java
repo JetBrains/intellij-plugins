@@ -96,10 +96,6 @@ public class ConciergeFrameworkInstanceManager extends AbstractFrameworkInstance
       return "A name for the framework instance needs to be given.";
     }
 
-    if (frameworkInstanceDefinition.isDownloadedByPaxRunner()) {
-      return checkDownloadedFolderStructure(frameworkInstanceDefinition);
-    }
-
     VirtualFile installFolder = getLocalFileSystem().findFileByPath(frameworkInstanceDefinition.getBaseFolder());
 
     if (installFolder == null || !installFolder.isDirectory()) {

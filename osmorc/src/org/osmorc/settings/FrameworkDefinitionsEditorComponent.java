@@ -27,6 +27,7 @@ package org.osmorc.settings;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 
@@ -36,6 +37,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -120,11 +122,7 @@ public class FrameworkDefinitionsEditorComponent {
     dialog.show();
 
     if (dialog.isOK()) {
-      FrameworkInstanceDefinition instanceDefinition = new FrameworkInstanceDefinition();
-      instanceDefinition.setName(dialog.getName());
-      instanceDefinition.setFrameworkIntegratorName(dialog.getIntegratorName());
-      instanceDefinition.setBaseFolder(dialog.getBaseFolder());
-      instanceDefinition.setVersion(dialog.getVersion());
+      FrameworkInstanceDefinition instanceDefinition = dialog.createDefinition();
       //noinspection unchecked
       myModel.addElement(instanceDefinition);
       myModified = true;
@@ -142,38 +140,29 @@ public class FrameworkDefinitionsEditorComponent {
   }
 
   private void editFrameworkInstance() {
-    FrameworkInstanceDefinition frameworkInstanceDefinition = mySelectedFrameworkInstance;
-    if (frameworkInstanceDefinition == null) {
-      return; // usually should not happen, but you never know.
-    }
+    FrameworkInstanceDefinition selectedFrameworkInstance = this.mySelectedFrameworkInstance;
+    if (selectedFrameworkInstance != null) {
+      CreateFrameworkInstanceDialog dialog = new CreateFrameworkInstanceDialog(myFrameworkIntegratorRegistry, selectedFrameworkInstance);
+      dialog.pack();
+      dialog.show();
 
-    CreateFrameworkInstanceDialog dialog =
-      new CreateFrameworkInstanceDialog(myFrameworkIntegratorRegistry, frameworkInstanceDefinition.getName());
-    dialog.setIntegratorName(frameworkInstanceDefinition.getFrameworkIntegratorName());
-    dialog.setBaseFolder(frameworkInstanceDefinition.getBaseFolder());
-    dialog.setVersion(frameworkInstanceDefinition.getVersion());
-    dialog.pack();
-    dialog.show();
-
-    if (dialog.isOK()) {
-      int index = myModel.indexOf(mySelectedFrameworkInstance);
-      myModel.removeElement(mySelectedFrameworkInstance);
-
-      frameworkInstanceDefinition = new FrameworkInstanceDefinition();
-      // set new properties
-      frameworkInstanceDefinition.setName(dialog.getName());
-      frameworkInstanceDefinition.setFrameworkIntegratorName(dialog.getIntegratorName());
-      frameworkInstanceDefinition.setBaseFolder(dialog.getBaseFolder());
-      frameworkInstanceDefinition.setVersion(dialog.getVersion());
-      //noinspection unchecked
-      myModel.add(index, frameworkInstanceDefinition);
-      // fire settings change.
-      myModified = true;
-      myFrameworkInstances.setSelectedValue(frameworkInstanceDefinition, true);
+      if (dialog.isOK()) {
+        int index = myModel.indexOf(mySelectedFrameworkInstance);
+        myModel.removeElement(mySelectedFrameworkInstance);
+        selectedFrameworkInstance = dialog.createDefinition();
+        //noinspection unchecked
+        myModel.add(index, selectedFrameworkInstance);
+        myModified = true;
+        myFrameworkInstances.setSelectedValue(selectedFrameworkInstance, true);
+      }
     }
   }
 
-  public void resetTo(ApplicationSettings settings) {
+  public JPanel getMainPanel() {
+    return mainPanel;
+  }
+
+  public void resetTo(@NotNull ApplicationSettings settings) {
     myModel.clear();
     for (FrameworkInstanceDefinition frameworkInstanceDefinition : settings.getFrameworkInstanceDefinitions()) {
       //noinspection unchecked
@@ -182,19 +171,14 @@ public class FrameworkDefinitionsEditorComponent {
     myModified = false;
   }
 
-  public void applyTo(ApplicationSettings settings) {
+  public void applyTo(@NotNull ApplicationSettings settings) {
     int instances = myModel.getSize();
-    ArrayList<FrameworkInstanceDefinition> definitions = new ArrayList<FrameworkInstanceDefinition>(instances);
+    List<FrameworkInstanceDefinition> definitions = new ArrayList<FrameworkInstanceDefinition>(instances);
     for (int i = 0; i < instances; i++) {
-      definitions.add((FrameworkInstanceDefinition)myFrameworkInstances.getModel().getElementAt(i));
+      definitions.add((FrameworkInstanceDefinition)myModel.getElementAt(i));
     }
-
     settings.setFrameworkInstanceDefinitions(definitions);
     myModified = false;
-  }
-
-  public JPanel getMainPanel() {
-    return mainPanel;
   }
 
   public boolean isModified() {

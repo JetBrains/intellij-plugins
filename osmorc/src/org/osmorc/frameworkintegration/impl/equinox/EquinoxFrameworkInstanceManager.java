@@ -90,10 +90,6 @@ public class EquinoxFrameworkInstanceManager extends AbstractFrameworkInstanceMa
       return "A name for the framework instance needs to be given.";
     }
 
-    if (frameworkInstanceDefinition.isDownloadedByPaxRunner()) {
-      return checkDownloadedFolderStructure(frameworkInstanceDefinition);
-    }
-
     VirtualFile equinoxFolder = getLocalFileSystem().findFileByPath(frameworkInstanceDefinition.getBaseFolder());
 
     if (equinoxFolder == null || !equinoxFolder.isDirectory()) {
