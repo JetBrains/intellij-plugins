@@ -18,7 +18,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
-import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -40,7 +39,7 @@ import java.net.URL;
  * Date: 13.07.2010
  * Time: 13:32:04
  */
-public class ActionScriptProfileRunner implements ProgramRunner<JDOMExternalizable> {
+public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> {
   private static final Logger LOG = Logger.getInstance(ActionScriptProfileRunner.class.getName());
   private static final String TOOLWINDOW_ID = ProfilerBundle.message("window.name");
 
@@ -58,7 +57,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<JDOMExternalizab
     return executorId.equals(DefaultProfilerExecutor.EXECUTOR_ID) && runProfile instanceof FlashRunConfiguration;
   }
 
-  public JDOMExternalizable createConfigurationData(ConfigurationInfoProvider configurationInfoProvider) {
+  public RunnerSettings createConfigurationData(ConfigurationInfoProvider configurationInfoProvider) {
     return null;
   }
 
@@ -75,7 +74,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<JDOMExternalizab
     return myFlexRunner.createActions(executionResult);
   }
 
-  public SettingsEditor<JDOMExternalizable> getSettingsEditor(Executor executor, RunConfiguration runConfiguration) {
+  public SettingsEditor<RunnerSettings> getSettingsEditor(Executor executor, RunConfiguration runConfiguration) {
     return null;
   }
 
