@@ -137,7 +137,10 @@ public class ValidateFlashConfigurationsPrecompileTask implements CompileTask {
   private static void reportProblems(final CompileContext context,
                                      final Collection<Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem>> problems) {
     // todo remove this senseless error message when 'show first error in editor' functionality respect canNavigateToSource()
-    context.addMessage(CompilerMessageCategory.ERROR, "Flash build configurations contain errors. See details below.", null, -1, -1);
+    context.addMessage(CompilerMessageCategory.ERROR,
+                       "Flash build configurations contain errors. " +
+                       "Double-click error message below to navigate to the corresponding field in the Project Structure dialog",
+                       null, -1, -1);
 
     for (Trinity<Module, FlexBuildConfiguration, FlashProjectStructureProblem> trinity : problems) {
       final Module module = trinity.getFirst();
