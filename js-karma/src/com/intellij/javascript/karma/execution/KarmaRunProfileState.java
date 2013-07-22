@@ -2,7 +2,6 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.coverage.CoverageExecutor;
 import com.intellij.execution.*;
-import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.executors.DefaultDebugExecutor;
@@ -91,10 +90,4 @@ public class KarmaRunProfileState implements RunProfileState {
   public RunnerSettings getRunnerSettings() {
     return myExecutionEnvironment.getRunnerSettings();
   }
-
-  @Override
-  public ConfigurationPerRunnerSettings getConfigurationSettings() {
-    return myExecutionEnvironment.getConfigurationSettings();
-  }
-
 }
