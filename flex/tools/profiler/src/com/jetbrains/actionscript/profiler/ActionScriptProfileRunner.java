@@ -70,10 +70,6 @@ public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> 
     myFlexRunner.onProcessStarted(runnerSettings, executionResult);
   }
 
-  public AnAction[] createActions(ExecutionResult executionResult) {
-    return myFlexRunner.createActions(executionResult);
-  }
-
   public SettingsEditor<RunnerSettings> getSettingsEditor(Executor executor, RunConfiguration runConfiguration) {
     return null;
   }
