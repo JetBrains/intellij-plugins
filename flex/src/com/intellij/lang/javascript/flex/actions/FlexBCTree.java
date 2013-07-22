@@ -75,7 +75,26 @@ public class FlexBCTree extends CheckboxTree {
     return consumer.getResult();
   }
 
+  public void setCheckedStatusForAll(final boolean checked) {
+    final CheckedTreeNode node = (CheckedTreeNode)getModel().getRoot();
+    node.setChecked(checked);
+    setChildrenCheckedRecursively(node, checked);
+  }
+
+  private static void setChildrenCheckedRecursively(final CheckedTreeNode node, final boolean checked) {
+    final Enumeration children = node.children();
+    while (children.hasMoreElements()) {
+      final CheckedTreeNode childNode = (CheckedTreeNode)children.nextElement();
+      childNode.setChecked(checked);
+      setChildrenCheckedRecursively(childNode, checked);
+    }
+  }
+
   public void setChecked(final String moduleName, final String bcName, final boolean checked) {
+    getBCNode(moduleName, bcName).setChecked(checked);
+  }
+
+  private CheckedTreeNode getBCNode(final String moduleName, final String bcName) {
     final Enumeration moduleNodes = ((CheckedTreeNode)getModel().getRoot()).children();
     while (moduleNodes.hasMoreElements()) {
       final CheckedTreeNode moduleNode = (CheckedTreeNode)moduleNodes.nextElement();
@@ -87,12 +106,21 @@ public class FlexBCTree extends CheckboxTree {
           final CheckedTreeNode bcNode = (CheckedTreeNode)bcNodes.nextElement();
           final Object bcUserObject = bcNode.getUserObject();
           if (bcUserObject instanceof FlexBuildConfiguration && ((FlexBuildConfiguration)bcUserObject).getName().equals(bcName)) {
-            bcNode.setChecked(checked);
-            break;
+            return bcNode;
           }
         }
-        break;
+        return null;
       }
+    }
+    return null;
+  }
+
+  public void selectRow(final Module module, final FlexBuildConfiguration bc) {
+    clearSelection();
+
+    final CheckedTreeNode node = getBCNode(module.getName(), bc.getName());
+    if (node != null) {
+      TreeUtil.selectInTree(node, true, this);
     }
   }
 
