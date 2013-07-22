@@ -39,7 +39,7 @@ public class OsgiDebuggerRunner extends GenericDebuggerRunner {
                                                          RunContentDescriptor contentToReuse,
                                                          ExecutionEnvironment env) throws ExecutionException {
     OsgiRunState runState = (OsgiRunState)state;
-    final RunnerSettings myRunnerSettings = state.getRunnerSettings();
+    final RunnerSettings myRunnerSettings = env.getRunnerSettings();
 
     if (runState.requiresRemoteDebugger()) {
       // this is actually copied from the default, but well

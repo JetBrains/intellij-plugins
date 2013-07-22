@@ -3,7 +3,6 @@ package com.intellij.javascript.karma.execution;
 import com.intellij.coverage.CoverageExecutor;
 import com.intellij.execution.*;
 import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -84,10 +83,5 @@ public class KarmaRunProfileState implements RunProfileState {
     DefaultExecutionResult executionResult = new DefaultExecutionResult(smtRunnerConsoleView, processHandler);
     executionResult.setRestartActions(new ToggleAutoTestAction());
     return executionResult;
-  }
-
-  @Override
-  public RunnerSettings getRunnerSettings() {
-    return myExecutionEnvironment.getRunnerSettings();
   }
 }
