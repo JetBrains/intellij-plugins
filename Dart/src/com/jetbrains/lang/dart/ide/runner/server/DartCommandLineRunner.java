@@ -1,16 +1,12 @@
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -22,20 +18,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class DartCommandLineRunner extends DefaultProgramRunner {
   public static final String DART_RUNNER_ID = "DartCommandLineRunner";
-
-  public static final RunProfileState EMPTY_RUN_STATE = new RunProfileState() {
-    public ExecutionResult execute(final Executor executor, @NotNull final ProgramRunner runner) throws ExecutionException {
-      return null;
-    }
-
-    public RunnerSettings getRunnerSettings() {
-      return null;
-    }
-
-    public ConfigurationPerRunnerSettings getConfigurationSettings() {
-      return null;
-    }
-  };
 
   @NotNull
   @Override

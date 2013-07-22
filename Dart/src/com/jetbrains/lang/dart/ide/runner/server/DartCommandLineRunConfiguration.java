@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
+import com.intellij.execution.configuration.EmptyRunProfileState;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RuntimeConfiguration;
@@ -105,7 +106,7 @@ public class DartCommandLineRunConfiguration extends RuntimeConfiguration
   }
 
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-    return DartCommandLineRunner.EMPTY_RUN_STATE;
+    return EmptyRunProfileState.INSTANCE;
   }
 
 
