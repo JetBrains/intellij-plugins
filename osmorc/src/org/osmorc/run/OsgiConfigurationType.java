@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.run;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
@@ -38,13 +37,11 @@ import javax.swing.*;
  * Configuration type for a bundle run configuration.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id$
  */
 public class OsgiConfigurationType implements ConfigurationType {
-
   private final ConfigurationFactory myFactory;
 
-  OsgiConfigurationType() {
+  public OsgiConfigurationType() {
     myFactory = new ConfigurationFactory(this) {
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new OsgiRunConfiguration(project, this, "");
@@ -57,24 +54,28 @@ public class OsgiConfigurationType implements ConfigurationType {
     };
   }
 
-
+  @Override
   public String getDisplayName() {
-    return OsmorcBundle.getTranslation("runconfiguration.displayname");
+    return OsmorcBundle.message("run.configuration.name");
   }
 
+  @Override
   public String getConfigurationTypeDescription() {
-    return OsmorcBundle.getTranslation("runconfiguration.description");
+    return OsmorcBundle.message("run.configuration.description");
   }
 
+  @Override
   public Icon getIcon() {
     return OsmorcBundle.getSmallIcon();
   }
 
   @NotNull
+  @Override
   public String getId() {
     return "#org.osmorc.OsgiConfigurationType";
   }
 
+  @Override
   public ConfigurationFactory[] getConfigurationFactories() {
     return new ConfigurationFactory[]{myFactory};
   }

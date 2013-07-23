@@ -112,23 +112,23 @@ public class KnopflerfishFrameworkInstanceManager extends AbstractFrameworkInsta
 
     if (installFolder == null || !installFolder.isDirectory()) {
       return OsmorcBundle
-        .getTranslation("knopflerfish.folder.does.not.exist", frameworkInstanceDefinition.getBaseFolder());
+        .message("knopflerfish.folder.does.not.exist", frameworkInstanceDefinition.getBaseFolder());
     }
 
     VirtualFile knopflerfishOrgFolder = installFolder.findChild("knopflerfish.org");
     if (knopflerfishOrgFolder == null || !knopflerfishOrgFolder.isDirectory()) {
       return OsmorcBundle
-        .getTranslation("knopflerfish.folder.knopflerfish.org.missing", frameworkInstanceDefinition.getBaseFolder());
+        .message("knopflerfish.folder.knopflerfish.org.missing", frameworkInstanceDefinition.getBaseFolder());
     }
 
     VirtualFile osgiFolder = knopflerfishOrgFolder.findChild("osgi");
     if (osgiFolder == null || !osgiFolder.isDirectory()) {
-      return OsmorcBundle.getTranslation("knopflerfish.folder.osgi.missing", knopflerfishOrgFolder.getPath());
+      return OsmorcBundle.message("knopflerfish.folder.osgi.missing", knopflerfishOrgFolder.getPath());
     }
 
     VirtualFile jarsFolder = osgiFolder.findChild("jars");
     if (jarsFolder == null || !jarsFolder.isDirectory()) {
-      return OsmorcBundle.getTranslation("knopflerfish.folder.jars.missing", osgiFolder.getPath());
+      return OsmorcBundle.message("knopflerfish.folder.jars.missing", osgiFolder.getPath());
     }
 
     return null;

@@ -60,7 +60,7 @@ public class EquinoxOsgiRunConfigurationChecker extends DefaultOsgiRunConfigurat
       }
 
       if (runProperties.isStartConsole()) {
-        throw new RuntimeConfigurationWarning(OsmorcBundle.getTranslation("runconfiguration.equinox.runningWithConsole"));
+        throw new RuntimeConfigurationWarning(OsmorcBundle.message("run.configuration.equinox.runningWithConsole"));
       }
     }
   }

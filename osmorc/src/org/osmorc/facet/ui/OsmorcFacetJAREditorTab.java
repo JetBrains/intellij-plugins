@@ -309,8 +309,8 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
         VfsUtil.createDirectories(VfsUtil.urlToPath(outputPathUrl));
       }
       catch (IOException e) {
-        Messages.showErrorDialog(myRoot, OsmorcBundle.getTranslation("error"),
-                                 OsmorcBundle.getTranslation("faceteditor.cannot.create.outputpath"));
+        Messages.showErrorDialog(myRoot, OsmorcBundle.message("error"),
+                                 OsmorcBundle.message("faceteditor.cannot.create.outputpath"));
         return;
       }
 
@@ -331,8 +331,8 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     if (file != null) {
       if (VfsUtil.isAncestor(moduleCompilerOutputPath, file, false)) {
         Messages.showErrorDialog(myEditorContext.getProject(),
-                                 OsmorcBundle.getTranslation("faceteditor.jar.cannot.be.in.output.path"),
-                                 OsmorcBundle.getTranslation("error"));
+                                 OsmorcBundle.message("faceteditor.jar.cannot.be.in.output.path"),
+                                 OsmorcBundle.message("error"));
         myJarOutputPathChooser.setText("");
         return;
       }

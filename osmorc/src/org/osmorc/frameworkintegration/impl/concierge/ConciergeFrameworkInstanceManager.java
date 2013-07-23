@@ -100,12 +100,12 @@ public class ConciergeFrameworkInstanceManager extends AbstractFrameworkInstance
 
     if (installFolder == null || !installFolder.isDirectory()) {
       return OsmorcBundle
-        .getTranslation("concierge.folder.does.not.exist", frameworkInstanceDefinition.getBaseFolder());
+        .message("concierge.folder.does.not.exist", frameworkInstanceDefinition.getBaseFolder());
     }
 
     VirtualFile bundlesFolder = installFolder.findChild("bundles");
     if (bundlesFolder == null || !bundlesFolder.isDirectory()) {
-      return OsmorcBundle.getTranslation("concierge.folder.bundles.missing", installFolder.getPath());
+      return OsmorcBundle.message("concierge.folder.bundles.missing", installFolder.getPath());
     }
 
     return null;

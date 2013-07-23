@@ -82,7 +82,7 @@ public class KnopflerfishFrameworkInstanceManagerTest {
         replay(fileSystem);
         assertThat(testObject.checkValidity(instanceDefinition),
                 equalTo(
-                        OsmorcBundle.getTranslation("knopflerfish.folder.does.not.exist", instanceDefinition.getBaseFolder())));
+                        OsmorcBundle.message("knopflerfish.folder.does.not.exist", instanceDefinition.getBaseFolder())));
         verify(fileSystem);
     }
 
@@ -102,8 +102,8 @@ public class KnopflerfishFrameworkInstanceManagerTest {
         expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("knopflerfish"));
         replay(fileSystem);
         assertThat(testObject.checkValidity(instanceDefinition),
-                equalTo(OsmorcBundle.getTranslation("knopflerfish.folder.knopflerfish.org.missing",
-                        instanceDefinition.getBaseFolder())));
+                equalTo(OsmorcBundle.message("knopflerfish.folder.knopflerfish.org.missing",
+                                             instanceDefinition.getBaseFolder())));
         verify(fileSystem);
     }
 
@@ -123,8 +123,8 @@ public class KnopflerfishFrameworkInstanceManagerTest {
         expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("knopflerfish"));
         replay(fileSystem);
         assertThat(testObject.checkValidity(instanceDefinition),
-                equalTo(OsmorcBundle.getTranslation("knopflerfish.folder.osgi.missing",
-                        root.findFileByRelativePath("knopflerfish/knopflerfish.org").getPath())));
+                equalTo(OsmorcBundle.message("knopflerfish.folder.osgi.missing",
+                                             root.findFileByRelativePath("knopflerfish/knopflerfish.org").getPath())));
         verify(fileSystem);
     }
 
@@ -145,8 +145,8 @@ public class KnopflerfishFrameworkInstanceManagerTest {
         expect(fileSystem.findFileByPath(instanceDefinition.getBaseFolder())).andReturn(root.findChild("knopflerfish"));
         replay(fileSystem);
         assertThat(testObject.checkValidity(instanceDefinition),
-                equalTo(OsmorcBundle.getTranslation("knopflerfish.folder.jars.missing",
-                        root.findFileByRelativePath("knopflerfish/knopflerfish.org/osgi").getPath())));
+                equalTo(OsmorcBundle.message("knopflerfish.folder.jars.missing",
+                                             root.findFileByRelativePath("knopflerfish/knopflerfish.org/osgi").getPath())));
         verify(fileSystem);
     }
 

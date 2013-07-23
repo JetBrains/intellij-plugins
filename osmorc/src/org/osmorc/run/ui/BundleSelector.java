@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.run.ui;
 
 import com.intellij.openapi.components.ServiceManager;
@@ -50,7 +49,6 @@ import java.util.*;
  * Dialog for selecting a bundle to be deployed.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id$
  */
 public class BundleSelector extends JDialog {
   private JPanel contentPane;
@@ -68,7 +66,7 @@ public class BundleSelector extends JDialog {
     this.project = project;
     setContentPane(contentPane);
     setModal(true);
-    setTitle(OsmorcBundle.getTranslation("bundleselector.title"));
+    setTitle(OsmorcBundle.message("bundle.selector.title"));
     getRootPane().setDefaultButton(buttonOK);
     bundlesList.setCellRenderer(new SelectedBundleListCellRenderer());
 

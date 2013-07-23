@@ -108,7 +108,7 @@ public class OsmorcFacetManifestGenerationEditorTab extends FacetEditorTab {
     PsiClass psiClass = JavaPsiFacade.getInstance(project)
       .findClass("org.osgi.framework.BundleActivator", GlobalSearchScope.allScope(project));
     TreeJavaClassChooserDialog dialog =
-      new TreeJavaClassChooserDialog(OsmorcBundle.getTranslation("faceteditor.select.bundleactivator"),
+      new TreeJavaClassChooserDialog(OsmorcBundle.message("faceteditor.select.bundleactivator"),
                                      project, searchScope, new TreeJavaClassChooserDialog.InheritanceJavaClassFilterImpl(
         psiClass, false, true,
         null), null);

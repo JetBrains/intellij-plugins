@@ -35,7 +35,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
+import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
@@ -294,11 +294,11 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       legacyOsgiRunConfigurationLoader = null;
     }
     if (instanceToUse == null) {
-      throw new RuntimeConfigurationError(OsmorcBundle.getTranslation("runconfiguration.no.instance.selected"));
+      throw new RuntimeConfigurationError(OsmorcBundle.message("run.configuration.no.instance.selected"));
     }
     if (isUseAlternativeJre()) {
       final String jrePath = this.getAlternativeJrePath();
-      if (jrePath == null || jrePath.length() == 0 || !JavaSdkImpl.checkForJre(jrePath)) {
+      if (jrePath == null || jrePath.length() == 0 || !JavaSdk.checkForJre(jrePath)) {
         throw new RuntimeConfigurationWarning(ExecutionBundle.message("jre.not.valid.error.message", jrePath));
       }
     }
