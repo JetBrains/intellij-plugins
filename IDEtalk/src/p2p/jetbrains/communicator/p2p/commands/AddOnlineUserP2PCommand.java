@@ -28,13 +28,12 @@ import java.util.Vector;
 
 /**
  * @author Kir Maximov
- *
- * notification about existence of a user in network
- *
+ *         <p/>
+ *         notification about existence of a user in network
  */
 @SuppressWarnings({"HardCodedStringLiteral"})
 public class AddOnlineUserP2PCommand implements P2PCommand {
-  private static final String ID = "AddOnlineUser";
+  public static final String ID = "AddOnlineUser";
 
   private final UserMonitorThread myUserMonitorThread;
 
@@ -42,25 +41,25 @@ public class AddOnlineUserP2PCommand implements P2PCommand {
     myUserMonitorThread = userMonitorThread;
   }
 
+  @Override
   public String getXmlRpcId() {
     return ID;
   }
 
-  @SuppressWarnings({"CollectionDeclaredAsConcreteClass"})
   public boolean addOnlineUser(String remoteAddress, String remoteUsername, int remotePort, Vector<String> projects, Vector userPresence) {
     myUserMonitorThread.addOnlineUser(remoteAddress, StringUtil.fromXMLSafeString(remoteUsername),
-        remotePort, projects, UserPresence.fromVector(userPresence));
+                                      remotePort, projects, UserPresence.fromVector(userPresence));
     return true;
   }
 
   public static void addSelfTo(int port, InetAddress remoteAddress, InetAddress selfAddress, int myPort, Collection<String> projects, UserPresence presence) {
     XmlRpcTargetImpl target = new XmlRpcTargetImpl(port, remoteAddress);
     NetworkUtil.sendMessage(target, ID, "addOnlineUser",
-        selfAddress.getHostAddress(),
-        StringUtil.toXMLSafeString(StringUtil.getMyUsername()),
-        myPort,
-        new Vector<String>(projects),
-        presence.toVector()
-        );
+                            selfAddress.getHostAddress(),
+                            StringUtil.toXMLSafeString(StringUtil.getMyUsername()),
+                            myPort,
+                            new Vector<String>(projects),
+                            presence.toVector()
+    );
   }
 }

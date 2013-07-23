@@ -15,6 +15,12 @@
  */
 package jetbrains.communicator.p2p;
 
+import com.intellij.ide.XmlRpcServer;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
+import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.util.ArrayUtil;
 import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.*;
@@ -35,13 +41,13 @@ import jetbrains.communicator.util.UIUtil;
 import jetbrains.communicator.util.WaitFor;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.ide.BuiltInServerManager;
+import org.jetbrains.io.CustomPortServerManagerBase;
 import org.picocontainer.Disposable;
 import org.picocontainer.MutablePicoContainer;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.util.*;
 
 /**
@@ -53,9 +59,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   static final String CODE = "P2P";
 
   static final int XML_RPC_PORT = MulticastPingThread.MULTICAST_PORT + 1;
-  private int myPort;
 
-  private P2PServer myP2PServer;
   private UserMonitorThread myUserMonitorThread;
 
   private final Map<User,OnlineUserInfo> myUser2Info = new HashMap<User, OnlineUserInfo>();
@@ -108,54 +112,54 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     }
   }
 
-  private void initializeXmlRpcPort() {
-    int port = XML_RPC_PORT;
-    if (NetworkUtil.isPortBusy(port)) {
-      ServerSocket socket = null;
-      try {
-        socket = new ServerSocket(0);
-        port = socket.getLocalPort();
-      }
-      catch (IOException e) {
-        final String msg = "Unable to get free port for IDEtalk: " + e.getMessage();
-        LOG.warn(msg);
-        LOG.debug(msg, e);
-        port = -1;
-      }
-      finally {
-        try {
-          if (socket != null) socket.close();
-        }
-        catch (IOException ignored) {
-        }
-      }
+  @SuppressWarnings("UnusedDeclaration")
+  private static final class P2PCustomPortServerManager extends CustomPortServerManagerBase {
+    @Override
+    public void cannotBind(Exception e, int port) {
+      String groupDisplayId = "IDETalk XmlRpc Server";
+      Notifications.Bus.register(groupDisplayId, NotificationDisplayType.STICKY_BALLOON);
+      new Notification(groupDisplayId, "IDETalk XmlRpc server on custom port " + port + " disabled",
+                       "Cannot start IDETalk XmlRpc server on custom port " + port + "." +
+                       "Please ensure that port is free (or check your firewall settings) and restart " + ApplicationNamesInfo.getInstance().getFullProductName(),
+                       NotificationType.ERROR).notify(null);
     }
 
-    myPort = port;
+    @Override
+    public int getPort() {
+      return XML_RPC_PORT;
+    }
+
+    @Override
+    public boolean isAvailableExternally() {
+      return true;
+    }
   }
 
   private void startup(long waitUserResponsesTimeout) {
+    BuiltInServerManager.getInstance().waitForStart();
+
     myUserMonitorThread = new UserMonitorThread(this, waitUserResponsesTimeout);
 
-    initializeXmlRpcPort();
-    if (myPort >= 0) {
-      myP2PServer = new P2PServer(myPort, new P2PCommand[] {
-        new SendXmlMessageP2PCommand(myEventBroadcaster, this),
-        new AddOnlineUserP2PCommand(myUserMonitorThread),
-      });
-      LOG.info("Internal Web server is bound to port " + myPort);
+    P2PCommand[] commands = {
+      new SendXmlMessageP2PCommand(myEventBroadcaster, this),
+      new AddOnlineUserP2PCommand(myUserMonitorThread),
+    };
 
-      myUserMonitorThread.start();
-      myUserMonitorThread.triggerFindNow();
-      new WaitFor() {
-        @Override
-        protected boolean condition() {
-          return myUserMonitorThread.isRunning();
-        }
-      };
-
-      myEventBroadcaster.addListener(myUserAddedCallbackListener);
+    XmlRpcServer xmlRpcServer = XmlRpcServer.SERVICE.getInstance();
+    for (P2PCommand command : commands) {
+      xmlRpcServer.addHandler(command.getXmlRpcId(), command);
     }
+
+    myUserMonitorThread.start();
+    myUserMonitorThread.triggerFindNow();
+    new WaitFor() {
+      @Override
+      protected boolean condition() {
+        return myUserMonitorThread.isRunning();
+      }
+    };
+
+    myEventBroadcaster.addListener(myUserAddedCallbackListener);
   }
 
   IDEFacade getIdeFacade() {
@@ -171,17 +175,11 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     catch (Throwable e) {
       LOG.info(e);
     }
-    final P2PServer p2PServer = myP2PServer;
-    if (p2PServer != null) {
-      try {
-        p2PServer.shutdown();
-      }
-      catch (Throwable e) {
-        LOG.info(e);
-      }
-    }
-
     myOnlineUsers.clear();
+
+    XmlRpcServer xmlRpcServer = XmlRpcServer.SERVICE.getInstance();
+    xmlRpcServer.removeHandler(SendXmlMessageP2PCommand.ID);
+    xmlRpcServer.removeHandler(AddOnlineUserP2PCommand.ID);
   }
 
   @Override
@@ -397,7 +395,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   @Override
   public int getPort() {
-    return myPort;
+    return XML_RPC_PORT;
   }
 
   private void addNewOnlineUsers(Collection<User> onlineUsers) {

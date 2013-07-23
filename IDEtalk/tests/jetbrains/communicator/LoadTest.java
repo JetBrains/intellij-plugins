@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator;
 
+import com.intellij.testFramework.LightPlatformTestCase;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.dispatcher.AsyncMessageDispatcher;
 import jetbrains.communicator.core.transport.Transport;
@@ -27,7 +28,6 @@ import junit.framework.TestCase;
  * @author Kir
  */
 public class LoadTest extends TestCase {
-
   public void testInitAll() throws Throwable {
     Pico.disposeInstance();
     Pico.setUnitTest(false);
@@ -35,11 +35,12 @@ public class LoadTest extends TestCase {
     checkInstance(JabberUserFinder.class);
     checkInstance(AsyncMessageDispatcher.class);
     checkInstance(JabberUI.class);
+    LightPlatformTestCase.initApplication();
     Pico.getInstance().getComponentInstancesOfType(Transport.class);
     Pico.disposeInstance();
   }
 
-  private void checkInstance(Class<? extends Object> aClass) {
+  private static void checkInstance(Class<?> aClass) {
     Object componentInstance = Pico.getInstance().getComponentInstanceOfType(aClass);
     assertNotNull(aClass.getName(), componentInstance);
   }

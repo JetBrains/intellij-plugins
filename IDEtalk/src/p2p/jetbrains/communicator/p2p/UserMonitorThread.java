@@ -28,10 +28,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Kir Maximov
@@ -204,24 +201,27 @@ public class UserMonitorThread extends Thread {
     for (MulticastPingThread multicastThread : myMulticastThreads) {
       multicastThread.start();
     }
-    new WaitFor(MSECS_IN_SEC) { @Override
-                                    protected boolean condition() {
-      for (MulticastPingThread multicastThread : myMulticastThreads) {
-        if (!multicastThread.isStarted()) return false;
+    new WaitFor(MSECS_IN_SEC) {
+      @Override
+      protected boolean condition() {
+        for (MulticastPingThread multicastThread : myMulticastThreads) {
+          if (!multicastThread.isStarted()) return false;
+        }
+        return true;
       }
-      return true;
-    } };
+    };
   }
 
   private void waitForNextSearch() {
     try {
-      synchronized(myLock) {
-        while(isRunning() && !isFinding()) {
+      synchronized (myLock) {
+        while (isRunning() && !isFinding()) {
           myLock.wait(myScansTimeout);
           startFindingUsers();
         }
       }
-    } catch (InterruptedException ignored) {
+    }
+    catch (InterruptedException ignored) {
       myThread = null;
     }
   }
@@ -234,11 +234,12 @@ public class UserMonitorThread extends Thread {
       OnlineUserInfo onlineUserInfo = new OnlineUserInfo(InetAddress.getByName(remoteAddress), remotePort.intValue(), projects, presence);
       if (!onlineUserInfo.getAddress().isLoopbackAddress() || Pico.isUnitTest()) {
         User user = myClient.createUser(remoteUsername, onlineUserInfo);
-        synchronized(myAvailableUsersLock) {
+        synchronized (myAvailableUsersLock) {
           myAvailableUsers.add(user);
         }
       }
-    } catch (UnknownHostException ignored) {
+    }
+    catch (UnknownHostException ignored) {
       LOG.info("Unable to find host for " + remoteAddress + ", user " + remoteUsername);
     }
   }
@@ -250,9 +251,9 @@ public class UserMonitorThread extends Thread {
   }
 
   void flushOnlineUsers() {
-    synchronized(myAvailableUsersLock) {
+    synchronized (myAvailableUsersLock) {
       if (LOG.isDebugEnabled()) {
-        LOG.debug("Setting online users: \n" + myAvailableUsers.toString().replace(',','\n'));
+        LOG.debug("Setting online users: \n" + Arrays.toString(myAvailableUsers.toArray()));
       }
       myClient.setOnlineUsers(new THashSet<User>(myAvailableUsers));
     }
@@ -270,14 +271,15 @@ public class UserMonitorThread extends Thread {
     while (isFinding()) {
       progressIndicator.checkCanceled();
       setIndicatorText(progressIndicator);
-      synchronized(myLock) {
+      synchronized (myLock) {
         double fraction = (System.currentTimeMillis() - myStartFindingAt) / (50.0 + myWaitUserResponsesTimeout);
         progressIndicator.setFraction(fraction);
       }
 
       try {
         Thread.sleep(50);
-      } catch (InterruptedException ignored) {
+      }
+      catch (InterruptedException ignored) {
         break;
       }
     }
@@ -296,7 +298,7 @@ public class UserMonitorThread extends Thread {
 
   private void setIndicatorText(ProgressIndicator progressIndicator) {
     int size;
-    synchronized(myAvailableUsersLock) {
+    synchronized (myAvailableUsersLock) {
       size = myAvailableUsers.size();
     }
     progressIndicator.setText(StringUtil.getMsg("p2p.finder.progressText",

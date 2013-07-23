@@ -32,10 +32,12 @@ public class XmlRpcTargetImpl implements XmlRpcTarget {
     myAddress = remoteAddress;
   }
 
+  @Override
   public InetAddress getAddress() {
     return myAddress;
   }
 
+  @Override
   public int getPort() {
     return myPort;
   }

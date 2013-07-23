@@ -18,6 +18,7 @@ package jetbrains.communicator.core.impl;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.testFramework.LightPlatformTestCase;
 import jetbrains.communicator.LightTestCase;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.impl.transport.CodePointerEventProvider;
@@ -46,7 +47,7 @@ import java.util.List;
  */
 public abstract class BaseTestCase extends LightTestCase {
   @NonNls
-  private static Logger LOG;
+  protected static Logger LOG;
 
   protected static final DataContext NULL_DATA_CONTEXT = new DataContext() {
     @Override
@@ -65,7 +66,7 @@ public abstract class BaseTestCase extends LightTestCase {
   public BaseTestCase(String s) {
     super(s);
   }
-                        
+
   @Override
   protected void setUp() throws Exception {
     super.setUp();
@@ -80,6 +81,8 @@ public abstract class BaseTestCase extends LightTestCase {
 
     TestFactory.init();
     myOptions = Pico.getOptions();
+
+    LightPlatformTestCase.initApplication();
   }
 
   @Override

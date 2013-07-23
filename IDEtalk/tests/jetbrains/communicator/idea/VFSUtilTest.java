@@ -24,7 +24,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.IdeaTestCase;
+import com.intellij.testFramework.PlatformTestCase;
 import jetbrains.communicator.core.vfs.VFile;
 import junit.framework.AssertionFailedError;
 
@@ -36,7 +36,7 @@ import java.util.Set;
 /**
  * @author Kir
  */
-public class VFSUtilTest extends IdeaTestCase {
+public class VFSUtilTest extends PlatformTestCase {
   private VirtualFile myContentRoot;
   private VirtualFile mySourceRoot;
   private ContentEntry myContentEntry;

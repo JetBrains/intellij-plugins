@@ -35,7 +35,7 @@ import java.io.StringReader;
  */
 public class SendXmlMessageP2PCommand extends BaseP2PCommand {
   private static final Logger LOG = Logger.getLogger(SendXmlMessageP2PCommand.class);
-  static final String ID = "SendMessage";
+  public static final String ID = "SendMessage";
 
   public SendXmlMessageP2PCommand(EventBroadcaster eventBroadcaster, Transport transport) {
     super(ID, eventBroadcaster, transport);

@@ -86,14 +86,16 @@ public class NetworkUtil {
     }
 
     try {
-      XmlRpcClient client = new XmlRpcClient(url);
-      return client.execute(fullMethodName, new Vector<Object>(parameters));
-    } catch (MalformedURLException e) {
-      LOG.info(buildFullLogLine(logLine, parameters)+ ' ' +e.getLocalizedMessage());
-    } catch (IOException e) {
-      LOG.info(buildFullLogLine(logLine, parameters)+ ' ' + e.getLocalizedMessage());
-    } catch (XmlRpcException e) {
-      LOG.info(buildFullLogLine(logLine, parameters)+ ' ' + e.getLocalizedMessage());
+      return new XmlRpcClient(url).execute(fullMethodName, new Vector<Object>(parameters));
+    }
+    catch (MalformedURLException e) {
+      LOG.info(buildFullLogLine(logLine, parameters) + ' ' + e.getLocalizedMessage());
+    }
+    catch (IOException e) {
+      LOG.info(buildFullLogLine(logLine, parameters) + ' ' + e.getLocalizedMessage());
+    }
+    catch (XmlRpcException e) {
+      LOG.info(buildFullLogLine(logLine, parameters) + ' ' + e.getLocalizedMessage());
     }
     return null;
   }
@@ -111,29 +113,5 @@ public class NetworkUtil {
   public static boolean isOwnAddress(InetAddress address) {
     if (address == null) return false;
     return address.isLoopbackAddress() || Arrays.asList(getSelfAddresses()).contains(address);
-  }
-
-  public static boolean isPortBusy(int port) {
-    ServerSocket socket = null;
-    try {
-      socket = new ServerSocket(port);
-    }
-    catch (IOException ignored) {
-      return true;
-    }
-    finally {
-      close(socket);
-    }
-    return false;
-  }
-
-  private static void close(ServerSocket socket) {
-    if (socket != null) {
-      try {
-        socket.close();
-      } catch (IOException e) {
-        LOG.info(e.getLocalizedMessage());
-      }
-    }
   }
 }

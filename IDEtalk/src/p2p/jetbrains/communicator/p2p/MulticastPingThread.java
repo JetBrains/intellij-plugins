@@ -191,7 +191,8 @@ class MulticastPingThread extends Thread {
     String port = message.substring(PING_MESSAGE.length());
     try {
       return Integer.valueOf(port).intValue();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.debug(e);
     }
     return P2PTransport.XML_RPC_PORT;

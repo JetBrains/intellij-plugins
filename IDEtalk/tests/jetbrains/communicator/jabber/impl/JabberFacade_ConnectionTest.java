@@ -20,7 +20,6 @@ import jetbrains.communicator.jabber.ConnectionListener;
 import jetbrains.communicator.jabber.JabberFacade;
 import jetbrains.communicator.jabber.VCardInfo;
 import jetbrains.communicator.mock.MockIDEFacade;
-import jetbrains.communicator.p2p.NetworkUtil;
 import jetbrains.communicator.util.WaitFor;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -29,6 +28,8 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.Arrays;
 
 /**
@@ -128,7 +129,7 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
   }
 
   public void testConnect_SSL() throws Exception {
-    if (NetworkUtil.isPortBusy(5223)) {
+    if (isPortBusy(5223)) {
       createGoodAccount(myUser, myFacade);
       myFacade.disconnect();
 
@@ -137,6 +138,31 @@ public class JabberFacade_ConnectionTest extends BaseTestCase {
 
       assertTrue(myFacade.getConnection().isSecureConnection());
       assertFalse(myFacade.getConnection().isUsingTLS());
+    }
+  }
+
+  private static boolean isPortBusy(int port) {
+    ServerSocket socket = null;
+    try {
+      socket = new ServerSocket(port);
+    }
+    catch (IOException ignored) {
+      return true;
+    }
+    finally {
+      close(socket);
+    }
+    return false;
+  }
+
+  private static void close(ServerSocket socket) {
+    if (socket != null) {
+      try {
+        socket.close();
+      }
+      catch (IOException e) {
+        LOG.info(e.getLocalizedMessage());
+      }
     }
   }
 
