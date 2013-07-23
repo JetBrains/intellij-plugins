@@ -109,6 +109,13 @@ function sendIntellijEvent(eventType, eventBody) {
   process.stdout.write('##intellij-event[' + eventType + ':' + JSON.stringify(eventBody) + ']\n');
 }
 
+var toString = Object().toString;
+
+function isString(value) {
+  return typeof value === 'string' || toString.call(value) === '[object String]';
+}
+
 exports.attributeValueEscape = attributeValueEscape;
 exports.joinList = joinList;
 exports.sendIntellijEvent = sendIntellijEvent;
+exports.isString = isString;

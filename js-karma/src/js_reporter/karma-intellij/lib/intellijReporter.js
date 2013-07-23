@@ -1,5 +1,4 @@
 var cli = require("./intellijCli.js")
-  , BaseReporter = cli.requireKarmaModule('lib/reporters/Base.js')
   , intellijUtil = require('./intellijUtil.js')
   , util = require('util')
   , Tree = require('./tree.js');
@@ -114,7 +113,6 @@ function startBrowsersTracking(globalEmitter) {
 function IntellijReporter(formatError, globalEmitter) {
   var fileListManager = new FileListTracker(globalEmitter);
   startBrowsersTracking(globalEmitter);
-  BaseReporter.call(this, formatError, false);
   this.adapters = [];
   var totalTestCount, uncheckedBrowserCount;
 
@@ -141,13 +139,12 @@ function IntellijReporter(formatError, globalEmitter) {
     addBrowserErrorNode(tree, browser, error);
   };
 
-  this.onBrowserDump = function (browser, dump) {
-    if (dump.length === 1) {
-      dump = dump[0];
+  this.onBrowserLog = function (browser, log, type) {
+    if (!intellijUtil.isString(log)) {
+      log = util.inspect(log, false, null, false);
     }
 
-    dump = util.inspect(dump, false, undefined, true);
-    write(dump + '\n');
+    write(log + '\n');
   };
 
   this.onSpecComplete = function (browser, result) {

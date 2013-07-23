@@ -3,11 +3,6 @@ var cli = require('./intellijCli.js')
   , constants = cli.requireKarmaModule('lib/constants.js')
   , originalConfigPath = cli.getConfigFile();
 
-function isString(value) {
-  var toString = {}.toString;
-  return typeof value === 'string' || toString.call(value) === '[object String]';
-}
-
 function setBasePath(config) {
   var path = require('path');
   var basePath = config.basePath || '';
