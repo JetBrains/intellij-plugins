@@ -883,6 +883,8 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
 
   private static <T extends XmlElement & PsiNamedElement> void collectLowerCasedElements(final List<XmlElement> elements, final T[] xmlAttributes) {
     for(T a: xmlAttributes) {
+      if (a instanceof XmlAttribute && FlexMxmlLanguageAttributeNames.ID.equals(a.getName())) continue;
+
       final String name = a instanceof XmlTag ? ((XmlTag)a).getLocalName() : a.getName();
       if (name != null && name.length() > 0 && Character.isLowerCase(name.charAt(0))) elements.add(a);
     }
@@ -1197,6 +1199,13 @@ public class ClassBackedElementDescriptor extends IconProvider implements XmlEle
     ensureDescriptorsMapsInitialized(element, null);
 
     AnnotationBackedDescriptor descriptor = myDescriptors.get(attributeName);
+
+    if (descriptor == null && context != null) {
+      final String prefix = context.getNamespacePrefix();
+      if (StringUtil.isNotEmpty(prefix) && attributeName.startsWith(prefix + ":")){
+        descriptor = myDescriptors.get(attributeName.substring(prefix.length() + 1));
+      }
+    }
 
     if (descriptor == null && context != null && !myPackageToInternalDescriptors.isEmpty()) {
       final String contextPackage = JSResolveUtil.getPackageNameFromPlace(context);

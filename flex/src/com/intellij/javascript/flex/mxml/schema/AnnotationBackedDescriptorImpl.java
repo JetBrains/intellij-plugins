@@ -528,7 +528,8 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
   @Nullable
   public String validateValue(final XmlElement context, String value) {
-    if (hasIdType()) {
+    final PsiElement parent = context instanceof XmlAttributeValue ? context.getParent() : null;
+    if (parent instanceof XmlAttribute && FlexMxmlLanguageAttributeNames.ID.equals(((XmlAttribute)parent).getName())) {
       final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(JavaScriptSupportLoader.JAVASCRIPT.getLanguage());
       if (!namesValidator.isIdentifier(value, context.getProject())) {
         return JSBundle.message("invalid.identifier.value");
@@ -633,7 +634,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
     if (!(declaration instanceof JSClass) || !(iStyleClient instanceof JSClass)
         || !JSInheritanceUtil.isParentClass((JSClass)JSResolveUtil.unwrapProxy(declaration),
-                                                              (JSClass)JSResolveUtil.unwrapProxy(iStyleClient))) {
+                                            (JSClass)JSResolveUtil.unwrapProxy(iStyleClient))) {
       return FlexBundle.message("clear.directive.IStyleClient.error");
     }
     return null;
