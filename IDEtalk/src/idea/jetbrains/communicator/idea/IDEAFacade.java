@@ -17,8 +17,8 @@ package jetbrains.communicator.idea;
 
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.DataConstants;
 import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.editor.Document;
@@ -77,10 +77,12 @@ public class IDEAFacade implements IDEFacade {
 
   private ViewFilesDialog myViewFilesDialog;
 
+  @Override
   public void showMessage(String title, String message) {
     Messages.showMessageDialog(message, title, Messages.getInformationIcon());
   }
 
+  @Override
   public boolean askQuestion(String title, String question) {
     //noinspection HardCodedStringLiteral
     int result = JOptionPane.showOptionDialog(null,
@@ -91,6 +93,7 @@ public class IDEAFacade implements IDEFacade {
     return result == JOptionPane.YES_OPTION;
   }
 
+  @Override
   public File getCacheDir() {
     //noinspection HardCodedStringLiteral
     File file = new File(PathManager.getSystemPath(), "ideTalk");
@@ -98,12 +101,14 @@ public class IDEAFacade implements IDEFacade {
     return file;
   }
 
+  @Override
   public File getConfigDir() {
     @NonNls File file = new File(PathManager.getConfigPath(), "ideTalk");
     file.mkdir();
     return file;
   }
 
+  @Override
   public FindUsersCommand.UsersInfo chooseUsersToBeAdded(List<User> foundNewUsers, String[] groups) {
 
     FindUsersDialog dialog = new FindUsersDialog(foundNewUsers, groups);
@@ -118,27 +123,33 @@ public class IDEAFacade implements IDEFacade {
     return new FindUsersCommand.UsersInfo();
   }
 
+  @Override
   public String getMessageLine(String labelText, String titleText) {
     return Messages.showInputDialog(labelText, titleText, Messages.getQuestionIcon());
   }
 
+  @Override
   public String getMessage(String labelText, String titleText, String optionalOKButtonText) {
     GetMessageDialog dialog = new GetMessageDialog(titleText, labelText, optionalOKButtonText);
     dialog.show();
     return dialog.getEnteredText();
   }
 
+  @Override
   public Future<?> runOnPooledThread(Runnable toRun) {
     return ApplicationManager.getApplication().executeOnPooledThread(toRun);
   }
 
+  @Override
   public void runLongProcess(String processTitle, final Process process) throws CanceledException {
     try {
       ProgressManager.getInstance().runProcessWithProgressSynchronously(new Runnable() {
+        @Override
         public void run() {
           final ProgressIndicator progressIndicator = ProgressManager.getInstance().getProgressIndicator();
           if (progressIndicator == null) {
             process.run(new NullProgressIndicator(){
+              @Override
               public void checkCanceled() {
                 super.checkCanceled();
                 throw new ProcessCanceledException();
@@ -147,18 +158,22 @@ public class IDEAFacade implements IDEFacade {
           } else {
             progressIndicator.pushState();
             process.run(new jetbrains.communicator.ide.ProgressIndicator() {
+              @Override
               public void setIndefinite(boolean indefinite) {
                 progressIndicator.setIndeterminate(indefinite);
               }
 
+              @Override
               public void setText(String text) {
                 progressIndicator.setText(text);
               }
 
+              @Override
               public void setFraction(double x) {
                 progressIndicator.setFraction(x);
               }
 
+              @Override
               public void checkCanceled() {
                 progressIndicator.checkCanceled();
               }
@@ -172,6 +187,7 @@ public class IDEAFacade implements IDEFacade {
     }
   }
 
+  @Override
   public void invokeSendMessage(User[] allUsers, User[] defaultTargetUsers, String message, SendMessageInvoker sendMessageInvoker) {
 
     Project project = getProject(null);
@@ -186,17 +202,20 @@ public class IDEAFacade implements IDEFacade {
     }
   }
 
+  @Override
   public void showSearchHistoryResults(List<LocalMessage> foundMessages, User user) {
     Project project = getProject(null);
     assert project != null;
     new ShowHistoryDialog(project, foundMessages, user).show();
   }
 
+  @Override
   public ProjectsData getProjectsData() {
 
     final ProjectsData result = new ProjectsData();
 
     ApplicationManager.getApplication().runReadAction(new Runnable() {
+      @Override
       public void run() {
         try {
           new ProjectsDataFiller(result).fillProjectsData();
@@ -209,6 +228,7 @@ public class IDEAFacade implements IDEFacade {
     return result;
   }
 
+  @Override
   public String[] getProjects() {
     Project[] projects = ProjectManager.getInstance().getOpenProjects();
     List<String> result = new ArrayList<String>();
@@ -218,9 +238,11 @@ public class IDEAFacade implements IDEFacade {
     return ArrayUtil.toStringArray(result);
   }
 
+  @Override
   public void showUserFiles(User user, ProjectsData data) {
     if (myViewFilesDialog == null) {
       myViewFilesDialog = new ViewFilesDialog(user, data, this) {
+        @Override
         protected void dispose() {
           super.dispose();
           myViewFilesDialog = null;
@@ -233,11 +255,13 @@ public class IDEAFacade implements IDEFacade {
     }
   }
 
+  @Override
   public boolean hasFile(VFile file) {
     VirtualFile virtualFile = VFSUtil.getVirtualFile(file);
     return  virtualFile != null && virtualFile.isValid();
   }
 
+  @Override
   public void open(VFile file) {
     VirtualFile virtualFile = VFSUtil.getVirtualFile(file);
     Project project = getProject(null);
@@ -247,12 +271,14 @@ public class IDEAFacade implements IDEFacade {
     }
   }
 
+  @Override
   public void fillFileContents(final VFile vFile) {
     vFile.setContents(null);
     final VirtualFile virtualFile = VFSUtil.getVirtualFile(vFile);
     if (virtualFile == null) return;
 
     ApplicationManager.getApplication().runReadAction(new Runnable() {
+      @Override
       public void run() {
         Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
         if (document != null) {
@@ -262,6 +288,7 @@ public class IDEAFacade implements IDEFacade {
     });
   }
 
+  @Override
   public void showDiffFor(User remoteUser, VFile vFile, String compareWith) {
     Project project = getProject(null);
     assert project != null;
@@ -271,9 +298,10 @@ public class IDEAFacade implements IDEFacade {
     }
   }
 
+  @Override
   public Change[] getDiff(Object[] src, Object[] dest) {
     List<MyChangeAdapter> result = new ArrayList<MyChangeAdapter>();
-    Diff.Change change = null;
+    Diff.Change change;
     try {
       change = Diff.buildChanges(src, dest);
     }
@@ -288,6 +316,7 @@ public class IDEAFacade implements IDEFacade {
     return result.toArray(new Change[result.size()]);
   }
 
+  @Override
   public LocalMessage createLocalMessageForIncomingEvent(TransportEvent event) {
     final LocalMessage[] result = new LocalMessage[1];
     event.accept(new EventVisitor(){
@@ -310,6 +339,7 @@ public class IDEAFacade implements IDEFacade {
     return result[0];
   }
 
+  @Override
   @Nullable
   public LocalMessage createLocalMessageForOutgoingEvent(OwnMessageEvent event) {
     final LocalMessage[] result = new LocalMessage[1];
@@ -326,6 +356,7 @@ public class IDEAFacade implements IDEFacade {
     return result[0];
   }
 
+  @Override
   @Nullable
   public String getCurrentProjectId() {
     Project project = getProject(null);
@@ -356,7 +387,7 @@ public class IDEAFacade implements IDEFacade {
     Project res = null;
 
     if (component != null) {
-      res = (Project) getData(component, DataConstants.PROJECT);
+      res = (Project) getData(component, PlatformDataKeys.PROJECT.getName());
     }
     else {
       IdeFrame[] frames = WindowManagerEx.getInstanceEx().getAllProjectFrames();
@@ -394,18 +425,22 @@ public class IDEAFacade implements IDEFacade {
       myChange1 = change1;
     }
 
+    @Override
     public int getInserted() {
       return myChange1.inserted;
     }
 
+    @Override
     public int getDeleted() {
       return myChange1.deleted;
     }
 
+    @Override
     public int getSrcLine() {
       return myChange1.line0;
     }
 
+    @Override
     public int getDestLine() {
       return myChange1.line1;
     }

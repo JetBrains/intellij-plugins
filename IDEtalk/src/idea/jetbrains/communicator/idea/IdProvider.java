@@ -41,6 +41,7 @@ public class IdProvider extends AbstractProjectComponent implements JDOMExternal
     super(project);
   }
 
+  @Override
   @NotNull
   public String getComponentName() {
     return "IdProvider";
@@ -50,10 +51,12 @@ public class IdProvider extends AbstractProjectComponent implements JDOMExternal
     return project.getComponent(IdProvider.class);
   }
 
+  @Override
   public void readExternal(Element element) throws InvalidDataException {
     myId = element.getAttributeValue(ID);
   }
 
+  @Override
   public void writeExternal(Element element) throws WriteExternalException {
     element.setAttribute(ID, getId());
   }

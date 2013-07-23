@@ -15,6 +15,7 @@
  */
 package jetbrains.communicator.p2p;
 
+import gnu.trove.THashSet;
 import jetbrains.communicator.core.Pico;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.core.users.UserPresence;
@@ -26,9 +27,11 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NoRouteToHostException;
-import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Kir Maximov
@@ -51,7 +54,7 @@ public class UserMonitorThread extends Thread {
   private final long myScansTimeout;
 
   private final Object myAvailableUsersLock = new Object();
-  private final Set<User> myAvailableUsers = new HashSet<User>();
+  private final Set<User> myAvailableUsers = new THashSet<User>();
 
   private Thread myThread;
   private long myStartFindingAt;
@@ -87,12 +90,8 @@ public class UserMonitorThread extends Thread {
 
   private static MulticastPingThread[] createMulticastThreads(P2PTransport client) {
     List<MulticastPingThread> result = new ArrayList<MulticastPingThread>();
-    try {
-      for (InetAddress selfAddress : NetworkUtil.getSelfAddresses()) {
-        result.add(new MulticastPingThread(selfAddress, client.getIdeFacade(), client));
-      }
-    } catch (SocketException e) {
-      LOG.info(e.getMessage(), e);
+    for (InetAddress selfAddress : NetworkUtil.getSelfAddresses()) {
+      result.add(new MulticastPingThread(selfAddress, client.getIdeFacade(), client));
     }
     return result.toArray(new MulticastPingThread[result.size()]);
   }
@@ -119,6 +118,7 @@ public class UserMonitorThread extends Thread {
     }
   }
 
+  @Override
   public void run() {
     super.run();
     LOG.info("Start " + getName());
@@ -132,7 +132,7 @@ public class UserMonitorThread extends Thread {
         waitForNextSearch();
 
         if (!isRunning()) return;
-        synchronized(myLock) {
+        synchronized (myLock) {
           myStartFindingAt = System.currentTimeMillis();
           LOG.debug("Start finding users ");
         }
@@ -143,21 +143,27 @@ public class UserMonitorThread extends Thread {
           Thread.sleep(myWaitUserResponsesTimeout);
 
           flushOnlineUsers();
-        } finally {
-          synchronized(myLock) {
+        }
+        finally {
+          synchronized (myLock) {
             myStartFindingAt = 0;
             LOG.debug("Done finding users. Timeout for " + myScansTimeout);
           }
         }
-      } catch (UnknownHostException e) {
+      }
+      catch (UnknownHostException e) {
         LOG.error(e.getMessage(), e);
-      } catch (NoRouteToHostException e) {
+      }
+      catch (NoRouteToHostException e) {
         LOG.info(e.getMessage(), e);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error(e.getMessage(), e);
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException ignored) {
         myThread = null;
-      } catch (Throwable e) {
+      }
+      catch (Throwable e) {
         LOG.error(e.getMessage(), e);
         myThread = null;
       }
@@ -186,9 +192,9 @@ public class UserMonitorThread extends Thread {
   }
 
   private void startFindingUsers() {
-    synchronized(myLock) {
+    synchronized (myLock) {
       myStartFindingAt = System.currentTimeMillis();
-      synchronized(myAvailableUsersLock) {
+      synchronized (myAvailableUsersLock) {
         myAvailableUsers.clear();
       }
     }
@@ -198,7 +204,8 @@ public class UserMonitorThread extends Thread {
     for (MulticastPingThread multicastThread : myMulticastThreads) {
       multicastThread.start();
     }
-    new WaitFor(1 * MSECS_IN_SEC) { protected boolean condition() {
+    new WaitFor(MSECS_IN_SEC) { @Override
+                                    protected boolean condition() {
       for (MulticastPingThread multicastThread : myMulticastThreads) {
         if (!multicastThread.isStarted()) return false;
       }
@@ -214,7 +221,7 @@ public class UserMonitorThread extends Thread {
           startFindingUsers();
         }
       }
-    } catch (InterruptedException e) {
+    } catch (InterruptedException ignored) {
       myThread = null;
     }
   }
@@ -231,7 +238,7 @@ public class UserMonitorThread extends Thread {
           myAvailableUsers.add(user);
         }
       }
-    } catch (UnknownHostException e) {
+    } catch (UnknownHostException ignored) {
       LOG.info("Unable to find host for " + remoteAddress + ", user " + remoteUsername);
     }
   }
@@ -247,7 +254,7 @@ public class UserMonitorThread extends Thread {
       if (LOG.isDebugEnabled()) {
         LOG.debug("Setting online users: \n" + myAvailableUsers.toString().replace(',','\n'));
       }
-      myClient.setOnlineUsers(new HashSet<User>(myAvailableUsers));
+      myClient.setOnlineUsers(new THashSet<User>(myAvailableUsers));
     }
   }
 
@@ -270,7 +277,7 @@ public class UserMonitorThread extends Thread {
 
       try {
         Thread.sleep(50);
-      } catch (InterruptedException e) {
+      } catch (InterruptedException ignored) {
         break;
       }
     }

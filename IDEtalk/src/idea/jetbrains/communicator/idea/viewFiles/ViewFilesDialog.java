@@ -43,6 +43,7 @@ public class ViewFilesDialog extends IdeaDialog {
     refreshData(user, projectsData);
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myPanel.getTree();
   }
@@ -52,12 +53,14 @@ public class ViewFilesDialog extends IdeaDialog {
     myPanel.refreshData(user, data);
   }
 
+  @Override
   @NotNull
   protected Action[] createActions() {
     setOKButtonText(StringUtil.getMsg("close"));
     return new Action[] {getOKAction()};
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     myPanel = new ViewFilesPanel(FileTypeManager.getInstance(), ActionManager.getInstance(), myFacade);
     return myPanel;

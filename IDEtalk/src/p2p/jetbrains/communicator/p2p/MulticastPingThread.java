@@ -36,12 +36,11 @@ class MulticastPingThread extends Thread {
 
   public static final int MULTICAST_PORT = 2863;
   static final String PING_MESSAGE = "Is there anybody out there?";
-  private static final String MULTICAST_ADDR = "239.203.13.64";
+  private static final String MULTICAST_ADORES = "239.203.13.64";
   private static final int BUFFER_SIZE = PING_MESSAGE.getBytes().length + 6;
   private static final int ALLOWED_FAILURES = 3000;
 
   private volatile boolean myIsRunning;
-  private volatile boolean myDisposed;
   private MulticastSocket myDatagramSocket;
   protected boolean myStarted;
 
@@ -90,12 +89,11 @@ class MulticastPingThread extends Thread {
 
   private static void sendMessage(MulticastSocket datagramSocket, String msg) throws IOException {
     DatagramPacket packet = new DatagramPacket(msg.getBytes(), 0, msg.getBytes().length,
-            InetAddress.getByName(MULTICAST_ADDR), MULTICAST_PORT);
+            InetAddress.getByName(MULTICAST_ADORES), MULTICAST_PORT);
     datagramSocket.send(packet);
   }
 
-  /** @noinspection AssignmentToNull*/
-  @SuppressWarnings({"RefusedBequest"})
+  @Override
   public void run() {
     LOG.info(getName() + ": Start thread.");
     Runtime.getRuntime().addShutdownHook(new Thread("IDETalk shutdown hook") {
@@ -112,7 +110,7 @@ class MulticastPingThread extends Thread {
     try {
       myDatagramSocket = new MulticastSocket(MULTICAST_PORT);
       myDatagramSocket.setInterface(mySelfAddress);
-      myDatagramSocket.joinGroup(InetAddress.getByName(MULTICAST_ADDR));
+      myDatagramSocket.joinGroup(InetAddress.getByName(MULTICAST_ADORES));
 
       byte[] buffer = new byte[BUFFER_SIZE];
       while (myIsRunning) {
@@ -156,7 +154,6 @@ class MulticastPingThread extends Thread {
       logError(e);
     }
     finally {
-      myDisposed = true;
       myIsRunning = false;
       if (myDatagramSocket != null && !myDatagramSocket.isClosed()){
         myDatagramSocket.close();

@@ -47,7 +47,6 @@ import java.util.*;
 /**
  * @author Kir Maximov
  */
-@SuppressWarnings({"HardCodedStringLiteral"})
 public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   private static final Logger LOG = Logger.getLogger(P2PTransport.class);
 
@@ -71,15 +70,15 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   private final UserModel myUserModel;
   private UserPresence myOwnPresence;
 
-  public P2PTransport(AsyncMessageDispatcher asyncMessageDispatcher, UserModel userModel) throws IOException {
+  public P2PTransport(AsyncMessageDispatcher asyncMessageDispatcher, UserModel userModel) {
     this(asyncMessageDispatcher, userModel, UserMonitorThread.WAIT_USER_RESPONSES_TIMEOUT);
   }
-  public P2PTransport(AsyncMessageDispatcher asyncMessageDispatcher, UserModel userModel, long waitUserResponsesTimeout) throws IOException {
-
+  public P2PTransport(AsyncMessageDispatcher asyncMessageDispatcher, UserModel userModel, long waitUserResponsesTimeout) {
     myEventBroadcaster = userModel.getBroadcaster();
     myAsyncMessageDispatcher = asyncMessageDispatcher;
     myUserModel = userModel;
     myUserAddedCallbackListener = new TransportUserListener(this) {
+      @Override
       protected void processAfterChange(UserEvent event) {
         event.accept(new EventVisitor() {
           @Override public void visitUserAdded(UserEvent.Added event) {
@@ -111,27 +110,31 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   private void initializeXmlRpcPort() {
     int port = XML_RPC_PORT;
-
     if (NetworkUtil.isPortBusy(port)) {
       ServerSocket socket = null;
       try {
         socket = new ServerSocket(0);
         port = socket.getLocalPort();
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         final String msg = "Unable to get free port for IDEtalk: " + e.getMessage();
         LOG.warn(msg);
         LOG.debug(msg, e);
         port = -1;
       }
       finally {
-        try { if (socket != null) socket.close(); } catch (IOException e) {  }
+        try {
+          if (socket != null) socket.close();
+        }
+        catch (IOException ignored) {
+        }
       }
     }
 
     myPort = port;
   }
 
-  private void startup(long waitUserResponsesTimeout) throws IOException {
+  private void startup(long waitUserResponsesTimeout) {
     myUserMonitorThread = new UserMonitorThread(this, waitUserResponsesTimeout);
 
     initializeXmlRpcPort();
@@ -144,7 +147,12 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
       myUserMonitorThread.start();
       myUserMonitorThread.triggerFindNow();
-      new WaitFor() { protected boolean condition() { return myUserMonitorThread.isRunning(); } };
+      new WaitFor() {
+        @Override
+        protected boolean condition() {
+          return myUserMonitorThread.isRunning();
+        }
+      };
 
       myEventBroadcaster.addListener(myUserAddedCallbackListener);
     }
@@ -154,6 +162,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     return myAsyncMessageDispatcher.getIdeFacade();
   }
 
+  @Override
   public void dispose() {
     try {
       myEventBroadcaster.removeListener(myUserAddedCallbackListener);
@@ -175,8 +184,10 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     myOnlineUsers.clear();
   }
 
+  @Override
   public void initializeProject(final String projectName, MutablePicoContainer projectLevelContainer) {
     getIdeFacade().runOnPooledThread(new Runnable() {
+      @Override
       public void run() {
         User[] users = findUsers(new NullProgressIndicator());
         Set<User> ourUsers = new HashSet<User>();
@@ -216,28 +227,34 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     return Arrays.asList(myUserModel.getGroups()).contains(projectName);
   }
 
+  @Override
   public Class<? extends NamedUserCommand> getSpecificFinderClass() {
     return null;
   }
 
+  @Override
   public String getName() {
     return CODE;
   }
 
+  @Override
   public User[] findUsers(ProgressIndicator progressIndicator) {
     myUserMonitorThread.findNow(progressIndicator);
 
     return myOnlineUsers.toArray(new User[myOnlineUsers.size()]);
   }
 
+  @Override
   public boolean isOnline() {
     return myOwnPresence.isOnline();
   }
 
+  @Override
   public boolean hasIDEtalkClient(User user) {
     return true;
   }
 
+  @Override
   public UserPresence getUserPresence(User user) {
     boolean online = myOnlineUsers.contains(user);
     if (online) {
@@ -250,11 +267,13 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     return getNotNullOnlineInfo(p2PUser).getAddress();
   }
 
+  @Override
   public boolean isSelf(User user) {
     InetAddress address = getAddress(user);
     return StringUtil.getMyUsername().equals(user.getName()) && NetworkUtil.isOwnAddress(address);
   }
 
+  @Override
   public Icon getIcon(UserPresence userPresence) {
     return UIUtil.getIcon(userPresence, IdetalkCoreIcons.IdeTalk.User, IdetalkCoreIcons.IdeTalk.User_dnd);
   }
@@ -263,6 +282,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     return getNotNullOnlineInfo(user).getPort();
   }
 
+  @Override
   public String[] getProjects(User user) {
     Collection<String> projects = getNotNullOnlineInfo(user).getProjects();
     return ArrayUtil.toStringArray(projects);
@@ -277,10 +297,12 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     return result;
   }
 
+  @Override
   public String getAddressString(User user) {
     return getAddress(user).getHostAddress() + ':' + getPort(user);
   }
 
+  @Override
   public void sendXmlMessage(User user, XmlMessage message) {
     Message msg = SendXmlMessageP2PCommand.createNetworkMessage(message);
     if (message.needsResponse()) {
@@ -291,19 +313,17 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     }
   }
 
+  @Override
   public UserPresence getOwnPresence() {
     return myOwnPresence;
   }
 
+  @Override
   public void setOwnPresence(UserPresence userPresence) {
-
     if (!myOwnPresence.isOnline() && userPresence.isOnline()) {
-      try {
-        startup(myUserMonitorThread.getWaitUserResponsesTimeout());
-      } catch (IOException e) {
-        LOG.error(e.getMessage() + " server port " + myPort, e);
-      }
-    } else if (myOwnPresence.isOnline() && !userPresence.isOnline()) {
+      startup(myUserMonitorThread.getWaitUserResponsesTimeout());
+    }
+    else if (myOwnPresence.isOnline() && !userPresence.isOnline()) {
       dispose();
     }
 
@@ -328,9 +348,8 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     }
   }
 
-  public synchronized void setOnlineUsers(Collection<User> onlineUsers) {
-    assert onlineUsers != null;
-
+  @Override
+  public synchronized void setOnlineUsers(@NotNull Collection<User> onlineUsers) {
     removeOfflineUsers_And_UpdateOldOnlineUsers(onlineUsers);
     addNewOnlineUsers(onlineUsers);
     myUser2InfoNew.clear();
@@ -343,6 +362,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
       final UserPresence newPresence = new UserPresence(true);
 
       myEventBroadcaster.doChange(new UserEvent.Updated(user, "presence", oldPresence, newPresence), new Runnable() {
+        @Override
         public void run() {
           makeUserOnline(user);
         }
@@ -356,6 +376,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     myUser2Info.put(user, onlineInfo);
   }
 
+  @Override
   public synchronized User createUser(String remoteUsername, @NotNull OnlineUserInfo onlineUserInfo) {
     User user = myUserModel.createUser(remoteUsername, CODE);
     myUser2InfoNew.put(user, onlineUserInfo);
@@ -374,6 +395,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     sendXmlMessage(user, new WasAddedXmlMessage());
   }
 
+  @Override
   public int getPort() {
     return myPort;
   }
@@ -382,6 +404,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     for (final User user : onlineUsers) {
       if (!myOnlineUsers.contains(user) && myUser2InfoNew.containsKey(user)) {
         myEventBroadcaster.doChange(new UserEvent.Online(user), new Runnable() {
+          @Override
           public void run() {
             myOnlineUsers.add(user);
             myUser2Info.put(user, myUser2InfoNew.get(user));
@@ -396,6 +419,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
       final User user = it.next();
       if (!onlineUsers.contains(user)) {  // User was removed
         myEventBroadcaster.doChange(new UserEvent.Offline(user), new Runnable() {
+              @Override
               public void run() {
                 it.remove();
                 myUser2Info.remove(user);
@@ -410,6 +434,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
         if (!newPresence.equals(oldPresence)) {
           myEventBroadcaster.doChange(new UserEvent.Updated(user, "presence", oldPresence, newPresence), new Runnable() {
+            @Override
             public void run() {
               myUser2Info.put(user, onlineUserInfo);
             }

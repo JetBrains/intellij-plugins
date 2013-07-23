@@ -16,11 +16,7 @@
 package jetbrains.communicator.p2p;
 
 import org.apache.log4j.Logger;
-import org.apache.xmlrpc.IdeaAwareWebServer;
-import org.apache.xmlrpc.IdeaAwareXmlRpcServer;
 import org.apache.xmlrpc.WebServer;
-
-import java.io.IOException;
 
 /**
  * @author Kir Maximov
@@ -28,20 +24,16 @@ import java.io.IOException;
 public class P2PServer {
   private static final Logger LOG = Logger.getLogger(P2PServer.class);
   private WebServer myWebServer;
-  private final int myXmlRpcPort;
 
-  public P2PServer(int portToListen, P2PCommand[] p2PServerCommands) throws IOException {
-    myXmlRpcPort = portToListen;
-
+  public P2PServer(int portToListen, P2PCommand[] p2PServerCommands) {
     //XmlRpc.setDebug(true);
     try{
       // Trying to avoid dependency on IDEA code here:
-      //noinspection UnnecessaryFullyQualifiedName
-      myWebServer = new IdeaAwareWebServer(myXmlRpcPort, null, new IdeaAwareXmlRpcServer());
+      myWebServer = new WebServer(portToListen, null);
     }
     catch (Exception e) {
       LOG.debug(e.getMessage(), e);
-      myWebServer = new WebServer(myXmlRpcPort);
+      myWebServer = new WebServer(portToListen);
     }
 
     for (P2PCommand p2PCommand : p2PServerCommands) {
@@ -52,11 +44,6 @@ public class P2PServer {
 
   public void shutdown() {
     myWebServer.shutdown();
-//    new WaitFor() {
-//      protected boolean condition() {
-//        return !NetworkUtil.isPortBusy(myXmlRpcPort);
-//      }
-//    };
 
     LOG.info("IDEtalk WebServer shut down");
   }

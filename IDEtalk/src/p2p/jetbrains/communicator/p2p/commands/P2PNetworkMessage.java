@@ -24,6 +24,7 @@ import jetbrains.communicator.p2p.XmlRpcTargetImpl;
 import jetbrains.communicator.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,11 +40,10 @@ public class P2PNetworkMessage implements Message {
     myCommandId = commandId;
     myCommand = command;
 
-    for (String commandParameter : commandParameters) {
-      myCommandParameters.add(commandParameter);
-    }
+    Collections.addAll(myCommandParameters, commandParameters);
   }
 
+  @Override
   public boolean send(User user) {
     int port = getPort(user);
     if (port < 0) {
@@ -66,7 +66,7 @@ public class P2PNetworkMessage implements Message {
     return myResponse;
   }
 
-  private int getPort(User user) {
+  private static int getPort(User user) {
     P2PTransport p2PTransport = P2PTransport.getInstance();
     if (p2PTransport == null) {
       return -1;
@@ -86,7 +86,7 @@ public class P2PNetworkMessage implements Message {
 
     if (myCommand != null ? !myCommand.equals(p2PNetworkMessage.myCommand) : p2PNetworkMessage.myCommand != null) return false;
     if (myCommandId != null ? !myCommandId.equals(p2PNetworkMessage.myCommandId) : p2PNetworkMessage.myCommandId != null) return false;
-    if (myCommandParameters != null ? !myCommandParameters.equals(p2PNetworkMessage.myCommandParameters) : p2PNetworkMessage.myCommandParameters != null) return false;
+    if (!myCommandParameters.equals(p2PNetworkMessage.myCommandParameters)) return false;
 
     return true;
   }
@@ -95,7 +95,7 @@ public class P2PNetworkMessage implements Message {
     int result;
     result = (myCommandId != null ? myCommandId.hashCode() : 0);
     result = 29 * result + (myCommand != null ? myCommand.hashCode() : 0);
-    result = 29 * result + (myCommandParameters != null ? myCommandParameters.hashCode() : 0);
+    result = 29 * result + (myCommandParameters.hashCode());
     return result;
   }
 }

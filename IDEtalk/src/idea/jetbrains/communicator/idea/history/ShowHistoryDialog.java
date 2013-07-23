@@ -20,8 +20,8 @@ import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.actionSystem.DataConstants;
 import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.util.text.DateFormatUtil;
@@ -69,6 +69,7 @@ public class ShowHistoryDialog extends IdeaDialog {
     init();
 
     UIUtil.runWhenShown(myConsole.getComponent(), new Runnable() {
+      @Override
       public void run() {
         outputMessages();
       }
@@ -98,15 +99,18 @@ public class ShowHistoryDialog extends IdeaDialog {
     return day;
   }
 
+  @Override
   @NonNls
   protected String getDimensionServiceKey() {
     return getClass().getName();
   }
 
+  @Override
   @NotNull
   protected Action[] createActions() {
     return new Action[]{
         new AbstractAction(CommonBundle.getCloseButtonText()) {
+          @Override
           public void actionPerformed(ActionEvent e) {
             doCancelAction();
           }
@@ -114,16 +118,19 @@ public class ShowHistoryDialog extends IdeaDialog {
     };
   }
 
+  @Override
   protected void dispose() {
     myConsole.dispose();
     super.dispose();
   }
 
+  @Override
   @Nullable
   protected JComponent createCenterPanel() {
     return new Panel(myConsole.getComponent());
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     return myConsole.getComponent();
   }
@@ -134,9 +141,10 @@ public class ShowHistoryDialog extends IdeaDialog {
       super(wrapped);
     }
 
+    @Override
     @Nullable
     public Object getData(@NonNls String dataId) {
-      if (DataConstants.PROJECT.equals(dataId)) {
+      if (PlatformDataKeys.PROJECT.getName().equals(dataId)) {
         return myProject;
       }
       return null;

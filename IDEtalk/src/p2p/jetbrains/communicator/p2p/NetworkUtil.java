@@ -61,7 +61,7 @@ public class NetworkUtil {
   private NetworkUtil() {
   }
 
-  public static InetAddress[] getSelfAddresses() throws SocketException {
+  public static InetAddress[] getSelfAddresses() {
     final List<InetAddress> res = ourInterfaces.getValue();
     return res.toArray(new InetAddress[res.size()]);
   }
@@ -98,11 +98,11 @@ public class NetworkUtil {
     return null;
   }
 
-  private static String buildFullLogLine(String logLine, List<? extends Object> parameters) {
+  private static String buildFullLogLine(String logLine, List<?> parameters) {
     return logLine + '(' + parameters + ')';
   }
 
-  private static void checkParameters(List<? extends Object> parameters, String method) {
+  private static void checkParameters(List<?> parameters, String method) {
     for (int i = 0; i < parameters.size(); i++) {
       assert parameters.get(i) != null : " null parameter " + i + " to " + method;
     }
@@ -110,19 +110,15 @@ public class NetworkUtil {
 
   public static boolean isOwnAddress(InetAddress address) {
     if (address == null) return false;
-    try {
-      return address.isLoopbackAddress() || Arrays.asList(getSelfAddresses()).contains(address);
-    } catch (SocketException e) {
-      LOG.info(e.getLocalizedMessage());
-    }
-    return false;
+    return address.isLoopbackAddress() || Arrays.asList(getSelfAddresses()).contains(address);
   }
 
   public static boolean isPortBusy(int port) {
     ServerSocket socket = null;
     try {
       socket = new ServerSocket(port);
-    } catch (IOException e) {
+    }
+    catch (IOException ignored) {
       return true;
     }
     finally {
