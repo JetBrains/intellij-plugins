@@ -38,43 +38,38 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetType;
-import org.osmorc.frameworkintegration.FrameworkInstanceLibraryManager;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsmorcModuleComponent implements ModuleComponent {
-  private MessageBusConnection connection;
   private final Module myModule;
   private final BundleManager myBundleManager;
-  private final FrameworkInstanceLibraryManager myFrameworkInstanceLibraryManager;
   private final AdditionalJARContentsWatcherManager myAdditionalJARContentsWatcherManager;
   private final Application myApplication;
-  private boolean disposed;
+  private MessageBusConnection myConnection;
 
   public OsmorcModuleComponent(Module module,
                                BundleManager bundleManager,
-                               FrameworkInstanceLibraryManager frameworkInstanceLibraryManager,
                                AdditionalJARContentsWatcherManager additionalJARContentsWatcherManager,
                                Application application) {
-    this.myModule = module;
+    myModule = module;
     myBundleManager = bundleManager;
-    this.myFrameworkInstanceLibraryManager = frameworkInstanceLibraryManager;
-    this.myAdditionalJARContentsWatcherManager = additionalJARContentsWatcherManager;
-    this.myApplication = application;
-    disposed = false;
+    myAdditionalJARContentsWatcherManager = additionalJARContentsWatcherManager;
+    myApplication = application;
   }
 
   @NonNls
   @NotNull
+  @Override
   public String getComponentName() {
     return "OsmorcModuleComponent";
   }
 
+  @Override
   public void initComponent() {
-    disposed = false;
-    connection = myModule.getMessageBus().connect();
-    connection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
+    myConnection = myModule.getMessageBus().connect();
+    myConnection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
       public void facetAdded(@NotNull Facet facet) {
         handleFacetChange(facet);
       }
@@ -85,21 +80,25 @@ public class OsmorcModuleComponent implements ModuleComponent {
     });
   }
 
+  @Override
   public void disposeComponent() {
-    if (connection != null) {
-      connection.disconnect();
+    if (myConnection != null) {
+      myConnection.disconnect();
+      myConnection = null;
     }
-    disposed = true;
   }
 
+  @Override
   public void projectOpened() {
     // the project component will rebuild indices
   }
 
+  @Override
   public void projectClosed() {
     myAdditionalJARContentsWatcherManager.dispose();
   }
 
+  @Override
   public void moduleAdded() {
   }
 
@@ -124,7 +123,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
   }
 
   private void handleFacetChange(Facet facet) {
-    if (!disposed && facet.getTypeId() == OsmorcFacetType.ID) {
+    if (myConnection != null && facet.getTypeId() == OsmorcFacetType.ID) {
       if (facet.getModule().getProject().isInitialized()) {
         // reindex the module itself
         buildManuallyEditedManifestIndex();

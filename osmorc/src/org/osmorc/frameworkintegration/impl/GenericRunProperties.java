@@ -22,9 +22,9 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.frameworkintegration.impl;
 
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.util.PropertiesWrapper;
 
 import java.util.Map;
@@ -33,47 +33,46 @@ import java.util.Map;
  * Run properties which are supported by any OSGi Framework.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id:$
  */
 public class GenericRunProperties extends PropertiesWrapper {
-  public static final String DEBUG_MODE = "debugMode";
-  public static final String START_CONSOLE = "startConsole";
   public static final String SYSTEM_PACKAGES = "systemPackages";
   public static final String BOOT_DELEGATION = "bootDelegation";
+  public static final String DEBUG_MODE = "debugMode";
+  public static final String START_CONSOLE = "startConsole";
 
-  public GenericRunProperties(Map<String, String> properties) {
+  public GenericRunProperties(@NotNull Map<String, String> properties) {
     super(properties);
-  }
-
-  public String getBootDelegation() {
-    return getProperty(BOOT_DELEGATION);
   }
 
   public String getSystemPackages() {
     return getProperty(SYSTEM_PACKAGES);
   }
 
-  public boolean isDebugMode() {
-    return getBooleanProperty(DEBUG_MODE);
+  public void setSystemPackages(String value) {
+    putProperty(SYSTEM_PACKAGES, value);
+  }
+
+  public String getBootDelegation() {
+    return getProperty(BOOT_DELEGATION);
   }
 
   public void setBootDelegation(String value) {
     putProperty(BOOT_DELEGATION, value);
   }
 
+  public boolean isDebugMode() {
+    return getBooleanProperty(DEBUG_MODE);
+  }
+
   public void setDebugMode(boolean debugMode) {
     putBooleanProperty(DEBUG_MODE, debugMode);
   }
 
-  public void setSystemPackages(String value) {
-    putProperty(SYSTEM_PACKAGES, value);
+  public boolean isStartConsole() {
+    return getBooleanProperty(START_CONSOLE);
   }
 
   public void setStartConsole(boolean value) {
     putBooleanProperty(START_CONSOLE, value);
-  }
-
-  public boolean isStartConsole() {
-    return getBooleanProperty(START_CONSOLE);
   }
 }

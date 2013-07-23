@@ -44,9 +44,9 @@ public class FrameworkIntegratorRegistry {
 
   @Nullable
   public FrameworkIntegrator findIntegratorByName(@NotNull String name) {
-    for (FrameworkIntegrator frameworkIntegrator : getFrameworkIntegrators()) {
-      if (frameworkIntegrator.getDisplayName().equals(name)) {
-        return frameworkIntegrator;
+    for (FrameworkIntegrator integrator : getFrameworkIntegrators()) {
+      if (name.equals(integrator.getDisplayName())) {
+        return integrator;
       }
     }
     return null;

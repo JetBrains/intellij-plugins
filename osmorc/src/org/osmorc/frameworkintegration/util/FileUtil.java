@@ -30,10 +30,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
 public class FileUtil {
-
   public static String getNameWithoutJarSuffix(@NotNull VirtualFile libraryClasses) {
     return getNameWithoutTail(libraryClasses, ".jar");
   }
@@ -51,6 +50,7 @@ public class FileUtil {
     }
   }
 
+  @Nullable
   public static VirtualFile getFolder(@Nullable VirtualFile file) {
     VirtualFile result = null;
 

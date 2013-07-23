@@ -24,7 +24,6 @@
  */
 package org.osmorc.run.ui;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -56,11 +55,12 @@ public class BundleSelector extends JDialog {
   private JButton buttonCancel;
   private JList bundlesList;
   private JTextField searchField;
+
+  private final Project project;
   private FrameworkInstanceDefinition usedFramework;
   private List<SelectedBundle> hideBundles = new ArrayList<SelectedBundle>();
-  private final Project project;
-  private ArrayList<SelectedBundle> selectedBundles = new ArrayList<SelectedBundle>();
-  private final ArrayList<SelectedBundle> allAvailableBundles = new ArrayList<SelectedBundle>();
+  private List<SelectedBundle> selectedBundles = new ArrayList<SelectedBundle>();
+  private final List<SelectedBundle> allAvailableBundles = new ArrayList<SelectedBundle>();
 
   public BundleSelector(Project project) {
     this.project = project;
@@ -68,6 +68,8 @@ public class BundleSelector extends JDialog {
     setModal(true);
     setTitle(OsmorcBundle.message("bundle.selector.title"));
     getRootPane().setDefaultButton(buttonOK);
+
+    //noinspection unchecked
     bundlesList.setCellRenderer(new SelectedBundleListCellRenderer());
 
     buttonOK.addActionListener(new ActionListener() {
@@ -116,61 +118,59 @@ public class BundleSelector extends JDialog {
   private void createList() {
     allAvailableBundles.clear();
 
-    final HashSet<SelectedBundle> hs = new HashSet<SelectedBundle>();
-    // add all the modules
+    final Set<SelectedBundle> bundles = new HashSet<SelectedBundle>();
+
+    // all the modules
     Module[] modules = ModuleManager.getInstance(project).getModules();
     for (Module module : modules) {
       if (OsmorcFacet.hasOsmorcFacet(module)) {
         SelectedBundle selectedBundle = new SelectedBundle(module.getName(), null, SelectedBundle.BundleType.Module);
-
-        // treeset produced weird results here... so i gotta take the slow approach.
-
-        hs.add(selectedBundle);
+        bundles.add(selectedBundle);
       }
     }
-    // add all framework bundles, if there are some.
+
+    // all the framework bundles (if there are any)
     if (usedFramework != null) {
-      FrameworkIntegratorRegistry registry = ServiceManager.getService(FrameworkIntegratorRegistry.class);
-      FrameworkIntegrator integrator = registry.findIntegratorByInstanceDefinition(usedFramework);
-      integrator.getFrameworkInstanceManager().collectLibraries(usedFramework, new JarFileLibraryCollector() {
-        @Override
-        protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles,
-                                            @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
-          for (VirtualFile jarFile : jarFiles) {
-            String url = jarFile.getUrl();
-            url = BundleCompiler.convertJarUrlToFileUrl(url);
-            url = BundleCompiler.fixFileURL(url);
-            String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(url);
-            if (bundleName != null) {
-              String bundleVersion = CachingBundleInfoProvider.getBundleVersions(url);
-              SelectedBundle b =
-                new SelectedBundle(bundleName + " - " + bundleVersion, url, SelectedBundle.BundleType.FrameworkBundle);
-              hs.add(b);
+      FrameworkIntegrator integrator = FrameworkIntegratorRegistry.getInstance().findIntegratorByInstanceDefinition(usedFramework);
+      if (integrator != null) {
+        integrator.getFrameworkInstanceManager().collectLibraries(usedFramework, new JarFileLibraryCollector() {
+          @Override
+          protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles,
+                                              @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
+            for (VirtualFile jarFile : jarFiles) {
+              String url = jarFile.getUrl();
+              url = BundleCompiler.convertJarUrlToFileUrl(url);
+              url = BundleCompiler.fixFileURL(url);
+              String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(url);
+              if (bundleName != null) {
+                String bundleVersion = CachingBundleInfoProvider.getBundleVersions(url);
+                SelectedBundle b =
+                  new SelectedBundle(bundleName + " - " + bundleVersion, url, SelectedBundle.BundleType.FrameworkBundle);
+                bundles.add(b);
+              }
             }
           }
-        }
-      });
+        });
+      }
 
-
-      // all the libraries that are bundles already (doesnt make much sense to start bundlified libs as they have no activator).
-      final String[] urls = OrderEnumerator.orderEntries(project).withoutSdk().withoutModuleSourceEntries()
+      // all the libraries that are bundles already (doesn't make much sense to start bundlified libs as they have no activator).
+      String[] urls = OrderEnumerator.orderEntries(project).withoutSdk().withoutModuleSourceEntries()
         .satisfying(BundleCompiler.NOT_FRAMEWORK_LIBRARY_CONDITION).classes().getUrls();
       for (String url : urls) {
         url = BundleCompiler.convertJarUrlToFileUrl(url);
         url = BundleCompiler.fixFileURL(url);
 
-
         String displayName = CachingBundleInfoProvider.getBundleSymbolicName(url);
         if (displayName != null) {
-          // okay its a startable library
-          SelectedBundle selectedBundle =
-            new SelectedBundle(displayName, url, SelectedBundle.BundleType.StartableLibrary);
-          hs.add(selectedBundle);
+          // okay its a start library
+          SelectedBundle selectedBundle = new SelectedBundle(displayName, url, SelectedBundle.BundleType.StartLibrary);
+          bundles.add(selectedBundle);
         }
       }
     }
-    hs.removeAll(hideBundles);
-    allAvailableBundles.addAll(hs);
+
+    bundles.removeAll(hideBundles);
+    allAvailableBundles.addAll(bundles);
     Collections.sort(allAvailableBundles, new TypeComparator());
   }
 
@@ -219,7 +219,6 @@ public class BundleSelector extends JDialog {
    * Comparator for sorting bundles by their type.
    *
    * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
-   * @version $Id:$
    */
   public static class TypeComparator implements Comparator<SelectedBundle> {
     public int compare(SelectedBundle selectedBundle, SelectedBundle selectedBundle2) {

@@ -10,7 +10,7 @@ import java.util.Set;
 
 /**
  * Convenience implementation of {@link FrameworkLibraryCollector} that extracts jars  from the given
- * jar paths and calls {@link #collectFrameworkJars(java.util.Collection} for the jar files.
+ * jar paths and calls {@link #collectFrameworkJars} for the jar files.
  *
  * @author janthomae@janthomae.de
  */
@@ -20,14 +20,12 @@ public abstract class JarFileLibraryCollector implements FrameworkLibraryCollect
                                               @NotNull Collection<VirtualFile> directoriesWithJars) {
     Set<VirtualFile> classRoots = new HashSet<VirtualFile>();
     for (VirtualFile directoryWithJars : directoriesWithJars) {
-      VirtualFile[] files = directoryWithJars.getChildren();
-      for (VirtualFile file : files) {
-        VirtualFile dir = FileUtil.getFolder(file);
-
+      for (VirtualFile child : directoryWithJars.getChildren()) {
+        VirtualFile dir = FileUtil.getFolder(child);
         if (dir != null) {
           VirtualFile manifest = dir.findFileByRelativePath("META-INF/MANIFEST.MF"); // it's a bundle
-          if (manifest != null && !sourceFinder.containsOnlySources(file)) {
-            classRoots.add(file);
+          if (manifest != null && !sourceFinder.containsOnlySources(child)) {
+            classRoots.add(child);
           }
         }
       }
