@@ -101,8 +101,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
         final SMTRunnerConsoleProperties consoleProperties = new SMTRunnerConsoleProperties(runConfiguration, testFrameworkName, executor);
 
         testRunnerConsole = SMTestRunnerConnectionUtil.createAndAttachConsole(testFrameworkName, processHandler, consoleProperties,
-                                                                              getRunnerSettings(),
-                                                                              getConfigurationSettings());
+                                                                              getEnvironment());
 
         return testRunnerConsole;
       }

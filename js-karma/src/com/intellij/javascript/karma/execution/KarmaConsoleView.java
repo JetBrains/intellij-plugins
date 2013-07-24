@@ -39,7 +39,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
                           @Nullable String splitterProperty,
                           @NotNull KarmaServer server,
                           @NotNull KarmaExecutionSession executionSession) {
-    super(consoleProperties, env.getRunnerSettings(), env.getConfigurationSettings(), splitterProperty);
+    super(consoleProperties, env, splitterProperty);
     myServer = server;
     myExecutionSession = executionSession;
   }

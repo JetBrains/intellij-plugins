@@ -156,10 +156,6 @@ public abstract class AbstractFrameworkRunner<P extends PropertiesWrapper> imple
   }
 
 
-  protected RunnerSettings getRunnerSettings() {
-    return myRunnerSettings;
-  }
-
   @NotNull
   public List<VirtualFile> getFrameworkStarterLibraries() {
     final List<VirtualFile> result = new ArrayList<VirtualFile>();

@@ -94,8 +94,7 @@ public class DartUnitRunningState extends CommandLineState {
     SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
       DART_FRAMEWORK_NAME,
       testConsoleProperties,
-      env.getRunnerSettings(),
-      env.getConfigurationSettings(),
+      env,
       new DartTestLocationProvider(),
       true,
       null

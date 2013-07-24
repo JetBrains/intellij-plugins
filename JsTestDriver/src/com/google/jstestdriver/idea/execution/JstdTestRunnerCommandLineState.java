@@ -113,8 +113,7 @@ public class JstdTestRunnerCommandLineState extends CommandLineState {
     SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
       JSTD_FRAMEWORK_NAME,
       testConsoleProperties,
-      env.getRunnerSettings(),
-      env.getConfigurationSettings(),
+      env,
       new JstdTestLocationProvider(),
       true,
       new JstdTestProxyFilterProvider(testConsoleProperties.getProject())
