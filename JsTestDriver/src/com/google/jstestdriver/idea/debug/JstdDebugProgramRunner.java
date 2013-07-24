@@ -63,7 +63,6 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
 
   @Override
   protected RunContentDescriptor doExecute(@NotNull Project project,
-                                           @NotNull Executor executor,
                                            RunProfileState state,
                                            @Nullable RunContentDescriptor contentToReuse,
                                            @NotNull ExecutionEnvironment env) throws ExecutionException {
@@ -72,14 +71,13 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
       throw new ExecutionException("Debug is available only for local browsers captured by a local JsTestDriver server.");
     }
     JstdRunConfigurationVerifier.checkJstdServerAndBrowserEnvironment(project, runConfiguration.getRunSettings(), true);
-    return startSession(project, contentToReuse, env, executor, runConfiguration);
+    return startSession(project, contentToReuse, env, runConfiguration);
   }
 
   @Nullable
   private <Connection> RunContentDescriptor startSession(@NotNull Project project,
                                                          @Nullable RunContentDescriptor contentToReuse,
                                                          @NotNull ExecutionEnvironment env,
-                                                         @NotNull Executor executor,
                                                          @NotNull JstdRunConfiguration runConfiguration) throws ExecutionException {
     JstdDebugBrowserInfo<Connection> debugBrowserInfo = JstdDebugBrowserInfo.build(runConfiguration.getRunSettings());
     if (debugBrowserInfo == null) {
@@ -100,7 +98,7 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
     }
 
     JstdTestRunnerCommandLineState runState = runConfiguration.getState(env, null, true);
-    final ExecutionResult executionResult = runState.execute(executor, this);
+    final ExecutionResult executionResult = runState.execute(env.getExecutor(), this);
     debugBrowserInfo.fixIfChrome(executionResult.getProcessHandler());
 
     final RemoteDebuggingFileFinder fileFinder = new JstdDebuggableFileFinderProvider(new File(runConfiguration.getRunSettings().getConfigFile())).provideFileFinder();

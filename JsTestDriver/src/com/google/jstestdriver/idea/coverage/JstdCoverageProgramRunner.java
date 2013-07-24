@@ -47,32 +47,30 @@ public class JstdCoverageProgramRunner extends GenericProgramRunner {
 
   @Override
   protected RunContentDescriptor doExecute(Project project,
-                                           Executor executor,
                                            RunProfileState state,
                                            RunContentDescriptor contentToReuse,
                                            ExecutionEnvironment env) throws ExecutionException {
-    return executeWithCoverage(project, executor, contentToReuse, env);
+    return executeWithCoverage(project, contentToReuse, env);
   }
 
   @Nullable
   private RunContentDescriptor executeWithCoverage(Project project,
-                                                Executor executor,
-                                                RunContentDescriptor contentToReuse,
-                                                ExecutionEnvironment env) throws ExecutionException {
+                                                   RunContentDescriptor contentToReuse,
+                                                   ExecutionEnvironment env) throws ExecutionException {
     JstdRunConfiguration runConfiguration = (JstdRunConfiguration) env.getRunProfile();
     JstdRunConfigurationVerifier.checkJstdServerAndBrowserEnvironment(project, runConfiguration.getRunSettings(), false);
     FileDocumentManager.getInstance().saveAllDocuments();
     CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
     RunProfileState state = runConfiguration.getCoverageState(env, coverageFilePath);
-    ExecutionResult executionResult = state.execute(executor, this);
+    ExecutionResult executionResult = state.execute(env.getExecutor(), this);
     if (executionResult == null) {
       return null;
     }
 
     CoverageHelper.attachToProcess(runConfiguration, executionResult.getProcessHandler(), env.getRunnerSettings());
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
+    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, env.getExecutor(), executionResult, env);
     return contentBuilder.showRunContent(contentToReuse);
   }
 }

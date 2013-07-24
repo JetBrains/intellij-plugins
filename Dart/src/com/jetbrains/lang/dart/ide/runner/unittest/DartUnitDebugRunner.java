@@ -45,7 +45,6 @@ public class DartUnitDebugRunner extends DefaultProgramRunner {
 
   @Override
   protected RunContentDescriptor doExecute(Project project,
-                                           Executor executor,
                                            RunProfileState state,
                                            RunContentDescriptor contentToReuse,
                                            ExecutionEnvironment env) throws ExecutionException {
@@ -66,7 +65,7 @@ public class DartUnitDebugRunner extends DefaultProgramRunner {
     final int debuggingPort = DartSdkUtil.findFreePortForDebugging();
 
     final DartUnitRunningState dartUnitRunningState = new DartUnitRunningState(env, parameters, dartSettings, debuggingPort);
-    final ExecutionResult executionResult = dartUnitRunningState.execute(executor, this);
+    final ExecutionResult executionResult = dartUnitRunningState.execute(env.getExecutor(), this);
 
     final XDebugSession debugSession =
       XDebuggerManager.getInstance(project).startSession(this, env, contentToReuse, new XDebugProcessStarter() {

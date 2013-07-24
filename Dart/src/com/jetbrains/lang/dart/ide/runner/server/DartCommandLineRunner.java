@@ -1,7 +1,6 @@
 package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultRunExecutor;
@@ -32,7 +31,6 @@ public class DartCommandLineRunner extends DefaultProgramRunner {
 
   @Override
   protected RunContentDescriptor doExecute(Project project,
-                                           Executor executor,
                                            RunProfileState state,
                                            RunContentDescriptor contentToReuse,
                                            ExecutionEnvironment env) throws ExecutionException {
@@ -50,6 +48,6 @@ public class DartCommandLineRunner extends DefaultProgramRunner {
       StringUtil.notNullize(configuration.getArguments())
     );
 
-    return super.doExecute(project, executor, dartCommandLineRunningState, contentToReuse, env);
+    return super.doExecute(project, dartCommandLineRunningState, contentToReuse, env);
   }
 }

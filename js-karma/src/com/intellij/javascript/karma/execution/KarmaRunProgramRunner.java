@@ -38,12 +38,11 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
   @Nullable
   @Override
   protected RunContentDescriptor doExecute(Project project,
-                                           Executor executor,
                                            RunProfileState state,
                                            RunContentDescriptor contentToReuse,
                                            ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
-    ExecutionResult executionResult = state.execute(executor, this);
+    ExecutionResult executionResult = state.execute(env.getExecutor(), this);
     if (executionResult == null) {
       return null;
     }
@@ -52,7 +51,7 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
       LOG.error("Can't get KarmaConsoleView from executionResult!");
       return null;
     }
-    RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
+    RunContentBuilder contentBuilder = new RunContentBuilder(project, this, env.getExecutor(), executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
 
     final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();

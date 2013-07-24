@@ -57,12 +57,11 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
   @Nullable
   @Override
   protected RunContentDescriptor doExecute(final Project project,
-                                           Executor executor,
                                            RunProfileState state,
                                            RunContentDescriptor contentToReuse,
                                            ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
-    final ExecutionResult executionResult = state.execute(executor, this);
+    final ExecutionResult executionResult = state.execute(env.getExecutor(), this);
     if (executionResult == null) {
       return null;
     }
@@ -75,7 +74,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     if (karmaServer.isReady() && karmaServer.hasCapturedBrowsers()) {
       return doStart(project, karmaServer, consoleView, executionResult, contentToReuse, env);
     }
-    RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
+    RunContentBuilder contentBuilder = new RunContentBuilder(project, this, env.getExecutor(), executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
     karmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
       @Override
