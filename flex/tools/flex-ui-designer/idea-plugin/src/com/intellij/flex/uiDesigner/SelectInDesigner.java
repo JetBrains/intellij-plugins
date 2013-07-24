@@ -1,7 +1,7 @@
 package com.intellij.flex.uiDesigner;
 
 import com.intellij.ide.SelectInContext;
-import com.intellij.ide.SelectInTarget;
+import com.intellij.ide.SelectInTargetBase;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
 import com.intellij.openapi.util.AsyncResult;
@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
 
-public class SelectInDesigner implements SelectInTarget {
+public class SelectInDesigner extends SelectInTargetBase {
   @Override
   public boolean canSelect(SelectInContext context) {
     PsiElement element = getPsiElement(context);
@@ -66,21 +66,6 @@ public class SelectInDesigner implements SelectInTarget {
         Client.getInstance().selectComponent(info.getId(), componentId);
       }
     });
-  }
-
-  @Override
-  public String getToolWindowId() {
-    return null;
-  }
-
-  @Override
-  public String getMinorViewId() {
-    return null;
-  }
-
-  @Override
-  public float getWeight() {
-    return 0;
   }
 
   @Override
