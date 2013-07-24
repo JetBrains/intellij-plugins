@@ -97,7 +97,6 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   @Override
   @Nullable
   protected RunContentDescriptor doExecute(final Project project,
-                                           final Executor executor,
                                            final RunProfileState state,
                                            final RunContentDescriptor contentToReuse,
                                            final ExecutionEnvironment env) throws ExecutionException {
@@ -149,7 +148,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
           }
         }
 
-        return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, executor, contentToReuse, env);
+        return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, contentToReuse, env);
       }
 
       if (runProfile instanceof FlexUnitRunConfiguration) {
@@ -160,10 +159,10 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
         if (bc.getTargetPlatform() == TargetPlatform.Web) {
           FlashPlayerTrustUtil.updateTrustedStatus(module, bc, isDebug, params.isTrusted());
-          return launchWebFlexUnit(project, executor, contentToReuse, env, params, bc.getActualOutputFilePath());
+          return launchWebFlexUnit(project, contentToReuse, env, params, bc.getActualOutputFilePath());
         }
         else {
-          return launchAirFlexUnit(project, executor, state, contentToReuse, env, params);
+          return launchAirFlexUnit(project, state, contentToReuse, env, params);
         }
       }
 
@@ -185,7 +184,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
           FlashPlayerTrustUtil.updateTrustedStatus(module, bc, isDebug, params.isRunTrusted());
         }
 
-        return launchFlexConfig(module, bc, params, executor, state, contentToReuse, env);
+        return launchFlexConfig(module, bc, params, state, contentToReuse, env);
       }
     }
     catch (RuntimeConfigurationError e) {
@@ -198,7 +197,6 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   protected RunContentDescriptor launchDebugProcess(final Module module,
                                                     final FlexBuildConfiguration bc,
                                                     final BCBasedRunnerParameters params,
-                                                    final Executor executor,
                                                     final RunContentDescriptor contentToReuse,
                                                     final ExecutionEnvironment env) throws ExecutionException {
     final XDebugSession debugSession =
@@ -213,7 +211,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
                 @Override
                 public ExecutionConsole createConsole() {
                   try {
-                    return createFlexUnitRunnerConsole(session.getProject(), env, getProcessHandler(), executor);
+                    return createFlexUnitRunnerConsole(session.getProject(), env, getProcessHandler());
                   }
                   catch (ExecutionException e) {
                     Logger.getInstance(FlexBaseRunner.class.getName()).error(e);
@@ -257,14 +255,12 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
 
   @Nullable
   protected abstract RunContentDescriptor launchAirFlexUnit(final Project project,
-                                                            final Executor executor,
                                                             final RunProfileState state,
                                                             final RunContentDescriptor contentToReuse,
                                                             final ExecutionEnvironment env,
                                                             final FlexUnitRunnerParameters params) throws ExecutionException;
 
   protected abstract RunContentDescriptor launchWebFlexUnit(final Project project,
-                                                            final Executor executor,
                                                             final RunContentDescriptor contentToReuse,
                                                             final ExecutionEnvironment env,
                                                             final FlexUnitRunnerParameters params,
@@ -274,18 +270,16 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
   protected abstract RunContentDescriptor launchFlexConfig(final Module module,
                                                            final FlexBuildConfiguration config,
                                                            final FlashRunnerParameters params,
-                                                           final Executor executor,
                                                            final RunProfileState state,
                                                            final RunContentDescriptor contentToReuse,
                                                            final ExecutionEnvironment environment) throws ExecutionException;
 
   public static ExecutionConsole createFlexUnitRunnerConsole(Project project,
                                                              ExecutionEnvironment env,
-                                                             ProcessHandler processHandler,
-                                                             Executor executor) throws ExecutionException {
+                                                             ProcessHandler processHandler) throws ExecutionException {
     final RunProfile runConfiguration = env.getRunProfile();
     final FlexStackTraceFilter stackTraceFilter = new FlexStackTraceFilter(project);
-    final FlexUnitConsoleProperties consoleProps = new FlexUnitConsoleProperties(((FlexUnitRunConfiguration)runConfiguration), executor);
+    final FlexUnitConsoleProperties consoleProps = new FlexUnitConsoleProperties(((FlexUnitRunConfiguration)runConfiguration), env.getExecutor());
     consoleProps.addStackTraceFilter(stackTraceFilter);
 
     final BaseTestsOutputConsoleView consoleView = SMTestRunnerConnectionUtil

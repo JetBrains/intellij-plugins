@@ -55,7 +55,6 @@ public class FlexRunner extends FlexBaseRunner {
   protected RunContentDescriptor launchFlexConfig(final Module module,
                                                   final FlexBuildConfiguration bc,
                                                   final FlashRunnerParameters runnerParameters,
-                                                  final Executor executor,
                                                   final RunProfileState state,
                                                   final RunContentDescriptor contentToReuse,
                                                   final ExecutionEnvironment environment) throws ExecutionException {
@@ -69,11 +68,11 @@ public class FlexRunner extends FlexBaseRunner {
         launchWithSelectedApplication(urlOrPath, runnerParameters.getLauncherParameters());
         break;
       case Desktop:
-        return standardLaunch(module.getProject(), executor, state, contentToReuse, environment);
+        return standardLaunch(module.getProject(), state, contentToReuse, environment);
       case Mobile:
         switch (runnerParameters.getMobileRunTarget()) {
           case Emulator:
-            return standardLaunch(module.getProject(), executor, state, contentToReuse, environment);
+            return standardLaunch(module.getProject(), state, contentToReuse, environment);
           case AndroidDevice:
             final String androidDescriptorPath = getAirDescriptorPath(bc, bc.getAndroidPackagingOptions());
             final String androidAppId = getApplicationId(androidDescriptorPath);
@@ -138,19 +137,17 @@ public class FlexRunner extends FlexBaseRunner {
 
   @Nullable
   private RunContentDescriptor standardLaunch(final Project project,
-                                              final Executor executor,
                                               final RunProfileState state,
                                               final RunContentDescriptor contentToReuse, final ExecutionEnvironment environment)
     throws ExecutionException {
-    final ExecutionResult executionResult = state.execute(executor, this);
+    final ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
     if (executionResult == null) return null;
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, environment);
+    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, environment.getExecutor(), executionResult, environment);
     return contentBuilder.showRunContent(contentToReuse);
   }
 
   protected RunContentDescriptor launchWebFlexUnit(final Project project,
-                                                   final Executor executor,
                                                    final RunContentDescriptor contentToReuse,
                                                    final ExecutionEnvironment env,
                                                    final FlexUnitRunnerParameters params,
@@ -176,20 +173,19 @@ public class FlexRunner extends FlexBaseRunner {
       }
     };
 
-    final ExecutionConsole console = createFlexUnitRunnerConsole(project, env, processHandler, executor);
+    final ExecutionConsole console = createFlexUnitRunnerConsole(project, env, processHandler);
     flexUnitConnection.addListener(new FlexUnitListener(processHandler));
 
     launchWithSelectedApplication(swfFilePath, params.getLauncherParameters());
 
     final RunContentBuilder contentBuilder =
-      new RunContentBuilder(project, this, executor, new DefaultExecutionResult(console, processHandler), env);
+      new RunContentBuilder(project, this, env.getExecutor(), new DefaultExecutionResult(console, processHandler), env);
     Disposer.register(project, contentBuilder);
     return contentBuilder.showRunContent(contentToReuse);
   }
 
   @Nullable
   protected RunContentDescriptor launchAirFlexUnit(final Project project,
-                                                   final Executor executor,
                                                    final RunProfileState state,
                                                    final RunContentDescriptor contentToReuse,
                                                    final ExecutionEnvironment env,
@@ -201,7 +197,7 @@ public class FlexRunner extends FlexBaseRunner {
     final FlexUnitConnection flexUnitConnection = new FlexUnitConnection();
     flexUnitConnection.open(params.getPort());
 
-    executionResult = state.execute(executor, this);
+    executionResult = state.execute(env.getExecutor(), this);
     if (executionResult == null) {
       flexUnitConnection.close();
       policyFileConnection.close();
@@ -221,7 +217,7 @@ public class FlexRunner extends FlexBaseRunner {
       }
     });
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
+    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, env.getExecutor(), executionResult, env);
     return contentBuilder.showRunContent(contentToReuse);
   }
 

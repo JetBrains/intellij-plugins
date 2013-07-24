@@ -50,14 +50,13 @@ public class FlexDebugRunner extends FlexBaseRunner {
   }
 
   protected RunContentDescriptor launchWebFlexUnit(final Project project,
-                                                   final Executor executor,
                                                    final RunContentDescriptor contentToReuse,
                                                    final ExecutionEnvironment env,
                                                    final FlexUnitRunnerParameters params,
                                                    final String swfFilePath) throws ExecutionException {
     try {
       final Pair<Module, FlexBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
-      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, executor, contentToReuse, env);
+      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, contentToReuse, env);
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e.getMessage());
@@ -65,14 +64,13 @@ public class FlexDebugRunner extends FlexBaseRunner {
   }
 
   protected RunContentDescriptor launchAirFlexUnit(final Project project,
-                                                   final Executor executor,
                                                    final RunProfileState state,
                                                    final RunContentDescriptor contentToReuse,
                                                    final ExecutionEnvironment env,
                                                    final FlexUnitRunnerParameters params) throws ExecutionException {
     try {
       final Pair<Module, FlexBuildConfiguration> moduleAndBC = params.checkAndGetModuleAndBC(project);
-      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, executor, contentToReuse, env);
+      return launchDebugProcess(moduleAndBC.first, moduleAndBC.second, params, contentToReuse, env);
     }
     catch (RuntimeConfigurationError e) {
       throw new ExecutionException(e.getMessage());
@@ -82,7 +80,6 @@ public class FlexDebugRunner extends FlexBaseRunner {
   protected RunContentDescriptor launchFlexConfig(final Module module,
                                                   final FlexBuildConfiguration bc,
                                                   final FlashRunnerParameters runnerParameters,
-                                                  final Executor executor,
                                                   final RunProfileState state,
                                                   final RunContentDescriptor contentToReuse,
                                                   final ExecutionEnvironment env) throws ExecutionException {
@@ -163,6 +160,6 @@ public class FlexDebugRunner extends FlexBaseRunner {
       }
     }
 
-    return launchDebugProcess(module, bc, runnerParameters, executor, contentToReuse, env);
+    return launchDebugProcess(module, bc, runnerParameters, contentToReuse, env);
   }
 }

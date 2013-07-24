@@ -46,7 +46,7 @@ public class FlexRunner extends GenericProgramRunner {
   }
 
   @Override
-  protected RunContentDescriptor doExecute(final Project project, final Executor executor, final RunProfileState state,
+  protected RunContentDescriptor doExecute(final Project project, final RunProfileState state,
                                            final RunContentDescriptor contentToReuse, final ExecutionEnvironment env)
       throws ExecutionException {
     final BCBasedRunnerParameters parameters = ((RemoteFlashRunConfiguration)env.getRunProfile()).getRunnerParameters();

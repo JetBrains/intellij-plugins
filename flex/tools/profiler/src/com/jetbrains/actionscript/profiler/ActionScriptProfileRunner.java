@@ -74,12 +74,11 @@ public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> 
     return null;
   }
 
-  public void execute(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
-    execute(executor, executionEnvironment, null);
+  public void execute(@NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
+    execute(executionEnvironment, null);
   }
 
-  public void execute(@NotNull Executor executor,
-                      @NotNull ExecutionEnvironment executionEnvironment,
+  public void execute(@NotNull ExecutionEnvironment executionEnvironment,
                       @Nullable Callback callback) throws ExecutionException {
     final RunnerSettings runnerSettings = executionEnvironment.getRunnerSettings();
     if (runnerSettings == null) {
@@ -93,7 +92,7 @@ public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> 
 
     Executor executorById = ExecutorRegistry.getInstance().getExecutorById(DefaultRunExecutor.EXECUTOR_ID);
     RunManager.getInstance(executionEnvironment.getProject()).refreshUsagesList(executionEnvironment.getRunProfile());
-    myFlexRunner.execute(executorById, executionEnvironment, callback);
+    myFlexRunner.execute(executionEnvironment, callback);
   }
 
   private static boolean startProfiling(RunProfileWithCompileBeforeLaunchOption state) {

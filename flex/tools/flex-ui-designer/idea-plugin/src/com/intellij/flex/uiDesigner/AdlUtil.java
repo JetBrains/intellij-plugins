@@ -106,7 +106,7 @@ final class AdlUtil {
     configuration.getRunnerParameters().setBCName(buildConfiguration.getName());
 
     final FlexRunner runner = new FlexRunner(callback, buildConfiguration);
-    runner.execute(executor, new ExecutionEnvironment(runner, settings, project));
+    runner.execute(new ExecutionEnvironment(executor, runner, settings, project));
   }
 
   public static AdlProcessHandler runAdl(AdlRunConfiguration runConfiguration,

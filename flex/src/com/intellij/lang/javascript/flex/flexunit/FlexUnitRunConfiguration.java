@@ -130,7 +130,7 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
           @Override
           public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
             final ProcessHandler processHandler = startProcess();
-            final ExecutionConsole console = FlexBaseRunner.createFlexUnitRunnerConsole(getProject(), env, processHandler, executor);
+            final ExecutionConsole console = FlexBaseRunner.createFlexUnitRunnerConsole(getProject(), env, processHandler);
             return new DefaultExecutionResult(console, processHandler);
           }
         };
