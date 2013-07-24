@@ -289,7 +289,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     consoleProps.addStackTraceFilter(stackTraceFilter);
 
     final BaseTestsOutputConsoleView consoleView = SMTestRunnerConnectionUtil
-      .createAndAttachConsole("FlexUnit", processHandler, consoleProps, env.getRunnerSettings(), env.getConfigurationSettings());
+      .createAndAttachConsole("FlexUnit", processHandler, consoleProps, env);
     consoleView.addMessageFilter(stackTraceFilter);
     Disposer.register(project, consoleView);
     return consoleView;
