@@ -26,18 +26,28 @@ public class CucumberStepsIndex {
   private static final Logger LOG = Logger.getInstance(CucumberStepsIndex.class.getName());
 
   private final Map<FileType, CucumberJvmExtensionPoint> myExtensionMap;
+  private final Map<CucumberJvmExtensionPoint, Object> myExtensionData;
+  private Project myProject;
 
   public static CucumberStepsIndex getInstance(Project project) {
-    return ServiceManager.getService(project, CucumberStepsIndex.class);
+    CucumberStepsIndex result = ServiceManager.getService(project, CucumberStepsIndex.class);
+    result.myProject = project;
+
+    return result;
   }
 
   public CucumberStepsIndex(final Project project) {
     myExtensionMap = new HashMap<FileType, CucumberJvmExtensionPoint>();
+    myExtensionData = new HashMap<CucumberJvmExtensionPoint, Object>();
 
     for (CucumberJvmExtensionPoint e : Extensions.getExtensions(CucumberJvmExtensionPoint.EP_NAME)) {
-      e.init(project);
       myExtensionMap.put(e.getStepFileType(), e);
+      myExtensionData.put(e, e.getDataObject(project));
     }
+  }
+
+  public Object getExtensionDataObject(CucumberJvmExtensionPoint e) {
+    return myExtensionData.get(e);
   }
 
   /**
@@ -130,7 +140,7 @@ public class CucumberStepsIndex {
     return result;
   }
 
-  public Set<PsiFile> getStepDefinitionContainers(@Nullable final GherkinFile featureFile) {
+  public Set<PsiFile> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
     Set<PsiFile> result = new HashSet<PsiFile>();
     for (CucumberJvmExtensionPoint ep: myExtensionMap.values()) {
       result.addAll(ep.getStepDefinitionContainers(featureFile));
@@ -140,13 +150,13 @@ public class CucumberStepsIndex {
 
   public void reset() {
     for (CucumberJvmExtensionPoint e : myExtensionMap.values()) {
-      e.reset();
+      e.reset(myProject);
     }
   }
 
   public void flush() {
     for (CucumberJvmExtensionPoint e : myExtensionMap.values()) {
-      e.flush();
+      e.flush(myProject);
     }
   }
 

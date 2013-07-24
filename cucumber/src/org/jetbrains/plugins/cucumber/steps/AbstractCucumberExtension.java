@@ -49,14 +49,15 @@ public abstract class AbstractCucumberExtension implements CucumberJvmExtensionP
   }
 
   @Override
-  public void flush() {
+  public void flush(@NotNull final Project project) {
   }
 
   @Override
-  public void reset() {
+  public void reset(@NotNull final Project project) {
   }
 
   @Override
-  public void init(@NotNull Project project) {
+  public Object getDataObject(@NotNull Project project) {
+    return null;
   }
 }

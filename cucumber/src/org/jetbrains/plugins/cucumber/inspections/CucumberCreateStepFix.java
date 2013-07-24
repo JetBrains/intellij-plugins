@@ -54,7 +54,7 @@ public class CucumberCreateStepFix implements LocalQuickFix {
     return getName();
   }
 
-  public static Set<PsiFile> getStepDefinitionContainers(final GherkinFile featureFile) {
+  public static Set<PsiFile> getStepDefinitionContainers(@NotNull final GherkinFile featureFile) {
     return CucumberStepsIndex.getInstance(featureFile.getProject()).getStepDefinitionContainers(featureFile);
   }
 

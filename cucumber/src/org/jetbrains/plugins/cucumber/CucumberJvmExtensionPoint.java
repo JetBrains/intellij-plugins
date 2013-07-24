@@ -31,7 +31,7 @@ public interface CucumberJvmExtensionPoint {
    * @param parent container of the child
    * @return true if the child could be step definition file, else otherwise
    */
-  boolean isStepLikeFile(@NotNull final PsiElement child, @NotNull final PsiElement parent);
+  boolean isStepLikeFile(@NotNull PsiElement child, @NotNull PsiElement parent);
 
   /**
    * Checks if the child could be a step definition container
@@ -39,7 +39,7 @@ public interface CucumberJvmExtensionPoint {
    * @param parent it's container
    * @return true if child could be step definition container and it's possible to write in it
    */
-  boolean isWritableStepLikeFile(@NotNull final PsiElement child, @NotNull final PsiElement parent);
+  boolean isWritableStepLikeFile(@NotNull PsiElement child, @NotNull PsiElement parent);
 
   /**
    * Provides type of step definition file
@@ -57,7 +57,7 @@ public interface CucumberJvmExtensionPoint {
    * @param step to be resolved
    * @return list of elements where step is resolved
    */
-  List<PsiElement> resolveStep(@NotNull final PsiElement step);
+  List<PsiElement> resolveStep(@NotNull PsiElement step);
 
   /**
    * Infers all 'glue' parameters for the file which it can find out.
@@ -72,13 +72,13 @@ public interface CucumberJvmExtensionPoint {
    * @param module
    * @return
    */
-  List<AbstractStepDefinition> loadStepsFor(@Nullable final PsiFile featureFile, @NotNull final Module module);
+  List<AbstractStepDefinition> loadStepsFor(@Nullable PsiFile featureFile, @NotNull Module module);
 
-  void flush();
+  void flush(@NotNull Project project);
 
-  void reset();
+  void reset(@NotNull Project project);
 
-  void init(@NotNull final Project project);
+  Object getDataObject(@NotNull Project project);
 
-  Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull final GherkinFile file);
+  Collection<? extends PsiFile> getStepDefinitionContainers(@NotNull GherkinFile file);
 }
