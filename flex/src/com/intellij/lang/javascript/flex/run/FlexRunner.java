@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.run;
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultRunExecutor;
@@ -143,7 +142,7 @@ public class FlexRunner extends FlexBaseRunner {
     final ExecutionResult executionResult = state.execute(environment.getExecutor(), this);
     if (executionResult == null) return null;
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, environment.getExecutor(), executionResult, environment);
+    final RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, environment);
     return contentBuilder.showRunContent(contentToReuse);
   }
 
@@ -179,7 +178,7 @@ public class FlexRunner extends FlexBaseRunner {
     launchWithSelectedApplication(swfFilePath, params.getLauncherParameters());
 
     final RunContentBuilder contentBuilder =
-      new RunContentBuilder(project, this, env.getExecutor(), new DefaultExecutionResult(console, processHandler), env);
+      new RunContentBuilder(this, new DefaultExecutionResult(console, processHandler), env);
     Disposer.register(project, contentBuilder);
     return contentBuilder.showRunContent(contentToReuse);
   }
@@ -217,7 +216,7 @@ public class FlexRunner extends FlexBaseRunner {
       }
     });
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, env.getExecutor(), executionResult, env);
+    final RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
     return contentBuilder.showRunContent(contentToReuse);
   }
 
