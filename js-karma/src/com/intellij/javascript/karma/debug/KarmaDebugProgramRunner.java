@@ -4,7 +4,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultDebugExecutor;
@@ -74,7 +73,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     if (karmaServer.isReady() && karmaServer.hasCapturedBrowsers()) {
       return doStart(project, karmaServer, consoleView, executionResult, contentToReuse, env);
     }
-    RunContentBuilder contentBuilder = new RunContentBuilder(project, this, env.getExecutor(), executionResult, env);
+    RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
     karmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
       @Override

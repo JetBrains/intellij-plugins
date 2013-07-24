@@ -74,7 +74,7 @@ public class DartUnitRunningState extends CommandLineState {
   @NotNull
   public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
     ProcessHandler processHandler = startProcess();
-    ConsoleView consoleView = createConsole(getEnvironment(), executor);
+    ConsoleView consoleView = createConsole(getEnvironment());
     consoleView.attachToProcess(processHandler);
 
     DefaultExecutionResult executionResult = new DefaultExecutionResult(consoleView, processHandler);
@@ -82,13 +82,12 @@ public class DartUnitRunningState extends CommandLineState {
     return executionResult;
   }
 
-  private ConsoleView createConsole(@NotNull ExecutionEnvironment env,
-                                    Executor executor) throws ExecutionException {
+  private ConsoleView createConsole(@NotNull ExecutionEnvironment env) throws ExecutionException {
     final DartUnitRunConfiguration runConfiguration = (DartUnitRunConfiguration)env.getRunProfile();
     TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(
       new RuntimeConfigurationProducer.DelegatingRuntimeConfiguration<DartUnitRunConfiguration>(runConfiguration),
       DART_FRAMEWORK_NAME,
-      executor
+      env.getExecutor()
     );
 
     SMTRunnerConsoleView smtConsoleView = SMTestRunnerConnectionUtil.createConsoleWithCustomLocator(
@@ -104,7 +103,6 @@ public class DartUnitRunningState extends CommandLineState {
     smtConsoleView.addMessageFilter(filter);
 
     final Project project = env.getProject();
-    assert project != null;
     Disposer.register(project, smtConsoleView);
     return smtConsoleView;
   }
@@ -128,7 +126,6 @@ public class DartUnitRunningState extends CommandLineState {
     }
 
     Project project = getEnvironment().getProject();
-    assert project != null;
     VirtualFile realFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(myUnitParameters.getFilePath()));
     PsiFile psiFile = realFile != null ? PsiManager.getInstance(project).findFile(realFile) : null;
     if (psiFile != null) {

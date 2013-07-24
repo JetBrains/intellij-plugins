@@ -2,7 +2,6 @@ package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultRunExecutor;
@@ -51,7 +50,7 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
       LOG.error("Can't get KarmaConsoleView from executionResult!");
       return null;
     }
-    RunContentBuilder contentBuilder = new RunContentBuilder(project, this, env.getExecutor(), executionResult, env);
+    RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
 
     final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();

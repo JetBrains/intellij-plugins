@@ -7,7 +7,6 @@ import com.intellij.coverage.CoverageHelper;
 import com.intellij.coverage.CoverageRunnerData;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
@@ -70,7 +69,7 @@ public class JstdCoverageProgramRunner extends GenericProgramRunner {
 
     CoverageHelper.attachToProcess(runConfiguration, executionResult.getProcessHandler(), env.getRunnerSettings());
 
-    final RunContentBuilder contentBuilder = new RunContentBuilder(project, this, env.getExecutor(), executionResult, env);
+    final RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
     return contentBuilder.showRunContent(contentToReuse);
   }
 }

@@ -3,7 +3,6 @@ package com.intellij.javascript.karma.coverage;
 import com.intellij.coverage.*;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
@@ -67,9 +66,9 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     }
     final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (karmaServer.isReady() && karmaServer.hasCapturedBrowsers()) {
-      return doCoverage(project, env.getExecutor(), executionResult, contentToReuse, env, karmaServer);
+      return doCoverage(project, executionResult, contentToReuse, env, karmaServer);
     }
-    RunContentBuilder contentBuilder = new RunContentBuilder(project, this, env.getExecutor(), executionResult, env);
+    RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
     karmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
       @Override
@@ -82,7 +81,6 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
 
   @NotNull
   private RunContentDescriptor doCoverage(@NotNull final Project project,
-                                          @NotNull Executor executor,
                                           @NotNull ExecutionResult executionResult,
                                           RunContentDescriptor contentToReuse,
                                           @NotNull final ExecutionEnvironment env,
@@ -91,7 +89,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     CoverageEnabledConfiguration coverageEnabledConfiguration = CoverageEnabledConfiguration.getOrCreate(runConfiguration);
     CoverageHelper.resetCoverageSuit(runConfiguration);
     final String coverageFilePath = coverageEnabledConfiguration.getCoverageFilePath();
-    RunContentBuilder contentBuilder = new RunContentBuilder(project, this, executor, executionResult, env);
+    RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
     if (coverageFilePath != null) {
       karmaServer.startCoverageSession(new KarmaCoverageSession() {
