@@ -6,8 +6,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ultimate.PluginVerifier;
-import com.intellij.ultimate.UltimateVerifier;
 import com.intellij.util.xmlb.annotations.Property;
 import com.intellij.util.xmlb.annotations.Tag;
 import org.jdom.Element;
@@ -23,10 +21,6 @@ import org.jetbrains.annotations.Nullable;
        })
 public class CfmlProjectConfiguration implements PersistentStateComponent<CfmlProjectConfiguration.State> {
   private State myState = new State();
-
-  public CfmlProjectConfiguration(Project project, UltimateVerifier verifier) {
-    PluginVerifier.verifyUltimatePlugin(verifier);
-  }
 
   public static CfmlProjectConfiguration getInstance(Project project) {
     return ServiceManager.getService(project, CfmlProjectConfiguration.class);

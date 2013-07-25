@@ -20,7 +20,7 @@ public class CfmlTestUtil {
   public static final String BASE_TEST_DATA_PATH = findTestDataPath();
 
   private static String findTestDataPath() {
-    File f = new File("testData");
+    File f = new File("tests", "testData");
     if (f.exists()) {
       return f.getAbsolutePath();
     }

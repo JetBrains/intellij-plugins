@@ -7,9 +7,9 @@ import com.intellij.coldFusion.model.CfmlUtil;
 import com.intellij.coldFusion.model.files.CfmlFile;
 import com.intellij.coldFusion.model.lexer.CfmlTokenTypes;
 import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
-import com.intellij.diagnostic.AttachmentFactory;
 import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -340,8 +340,7 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
                                              DebugUtil.currentStackTrace(),
                                              "CFML parsing problem",
                                              "CFML parsing problem",
-                                             AttachmentFactory
-                                               .createAttachment(element.getContainingFile().getOriginalFile().getVirtualFile())));
+                                             new Attachment("problem.cfml", element.getContainingFile().getText())));
           return null;
         }
       }
