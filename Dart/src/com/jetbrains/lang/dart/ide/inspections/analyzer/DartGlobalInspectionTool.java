@@ -37,6 +37,11 @@ public class DartGlobalInspectionTool extends GlobalInspectionTool {
     });
   }
 
+  @Override
+  public boolean isGraphNeeded() {
+    return false;
+  }
+
   protected void processMessage(AnalyzerMessage message,
                                 GlobalInspectionContext globalContext,
                                 InspectionManager manager,
