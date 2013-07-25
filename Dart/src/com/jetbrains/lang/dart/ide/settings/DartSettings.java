@@ -49,7 +49,7 @@ public class DartSettings {
   }
 
   public String getSdkPath() {
-    return VfsUtil.urlToPath(sdkUrl);
+    return VfsUtilCore.urlToPath(sdkUrl);
   }
 
   @Override

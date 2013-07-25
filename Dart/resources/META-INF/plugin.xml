@@ -269,6 +269,10 @@
                      key="inspections.unresolved.import.name"
                      groupName="Dart" enabledByDefault="true" level="WARNING"
                      implementationClass="com.jetbrains.lang.dart.ide.inspections.DartUnresolvedImportInspection"/>
+    <localInspection language="Dart" shortName="AbsentDartSdk" bundle="com.jetbrains.lang.dart.DartBundle"
+                     key="inspections.dart.sdk"
+                     groupName="Dart" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.jetbrains.lang.dart.ide.inspections.DartSdkInspection"/>
   </extensions>
 
   <actions>

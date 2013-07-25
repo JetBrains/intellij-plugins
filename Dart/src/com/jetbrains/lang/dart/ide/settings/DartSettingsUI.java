@@ -11,16 +11,13 @@ import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.ui.HyperlinkLabel;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.libraries.ScriptingLibraryMappings;
-import com.intellij.webcore.libraries.ScriptingLibraryModel;
 import com.intellij.webcore.libraries.ui.ScriptingContextsConfigurable;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
@@ -74,7 +71,7 @@ public class DartSettingsUI {
     mySetupScopeLabel.addHyperlinkListener(new HyperlinkListener() {
       @Override
       public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && isDartSDKConfigured()) {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && DartSettingsUtil.isDartSDKConfigured(DartSettingsUI.this.myProject)) {
           JSLibraryManager libraryManager = ServiceManager.getService(myProject, JSLibraryManager.class);
           final JSLibraryMappings mappings = ServiceManager.getService(project, JSLibraryMappings.class);
           ShowSettingsUtil.getInstance().editConfigurable(
@@ -85,7 +82,8 @@ public class DartSettingsUI {
           libraryManager.commitChanges();
           writeToken.finish();
         }
-        else if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && !isDartSDKConfigured() && isDartSDKPathValid()) {
+        else if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED && !DartSettingsUtil
+          .isDartSDKConfigured(DartSettingsUI.this.myProject) && isDartSDKPathValid()) {
           updateOrCreateDartLibrary();
           updateUI();
         }
@@ -118,18 +116,8 @@ public class DartSettingsUI {
     });
   }
 
-  private boolean isDartSDKConfigured() {
-    final JSLibraryMappings mappings = ServiceManager.getService(myProject, JSLibraryMappings.class);
-    return ContainerUtil.exists(mappings.getSingleLibraries(), new Condition<ScriptingLibraryModel>() {
-      @Override
-      public boolean value(ScriptingLibraryModel model) {
-        return DartBundle.message("dart.sdk.name").equals(model.getName());
-      }
-    });
-  }
-
   private void updateUI() {
-    final boolean sdkConfigured = isDartSDKConfigured();
+    final boolean sdkConfigured = DartSettingsUtil.isDartSDKConfigured(myProject);
     myDartSdkEnabled.setEnabled(sdkConfigured);
     final JSLibraryManager libraryManager = JSLibraryManager.getInstance(myProject);
     myDartSdkEnabled.setSelected(libraryManager.getLibraryMappings().isAssociatedWithProject(DartBundle.message("dart.sdk.name")));
