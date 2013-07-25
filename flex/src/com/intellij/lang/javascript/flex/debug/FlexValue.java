@@ -743,8 +743,8 @@ class FlexValue extends XValue {
       type = "Array";
     }
 
-    if (type != null && type.startsWith(VECTOR_PREFIX)) {
-      type = type.substring(VECTOR_PREFIX.length());
+    if (type != null) {
+      type = StringUtil.replace(type, VECTOR_PREFIX, "");
     }
 
     return Pair.create(type, additionalInfo);
