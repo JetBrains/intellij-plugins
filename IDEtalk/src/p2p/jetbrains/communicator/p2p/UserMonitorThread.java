@@ -72,7 +72,7 @@ public class UserMonitorThread extends Thread {
 
     String timeout = System.getProperty(SCAN_TIMEOUT_PROPERTY);
 
-    if(StringUtil.isEmpty(timeout)) {
+    if(com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(timeout)) {
       myScansTimeout = TIMEOUT_BETWEEN_SCANS;
     }
     else {

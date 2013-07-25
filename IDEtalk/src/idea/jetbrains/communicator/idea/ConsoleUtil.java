@@ -76,6 +76,7 @@ public class ConsoleUtil {
     //console.print("\n", ConsoleViewContentType.NORMAL_OUTPUT);
 
     console.performWhenNoDeferredOutput(new Runnable() {
+      @Override
       public void run() {
         int allContent = console.getContentSize();
         console.scrollTo(Math.min(allContent, contentSize + header.length()));
@@ -105,7 +106,7 @@ public class ConsoleUtil {
 
   public static void printMessageIfExists(ConsoleView console, String message, ConsoleViewContentType textAttributes) {
     message = message.trim();
-    if (StringUtil.isNotEmpty(message)) {
+    if (!com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(message)) {
 
       Matcher matcher = URL_PATTERN.matcher(message);
       int pos = 0;
@@ -121,7 +122,7 @@ public class ConsoleUtil {
   }
 
   private static void print(ConsoleView console, String s, ConsoleViewContentType textAttributes) {
-    if (StringUtil.isNotEmpty(s)) {
+    if (!com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(s)) {
       console.print(s, textAttributes);
     }
   }

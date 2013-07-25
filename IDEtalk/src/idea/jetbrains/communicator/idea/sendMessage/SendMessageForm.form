@@ -73,7 +73,7 @@
             </properties>
             <border type="none"/>
             <children>
-              <component id="4d42b" class="javax.swing.JLabel" binding="myRecepientsLabel">
+              <component id="4d42b" class="javax.swing.JLabel" binding="myRecipientsLabel">
                 <constraints>
                   <xy x="2" y="5" width="92" height="14"/>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0"/>
@@ -91,7 +91,7 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="29d8f" class="com.intellij.ui.components.JBList" binding="myRecepients">
+                  <component id="29d8f" class="com.intellij.ui.components.JBList" binding="myRecipients">
                     <constraints/>
                     <properties/>
                   </component>

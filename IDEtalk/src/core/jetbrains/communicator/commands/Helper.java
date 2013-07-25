@@ -45,12 +45,14 @@ public class Helper {
       try {
         UIUtil.run(ideFacade, StringUtil.getMsg("ViewFilesCommand.title", user.getDisplayName()),
             new Runnable() {
+              @Override
               public void run() {
                 final Semaphore semaphore = new Semaphore(1);
                 try {
                   semaphore.acquire();
 
                   transport.sendXmlMessage(user, new GetProjectsDataXmlMessage(result) {
+                    @Override
                     public void processResponse(Element responseElement) {
                       super.processResponse(responseElement);
                       semaphore.release();
@@ -59,10 +61,10 @@ public class Helper {
 
                   semaphore.tryAcquire(getWaitTimeout(), TimeUnit.MILLISECONDS);
 
-                } catch (InterruptedException e) { }
+                } catch (InterruptedException ignored) { }
               }
             });
-      } catch (CanceledException e) {
+      } catch (CanceledException ignored) {
         //
       }
     }
@@ -74,6 +76,7 @@ public class Helper {
       try {
         UIUtil.run(ideFacade, StringUtil.getMsg("GetVFileContents.title"),
             new Runnable() {
+              @Override
               public void run() {
 
                 final Semaphore semaphore = new Semaphore(1);
@@ -81,6 +84,7 @@ public class Helper {
                   semaphore.acquire();
 
                   transport.sendXmlMessage(user, new GetVFileContentsXmlMessage(vFile) {
+                    @Override
                     public void processResponse(Element responseElement) {
                       super.processResponse(responseElement);
                       semaphore.release();
@@ -89,7 +93,7 @@ public class Helper {
 
                   semaphore.tryAcquire(getWaitTimeout(), TimeUnit.MILLISECONDS);
 
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                   // noop
                 }
               }
@@ -100,7 +104,7 @@ public class Helper {
       if (vFile.getContents() == null) {
         String secondParamForFailMessage = user.getDisplayName();
         String address = transport.getAddressString(user);
-        if (StringUtil.isNotEmpty(address)) {
+        if (!com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(address)) {
           secondParamForFailMessage += " from " + address;
         }
 

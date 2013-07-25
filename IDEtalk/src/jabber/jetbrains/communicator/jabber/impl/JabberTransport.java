@@ -22,7 +22,6 @@ import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.dispatcher.AsyncMessageDispatcher;
 import jetbrains.communicator.core.transport.*;
 import jetbrains.communicator.core.users.*;
-import static jetbrains.communicator.core.users.UserEvent.Updated.*;
 import jetbrains.communicator.ide.IDEFacade;
 import jetbrains.communicator.ide.ProgressIndicator;
 import jetbrains.communicator.jabber.ConnectionListener;
@@ -30,8 +29,6 @@ import jetbrains.communicator.jabber.JabberFacade;
 import jetbrains.communicator.jabber.JabberUI;
 import jetbrains.communicator.jabber.JabberUserFinder;
 import jetbrains.communicator.util.IgnoreList;
-import jetbrains.communicator.util.StringUtil;
-import static jetbrains.communicator.util.StringUtil.getMsg;
 import jetbrains.communicator.util.UIUtil;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
@@ -51,6 +48,9 @@ import org.picocontainer.MutablePicoContainer;
 import javax.swing.*;
 import java.util.*;
 import java.util.concurrent.Future;
+
+import static jetbrains.communicator.core.users.UserEvent.Updated.*;
+import static jetbrains.communicator.util.StringUtil.getMsg;
 
 /**
  * @author Kir
@@ -114,19 +114,23 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     return myUserModel.getBroadcaster();
   }
 
+  @Override
   public String getName() {
     return CODE;
   }
 
+  @Override
   public void initializeProject(String projectName, MutablePicoContainer projectLevelContainer) {
     myUI.initPerProject(projectLevelContainer);
     myIdeFacade.runOnPooledThread(new Runnable() {
+      @Override
       public void run() {
         myFacade.connect();
       }
     });
   }
 
+  @Override
   public User[] findUsers(ProgressIndicator progressIndicator) {
     if (isOnline()) {
       return myUserFinder.findUsers(progressIndicator);
@@ -134,14 +138,17 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     return new User[0];
   }
 
+  @Override
   public Class<? extends NamedUserCommand> getSpecificFinderClass() {
     return FindByJabberIdCommand.class;
   }
 
+  @Override
   public boolean isOnline() {
     return myFacade.isConnectedAndAuthenticated();
   }
 
+  @Override
   public UserPresence getUserPresence(User user) {
     UserPresence presence = myUser2Presence.get(user);
     if (presence == null) {
@@ -175,24 +182,29 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     return new UserPresence(false);
   }
 
+  @Override
   @NonNls
   public Icon getIcon(UserPresence userPresence) {
     return UIUtil.getIcon(userPresence, IdetalkCoreIcons.IdeTalk.Jabber, IdetalkCoreIcons.IdeTalk.Jabber_dnd);
   }
 
+  @Override
   public boolean isSelf(User user) {
     return myFacade.isConnectedAndAuthenticated() && getSimpleId(myFacade.getConnection().getUser()).equals(user.getName());
   }
 
+  @Override
   public String[] getProjects(User user) {
     return ArrayUtil.EMPTY_STRING_ARRAY;
   }
 
+  @Override
   @Nullable
   public String getAddressString(User user) {
     return null;
   }
 
+  @Override
   public synchronized void sendXmlMessage(User user, final XmlMessage xmlMessage) {
     if (!myUI.connectAndLogin(null)) {
       return;
@@ -205,6 +217,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     if (xmlMessage.needsResponse()) {
       //noinspection HardCodedStringLiteral
       final Runnable responseWaiterRunnable = new Runnable() {
+        @Override
         public void run() {
           try {
             processResponse(xmlMessage, packetCollector);
@@ -230,6 +243,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     return id;
   }
 
+  @Override
   public void setOwnPresence(UserPresence userPresence) {
     if (isOnline() && !userPresence.isOnline()) {
       myFacade.disconnect();
@@ -245,6 +259,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   }
 
 
+  @Override
   public boolean hasIDEtalkClient(User user) {
     return myIDEtalkUsers.contains(user.getName());
   }
@@ -293,6 +308,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     return msg;
   }
 
+  @Override
   public void connected(XMPPConnection connection) {
     LOG.info("Jabber connected");
     if (mySubscribeListener == null) {
@@ -305,6 +321,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     }
   }
 
+  @Override
   public void authenticated() {
     LOG.info("Jabber authenticated: " + myFacade.getConnection().getUser());
     if (myRosterListener == null) {
@@ -326,6 +343,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     return false;
   }
 
+  @Override
   public void disconnected(boolean onError) {
     final XMPPConnection connection = myFacade.getConnection();
 
@@ -346,7 +364,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     myUser2Thread.clear();
 
     if (onError && reconnectEnabledAndNotStarted()) {
-      LOG.warn(StringUtil.getMsg("jabber.server.was.disconnected", myReconnectTimeout / 1000));
+      LOG.warn(getMsg("jabber.server.was.disconnected", myReconnectTimeout / 1000));
       myReconnectProcess = myIdeFacade.runOnPooledThread(new MyReconnectRunnable());
     }
   }
@@ -355,6 +373,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
     return (myReconnectProcess == null || myReconnectProcess.isDone()) && myReconnectTimeout >= 0;
   }
 
+  @Override
   public void dispose() {
     getBroadcaster().removeListener(myUserModelListener);
     myFacade.removeConnectionListener(this);
@@ -370,6 +389,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
       IDEtalkEvent event = createPresenceChangeEvent(user, presence);
       if (event != null) {
         getBroadcaster().doChange(event, new Runnable() {
+          @Override
           public void run() {
             myUser2Presence.put(user, presence);
           }
@@ -523,18 +543,22 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   }
 
   private class MyRosterListener implements RosterListener {
+    @Override
     public void entriesAdded(Collection addresses) {
       updateJabberUsers(false);
     }
 
+    @Override
     public void entriesUpdated(Collection addresses) {
       updateJabberUsers(false);
     }
 
+    @Override
     public void entriesDeleted(Collection addresses) {
       updateJabberUsers(false);
     }
 
+    @Override
     public void presenceChanged(final String string) {
       updateUserPresence(string);
     }
@@ -547,6 +571,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
       super(JabberTransport.this);
     }
 
+    @Override
     protected void processBeforeChange(UserEvent event) {
       super.processBeforeChange(event);
       event.accept(new EventVisitor() {
@@ -556,6 +581,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
       });
     }
 
+    @Override
     protected void processAfterChange(UserEvent event) {
       if (myIgnoreUserEvents) return;
 
@@ -582,6 +608,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   }
 
   private class MySubscribeListener implements PacketListener {
+    @Override
     public void processPacket(Packet packet) {
       final Presence presence = ((Presence) packet);
       if (presence.getType() != Presence.Type.subscribe) return;
@@ -598,6 +625,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
       }
 
       UIUtil.invokeLater(new Runnable() {
+        @Override
         public void run() {
           acceptSubscription(presence, myUI.shouldAcceptSubscriptionRequest(presence));
         }
@@ -625,6 +653,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
 
   private class MyMessageListener implements PacketListener {
 
+    @Override
     public void processPacket(Packet packet) {
       try {
         doProcessPacket(packet);
@@ -638,6 +667,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
       final Message message = ((Message) packet);
       if (message.getType() == Message.Type.ERROR) {
         UIUtil.invokeLater(new Runnable() {
+          @Override
           public void run() {
             String from = (message.getFrom() != null) ? getMsg("from.0.lf", message.getFrom()) : "";
             LOG.warn(getMsg("jabber.error.text", from,
@@ -689,6 +719,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
   }
 
   private class MyReconnectRunnable implements Runnable {
+    @Override
     public void run() {
       try {
         Thread.sleep(myReconnectTimeout);
@@ -696,7 +727,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
         if (myFacade.connect() != null && myFacade.getMyAccount().isLoginAllowed()) {
           myReconnectProcess = myIdeFacade.runOnPooledThread(this);
         }
-      } catch (InterruptedException e) {
+      } catch (InterruptedException ignored) {
         // return
       }
     }

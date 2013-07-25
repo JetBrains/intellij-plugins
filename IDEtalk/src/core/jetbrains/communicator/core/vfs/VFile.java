@@ -18,6 +18,7 @@ package jetbrains.communicator.core.vfs;
 
 import jetbrains.communicator.util.StringUtil;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Vector;
@@ -109,7 +110,8 @@ public class VFile implements Comparable, Cloneable {
     return myWritable;
   }
 
-  public int compareTo(Object o) {
+  @Override
+  public int compareTo(@NotNull Object o) {
     return getShortestPath().compareTo(((VFile)o).getShortestPath());
   }
 
@@ -221,14 +223,16 @@ public class VFile implements Comparable, Cloneable {
   }
 
   private static String getNullableItem(List v, int index) {
-    if (StringUtil.isEmpty((String) v.get(index))) return null;
+    if (com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces((String)v.get(index))) return null;
     return v.get(index).toString();
   }
 
+  @Override
   public final Object clone() {
     try {
       return super.clone();
-    } catch (CloneNotSupportedException e) {
+    }
+    catch (CloneNotSupportedException ignored) {
       return null;
     }
   }
@@ -253,7 +257,7 @@ public class VFile implements Comparable, Cloneable {
     return (myProjectName != null ? myProjectName.hashCode() : 0);
   }
 
-  private void setAttr(Element root, String attrName, String val) {
+  private static void setAttr(Element root, String attrName, String val) {
     if (val != null) {
       root.setAttribute(attrName, val);
     }

@@ -15,8 +15,8 @@
  */
 package jetbrains.communicator.core.transport;
 
+import com.intellij.openapi.util.text.StringUtil;
 import jetbrains.communicator.core.EventBroadcaster;
-import jetbrains.communicator.util.StringUtil;
 import org.jdom.Element;
 
 /**
@@ -28,12 +28,14 @@ public class TextMessageEventProvider extends EventProvider {
     super(broadcaster);
   }
 
+  @Override
   public String getTagName() {
     return TextXmlMessage.TAG;
   }
 
+  @Override
   protected TransportEvent createEvent(Transport transport, String remoteUser, Element rootElement) {
-    if (StringUtil.isNotEmpty(rootElement.getText())) {
+    if (!StringUtil.isEmptyOrSpaces(rootElement.getText())) {
       return EventFactory.createMessageEvent(transport, remoteUser, rootElement.getText());
     }
     return null;

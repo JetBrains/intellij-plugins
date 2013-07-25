@@ -15,11 +15,11 @@
  */
 package jetbrains.communicator.idea.sendMessage;
 
+import com.intellij.openapi.util.text.StringUtil;
 import jetbrains.communicator.commands.SendMessageInvoker;
 import jetbrains.communicator.core.users.User;
 import jetbrains.communicator.idea.IdeaDialog;
 import jetbrains.communicator.util.HardWrapUtil;
-import jetbrains.communicator.util.StringUtil;
 import jetbrains.communicator.util.UIUtil;
 
 import javax.swing.*;
@@ -33,9 +33,9 @@ import java.util.List;
 public class SendMessageDialog extends IdeaDialog {
   private JPanel myMainPanel;
 
-  private JList myRecepients;
+  private JList myRecipients;
 
-  private JLabel myRecepientsLabel;
+  private JLabel myRecipientsLabel;
   private JLabel myCommentLabel;
   private JTextArea myComment;
   private final SendMessageInvoker myRunOnOK;
@@ -51,13 +51,13 @@ public class SendMessageDialog extends IdeaDialog {
     getOKAction().putValue(Action.MNEMONIC_KEY, new Integer((int) 'S'));
 
     ArrayList<User> users = new ArrayList<User>(Arrays.asList(availableUsers));
-    UIUtil.setupUserList(myRecepients, users);
-    UIUtil.setDefaultSelection(myRecepients, selectedUsers);
+    UIUtil.setupUserList(myRecipients, users);
+    UIUtil.setDefaultSelection(myRecipients, selectedUsers);
 
-    myRecepientsLabel.setLabelFor(myRecepients);
+    myRecipientsLabel.setLabelFor(myRecipients);
     myCommentLabel.setLabelFor(myComment);
 
-    if (!StringUtil.isEmpty(message)) {
+    if (!StringUtil.isEmptyOrSpaces(message)) {
       myComment.setText('\n' + message);
     }
 
@@ -68,22 +68,25 @@ public class SendMessageDialog extends IdeaDialog {
     init();
   }
 
+  @Override
   public JComponent getPreferredFocusedComponent() {
     myComment.setCaretPosition(0);
     return myComment;
   }
 
+  @Override
   protected JComponent createCenterPanel() {
     return myMainPanel;
   }
 
+  @Override
   protected void doOKAction() {
     myRunOnOK.doSendMessage(getUsers(), getComment());
     super.doOKAction();
   }
 
   private User[] getUsers() {
-    List list = Arrays.asList(myRecepients.getSelectedValues());
+    List list = Arrays.asList(myRecipients.getSelectedValues());
     return (User[]) list.toArray(new User[list.size()]);
   }
 

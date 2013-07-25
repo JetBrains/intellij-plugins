@@ -19,15 +19,9 @@ package jetbrains.communicator.util;
 import com.thoughtworks.xstream.XStream;
 import jetbrains.communicator.core.Pico;
 import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.input.SAXBuilder;
 import org.jetbrains.annotations.NonNls;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import java.io.*;
-import java.net.URL;
 
 /**
  * @author Kir Maximov
@@ -55,7 +49,8 @@ public class XMLUtil {
       BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream(fullFileName));
       fileReader = new InputStreamReader(inputStream, "UTF-8");
       return xStream.fromXML(fileReader);
-    } catch (FileNotFoundException e) {
+    }
+    catch (FileNotFoundException ignored) {
       return null;
     }
     catch (Throwable e) {
@@ -67,11 +62,12 @@ public class XMLUtil {
       }
       return null;
     }
-    finally{
+    finally {
       if (fileReader != null) {
         try {
           fileReader.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           processError(e);
         }
       }
@@ -102,26 +98,6 @@ public class XMLUtil {
     }
   }
 
-  /** @param resourcePath should be absolute */
-  public static Document getDocument(String resourcePath) {
-    URL resource = XMLUtil.class.getResource(resourcePath);
-    SAXBuilder saxBuilder = new SAXBuilder(false);
-    
-    saxBuilder.setEntityResolver(new EntityResolver() {
-      public InputSource resolveEntity(String publicId,
-                                       String systemId)
-          throws SAXException, IOException {
-        return new InputSource(new CharArrayReader(new char[0]));
-      }
-    });
-
-    try {
-      return saxBuilder.build(resource);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-
   private static void processError(Exception e) {
     LOG.error(e.getMessage());
     LOG.info(e.getMessage(), e);
@@ -129,5 +105,4 @@ public class XMLUtil {
       assert false: "LOG.error()";
     }
   }
-
 }

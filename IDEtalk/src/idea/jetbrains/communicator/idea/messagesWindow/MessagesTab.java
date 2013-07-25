@@ -87,9 +87,10 @@ public class MessagesTab implements Disposable {
     myMainPanel.revalidate();
 
     myButtonsUpdater = new DocumentAdapter() {
+      @Override
       protected void textChanged(DocumentEvent e) {
         String s = myHardWrapUtil.getText();
-        boolean enabled = StringUtil.isNotEmpty(s);
+        boolean enabled = !com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(s);
         mySend.setEnabled(enabled);
       }
     };
@@ -120,6 +121,7 @@ public class MessagesTab implements Disposable {
 
   private void setupIDEtalkListener() {
     myListener = new IDEtalkAdapter() {
+      @Override
       public void afterChange(IDEtalkEvent event) {
         event.accept(new EventVisitor(){
           @Override public void visitSettingsChanged(SettingsChanged settingsChanged) {
@@ -134,6 +136,7 @@ public class MessagesTab implements Disposable {
 
   private void setupDivider() {
     UIUtil.runWhenShown(mySplitPane, new Runnable() {
+      @Override
       public void run() {
         mySplitPane.setDividerLocation(mySplitPane.getHeight() >> 1);
       }
@@ -157,6 +160,7 @@ public class MessagesTab implements Disposable {
     }
   }
 
+  @Override
   public void dispose() {
     myLocalMessageDispatcher.getBroadcaster().removeListener(myListener);
     myInput.getDocument().removeDocumentListener(myButtonsUpdater);
@@ -209,6 +213,7 @@ public class MessagesTab implements Disposable {
 
   public void attachTo(Content content) {
     content.setDisposer(new com.intellij.openapi.Disposable(){
+      @Override
       public void dispose() {
         MessagesTab.this.dispose();
       }
@@ -227,12 +232,14 @@ public class MessagesTab implements Disposable {
   }
 
   private class SendAction extends AbstractAction {
+    @Override
     public void actionPerformed(ActionEvent e) {
       send();
       myInput.requestFocus();
     }
   }
   private class LfAction extends AbstractAction {
+    @Override
     public void actionPerformed(ActionEvent e) {
       myInput.setText(myInput.getText() + "\n");
     }

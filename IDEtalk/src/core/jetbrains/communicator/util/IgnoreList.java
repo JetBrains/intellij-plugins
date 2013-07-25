@@ -71,7 +71,7 @@ public class IgnoreList {
         myIgnored.clear();
         String line = bufferedReader.readLine();
         while(line != null) {
-          if (StringUtil.isNotEmpty(line)) {
+          if (!com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(line)) {
             myIgnored.add(line.toLowerCase());
           }
           line = bufferedReader.readLine();

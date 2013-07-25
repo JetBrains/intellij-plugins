@@ -53,7 +53,7 @@ class P2PNetworkXmlMessage extends P2PNetworkMessage {
 
     try {
       final String response = getResponse().toString();
-      if (StringUtil.isNotEmpty(response)) {
+      if (!com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(response)) {
         Document document = new SAXBuilder().build(new StringReader(response));
         myMessage.processResponse(document.getRootElement());
       }

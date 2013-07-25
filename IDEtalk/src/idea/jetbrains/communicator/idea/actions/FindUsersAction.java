@@ -20,7 +20,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import jetbrains.communicator.commands.FindUsersCommand;
 import jetbrains.communicator.core.Pico;
-import jetbrains.communicator.core.commands.UserCommand;
+import jetbrains.communicator.core.commands.NamedUserCommand;
 import jetbrains.communicator.core.transport.Transport;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,24 +35,22 @@ public class FindUsersAction extends ActionGroup {
 
   public FindUsersAction() {
     myActions = new ArrayList<AnAction>();
-    BaseAction<FindUsersCommand> genericFindAction = new BaseAction<FindUsersCommand>(FindUsersCommand.class);
-
     myActions.add(new CreateGroupAction());
-    myActions.add(genericFindAction);
+    myActions.add(new BaseAction<FindUsersCommand>(FindUsersCommand.class));
 
     List instancesOfType = Pico.getInstance().getComponentInstancesOfType(Transport.class);
     for (Object aInstancesOfType : instancesOfType) {
       Transport transport = (Transport) aInstancesOfType;
-      Class<? extends UserCommand> specificFinderClass = transport.getSpecificFinderClass();
+      Class<? extends NamedUserCommand> specificFinderClass = transport.getSpecificFinderClass();
       if (specificFinderClass != null) {
         myActions.add(new BaseAction(specificFinderClass));
       }
     }
   }
 
+  @Override
   @NotNull
   public AnAction[] getChildren(AnActionEvent e) {
     return myActions.toArray(new AnAction[myActions.size()]);
   }
-
 }

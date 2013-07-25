@@ -29,8 +29,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,7 +40,7 @@ public class StringUtil {
   private static final Logger LOG = Logger.getLogger(StringUtil.class);
 
   @NonNls
-  private static final Pattern SPECIALCHAR = Pattern.compile("&#(\\d+);");
+  private static final Pattern SPECIAL_CHAR = Pattern.compile("&#(\\d+);");
   @NonNls
   private static final ResourceBundle ourBundle = ResourceBundle.getBundle("IDEtalkMessages");
   public static final String FAILED_TITLE = getMsg("operation_failed.title");
@@ -51,9 +49,9 @@ public class StringUtil {
   private StringUtil() {
   }
 
-  public static String getShortName(Class<? extends Object> aClass) {
+  public static String getShortName(Class<?> aClass) {
     String name = aClass.getName();
-    return name.substring(name.lastIndexOf(".") + 1);
+    return name.substring(name.lastIndexOf('.') + 1);
   }
 
   public static String getMyUsername() {
@@ -63,14 +61,6 @@ public class StringUtil {
 
   public static void setMyUsername(String username) {
     ourUsername = username;
-  }
-
-  public static boolean isEmpty(String s) {
-    return s == null || "".equals(s.trim());
-  }
-
-  public static boolean isNotEmpty(String s) {
-    return !isEmpty(s);
   }
 
   public static String getText(String txt, int count) {
@@ -95,21 +85,21 @@ public class StringUtil {
     }
   }
 
-  public static String toString(Class<? extends Object> aClass, Object[] objects) {
+  public static String toString(Class<?> aClass, Object[] objects) {
     return getShortName(aClass) + Arrays.asList(objects);
   }
 
-  public static String toString(Class<? extends Object> aClass, Object object) {
+  public static String toString(Class<?> aClass, Object object) {
     return toString(aClass, new Object[]{object});
   }
 
   public static String fixGroup(String group) {
-    return isEmpty(group) ? UserModel.DEFAULT_GROUP : group.trim();
+    return com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(group) ? UserModel.DEFAULT_GROUP : group.trim();
   }
 
   /* replaces non-ASCII characters with &#xxx; presentation */
   public static String toXMLSafeString(String str) {
-    StringBuffer result = new StringBuffer(str.length() * 3);
+    StringBuilder result = new StringBuilder(str.length() * 3);
     for (char aChar : str.toCharArray()) {
       if (aChar < 0x20 || aChar > 0xff) {
         result.append("&#").append((int)aChar).append(';');
@@ -126,7 +116,7 @@ public class StringUtil {
     if (str == null) return "";
     StringBuffer result = new StringBuffer(str.length());
 
-    Matcher matcher = SPECIALCHAR.matcher(str);
+    Matcher matcher = SPECIAL_CHAR.matcher(str);
 
     while (matcher.find()) {
       char c = '?';
@@ -152,20 +142,6 @@ public class StringUtil {
     return s.substring(0, idx);
   }
 
-  /**
-   * @noinspection "Magic number"
-   */
-  public static String join(List<String> lines, char delimeter) {
-    StringBuffer sb = new StringBuffer(lines.size() * 70);
-    for (Iterator<String> it = lines.iterator(); it.hasNext();) {
-      sb.append(it.next());
-      if (it.hasNext()) {
-        sb.append(delimeter);
-      }
-    }
-    return sb.toString();
-  }
-
   public static String toXML(Throwable e) {
     @NonNls Element element = new Element("exception", Transport.NAMESPACE);
     if (e.getMessage() != null) {
@@ -178,6 +154,6 @@ public class StringUtil {
   }
 
   public static boolean containedIn(@Nullable String s, @NotNull String searched) {
-    return s != null && s.indexOf(searched) >= 0;
+    return s != null && s.contains(searched);
   }
 }

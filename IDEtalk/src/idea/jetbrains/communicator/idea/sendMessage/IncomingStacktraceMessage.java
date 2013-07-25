@@ -35,12 +35,14 @@ public class IncomingStacktraceMessage extends BaseIncomingLocalMessage {
     myStacktrace = event.getStacktrace();
   }
 
+  @Override
   public boolean containsString(String searchString) {
     return super.containsString(searchString) || StringUtil.containedIn(myStacktrace, searchString);
   }
 
+  @Override
   protected void outputMessage(ConsoleView consoleView) {
-    if (StringUtil.isNotEmpty(getComment())) {
+    if (!com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(getComment())) {
       printComment(consoleView);
       consoleView.print("-----------------------------------------------------\n", ConsoleViewContentType.SYSTEM_OUTPUT);
     }
@@ -48,10 +50,12 @@ public class IncomingStacktraceMessage extends BaseIncomingLocalMessage {
     consoleView.print("\n", ConsoleViewContentType.NORMAL_OUTPUT);
   }
 
+  @Override
   public String getTitle() {
     return StringUtil.getMsg("stacktrace");
   }
 
+  @Override
   protected Icon getIcon() {
     return IdetalkCoreIcons.Stacktrace;
   }

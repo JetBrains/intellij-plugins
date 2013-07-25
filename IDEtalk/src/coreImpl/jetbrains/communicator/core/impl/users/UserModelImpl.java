@@ -144,7 +144,7 @@ public class UserModelImpl implements UserModel, Disposable {
   }
 
   public void addGroup(String groupName) {
-    if (StringUtil.isNotEmpty(groupName)) {
+    if (!com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(groupName)) {
       final String trimmedName = groupName.trim();
 
       if (Arrays.asList(getGroups()).contains(trimmedName)) return;

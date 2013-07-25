@@ -16,6 +16,10 @@
 
 package jetbrains.communicator.util;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.intellij.openapi.util.text.StringUtil;
+
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
@@ -47,37 +51,29 @@ public class HardWrapUtil {
   }
 
   public String getText() {
-    String text = myTextArea.getText().trim().replaceAll("\r\n", "\n").replace('\r', '\n');
-
+    String text = StringUtil.convertLineSeparators(myTextArea.getText().trim());
     StacktraceExtractor extractor = new StacktraceExtractor(text);
     if (extractor.containsStacktrace()) {
       text = extractor.getMessageText();
       return hardWrapText(text) + extractor.getStacktrace();
     }
-
-    return hardWrapText(text);
+    else {
+      return hardWrapText(text);
+    }
   }
 
   private String hardWrapText(final String text) {
     int cols = myTextArea.getWidth() / getCharWidth();
     List<String> result = new ArrayList<String>();
-    String[] lines = text.split("\n");
-    for (String line : lines) {
+    for (String line : Splitter.on('\n').split(text)) {
       if (line.length() > cols) {
         split(line, cols, result);
-      } else {
+      }
+      else {
         result.add(line);
       }
     }
-
-    String res = StringUtil.join(result, '\n');
-    if (text.startsWith("\n")) {
-      res = "\n" + res;
-    }
-    if (text.endsWith("\n")) {
-      res = res + "\n";
-    }
-    return res;
+    return Joiner.on('\n').join(result);
   }
 
   private void split(String line, int cols, List<String> result) {
@@ -87,14 +83,12 @@ public class HardWrapUtil {
     }
 
     int i = findWhitespaceBackward(cols, line, result);
-
     if (i < 0) {
       i = findWhitespaceForward(cols, line, result);
       if (i == line.length()) {
         result.add(line);
       }
     }
-
   }
 
   private int findWhitespaceForward(int cols, String line, List<String> result) {

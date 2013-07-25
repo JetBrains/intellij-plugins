@@ -42,16 +42,19 @@ public abstract class BaseUserImpl implements User {
     myGroup = StringUtil.fixGroup(group);
   }
 
+  @Override
   public String getName() {
     return myName;
   }
 
+  @Override
   public String getDisplayName() {
     return myDisplayName;
   }
 
+  @Override
   public void setDisplayName(final String name, UserModel userModel) {
-    if (StringUtil.isEmpty(name)) return;
+    if (com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(name)) return;
 
     if (userModel != null) {
       User inModel = userModel.findUser(getName(), getTransportCode());
@@ -62,10 +65,12 @@ public abstract class BaseUserImpl implements User {
     myDisplayName = name;
   }
 
+  @Override
   public String getGroup() {
     return myGroup;
   }
 
+  @Override
   public void setGroup(final String group, UserModel userModel) {
     final String fixedGroup = StringUtil.fixGroup(group);
 
@@ -78,10 +83,12 @@ public abstract class BaseUserImpl implements User {
     myGroup = fixedGroup;
   }
 
+  @Override
   public boolean canAccessMyFiles() {
     return myCanAccessMyFiles;
   }
 
+  @Override
   public void setCanAccessMyFiles(final boolean canAccessMyFiles, UserModel userModel) {
     if (userModel != null) {
       User inModel = userModel.findUser(getName(), getTransportCode());
@@ -97,6 +104,7 @@ public abstract class BaseUserImpl implements User {
     if (canAccessMyFiles == canAccessMyFiles()) return;
     broadcaster.doChange(new UserEvent.Updated(this, CAN_ACCESS_MY_FILES,
         canAccessMyFiles(), canAccessMyFiles), new Runnable() {
+      @Override
       public void run() {
         myCanAccessMyFiles = canAccessMyFiles;
       }
@@ -107,6 +115,7 @@ public abstract class BaseUserImpl implements User {
     if (myGroup.equals(group)) return;
 
     broadcaster.doChange(new UserEvent.Updated(this, GROUP, myGroup, group), new Runnable() {
+      @Override
       public void run() {
         myGroup = group;
       }
@@ -117,6 +126,7 @@ public abstract class BaseUserImpl implements User {
     if (myDisplayName.equals(name)) return;
 
     broadcaster.doChange(new UserEvent.Updated(this, DISPLAY_NAME, myDisplayName, name), new Runnable() {
+      @Override
       public void run() {
         myDisplayName = name;
       }

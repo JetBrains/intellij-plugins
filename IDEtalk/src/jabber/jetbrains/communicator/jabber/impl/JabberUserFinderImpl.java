@@ -56,6 +56,7 @@ public class JabberUserFinderImpl implements JabberUserFinder {
     myRegistryUrl = Pico.isUnitTest() ? TEST_URL : REAL_URL;
   }
 
+  @Override
   public User[] findUsers(ProgressIndicator progressIndicator) {
     final String currentProjectId = myIdeFacade.getCurrentProjectId();
     List<User> users = new ArrayList<User>();
@@ -71,7 +72,7 @@ public class JabberUserFinderImpl implements JabberUserFinder {
         if (csv != null) {
           String[] strings = csv.split(",");
           for (String userId : strings) {
-            if (StringUtil.isNotEmpty(userId)) {
+            if (!com.intellij.openapi.util.text.StringUtil.isEmptyOrSpaces(userId)) {
               users.add(myUserModel.createUser(userId, JabberTransport.CODE));
             }
           }
@@ -85,6 +86,7 @@ public class JabberUserFinderImpl implements JabberUserFinder {
     return users.toArray(new User[users.size()]);
   }
 
+  @Override
   public void registerForProject(final String jabberUserId) {
     final String currentProjectId = myIdeFacade.getCurrentProjectId();
     if (currentProjectId != null) {
@@ -112,6 +114,7 @@ public class JabberUserFinderImpl implements JabberUserFinder {
 
   protected void doRegister(final String jabberUserId, final String currentProjectId) {
     myIdeFacade.runOnPooledThread(new Runnable() {
+      @Override
       public void run() {
         try {
           URL url = new URL(myRegistryUrl + "?user=" + jabberUserId + "&id=" + currentProjectId);

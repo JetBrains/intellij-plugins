@@ -76,11 +76,11 @@ public class StacktraceExtractor {
 
   private void normalizeStacktrace() {
     if (myStacktraceText == null) return;
-    String splitted = myStacktraceText.replaceAll("\\bat ([^)\\s]+)[ \t]*[\\r\\n]+[ \t]*([^)]*\\))", "at $1$2");
-    splitted = splitted.replaceAll("\\t", "  ");
-    splitted = Pattern.compile("^ +", Pattern.MULTILINE).matcher(splitted).replaceAll("  ");
-    splitted = splitted.replaceAll("\r\n\r\n", "\r\n").replaceAll("\n\n", "\n");
-    myStacktraceText = splitted;
+    String slitted = myStacktraceText.replaceAll("\\bat ([^)\\s]+)[ \t]*[\\r\\n]+[ \t]*([^)]*\\))", "at $1$2");
+    slitted = slitted.replaceAll("\\t", "  ");
+    slitted = Pattern.compile("^ +", Pattern.MULTILINE).matcher(slitted).replaceAll("  ");
+    slitted = slitted.replaceAll("\r\n\r\n", "\r\n").replaceAll("\n\n", "\n");
+    myStacktraceText = slitted;
   }
 
 
