@@ -20,6 +20,8 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationType;
 import com.intellij.notification.Notifications;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.util.ArrayUtil;
 import icons.IdetalkCoreIcons;
@@ -135,7 +137,22 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     }
   }
 
-  private void startup(long waitUserResponsesTimeout) {
+  private void startup(final long waitUserResponsesTimeout) {
+    Application application = ApplicationManager.getApplication();
+    if (application.isUnitTestMode() || !application.isDispatchThread()) {
+      doStart(waitUserResponsesTimeout);
+    }
+    else {
+      application.executeOnPooledThread(new Runnable() {
+        @Override
+        public void run() {
+          doStart(waitUserResponsesTimeout);
+        }
+      });
+    }
+  }
+
+  private void doStart(long waitUserResponsesTimeout) {
     BuiltInServerManager.getInstance().waitForStart();
 
     myUserMonitorThread = new UserMonitorThread(this, waitUserResponsesTimeout);
