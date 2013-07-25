@@ -1,0 +1,13 @@
+CFML_TEMPLATE_TEXT ('<head>
+<link rel="stylesheet" type="text/css" media="print"      href="/jira/styles/combined-printable.css"/>
+</head>
+')
+OPENER ('<')
+CF_TAG_NAME ('cfoutput')
+R_ANGLEBRACKET ('>')
+CFML_TEMPLATE_TEXT ('bla-bla-bla')
+LSLASH_ANGLEBRACKET ('</')
+CF_TAG_NAME ('cfoutput')
+CLOSER ('>')
+CFML_TEMPLATE_TEXT ('
+<div> aaa </div>')

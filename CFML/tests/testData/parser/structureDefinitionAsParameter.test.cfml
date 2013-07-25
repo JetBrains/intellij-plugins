@@ -1,0 +1,1 @@
+<cfset a = method({a = 2})>

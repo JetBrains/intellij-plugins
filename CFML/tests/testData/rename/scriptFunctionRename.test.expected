@@ -1,0 +1,11 @@
+<cfscript>
+function newName() {
+        newName();
+}
+</cfscript>
+
+<cfinvoke method="newName">
+
+<cfscript>
+    newName();
+</cfscript>

@@ -1,0 +1,6 @@
+<cfcomponent name="myComponent">
+    <cfset cookie.newName = 10>
+    <cffunction name="myFunction">
+        <cfset cookie.myVariable2 = cookie.newName + myVariable + 10>
+    </cffunction>
+</cfcomponent>

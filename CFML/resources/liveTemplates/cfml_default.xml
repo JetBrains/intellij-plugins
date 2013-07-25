@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templateSet group="ColdFusion">
+  <template name="cfs" value="&lt;cfset $VAR$ = $VALUE$/&gt;"
+            resource-bundle="messages.CfmlBundle" key="livetemplate.description.cfs" toReformat="false"
+            toShortenFQNames="true">
+    <variable name="VAR" expression="&quot;var&quot;" defaultValue="&quot;var&quot;" alwaysStopAt="true"/>
+    <variable name="VALUE" expression="&quot;value&quot;" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ColdFusion" value="true" />
+    </context>
+  </template>
+
+  <template name="cfd" value="&lt;cfdump var=&quot;#$VAR$#&quot;/&gt;"
+            resource-bundle="messages.CfmlBundle" key="livetemplate.description.cfd" toReformat="false"
+            toShortenFQNames="true">
+    <variable name="VAR" expression="&quot;var&quot;" defaultValue="&quot;var&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ColdFusion" value="true" />
+    </context>
+  </template>
+
+  <template name="cfo" value="&lt;cfoutput&gt;$CONTENT$&lt;/cfoutput&gt;"
+            resource-bundle="messages.CfmlBundle" key="livetemplate.description.cfo" toReformat="false"
+            toShortenFQNames="true">
+    <variable name="CONTENT" expression="&quot;CONTENT&quot;" defaultValue="&quot;CONTENT&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ColdFusion" value="true" />
+    </context>
+  </template>
+
+  <template name="coj" value="createObject(&quot;java&quot;, &quot;$CLASSPATH$&quot;)"
+            resource-bundle="messages.CfmlBundle" key="livetemplate.description.coj" toReformat="false"
+            toShortenFQNames="true">
+    <variable name="CLASSPATH" expression="&quot;CLASSPATH&quot;" defaultValue="&quot;CLASSPATH&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ColdFusion" value="true" />
+    </context>
+  </template>
+
+  <template name="coc" value="createObject(&quot;component&quot;, &quot;$CFCPATH$&quot;)"
+            resource-bundle="messages.CfmlBundle" key="livetemplate.description.coc" toReformat="false"
+            toShortenFQNames="true">
+    <variable name="CFCPATH" expression="&quot;CFCPATH&quot;" defaultValue="&quot;CFCPATH&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ColdFusion" value="true" />
+    </context>
+  </template>
+
+  <template name="cow" value="createObject(&quot;webservice&quot;, &quot;$WSDL$&quot;)"
+            resource-bundle="messages.CfmlBundle" key="livetemplate.description.cow" toReformat="false"
+            toShortenFQNames="true">
+    <variable name="WSDL" expression="&quot;WSDL&quot;" defaultValue="&quot;WSDL&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ColdFusion" value="true" />
+    </context>
+  </template>
+
+  <template name="r." value="request.$VAR$"
+            resource-bundle="messages.CfmlBundle" key="livetemplate.description.r" toReformat="false"
+            toShortenFQNames="true">
+    <variable name="VAR" expression="&quot;var&quot;" defaultValue="&quot;var&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ColdFusion" value="true" />
+    </context>
+  </template>
+
+  <template name="v." value="variables.$VAR$"
+            resource-bundle="messages.CfmlBundle" key="livetemplate.description.v" toReformat="false"
+            toShortenFQNames="true">
+    <variable name="VAR" expression="&quot;var&quot;" defaultValue="&quot;var&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ColdFusion" value="true" />
+    </context>
+  </template>
+
+  <template name="a." value="application.$VAR$"
+            resource-bundle="messages.CfmlBundle" key="livetemplate.description.a" toReformat="false"
+            toShortenFQNames="true">
+    <variable name="VAR" expression="&quot;var&quot;" defaultValue="&quot;var&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ColdFusion" value="true" />
+    </context>
+  </template>
+
+  <template name="u." value="url.$VAR$"
+            resource-bundle="messages.CfmlBundle" key="livetemplate.description.u" toReformat="false"
+            toShortenFQNames="true">
+    <variable name="VAR" expression="&quot;var&quot;" defaultValue="&quot;var&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ColdFusion" value="true" />
+    </context>
+  </template>
+
+  <template name="f." value="form.$VAR$"
+            resource-bundle="messages.CfmlBundle" key="livetemplate.description.f" toReformat="false"
+            toShortenFQNames="true">
+    <variable name="VAR" expression="&quot;var&quot;" defaultValue="&quot;var&quot;" alwaysStopAt="true"/>
+    <context>
+      <option name="ColdFusion" value="true" />
+    </context>
+  </template>
+</templateSet>
+

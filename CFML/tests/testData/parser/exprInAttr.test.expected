@@ -1,0 +1,19 @@
+CfmlFile:exprInAttr.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfparam')
+    Attribute
+      PsiElement(ATTRIBUTE)('default')
+      PsiElement(ASSIGN)('=')
+      PsiElement(DOUBLE_QUOTE)('"')
+      AttributeValue
+        PsiElement(START_EXPRESSION)('#')
+        BinaryExpression
+          IntegerLiteral
+            PsiElement(INTEGER)('2')
+          PsiElement(ADD)('+')
+          ReferenceExpression
+            PsiElement(IDENTIFIER)('a')
+        PsiElement(END_EXPRESSION)('#')
+      PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    PsiElement(CLOSER)('>')

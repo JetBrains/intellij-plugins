@@ -1,0 +1,13 @@
+CfmlFile:concateq.cfml
+  COMPONENT_DEFINITION
+    PsiElement(COMPONENT_KEYWORD)('component')
+    PsiElement(L_CURLYBRACKET)('{')
+    ReferenceExpression
+      PsiElement(IDENTIFIER)('foo')
+    PsiElement(CONCAT_EQ)('&=')
+    StringLiteral
+      PsiElement(SINGLE_QUOTE)(''')
+      PsiElement(STRING_TEXT)(' concatenated')
+      PsiElement(SINGLE_QUOTE_CLOSER)(''')
+    PsiElement(SEMICOLON)(';')
+    PsiElement(R_CURLYBRACKET)('}')

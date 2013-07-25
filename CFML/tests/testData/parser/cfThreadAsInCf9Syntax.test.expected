@@ -1,0 +1,22 @@
+CfmlFile:cfThreadAsInCf9Syntax.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfthread')
+    Attribute
+      PsiElement(ATTRIBUTE)('action')
+      PsiElement(ASSIGN)('=')
+      PsiElement(DOUBLE_QUOTE)('"')
+      AttributeValue
+        PsiElement(STRING_TEXT)('run')
+      PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    NamedAttribute
+      PsiElement(ATTRIBUTE)('name')
+      PsiElement(ASSIGN)('=')
+      PsiElement(DOUBLE_QUOTE)('"')
+      AttributeValue
+        PsiElement(STRING_TEXT)('foo')
+      PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    PsiElement(R_ANGLEBRACKET)('>')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfthread')
+    PsiElement(CLOSER)('>')

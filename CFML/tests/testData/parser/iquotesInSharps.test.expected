@@ -1,0 +1,15 @@
+CfmlFile:iquotesInSharps.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfset')
+    PsiElement(DOUBLE_QUOTE)('"')
+    ReferenceExpression
+      PsiElement(OPENSHARP)('#')
+      StringLiteral
+        PsiElement(DOUBLE_QUOTE)('"')
+        PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+      PsiElement(CLOSESHARP)('#')
+    PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    PsiErrorElement:Not a statemenet
+      <empty list>
+    PsiElement(CLOSER)('>')

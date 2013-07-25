@@ -1,0 +1,6 @@
+<cfscript>
+function mineFunc() {
+
+}
+</cfscript>
+<cfset a = mineFunc()>

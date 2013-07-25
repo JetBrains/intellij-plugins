@@ -1,0 +1,15 @@
+CfmlFile:attributesInProperty.cfml
+  COMPONENT_DEFINITION
+    PsiElement(COMPONENT_KEYWORD)('component')
+    PsiElement(L_CURLYBRACKET)('{')
+    PROPERTY
+      PsiElement(IDENTIFIER)('property')
+      TYPE
+        PsiElement(IDENTIFIER)('com')
+        PsiElement(POINT)('.')
+        PsiElement(IDENTIFIER)('foo')
+        PsiElement(POINT)('.')
+        PsiElement(IDENTIFIER)('Bar')
+      PsiElement(IDENTIFIER)('foo')
+    PsiElement(SEMICOLON)(';')
+    PsiElement(R_CURLYBRACKET)('}')

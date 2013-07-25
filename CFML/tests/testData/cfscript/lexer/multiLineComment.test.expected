@@ -1,0 +1,13 @@
+OPENER ('<')
+CF_TAG_NAME ('cfscipt')
+R_ANGLEBRACKET ('>')
+CFML_TEMPLATE_TEXT ('
+/*
+  multi
+  line
+  comment
+*/
+')
+LSLASH_ANGLEBRACKET ('</')
+CF_TAG_NAME ('cfscript')
+CLOSER ('>')

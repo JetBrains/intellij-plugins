@@ -1,0 +1,21 @@
+CfmlFile:ifElseExpression.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(R_ANGLEBRACKET)('>')
+    IFEXPRESSION
+      PsiElement(IF_KEYWORD)('if')
+      PsiElement(L_BRACKET)('(')
+      IntegerLiteral
+        PsiElement(INTEGER)('1')
+      PsiElement(R_BRACKET)(')')
+      BLOCK_OF_STATEMENTS
+        PsiElement(L_CURLYBRACKET)('{')
+        PsiElement(R_CURLYBRACKET)('}')
+      PsiElement(ELSE_KEYWORD)('else')
+      BLOCK_OF_STATEMENTS
+        PsiElement(L_CURLYBRACKET)('{')
+        PsiElement(R_CURLYBRACKET)('}')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(CLOSER)('>')

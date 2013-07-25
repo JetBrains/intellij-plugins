@@ -1,0 +1,23 @@
+CfmlFile:structureDefinitionAsParameter.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfset')
+    Assignment
+      ReferenceExpression
+        PsiElement(IDENTIFIER)('a')
+      PsiElement(ASSIGN)('=')
+      FunctionCallExpression
+        ReferenceExpression
+          PsiElement(IDENTIFIER)('method')
+        ArgumentList
+          PsiElement(L_BRACKET)('(')
+          PsiElement(L_CURLYBRACKET)('{')
+          Assignment
+            ReferenceExpression
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(ASSIGN)('=')
+            IntegerLiteral
+              PsiElement(INTEGER)('2')
+          PsiElement(R_CURLYBRACKET)('}')
+          PsiElement(R_BRACKET)(')')
+    PsiElement(CLOSER)('>')

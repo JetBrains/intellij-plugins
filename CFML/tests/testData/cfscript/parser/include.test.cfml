@@ -1,0 +1,3 @@
+component {
+  include "header.cfml";
+}

@@ -1,0 +1,22 @@
+CfmlFile:twoSimpleStatements.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(R_ANGLEBRACKET)('>')
+    Assignment
+      ReferenceExpression
+        PsiElement(IDENTIFIER)('a')
+      PsiElement(ASSIGN)('=')
+      IntegerLiteral
+        PsiElement(INTEGER)('1')
+    PsiElement(SEMICOLON)(';')
+    FunctionCallExpression
+      ReferenceExpression
+        PsiElement(IDENTIFIER)('b')
+      ArgumentList
+        PsiElement(L_BRACKET)('(')
+        PsiElement(R_BRACKET)(')')
+    PsiElement(SEMICOLON)(';')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(CLOSER)('>')

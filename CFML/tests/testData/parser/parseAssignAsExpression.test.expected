@@ -1,0 +1,24 @@
+CfmlFile:parseAssignAsExpression.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfset')
+    FunctionCallExpression
+      ReferenceExpression
+        PsiElement(IDENTIFIER)('func')
+      ArgumentList
+        PsiElement(L_BRACKET)('(')
+        Assignment
+          Argument a
+            PsiElement(IDENTIFIER)('a')
+          PsiElement(ASSIGN)('=')
+          IntegerLiteral
+            PsiElement(INTEGER)('0')
+        PsiElement(COMMA)(',')
+        Assignment
+          Argument b
+            PsiElement(IDENTIFIER)('b')
+          PsiElement(ASSIGN)('=')
+          IntegerLiteral
+            PsiElement(INTEGER)('0')
+        PsiElement(R_BRACKET)(')')
+    PsiElement(CLOSER)('>')

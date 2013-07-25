@@ -1,0 +1,1 @@
+<cfset a = CreateObject("component","class")>

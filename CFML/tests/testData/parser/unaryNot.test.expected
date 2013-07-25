@@ -1,0 +1,13 @@
+CfmlFile:unaryNot.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfset')
+    Assignment
+      ReferenceExpression
+        PsiElement(IDENTIFIER)('a')
+      PsiElement(ASSIGN)('=')
+      UnaryExpression
+        PsiElement(NOT)('!')
+        ReferenceExpression
+          PsiElement(IDENTIFIER)('b')
+    PsiElement(CLOSER)('>')

@@ -1,0 +1,19 @@
+CfmlFile:defaultFunctionName.cfml
+  COMPONENT_DEFINITION
+    PsiElement(COMPONENT_KEYWORD)('component')
+    PsiElement(L_CURLYBRACKET)('{')
+    FunctionDefinition
+      PsiElement(FUNCTION_KEYWORD)('function')
+      PsiElement(DEFAULT_KEYWORD)('default')
+      ParametersList
+        PsiElement(L_BRACKET)('(')
+        FUNCTION_ARGUMENT
+          TYPE
+            PsiElement(STRING_TYPE)('string')
+          PsiElement(IDENTIFIER)('rc')
+        PsiElement(R_BRACKET)(')')
+      FUNCTIONBODY
+        BLOCK_OF_STATEMENTS
+          PsiElement(L_CURLYBRACKET)('{')
+          PsiElement(R_CURLYBRACKET)('}')
+    PsiElement(R_CURLYBRACKET)('}')

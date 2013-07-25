@@ -1,0 +1,34 @@
+CfmlFile:infiniteCycleWhileCaseParsing.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(R_ANGLEBRACKET)('>')
+    SWITCHEXPRESSION
+      PsiElement(SWITCH_KEYWORD)('switch')
+      PsiElement(L_BRACKET)('(')
+      ReferenceExpression
+        PsiElement(IDENTIFIER)('a')
+      PsiElement(R_BRACKET)(')')
+      PsiElement(L_CURLYBRACKET)('{')
+      CASEEXPRESSION
+        PsiElement(CASE_KEYWORD)('case')
+        PsiElement(DOUBLE_QUOTE)('"')
+        PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+        PsiElement(DOTDOT)(':')
+        ReferenceExpression
+          PsiElement(IDENTIFIER)('a')
+        PsiErrorElement:Not a statemenet
+          <empty list>
+        ReferenceExpression
+          PsiElement(CASE_KEYWORD)('case')
+        PsiErrorElement:; expected
+          <empty list>
+        PsiElement(DOUBLE_QUOTE)('"')
+        PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+        PsiErrorElement:Quote expected
+          <empty list>
+    PsiElement(DOTDOT)(':')
+    PsiElement(R_CURLYBRACKET)('}')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(CLOSER)('>')

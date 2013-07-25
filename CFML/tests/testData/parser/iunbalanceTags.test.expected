@@ -1,0 +1,13 @@
+CfmlFile:iunbalanceTags.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfif')
+    PsiElement(R_ANGLEBRACKET)('>')
+    Tag
+      PsiElement(OPENER)('<')
+      PsiElement(CF_TAG_NAME)('cf')
+      PsiErrorElement:Tag is not done
+        <empty list>
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfif')
+    PsiElement(CLOSER)('>')

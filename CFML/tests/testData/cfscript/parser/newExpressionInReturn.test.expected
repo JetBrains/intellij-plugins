@@ -1,0 +1,26 @@
+CfmlFile:newExpressionInReturn.cfml
+  COMPONENT_DEFINITION
+    PsiElement(COMPONENT_KEYWORD)('component')
+    PsiElement(L_CURLYBRACKET)('{')
+    FunctionDefinition
+      PsiElement(PUBLIC_KEYWORD)('public')
+      PsiElement(FUNCTION_KEYWORD)('function')
+      PsiElement(IDENTIFIER)('createA')
+      ParametersList
+        PsiElement(L_BRACKET)('(')
+        PsiElement(R_BRACKET)(')')
+      FUNCTIONBODY
+        BLOCK_OF_STATEMENTS
+          PsiElement(L_CURLYBRACKET)('{')
+          PsiElement(RETURN_KEYWORD)('return')
+          NewExpression
+            PsiElement(IDENTIFIER)('new')
+            COMPONENT_CONSTRUCTOR_CALL
+              COMPONENT_REFERENCE
+                PsiElement(IDENTIFIER)('http')
+              ArgumentList
+                PsiElement(L_BRACKET)('(')
+                PsiElement(R_BRACKET)(')')
+          PsiElement(SEMICOLON)(';')
+          PsiElement(R_CURLYBRACKET)('}')
+    PsiElement(R_CURLYBRACKET)('}')

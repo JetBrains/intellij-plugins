@@ -1,0 +1,15 @@
+<cffunction name="newName">
+<cfif true>
+    <cfinvoke method="newName">
+<cfelse>
+    <cfscript>
+        newName();
+    </cfscript>
+</cfif>
+
+</cffunction>
+
+<cfinvoke method="newName">
+<cfscript>
+newName();
+</cfscript>

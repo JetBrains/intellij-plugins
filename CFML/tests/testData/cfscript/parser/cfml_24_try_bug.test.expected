@@ -1,0 +1,11 @@
+CfmlFile:cfml_24_try_bug.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(R_ANGLEBRACKET)('>')
+    TRYCATCHEXPRESSION
+      PsiElement(TRY_KEYWORD)('try')
+      PsiElement(L_CURLYBRACKET)('{')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(CLOSER)('>')

@@ -1,0 +1,9 @@
+<cfcomponent name="myComponent">
+    <cffunction name="myFunction">
+        <cfargument name="newName">
+        <cfset v = arguments.newName + newName>
+        <cfscript>
+            v = arguments.newName + newName;
+        </cfscript>
+    </cffunction>
+</cfcomponent>

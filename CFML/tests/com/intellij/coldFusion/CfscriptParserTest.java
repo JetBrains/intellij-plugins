@@ -1,0 +1,241 @@
+package com.intellij.coldFusion;
+
+import com.intellij.coldFusion.UI.config.CfmlProjectConfiguration;
+import com.intellij.coldFusion.model.CfmlLanguage;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.impl.DebugUtil;
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+
+import java.io.File;
+import java.io.IOException;
+
+/**
+ * Created by Lera Nikolaenko
+ * Date: 14.01.2009
+ */
+public class CfscriptParserTest extends CfmlCodeInsightFixtureTestCase {
+  public void testSimpleStatement() throws Throwable {
+    doTest();
+  }
+
+  public void testTwoSimpleStatements() throws Throwable {
+    doTest();
+  }
+
+  public void testIfExpression() throws Throwable {
+    doTest();
+  }
+
+  public void testIfElseExpression() throws Throwable {
+    doTest();
+  }
+
+  public void testIfElseNestedExpression() throws Throwable {
+    doTest();
+  }
+
+  public void testWhileExpression() throws Throwable {
+    doTest();
+  }
+
+  public void testSwitchExpression() throws Throwable {
+    doTest();
+  }
+
+  public void testActionExpression() throws Throwable {
+    doTest();
+  }
+
+  public void testActionSaveContentExpression() throws Throwable {
+    doTest();
+  }
+
+  public void testDefaultAttribute() throws Throwable {
+    doTest();
+  }
+
+  public void testAttributesInFunctionDefinition() throws Throwable {
+    doTest();
+  }
+
+  public void testAttributesInProperty() throws Throwable {
+    doTest();
+  }
+
+  public void testNewExpressionInReturn() throws Throwable {
+    doTest();
+  }
+
+  public void testStructArrayAsReferenceExpression() throws Throwable {
+    doTest();
+  }
+
+  public void testEmptyOneLineComment() throws Throwable {
+    doTest();
+  }
+
+  public void testOneLineComment() throws Throwable {
+    doTest();
+  }
+
+  public void testMultiLineComment() throws Throwable {
+    doTest();
+  }
+
+  public void testInvalidDivisionOperator() throws Throwable {
+    doTest();
+  }
+
+  public void testCfml_24_try_bug() throws Throwable {
+    doTest();
+  }
+
+  public void testDotBracesConstruction() throws Throwable {
+    doTest();
+  }
+
+  public void testCfsetTag() throws Throwable {
+    doTest();
+  }
+
+  public void testBraceStructure() throws Throwable {
+    doTest();
+  }
+
+  public void testOldFunctionSyntax() throws Throwable {
+    doTest();
+  }
+
+  public void testNewComponentSyntax() throws Throwable {
+    doTest("/newSyntax");
+  }
+
+  public void testNewInitAsReturnStatement() throws Throwable {
+    doTest();
+  }
+
+  public void testDefaultFunctionNameInCf8() throws Throwable {
+    CfmlProjectConfiguration.State currentState = new CfmlProjectConfiguration.State();
+    try {
+      currentState.setLanguageLevel(CfmlLanguage.CF8);
+      CfmlProjectConfiguration.getInstance(getProject()).loadState(currentState);
+      doTest();
+    }
+    finally {
+      currentState.setLanguageLevel(CfmlLanguage.CF9);
+      CfmlProjectConfiguration.getInstance(getProject()).loadState(currentState);
+    }
+  }
+
+  public void testDefaultFunctionName() throws Throwable {
+    doTest();
+  }
+
+  public void testNewFunctionSyntax1() throws Throwable {
+    doTest("/newSyntax");
+  }
+
+  public void testNewFunctionSyntax2() throws Throwable {
+    doTest("/newSyntax");
+  }
+
+  public void testNewFunctionSyntax3() throws Throwable {
+    doTest("/newSyntax");
+  }
+
+  public void testNewFunctionSyntax4() throws Throwable {
+    doTest("/newSyntax");
+  }
+
+  public void testComponentAsReturnType() throws Throwable {
+    doTest();
+  }
+
+  public void testDefineComponentWithoutTag() throws Throwable {
+    doTest("/newSyntax");
+  }
+
+  public void testAllowImportsBeforeComponentDecl() throws Throwable {
+    doTest("/newSyntax");
+  }
+
+  public void testConsequentCaseLabels() throws Throwable {
+    doTest("");
+  }
+
+  public void testMultipleStatementsInCase() throws Throwable {
+    doTest("");
+  }
+
+  public void testInfiniteCycleWhileCaseParsing() throws Throwable {
+    this.
+    doTest("");
+  }
+
+  public void testCreateStructWithQuotedLValue() throws Throwable {
+    this.doTest("");
+  }
+
+  public void testDefaultValueInFunctionDefinition() throws Throwable {
+    this.doTest("");
+  }
+
+  public void testTernaryOperator() throws Throwable {
+    doTest("");
+  }
+
+  public void testAbort() throws Throwable {
+    doTest("");
+  }
+
+  public void testAbortAttributeInProperty() throws Throwable {
+    doTest("");
+  }
+
+  public void testPropertyAsVariable() throws Throwable {
+    doTest("");
+  }
+
+  public void testDefineInterfaceCaseInsensitive() throws Throwable {
+    doTest("/newSyntax");
+  }
+
+  public void testInclude() throws Throwable { doTest(); }
+  public void testPageencoding() throws Throwable { doTest(); }
+  public void testForInWithVar() throws Throwable { doTest(); }
+  public void testConcateq() throws Throwable { doTest(); }
+  public void testImplicitArrayOrStruct() throws Throwable { doTest(); }
+
+  public void testForInWithArray() throws Throwable {
+    doTest();
+  }
+
+  private void doTest() throws IOException {
+    doTest("");
+  }
+
+  /**
+   * @param relatedPath - "/directory"
+   * @throws IOException
+   */
+  private void doTest(String relatedPath) throws IOException {
+    String fileName = getTestName(true) + ".cfml";
+
+    String testText = StringUtil.convertLineSeparators(loadFile(relatedPath + "/"+ getTestName(true) + ".test.cfml"));
+    final PsiFile psiFile = PsiFileFactory.getInstance(getProject()).createFileFromText(fileName, testText);
+    final String tree = DebugUtil.psiTreeToString(psiFile, true);
+
+    assertSameLinesWithFile(getDataSubpath() + relatedPath + "/"+ getTestName(true) + ".test.expected", tree);
+  }
+
+  private String loadFile(String fileName) throws IOException {
+    return FileUtil.loadFile(new File(FileUtil.toSystemDependentName(getDataSubpath() + fileName)));
+  }
+
+  protected String getDataSubpath() {
+    return CfmlTestUtil.BASE_TEST_DATA_PATH + "/cfscript/parser";
+  }
+}

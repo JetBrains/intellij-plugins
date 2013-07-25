@@ -1,0 +1,33 @@
+CfmlFile:powOperator.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfset')
+    FunctionCallExpression
+      ReferenceExpression
+        PsiElement(IDENTIFIER)('myFunction')
+      ArgumentList
+        PsiElement(L_BRACKET)('(')
+        Argument a
+          PsiElement(IDENTIFIER)('a')
+        PsiElement(COMMA)(',')
+        BinaryExpression
+          IntegerLiteral
+            PsiElement(INTEGER)('3')
+          PsiElement(ADD)('+')
+          IntegerLiteral
+            PsiElement(INTEGER)('4')
+        PsiElement(COMMA)(',')
+        BinaryExpression
+          IntegerLiteral
+            PsiElement(INTEGER)('2')
+          PsiElement(POW)('^')
+          PsiElement(L_BRACKET)('(')
+          BinaryExpression
+            ReferenceExpression
+              PsiElement(IDENTIFIER)('i')
+            PsiElement(ADD)('+')
+            IntegerLiteral
+              PsiElement(INTEGER)('2')
+          PsiElement(R_BRACKET)(')')
+        PsiElement(R_BRACKET)(')')
+    PsiElement(CLOSER)('>')

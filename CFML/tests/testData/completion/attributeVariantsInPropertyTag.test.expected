@@ -1,0 +1,4 @@
+<cfcomponent>
+    <cfproperty name="sad" abort="">
+
+</cfcomponent>

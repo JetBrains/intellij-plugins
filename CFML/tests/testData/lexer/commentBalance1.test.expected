@@ -1,0 +1,5 @@
+OPENER ('<')
+CF_TAG_NAME ('cfset')
+WHITE_SPACE (' ')
+COMMENT ('<!---first level comment--->')
+CLOSER ('/>')

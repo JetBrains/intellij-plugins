@@ -1,0 +1,5 @@
+/**
+ * Some comment
+ */
+Interface {
+}

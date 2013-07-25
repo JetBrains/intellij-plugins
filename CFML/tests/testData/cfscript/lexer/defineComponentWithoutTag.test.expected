@@ -1,0 +1,26 @@
+COMMENT ('/**
+ * comment
+ * comment
+ */')
+WHITE_SPACE ('
+')
+COMPONENT_KEYWORD ('component')
+WHITE_SPACE (' ')
+L_CURLYBRACKET ('{')
+WHITE_SPACE ('
+  ')
+PUBLIC_KEYWORD ('public')
+WHITE_SPACE (' ')
+VOID_TYPE ('void')
+WHITE_SPACE (' ')
+FUNCTION_KEYWORD ('function')
+WHITE_SPACE (' ')
+IDENTIFIER ('a')
+L_BRACKET ('(')
+R_BRACKET (')')
+WHITE_SPACE (' ')
+L_CURLYBRACKET ('{')
+R_CURLYBRACKET ('}')
+WHITE_SPACE ('
+')
+R_CURLYBRACKET ('}')

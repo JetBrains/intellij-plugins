@@ -1,0 +1,27 @@
+CfmlFile:finally.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(R_ANGLEBRACKET)('>')
+    TRYCATCHEXPRESSION
+      PsiElement(TRY_KEYWORD)('try')
+      BLOCK_OF_STATEMENTS
+        PsiElement(L_CURLYBRACKET)('{')
+        PsiElement(R_CURLYBRACKET)('}')
+      CATCH_EXPRESSION
+        PsiElement(CATCH_KEYWORD)('catch')
+        PsiElement(L_BRACKET)('(')
+        TYPE
+          PsiElement(ANY_TYPE)('Any')
+        PsiElement(IDENTIFIER)('e')
+        PsiElement(R_BRACKET)(')')
+      BLOCK_OF_STATEMENTS
+        PsiElement(L_CURLYBRACKET)('{')
+        PsiElement(R_CURLYBRACKET)('}')
+      PsiElement(FINALLY_KEYWORD)('finally')
+      BLOCK_OF_STATEMENTS
+        PsiElement(L_CURLYBRACKET)('{')
+        PsiElement(R_CURLYBRACKET)('}')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(CLOSER)('>')

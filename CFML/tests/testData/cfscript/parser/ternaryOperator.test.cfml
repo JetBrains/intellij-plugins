@@ -1,0 +1,1 @@
+<cfset currentStep = find('extra.cfm',cgi.CF_TEMPLATE_PATH) ? 2 + 1 : true ? 1 : 0 />

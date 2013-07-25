@@ -1,0 +1,10 @@
+CfmlFile:multiLineComment.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(R_ANGLEBRACKET)('>')
+    PsiComment(COMMENT)('/*\n\tmulti\n\tlint\n\tcomment\n\t*/')
+    PsiComment(COMMENT)('/* one line */')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(CLOSER)('>')

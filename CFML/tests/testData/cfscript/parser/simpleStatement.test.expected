@@ -1,0 +1,17 @@
+CfmlFile:simpleStatement.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(R_ANGLEBRACKET)('>')
+    Assignment
+      ReferenceExpression
+        PsiElement(IDENTIFIER)('fckEditor')
+      PsiElement(ASSIGN)('=')
+      StringLiteral
+        PsiElement(DOUBLE_QUOTE)('"')
+        PsiElement(STRING_TEXT)('component')
+        PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    PsiElement(SEMICOLON)(';')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(CLOSER)('>')

@@ -1,0 +1,28 @@
+CfmlFile:nofile.cfml
+  CfmlTag:cfargument
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfargument')
+    CfmlAttributeImpl: <name="test">
+      PsiElement(ATTRIBUTE)('name')
+      PsiElement(ASSIGN)('=')
+      STRING_TEXT
+        PsiElement(DOUBLE_QUOTE)('"')
+        PsiElement(STRING_TEXT)('test')
+        PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    CfmlAttributeImpl: <default="#WriteOutput(""a"")#">
+      PsiElement(ATTRIBUTE)('default')
+      PsiElement(ASSIGN)('=')
+      STRING_TEXT
+        PsiElement(DOUBLE_QUOTE)('"')
+        PsiElement(OPENSHARP)('#')
+        PsiElement(IDENTIFIER)('WriteOutput')
+        PsiElement(L_BRACKET)('(')
+        PsiElement(DOUBLE_QUOTE)('"')
+        PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+        PsiElement(IDENTIFIER)('a')
+        PsiElement(DOUBLE_QUOTE)('"')
+        PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+        PsiElement(R_BRACKET)(')')
+        PsiElement(CLOSESHARP)('#')
+        PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    PsiElement(CLOSER)('/>')

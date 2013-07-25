@@ -1,0 +1,1 @@
+<cfset a = <caret>((a + b) * 2 + 3<pair>) * 6>

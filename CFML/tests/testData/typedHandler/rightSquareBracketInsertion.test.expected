@@ -1,0 +1,1 @@
+<cfset a = b[<caret>]>

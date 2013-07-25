@@ -1,0 +1,23 @@
+CfmlFile:cfTagWithPrefixWithoutCloseTag.cfml
+  ImportTag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfimport')
+    Attribute
+      PsiElement(ATTRIBUTE)('prefix')
+      PsiElement(ASSIGN)('=')
+      PsiElement(DOUBLE_QUOTE)('"')
+      AttributeValue
+        PsiElement(STRING_TEXT)('cftags')
+      PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    Attribute
+      PsiElement(ATTRIBUTE)('taglib')
+      PsiElement(ASSIGN)('=')
+      PsiElement(DOUBLE_QUOTE)('"')
+      AttributeValue
+        PsiElement(STRING_TEXT)('pack202s/insidePack/doubleInside')
+      PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    PsiElement(CLOSER)('>')
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cftags:date')
+    PsiElement(R_ANGLEBRACKET)('>')

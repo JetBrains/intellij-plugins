@@ -1,0 +1,6 @@
+<cfcomponent name="myComponent">
+  <cfset newName = 10>
+  <cffunction name="myFunction">
+    <cfset b = newName>
+  </cffunction>
+</cfcomponent>

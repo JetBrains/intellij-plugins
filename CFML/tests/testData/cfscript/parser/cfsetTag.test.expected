@@ -1,0 +1,24 @@
+CfmlFile:cfsetTag.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfset')
+    Assignment
+      ReferenceExpression
+        PsiElement(IDENTIFIER)('a')
+      PsiElement(ASSIGN)('=')
+      FunctionCallExpression
+        ReferenceExpression
+          PsiElement(IDENTIFIER)('CreateObject')
+        ArgumentList
+          PsiElement(L_BRACKET)('(')
+          StringLiteral
+            PsiElement(DOUBLE_QUOTE)('"')
+            PsiElement(STRING_TEXT)('component')
+            PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+          PsiElement(COMMA)(',')
+          StringLiteral
+            PsiElement(DOUBLE_QUOTE)('"')
+            PsiElement(STRING_TEXT)('class')
+            PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+          PsiElement(R_BRACKET)(')')
+    PsiElement(CLOSER)('>')

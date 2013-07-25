@@ -1,0 +1,33 @@
+IMPORT_KEYWORD ('import')
+WHITE_SPACE (' ')
+DOUBLE_QUOTE ('"')
+STRING_TEXT ('cfc_filepath1')
+DOUBLE_QUOTE_CLOSER ('"')
+WHITE_SPACE ('
+')
+IMPORT_KEYWORD ('import')
+WHITE_SPACE (' ')
+SINGLE_QUOTE (''')
+STRING_TEXT ('cfc_filepath2')
+SINGLE_QUOTE_CLOSER (''')
+WHITE_SPACE ('
+')
+IMPORT_KEYWORD ('import')
+WHITE_SPACE (' ')
+IDENTIFIER ('package')
+POINT ('.')
+IDENTIFIER ('package')
+POINT ('.')
+COMPONENT_KEYWORD ('component')
+WHITE_SPACE ('
+')
+COMMENT ('/* comment */')
+WHITE_SPACE ('
+')
+COMPONENT_KEYWORD ('component')
+WHITE_SPACE (' ')
+L_CURLYBRACKET ('{')
+WHITE_SPACE ('
+
+')
+R_CURLYBRACKET ('}')

@@ -1,0 +1,1 @@
+<cfparam default = "#some + "str#1#" + some#str">

@@ -1,0 +1,26 @@
+CfmlFile:allowImportsBeforeComponentDecl.cfml
+  IMPORT_EXPRESSION
+    PsiElement(IMPORT_KEYWORD)('import')
+    StringLiteral
+      PsiElement(DOUBLE_QUOTE)('"')
+      PsiElement(STRING_TEXT)('cfc_filepath1')
+      PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+  IMPORT_EXPRESSION
+    PsiElement(IMPORT_KEYWORD)('import')
+    StringLiteral
+      PsiElement(SINGLE_QUOTE)(''')
+      PsiElement(STRING_TEXT)('cfc_filepath2')
+      PsiElement(SINGLE_QUOTE_CLOSER)(''')
+  IMPORT_EXPRESSION
+    PsiElement(IMPORT_KEYWORD)('import')
+    COMPONENT_REFERENCE
+      PsiElement(IDENTIFIER)('package')
+      PsiElement(POINT)('.')
+      PsiElement(IDENTIFIER)('package')
+      PsiElement(POINT)('.')
+      PsiElement(COMPONENT_KEYWORD)('component')
+  PsiComment(COMMENT)('/* comment */')
+  COMPONENT_DEFINITION
+    PsiElement(COMPONENT_KEYWORD)('component')
+    PsiElement(L_CURLYBRACKET)('{')
+    PsiElement(R_CURLYBRACKET)('}')

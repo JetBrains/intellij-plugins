@@ -1,0 +1,6 @@
+CfmlFile:defineInterfaceCaseInsensitive.cfml
+  PsiComment(COMMENT)('/**\n * Some comment\n */')
+  COMPONENT_DEFINITION
+    PsiElement(INTERFACE_KEYWORD)('Interface')
+    PsiElement(L_CURLYBRACKET)('{')
+    PsiElement(R_CURLYBRACKET)('}')

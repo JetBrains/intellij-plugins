@@ -1,0 +1,42 @@
+OPENER ('<')
+CF_TAG_NAME ('cfoutput')
+R_ANGLEBRACKET ('>')
+WHITE_SPACE ('
+')
+OPENER ('<')
+CF_TAG_NAME ('cfif')
+R_ANGLEBRACKET ('>')
+WHITE_SPACE ('
+')
+OPENER ('<')
+CF_TAG_NAME ('cfoutput')
+R_ANGLEBRACKET ('>')
+CFML_TEMPLATE_TEXT ('text')
+LSLASH_ANGLEBRACKET ('</')
+CF_TAG_NAME ('cfoutput')
+CLOSER ('>')
+WHITE_SPACE ('
+')
+LSLASH_ANGLEBRACKET ('</')
+CF_TAG_NAME ('cfif')
+CLOSER ('>')
+WHITE_SPACE ('
+')
+OPENER ('<')
+CF_TAG_NAME ('cfif')
+R_ANGLEBRACKET ('>')
+WHITE_SPACE ('
+')
+START_EXPRESSION ('#')
+IDENTIFIER ('myVar')
+END_EXPRESSION ('#')
+WHITE_SPACE ('
+')
+LSLASH_ANGLEBRACKET ('</')
+CF_TAG_NAME ('cfif')
+CLOSER ('>')
+WHITE_SPACE ('
+')
+LSLASH_ANGLEBRACKET ('</')
+CF_TAG_NAME ('cfoutput')
+CLOSER ('>')

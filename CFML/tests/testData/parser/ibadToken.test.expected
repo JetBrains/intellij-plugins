@@ -1,0 +1,8 @@
+CfmlFile:ibadToken.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfset')
+    PsiErrorElement:Tag is not done
+      <empty list>
+  PsiElement(BAD_CHARACTER)('@')
+  PsiElement(CLOSER)('>')

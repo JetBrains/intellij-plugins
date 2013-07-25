@@ -1,0 +1,3 @@
+<cfscript>
+  throw(message=<caret>);
+</cfscript>

@@ -1,0 +1,12 @@
+CfmlFile:singleTag.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfparam')
+    Attribute
+      PsiElement(ATTRIBUTE)('default')
+      PsiElement(ASSIGN)('=')
+      PsiElement(DOUBLE_QUOTE)('"')
+      AttributeValue
+        PsiElement(STRING_TEXT)('some')
+      PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    PsiElement(CLOSER)('>')

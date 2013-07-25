@@ -1,0 +1,24 @@
+CfmlFile:accessMethodViaArray.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(R_ANGLEBRACKET)('>')
+    FunctionCallExpression
+      None
+        ReferenceExpression
+          PsiElement(SCOPE_KEYWORD)('variables')
+          PsiElement(POINT)('.')
+          PsiElement(IDENTIFIER)('mycfc')
+        PsiElement(L_SQUAREBRACKET)('[')
+        ReferenceExpression
+          PsiElement(IDENTIFIER)('methodName')
+        PsiElement(R_SQUAREBRACKET)(']')
+      ArgumentList
+        PsiElement(L_BRACKET)('(')
+        Argument arguments
+          PsiElement(IDENTIFIER)('arguments')
+        PsiElement(R_BRACKET)(')')
+    PsiElement(SEMICOLON)(';')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(CLOSER)('>')

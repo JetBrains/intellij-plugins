@@ -1,0 +1,5 @@
+CfmlFile:nonUniqueUnclosedTag.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cftransaction')
+    PsiElement(CLOSER)('/>')

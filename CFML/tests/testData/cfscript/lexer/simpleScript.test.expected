@@ -1,0 +1,23 @@
+WHITE_SPACE ('
+')
+OPENER ('<')
+CF_TAG_NAME ('cfscript')
+R_ANGLEBRACKET ('>')
+WHITE_SPACE ('
+')
+COMMENT ('//a++;')
+WHITE_SPACE ('
+')
+VAR_KEYWORD ('var')
+WHITE_SPACE (' ')
+IDENTIFIER ('a')
+WHITE_SPACE (' ')
+ASSIGN ('=')
+WHITE_SPACE (' ')
+INTEGER ('2')
+SEMICOLON (';')
+WHITE_SPACE ('
+')
+LSLASH_ANGLEBRACKET ('</')
+CF_TAG_NAME ('cfscript')
+CLOSER ('>')

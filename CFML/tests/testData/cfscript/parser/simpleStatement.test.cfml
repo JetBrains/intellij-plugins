@@ -1,0 +1,3 @@
+<cfscript>
+    fckEditor = "component";
+</cfscript>

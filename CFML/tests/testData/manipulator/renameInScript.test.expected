@@ -1,0 +1,4 @@
+<cfscript>
+    include "newName.test.cfml";
+
+</cfscript>

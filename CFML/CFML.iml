@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module relativePaths="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/source_for_IDEA9" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/source_for_IDEA8" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="TEST" name="Groovy" level="project" />
+    <orderEntry type="module" module-name="platform-api" />
+    <orderEntry type="module" module-name="sql" />
+    <orderEntry type="module" module-name="platform-impl" />
+    <orderEntry type="module" module-name="xml" />
+    <orderEntry type="module" module-name="lang-api" />
+    <orderEntry type="module" module-name="lang-impl" />
+    <orderEntry type="module" module-name="openapi" />
+    <orderEntry type="module" module-name="idea" />
+    <orderEntry type="module" module-name="testFramework-java" scope="TEST" />
+    <orderEntry type="module" module-name="compiler-openapi" />
+    <orderEntry type="module" module-name="smRunner" />
+    <orderEntry type="library" name="http-client-3.1" level="project" />
+    <orderEntry type="module" module-name="database-impl" scope="TEST" />
+    <orderEntry type="module" module-name="idea-tests" scope="TEST" />
+    <orderEntry type="module" module-name="platform-ultimate" />
+    <orderEntry type="module" module-name="ultimate-verifier" />
+    <orderEntry type="module" module-name="spellchecker" />
+  </component>
+</module>
+

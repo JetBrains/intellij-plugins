@@ -1,0 +1,12 @@
+CfmlFile:cfinvokeTagMightBeSingle.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfinvoke')
+    FunctionInvoke
+      PsiElement(ATTRIBUTE)('method')
+      PsiElement(ASSIGN)('=')
+      PsiElement(DOUBLE_QUOTE)('"')
+      ReferenceExpression
+        PsiElement(STRING_TEXT)('someMethod')
+      PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    PsiElement(R_ANGLEBRACKET)('>')

@@ -1,0 +1,4 @@
+component persistent="true"
+{
+    property name="name" ormType="";
+}

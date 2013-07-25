@@ -1,0 +1,22 @@
+CfmlFile:defaultFunctionNameInCf8.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(R_ANGLEBRACKET)('>')
+    FunctionDefinition
+      PsiElement(FUNCTION_KEYWORD)('function')
+      PsiElement(DEFAULT_KEYWORD)('default')
+      ParametersList
+        PsiElement(L_BRACKET)('(')
+        FUNCTION_ARGUMENT
+          TYPE
+            PsiElement(IDENTIFIER)('string')
+          PsiElement(IDENTIFIER)('rc')
+        PsiElement(R_BRACKET)(')')
+      FUNCTIONBODY
+        BLOCK_OF_STATEMENTS
+          PsiElement(L_CURLYBRACKET)('{')
+          PsiElement(R_CURLYBRACKET)('}')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(CLOSER)('>')

@@ -1,0 +1,15 @@
+CfmlFile:iunbalanceSharps.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfset')
+    PsiElement(DOUBLE_QUOTE)('"')
+    ReferenceExpression
+      PsiElement(OPENSHARP)('#')
+      StringLiteral
+        PsiElement(DOUBLE_QUOTE)('"')
+        PsiElement(OPENSHARP)('#')
+        StringLiteral
+          PsiElement(DOUBLE_QUOTE)('"')
+          PsiElement(STRING_TEXT)('>')
+          PsiErrorElement:Quote expected
+            <empty list>

@@ -1,0 +1,25 @@
+CfmlFile:abort.cfml
+  COMPONENT_DEFINITION
+    PsiElement(COMPONENT_KEYWORD)('component')
+    PsiElement(L_CURLYBRACKET)('{')
+    FunctionDefinition
+      PsiElement(FUNCTION_KEYWORD)('function')
+      PsiElement(IDENTIFIER)('foo')
+      ParametersList
+        PsiElement(L_BRACKET)('(')
+        PsiElement(R_BRACKET)(')')
+      FUNCTIONBODY
+        BLOCK_OF_STATEMENTS
+          PsiElement(L_CURLYBRACKET)('{')
+          Assignment
+            PsiElement(VAR_KEYWORD)('var')
+            ReferenceExpression
+              PsiElement(IDENTIFIER)('a')
+            PsiElement(ASSIGN)('=')
+            IntegerLiteral
+              PsiElement(INTEGER)('1')
+          PsiElement(SEMICOLON)(';')
+          PsiElement(ABORT_KEYWORD)('abort')
+          PsiElement(SEMICOLON)(';')
+          PsiElement(R_CURLYBRACKET)('}')
+    PsiElement(R_CURLYBRACKET)('}')

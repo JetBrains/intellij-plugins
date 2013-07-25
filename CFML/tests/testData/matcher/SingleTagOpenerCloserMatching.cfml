@@ -1,0 +1,1 @@
+<pair><cfinvoke method="foo"<caret>>

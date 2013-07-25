@@ -1,0 +1,32 @@
+CfmlFile:actionSaveContentExpression.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(R_ANGLEBRACKET)('>')
+    ACTION
+      PsiElement(ACTION_NAME)('savecontent')
+      Attribute
+        PsiElement(IDENTIFIER)('variable')
+        PsiElement(ASSIGN)('=')
+        PsiElement(DOUBLE_QUOTE)('"')
+        AttributeValue
+          PsiElement(STRING_TEXT)('myVariable')
+        PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+      FUNCTIONBODY
+        BLOCK_OF_STATEMENTS
+          PsiElement(L_CURLYBRACKET)('{')
+          FunctionCallExpression
+            ReferenceExpression
+              PsiElement(IDENTIFIER)('WriteOutput')
+            ArgumentList
+              PsiElement(L_BRACKET)('(')
+              StringLiteral
+                PsiElement(DOUBLE_QUOTE)('"')
+                PsiElement(STRING_TEXT)('Hello World')
+                PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+              PsiElement(R_BRACKET)(')')
+          PsiElement(SEMICOLON)(';')
+          PsiElement(R_CURLYBRACKET)('}')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(CLOSER)('>')

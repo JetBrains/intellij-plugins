@@ -1,0 +1,18 @@
+CfmlFile:componentAsReturnType.cfml
+  COMPONENT_DEFINITION
+    PsiElement(COMPONENT_KEYWORD)('component')
+    PsiElement(L_CURLYBRACKET)('{')
+    FunctionDefinition
+      TYPE
+        PsiElement(COMPONENT_KEYWORD)('component')
+      PsiElement(FUNCTION_KEYWORD)('function')
+      PsiElement(IDENTIFIER)('foo')
+      ParametersList
+        PsiElement(L_BRACKET)('(')
+        PsiElement(R_BRACKET)(')')
+      FUNCTIONBODY
+        BLOCK_OF_STATEMENTS
+          PsiElement(L_CURLYBRACKET)('{')
+          PsiComment(COMMENT)('//')
+          PsiElement(R_CURLYBRACKET)('}')
+    PsiElement(R_CURLYBRACKET)('}')

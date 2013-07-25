@@ -1,0 +1,83 @@
+CfmlFile:actions.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(R_ANGLEBRACKET)('>')
+    PsiComment(COMMENT)('// IDEA-85678 writeLog in cfscript shows a syntax error')
+    FunctionCallExpression
+      ReferenceExpression
+        PsiElement(IDENTIFIER)('writeLog')
+      ArgumentList
+        PsiElement(L_BRACKET)('(')
+        Assignment
+          Argument application
+            PsiElement(IDENTIFIER)('application')
+          PsiElement(ASSIGN)('=')
+          BooleanLiteral
+            PsiElement(BOOLEAN)('true')
+        PsiElement(COMMA)(',')
+        Assignment
+          Argument file
+            PsiElement(IDENTIFIER)('file')
+          PsiElement(ASSIGN)('=')
+          StringLiteral
+            PsiElement(DOUBLE_QUOTE)('"')
+            PsiElement(STRING_TEXT)('someLogFile')
+            PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+        PsiElement(COMMA)(',')
+        Assignment
+          Argument type
+            PsiElement(IDENTIFIER)('type')
+          PsiElement(ASSIGN)('=')
+          StringLiteral
+            PsiElement(DOUBLE_QUOTE)('"')
+            PsiElement(STRING_TEXT)('error')
+            PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+        PsiElement(COMMA)(',')
+        Assignment
+          Argument text
+            PsiElement(IDENTIFIER)('text')
+          PsiElement(ASSIGN)('=')
+          StringLiteral
+            PsiElement(DOUBLE_QUOTE)('"')
+            PsiElement(STRING_TEXT)('some log message')
+            PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+        PsiElement(R_BRACKET)(')')
+    PsiElement(SEMICOLON)(';')
+    Assignment
+      ReferenceExpression
+        PsiElement(IDENTIFIER)('writeLog')
+      PsiElement(ASSIGN)('=')
+      PsiElement(L_CURLYBRACKET)('{')
+      PsiComment(COMMENT)('// an action')
+      PsiElement(R_CURLYBRACKET)('}')
+    PsiElement(SEMICOLON)(';')
+    PsiComment(COMMENT)('// IDEA-85991 param directive in cfscript shows a syntax error')
+    ACTION
+      PsiElement(ACTION_NAME)('param')
+      NamedAttribute
+        PsiElement(IDENTIFIER)('name')
+        PsiElement(ASSIGN)('=')
+        PsiElement(DOUBLE_QUOTE)('"')
+        AttributeValue
+          PsiElement(STRING_TEXT)('rc.firstname')
+        PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+      Attribute
+        PsiElement(DEFAULT_KEYWORD)('default')
+        PsiElement(ASSIGN)('=')
+        PsiElement(DOUBLE_QUOTE)('"')
+        AttributeValue
+          PsiElement(OPENSHARP)('#')
+          PsiElement(IDENTIFIER)('rc')
+          PsiElement(POINT)('.')
+          PsiElement(IDENTIFIER)('customer')
+          PsiElement(POINT)('.')
+          PsiElement(IDENTIFIER)('getFirstName')
+          PsiElement(L_BRACKET)('(')
+          PsiElement(R_BRACKET)(')')
+          PsiElement(CLOSESHARP)('#')
+        PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+      PsiElement(SEMICOLON)(';')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(CLOSER)('>')

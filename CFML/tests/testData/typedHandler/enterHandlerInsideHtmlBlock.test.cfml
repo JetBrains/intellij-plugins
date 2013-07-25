@@ -1,0 +1,8 @@
+<cfloop index="ListElement" list="John,Paul,George,Ringo">
+    <h1>
+    djf
+    <cfloop index="ListElement" list="John,Paul,George,Ringo"><caret>
+        <cfset asdsaddfkjdfgdfk = "dfsfsd">
+    </cfloop>
+    </h1>
+</cfloop>

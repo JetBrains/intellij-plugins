@@ -1,0 +1,9 @@
+<cfscript>
+    function foo( a )
+{
+            asdasdasd = 's';
+    }
+    if ( a == 7 ){
+            a = 's';
+        }
+</cfscript>

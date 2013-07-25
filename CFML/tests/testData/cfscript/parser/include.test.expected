@@ -1,0 +1,12 @@
+CfmlFile:include.cfml
+  COMPONENT_DEFINITION
+    PsiElement(COMPONENT_KEYWORD)('component')
+    PsiElement(L_CURLYBRACKET)('{')
+    INCLUDE_EXPRESSION
+      PsiElement(INCLUDE_KEYWORD)('include')
+      StringLiteral
+        PsiElement(DOUBLE_QUOTE)('"')
+        PsiElement(STRING_TEXT)('header.cfml')
+        PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    PsiElement(SEMICOLON)(';')
+    PsiElement(R_CURLYBRACKET)('}')

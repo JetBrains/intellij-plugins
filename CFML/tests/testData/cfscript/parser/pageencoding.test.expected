@@ -1,0 +1,11 @@
+CfmlFile:pageencoding.cfml
+  COMPONENT_DEFINITION
+    PsiElement(COMPONENT_KEYWORD)('component')
+    PsiElement(L_CURLYBRACKET)('{')
+    PsiElement(PAGEENCODING_KEYWORD)('pageencoding')
+    StringLiteral
+      PsiElement(DOUBLE_QUOTE)('"')
+      PsiElement(STRING_TEXT)('fggfdgsdfg')
+      PsiElement(DOUBLE_QUOTE_CLOSER)('"')
+    PsiElement(SEMICOLON)(';')
+    PsiElement(R_CURLYBRACKET)('}')

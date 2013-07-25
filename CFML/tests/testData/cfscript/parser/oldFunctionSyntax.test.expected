@@ -1,0 +1,18 @@
+CfmlFile:oldFunctionSyntax.cfml
+  Tag
+    PsiElement(OPENER)('<')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(R_ANGLEBRACKET)('>')
+    FunctionDefinition
+      PsiElement(FUNCTION_KEYWORD)('function')
+      PsiElement(IDENTIFIER)('functionName3')
+      ParametersList
+        PsiElement(L_BRACKET)('(')
+        PsiElement(R_BRACKET)(')')
+      FUNCTIONBODY
+        BLOCK_OF_STATEMENTS
+          PsiElement(L_CURLYBRACKET)('{')
+          PsiElement(R_CURLYBRACKET)('}')
+    PsiElement(LSLASH_ANGLEBRACKET)('</')
+    PsiElement(CF_TAG_NAME)('cfscript')
+    PsiElement(CLOSER)('>')
