@@ -2,10 +2,7 @@ package com.intellij.flex.uiDesigner;
 
 import com.intellij.compiler.options.CompileStepBeforeRun;
 import com.intellij.compiler.options.CompileStepBeforeRunNoErrorCheck;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.ExecutionManager;
-import com.intellij.execution.RunManagerEx;
-import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.execution.*;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.process.OSProcessHandler;
@@ -72,7 +69,7 @@ final class AdlUtil {
     final RemoteFlashRunConfiguration configuration = (RemoteFlashRunConfiguration)settings.getConfiguration();
     RunManagerEx.disableTasks(project, settings.getConfiguration(), CompileStepBeforeRun.ID, CompileStepBeforeRunNoErrorCheck.ID);
 
-    final DefaultDebugExecutor executor = new DefaultDebugExecutor();
+    final Executor executor = DefaultDebugExecutor.getDebugExecutorInstance();
     ProgramRunner.Callback callback = new ProgramRunner.Callback() {
       @Override
       public void processStarted(final RunContentDescriptor descriptor) {

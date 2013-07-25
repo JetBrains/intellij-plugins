@@ -1,8 +1,10 @@
 package com.jetbrains.actionscript.profiler;
 
-import com.intellij.execution.*;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.ExecutionResult;
+import com.intellij.execution.Executor;
+import com.intellij.execution.RunManager;
 import com.intellij.execution.configurations.*;
-import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.flex.model.bc.TargetPlatform;
@@ -90,7 +92,6 @@ public class ActionScriptProfileRunner implements ProgramRunner<RunnerSettings> 
       return;
     }
 
-    Executor executorById = ExecutorRegistry.getInstance().getExecutorById(DefaultRunExecutor.EXECUTOR_ID);
     RunManager.getInstance(executionEnvironment.getProject()).refreshUsagesList(executionEnvironment.getRunProfile());
     myFlexRunner.execute(executionEnvironment, callback);
   }
