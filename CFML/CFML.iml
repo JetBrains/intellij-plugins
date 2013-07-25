@@ -7,6 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/source_for_IDEA9" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/out" />
       <excludeFolder url="file://$MODULE_DIR$/source_for_IDEA8" />
     </content>
     <orderEntry type="inheritedJdk" />
