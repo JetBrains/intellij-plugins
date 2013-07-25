@@ -2,7 +2,6 @@ package com.intellij.coldFusion.UI.runner;
 
 import com.intellij.coldFusion.mxunit.CfmlUnitRunConfiguration;
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultRunExecutor;
@@ -16,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class CfmlRunner extends DefaultProgramRunner {
   protected RunContentDescriptor doExecute(Project project,
-                                           Executor executor,
                                            RunProfileState state,
                                            RunContentDescriptor contentToReuse,
                                            ExecutionEnvironment env) throws ExecutionException {
@@ -29,7 +27,7 @@ public class CfmlRunner extends DefaultProgramRunner {
       return null;
     }
     else {
-      return super.doExecute(project, executor, state, contentToReuse, env);
+      return super.doExecute(project, state, contentToReuse, env);
     }
   }
 

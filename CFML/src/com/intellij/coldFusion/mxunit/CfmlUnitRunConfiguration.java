@@ -157,7 +157,7 @@ public class
     consoleProps.addStackTraceFilter(new CfmlStackTraceFilterProvider(getProject()));
 
     BaseTestsOutputConsoleView testsOutputConsoleView = SMTestRunnerConnectionUtil
-      .createAndAttachConsole("Cfml", processHandler, consoleProps, env.getRunnerSettings(), env.getConfigurationSettings());
+      .createAndAttachConsole("Cfml", processHandler, consoleProps, env);
     Disposer.register(project, testsOutputConsoleView);
     return testsOutputConsoleView;
   }
