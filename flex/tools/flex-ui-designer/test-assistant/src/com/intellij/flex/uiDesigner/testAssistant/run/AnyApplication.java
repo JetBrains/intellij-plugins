@@ -3,7 +3,6 @@ package com.intellij.flex.uiDesigner.testAssistant.run;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.*;
-import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.module.Module;
@@ -72,7 +71,8 @@ public class AnyApplication implements ConfigurationType {
 
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-      final JavaCommandLineState state = new JavaCommandLineState(env) {
+
+      return new JavaCommandLineState(env) {
         @Override
         protected JavaParameters createJavaParameters() throws ExecutionException {
           final JavaParameters params = new JavaParameters();
@@ -99,9 +99,6 @@ public class AnyApplication implements ConfigurationType {
           return params;
         }
       };
-
-      state.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
-      return state;
     }
 
     @Override

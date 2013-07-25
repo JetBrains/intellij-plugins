@@ -3,7 +3,6 @@ package com.intellij.lang.javascript.flex.flexunit;
 import com.intellij.execution.*;
 import com.intellij.execution.configuration.EmptyRunProfileState;
 import com.intellij.execution.configurations.*;
-import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
@@ -124,18 +123,15 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
     final BuildConfigurationNature nature = bc.getNature();
     if (nature.isDesktopPlatform() || nature.isMobilePlatform()) {
 
-      final FlashRunConfiguration.AirRunState airRunState =
-        new FlashRunConfiguration.AirRunState(getProject(), env, myRunnerParameters) {
-          @NotNull
-          @Override
-          public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
-            final ProcessHandler processHandler = startProcess();
-            final ExecutionConsole console = FlexBaseRunner.createFlexUnitRunnerConsole(getProject(), env, processHandler);
-            return new DefaultExecutionResult(console, processHandler);
-          }
-        };
-      airRunState.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
-      return airRunState;
+      return new FlashRunConfiguration.AirRunState(getProject(), env, myRunnerParameters) {
+        @NotNull
+        @Override
+        public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+          final ProcessHandler processHandler = startProcess();
+          final ExecutionConsole console = FlexBaseRunner.createFlexUnitRunnerConsole(getProject(), env, processHandler);
+          return new DefaultExecutionResult(console, processHandler);
+        }
+      };
     }
 
     return EmptyRunProfileState.INSTANCE;

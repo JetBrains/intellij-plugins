@@ -5,7 +5,6 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configuration.EmptyRunProfileState;
 import com.intellij.execution.configurations.*;
-import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
@@ -95,9 +94,7 @@ public class FlashRunConfiguration extends RunConfigurationBase
     final BuildConfigurationNature nature = config.getNature();
     if (nature.isDesktopPlatform() ||
         (nature.isMobilePlatform() && myRunnerParameters.getMobileRunTarget() == AirMobileRunTarget.Emulator)) {
-      final AirRunState airRunState = new AirRunState(getProject(), env, myRunnerParameters);
-      airRunState.setConsoleBuilder(TextConsoleBuilderFactory.getInstance().createBuilder(getProject()));
-      return airRunState;
+      return new AirRunState(getProject(), env, myRunnerParameters);
     }
 
     return EmptyRunProfileState.INSTANCE;
