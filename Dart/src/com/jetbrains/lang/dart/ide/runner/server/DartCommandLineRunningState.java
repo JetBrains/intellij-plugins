@@ -57,7 +57,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     final GeneralCommandLine commandLine = new GeneralCommandLine();
 
     commandLine.setExePath(dartExecutablePath);
-    commandLine.setWorkDirectory(PathUtil.getParentPath(module.getModuleFilePath()));
+    commandLine.setWorkDirectory(PathUtil.getParentPath(filePath));
     commandLine.setPassParentEnvironment(true);
 
     setupUserProperties(
@@ -84,7 +84,6 @@ public class DartCommandLineRunningState extends CommandLineState {
     }
 
     String libUrl = VfsUtilCore.pathToUrl(filePath);
-    final VirtualFile libraryRoot = VirtualFileManager.getInstance().findFileByUrl(libUrl);
     final VirtualFile packages = DartResolveUtil.findPackagesFolder(module);
     if (packages != null && packages.isDirectory()) {
       commandLine.addParameter("--package-root=" + packages.getPath() + "/");
