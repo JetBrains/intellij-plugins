@@ -24,10 +24,9 @@ public class CfmlNewExpression extends CfmlCompositeElement implements CfmlTyped
         if (containingFile != null) {
           return new CfmlComponentType(referenceExpression.getComponentQualifiedName(referenceExpression.getText()),
                                        containingFile,
-                                        getProject());
+                                       getProject());
         }
       }
-
     }
     return null;
   }

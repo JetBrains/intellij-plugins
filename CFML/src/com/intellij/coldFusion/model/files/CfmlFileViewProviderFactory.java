@@ -11,7 +11,10 @@ import org.jetbrains.annotations.NotNull;
  * Date: 06.10.2008
  */
 public class CfmlFileViewProviderFactory implements FileViewProviderFactory {
-    public FileViewProvider createFileViewProvider(@NotNull VirtualFile file, com.intellij.lang.Language language, @NotNull PsiManager manager, boolean physical) {
-        return new CfmlFileViewProvider(manager, file, physical);
-    }
+  public FileViewProvider createFileViewProvider(@NotNull VirtualFile file,
+                                                 com.intellij.lang.Language language,
+                                                 @NotNull PsiManager manager,
+                                                 boolean physical) {
+    return new CfmlFileViewProvider(manager, file, physical);
+  }
 }

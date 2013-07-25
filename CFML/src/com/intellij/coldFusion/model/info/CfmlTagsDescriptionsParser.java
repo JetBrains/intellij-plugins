@@ -50,7 +50,8 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
     description = description.replaceAll("\\s*", " ");
     if (myIsTagHelpSection && myCurrentTag != null) {
       myCurrentTag.setDescription(description);
-    } else if (myIsFunctionHelpSection && myCurrentFunction != null) {
+    }
+    else if (myIsFunctionHelpSection && myCurrentFunction != null) {
       myCurrentFunction.setDescription(description);
     }
   }
@@ -59,13 +60,17 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
                            Attributes attr) throws SAXException {
     if (localName.equals("tags")) {
       myState = TAG_STATE;
-    } else if (localName.equals("functions")) {
+    }
+    else if (localName.equals("functions")) {
       myState = FUNCTION_STATE;
-    } else if (localName.equals("cfscopes")) {
+    }
+    else if (localName.equals("cfscopes")) {
       myState = SCOPE_STATE;
-    } else if (localName.equals("scopes")) {
+    }
+    else if (localName.equals("scopes")) {
       myState = PREDEFINED_VARIABLE_STATE;
-    } else if (myState == TAG_STATE) {
+    }
+    else if (myState == TAG_STATE) {
       myIsTagHelpSection = false;
       if (localName.equals("tag")) {
         final String isSingle = attr.getValue("single");
@@ -82,29 +87,35 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
         boolean aRequired = Boolean.valueOf(attr.getValue("required"));
         String aDescription = "";
         myCurrentAttribute = new CfmlAttributeDescription(aName, aType, aRequired, aDescription);
-      } else if (localName.equals("value") && myCurrentAttribute != null) {
+      }
+      else if (localName.equals("value") && myCurrentAttribute != null) {
         myCurrentAttribute.addValue(attr.getValue("option"));
       }
-    } else if (myState == FUNCTION_STATE) {
+    }
+    else if (myState == FUNCTION_STATE) {
       myIsFunctionHelpSection = false;
       if (localName.equals("function")) {
         myCurrentFunction = new CfmlFunctionDescription(attr.getValue("name"), attr.getValue("returns"));
-      } else if (localName.equals("parameter") && myCurrentFunction != null) {
+      }
+      else if (localName.equals("parameter") && myCurrentFunction != null) {
         String aName = attr.getValue("name");
         String aType = attr.getValue("type");
         boolean aRequired = Boolean.valueOf(attr.getValue("required"));
 
         myCurrentFunction.addParameter(new CfmlFunctionDescription.CfmlParameterDescription(aName, aType, aRequired));
-      } else if (localName.equals("help")) {
+      }
+      else if (localName.equals("help")) {
         myIsFunctionHelpSection = true;
       }
-    } else if (myState == PREDEFINED_VARIABLE_STATE) {
+    }
+    else if (myState == PREDEFINED_VARIABLE_STATE) {
       if (localName.equals("scope")) {
         int aType = CfmlTypesInfo.getTypeByString(attr.getValue("type"));
         String aName = attr.getValue("value");
         myPredefinedVariables.put(aName.toLowerCase(), aType);
       }
-    } else if (myState == SCOPE_STATE) {
+    }
+    else if (myState == SCOPE_STATE) {
       if (localName.equals("scopevar")) {
         if (!StringUtil.isEmpty(myCurrentScope) && myCurrentScope.charAt(myCurrentScope.length() - 1) != '.') {
           myCurrentScope += ".";
@@ -118,25 +129,30 @@ public class CfmlTagsDescriptionsParser extends DefaultHandler {
     if (localName.equals("tag") && myCurrentTag != null) {
       myTags.put(myCurrentTag.getName(), myCurrentTag);
       myCurrentTag = null;
-    } else if (localName.equals("function") && myCurrentFunction != null) {
+    }
+    else if (localName.equals("function") && myCurrentFunction != null) {
       String functioName = myCurrentFunction.getName();
       myFunctionUpperCased.add(functioName);
       myFunctions.put(functioName.toLowerCase(), myCurrentFunction);
       myCurrentFunction = null;
-    } else if (localName.equals("parameter") && myCurrentTag != null && myCurrentAttribute != null) {
+    }
+    else if (localName.equals("parameter") && myCurrentTag != null && myCurrentAttribute != null) {
       myCurrentTag.addAttribute(myCurrentAttribute);
       myCurrentAttribute = null;
-    } else if (localName.equals("scopevar")) {
+    }
+    else if (localName.equals("scopevar")) {
       if (!StringUtil.isEmpty(myCurrentScope)) {
         if (myCurrentScope.charAt(myCurrentScope.length() - 1) != '.') {
           myPredefinedVariables.put(myCurrentScope.toLowerCase(), CfmlTypesInfo.ANY_TYPE);
-        } else {
+        }
+        else {
           myCurrentScope = myCurrentScope.substring(0, myCurrentScope.length() - 1);
         }
         int i = myCurrentScope.lastIndexOf('.');
         if (i != -1) {
           myCurrentScope = myCurrentScope.substring(0, i + 1);
-        } else {
+        }
+        else {
           myCurrentScope = "";
         }
       }

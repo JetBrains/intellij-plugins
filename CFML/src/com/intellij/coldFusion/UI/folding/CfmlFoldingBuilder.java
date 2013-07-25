@@ -70,7 +70,7 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
       ASTNode astNode = tag.getNode();
       if (tag instanceof CfmlTag) {
         //if (tag instanceof CfmlTagFunctionImpl || tag instanceof CfmlTagComponentImpl || tag instanceof CfmlTagScriptImpl) {
-          range = buildRangeForBraces(range, astNode, CfmlTokenTypes.R_ANGLEBRACKET, CfmlTokenTypes.LSLASH_ANGLEBRACKET);
+        range = buildRangeForBraces(range, astNode, CfmlTokenTypes.R_ANGLEBRACKET, CfmlTokenTypes.LSLASH_ANGLEBRACKET);
         //}
       }
       else if (tag instanceof CfmlFunction) {
@@ -78,7 +78,8 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
         if (body != null) {
           range = buildRange(range, body.getStartOffset(), body.getTextRange().getEndOffset());
         }
-      } else if (tag instanceof PsiComment) {
+      }
+      else if (tag instanceof PsiComment) {
         boolean isColdFusionComment = astNode.getElementType() == CfmlTokenTypes.COMMENT;
         int endIndex = astNode.getText().lastIndexOf(isColdFusionComment ? "--->" : "*/");
         if (endIndex != -1) {
@@ -134,10 +135,12 @@ public class CfmlFoldingBuilder implements FoldingBuilder, DumbAware {
 
       if (parent.getElementType() == CfmlElementTypes.CFML_FILE && treePrev == null) {
         return CodeFoldingSettings.getInstance().COLLAPSE_FILE_HEADER;
-      } else {
+      }
+      else {
         return CodeFoldingSettings.getInstance().COLLAPSE_DOC_COMMENTS;
       }
-    } else if (element instanceof CfmlFunction) {
+    }
+    else if (element instanceof CfmlFunction) {
       return settings.COLLAPSE_METHODS;
     }/* else if (element instanceof CfmlComponent) {
       return settings.isCollapseClasses();

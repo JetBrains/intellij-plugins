@@ -36,19 +36,26 @@ public class CfmlParser implements PsiParser {
   public static IElementType getElementTypeForTag(@NotNull String tagName) {
     if ("cfcomponent".equals(tagName.toLowerCase()) || "cfinterface".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.COMPONENT_TAG;
-    } else if ("cffunction".equals(tagName.toLowerCase())) {
+    }
+    else if ("cffunction".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.FUNCTION_TAG;
-    } else if ("cfinvoke".equals(tagName.toLowerCase())) {
+    }
+    else if ("cfinvoke".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.INVOKE_TAG;
-    } else if ("cfargument".equals(tagName.toLowerCase())) {
+    }
+    else if ("cfargument".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.ARGUMENT_TAG;
-    } else if ("cfscript".equals(tagName.toLowerCase())) {
+    }
+    else if ("cfscript".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.SCRIPT_TAG;
-    } else if ("cfproperty".equals(tagName.toLowerCase())) {
+    }
+    else if ("cfproperty".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.PROPERTY_TAG;
-    } else if ("cfimport".equals(tagName.toLowerCase())) {
+    }
+    else if ("cfimport".equals(tagName.toLowerCase())) {
       return CfmlElementTypes.TAG_IMPORT;
-    } else if ("cfloop".endsWith(tagName.toLowerCase())) {
+    }
+    else if ("cfloop".endsWith(tagName.toLowerCase())) {
       return CfmlElementTypes.FORTAGEXPRESSION;
     }
     return CfmlElementTypes.TAG;
@@ -64,14 +71,15 @@ public class CfmlParser implements PsiParser {
         builder.getTokenType() == CfscriptTokenTypes.COMPONENT_KEYWORD ||
         builder.getTokenType() == CfscriptTokenTypes.INTERFACE_KEYWORD ||
         builder.getTokenType() == CfscriptTokenTypes.IMPORT_KEYWORD) {
-        (new CfscriptParser()).parseScript(builder, true);
+      (new CfscriptParser()).parseScript(builder, true);
       if (!builder.eof()) {
         builder.error(CfmlBundle.message("cfml.parsing.unexpected.token"));
       }
       while (!builder.eof()) {
         builder.advanceLexer();
       }
-    } else {
+    }
+    else {
       while (!builder.eof()) {
         if (builder.getTokenType() == OPENER) {
           parseOpenTag(builder, tagNamesStack);
@@ -153,7 +161,8 @@ public class CfmlParser implements PsiParser {
           builder.advanceLexer();
         }
         return;
-      } else if (!CfmlUtil.isControlToken(builder.getTokenType()) && builder.getTokenType() != ATTRIBUTE) {
+      }
+      else if (!CfmlUtil.isControlToken(builder.getTokenType()) && builder.getTokenType() != ATTRIBUTE) {
         (new CfmlExpressionParser(builder)).parseExpression();
         return;
       }
@@ -215,17 +224,20 @@ public class CfmlParser implements PsiParser {
           readValue(builder, CfmlElementTypes.ATTRIBUTE_VALUE);
           if (doNeedNamedAttribute(tagName)) {
             attrMarker.done(CfmlElementTypes.NAMED_ATTRIBUTE);
-          } else {
+          }
+          else {
             attrMarker.done(CfmlElementTypes.ATTRIBUTE_NAME);
           }
         }
         else if ("method".equals(attributeName) && "cfinvoke".equals(tagName)) {
           readValue(builder, CfmlElementTypes.REFERENCE_EXPRESSION);
           attrMarker.done(CfmlElementTypes.TAG_FUNCTION_CALL);
-        } else if ("index".equals(attributeName) && "cfloop".equals(tagName)) {
+        }
+        else if ("index".equals(attributeName) && "cfloop".equals(tagName)) {
           readValue(builder, CfmlElementTypes.ATTRIBUTE_VALUE);
           attrMarker.done(CfmlElementTypes.FORTAGINDEXATTRIBUTE);
-        } else {
+        }
+        else {
           readValue(builder, CfmlElementTypes.ATTRIBUTE_VALUE);
           attrMarker.done(CfmlElementTypes.ATTRIBUTE);
         }
@@ -339,7 +351,7 @@ public class CfmlParser implements PsiParser {
         builder.advanceLexer();
         // ignore cfscript tag for psi tree depth decreasing
         //if (!"cfscript".equals(currentTagName.toLowerCase())) {
-          tagNamesStack.push(new Tag(currentTagName, marker, builder.mark()));
+        tagNamesStack.push(new Tag(currentTagName, marker, builder.mark()));
         //}
       }
       else {

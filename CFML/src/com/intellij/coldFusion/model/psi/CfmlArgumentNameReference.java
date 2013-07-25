@@ -122,13 +122,15 @@ public class CfmlArgumentNameReference extends CfmlReferenceExpression implement
 
     String functionName = getFunctionName();
     if (CfmlUtil.isPredefinedFunction(functionName, getProject())) {
-      CfmlFunctionDescription cfmlFunctionDescription = CfmlLangInfo.getInstance(getProject()).getFunctionParameters().get(functionName.toLowerCase());
+      CfmlFunctionDescription cfmlFunctionDescription =
+        CfmlLangInfo.getInstance(getProject()).getFunctionParameters().get(functionName.toLowerCase());
       for (CfmlFunctionDescription.CfmlParameterDescription param : cfmlFunctionDescription.getParameters()) {
         result.add(TailTypeDecorator.withTail(
           LookupElementBuilder.create(param.getName()).withCaseSensitivity(false),
           TailType.createSimpleTailType('=')));
       }
-    } else {
+    }
+    else {
       CfmlArgumentList parentArgumentsList = PsiTreeUtil.getParentOfType(this, CfmlArgumentList.class);
       if (parentArgumentsList != null) {
         CfmlExpression[] arguments = parentArgumentsList.getArguments();

@@ -57,9 +57,10 @@ public class CfmlStringLiteralExpression extends CfmlCompositeElement implements
           expressions.length == 2 && expressions[1] == this) {
         final JavaClassReferenceProvider provider = new JavaClassReferenceProvider();
         return provider.getReferencesByString(args[1], referenceElement, 0);
-      } else if ((args.length == 2 && "component".equals(args[0]) &&
-          expressions.length == 2 && expressions[1] == this) ||
-                 (args.length == 1 && expressions.length == 1 && expressions[0] == this)) {
+      }
+      else if ((args.length == 2 && "component".equals(args[0]) &&
+                expressions.length == 2 && expressions[1] == this) ||
+               (args.length == 1 && expressions.length == 1 && expressions[0] == this)) {
         final ASTNode referenceNode = referenceElement.getNode();
         if (referenceNode != null) {
           return new PsiReference[]{new CfmlComponentReference(referenceNode)};
@@ -102,7 +103,8 @@ public class CfmlStringLiteralExpression extends CfmlCompositeElement implements
           return provider.getReferencesByString(possibleJavaClassName, stringTextElement, 0);
         }
       }
-    } else if (getParent() instanceof CfmlComponentConstructorCall || getParent() instanceof CfmlImport) {
+    }
+    else if (getParent() instanceof CfmlComponentConstructorCall || getParent() instanceof CfmlImport) {
       PsiElement stringTextElement = findChildByType(CfmlTokenTypes.STRING_TEXT);
       if (stringTextElement != null) {
         return new PsiReference[]{new CfmlComponentReference(stringTextElement.getNode(), this)};

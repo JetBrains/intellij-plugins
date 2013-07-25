@@ -68,7 +68,7 @@ public class CfmlMappingsForm {
         if (StringUtil.isEmpty(item.myLogicalPath)) {
           return CfmlBundle.message("logical.path.is.empty");
         }
-        if (!item.myLogicalPath.startsWith("/") && !item.myLogicalPath.startsWith("\\")  ) {
+        if (!item.myLogicalPath.startsWith("/") && !item.myLogicalPath.startsWith("\\")) {
           return CfmlBundle.message("incorrect.logical.path");
         }
         VirtualFile file = LocalFileSystem.getInstance().findFileByPath(item.myDirectoryPath);
@@ -92,11 +92,14 @@ public class CfmlMappingsForm {
       public void customize(JList list, Object value, int index, boolean selected, boolean hasFocus) {
         if (CfmlLanguage.CF8.equals(value)) {
           setText("ColdFusion 8");
-        } else if (CfmlLanguage.CF9.equals(value)) {
+        }
+        else if (CfmlLanguage.CF9.equals(value)) {
           setText("ColdFusion 9");
-        } else if (CfmlLanguage.CF10.equals(value)) {
+        }
+        else if (CfmlLanguage.CF10.equals(value)) {
           setText("ColdFusion 10");
-        } else if (CfmlLanguage.RAILO.equals(value)) {
+        }
+        else if (CfmlLanguage.RAILO.equals(value)) {
           setText("Railo");
         }
       }
@@ -210,5 +213,4 @@ public class CfmlMappingsForm {
       return new JTextField().getPreferredSize().height + 1;
     }
   }
-
 }

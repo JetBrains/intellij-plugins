@@ -152,7 +152,8 @@ public class CfmlTagComponentImpl extends CfmlTagImpl implements CfmlComponent, 
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof CfmlRecursiveElementVisitor) {
       ((CfmlRecursiveElementVisitor)visitor).visitCfmlComponent(this);
-    } else {
+    }
+    else {
       super.accept(visitor);
     }
   }

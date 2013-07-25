@@ -33,10 +33,12 @@ public class CfmlMethodInsertHandler implements InsertHandler<LookupElement> {
           editor.getCaretModel().moveCaretRelatively(-1, 0, false, false, true);
           showParameterInfo(editor);
         }
-      } else {
+      }
+      else {
         if (CfmlInsertHandlerUtil.isStringAtCaret(editor, "()")) {
           editor.getCaretModel().moveCaretRelatively(2, 0, false, false, true);
-        } else {
+        }
+        else {
           editor.getCaretModel().moveCaretRelatively(1, 0, false, false, true);
           showParameterInfo(editor);
         }

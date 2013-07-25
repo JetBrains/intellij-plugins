@@ -8,7 +8,7 @@ import com.intellij.psi.tree.IElementType;
  * Date: 06.10.2008
  */
 public class CfmlElementType extends IElementType {
-    public CfmlElementType(final String s) {
-        super(s, CfmlLanguage.INSTANCE);
-    }
+  public CfmlElementType(final String s) {
+    super(s, CfmlLanguage.INSTANCE);
+  }
 }

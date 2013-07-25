@@ -12,6 +12,7 @@ public class CfmlComponentStubImpl extends NamedStubBase<CfmlComponent> implemen
   private boolean myIsInterface;
   private String mySuperClass;
   private String[] myInterfaces;
+
   protected CfmlComponentStubImpl(final StubElement parent, final IStubElementType elementType, final String name,
                                   boolean isInterface, String superclass, String[] interfaces) {
     super(parent, elementType, name);

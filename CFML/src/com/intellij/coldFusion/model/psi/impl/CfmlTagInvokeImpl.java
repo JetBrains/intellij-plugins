@@ -16,16 +16,16 @@ public class CfmlTagInvokeImpl extends CfmlTagImpl implements CfmlFunctionCall {
   private static final String TAG_NAME = "cfinvoke";
 
   public CfmlTagInvokeImpl(@NotNull ASTNode node) {
-        super(node);
-    }
+    super(node);
+  }
 
-    public PsiType getPsiType() {
-        return null;
-    }
+  public PsiType getPsiType() {
+    return null;
+  }
 
-    public CfmlReference getReferenceExpression() {
-        return findNotNullChildByClass(CfmlReferenceExpression.class);
-    }
+  public CfmlReference getReferenceExpression() {
+    return findNotNullChildByClass(CfmlReferenceExpression.class);
+  }
 
   @NotNull
   @Override
@@ -34,18 +34,18 @@ public class CfmlTagInvokeImpl extends CfmlTagImpl implements CfmlFunctionCall {
   }
 
   public CfmlArgumentList findArgumentList() {
-        return null;
-    }
+    return null;
+  }
 
-    public PsiType[] getArgumentTypes() {
-        return new PsiType[0];
-    }
+  public PsiType[] getArgumentTypes() {
+    return new PsiType[0];
+  }
 
-    @Override
-    public String getName() {
-        CfmlReferenceExpression name = findChildByClass(CfmlReferenceExpression.class);
-        return name != null ? name.getName() : null;
-    }
+  @Override
+  public String getName() {
+    CfmlReferenceExpression name = findChildByClass(CfmlReferenceExpression.class);
+    return name != null ? name.getName() : null;
+  }
 
   public String getTagName() {
     return TAG_NAME;

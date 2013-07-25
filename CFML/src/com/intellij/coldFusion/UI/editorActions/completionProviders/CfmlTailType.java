@@ -10,12 +10,13 @@ import com.intellij.openapi.editor.highlighter.HighlighterIterator;
  * @author vnikolaenko
  */
 public class CfmlTailType extends TailType {
-    public static final TailType PARENTHS = new CfmlTailType(); 
-    public int processTail(Editor editor, int tailOffset) {
-        HighlighterIterator iterator = ((EditorEx) editor).getHighlighter().createIterator(tailOffset);
-        if (iterator.getTokenType() != CfscriptTokenTypes.L_BRACKET) {
-            editor.getDocument().insertString(tailOffset, "()");
-        }
-        return moveCaret(editor, tailOffset, 1);
+  public static final TailType PARENTHS = new CfmlTailType();
+
+  public int processTail(Editor editor, int tailOffset) {
+    HighlighterIterator iterator = ((EditorEx)editor).getHighlighter().createIterator(tailOffset);
+    if (iterator.getTokenType() != CfscriptTokenTypes.L_BRACKET) {
+      editor.getDocument().insertString(tailOffset, "()");
     }
+    return moveCaret(editor, tailOffset, 1);
+  }
 }

@@ -41,15 +41,16 @@ public class CfmlUnitRunConfigurationForm extends SettingsEditor<CfmlUnitRunConf
     myProject = project;
 
     myMethodPanel.setVisible(false);
-    
+
     myFileChooser = new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>(null, null, myDirectoryOrFileField, project,
                                                                                          FileChooserDescriptorFactory
                                                                                            .createSingleFileOrFolderDescriptor(),
-                                                                           TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+                                                                                         TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
 
     myDirectoryChooser = new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>(null, null, myDirectoryOrFileField, project,
-                                                                           FileChooserDescriptorFactory.createSingleFolderDescriptor(),
-                                                                           TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+                                                                                              FileChooserDescriptorFactory
+                                                                                                .createSingleFolderDescriptor(),
+                                                                                              TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
     myMethodRadioButton.addChangeListener(myScopeChangeListener);
     myDirectoryRadioButton.addChangeListener(myScopeChangeListener);
     myComponentRadioButton.addChangeListener(myScopeChangeListener);
@@ -81,9 +82,11 @@ public class CfmlUnitRunConfigurationForm extends SettingsEditor<CfmlUnitRunConf
     final CfmlUnitRunnerParameters parameters = s.getRunnerParameters();
     if (parameters.getScope() == CfmlUnitRunnerParameters.Scope.Component) {
       myComponentRadioButton.setSelected(true);
-    } else if (parameters.getScope() == CfmlUnitRunnerParameters.Scope.Directory) {
+    }
+    else if (parameters.getScope() == CfmlUnitRunnerParameters.Scope.Directory) {
       myDirectoryRadioButton.setSelected(true);
-    } else if (parameters.getScope() == CfmlUnitRunnerParameters.Scope.Method) {
+    }
+    else if (parameters.getScope() == CfmlUnitRunnerParameters.Scope.Method) {
       myMethodRadioButton.setSelected(true);
     }
     myDirectoryOrFileField.setText(parameters.getPath());
@@ -96,9 +99,11 @@ public class CfmlUnitRunConfigurationForm extends SettingsEditor<CfmlUnitRunConf
     final CfmlUnitRunnerParameters parameters = s.getRunnerParameters();
     if (myComponentRadioButton.isSelected()) {
       parameters.setScope(CfmlUnitRunnerParameters.Scope.Component);
-    } else if (myDirectoryRadioButton.isSelected()) {
+    }
+    else if (myDirectoryRadioButton.isSelected()) {
       parameters.setScope(CfmlUnitRunnerParameters.Scope.Directory);
-    } else if (myMethodRadioButton.isSelected()) {
+    }
+    else if (myMethodRadioButton.isSelected()) {
       parameters.setScope(CfmlUnitRunnerParameters.Scope.Method);
     }
 

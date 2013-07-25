@@ -26,57 +26,57 @@ import java.util.Set;
 public class CfmlFileViewProvider extends MultiplePsiFilesPerDocumentFileViewProvider implements TemplateLanguageFileViewProvider {
 
   private static final THashSet<Language> ourRelevantLanguages =
-            new THashSet<Language>(Arrays.asList(StdLanguages.HTML, CfmlLanguage.INSTANCE,
-                                                 SqlLanguage.INSTANCE));
+    new THashSet<Language>(Arrays.asList(StdLanguages.HTML, CfmlLanguage.INSTANCE,
+                                         SqlLanguage.INSTANCE));
 
 
-    public CfmlFileViewProvider(final PsiManager manager, final VirtualFile virtualFile, final boolean physical) {
-        super(manager, virtualFile, physical);
+  public CfmlFileViewProvider(final PsiManager manager, final VirtualFile virtualFile, final boolean physical) {
+    super(manager, virtualFile, physical);
+  }
+
+  @Override
+  @NotNull
+  public Language getBaseLanguage() {
+    return CfmlLanguage.INSTANCE;
+  }
+
+  @Override
+  @NotNull
+  public Set<Language> getLanguages() {
+    return ourRelevantLanguages;
+  }
+
+  @Override
+  @Nullable
+  protected PsiFile createFile(@NotNull final Language lang) {
+    if (lang == getTemplateDataLanguage()) {
+      // final PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(lang).createFile(this);
+
+      final PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(StdLanguages.HTML).createFile(this);
+      file.setContentElementType(CfmlElementTypes.TEMPLATE_DATA);
+      return file;
+    }
+    if (lang == SqlLanguage.INSTANCE) {
+      final PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(SqlLanguage.INSTANCE).createFile(this);
+      file.setContentElementType(CfmlElementTypes.SQL_DATA);
+      return file;
     }
 
-    @Override
-    @NotNull
-    public Language getBaseLanguage() {
-        return CfmlLanguage.INSTANCE;
+    if (lang == getBaseLanguage()) {
+      return LanguageParserDefinitions.INSTANCE.forLanguage(lang).createFile(this);
     }
+    return null;
+  }
 
-    @Override
-    @NotNull
-    public Set<Language> getLanguages() {
-        return ourRelevantLanguages;
-    }
+  @Override
+  protected CfmlFileViewProvider cloneInner(final VirtualFile copy) {
+    return new CfmlFileViewProvider(getManager(), copy, false);
+  }
 
-    @Override
-    @Nullable
-    protected PsiFile createFile(@NotNull final Language lang) {
-        if (lang == getTemplateDataLanguage()) {
-            // final PsiFileImpl file = (PsiFileImpl)LanguageParserDefinitions.INSTANCE.forLanguage(lang).createFile(this);
-
-            final PsiFileImpl file = (PsiFileImpl) LanguageParserDefinitions.INSTANCE.forLanguage(StdLanguages.HTML).createFile(this);
-            file.setContentElementType(CfmlElementTypes.TEMPLATE_DATA);
-            return file;
-        }
-        if (lang == SqlLanguage.INSTANCE) {
-            final PsiFileImpl file = (PsiFileImpl) LanguageParserDefinitions.INSTANCE.forLanguage(SqlLanguage.INSTANCE).createFile(this);
-            file.setContentElementType(CfmlElementTypes.SQL_DATA);
-            return file;
-        }
-
-        if (lang == getBaseLanguage()) {
-            return LanguageParserDefinitions.INSTANCE.forLanguage(lang).createFile(this);
-        }
-        return null;
-    }
-
-    @Override
-    protected CfmlFileViewProvider cloneInner(final VirtualFile copy) {
-        return new CfmlFileViewProvider(getManager(), copy, false);
-    }
-
-    @Override
-    @NotNull
-    public Language getTemplateDataLanguage() {
-        return StdLanguages.HTML;
-    }
+  @Override
+  @NotNull
+  public Language getTemplateDataLanguage() {
+    return StdLanguages.HTML;
+  }
 }
 

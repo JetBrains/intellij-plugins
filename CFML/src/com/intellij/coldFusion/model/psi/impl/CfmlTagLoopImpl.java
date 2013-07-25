@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author: vnikolaenko
  */
-public class CfmlTagLoopImpl  extends CfmlTagImpl {
+public class CfmlTagLoopImpl extends CfmlTagImpl {
 
   public CfmlTagLoopImpl(ASTNode astNode) {
     super(astNode);
@@ -96,7 +96,8 @@ public class CfmlTagLoopImpl  extends CfmlTagImpl {
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof CfmlRecursiveElementVisitor) {
       ((CfmlRecursiveElementVisitor)visitor).visitCfmlTag(this);
-    } else {
+    }
+    else {
       super.accept(visitor);
     }
   }

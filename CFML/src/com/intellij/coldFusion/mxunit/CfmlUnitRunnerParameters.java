@@ -4,9 +4,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Attribute;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class CfmlUnitRunnerParameters implements Cloneable {
 
   public enum Scope {
@@ -14,7 +11,7 @@ public class CfmlUnitRunnerParameters implements Cloneable {
   }
 
   private @NotNull String myWebPath = "";
-  private @NotNull String myPath= "";
+  private @NotNull String myPath = "";
   private @NotNull String myMethod = "";
 
   private static final Scope DEFAULT_SCOPE = Scope.Component;

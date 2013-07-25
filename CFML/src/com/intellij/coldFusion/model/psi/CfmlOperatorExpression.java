@@ -16,51 +16,51 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CfmlOperatorExpression extends CfmlCompositeElement implements CfmlExpression {
 
-    private final boolean myBinary;
+  private final boolean myBinary;
 
-    public CfmlOperatorExpression(@NotNull final ASTNode node, boolean binary) {
-        super(node);
-        myBinary = binary;
-    }
+  public CfmlOperatorExpression(@NotNull final ASTNode node, boolean binary) {
+    super(node);
+    myBinary = binary;
+  }
 
-    public PsiType getPsiType() {
-        CfmlExpressionTypeCalculator typeCalculator = getOperationSign().getTypeCalculator();
-        CfmlExpression operand1 = getOperand1();
-        if (operand1 == null) {
-            return null;
-        }
-        if(!myBinary) {
-            return typeCalculator.calculateUnary(operand1);
-        }
-        CfmlExpression operand2 = getOperand2();
-        if (operand2 == null) {
-            return null;
-        }
-        return typeCalculator.calculateBinary(operand1, operand2);
+  public PsiType getPsiType() {
+    CfmlExpressionTypeCalculator typeCalculator = getOperationSign().getTypeCalculator();
+    CfmlExpression operand1 = getOperand1();
+    if (operand1 == null) {
+      return null;
     }
+    if (!myBinary) {
+      return typeCalculator.calculateUnary(operand1);
+    }
+    CfmlExpression operand2 = getOperand2();
+    if (operand2 == null) {
+      return null;
+    }
+    return typeCalculator.calculateBinary(operand1, operand2);
+  }
 
-    @NotNull
-    private CfmlOperatorTokenType getOperationSign() {
-        final ASTNode operationNode = getNode().findChildByType(CfscriptTokenTypes.OPERATIONS);
-        assert operationNode != null : getText();
-        IElementType tokenType = operationNode.getElementType();
-        assert tokenType instanceof CfmlOperatorTokenType : getText();
-        return (CfmlOperatorTokenType) tokenType;
-    }
+  @NotNull
+  private CfmlOperatorTokenType getOperationSign() {
+    final ASTNode operationNode = getNode().findChildByType(CfscriptTokenTypes.OPERATIONS);
+    assert operationNode != null : getText();
+    IElementType tokenType = operationNode.getElementType();
+    assert tokenType instanceof CfmlOperatorTokenType : getText();
+    return (CfmlOperatorTokenType)tokenType;
+  }
 
-    private CfmlExpression getOperand1() {
-        return findChildByClass(CfmlExpression.class);
-    }
+  private CfmlExpression getOperand1() {
+    return findChildByClass(CfmlExpression.class);
+  }
 
-    private CfmlExpression getOperand2() {
-        CfmlExpression first = getOperand1();
-        if (first == null) {
-            return null;
-        }
-        PsiElement second = first.getNextSibling();
-        while (second != null && !(second instanceof CfmlExpression)) {
-            second = second.getNextSibling();
-        }
-        return (CfmlExpression) second;
+  private CfmlExpression getOperand2() {
+    CfmlExpression first = getOperand1();
+    if (first == null) {
+      return null;
     }
+    PsiElement second = first.getNextSibling();
+    while (second != null && !(second instanceof CfmlExpression)) {
+      second = second.getNextSibling();
+    }
+    return (CfmlExpression)second;
+  }
 }

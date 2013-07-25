@@ -56,7 +56,8 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
       CfmlTagScriptImpl scriptTag = PsiTreeUtil.getParentOfType(at, CfmlTagScriptImpl.class);
       if (scriptTag != null) {
         return scriptTag.isInsideTag(offset);
-      } else {
+      }
+      else {
         PsiElement firstChild = file.getFirstChild();
         if (firstChild != null) {
           ASTNode theDeepestChild = firstChild.getNode();
@@ -101,7 +102,10 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
     return new MyCommenterData(isOffsetWithinCfscript(lineStartOffset, document, file), lineStartOffset);
   }
 
-  public MyCommenterData createBlockCommentingState(int selectionStart, int selectionEnd, @NotNull Document document, @NotNull PsiFile file) {
+  public MyCommenterData createBlockCommentingState(int selectionStart,
+                                                    int selectionEnd,
+                                                    @NotNull Document document,
+                                                    @NotNull PsiFile file) {
     return new MyCommenterData(isOffsetWithinCfscript(selectionStart, document, file), selectionStart);
   }
 
@@ -109,7 +113,8 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
     final int originalLineEndOffset = document.getLineEndOffset(line);
     if (data.isIsWithinCfscript()) {
       document.insertString(offset, CF_SCRIPT_LINE_COMMENT_PREFIX);
-    } else {
+    }
+    else {
       document.insertString(originalLineEndOffset, CFML_COMMENT_SUFFIX);
       document.insertString(offset, CFML_COMMENT_PREFIX);
     }
@@ -139,20 +144,20 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
     if (!data.isIsWithinCfscript()) {
       final String commentSuffix = CFML_COMMENT_SUFFIX;
       if (!CharArrayUtil.regionMatches(
-            document.getCharsSequence(),
-            rangeEnd - commentSuffix.length(),
-            commentSuffix
-          )) {
+        document.getCharsSequence(),
+        rangeEnd - commentSuffix.length(),
+        commentSuffix
+      )) {
         commented = false;
       }
     }
 
     final String commentPrefix = data.getLineCommentPrefix();
     if (commented && !CharArrayUtil.regionMatches(
-          document.getCharsSequence(),
-          offset,
-          commentPrefix
-        )) {
+      document.getCharsSequence(),
+      offset,
+      commentPrefix
+    )) {
       commented = false;
     }
     return commented;
@@ -197,9 +202,11 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
     int endBlockLine = document.getLineNumber(endOffset);
 
     if (document.getCharsSequence().subSequence(document.getLineStartOffset(startBlockLine),
-                                    document.getLineEndOffset(startBlockLine)).toString().matches("\\s*\\Q" + commentPrefix + "\\E\\s*")) {
+                                                document.getLineEndOffset(startBlockLine)).toString()
+      .matches("\\s*\\Q" + commentPrefix + "\\E\\s*")) {
       if (document.getCharsSequence().subSequence(document.getLineStartOffset(endBlockLine),
-                                    document.getLineEndOffset(endBlockLine)).toString().matches("\\s*\\Q" + commentSuffix + "\\E\\s*")) {
+                                                  document.getLineEndOffset(endBlockLine)).toString()
+        .matches("\\s*\\Q" + commentSuffix + "\\E\\s*")) {
         document.deleteString(document.getLineStartOffset(endBlockLine), document.getLineEndOffset(endBlockLine) + 1);
         document.deleteString(document.getLineStartOffset(startBlockLine), document.getLineEndOffset(startBlockLine) + 1);
         return;
@@ -221,7 +228,7 @@ public class CfmlCommenter implements Commenter, SelfManagingCommenter<CfmlComme
         String commentStart = data.getBlockCommentPrefix() + "\n";
         String commentEnd = data.getBlockCommentSuffix() + "\n";
         document.insertString(endOffset, commentEnd);
-        document.insertString(startOffset,  commentStart);
+        document.insertString(startOffset, commentStart);
         return new TextRange(startOffset, endOffset + commentStart.length() + commentEnd.length());
       }
     }

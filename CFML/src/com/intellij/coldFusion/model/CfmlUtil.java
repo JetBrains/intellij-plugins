@@ -109,6 +109,7 @@ public class CfmlUtil {
     if (projects.length != 0) return projects[0];
     return ProjectManager.getInstance().getDefaultProject();
   }
+
   public static boolean hasAnyAttributes(String tagName, Project project) {
     if (isUserDefined(tagName)) {
       return true;
@@ -123,7 +124,8 @@ public class CfmlUtil {
   public static Collection<CfmlAttributeDescription> getAttributes(String tagName, Project project) {
     if (CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName) != null &&
         CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName).getAttributes() != null) {
-      return Collections.unmodifiableCollection(CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName).getAttributes());
+      return Collections
+        .unmodifiableCollection(CfmlLangInfo.getInstance(anyProject(project)).getTagAttributes().get(tagName).getAttributes());
     }
     return Collections.emptyList();
   }
@@ -227,7 +229,8 @@ public class CfmlUtil {
   }
 
   public static boolean isPredefinedFunction(String functionName, Project project) {
-    return ArrayUtil.find(CfmlLangInfo.getInstance(anyProject(project)).getPredefinedFunctionsInLowCase(), functionName.toLowerCase()) != -1;
+    return ArrayUtil.find(CfmlLangInfo.getInstance(anyProject(project)).getPredefinedFunctionsInLowCase(), functionName.toLowerCase()) !=
+           -1;
   }
 
   public static boolean isPredefinedTagVariables(CfmlReferenceExpression cfmlRef, Project project) {
@@ -245,8 +248,9 @@ public class CfmlUtil {
     String tagName = ((CfmlTagImpl)referenceName).getTagName();
     String tagNameWithoutCf = tagName.startsWith("cf") ? tagName.substring(2) : tagName;
     return
-      CfmlLangInfo.getInstance(anyProject(project)).getPredefinedVariables().keySet().contains(tagNameWithoutCf.toLowerCase() + "." + predefVarText
-        .toLowerCase());
+      CfmlLangInfo.getInstance(anyProject(project)).getPredefinedVariables().keySet()
+        .contains(tagNameWithoutCf.toLowerCase() + "." + predefVarText
+          .toLowerCase());
   }
 
   private static String[] EMPTY_STRING_ARRAY = ArrayUtil.EMPTY_STRING_ARRAY;

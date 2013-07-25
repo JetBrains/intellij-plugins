@@ -7,13 +7,13 @@ import com.intellij.psi.ResolveState;
 import com.intellij.psi.scope.PsiScopeProcessor;
 import org.jetbrains.annotations.NotNull;
 
-public class CfmlParametersList extends CfmlCompositeElement  {
+public class CfmlParametersList extends CfmlCompositeElement {
   public CfmlParametersList(ASTNode node) {
-      super(node);
+    super(node);
   }
 
   public CfmlFunctionParameterImpl[] getParameters() {
-      return findChildrenByClass(CfmlFunctionParameterImpl.class);
+    return findChildrenByClass(CfmlFunctionParameterImpl.class);
   }
 
   @NotNull

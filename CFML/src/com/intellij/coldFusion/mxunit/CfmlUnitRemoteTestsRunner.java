@@ -160,10 +160,11 @@ public class CfmlUnitRemoteTestsRunner {
           String agentUrl;
           if (params.getScope() == CfmlUnitRunnerParameters.Scope.Directory) {
             agentUrl = agentPath + "?method=executeDirectory&directoryName=" + componentFile.getName();
-          } else {
+          }
+          else {
             agentUrl = agentPath + "?method=executeTestCase&componentName=" + componentFile.getNameWithoutExtension();
             if (params.getScope() == CfmlUnitRunnerParameters.Scope.Method) {
-               agentUrl += "&methodName=" + params.getMethod();
+              agentUrl += "&methodName=" + params.getMethod();
             }
           }
           HttpMethod method = null;

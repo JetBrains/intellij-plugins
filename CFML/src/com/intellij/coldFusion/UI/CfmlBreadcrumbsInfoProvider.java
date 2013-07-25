@@ -15,29 +15,29 @@ import org.jetbrains.annotations.NotNull;
  * Date: 09.02.2009
  */
 public class CfmlBreadcrumbsInfoProvider extends BreadcrumbsInfoProvider {
-    public Language[] getLanguages() {
-        return new Language[]{CfmlLanguage.INSTANCE, StdLanguages.HTML};
-    }
+  public Language[] getLanguages() {
+    return new Language[]{CfmlLanguage.INSTANCE, StdLanguages.HTML};
+  }
 
-    public boolean acceptElement(@NotNull final PsiElement e) {
-        return e instanceof CfmlTag || e instanceof XmlTag;
-    }
+  public boolean acceptElement(@NotNull final PsiElement e) {
+    return e instanceof CfmlTag || e instanceof XmlTag;
+  }
 
-    public PsiElement getParent(@NotNull final PsiElement e) {
-        return e instanceof CfmlTag ?
-                PsiTreeUtil.getParentOfType(e, CfmlTag.class) :
-                PsiTreeUtil.getParentOfType(e, XmlTag.class);
-    }
+  public PsiElement getParent(@NotNull final PsiElement e) {
+    return e instanceof CfmlTag ?
+           PsiTreeUtil.getParentOfType(e, CfmlTag.class) :
+           PsiTreeUtil.getParentOfType(e, XmlTag.class);
+  }
 
-    @NotNull
-    public String getElementInfo(@NotNull final PsiElement e) {
-      String result = e instanceof CfmlTag ? ((CfmlTag) e).getTagName() :
-                e instanceof XmlTag ? ((XmlTag) e).getName() : "";
-        return result != null ? result : "";
-    }
+  @NotNull
+  public String getElementInfo(@NotNull final PsiElement e) {
+    String result = e instanceof CfmlTag ? ((CfmlTag)e).getTagName() :
+                    e instanceof XmlTag ? ((XmlTag)e).getName() : "";
+    return result != null ? result : "";
+  }
 
-    public String getElementTooltip(@NotNull final PsiElement e) {
-        return null;
-    }
+  public String getElementTooltip(@NotNull final PsiElement e) {
+    return null;
+  }
 }
 

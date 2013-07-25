@@ -84,7 +84,8 @@ public class CfmlFunctionDescription {
         sb.append("[");
         sb.append(paramDescription);
         sb.append("]");
-      } else {
+      }
+      else {
         sb.append(paramDescription);
       }
       return sb.toString();

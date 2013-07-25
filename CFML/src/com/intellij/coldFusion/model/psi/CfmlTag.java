@@ -7,5 +7,6 @@ import com.intellij.psi.PsiElement;
  */
 public interface CfmlTag extends PsiElement {
   String getTagName();
+
   PsiElement getDeclarativeElement();
 }

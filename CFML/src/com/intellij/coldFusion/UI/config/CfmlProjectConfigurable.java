@@ -74,6 +74,7 @@ public class CfmlProjectConfigurable
     CfmlProjectConfiguration.getInstance(myProject).loadState(currentState);
     storeLanguageVersionWithProgress(myProject);
   }
+
   public void reset() {
     myForm.reset(CfmlProjectConfiguration.getInstance(myProject).getState());
   }

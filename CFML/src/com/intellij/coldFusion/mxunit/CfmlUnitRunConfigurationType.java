@@ -41,7 +41,7 @@ public class CfmlUnitRunConfigurationType implements ConfigurationType {
   }
 
   public ConfigurationFactory[] getConfigurationFactories() {
-    return new ConfigurationFactory[] {myFactory};
+    return new ConfigurationFactory[]{myFactory};
   }
 
   @Nullable

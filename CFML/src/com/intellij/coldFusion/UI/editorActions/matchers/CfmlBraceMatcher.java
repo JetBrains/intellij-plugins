@@ -27,22 +27,22 @@ import org.jetbrains.annotations.Nullable;
  * Date: 09.10.2008
  */
 public class CfmlBraceMatcher implements BraceMatcher {
-    private static final BracePair[] PAIRS = new BracePair[]{
-            // new BracePair(CfmlTokenTypes.OPENER, CfmlTokenTypes.CLOSER, true),
-            new BracePair(CfscriptTokenTypes.L_BRACKET, CfscriptTokenTypes.R_BRACKET, false),
-            new BracePair(CfscriptTokenTypes.L_SQUAREBRACKET, CfscriptTokenTypes.R_SQUAREBRACKET, false),
-            new BracePair(CfscriptTokenTypes.L_CURLYBRACKET, CfscriptTokenTypes.R_CURLYBRACKET, false),
-            new BracePair(CfscriptTokenTypes.OPENSHARP, CfscriptTokenTypes.CLOSESHARP, true),/*
+  private static final BracePair[] PAIRS = new BracePair[]{
+    // new BracePair(CfmlTokenTypes.OPENER, CfmlTokenTypes.CLOSER, true),
+    new BracePair(CfscriptTokenTypes.L_BRACKET, CfscriptTokenTypes.R_BRACKET, false),
+    new BracePair(CfscriptTokenTypes.L_SQUAREBRACKET, CfscriptTokenTypes.R_SQUAREBRACKET, false),
+    new BracePair(CfscriptTokenTypes.L_CURLYBRACKET, CfscriptTokenTypes.R_CURLYBRACKET, false),
+    new BracePair(CfscriptTokenTypes.OPENSHARP, CfscriptTokenTypes.CLOSESHARP, true),/*
             new BracePair(CfscriptTokenTypes.DOUBLE_QUOTE, CfscriptTokenTypes.DOUBLE_QUOTE_CLOSER, false),
             new BracePair(CfscriptTokenTypes.SINGLE_QUOTE, CfscriptTokenTypes.SINGLE_QUOTE_CLOSER, false),*/
-            new BracePair(CfmlTokenTypes.START_EXPRESSION, CfmlTokenTypes.END_EXPRESSION, true)/*,
+    new BracePair(CfmlTokenTypes.START_EXPRESSION, CfmlTokenTypes.END_EXPRESSION, true)/*,
             new BracePair(CfmlTokenTypes.DOUBLE_QUOTE, CfmlTokenTypes.DOUBLE_QUOTE_CLOSER, false),
             new BracePair(CfmlTokenTypes.SINGLE_QUOTE, CfmlTokenTypes.SINGLE_QUOTE_CLOSER, false)*/
-    };
+  };
 
-    public int getBraceTokenGroupId(IElementType tokenType) {
-        final Language l = tokenType.getLanguage();
-        return l.hashCode();
+  public int getBraceTokenGroupId(IElementType tokenType) {
+    final Language l = tokenType.getLanguage();
+    return l.hashCode();
         /*
         PairedBraceMatcher matcher = LanguageBraceMatching.INSTANCE.forLanguage(l);
         if (matcher != null) {
@@ -63,107 +63,110 @@ public class CfmlBraceMatcher implements BraceMatcher {
         }
         return l.hashCode();
         */
-    }
+  }
 
-    public boolean isLBraceToken(HighlighterIterator iterator, CharSequence fileText, FileType fileType) {
-        final IElementType tokenType = iterator.getTokenType();
-        PairedBraceMatcher matcher = LanguageBraceMatching.INSTANCE.forLanguage(tokenType.getLanguage());
-        if (matcher != null) {
-            BracePair[] pairs = matcher.getPairs();
-            for (BracePair pair : pairs) {
-                if (pair.getLeftBraceType() == tokenType) return true;
-            }
-        }
-
-        if (!tokenType.getLanguage().equals(CfmlLanguage.INSTANCE)) {
-            FileType tokenFileType = iterator.getTokenType().getLanguage().getAssociatedFileType();
-            if (tokenFileType != null && tokenFileType != CfmlFileType.INSTANCE) {
-                for (FileTypeExtensionPoint<BraceMatcher> ext : Extensions.getExtensions(BraceMatcher.EP_NAME)) {
-                    if (ext.filetype != null && ext.filetype.equals(tokenFileType.getName())) {
-                        return ext.getInstance().isLBraceToken(iterator, fileText,
-                                tokenFileType instanceof XmlFileType ? StdFileTypes.HTML : tokenFileType);
-                    }
-                }
-            }
-        }
-
-        for (BracePair pair : PAIRS) {
-            if (pair.getLeftBraceType() == tokenType)
-                return true;
-        }
-        return tokenType.equals(CfmlTokenTypes.OPENER) &&
-               (!CfmlUtil.isEndTagRequired(getTagName(fileText, iterator), null) || findEndTag(fileText, iterator));
-    }
-
-    public boolean isRBraceToken(HighlighterIterator iterator, CharSequence fileText, FileType fileType) {
-        final IElementType tokenType = iterator.getTokenType();
-
-        PairedBraceMatcher matcher = LanguageBraceMatching.INSTANCE.forLanguage(tokenType.getLanguage());
-        if (matcher != null) {
-            BracePair[] pairs = matcher.getPairs();
-            for (BracePair pair : pairs) {
-                if (pair.getRightBraceType() == tokenType) return true;
-            }
-        }
-
-        if (!tokenType.getLanguage().equals(CfmlLanguage.INSTANCE)) {
-            FileType tokenFileType = iterator.getTokenType().getLanguage().getAssociatedFileType();
-            if (tokenFileType != null && tokenFileType != CfmlFileType.INSTANCE) {
-                for (FileTypeExtensionPoint<BraceMatcher> ext : Extensions.getExtensions(BraceMatcher.EP_NAME)) {
-                    if (ext.filetype != null && ext.filetype.equals(tokenFileType.getName())) {
-                        return ext.getInstance().isRBraceToken(iterator, fileText,
-                                tokenFileType instanceof XmlFileType ? StdFileTypes.HTML : tokenFileType);
-                    }
-                }
-            }
-        }
-
-        for (BracePair pair : PAIRS) {
-            if (pair.getRightBraceType() == tokenType) return true;
-        }
-        return ((tokenType.equals(CfmlTokenTypes.CLOSER)) && findBeginTag(fileText, iterator)) ||
-           (tokenType.equals(CfmlTokenTypes.R_ANGLEBRACKET) && !CfmlUtil.isEndTagRequired(getTagName(fileText, iterator), null) && !findEndTag(fileText, iterator));
-    }
-
-    public boolean isPairBraces(IElementType tokenType1, IElementType tokenType2) {
-        PairedBraceMatcher matcher = LanguageBraceMatching.INSTANCE.forLanguage(tokenType1.getLanguage());
-        if (matcher != null) {
-            BracePair[] pairs = matcher.getPairs();
-            for (BracePair pair : pairs) {
-                if (pair.getLeftBraceType() == tokenType1) return pair.getRightBraceType() == tokenType2;
-                if (pair.getRightBraceType() == tokenType1) return pair.getLeftBraceType() == tokenType2;
-            }
-        }
-
-        FileType tokenFileType1 = tokenType1.getLanguage().getAssociatedFileType();
-        FileType tokenFileType2 = tokenType2.getLanguage().getAssociatedFileType();
-        if (tokenFileType2 != tokenFileType1) {
-            return false;
-        }
-        if (tokenFileType1 != CfmlFileType.INSTANCE && tokenFileType1 != null) {
-            for (FileTypeExtensionPoint<BraceMatcher> ext : Extensions.getExtensions(BraceMatcher.EP_NAME)) {
-                if (ext.filetype.equals(tokenFileType1.getName())) {
-                    return ext.getInstance().isPairBraces(tokenType1, tokenType2);
-                }
-            }
-        }
-
-        for (BracePair pair : PAIRS) {
-            if (pair.getLeftBraceType() == tokenType1) return pair.getRightBraceType() == tokenType2;
-            if (pair.getRightBraceType() == tokenType1) return pair.getLeftBraceType() == tokenType2;
-        }
-        return (tokenType1.equals(CfmlTokenTypes.OPENER) && tokenType2.equals(CfmlTokenTypes.CLOSER)) ||
-                (tokenType1.equals(CfmlTokenTypes.CLOSER) && tokenType2.equals(CfmlTokenTypes.OPENER)) ||
-                (tokenType1.equals(CfmlTokenTypes.R_ANGLEBRACKET) && tokenType2.equals(CfmlTokenTypes.OPENER)) ||
-                (tokenType1.equals(CfmlTokenTypes.OPENER) && tokenType2.equals(CfmlTokenTypes.R_ANGLEBRACKET));
-    }
-
-    public boolean isStructuralBrace(HighlighterIterator iterator, CharSequence text, FileType fileType) {
-      IElementType type = iterator.getTokenType();
-      if (type == CfscriptTokenTypes.L_BRACKET || type == CfscriptTokenTypes.R_BRACKET) {
-        return false;
+  public boolean isLBraceToken(HighlighterIterator iterator, CharSequence fileText, FileType fileType) {
+    final IElementType tokenType = iterator.getTokenType();
+    PairedBraceMatcher matcher = LanguageBraceMatching.INSTANCE.forLanguage(tokenType.getLanguage());
+    if (matcher != null) {
+      BracePair[] pairs = matcher.getPairs();
+      for (BracePair pair : pairs) {
+        if (pair.getLeftBraceType() == tokenType) return true;
       }
-      return true;
+    }
+
+    if (!tokenType.getLanguage().equals(CfmlLanguage.INSTANCE)) {
+      FileType tokenFileType = iterator.getTokenType().getLanguage().getAssociatedFileType();
+      if (tokenFileType != null && tokenFileType != CfmlFileType.INSTANCE) {
+        for (FileTypeExtensionPoint<BraceMatcher> ext : Extensions.getExtensions(BraceMatcher.EP_NAME)) {
+          if (ext.filetype != null && ext.filetype.equals(tokenFileType.getName())) {
+            return ext.getInstance().isLBraceToken(iterator, fileText,
+                                                   tokenFileType instanceof XmlFileType ? StdFileTypes.HTML : tokenFileType);
+          }
+        }
+      }
+    }
+
+    for (BracePair pair : PAIRS) {
+      if (pair.getLeftBraceType() == tokenType) {
+        return true;
+      }
+    }
+    return tokenType.equals(CfmlTokenTypes.OPENER) &&
+           (!CfmlUtil.isEndTagRequired(getTagName(fileText, iterator), null) || findEndTag(fileText, iterator));
+  }
+
+  public boolean isRBraceToken(HighlighterIterator iterator, CharSequence fileText, FileType fileType) {
+    final IElementType tokenType = iterator.getTokenType();
+
+    PairedBraceMatcher matcher = LanguageBraceMatching.INSTANCE.forLanguage(tokenType.getLanguage());
+    if (matcher != null) {
+      BracePair[] pairs = matcher.getPairs();
+      for (BracePair pair : pairs) {
+        if (pair.getRightBraceType() == tokenType) return true;
+      }
+    }
+
+    if (!tokenType.getLanguage().equals(CfmlLanguage.INSTANCE)) {
+      FileType tokenFileType = iterator.getTokenType().getLanguage().getAssociatedFileType();
+      if (tokenFileType != null && tokenFileType != CfmlFileType.INSTANCE) {
+        for (FileTypeExtensionPoint<BraceMatcher> ext : Extensions.getExtensions(BraceMatcher.EP_NAME)) {
+          if (ext.filetype != null && ext.filetype.equals(tokenFileType.getName())) {
+            return ext.getInstance().isRBraceToken(iterator, fileText,
+                                                   tokenFileType instanceof XmlFileType ? StdFileTypes.HTML : tokenFileType);
+          }
+        }
+      }
+    }
+
+    for (BracePair pair : PAIRS) {
+      if (pair.getRightBraceType() == tokenType) return true;
+    }
+    return ((tokenType.equals(CfmlTokenTypes.CLOSER)) && findBeginTag(fileText, iterator)) ||
+           (tokenType.equals(CfmlTokenTypes.R_ANGLEBRACKET) &&
+            !CfmlUtil.isEndTagRequired(getTagName(fileText, iterator), null) &&
+            !findEndTag(fileText, iterator));
+  }
+
+  public boolean isPairBraces(IElementType tokenType1, IElementType tokenType2) {
+    PairedBraceMatcher matcher = LanguageBraceMatching.INSTANCE.forLanguage(tokenType1.getLanguage());
+    if (matcher != null) {
+      BracePair[] pairs = matcher.getPairs();
+      for (BracePair pair : pairs) {
+        if (pair.getLeftBraceType() == tokenType1) return pair.getRightBraceType() == tokenType2;
+        if (pair.getRightBraceType() == tokenType1) return pair.getLeftBraceType() == tokenType2;
+      }
+    }
+
+    FileType tokenFileType1 = tokenType1.getLanguage().getAssociatedFileType();
+    FileType tokenFileType2 = tokenType2.getLanguage().getAssociatedFileType();
+    if (tokenFileType2 != tokenFileType1) {
+      return false;
+    }
+    if (tokenFileType1 != CfmlFileType.INSTANCE && tokenFileType1 != null) {
+      for (FileTypeExtensionPoint<BraceMatcher> ext : Extensions.getExtensions(BraceMatcher.EP_NAME)) {
+        if (ext.filetype.equals(tokenFileType1.getName())) {
+          return ext.getInstance().isPairBraces(tokenType1, tokenType2);
+        }
+      }
+    }
+
+    for (BracePair pair : PAIRS) {
+      if (pair.getLeftBraceType() == tokenType1) return pair.getRightBraceType() == tokenType2;
+      if (pair.getRightBraceType() == tokenType1) return pair.getLeftBraceType() == tokenType2;
+    }
+    return (tokenType1.equals(CfmlTokenTypes.OPENER) && tokenType2.equals(CfmlTokenTypes.CLOSER)) ||
+           (tokenType1.equals(CfmlTokenTypes.CLOSER) && tokenType2.equals(CfmlTokenTypes.OPENER)) ||
+           (tokenType1.equals(CfmlTokenTypes.R_ANGLEBRACKET) && tokenType2.equals(CfmlTokenTypes.OPENER)) ||
+           (tokenType1.equals(CfmlTokenTypes.OPENER) && tokenType2.equals(CfmlTokenTypes.R_ANGLEBRACKET));
+  }
+
+  public boolean isStructuralBrace(HighlighterIterator iterator, CharSequence text, FileType fileType) {
+    IElementType type = iterator.getTokenType();
+    if (type == CfscriptTokenTypes.L_BRACKET || type == CfscriptTokenTypes.R_BRACKET) {
+      return false;
+    }
+    return true;
         /*
         for(FileTypeExtensionPoint<BraceMatcher> ext : Extensions.getExtensions(BraceMatcher.EP_NAME)) {
             if (StdFileTypes.HTML.getName().equals(ext.filetype)) {
@@ -186,11 +189,11 @@ public class CfmlBraceMatcher implements BraceMatcher {
         }
         return tokenType.equals(CfmlTokenTypes.OPENER) || tokenType.equals(CfmlTokenTypes.CLOSER);
         */
-    }
+  }
 
-    public boolean isPairedBracesAllowedBeforeType(@NotNull final IElementType lbraceType, @Nullable final IElementType contextType) {
-        return true;
-    }
+  public boolean isPairedBracesAllowedBeforeType(@NotNull final IElementType lbraceType, @Nullable final IElementType contextType) {
+    return true;
+  }
 
   private static boolean findBeginTag(CharSequence fileText, HighlighterIterator iterator) {
     IElementType tokenType;
@@ -199,23 +202,24 @@ public class CfmlBraceMatcher implements BraceMatcher {
       return false;
     }
     int balance = 0;
-        int count = 0;
-        while (balance < 1) {
-            iterator.retreat();
-            count++;
-            if (iterator.atEnd()) break;
-            tokenType = iterator.getTokenType();
-            String currentTagName = getTagName(fileText, iterator);
-          if (tokenType == CfmlTokenTypes.CLOSER && name.equals(currentTagName)) {
-            balance--;
-            } else if (tokenType == CfmlTokenTypes.OPENER &&
-                       name.equals(currentTagName)) {
-            balance++;
-            }
-        }
-        while (count-- > 0) iterator.advance();
-        return balance == 1;
+    int count = 0;
+    while (balance < 1) {
+      iterator.retreat();
+      count++;
+      if (iterator.atEnd()) break;
+      tokenType = iterator.getTokenType();
+      String currentTagName = getTagName(fileText, iterator);
+      if (tokenType == CfmlTokenTypes.CLOSER && name.equals(currentTagName)) {
+        balance--;
+      }
+      else if (tokenType == CfmlTokenTypes.OPENER &&
+               name.equals(currentTagName)) {
+        balance++;
+      }
     }
+    while (count-- > 0) iterator.advance();
+    return balance == 1;
+  }
 
   private static boolean findEndTag(CharSequence fileText, HighlighterIterator iterator) {
     IElementType tokenType;
@@ -224,79 +228,81 @@ public class CfmlBraceMatcher implements BraceMatcher {
       return false;
     }
     int balance = 0;
-        int count = 0;
-        while (balance > -1 && !iterator.atEnd()) {
-            iterator.advance();
-            count++;
-            if (iterator.atEnd()) break;
-            tokenType = iterator.getTokenType();
-            String currrentTagName = getTagName(fileText, iterator);
-            if (tokenType == CfmlTokenTypes.OPENER &&
-                name.equals(currrentTagName)) {
-              balance++;
-            }
-            else if (tokenType == CfmlTokenTypes.CLOSER && name.equals(currrentTagName)) {
-              balance--;
-            }
-        }
-        while (count-- > 0) iterator.retreat();
-        return balance == -1;
+    int count = 0;
+    while (balance > -1 && !iterator.atEnd()) {
+      iterator.advance();
+      count++;
+      if (iterator.atEnd()) break;
+      tokenType = iterator.getTokenType();
+      String currrentTagName = getTagName(fileText, iterator);
+      if (tokenType == CfmlTokenTypes.OPENER &&
+          name.equals(currrentTagName)) {
+        balance++;
+      }
+      else if (tokenType == CfmlTokenTypes.CLOSER && name.equals(currrentTagName)) {
+        balance--;
+      }
     }
+    while (count-- > 0) iterator.retreat();
+    return balance == -1;
+  }
 
   @Nullable
   public static String getTagName(CharSequence fileText, HighlighterIterator iterator) {
     final IElementType tokenType = iterator.getTokenType();
-        String name = null;
-        if (tokenType == CfmlTokenTypes.CLOSER || tokenType == CfmlTokenTypes.R_ANGLEBRACKET) {
-            iterator.retreat();
-            IElementType tokenType1 = (!iterator.atEnd() ? iterator.getTokenType() : null);
+    String name = null;
+    if (tokenType == CfmlTokenTypes.CLOSER || tokenType == CfmlTokenTypes.R_ANGLEBRACKET) {
+      iterator.retreat();
+      IElementType tokenType1 = (!iterator.atEnd() ? iterator.getTokenType() : null);
 
-            if (tokenType1 == CfmlTokenTypes.CF_TAG_NAME) {
-                name = fileText.subSequence(iterator.getStart(), iterator.getEnd()).toString();
-            } else {
-                int counter = 0;
-                while (!iterator.atEnd()) {
-                    if (iterator.getTokenType() == CfmlTokenTypes.CF_TAG_NAME) {
-                        name = fileText.subSequence(iterator.getStart(), iterator.getEnd()).toString();
-                        break;
-                    }
-                    if (iterator.getTokenType() == CfmlTokenTypes.CLOSER ||
-                            iterator.getTokenType() == CfmlTokenTypes.R_ANGLEBRACKET) {
-                        break;
-                    }
-                    iterator.retreat();
-                    counter++;
-                }
-                while (counter-- > 0) iterator.advance();
-            }
-            iterator.advance();
-        } else if (tokenType == CfmlTokenTypes.OPENER) {
-            iterator.advance();
-            IElementType tokenType1 = (!iterator.atEnd() ? iterator.getTokenType() : null);
-
-            if (tokenType1 == CfmlTokenTypes.CF_TAG_NAME) {
-                name = fileText.subSequence(iterator.getStart(), iterator.getEnd()).toString();
-            }
-            iterator.retreat();
+      if (tokenType1 == CfmlTokenTypes.CF_TAG_NAME) {
+        name = fileText.subSequence(iterator.getStart(), iterator.getEnd()).toString();
+      }
+      else {
+        int counter = 0;
+        while (!iterator.atEnd()) {
+          if (iterator.getTokenType() == CfmlTokenTypes.CF_TAG_NAME) {
+            name = fileText.subSequence(iterator.getStart(), iterator.getEnd()).toString();
+            break;
+          }
+          if (iterator.getTokenType() == CfmlTokenTypes.CLOSER ||
+              iterator.getTokenType() == CfmlTokenTypes.R_ANGLEBRACKET) {
+            break;
+          }
+          iterator.retreat();
+          counter++;
         }
-        return name == null ? name : name.toLowerCase();
+        while (counter-- > 0) iterator.advance();
+      }
+      iterator.advance();
     }
+    else if (tokenType == CfmlTokenTypes.OPENER) {
+      iterator.advance();
+      IElementType tokenType1 = (!iterator.atEnd() ? iterator.getTokenType() : null);
 
-    public IElementType getOppositeBraceTokenType(@NotNull final IElementType type) {
-        for (BracePair pair : PAIRS) {
-            if (pair.getLeftBraceType() == type) return pair.getRightBraceType();
-            if (pair.getRightBraceType() == type) return pair.getLeftBraceType();
-        }
-        if (type == CfmlTokenTypes.OPENER) return CfmlTokenTypes.R_ANGLEBRACKET;
-        if (type == CfmlTokenTypes.CLOSER) return CfmlTokenTypes.OPENER;
-        if (type == CfmlTokenTypes.R_ANGLEBRACKET) return CfmlTokenTypes.OPENER;
-        return null;
+      if (tokenType1 == CfmlTokenTypes.CF_TAG_NAME) {
+        name = fileText.subSequence(iterator.getStart(), iterator.getEnd()).toString();
+      }
+      iterator.retreat();
     }
+    return name == null ? name : name.toLowerCase();
+  }
 
-    public int getCodeConstructStart(final PsiFile file, int openingBraceOffset) {
-      PsiElement element = file.findElementAt(openingBraceOffset);
-      if (element == null || element instanceof PsiFile) return openingBraceOffset;
-      PsiElement parent = element.getParent();
-      return parent.getTextRange().getStartOffset();
+  public IElementType getOppositeBraceTokenType(@NotNull final IElementType type) {
+    for (BracePair pair : PAIRS) {
+      if (pair.getLeftBraceType() == type) return pair.getRightBraceType();
+      if (pair.getRightBraceType() == type) return pair.getLeftBraceType();
     }
+    if (type == CfmlTokenTypes.OPENER) return CfmlTokenTypes.R_ANGLEBRACKET;
+    if (type == CfmlTokenTypes.CLOSER) return CfmlTokenTypes.OPENER;
+    if (type == CfmlTokenTypes.R_ANGLEBRACKET) return CfmlTokenTypes.OPENER;
+    return null;
+  }
+
+  public int getCodeConstructStart(final PsiFile file, int openingBraceOffset) {
+    PsiElement element = file.findElementAt(openingBraceOffset);
+    if (element == null || element instanceof PsiFile) return openingBraceOffset;
+    PsiElement parent = element.getParent();
+    return parent.getTextRange().getStartOffset();
+  }
 }

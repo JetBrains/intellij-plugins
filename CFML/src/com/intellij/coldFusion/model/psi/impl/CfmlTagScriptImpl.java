@@ -38,7 +38,8 @@ public class CfmlTagScriptImpl extends CfmlTagImpl {
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof CfmlRecursiveElementVisitor) {
       ((CfmlRecursiveElementVisitor)visitor).visitCfmlTag(this);
-    } else {
+    }
+    else {
       super.accept(visitor);
     }
   }

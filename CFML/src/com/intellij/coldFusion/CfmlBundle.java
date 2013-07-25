@@ -13,27 +13,27 @@ import java.util.ResourceBundle;
  * Date: 17.11.2008
  */
 public class CfmlBundle {
-    private static Reference<ResourceBundle> ourBundle;
+  private static Reference<ResourceBundle> ourBundle;
 
-    @NonNls
-    protected static final String PATH_TO_BUNDLE = "messages.CfmlBundle";
+  @NonNls
+  protected static final String PATH_TO_BUNDLE = "messages.CfmlBundle";
 
-    private CfmlBundle() {
+  private CfmlBundle() {
+  }
+
+  public static String message(@PropertyKey(resourceBundle = PATH_TO_BUNDLE) String key, Object... params) {
+    return CommonBundle.message(getBundle(), key, params);
+  }
+
+  private static ResourceBundle getBundle() {
+    ResourceBundle bundle = null;
+    if (ourBundle != null) {
+      bundle = ourBundle.get();
     }
-
-    public static String message(@PropertyKey(resourceBundle = PATH_TO_BUNDLE)String key, Object... params) {
-        return CommonBundle.message(getBundle(), key, params);
+    if (bundle == null) {
+      bundle = ResourceBundle.getBundle(PATH_TO_BUNDLE);
+      ourBundle = new SoftReference<ResourceBundle>(bundle);
     }
-
-    private static ResourceBundle getBundle() {
-        ResourceBundle bundle = null;
-        if (ourBundle != null) {
-            bundle = ourBundle.get();
-        }
-        if (bundle == null) {
-            bundle = ResourceBundle.getBundle(PATH_TO_BUNDLE);
-            ourBundle = new SoftReference<ResourceBundle>(bundle);
-        }
-        return bundle;
-    }
+    return bundle;
+  }
 }

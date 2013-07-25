@@ -30,7 +30,9 @@ public class CfmlPredefinedVariablesCompletion extends CompletionProvider<Comple
         if (tagName != null && s.startsWith(tagName)) {
           result.addElement(LookupElementBuilder.create(s.substring(s.indexOf(".") + 1)).withCaseSensitivity(false));
         }
-        else if (tagName == null && !result.getPrefixMatcher().getPrefix().isEmpty() && parameters.getPosition().getParent() instanceof CfmlReference) {
+        else if (tagName == null &&
+                 !result.getPrefixMatcher().getPrefix().isEmpty() &&
+                 parameters.getPosition().getParent() instanceof CfmlReference) {
           result.addElement(LookupElementBuilder.create(s).withCaseSensitivity(false));
         }
       }

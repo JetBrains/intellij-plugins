@@ -43,7 +43,7 @@ public class CfmlFile extends PsiFileBase {
 
   @NonNls
   public static final Pattern IMPLICIT_VAR_DECL_PATTERN_TEMP = Pattern.compile(
-      "<!---[\\s]*" + CFMLVARIABLE_MARKER + "[\\s]*name=\"([^\"]+)\"[\\s]*type=\"([^\"]*)\"[\\s]*--->[\\s]*");
+    "<!---[\\s]*" + CFMLVARIABLE_MARKER + "[\\s]*name=\"([^\"]+)\"[\\s]*type=\"([^\"]*)\"[\\s]*--->[\\s]*");
 
   CachedValueProvider<Map<String, CfmlImplicitVariable>> createImplicitVarsProvider() {
     return new CachedValueProvider<Map<String, CfmlImplicitVariable>>() {
@@ -138,7 +138,8 @@ public class CfmlFile extends PsiFileBase {
       }
 
       @Override
-      public void visitCfmlComponent(CfmlComponent component) {}
+      public void visitCfmlComponent(CfmlComponent component) {
+      }
 
       @Override
       public void visitCfmlTag(CfmlTag tag) {
@@ -160,7 +161,8 @@ public class CfmlFile extends PsiFileBase {
     final Ref<CfmlComponent> ref = new Ref<CfmlComponent>(null);
     accept(new CfmlRecursiveElementVisitor() {
       @Override
-      public void visitCfmlFunction(CfmlFunction function) {}
+      public void visitCfmlFunction(CfmlFunction function) {
+      }
 
       @Override
       public void visitCfmlComponent(CfmlComponent component) {

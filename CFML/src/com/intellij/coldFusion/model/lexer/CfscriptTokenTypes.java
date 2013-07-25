@@ -107,7 +107,8 @@ public interface CfscriptTokenTypes {
   TokenSet WORD_PREFIX_OPERATIONS = TokenSet.create(NOT_L);
 
   TokenSet SYMBOL_BINARY_OPERATIONS = TokenSet
-    .create(CfmlTokenTypes.ASSIGN, ADD, ADD_EQ, MINUS, MINUS_EQ, MUL, MUL_EQ, DEV, DEV_EQ, MOD, INT_DEV, POW, AND, OR, CONCAT, CONCAT_EQ, EQEQ, NEQ,
+    .create(CfmlTokenTypes.ASSIGN, ADD, ADD_EQ, MINUS, MINUS_EQ, MUL, MUL_EQ, DEV, DEV_EQ, MOD, INT_DEV, POW, AND, OR, CONCAT, CONCAT_EQ,
+            EQEQ, NEQ,
             LT, LTE, GT, GTE);
   TokenSet SYMBOL_PREFIX_OPERATIONS = TokenSet.create(MINUS, ADD, INC, DEC, NOT);
   TokenSet SYMBOL_POSTFIX_OPERATIONS = TokenSet.create(INC, DEC);

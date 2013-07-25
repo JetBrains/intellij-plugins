@@ -15,45 +15,45 @@ import org.jetbrains.annotations.NotNull;
  * Date: 19.02.2009
  */
 public class CfmlStructureViewModel extends TextEditorBasedStructureViewModel {
-    private PsiFile myCfmlPsiFile;
-    private StructureViewTreeElement myRoot;
-    private final Class[] myClasses = {CfmlFunction.class};
+  private PsiFile myCfmlPsiFile;
+  private StructureViewTreeElement myRoot;
+  private final Class[] myClasses = {CfmlFunction.class};
 
-    protected CfmlStructureViewModel(@NotNull PsiFile psiFile) {
-        super(psiFile);
+  protected CfmlStructureViewModel(@NotNull PsiFile psiFile) {
+    super(psiFile);
 
-        myCfmlPsiFile = psiFile.getViewProvider().getPsi(CfmlLanguage.INSTANCE);
-        myRoot = new CfmlStructureViewElement(myCfmlPsiFile);
-    }
+    myCfmlPsiFile = psiFile.getViewProvider().getPsi(CfmlLanguage.INSTANCE);
+    myRoot = new CfmlStructureViewElement(myCfmlPsiFile);
+  }
 
-    @Override
-    protected PsiFile getPsiFile() {
-        return myCfmlPsiFile;
-    }
+  @Override
+  protected PsiFile getPsiFile() {
+    return myCfmlPsiFile;
+  }
 
-    @Override
-    @NotNull
-    public StructureViewTreeElement getRoot() {
-        return myRoot;
-    }
+  @Override
+  @NotNull
+  public StructureViewTreeElement getRoot() {
+    return myRoot;
+  }
 
-    @Override
-    @NotNull
-    public Grouper[] getGroupers() {
-        return new Grouper[0];  //To change body of implemented methods use File | Settings | File Templates.
-    }
+  @Override
+  @NotNull
+  public Grouper[] getGroupers() {
+    return new Grouper[0];  //To change body of implemented methods use File | Settings | File Templates.
+  }
 
-    @Override
-    @NotNull
-    public Sorter[] getSorters() {
-        return new Sorter[]{Sorter.ALPHA_SORTER};
-    }
+  @Override
+  @NotNull
+  public Sorter[] getSorters() {
+    return new Sorter[]{Sorter.ALPHA_SORTER};
+  }
 
-    @Override
-    @NotNull
-    public Filter[] getFilters() {
-        return new Filter[0];
-    }
+  @Override
+  @NotNull
+  public Filter[] getFilters() {
+    return new Filter[0];
+  }
 
   @NotNull
   @Override

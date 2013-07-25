@@ -149,7 +149,8 @@ public class CfmlComponentImpl extends CfmlCompositeElement implements CfmlCompo
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof CfmlRecursiveElementVisitor) {
       ((CfmlRecursiveElementVisitor)visitor).visitCfmlComponent(this);
-    } else {
+    }
+    else {
       super.accept(visitor);
     }
   }

@@ -41,7 +41,8 @@ public class CfmlPropertyImpl extends CfmlCompositeElement implements CfmlProper
     ASTNode node = lastChild.getNode();
     if (node != null && node.getElementType() == CfscriptTokenTypes.IDENTIFIER) {
       return lastChild;
-    } else {
+    }
+    else {
       CfmlNamedAttributeImpl namedAttribute = PsiTreeUtil.findChildOfType(this, CfmlNamedAttributeImpl.class);
       if (namedAttribute != null) {
         return namedAttribute.getNameIdentifier();

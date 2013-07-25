@@ -47,8 +47,9 @@ public class CfmlLangInfo {
         XMLReader xr = XMLReaderFactory.createXMLReader();
         xr.setContentHandler(cfmlTagsParser);
         xr.parse(new InputSource(CfmlLangInfo.class.getResourceAsStream(tagsFileName)));
-      } catch(Exception e) {
-          LOG.error(e);
+      }
+      catch (Exception e) {
+        LOG.error(e);
       }
       myTagAttributes = cfmlTagsParser.getTags();
       myFunctionParameters = cfmlTagsParser.getFunctions();
@@ -166,7 +167,8 @@ public class CfmlLangInfo {
           result[i] = s;
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error(e);
     }
     return result;

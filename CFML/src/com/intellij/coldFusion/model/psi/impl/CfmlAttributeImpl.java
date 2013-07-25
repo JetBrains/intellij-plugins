@@ -52,7 +52,5 @@ public class CfmlAttributeImpl extends CfmlCompositeElement implements CfmlAttri
 
     return "";
   }
-
-
 }
 

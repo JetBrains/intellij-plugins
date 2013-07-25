@@ -74,7 +74,8 @@ public class CfmlReferenceInspection extends CfmlInspectionBase {
       mostDescentReferenceParent = mostDescentReferenceParent.getParent();
     }
 
-    if (CfmlLangInfo.getInstance(element.getProject()).getPredefinedVariables().containsKey(mostDescentReferenceParent.getText().toLowerCase())) {
+    if (CfmlLangInfo.getInstance(element.getProject()).getPredefinedVariables()
+      .containsKey(mostDescentReferenceParent.getText().toLowerCase())) {
       return;
     }
     if (ref instanceof CfmlReferenceExpression && CfmlUtil.isPredefinedTagVariables((CfmlReferenceExpression)ref, element.getProject())) {

@@ -37,7 +37,7 @@ public class CfmlUnitQualifiedNameLocationProvider implements TestLocationProvid
 
   @Nullable
   private PsiElement findElement(String link, Project project) {
-    String [] location = link.split("::");
+    String[] location = link.split("::");
 
     int tokensNumber = location.length;
     if (tokensNumber <= 0 || tokensNumber > 3) {
@@ -62,7 +62,8 @@ public class CfmlUnitQualifiedNameLocationProvider implements TestLocationProvid
           break;
         }
       }
-    } else {
+    }
+    else {
       return null;
     }
     if (tokensNumber > 1) {
@@ -85,8 +86,6 @@ public class CfmlUnitQualifiedNameLocationProvider implements TestLocationProvid
           }
         }
       }
-
-
     }
     return result;
   }

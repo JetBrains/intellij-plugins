@@ -76,13 +76,15 @@ public class CfmlExpressionParser {
           expr.drop();
           return true;
         }
-      } else {
+      }
+      else {
         myBuilder.error(CfmlBundle.message("cfml.parsing.dot.dot.expected"));
         expr.drop();
         return true;
       }
       expr.done(CfmlElementTypes.TERNARY_EXPRESSION);
-    } else {
+    }
+    else {
       expr.drop();
     }
     return true;
@@ -338,7 +340,8 @@ public class CfmlExpressionParser {
     }
     if (isProbableVariableDef) {
       statementMarker.done(CfmlElementTypes.ASSIGNMENT);
-    } else {
+    }
+    else {
       statementMarker.drop();
     }
   }
@@ -461,7 +464,7 @@ public class CfmlExpressionParser {
           parseArgumentsList();
           referenceExpression.done(CfmlElementTypes.FUNCTION_CALL_EXPRESSION);
         }
-          // parse ([])*
+        // parse ([])*
         int arrayAccessNumber = 0;
         while (getTokenType() == L_SQUAREBRACKET) {
           isReference = true;
@@ -474,7 +477,8 @@ public class CfmlExpressionParser {
         if (arrayAccessNumber != 1) {
           break;
         }
-      } while (getTokenType() == L_BRACKET);
+      }
+      while (getTokenType() == L_BRACKET);
       referenceExpression = referenceExpression.precede();
     }
     referenceExpression.drop();
@@ -555,11 +559,13 @@ public class CfmlExpressionParser {
               parseExpression();
               assignment.done(CfmlElementTypes.ASSIGNMENT);
               continue;
-            } else if (getTokenType() == COMMA || getTokenType() == R_BRACKET) {
+            }
+            else if (getTokenType() == COMMA || getTokenType() == R_BRACKET) {
               markArgumentName.done(CfmlElementTypes.ARGUMENT_NAME);
               continue;
             }
-          } else if (parseRValue()) {
+          }
+          else if (parseRValue()) {
             markArgumentName.drop();
             continue;
           }
@@ -603,9 +609,11 @@ public class CfmlExpressionParser {
     PsiBuilder.Marker constructorCall = mark();
     if (getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE) {
       parseString();
-    } else if (getTokenType() == CfscriptTokenTypes.IDENTIFIER) {
+    }
+    else if (getTokenType() == CfscriptTokenTypes.IDENTIFIER) {
       parseComponentReference();
-    } else {
+    }
+    else {
       myBuilder.error(CfmlBundle.message("cfml.parsing.identifier.expected"));
     }
     parseArgumentsList();
@@ -651,7 +659,9 @@ public class CfmlExpressionParser {
     if (tokenType != L_SQUAREBRACKET) {
       return false;
     }
-    PsiBuilder.Marker arrayDefMarker = mark(); getTokenType(); advance();
+    PsiBuilder.Marker arrayDefMarker = mark();
+    getTokenType();
+    advance();
     if (getTokenType() != R_SQUAREBRACKET) {
       parseRValuesList();
     }
@@ -700,7 +710,8 @@ public class CfmlExpressionParser {
         return;
       }
       advance();
-    } if(parseArrayDefinition() || parseStructureDefinition()) {
+    }
+    if (parseArrayDefinition() || parseStructureDefinition()) {
     }
     else if (tokenType == CfmlTokenTypes.SINGLE_QUOTE || tokenType == CfmlTokenTypes.DOUBLE_QUOTE) {
       parseString();
@@ -709,11 +720,13 @@ public class CfmlExpressionParser {
       PsiBuilder.Marker integerLiteral = myBuilder.mark();
       advance();
       integerLiteral.done(CfmlElementTypes.INTEGER_LITERAL);
-    } else if (tokenType == BOOLEAN) {
+    }
+    else if (tokenType == BOOLEAN) {
       PsiBuilder.Marker integerLiteral = myBuilder.mark();
       advance();
       integerLiteral.done(CfmlElementTypes.BOOLEAN_LITERAL);
-    } else if (tokenType == DOUBLE) {
+    }
+    else if (tokenType == DOUBLE) {
       PsiBuilder.Marker integerLiteral = myBuilder.mark();
       advance();
       integerLiteral.done(CfmlElementTypes.DOUBLE_LITERAL);

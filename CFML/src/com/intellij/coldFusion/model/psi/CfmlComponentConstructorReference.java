@@ -4,7 +4,8 @@ package com.intellij.coldFusion.model.psi;
  * @author vnikolaenko
  * @date 21.02.11
  */
-public class CfmlComponentConstructorReference {}/*extends CfmlCompositeElement implements CfmlReference {
+public class CfmlComponentConstructorReference {
+}/*extends CfmlCompositeElement implements CfmlReference {
   CfmlComponentConstructorCall myParent;
 
   public CfmlComponentConstructorReference(@NotNull ASTNode node, CfmlComponentConstructorCall parent) {

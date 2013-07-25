@@ -17,21 +17,21 @@ import com.intellij.psi.tree.TokenSet;
  * Date: 06.10.2008
  */
 public interface CfmlElementTypes extends CfmlStubElementTypes {
-    // IElementType SOME = new CfmlElementType("SOME");
-    IElementType CF_SCRIPT = new CfmlElementType("CF_SCRIPT");
+  // IElementType SOME = new CfmlElementType("SOME");
+  IElementType CF_SCRIPT = new CfmlElementType("CF_SCRIPT");
 
-    IElementType TEMPLATE_TEXT = new CfmlElementType("CFML_TEMPLATE_TEXT");
+  IElementType TEMPLATE_TEXT = new CfmlElementType("CFML_TEMPLATE_TEXT");
 
-    IElementType OUTER_ELEMENT_TYPE = new CfmlElementType("CFML_FRAGMENT");
+  IElementType OUTER_ELEMENT_TYPE = new CfmlElementType("CFML_FRAGMENT");
 
-    IElementType SQL = new CfmlElementType("SQL");
+  IElementType SQL = new CfmlElementType("SQL");
 
-    IElementType SQL_DATA = new TemplateDataElementType("SQL_DATA", CfmlLanguage.INSTANCE, SQL,
-            OUTER_ELEMENT_TYPE);
-    TemplateDataElementType TEMPLATE_DATA =
-      new TemplateDataElementType("CFML_TEMPLATE_DATA", CfmlLanguage.INSTANCE, TEMPLATE_TEXT, OUTER_ELEMENT_TYPE);
+  IElementType SQL_DATA = new TemplateDataElementType("SQL_DATA", CfmlLanguage.INSTANCE, SQL,
+                                                      OUTER_ELEMENT_TYPE);
+  TemplateDataElementType TEMPLATE_DATA =
+    new TemplateDataElementType("CFML_TEMPLATE_DATA", CfmlLanguage.INSTANCE, TEMPLATE_TEXT, OUTER_ELEMENT_TYPE);
 
-    IElementType CFML_FILE_CONTENT = new CfmlElementType("CFML_FILE_CONTENT");
+  IElementType CFML_FILE_CONTENT = new CfmlElementType("CFML_FILE_CONTENT");
   IElementType FILE_CONTENT = new CfmlCompositeElementType("FILE_CONTENT");
   IElementType VALUE = new CfmlCompositeElementType("VALUE");
   IElementType TYPE = new CfmlCompositeElementType("TYPE");

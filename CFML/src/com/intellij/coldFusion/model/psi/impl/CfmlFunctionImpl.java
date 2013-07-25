@@ -128,7 +128,8 @@ public class CfmlFunctionImpl extends CfmlCompositeElement implements CfmlFuncti
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof CfmlRecursiveElementVisitor) {
       ((CfmlRecursiveElementVisitor)visitor).visitCfmlFunction(this);
-    } else {
+    }
+    else {
       super.accept(visitor);
     }
   }

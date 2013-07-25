@@ -12,13 +12,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CfmlRunConfigurationFactory extends ConfigurationFactory {
 
-    public CfmlRunConfigurationFactory(@NotNull ConfigurationType type) {
-        super(type);
-    }
+  public CfmlRunConfigurationFactory(@NotNull ConfigurationType type) {
+    super(type);
+  }
 
-    public RunConfiguration createTemplateConfiguration(Project project) {
-        return new CfmlRunConfiguration(project, this, "Cold Fusion");
-    }
-
-
+  public RunConfiguration createTemplateConfiguration(Project project) {
+    return new CfmlRunConfiguration(project, this, "Cold Fusion");
+  }
 }

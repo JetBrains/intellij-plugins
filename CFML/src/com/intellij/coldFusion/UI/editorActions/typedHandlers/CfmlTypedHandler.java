@@ -40,124 +40,127 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
     return Result.CONTINUE;
   }
 
-    public Result beforeCharTyped(final char c, final Project project, final Editor editor, final PsiFile file, final FileType fileType) {
-        PsiFile cfmlFile = file.getViewProvider().getPsi(CfmlLanguage.INSTANCE);
+  public Result beforeCharTyped(final char c, final Project project, final Editor editor, final PsiFile file, final FileType fileType) {
+    PsiFile cfmlFile = file.getViewProvider().getPsi(CfmlLanguage.INSTANCE);
 
-        if (isNotCfmlFile(cfmlFile, editor)) {
-            return Result.CONTINUE;
-        }
-        int offset = editor.getCaretModel().getOffset();
-
-        if (c == '{') {
-            CfmlBraceMatcher braceMatcher = new CfmlBraceMatcher();
-            HighlighterIterator iterator = ((EditorEx) editor).getHighlighter().createIterator(offset);
-            if (!braceMatcher.isLBraceToken(iterator, editor.getDocument().getCharsSequence(), fileType)) {
-                DocumentUtils.typeInStringAndMoveCaret(editor, offset, "}");
-                // return Result.STOP;
-            }
-            return Result.CONTINUE;
-        }
-        if (c == '#') {
-            if (CfmlEditorUtil.countSharpsBalance(editor) == 0) {
-                char charAtOffset = DocumentUtils.getCharAt(editor.getDocument(), offset);
-                if (charAtOffset == '#') {
-                    editor.getCaretModel().moveToOffset(offset + 1);
-                    return Result.STOP;
-                }
-                DocumentUtils.typeInStringAndMoveCaret(editor, offset, "#");
-            }
-        } else if (c == '>') {
-            if (((EditorEx) editor).getHighlighter().createIterator(editor.getCaretModel().getOffset()).getTokenType() == CfmlTokenTypes.COMMENT ||
-                    ((EditorEx) editor).getHighlighter().createIterator(editor.getCaretModel().getOffset()).getTokenType().getLanguage() != CfmlLanguage.INSTANCE) {
-                return Result.CONTINUE;
-            }
-            insertCloseTagIfNeeded(editor, cfmlFile, project);
-            return Result.STOP;
-        }
-        return Result.CONTINUE;
+    if (isNotCfmlFile(cfmlFile, editor)) {
+      return Result.CONTINUE;
     }
+    int offset = editor.getCaretModel().getOffset();
 
-    public static boolean insertCloseTagIfNeeded(Editor editor, PsiFile file, Project project) {
-        final Document document = editor.getDocument();
-        final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
+    if (c == '{') {
+      CfmlBraceMatcher braceMatcher = new CfmlBraceMatcher();
+      HighlighterIterator iterator = ((EditorEx)editor).getHighlighter().createIterator(offset);
+      if (!braceMatcher.isLBraceToken(iterator, editor.getDocument().getCharsSequence(), fileType)) {
+        DocumentUtils.typeInStringAndMoveCaret(editor, offset, "}");
+        // return Result.STOP;
+      }
+      return Result.CONTINUE;
+    }
+    if (c == '#') {
+      if (CfmlEditorUtil.countSharpsBalance(editor) == 0) {
+        char charAtOffset = DocumentUtils.getCharAt(editor.getDocument(), offset);
+        if (charAtOffset == '#') {
+          editor.getCaretModel().moveToOffset(offset + 1);
+          return Result.STOP;
+        }
+        DocumentUtils.typeInStringAndMoveCaret(editor, offset, "#");
+      }
+    }
+    else if (c == '>') {
+      if (((EditorEx)editor).getHighlighter().createIterator(editor.getCaretModel().getOffset()).getTokenType() == CfmlTokenTypes.COMMENT ||
+          ((EditorEx)editor).getHighlighter().createIterator(editor.getCaretModel().getOffset()).getTokenType().getLanguage() !=
+          CfmlLanguage.INSTANCE) {
+        return Result.CONTINUE;
+      }
+      insertCloseTagIfNeeded(editor, cfmlFile, project);
+      return Result.STOP;
+    }
+    return Result.CONTINUE;
+  }
 
-        int offset = editor.getCaretModel().getOffset();
-        documentManager.commitDocument(document);
-        char charAtOffset = DocumentUtils.getCharAt(document, offset);
+  public static boolean insertCloseTagIfNeeded(Editor editor, PsiFile file, Project project) {
+    final Document document = editor.getDocument();
+    final PsiDocumentManager documentManager = PsiDocumentManager.getInstance(project);
 
-        if (charAtOffset != '>') {
-            DocumentUtils.typeInStringAndMoveCaret(editor, offset, ">");
-        }
-        editor.getCaretModel().moveToOffset(++offset);
-        if (DocumentUtils.getCharAt(document, offset - 2) == '/') {
-            return false;
-        }
-        HighlighterIterator iterator = ((EditorEx) editor).getHighlighter().createIterator(offset - 2);
+    int offset = editor.getCaretModel().getOffset();
+    documentManager.commitDocument(document);
+    char charAtOffset = DocumentUtils.getCharAt(document, offset);
 
-        while (!iterator.atEnd() && !iterator.getTokenType().equals(CfmlTokenTypes.CF_TAG_NAME)) {
-            if (CfmlUtil.isControlToken(iterator.getTokenType())) {
-                return false;
-            }
-            iterator.retreat();
-        }
-        if (!iterator.atEnd()) {
-            iterator.retreat();
-            if (!iterator.atEnd() && iterator.getTokenType().equals(CfmlTokenTypes.LSLASH_ANGLEBRACKET)) {
-                return false;
-            }
-            iterator.advance();
-        }
-        if (iterator.atEnd()) {
-          return false;
-        }
-        String tagName = document.getCharsSequence().subSequence(iterator.getStart(), iterator.getEnd()).toString();
-        if (CfmlUtil.isSingleCfmlTag(tagName, project) || CfmlUtil.isUserDefined(tagName)) {
-            return false;
-        }
-        PsiElement tagElement = file.findElementAt(iterator.getStart());
-        while (tagElement != null && !(tagElement instanceof CfmlTag)) {
-            tagElement = tagElement.getParent();
-        }
-        if (tagElement == null) {
-            return false;
-        }
-        boolean doInsertion = false;
-        if (tagElement.getLastChild() instanceof PsiErrorElement) {
-            doInsertion = true;
-        } else {
-            iterator = ((EditorEx) editor).getHighlighter().createIterator(0);
-            while (!iterator.atEnd() && iterator.getStart() < offset) {
-                if (iterator.getTokenType() == CfmlTokenTypes.CF_TAG_NAME) {
-                    String currentTagName = document.getCharsSequence().subSequence(iterator.getStart(), iterator.getEnd()).toString();
-                    if (tagName.equals(currentTagName)) {
-                        PsiElement currentTagElement = file.findElementAt(iterator.getStart());
-                        currentTagElement = PsiTreeUtil.getParentOfType(currentTagElement, CfmlTag.class);
-                        if (currentTagElement.getLastChild() instanceof PsiErrorElement) {
-                            doInsertion = true;
-                            break;
-                        }
-                    }
-                }
-                iterator.advance();
-            }
-        }
-        if (doInsertion && CfmlUtil.isEndTagRequired(((CfmlTag) tagElement).getTagName(), project)) {
-            DocumentUtils.typeInStringAndMoveCaret(editor, offset, "</" + ((CfmlTag) tagElement).getTagName() + ">");
-            return true;
-        }
+    if (charAtOffset != '>') {
+      DocumentUtils.typeInStringAndMoveCaret(editor, offset, ">");
+    }
+    editor.getCaretModel().moveToOffset(++offset);
+    if (DocumentUtils.getCharAt(document, offset - 2) == '/') {
+      return false;
+    }
+    HighlighterIterator iterator = ((EditorEx)editor).getHighlighter().createIterator(offset - 2);
+
+    while (!iterator.atEnd() && !iterator.getTokenType().equals(CfmlTokenTypes.CF_TAG_NAME)) {
+      if (CfmlUtil.isControlToken(iterator.getTokenType())) {
         return false;
+      }
+      iterator.retreat();
     }
-
-
-    public Result charTyped(final char c, final Project project, final Editor editor, final PsiFile file) {
-        if (isNotCfmlFile(file, editor)) {
-            return Result.CONTINUE;
+    if (!iterator.atEnd()) {
+      iterator.retreat();
+      if (!iterator.atEnd() && iterator.getTokenType().equals(CfmlTokenTypes.LSLASH_ANGLEBRACKET)) {
+        return false;
+      }
+      iterator.advance();
+    }
+    if (iterator.atEnd()) {
+      return false;
+    }
+    String tagName = document.getCharsSequence().subSequence(iterator.getStart(), iterator.getEnd()).toString();
+    if (CfmlUtil.isSingleCfmlTag(tagName, project) || CfmlUtil.isUserDefined(tagName)) {
+      return false;
+    }
+    PsiElement tagElement = file.findElementAt(iterator.getStart());
+    while (tagElement != null && !(tagElement instanceof CfmlTag)) {
+      tagElement = tagElement.getParent();
+    }
+    if (tagElement == null) {
+      return false;
+    }
+    boolean doInsertion = false;
+    if (tagElement.getLastChild() instanceof PsiErrorElement) {
+      doInsertion = true;
+    }
+    else {
+      iterator = ((EditorEx)editor).getHighlighter().createIterator(0);
+      while (!iterator.atEnd() && iterator.getStart() < offset) {
+        if (iterator.getTokenType() == CfmlTokenTypes.CF_TAG_NAME) {
+          String currentTagName = document.getCharsSequence().subSequence(iterator.getStart(), iterator.getEnd()).toString();
+          if (tagName.equals(currentTagName)) {
+            PsiElement currentTagElement = file.findElementAt(iterator.getStart());
+            currentTagElement = PsiTreeUtil.getParentOfType(currentTagElement, CfmlTag.class);
+            if (currentTagElement.getLastChild() instanceof PsiErrorElement) {
+              doInsertion = true;
+              break;
+            }
+          }
         }
-        return Result.CONTINUE;
+        iterator.advance();
+      }
     }
+    if (doInsertion && CfmlUtil.isEndTagRequired(((CfmlTag)tagElement).getTagName(), project)) {
+      DocumentUtils.typeInStringAndMoveCaret(editor, offset, "</" + ((CfmlTag)tagElement).getTagName() + ">");
+      return true;
+    }
+    return false;
+  }
 
-    static boolean isNotCfmlFile(final PsiFile file, final Editor editor) {
-        return !(file instanceof CfmlFile)
-                || editor.getCaretModel().getOffset() == 0;
+
+  public Result charTyped(final char c, final Project project, final Editor editor, final PsiFile file) {
+    if (isNotCfmlFile(file, editor)) {
+      return Result.CONTINUE;
     }
+    return Result.CONTINUE;
+  }
+
+  static boolean isNotCfmlFile(final PsiFile file, final Editor editor) {
+    return !(file instanceof CfmlFile)
+           || editor.getCaretModel().getOffset() == 0;
+  }
 }

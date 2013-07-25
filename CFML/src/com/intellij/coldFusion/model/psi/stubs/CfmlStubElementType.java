@@ -3,13 +3,12 @@ package com.intellij.coldFusion.model.psi.stubs;
 import com.intellij.coldFusion.model.CfmlLanguage;
 import com.intellij.coldFusion.model.psi.CfmlPsiElement;
 import com.intellij.lang.Language;
-import com.intellij.psi.stubs.*;
+import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.stubs.IndexSink;
+import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.IOException;
-import java.util.Collection;
 
 /**
  * @author vnikolaenko

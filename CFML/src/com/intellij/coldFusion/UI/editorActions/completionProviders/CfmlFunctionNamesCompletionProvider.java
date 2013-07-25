@@ -18,19 +18,19 @@ import org.jetbrains.annotations.NotNull;
  */
 
 class CfmlFunctionNamesCompletionProvider extends CompletionProvider<CompletionParameters> {
-    public void addCompletions(@NotNull final CompletionParameters parameters,
-                               final ProcessingContext context,
-                               @NotNull final CompletionResultSet result) {
-        for (CfmlFunctionDescription s : CfmlLangInfo.getInstance(parameters.getPosition().getProject()).getFunctionParameters().values()) {
-            addFunctionName(result.caseInsensitive(), s);
-        }/*
+  public void addCompletions(@NotNull final CompletionParameters parameters,
+                             final ProcessingContext context,
+                             @NotNull final CompletionResultSet result) {
+    for (CfmlFunctionDescription s : CfmlLangInfo.getInstance(parameters.getPosition().getProject()).getFunctionParameters().values()) {
+      addFunctionName(result.caseInsensitive(), s);
+    }/*
         for (String s : CfmlPsiUtil.getFunctionsNamesDefined(parameters.getOriginalFile())) {
             addFunctionName(result, lookupElementFactory, s);
         }
         */
-    }
+  }
 
-    private static void addFunctionName(CompletionResultSet result, CfmlFunctionDescription s) {
-        result.addElement(CfmlLookUpItemUtil.functionDescriptionToLookupItem(s)/*LookupElementBuilder.create(s).setInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS).setIcon(Icons.METHOD_ICON)*/);
-    }
+  private static void addFunctionName(CompletionResultSet result, CfmlFunctionDescription s) {
+    result.addElement(CfmlLookUpItemUtil.functionDescriptionToLookupItem(s)/*LookupElementBuilder.create(s).setInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS).setIcon(Icons.METHOD_ICON)*/);
+  }
 }

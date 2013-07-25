@@ -1,6 +1,5 @@
 package com.intellij.coldFusion.model.formatter;
 
-import com.intellij.coldFusion.model.lexer.CfscriptTokenTypes;
 import com.intellij.coldFusion.model.parsers.CfmlElementTypes;
 import com.intellij.formatting.Alignment;
 import com.intellij.lang.ASTNode;

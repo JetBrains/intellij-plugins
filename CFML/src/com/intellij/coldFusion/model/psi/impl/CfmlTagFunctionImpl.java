@@ -41,7 +41,7 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
     return returnTypeString != null ?
            new CfmlComponentType(returnTypeString, getContainingFile(), getProject()) : null;
   }
-  
+
   @Override
   public Icon getIcon(int flags) {
     String access = CfmlPsiUtil.getPureAttributeValue(this, "access");
@@ -53,11 +53,14 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
     baseIcon.setIcon(METHOD_ICON, 0);
     if ("private".equals(access)) {
       baseIcon.setIcon(PRIVATE_ICON, 1);
-    } else if ("package".equals(access)) {
+    }
+    else if ("package".equals(access)) {
       baseIcon.setIcon(PACKAGE_LOCAL_ICON, 1);
-    } else if ("public".equals(access)) {
+    }
+    else if ("public".equals(access)) {
       baseIcon.setIcon(PUBLIC_ICON, 1);
-    } else if ("remote".equals(access)) {
+    }
+    else if ("remote".equals(access)) {
       baseIcon.setIcon(CFMLIcons.Remote_access, 1);
     }
     return baseIcon;
@@ -80,7 +83,8 @@ public class CfmlTagFunctionImpl extends CfmlNamedTagImpl implements CfmlFunctio
   public void accept(@NotNull PsiElementVisitor visitor) {
     if (visitor instanceof CfmlRecursiveElementVisitor) {
       ((CfmlRecursiveElementVisitor)visitor).visitCfmlFunction(this);
-    } else {
+    }
+    else {
       super.accept(visitor);
     }
   }

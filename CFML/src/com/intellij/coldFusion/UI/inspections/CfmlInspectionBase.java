@@ -14,29 +14,29 @@ import org.jetbrains.annotations.NotNull;
  * Date: 17.02.2009
  */
 public abstract class CfmlInspectionBase extends LocalInspectionTool {
-    @NotNull
-    public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
-        return new PsiElementVisitor() {
-            public void visitElement(final PsiElement element) {
-                registerProblems(element, holder);
-            }
-        };
-    }
+  @NotNull
+  public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, final boolean isOnTheFly) {
+    return new PsiElementVisitor() {
+      public void visitElement(final PsiElement element) {
+        registerProblems(element, holder);
+      }
+    };
+  }
 
-    protected abstract void registerProblems(final PsiElement element, final ProblemsHolder holder); 
+  protected abstract void registerProblems(final PsiElement element, final ProblemsHolder holder);
 
-    @Nls
-    @NotNull
-    public String getGroupDisplayName() {
-        return CfmlBundle.message("cfml.inspections.group");
-    }
+  @Nls
+  @NotNull
+  public String getGroupDisplayName() {
+    return CfmlBundle.message("cfml.inspections.group");
+  }
 
-    @NotNull
-    public HighlightDisplayLevel getDefaultLevel() {
-        return HighlightDisplayLevel.WARNING;
-    }
+  @NotNull
+  public HighlightDisplayLevel getDefaultLevel() {
+    return HighlightDisplayLevel.WARNING;
+  }
 
-    public boolean isEnabledByDefault() {
-        return true;
-    }
+  public boolean isEnabledByDefault() {
+    return true;
+  }
 }

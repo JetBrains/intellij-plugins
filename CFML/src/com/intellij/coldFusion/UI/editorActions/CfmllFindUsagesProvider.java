@@ -15,9 +15,9 @@ import org.jetbrains.annotations.NotNull;
  * Date: 12.02.2009
  */
 public class CfmllFindUsagesProvider implements FindUsagesProvider {
-    public WordsScanner getWordsScanner() {
-        return null;
-    }
+  public WordsScanner getWordsScanner() {
+    return null;
+  }
 
   public boolean canFindUsagesFor(@NotNull final PsiElement psiElement) {
     return psiElement instanceof CfmlReferenceExpression || (psiElement instanceof CfmlTagFunctionImpl) ||
@@ -25,27 +25,27 @@ public class CfmllFindUsagesProvider implements FindUsagesProvider {
            psiElement instanceof CfmlFunctionImpl || psiElement instanceof CfmlFunctionParameterImpl;
   }
 
-    public String getHelpId(@NotNull final PsiElement psiElement) {
-        return null;
-    }
+  public String getHelpId(@NotNull final PsiElement psiElement) {
+    return null;
+  }
 
-    @NotNull
-    public String getType(@NotNull final PsiElement element) {
-      return element instanceof CfmlReferenceExpression
-             ? "reference"
-             : (element instanceof CfmlTagFunctionImpl) || element instanceof CfmlFunctionImpl ? "Function Name" : "Argument Name";
-    }
+  @NotNull
+  public String getType(@NotNull final PsiElement element) {
+    return element instanceof CfmlReferenceExpression
+           ? "reference"
+           : (element instanceof CfmlTagFunctionImpl) || element instanceof CfmlFunctionImpl ? "Function Name" : "Argument Name";
+  }
 
-    @NotNull
-    public String getDescriptiveName(@NotNull final PsiElement element) {
-      return element instanceof CfmlReferenceExpression
-             ? "reference"
-             : (element instanceof CfmlTagFunctionImpl) || element instanceof CfmlFunctionImpl ? "function" : "argument";
-    }
+  @NotNull
+  public String getDescriptiveName(@NotNull final PsiElement element) {
+    return element instanceof CfmlReferenceExpression
+           ? "reference"
+           : (element instanceof CfmlTagFunctionImpl) || element instanceof CfmlFunctionImpl ? "function" : "argument";
+  }
 
-    @NotNull
-    public String getNodeText(@NotNull final PsiElement element, final boolean useFullName) {
-        return element.getText();
-    }
+  @NotNull
+  public String getNodeText(@NotNull final PsiElement element, final boolean useFullName) {
+    return element.getText();
+  }
 }
 

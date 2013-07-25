@@ -7,8 +7,11 @@ import org.jetbrains.annotations.Nullable;
 
 public interface CfmlParameter extends PsiElement, PsiNamedElement {
   boolean isRequired();
+
   @Nullable
   String getType();
-  @Nullable @NonNls
+
+  @Nullable
+  @NonNls
   String getName();
 }

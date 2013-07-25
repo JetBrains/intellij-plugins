@@ -16,7 +16,7 @@ public class CfmlResolveResult extends PsiElementResolveResult {
   }
 
   public static ResolveResult[] create(Collection<? extends PsiElement> from) {
-    final ResolveResult[] results = from.size()>0 ? new ResolveResult[from.size()] : EMPTY_ARRAY;
+    final ResolveResult[] results = from.size() > 0 ? new ResolveResult[from.size()] : EMPTY_ARRAY;
     int i = 0;
     for (PsiElement element : from) {
       results[i++] = new CfmlResolveResult(element);

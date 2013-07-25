@@ -25,14 +25,14 @@ import com.intellij.openapi.editor.EditorModificationUtil;
  */
 public class DocumentUtils {
   static char getCharAt(Document document, int offset) {
-      if (offset >= document.getTextLength() || offset < 0) {
-          return 0;
-      }
-      return document.getCharsSequence().charAt(offset);
+    if (offset >= document.getTextLength() || offset < 0) {
+      return 0;
+    }
+    return document.getCharsSequence().charAt(offset);
   }
 
   static void typeInStringAndMoveCaret(Editor editor, int offset, String str) {
-      EditorModificationUtil.typeInStringAtCaretHonorBlockSelection(editor, str, true);
-      editor.getCaretModel().moveToOffset(offset);
+    EditorModificationUtil.typeInStringAtCaretHonorBlockSelection(editor, str, true);
+    editor.getCaretModel().moveToOffset(offset);
   }
 }

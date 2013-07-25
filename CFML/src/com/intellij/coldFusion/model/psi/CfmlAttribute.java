@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface CfmlAttribute extends PsiElement {
   String getAttributeName();
+
   @Nullable
   String getPureAttributeValue();
 }

@@ -37,8 +37,10 @@ import java.util.Set;
  * Created by Lera Nikolaenko
  * Date: 11.02.2009
  */
-public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlReferenceExpression> implements CfmlReference, CfmlExpression, CfmlTypedElement {
+public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlReferenceExpression>
+  implements CfmlReference, CfmlExpression, CfmlTypedElement {
   private static final Logger LOG = Logger.getInstance(CfmlReferenceExpression.class.getName());
+
   public CfmlReferenceExpression(@NotNull ASTNode node) {
     super(node);
   }
@@ -54,11 +56,13 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
       CfmlFunction[] functions;
       if (componentDefinition != null) {
         functions = componentDefinition.getFunctionsWithSupers(this.getFirstChild() instanceof CfmlSuperComponentReference);
-      } else {
+      }
+      else {
         PsiFile file = this.getContainingFile();
         if (file instanceof CfmlFile) {
           functions = ((CfmlFile)file).getGlobalFunctions().toArray(CfmlFunction.EMPTY_ARRAY);
-        } else {
+        }
+        else {
           functions = CfmlFunction.EMPTY_ARRAY;
         }
       }
@@ -87,7 +91,8 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     PsiType type = null;
     if (typedOwner != null) {
       type = typedOwner.getPsiType();
-    } else {
+    }
+    else {
       return processUnqualifiedVariants(processor);
     }
     // CfmlReferenceExpression qualifier = CfmlPsiUtil.getQualifierInner(this);
@@ -96,14 +101,16 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
       if (type instanceof CfmlFunctionCallExpression.PsiClassStaticType) {
         psiClass = PsiUtil.resolveClassInType(((CfmlFunctionCallExpression.PsiClassStaticType)type).getRawType());
         processor.handleEvent(JavaScopeProcessorEvent.START_STATIC, null);
-      } else {
+      }
+      else {
         psiClass = PsiUtil.resolveClassInType(type);
       }
       processor.handleEvent(CfmlVariantsProcessor.CfmlProcessorEvent.SET_INITIAL_CLASS, psiClass);
       if (psiClass != null && !psiClass.processDeclarations(processor, ResolveState.initial(), null, this)) {
         return false;
       }
-    } else if (type instanceof CfmlComponentType) {
+    }
+    else if (type instanceof CfmlComponentType) {
       Collection<CfmlComponent> components = ((CfmlComponentType)type).resolve();
 
       for (CfmlComponent component : components) {
@@ -132,7 +139,8 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
            referenceText.toLowerCase().startsWith("set")) &&
           referenceText.substring(3).equalsIgnoreCase(name)) {
         return true;
-      } else {
+      }
+      else {
         return false;
       }
     }
@@ -181,12 +189,14 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
     for (ResolveResult variantsResult : variantsResults) {
       if (variantsResult.getElement() != null) {
         PsiElement parentRef = variantsResult.getElement().getParent();
-        if (!(parentRef instanceof CfmlReferenceExpression) || (variantsResult.getElement() instanceof CfmlAssignmentExpression.AssignedVariable && CfmlUtil.hasEqualScope(this, (CfmlReferenceExpression)parentRef))) {
+        if (!(parentRef instanceof CfmlReferenceExpression) ||
+            (variantsResult.getElement() instanceof CfmlAssignmentExpression.AssignedVariable &&
+             CfmlUtil.hasEqualScope(this, (CfmlReferenceExpression)parentRef))) {
           results.add(variantsResult);
         }
       }
     }
-    if(results.isEmpty()){
+    if (results.isEmpty()) {
       return ResolveResult.EMPTY_ARRAY;
     }
     // resolve to truly declaration if found, otherwise resolve to the nearest assignment
@@ -259,13 +269,15 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
   public Object[] getVariants() {
     final CfmlVariantsProcessor<PsiNamedElement> processor = new CfmlVariantsProcessor<PsiNamedElement>(this, getParent(), null) {
       Set<String> myVariablesNames = new HashSet<String>();
+
       protected PsiNamedElement execute(final PsiNamedElement element, final boolean error) {
         if (element instanceof CfmlVariable) {
           if (myVariablesNames.add(element.getName())) {
             return element;
           }
           return null;
-        } else {
+        }
+        else {
           // only variables can be scoped
           PsiElement scope = getScope();
           if (scope != null && !scope.getText().equalsIgnoreCase("this")) {
@@ -321,8 +333,11 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
         if (rightExpr == this || (rightExpr instanceof CfmlFunctionCallExpression &&
                                   ((CfmlFunctionCallExpression)rightExpr).getExternalType() == null &&
                                   ((CfmlFunctionCallExpression)rightExpr).getReferenceExpression() == this)) {
-          LOG.error(LogMessageEx.createEvent("CFML parsing problem", "Please report the problem to JetBrains with the file attached\nProblem at" + (rightExpr != null ? rightExpr.getText() : null) + "\n" +
-                                                                     DebugUtil.currentStackTrace(),
+          LOG.error(LogMessageEx.createEvent("CFML parsing problem",
+                                             "Please report the problem to JetBrains with the file attached\nProblem at" +
+                                             (rightExpr != null ? rightExpr.getText() : null) +
+                                             "\n" +
+                                             DebugUtil.currentStackTrace(),
                                              "CFML parsing problem",
                                              "CFML parsing problem",
                                              AttachmentFactory
@@ -362,7 +377,8 @@ public class CfmlReferenceExpression extends AbstractQualifiedReference<CfmlRefe
       }
       if (referenceNode.getElementType() == CfmlTokenTypes.STRING_TEXT) {
         newElement = CfmlPsiUtil.createConstantString(newElementName, getProject());
-      } else {
+      }
+      else {
         newElement = CfmlPsiUtil.createIdentifier(newElementName, getProject());
       }
       //noinspection ConstantConditions

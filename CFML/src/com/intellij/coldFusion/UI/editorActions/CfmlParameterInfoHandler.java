@@ -94,31 +94,35 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
   public void showParameterInfo(@NotNull PsiElement element, CreateParameterInfoContext context) {
     ResolveResult[] variants = ResolveResult.EMPTY_ARRAY;
     if (element instanceof PsiPolyVariantReference) {
-      variants = ((PsiPolyVariantReference) element).multiResolve(true);
+      variants = ((PsiPolyVariantReference)element).multiResolve(true);
       if (variants.length != 0) {
-        context.setItemsToShow(ContainerUtil.map2Array(variants, CfmlFunctionDescription.class, new Function<ResolveResult, CfmlFunctionDescription>() {
-          public CfmlFunctionDescription fun(ResolveResult resolveResult) {
-            final PsiElement element1 = resolveResult.getElement();
-            if (CfmlPsiUtil.isFunctionDefinition(element1)) {
-              CfmlFunction function = CfmlPsiUtil.getFunctionDefinition(element1);
-              if (function != null) {
-                return function.getFunctionInfo();
+        context.setItemsToShow(
+          ContainerUtil.map2Array(variants, CfmlFunctionDescription.class, new Function<ResolveResult, CfmlFunctionDescription>() {
+            public CfmlFunctionDescription fun(ResolveResult resolveResult) {
+              final PsiElement element1 = resolveResult.getElement();
+              if (CfmlPsiUtil.isFunctionDefinition(element1)) {
+                CfmlFunction function = CfmlPsiUtil.getFunctionDefinition(element1);
+                if (function != null) {
+                  return function.getFunctionInfo();
+                }
               }
-            } else if (element1 instanceof PsiMethod) {
-              PsiMethod function = (PsiMethod)element1;
-              CfmlFunctionDescription javaMethodDescr = new CfmlFunctionDescription(function.getName(), function.getReturnType().getPresentableText());
-              final PsiParameter[] psiParameters = function.getParameterList().getParameters();
-              final int paramsNum = psiParameters.length;
-              for (int i = 0; i < paramsNum; i++) {
-                PsiParameter psiParameter = psiParameters[i];
-                javaMethodDescr.addParameter(new CfmlFunctionDescription.CfmlParameterDescription(psiParameter.getName(),
-                  psiParameter.getType().getPresentableText(), true));
+              else if (element1 instanceof PsiMethod) {
+                PsiMethod function = (PsiMethod)element1;
+                CfmlFunctionDescription javaMethodDescr =
+                  new CfmlFunctionDescription(function.getName(), function.getReturnType().getPresentableText());
+                final PsiParameter[] psiParameters = function.getParameterList().getParameters();
+                final int paramsNum = psiParameters.length;
+                for (int i = 0; i < paramsNum; i++) {
+                  PsiParameter psiParameter = psiParameters[i];
+                  javaMethodDescr.addParameter(new CfmlFunctionDescription.CfmlParameterDescription(psiParameter.getName(),
+                                                                                                    psiParameter.getType()
+                                                                                                      .getPresentableText(), true));
+                }
+                return javaMethodDescr;
               }
-              return javaMethodDescr;
+              return null;
             }
-            return null;
-          }
-        }));
+          }));
         context.showHint(element, element.getTextRange().getStartOffset(), this);
         return;
       }
@@ -126,7 +130,7 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
     if (element instanceof CfmlReferenceExpression) {
       String functionName = element.getText().toLowerCase();
       if (ArrayUtil.find(CfmlLangInfo.getInstance(element.getProject()).getPredefinedFunctionsLowCase(), functionName) != -1) {
-        context.setItemsToShow(new Object[] {CfmlLangInfo.getInstance(element.getProject()).getFunctionParameters().get(functionName)});
+        context.setItemsToShow(new Object[]{CfmlLangInfo.getInstance(element.getProject()).getFunctionParameters().get(functionName)});
         context.showHint(element, element.getTextRange().getStartOffset(), this);
       }
     }
@@ -135,7 +139,8 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
   public void updateParameterInfo(@NotNull PsiElement place, UpdateParameterInfoContext context) {
     if (context.getParameterOwner() == null) {
       context.setParameterOwner(place);
-    } else if (!context.getParameterOwner().equals(place)) {
+    }
+    else if (!context.getParameterOwner().equals(place)) {
       context.removeHint();
       return;
     }
@@ -163,13 +168,13 @@ public class CfmlParameterInfoHandler implements ParameterInfoHandler<PsiElement
 
     myText = p.getParametersListPresentableText();
     context.setupUIComponentPresentation(
-        myText,
-        0,
-        0,
-        !context.isUIComponentEnabled(),
-        false,
-        false,
-        context.getDefaultParameterColor()
+      myText,
+      0,
+      0,
+      !context.isUIComponentEnabled(),
+      false,
+      false,
+      context.getDefaultParameterColor()
     );
   }
 

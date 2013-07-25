@@ -63,7 +63,6 @@ public class CfmlAttributeDescription implements Comparable<CfmlAttributeDescrip
 
   public int compareTo(CfmlAttributeDescription o) {
     return myNamePattern.pattern().compareTo(o.myNamePattern.pattern());
-
   }
 
   @Override

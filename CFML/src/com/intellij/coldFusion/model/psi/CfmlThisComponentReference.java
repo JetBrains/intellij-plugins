@@ -29,7 +29,7 @@ public class CfmlThisComponentReference extends CfmlCompositeElement implements 
     if (resolveResult == null) {
       return ResolveResult.EMPTY_ARRAY;
     }
-    return new ResolveResult[] {new PsiElementResolveResult(resolveResult, false)};
+    return new ResolveResult[]{new PsiElementResolveResult(resolveResult, false)};
   }
 
   @Override
@@ -66,7 +66,7 @@ public class CfmlThisComponentReference extends CfmlCompositeElement implements 
   @Override
   public boolean isReferenceTo(PsiElement element) {
     return element instanceof CfmlComponent &&
-        (element.getContainingFile() == getContainingFile());
+           (element.getContainingFile() == getContainingFile());
   }
 
   @NotNull

@@ -76,7 +76,8 @@ public class CfmlProjectConfiguration implements PersistentStateComponent<CfmlPr
 
     private String myLanguageLevel = CfmlLanguage.CF10;
 
-    public State() {}
+    public State() {
+    }
 
     public State(CfmlMappingsConfig mappings) {
       myMapps = mappings;
@@ -113,7 +114,6 @@ public class CfmlProjectConfiguration implements PersistentStateComponent<CfmlPr
     public void setSlashMappingElement(@Nullable Element element) {
       mySlashMappingElement = element;
     }
-
 
 
     @Tag("language_level")

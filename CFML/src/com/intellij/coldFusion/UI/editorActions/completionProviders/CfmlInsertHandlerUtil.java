@@ -19,5 +19,4 @@ public class CfmlInsertHandlerUtil {
     EditorModificationUtil.insertStringAtCaret(editor, string);
     PsiDocumentManager.getInstance(editor.getProject()).commitDocument(editor.getDocument());
   }
-
 }

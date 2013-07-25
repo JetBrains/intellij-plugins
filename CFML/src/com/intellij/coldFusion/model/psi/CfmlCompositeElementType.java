@@ -17,16 +17,16 @@ import org.jetbrains.annotations.NotNull;
  * To change this template use File | Settings | File Templates.
  */
 public class CfmlCompositeElementType extends IElementType implements ICompositeElementType {
-    public CfmlCompositeElementType(@NotNull @NonNls final String debugName) {
-        super(debugName, CfmlLanguage.INSTANCE);
-    }
-    
-    public PsiElement createPsiElement(ASTNode node) {
-        return new CfmlCompositeElement(node);
-    }
+  public CfmlCompositeElementType(@NotNull @NonNls final String debugName) {
+    super(debugName, CfmlLanguage.INSTANCE);
+  }
 
-    @NotNull
-    public ASTNode createCompositeNode() {
-        return new CompositeElement(this);
-    }
+  public PsiElement createPsiElement(ASTNode node) {
+    return new CfmlCompositeElement(node);
+  }
+
+  @NotNull
+  public ASTNode createCompositeNode() {
+    return new CompositeElement(this);
+  }
 }

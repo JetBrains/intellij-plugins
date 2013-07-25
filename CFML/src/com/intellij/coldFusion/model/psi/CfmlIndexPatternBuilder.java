@@ -26,12 +26,12 @@ public class CfmlIndexPatternBuilder implements IndexPatternBuilder {
     if (file instanceof CfmlFile) {
 
 
-      LayeredLexer cfmlLayeredLexer =    new LayeredLexer(new CfmlLexer(true, file.getProject()));
+      LayeredLexer cfmlLayeredLexer = new LayeredLexer(new CfmlLexer(true, file.getProject()));
 
-      cfmlLayeredLexer.registerLayer( new XmlHighlightingLexer(),CfmlElementTypes.TEMPLATE_TEXT);
-      cfmlLayeredLexer.registerLayer(new SqlLexer(),CfmlElementTypes.SQL);
+      cfmlLayeredLexer.registerLayer(new XmlHighlightingLexer(), CfmlElementTypes.TEMPLATE_TEXT);
+      cfmlLayeredLexer.registerLayer(new SqlLexer(), CfmlElementTypes.SQL);
 
-       return cfmlLayeredLexer;
+      return cfmlLayeredLexer;
     }
     return null;
   }

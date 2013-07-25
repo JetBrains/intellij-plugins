@@ -8,6 +8,8 @@ import com.intellij.psi.stubs.NamedStub;
  */
 public interface CfmlComponentStub extends NamedStub<CfmlComponent> {
   String getSuperclass();
+
   String[] getInterfaces();
+
   boolean isInterface();
 }

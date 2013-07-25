@@ -8,16 +8,16 @@ import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 public class CfmlQuoteHandler implements QuoteHandler {
   public boolean isClosingQuote(HighlighterIterator iterator, int offset) {
     return iterator.getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE_CLOSER ||
-            iterator.getTokenType() == CfmlTokenTypes.SINGLE_QUOTE_CLOSER ||
-            iterator.getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE_CLOSER ||
-            iterator.getTokenType() == CfmlTokenTypes.SINGLE_QUOTE_CLOSER;
+           iterator.getTokenType() == CfmlTokenTypes.SINGLE_QUOTE_CLOSER ||
+           iterator.getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE_CLOSER ||
+           iterator.getTokenType() == CfmlTokenTypes.SINGLE_QUOTE_CLOSER;
   }
 
   public boolean isOpeningQuote(HighlighterIterator iterator, int offset) {
-      return iterator.getTokenType() == CfmlTokenTypes.SINGLE_QUOTE ||
-              iterator.getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE ||
-              iterator.getTokenType() == CfmlTokenTypes.SINGLE_QUOTE ||
-              iterator.getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE;
+    return iterator.getTokenType() == CfmlTokenTypes.SINGLE_QUOTE ||
+           iterator.getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE ||
+           iterator.getTokenType() == CfmlTokenTypes.SINGLE_QUOTE ||
+           iterator.getTokenType() == CfmlTokenTypes.DOUBLE_QUOTE;
   }
 
   public boolean hasNonClosedLiteral(Editor editor, HighlighterIterator iterator, int offset) {

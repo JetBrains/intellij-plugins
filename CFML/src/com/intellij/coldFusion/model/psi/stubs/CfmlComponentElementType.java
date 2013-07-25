@@ -58,13 +58,15 @@ public abstract class CfmlComponentElementType extends CfmlStubElementType<CfmlC
     if (shortName != null) {
       if (stub.isInterface()) {
         sink.occurrence(CfmlInterfaceIndex.KEY, shortName.toLowerCase());
-      } else {
+      }
+      else {
         sink.occurrence(CfmlComponentIndex.KEY, shortName.toLowerCase());
       }
     }
-    if(stub.getSuperclass() != null)
+    if (stub.getSuperclass() != null) {
       sink.occurrence(CfmlInheritanceIndex.KEY, stub.getSuperclass().toLowerCase());
-    for (String superName : stub.getInterfaces()){
+    }
+    for (String superName : stub.getInterfaces()) {
       sink.occurrence(CfmlInheritanceIndex.KEY, superName.toLowerCase());
     }
   }

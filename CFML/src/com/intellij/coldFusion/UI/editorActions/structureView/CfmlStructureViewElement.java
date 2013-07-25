@@ -31,9 +31,11 @@ public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
   private void collectResults(Collection<StructureViewTreeElement> result, PsiElement element) {
     if (element instanceof CfmlComponent) {
       result.addAll(makeCollection(((CfmlComponent)element).getFunctions()));
-    } else if (element instanceof CfmlFunction) {
+    }
+    else if (element instanceof CfmlFunction) {
       result.add(new CfmlStructureViewElement(element));
-    } else if (element instanceof CfmlTag) {
+    }
+    else if (element instanceof CfmlTag) {
       final PsiElement[] children = element.getChildren();
       for (PsiElement child : children) {
         collectResults(result, child);
@@ -42,18 +44,18 @@ public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
   }
 
   @NotNull
-    public Collection<StructureViewTreeElement> getChildrenBase() {
-      PsiElement element = getElement();
-      Collection<StructureViewTreeElement> result = new LinkedList<StructureViewTreeElement>();
+  public Collection<StructureViewTreeElement> getChildrenBase() {
+    PsiElement element = getElement();
+    Collection<StructureViewTreeElement> result = new LinkedList<StructureViewTreeElement>();
 
-      if (element != null && (element instanceof CfmlFile || !(element instanceof CfmlFunction))) {
-        final PsiElement[] children = element.getChildren();
-        for (PsiElement child : children) {
-          collectResults(result, child);
-        }
+    if (element != null && (element instanceof CfmlFile || !(element instanceof CfmlFunction))) {
+      final PsiElement[] children = element.getChildren();
+      for (PsiElement child : children) {
+        collectResults(result, child);
       }
+    }
 
-      return result;
+    return result;
   }
 
   @Override
@@ -65,7 +67,8 @@ public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
     PsiElement element = getElement();
     if (element instanceof CfmlFunction) {
       return ((CfmlFunction)element).getFunctionInfo().getPresentableText();
-    } else if (element instanceof CfmlFile) {
+    }
+    else if (element instanceof CfmlFile) {
       return ((CfmlFile)element).getName();
     }
     return "";
@@ -76,14 +79,14 @@ public class CfmlStructureViewElement extends PsiTreeElementBase<PsiElement> {
   }
 
   private Collection<StructureViewTreeElement> makeCollection(@Nullable PsiElement[] tags) {
-        if (tags == null) {
-            return Collections.emptyList();
-        }
-        return ContainerUtil.map2List(tags,
-                new Function<PsiElement, StructureViewTreeElement>() {
-                    public StructureViewTreeElement fun(PsiElement cfmlTag) {
-                        return new CfmlStructureViewElement(cfmlTag);
-                    }
-                });
+    if (tags == null) {
+      return Collections.emptyList();
     }
+    return ContainerUtil.map2List(tags,
+                                  new Function<PsiElement, StructureViewTreeElement>() {
+                                    public StructureViewTreeElement fun(PsiElement cfmlTag) {
+                                      return new CfmlStructureViewElement(cfmlTag);
+                                    }
+                                  });
+  }
 }

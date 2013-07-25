@@ -80,7 +80,8 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
         typeText = type.getPresentableText();
       }
       name = ((CfmlVariable)element).getlookUpString();
-    } else if (element instanceof PsiDirectory) {
+    }
+    else if (element instanceof PsiDirectory) {
       name = element.getName();
       tailText = ".";
     }
@@ -115,7 +116,8 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
     else if (element instanceof CfmlComponent) {
       if (((CfmlComponent)element).isInterface()) {
         return INTERFACE_ICON;
-      } else {
+      }
+      else {
         return CLASS_ICON;
       }
     }
@@ -125,7 +127,7 @@ public class CfmlLookUpItemUtil implements PlatformIcons {
   public static CfmlFunctionDescription getFunctionDescription(CfmlFunction function) {
     PsiType returnType = function.getReturnType();
     CfmlFunctionDescription functionInfo = new CfmlFunctionDescription(function.getName(),
-      returnType != null ? returnType.getCanonicalText() : null);
+                                                                       returnType != null ? returnType.getCanonicalText() : null);
     CfmlParameter[] params = function.getParameters();
     for (CfmlParameter param : params) {
       functionInfo.addParameter(new CfmlFunctionDescription.CfmlParameterDescription(param.getName(), param.getType(), param.isRequired()));

@@ -32,63 +32,65 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 class CfmlAttributeNamesCompletionProvider extends CompletionProvider<CompletionParameters> {
-    public void addCompletions(@NotNull final CompletionParameters parameters,
-                               final ProcessingContext context,
-                               @NotNull final CompletionResultSet result) {
+  public void addCompletions(@NotNull final CompletionParameters parameters,
+                             final ProcessingContext context,
+                             @NotNull final CompletionResultSet result) {
 
-        PsiElement element = parameters.getPosition();
-      String tagName = "";
-      while (element != null && !(element instanceof CfmlTag) && !(element instanceof CfmlComponent) &&
-             !(element instanceof CfmlPropertyImpl)) {
-        PsiElement prevNode = element.getPrevSibling();
-        PsiElement superPrevNode = prevNode != null ? prevNode.getPrevSibling() : null;
-        if (superPrevNode != null && superPrevNode.getText().equalsIgnoreCase("property")) {
-          tagName = "cfproperty";
-          break;
-        }
-        element = element.getParent();
+    PsiElement element = parameters.getPosition();
+    String tagName = "";
+    while (element != null && !(element instanceof CfmlTag) && !(element instanceof CfmlComponent) &&
+           !(element instanceof CfmlPropertyImpl)) {
+      PsiElement prevNode = element.getPrevSibling();
+      PsiElement superPrevNode = prevNode != null ? prevNode.getPrevSibling() : null;
+      if (superPrevNode != null && superPrevNode.getText().equalsIgnoreCase("property")) {
+        tagName = "cfproperty";
+        break;
       }
-      if (element == null) {
-        return;
-      }
-      if (tagName.isEmpty()) {
-        tagName =
-          element instanceof CfmlTag ? ((CfmlTag)element).getTagName() : element instanceof CfmlPropertyImpl ? "cfproperty" : "cfcomponent";
-      }
-        Set<String> excluded = new HashSet<String>();
-        final CfmlAttributeImpl[] attributes = PsiTreeUtil.getChildrenOfType(element, CfmlAttributeImpl.class);
-        if (attributes != null) {
-        for (CfmlAttributeImpl attribute : attributes) {
-            excluded.add(attribute.getAttributeName());
-          }
-        }
-        for (CfmlAttributeDescription s : CfmlUtil.getAttributes(tagName, element.getProject())) {
-            if (s.getName() == null) {
-                continue;
-            }
-            if (excluded.contains(s.getName())) {
-              continue;
-            }
-            result.addElement(TailTypeDecorator.withTail(LookupElementBuilder.create(s.getName()).
-              withCaseSensitivity(false), new TailType() {
-                public int processTail(Editor editor, int tailOffset) {
-                    HighlighterIterator iterator = ((EditorEx) editor).getHighlighter().createIterator(tailOffset);
-                    if (!iterator.atEnd() && iterator.getTokenType() == CfmlTokenTypes.WHITE_SPACE) iterator.advance();
-                    if (!iterator.atEnd() && iterator.getTokenType() == CfmlTokenTypes.ASSIGN) iterator.advance();
-                    else {
-                        editor.getDocument().insertString(tailOffset, "=\"\"");
-                        return moveCaret(editor, tailOffset, 2);
-                    }
-                    int offset = iterator.getStart();
-                    if (!iterator.atEnd() && iterator.getTokenType() == CfmlTokenTypes.WHITE_SPACE) iterator.advance();
-                    if (!iterator.atEnd() && CfmlTokenTypes.STRING_ELEMENTS.contains(iterator.getTokenType())) {
-                        return tailOffset;
-                    }
-
-                    editor.getDocument().insertString(offset, "\"\"");
-                    return moveCaret(editor, tailOffset, offset - tailOffset + 1);
-                }
-            }));
-        }
+      element = element.getParent();
     }
+    if (element == null) {
+      return;
+    }
+    if (tagName.isEmpty()) {
+      tagName =
+        element instanceof CfmlTag ? ((CfmlTag)element).getTagName() : element instanceof CfmlPropertyImpl ? "cfproperty" : "cfcomponent";
+    }
+    Set<String> excluded = new HashSet<String>();
+    final CfmlAttributeImpl[] attributes = PsiTreeUtil.getChildrenOfType(element, CfmlAttributeImpl.class);
+    if (attributes != null) {
+      for (CfmlAttributeImpl attribute : attributes) {
+        excluded.add(attribute.getAttributeName());
+      }
+    }
+    for (CfmlAttributeDescription s : CfmlUtil.getAttributes(tagName, element.getProject())) {
+      if (s.getName() == null) {
+        continue;
+      }
+      if (excluded.contains(s.getName())) {
+        continue;
+      }
+      result.addElement(TailTypeDecorator.withTail(LookupElementBuilder.create(s.getName()).
+        withCaseSensitivity(false), new TailType() {
+        public int processTail(Editor editor, int tailOffset) {
+          HighlighterIterator iterator = ((EditorEx)editor).getHighlighter().createIterator(tailOffset);
+          if (!iterator.atEnd() && iterator.getTokenType() == CfmlTokenTypes.WHITE_SPACE) iterator.advance();
+          if (!iterator.atEnd() && iterator.getTokenType() == CfmlTokenTypes.ASSIGN) {
+            iterator.advance();
+          }
+          else {
+            editor.getDocument().insertString(tailOffset, "=\"\"");
+            return moveCaret(editor, tailOffset, 2);
+          }
+          int offset = iterator.getStart();
+          if (!iterator.atEnd() && iterator.getTokenType() == CfmlTokenTypes.WHITE_SPACE) iterator.advance();
+          if (!iterator.atEnd() && CfmlTokenTypes.STRING_ELEMENTS.contains(iterator.getTokenType())) {
+            return tailOffset;
+          }
+
+          editor.getDocument().insertString(offset, "\"\"");
+          return moveCaret(editor, tailOffset, offset - tailOffset + 1);
+        }
+      }));
+    }
+  }
 }

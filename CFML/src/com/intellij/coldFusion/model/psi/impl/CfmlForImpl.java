@@ -74,7 +74,8 @@ public class CfmlForImpl extends CfmlCompositeElement {
           return false;
         }
       }
-    } else {
+    }
+    else {
       List<PsiElement> childrenByType = findChildrenByType(CfscriptTokenTypes.SEMICOLON);
       if (childrenByType.size() == 2) {
         CfmlAssignmentExpression[] childrenByClass = findChildrenByClass(CfmlAssignmentExpression.class);

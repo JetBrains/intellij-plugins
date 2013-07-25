@@ -42,7 +42,6 @@ public class
   }
 
 
-
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new CfmlUnitRunConfigurationForm(getProject());
@@ -109,7 +108,7 @@ public class
     final CfmlUnitRunnerParameters params = getRunnerParameters();
     final String path = params.getPath();
 
-    switch(params.getScope()) {
+    switch (params.getScope()) {
       case Method:
       case Component: {
         if (StringUtil.isEmpty(path)) {
@@ -123,8 +122,9 @@ public class
           throw new RuntimeConfigurationError(CfmlBundle.message("cfml.runconfig.file.not.in.project", path));
         }
         final PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(file);
-        if (!(psiFile instanceof CfmlFile))
+        if (!(psiFile instanceof CfmlFile)) {
           throw new RuntimeConfigurationException("Incorrect file type");
+        }
         /*
         final CfmlFile cfmlFile = (CfmlFile)psiFile;
         PsiTreeUtil.getChildrenOfType(cfmlFile, CfmlTagImpl);

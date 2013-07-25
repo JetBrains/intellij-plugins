@@ -49,6 +49,4 @@ public class CfmlCreateFileAction extends CreateFileFromTemplateAction implement
   public boolean equals(Object obj) {
     return obj instanceof CfmlCreateFileAction;
   }
-
-
 }

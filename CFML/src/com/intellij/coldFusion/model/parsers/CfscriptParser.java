@@ -39,7 +39,8 @@ public class CfscriptParser {
         propertyBodyMarker.rollbackTo();
         CfmlParser.parseAttributes(myBuilder, "cfproperty", CfscriptTokenTypes.IDENTIFIER, true);
         return true;
-      } else if (myBuilder.getTokenType() == IDENTIFIER) {
+      }
+      else if (myBuilder.getTokenType() == IDENTIFIER) {
         PsiBuilder.Marker attributesMarker = myBuilder.mark();
         myBuilder.advanceLexer();
         if (myBuilder.getTokenType() == CfmlTokenTypes.ASSIGN) {
@@ -47,7 +48,8 @@ public class CfscriptParser {
           propertyBodyMarker.drop();
           CfmlParser.parseAttributes(myBuilder, "cfproperty", CfscriptTokenTypes.IDENTIFIER, true);
           return true;
-        } else {
+        }
+        else {
           attributesMarker.drop();
           propertyBodyMarker.rollbackTo();
           return false;
@@ -85,11 +87,13 @@ public class CfscriptParser {
       if (!parseOptionalIDAndTags_PropertyUtil(myBuilder)) {
         propertyMarker.drop();
         return false;
-      } else {
+      }
+      else {
         propertyMarker.done(CfmlElementTypes.PROPERTY);
         return true;
       }
-    } else {
+    }
+    else {
       propertyMarker.done(CfmlElementTypes.PROPERTY);
       return true;
     }
@@ -127,7 +131,8 @@ public class CfscriptParser {
     if (myBuilder.getTokenType() == IDENTIFIER &&
         "property".equalsIgnoreCase(myBuilder.getTokenText()) &&
         parseProperty(myBuilder)) {
-    } else {
+    }
+    else {
       (new CfmlExpressionParser(myBuilder)).parseStatement();
     }
     eatSemicolon(myBuilder);
@@ -163,7 +168,8 @@ public class CfscriptParser {
     IElementType tokenType = myBuilder.getTokenType();
     if (tokenType == CfmlTokenTypes.SINGLE_QUOTE || tokenType == CfmlTokenTypes.DOUBLE_QUOTE) {
       (new CfmlExpressionParser(myBuilder)).parseString();
-    } else if (tokenType == IDENTIFIER) {
+    }
+    else if (tokenType == IDENTIFIER) {
       (new CfmlExpressionParser(myBuilder)).parseComponentReference();
     }
     marker.done(CfmlElementTypes.IMPORTEXPRESSION);
@@ -246,7 +252,8 @@ public class CfscriptParser {
       if (tokenType == CfmlTokenTypes.SINGLE_QUOTE || tokenType == CfmlTokenTypes.DOUBLE_QUOTE) {
         (new CfmlExpressionParser(myBuilder)).parseString();
         eatSemicolon(myBuilder);
-      } else {
+      }
+      else {
         myBuilder.error(CfmlBundle.message("cfml.parsing.string.expected"));
       }
     }
@@ -349,7 +356,8 @@ public class CfscriptParser {
     if (!(new CfmlExpressionParser(myBuilder)).parseReference(false)) {
       myBuilder.error(CfmlBundle.message("cfml.parsing.close.bracket.expected"));
       definitionMarker.drop();
-    } else {
+    }
+    else {
       definitionMarker.done(CfmlElementTypes.FORVARIABLE);
     }
     if (myBuilder.getTokenType() != IN_L) {
@@ -429,7 +437,8 @@ public class CfscriptParser {
     final PsiBuilder.Marker marker = myBuilder.mark();
     if (!parseType(myBuilder) || myBuilder.getTokenType() != IDENTIFIER) {
       marker.rollbackTo();
-    } else {
+    }
+    else {
       marker.drop();
     }
     // parse parameter name
@@ -450,7 +459,8 @@ public class CfscriptParser {
         myBuilder.advanceLexer();
         parseParametersList(myBuilder);
       }
-    } else {
+    }
+    else {
       argumentMarker.drop();
     }
   }
@@ -507,9 +517,9 @@ public class CfscriptParser {
              myBuilder.getTokenType() != DEFAULT_KEYWORD &&
              myBuilder.getTokenType() != CASE_KEYWORD &&
              myBuilder.getTokenType() != R_CURLYBRACKET && !isEndOfScript(myBuilder)) {
-         if (!parseScript(myBuilder, false)) {
-           break;
-         }
+        if (!parseScript(myBuilder, false)) {
+          break;
+        }
         if (offset == myBuilder.getCurrentOffset()) {
           break;
         }
@@ -520,7 +530,8 @@ public class CfscriptParser {
         myBuilder.advanceLexer();
         eatSemicolon(myBuilder);
       }
-    } else {
+    }
+    else {
       parseScript(myBuilder, false);
     }
   }
@@ -535,7 +546,8 @@ public class CfscriptParser {
       if (myBuilder.getTokenType() == IDENTIFIER) {
         myBuilder.error(CfmlBundle.message("cfml.parsing.constant.expected"));
         myBuilder.advanceLexer();
-      } else {
+      }
+      else {
         myBuilder.error(CfmlBundle.message("cfml.parsing.constant.expected"));
       }
     }
@@ -603,7 +615,8 @@ public class CfscriptParser {
       final PsiBuilder.Marker typeMarker = myBuilder.mark();
       myBuilder.advanceLexer();
       typeMarker.done(CfmlElementTypes.TYPE);
-    } else {
+    }
+    else {
       if (myBuilder.getTokenType() != IDENTIFIER) {
         myBuilder.error(CfmlBundle.message("cfml.parsing.type.expected"));
         return false;
@@ -667,6 +680,7 @@ public class CfscriptParser {
   public boolean parseScript(PsiBuilder myBuilder, boolean betweenScriptTags) {
     return parseScript(myBuilder, betweenScriptTags, true, false);
   }
+
   public boolean parseScript(PsiBuilder myBuilder, boolean betweenScriptTags, boolean createBlockOfStatments, boolean waitForRightBracket) {
     PsiBuilder.Marker blockOfStatements = null;
     if (myBuilder.getTokenType() == L_CURLYBRACKET) {
@@ -683,7 +697,7 @@ public class CfscriptParser {
         parseImport(myBuilder);
       }
       else if (myBuilder.getTokenType() == COMPONENT_KEYWORD ||
-          myBuilder.getTokenType() == INTERFACE_KEYWORD) {
+               myBuilder.getTokenType() == INTERFACE_KEYWORD) {
         parseComponentOrInterface(myBuilder);
       }
       else if (CfscriptTokenTypes.ACCESS_KEYWORDS.contains(myBuilder.getTokenType()) ||
@@ -721,7 +735,7 @@ public class CfscriptParser {
         parseReturnStatement(myBuilder);
       }
       else if (myBuilder.getTokenType() == BREAK_KEYWORD ||
-        myBuilder.getTokenType() == ABORT_KEYWORD) {
+               myBuilder.getTokenType() == ABORT_KEYWORD) {
         myBuilder.advanceLexer();
         eatSemicolon(myBuilder);
       }
@@ -737,7 +751,8 @@ public class CfscriptParser {
           if (blockOfStatements != null) {
             if (createBlockOfStatments) {
               blockOfStatements.done(CfmlElementTypes.BLOCK_OF_STATEMENTS);
-            } else {
+            }
+            else {
               blockOfStatements.drop();
             }
           }
@@ -756,7 +771,9 @@ public class CfscriptParser {
         if (myBuilder.getTokenType() == VAR_KEYWORD || myBuilder.getTokenType() == SCOPE_KEYWORD) {
           parseStatement(myBuilder);
         }
-        else if (myBuilder.getTokenType() != CONTINUE_KEYWORD && myBuilder.getTokenType() != RETURN_KEYWORD && myBuilder.getTokenType() != BREAK_KEYWORD) {
+        else if (myBuilder.getTokenType() != CONTINUE_KEYWORD &&
+                 myBuilder.getTokenType() != RETURN_KEYWORD &&
+                 myBuilder.getTokenType() != BREAK_KEYWORD) {
           PsiBuilder.Marker errorMarker = myBuilder.mark();
           myBuilder.advanceLexer();
           errorMarker.error(CfmlBundle.message("cfml.parsing.unexpected.token"));
@@ -769,9 +786,10 @@ public class CfscriptParser {
       else {
         PsiBuilder.Marker marker = myBuilder.mark();
         if (parseType(myBuilder) && myBuilder.getTokenType() == FUNCTION_KEYWORD) {
-            marker.rollbackTo();
-            parseFunctionExpression(myBuilder);
-        } else {
+          marker.rollbackTo();
+          parseFunctionExpression(myBuilder);
+        }
+        else {
           marker.rollbackTo();
           if (myBuilder.getTokenType() == IDENTIFIER) {
             PsiBuilder.Marker assignMarker = myBuilder.mark();
@@ -839,7 +857,8 @@ public class CfscriptParser {
   }
 
   private static boolean isEndOfScript(PsiBuilder myBuilder) {
-    return myBuilder.getTokenType() == null || myBuilder.getTokenType() == CfmlTokenTypes.OPENER || myBuilder.getTokenType() == CfmlTokenTypes.LSLASH_ANGLEBRACKET;
+    return myBuilder.getTokenType() == null ||
+           myBuilder.getTokenType() == CfmlTokenTypes.OPENER ||
+           myBuilder.getTokenType() == CfmlTokenTypes.LSLASH_ANGLEBRACKET;
   }
-
 }

@@ -31,50 +31,52 @@ public class CfmlParserDefinition implements ParserDefinition {
     TokenSet.create(CfmlTokenTypes.COMMENT, CfscriptTokenTypes.COMMENT, CfmlTokenTypes.VAR_ANNOTATION);
 
   @NotNull
-    public Lexer createLexer(Project project) {
-        return new CfmlLexer(false, project);
-    }
+  public Lexer createLexer(Project project) {
+    return new CfmlLexer(false, project);
+  }
 
-    public PsiParser createParser(Project project) {
-        return new CfmlParser();
-    }
+  public PsiParser createParser(Project project) {
+    return new CfmlParser();
+  }
 
-    public IFileElementType getFileNodeType() {
-        return CfmlElementTypes.CFML_FILE;
-    }
+  public IFileElementType getFileNodeType() {
+    return CfmlElementTypes.CFML_FILE;
+  }
 
-    @NotNull
-    public TokenSet getWhitespaceTokens() {
-        return TokenSet.create(CfmlTokenTypes.WHITE_SPACE, CfscriptTokenTypes.WHITE_SPACE);
-    }
+  @NotNull
+  public TokenSet getWhitespaceTokens() {
+    return TokenSet.create(CfmlTokenTypes.WHITE_SPACE, CfscriptTokenTypes.WHITE_SPACE);
+  }
 
-    @NotNull
-    public TokenSet getCommentTokens() {
-        return myCommentTypes;
-    }
+  @NotNull
+  public TokenSet getCommentTokens() {
+    return myCommentTypes;
+  }
 
-    @NotNull
-    public TokenSet getStringLiteralElements() {
-        return TokenSet.create(CfmlTokenTypes.STRING_TEXT,
-                CfmlTokenTypes.SINGLE_QUOTE, CfmlTokenTypes.DOUBLE_QUOTE,
-                CfmlTokenTypes.SINGLE_QUOTE_CLOSER, CfmlTokenTypes.DOUBLE_QUOTE_CLOSER,
+  @NotNull
+  public TokenSet getStringLiteralElements() {
+    return TokenSet.create(CfmlTokenTypes.STRING_TEXT,
+                           CfmlTokenTypes.SINGLE_QUOTE, CfmlTokenTypes.DOUBLE_QUOTE,
+                           CfmlTokenTypes.SINGLE_QUOTE_CLOSER, CfmlTokenTypes.DOUBLE_QUOTE_CLOSER,
                 /*CfmlTokenTypes.STRING_TEXT,*/
                 CfmlTokenTypes.SINGLE_QUOTE, CfmlTokenTypes.SINGLE_QUOTE_CLOSER,
                 CfmlTokenTypes.DOUBLE_QUOTE, CfmlTokenTypes.DOUBLE_QUOTE_CLOSER);
+  }
+
+  @NotNull
+  public PsiElement createElement(ASTNode node) {
+    final IElementType type = node.getElementType();
+
+    if (type instanceof CfmlCompositeElementType) {
+      return ((CfmlCompositeElementType)type).createPsiElement(node);
     }
-
-    @NotNull
-    public PsiElement createElement(ASTNode node) {
-        final IElementType type = node.getElementType();
-
-        if (type instanceof CfmlCompositeElementType) {
-            return ((CfmlCompositeElementType)type).createPsiElement(node);
-        } else if (type == CfmlElementTypes.COMPONENT_DEFINITION) {
-          return new CfmlComponentImpl(node);
-        } else if (type == CfmlElementTypes.COMPONENT_TAG) {
-          return new CfmlTagComponentImpl(node);
-        }
-        throw new AssertionError("Unknown type: " + type);
+    else if (type == CfmlElementTypes.COMPONENT_DEFINITION) {
+      return new CfmlComponentImpl(node);
+    }
+    else if (type == CfmlElementTypes.COMPONENT_TAG) {
+      return new CfmlTagComponentImpl(node);
+    }
+    throw new AssertionError("Unknown type: " + type);
 
 
         /*if (type == CfmlElementTypes.FUNCTION_CALL_NAME) {
@@ -101,19 +103,19 @@ public class CfmlParserDefinition implements ParserDefinition {
             return new CfmlArgumentList(node);
         }
         */
-        // return new CfmlElementImpl(node);
-    }
+    // return new CfmlElementImpl(node);
+  }
 
-    public PsiFile createFile(FileViewProvider viewProvider) {
-        return new CfmlFile(viewProvider, CfmlLanguage.INSTANCE);
-    }
+  public PsiFile createFile(FileViewProvider viewProvider) {
+    return new CfmlFile(viewProvider, CfmlLanguage.INSTANCE);
+  }
 
-    public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
-        return SpaceRequirements.MAY;
-    }
+  public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
+    return SpaceRequirements.MAY;
+  }
 
-    public String toString() {
-        return "CfmlParserDefinition";
-    }
+  public String toString() {
+    return "CfmlParserDefinition";
+  }
 }
 

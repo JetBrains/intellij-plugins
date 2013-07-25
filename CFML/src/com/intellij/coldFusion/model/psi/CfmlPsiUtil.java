@@ -64,6 +64,7 @@ public class CfmlPsiUtil {
   }
 
   private final static Set<String> OUR_TRANSPARENT_FUNCTIONS = new HashSet<String>();
+
   static {
     OUR_TRANSPARENT_FUNCTIONS.add("cfsilent");
     OUR_TRANSPARENT_FUNCTIONS.add(CfmlTagScriptImpl.TAG_NAME);
@@ -82,7 +83,8 @@ public class CfmlPsiUtil {
         if (!processor.execute(element, state)) {
           return false;
         }
-      } else if (element instanceof CfmlTag) {
+      }
+      else if (element instanceof CfmlTag) {
         if (!(element instanceof CfmlFunction)) { // functions are processed separately
           final PsiElement psiElement = ((CfmlTag)element).getDeclarativeElement();
           if (psiElement != null && !processor.execute(psiElement, state)) {
@@ -94,10 +96,13 @@ public class CfmlPsiUtil {
             }
           }
         }
-      } else if (element instanceof CfmlAssignmentExpression) {
+      }
+      else if (element instanceof CfmlAssignmentExpression) {
         final CfmlAssignmentExpression assignmentExpression = (CfmlAssignmentExpression)element;
         CfmlVariable assignedVariable = assignmentExpression.getAssignedVariable();
-        if (assignedVariable != null && lastParent != assignmentExpression.getRightHandExpr() && !processor.execute(assignedVariable, state)) {
+        if (assignedVariable != null &&
+            lastParent != assignmentExpression.getRightHandExpr() &&
+            !processor.execute(assignedVariable, state)) {
           return false;
         }
       }
@@ -149,20 +154,20 @@ public class CfmlPsiUtil {
   }
 
   public static CfmlFile createDummyFile(Project project, String text) {
-      final String fileName = "dummy." + CfmlFileType.INSTANCE.getDefaultExtension();
-      return (CfmlFile) PsiFileFactory.getInstance(project).createFileFromText(fileName, CfmlLanguage.INSTANCE, text);
+    final String fileName = "dummy." + CfmlFileType.INSTANCE.getDefaultExtension();
+    return (CfmlFile)PsiFileFactory.getInstance(project).createFileFromText(fileName, CfmlLanguage.INSTANCE, text);
   }
 
   @NotNull
   public static CfmlReferenceExpression createReferenceExpression(final String text, final Project project) {
-      final CfmlFile dummyFile = createDummyFile(project, "<cfset " + text + " = 0>");
-      final PsiElement tag = dummyFile.getFirstChild();
-      assert tag != null;
-      final CfmlAssignmentExpression assignment = PsiTreeUtil.getChildOfType(tag, CfmlAssignmentExpression.class);
-      assert assignment != null;
-      final CfmlReferenceExpression expression = PsiTreeUtil.getChildOfType(assignment, CfmlReferenceExpression.class);
-      assert expression != null;
-      return expression;
+    final CfmlFile dummyFile = createDummyFile(project, "<cfset " + text + " = 0>");
+    final PsiElement tag = dummyFile.getFirstChild();
+    assert tag != null;
+    final CfmlAssignmentExpression assignment = PsiTreeUtil.getChildOfType(tag, CfmlAssignmentExpression.class);
+    assert assignment != null;
+    final CfmlReferenceExpression expression = PsiTreeUtil.getChildOfType(assignment, CfmlReferenceExpression.class);
+    assert expression != null;
+    return expression;
   }
 
   @NotNull
@@ -178,14 +183,14 @@ public class CfmlPsiUtil {
 
   @NotNull
   public static PsiElement createConstantString(final String text, final Project project) {
-      final CfmlFile dummyFile = createDummyFile(project, "<cffunction name=\"" + text + "\"></cffunction>");
-      final PsiElement tag = dummyFile.getFirstChild();
-      assert tag != null;
-      final CfmlAttributeNameImpl namedAttribute = PsiTreeUtil.getChildOfType(tag, CfmlAttributeNameImpl.class);
-      assert namedAttribute != null;
-      final PsiElement element = namedAttribute.getValueElement();
-      assert element != null;
-      return element;
+    final CfmlFile dummyFile = createDummyFile(project, "<cffunction name=\"" + text + "\"></cffunction>");
+    final PsiElement tag = dummyFile.getFirstChild();
+    assert tag != null;
+    final CfmlAttributeNameImpl namedAttribute = PsiTreeUtil.getChildOfType(tag, CfmlAttributeNameImpl.class);
+    assert namedAttribute != null;
+    final PsiElement element = namedAttribute.getValueElement();
+    assert element != null;
+    return element;
   }
 
   @Nullable
@@ -203,7 +208,8 @@ public class CfmlPsiUtil {
   }
 
   public static boolean isFunctionDefinition(Object element) {
-    return element instanceof CfmlFunction || (element instanceof CfmlNamedAttributeImpl && ((CfmlNamedAttributeImpl)element).getParent() instanceof CfmlFunction);
+    return element instanceof CfmlFunction ||
+           (element instanceof CfmlNamedAttributeImpl && ((CfmlNamedAttributeImpl)element).getParent() instanceof CfmlFunction);
   }
 
   public static CfmlFunction getFunctionDefinition(Object element) {
@@ -211,7 +217,7 @@ public class CfmlPsiUtil {
       return (CfmlFunction)element;
     }
     if (element instanceof CfmlNamedAttributeImpl && ((CfmlNamedAttributeImpl)element).getParent() instanceof CfmlFunction) {
-      return ((CfmlFunction)((CfmlNamedAttributeImpl)element).getParent()); 
+      return ((CfmlFunction)((CfmlNamedAttributeImpl)element).getParent());
     }
     return null;
   }
@@ -239,7 +245,7 @@ public class CfmlPsiUtil {
     ASTNode rImplNode = rImpl != null ? rImpl.getNode() : null;
     if (rExNode != null) {
       return rImplNode == null ? new PsiReference[]{new CfmlComponentReference(rExNode, element)} :
-        new PsiReference[]{new CfmlComponentReference(rExNode, element), new CfmlComponentReference(rImplNode, element)};
+             new PsiReference[]{new CfmlComponentReference(rExNode, element), new CfmlComponentReference(rImplNode, element)};
     }
     if (rImplNode != null) {
       String implList = rImplNode.getText();
@@ -298,8 +304,8 @@ public class CfmlPsiUtil {
   }
 
   private static <Result extends PsiNamedElement> Result[] componentHierarchyGatherer(CfmlComponent component,
-                                                     Getter<Result[], CfmlComponent> gatherer,
-                                                     Result[] EMPTY_ARRAY,boolean isSuperPriority) {
+                                                                                      Getter<Result[], CfmlComponent> gatherer,
+                                                                                      Result[] EMPTY_ARRAY, boolean isSuperPriority) {
     CfmlComponent currentComponent = isSuperPriority ? component.getSuper() : component;
     Set<String> names = new HashSet<String>();
     List<Result> result = new LinkedList<Result>();

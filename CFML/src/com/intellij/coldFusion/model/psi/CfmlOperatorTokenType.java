@@ -10,15 +10,15 @@ import com.intellij.psi.tree.IElementType;
  */
 public class CfmlOperatorTokenType extends IElementType {
 
-    private CfmlExpressionTypeCalculator myTypeCalculator;
-    
-    public CfmlOperatorTokenType(@org.jetbrains.annotations.NotNull String debugName,
-                                 CfmlExpressionTypeCalculator typeCalculator) {
-        super(debugName, CfmlLanguage.INSTANCE);
-        myTypeCalculator = typeCalculator;
-    }
+  private CfmlExpressionTypeCalculator myTypeCalculator;
 
-    public CfmlExpressionTypeCalculator getTypeCalculator() {
-        return myTypeCalculator;
-    }
+  public CfmlOperatorTokenType(@org.jetbrains.annotations.NotNull String debugName,
+                               CfmlExpressionTypeCalculator typeCalculator) {
+    super(debugName, CfmlLanguage.INSTANCE);
+    myTypeCalculator = typeCalculator;
+  }
+
+  public CfmlExpressionTypeCalculator getTypeCalculator() {
+    return myTypeCalculator;
+  }
 }

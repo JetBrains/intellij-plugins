@@ -190,91 +190,92 @@ public class CfmlLexer extends LexerBase {
 }
 */
 public class CfmlLexer extends MergingLexerAdapter {
-    private Lexer myCfscriptLexer = null;
-    private int myStartPosition = 0;
-    private Project myProject;
+  private Lexer myCfscriptLexer = null;
+  private int myStartPosition = 0;
+  private Project myProject;
 
-    private static final TokenSet TOKENS_TO_MERGE =
-            TokenSet.create(CfmlTokenTypes.COMMENT,
+  private static final TokenSet TOKENS_TO_MERGE =
+    TokenSet.create(CfmlTokenTypes.COMMENT,
                     CfmlTokenTypes.WHITE_SPACE,
                     CfmlTokenTypes.SCRIPT_EXPRESSION, CfmlElementTypes.TEMPLATE_TEXT);
 
-    public CfmlLexer(boolean highlightingMode, Project project) {
-        super(new FlexAdapter(new _CfmlLexer(project)), TOKENS_TO_MERGE);
-        myProject = project;
-    }
+  public CfmlLexer(boolean highlightingMode, Project project) {
+    super(new FlexAdapter(new _CfmlLexer(project)), TOKENS_TO_MERGE);
+    myProject = project;
+  }
 
-    @Override
-    public int getState() {
-      return 1000;
-    }
+  @Override
+  public int getState() {
+    return 1000;
+  }
 
-    @Override
-    public void advance() {
-        if (myCfscriptLexer != null) {
+  @Override
+  public void advance() {
+    if (myCfscriptLexer != null) {
             /*
             if (myStateToReturn == START_EXPRESSION) {
                 myStateToReturn = ORIGINAL;
             }
             */
-            myCfscriptLexer.advance();
-            if (myCfscriptLexer.getTokenType() == null) {
-                myCfscriptLexer = null;
-                // myStateToReturn = END_EXPRESSION;
-            }
-        } else {
+      myCfscriptLexer.advance();
+      if (myCfscriptLexer.getTokenType() == null) {
+        myCfscriptLexer = null;
+        // myStateToReturn = END_EXPRESSION;
+      }
+    }
+    else {
             /*
             if (myStateToReturn == END_EXPRESSION) {
                 myStateToReturn = ORIGINAL;
             }
             */
-            super.advance();
-        }
+      super.advance();
     }
+  }
 
-    @Override
-    public IElementType getTokenType() {
+  @Override
+  public IElementType getTokenType() {
 
-        if (myCfscriptLexer != null) {
-            return myCfscriptLexer.getTokenType();
-        }
-        if (super.getTokenType() == CfmlElementTypes.CF_SCRIPT ||
-                  super.getTokenType() == CfmlTokenTypes.SCRIPT_EXPRESSION) {
-          // myStateToReturn = START_EXPRESSION;
-          final int startPosition = super.getTokenStart();
-          myStartPosition = startPosition;
-          int endPosition = super.getTokenEnd();
-          while (super.getTokenType() == CfmlTokenTypes.SCRIPT_EXPRESSION ||
-                  super.getTokenType() == CfmlElementTypes.CF_SCRIPT) {
-              endPosition = super.getTokenEnd();
-              super.advance();
-          }
-          myCfscriptLexer = new CfscriptLexer(myProject);//new CfscriptHighlighter.CfscriptFileHighlighter().getHighlightingLexer();
-          myCfscriptLexer.start(super.getBufferSequence().subSequence(startPosition, endPosition),
-              0, endPosition - startPosition, myCfscriptLexer.getState());
-          return myCfscriptLexer.getTokenType();
-        }
-        return super.getTokenType();
+    if (myCfscriptLexer != null) {
+      return myCfscriptLexer.getTokenType();
     }
-
-    @Override
-    public int getTokenStart() {
-        if (myCfscriptLexer != null) {
-            return myCfscriptLexer.getTokenStart() + myStartPosition;
-        }
-        return super.getTokenStart();
+    if (super.getTokenType() == CfmlElementTypes.CF_SCRIPT ||
+        super.getTokenType() == CfmlTokenTypes.SCRIPT_EXPRESSION) {
+      // myStateToReturn = START_EXPRESSION;
+      final int startPosition = super.getTokenStart();
+      myStartPosition = startPosition;
+      int endPosition = super.getTokenEnd();
+      while (super.getTokenType() == CfmlTokenTypes.SCRIPT_EXPRESSION ||
+             super.getTokenType() == CfmlElementTypes.CF_SCRIPT) {
+        endPosition = super.getTokenEnd();
+        super.advance();
+      }
+      myCfscriptLexer = new CfscriptLexer(myProject);//new CfscriptHighlighter.CfscriptFileHighlighter().getHighlightingLexer();
+      myCfscriptLexer.start(super.getBufferSequence().subSequence(startPosition, endPosition),
+                            0, endPosition - startPosition, myCfscriptLexer.getState());
+      return myCfscriptLexer.getTokenType();
     }
+    return super.getTokenType();
+  }
 
-    @Override
-    public int getTokenEnd() {
+  @Override
+  public int getTokenStart() {
+    if (myCfscriptLexer != null) {
+      return myCfscriptLexer.getTokenStart() + myStartPosition;
+    }
+    return super.getTokenStart();
+  }
+
+  @Override
+  public int getTokenEnd() {
         /*
         if (myStateToReturn != ORIGINAL) {
             return getTokenStart();
         }
         */
-        if (myCfscriptLexer != null) {
-            return myCfscriptLexer.getTokenEnd() + myStartPosition;
-        }
-        return super.getTokenEnd();
+    if (myCfscriptLexer != null) {
+      return myCfscriptLexer.getTokenEnd() + myStartPosition;
     }
+    return super.getTokenEnd();
+  }
 }

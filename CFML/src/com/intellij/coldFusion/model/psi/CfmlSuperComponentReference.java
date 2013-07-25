@@ -29,14 +29,13 @@ public class CfmlSuperComponentReference extends CfmlCompositeElement implements
     if (resolveResult == null) {
       return ResolveResult.EMPTY_ARRAY;
     }
-    return new ResolveResult[] {new PsiElementResolveResult(resolveResult, false)};
+    return new ResolveResult[]{new PsiElementResolveResult(resolveResult, false)};
   }
 
   @Override
   public PsiElement getElement() {
     return this;
   }
-
 
 
   @Override

@@ -10,6 +10,7 @@ public interface CfmlProperty extends CfmlPsiElement, CfmlVariable {
   CfmlProperty[] EMPTY_ARRAY = new CfmlProperty[0];
 
   boolean hasGetter();
+
   boolean hasSetter();
 
   @Nullable

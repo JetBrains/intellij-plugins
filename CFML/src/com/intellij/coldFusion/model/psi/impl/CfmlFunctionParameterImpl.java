@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class CfmlFunctionParameterImpl extends CfmlCompositeElement implements CfmlParameter, CfmlVariable {
   public static final CfmlFunctionParameterImpl[] EMPTY_ARRAY = new CfmlFunctionParameterImpl[0];
+
   public CfmlFunctionParameterImpl(@NotNull ASTNode node) {
     super(node);
   }
