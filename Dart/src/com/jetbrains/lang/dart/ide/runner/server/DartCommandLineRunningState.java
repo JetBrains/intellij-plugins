@@ -3,8 +3,6 @@ package com.jetbrains.lang.dart.ide.runner.server;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.filters.TextConsoleBuilder;
-import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -68,9 +66,7 @@ public class DartCommandLineRunningState extends CommandLineState {
       dartSettings
     );
 
-    final TextConsoleBuilder consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(module.getProject());
-    consoleBuilder.addFilter(new DartStackTraceMessageFiler(module.getProject(), filePath));
-    setConsoleBuilder(consoleBuilder);
+    addConsoleFilters(new DartStackTraceMessageFiler(module.getProject(), filePath));
 
     return commandLine;
   }

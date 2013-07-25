@@ -30,7 +30,6 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.configurations.ParametersList;
-import com.intellij.execution.filters.TextConsoleBuilderImpl;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
@@ -99,7 +98,6 @@ public class OsgiRunState extends JavaCommandLineState {
     else {
       this.jdkForRun = projectJdk;
     }
-    setConsoleBuilder(new TextConsoleBuilderImpl(project));
     FrameworkInstanceDefinition definition = runConfiguration.getInstanceToUse();
     FrameworkIntegratorRegistry registry = ServiceManager.getService(project, FrameworkIntegratorRegistry.class);
     FrameworkIntegrator integrator = registry.findIntegratorByInstanceDefinition(definition);
