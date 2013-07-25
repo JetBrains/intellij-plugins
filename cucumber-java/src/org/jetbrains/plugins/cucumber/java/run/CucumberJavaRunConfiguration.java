@@ -44,10 +44,6 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     super(name, project, factory);
   }
 
-  protected ModuleBasedConfiguration createInstance() {
-    return new CucumberJavaRunConfiguration(getName(), getProject(), CucumberJavaRunConfigurationType.getInstance());
-  }
-
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     SettingsEditorGroup<CucumberJavaRunConfiguration> group = new SettingsEditorGroup<CucumberJavaRunConfiguration>();
