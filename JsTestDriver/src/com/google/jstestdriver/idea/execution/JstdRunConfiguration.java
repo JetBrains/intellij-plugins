@@ -42,7 +42,7 @@ import java.io.File;
  *
  * @author alexeagle@google.com (Alex Eagle)
  */
-public class JstdRunConfiguration extends RunConfigurationBase implements LocatableConfiguration, RefactoringListenerProvider {
+public class JstdRunConfiguration extends LocatableConfigurationBase implements RefactoringListenerProvider {
 
   private @NotNull JstdRunSettings myRunSettings = new JstdRunSettings.Builder().build();
   private volatile String myGeneratedName;
@@ -112,28 +112,6 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
   public void writeExternal(Element element) throws WriteExternalException {
     super.writeExternal(element);
     JstdRunSettingsSerializationUtils.writeToXml(element, myRunSettings);
-  }
-
-  @Override
-  public boolean isGeneratedName() {
-    String name = getName();
-    if (name == null) {
-      return false;
-    }
-    if ("Unnamed".equals(name)) {
-      return true;
-    }
-    String prefix = "Unnamed (";
-    String suffix = ")";
-    if (name.startsWith(prefix) && name.endsWith(suffix)) {
-      String id = name.substring(prefix.length(), name.length() - suffix.length());
-      try {
-        Integer.parseInt(id);
-      } catch (Exception ignored) {}
-      return true;
-    }
-    String suggestedName = suggestedName();
-    return name.equals(suggestedName);
   }
 
   @Override

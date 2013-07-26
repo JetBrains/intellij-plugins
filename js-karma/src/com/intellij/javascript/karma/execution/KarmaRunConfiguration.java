@@ -18,7 +18,7 @@ import java.io.File;
 /**
  * @author Sergey Simonchik
  */
-public class KarmaRunConfiguration extends RunConfigurationBase implements LocatableConfiguration, RefactoringListenerProvider {
+public class KarmaRunConfiguration extends LocatableConfigurationBase implements RefactoringListenerProvider {
 
   private KarmaRunSettings myRunSettings = new KarmaRunSettings.Builder().build();
   private final ThreadLocal<GlobalSettings> myGlobalSettingsRef = new ThreadLocal<GlobalSettings>();
@@ -118,28 +118,6 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
 
   public void setRunSettings(@NotNull KarmaRunSettings runSettings) {
     myRunSettings = runSettings;
-  }
-
-  @Override
-  public boolean isGeneratedName() {
-    String name = getName();
-    if (name == null) {
-      return false;
-    }
-    if ("Unnamed".equals(name)) {
-      return true;
-    }
-    String prefix = "Unnamed (";
-    String suffix = ")";
-    if (name.startsWith(prefix) && name.endsWith(suffix)) {
-      String id = name.substring(prefix.length(), name.length() - suffix.length());
-      try {
-        Integer.parseInt(id);
-      } catch (Exception ignored) {}
-      return true;
-    }
-    String suggestedName = suggestedName();
-    return name.equals(suggestedName);
   }
 
   @Override

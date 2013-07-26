@@ -47,8 +47,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.OutputStream;
 
-public class
-  CfmlUnitRunConfiguration extends RunConfigurationBase implements LocatableConfiguration {
+public class CfmlUnitRunConfiguration extends LocatableConfigurationBase {
   private CfmlUnitRunnerParameters myRunnerParameters;
 
   protected CfmlUnitRunConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
@@ -61,16 +60,6 @@ public class
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new CfmlUnitRunConfigurationForm(getProject());
-  }
-
-  @Override
-  public boolean isGeneratedName() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  @Override
-  public String suggestedName() {
-    return "";  //To change body of implemented methods use File | Settings | File Templates.
   }
 
   private static class MyProcessHandler extends ProcessHandler {

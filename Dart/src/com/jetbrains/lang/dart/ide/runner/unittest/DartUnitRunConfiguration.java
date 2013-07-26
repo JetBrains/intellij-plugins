@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author: Fedor.Korotkov
  */
-public class DartUnitRunConfiguration extends RunConfigurationBase implements LocatableConfiguration {
+public class DartUnitRunConfiguration extends LocatableConfigurationBase {
   private final DartUnitRunnerParameters myRunnerParameters = new DartUnitRunnerParameters();
 
   protected DartUnitRunConfiguration(final Project project, final ConfigurationFactory factory, final String name) {
@@ -82,15 +82,5 @@ public class DartUnitRunConfiguration extends RunConfigurationBase implements Lo
   public void readExternal(final Element element) throws InvalidDataException {
     super.readExternal(element);
     XmlSerializer.deserializeInto(myRunnerParameters, element);
-  }
-
-  @Override
-  public boolean isGeneratedName() {
-    return "Unnamed".equals(getName());
-  }
-
-  @Override
-  public String suggestedName() {
-    return "Unnamed";
   }
 }
