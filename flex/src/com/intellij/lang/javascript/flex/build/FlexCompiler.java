@@ -591,7 +591,7 @@ public class FlexCompiler implements SourceProcessingCompiler {
     }
 
     if (info.getOutputFileName() == null && info.getOutputFolderPath() == null) {
-      if (bc.getOutputFileName().isEmpty()) {
+      if (FileUtil.getNameWithoutExtension(bc.getOutputFileName()).isEmpty()) {
         errorConsumer.consume(FlashProjectStructureProblem
                                 .createGeneralOptionProblem(bc.getName(), FlexBundle.message("output.file.name.not.set"),
                                                             FlexBCConfigurable.Location.OutputFileName));
