@@ -70,15 +70,7 @@ public class JstdRunConfigurationRefactoringHandler {
         if (myIsAllInDirectory) {
           settingsBuilder.setDirectory(newPath);
         }
-        updateRunSettings(settingsBuilder.build());
-      }
-    }
-
-    private void updateRunSettings(@NotNull JstdRunSettings newRunSettings) {
-      boolean generatedName = myConfiguration.isGeneratedName();
-      myConfiguration.setRunSettings(newRunSettings);
-      if (generatedName) {
-        myConfiguration.setName(myConfiguration.resetGeneratedName());
+        myConfiguration.setRunSettings(settingsBuilder.build());
       }
     }
   }
