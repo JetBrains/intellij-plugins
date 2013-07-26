@@ -2,14 +2,8 @@ package com.jetbrains.lang.dart.ide.runner.server;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configuration.EmptyRunProfileState;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.configurations.RuntimeConfiguration;
-import com.intellij.execution.configurations.RuntimeConfigurationException;
-import com.intellij.execution.executors.DefaultDebugExecutor;
+import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.SettingsEditor;
@@ -31,7 +25,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author: Fedor.Korotkov
  */
-public class DartCommandLineRunConfiguration extends RuntimeConfiguration {
+public class DartCommandLineRunConfiguration extends LocatableConfigurationBase
+  implements ModuleRunConfiguration {
   @Nullable
   private String myFilePath = null;
   @Nullable
@@ -40,7 +35,7 @@ public class DartCommandLineRunConfiguration extends RuntimeConfiguration {
   private String myArguments = null;
 
   public DartCommandLineRunConfiguration(String name, Project project, DartCommandLineRunConfigurationType configurationType) {
-    super(name, project, configurationType.getConfigurationFactories()[0]);
+    super(project, configurationType.getConfigurationFactories()[0], name);
   }
 
   @Nullable
@@ -131,5 +126,11 @@ public class DartCommandLineRunConfiguration extends RuntimeConfiguration {
   public void readExternal(final Element element) throws InvalidDataException {
     super.readExternal(element);
     XmlSerializer.deserializeInto(this, element);
+  }
+
+  @NotNull
+  @Override
+  public Module[] getModules() {
+    return Module.EMPTY_ARRAY;
   }
 }

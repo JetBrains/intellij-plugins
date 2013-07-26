@@ -1,10 +1,5 @@
 package com.google.jstestdriver.idea.execution;
 
-import com.intellij.execution.configurations.ConfigurationTypeUtil;
-import com.intellij.execution.configurations.RuntimeConfiguration;
-import com.intellij.javascript.testFramework.JstdRunElement;
-import com.intellij.javascript.testFramework.TestFileStructureManager;
-import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.google.jstestdriver.idea.config.JstdConfigFileUtils;
 import com.google.jstestdriver.idea.config.JstdTestFilePathIndex;
 import com.google.jstestdriver.idea.execution.settings.JstdRunSettings;
@@ -13,7 +8,12 @@ import com.google.jstestdriver.idea.execution.settings.TestType;
 import com.intellij.execution.Location;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
+import com.intellij.javascript.testFramework.JstdRunElement;
+import com.intellij.javascript.testFramework.TestFileStructureManager;
+import com.intellij.javascript.testFramework.TestFileStructurePack;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.index.JSIndexEntry;
 import com.intellij.lang.javascript.index.JavaScriptIndex;
@@ -77,7 +77,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
 
   @Override
   protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
-    RuntimeConfiguration original = context.getOriginalConfiguration(null);
+    RunConfiguration original = context.getOriginalConfiguration(null);
     if (original != null && !ConfigurationTypeUtil.equals(original.getType(), JstdConfigurationType.getInstance())) {
       return null;
     }

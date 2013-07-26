@@ -4,7 +4,7 @@ import com.intellij.execution.Location;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
-import com.intellij.execution.configurations.RuntimeConfiguration;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.lang.javascript.psi.JSFile;
 import com.intellij.openapi.util.io.FileUtil;
@@ -34,7 +34,7 @@ public class KarmaRunConfigurationProducer extends RuntimeConfigurationProducer 
   @Nullable
   @Override
   protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
-    RuntimeConfiguration original = context.getOriginalConfiguration(null);
+    RunConfiguration original = context.getOriginalConfiguration(null);
     if (original != null && !ConfigurationTypeUtil.equals(original.getType(), KarmaConfigurationType.getInstance())) {
       return null;
     }
