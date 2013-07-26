@@ -7,6 +7,7 @@ import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.configurations.RuntimeConfiguration;
 import com.intellij.execution.configurations.RuntimeConfigurationException;
+import com.intellij.execution.executors.DefaultDebugExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.RunConfigurationWithSuppressedDefaultRunAction;
 import com.intellij.openapi.module.Module;
@@ -16,6 +17,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -29,8 +31,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author: Fedor.Korotkov
  */
-public class DartCommandLineRunConfiguration extends RuntimeConfiguration
-  implements RunConfigurationWithSuppressedDefaultRunAction {
+public class DartCommandLineRunConfiguration extends RuntimeConfiguration {
   @Nullable
   private String myFilePath = null;
   @Nullable
@@ -107,7 +108,18 @@ public class DartCommandLineRunConfiguration extends RuntimeConfiguration
   }
 
   public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
-    return EmptyRunProfileState.INSTANCE;
+    final String filePath = getFilePath();
+    if (StringUtil.isEmpty(filePath)) {
+      throw new ExecutionException("Empty file path");
+    }
+    assert filePath != null;
+    return new DartCommandLineRunningState(
+      env,
+      getModule(),
+      filePath,
+      StringUtil.notNullize(getVMOptions()),
+      StringUtil.notNullize(getArguments())
+    );
   }
 
 
