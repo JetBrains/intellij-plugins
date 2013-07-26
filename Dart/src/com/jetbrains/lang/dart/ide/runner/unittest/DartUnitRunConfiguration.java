@@ -35,6 +35,7 @@ public class DartUnitRunConfiguration extends RunConfigurationBase implements Lo
     return myRunnerParameters;
   }
 
+  @NotNull
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new DartUnitConfigurationEditorForm(getProject());

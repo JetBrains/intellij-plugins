@@ -42,6 +42,7 @@ public class CfmlRunConfiguration extends RunConfigurationBase {
     super(project, factory, name);
   }
 
+  @NotNull
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new CfmlRunConfigurationEditor();

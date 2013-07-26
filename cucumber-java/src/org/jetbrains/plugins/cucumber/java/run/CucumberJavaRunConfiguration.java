@@ -44,6 +44,7 @@ public class CucumberJavaRunConfiguration extends ApplicationConfiguration {
     super(name, project, factory);
   }
 
+  @NotNull
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     SettingsEditorGroup<CucumberJavaRunConfiguration> group = new SettingsEditorGroup<CucumberJavaRunConfiguration>();

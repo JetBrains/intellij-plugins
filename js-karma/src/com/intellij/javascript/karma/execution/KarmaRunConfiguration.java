@@ -27,6 +27,7 @@ public class KarmaRunConfiguration extends RunConfigurationBase implements Locat
     super(project, factory, name);
   }
 
+  @NotNull
   @Override
   public KarmaRunConfigurationEditor getConfigurationEditor() {
     return new KarmaRunConfigurationEditor(getProject());

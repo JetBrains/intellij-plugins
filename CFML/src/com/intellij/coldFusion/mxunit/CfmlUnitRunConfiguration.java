@@ -57,6 +57,7 @@ public class
   }
 
 
+  @NotNull
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new CfmlUnitRunConfigurationForm(getProject());

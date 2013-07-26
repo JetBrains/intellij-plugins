@@ -53,6 +53,7 @@ public class JstdRunConfiguration extends RunConfigurationBase implements Locata
     super(project, jsTestDriverConfigurationFactory, configurationTypeName);
   }
 
+  @NotNull
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new JstdRunConfigurationEditor(getProject());

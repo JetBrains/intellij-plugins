@@ -276,6 +276,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     super.writeExternal(element);
   }
 
+  @NotNull
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new OsgiRunConfigurationEditor(getProject());
   }

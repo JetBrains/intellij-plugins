@@ -69,6 +69,7 @@ public class DartCommandLineRunConfiguration extends RuntimeConfiguration
     myArguments = arguments;
   }
 
+  @NotNull
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new DartCommandLineConfigurationEditorForm(getProject());
   }
