@@ -75,5 +75,5 @@ public interface Transport {
   void setOwnPresence(UserPresence userPresence);
 
   /** return true if user has IDEtalk client installed */
-  boolean hasIDEtalkClient(User user);
+  boolean hasIdeTalkClient(User user);
 }

@@ -75,7 +75,7 @@ public class NullTransport implements Transport {
     return new UserPresence(false);
   }
 
-  public boolean hasIDEtalkClient(User user) {
+  public boolean hasIdeTalkClient(User user) {
     return false;
   }
 }

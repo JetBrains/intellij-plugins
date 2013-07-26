@@ -21,6 +21,7 @@ import jetbrains.communicator.p2p.P2PCommand;
 import jetbrains.communicator.p2p.UserMonitorThread;
 import jetbrains.communicator.p2p.XmlRpcTargetImpl;
 import jetbrains.communicator.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.net.InetAddress;
 import java.util.Collection;
@@ -33,11 +34,11 @@ import java.util.Vector;
  */
 @SuppressWarnings({"HardCodedStringLiteral"})
 public class AddOnlineUserP2PCommand implements P2PCommand {
-  public static final String ID = "AddOnlineUser";
+  private static final String ID = "AddOnlineUser";
 
   private final UserMonitorThread myUserMonitorThread;
 
-  public AddOnlineUserP2PCommand(UserMonitorThread userMonitorThread) {
+  public AddOnlineUserP2PCommand(@NotNull UserMonitorThread userMonitorThread) {
     myUserMonitorThread = userMonitorThread;
   }
 

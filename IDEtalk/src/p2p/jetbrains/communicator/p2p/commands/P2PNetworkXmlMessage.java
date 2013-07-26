@@ -40,6 +40,7 @@ class P2PNetworkXmlMessage extends P2PNetworkMessage {
     myMessage = message;
   }
 
+  @Override
   public boolean send(User user) {
     if (super.send(user)) {
       processResponse();

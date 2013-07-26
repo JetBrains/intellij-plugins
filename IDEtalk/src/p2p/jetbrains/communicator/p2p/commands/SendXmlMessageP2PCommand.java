@@ -35,7 +35,7 @@ import java.io.StringReader;
  */
 public class SendXmlMessageP2PCommand extends BaseP2PCommand {
   private static final Logger LOG = Logger.getLogger(SendXmlMessageP2PCommand.class);
-  public static final String ID = "SendMessage";
+  static final String ID = "SendMessage";
 
   public SendXmlMessageP2PCommand(EventBroadcaster eventBroadcaster, Transport transport) {
     super(ID, eventBroadcaster, transport);
@@ -69,10 +69,6 @@ public class SendXmlMessageP2PCommand extends BaseP2PCommand {
   public static Message createNetworkMessage(final XmlMessage message) {
     Element element = new Element(message.getTagName(), message.getTagNamespace());
     message.fillRequest(element);
-
-    XMLOutputter outputter = new XMLOutputter();
-    String str = outputter.outputString(element);
-    return new P2PNetworkXmlMessage(str, message);
+    return new P2PNetworkXmlMessage(new XMLOutputter().outputString(element), message);
   }
-
 }

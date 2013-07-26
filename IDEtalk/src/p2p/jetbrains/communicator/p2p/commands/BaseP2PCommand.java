@@ -23,7 +23,6 @@ import jetbrains.communicator.p2p.P2PCommand;
  * @author Kir
  */
 public abstract class BaseP2PCommand implements P2PCommand {
-
   private final String myId;
   protected final EventBroadcaster myEventBroadcaster;
   protected final Transport myTransport;
@@ -34,6 +33,7 @@ public abstract class BaseP2PCommand implements P2PCommand {
     myTransport = transport;
   }
 
+  @Override
   public final String getXmlRpcId() {
     return myId;
   }

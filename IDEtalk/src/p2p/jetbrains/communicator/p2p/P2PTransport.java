@@ -15,7 +15,6 @@
  */
 package jetbrains.communicator.p2p;
 
-import com.intellij.ide.XmlRpcServer;
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationType;
@@ -24,6 +23,7 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.util.ArrayUtil;
+import gnu.trove.THashMap;
 import icons.IdetalkCoreIcons;
 import jetbrains.communicator.core.*;
 import jetbrains.communicator.core.commands.NamedUserCommand;
@@ -44,6 +44,7 @@ import jetbrains.communicator.util.WaitFor;
 import org.apache.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.ide.BuiltInServerManager;
+import org.jetbrains.ide.CustomPortServerManager;
 import org.jetbrains.io.CustomPortServerManagerBase;
 import org.picocontainer.Disposable;
 import org.picocontainer.MutablePicoContainer;
@@ -64,8 +65,8 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   private UserMonitorThread myUserMonitorThread;
 
-  private final Map<User,OnlineUserInfo> myUser2Info = new HashMap<User, OnlineUserInfo>();
-  private final Map<User,OnlineUserInfo> myUser2InfoNew = new HashMap<User, OnlineUserInfo>();
+  private final Map<User, OnlineUserInfo> myUser2Info = new THashMap<User, OnlineUserInfo>();
+  private final Map<User, OnlineUserInfo> myUser2InfoNew = new THashMap<User, OnlineUserInfo>();
 
   private final Collection<User> myOnlineUsers =
       Collections.synchronizedCollection(new HashSet<User>());
@@ -79,6 +80,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   public P2PTransport(AsyncMessageDispatcher asyncMessageDispatcher, UserModel userModel) {
     this(asyncMessageDispatcher, userModel, UserMonitorThread.WAIT_USER_RESPONSES_TIMEOUT);
   }
+
   public P2PTransport(AsyncMessageDispatcher asyncMessageDispatcher, UserModel userModel, long waitUserResponsesTimeout) {
     myEventBroadcaster = userModel.getBroadcaster();
     myAsyncMessageDispatcher = asyncMessageDispatcher;
@@ -116,6 +118,8 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
 
   @SuppressWarnings("UnusedDeclaration")
   private static final class P2PCustomPortServerManager extends CustomPortServerManagerBase {
+    private final Map<String, Object> handlers = new THashMap<String, Object>();
+
     @Override
     public void cannotBind(Exception e, int port) {
       String groupDisplayId = "IDETalk XmlRpc Server";
@@ -134,6 +138,11 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     @Override
     public boolean isAvailableExternally() {
       return true;
+    }
+
+    @Override
+    public Map<String, Object> createXmlRpcHandlers() {
+      return handlers;
     }
   }
 
@@ -156,17 +165,6 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     BuiltInServerManager.getInstance().waitForStart();
 
     myUserMonitorThread = new UserMonitorThread(this, waitUserResponsesTimeout);
-
-    P2PCommand[] commands = {
-      new SendXmlMessageP2PCommand(myEventBroadcaster, this),
-      new AddOnlineUserP2PCommand(myUserMonitorThread),
-    };
-
-    XmlRpcServer xmlRpcServer = XmlRpcServer.SERVICE.getInstance();
-    for (P2PCommand command : commands) {
-      xmlRpcServer.addHandler(command.getXmlRpcId(), command);
-    }
-
     myUserMonitorThread.start();
     myUserMonitorThread.triggerFindNow();
     new WaitFor() {
@@ -177,6 +175,16 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
     };
 
     myEventBroadcaster.addListener(myUserAddedCallbackListener);
+
+    P2PCommand[] commands = {
+      new SendXmlMessageP2PCommand(myEventBroadcaster, this),
+      new AddOnlineUserP2PCommand(myUserMonitorThread),
+    };
+
+    Map<String, Object> handlers = CustomPortServerManager.EP_NAME.findExtension(P2PCustomPortServerManager.class).handlers;
+    for (P2PCommand command : commands) {
+      handlers.put(command.getXmlRpcId(), command);
+    }
   }
 
   IDEFacade getIdeFacade() {
@@ -193,10 +201,6 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
       LOG.info(e);
     }
     myOnlineUsers.clear();
-
-    XmlRpcServer xmlRpcServer = XmlRpcServer.SERVICE.getInstance();
-    xmlRpcServer.removeHandler(SendXmlMessageP2PCommand.ID);
-    xmlRpcServer.removeHandler(AddOnlineUserP2PCommand.ID);
   }
 
   @Override
@@ -265,7 +269,7 @@ public class P2PTransport implements Transport, UserMonitorClient, Disposable {
   }
 
   @Override
-  public boolean hasIDEtalkClient(User user) {
+  public boolean hasIdeTalkClient(User user) {
     return true;
   }
 

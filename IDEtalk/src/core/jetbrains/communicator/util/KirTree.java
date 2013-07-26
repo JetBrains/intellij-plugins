@@ -44,6 +44,7 @@ public class KirTree extends Tree {
     ToolTipManager.sharedInstance().registerComponent(this);
 
     setCellRenderer(new DefaultTreeCellRenderer(){
+      @Override
       public Component getTreeCellRendererComponent(JTree tree1, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus1) {
         Component renderer = super.getTreeCellRendererComponent(tree1, value, sel, expanded, leaf, row, hasFocus1);
         if (renderer instanceof JLabel && value instanceof KirTreeNode) {
@@ -55,11 +56,13 @@ public class KirTree extends Tree {
     });
 
     addMouseListener(new MouseAdapter() {
+      @Override
       public void mouseReleased(MouseEvent e) {
         // Disable selection on mouse release
         //e.consume();
       }
 
+      @Override
       public void mousePressed(final MouseEvent e) {
         final TreePath closestPath = getPathForLocation(e.getX(), e.getY());
         if (e.getClickCount() == 2) {
@@ -72,6 +75,7 @@ public class KirTree extends Tree {
 
           if (e.getButton() == MouseEvent.BUTTON1) {
             UIUtil.invokeLater(new Runnable() {
+              @Override
               public void run() {
                 TreePath path = getSelectionPath();
                 if (path != null && path.equals(closestPath)) {
@@ -91,6 +95,7 @@ public class KirTree extends Tree {
 
     getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "Enter");
     getActionMap().put("Enter", new AbstractAction() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         onEnter();
       }

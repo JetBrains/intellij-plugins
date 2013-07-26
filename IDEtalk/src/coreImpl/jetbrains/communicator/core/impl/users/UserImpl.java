@@ -116,7 +116,7 @@ public final class UserImpl extends BaseUserImpl {
   }
 
   public boolean hasIDEtalkClient() {
-    return getTransport().hasIDEtalkClient(this);
+    return getTransport().hasIdeTalkClient(this);
   }
 
   Transport getTransport() {

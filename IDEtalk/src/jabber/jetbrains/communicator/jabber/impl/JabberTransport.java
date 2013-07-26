@@ -260,7 +260,7 @@ public class JabberTransport implements Transport, ConnectionListener, Disposabl
 
 
   @Override
-  public boolean hasIDEtalkClient(User user) {
+  public boolean hasIdeTalkClient(User user) {
     return myIDEtalkUsers.contains(user.getName());
   }
 
