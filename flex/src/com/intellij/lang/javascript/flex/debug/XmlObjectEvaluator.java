@@ -62,7 +62,7 @@ public class XmlObjectEvaluator {
     }
 
     @Override
-    public void addChildren(@NotNull XValueChildrenList children, boolean last) {
+    public void addChildren(@NotNull XValueChildrenProvider children, boolean last) {
       if (getRootNode().myCallback.isObsolete()) {
         return;
       }
@@ -76,10 +76,6 @@ public class XmlObjectEvaluator {
 
       final FakeCompositeNode rootNode = getRootNode();
       rootNode.myCallback.evaluated(rootNode.toPresentableSting(0), MONOSPACED_FONT);
-    }
-
-    public void addChildren(List<? extends XValue> children, boolean last) {
-      assert false;
     }
 
     private FakeCompositeNode getRootNode() {
@@ -153,9 +149,11 @@ public class XmlObjectEvaluator {
       }
     }
 
+    @Override
     public void tooManyChildren(int remaining) {
     }
 
+    @Override
     public void setErrorMessage(@NotNull String errorMessage) {
     }
 
@@ -168,6 +166,7 @@ public class XmlObjectEvaluator {
                            final Icon icon, @NotNull final SimpleTextAttributes attributes, @Nullable XDebuggerTreeNodeHyperlink link) {
     }
 
+    @Override
     public boolean isObsolete() {
       return false;
     }
