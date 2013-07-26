@@ -16,7 +16,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
-import com.intellij.ui.SimpleColoredComponent;
+import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.Function;
 import com.intellij.xdebugger.XSourcePosition;
@@ -69,6 +69,7 @@ public class FlexStackFrame extends XStackFrame {
     myLineIfSourcePositionIsNull = line;
   }
 
+  @Override
   @Nullable
   public XSourcePosition getSourcePosition() {
     return mySourcePosition;
@@ -90,6 +91,7 @@ public class FlexStackFrame extends XStackFrame {
           final XValueChildrenList resultChildren = new XValueChildrenList(1);
 
           Boolean insideFunExpr = ApplicationManager.getApplication().runReadAction(new Computable<Boolean>() {
+            @Override
             public Boolean compute() {
               Project project = getDebugProcess().getSession().getProject();
               PsiElement element =
@@ -194,6 +196,7 @@ public class FlexStackFrame extends XStackFrame {
   private @NonNls String buildCommandForExpression(final String _expression) {
     if (_expression.indexOf('=') != -1) {
       String evalCommand = ApplicationManager.getApplication().runReadAction(new Computable<String>() {
+        @Override
         public String compute() {
           final PsiFile fromText =
             PsiFileFactory.getInstance(myDebugProcess.getSession().getProject()).createFileFromText("A.js2", _expression);
@@ -253,6 +256,7 @@ public class FlexStackFrame extends XStackFrame {
 
     };
     myDebugProcess.sendAndProcessOneCommand(command, new Function<Exception, Void>() {
+      @Override
       public Void fun(final Exception e) {
         FlexDebugProcess.log(e);
         return null;
@@ -312,6 +316,7 @@ public class FlexStackFrame extends XStackFrame {
       final String typeName = dotPos != -1 ? expression.substring(0, dotPos):expression;
 
       final String resolvedName = ApplicationManager.getApplication().runReadAction(new Computable<String>() {
+        @Override
         public String compute() {
           final VirtualFile virtualFile = mySourcePosition.getFile();
           final PsiFile file = PsiManager.getInstance(myDebugProcess.getSession().getProject()).findFile(virtualFile);
@@ -325,6 +330,7 @@ public class FlexStackFrame extends XStackFrame {
             if (psiLanguageInjectionHost != null) {
               final Ref<PsiElement> result = new Ref<PsiElement>();
               InjectedLanguageUtil.enumerate(psiLanguageInjectionHost, new PsiLanguageInjectionHost.InjectedPsiVisitor() {
+                @Override
                 public void visit(@NotNull final PsiFile injectedPsi, @NotNull final List<PsiLanguageInjectionHost.Shred> places) {
                   final PsiLanguageInjectionHost.Shred shred = places.get(0);
                   final int injectedStart = shred.getHost().getTextOffset() + shred.getRangeInsideHost().getStartOffset();
@@ -357,6 +363,7 @@ public class FlexStackFrame extends XStackFrame {
             }
           };
           myDebugProcess.sendAndProcessOneCommand(evaluateCommand, new Function<Exception, Void>() {
+            @Override
             public Void fun(final Exception e) {
               FlexDebugProcess.log(e);
               return null;
@@ -377,6 +384,7 @@ public class FlexStackFrame extends XStackFrame {
               }
             };
             myDebugProcess.sendAndProcessOneCommand(evaluateCommand, new Function<Exception, Void>() {
+              @Override
               public Void fun(final Exception e) {
                 FlexDebugProcess.log(e);
                 return null;
@@ -402,6 +410,7 @@ public class FlexStackFrame extends XStackFrame {
 
       if (callback != null) {
         ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+          @Override
           public void run() {
             callback.evaluated(new FlexValue(FlexStackFrame.this, myDebugProcess, mySourcePosition, expression, expression, result, null,
                                              FlexValue.ValueType.Other));
@@ -436,6 +445,7 @@ public class FlexStackFrame extends XStackFrame {
 
   private class FlexDebuggerEvaluator extends XDebuggerEvaluator {
 
+    @Override
     public boolean evaluateCondition(@NotNull final String expression) {
       final String result = eval(expression, myDebugProcess);
 
@@ -449,6 +459,7 @@ public class FlexStackFrame extends XStackFrame {
         final Ref<Boolean> stopRef = new Ref<Boolean>(false);
 
         ApplicationManager.getApplication().invokeAndWait(new Runnable() {
+          @Override
           public void run() {
             final Project project = getDebugProcess().getSession().getProject();
             final int answer =
@@ -461,15 +472,18 @@ public class FlexStackFrame extends XStackFrame {
       }
     }
 
+    @Override
     public String evaluateMessage(@NotNull final String expression) {
       return eval(expression, myDebugProcess);
     }
 
+    @Override
     public void evaluate(@NotNull final String expression, @NotNull final XEvaluationCallback callback, @Nullable XSourcePosition expressionPosition) {
       final EvaluateCommand command = new EvaluateCommand(expression, callback);
       myDebugProcess.sendCommand(command);
     }
 
+    @Override
     public TextRange getExpressionRangeAtOffset(final Project project, final Document document, final int offset, boolean sideEffectsAllowed) {
       return JSDebuggerSupportUtils.getExpressionAtOffset(project, document, offset);
     }
@@ -487,7 +501,7 @@ public class FlexStackFrame extends XStackFrame {
   }
 
   @Override
-  public void customizePresentation(final SimpleColoredComponent component) {
+  public void customizePresentation(final ColoredTextContainer component) {
     component.append(myScope, SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
     if (mySourcePosition != null) {
@@ -512,6 +526,7 @@ public class FlexStackFrame extends XStackFrame {
 
   private String myQualifiedFunctionName;
 
+  @Override
   public Object getEqualityObject() {
     if (myQualifiedFunctionName == null) {  // myScope is filled async
 
@@ -521,6 +536,7 @@ public class FlexStackFrame extends XStackFrame {
         final VirtualFile file = mySourcePosition.getFile();
 
         final JSFunction function = ApplicationManager.getApplication().runReadAction(new NullableComputable<JSFunction>() {
+          @Override
           public JSFunction compute() {
             final PsiElement element = JSDebuggerSupportUtils.getContextElement(file, mySourcePosition.getOffset(), project);
             return PsiTreeUtil.getParentOfType(element, JSFunction.class);
