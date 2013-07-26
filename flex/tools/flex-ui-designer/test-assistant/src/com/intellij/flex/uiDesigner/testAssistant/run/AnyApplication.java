@@ -64,6 +64,7 @@ public class AnyApplication implements ConfigurationType {
       super(project, factory, name);
     }
 
+    @NotNull
     @Override
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
       return new UnknownSettingsEditor();

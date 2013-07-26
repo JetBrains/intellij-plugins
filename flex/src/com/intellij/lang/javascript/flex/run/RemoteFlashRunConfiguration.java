@@ -36,6 +36,7 @@ public class RemoteFlashRunConfiguration extends RunConfigurationBase implements
     return clone;
   }
 
+  @NotNull
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new RemoteFlashRunConfigurationForm(getProject());

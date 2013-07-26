@@ -63,6 +63,7 @@ public class FlashRunConfiguration extends RunConfigurationBase
     return clone;
   }
 
+  @NotNull
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new FlashRunConfigurationForm(getProject());

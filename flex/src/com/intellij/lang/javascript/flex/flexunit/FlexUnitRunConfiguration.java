@@ -45,6 +45,7 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
     super(project, factory, name);
   }
 
+  @NotNull
   @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new FlexUnitRunConfigurationForm(getProject());
