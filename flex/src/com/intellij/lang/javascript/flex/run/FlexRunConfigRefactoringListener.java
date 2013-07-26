@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.run;
 
-import com.intellij.execution.configurations.LocatableConfiguration;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.lang.javascript.flex.FlexRefactoringListenerProvider;
 import com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfiguration;
@@ -28,23 +27,11 @@ public abstract class FlexRunConfigRefactoringListener extends RefactoringElemen
   }
 
   protected void elementRenamedOrMoved(@NotNull PsiElement newElement) {
-    final boolean generatedName = ((LocatableConfiguration)myRunConfiguration).isGeneratedName();
-
     updateParams(newElement);
-
-    if (generatedName) {
-      myRunConfiguration.setName(((LocatableConfiguration)myRunConfiguration).suggestedName());
-    }
   }
 
   public void undoElementMovedOrRenamed(@NotNull final PsiElement newElement, @NotNull final String oldQualifiedName) {
-    final boolean generatedName = ((LocatableConfiguration)myRunConfiguration).isGeneratedName();
-
     undo(newElement, oldQualifiedName);
-
-    if (generatedName) {
-      myRunConfiguration.setName(((LocatableConfiguration)myRunConfiguration).suggestedName());
-    }
   }
 
   protected abstract void updateParams(PsiElement newElement);
