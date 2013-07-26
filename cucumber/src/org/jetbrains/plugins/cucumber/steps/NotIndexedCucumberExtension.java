@@ -130,6 +130,10 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
 
 
   private void createWatcher(final PsiFile file) {
+    if (file.getProject().isDisposed()) {
+      return;
+    }
+
     final DataObject dataObject = (DataObject)CucumberStepsIndex.getInstance(file.getProject()).getExtensionDataObject(this);
 
     dataObject.myCucumberPsiTreeListener.addChangesWatcher(file, new CucumberPsiTreeListener.ChangesWatcher() {
@@ -146,6 +150,10 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
   }
 
   private void reloadAbstractStepDefinitions(final PsiFile file) {
+    if (file.getProject().isDisposed()) {
+      return;
+    }
+
     final DataObject dataObject = (DataObject)CucumberStepsIndex.getInstance(file.getProject()).getExtensionDataObject(this);
     // Do not commit document if file was deleted
     final PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(file.getProject());
@@ -166,6 +174,9 @@ public abstract class NotIndexedCucumberExtension extends AbstractCucumberExtens
   }
 
   private void removeAbstractStepDefinitionsRelatedTo(final PsiFile file) {
+    if (file.getProject().isDisposed()) {
+      return;
+    }
     final DataObject dataObject = (DataObject)CucumberStepsIndex.getInstance(file.getProject()).getExtensionDataObject(this);
     // file may be invalid !!!!
     synchronized (dataObject.myStepDefinitions) {
