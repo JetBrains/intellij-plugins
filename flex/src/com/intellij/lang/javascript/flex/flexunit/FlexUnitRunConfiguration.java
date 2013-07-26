@@ -36,8 +36,8 @@ import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class FlexUnitRunConfiguration extends RunConfigurationBase
-  implements RunProfileWithCompileBeforeLaunchOption, LocatableConfiguration, RefactoringListenerProvider {
+public class FlexUnitRunConfiguration extends LocatableConfigurationBase
+  implements RunProfileWithCompileBeforeLaunchOption, RefactoringListenerProvider {
 
   private FlexUnitRunnerParameters myRunnerParameters = new FlexUnitRunnerParameters();
 
@@ -91,12 +91,6 @@ public class FlexUnitRunConfiguration extends RunConfigurationBase
         assert false : "Unknown scope: " + myRunnerParameters.getScope();
         return null;
     }
-  }
-
-  @Override
-  public boolean isGeneratedName() {
-    return getName().startsWith(ExecutionBundle.message("run.configuration.unnamed.name.prefix")) ||
-           Comparing.equal(getName(), suggestedName());
   }
 
   @Override

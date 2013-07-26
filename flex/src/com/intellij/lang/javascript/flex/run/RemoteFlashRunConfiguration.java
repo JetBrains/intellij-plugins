@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.run;
 
-import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configuration.EmptyRunProfileState;
@@ -19,7 +18,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class RemoteFlashRunConfiguration extends RunConfigurationBase implements LocatableConfiguration {
+public class RemoteFlashRunConfiguration extends LocatableConfigurationBase {
 
   private static final String DEFAULT_NAME = "Remote debug";
 
@@ -86,11 +85,6 @@ public class RemoteFlashRunConfiguration extends RunConfigurationBase implements
     else {
       return Module.EMPTY_ARRAY;
     }
-  }
-
-  @Override
-  public boolean isGeneratedName() {
-    return getName().startsWith(ExecutionBundle.message("run.configuration.unnamed.name.prefix")) || getName().equals(suggestedName());
   }
 
   @Override

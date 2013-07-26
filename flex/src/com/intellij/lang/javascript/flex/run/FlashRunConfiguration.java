@@ -1,6 +1,5 @@
 package com.intellij.lang.javascript.flex.run;
 
-import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configuration.EmptyRunProfileState;
@@ -47,8 +46,8 @@ import java.io.IOException;
 
 import static com.intellij.lang.javascript.flex.run.FlashRunnerParameters.AirMobileRunTarget;
 
-public class FlashRunConfiguration extends RunConfigurationBase
-  implements RunProfileWithCompileBeforeLaunchOption, LocatableConfiguration, RefactoringListenerProvider {
+public class FlashRunConfiguration extends LocatableConfigurationBase
+  implements RunProfileWithCompileBeforeLaunchOption, RefactoringListenerProvider {
 
   private FlashRunnerParameters myRunnerParameters = new FlashRunnerParameters();
 
@@ -121,12 +120,6 @@ public class FlashRunConfiguration extends RunConfigurationBase
     else {
       return Module.EMPTY_ARRAY;
     }
-  }
-
-  @Override
-  public boolean isGeneratedName() {
-    return getName().startsWith(ExecutionBundle.message("run.configuration.unnamed.name.prefix")) ||
-           Comparing.equal(getName(), suggestedName());
   }
 
   @Override
