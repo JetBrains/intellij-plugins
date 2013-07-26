@@ -1,7 +1,7 @@
 package org.jetbrains.plugins.cucumber.psi;
 
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.HighlighterColors;
-import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import org.jetbrains.annotations.NonNls;
@@ -14,7 +14,7 @@ import java.awt.*;
 public class GherkinHighlighter {
   @NonNls
   static final String COMMENT_ID = "GHERKIN_COMMENT";
-  public static final TextAttributes COMMENT_DEFAULT_ATTRS = SyntaxHighlighterColors.DOC_COMMENT.getDefaultAttributes().clone();
+  public static final TextAttributes COMMENT_DEFAULT_ATTRS = DefaultLanguageHighlighterColors.DOC_COMMENT.getDefaultAttributes().clone();
   public static final TextAttributesKey COMMENT = TextAttributesKey.createTextAttributesKey(
     COMMENT_ID,
     COMMENT_DEFAULT_ATTRS
@@ -22,7 +22,7 @@ public class GherkinHighlighter {
 
   @NonNls
   static final String KEYWORD_ID = "GHERKIN_KEYWORD";
-  public static final TextAttributes KEYWORD_DEFAULT_ATTRS = SyntaxHighlighterColors.KEYWORD.getDefaultAttributes().clone();
+  public static final TextAttributes KEYWORD_DEFAULT_ATTRS = DefaultLanguageHighlighterColors.KEYWORD.getDefaultAttributes().clone();
   public static final TextAttributesKey KEYWORD = TextAttributesKey.createTextAttributesKey(
     KEYWORD_ID,
     KEYWORD_DEFAULT_ATTRS
