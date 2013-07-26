@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.ui.SimpleColoredComponent;
+import com.intellij.ui.ColoredTextContainer;
 import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.util.io.socketConnection.AbstractResponseToRequestHandler;
 import com.intellij.xdebugger.XSourcePosition;
@@ -146,7 +146,7 @@ public class DartStackFrame extends XStackFrame {
   }
 
   @Override
-  public void customizePresentation(SimpleColoredComponent component) {
+  public void customizePresentation(ColoredTextContainer component) {
     XSourcePosition position = getSourcePosition();
     component.append(myFunctionName, SimpleTextAttributes.REGULAR_ATTRIBUTES);
     component.append(" in ", SimpleTextAttributes.REGULAR_ATTRIBUTES);
