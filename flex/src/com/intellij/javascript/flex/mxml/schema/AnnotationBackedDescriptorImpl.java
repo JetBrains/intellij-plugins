@@ -537,6 +537,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     }
 
     if (value.indexOf('{') != -1) return null; // dynamic values
+    if (value.trim().startsWith("@Resource")) return null;
 
     if (myAnnotationName != null && CLEAR_DIRECTIVE.equals(value)) {
       return checkClearDirectiveContext(context);
@@ -555,13 +556,15 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
       if (!inEnumeration) return FlexBundle.message("flex.invalid.enumeration.value", value);
     }
 
-    if (isAllowsPercentage() && value != null && value.endsWith("%")) value = value.substring(0, value.length() - 1);
+    if (isAllowsPercentage() && value.endsWith("%")) {
+      value = value.substring(0, value.length() - 1);
+    }
 
     boolean uint = false;
     if ("int".equals(type) || (uint = "uint".equals(type))) {
       try {
-        boolean startWithSharp = false;
-        if (value != null && ((startWithSharp = value.startsWith("#")) || value.startsWith("0x"))) {
+        boolean startWithSharp;
+        if ((startWithSharp = value.startsWith("#")) || value.startsWith("0x")) {
           if (uint) {
             final long l = Long.parseLong(value.substring(startWithSharp ? 1 : 2), 16);
             if (l < 0 || l > 0xFFFFFFFFL) {
@@ -573,7 +576,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
           }
         }
         else {
-          if ("Color".equals(format) && !StringUtil.isEmptyOrSpaces(value) && !value.isEmpty() && !Character.isDigit(value.charAt(0))) {
+          if ("Color".equals(format) && !StringUtil.isEmptyOrSpaces(value) && !Character.isDigit(value.charAt(0))) {
             return checkColorAlias(value);
           }
 
@@ -594,7 +597,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     }
     else if ("Number".equals(type)) {
       try {
-        boolean startWithSharp = false;
+        boolean startWithSharp;
         if (value != null && ((startWithSharp = value.startsWith("#")) || value.startsWith("0x"))) {
           Integer.parseInt(value.substring(startWithSharp ? 1 : 2), 16);
         }
