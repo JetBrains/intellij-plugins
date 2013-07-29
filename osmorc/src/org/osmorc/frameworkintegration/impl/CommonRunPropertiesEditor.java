@@ -25,21 +25,19 @@
 package org.osmorc.frameworkintegration.impl;
 
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 import org.osmorc.run.ui.GenericRunPropertiesEditor;
 
 import javax.swing.*;
-import java.util.HashMap;
-
 
 public class CommonRunPropertiesEditor implements FrameworkRunPropertiesEditor {
   private JPanel myMainPanel;
   private GenericRunPropertiesEditor myGenericRunPropertiesEditor;
 
   private void createUIComponents() {
-    myGenericRunPropertiesEditor =
-      new GenericRunPropertiesEditor<GenericRunProperties>(new GenericRunProperties(new HashMap<String, String>()));
+    myGenericRunPropertiesEditor = new GenericRunPropertiesEditor();
   }
 
   @Override
@@ -48,12 +46,12 @@ public class CommonRunPropertiesEditor implements FrameworkRunPropertiesEditor {
   }
 
   @Override
-  public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
-    myGenericRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
+  public void resetEditorFrom(@NotNull OsgiRunConfiguration runConfiguration) {
+    myGenericRunPropertiesEditor.resetEditorFrom(runConfiguration);
   }
 
   @Override
-  public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
-    myGenericRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
+  public void applyEditorTo(@NotNull OsgiRunConfiguration runConfiguration) throws ConfigurationException {
+    myGenericRunPropertiesEditor.applyEditorTo(runConfiguration);
   }
 }

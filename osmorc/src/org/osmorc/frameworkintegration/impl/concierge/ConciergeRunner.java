@@ -36,7 +36,6 @@ import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Concierge specific implementation of {@link org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner}.
@@ -44,14 +43,8 @@ import java.util.Map;
  * @author <a href="mailto:al@chilibi.org">Alain Greppin</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ConciergeRunner extends AbstractFrameworkRunner<GenericRunProperties> {
+public class ConciergeRunner extends AbstractFrameworkRunner {
   static final String MAIN_CLASS = "ch.ethz.iks.concierge.framework.Framework";
-
-  @NotNull
-  @Override
-  protected GenericRunProperties convertProperties(@NotNull Map<String, String> properties) {
-    return new GenericRunProperties(properties);
-  }
 
   /**
    * See <a href="http://concierge.sourceforge.net/properties.html">Concierge Startup Properties</a>.
@@ -97,7 +90,7 @@ public class ConciergeRunner extends AbstractFrameworkRunner<GenericRunPropertie
 
     vmParameters.addProperty("osgi.init", "true");
 
-    if (myAdditionalProperties.isDebugMode()) {
+    if (GenericRunProperties.isDebugMode(myAdditionalProperties)) {
       vmParameters.addProperty("ch.ethz.iks.concierge.debug", "true");
     }
 

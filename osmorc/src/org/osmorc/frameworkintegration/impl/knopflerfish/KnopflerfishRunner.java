@@ -35,7 +35,6 @@ import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Knopflerfish specific implementation of {@link org.osmorc.frameworkintegration.FrameworkRunner}.
@@ -43,13 +42,8 @@ import java.util.Map;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class KnopflerfishRunner extends AbstractFrameworkRunner<GenericRunProperties> {
+public class KnopflerfishRunner extends AbstractFrameworkRunner {
   static final String MAIN_CLASS = "org.knopflerfish.framework.Main";
-
-  @NotNull
-  protected GenericRunProperties convertProperties(@NotNull Map<String, String> properties) {
-    return new GenericRunProperties(properties);
-  }
 
   /**
    * See <a href="http://www.knopflerfish.org/releases/current/docs/running.html">Running Knopflerfish</a>.
@@ -64,7 +58,7 @@ public class KnopflerfishRunner extends AbstractFrameworkRunner<GenericRunProper
     vmParameters.addProperty("org.osgi.framework.dir", vmParameters.getPropertyValue("org.osgi.framework.storage"));
 
     vmParameters.addProperty("org.knopflerfish.framework.debug.errors", "true");
-    if (myAdditionalProperties.isDebugMode()) {
+    if (GenericRunProperties.isDebugMode(myAdditionalProperties)) {
       // todo: more detailed settings in the dialog (?)
       vmParameters.addProperty("org.knopflerfish.verbosity", "10");
       vmParameters.addProperty("org.knopflerfish.framework.debug.startlevel", "true");

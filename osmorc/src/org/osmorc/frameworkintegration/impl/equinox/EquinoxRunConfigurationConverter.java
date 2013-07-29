@@ -32,10 +32,12 @@ import com.intellij.conversion.RunManagerSettings;
 import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
+import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -93,13 +95,12 @@ public class EquinoxRunConfigurationConverter extends ProjectConverter {
           osgiRunConfiguration.setVmParameters(jvmArgs);
           osgiRunConfiguration.setProgramParameters(additionalEquinoxArgs);
 
-          EquinoxRunProperties runProperties = new EquinoxRunProperties(osgiRunConfiguration.getAdditionalProperties());
-          runProperties.setEquinoxApplication(application);
-          runProperties.setEquinoxProduct(product);
-          runProperties.setStartConsole(equinoxConsole);
-          runProperties.setDebugMode(equinoxDebug);
-
-          osgiRunConfiguration.putAdditionalProperties(runProperties.getProperties());
+          Map<String, String> properties = osgiRunConfiguration.getAdditionalProperties();
+          GenericRunProperties.setDebugMode(properties, equinoxDebug);
+          GenericRunProperties.setStartConsole(properties, equinoxConsole);
+          EquinoxRunProperties.setEquinoxProduct(properties, product);
+          EquinoxRunProperties.setEquinoxApplication(properties, application);
+          osgiRunConfiguration.putAdditionalProperties(properties);
 
           ArrayList<SelectedBundle> bundles = new ArrayList<SelectedBundle>();
           bundles.add(

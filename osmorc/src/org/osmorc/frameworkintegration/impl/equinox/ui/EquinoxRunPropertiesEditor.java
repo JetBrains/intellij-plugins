@@ -26,8 +26,8 @@ package org.osmorc.frameworkintegration.impl.equinox.ui;
 
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.util.text.StringUtil;
-import com.jgoodies.binding.PresentationModel;
-import com.jgoodies.binding.adapter.BasicComponentFactory;
+import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.impl.equinox.EquinoxRunProperties;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
@@ -36,7 +36,7 @@ import org.osmorc.run.ui.GenericRunPropertiesEditor;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
@@ -50,53 +50,38 @@ public class EquinoxRunPropertiesEditor implements FrameworkRunPropertiesEditor 
   private JTextField myProductTextField;
   private JRadioButton myApplicationRadioButton;
   private JTextField myApplicationTextField;
-  private PresentationModel<EquinoxRunProperties> myPresentationModel;
 
   public EquinoxRunPropertiesEditor() {
-    myJustTheBundlesRadioButton.addActionListener(new ActionListener() {
+    ActionListener updater = new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         updatePresentation();
       }
-    });
-    myProductRadioButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        updatePresentation();
-      }
-    });
-    myApplicationRadioButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        updatePresentation();
-      }
-    });
+    };
+    myJustTheBundlesRadioButton.addActionListener(updater);
+    myProductRadioButton.addActionListener(updater);
+    myApplicationRadioButton.addActionListener(updater);
   }
 
   private void createUIComponents() {
-    EquinoxRunProperties runProperties = new EquinoxRunProperties(new HashMap<String, String>());
-    myPresentationModel = new PresentationModel<EquinoxRunProperties>(runProperties);
-    myGenericRunPropertiesEditor = new GenericRunPropertiesEditor<EquinoxRunProperties>(runProperties);
-    myProductTextField = BasicComponentFactory.createTextField(myPresentationModel.getModel(EquinoxRunProperties.EQUINOX_PRODUCT));
-    myApplicationTextField = BasicComponentFactory.createTextField(myPresentationModel.getModel(EquinoxRunProperties.EQUINOX_APPLICATION));
+    myGenericRunPropertiesEditor = new GenericRunPropertiesEditor();
   }
 
   private void updatePresentation() {
     if (myJustTheBundlesRadioButton.isSelected()) {
       myProductTextField.setText("");
       myProductTextField.setEnabled(false);
-      myPresentationModel.getBean().setEquinoxProduct("");
       myApplicationTextField.setText("");
       myApplicationTextField.setEnabled(false);
-      myPresentationModel.getBean().setEquinoxApplication("");
     }
     else if (myProductRadioButton.isSelected()) {
       myApplicationTextField.setText("");
       myApplicationTextField.setEnabled(false);
-      myPresentationModel.getBean().setEquinoxApplication("");
       myProductTextField.setEnabled(true);
     }
     else if (myApplicationRadioButton.isSelected()) {
       myProductTextField.setText("");
       myProductTextField.setEnabled(false);
-      myPresentationModel.getBean().setEquinoxProduct("");
       myApplicationTextField.setEnabled(true);
     }
   }
@@ -107,15 +92,19 @@ public class EquinoxRunPropertiesEditor implements FrameworkRunPropertiesEditor 
   }
 
   @Override
-  public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
-    myGenericRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
+  public void resetEditorFrom(@NotNull OsgiRunConfiguration runConfiguration) {
+    myGenericRunPropertiesEditor.resetEditorFrom(runConfiguration);
 
-    myPresentationModel.getBean().load(osgiRunConfiguration.getAdditionalProperties());
-    if (!StringUtil.isEmptyOrSpaces(myPresentationModel.getBean().getEquinoxProduct())) {
+    Map<String, String> properties = runConfiguration.getAdditionalProperties();
+    String product = EquinoxRunProperties.getEquinoxProduct(properties);
+    String application = EquinoxRunProperties.getEquinoxApplication(properties);
+    if (!StringUtil.isEmptyOrSpaces(product)) {
       myProductRadioButton.setSelected(true);
+      myProductTextField.setText(product);
     }
-    else if (!StringUtil.isEmptyOrSpaces(myPresentationModel.getBean().getEquinoxApplication())) {
+    else if (!StringUtil.isEmptyOrSpaces(application)) {
       myApplicationRadioButton.setSelected(true);
+      myApplicationTextField.setText(application);
     }
     else {
       myJustTheBundlesRadioButton.setSelected(true);
@@ -125,8 +114,12 @@ public class EquinoxRunPropertiesEditor implements FrameworkRunPropertiesEditor 
   }
 
   @Override
-  public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
-    myGenericRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
-    osgiRunConfiguration.putAdditionalProperties(myPresentationModel.getBean().getProperties());
+  public void applyEditorTo(@NotNull OsgiRunConfiguration runConfiguration) throws ConfigurationException {
+    myGenericRunPropertiesEditor.applyEditorTo(runConfiguration);
+
+    Map<String, String> properties = ContainerUtil.newHashMap();
+    EquinoxRunProperties.setEquinoxProduct(properties, myProductTextField.getText());
+    EquinoxRunProperties.setEquinoxApplication(properties, myApplicationTextField.getText());
+    runConfiguration.putAdditionalProperties(properties);
   }
 }

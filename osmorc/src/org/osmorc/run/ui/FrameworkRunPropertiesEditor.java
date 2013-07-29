@@ -26,6 +26,7 @@
 package org.osmorc.run.ui;
 
 import com.intellij.openapi.options.ConfigurationException;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.run.OsgiRunConfiguration;
 
 import javax.swing.*;
@@ -34,9 +35,9 @@ import javax.swing.*;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface FrameworkRunPropertiesEditor {
-  void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration);
+  void resetEditorFrom(@NotNull OsgiRunConfiguration runConfiguration);
 
-  void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException;
+  void applyEditorTo(@NotNull OsgiRunConfiguration runConfiguration) throws ConfigurationException;
 
   JPanel getUI();
 }

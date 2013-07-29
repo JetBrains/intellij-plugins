@@ -22,9 +22,9 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.frameworkintegration.impl.equinox;
 
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 
 import java.util.Map;
@@ -34,28 +34,22 @@ import java.util.Map;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class EquinoxRunProperties extends GenericRunProperties {
+  private static final String EQUINOX_PRODUCT = "equinoxProduct";
+  private static final String EQUINOX_APPLICATION = "equinoxApplication";
 
-  public EquinoxRunProperties(Map<String, String> additionalProperties) {
-    super(additionalProperties);
+  public static String getEquinoxProduct(@NotNull Map<String, String> properties) {
+    return properties.get(EQUINOX_PRODUCT);
   }
 
-
-  public String getEquinoxProduct() {
-    return getProperty(EQUINOX_PRODUCT);
+  public static void setEquinoxProduct(@NotNull Map<String, String> properties, String product) {
+    properties.put(EQUINOX_PRODUCT, product);
   }
 
-  public void setEquinoxProduct(final String product) {
-    putProperty(EQUINOX_PRODUCT, product);
+  public static String getEquinoxApplication(@NotNull Map<String, String> properties) {
+    return properties.get(EQUINOX_APPLICATION);
   }
 
-  public String getEquinoxApplication() {
-    return getProperty(EQUINOX_APPLICATION);
+  public static void setEquinoxApplication(@NotNull Map<String, String> properties, String application) {
+    properties.put(EQUINOX_APPLICATION, application);
   }
-
-  public void setEquinoxApplication(final String application) {
-    putProperty(EQUINOX_APPLICATION, application);
-  }
-
-  public static final String EQUINOX_PRODUCT = "equinoxProduct";
-  public static final String EQUINOX_APPLICATION = "equinoxApplication";
 }

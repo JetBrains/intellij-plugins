@@ -22,44 +22,38 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.frameworkintegration.impl.equinox;
 
 import com.intellij.execution.configurations.RuntimeConfigurationWarning;
 import com.intellij.openapi.util.SystemInfo;
-import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.impl.DefaultOsgiRunConfigurationChecker;
+import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.OsgiRunConfiguration;
 
+import java.util.Map;
+
 /**
- * Runconfiguration checker for the Equinox framework.
+ * Run configuration checker for the Equinox framework.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class EquinoxOsgiRunConfigurationChecker extends DefaultOsgiRunConfigurationChecker {
-
-
-  public EquinoxOsgiRunConfigurationChecker() {
-  }
-
-
   @Override
-  protected void checkFrameworkSpecifics(OsgiRunConfiguration runConfiguration) throws RuntimeConfigurationWarning {
-    FrameworkInstanceDefinition frameworkInstanceDefinition = runConfiguration.getInstanceToUse();
-    assert frameworkInstanceDefinition != null;
+  protected void checkFrameworkSpecifics(@NotNull OsgiRunConfiguration runConfiguration) throws RuntimeConfigurationWarning {
+    Map<String, String> properties = runConfiguration.getAdditionalProperties();
 
-    EquinoxRunProperties runProperties = new EquinoxRunProperties(runConfiguration.getAdditionalProperties());
-
-    if (runProperties.getEquinoxApplication() != null && runProperties.getEquinoxApplication().length() > 0 ||
-        runProperties.getEquinoxProduct() != null && runProperties.getEquinoxProduct().length() > 0) {
+    String product = EquinoxRunProperties.getEquinoxProduct(properties);
+    String application = EquinoxRunProperties.getEquinoxApplication(properties);
+    if (!StringUtil.isEmptyOrSpaces(product) || !StringUtil.isEmptyOrSpaces(application)) {
       if (SystemInfo.isMac && !runConfiguration.getVmParameters().contains("-XstartOnFirstThread")) {
-        throw new RuntimeConfigurationWarning(
-          "Using the JVM option -XstartOnFirstThread for running SWT apps on Mac OS X is highly recommended.");
+        throw new RuntimeConfigurationWarning(OsmorcBundle.message("run.configuration.equinox.jvm"));
       }
 
-      if (runProperties.isStartConsole()) {
+      if (GenericRunProperties.isStartConsole(properties)) {
         throw new RuntimeConfigurationWarning(OsmorcBundle.message("run.configuration.equinox.runningWithConsole"));
       }
     }

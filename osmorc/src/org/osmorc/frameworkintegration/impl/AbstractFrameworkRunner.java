@@ -55,12 +55,12 @@ import static org.osmorc.frameworkintegration.FrameworkInstanceManager.Framework
  * @author Robert F. Beeger (robert@beeger.net)
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public abstract class AbstractFrameworkRunner<P extends GenericRunProperties> implements FrameworkRunner {
+public abstract class AbstractFrameworkRunner implements FrameworkRunner {
   protected OsgiRunConfiguration myRunConfiguration;
   protected FrameworkInstanceDefinition myInstance;
   protected FrameworkIntegrator myIntegrator;
   protected AbstractFrameworkInstanceManager myInstanceManager;
-  protected P myAdditionalProperties;
+  protected Map<String, String> myAdditionalProperties;
   protected List<SelectedBundle> myBundles;
 
   private File myWorkingDir;
@@ -74,7 +74,7 @@ public abstract class AbstractFrameworkRunner<P extends GenericRunProperties> im
     myIntegrator = FrameworkIntegratorRegistry.getInstance().findIntegratorByInstanceDefinition(myInstance);
     assert myIntegrator != null : myInstance;
     myInstanceManager = (AbstractFrameworkInstanceManager)myIntegrator.getFrameworkInstanceManager();
-    myAdditionalProperties = convertProperties(myRunConfiguration.getAdditionalProperties());
+    myAdditionalProperties = myRunConfiguration.getAdditionalProperties();
     myBundles = bundles;
 
     // validation
@@ -128,7 +128,7 @@ public abstract class AbstractFrameworkRunner<P extends GenericRunProperties> im
       params.getClassPath().add(org.osmorc.frameworkintegration.util.FileUtil.urlToPath(url));
     }
 
-    if (myAdditionalProperties.isStartConsole()) {
+    if (GenericRunProperties.isStartConsole(myAdditionalProperties)) {
       Collection<SelectedBundle> shellBundles = myInstanceManager.getFrameworkBundles(myInstance, FrameworkBundleType.SHELL);
       if (shellBundles.isEmpty()) {
         throw new CantRunException("Console requested but no shell bundles can be found - please check the installation");
@@ -159,12 +159,12 @@ public abstract class AbstractFrameworkRunner<P extends GenericRunProperties> im
       params.getProgramParametersList().addParametersString(additionalProgramParams);
     }
 
-    String bootDelegation = myAdditionalProperties.getBootDelegation();
+    String bootDelegation = GenericRunProperties.getBootDelegation(myAdditionalProperties);
     if (!StringUtil.isEmptyOrSpaces(bootDelegation)) {
       params.getVMParametersList().addProperty("org.osgi.framework.bootdelegation", bootDelegation);
     }
 
-    String systemPackages = myAdditionalProperties.getSystemPackages();
+    String systemPackages = GenericRunProperties.getSystemPackages(myAdditionalProperties);
     if (!StringUtil.isEmptyOrSpaces(systemPackages)) {
       params.getVMParametersList().addProperty("org.osgi.framework.system.packages.extra", systemPackages);
     }
@@ -175,9 +175,6 @@ public abstract class AbstractFrameworkRunner<P extends GenericRunProperties> im
 
     return params;
   }
-
-  @NotNull
-  protected abstract P convertProperties(@NotNull Map<String, String> properties);
 
   protected abstract void setupParameters(@NotNull JavaParameters parameters);
 

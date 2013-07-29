@@ -25,7 +25,6 @@
 package org.osmorc.frameworkintegration.impl;
 
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.util.PropertiesWrapper;
 
 import java.util.Map;
 
@@ -34,45 +33,41 @@ import java.util.Map;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class GenericRunProperties extends PropertiesWrapper {
-  public static final String SYSTEM_PACKAGES = "systemPackages";
-  public static final String BOOT_DELEGATION = "bootDelegation";
-  public static final String DEBUG_MODE = "debugMode";
-  public static final String START_CONSOLE = "startConsole";
+public class GenericRunProperties {
+  private static final String SYSTEM_PACKAGES = "systemPackages";
+  private static final String BOOT_DELEGATION = "bootDelegation";
+  private static final String DEBUG_MODE = "debugMode";
+  private static final String START_CONSOLE = "startConsole";
 
-  public GenericRunProperties(@NotNull Map<String, String> properties) {
-    super(properties);
+  public static String getSystemPackages(@NotNull Map<String, String> properties) {
+    return properties.get(SYSTEM_PACKAGES);
   }
 
-  public String getSystemPackages() {
-    return getProperty(SYSTEM_PACKAGES);
+  public static void setSystemPackages(@NotNull Map<String, String> properties, String value) {
+    properties.put(SYSTEM_PACKAGES, value);
   }
 
-  public void setSystemPackages(String value) {
-    putProperty(SYSTEM_PACKAGES, value);
+  public static String getBootDelegation(@NotNull Map<String, String> properties) {
+    return properties.get(BOOT_DELEGATION);
   }
 
-  public String getBootDelegation() {
-    return getProperty(BOOT_DELEGATION);
+  public static void setBootDelegation(@NotNull Map<String, String> properties, String value) {
+    properties.put(BOOT_DELEGATION, value);
   }
 
-  public void setBootDelegation(String value) {
-    putProperty(BOOT_DELEGATION, value);
+  public static boolean isDebugMode(@NotNull Map<String, String> properties) {
+    return Boolean.parseBoolean(properties.get(DEBUG_MODE));
   }
 
-  public boolean isDebugMode() {
-    return getBooleanProperty(DEBUG_MODE);
+  public static void setDebugMode(@NotNull Map<String, String> properties, boolean value) {
+    properties.put(DEBUG_MODE, String.valueOf(value));
   }
 
-  public void setDebugMode(boolean debugMode) {
-    putBooleanProperty(DEBUG_MODE, debugMode);
+  public static boolean isStartConsole(@NotNull Map<String, String> properties) {
+    return Boolean.parseBoolean(properties.get(START_CONSOLE));
   }
 
-  public boolean isStartConsole() {
-    return getBooleanProperty(START_CONSOLE);
-  }
-
-  public void setStartConsole(boolean value) {
-    putBooleanProperty(START_CONSOLE, value);
+  public static void setStartConsole(@NotNull Map<String, String> properties, boolean value) {
+    properties.put(START_CONSOLE, String.valueOf(value));
   }
 }

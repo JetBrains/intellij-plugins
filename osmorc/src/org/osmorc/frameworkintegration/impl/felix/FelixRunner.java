@@ -36,7 +36,6 @@ import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Felix specific implementation of {@link org.osmorc.frameworkintegration.FrameworkRunner}.
@@ -44,14 +43,8 @@ import java.util.Map;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class FelixRunner extends AbstractFrameworkRunner<GenericRunProperties> {
+public class FelixRunner extends AbstractFrameworkRunner {
   static final String MAIN_CLASS = "org.apache.felix.main.Main";
-
-  @NotNull
-  @Override
-  protected GenericRunProperties convertProperties(@NotNull Map<String, String> properties) {
-    return new GenericRunProperties(properties);
-  }
 
   /**
    * See <a href="http://felix.apache.org/site/apache-felix-framework-configuration-properties.html">Felix Configuration Properties</a>.
@@ -97,7 +90,7 @@ public class FelixRunner extends AbstractFrameworkRunner<GenericRunProperties> {
 
     vmParameters.addProperty("org.osgi.framework.storage.clean", "onFirstInit");
 
-    if (myAdditionalProperties.isDebugMode()) {
+    if (GenericRunProperties.isDebugMode(myAdditionalProperties)) {
       vmParameters.addProperty("felix.log.level", "4");
     }
 

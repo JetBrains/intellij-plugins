@@ -31,23 +31,17 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkRunner;
+import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class EquinoxRunner extends AbstractFrameworkRunner<EquinoxRunProperties> {
+public class EquinoxRunner extends AbstractFrameworkRunner {
   static final String MAIN_CLASS = "org.eclipse.core.runtime.adaptor.EclipseStarter";
-
-  @NotNull
-  @Override
-  protected EquinoxRunProperties convertProperties(@NotNull Map<String, String> properties) {
-    return new EquinoxRunProperties(properties);
-  }
 
   /**
    * See <a href="http://help.eclipse.org/juno/topic/org.eclipse.platform.doc.isv/reference/misc/runtime-options.html">Eclipse runtime options</a>.
@@ -88,20 +82,20 @@ public class EquinoxRunner extends AbstractFrameworkRunner<EquinoxRunProperties>
 
     // framework-specific options
 
-    if (myAdditionalProperties.isStartConsole()) {
+    if (GenericRunProperties.isStartConsole(myAdditionalProperties)) {
       vmParameters.addProperty("osgi.console");
       vmParameters.addProperty("osgi.console.enable.builtin", "true");
     }
 
     vmParameters.addProperty("osgi.clean", "true");
 
-    if (myAdditionalProperties.isDebugMode()) {
+    if (GenericRunProperties.isDebugMode(myAdditionalProperties)) {
       vmParameters.addProperty("osgi.debug");
       vmParameters.addProperty("eclipse.consoleLog", "true");
     }
 
-    String product = myAdditionalProperties.getEquinoxProduct();
-    String application = myAdditionalProperties.getEquinoxApplication();
+    String product = EquinoxRunProperties.getEquinoxProduct(myAdditionalProperties);
+    String application = EquinoxRunProperties.getEquinoxApplication(myAdditionalProperties);
     if (!StringUtil.isEmptyOrSpaces(product)) {
       vmParameters.defineProperty("eclipse.product", product);
       vmParameters.defineProperty("eclipse.ignoreApp", "false");

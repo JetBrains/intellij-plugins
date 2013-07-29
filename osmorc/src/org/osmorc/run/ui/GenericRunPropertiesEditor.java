@@ -22,56 +22,48 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.run.ui;
 
 import com.intellij.openapi.options.ConfigurationException;
-import com.jgoodies.binding.PresentationModel;
-import com.jgoodies.binding.adapter.BasicComponentFactory;
+import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.impl.GenericRunProperties;
 import org.osmorc.run.OsgiRunConfiguration;
 
 import javax.swing.*;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class GenericRunPropertiesEditor<T extends GenericRunProperties> implements FrameworkRunPropertiesEditor {
-  private final T propertiesHolder;
+public class GenericRunPropertiesEditor implements FrameworkRunPropertiesEditor {
+  private JPanel myMainPanel;
+  private JTextField mySystemPackages;
+  private JTextField myBootDelegation;
+  private JCheckBox myDebugCheckbox;
+  private JCheckBox myStartConsoleCheckbox;
 
-  public GenericRunPropertiesEditor(T propertiesHolder) {
-    this.propertiesHolder = propertiesHolder;
-  }
-
+  @Override
   public JPanel getUI() {
-    return _mainPanel;
+    return myMainPanel;
   }
 
-  public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
-    _presentationModel.getBean().load(osgiRunConfiguration.getAdditionalProperties());
+  @Override
+  public void resetEditorFrom(@NotNull OsgiRunConfiguration runConfiguration) {
+    Map<String, String> properties = runConfiguration.getAdditionalProperties();
+    mySystemPackages.setText(GenericRunProperties.getSystemPackages(properties));
+    myBootDelegation.setText(GenericRunProperties.getBootDelegation(properties));
+    myDebugCheckbox.setSelected(GenericRunProperties.isDebugMode(properties));
+    myStartConsoleCheckbox.setSelected(GenericRunProperties.isStartConsole(properties));
   }
 
-  public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
-    osgiRunConfiguration.putAdditionalProperties(_presentationModel.getBean().getProperties());
+  @Override
+  public void applyEditorTo(@NotNull OsgiRunConfiguration runConfiguration) throws ConfigurationException {
+    Map<String, String> properties = ContainerUtil.newHashMap();
+    GenericRunProperties.setSystemPackages(properties, mySystemPackages.getText());
+    GenericRunProperties.setBootDelegation(properties, myBootDelegation.getText());
+    GenericRunProperties.setDebugMode(properties, myDebugCheckbox.isSelected());
+    GenericRunProperties.setStartConsole(properties, myStartConsoleCheckbox.isSelected());
+    runConfiguration.putAdditionalProperties(properties);
   }
-
-  private void createUIComponents() {
-    _presentationModel = new PresentationModel<T>(propertiesHolder);
-    _debugCheckbox =
-      BasicComponentFactory.createCheckBox(_presentationModel.getModel(GenericRunProperties.DEBUG_MODE), "");
-    _startConsoleCheckbox =
-      BasicComponentFactory.createCheckBox(_presentationModel.getModel(GenericRunProperties.START_CONSOLE), "");
-    _systemPackages =
-      BasicComponentFactory.createTextField(_presentationModel.getModel(GenericRunProperties.SYSTEM_PACKAGES));
-    _bootDelegation =
-      BasicComponentFactory.createTextField(_presentationModel.getModel(GenericRunProperties.BOOT_DELEGATION));
-  }
-
-
-  private JPanel _mainPanel;
-  private JCheckBox _debugCheckbox;
-  private JTextField _systemPackages;
-  private JTextField _bootDelegation;
-  private JCheckBox _startConsoleCheckbox;
-  private PresentationModel<T> _presentationModel;
 }

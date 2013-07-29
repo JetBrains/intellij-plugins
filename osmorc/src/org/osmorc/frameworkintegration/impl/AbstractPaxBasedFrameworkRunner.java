@@ -54,12 +54,12 @@ import java.util.Map;
  *
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProperties> implements ExternalVMFrameworkRunner {
+public abstract class AbstractPaxBasedFrameworkRunner implements ExternalVMFrameworkRunner {
   private static final String PAX_RUNNER_LIB = "pax-runner.jar";
   private static final String PAX_RUNNER_MAIN_CLASS = "org.ops4j.pax.runner.Run";
 
   protected OsgiRunConfiguration myRunConfiguration;
-  protected P myAdditionalProperties;
+  protected Map<String, String> myAdditionalProperties;
   protected List<SelectedBundle> myBundles;
   private File myWorkingDir;
 
@@ -67,7 +67,7 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
   public JavaParameters createJavaParameters(@NotNull OsgiRunConfiguration runConfiguration,
                                              @NotNull List<SelectedBundle> bundles) throws ExecutionException {
     myRunConfiguration = runConfiguration;
-    myAdditionalProperties = convertProperties(runConfiguration.getAdditionalProperties());
+    myAdditionalProperties = runConfiguration.getAdditionalProperties();
     myBundles = bundles;
 
     Sdk jdkForRun;
@@ -153,13 +153,12 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
       }
     }
 
-    P frameworkProperties = myAdditionalProperties;
-    String bootDelegation = frameworkProperties.getBootDelegation();
+    String bootDelegation = GenericRunProperties.getBootDelegation(myAdditionalProperties);
     if (bootDelegation != null && !(bootDelegation.trim().length() == 0)) {
       commandLineParameters.add("--bd=" + bootDelegation);
     }
 
-    String systemPackages = frameworkProperties.getSystemPackages();
+    String systemPackages = GenericRunProperties.getSystemPackages(myAdditionalProperties);
     if (systemPackages != null && !(systemPackages.trim().length() == 0)) {
       commandLineParameters.add("--sp=" + systemPackages);
     }
@@ -170,11 +169,11 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
     int defaultStartLevel = myRunConfiguration.getDefaultStartLevel();
     commandLineParameters.add("--bsl=" + defaultStartLevel);
 
-    if (frameworkProperties.isDebugMode()) {
+    if (GenericRunProperties.isDebugMode(myAdditionalProperties)) {
       commandLineParameters.add("--log=DEBUG");
     }
 
-    if (frameworkProperties.isStartConsole()) {
+    if (GenericRunProperties.isStartConsole(myAdditionalProperties)) {
       commandLineParameters.add("--console");
     }
     else {
@@ -194,9 +193,6 @@ public abstract class AbstractPaxBasedFrameworkRunner<P extends GenericRunProper
 
     return params;
   }
-
-  @NotNull
-  protected abstract P convertProperties(@NotNull Map<String, String> properties);
 
   private static File getWorkingDir(OsgiRunConfiguration runConfiguration) {
     String path;

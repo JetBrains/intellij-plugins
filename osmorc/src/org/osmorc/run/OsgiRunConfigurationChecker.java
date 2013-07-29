@@ -22,10 +22,10 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.run;
 
 import com.intellij.execution.configurations.RuntimeConfigurationException;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Classes implementing this interface provide additional checks for the run configuration.
@@ -33,5 +33,5 @@ import com.intellij.execution.configurations.RuntimeConfigurationException;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface OsgiRunConfigurationChecker {
-  void checkConfiguration(OsgiRunConfiguration runConfiguration) throws RuntimeConfigurationException;
+  void checkConfiguration(@NotNull OsgiRunConfiguration runConfiguration) throws RuntimeConfigurationException;
 }

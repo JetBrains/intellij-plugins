@@ -97,17 +97,15 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     super(project, configurationFactory, name);
     bundlesToDeploy = new ArrayList<SelectedBundle>();
     additionalProperties = new HashMap<String, String>();
-    additionalProperties.put(GenericRunProperties.START_CONSOLE, String.valueOf(true));
+    GenericRunProperties.setStartConsole(additionalProperties, true);
   }
 
   @Override
   @Nullable
   public RunConfiguration clone() {
     OsgiRunConfiguration conf = (OsgiRunConfiguration)super.clone();
-    if (conf == null) {
-      //noinspection ConstantConditions
-      return conf;
-    }
+    if (conf == null) return null;
+
     conf.bundlesToDeploy = new ArrayList<SelectedBundle>(bundlesToDeploy);
     conf.additionalProperties = new HashMap<String, String>(additionalProperties);
     return conf;
@@ -275,7 +273,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       throw new RuntimeConfigurationError(OsmorcBundle.message("run.configuration.no.instance.selected"));
     }
     if (isUseAlternativeJre()) {
-      final String jrePath = this.getAlternativeJrePath();
+      String jrePath = this.getAlternativeJrePath();
       if (jrePath == null || jrePath.length() == 0 || !JavaSdk.checkForJre(jrePath)) {
         throw new RuntimeConfigurationWarning(ExecutionBundle.message("jre.not.valid.error.message", jrePath));
       }
@@ -345,7 +343,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     return useAlternativeJre;
   }
 
-  public void putAdditionalProperties(@NotNull final Map<String, String> props) {
+  public void putAdditionalProperties(@NotNull Map<String, String> props) {
     additionalProperties.putAll(props);
   }
 
