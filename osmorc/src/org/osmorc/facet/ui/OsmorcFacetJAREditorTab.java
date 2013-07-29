@@ -310,7 +310,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
       }
       catch (IOException e) {
         Messages.showErrorDialog(myRoot, OsmorcBundle.message("error"),
-                                 OsmorcBundle.message("faceteditor.cannot.create.outputpath"));
+                                 OsmorcBundle.message("facet.editor.cannot.create.output.path"));
         return;
       }
 
@@ -331,7 +331,7 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
     if (file != null) {
       if (VfsUtil.isAncestor(moduleCompilerOutputPath, file, false)) {
         Messages.showErrorDialog(myEditorContext.getProject(),
-                                 OsmorcBundle.message("faceteditor.jar.cannot.be.in.output.path"),
+                                 OsmorcBundle.message("facet.editor.jar.cannot.be.in.output.path"),
                                  OsmorcBundle.message("error"));
         myJarOutputPathChooser.setText("");
         return;

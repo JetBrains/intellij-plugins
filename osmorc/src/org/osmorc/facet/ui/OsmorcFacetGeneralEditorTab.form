@@ -76,7 +76,7 @@
             </constraints>
             <properties>
               <selected value="true"/>
-              <text resource-bundle="org/osmorc/i18n/OsmorcBundle" key="faceteditor.manifestfilelocation.useprojectdefault"/>
+              <text value="Use project default"/>
             </properties>
           </component>
           <grid id="e8153" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
