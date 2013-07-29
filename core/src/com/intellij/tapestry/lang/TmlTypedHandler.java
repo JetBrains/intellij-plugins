@@ -8,6 +8,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.tapestry.psi.TelTokenTypes;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * User: Maxim.Mossienko
@@ -16,7 +17,7 @@ import com.intellij.tapestry.psi.TelTokenTypes;
  */
 public class TmlTypedHandler extends TypedHandlerDelegate {
   @Override
-  public Result charTyped(char c, Project project, Editor editor, PsiFile file) {
+  public Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file) {
     if (file.getFileType() != TmlFileType.INSTANCE || c != '{') return Result.CONTINUE;
     if(!CodeInsightSettings.getInstance().AUTOINSERT_PAIR_BRACKET) return Result.CONTINUE;
     PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
