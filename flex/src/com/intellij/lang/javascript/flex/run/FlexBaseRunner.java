@@ -507,7 +507,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
       final AirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
       final String descriptorPath = getAirDescriptorPath(bc, packagingOptions);
 
-      if ((FlexSdkUtils.isAirSdkWithoutFlex(sdk) || StringUtil.compareVersionNumbers(sdk.getVersionString(), "4") >= 0) &&
+      if ((FlexSdkUtils.isAirSdkWithoutFlex(sdk) || StringUtil.compareVersionNumbers(sdk.getVersionString(), "4.1") >= 0) &&
           FlexCommonUtils.getOptionValues(adlOptions, "profile").isEmpty()) {
 
         final String profiles = getSupportedProfiles(descriptorPath);
