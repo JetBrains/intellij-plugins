@@ -2,18 +2,19 @@ package com.intellij.javascript.karma.server;
 
 import com.intellij.execution.actions.StopProcessAction;
 import com.intellij.execution.filters.TextConsoleBuilderImpl;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
-import com.intellij.javascript.karma.util.ProcessEventStore;
+import com.intellij.javascript.karma.util.ArchivedOutputListener;
+import com.intellij.javascript.karma.util.ProcessOutputArchive;
 import com.intellij.javascript.nodejs.BaseNodeJSFilter;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithActions;
 import com.intellij.openapi.util.Key;
@@ -29,7 +30,7 @@ import javax.swing.*;
  */
 public class KarmaServerLogComponent implements ComponentWithActions {
 
-  private final ProcessEventStore myProcessEventStore;
+  private final ProcessOutputArchive myProcessOutputArchive;
   private final ConsoleView myConsole;
   private final KarmaServer myKarmaServer;
   private ActionGroup myActionGroup;
@@ -37,7 +38,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
   public KarmaServerLogComponent(@NotNull Project project,
                                  @NotNull KarmaServer karmaServer) {
     myKarmaServer = karmaServer;
-    myProcessEventStore = karmaServer.getProcessEventStore();
+    myProcessOutputArchive = karmaServer.getProcessOutputArchive();
     GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     TextConsoleBuilderImpl builder = new TextConsoleBuilderImpl(project, scope);
     builder.setUsePredefinedMessageFilter(false);
@@ -46,13 +47,25 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     if (myConsole == null) {
       throw new RuntimeException("Console shouldn't be null!");
     }
-    ProcessAdapter processListener = new ProcessAdapter() {
+  }
+
+  private void start(@NotNull final Content consoleContent) {
+    ArchivedOutputListener outputListener = new ArchivedOutputListener() {
       @Override
-      public void onTextAvailable(ProcessEvent event, Key outputType) {
-        myConsole.print(event.getText(), ConsoleViewContentType.getConsoleViewType(outputType));
+      public void onOutputAvailable(@NotNull String text, Key outputType, boolean archived) {
+        ConsoleViewContentType contentType = ConsoleViewContentType.getConsoleViewType(outputType);
+        myConsole.print(text, contentType);
+        if (!archived && text.startsWith("ERROR ")) {
+          ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              consoleContent.fireAlert();
+            }
+          }, ModalityState.any());
+        }
       }
     };
-    myProcessEventStore.addProcessListener(processListener);
+    myProcessOutputArchive.addOutputListener(outputListener);
   }
 
   @Nullable
@@ -62,7 +75,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
       return myActionGroup;
     }
     DefaultActionGroup group = new DefaultActionGroup();
-    group.add(new StopProcessAction("Stop Karma Server", null, myProcessEventStore.getProcessHandler()));
+    group.add(new StopProcessAction("Stop Karma Server", null, myProcessOutputArchive.getProcessHandler()));
 
     final AnAction[] actions = myConsole.createConsoleActions();
     for (AnAction action : actions) {
@@ -125,6 +138,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
         }
       }
     });
+    start(consoleContent);
   }
 
 }

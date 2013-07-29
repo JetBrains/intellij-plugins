@@ -13,17 +13,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * @author Sergey Simonchik
  */
-public class ProcessEventStore {
+public class ProcessOutputArchive {
 
   private static final String PREFIX = "##intellij-event[";
   private static final String SUFFIX = "]\n";
 
   private final ProcessHandler myProcessHandler;
-  private final List<Pair<ProcessEvent, Key>> myTexts = Lists.newArrayList();
-  private final List<ProcessListener> myProcessListeners = new CopyOnWriteArrayList<ProcessListener>();
+  private final List<Pair<String, Key>> myTexts = Lists.newArrayList();
+  private final List<ArchivedOutputListener> myOutputListeners = new CopyOnWriteArrayList<ArchivedOutputListener>();
   private final List<StreamEventListener> myStdoutStreamEventListeners = new CopyOnWriteArrayList<StreamEventListener>();
 
-  public ProcessEventStore(@NotNull ProcessHandler processHandler) {
+  public ProcessOutputArchive(@NotNull ProcessHandler processHandler) {
     myProcessHandler = processHandler;
   }
 
@@ -31,15 +31,16 @@ public class ProcessEventStore {
     myProcessHandler.addProcessListener(new ProcessAdapter() {
       @Override
       public void onTextAvailable(ProcessEvent event, Key outputType) {
+        String text = event.getText();
         if (outputType != ProcessOutputTypes.SYSTEM && outputType != ProcessOutputTypes.STDERR) {
-          if (handleLineAsEvent(event.getText())) {
+          if (handleLineAsEvent(text)) {
             return;
           }
         }
         synchronized (myTexts) {
-          myTexts.add(Pair.create(event, outputType));
-          for (ProcessListener listener : myProcessListeners) {
-            listener.onTextAvailable(event, outputType);
+          myTexts.add(Pair.create(text, outputType));
+          for (ArchivedOutputListener listener : myOutputListeners) {
+            listener.onOutputAvailable(event.getText(), outputType, false);
           }
         }
       }
@@ -48,19 +49,17 @@ public class ProcessEventStore {
   }
 
   private boolean handleLineAsEvent(@NotNull String line) {
-    if (line.startsWith(PREFIX)) {
-      if (line.endsWith(SUFFIX)) {
-        int colonInd = line.indexOf(':');
-        if (colonInd == -1) {
-           return false;
-        }
-        String eventType = line.substring(PREFIX.length(), colonInd);
-        String eventBody = line.substring(colonInd + 1, line.length() - SUFFIX.length());
-        for (StreamEventListener listener : myStdoutStreamEventListeners) {
-          listener.on(eventType, eventBody);
-        }
-        return true;
+    if (line.startsWith(PREFIX) && line.endsWith(SUFFIX)) {
+      int colonInd = line.indexOf(':');
+      if (colonInd == -1) {
+        return false;
       }
+      String eventType = line.substring(PREFIX.length(), colonInd);
+      String eventBody = line.substring(colonInd + 1, line.length() - SUFFIX.length());
+      for (StreamEventListener listener : myStdoutStreamEventListeners) {
+        listener.on(eventType, eventBody);
+      }
+      return true;
     }
     return false;
   }
@@ -70,32 +69,22 @@ public class ProcessEventStore {
     return myProcessHandler;
   }
 
-  public void addProcessListener(@NotNull final ProcessListener processListener) {
+  public void addOutputListener(@NotNull final ArchivedOutputListener outputListener) {
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override
       public void run() {
         synchronized (myTexts) {
-          for (Pair<ProcessEvent, Key> text : myTexts) {
-            processListener.onTextAvailable(text.getFirst(), text.getSecond());
+          for (Pair<String, Key> text : myTexts) {
+            outputListener.onOutputAvailable(text.getFirst(), text.getSecond(), true);
           }
-          myProcessListeners.add(processListener);
+          myOutputListeners.add(outputListener);
         }
       }
     });
   }
 
-  public void removeProcessListener(@NotNull final ProcessListener processListener) {
-    synchronized (myTexts) {
-      myProcessListeners.remove(processListener);
-    }
-  }
-
   public void addStreamEventListener(@NotNull StreamEventListener listener) {
     myStdoutStreamEventListeners.add(listener);
-  }
-
-  public void removeStreamEventListener(@NotNull StreamEventListener listener) {
-    myStdoutStreamEventListeners.remove(listener);
   }
 
 }

@@ -9,7 +9,7 @@ import com.intellij.execution.process.*;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.coverage.KarmaCoverageSession;
 import com.intellij.javascript.karma.util.GsonUtil;
-import com.intellij.javascript.karma.util.ProcessEventStore;
+import com.intellij.javascript.karma.util.ProcessOutputArchive;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -40,7 +40,7 @@ public class KarmaServer {
 
   private final File myConfigurationFile;
   private final KillableColoredProcessHandler myProcessHandler;
-  private final ProcessEventStore myProcessEventStore;
+  private final ProcessOutputArchive myProcessOutputArchive;
   private final KarmaJsSourcesLocator myKarmaJsSourcesLocator;
   private final KarmaServerState myState;
 
@@ -73,7 +73,7 @@ public class KarmaServer {
     catch (ExecutionException e) {
       throw new IOException("Can not create karma server process", e);
     }
-    myProcessEventStore = new ProcessEventStore(myProcessHandler);
+    myProcessOutputArchive = new ProcessOutputArchive(myProcessHandler);
     registerStreamEventHandler(new StreamEventHandler() {
       @NotNull
       @Override
@@ -104,7 +104,7 @@ public class KarmaServer {
       }
     });
 
-    myProcessEventStore.addStreamEventListener(new StreamEventListener() {
+    myProcessOutputArchive.addStreamEventListener(new StreamEventListener() {
       @Override
       public void on(@NotNull String eventType, @NotNull String eventBody) {
         JsonElement jsonElement;
@@ -126,7 +126,7 @@ public class KarmaServer {
         }
       }
     });
-    myProcessEventStore.startNotify();
+    myProcessOutputArchive.startNotify();
     Disposer.register(ApplicationManager.getApplication(), new Disposable() {
       @Override
       public void dispose() {
@@ -193,8 +193,8 @@ public class KarmaServer {
   }
 
   @NotNull
-  public ProcessEventStore getProcessEventStore() {
-    return myProcessEventStore;
+  public ProcessOutputArchive getProcessOutputArchive() {
+    return myProcessOutputArchive;
   }
 
   void fireOnReady(final int webServerPort, final int runnerPort) {
