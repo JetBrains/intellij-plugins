@@ -40,6 +40,7 @@ import com.intellij.util.net.HttpConfigurable;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import org.osmorc.frameworkintegration.util.OsgiFileUtil;
 import org.osmorc.run.ExternalVMFrameworkRunner;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
@@ -111,7 +112,7 @@ public abstract class AbstractPaxBasedFrameworkRunner implements ExternalVMFrame
       for (SelectedBundle bundle : myBundles) {
         String url = bundle.getBundleUrl();
         if (url != null) {
-          params.getClassPath().add(org.osmorc.frameworkintegration.util.FileUtil.urlToPath(url));
+          params.getClassPath().add(OsgiFileUtil.urlToPath(url));
         }
       }
     }

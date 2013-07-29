@@ -3,7 +3,7 @@ package org.osmorc.frameworkintegration;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.util.FileUtil;
+import org.osmorc.frameworkintegration.util.OsgiFileUtil;
 
 import java.util.Collection;
 import java.util.Set;
@@ -21,7 +21,7 @@ public abstract class JarFileLibraryCollector implements FrameworkLibraryCollect
     Set<VirtualFile> classRoots = new HashSet<VirtualFile>();
     for (VirtualFile directoryWithJars : directoriesWithJars) {
       for (VirtualFile child : directoryWithJars.getChildren()) {
-        VirtualFile dir = FileUtil.getFolder(child);
+        VirtualFile dir = OsgiFileUtil.getFolder(child);
         if (dir != null) {
           VirtualFile manifest = dir.findFileByRelativePath("META-INF/MANIFEST.MF"); // it's a bundle
           if (manifest != null && !sourceFinder.containsOnlySources(child)) {

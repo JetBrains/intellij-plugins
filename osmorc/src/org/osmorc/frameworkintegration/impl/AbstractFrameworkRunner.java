@@ -38,6 +38,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.HttpConfigurable;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.*;
+import org.osmorc.frameworkintegration.util.OsgiFileUtil;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 
@@ -125,7 +126,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
     for (SelectedBundle bundle : systemBundles) {
       String url = bundle.getBundleUrl();
       assert url != null : bundle;
-      params.getClassPath().add(org.osmorc.frameworkintegration.util.FileUtil.urlToPath(url));
+      params.getClassPath().add(OsgiFileUtil.urlToPath(url));
     }
 
     if (GenericRunProperties.isStartConsole(myAdditionalProperties)) {
@@ -142,7 +143,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
       for (SelectedBundle bundle : myBundles) {
         String url = bundle.getBundleUrl();
         if (url != null) {
-          params.getClassPath().add(org.osmorc.frameworkintegration.util.FileUtil.urlToPath(url));
+          params.getClassPath().add(OsgiFileUtil.urlToPath(url));
         }
       }
     }

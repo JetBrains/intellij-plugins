@@ -29,7 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceLibrarySourceFinder;
-import org.osmorc.frameworkintegration.util.FileUtil;
+import org.osmorc.frameworkintegration.util.OsgiFileUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +45,9 @@ public class ConciergeSourceFinder implements FrameworkInstanceLibrarySourceFind
   public List<VirtualFile> getSourceForLibraryClasses(@NotNull VirtualFile libraryClasses) {
     List<VirtualFile> result = new ArrayList<VirtualFile>();
     if (_sourceFolder != null) {
-      String sourceZIPName = FileUtil.getNameWithoutJarSuffix(libraryClasses) + ".zip";
+      String sourceZIPName = OsgiFileUtil.getNameWithoutJarSuffix(libraryClasses) + ".zip";
       VirtualFile sourceZIP = _sourceFolder.findChild(sourceZIPName);
-      VirtualFile sourceFolder = FileUtil.getFolder(sourceZIP);
+      VirtualFile sourceFolder = OsgiFileUtil.getFolder(sourceZIP);
       if (sourceFolder != null) {
         result.add(sourceFolder);
       }

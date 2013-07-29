@@ -28,7 +28,7 @@ package org.osmorc.frameworkintegration.impl.equinox;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceLibrarySourceFinder;
-import org.osmorc.frameworkintegration.util.FileUtil;
+import org.osmorc.frameworkintegration.util.OsgiFileUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ public class EquinoxSourceFinder implements FrameworkInstanceLibrarySourceFinder
       if (file.isDirectory() && file.getName().contains("source")) {
         VirtualFile sourcesFolder = file.findChild("src");
         if (sourcesFolder != null && sourcesFolder.isDirectory()) {
-          VirtualFile librarySourcesFolder = sourcesFolder.findChild(FileUtil.getNameWithoutJarSuffix(libraryClasses));
+          VirtualFile librarySourcesFolder = sourcesFolder.findChild(OsgiFileUtil.getNameWithoutJarSuffix(libraryClasses));
           if (librarySourcesFolder != null && librarySourcesFolder.isDirectory()) {
             VirtualFile sourceZIP = librarySourcesFolder.findChild("src.zip");
             if (sourceZIP != null) {

@@ -28,7 +28,7 @@ package org.osmorc.frameworkintegration.impl.felix;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceLibrarySourceFinder;
-import org.osmorc.frameworkintegration.util.FileUtil;
+import org.osmorc.frameworkintegration.util.OsgiFileUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,9 +75,9 @@ public class FelixSourceFinder implements FrameworkInstanceLibrarySourceFinder {
   }
 
   private void addIfSource(VirtualFile sourceZIP, List<VirtualFile> result) {
-    VirtualFile folder = FileUtil.getFolder(sourceZIP);
+    VirtualFile folder = OsgiFileUtil.getFolder(sourceZIP);
     if (folder != null) {
-      String name = FileUtil.getNameWithoutTail(FileUtil.getNameWithoutTail(sourceZIP, ".zip"), "-project");
+      String name = OsgiFileUtil.getNameWithoutTail(OsgiFileUtil.getNameWithoutTail(sourceZIP, ".zip"), "-project");
       VirtualFile sourceFolder = folder.findFileByRelativePath(name + ZIP_SOURCE_PATH);
       if (sourceFolder != null && sourceFolder.isDirectory()) {
         result.add(sourceFolder);
@@ -86,10 +86,10 @@ public class FelixSourceFinder implements FrameworkInstanceLibrarySourceFinder {
   }
 
   private void addIfSource(VirtualFile libraryClasses, VirtualFile sourceZIP, List<VirtualFile> result) {
-    VirtualFile folder = FileUtil.getFolder(sourceZIP);
+    VirtualFile folder = OsgiFileUtil.getFolder(sourceZIP);
     if (folder != null) {
-      String classesName = FileUtil.getNameWithoutTail(libraryClasses, ".jar");
-      String sourceName = FileUtil.getNameWithoutTail(FileUtil.getNameWithoutTail(sourceZIP, ".zip"), "-project");
+      String classesName = OsgiFileUtil.getNameWithoutTail(libraryClasses, ".jar");
+      String sourceName = OsgiFileUtil.getNameWithoutTail(OsgiFileUtil.getNameWithoutTail(sourceZIP, ".zip"), "-project");
 
       if (classesName.contains(sourceName)) {
         VirtualFile sourceFolder = folder.findFileByRelativePath(sourceName + ZIP_SOURCE_PATH);

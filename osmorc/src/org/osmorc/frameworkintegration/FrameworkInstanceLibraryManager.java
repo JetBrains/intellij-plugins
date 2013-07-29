@@ -40,7 +40,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.frameworkintegration.util.FileUtil;
+import org.osmorc.frameworkintegration.util.OsgiFileUtil;
 import org.osmorc.settings.ApplicationSettings;
 import org.osmorc.settings.ProjectSettings;
 
@@ -172,14 +172,14 @@ public class FrameworkInstanceLibraryManager {
                   Library library =
                     projectModel.createLibrary(OsmorcControlledLibrariesPrefix + idx + ":" + jarFile.getNameWithoutExtension());
                   Library.ModifiableModel libraryModel = library.getModifiableModel();
-                  VirtualFile folder = FileUtil.getFolder(jarFile);
+                  VirtualFile folder = OsgiFileUtil.getFolder(jarFile);
                   if (folder != null) {
                     libraryModel.addRoot(folder, OrderRootType.CLASSES);
                   }
                   // find sources and add them to library
                   List<VirtualFile> sources = sourceFinder.getSourceForLibraryClasses(jarFile);
                   for (VirtualFile source : sources) {
-                    VirtualFile sourceFolder = FileUtil.getFolder(source);
+                    VirtualFile sourceFolder = OsgiFileUtil.getFolder(source);
                     libraryModel.addRoot(sourceFolder, OrderRootType.SOURCES);
                   }
                   // finish the library

@@ -34,22 +34,22 @@ import static org.junit.Assert.assertThat;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class FileUtilTest {
+public class OsgiFileUtilTest {
   @Test
   public void testGetNameWithoutJarSuffix() {
-    assertThat(FileUtil.getNameWithoutJarSuffix(new LightVirtualFile("test.jar")), equalTo("test"));
-    assertThat(FileUtil.getNameWithoutJarSuffix(new LightVirtualFile("test.bla.jar")), equalTo("test.bla"));
-    assertThat(FileUtil.getNameWithoutJarSuffix(new LightVirtualFile("test")), equalTo("test"));
+    assertThat(OsgiFileUtil.getNameWithoutJarSuffix(new LightVirtualFile("test.jar")), equalTo("test"));
+    assertThat(OsgiFileUtil.getNameWithoutJarSuffix(new LightVirtualFile("test.bla.jar")), equalTo("test.bla"));
+    assertThat(OsgiFileUtil.getNameWithoutJarSuffix(new LightVirtualFile("test")), equalTo("test"));
   }
 
   @Test
   public void testGetNameWithoutTailVirtualFile() {
-    assertThat(FileUtil.getNameWithoutTail(new LightVirtualFile("test.bla.jar"), ".bla.jar"), equalTo("test"));
+    assertThat(OsgiFileUtil.getNameWithoutTail(new LightVirtualFile("test.bla.jar"), ".bla.jar"), equalTo("test"));
   }
 
   @Test
   public void testUrlToPath() throws Exception {
-    assertEquals("/some/path", FileUtil.urlToPath("file:///some/path"));
-    assertEquals("c:/some/path", FileUtil.urlToPath("file:///c:/some/path"));
+    assertEquals("/some/path", OsgiFileUtil.urlToPath("file:///some/path"));
+    assertEquals("c:/some/path", OsgiFileUtil.urlToPath("file:///c:/some/path"));
   }
 }

@@ -5,7 +5,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.frameworkintegration.util.FileUtil;
+import org.osmorc.frameworkintegration.util.OsgiFileUtil;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.ui.SelectedBundle;
 
@@ -98,7 +98,7 @@ public abstract class AbstractFrameworkInstanceManager implements FrameworkInsta
   }
 
   protected SelectedBundle makeBundle(@NotNull File file, @NotNull FrameworkBundleType type) {
-    String url = FileUtil.pathToUrl(file.getPath());
+    String url = OsgiFileUtil.pathToUrl(file.getPath());
 
     String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(url);
     if (bundleName != null) {

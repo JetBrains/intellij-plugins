@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class FileUtil {
+public class OsgiFileUtil {
   public static String getNameWithoutJarSuffix(@NotNull VirtualFile libraryClasses) {
     return getNameWithoutTail(libraryClasses, ".jar");
   }
