@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 public class OgnlTypedHandler extends TypedHandlerDelegate {
 
   @Override
-  public Result charTyped(final char c, final Project project, final Editor editor, @NotNull final PsiFile file) {
+  public Result charTyped(final char c, final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
     if (c != '{') {
       return Result.CONTINUE;
     }

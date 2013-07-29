@@ -64,7 +64,7 @@ public class DartTypeHandler extends TypedHandlerDelegate {
   }
 
   @Override
-  public Result charTyped(char c, Project project, Editor editor, @NotNull PsiFile file) {
+  public Result charTyped(char c, Project project, @NotNull Editor editor, @NotNull PsiFile file) {
     String textToInsert = null;
     if (c == '<' && myAfterTypeOrComponentName) {
       myAfterTypeOrComponentName = false;

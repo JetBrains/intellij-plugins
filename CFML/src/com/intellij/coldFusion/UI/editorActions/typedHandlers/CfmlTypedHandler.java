@@ -34,6 +34,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Lera Nikolaenko
@@ -167,7 +168,7 @@ public class CfmlTypedHandler extends TypedHandlerDelegate {
   }
 
 
-  public Result charTyped(final char c, final Project project, final Editor editor, final PsiFile file) {
+  public Result charTyped(final char c, final Project project, @NotNull final Editor editor, @NotNull final PsiFile file) {
     if (isNotCfmlFile(file, editor)) {
       return Result.CONTINUE;
     }
