@@ -26,38 +26,23 @@ package org.osmorc.run;
 
 import com.intellij.execution.CantRunException;
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
-import com.intellij.execution.configurations.ParametersList;
-import com.intellij.execution.process.OSProcessHandler;
-import com.intellij.execution.process.ProcessAdapter;
-import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.compiler.DummyCompileContext;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.projectRoots.JdkUtil;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.Ref;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.frameworkintegration.*;
 import org.osmorc.make.BundleCompiler;
 import org.osmorc.run.ui.SelectedBundle;
 
-import javax.swing.*;
-import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -66,151 +51,75 @@ import java.util.*;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
- * @version $Id$
  */
 public class OsgiRunState extends JavaCommandLineState {
-  private final OsgiRunConfiguration runConfiguration;
-  private final Project project;
-  private final Sdk jdkForRun;
-  private SelectedBundle[] _selectedBundles;
-  private final FrameworkRunner runner;
-  private static final String FILE_URL_PREFIX = "file:///";
+  private final OsgiRunConfiguration myRunConfiguration;
+  private final FrameworkRunner myRunner;
 
-  public OsgiRunState(@NotNull Executor executor,
-                      @NotNull ExecutionEnvironment env,
-                      OsgiRunConfiguration configuration,
-                      Project project,
-                      Sdk projectJdk) {
-    super(env);
-    this.runConfiguration = configuration;
-    this.project = project;
+  public OsgiRunState(@NotNull ExecutionEnvironment environment, @NotNull OsgiRunConfiguration configuration) throws ExecutionException {
+    super(environment);
+    myRunConfiguration = configuration;
 
-    if (configuration.isUseAlternativeJre()) {
-      String path = configuration.getAlternativeJrePath();
-      if (StringUtil.isEmpty(path) || !JdkUtil.checkForJre(path)) {
-        this.jdkForRun = null;
-      }
-      else {
-        this.jdkForRun = JavaSdk.getInstance().createJdk("", configuration.getAlternativeJrePath());
-      }
+    FrameworkInstanceDefinition instance = myRunConfiguration.getInstanceToUse();
+    if (instance == null) {
+      throw new CantRunException("Incorrect OSGi run configuration: framework not set");
     }
-    else {
-      this.jdkForRun = projectJdk;
+    FrameworkIntegrator integrator = FrameworkIntegratorRegistry.getInstance().findIntegratorByInstanceDefinition(instance);
+    if (integrator == null) {
+      throw new CantRunException("Internal error: missing integrator for " + instance);
     }
-    FrameworkInstanceDefinition definition = runConfiguration.getInstanceToUse();
-    FrameworkIntegratorRegistry registry = ServiceManager.getService(project, FrameworkIntegratorRegistry.class);
-    FrameworkIntegrator integrator = registry.findIntegratorByInstanceDefinition(definition);
-    runner = integrator.createFrameworkRunner();
-    runner.init(project, runConfiguration, getRunnerSettings());
+    myRunner = integrator.createFrameworkRunner();
   }
-
 
   public boolean requiresRemoteDebugger() {
-    return runner instanceof ExternalVMFrameworkRunner;
+    return myRunner instanceof ExternalVMFrameworkRunner;
   }
 
+  @Override
   protected JavaParameters createJavaParameters() throws ExecutionException {
-    if (jdkForRun == null) {
-      throw CantRunException.noJdkConfigured();
-    }
-    final JavaParameters params = new JavaParameters();
-
-    params.setWorkingDirectory(runner.getWorkingDir());
-
-    // only add JDK classes to the classpath
-    // the rest is is to be provided by bundles
-    params.configureByProject(project, JavaParameters.JDK_ONLY, jdkForRun);
-    params.getClassPath().addAll(runner.getFrameworkStarterLibraries());
-
-    if (runConfiguration.isIncludeAllBundlesInClassPath()) {
-      SelectedBundle[] bundles = getSelectedBundles();
-      if (bundles != null) {
-        for (SelectedBundle bundle : bundles) {
-          String bundlePath = bundle.getBundleUrl();
-          if (bundlePath != null) {
-            bundlePath = bundlePath.substring(FILE_URL_PREFIX.length());
-            if (bundlePath.indexOf(':') < 0 && bundlePath.charAt(0) != '/') {
-              bundlePath = "/" + bundlePath;
-            }
-            bundlePath = bundlePath.replace('/', File.separatorChar);
-            params.getClassPath().add(bundlePath);
-          }
-        }
-      }
-    }
-
-    // setup  the main class
-    params.setMainClass(runner.getMainClass());
-
-    // get the bundles to be run.
-    SelectedBundle[] bundles = getSelectedBundles();
-    if (bundles == null) {
-      throw new CantRunException(
-        "One or more modules seem to be missing their OSGi facets or you have modules in your run configuration that no longer exist. Please re-add the OSGi facets or clean the run configuration and try again.");
-    }
-
-    // setup the commandline parameters
-    final ParametersList programParameters = params.getProgramParametersList();
-    runner.fillCommandLineParameters(programParameters, bundles);
-
-    // and the vm parameters
-    final ParametersList vmParameters = params.getVMParametersList();
-    runner.fillVmParameters(vmParameters, bundles);
-
-    //hide vm options from command line in order to make length predictable
-    params.setUseDynamicVMOptions(bundles.length > 0);
-
-    return params;
+    return myRunner.createJavaParameters(myRunConfiguration, getSelectedBundles());
   }
 
   /**
    * Here we got the magic. All libs are turned into bundles sorted and returned.
-   *
-   * @return the sorted list of all bundles to start or null if the selected bundles cannot be collected for some reason.
    */
-  @Nullable
-  private SelectedBundle[] getSelectedBundles() {
+  private List<SelectedBundle> getSelectedBundles() throws ExecutionException {
+    final Ref<List<SelectedBundle>> result = Ref.create();
+    final Ref<ExecutionException> error = Ref.create();
 
-    if (_selectedBundles == null) {
-      ProgressManager.getInstance().run(new Task.Modal(project, "Preparing bundles...", false) {
+    ProgressManager.getInstance().run(new Task.Modal(myRunConfiguration.getProject(), "Preparing bundles...", false) {
+      @Override
+      public void run(@NotNull ProgressIndicator progressIndicator) {
+        progressIndicator.setIndeterminate(false);
 
-        public void run(@NotNull ProgressIndicator progressIndicator) {
-          progressIndicator.setIndeterminate(false);
-          final HashSet<SelectedBundle> selectedBundles = new HashSet<SelectedBundle>();
+        try {
+          Set<SelectedBundle> selectedBundles = new HashSet<SelectedBundle>();
           // the bundles are module names, by now we try to find jar files in the output directory which we can then install
-          ModuleManager moduleManager = ModuleManager.getInstance(project);
-          int bundleCount = runConfiguration.getBundlesToDeploy().size();
+          ModuleManager moduleManager = ModuleManager.getInstance(myRunConfiguration.getProject());
+          int bundleCount = myRunConfiguration.getBundlesToDeploy().size();
           for (int i = 0; i < bundleCount; i++) {
-            final SelectedBundle selectedBundle = runConfiguration.getBundlesToDeploy().get(i);
-            progressIndicator.setFraction(i / bundleCount);
+            progressIndicator.setFraction((double)i / bundleCount);
+
+            SelectedBundle selectedBundle = myRunConfiguration.getBundlesToDeploy().get(i);
             if (selectedBundle.isModule()) {
               // use the output jar name if it is a module
-              try {
-                final Module module = moduleManager.findModuleByName(selectedBundle.getName());
-                if (module == null) {
-                  showErrorMessage("Module '" + selectedBundle.getName() + "' does no longer exist. Please check your run configuration.");
-                  _selectedBundles = null;
-                  return;
-                }
-
-                if (!OsmorcFacet.hasOsmorcFacet(module)) {
-                  // actually this should not happen, but it seemed to happen once, so we check this here.
-                  showErrorMessage("Module '" + selectedBundle.getName() +
-                                   "' has no OSGi facet, but should have. Please re-add the OSGi facet to this module.");
-                  _selectedBundles = null;
-                  return;
-                }
-                selectedBundle.setBundleUrl(new URL("file", "/", BundleCompiler.getJarFileName(module)).toString());
-                // add all the library dependencies of the bundle
-                String[] depUrls = BundleCompiler.bundlifyLibraries(module, progressIndicator, DummyCompileContext.getInstance());
-                for (String depUrl : depUrls) {
-                  SelectedBundle dependency = new SelectedBundle("Dependency", depUrl, SelectedBundle.BundleType.PlainLibrary);
-                  selectedBundles.add(dependency);
-                }
-                selectedBundles.add(selectedBundle);
+              Module module = moduleManager.findModuleByName(selectedBundle.getName());
+              if (module == null) {
+                throw new CantRunException("Module '" + selectedBundle.getName() + "' does no longer exist." +
+                                           " Please check your run configuration.");
               }
-              catch (MalformedURLException e) {
-                throw new IllegalStateException(e); // should not happen...
+              if (!OsmorcFacet.hasOsmorcFacet(module)) {
+                // actually this should not happen, but it seemed to happen once, so we check this here.
+                throw new CantRunException("Module '" + selectedBundle.getName() + "' has no OSGi facet, but should have." +
+                                           " Please re-add the OSGi facet to this module.");
+              }
+              selectedBundle.setBundleUrl(new URL("file", "/", BundleCompiler.getJarFileName(module)).toString());
+              selectedBundles.add(selectedBundle);
+              // add all the library dependencies of the bundle
+              String[] depUrls = BundleCompiler.bundlifyLibraries(module, progressIndicator, DummyCompileContext.getInstance());
+              for (String depUrl : depUrls) {
+                SelectedBundle dependency = new SelectedBundle("Dependency", depUrl, SelectedBundle.BundleType.PlainLibrary);
+                selectedBundles.add(dependency);
               }
             }
             else {
@@ -222,64 +131,39 @@ public class OsgiRunState extends JavaCommandLineState {
               selectedBundles.add(selectedBundle);
             }
           }
-          HashMap<String, SelectedBundle> finalList = new HashMap<String, SelectedBundle>();
 
           // filter out bundles which have the same symbolic name
+          Map<String, SelectedBundle> filteredBundles = new HashMap<String, SelectedBundle>();
           for (SelectedBundle selectedBundle : selectedBundles) {
             String name = CachingBundleInfoProvider.getBundleSymbolicName(selectedBundle.getBundleUrl());
             String version = CachingBundleInfoProvider.getBundleVersions(selectedBundle.getBundleUrl());
             String key = name + version;
-            if (!finalList.containsKey(key)) {
-              finalList.put(key, selectedBundle);
+            if (!filteredBundles.containsKey(key)) {
+              filteredBundles.put(key, selectedBundle);
             }
           }
 
-          Collection<SelectedBundle> selectedBundleCollection = finalList.values();
-          _selectedBundles = selectedBundleCollection.toArray(new SelectedBundle[selectedBundleCollection.size()]);
-          Arrays.sort(_selectedBundles, new StartLevelComparator());
+          List<SelectedBundle> sortedBundles = ContainerUtil.newArrayList(filteredBundles.values());
+          Collections.sort(sortedBundles, new StartLevelComparator());
+          result.set(sortedBundles);
         }
-      });
-    }
-    return _selectedBundles;
-  }
-
-  private static void showErrorMessage(final String message) {
-    try {
-
-      SwingUtilities.invokeAndWait(new Runnable() {
-        @Override
-        public void run() {
-          Messages.showErrorDialog(message, "Error");
+        catch (CantRunException e) {
+          error.set(e);
         }
-      });
-    }
-    catch (Exception ignore) {
-      //ok
-    }
-  }
-
-  @NotNull
-  protected OSProcessHandler startProcess() throws ExecutionException {
-    // run any final configuration steps
-    SelectedBundle[] bundles = getSelectedBundles();
-    runner.runCustomInstallationSteps(bundles);
-
-    OSProcessHandler handler = super.startProcess();
-    handler.addProcessListener(new ProcessAdapter() {
-      public void processTerminated(ProcessEvent event) {
-        // make sure the runner is disposed when the process exits (so we get rid of the temp folders)
-        Disposer.dispose(runner);
+        catch (Throwable t) {
+          error.set(new CantRunException("Internal error: " + t.getMessage()));
+        }
       }
     });
-    return handler;
+
+    if (!result.isNull()) {
+      return result.get();
+    }
+    else {
+      throw error.get();
+    }
   }
 
-  /**
-   * Comparator for sorting bundles by their start level.
-   *
-   * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
-   * @version $Id:$
-   */
   public static class StartLevelComparator implements Comparator<SelectedBundle> {
     public int compare(SelectedBundle selectedBundle, SelectedBundle selectedBundle2) {
       return selectedBundle.getStartLevel() - selectedBundle2.getStartLevel();

@@ -28,7 +28,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEnumerator;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.DocumentAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +42,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.*;
 import java.util.*;
+
+import static org.osmorc.frameworkintegration.FrameworkInstanceManager.FrameworkBundleType;
 
 /**
  * Dialog for selecting a bundle to be deployed.
@@ -64,6 +65,7 @@ public class BundleSelector extends JDialog {
 
   public BundleSelector(Project project) {
     this.project = project;
+
     setContentPane(contentPane);
     setModal(true);
     setTitle(OsmorcBundle.message("bundle.selector.title"));
@@ -133,29 +135,22 @@ public class BundleSelector extends JDialog {
     if (usedFramework != null) {
       FrameworkIntegrator integrator = FrameworkIntegratorRegistry.getInstance().findIntegratorByInstanceDefinition(usedFramework);
       if (integrator != null) {
-        integrator.getFrameworkInstanceManager().collectLibraries(usedFramework, new JarFileLibraryCollector() {
-          @Override
-          protected void collectFrameworkJars(@NotNull Collection<VirtualFile> jarFiles,
-                                              @NotNull FrameworkInstanceLibrarySourceFinder sourceFinder) {
-            for (VirtualFile jarFile : jarFiles) {
-              String url = jarFile.getUrl();
-              url = BundleCompiler.convertJarUrlToFileUrl(url);
-              url = BundleCompiler.fixFileURL(url);
-              String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(url);
-              if (bundleName != null) {
-                String bundleVersion = CachingBundleInfoProvider.getBundleVersions(url);
-                SelectedBundle b =
-                  new SelectedBundle(bundleName + " - " + bundleVersion, url, SelectedBundle.BundleType.FrameworkBundle);
-                bundles.add(b);
-              }
-            }
-          }
-        });
+        FrameworkInstanceManager manager = integrator.getFrameworkInstanceManager();
+        if (manager instanceof AbstractFrameworkInstanceManager) {
+          Collection<SelectedBundle> frameworkBundles = ((AbstractFrameworkInstanceManager)manager).getFrameworkBundles(usedFramework, FrameworkBundleType.OTHER);
+          bundles.addAll(frameworkBundles);
+        }
       }
 
       // all the libraries that are bundles already (doesn't make much sense to start bundlified libs as they have no activator).
-      String[] urls = OrderEnumerator.orderEntries(project).withoutSdk().withoutModuleSourceEntries()
-        .satisfying(BundleCompiler.NOT_FRAMEWORK_LIBRARY_CONDITION).classes().getUrls();
+      String[] urls = OrderEnumerator.orderEntries(project)
+        .withoutSdk()
+        .withoutModuleSourceEntries()
+        .withoutDepModules()
+        .productionOnly()
+        .runtimeOnly()
+        .satisfying(BundleCompiler.NOT_FRAMEWORK_LIBRARY_CONDITION)
+        .classes().getUrls();
       for (String url : urls) {
         url = BundleCompiler.convertJarUrlToFileUrl(url);
         url = BundleCompiler.fixFileURL(url);

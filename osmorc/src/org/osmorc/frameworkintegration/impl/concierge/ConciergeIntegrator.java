@@ -25,14 +25,10 @@
 package org.osmorc.frameworkintegration.impl.concierge;
 
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.BundleSelectionAction;
 import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkIntegrator;
-import org.osmorc.frameworkintegration.impl.concierge.ui.ConciergeRunPropertiesEditor;
+import org.osmorc.frameworkintegration.impl.CommonRunPropertiesEditor;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Concierge specific implementation of {@link org.osmorc.frameworkintegration.FrameworkIntegrator}.
@@ -40,30 +36,26 @@ import java.util.List;
  * @author <a href="mailto:al@chilibi.org">Alain Greppin</a>
  */
 public class ConciergeIntegrator extends AbstractFrameworkIntegrator {
-  public ConciergeIntegrator(ConciergeFrameworkInstanceManager frameworkInstanceManager) {
-    super(frameworkInstanceManager);
+  private static final String FRAMEWORK_NAME = "Concierge";
+
+  public ConciergeIntegrator() {
+    super(new ConciergeInstanceManager());
   }
 
   @NotNull
-  public FrameworkRunner createFrameworkRunner() {
-    return new ConciergeFrameworkRunner();
-  }
-
-  @NotNull
+  @Override
   public String getDisplayName() {
     return FRAMEWORK_NAME;
   }
 
+  @NotNull
+  @Override
+  public FrameworkRunner createFrameworkRunner() {
+    return new ConciergeRunner();
+  }
 
   @Override
   public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
-    return new ConciergeRunPropertiesEditor();
+    return new CommonRunPropertiesEditor();
   }
-
-  @NotNull
-  public List<BundleSelectionAction> getBundleSelectionActions() {
-    return Collections.emptyList();
-  }
-
-  private static final String FRAMEWORK_NAME = "Concierge";
 }

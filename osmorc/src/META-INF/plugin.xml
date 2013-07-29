@@ -90,14 +90,6 @@
     <!-- Framework integration -->
     <applicationService serviceInterface="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"
                         serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
-    <applicationService serviceInterface="org.osmorc.frameworkintegration.impl.equinox.EquinoxFrameworkInstanceManager"
-                        serviceImplementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxFrameworkInstanceManager"/>
-    <applicationService serviceInterface="org.osmorc.frameworkintegration.impl.knopflerfish.KnopflerfishFrameworkInstanceManager"
-                        serviceImplementation="org.osmorc.frameworkintegration.impl.knopflerfish.KnopflerfishFrameworkInstanceManager"/>
-    <applicationService serviceInterface="org.osmorc.frameworkintegration.impl.felix.FelixFrameworkInstanceManager"
-                        serviceImplementation="org.osmorc.frameworkintegration.impl.felix.FelixFrameworkInstanceManager"/>
-    <applicationService serviceInterface="org.osmorc.frameworkintegration.impl.concierge.ConciergeFrameworkInstanceManager"
-                        serviceImplementation="org.osmorc.frameworkintegration.impl.concierge.ConciergeFrameworkInstanceManager"/>
 
     <!-- Manifest header parsing and annotation -->
     <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.HeaderParserRepository"

@@ -25,44 +25,36 @@
 package org.osmorc.frameworkintegration.impl.felix;
 
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.BundleSelectionAction;
 import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkIntegrator;
-import org.osmorc.frameworkintegration.impl.felix.ui.FelixRunPropertiesEditor;
+import org.osmorc.frameworkintegration.impl.CommonRunPropertiesEditor;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
- * Felix specific implementation of {@link org.osmorc.frameworkintegration.FrameworkIntegrator}.
- *
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class FelixIntegrator extends AbstractFrameworkIntegrator {
-  public FelixIntegrator(FelixFrameworkInstanceManager frameworkInstanceManager) {
-    super(frameworkInstanceManager);
+  private static final String FRAMEWORK_NAME = "Felix";
+
+  public FelixIntegrator() {
+    super(new FelixInstanceManager());
   }
 
   @NotNull
-  public FrameworkRunner createFrameworkRunner() {
-    return new FelixFrameworkRunner();
-  }
-
-  @NotNull
+  @Override
   public String getDisplayName() {
     return FRAMEWORK_NAME;
   }
 
+  @NotNull
+  @Override
+  public FrameworkRunner createFrameworkRunner() {
+    return new FelixRunner();
+  }
+
+
   @Override
   public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
-    return new FelixRunPropertiesEditor();
+    return new CommonRunPropertiesEditor();
   }
-
-  @NotNull
-  public List<BundleSelectionAction> getBundleSelectionActions() {
-    return Collections.emptyList();
-  }
-
-  private static final String FRAMEWORK_NAME = "Felix";
 }

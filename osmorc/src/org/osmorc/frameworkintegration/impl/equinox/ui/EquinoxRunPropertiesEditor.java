@@ -22,10 +22,10 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.frameworkintegration.impl.equinox.ui;
 
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.util.text.StringUtil;
 import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import org.osmorc.frameworkintegration.impl.equinox.EquinoxRunProperties;
@@ -43,88 +43,90 @@ import java.util.HashMap;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class EquinoxRunPropertiesEditor implements FrameworkRunPropertiesEditor {
-  private JPanel _mainPanel;
-  private JRadioButton productRadioButton;
-  private JRadioButton applicationRadioButton;
-  private JTextField productTextField;
-  private JTextField applicationTextField;
-  private JRadioButton justTheBundlesRadioButton;
-  private GenericRunPropertiesEditor _genericRunPropertiesEditor;
-  private PresentationModel<EquinoxRunProperties> presentationModel;
+  private JPanel myMainPanel;
+  private GenericRunPropertiesEditor myGenericRunPropertiesEditor;
+  private JRadioButton myJustTheBundlesRadioButton;
+  private JRadioButton myProductRadioButton;
+  private JTextField myProductTextField;
+  private JRadioButton myApplicationRadioButton;
+  private JTextField myApplicationTextField;
+  private PresentationModel<EquinoxRunProperties> myPresentationModel;
 
   public EquinoxRunPropertiesEditor() {
-    justTheBundlesRadioButton.addActionListener(new ActionListener() {
+    myJustTheBundlesRadioButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        updateEnablement();
+        updatePresentation();
       }
     });
-    productRadioButton.addActionListener(new ActionListener() {
+    myProductRadioButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        updateEnablement();
+        updatePresentation();
       }
     });
-    applicationRadioButton.addActionListener(new ActionListener() {
+    myApplicationRadioButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        updateEnablement();
+        updatePresentation();
       }
     });
-  }
-
-  private void updateEnablement() {
-    if (justTheBundlesRadioButton.isSelected()) {
-      productTextField.setText("");
-      productTextField.setEnabled(false);
-      presentationModel.getBean().setEquinoxProduct("");
-      applicationTextField.setText("");
-      applicationTextField.setEnabled(false);
-      presentationModel.getBean().setEquinoxApplication("");
-    }
-    else if (productRadioButton.isSelected()) {
-      applicationTextField.setText("");
-      applicationTextField.setEnabled(false);
-      presentationModel.getBean().setEquinoxApplication("");
-      productTextField.setEnabled(true);
-    }
-    else if (applicationRadioButton.isSelected()) {
-      productTextField.setText("");
-      productTextField.setEnabled(false);
-      presentationModel.getBean().setEquinoxProduct("");
-      applicationTextField.setEnabled(true);
-    }
-  }
-
-  public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
-    _genericRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
-    presentationModel.getBean().load(osgiRunConfiguration.getAdditionalProperties());
-    if (presentationModel.getBean().getEquinoxProduct() != null && presentationModel.getBean().getEquinoxProduct().length() > 0) {
-      productRadioButton.setSelected(true);
-    }
-    else if (presentationModel.getBean().getEquinoxApplication() != null &&
-             presentationModel.getBean().getEquinoxApplication().length() > 0) {
-      applicationRadioButton.setSelected(true);
-    }
-    else {
-      justTheBundlesRadioButton.setSelected(true);
-    }
-    updateEnablement();
-  }
-
-  public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
-    _genericRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
-    osgiRunConfiguration.putAdditionalProperties(presentationModel.getBean().getProperties());
-  }
-
-  public JPanel getUI() {
-    return _mainPanel;
   }
 
   private void createUIComponents() {
-    final EquinoxRunProperties runProperties = new EquinoxRunProperties(new HashMap<String, String>());
-    presentationModel = new PresentationModel<EquinoxRunProperties>(runProperties);
-    _genericRunPropertiesEditor = new GenericRunPropertiesEditor<EquinoxRunProperties>(runProperties);
-    productTextField =
-      BasicComponentFactory.createTextField(presentationModel.getModel(EquinoxRunProperties.EQUINOX_PRODUCT));
-    applicationTextField =
-      BasicComponentFactory.createTextField(presentationModel.getModel(EquinoxRunProperties.EQUINOX_APPLICATION));
+    EquinoxRunProperties runProperties = new EquinoxRunProperties(new HashMap<String, String>());
+    myPresentationModel = new PresentationModel<EquinoxRunProperties>(runProperties);
+    myGenericRunPropertiesEditor = new GenericRunPropertiesEditor<EquinoxRunProperties>(runProperties);
+    myProductTextField = BasicComponentFactory.createTextField(myPresentationModel.getModel(EquinoxRunProperties.EQUINOX_PRODUCT));
+    myApplicationTextField = BasicComponentFactory.createTextField(myPresentationModel.getModel(EquinoxRunProperties.EQUINOX_APPLICATION));
+  }
+
+  private void updatePresentation() {
+    if (myJustTheBundlesRadioButton.isSelected()) {
+      myProductTextField.setText("");
+      myProductTextField.setEnabled(false);
+      myPresentationModel.getBean().setEquinoxProduct("");
+      myApplicationTextField.setText("");
+      myApplicationTextField.setEnabled(false);
+      myPresentationModel.getBean().setEquinoxApplication("");
+    }
+    else if (myProductRadioButton.isSelected()) {
+      myApplicationTextField.setText("");
+      myApplicationTextField.setEnabled(false);
+      myPresentationModel.getBean().setEquinoxApplication("");
+      myProductTextField.setEnabled(true);
+    }
+    else if (myApplicationRadioButton.isSelected()) {
+      myProductTextField.setText("");
+      myProductTextField.setEnabled(false);
+      myPresentationModel.getBean().setEquinoxProduct("");
+      myApplicationTextField.setEnabled(true);
+    }
+  }
+
+  @Override
+  public JPanel getUI() {
+    return myMainPanel;
+  }
+
+  @Override
+  public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
+    myGenericRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
+
+    myPresentationModel.getBean().load(osgiRunConfiguration.getAdditionalProperties());
+    if (!StringUtil.isEmptyOrSpaces(myPresentationModel.getBean().getEquinoxProduct())) {
+      myProductRadioButton.setSelected(true);
+    }
+    else if (!StringUtil.isEmptyOrSpaces(myPresentationModel.getBean().getEquinoxApplication())) {
+      myApplicationRadioButton.setSelected(true);
+    }
+    else {
+      myJustTheBundlesRadioButton.setSelected(true);
+    }
+
+    updatePresentation();
+  }
+
+  @Override
+  public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
+    myGenericRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
+    osgiRunConfiguration.putAdditionalProperties(myPresentationModel.getBean().getProperties());
   }
 }

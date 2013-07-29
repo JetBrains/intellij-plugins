@@ -381,9 +381,6 @@ public class BundleCompiler implements PackagingCompiler {
   public static String[] bundlifyLibraries(@NotNull Module module,
                                            @NotNull ProgressIndicator indicator,
                                            @NotNull CompileContext compileContext) {
-    String[] urls = OrderEnumerator.orderEntries(module).withoutSdk().withoutModuleSourceEntries().withoutDepModules()
-      .satisfying(NOT_FRAMEWORK_LIBRARY_CONDITION).recursively().exportedOnly().classes().getUrls();
-
     File outputDir = null;
     VirtualFile moduleOutputUrl = getModuleOutputUrl(module);
     if (moduleOutputUrl != null) {
@@ -394,6 +391,16 @@ public class BundleCompiler implements PackagingCompiler {
       return ArrayUtil.EMPTY_STRING_ARRAY;
     }
 
+    String[] urls = OrderEnumerator.orderEntries(module)
+      .withoutSdk()
+      .withoutModuleSourceEntries()
+      .withoutDepModules()
+      .productionOnly()
+      .runtimeOnly()
+      .recursively()
+      .exportedOnly()
+      .satisfying(NOT_FRAMEWORK_LIBRARY_CONDITION)
+      .classes().getUrls();
     List<String> result = new ArrayList<String>();
     BndWrapper wrapper = new BndWrapper();
     for (String url : urls) {

@@ -22,26 +22,34 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.frameworkintegration.util;
 
 import com.intellij.testFramework.LightVirtualFile;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
 /**
- * Author: Robert F. Beeger (robert@beeger.net)
+ * @author Robert F. Beeger (robert@beeger.net)
  */
 public class FileUtilTest {
-    @Test
-    public void testGetNameWithoutJarSuffix() {
-        assertThat(FileUtil.getNameWithoutJarSuffix(new LightVirtualFile("test.jar")), equalTo("test"));
-        assertThat(FileUtil.getNameWithoutJarSuffix(new LightVirtualFile("test.bla.jar")), equalTo("test.bla"));
-        assertThat(FileUtil.getNameWithoutJarSuffix(new LightVirtualFile("test")), equalTo("test"));
-    }
+  @Test
+  public void testGetNameWithoutJarSuffix() {
+    assertThat(FileUtil.getNameWithoutJarSuffix(new LightVirtualFile("test.jar")), equalTo("test"));
+    assertThat(FileUtil.getNameWithoutJarSuffix(new LightVirtualFile("test.bla.jar")), equalTo("test.bla"));
+    assertThat(FileUtil.getNameWithoutJarSuffix(new LightVirtualFile("test")), equalTo("test"));
+  }
 
-    public void testGetNameWithoutTailVirtualFile() {
-        assertThat(FileUtil.getNameWithoutTail(new LightVirtualFile("test.bla.jar"), ".bla.jar"), equalTo("test"));
-    }
+  @Test
+  public void testGetNameWithoutTailVirtualFile() {
+    assertThat(FileUtil.getNameWithoutTail(new LightVirtualFile("test.bla.jar"), ".bla.jar"), equalTo("test"));
+  }
+
+  @Test
+  public void testUrlToPath() throws Exception {
+    assertEquals("/some/path", FileUtil.urlToPath("file:///some/path"));
+    assertEquals("c:/some/path", FileUtil.urlToPath("file:///c:/some/path"));
+  }
 }

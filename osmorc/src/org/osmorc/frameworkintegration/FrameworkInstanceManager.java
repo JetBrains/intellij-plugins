@@ -31,21 +31,16 @@ import org.jetbrains.annotations.Nullable;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface FrameworkInstanceManager {
+  enum FrameworkBundleType { SYSTEM, SHELL, OTHER }
 
   /**
    * Collects a all libraries of the given framework instance definition and calls the framework library collector with the results.
-   *
-   * @param collector
    */
-  void collectLibraries(@NotNull FrameworkInstanceDefinition frameworkInstanceDefinition,
-                        @NotNull FrameworkLibraryCollector collector);
+  void collectLibraries(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkLibraryCollector collector);
 
   /**
-   * Checks if the given framework instance definition is valid.
-   *
-   * @param frameworkInstanceDefinition the instance definition.
-   * @return null, if the instance definition is valid, an error message otherwise.
+   * Returns null if the instance definition is valid, an error message otherwise.
    */
   @Nullable
-  String checkValidity(@NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition);
+  String checkValidity(@NotNull FrameworkInstanceDefinition instance);
 }

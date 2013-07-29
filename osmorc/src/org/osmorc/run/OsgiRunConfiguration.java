@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.run;
 
 import com.intellij.execution.ExecutionBundle;
@@ -36,7 +35,6 @@ import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Attribute;
@@ -58,46 +56,27 @@ import java.util.*;
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
- * @version $Id$
  */
 public class OsgiRunConfiguration extends RunConfigurationBase implements ModuleRunConfiguration {
-  @NonNls
-  private static final String BUNDLE_ELEMENT = "bundle";
-  @NonNls
-  private static final String NAME_ATTRIBUTE = "name";
-  @NonNls
-  private static final String VM_PARAMETERS_ATTRIBUTE = "vmParameters";
-  @NonNls
-  private static final String PROGRAM_PARAMETERS_ATTRIBUTE = "programParameters";
-  @NonNls
-  private static final String WORKING_DIR_ATTRIBUTE = "workingDir";
-  @NonNls
-  private static final String FRAMEWORK_ELEMENT = "framework";
-  @NonNls
-  private static final String INSTANCE_ATTRIBUTE = "instance";
-  @NonNls
-  private static final String URL_ATTRIBUTE = "url";
-  @NonNls
-  private static final String ADDITIONAL_PROPERTIES_ELEMENT = "additinalProperties";
-  @NonNls
-  private static final String TYPE_ATTRIBUTE = "type";
-  @NonNls
-  private static final String START_AFTER_INSTALLATION_ATTRIBUTE = "startAfterInstallation";
-  @NonNls
-  private static final String START_LEVEL_ATTRIBUTE = "startLevel";
-  @NonNls
-  private static final String INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE = "includeAllBundlesInClassPath";
-  @NonNls
-  private static final String USE_ALTERNATIVE_JRE_ATTRIBUTE = "useAlternativeJre";
-  @NonNls
-  private static final String ALTERNATIVE_JRE_PATH = "alternativeJrePath";
-  @NonNls
-  private static final String FRAMEWORK_START_LEVEL = "frameworkStartLevel";
-  @NonNls
-  private static final String DEFAULT_START_LEVEL = "defaultStartLevel";
-  @NonNls
-  public static final String GENERATE_WORKING_DIR_ATTRIBUTE = "generateWorkingDir";
-  @Nullable
+  @NonNls private static final String BUNDLE_ELEMENT = "bundle";
+  @NonNls private static final String NAME_ATTRIBUTE = "name";
+  @NonNls private static final String VM_PARAMETERS_ATTRIBUTE = "vmParameters";
+  @NonNls private static final String PROGRAM_PARAMETERS_ATTRIBUTE = "programParameters";
+  @NonNls private static final String WORKING_DIR_ATTRIBUTE = "workingDir";
+  @NonNls private static final String FRAMEWORK_ELEMENT = "framework";
+  @NonNls private static final String INSTANCE_ATTRIBUTE = "instance";
+  @NonNls private static final String URL_ATTRIBUTE = "url";
+  @NonNls private static final String ADDITIONAL_PROPERTIES_ELEMENT = "additinalProperties";
+  @NonNls private static final String TYPE_ATTRIBUTE = "type";
+  @NonNls private static final String START_AFTER_INSTALLATION_ATTRIBUTE = "startAfterInstallation";
+  @NonNls private static final String START_LEVEL_ATTRIBUTE = "startLevel";
+  @NonNls private static final String INCLUDE_ALL_BUNDLES_IN_CLASS_PATH_ATTRIBUTE = "includeAllBundlesInClassPath";
+  @NonNls private static final String USE_ALTERNATIVE_JRE_ATTRIBUTE = "useAlternativeJre";
+  @NonNls private static final String ALTERNATIVE_JRE_PATH = "alternativeJrePath";
+  @NonNls private static final String FRAMEWORK_START_LEVEL = "frameworkStartLevel";
+  @NonNls private static final String DEFAULT_START_LEVEL = "defaultStartLevel";
+  @NonNls private static final String GENERATE_WORKING_DIR_ATTRIBUTE = "generateWorkingDir";
+
   private OsgiRunConfigurationChecker checker;
   private LegacyOsgiRunConfigurationLoader legacyOsgiRunConfigurationLoader;
 
@@ -126,6 +105,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   public RunConfiguration clone() {
     OsgiRunConfiguration conf = (OsgiRunConfiguration)super.clone();
     if (conf == null) {
+      //noinspection ConstantConditions
       return conf;
     }
     conf.bundlesToDeploy = new ArrayList<SelectedBundle>(bundlesToDeploy);
@@ -133,6 +113,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     return conf;
   }
 
+  @Override
   public void readExternal(final Element element) throws InvalidDataException {
     workingDir = element.getAttributeValue(WORKING_DIR_ATTRIBUTE);
     vmParameters = element.getAttributeValue(VM_PARAMETERS_ATTRIBUTE);
@@ -233,7 +214,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     super.readExternal(element);
   }
 
-
+  @Override
   public void writeExternal(final Element element) throws WriteExternalException {
     // store the vm parameters
     element.setAttribute(VM_PARAMETERS_ATTRIBUTE, vmParameters == null ? "" : vmParameters);
@@ -245,7 +226,6 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     element.setAttribute(FRAMEWORK_START_LEVEL, String.valueOf(frameworkStartLevel));
     element.setAttribute(DEFAULT_START_LEVEL, String.valueOf(defaultStartLevel));
     element.setAttribute(GENERATE_WORKING_DIR_ATTRIBUTE, String.valueOf(generateWorkingDir));
-
 
     // all module's names
     for (SelectedBundle selectedBundle : bundlesToDeploy) {
@@ -266,28 +246,26 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     element.addContent(framework);
 
     Element additionalProperties = new Element(ADDITIONAL_PROPERTIES_ELEMENT);
-
     for (String additionalPropertyName : this.additionalProperties.keySet()) {
       additionalProperties.setAttribute(additionalPropertyName, this.additionalProperties.get(additionalPropertyName));
     }
-
     element.addContent(additionalProperties);
 
     super.writeExternal(element);
   }
 
   @NotNull
+  @Override
   public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
     return new OsgiRunConfigurationEditor(getProject());
   }
 
-
-  public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment env) throws ExecutionException {
-    // prepare the state
-
-    return new OsgiRunState(executor, env, this, getProject(), ProjectRootManager.getInstance(getProject()).getProjectSdk());
+  @Override
+  public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment env) throws ExecutionException {
+    return new OsgiRunState(env, this);
   }
 
+  @Override
   public void checkConfiguration() throws RuntimeConfigurationException {
     if (legacyOsgiRunConfigurationLoader != null) {
       legacyOsgiRunConfigurationLoader.finishAfterModulesAreAvailable(this);
@@ -308,6 +286,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
   }
 
   @NotNull
+  @Override
   public Module[] getModules() {
     List<Module> modules = new ArrayList<Module>();
     for (SelectedBundle selectedBundle : getBundlesToDeploy()) {

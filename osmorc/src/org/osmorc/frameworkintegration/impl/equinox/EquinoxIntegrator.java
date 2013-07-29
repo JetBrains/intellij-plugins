@@ -36,30 +36,28 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Equinox specific implementation of {@link org.osmorc.frameworkintegration.FrameworkIntegrator}.
- *
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class EquinoxIntegrator extends AbstractFrameworkIntegrator {
-  private final EquinoxOsgiRunConfigurationChecker checker;
-  private static final BundleSelectionAction[] ACTIONS = new BundleSelectionAction[]{
-    //new AdaptToRunWithUpdateConfiguratorAction(),
-    new AdaptToRunWithoutUpdateConfigurator()};
+  private static final String FRAMEWORK_NAME = "Equinox";
 
-  public EquinoxIntegrator(EquinoxFrameworkInstanceManager frameworkInstanceManager) {
-    super(frameworkInstanceManager);
-    checker = new EquinoxOsgiRunConfigurationChecker();
-  }
+  private static final List<BundleSelectionAction> ACTIONS = Arrays.<BundleSelectionAction>asList(
+    /*new AdaptToRunWithUpdateConfiguratorAction(),*/ new AdaptToRunWithoutUpdateConfigurator());
 
-
-  @NotNull
-  public FrameworkRunner createFrameworkRunner() {
-    return new EquinoxFrameworkRunner();
+  public EquinoxIntegrator() {
+    super(new EquinoxInstanceManager());
   }
 
   @NotNull
+  @Override
   public String getDisplayName() {
     return FRAMEWORK_NAME;
+  }
+
+  @NotNull
+  @Override
+  public FrameworkRunner createFrameworkRunner() {
+    return new EquinoxRunner();
   }
 
   @Override
@@ -67,14 +65,14 @@ public class EquinoxIntegrator extends AbstractFrameworkIntegrator {
     return new EquinoxRunPropertiesEditor();
   }
 
+  @Override
   public OsgiRunConfigurationChecker getOsgiRunConfigurationChecker() {
-    return checker;
+    return new EquinoxOsgiRunConfigurationChecker();
   }
 
   @NotNull
+  @Override
   public List<BundleSelectionAction> getBundleSelectionActions() {
-    return Arrays.asList(ACTIONS);
+    return ACTIONS;
   }
-
-  private static final String FRAMEWORK_NAME = "Equinox";
 }

@@ -22,11 +22,9 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package org.osmorc.frameworkintegration.impl.knopflerfish.ui;
+package org.osmorc.frameworkintegration.impl;
 
 import com.intellij.openapi.options.ConfigurationException;
-import org.osmorc.frameworkintegration.impl.knopflerfish.KnopflerfishRunProperties;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 import org.osmorc.run.ui.GenericRunPropertiesEditor;
@@ -34,31 +32,28 @@ import org.osmorc.run.ui.GenericRunPropertiesEditor;
 import javax.swing.*;
 import java.util.HashMap;
 
-/**
- * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- */
-public class KnopflerfishRunPropertiesEditor implements FrameworkRunPropertiesEditor {
-  private JPanel _mainPanel;
-  private GenericRunPropertiesEditor _genericRunPropertiesEditor;
 
-  public KnopflerfishRunPropertiesEditor() {
-
-  }
-
-  public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
-    _genericRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
-  }
-
-  public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
-    _genericRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
-  }
-
-  public JPanel getUI() {
-    return _mainPanel;
-  }
+public class CommonRunPropertiesEditor implements FrameworkRunPropertiesEditor {
+  private JPanel myMainPanel;
+  private GenericRunPropertiesEditor myGenericRunPropertiesEditor;
 
   private void createUIComponents() {
-    _genericRunPropertiesEditor =
-      new GenericRunPropertiesEditor<KnopflerfishRunProperties>(new KnopflerfishRunProperties(new HashMap<String, String>()));
+    myGenericRunPropertiesEditor =
+      new GenericRunPropertiesEditor<GenericRunProperties>(new GenericRunProperties(new HashMap<String, String>()));
+  }
+
+  @Override
+  public JPanel getUI() {
+    return myMainPanel;
+  }
+
+  @Override
+  public void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
+    myGenericRunPropertiesEditor.resetEditorFrom(osgiRunConfiguration);
+  }
+
+  @Override
+  public void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
+    myGenericRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
   }
 }

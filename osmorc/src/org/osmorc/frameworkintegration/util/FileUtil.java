@@ -24,7 +24,9 @@
  */
 package org.osmorc.frameworkintegration.util;
 
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.StandardFileSystems;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,5 +66,22 @@ public class FileUtil {
     }
 
     return result;
+  }
+
+  @NotNull
+  public static String pathToUrl(@NotNull String path) {
+    return SystemInfo.isWindows ? StandardFileSystems.FILE_PROTOCOL_PREFIX + "/" + path : StandardFileSystems.FILE_PROTOCOL_PREFIX + path;
+  }
+
+  @NotNull
+  public static String urlToPath(@NotNull String url) {
+    String path = url;
+    if (path.startsWith(StandardFileSystems.FILE_PROTOCOL_PREFIX)) {
+      path = path.substring(StandardFileSystems.FILE_PROTOCOL_PREFIX.length());
+      if (path.length() >= 2 && path.charAt(0) == '/' && Character.isLetter(path.charAt(1)) && path.charAt(2) == ':') {
+        path = path.substring(1);
+      }
+    }
+    return path;
   }
 }

@@ -25,40 +25,54 @@
 package org.osmorc.frameworkintegration.impl;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.osmorc.frameworkintegration.BundleSelectionAction;
 import org.osmorc.frameworkintegration.FrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.run.OsgiRunConfigurationChecker;
 import org.osmorc.run.OsgiRunConfigurationCheckerProvider;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Abstract base class for framework integrators, for avoiding duplicated code.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id$
  */
 public abstract class AbstractFrameworkIntegrator implements FrameworkIntegrator, OsgiRunConfigurationCheckerProvider {
-  protected AbstractFrameworkIntegrator(FrameworkInstanceManager frameworkInstanceManager) {
-    _frameworkInstanceManager = frameworkInstanceManager;
+  private final FrameworkInstanceManager myInstanceManager;
+
+  protected AbstractFrameworkIntegrator(@NotNull FrameworkInstanceManager instanceManager) {
+    myInstanceManager = instanceManager;
   }
 
   @NotNull
+  @Override
   public FrameworkInstanceManager getFrameworkInstanceManager() {
-    return _frameworkInstanceManager;
+    return myInstanceManager;
   }
 
-
-  public String toString() {
-    return getDisplayName();
-  }
-
+  @Nullable
+  @Override
   public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
     return null;
   }
 
+  @NotNull
+  @Override
+  public List<BundleSelectionAction> getBundleSelectionActions() {
+    return Collections.emptyList();
+  }
+
+  @Override
   public OsgiRunConfigurationChecker getOsgiRunConfigurationChecker() {
     return new DefaultOsgiRunConfigurationChecker();
   }
 
-  protected final FrameworkInstanceManager _frameworkInstanceManager;
+  @Override
+  public String toString() {
+    return getDisplayName();
+  }
 }

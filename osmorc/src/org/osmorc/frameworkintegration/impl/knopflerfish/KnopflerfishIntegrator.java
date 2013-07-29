@@ -25,14 +25,10 @@
 package org.osmorc.frameworkintegration.impl.knopflerfish;
 
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.BundleSelectionAction;
 import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkIntegrator;
-import org.osmorc.frameworkintegration.impl.knopflerfish.ui.KnopflerfishRunPropertiesEditor;
+import org.osmorc.frameworkintegration.impl.CommonRunPropertiesEditor;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Knopflerfish specific implementation of {@link org.osmorc.frameworkintegration.FrameworkIntegrator}.
@@ -40,30 +36,26 @@ import java.util.List;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class KnopflerfishIntegrator extends AbstractFrameworkIntegrator {
-  public KnopflerfishIntegrator(KnopflerfishFrameworkInstanceManager frameworkInstanceManager) {
-    super(frameworkInstanceManager);
+  private static final String FRAMEWORK_NAME = "Knopflerfish";
+
+  public KnopflerfishIntegrator() {
+    super(new KnopflerfishInstanceManager());
   }
 
   @NotNull
-  public FrameworkRunner createFrameworkRunner() {
-    return new KnopflerfishFrameworkRunner();
-  }
-
-  @NotNull
+  @Override
   public String getDisplayName() {
     return FRAMEWORK_NAME;
   }
 
+  @NotNull
+  @Override
+  public FrameworkRunner createFrameworkRunner() {
+    return new KnopflerfishRunner();
+  }
 
   @Override
   public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
-    return new KnopflerfishRunPropertiesEditor();
+    return new CommonRunPropertiesEditor();
   }
-
-  @NotNull
-  public List<BundleSelectionAction> getBundleSelectionActions() {
-    return Collections.emptyList();
-  }
-
-  private static final String FRAMEWORK_NAME = "Knopflerfish";
 }
