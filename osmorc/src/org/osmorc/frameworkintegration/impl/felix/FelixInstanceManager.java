@@ -29,13 +29,16 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.JarUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.AbstractFrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
+import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -88,6 +91,16 @@ public class FelixInstanceManager extends AbstractFrameworkInstanceManager {
         collector.collectFrameworkLibraries(new FelixSourceFinder(), directoriesToAdd);
       }
     });
+  }
+
+  @NotNull
+  @Override
+  public Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type) {
+    Collection<SelectedBundle> bundles = super.getFrameworkBundles(instance, type);
+    if (type == FrameworkBundleType.SHELL && bundles.size() < 3) {
+      return ContainerUtil.emptyList();
+    }
+    return bundles;
   }
 
   @NotNull
