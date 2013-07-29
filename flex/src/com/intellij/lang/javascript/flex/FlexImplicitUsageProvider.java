@@ -113,6 +113,7 @@ public class FlexImplicitUsageProvider implements ImplicitUsageProvider, Conditi
     return false;
   }
 
+  // for "Can't be static" extension
   @Override
   public boolean value(PsiElement psiNamedElement) {
     if (psiNamedElement instanceof JSFunction) {
