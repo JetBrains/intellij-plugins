@@ -1,6 +1,6 @@
 var join = require('path').join;
 
-var RUNNER_PORT_KEY = 'runnerPort'
+var SERVER_PORT_KEY = 'serverPort'
   , CONFIG_FILE_KEY = 'configFile'
   , KARMA_PACKAGE_DIR_KEY = 'karmaPackageDir'
   , DEBUG_KEY = 'debug'
@@ -47,13 +47,13 @@ function getConfigFile() {
   return configFile;
 }
 
-function getRunnerPort() {
-  var runnerPortStr = options[RUNNER_PORT_KEY] || '';
-  var runnerPort = parseInt(runnerPortStr, 10);
-  if (isNaN(runnerPort)) {
+function getServerPort() {
+  var serverPortStr = options[SERVER_PORT_KEY] || '';
+  var serverPort = parseInt(serverPortStr, 10);
+  if (isNaN(serverPort)) {
     return undefined;
   }
-  return runnerPort;
+  return serverPort;
 }
 
 function isDebug() {
@@ -67,6 +67,6 @@ function getCoverageTempDirPath() {
 
 exports.requireKarmaModule = requireKarmaModule;
 exports.getConfigFile = getConfigFile;
-exports.getRunnerPort = getRunnerPort;
+exports.getServerPort = getServerPort;
 exports.isDebug = isDebug;
 exports.getCoverageTempDirPath = getCoverageTempDirPath;

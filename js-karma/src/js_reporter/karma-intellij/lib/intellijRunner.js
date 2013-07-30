@@ -3,9 +3,9 @@ var RESUME_TEST_RUNNING_MESSAGE = 'resume-test-running';
 
 function runTests() {
   var runner = cli.requireKarmaModule('lib/runner.js');
-  var runnerPort = cli.getRunnerPort();
+  var serverPort = cli.getServerPort();
   runner.run(
-    { runnerPort: runnerPort },
+    { port: serverPort },
     function() {}
   );
 }
