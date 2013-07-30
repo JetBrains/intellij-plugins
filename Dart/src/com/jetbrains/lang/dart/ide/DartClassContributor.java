@@ -27,6 +27,9 @@ public class DartClassContributor implements ChooseByNameContributor {
   public NavigationItem[] getItemsByName(String name, String pattern, Project project, boolean includeNonProjectItems) {
     final GlobalSearchScope scope = includeNonProjectItems ? GlobalSearchScope.allScope(project) : GlobalSearchScope.projectScope(project);
     final Collection<DartComponentName> result = DartClassIndex.getItemsByName(name, project, scope);
+    if (result.size() == 0) {
+      return NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY;
+    }
     return result.toArray(new NavigationItem[result.size()]);
   }
 }
