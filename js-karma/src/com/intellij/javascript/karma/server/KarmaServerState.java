@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 */
 public class KarmaServerState implements ProcessListener {
 
-  private static final Pattern WEB_SERVER_LINE_PATTERN = Pattern.compile("^INFO \\[.*\\]: Karma.+server started at http://[^:]+:(\\d+)/.*$");
+  private static final Pattern SERVER_PORT_LINE_PATTERN = Pattern.compile("^INFO \\[.*\\]: Karma.+server started at http://[^:]+:(\\d+)/.*$");
   private static final Logger LOG = Logger.getInstance(KarmaServerState.class);
   private static final String BROWSER_CONNECTED_EVENT_TYPE = "browserConnected";
   private static final String BROWSER_DISCONNECTED_EVENT_TYPE = "browserDisconnected";
@@ -29,8 +29,7 @@ public class KarmaServerState implements ProcessListener {
   private final KarmaServer myServer;
   private final ConcurrentMap<String, String> myCapturedBrowsers = new ConcurrentHashMap<String, String>();
   private final StringBuilder myBuffer = new StringBuilder();
-  private volatile int myWebServerPort = -1;
-  private volatile int myRunnerPort = -1;
+  private volatile int myServerPort = -1;
 
   public KarmaServerState(@NotNull KarmaServer server) {
     myServer = server;
@@ -67,19 +66,18 @@ public class KarmaServerState implements ProcessListener {
   }
 
   private void handleStdout(@NotNull String text) {
-    if (myWebServerPort == -1) {
-      myWebServerPort = parseWebServerPort(text);
+    int serverPort = myServerPort;
+    if (serverPort == -1) {
+      serverPort = parseServerPort(text);
+      myServerPort = serverPort;
     }
-    if (myRunnerPort == -1) {
-      myRunnerPort = parseRunnerPort(text);
-    }
-    if (myWebServerPort != -1 && myRunnerPort != -1) {
-      myServer.fireOnReady(myWebServerPort, myRunnerPort);
+    if (serverPort != -1) {
+      myServer.fireOnReady(serverPort);
     }
   }
 
-  private static int parseWebServerPort(@NotNull String text) {
-    Matcher m = WEB_SERVER_LINE_PATTERN.matcher(text);
+  private static int parseServerPort(@NotNull String text) {
+    Matcher m = SERVER_PORT_LINE_PATTERN.matcher(text);
     if (m.find()) {
       String portStr = m.group(1);
       try {
@@ -87,21 +85,6 @@ public class KarmaServerState implements ProcessListener {
       }
       catch (NumberFormatException e) {
         LOG.warn("Can't parse web server port from '" + text + "'");
-      }
-    }
-    return -1;
-  }
-
-  private static int parseRunnerPort(@NotNull String text) {
-    String prefix = "INFO [karma]: To run via this server, use \"karma run --runner-port ";
-    String suffix = "\"";
-    if (text.startsWith(prefix) && text.endsWith(suffix)) {
-      String str = text.substring(prefix.length(), text.length() - suffix.length());
-      try {
-        return Integer.parseInt(str);
-      }
-      catch (NumberFormatException e) {
-        LOG.warn("Can't parse runner port from '" + text + "'");
       }
     }
     return -1;
@@ -128,12 +111,8 @@ public class KarmaServerState implements ProcessListener {
     return myCapturedBrowsers.values();
   }
 
-  public int getWebServerPort() {
-    return myWebServerPort;
-  }
-
-  public int getRunnerPort() {
-    return myRunnerPort;
+  public int getServerPort() {
+    return myServerPort;
   }
 
   private class BrowserEventHandler implements StreamEventHandler {

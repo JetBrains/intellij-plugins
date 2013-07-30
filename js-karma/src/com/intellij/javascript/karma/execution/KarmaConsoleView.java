@@ -78,7 +78,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     else {
       myServer.doWhenReady(new KarmaServerReadyListener() {
         @Override
-        public void onReady(int webServerPort, int runnerPort) {
+        public void onReady(int webServerPort) {
           ui.selectAndFocus(consoleContent, false, false);
         }
       });
@@ -88,7 +88,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
         public void run() {
           if (myServer.isReady() && !myServer.hasCapturedBrowsers()) {
             print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
-            String url = "http://localhost:" + myServer.getWebServerPort();
+            String url = "http://localhost:" + myServer.getServerPort();
             printHyperlink(url + "\n", new OpenUrlHyperlinkInfo(url));
           }
         }

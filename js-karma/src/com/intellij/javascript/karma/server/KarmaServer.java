@@ -197,7 +197,7 @@ public class KarmaServer {
     return myProcessOutputArchive;
   }
 
-  void fireOnReady(final int webServerPort, final int runnerPort) {
+  void fireOnReady(final int webServerPort) {
     if (myOnReadyFired.compareAndSet(false, true)) {
       UIUtil.invokeLaterIfNeeded(new Runnable() {
         @Override
@@ -206,7 +206,7 @@ public class KarmaServer {
           List<KarmaServerReadyListener> listeners = ContainerUtil.newArrayList(myDoListWhenReady);
           myDoListWhenReady.clear();
           for (KarmaServerReadyListener listener : listeners) {
-            listener.onReady(webServerPort, runnerPort);
+            listener.onReady(webServerPort);
           }
           processWhenReadyWithCapturedBrowserQueue();
         }
@@ -229,7 +229,7 @@ public class KarmaServer {
       @Override
       public void run() {
         if (myOnReadyExecuted) {
-          readyCallback.onReady(myState.getWebServerPort(), myState.getRunnerPort());
+          readyCallback.onReady(myState.getServerPort());
         }
         else {
           myDoListWhenReady.add(readyCallback);
@@ -276,17 +276,13 @@ public class KarmaServer {
     return myOnReadyFired.get();
   }
 
-  public int getRunnerPort() {
-    return myState.getRunnerPort();
-  }
-
   @Nullable
   public KarmaConfig getKarmaConfig() {
     return myKarmaConfig;
   }
 
-  public int getWebServerPort() {
-    return myState.getWebServerPort();
+  public int getServerPort() {
+    return myState.getServerPort();
   }
 
   public boolean hasCapturedBrowsers() {

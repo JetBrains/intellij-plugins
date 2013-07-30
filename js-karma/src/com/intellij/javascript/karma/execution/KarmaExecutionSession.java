@@ -100,7 +100,7 @@ public class KarmaExecutionSession {
         throw new ExecutionException("Can't find karma-intellij test runner", e);
       }
       if (server.isReady() && server.hasCapturedBrowsers()) {
-        return createOSProcessHandler(server.getRunnerPort(), clientAppFile);
+        return createOSProcessHandler(server.getServerPort(), clientAppFile);
       }
     }
     final NopProcessHandler nopProcessHandler = new NopProcessHandler();
@@ -114,8 +114,8 @@ public class KarmaExecutionSession {
   }
 
   @NotNull
-  private OSProcessHandler createOSProcessHandler(int runnerPort, @NotNull File clientAppFile) throws ExecutionException {
-    GeneralCommandLine commandLine = createCommandLine(runnerPort, clientAppFile);
+  private OSProcessHandler createOSProcessHandler(int serverPort, @NotNull File clientAppFile) throws ExecutionException {
+    GeneralCommandLine commandLine = createCommandLine(serverPort, clientAppFile);
     Process process = commandLine.createProcess();
     OSProcessHandler osProcessHandler = new KillableColoredProcessHandler(process, commandLine.getCommandLineString());
     ProcessTerminatedListener.attach(osProcessHandler);
@@ -124,7 +124,7 @@ public class KarmaExecutionSession {
   }
 
   @NotNull
-  private GeneralCommandLine createCommandLine(int runnerPort, @NotNull File clientAppFile) {
+  private GeneralCommandLine createCommandLine(int serverPort, @NotNull File clientAppFile) {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     File configFile = new File(myRunSettings.getConfigPath());
     // looks like it should work with any working directory
@@ -133,7 +133,7 @@ public class KarmaExecutionSession {
     //commandLine.addParameter("--debug-brk=5858");
     commandLine.addParameter(clientAppFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getKarmaJsSourcesLocator().getKarmaPackageDir());
-    commandLine.addParameter("--runnerPort=" + runnerPort);
+    commandLine.addParameter("--serverPort=" + serverPort);
     if (isDebug()) {
       commandLine.addParameter("--debug=true");
     }
