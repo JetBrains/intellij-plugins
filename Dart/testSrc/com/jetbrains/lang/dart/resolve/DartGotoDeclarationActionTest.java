@@ -170,6 +170,10 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
     doTest(1);
   }
 
+  public void testMixin2() throws Throwable {
+    doTest(1);
+  }
+
   public void testLocalVarDeclaration1() throws Throwable {
     doTest(1);
   }

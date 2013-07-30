@@ -144,6 +144,7 @@ private topLevelDefinition ::= libraryStatement
                              | resourceStatement
                              | classDefinition
                              | interfaceDefinition
+                             | classTypeAlias
                              | functionTypeAlias
                              | functionDeclarationWithBodyOrNative
                              | getterOrSetterDeclaration
@@ -287,7 +288,10 @@ interfaceDefinition ::= 'interface' componentName typeParameters? superinterface
 factorySpecification ::= 'factory' type {pin=1}
 
 functionTypeAlias ::= 'typedef' functionPrefix typeParameters? formalParameterList ';'
-{pin=2 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+{pin=4 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
+
+classTypeAlias ::= 'typedef' componentName typeParameters? '=' 'abstract'? type mixins? ';'
+{pin=4 mixin="com.jetbrains.lang.dart.psi.impl.TypedefDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
 interfaceBody ::= (metadata* interfaceMemberDefinition)* {recoverUntil="simple_scope_recover" implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
 private interfaceMemberDefinition ::= methodPrototypeDeclaration

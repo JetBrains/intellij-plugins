@@ -24,9 +24,9 @@ public class DartFunctionTypeAliasImpl extends AbstractDartComponentImpl impleme
   }
 
   @Override
-  @Nullable
+  @NotNull
   public DartFormalParameterList getFormalParameterList() {
-    return findChildByClass(DartFormalParameterList.class);
+    return findNotNullChildByClass(DartFormalParameterList.class);
   }
 
   @Override

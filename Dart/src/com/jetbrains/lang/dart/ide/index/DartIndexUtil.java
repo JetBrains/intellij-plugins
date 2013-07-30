@@ -22,7 +22,7 @@ import java.util.Set;
 
 public class DartIndexUtil {
   // inc when change parser
-  public static int BASE_VERSION = 1;
+  public static int BASE_VERSION = 2;
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 

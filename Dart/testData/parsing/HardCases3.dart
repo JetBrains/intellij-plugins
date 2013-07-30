@@ -1,3 +1,5 @@
+typedef ObservableBase = Object with ObservableMixin;
+
 @DocsEditable
 @DomName('AbstractWorker')
 class AbstractWorker extends EventTarget {

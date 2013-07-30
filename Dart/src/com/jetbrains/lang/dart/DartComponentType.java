@@ -124,7 +124,7 @@ public enum DartComponentType {
     if (element instanceof DartInterfaceDefinition) {
       return INTERFACE;
     }
-    if (element instanceof DartFunctionTypeAlias) {
+    if (element instanceof DartFunctionTypeAlias || element instanceof DartClassTypeAlias) {
       return TYPEDEF;
     }
     if (element instanceof DartNamedConstructorDeclaration

@@ -1,4 +1,22 @@
 Dart File
+  CLASS_TYPE_ALIAS
+    PsiElement(typedef)('typedef')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('ObservableBase')
+    PsiElement(=)('=')
+    TYPE
+      REFERENCE_EXPRESSION
+        ID
+          PsiElement(IDENTIFIER)('Object')
+    MIXINS
+      PsiElement(with)('with')
+      TYPE_LIST
+        TYPE
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('ObservableMixin')
+    PsiElement(;)(';')
   METADATA
     PsiElement(@)('@')
     REFERENCE_EXPRESSION

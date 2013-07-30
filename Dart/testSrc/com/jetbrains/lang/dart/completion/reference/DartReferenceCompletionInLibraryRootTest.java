@@ -48,6 +48,10 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
     doTest();
   }
 
+  public void testMixin2() throws Throwable {
+    doTest();
+  }
+
   public void testPackages1() throws Throwable {
     myFixture.addFileToProject("pubspec.yaml", "");
     myFixture.addFileToProject("packages/foo/foo.dart", "");

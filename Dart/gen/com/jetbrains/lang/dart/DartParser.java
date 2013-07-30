@@ -80,6 +80,9 @@ public class DartParser implements PsiParser {
     else if (root_ == CLASS_DEFINITION) {
       result_ = classDefinition(builder_, level_ + 1);
     }
+    else if (root_ == CLASS_TYPE_ALIAS) {
+      result_ = classTypeAlias(builder_, level_ + 1);
+    }
     else if (root_ == COMPARE_EXPRESSION) {
       result_ = compareExpression(builder_, level_ + 1);
     }
@@ -1436,6 +1439,55 @@ public class DartParser implements PsiParser {
     }
     result_ = exitErrorRecordingSection(builder_, level_, result_, false, _SECTION_RECOVER_, class_member_recover_parser_);
     return result_;
+  }
+
+  /* ********************************************************** */
+  // 'typedef' componentName typeParameters? '=' 'abstract'? type mixins? ';'
+  public static boolean classTypeAlias(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classTypeAlias")) return false;
+    if (!nextTokenIs(builder_, TYPEDEF)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = builder_.mark();
+    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
+    result_ = consumeToken(builder_, TYPEDEF);
+    result_ = result_ && componentName(builder_, level_ + 1);
+    result_ = result_ && classTypeAlias_2(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, EQ);
+    pinned_ = result_; // pin = 4
+    result_ = result_ && report_error_(builder_, classTypeAlias_4(builder_, level_ + 1));
+    result_ = pinned_ && report_error_(builder_, type(builder_, level_ + 1)) && result_;
+    result_ = pinned_ && report_error_(builder_, classTypeAlias_6(builder_, level_ + 1)) && result_;
+    result_ = pinned_ && consumeToken(builder_, SEMICOLON) && result_;
+    if (result_ || pinned_) {
+      marker_.done(CLASS_TYPE_ALIAS);
+    }
+    else {
+      marker_.rollbackTo();
+    }
+    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
+    return result_ || pinned_;
+  }
+
+  // typeParameters?
+  private static boolean classTypeAlias_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classTypeAlias_2")) return false;
+    typeParameters(builder_, level_ + 1);
+    return true;
+  }
+
+  // 'abstract'?
+  private static boolean classTypeAlias_4(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classTypeAlias_4")) return false;
+    consumeToken(builder_, ABSTRACT);
+    return true;
+  }
+
+  // mixins?
+  private static boolean classTypeAlias_6(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classTypeAlias_6")) return false;
+    mixins(builder_, level_ + 1);
+    return true;
   }
 
   /* ********************************************************** */
@@ -3421,10 +3473,10 @@ public class DartParser implements PsiParser {
     enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
     result_ = consumeToken(builder_, TYPEDEF);
     result_ = result_ && functionPrefix(builder_, level_ + 1);
-    pinned_ = result_; // pin = 2
-    result_ = result_ && report_error_(builder_, functionTypeAlias_2(builder_, level_ + 1));
-    result_ = pinned_ && report_error_(builder_, formalParameterList(builder_, level_ + 1)) && result_;
-    result_ = pinned_ && consumeToken(builder_, SEMICOLON) && result_;
+    result_ = result_ && functionTypeAlias_2(builder_, level_ + 1);
+    result_ = result_ && formalParameterList(builder_, level_ + 1);
+    pinned_ = result_; // pin = 4
+    result_ = result_ && consumeToken(builder_, SEMICOLON);
     if (result_ || pinned_) {
       marker_.done(FUNCTION_TYPE_ALIAS);
     }
@@ -7327,6 +7379,7 @@ public class DartParser implements PsiParser {
   //                              | resourceStatement
   //                              | classDefinition
   //                              | interfaceDefinition
+  //                              | classTypeAlias
   //                              | functionTypeAlias
   //                              | functionDeclarationWithBodyOrNative
   //                              | getterOrSetterDeclaration
@@ -7345,6 +7398,7 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = resourceStatement(builder_, level_ + 1);
     if (!result_) result_ = classDefinition(builder_, level_ + 1);
     if (!result_) result_ = interfaceDefinition(builder_, level_ + 1);
+    if (!result_) result_ = classTypeAlias(builder_, level_ + 1);
     if (!result_) result_ = functionTypeAlias(builder_, level_ + 1);
     if (!result_) result_ = functionDeclarationWithBodyOrNative(builder_, level_ + 1);
     if (!result_) result_ = getterOrSetterDeclaration(builder_, level_ + 1);
