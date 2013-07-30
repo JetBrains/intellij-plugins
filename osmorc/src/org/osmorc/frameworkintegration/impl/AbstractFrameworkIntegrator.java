@@ -26,15 +26,11 @@ package org.osmorc.frameworkintegration.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.frameworkintegration.BundleSelectionAction;
 import org.osmorc.frameworkintegration.FrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.run.OsgiRunConfigurationChecker;
 import org.osmorc.run.OsgiRunConfigurationCheckerProvider;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Abstract base class for framework integrators, for avoiding duplicated code.
@@ -58,12 +54,6 @@ public abstract class AbstractFrameworkIntegrator implements FrameworkIntegrator
   @Override
   public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
     return null;
-  }
-
-  @NotNull
-  @Override
-  public List<BundleSelectionAction> getBundleSelectionActions() {
-    return Collections.emptyList();
   }
 
   @Override

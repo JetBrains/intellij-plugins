@@ -25,24 +25,17 @@
 package org.osmorc.frameworkintegration.impl.equinox;
 
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.BundleSelectionAction;
 import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkIntegrator;
 import org.osmorc.frameworkintegration.impl.equinox.ui.EquinoxRunPropertiesEditor;
 import org.osmorc.run.OsgiRunConfigurationChecker;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class EquinoxIntegrator extends AbstractFrameworkIntegrator {
   private static final String FRAMEWORK_NAME = "Equinox";
-
-  private static final List<BundleSelectionAction> ACTIONS = Arrays.<BundleSelectionAction>asList(
-    /*new AdaptToRunWithUpdateConfiguratorAction(),*/ new AdaptToRunWithoutUpdateConfigurator());
 
   public EquinoxIntegrator() {
     super(new EquinoxInstanceManager());
@@ -68,11 +61,5 @@ public class EquinoxIntegrator extends AbstractFrameworkIntegrator {
   @Override
   public OsgiRunConfigurationChecker getOsgiRunConfigurationChecker() {
     return new EquinoxOsgiRunConfigurationChecker();
-  }
-
-  @NotNull
-  @Override
-  public List<BundleSelectionAction> getBundleSelectionActions() {
-    return ACTIONS;
   }
 }

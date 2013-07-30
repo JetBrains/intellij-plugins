@@ -29,8 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 
-import java.util.List;
-
 /**
  * The FrameworkIntegrator is an integrating class that provides access to all framework specific components.
  *
@@ -62,7 +60,4 @@ public interface FrameworkIntegrator {
    */
   @Nullable
   FrameworkRunPropertiesEditor createRunPropertiesEditor();
-
-  @NotNull
-  List<BundleSelectionAction> getBundleSelectionActions();
 }
