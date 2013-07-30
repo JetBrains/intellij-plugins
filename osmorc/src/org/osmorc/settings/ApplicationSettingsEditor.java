@@ -29,7 +29,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 
 import javax.swing.*;
 
@@ -69,7 +68,7 @@ public class ApplicationSettingsEditor implements SearchableConfigurable, Config
 
   @Override
   public JComponent createComponent() {
-    myComponent = new FrameworkDefinitionsEditorComponent(FrameworkIntegratorRegistry.getInstance());
+    myComponent = new FrameworkDefinitionsEditorComponent();
     return myComponent.getMainPanel();
   }
 

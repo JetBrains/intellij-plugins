@@ -26,20 +26,26 @@ package org.osmorc.frameworkintegration.impl.knopflerfish;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.JarUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.AbstractFrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
+import org.osmorc.frameworkintegration.util.OsgiFileUtil;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 /**
@@ -90,6 +96,30 @@ public class KnopflerfishInstanceManager extends AbstractFrameworkInstanceManage
         collector.collectFrameworkLibraries(new KnopflerfishSourceFinder(osgiFolder), directoriesToAdd);
       }
     });
+  }
+
+  @Nullable
+  @Override
+  public String getVersion(@NotNull FrameworkInstanceDefinition instance) {
+    Collection<SelectedBundle> bundles = getFrameworkBundles(instance, FrameworkBundleType.SYSTEM);
+    if (bundles.size() == 1) {
+      String url = bundles.iterator().next().getBundleUrl();
+      if (url != null) {
+        try {
+          JarFile jar = new JarFile(OsgiFileUtil.urlToPath(url));
+          try {
+            InputStream stream = jar.getInputStream(jar.getEntry("release"));
+            return FileUtil.loadTextAndClose(stream);
+          }
+          finally {
+            jar.close();
+          }
+        }
+        catch (IOException ignored) { }
+      }
+    }
+
+    return null;
   }
 
   @NotNull

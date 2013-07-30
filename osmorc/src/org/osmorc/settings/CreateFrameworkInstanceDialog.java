@@ -28,18 +28,16 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.components.JBLabel;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.frameworkintegration.FrameworkIntegrator;
-import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
+import org.osmorc.frameworkintegration.*;
+import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Dialog for creating/updating a framework instance.
@@ -48,90 +46,88 @@ import java.awt.event.ActionListener;
  */
 public class CreateFrameworkInstanceDialog extends DialogWrapper {
   private JPanel myMainPanel;
-  private JComboBox myIntegratorComboBox;
-  private JTextField myNameTextField;
-  private JTextField myVersionField;
   private TextFieldWithBrowseButton myBaseFolderChooser;
-  private JPanel myErrorText;
+  private JTextField myNameField;
+  private JBLabel myVersionLabel;
 
-  public CreateFrameworkInstanceDialog(@NotNull FrameworkIntegratorRegistry registry, @Nullable FrameworkInstanceDefinition framework) {
+  private final FrameworkInstanceDefinition myInstance;
+  private final DefaultListModel myModel;
+  private final FrameworkIntegrator myIntegrator;
+
+  public CreateFrameworkInstanceDialog(@NotNull FrameworkInstanceDefinition instance, @NotNull DefaultListModel model) {
     super(true);
 
-    setTitle("OSGi Framework Instance");
+    myInstance = instance;
+    myModel = model;
+    myIntegrator = FrameworkIntegratorRegistry.getInstance().findIntegratorByInstanceDefinition(instance);
+    assert myIntegrator != null : instance;
+
+    setTitle(OsmorcBundle.message("framework.edit.title", myIntegrator.getDisplayName()));
     setModal(true);
 
-    //noinspection unchecked
-    myIntegratorComboBox.setModel(new DefaultComboBoxModel(registry.getFrameworkIntegrators()));
-    myIntegratorComboBox.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        FrameworkIntegrator integrator = (FrameworkIntegrator)myIntegratorComboBox.getSelectedItem();
-        if (integrator != null && StringUtil.isEmptyOrSpaces(myNameTextField.getText())) {
-          myNameTextField.setText(integrator.getDisplayName());
-        }
-        updateUiState();
-      }
-    });
-
-    myNameTextField.getDocument().addDocumentListener(new DocumentAdapter() {
-      @Override
-      protected void textChanged(DocumentEvent e) {
-        updateUiState();
-      }
-    });
-
-    FileChooserDescriptor fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    myBaseFolderChooser.addBrowseFolderListener("Choose framework instance base folder", "", null, fileChooserDescriptor);
+    FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
+    String title = OsmorcBundle.message("framework.path.chooser.title");
+    String description = OsmorcBundle.message("framework.path.chooser.description", myIntegrator.getDisplayName());
+    myBaseFolderChooser.addBrowseFolderListener(title, description, null, descriptor);
     myBaseFolderChooser.getTextField().setEditable(false);
     myBaseFolderChooser.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
       protected void textChanged(DocumentEvent e) {
-        updateUiState();
+        checkInstance(); updateVersion();
       }
     });
 
-    if (framework != null) {
-      myNameTextField.setText(framework.getName());
-      myIntegratorComboBox.setSelectedItem(FrameworkIntegratorRegistry.getInstance().findIntegratorByName(framework.getName()));
-      myBaseFolderChooser.setText(framework.getBaseFolder());
-      myVersionField.setText(framework.getVersion());
-    }
+    myNameField.getDocument().addDocumentListener(new DocumentAdapter() {
+      @Override
+      protected void textChanged(DocumentEvent e) {
+        checkInstance();
+      }
+    });
+
+    myBaseFolderChooser.setText(ObjectUtils.notNull(instance.getBaseFolder(), ""));
+    myNameField.setText(ObjectUtils.notNull(instance.getName(), ""));
+    myVersionLabel.setText(ObjectUtils.notNull(instance.getVersion(), ""));
 
     init();
-    updateUiState();
+
+    checkInstance();
   }
 
-  private void createUIComponents() {
-    myErrorText = new MyErrorText();
-  }
+  private void checkInstance() {
+    FrameworkInstanceDefinition newInstance = createDefinition();
+    String message = myIntegrator.getFrameworkInstanceManager().checkValidity(newInstance);
 
-  private void updateUiState() {
-    FrameworkIntegrator integrator = (FrameworkIntegrator)myIntegratorComboBox.getSelectedItem();
-    if (integrator != null) {
-      FrameworkInstanceDefinition definition = createDefinition();
-      String errorInfoText = integrator.getFrameworkInstanceManager().checkValidity(definition);
-      ((MyErrorText)myErrorText).setError(errorInfoText);
-      setOKActionEnabled(!StringUtil.isEmptyOrSpaces(myNameTextField.getText()) && StringUtil.isEmpty(errorInfoText));
+    if (message == null) {
+      for (int i = 0; i < myModel.size(); i++) {
+        FrameworkInstanceDefinition instance = (FrameworkInstanceDefinition)myModel.get(i);
+        if (newInstance.equals(instance) && instance != myInstance) {
+          message = OsmorcBundle.message("framework.name.duplicate");
+        }
+      }
     }
-    else {
-      setOKActionEnabled(false);
-    }
+
+    setErrorText(message);
+    setOKActionEnabled(message == null);
   }
 
-  @NotNull
-  public FrameworkInstanceDefinition createDefinition() {
-    FrameworkInstanceDefinition framework = new FrameworkInstanceDefinition();
-    framework.setName(myNameTextField.getText().trim());
-    FrameworkIntegrator integrator = (FrameworkIntegrator)myIntegratorComboBox.getSelectedItem();
-    assert integrator != null;
-    framework.setFrameworkIntegratorName(integrator.getDisplayName());
-    framework.setBaseFolder(myBaseFolderChooser.getText().trim());
-    framework.setVersion(myVersionField.getText().trim());
-    return framework;
+  private void updateVersion() {
+    FrameworkInstanceDefinition instance = createDefinition();
+    FrameworkInstanceManager manager = myIntegrator.getFrameworkInstanceManager();
+    if (manager instanceof AbstractFrameworkInstanceManager) {
+      String version = ((AbstractFrameworkInstanceManager)manager).getVersion(instance);
+      if (version != null) {
+        myNameField.setText(myIntegrator.getDisplayName() + " (" + version + ")");
+        myVersionLabel.setText(version);
+        return;
+      }
+    }
+
+    myNameField.setText(myIntegrator.getDisplayName());
+    myVersionLabel.setText("");
   }
 
   @Override
   public JComponent getPreferredFocusedComponent() {
-    return myIntegratorComboBox;
+    return myBaseFolderChooser.getButton();
   }
 
   @Nullable
@@ -143,5 +139,15 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
   @Override
   protected String getHelpId() {
     return "reference.settings.project.osgi.new.framework.instance";
+  }
+
+  @NotNull
+  public FrameworkInstanceDefinition createDefinition() {
+    FrameworkInstanceDefinition framework = new FrameworkInstanceDefinition();
+    framework.setName(myNameField.getText().trim());
+    framework.setFrameworkIntegratorName(myIntegrator.getDisplayName());
+    framework.setBaseFolder(myBaseFolderChooser.getText().trim());
+    framework.setVersion(myVersionLabel.getText().trim());
+    return framework;
   }
 }

@@ -19,20 +19,31 @@ import java.util.List;
  */
 public abstract class AbstractFrameworkInstanceManager implements FrameworkInstanceManager {
   @Nullable
-  @Override
-  public String checkValidity(@NotNull FrameworkInstanceDefinition instance) {
-    if (StringUtil.isEmptyOrSpaces(instance.getName())) {
-      return OsmorcBundle.message("framework.name.missing");
+  public String getVersion(@NotNull FrameworkInstanceDefinition instance) {
+    Collection<SelectedBundle> bundles = getFrameworkBundles(instance, FrameworkBundleType.SYSTEM);
+    if (bundles.size() == 1) {
+      SelectedBundle bundle = bundles.iterator().next();
+      return CachingBundleInfoProvider.getBundleVersions(bundle.getBundleUrl());
     }
 
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public String checkValidity(@NotNull FrameworkInstanceDefinition instance) {
     String basePath = instance.getBaseFolder();
     if (basePath == null || !new File(basePath).isDirectory()) {
       return OsmorcBundle.message("framework.directory.missing", (basePath != null ? basePath : ""), instance.getFrameworkIntegratorName());
     }
 
-    Collection<SelectedBundle> systemBundles = getFrameworkBundles(instance, FrameworkBundleType.SYSTEM);
-    if (systemBundles.isEmpty()) {
+    String version = getVersion(instance);
+    if (version == null) {
       return OsmorcBundle.message("framework.jar.missing", basePath, instance.getFrameworkIntegratorName());
+    }
+
+    if (StringUtil.isEmptyOrSpaces(instance.getName())) {
+      return OsmorcBundle.message("framework.name.missing");
     }
 
     return null;

@@ -30,12 +30,16 @@ import com.intellij.openapi.util.io.JarUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.AbstractFrameworkInstanceManager;
+import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
+import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -78,6 +82,18 @@ public class ConciergeInstanceManager extends AbstractFrameworkInstanceManager {
         collector.collectFrameworkLibraries(new ConciergeSourceFinder(installFolder), directoriesToAdd);
       }
     });
+  }
+
+  @Nullable
+  @Override
+  public String getVersion(@NotNull FrameworkInstanceDefinition instance) {
+    Collection<SelectedBundle> bundles = getFrameworkBundles(instance, FrameworkBundleType.SYSTEM);
+    if (bundles.size() == 1) {
+      SelectedBundle bundle = bundles.iterator().next();
+      return CachingBundleInfoProvider.getBundleAttribute(bundle.getBundleUrl(), "PproApp-Version");
+    }
+
+    return null;
   }
 
   @NotNull
