@@ -22,16 +22,18 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.frameworkintegration;
 
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.diagnostic.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
+import org.osmorc.frameworkintegration.util.OsgiFileUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -44,13 +46,14 @@ import java.util.jar.Manifest;
  * for stuff outside the project.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id:$
  */
 public class CachingBundleInfoProvider {
-  private static final WeakHashMap<String, Manifest> _cache = new WeakHashMap<String, Manifest>();
+  private static final Logger LOG = Logger.getInstance(CachingBundleInfoProvider.class);
 
-  private CachingBundleInfoProvider() {
-  }
+  // todo: check timestamp
+  private static final Map<String, Manifest> ourCache = new WeakHashMap<String, Manifest>();
+
+  private CachingBundleInfoProvider() { }
 
   /**
    * Returns true if the file at the given url is a bundle, false otherwise.
@@ -58,7 +61,7 @@ public class CachingBundleInfoProvider {
    * @param bundleUrl the url of the bundle
    * @return true if the file at the url is a bundle, false otherwise.
    */
-  public static boolean isBundle(String bundleUrl) {
+  public static boolean isBundle(@Nullable String bundleUrl) {
     return getBundleSymbolicName(bundleUrl) != null;
   }
 
@@ -68,9 +71,12 @@ public class CachingBundleInfoProvider {
    * @param bundleUrl the url to the object to be bundlified.
    * @return true if the object can be bundlified, false otherwise.
    */
-  public static boolean canBeBundlified(String bundleUrl) {
-    if (isBundle(bundleUrl)) return false;
-    File sourceFile = new File(VfsUtil.urlToPath(bundleUrl));
+  public static boolean canBeBundlified(@NotNull String bundleUrl) {
+    if (isBundle(bundleUrl)) {
+      return false;
+    }
+
+    File sourceFile = new File(OsgiFileUtil.urlToPath(bundleUrl));
     if (sourceFile.isDirectory()) {
       // it's an exploded directory, we cannot bundle these.
       return false;
@@ -79,6 +85,7 @@ public class CachingBundleInfoProvider {
       // it's no jar, so we won't bundlify it either.
       return false;
     }
+
     return true;
   }
 
@@ -89,7 +96,7 @@ public class CachingBundleInfoProvider {
    * @return the symbolic name of the bundle or null if the file is no bundle.
    */
   @Nullable
-  public static String getBundleSymbolicName(String bundleUrl) {
+  public static String getBundleSymbolicName(@Nullable String bundleUrl) {
     String symbolicName = getBundleAttribute(bundleUrl, Constants.BUNDLE_SYMBOLICNAME);
     return symbolicName != null ? symbolicName.split(";", 2)[0] : null; // Only take the name and leave the parameters
   }
@@ -101,10 +108,9 @@ public class CachingBundleInfoProvider {
    * @return the version of the bundle or null if the file is no bundle
    */
   @Nullable
-  public static String getBundleVersions(String bundleUrl) {
+  public static String getBundleVersions(@Nullable String bundleUrl) {
     return getBundleAttribute(bundleUrl, Constants.BUNDLE_VERSION);
   }
-
 
   /**
    * Returns boolean status if the given bundle is a fragment bundle.
@@ -112,9 +118,8 @@ public class CachingBundleInfoProvider {
    * @param bundleUrl the url of the bundle
    * @return true if the given bundle is a fragment bundle, false if it is not or if the state could not be determined.
    */
-  public static boolean isFragmentBundle(String bundleUrl) {
-    String fragmentHost = getBundleAttribute(bundleUrl, Constants.FRAGMENT_HOST);
-    return fragmentHost != null;
+  public static boolean isFragmentBundle(@NotNull String bundleUrl) {
+    return getBundleAttribute(bundleUrl, Constants.FRAGMENT_HOST) != null;
   }
 
   /**
@@ -126,32 +131,44 @@ public class CachingBundleInfoProvider {
    * @return the attribute's value or null if there is no such bundle or no such attribute
    */
   @Nullable
-  private synchronized static String getBundleAttribute(String bundleUrl, String attribute) {
+  public synchronized static String getBundleAttribute(@Nullable String bundleUrl, @NotNull String attribute) {
+    if (bundleUrl == null) return null;
+
     bundleUrl = normalize(bundleUrl);
-    if (!_cache.containsKey(bundleUrl)) {
+
+    if (!ourCache.containsKey(bundleUrl)) {
       try {
-        File bundleFile = new File(VfsUtil.urlToPath(bundleUrl));
+        File bundleFile = new File(OsgiFileUtil.urlToPath(bundleUrl));
         if (bundleFile.isDirectory()) {
           File manifestFile = new File(bundleFile, "META-INF/MANIFEST.MF");
           if (manifestFile.exists() && !manifestFile.isDirectory()) {
             FileInputStream fileInputStream = new FileInputStream(manifestFile);
-            Manifest manifest = new Manifest(fileInputStream);
-            fileInputStream.close();
-            _cache.put(bundleUrl, manifest);
+            try {
+              Manifest manifest = new Manifest(fileInputStream);
+              ourCache.put(bundleUrl, manifest);
+            }
+            finally {
+              fileInputStream.close();
+            }
           }
         }
         else {
           JarFile file = new JarFile(bundleFile);
-          _cache.put(bundleUrl, file.getManifest());
-          file.close();
+          try {
+            ourCache.put(bundleUrl, file.getManifest());
+          }
+          finally {
+            file.close();
+          }
         }
       }
       catch (IOException e) {
+        LOG.debug(e);
         return null;
       }
     }
 
-    Manifest manifest = _cache.get(bundleUrl);
+    Manifest manifest = ourCache.get(bundleUrl);
     return manifest != null ? manifest.getMainAttributes().getValue(attribute) : null;
   }
 
@@ -159,8 +176,7 @@ public class CachingBundleInfoProvider {
     return bundleUrl.replaceAll("file:/([^/]+)", "file:///$1");
   }
 
-  public static boolean isExploded(String bundleUrl) {
-    File bundleFile = new File(VfsUtil.urlToPath(bundleUrl));
-    return bundleFile.isDirectory();
+  public static boolean isExploded(@NotNull String bundleUrl) {
+    return new File(OsgiFileUtil.urlToPath(bundleUrl)).isDirectory();
   }
 }
