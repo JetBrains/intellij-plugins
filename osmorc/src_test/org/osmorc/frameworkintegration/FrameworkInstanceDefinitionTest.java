@@ -11,9 +11,8 @@ public class FrameworkInstanceDefinitionTest {
   @Test
   public void comparison() throws Exception {
     assertEquals(define("Equinox", null), define("Equinox", null));
+    assertEquals(define("Equinox", "3.6"), define("Equinox", null));
     assertFalse(define("Equinox", null).equals(define("Felix", null)));
-    assertFalse(define("Equinox", "3.6").equals(define("Equinox", null)));
-    assertFalse(define("Equinox", "3.6").equals(define("Equinox", "3.6.0")));
   }
 
   private static FrameworkInstanceDefinition define(@NotNull String name, @Nullable String version) {

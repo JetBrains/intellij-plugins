@@ -76,17 +76,14 @@ public class FrameworkInstanceDefinition extends UserDataHolderBase {
 
     FrameworkInstanceDefinition that = (FrameworkInstanceDefinition)o;
 
-    if (!myName.equals(that.myName)) return false;
-    if (myVersion != null ? !myVersion.equals(that.myVersion) : that.myVersion != null) return false;
+    if (myName != null ? !myName.equals(that.myName) : that.myName != null) return false;
 
     return true;
   }
 
   @Override
   public int hashCode() {
-    int result = myName.hashCode();
-    result = 31 * result + (myVersion != null ? myVersion.hashCode() : 0);
-    return result;
+    return myName != null ? myName.hashCode() : 0;
   }
 
   @Override
