@@ -150,6 +150,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     });
 
     myOsmorcControlledDir.addChangeListener(new ChangeListener() {
+      @Override
       public void stateChanged(ChangeEvent e) {
         boolean isUserDefined = !myOsmorcControlledDir.isSelected();
         myWorkingDirField.setEnabled(isUserDefined);
@@ -226,6 +227,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     }
   }
 
+  @Override
   protected void resetEditorFrom(OsgiRunConfiguration osgiRunConfiguration) {
     myRunConfiguration = osgiRunConfiguration;
     myVmOptions.setText(osgiRunConfiguration.getVmParameters());
@@ -271,6 +273,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     myAlternativeJrePanel.init(osgiRunConfiguration.getAlternativeJrePath(), osgiRunConfiguration.isUseAlternativeJre());
   }
 
+  @Override
   protected void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
     List<SelectedBundle> modules = getBundlesToRun();
     osgiRunConfiguration.setBundlesToDeploy(modules);
@@ -298,6 +301,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
   }
 
   @NotNull
+  @Override
   protected JComponent createEditor() {
     return root;
   }
@@ -313,7 +317,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
       selectedBundles = new ArrayList<SelectedBundle>();
     }
 
-    public SelectedBundle getBundleAt(final int index) {
+    public SelectedBundle getBundleAt(int index) {
       return selectedBundles.get(index);
     }
 
@@ -321,20 +325,17 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
       return selectedBundles;
     }
 
-    public void removeBundle(SelectedBundle bundle) {
-      removeBundleAt(selectedBundles.indexOf(bundle));
-    }
-
-    public void removeBundleAt(final int index) {
-      selectedBundles.remove(index);
-      fireTableRowsDeleted(index, index);
-    }
-
-    public void addBundle(final SelectedBundle bundle) {
+    public void addBundle(SelectedBundle bundle) {
       selectedBundles.add(bundle);
       fireTableRowsInserted(selectedBundles.size() - 1, selectedBundles.size() - 1);
     }
 
+    public void removeBundleAt(int index) {
+      selectedBundles.remove(index);
+      fireTableRowsDeleted(index, index);
+    }
+
+    @Override
     public Class<?> getColumnClass(int columnIndex) {
       switch (columnIndex) {
         case 0:
@@ -362,14 +363,17 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
       }
     }
 
+    @Override
     public int getColumnCount() {
       return 3;
     }
 
+    @Override
     public int getRowCount() {
       return selectedBundles.size();
     }
 
+    @Override
     public boolean isCellEditable(int row, int column) {
       return column != 0;
     }
@@ -389,6 +393,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
       }
     }
 
+    @Override
     public Object getValueAt(int row, int column) {
       SelectedBundle bundle = getBundleAt(row);
       switch (column) {

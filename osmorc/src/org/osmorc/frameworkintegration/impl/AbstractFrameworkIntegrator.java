@@ -39,9 +39,15 @@ import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
  */
 public abstract class AbstractFrameworkIntegrator implements FrameworkIntegrator, OsgiRunConfigurationCheckerProvider {
   private final FrameworkInstanceManager myInstanceManager;
+  private final OsgiRunConfigurationChecker myRunConfigurationChecker;
 
-  protected AbstractFrameworkIntegrator(@NotNull FrameworkInstanceManager instanceManager) {
-    myInstanceManager = instanceManager;
+  protected AbstractFrameworkIntegrator(@NotNull FrameworkInstanceManager manager) {
+    this(manager, new DefaultOsgiRunConfigurationChecker());
+  }
+
+  protected AbstractFrameworkIntegrator(@NotNull FrameworkInstanceManager manager, @NotNull OsgiRunConfigurationChecker checker) {
+    myInstanceManager = manager;
+    myRunConfigurationChecker = checker;
   }
 
   @NotNull
@@ -58,7 +64,7 @@ public abstract class AbstractFrameworkIntegrator implements FrameworkIntegrator
 
   @Override
   public OsgiRunConfigurationChecker getOsgiRunConfigurationChecker() {
-    return new DefaultOsgiRunConfigurationChecker();
+    return myRunConfigurationChecker;
   }
 
   @Override

@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkRunner;
 import org.osmorc.frameworkintegration.impl.AbstractFrameworkIntegrator;
 import org.osmorc.frameworkintegration.impl.equinox.ui.EquinoxRunPropertiesEditor;
-import org.osmorc.run.OsgiRunConfigurationChecker;
 import org.osmorc.run.ui.FrameworkRunPropertiesEditor;
 
 /**
@@ -38,7 +37,7 @@ public class EquinoxIntegrator extends AbstractFrameworkIntegrator {
   private static final String FRAMEWORK_NAME = "Equinox";
 
   public EquinoxIntegrator() {
-    super(new EquinoxInstanceManager());
+    super(new EquinoxInstanceManager(), new EquinoxOsgiRunConfigurationChecker());
   }
 
   @NotNull
@@ -56,10 +55,5 @@ public class EquinoxIntegrator extends AbstractFrameworkIntegrator {
   @Override
   public FrameworkRunPropertiesEditor createRunPropertiesEditor() {
     return new EquinoxRunPropertiesEditor();
-  }
-
-  @Override
-  public OsgiRunConfigurationChecker getOsgiRunConfigurationChecker() {
-    return new EquinoxOsgiRunConfigurationChecker();
   }
 }
