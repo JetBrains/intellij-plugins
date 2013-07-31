@@ -101,15 +101,22 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
     myDefaultStartLevel.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
 
+    DefaultComboBoxModel model = new DefaultComboBoxModel();
     //noinspection unchecked
-    myFrameworkInstances.setModel(new DefaultComboBoxModel(ApplicationSettings.getInstance().getFrameworkInstanceDefinitions().toArray()));
+    model.addElement(null);
+    for (FrameworkInstanceDefinition instance : ApplicationSettings.getInstance().getFrameworkInstanceDefinitions()) {
+      //noinspection unchecked
+      model.addElement(instance);
+    }
+    //noinspection unchecked
+    myFrameworkInstances.setModel(model);
     myFrameworkInstances.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         onFrameworkChange();
       }
     });
     //noinspection unchecked
-    myFrameworkInstances.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer());
+    myFrameworkInstances.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer("[project default]"));
 
     myBundlesTable.setModel(new RunConfigurationTableModel());
     myBundlesTable.setRowSelectionAllowed(true);
@@ -271,8 +278,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
   @Override
   protected void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
-    List<SelectedBundle> modules = getBundlesToRun();
-    osgiRunConfiguration.setBundlesToDeploy(modules);
+    osgiRunConfiguration.setBundlesToDeploy(getBundlesToRun());
     osgiRunConfiguration.setVmParameters(myVmOptions.getText());
     osgiRunConfiguration.setProgramParameters(myProgramParameters.getText());
     osgiRunConfiguration.setIncludeAllBundlesInClassPath(myClassPathAllBundles.isSelected());
@@ -282,10 +288,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     osgiRunConfiguration.setFrameworkStartLevel((Integer)myFrameworkStartLevel.getValue());
     osgiRunConfiguration.setDefaultStartLevel((Integer)myDefaultStartLevel.getValue());
     osgiRunConfiguration.setGenerateWorkingDir(myOsmorcControlledDir.isSelected());
-    FrameworkInstanceDefinition frameworkInstanceDefinition = (FrameworkInstanceDefinition)myFrameworkInstances.getSelectedItem();
-    if (frameworkInstanceDefinition != null) {
-      osgiRunConfiguration.setInstanceToUse(frameworkInstanceDefinition);
-    }
+    osgiRunConfiguration.setInstanceToUse((FrameworkInstanceDefinition)myFrameworkInstances.getSelectedItem());
 
     if (myCurrentRunPropertiesEditor != null) {
       myCurrentRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
