@@ -46,6 +46,7 @@ import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.OsgiRunConfigurationChecker;
 import org.osmorc.run.OsgiRunConfigurationCheckerProvider;
 import org.osmorc.settings.ApplicationSettings;
+import org.osmorc.util.OsgiUiUtil;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -107,6 +108,8 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         onFrameworkChange();
       }
     });
+    //noinspection unchecked
+    myFrameworkInstances.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer());
 
     myBundlesTable.setModel(new RunConfigurationTableModel());
     myBundlesTable.setRowSelectionAllowed(true);

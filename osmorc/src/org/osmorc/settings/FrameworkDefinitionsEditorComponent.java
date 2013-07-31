@@ -30,8 +30,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.*;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.DoubleClickListener;
+import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
@@ -40,6 +42,7 @@ import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 import org.osmorc.i18n.OsmorcBundle;
+import org.osmorc.util.OsgiUiUtil;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -68,16 +71,7 @@ public class FrameworkDefinitionsEditorComponent {
     myModel = new DefaultListModel();
     myFrameworkInstances = new JBList(myModel);
     myFrameworkInstances.getEmptyText().setText(OsmorcBundle.message("frameworks.empty"));
-    myFrameworkInstances.setCellRenderer(new ColoredListCellRenderer() {
-      @Override
-      protected void customizeCellRenderer(JList list, Object value, int index, boolean selected, boolean hasFocus) {
-        FrameworkInstanceDefinition instance = (FrameworkInstanceDefinition)value;
-        append(instance.getName());
-        String version = instance.getVersion();
-        if (StringUtil.isEmptyOrSpaces(version)) version = "(unknown)";
-        append(" [" + instance.getFrameworkIntegratorName() + ", " + version + "]", SimpleTextAttributes.GRAY_ATTRIBUTES);
-      }
-    });
+    myFrameworkInstances.setCellRenderer(new OsgiUiUtil.FrameworkInstanceRenderer());
 
     final List<AddAction> addActions = ContainerUtil.newArrayList();
     for (FrameworkIntegrator integrator : FrameworkIntegratorRegistry.getInstance().getFrameworkIntegrators()) {
