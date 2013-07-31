@@ -89,7 +89,7 @@ public class BundleSelector extends DialogWrapper {
     DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
     // all the modules
-    DefaultMutableTreeNode moduleNode = new DefaultMutableTreeNode("Modules");
+    DefaultMutableTreeNode moduleNode = new DefaultMutableTreeNode(OsmorcBundle.message("bundle.selector.group.modules"));
     Module[] modules = ModuleManager.getInstance(project).getModules();
     for (Module module : modules) {
       if (OsmorcFacet.hasOsmorcFacet(module)) {
@@ -107,7 +107,7 @@ public class BundleSelector extends DialogWrapper {
       if (integrator != null) {
         FrameworkInstanceManager manager = integrator.getFrameworkInstanceManager();
         if (manager instanceof AbstractFrameworkInstanceManager) {
-          DefaultMutableTreeNode frameworkNode = new DefaultMutableTreeNode("Framework bundles");
+          DefaultMutableTreeNode frameworkNode = new DefaultMutableTreeNode(OsmorcBundle.message("bundle.selector.group.framework"));
           Collection<SelectedBundle> frameworkBundles = ((AbstractFrameworkInstanceManager)manager).getFrameworkBundles(instance, FrameworkBundleType.OTHER);
           for (SelectedBundle bundle : frameworkBundles) {
             if (!toHide.contains(bundle)) {
@@ -120,7 +120,7 @@ public class BundleSelector extends DialogWrapper {
     }
 
     // all the libraries that are bundles already (doesn't make much sense to start bundlified libs as they have no activator).
-    DefaultMutableTreeNode libraryNode = new DefaultMutableTreeNode("Project libraries");
+    DefaultMutableTreeNode libraryNode = new DefaultMutableTreeNode(OsmorcBundle.message("bundle.selector.group.libraries"));
     String[] urls = OrderEnumerator.orderEntries(project)
       .withoutSdk()
       .withoutModuleSourceEntries()
