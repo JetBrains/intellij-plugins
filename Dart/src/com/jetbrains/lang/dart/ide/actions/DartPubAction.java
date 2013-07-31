@@ -34,8 +34,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLFile;
 
-import java.nio.charset.Charset;
-
 /**
  * @author: Fedor.Korotkov
  */
@@ -114,11 +112,7 @@ public class DartPubAction extends AnAction {
 
 
         try {
-          final ProcessOutput processOutput = new CapturingProcessHandler(
-            command.createProcess(),
-            Charset.defaultCharset(),
-            command.getCommandLineString()
-          ).runProcess();
+          final ProcessOutput processOutput = new CapturingProcessHandler(command).runProcess();
 
           LOG.debug("pub exited with exit code: " + processOutput.getExitCode());
           LOG.debug(processOutput.getStdout());
