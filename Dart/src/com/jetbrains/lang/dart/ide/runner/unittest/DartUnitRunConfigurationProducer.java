@@ -1,18 +1,12 @@
 package com.jetbrains.lang.dart.ide.runner.unittest;
 
-import com.intellij.execution.Location;
-import com.intellij.execution.PsiLocation;
-import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.configurations.LocatableConfiguration;
-import com.intellij.execution.junit.RuntimeConfigurationProducer;
-import com.intellij.openapi.util.Condition;
+import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.psi.DartArgumentList;
 import com.jetbrains.lang.dart.psi.DartCallExpression;
 import com.jetbrains.lang.dart.psi.DartExpression;
@@ -26,37 +20,26 @@ import java.util.List;
 /**
  * @author: Fedor.Korotkov
  */
-public class DartUnitRuntimeConfigurationProducer extends RuntimeConfigurationProducer {
-  private PsiElement mySourceElement;
-
-  public DartUnitRuntimeConfigurationProducer() {
+public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<DartUnitRunConfiguration> {
+  public DartUnitRunConfigurationProducer() {
     super(DartUnitRunConfigurationType.getInstance());
   }
 
   @Override
-  public PsiElement getSourceElement() {
-    return mySourceElement;
+  protected boolean setupConfigurationFromContext(DartUnitRunConfiguration configuration, ConfigurationContext context) {
+    final PsiElement element = findTestElement(context.getPsiLocation());
+    if (element == null || !setupRunConfiguration(configuration, element)) {
+      return false;
+    }
+
+    configuration.setName("Test: " + configuration.getRunnerParameters().getTestName());
+    return true;
   }
 
   @Override
-  protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
-    if (!(location instanceof PsiLocation)) return null;
-
-    final RunnerAndConfigurationSettings settings = cloneTemplateConfiguration(location.getProject(), context);
-    final LocatableConfiguration runConfig = (LocatableConfiguration)settings.getConfiguration();
-    if (!(runConfig instanceof DartUnitRunConfiguration)) {
-      return null;
-    }
-
-    final DartUnitRunConfiguration dartUnitRunConfiguration = ((DartUnitRunConfiguration)runConfig);
-    final PsiElement element = findTestElement(location.getPsiElement());
-    if (element == null || !setupRunConfiguration(dartUnitRunConfiguration, element)) {
-      return null;
-    }
-
-    mySourceElement = location.getPsiElement();
-    settings.setName("Test: " + dartUnitRunConfiguration.getRunnerParameters().getTestName());
-    return settings;
+  public boolean isConfigurationFromContext(DartUnitRunConfiguration configuration, ConfigurationContext context) {
+    final String testName = "Test: " + findTestName(PsiTreeUtil.getParentOfType(context.getPsiLocation(), DartCallExpression.class));
+    return testName.equals(configuration.getName());
   }
 
   private static boolean setupRunConfiguration(DartUnitRunConfiguration configuration, @NotNull PsiElement expression) {
@@ -130,24 +113,5 @@ public class DartUnitRuntimeConfigurationProducer extends RuntimeConfigurationPr
   private static boolean checkLibAndName(DartCallExpression callExpression, String expectedName) {
     final String name = callExpression.getExpression().getText();
     return expectedName.equalsIgnoreCase(name);
-  }
-
-  @Nullable
-  @Override
-  protected RunnerAndConfigurationSettings findExistingByElement(Location location,
-                                                                 @NotNull RunnerAndConfigurationSettings[] existingConfigurations,
-                                                                 ConfigurationContext context) {
-    final String testName = "Test: " + findTestName(PsiTreeUtil.getParentOfType(location.getPsiElement(), DartCallExpression.class));
-    return ContainerUtil.find(existingConfigurations, new Condition<RunnerAndConfigurationSettings>() {
-      @Override
-      public boolean value(RunnerAndConfigurationSettings settings) {
-        return testName.equals(settings.getName());
-      }
-    });
-  }
-
-  @Override
-  public int compareTo(Object o) {
-    return PREFERED;
   }
 }
