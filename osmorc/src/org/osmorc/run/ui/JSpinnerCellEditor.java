@@ -1,6 +1,5 @@
 package org.osmorc.run.ui;
 
-import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -19,72 +18,71 @@ import java.util.EventObject;
 
 /**
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id:$
  */
 public class JSpinnerCellEditor extends AbstractCellEditor implements TableCellEditor, TableCellRenderer {
-  final JSpinner spinner = new JSpinner();
-
-  private static final Logger LOG = Logger.getInstance("#org.osmorc.run.ui.JSpinnerCellEditor");
-
+  private final JSpinner mySpinner = new JSpinner();
 
   public JSpinnerCellEditor() {
-    spinner.setModel(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
-    JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();
+    mySpinner.setModel(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
+    JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)mySpinner.getEditor();
     editor.getTextField().setFormatterFactory(new DefaultFormatterFactory(new MyNumberFormatter("Default")));
   }
 
+  @Override
+  public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    mySpinner.setValue(value);
+    adjust(table, row, column);
+    return mySpinner;
+  }
+
+  @Override
   public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-    spinner.setValue(value);
-    table.setRowHeight(row, spinner.getPreferredSize().height);
-    spinner.addFocusListener(new FocusAdapter() {
+    mySpinner.setValue(value);
+    mySpinner.addFocusListener(new FocusAdapter() {
       public void focusLost(FocusEvent e) {
         fireEditingStopped();
       }
     });
-    spinner.addChangeListener(new ChangeListener() {
+    mySpinner.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
         fireEditingStopped();
       }
     });
-    return spinner;
+    adjust(table, row, column);
+    return mySpinner;
   }
 
+  private void adjust(JTable table, int row, int column) {
+    Dimension size = mySpinner.getPreferredSize();
+    size.width = table.getColumnModel().getColumn(column).getWidth();
+    mySpinner.setPreferredSize(size);
+    table.setRowHeight(row, size.height);
+  }
+
+  @Override
   public boolean isCellEditable(EventObject evt) {
-    if (evt instanceof MouseEvent) {
-      return ((MouseEvent)evt).getClickCount() >= 1;
-    }
-    return true;
+    return !(evt instanceof MouseEvent) || ((MouseEvent)evt).getClickCount() >= 1;
   }
 
+  @Override
   public Object getCellEditorValue() {
-    return spinner.getValue();
+    return mySpinner.getValue();
   }
 
+  @Override
   public boolean stopCellEditing() {
     try {
-      spinner.commitEdit();
+      mySpinner.commitEdit();
+      return super.stopCellEditing();
     }
-    catch (ParseException exc) {
+    catch (ParseException e) {
       return false;
     }
-    return super.stopCellEditing();
-  }
-
-  public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-    try {
-      spinner.setValue(value);
-    }
-    catch (IllegalArgumentException e) {
-      LOG.warn("INvalid value: " + value, e);
-    }
-    table.setRowHeight(row, spinner.getPreferredSize().height);
-    return spinner;
   }
 
 
   public static class MyNumberFormatter extends NumberFormatter {
-
-    private String myZeroValue;
+    private final String myZeroValue;
 
     public MyNumberFormatter(@NotNull String zeroValue) {
       myZeroValue = zeroValue;
@@ -93,8 +91,6 @@ public class JSpinnerCellEditor extends AbstractCellEditor implements TableCellE
 
     @Override
     public String valueToString(Object value) throws ParseException {
-
-
       if ((value instanceof Long && value.equals(0L)) || (value instanceof Integer && value.equals(0))) {
         return myZeroValue;
       }

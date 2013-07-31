@@ -24,11 +24,16 @@
  */
 package org.osmorc.run.ui;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEnumerator;
-import com.intellij.ui.DocumentAdapter;
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.TreeUIHelper;
+import com.intellij.ui.treeStructure.SimpleTree;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
@@ -38,11 +43,15 @@ import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.make.BundleCompiler;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.event.*;
-import java.util.*;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.util.Collection;
+import java.util.List;
 
 import static org.osmorc.frameworkintegration.FrameworkInstanceManager.FrameworkBundleType;
 
@@ -51,174 +60,144 @@ import static org.osmorc.frameworkintegration.FrameworkInstanceManager.Framework
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class BundleSelector extends JDialog {
-  private JPanel contentPane;
-  private JButton buttonOK;
-  private JButton buttonCancel;
-  private JList bundlesList;
-  private JTextField searchField;
+public class BundleSelector extends DialogWrapper {
+  private JPanel myContentPane;
+  private SimpleTree myBundleTree;
 
-  private final Project project;
-  private FrameworkInstanceDefinition usedFramework;
-  private List<SelectedBundle> hideBundles = new ArrayList<SelectedBundle>();
-  private List<SelectedBundle> selectedBundles = new ArrayList<SelectedBundle>();
-  private final List<SelectedBundle> allAvailableBundles = new ArrayList<SelectedBundle>();
+  public BundleSelector(@NotNull Project project, @Nullable FrameworkInstanceDefinition instance, @NotNull List<SelectedBundle> toHide) {
+    super(project);
 
-  public BundleSelector(Project project) {
-    this.project = project;
-
-    setContentPane(contentPane);
-    setModal(true);
     setTitle(OsmorcBundle.message("bundle.selector.title"));
-    getRootPane().setDefaultButton(buttonOK);
+    setModal(true);
 
-    //noinspection unchecked
-    bundlesList.setCellRenderer(new SelectedBundleListCellRenderer());
-
-    buttonOK.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        onOK();
+    myContentPane.setPreferredSize(new Dimension(600, 400));
+    myBundleTree.setModel(createModel(project, instance, toHide));
+    myBundleTree.setCellRenderer(new BundleTreeRenderer());
+    myBundleTree.addTreeSelectionListener(new TreeSelectionListener() {
+      @Override
+      public void valueChanged(TreeSelectionEvent e) {
+        setOKActionEnabled(myBundleTree.getSelectionCount() > 0);
       }
     });
+    for (int i = 0; i < myBundleTree.getRowCount(); i++) myBundleTree.expandRow(i);
+    TreeUIHelper.getInstance().installTreeSpeedSearch(myBundleTree);
 
-    buttonCancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        onCancel();
-      }
-    });
-
-    setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-    addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        onCancel();
-      }
-    });
-
-    searchField.getDocument().addDocumentListener(new DocumentAdapter() {
-      protected void textChanged(DocumentEvent event) {
-        updateList();
-      }
-    });
-    contentPane.registerKeyboardAction(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        onCancel();
-      }
-    }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-    bundlesList.addListSelectionListener(new ListSelectionListener() {
-
-      public void valueChanged(ListSelectionEvent e) {
-        buttonOK.setEnabled(bundlesList.getSelectedIndex() != -1);
-      }
-    });
-    setSize(400, 300);
+    init();
   }
 
-  public void show(JComponent owner) {
-    setLocationRelativeTo(owner);
-    setVisible(true);
-  }
-
-  private void createList() {
-    allAvailableBundles.clear();
-
-    final Set<SelectedBundle> bundles = new HashSet<SelectedBundle>();
+  private static TreeModel createModel(Project project, FrameworkInstanceDefinition instance, List<SelectedBundle> toHide) {
+    DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
     // all the modules
+    DefaultMutableTreeNode moduleNode = new DefaultMutableTreeNode("Modules");
     Module[] modules = ModuleManager.getInstance(project).getModules();
     for (Module module : modules) {
       if (OsmorcFacet.hasOsmorcFacet(module)) {
-        SelectedBundle selectedBundle = new SelectedBundle(module.getName(), null, SelectedBundle.BundleType.Module);
-        bundles.add(selectedBundle);
+        SelectedBundle bundle = new SelectedBundle(module.getName(), null, SelectedBundle.BundleType.Module);
+        if (!toHide.contains(bundle)) {
+          moduleNode.add(new DefaultMutableTreeNode(bundle));
+        }
       }
     }
+    if (moduleNode.getChildCount() > 0) root.add(moduleNode);
 
     // all the framework bundles (if there are any)
-    if (usedFramework != null) {
-      FrameworkIntegrator integrator = FrameworkIntegratorRegistry.getInstance().findIntegratorByInstanceDefinition(usedFramework);
+    if (instance != null) {
+      FrameworkIntegrator integrator = FrameworkIntegratorRegistry.getInstance().findIntegratorByInstanceDefinition(instance);
       if (integrator != null) {
         FrameworkInstanceManager manager = integrator.getFrameworkInstanceManager();
         if (manager instanceof AbstractFrameworkInstanceManager) {
-          Collection<SelectedBundle> frameworkBundles = ((AbstractFrameworkInstanceManager)manager).getFrameworkBundles(usedFramework, FrameworkBundleType.OTHER);
-          bundles.addAll(frameworkBundles);
-        }
-      }
-
-      // all the libraries that are bundles already (doesn't make much sense to start bundlified libs as they have no activator).
-      String[] urls = OrderEnumerator.orderEntries(project)
-        .withoutSdk()
-        .withoutModuleSourceEntries()
-        .withoutDepModules()
-        .productionOnly()
-        .runtimeOnly()
-        .satisfying(BundleCompiler.NOT_FRAMEWORK_LIBRARY_CONDITION)
-        .classes().getUrls();
-      for (String url : urls) {
-        url = BundleCompiler.convertJarUrlToFileUrl(url);
-        url = BundleCompiler.fixFileURL(url);
-
-        String displayName = CachingBundleInfoProvider.getBundleSymbolicName(url);
-        if (displayName != null) {
-          // okay its a start library
-          SelectedBundle selectedBundle = new SelectedBundle(displayName, url, SelectedBundle.BundleType.StartLibrary);
-          bundles.add(selectedBundle);
+          DefaultMutableTreeNode frameworkNode = new DefaultMutableTreeNode("Framework bundles");
+          Collection<SelectedBundle> frameworkBundles = ((AbstractFrameworkInstanceManager)manager).getFrameworkBundles(instance, FrameworkBundleType.OTHER);
+          for (SelectedBundle bundle : frameworkBundles) {
+            if (!toHide.contains(bundle)) {
+              frameworkNode.add(new DefaultMutableTreeNode(bundle));
+            }
+          }
+          if (frameworkNode.getChildCount() > 0) root.add(frameworkNode);
         }
       }
     }
 
-    bundles.removeAll(hideBundles);
-    allAvailableBundles.addAll(bundles);
-    Collections.sort(allAvailableBundles, new TypeComparator());
-  }
+    // all the libraries that are bundles already (doesn't make much sense to start bundlified libs as they have no activator).
+    DefaultMutableTreeNode libraryNode = new DefaultMutableTreeNode("Project libraries");
+    String[] urls = OrderEnumerator.orderEntries(project)
+      .withoutSdk()
+      .withoutModuleSourceEntries()
+      .withoutDepModules()
+      .productionOnly()
+      .runtimeOnly()
+      .satisfying(BundleCompiler.NOT_FRAMEWORK_LIBRARY_CONDITION)
+      .classes().getUrls();
+    for (String url : urls) {
+      url = BundleCompiler.convertJarUrlToFileUrl(url);
+      url = BundleCompiler.fixFileURL(url);
 
-  private void updateList() {
-    ArrayList<SelectedBundle> theList = new ArrayList<SelectedBundle>(allAvailableBundles);
-    // now filter
-    String filterText = searchField.getText().toLowerCase();
-    DefaultListModel newModel = new DefaultListModel();
-    for (SelectedBundle selectedBundle : theList) {
-      boolean needsFiltering = filterText.length() > 0;
-      if (needsFiltering && !selectedBundle.getName().toLowerCase().contains(filterText)) {
-        continue;
+      String displayName = CachingBundleInfoProvider.getBundleSymbolicName(url);
+      if (displayName != null) {
+        // okay its a start library
+        SelectedBundle bundle = new SelectedBundle(displayName, url, SelectedBundle.BundleType.StartLibrary);
+        if (!toHide.contains(bundle)) {
+          libraryNode.add(new DefaultMutableTreeNode(bundle));
+        }
       }
-      newModel.addElement(selectedBundle);
     }
-    bundlesList.setModel(newModel);
-  }
+    if (libraryNode.getChildCount() > 0) root.add(libraryNode);
 
-  private void onOK() {
-    Object[] selectedValues = bundlesList.getSelectedValues();
-    selectedBundles = new ArrayList<SelectedBundle>();
-    for (Object selectedValue : selectedValues) {
-      selectedBundles.add((SelectedBundle)selectedValue);
-    }
-    dispose();
-  }
-
-  private void onCancel() {
-    selectedBundles = null;
-    dispose();
-  }
-
-  public void setUp(@Nullable FrameworkInstanceDefinition usedFramework, @NotNull List<SelectedBundle> hideBundles) {
-    this.usedFramework = usedFramework;
-    this.hideBundles = hideBundles;
-    createList();
-    updateList();
+    return new DefaultTreeModel(root);
   }
 
   @Nullable
-  public List<SelectedBundle> getSelectedBundles() {
-    return selectedBundles;
+  @Override
+  protected JComponent createCenterPanel() {
+    return myContentPane;
   }
 
-  /**
-   * Comparator for sorting bundles by their type.
-   *
-   * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
-   */
-  public static class TypeComparator implements Comparator<SelectedBundle> {
-    public int compare(SelectedBundle selectedBundle, SelectedBundle selectedBundle2) {
-      return selectedBundle.getBundleType().ordinal() - selectedBundle2.getBundleType().ordinal();
+  @Nullable
+  @Override
+  public JComponent getPreferredFocusedComponent() {
+    return myBundleTree;
+  }
+
+  @NotNull
+  public List<SelectedBundle> getSelectedBundles() {
+    TreePath[] paths = myBundleTree.getSelectionPaths();
+    if (paths == null) return ContainerUtil.emptyList();
+
+    List<SelectedBundle> bundles = ContainerUtil.newArrayListWithCapacity(paths.length);
+    for (TreePath path : paths) {
+      Object last = path.getLastPathComponent();
+      if (last instanceof DefaultMutableTreeNode) {
+        Object object = ((DefaultMutableTreeNode)last).getUserObject();
+        if (object instanceof SelectedBundle) {
+          bundles.add((SelectedBundle)object);
+        }
+      }
+    }
+    return bundles;
+  }
+
+
+  private static class BundleTreeRenderer extends ColoredTreeCellRenderer {
+    @Override
+    public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+      if (value instanceof DefaultMutableTreeNode) {
+        Object object = ((DefaultMutableTreeNode)value).getUserObject();
+        if (object instanceof SelectedBundle) {
+          SelectedBundle bundle = (SelectedBundle)object;
+          if (bundle.isModule()) {
+            setIcon(AllIcons.Nodes.Module);
+          }
+          else if (bundle.getBundleType() == SelectedBundle.BundleType.FrameworkBundle) {
+            setIcon(OsmorcBundle.getSmallIcon());
+          }
+          else {
+            setIcon(AllIcons.Nodes.PpJar);
+          }
+        }
+      }
+
+      append(value.toString());
     }
   }
 }
