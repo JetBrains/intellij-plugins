@@ -26,7 +26,6 @@ package org.osmorc.frameworkintegration.impl.concierge;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.io.JarUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +36,6 @@ import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
 import org.osmorc.run.ui.SelectedBundle;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -98,20 +96,7 @@ public class ConciergeInstanceManager extends AbstractFrameworkInstanceManager {
 
   @NotNull
   @Override
-  protected String[] getBundleDirectories() {
-    return BUNDLE_DIRS;
-  }
-
-  @NotNull
-  @Override
-  protected Result checkType(@NotNull File file, @NotNull FrameworkBundleType type) {
-    if (type == FrameworkBundleType.SYSTEM) {
-      return Result.isA(SYSTEM_BUNDLE.matcher(file.getName()).matches() && JarUtil.containsClass(file, ConciergeRunner.MAIN_CLASS));
-    }
-    else if (type == FrameworkBundleType.SHELL) {
-      return Result.isA(SHELL_BUNDLE.matcher(file.getName()).matches());
-    }
-
-    return super.checkType(file, type);
+  public Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type) {
+    return collectBundles(instance, type, BUNDLE_DIRS, SYSTEM_BUNDLE, ConciergeRunner.MAIN_CLASS, 1, SHELL_BUNDLE, null, 1);
   }
 }

@@ -26,7 +26,6 @@ package org.osmorc.frameworkintegration.impl.equinox;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.io.JarUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +34,7 @@ import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
 import org.osmorc.run.ui.SelectedBundle;
 
-import java.io.File;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Pattern;
 
@@ -47,6 +46,7 @@ public class EquinoxInstanceManager extends AbstractFrameworkInstanceManager {
 
   private static final String[] BUNDLE_DIRS = {"plugins"};
   private static final Pattern SYSTEM_BUNDLE = Pattern.compile("org.eclipse.osgi_.*\\.jar");
+  private static final Pattern SHELL_BUNDLES = Pattern.compile(".*\\.gogo\\.(command|runtime|shell).*\\.jar");
 
   @Override
   public void collectLibraries(@NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition,
@@ -74,26 +74,12 @@ public class EquinoxInstanceManager extends AbstractFrameworkInstanceManager {
 
   @NotNull
   @Override
-  protected String[] getBundleDirectories() {
-    return BUNDLE_DIRS;
-  }
-
-  @NotNull
-  @Override
-  protected Result checkType(@NotNull File file, @NotNull FrameworkBundleType type) {
-    if (type == FrameworkBundleType.SYSTEM || type == FrameworkBundleType.SHELL) {
-      return Result.isA(SYSTEM_BUNDLE.matcher(file.getName()).matches() && JarUtil.containsClass(file, EquinoxRunner.MAIN_CLASS));
-    }
-
-    return super.checkType(file, type);
-  }
-
-  @Override
-  protected SelectedBundle makeBundle(@NotNull File file, @NotNull FrameworkBundleType type) {
+  public Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type) {
     if (type == FrameworkBundleType.SHELL) {
-      return new SelectedBundle("Equinox built-in console", null, SelectedBundle.BundleType.FrameworkBundle);
+      return Collections.singleton(new SelectedBundle("Equinox built-in console", null, SelectedBundle.BundleType.FrameworkBundle));
     }
-
-    return super.makeBundle(file, type);
+    else {
+      return collectBundles(instance, type, BUNDLE_DIRS, SYSTEM_BUNDLE, EquinoxRunner.MAIN_CLASS, 1, SHELL_BUNDLES, null, 0);
+    }
   }
 }

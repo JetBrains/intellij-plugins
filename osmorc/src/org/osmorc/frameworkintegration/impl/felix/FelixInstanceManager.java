@@ -26,17 +26,14 @@ package org.osmorc.frameworkintegration.impl.felix;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.io.JarUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.AbstractFrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
 import org.osmorc.run.ui.SelectedBundle;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -96,29 +93,6 @@ public class FelixInstanceManager extends AbstractFrameworkInstanceManager {
   @NotNull
   @Override
   public Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type) {
-    Collection<SelectedBundle> bundles = super.getFrameworkBundles(instance, type);
-    if (type == FrameworkBundleType.SHELL && bundles.size() < 3) {
-      return ContainerUtil.emptyList();
-    }
-    return bundles;
-  }
-
-  @NotNull
-  @Override
-  protected String[] getBundleDirectories() {
-    return BUNDLE_DIRS;
-  }
-
-  @NotNull
-  @Override
-  protected Result checkType(@NotNull File file, @NotNull FrameworkBundleType type) {
-    if (type == FrameworkBundleType.SYSTEM) {
-      return Result.isA(SYSTEM_BUNDLE.matcher(file.getName()).matches() && JarUtil.containsClass(file, FelixRunner.MAIN_CLASS));
-    }
-    else if (type == FrameworkBundleType.SHELL) {
-      return Result.oneOf(SHELL_BUNDLES.matcher(file.getName()).matches());
-    }
-
-    return super.checkType(file, type);
+    return collectBundles(instance, type, BUNDLE_DIRS, SYSTEM_BUNDLE, FelixRunner.MAIN_CLASS, 1, SHELL_BUNDLES, null, 3);
   }
 }
