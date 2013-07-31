@@ -2,27 +2,19 @@ package com.jetbrains.lang.dart.ide.runner.server.connection;
 
 import com.google.gson.JsonObject;
 import com.intellij.util.io.socketConnection.*;
+import com.intellij.util.net.NetUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 public class DartVMConnection {
   private ClientSocketConnection<JSONCommand, JsonResponse> myConnection;
   private int lastCommandId = 0;
 
   public void connect(int debuggingPort) {
-    InetAddress host = null;
-    try {
-      host = InetAddress.getByName("127.0.0.1");
-    }
-    catch (UnknownHostException ignored) {
-    }
-
     myConnection = SocketConnectionFactory.createConnection(
-      host,
+      NetUtils.getLoopbackAddress(),
       debuggingPort,
       1,
       new RequestResponseExternalizerFactory<JSONCommand, JsonResponse>() {
