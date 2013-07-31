@@ -29,6 +29,7 @@ import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
@@ -43,7 +44,6 @@ import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.maven.LocalPackageCollector;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
-import org.osmorc.frameworkintegration.FrameworkInstanceLibraryManager;
 
 import java.io.DataInput;
 import java.io.File;
@@ -66,8 +66,16 @@ public class BundleCompiler implements PackagingCompiler {
   public static final Condition<OrderEntry> NOT_FRAMEWORK_LIBRARY_CONDITION = new Condition<OrderEntry>() {
     @Override
     public boolean value(OrderEntry entry) {
-      return !(entry instanceof LibraryOrderEntry) ||
-             !FrameworkInstanceLibraryManager.isFrameworkInstanceLibrary((LibraryOrderEntry)entry);
+      if ((entry instanceof LibraryOrderEntry)) {
+        LibraryOrderEntry libEntry = (LibraryOrderEntry)entry;
+        if (LibraryTablesRegistrar.PROJECT_LEVEL.equals(libEntry.getLibraryLevel())) {
+          String libraryName = libEntry.getLibraryName();
+          if (libraryName != null && libraryName.startsWith("Osmorc:")) {
+            return false;
+          }
+        }
+      }
+      return true;
     }
   };
 

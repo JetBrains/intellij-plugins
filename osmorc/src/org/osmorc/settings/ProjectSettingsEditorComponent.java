@@ -59,7 +59,6 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
   private UserActivityWatcher myWatcher;
   private JPanel myMainPanel;
   @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"}) private JComboBox myFrameworkInstance;
-  private JCheckBox myCreateFrameworkInstanceModule;
   private JComboBox myDefaultManifestFileLocation;
   private TextFieldWithBrowseButton myBundleOutputPath;
   private JButton myApplyToAllButton;
@@ -153,9 +152,7 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
     });
   }
 
-
   public void applyTo(ProjectSettings settings) {
-    settings.setCreateFrameworkInstanceModule(myCreateFrameworkInstanceModule.isSelected());
     final String fileLocation = (String)myDefaultManifestFileLocation.getSelectedItem();
     if (fileLocation != null) {
       settings.setDefaultManifestFileLocation(fileLocation);
@@ -191,7 +188,6 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
     refreshFrameworkInstanceCombobox();
     refreshSynchronizationCombobox();
     myDefaultManifestFileLocation.setSelectedItem(mySettings.getDefaultManifestFileLocation());
-    myCreateFrameworkInstanceModule.setSelected(mySettings.isCreateFrameworkInstanceModule());
     String bundlesPath = mySettings.getBundlesOutputPath();
     if (bundlesPath != null) {
       myBundleOutputPath.setText(bundlesPath);

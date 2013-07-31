@@ -24,21 +24,14 @@
  */
 package org.osmorc.frameworkintegration.impl.concierge;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
+import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
 import org.osmorc.run.ui.SelectedBundle;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -46,41 +39,9 @@ import java.util.regex.Pattern;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ConciergeInstanceManager extends AbstractFrameworkInstanceManager {
-  private static final Logger LOG = Logger.getInstance(ConciergeInstanceManager.class);
-
   private static final String[] BUNDLE_DIRS = {"", "bundles"};
   private static final Pattern SYSTEM_BUNDLE = Pattern.compile("concierge.*\\.jar");
   private static final Pattern SHELL_BUNDLE = Pattern.compile("shell.*\\.jar");
-
-  @Override
-  public void collectLibraries(@NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition,
-                               @NotNull final FrameworkLibraryCollector collector) {
-    final VirtualFile installFolder = LocalFileSystem.getInstance().findFileByPath(frameworkInstanceDefinition.getBaseFolder());
-    if (installFolder == null || !installFolder.isDirectory()) {
-      LOG.warn(frameworkInstanceDefinition.getBaseFolder() + " is not a folder");
-      return;
-    }
-
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        installFolder.refresh(false, true);
-
-        List<VirtualFile> directoriesToAdd = new ArrayList<VirtualFile>();
-        directoriesToAdd.add(installFolder);
-        VirtualFile bundlesFolder = installFolder.findChild("bundles");
-        if (bundlesFolder != null) {
-          if (!bundlesFolder.isDirectory()) {
-            LOG.warn(bundlesFolder.getPath() + " is not a folder");
-          }
-          else {
-            directoriesToAdd.add(bundlesFolder);
-          }
-        }
-
-        collector.collectFrameworkLibraries(new ConciergeSourceFinder(installFolder), directoriesToAdd);
-      }
-    });
-  }
 
   @Nullable
   @Override

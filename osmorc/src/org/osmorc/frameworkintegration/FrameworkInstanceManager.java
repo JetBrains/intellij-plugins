@@ -36,13 +36,11 @@ import java.util.Collection;
 public interface FrameworkInstanceManager {
   enum FrameworkBundleType { SYSTEM, SHELL, OTHER }
 
+  /**
+   * Returns framework bundles of a specific role.
+   */
   @NotNull
   Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type);
-
-  /**
-   * Collects a all libraries of the given framework instance definition and calls the framework library collector with the results.
-   */
-  void collectLibraries(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkLibraryCollector collector);
 
   /**
    * Returns null if the instance definition is valid, an error message otherwise.

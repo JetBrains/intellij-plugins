@@ -38,7 +38,6 @@ import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.FrameworkInstanceLibraryManager;
 import org.osmorc.make.BundleCompiler;
 import org.osmorc.settings.ApplicationSettings;
 import org.osmorc.settings.ProjectSettings;
@@ -55,32 +54,32 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
     new NotificationGroup("OSGi important errors", NotificationDisplayType.STICKY_BALLOON, true);
 
   private final BundleManager myBundleManager;
-  private ApplicationSettings myApplicationSettings;
+  private final ApplicationSettings myApplicationSettings;
   private final ProjectSettings myProjectSettings;
   private final Project myProject;
-  private final FrameworkInstanceLibraryManager myFrameworkInstanceLibraryManager;
   private final CompilerManager myCompilerManager;
-  private Alarm myAlarm;
+  private final Alarm myAlarm;
 
-  public OsmorcProjectComponent(BundleManager bundleManager, ApplicationSettings applicationSettings,
+  public OsmorcProjectComponent(BundleManager bundleManager,
+                                ApplicationSettings applicationSettings,
                                 ProjectSettings projectSettings,
                                 Project project,
-                                FrameworkInstanceLibraryManager frameworkInstanceLibraryManager,
                                 CompilerManager compilerManager) {
-    this.myBundleManager = bundleManager;
+    myBundleManager = bundleManager;
     myApplicationSettings = applicationSettings;
-    this.myProjectSettings = projectSettings;
-    this.myProject = project;
-    this.myFrameworkInstanceLibraryManager = frameworkInstanceLibraryManager;
+    myProjectSettings = projectSettings;
+    myProject = project;
     myCompilerManager = compilerManager;
     myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, myProject);
   }
 
   @NotNull
+  @Override
   public String getComponentName() {
     return "OsmorcProjectComponent";
   }
 
+  @Override
   public void initComponent() {
     myProjectSettings.addProjectSettingsListener(this);
     myApplicationSettings.addApplicationSettingsListener(this);
@@ -88,24 +87,25 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
     myCompilerManager.addAfterTask(new FileProcessingCompilerAdapterTask(new BundleCompiler()));
   }
 
+  @Override
   public void disposeComponent() {
     myProjectSettings.removeProjectSettingsListener(this);
     myApplicationSettings.removeApplicationSettingsListener(this);
   }
 
+  @Override
   public void projectOpened() {
     refreshFrameworkInstanceLibrary();
     rebuildOSGiIndices();
   }
 
-  public void projectClosed() {
-  }
+  @Override
+  public void projectClosed() { }
 
-
+  @Override
   public void projectSettingsChanged() {
     refreshFrameworkInstanceLibrary();
   }
-
 
   @Override
   public void frameworkInstancesChanged() {
@@ -121,7 +121,6 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
       @Override
       public void run() {
         if (!myProject.isOpen()) return;
-        myFrameworkInstanceLibraryManager.updateFrameworkInstanceLibraries();
         myAlarm.cancelAllRequests();
         myAlarm.addRequest(new Runnable() {
           @Override
@@ -132,7 +131,6 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
       }
     }, myProject.getDisposed());
   }
-
 
   private void rebuildOSGiIndices() {
     if (ApplicationManager.getApplication().isUnitTestMode()) return;

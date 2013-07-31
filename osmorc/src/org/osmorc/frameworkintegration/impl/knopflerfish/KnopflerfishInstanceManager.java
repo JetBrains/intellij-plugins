@@ -24,76 +24,27 @@
  */
 package org.osmorc.frameworkintegration.impl.knopflerfish;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
-import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
-import org.osmorc.util.OsgiFileUtil;
+import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
 import org.osmorc.run.ui.SelectedBundle;
+import org.osmorc.util.OsgiFileUtil;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class KnopflerfishInstanceManager extends AbstractFrameworkInstanceManager {
-  private static final Logger LOG = Logger.getInstance(KnopflerfishInstanceManager.class);
-
   private static final String[] BUNDLE_DIRS = {"knopflerfish.org/osgi", "knopflerfish.org/osgi/jars/*", "osgi", "osgi/jars/*"};
   private static final Pattern SYSTEM_BUNDLE = Pattern.compile("framework.*\\.jar");
   private static final Pattern SHELL_BUNDLES = Pattern.compile("(log_api|cm_api|console_all|consoletty|frameworkcommands).*\\.jar");
-
-  @Override
-  public void collectLibraries(@NotNull final FrameworkInstanceDefinition frameworkInstanceDefinition,
-                               @NotNull final FrameworkLibraryCollector collector) {
-    VirtualFile installFolder = LocalFileSystem.getInstance().findFileByPath(frameworkInstanceDefinition.getBaseFolder());
-    if (installFolder == null || !installFolder.isDirectory()) {
-      LOG.warn(frameworkInstanceDefinition.getBaseFolder() + " is not a folder");
-      return;
-    }
-
-    VirtualFile kf2Folder = installFolder.findChild("knopflerfish.org");
-    final VirtualFile osgiFolder = kf2Folder != null ? kf2Folder.findChild("osgi") : installFolder.findChild("osgi");
-    if (osgiFolder == null) {
-      LOG.warn(installFolder.getPath() + " does not contain neither 'osgi' nor 'knopflerfish.org/osgi'");
-      return;
-    }
-
-    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-      public void run() {
-        osgiFolder.refresh(false, true);
-
-        List<VirtualFile> directoriesToAdd = new ArrayList<VirtualFile>();
-        VirtualFile jarsFolder = osgiFolder.findChild("jars");
-        if (jarsFolder != null) {
-          if (!jarsFolder.isDirectory()) {
-            LOG.warn(jarsFolder.getPath() + " is not a folder");
-            return;
-          }
-          VirtualFile[] files = jarsFolder.getChildren();
-          for (VirtualFile file : files) {
-            if (file.isDirectory()) {
-              directoriesToAdd.add(file);
-            }
-          }
-        }
-
-        collector.collectFrameworkLibraries(new KnopflerfishSourceFinder(osgiFolder), directoriesToAdd);
-      }
-    });
-  }
 
   @Nullable
   @Override
@@ -105,8 +56,10 @@ public class KnopflerfishInstanceManager extends AbstractFrameworkInstanceManage
         try {
           JarFile jar = new JarFile(OsgiFileUtil.urlToPath(url));
           try {
-            InputStream stream = jar.getInputStream(jar.getEntry("release"));
-            return FileUtil.loadTextAndClose(stream);
+            ZipEntry entry = jar.getEntry("release");
+            if (entry != null) {
+              return FileUtil.loadTextAndClose(jar.getInputStream(entry));
+            }
           }
           finally {
             jar.close();
