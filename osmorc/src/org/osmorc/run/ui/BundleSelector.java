@@ -37,8 +37,10 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.frameworkintegration.*;
-import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
+import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
+import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import org.osmorc.frameworkintegration.FrameworkIntegrator;
+import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.make.BundleCompiler;
 
@@ -50,7 +52,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.util.Collection;
 import java.util.List;
 
 import static org.osmorc.frameworkintegration.FrameworkInstanceManager.FrameworkBundleType;
@@ -105,17 +106,13 @@ public class BundleSelector extends DialogWrapper {
     if (instance != null) {
       FrameworkIntegrator integrator = FrameworkIntegratorRegistry.getInstance().findIntegratorByInstanceDefinition(instance);
       if (integrator != null) {
-        FrameworkInstanceManager manager = integrator.getFrameworkInstanceManager();
-        if (manager instanceof AbstractFrameworkInstanceManager) {
-          DefaultMutableTreeNode frameworkNode = new DefaultMutableTreeNode(OsmorcBundle.message("bundle.selector.group.framework"));
-          Collection<SelectedBundle> frameworkBundles = ((AbstractFrameworkInstanceManager)manager).getFrameworkBundles(instance, FrameworkBundleType.OTHER);
-          for (SelectedBundle bundle : frameworkBundles) {
-            if (!toHide.contains(bundle)) {
-              frameworkNode.add(new DefaultMutableTreeNode(bundle));
-            }
+        DefaultMutableTreeNode frameworkNode = new DefaultMutableTreeNode(OsmorcBundle.message("bundle.selector.group.framework"));
+        for (SelectedBundle bundle : integrator.getFrameworkInstanceManager().getFrameworkBundles(instance, FrameworkBundleType.OTHER)) {
+          if (!toHide.contains(bundle)) {
+            frameworkNode.add(new DefaultMutableTreeNode(bundle));
           }
-          if (frameworkNode.getChildCount() > 0) root.add(frameworkNode);
         }
+        if (frameworkNode.getChildCount() > 0) root.add(frameworkNode);
       }
     }
 
