@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.frameworkintegration.*;
+import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.make.BundleCompiler;
 

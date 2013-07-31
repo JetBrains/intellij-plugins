@@ -38,7 +38,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.net.HttpConfigurable;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.*;
-import org.osmorc.frameworkintegration.util.OsgiFileUtil;
+import org.osmorc.util.OsgiFileUtil;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
 

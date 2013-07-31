@@ -31,10 +31,10 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.frameworkintegration.AbstractFrameworkInstanceManager;
+import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkLibraryCollector;
-import org.osmorc.frameworkintegration.util.OsgiFileUtil;
+import org.osmorc.util.OsgiFileUtil;
 import org.osmorc.run.ui.SelectedBundle;
 
 import java.io.IOException;

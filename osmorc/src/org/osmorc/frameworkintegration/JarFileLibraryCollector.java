@@ -3,7 +3,7 @@ package org.osmorc.frameworkintegration;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.HashSet;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.frameworkintegration.util.OsgiFileUtil;
+import org.osmorc.util.OsgiFileUtil;
 
 import java.util.Collection;
 import java.util.Set;

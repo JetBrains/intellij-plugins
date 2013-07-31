@@ -34,6 +34,7 @@ import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.*;
+import org.osmorc.frameworkintegration.impl.AbstractFrameworkInstanceManager;
 import org.osmorc.i18n.OsmorcBundle;
 
 import javax.swing.*;

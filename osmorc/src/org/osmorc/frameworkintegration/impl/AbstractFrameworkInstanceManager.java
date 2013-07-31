@@ -1,4 +1,4 @@
-package org.osmorc.frameworkintegration;
+package org.osmorc.frameworkintegration.impl;
 
 import com.intellij.openapi.util.io.JarUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -7,7 +7,10 @@ import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.frameworkintegration.util.OsgiFileUtil;
+import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
+import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import org.osmorc.frameworkintegration.FrameworkInstanceManager;
+import org.osmorc.util.OsgiFileUtil;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.ui.SelectedBundle;
 
@@ -18,7 +21,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Base class for all {@link FrameworkInstanceManager}s.
+ * Base class for all {@link org.osmorc.frameworkintegration.FrameworkInstanceManager}s.
  */
 public abstract class AbstractFrameworkInstanceManager implements FrameworkInstanceManager {
   @Nullable

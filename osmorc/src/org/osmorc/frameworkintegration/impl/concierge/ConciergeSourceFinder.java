@@ -29,7 +29,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceLibrarySourceFinder;
-import org.osmorc.frameworkintegration.util.OsgiFileUtil;
+import org.osmorc.util.OsgiFileUtil;
 
 import java.util.ArrayList;
 import java.util.List;

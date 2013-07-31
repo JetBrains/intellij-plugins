@@ -28,7 +28,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
-import org.osmorc.frameworkintegration.util.OsgiFileUtil;
+import org.osmorc.util.OsgiFileUtil;
 
 import java.io.File;
 import java.io.FileInputStream;

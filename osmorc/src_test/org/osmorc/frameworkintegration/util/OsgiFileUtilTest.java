@@ -26,6 +26,7 @@ package org.osmorc.frameworkintegration.util;
 
 import com.intellij.testFramework.LightVirtualFile;
 import org.junit.Test;
+import org.osmorc.util.OsgiFileUtil;
 
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
