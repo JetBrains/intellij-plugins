@@ -88,7 +88,7 @@ public class FlexmojosSdkType extends SdkType {
     return getIcon();
   }
 
-  public void setupSdkPaths(final Sdk sdk) {
+  public void setupSdkPaths(@NotNull final Sdk sdk) {
     final VirtualFile sdkRoot = sdk.getHomeDirectory();
     if (sdkRoot == null || !sdkRoot.isValid() || sdkRoot.isDirectory()) {
       return;

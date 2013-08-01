@@ -78,7 +78,7 @@ public class FlexSdkType2 extends SdkType {
     return SdkType.findInstance(FlexSdkType2.class);
   }
 
-  public void setupSdkPaths(final Sdk sdk) {
+  public void setupSdkPaths(@NotNull final Sdk sdk) {
     SdkModificator modificator = sdk.getSdkModificator();
     setupSdkPaths(sdk.getHomeDirectory(), modificator);
     modificator.commitChanges();
