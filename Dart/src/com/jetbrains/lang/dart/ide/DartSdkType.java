@@ -10,6 +10,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -72,7 +73,7 @@ public class DartSdkType extends SdkType {
   }
 
   @Override
-  public void setupSdkPaths(Sdk sdk) {
+  public void setupSdkPaths(@NotNull Sdk sdk) {
     final SdkModificator modificator = sdk.getSdkModificator();
 
     SdkAdditionalData data = sdk.getSdkAdditionalData();
