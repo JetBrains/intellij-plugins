@@ -13,7 +13,10 @@ import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.util.CatchingConsumer;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,18 +59,36 @@ public class KarmaRunProfileState implements RunProfileState {
   }
 
   @Override
-  @NotNull
-  public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
+  @Nullable
+  public ExecutionResult execute(@NotNull final Executor executor, @NotNull final ProgramRunner runner) throws ExecutionException {
     File configurationFile = new File(myRunSettings.getConfigPath());
     KarmaServer server = KarmaServerRegistry.getServerByConfigurationFile(configurationFile);
     if (server == null) {
-      try {
-        server = new KarmaServer(new File(myNodeInterpreterPath), new File(myKarmaPackageDir), configurationFile);
-        KarmaServerRegistry.registerServer(server);
-      }
-      catch (IOException e) {
-        throw new ExecutionException(e);
-      }
+      KarmaServerRegistry.startServer(
+        new File(myNodeInterpreterPath),
+        new File(myKarmaPackageDir),
+        configurationFile,
+        new CatchingConsumer<KarmaServer, IOException>() {
+          @Override
+          public void consume(IOException e) {
+          }
+
+          @Override
+          public void consume(KarmaServer server) {
+            UIUtil.invokeLaterIfNeeded(new Runnable() {
+              @Override
+              public void run() {
+                RunnerAndConfigurationSettings configuration = myExecutionEnvironment.getRunnerAndConfigurationSettings();
+                if (configuration != null) {
+                  ProgramRunnerUtil.executeConfiguration(myProject, configuration, executor);
+                }
+              }
+            });
+          }
+        }
+      );
+
+      return null;
     }
     KarmaExecutionSession session = new KarmaExecutionSession(myProject,
                                                               myExecutionEnvironment,

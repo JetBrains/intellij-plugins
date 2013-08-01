@@ -39,12 +39,10 @@ public class KarmaServer {
   private static final Logger LOG = Logger.getInstance(KarmaServer.class);
 
   private final File myConfigurationFile;
-  private final KillableColoredProcessHandler myProcessHandler;
   private final ProcessOutputArchive myProcessOutputArchive;
   private final KarmaJsSourcesLocator myKarmaJsSourcesLocator;
   private final KarmaServerState myState;
 
-  // accessed in EDT only
   private final AtomicBoolean myOnReadyFired = new AtomicBoolean(false);
   private boolean myOnReadyExecuted = false;
   private Integer myExitCode = null;
@@ -61,19 +59,20 @@ public class KarmaServer {
   public KarmaServer(@NotNull File nodeInterpreter,
                      @NotNull File karmaPackageDir,
                      @NotNull File configurationFile) throws IOException {
-    myCoverageTempDir = FileUtil.createTempDirectory("karma-intellij-coverage-", null);
     /* 'nodeInterpreter', 'karmaPackageDir' and 'configurationFile'
         are already checked in KarmaRunConfiguration.checkConfiguration */
+    myCoverageTempDir = FileUtil.createTempDirectory("karma-intellij-coverage-", null);
     myConfigurationFile = configurationFile;
     myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(karmaPackageDir);
     myState = new KarmaServerState(this);
+    final KillableColoredProcessHandler processHandler;
     try {
-      myProcessHandler = startServer(nodeInterpreter, configurationFile);
+      processHandler = startServer(nodeInterpreter, configurationFile);
     }
     catch (ExecutionException e) {
       throw new IOException("Can not create karma server process", e);
     }
-    myProcessOutputArchive = new ProcessOutputArchive(myProcessHandler);
+    myProcessOutputArchive = new ProcessOutputArchive(processHandler);
     registerStreamEventHandler(new StreamEventHandler() {
       @NotNull
       @Override
@@ -130,8 +129,8 @@ public class KarmaServer {
     Disposer.register(ApplicationManager.getApplication(), new Disposable() {
       @Override
       public void dispose() {
-        if (!myProcessHandler.isProcessTerminated()) {
-          ScriptRunnerUtil.terminateProcessHandler(myProcessHandler, 500, null);
+        if (!processHandler.isProcessTerminated()) {
+          ScriptRunnerUtil.terminateProcessHandler(processHandler, 500, null);
         }
       }
     });
