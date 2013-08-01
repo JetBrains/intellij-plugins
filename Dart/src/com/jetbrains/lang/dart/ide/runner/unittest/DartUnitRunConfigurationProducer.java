@@ -2,6 +2,7 @@ package com.jetbrains.lang.dart.ide.runner.unittest;
 
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.RunConfigurationProducer;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -26,7 +27,9 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
   }
 
   @Override
-  protected boolean setupConfigurationFromContext(DartUnitRunConfiguration configuration, ConfigurationContext context) {
+  protected boolean setupConfigurationFromContext(DartUnitRunConfiguration configuration,
+                                                  ConfigurationContext context,
+                                                  Ref<PsiElement> sourceElement) {
     final PsiElement element = findTestElement(context.getPsiLocation());
     if (element == null || !setupRunConfiguration(configuration, element)) {
       return false;
