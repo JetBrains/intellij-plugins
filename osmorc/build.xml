@@ -153,7 +153,6 @@
         <copy file="${module.osmorc.basedir}/lib/com.springsource.util.math-2.0.0.RELEASE.jar" todir="${tmp.dir.osmorc}/lib"/>
         <copy file="${module.osmorc.basedir}/lib/com.springsource.util.osgi-2.0.0.RELEASE.jar" todir="${tmp.dir.osmorc}/lib"/>
         <copy file="${module.osmorc.basedir}/lib/com.springsource.util.parser.manifest-2.0.0.RELEASE.jar" todir="${tmp.dir.osmorc}/lib"/>
-        <copy file="${module.osmorc.basedir}/lib/pax-runner.jar" todir="${tmp.dir.osmorc}/lib"/>
 
         <copy todir="${tmp.dir.osmorc}">
             <fileset dir="${module.osmorc.basedir}">

@@ -48,6 +48,7 @@ import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.ui.OsgiRunConfigurationEditor;
 import org.osmorc.run.ui.SelectedBundle;
 import org.osmorc.settings.ApplicationSettings;
+import org.osmorc.settings.ProjectSettings;
 
 import java.util.*;
 
@@ -269,8 +270,8 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
       legacyOsgiRunConfigurationLoader.finishAfterModulesAreAvailable(this);
       legacyOsgiRunConfigurationLoader = null;
     }
-    if (instanceToUse == null) {
-      throw new RuntimeConfigurationError(OsmorcBundle.message("run.configuration.no.instance.selected"));
+    if (getInstanceToUse() == null) {
+      throw new RuntimeConfigurationError(OsmorcBundle.message("run.configuration.no.instance"));
     }
     if (isUseAlternativeJre()) {
       String jrePath = this.getAlternativeJrePath();
@@ -315,7 +316,13 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
 
   @Nullable
   public FrameworkInstanceDefinition getInstanceToUse() {
-    return instanceToUse;
+    if (instanceToUse != null) return instanceToUse;
+
+    String projectInstanceName = ProjectSettings.getInstance(getProject()).getFrameworkInstanceName();
+    FrameworkInstanceDefinition projectInstance = ApplicationSettings.getInstance().getFrameworkInstance(projectInstanceName);
+    if (projectInstance != null) return projectInstance;
+
+    return null;
   }
 
   public String getProgramParameters() {
@@ -367,7 +374,7 @@ public class OsgiRunConfiguration extends RunConfigurationBase implements Module
     this.includeAllBundlesInClassPath = includeAllBundlesInClassPath;
   }
 
-  public void setInstanceToUse(@NotNull final FrameworkInstanceDefinition instanceToUse) {
+  public void setInstanceToUse(@Nullable FrameworkInstanceDefinition instanceToUse) {
     this.instanceToUse = instanceToUse;
   }
 

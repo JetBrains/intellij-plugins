@@ -55,11 +55,6 @@ public abstract class AbstractFrameworkInstanceManager implements FrameworkInsta
     return null;
   }
 
-  // todo[r.sh] move to interface; replace old collector
-  @NotNull
-  public abstract Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance,
-                                                                 @NotNull FrameworkBundleType type);
-
   @NotNull
   protected Collection<SelectedBundle> collectBundles(@NotNull FrameworkInstanceDefinition instance,
                                                       @NotNull FrameworkBundleType type,

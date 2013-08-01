@@ -26,20 +26,29 @@ package org.osmorc.manifest.lang.headerparser.impl;
 
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.manifest.lang.psi.Attribute;
 import org.osmorc.manifest.lang.psi.Clause;
+import org.osmorc.manifest.lang.psi.Directive;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
-import org.osmorc.manifest.lang.psi.PackageReference;
-import org.osmorc.manifest.lang.psi.PackageReferenceSet;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ExportPackageParser extends AbstractHeaderParserImpl {
 
+  private final ExportPackageClauseParser clauseParser = new ExportPackageClauseParser();
+  private final ExportPackageAttributeParser attributeParser = new ExportPackageAttributeParser();
+  private final ExportPackageDirectiveParser directiveParser = new ExportPackageDirectiveParser();
+
   public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
-    if (headerValuePart.getParent() instanceof Clause) {
-      PackageReferenceSet referenceSet = new PackageReferenceSet(headerValuePart.getUnwrappedText(), headerValuePart, 0);
-      return referenceSet.getReferences().toArray(new PackageReference[referenceSet.getReferences().size()]);
+    if (headerValuePart.getParent() != null && headerValuePart.getParent() instanceof Clause) {
+      return clauseParser.getReferences(headerValuePart);
+    }
+    else if (headerValuePart.getParent() instanceof Attribute) {
+      return attributeParser.getReferences(headerValuePart);
+    }
+    else if (headerValuePart.getParent() instanceof Directive) {
+      return directiveParser.getReferences(headerValuePart);
     }
     return EMPTY_PSI_REFERENCE_ARRAY;
   }

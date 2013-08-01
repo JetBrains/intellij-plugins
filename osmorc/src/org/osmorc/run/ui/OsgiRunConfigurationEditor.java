@@ -42,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
 import org.osmorc.frameworkintegration.FrameworkIntegratorRegistry;
+import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.OsgiRunConfigurationChecker;
 import org.osmorc.run.OsgiRunConfigurationCheckerProvider;
@@ -52,7 +53,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
 import javax.swing.text.DefaultFormatterFactory;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -101,15 +101,22 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
     myDefaultStartLevel.setModel(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
 
+    DefaultComboBoxModel model = new DefaultComboBoxModel();
     //noinspection unchecked
-    myFrameworkInstances.setModel(new DefaultComboBoxModel(ApplicationSettings.getInstance().getFrameworkInstanceDefinitions().toArray()));
+    model.addElement(null);
+    for (FrameworkInstanceDefinition instance : ApplicationSettings.getInstance().getFrameworkInstanceDefinitions()) {
+      //noinspection unchecked
+      model.addElement(instance);
+    }
+    //noinspection unchecked
+    myFrameworkInstances.setModel(model);
     myFrameworkInstances.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         onFrameworkChange();
       }
     });
     //noinspection unchecked
-    myFrameworkInstances.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer());
+    myFrameworkInstances.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer("[project default]"));
 
     myBundlesTable.setModel(new RunConfigurationTableModel());
     myBundlesTable.setRowSelectionAllowed(true);
@@ -138,17 +145,11 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
       @Override
       public void componentResized(ComponentEvent e) {
         int width = myBundlesTable.getWidth();
-        int bundleNameWidth = 2 * width / 3;
-        int otherWidth = width / 3 / 2;
-
-        TableColumn bundleColumn = myBundlesTable.getColumnModel().getColumn(0);
-        bundleColumn.setPreferredWidth(bundleNameWidth);
-
-        TableColumn startLevelColumn = myBundlesTable.getColumnModel().getColumn(1);
-        startLevelColumn.setPreferredWidth(otherWidth);
-
-        TableColumn startColumn = myBundlesTable.getColumnModel().getColumn(2);
-        startColumn.setPreferredWidth(otherWidth);
+        if (width > 200) {
+          myBundlesTable.getColumnModel().getColumn(0).setPreferredWidth(width - 200);
+          myBundlesTable.getColumnModel().getColumn(1).setPreferredWidth(80);
+          myBundlesTable.getColumnModel().getColumn(2).setPreferredWidth(120);
+        }
       }
     });
 
@@ -161,8 +162,8 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     });
 
     FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFolderDescriptor();
-    String title = "Choose a working directory";
-    String description = "The working directory is the directory from which the framework is started";
+    String title = OsmorcBundle.message("run.configuration.working.dir.title");
+    String description = OsmorcBundle.message("run.configuration.working.dir.description");
     myWorkingDirField.addBrowseFolderListener(title, description, null, descriptor);
     myWorkingDirField.getTextField().setColumns(30);
 
@@ -210,13 +211,12 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
   }
 
   private void onAddClick() {
-    BundleSelector selector = new BundleSelector(myProject);
-    selector.setUp((FrameworkInstanceDefinition)myFrameworkInstances.getSelectedItem(), getBundlesToRun());
-    selector.show(root);
-    List<SelectedBundle> selectedModules = selector.getSelectedBundles();
-    if (selectedModules != null) {
+    FrameworkInstanceDefinition instance = (FrameworkInstanceDefinition)myFrameworkInstances.getSelectedItem();
+    BundleSelector selector = new BundleSelector(myProject, instance, getBundlesToRun());
+    selector.show();
+    if (selector.isOK()) {
       RunConfigurationTableModel model = getTableModel();
-      for (SelectedBundle aModule : selectedModules) {
+      for (SelectedBundle aModule : selector.getSelectedBundles()) {
         model.addBundle(aModule);
       }
     }
@@ -278,8 +278,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
   @Override
   protected void applyEditorTo(OsgiRunConfiguration osgiRunConfiguration) throws ConfigurationException {
-    List<SelectedBundle> modules = getBundlesToRun();
-    osgiRunConfiguration.setBundlesToDeploy(modules);
+    osgiRunConfiguration.setBundlesToDeploy(getBundlesToRun());
     osgiRunConfiguration.setVmParameters(myVmOptions.getText());
     osgiRunConfiguration.setProgramParameters(myProgramParameters.getText());
     osgiRunConfiguration.setIncludeAllBundlesInClassPath(myClassPathAllBundles.isSelected());
@@ -289,10 +288,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     osgiRunConfiguration.setFrameworkStartLevel((Integer)myFrameworkStartLevel.getValue());
     osgiRunConfiguration.setDefaultStartLevel((Integer)myDefaultStartLevel.getValue());
     osgiRunConfiguration.setGenerateWorkingDir(myOsmorcControlledDir.isSelected());
-    FrameworkInstanceDefinition frameworkInstanceDefinition = (FrameworkInstanceDefinition)myFrameworkInstances.getSelectedItem();
-    if (frameworkInstanceDefinition != null) {
-      osgiRunConfiguration.setInstanceToUse(frameworkInstanceDefinition);
-    }
+    osgiRunConfiguration.setInstanceToUse((FrameworkInstanceDefinition)myFrameworkInstances.getSelectedItem());
 
     if (myCurrentRunPropertiesEditor != null) {
       myCurrentRunPropertiesEditor.applyEditorTo(osgiRunConfiguration);
@@ -314,28 +310,10 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
 
   private static class RunConfigurationTableModel extends AbstractTableModel {
-    private final List<SelectedBundle> selectedBundles;
+    private final List<SelectedBundle> mySelectedBundles;
 
     public RunConfigurationTableModel() {
-      selectedBundles = new ArrayList<SelectedBundle>();
-    }
-
-    public SelectedBundle getBundleAt(int index) {
-      return selectedBundles.get(index);
-    }
-
-    public List<SelectedBundle> getBundles() {
-      return selectedBundles;
-    }
-
-    public void addBundle(SelectedBundle bundle) {
-      selectedBundles.add(bundle);
-      fireTableRowsInserted(selectedBundles.size() - 1, selectedBundles.size() - 1);
-    }
-
-    public void removeBundleAt(int index) {
-      selectedBundles.remove(index);
-      fireTableRowsDeleted(index, index);
+      mySelectedBundles = new ArrayList<SelectedBundle>();
     }
 
     @Override
@@ -356,11 +334,11 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     public String getColumnName(int columnIndex) {
       switch (columnIndex) {
         case 0:
-          return "Bundle Name";
+          return "Bundle name";
         case 1:
-          return "Start Level";
+          return "Start level";
         case 2:
-          return "Start After Install";
+          return "Start after install";
         default:
           return "";
       }
@@ -373,27 +351,12 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
 
     @Override
     public int getRowCount() {
-      return selectedBundles.size();
+      return mySelectedBundles.size();
     }
 
     @Override
     public boolean isCellEditable(int row, int column) {
       return column != 0;
-    }
-
-    @Override
-    public void setValueAt(Object o, int row, int column) {
-      SelectedBundle bundle = getBundleAt(row);
-      switch (column) {
-        case 1:
-          bundle.setStartLevel((Integer)o);
-          break;
-        case 2:
-          bundle.setStartAfterInstallation((Boolean)o);
-          break;
-        default:
-          throw new RuntimeException("Cannot edit column " + column);
-      }
     }
 
     @Override
@@ -411,8 +374,41 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
       }
     }
 
+    @Override
+    public void setValueAt(Object o, int row, int column) {
+      SelectedBundle bundle = getBundleAt(row);
+      switch (column) {
+        case 1:
+          bundle.setStartLevel((Integer)o);
+          break;
+        case 2:
+          bundle.setStartAfterInstallation((Boolean)o);
+          break;
+        default:
+          throw new RuntimeException("Cannot edit column " + column);
+      }
+    }
+
+    public SelectedBundle getBundleAt(int index) {
+      return mySelectedBundles.get(index);
+    }
+
+    public List<SelectedBundle> getBundles() {
+      return mySelectedBundles;
+    }
+
+    public void addBundle(SelectedBundle bundle) {
+      mySelectedBundles.add(bundle);
+      fireTableRowsInserted(mySelectedBundles.size() - 1, mySelectedBundles.size() - 1);
+    }
+
+    public void removeBundleAt(int index) {
+      mySelectedBundles.remove(index);
+      fireTableRowsDeleted(index, index);
+    }
+
     public void removeAllOfType(SelectedBundle.BundleType type) {
-      for (Iterator<SelectedBundle> selectedBundleIterator = selectedBundles.iterator(); selectedBundleIterator.hasNext(); ) {
+      for (Iterator<SelectedBundle> selectedBundleIterator = mySelectedBundles.iterator(); selectedBundleIterator.hasNext(); ) {
         SelectedBundle selectedBundle = selectedBundleIterator.next();
         if (selectedBundle.getBundleType() == type) {
           selectedBundleIterator.remove();

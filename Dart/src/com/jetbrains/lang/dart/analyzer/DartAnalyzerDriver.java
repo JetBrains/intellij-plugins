@@ -11,7 +11,6 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -52,11 +51,7 @@ public class DartAnalyzerDriver {
       command.addParameter(libraryRoot.getPath());
 
       LOG.debug("executing:\n" + command.getCommandLineString());
-      final ProcessOutput output = new CapturingProcessHandler(
-        command.createProcess(),
-        Charset.defaultCharset(),
-        command.getCommandLineString()
-      ).runProcess();
+      final ProcessOutput output = new CapturingProcessHandler(command).runProcess();
 
       LOG.debug("analyzer exited with exit code: " + output.getExitCode());
       LOG.debug(output.getStdout());

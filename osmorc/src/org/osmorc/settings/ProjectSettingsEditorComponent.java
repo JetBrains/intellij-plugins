@@ -44,6 +44,7 @@ import org.osmorc.ModuleDependencySynchronizer;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
+import org.osmorc.util.OsgiUiUtil;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -59,7 +60,6 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
   private UserActivityWatcher myWatcher;
   private JPanel myMainPanel;
   @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"}) private JComboBox myFrameworkInstance;
-  private JCheckBox myCreateFrameworkInstanceModule;
   private JComboBox myDefaultManifestFileLocation;
   private TextFieldWithBrowseButton myBundleOutputPath;
   private JButton myApplyToAllButton;
@@ -69,9 +69,10 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
 
   public ProjectSettingsEditorComponent(Project project) {
     myProject = project;
-    myFrameworkInstance.setRenderer(new FrameworkInstanceCellRenderer(myFrameworkInstance.getRenderer()) {
+    //noinspection unchecked
+    myFrameworkInstance.setRenderer(new OsgiUiUtil.FrameworkInstanceRenderer("[not specified]") {
       @Override
-      protected boolean isInstanceDefined(FrameworkInstanceDefinition instance) {
+      protected boolean isInstanceDefined(@NotNull FrameworkInstanceDefinition instance) {
         List<FrameworkInstanceDefinition> instanceDefinitions = ApplicationSettings.getInstance().getFrameworkInstanceDefinitions();
         for (FrameworkInstanceDefinition instanceDefinition : instanceDefinitions) {
           if (instance.equals(instanceDefinition)) {
@@ -153,17 +154,14 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
     });
   }
 
-
   public void applyTo(ProjectSettings settings) {
-    settings.setCreateFrameworkInstanceModule(myCreateFrameworkInstanceModule.isSelected());
     final String fileLocation = (String)myDefaultManifestFileLocation.getSelectedItem();
     if (fileLocation != null) {
       settings.setDefaultManifestFileLocation(fileLocation);
     }
-    final FrameworkInstanceDefinition instanceDefinition = (FrameworkInstanceDefinition)this.myFrameworkInstance.getSelectedItem();
-    if (instanceDefinition != null) {
-      settings.setFrameworkInstanceName(instanceDefinition.getName());
-    }
+
+    FrameworkInstanceDefinition instance = (FrameworkInstanceDefinition)this.myFrameworkInstance.getSelectedItem();
+    settings.setFrameworkInstanceName(instance != null ? instance.getName() : null);
 
     if (myBundleOutputPath.getText() != null && !"".equals(myBundleOutputPath.getText().trim())) {
       settings.setBundlesOutputPath(myBundleOutputPath.getText());
@@ -191,7 +189,6 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
     refreshFrameworkInstanceCombobox();
     refreshSynchronizationCombobox();
     myDefaultManifestFileLocation.setSelectedItem(mySettings.getDefaultManifestFileLocation());
-    myCreateFrameworkInstanceModule.setSelected(mySettings.isCreateFrameworkInstanceModule());
     String bundlesPath = mySettings.getBundlesOutputPath();
     if (bundlesPath != null) {
       myBundleOutputPath.setText(bundlesPath);
@@ -206,12 +203,15 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
     if (mySettings == null) return;
 
     myFrameworkInstance.removeAllItems();
+    //noinspection unchecked
+    myFrameworkInstance.addItem(null);
 
     List<FrameworkInstanceDefinition> instanceDefinitions = ApplicationSettings.getInstance().getFrameworkInstanceDefinitions();
     final String frameworkInstanceName = mySettings.getFrameworkInstanceName();
 
     FrameworkInstanceDefinition projectFrameworkInstance = null;
     for (FrameworkInstanceDefinition instanceDefinition : instanceDefinitions) {
+      //noinspection unchecked
       myFrameworkInstance.addItem(instanceDefinition);
       if (instanceDefinition.getName().equals(frameworkInstanceName)) {
         projectFrameworkInstance = instanceDefinition;
@@ -222,6 +222,7 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
     if (projectFrameworkInstance == null && frameworkInstanceName != null) {
       projectFrameworkInstance = new FrameworkInstanceDefinition();
       projectFrameworkInstance.setName(frameworkInstanceName);
+      //noinspection unchecked
       myFrameworkInstance.addItem(projectFrameworkInstance);
     }
     myFrameworkInstance.setSelectedItem(projectFrameworkInstance);

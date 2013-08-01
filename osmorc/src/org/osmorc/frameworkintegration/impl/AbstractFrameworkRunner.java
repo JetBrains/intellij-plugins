@@ -60,7 +60,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
   protected OsgiRunConfiguration myRunConfiguration;
   protected FrameworkInstanceDefinition myInstance;
   protected FrameworkIntegrator myIntegrator;
-  protected AbstractFrameworkInstanceManager myInstanceManager;
+  protected FrameworkInstanceManager myInstanceManager;
   protected Map<String, String> myAdditionalProperties;
   protected List<SelectedBundle> myBundles;
 
@@ -74,7 +74,7 @@ public abstract class AbstractFrameworkRunner implements FrameworkRunner {
     assert myInstance != null : myRunConfiguration;
     myIntegrator = FrameworkIntegratorRegistry.getInstance().findIntegratorByInstanceDefinition(myInstance);
     assert myIntegrator != null : myInstance;
-    myInstanceManager = (AbstractFrameworkInstanceManager)myIntegrator.getFrameworkInstanceManager();
+    myInstanceManager = myIntegrator.getFrameworkInstanceManager();
     myAdditionalProperties = myRunConfiguration.getAdditionalProperties();
     myBundles = bundles;
 

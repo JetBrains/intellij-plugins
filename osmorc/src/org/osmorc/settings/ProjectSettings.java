@@ -22,14 +22,13 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.settings;
 
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.CompilerProjectExtension;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.xmlb.XmlSerializerUtil;
@@ -39,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EventListener;
 
 /**
- * This class stores Osmorc's project settings.
+ * This class stores Osmorc project settings.
  *
  * @author Robert F. Beeger (robert@beeger.net)
  * @author Jan Thom&auml; (janthomae@janthomae.de)
@@ -50,18 +49,16 @@ import java.util.EventListener;
     file = StoragePathMacros.PROJECT_FILE)})
 public class ProjectSettings implements PersistentStateComponent<ProjectSettings> {
 
-  private EventDispatcher<ProjectSettingsListener> dispatcher = EventDispatcher.create(ProjectSettingsListener.class);
-  private @Nullable String _frameworkInstanceName;
-  private boolean _createFrameworkInstanceModule;
-  private @NotNull String _defaultManifestFileLocation = "META-INF/MANIFEST.MF";
-  private @Nullable String _bundlesOutputPath;
+  private EventDispatcher<ProjectSettingsListener> myDispatcher = EventDispatcher.create(ProjectSettingsListener.class);
+  private @Nullable String myFrameworkInstanceName;
+  private @NotNull String myDefaultManifestFileLocation = "META-INF/MANIFEST.MF";
+  private @Nullable String myBundlesOutputPath;
   private @NotNull ManifestSynchronizationType myManifestSynchronizationType = ManifestSynchronizationType.ManuallySynchronize;
-
 
   /**
    * Returns the default output path for bundles. This is the compiler output path plus "/bundles" (e.g. $PROJECT_ROOT/out/bundles).
    *
-   * @param project the project for wich the output path should be returned
+   * @param project the project for which the output path should be returned
    * @return the output path.
    */
   @NotNull
@@ -70,7 +67,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
     if (instance != null) {
       final VirtualFilePointer compilerOutput = instance.getCompilerOutputPointer();
       if (compilerOutput != null) {
-        return VfsUtil.urlToPath(compilerOutput.getUrl()) + "/bundles";
+        return VfsUtilCore.urlToPath(compilerOutput.getUrl()) + "/bundles";
       }
     }
     // this actually should never happen (only in tests)
@@ -81,17 +78,14 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
    * Returns the project settings for the given project.
    *
    * @param project the project
-   * @return an instance of the project settings for the given prject.
+   * @return an instance of the project settings for the given project.
    */
   public static ProjectSettings getInstance(@NotNull Project project) {
     return ServiceManager.getService(project, ProjectSettings.class);
   }
 
-
   /**
    * The synchronization type for manually edited manifests.
-   *
-   * @return the synchronization type.
    */
   @NotNull
   public ManifestSynchronizationType getManifestSynchronizationType() {
@@ -103,88 +97,67 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
   }
 
   /**
-   * The project wide bundle output path. All compiled bundles will be put in this path. This can be overriden by facet settings.
-   *
-   * @return the output path.
+   * The project wide bundle output path. All compiled bundles will be put in this path. This can be overridden by facet settings.
    */
   @Nullable
   public String getBundlesOutputPath() {
-    return _bundlesOutputPath;
+    return myBundlesOutputPath;
   }
 
   public void setBundlesOutputPath(@Nullable String _bundlesOutputPath) {
-    this._bundlesOutputPath = _bundlesOutputPath;
+    this.myBundlesOutputPath = _bundlesOutputPath;
   }
-
 
   /**
    * The name of the framework instance that should be used for this project.
-   *
-   * @return the framework instance name.
    */
   @Nullable
   public String getFrameworkInstanceName() {
-    return _frameworkInstanceName;
+    return myFrameworkInstanceName;
   }
 
   public void setFrameworkInstanceName(@Nullable String frameworkInstanceName) {
-    _frameworkInstanceName = frameworkInstanceName;
-    dispatcher.getMulticaster().projectSettingsChanged();
-  }
-
-  @NotNull
-  public ProjectSettings getState() {
-    return this;
-  }
-
-  public void loadState(@NotNull ProjectSettings state) {
-    XmlSerializerUtil.copyBean(state, this);
-  }
-
-  public void setCreateFrameworkInstanceModule(boolean selected) {
-    _createFrameworkInstanceModule = selected;
-    dispatcher.getMulticaster().projectSettingsChanged();
-  }
-
-  /**
-   * If Osmorc shall create and maintain a library containing the jars of the selected framework.
-   *
-   * @return true if Osmorc should do this, false otherwise
-   */
-  public boolean isCreateFrameworkInstanceModule() {
-    return _createFrameworkInstanceModule;
-  }
-
-  public void setDefaultManifestFileLocation(@NotNull String defaultManifestFileLocation) {
-    _defaultManifestFileLocation = defaultManifestFileLocation;
-    if (_defaultManifestFileLocation.equals("META-INF")) {
-      // we specify full names, so to work with older projects, we have to convert this
-      _defaultManifestFileLocation = "META-INF/MANIFEST.MF";
-    }
-    dispatcher.getMulticaster().projectSettingsChanged();
-  }
-
-  /**
-   * Allows adding a listener that will be notified if project settings change.
-   *
-   * @param listener the listener to be added
-   */
-  public void addProjectSettingsListener(@NotNull ProjectSettingsListener listener) {
-    dispatcher.addListener(listener);
-  }
-
-  /**
-   * Allows removing a listener.
-   *
-   * @param listener the listener to be removed.
-   */
-  public void removeProjectSettingsListener(@NotNull ProjectSettingsListener listener) {
-    dispatcher.removeListener(listener);
+    myFrameworkInstanceName = frameworkInstanceName;
+    myDispatcher.getMulticaster().projectSettingsChanged();
   }
 
   @NotNull
   public String getDefaultManifestFileLocation() {
-    return _defaultManifestFileLocation;
+    return myDefaultManifestFileLocation;
+  }
+
+  public void setDefaultManifestFileLocation(@NotNull String defaultManifestFileLocation) {
+    myDefaultManifestFileLocation = defaultManifestFileLocation;
+    if (myDefaultManifestFileLocation.equals("META-INF")) {
+      // we specify full names, so to work with older projects, we have to convert this
+      myDefaultManifestFileLocation = "META-INF/MANIFEST.MF";
+    }
+    myDispatcher.getMulticaster().projectSettingsChanged();
+  }
+
+  @NotNull
+  @Override
+  public ProjectSettings getState() {
+    return this;
+  }
+
+  @Override
+  public void loadState(@NotNull ProjectSettings state) {
+    XmlSerializerUtil.copyBean(state, this);
+  }
+
+  /**
+   * Allows adding a listener that will be notified if project settings change.
+   */
+  public void addProjectSettingsListener(@NotNull ProjectSettingsListener listener) {
+    myDispatcher.addListener(listener);
+  }
+
+  /**
+   * Allows removing a listener.
+   */
+  public void removeProjectSettingsListener(@NotNull ProjectSettingsListener listener) {
+    myDispatcher.removeListener(listener);
   }
 
 
@@ -195,7 +168,7 @@ public class ProjectSettings implements PersistentStateComponent<ProjectSettings
     void projectSettingsChanged();
   }
 
-  public static enum ManifestSynchronizationType {
+  public enum ManifestSynchronizationType {
     /**
      * Modules with manually edited manifests won't be synchronized at all.
      */

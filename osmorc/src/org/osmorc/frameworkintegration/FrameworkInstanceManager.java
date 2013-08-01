@@ -26,6 +26,9 @@ package org.osmorc.frameworkintegration;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.osmorc.run.ui.SelectedBundle;
+
+import java.util.Collection;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -34,9 +37,10 @@ public interface FrameworkInstanceManager {
   enum FrameworkBundleType { SYSTEM, SHELL, OTHER }
 
   /**
-   * Collects a all libraries of the given framework instance definition and calls the framework library collector with the results.
+   * Returns framework bundles of a specific role.
    */
-  void collectLibraries(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkLibraryCollector collector);
+  @NotNull
+  Collection<SelectedBundle> getFrameworkBundles(@NotNull FrameworkInstanceDefinition instance, @NotNull FrameworkBundleType type);
 
   /**
    * Returns null if the instance definition is valid, an error message otherwise.
