@@ -70,7 +70,7 @@
       <implementation-class>org.osmorc.OsmorcProjectComponent</implementation-class>
     </component>
     <component>
-      <implementation-class>org.osmorc.ModuleChangeHandler</implementation-class>
+      <implementation-class>org.osmorc.ModuleRenameHandler</implementation-class>
     </component>
   </project-components>
 
@@ -84,7 +84,6 @@
     <extensionPoint name="frameworkIntegrator" interface="org.osmorc.frameworkintegration.FrameworkIntegrator"/>
     <extensionPoint name="headerParserProviderRepository" interface="org.osmorc.manifest.lang.headerparser.HeaderParserProviderRepository"/>
     <extensionPoint name="obr" interface="org.osmorc.obrimport.Obr"/>
-    <extensionPoint name="moduleChangeListener" interface="org.osmorc.ModuleChangeListener"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -200,10 +199,7 @@
     <headerParserProviderRepository implementation="org.osmorc.manifest.lang.headerparser.impl.BndHeaderProviderRepository"/>
     <headerParserProviderRepository implementation="org.osmorc.manifest.lang.headerparser.impl.JavaFxHeaderProviderRepository"/>
 
-    <!-- Known bundle repositories -->
     <obr implementation="org.osmorc.obrimport.springsource.SpringSourceObr"/>
-
-    <moduleChangeListener implementation="org.osmorc.run.OsgiRunConfigurationModuleChangeListener"/>
   </extensions>
 
   <actions>
