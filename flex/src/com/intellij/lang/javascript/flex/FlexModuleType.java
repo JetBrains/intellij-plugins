@@ -7,6 +7,7 @@ import com.intellij.openapi.module.ModuleTypeManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import icons.FlexIcons;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -20,20 +21,24 @@ public class FlexModuleType extends ModuleType<FlexModuleBuilder> {
     super(MODULE_TYPE_ID);
   }
 
+  @NotNull
   public FlexModuleBuilder createModuleBuilder() {
     return new FlexModuleBuilder();
   }
 
-  public ModuleWizardStep[] createWizardSteps(final WizardContext wizardContext,
-                                              final FlexModuleBuilder moduleBuilder,
-                                              final ModulesProvider modulesProvider) {
+  @NotNull
+  public ModuleWizardStep[] createWizardSteps(@NotNull final WizardContext wizardContext,
+                                              @NotNull final FlexModuleBuilder moduleBuilder,
+                                              @NotNull final ModulesProvider modulesProvider) {
     return new ModuleWizardStep[]{new SetupFlexModuleWizardStep(moduleBuilder)};
   }
 
+  @NotNull
   public String getName() {
     return FlexBundle.message("flash.module.type.name");
   }
 
+  @NotNull
   public String getDescription() {
     return FlexBundle.message("flash.module.type.description");
   }
