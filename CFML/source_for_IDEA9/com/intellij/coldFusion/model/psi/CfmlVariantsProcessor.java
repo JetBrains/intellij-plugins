@@ -68,10 +68,10 @@ abstract public class CfmlVariantsProcessor<T> extends BaseScopeProcessor {
     myIsMethodCall = parent instanceof CfmlFunctionCallExpression || parent instanceof CfmlTagInvokeImpl;
     if (parent instanceof CfmlFunctionCallExpression && !myIsForCompletion) {
       final PsiType[] parameterTypes = ((CfmlFunctionCallExpression)parent).getArgumentTypes();
-      myMethods = new JavaMethodResolveHelper(parent, parameterTypes);
+      myMethods = new JavaMethodResolveHelper(parent, parent.getContainingFile(), parameterTypes);
     }
     else {
-      myMethods = new JavaMethodResolveHelper(parent, null);
+      myMethods = new JavaMethodResolveHelper(parent, parent.getContainingFile(), null);
     }
   }
 
