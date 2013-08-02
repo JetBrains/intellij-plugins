@@ -31,29 +31,27 @@ import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import static org.hamcrest.core.IsSame.sameInstance;
 import static org.junit.Assert.assertThat;
 
-
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ApplicationSettingsTest {
-    @Before
-    public void setUp() {
-        testObject = new ApplicationSettings();
-        frameworkInstanceDefinition = new FrameworkInstanceDefinition();
-        frameworkInstanceDefinition.setName("T");
-        frameworkInstanceDefinition.setFrameworkIntegratorName("i");
-        frameworkInstanceDefinition.setBaseFolder("b");
-        testObject.addFrameworkInstanceDefinition(frameworkInstanceDefinition);
-    }
+  private ApplicationSettings testObject;
+  private FrameworkInstanceDefinition frameworkInstanceDefinition;
 
+  @Before
+  public void setUp() {
+    frameworkInstanceDefinition = new FrameworkInstanceDefinition();
+    frameworkInstanceDefinition.setName("T");
+    frameworkInstanceDefinition.setFrameworkIntegratorName("i");
+    frameworkInstanceDefinition.setBaseFolder("b");
 
-    @Test
-    public void testGetFrameworkInstance() {
-        FrameworkInstanceDefinition frameworkInstance =
-                testObject.getFrameworkInstance(frameworkInstanceDefinition.getName());
-        assertThat(frameworkInstance, sameInstance(frameworkInstanceDefinition));
-    }
+    testObject = new ApplicationSettings();
+    testObject.getFrameworkInstanceDefinitions().add(frameworkInstanceDefinition);
+  }
 
-    private ApplicationSettings testObject;
-    private FrameworkInstanceDefinition frameworkInstanceDefinition;
+  @Test
+  public void testGetFrameworkInstance() {
+    FrameworkInstanceDefinition frameworkInstance = testObject.getFrameworkInstance(frameworkInstanceDefinition.getName());
+    assertThat(frameworkInstance, sameInstance(frameworkInstanceDefinition));
+  }
 }

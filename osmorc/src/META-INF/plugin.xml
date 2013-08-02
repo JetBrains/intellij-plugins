@@ -26,13 +26,20 @@
 <idea-plugin version="2">
   <id>Osmorc</id>
   <name>Osmorc</name>
-  <version>1.4.3</version>
+  <version>1.4.4</version>
   <description>This plugin adds support for the development of OSGi-based applications to IDEA</description>
   <category>Framework integration</category>
   <vendor>JetBrains</vendor>
 
   <change-notes>
     <![CDATA[
+      <b>Version 1.4.4</b>
+      <ul>
+        <li>Compatible with IDEA 13</li>
+        <li>Framework runners reworked to support modern versions</li>
+        <li>PAX Runner dropped</li>
+      </ul>
+
       <b>Version 1.4.3</b>
       <ul><li>Compatible with IDEA 12</li></ul>
 
@@ -167,7 +174,6 @@
     <fileTypeFactory implementation="org.osmorc.manifest.ManifestFileTypeFactory"/>
     <compiler implementation="org.osmorc.make.BundleCompiler"/>
     <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
-    <!--<programRunner implementation="org.osmorc.run.OsgiDebuggerRunner"/>-->
 
     <projectConfigurable instance="org.osmorc.settings.ProjectSettingsEditor" id="reference.settings.project.osgi.project.settings"
                          displayName="OSGi"/>

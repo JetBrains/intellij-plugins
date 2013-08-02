@@ -38,7 +38,6 @@ public class KarmaServer {
 
   private static final Logger LOG = Logger.getInstance(KarmaServer.class);
 
-  private final File myConfigurationFile;
   private final ProcessOutputArchive myProcessOutputArchive;
   private final KarmaJsSourcesLocator myKarmaJsSourcesLocator;
   private final KarmaServerState myState;
@@ -62,17 +61,23 @@ public class KarmaServer {
     /* 'nodeInterpreter', 'karmaPackageDir' and 'configurationFile'
         are already checked in KarmaRunConfiguration.checkConfiguration */
     myCoverageTempDir = FileUtil.createTempDirectory("karma-intellij-coverage-", null);
-    myConfigurationFile = configurationFile;
     myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(karmaPackageDir);
     myState = new KarmaServerState(this);
-    final KillableColoredProcessHandler processHandler;
-    try {
-      processHandler = startServer(nodeInterpreter, configurationFile);
-    }
-    catch (ExecutionException e) {
-      throw new IOException("Can not create karma server process", e);
-    }
+    final ProcessHandler processHandler = startServer(nodeInterpreter, configurationFile);
     myProcessOutputArchive = new ProcessOutputArchive(processHandler);
+    registerStreamEventHandlers();
+    myProcessOutputArchive.startNotify();
+    Disposer.register(ApplicationManager.getApplication(), new Disposable() {
+      @Override
+      public void dispose() {
+        if (!processHandler.isProcessTerminated()) {
+          ScriptRunnerUtil.terminateProcessHandler(processHandler, 500, null);
+        }
+      }
+    });
+  }
+
+  private void registerStreamEventHandlers() {
     registerStreamEventHandler(new StreamEventHandler() {
       @NotNull
       @Override
@@ -125,20 +130,6 @@ public class KarmaServer {
         }
       }
     });
-    myProcessOutputArchive.startNotify();
-    Disposer.register(ApplicationManager.getApplication(), new Disposable() {
-      @Override
-      public void dispose() {
-        if (!processHandler.isProcessTerminated()) {
-          ScriptRunnerUtil.terminateProcessHandler(processHandler, 500, null);
-        }
-      }
-    });
-  }
-
-  @NotNull
-  public File getConfigurationFile() {
-    return myConfigurationFile;
   }
 
   @NotNull
@@ -151,7 +142,7 @@ public class KarmaServer {
   }
 
   private KillableColoredProcessHandler startServer(@NotNull File nodeInterpreter,
-                                                    @NotNull File configurationFile) throws IOException, ExecutionException {
+                                                    @NotNull File configurationFile) throws IOException {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     commandLine.setPassParentEnvironment(true);
     commandLine.setWorkDirectory(configurationFile.getParentFile());
@@ -163,7 +154,13 @@ public class KarmaServer {
     commandLine.addParameter("--coverageTempDir=" + myCoverageTempDir.getAbsolutePath());
 
     LOG.info("Starting karma server: " + commandLine.getCommandLineString());
-    final Process process = commandLine.createProcess();
+    final Process process;
+    try {
+      process = commandLine.createProcess();
+    }
+    catch (ExecutionException e) {
+      throw new IOException("Can not launch process " + commandLine.getCommandLineString() + "\"", e);
+    }
     KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(
       process,
       commandLine.getCommandLineString(),
@@ -174,7 +171,6 @@ public class KarmaServer {
       @Override
       public void processTerminated(final ProcessEvent event) {
         FileUtil.asyncDelete(myCoverageTempDir);
-        KarmaServerRegistry.serverTerminated(KarmaServer.this);
         UIUtil.invokeLaterIfNeeded(new Runnable() {
           @Override
           public void run() {

@@ -10,54 +10,59 @@ import javax.swing.*;
 
 /**
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id:$
  */
 public class LibraryBundlingEditor implements SearchableConfigurable, Configurable.NoScroll {
   private LibraryBundlingEditorComponent myComponent;
 
-  public LibraryBundlingEditor() {
-  }
-
   @Nls
+  @Override
   public String getDisplayName() {
     return "Library Bundling";
   }
 
+  @NotNull
+  @Override
   public String getHelpTopic() {
     return "reference.settings.project.osgi.library.bundling";
   }
 
   @NotNull
+  @Override
   public String getId() {
     return getHelpTopic();
   }
 
+  @Override
   public Runnable enableSearch(String option) {
     return null;
   }
 
+  @Override
   public JComponent createComponent() {
     myComponent = new LibraryBundlingEditorComponent();
     return myComponent.getMainPanel();
   }
 
+  @Override
   public boolean isModified() {
-    // Fixes:    EA-23199. This probably occurs when isModified is called after disposing the UI. should not happen but does.. :(
-    return myComponent != null ? myComponent.isModified() : false;
+    return myComponent != null && myComponent.isModified(ApplicationSettings.getInstance());
   }
 
+  @Override
   public void apply() throws ConfigurationException {
     myComponent.applyTo(ApplicationSettings.getInstance());
   }
 
+  @Override
   public void reset() {
     myComponent.resetTo(ApplicationSettings.getInstance());
   }
 
+  @Override
   public void disposeUIResources() {
     if (myComponent != null) {
       myComponent.dispose();
+      myComponent = null;
     }
-    myComponent = null;
   }
 }

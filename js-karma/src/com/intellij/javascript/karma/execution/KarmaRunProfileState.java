@@ -12,6 +12,7 @@ import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerRegistry;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.CatchingConsumer;
 import com.intellij.util.ui.UIUtil;
@@ -19,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * @author Sergey Simonchik
@@ -68,9 +68,10 @@ public class KarmaRunProfileState implements RunProfileState {
         new File(myNodeInterpreterPath),
         new File(myKarmaPackageDir),
         configurationFile,
-        new CatchingConsumer<KarmaServer, IOException>() {
+        new CatchingConsumer<KarmaServer, Exception>() {
           @Override
-          public void consume(IOException e) {
+          public void consume(final Exception e) {
+            showServerStartupError(e);
           }
 
           @Override
@@ -105,4 +106,28 @@ public class KarmaRunProfileState implements RunProfileState {
     executionResult.setRestartActions(new ToggleAutoTestAction());
     return executionResult;
   }
+
+  private void showServerStartupError(@NotNull final Exception serverException) {
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        StringBuilder errorMessage = new StringBuilder("Karma server launching failed.");
+        Throwable e = serverException;
+        String prevMessage = null;
+        while (e != null) {
+          String message = e.getMessage();
+          if (message != null && !message.equals(prevMessage)) {
+            errorMessage.append("\n\nCaused by:\n");
+            errorMessage.append(message);
+            prevMessage = message;
+          }
+          e = e.getCause();
+        }
+        Messages.showErrorDialog(myProject,
+                                 errorMessage.toString(),
+                                 "Karma Server Launching");
+      }
+    });
+  }
+
 }

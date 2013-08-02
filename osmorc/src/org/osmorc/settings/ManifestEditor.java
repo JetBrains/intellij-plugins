@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.settings;
 
 import com.intellij.openapi.Disposable;
@@ -32,20 +31,18 @@ import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorTextField;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.ManifestFileTypeFactory;
 
 /**
  * Editor component for editing a Manifest with syntax highlighting and code completion. This is used in various settings dialogs.
  *
  * @author <a href="janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id:$
  */
 public class ManifestEditor extends EditorTextField implements Disposable {
   private final ManifestEditor.MyDocumentAdapter listener = new MyDocumentAdapter();
 
-
-  public ManifestEditor(Project project, final String text) {
+  public ManifestEditor(@Nullable Project project, final String text) {
     super("", project, ManifestFileTypeFactory.MANIFEST);
     addDocumentListener(listener);
     UIUtil.invokeLaterIfNeeded(new Runnable() {
@@ -55,13 +52,7 @@ public class ManifestEditor extends EditorTextField implements Disposable {
     });
   }
 
-  public void setText(@NotNull String text) {
-    if (text == null) {
-      text = "";
-    }
-    super.setText(text);
-  }
-
+  @Override
   protected EditorEx createEditor() {
     EditorEx editor = super.createEditor();
     editor.setVerticalScrollbarVisible(true);
@@ -74,6 +65,7 @@ public class ManifestEditor extends EditorTextField implements Disposable {
     return false;
   }
 
+  @Override
   public void dispose() {
     removeDocumentListener(listener);
   }

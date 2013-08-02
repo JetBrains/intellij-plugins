@@ -29,7 +29,7 @@ public abstract class AbstractFrameworkInstanceManager implements FrameworkInsta
     Collection<SelectedBundle> bundles = getFrameworkBundles(instance, FrameworkBundleType.SYSTEM);
     if (bundles.size() == 1) {
       SelectedBundle bundle = bundles.iterator().next();
-      return CachingBundleInfoProvider.getBundleVersions(bundle.getBundleUrl());
+      return CachingBundleInfoProvider.getBundleVersion(bundle.getBundleUrl());
     }
 
     return null;
@@ -141,7 +141,7 @@ public abstract class AbstractFrameworkInstanceManager implements FrameworkInsta
 
     String bundleName = CachingBundleInfoProvider.getBundleSymbolicName(url);
     if (bundleName != null) {
-      String bundleVersion = CachingBundleInfoProvider.getBundleVersions(url);
+      String bundleVersion = CachingBundleInfoProvider.getBundleVersion(url);
       if (bundleVersion != null) {
         bundleName += " - " + bundleVersion;
       }
