@@ -44,12 +44,12 @@ abstract class TelVariantsProcessor<T> extends BaseScopeProcessor {
     myMethodCall = parent instanceof TelMethodCallExpression;
     if (myMethodCall && !myForCompletion) {
       final PsiType[] parameterTypes = ((TelMethodCallExpression)parent).getArgumentTypes();
-      myMethods = new JavaMethodResolveHelper(parent, parameterTypes);
+      myMethods = new JavaMethodResolveHelper(parent, parent.getContainingFile(), parameterTypes);
       myPropertyAccessors = null;
     }
     else {
-      myMethods = myForCompletion ? new JavaMethodResolveHelper(parent, null) : null;
-      myPropertyAccessors = new JavaMethodResolveHelper(parent, null);
+      myMethods = myForCompletion ? new JavaMethodResolveHelper(parent, parent.getContainingFile(), null) : null;
+      myPropertyAccessors = new JavaMethodResolveHelper(parent, parent.getContainingFile(), null);
     }
   }
 
