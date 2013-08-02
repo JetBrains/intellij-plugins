@@ -7,6 +7,7 @@ import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.DumbServiceImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
@@ -72,7 +73,7 @@ public class LiveObjectsView extends ProfileView implements Disposable {
     updateTimer = new Timer(2000, new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        if (!liveUpdatesCheckBox.isSelected()) {
+        if (!liveUpdatesCheckBox.isSelected() || DumbServiceImpl.getInstance(getProject()).isDumb()) {
           return;
         }
         final List<TreePath> paths = TreeUtil.collectExpandedPaths(liveObjectsTreeTable.getTree());
