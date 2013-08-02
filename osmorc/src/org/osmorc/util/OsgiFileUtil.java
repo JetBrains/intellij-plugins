@@ -25,49 +25,13 @@
 package org.osmorc.util;
 
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.StandardFileSystems;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsgiFileUtil {
-  public static String getNameWithoutJarSuffix(@NotNull VirtualFile libraryClasses) {
-    return getNameWithoutTail(libraryClasses, ".jar");
-  }
-
-  public static String getNameWithoutTail(@NotNull VirtualFile libraryClasses, @NotNull String tail) {
-    return getNameWithoutTail(libraryClasses.getName(), tail);
-  }
-
-  public static String getNameWithoutTail(@NotNull String name, @NotNull String tail) {
-    if (name.toLowerCase().endsWith(tail.toLowerCase())) {
-      return name.substring(0, name.length() - tail.length());
-    }
-    else {
-      return name;
-    }
-  }
-
-  @Nullable
-  public static VirtualFile getFolder(@Nullable VirtualFile file) {
-    VirtualFile result = null;
-
-    if (file != null) {
-      if (file.isDirectory()) {
-        result = file;
-      }
-      else {
-        result = JarFileSystem.getInstance().getJarRootForLocalFile(file);
-      }
-    }
-
-    return result;
-  }
-
   @NotNull
   public static String pathToUrl(@NotNull String path) {
     return SystemInfo.isWindows ? StandardFileSystems.FILE_PROTOCOL_PREFIX + "/" + path : StandardFileSystems.FILE_PROTOCOL_PREFIX + path;

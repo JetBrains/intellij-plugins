@@ -22,13 +22,11 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.facet.maven;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
-import com.jgoodies.binding.beans.BeanUtils;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.importing.FacetImporter;
@@ -101,8 +99,8 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
 
       // Check if there are any overrides set up in the maven plugin settings
       conf.setBundleSymbolicName(computeSymbolicName(mavenProject)); // IDEA-63243
-      setConfigProperty(mavenProject, conf, "bundleVersion", "instructions." + Constants.BUNDLE_VERSION);
-      setConfigProperty(mavenProject, conf, "bundleActivator", "instructions." + Constants.BUNDLE_ACTIVATOR);
+      conf.setBundleVersion("instructions." + Constants.BUNDLE_VERSION);
+      conf.setBundleActivator("instructions." + Constants.BUNDLE_ACTIVATOR);
 
 
       if (StringUtil.isEmptyOrSpaces(conf.getBundleVersion())) {  // IDEA-74272
@@ -237,8 +235,8 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
    */
   @NotNull
   private String computeSymbolicName(MavenProject mavenProject) {
-
     String bundleSymbolicName = findConfigValue(mavenProject, "instructions." + Constants.BUNDLE_SYMBOLICNAME);
+
     // if it's not set compute it
     if (bundleSymbolicName == null || bundleSymbolicName.length() == 0) {
       // Get the symbolic name as groupId + "." + artifactId, with the following exceptions:
@@ -266,22 +264,6 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
     }
     else {
       return bundleSymbolicName;
-    }
-  }
-
-  private void setConfigProperty(MavenProject mavenProjectModel, OsmorcFacetConfiguration conf,
-                                 String confProperty, String mavenConfProperty) {
-    String value = findConfigValue(mavenProjectModel, mavenConfProperty);
-    // Fix for IDEA-63242 - don't merge it with the existing settings, overwrite them
-    if (value == null) {
-      value = "";
-    }
-    try {
-      BeanUtils.setValue(conf, BeanUtils.getPropertyDescriptor(OsmorcFacetConfiguration.class, confProperty),
-                         value);
-    }
-    catch (Exception e) {
-      logger.error("Problem when setting property", e);
     }
   }
 

@@ -71,10 +71,6 @@ public class OsgiRunState extends JavaCommandLineState {
     myRunner = integrator.createFrameworkRunner();
   }
 
-  public boolean requiresRemoteDebugger() {
-    return myRunner instanceof ExternalVMFrameworkRunner;
-  }
-
   @Override
   protected JavaParameters createJavaParameters() throws ExecutionException {
     return myRunner.createJavaParameters(myRunConfiguration, getSelectedBundles());
@@ -136,7 +132,7 @@ public class OsgiRunState extends JavaCommandLineState {
           Map<String, SelectedBundle> filteredBundles = new HashMap<String, SelectedBundle>();
           for (SelectedBundle selectedBundle : selectedBundles) {
             String name = CachingBundleInfoProvider.getBundleSymbolicName(selectedBundle.getBundleUrl());
-            String version = CachingBundleInfoProvider.getBundleVersions(selectedBundle.getBundleUrl());
+            String version = CachingBundleInfoProvider.getBundleVersion(selectedBundle.getBundleUrl());
             String key = name + version;
             if (!filteredBundles.containsKey(key)) {
               filteredBundles.put(key, selectedBundle);

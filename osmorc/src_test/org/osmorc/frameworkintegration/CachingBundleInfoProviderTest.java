@@ -83,9 +83,9 @@ public class CachingBundleInfoProviderTest {
 
     @Test
     public void testGetBundleVersions() throws Exception {
-        assertThat(CachingBundleInfoProvider.getBundleVersions(dirbundleUrl), equalTo("1.0.0"));
-        assertThat(CachingBundleInfoProvider.getBundleVersions(jarbundleUrl), equalTo("1.0.0"));
-        assertThat(CachingBundleInfoProvider.getBundleVersions(invaliddirbundleUrl), equalTo(null));
+        assertThat(CachingBundleInfoProvider.getBundleVersion(dirbundleUrl), equalTo("1.0.0"));
+        assertThat(CachingBundleInfoProvider.getBundleVersion(jarbundleUrl), equalTo("1.0.0"));
+        assertThat(CachingBundleInfoProvider.getBundleVersion(invaliddirbundleUrl), equalTo(null));
     }
 
     @Test

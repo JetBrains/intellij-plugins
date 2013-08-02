@@ -31,7 +31,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 
@@ -111,10 +110,5 @@ public class ApplicationSettings implements PersistentStateComponent<Application
 
   public interface ApplicationSettingsListener extends EventListener {
     void frameworkInstancesChanged();
-  }
-
-  @TestOnly
-  public void addFrameworkInstanceDefinition(FrameworkInstanceDefinition frameworkInstanceDefinition) {
-    myInstances.add(frameworkInstanceDefinition);
   }
 }

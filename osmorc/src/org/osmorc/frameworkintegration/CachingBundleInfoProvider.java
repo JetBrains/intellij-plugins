@@ -108,8 +108,14 @@ public class CachingBundleInfoProvider {
    * @return the version of the bundle or null if the file is no bundle
    */
   @Nullable
-  public static String getBundleVersions(@Nullable String bundleUrl) {
+  public static String getBundleVersion(@Nullable String bundleUrl) {
     return getBundleAttribute(bundleUrl, Constants.BUNDLE_VERSION);
+  }
+
+  /** deprecated (to remove in IDEA 14) */
+  @SuppressWarnings("UnusedDeclaration")
+  public static String getBundleVersions(@Nullable String bundleUrl) {
+    return getBundleVersion(bundleUrl);
   }
 
   /**

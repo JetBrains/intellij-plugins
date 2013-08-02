@@ -71,7 +71,6 @@
         <path refid="${module.jdk.classpath.osmorc}"/>
         <pathelement location="${module.osmorc.basedir}/lib/org.eclipse.osgi.jar"/>
         <pathelement location="${module.osmorc.basedir}/lib/biz.aQute.bndlib.jar"/>
-        <pathelement location="${module.osmorc.basedir}/lib/binding-2.0.6.jar"/>
         <pathelement location="${module.osmorc.basedir}/lib/plexus-utils-3.0.10.jar"/>
         <pathelement location="${module.osmorc.basedir}/lib/felix-utils.jar"/>
         <pathelement location="${module.osmorc.basedir}/lib/com.springsource.bundlor-1.0.0.RELEASE.jar"/>
@@ -139,7 +138,6 @@
 
         <copy file="${module.osmorc.basedir}/lib/org.eclipse.osgi.jar" todir="${tmp.dir.osmorc}/lib"/>
         <copy file="${module.osmorc.basedir}/lib/biz.aQute.bndlib.jar" todir="${tmp.dir.osmorc}/lib"/>
-        <copy file="${module.osmorc.basedir}/lib/binding-2.0.6.jar" todir="${tmp.dir.osmorc}/lib"/>
         <copy file="${module.osmorc.basedir}/lib/plexus-utils-3.0.10.jar" todir="${tmp.dir.osmorc}/lib"/>
         <copy file="${module.osmorc.basedir}/lib/felix-utils.jar" todir="${tmp.dir.osmorc}/lib"/>
         <copy file="${module.osmorc.basedir}/lib/com.springsource.bundlor-1.0.0.RELEASE.jar" todir="${tmp.dir.osmorc}/lib"/>
