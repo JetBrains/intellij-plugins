@@ -24,17 +24,15 @@
  */
 package org.osmorc.frameworkintegration;
 
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
-import com.jgoodies.binding.beans.Model;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -45,131 +43,138 @@ import java.util.regex.PatternSyntaxException;
  * bundle using the bnd tool.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id:$
  */
-public class LibraryBundlificationRule extends Model {
-  public LibraryBundlificationRule() {
-    addPropertyChangeListener(new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent event) {
-        // track last modification of the rule, so dependent packages
-        // can be rebuilt when the rule has been changed.
-        _lastModified = System.currentTimeMillis();
-      }
-    });
-  }
-
-
-  /**
-   * @return a map containing additional manifest properties to be added to the bundle manifest definition of all
-   *         libraries which this rule applies to.
-   */
-  @Transient
-  public Map<String, String> getAdditionalPropertiesMap() {
-    Map<String, String> result = new HashMap<String, String>();
-    Properties p = new Properties();
-    ByteArrayInputStream bais = new ByteArrayInputStream(getAdditionalProperties().getBytes());
-    try {
-      p.load(bais);
-    }
-    catch (IOException e) {
-      // XXX: some real erorr msg here..
-      e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-    }
-
-    for (Enumeration e = p.propertyNames(); e.hasMoreElements(); ) {
-      String name = (String)e.nextElement();
-      result.put(name, p.getProperty(name));
-    }
-    return result;
-  }
+public class LibraryBundlificationRule {
+  private String myRuleRegex = ".*";
+  private String myAdditionalProperties = Constants.IMPORT_PACKAGE + ": *;resolution:=optional";
+  private boolean myDoNotBundle = false;
+  private boolean myStopAfterThisRule = false;
+  private long myLastModified = System.currentTimeMillis();
 
   public String getRuleRegex() {
-    return _ruleRegex;
+    return myRuleRegex;
   }
 
   public void setRuleRegex(String ruleRegex) {
-    String oldRegex = _ruleRegex;
-    this._ruleRegex = ruleRegex;
-    firePropertyChange("ruleRegex", oldRegex, _ruleRegex);
-  }
-
-
-  /**
-   * Checks, if this rule applies to the  given library name.
-   *
-   * @param libraryName the name of the library to check against.
-   * @return true, if this rule applies to the library, false otherwise.
-   */
-  public boolean appliesTo(@NotNull String libraryName) {
-    try {
-      // we skip compiling the pattern for .* regex as they match anything.
-      return ".*".equals(getRuleRegex()) ||
-             (!"".equals(getRuleRegex()) && Pattern.compile(getRuleRegex()).matcher(libraryName).matches());
-    }
-    catch (PatternSyntaxException e) {
-
-      //XXX: not sure if it is good to silently ignore this here, might confuse the users
-      return false;
-    }
+    myRuleRegex = ruleRegex;
   }
 
   public String getAdditionalProperties() {
-    return _additionalProperties;
+    return myAdditionalProperties;
   }
 
   public void setAdditionalProperties(String additionalProperties) {
-    String old = _additionalProperties;
-    _additionalProperties = additionalProperties;
-    firePropertyChange("additionalProperties", old, _additionalProperties);
-  }
-
-  @Override
-  public String toString() {
-    return "Rule: " + _ruleRegex;
-  }
-
-  public long getLastModified() {
-    return _lastModified;
-  }
-
-  public void setLastModified(long lastModified) {
-    long old = _lastModified;
-    _lastModified = lastModified;
-    firePropertyChange("lastModified", old, lastModified);
+    myAdditionalProperties = additionalProperties;
   }
 
   public boolean isDoNotBundle() {
-    return _doNotBundle;
+    return myDoNotBundle;
   }
 
   public void setDoNotBundle(boolean doNotBundle) {
-    boolean old = _doNotBundle;
-    _doNotBundle = doNotBundle;
-    firePropertyChange("doNotBundle", old, doNotBundle);
-  }
-
-  public void setStopAfterThisRule(boolean stopAfterThisRule) {
-    boolean old = _stopAfterThisRule;
-    _stopAfterThisRule = stopAfterThisRule;
-    firePropertyChange("stopAfterThisRule", old, stopAfterThisRule);
+    myDoNotBundle = doNotBundle;
   }
 
   public boolean isStopAfterThisRule() {
-    return _stopAfterThisRule;
+    return myStopAfterThisRule;
+  }
+
+  public void setStopAfterThisRule(boolean stopAfterThisRule) {
+    myStopAfterThisRule = stopAfterThisRule;
+  }
+
+  public long getLastModified() {
+    return myLastModified;
+  }
+
+  @SuppressWarnings("UnusedDeclaration")
+  public void setLastModified(long lastModified) {
+    myLastModified = lastModified;
   }
 
   public LibraryBundlificationRule copy() {
     LibraryBundlificationRule result = new LibraryBundlificationRule();
-    result._additionalProperties = _additionalProperties;
-    result._ruleRegex = _ruleRegex;
-    result._doNotBundle = _doNotBundle;
-    result._stopAfterThisRule = _stopAfterThisRule;
+    result.myAdditionalProperties = myAdditionalProperties;
+    result.myRuleRegex = myRuleRegex;
+    result.myDoNotBundle = myDoNotBundle;
+    result.myStopAfterThisRule = myStopAfterThisRule;
     return result;
   }
 
-  private String _additionalProperties = Constants.IMPORT_PACKAGE + ": *;resolution:=optional";
-  private String _ruleRegex = ".*";
-  private long _lastModified = System.currentTimeMillis();
-  private boolean _doNotBundle = false;
-  private boolean _stopAfterThisRule = false;
+  /**
+   * Returns a map with properties to be added to the bundle manifest definition of all * libraries which this rule applies to.
+   */
+  @Transient
+  public Map<String, String> getAdditionalPropertiesMap() {
+    try {
+      Properties p = new Properties();
+      p.load(new ByteArrayInputStream(myAdditionalProperties.getBytes("UTF-8")));
+
+      Map<String, String> result = ContainerUtil.newHashMap();
+      for (Map.Entry<Object, Object> entry : p.entrySet()) {
+        result.put(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
+      }
+      return result;
+    }
+    catch (IOException ignored) { }
+    return Collections.emptyMap();
+  }
+
+  /**
+   * Checks, if this rule applies to the  given library name.
+   */
+  public boolean appliesTo(@NotNull String libraryName) {
+    try {
+      return ".*".equals(myRuleRegex) || (!StringUtil.isEmptyOrSpaces(myRuleRegex) && libraryName.matches(myRuleRegex));
+    }
+    catch (PatternSyntaxException ignored) { }
+    return false;
+  }
+
+  public void validate() throws IllegalArgumentException {
+    if (StringUtil.isEmptyOrSpaces(myRuleRegex)) {
+      throw new IllegalArgumentException("Empty regex");
+    }
+    if (!".*".equals(myRuleRegex)) {
+      Pattern.compile(myRuleRegex);
+    }
+
+    if (!StringUtil.isEmptyOrSpaces(myAdditionalProperties)) {
+      try {
+        new Properties().load(new ByteArrayInputStream(myAdditionalProperties.getBytes("UTF-8")));
+      }
+      catch (Exception e) {
+        throw new IllegalArgumentException("Malformed manifest entries");
+      }
+    }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    LibraryBundlificationRule rule = (LibraryBundlificationRule)o;
+
+    if (myDoNotBundle != rule.myDoNotBundle) return false;
+    if (myStopAfterThisRule != rule.myStopAfterThisRule) return false;
+    if (!myAdditionalProperties.equals(rule.myAdditionalProperties)) return false;
+    if (!myRuleRegex.equals(rule.myRuleRegex)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = myRuleRegex.hashCode();
+    result = 31 * result + myAdditionalProperties.hashCode();
+    result = 31 * result + (myDoNotBundle ? 1 : 0);
+    result = 31 * result + (myStopAfterThisRule ? 1 : 0);
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return "Rule: " + myRuleRegex;
+  }
 }

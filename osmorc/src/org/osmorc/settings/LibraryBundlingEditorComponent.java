@@ -22,198 +22,201 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.settings;
 
-import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
-import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.*;
+import com.intellij.ui.components.JBList;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
-import com.jgoodies.binding.adapter.BasicComponentFactory;
-import com.jgoodies.binding.adapter.Bindings;
-import com.jgoodies.binding.beans.BeanAdapter;
-import com.jgoodies.binding.list.SelectionInList;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
 public class LibraryBundlingEditorComponent {
-  private JPanel mainPanel;
-  private JTextField libraryRegex;
-  private JList libraries;
-  private ManifestEditor manifestEntries;
-  private JCheckBox neverBundle;
-  private JCheckBox stopAfterThisRule;
-  private JPanel _manifestEntriesHolder;
-  private JPanel myLibrariesPanel;
-  private SelectionInList<LibraryBundlificationRule> selectedRule;
-  private boolean modified;
-  private PropertyChangeListener beanPropertyChangeListener;
-  private BeanAdapter<LibraryBundlificationRule> beanAdapter;
-  private List<LibraryBundlificationRule> rules;
+  private JPanel myMainPanel;
+  private JPanel myRulesPanel;
+  private JBList myRulesList;
+  private JTextField myLibraryRegex;
+  private ManifestEditor myManifestEditor;
+  private JCheckBox myNeverBundle;
+  private JCheckBox myStopAfterThisRule;
+
+  private final CollectionListModel<LibraryBundlificationRule> myRulesModel;
+  private int myLastSelected = -1;
 
   public LibraryBundlingEditorComponent() {
-    // Am not sure if this is really a good idea. However using the default project produces some nice NPEs somehwere
-    // deep inside the EnterHandler.
-    final DataContext dataContext = DataManager.getInstance().getDataContext();
-    Project project = PlatformDataKeys.PROJECT.getData(dataContext);
-    if (project == null) {
-      project = ProjectManager.getInstance().getDefaultProject();
-    }
-    manifestEntries = new ManifestEditor(project, "");
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      public void run() {
-        Bindings.bind(manifestEntries, "text", beanAdapter.getValueModel("additionalProperties"));
+    GuiUtils.replaceJSplitPaneWithIDEASplitter(myMainPanel);
+    ((JBSplitter)myMainPanel.getComponent(0)).setProportion(0.4f);
+
+    myRulesPanel.add(
+      ToolbarDecorator.createDecorator(myRulesList)
+        .setAddAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            updateCurrentRule();
+            myRulesModel.add(new LibraryBundlificationRule());
+            myRulesList.setSelectedIndex(myRulesModel.getSize() - 1);
+            updateFields();
+          }
+        })
+        .setRemoveAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            myLastSelected = -1;
+            if (myRulesModel.getSize() == 1) {
+              myRulesModel.setElementAt(new LibraryBundlificationRule(), 0);
+              myRulesList.setSelectedIndex(0);
+            }
+            else {
+              int index = myRulesList.getSelectedIndex();
+              myRulesModel.remove(index);
+              myRulesList.setSelectedIndex(index > 0 ? index - 1 : 0);
+            }
+            updateFields();
+          }
+        })
+        .setMoveUpAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            updateCurrentRule();
+            myLastSelected = -1;
+            ListUtil.moveSelectedItemsUp(myRulesList);
+            updateFields();
+          }
+        })
+        .setMoveDownAction(new AnActionButtonRunnable() {
+          @Override
+          public void run(AnActionButton button) {
+            updateCurrentRule();
+            myLastSelected = -1;
+            ListUtil.moveSelectedItemsDown(myRulesList);
+            updateFields();
+          }
+        })
+        .addExtraAction(new AnActionButton("Copy", PlatformIcons.COPY_ICON) {
+          @Override
+          public void actionPerformed(AnActionEvent e) {
+            updateCurrentRule();
+            int index = myRulesList.getSelectedIndex();
+            if (index >= 0) {
+              myRulesModel.add(myRulesModel.getElementAt(index).copy());
+              myRulesList.setSelectedIndex(myRulesModel.getSize() - 1);
+              updateFields();
+            }
+          }
+
+          @Override
+          public boolean isEnabled() {
+            return myRulesList.getSelectedIndex() >= 0;
+          }
+        })
+        .createPanel(), BorderLayout.CENTER
+    );
+
+    myRulesModel = new CollectionListModel<LibraryBundlificationRule>();
+    //noinspection unchecked
+    myRulesList.setModel(myRulesModel);
+    myRulesList.addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+        updateCurrentRule();
+        updateFields();
       }
     });
-    _manifestEntriesHolder.add(manifestEntries, BorderLayout.CENTER);
-
-    beanAdapter.addBeanPropertyChangeListener(beanPropertyChangeListener);
-  }
-
-  private void notifyChanged() {
-    modified = true;
-  }
-
-
-  public void applyTo(ApplicationSettings settings) {
-    settings.setLibraryBundlificationRules(rules);
-    modified = false;
-  }
-
-  public void dispose() {
-    Disposer.dispose(manifestEntries);
-    manifestEntries = null;
-    _manifestEntriesHolder.removeAll();
-    beanAdapter.removeBeanPropertyChangeListener(beanPropertyChangeListener);
-  }
-
-  public JPanel getMainPanel() {
-    return mainPanel;
-  }
-
-  public boolean isModified() {
-    return modified;
-  }
-
-  public void resetTo(ApplicationSettings settings) {
-    rules = new ArrayList<LibraryBundlificationRule>(settings.getLibraryBundlificationRules());
-    selectedRule.setList(rules);
-    selectedRule.setSelectionIndex(0);
-    modified = false;
   }
 
   private void createUIComponents() {
-    selectedRule = new SelectionInList<LibraryBundlificationRule>();
-    libraries = BasicComponentFactory.createList(selectedRule);
+    myManifestEditor = new ManifestEditor(null, "");
+  }
 
-    myLibrariesPanel = ToolbarDecorator.createDecorator(libraries)
-      .setAddAction(new AnActionButtonRunnable() {
+  private void updateFields() {
+    int index = myRulesList.getSelectedIndex();
+    if (index >= 0 && index != myLastSelected) {
+      final LibraryBundlificationRule rule = myRulesModel.getElementAt(index);
+      myLibraryRegex.setText(rule.getRuleRegex());
+      UIUtil.invokeLaterIfNeeded(new Runnable() {
         @Override
-        public void run(AnActionButton button) {
-          LibraryBundlificationRule newRule = new LibraryBundlificationRule();
-          rules.add(newRule);
-          selectedRule.fireIntervalAdded(rules.size() - 1, rules.size() - 1);
-          selectedRule.setSelection(newRule);
-          notifyChanged();
+        public void run() {
+          myManifestEditor.setText(rule.getAdditionalProperties());
         }
-      }).setRemoveAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          if (rules.size() == 1) {
-            LibraryBundlificationRule newRule = new LibraryBundlificationRule();
-            rules.set(0, newRule);
-            selectedRule.fireContentsChanged(0, 1);
-            selectedRule.setSelection(newRule);
-          }
-          else {
-            int oldSelectionIndex = selectedRule.getSelectionIndex();
-            rules.remove(selectedRule.getValue());
-            selectedRule.fireIntervalRemoved(rules.size(), rules.size());
-            final int newSelectionIndex = oldSelectionIndex > 0 ? oldSelectionIndex - 1 : oldSelectionIndex;
+      });
+      myNeverBundle.setSelected(rule.isDoNotBundle());
+      myStopAfterThisRule.setSelected(rule.isStopAfterThisRule());
+      myLastSelected = index;
+    }
+    myLibraryRegex.setEnabled(index >= 0);
+    myManifestEditor.setEnabled(index >= 0);
+    myNeverBundle.setEnabled(index >= 0);
+    myStopAfterThisRule.setEnabled(index >= 0);
+  }
 
-            if (newSelectionIndex == oldSelectionIndex) {
-              // force a change event, since the underlying list has changed and this needs to be reflected in the text fields
-              selectedRule.clearSelection();
-            }
-
-            selectedRule.setSelectionIndex(newSelectionIndex);
-          }
-          notifyChanged();
-        }
-      }).setMoveUpAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          int selectionIndex = selectedRule.getSelectionIndex();
-          if (selectionIndex > 0) {
-            LibraryBundlificationRule ruleToMove = rules.get(selectionIndex);
-            rules.set(selectionIndex, rules.get(selectionIndex - 1));
-            rules.set(selectionIndex - 1, ruleToMove);
-            selectedRule.fireContentsChanged(selectionIndex - 1, selectionIndex);
-            selectedRule.setSelectionIndex(selectionIndex - 1);
-            notifyChanged();
-          }
-        }
-      }).setMoveDownAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          int selectionIndex = selectedRule.getSelectionIndex();
-          if (selectionIndex < rules.size() - 1) {
-            LibraryBundlificationRule ruleToMove = rules.get(selectionIndex);
-            rules.set(selectionIndex, rules.get(selectionIndex + 1));
-            rules.set(selectionIndex + 1, ruleToMove);
-            selectedRule.fireContentsChanged(selectionIndex, selectionIndex + 1);
-            selectedRule.setSelectionIndex(selectionIndex + 1);
-            notifyChanged();
-          }
-        }
-      }).addExtraAction(new AnActionButton("Copy", PlatformIcons.COPY_ICON) {
-        @Override
-        public void actionPerformed(AnActionEvent e) {
-          LibraryBundlificationRule rule = selectedRule.getSelection();
-          if (rule != null) {
-            LibraryBundlificationRule newRule = rule.copy();
-            int selectedIndex = selectedRule.getSelectionIndex();
-            rules.add(selectedIndex, newRule);
-            selectedRule.fireIntervalAdded(selectedIndex, selectedIndex);
-            notifyChanged();
-          }
-        }
-      }).createPanel();
-
-    // adapter always holds currently selected bean
-    beanAdapter = new BeanAdapter<LibraryBundlificationRule>(new LibraryBundlificationRule());
-    libraryRegex = BasicComponentFactory.createTextField(beanAdapter.getValueModel("ruleRegex"), false);
-    neverBundle = BasicComponentFactory.createCheckBox(beanAdapter.getValueModel("doNotBundle"), "");
-    stopAfterThisRule = BasicComponentFactory.createCheckBox(beanAdapter.getValueModel("stopAfterThisRule"), "");
-    selectedRule.addValueChangeListener(new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent event) {
-        // put currently selected bean into adapter, so all the textfields know which bean to work on.
-        beanAdapter.setBean(selectedRule.getSelection());
+  private void updateCurrentRule() {
+    if (myLastSelected >= 0 && myLastSelected < myRulesModel.getSize()) {
+      LibraryBundlificationRule newRule = new LibraryBundlificationRule();
+      newRule.setRuleRegex(myLibraryRegex.getText().trim());
+      newRule.setAdditionalProperties(myManifestEditor.getText().trim());
+      newRule.setDoNotBundle(myNeverBundle.isSelected());
+      newRule.setStopAfterThisRule(myStopAfterThisRule.isSelected());
+      if (!newRule.equals(myRulesModel.getElementAt(myLastSelected))) {
+        myRulesModel.setElementAt(newRule, myLastSelected);
       }
-    });
+    }
+  }
 
-    beanPropertyChangeListener = new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent event) {
-        selectedRule.fireContentsChanged(selectedRule.getSelectionIndex(), 1);
-        notifyChanged();
+  public JPanel getMainPanel() {
+    return myMainPanel;
+  }
+
+  public void dispose() {
+    Disposer.dispose(myManifestEditor);
+    myManifestEditor = null;
+  }
+
+  public boolean isModified(ApplicationSettings settings) {
+    updateCurrentRule();
+    List<LibraryBundlificationRule> rules = settings.getLibraryBundlificationRules();
+    if (myRulesModel.getSize() != rules.size()) {
+      return true;
+    }
+    for (int i = 0; i < rules.size(); i++) {
+      if (!rules.get(i).equals(myRulesModel.getElementAt(i))) {
+        return true;
       }
-    };
+    }
+    return false;
+  }
+
+  public void resetTo(ApplicationSettings settings) {
+    myLastSelected = -1;
+    myRulesModel.replaceAll(settings.getLibraryBundlificationRules());
+    myRulesList.setSelectedIndex(0);
+    updateFields();
+  }
+
+  public void applyTo(ApplicationSettings settings) throws ConfigurationException {
+    updateCurrentRule();
+
+    for (int i = 0; i < myRulesModel.getSize(); i++) {
+      try {
+        myRulesModel.getElementAt(i).validate();
+      }
+      catch (IllegalArgumentException e) {
+        myRulesList.setSelectedIndex(i);
+        throw new ConfigurationException(e.getMessage());
+      }
+    }
+
+    settings.setLibraryBundlificationRules(ContainerUtil.newArrayList(myRulesModel.getItems()));
   }
 }
