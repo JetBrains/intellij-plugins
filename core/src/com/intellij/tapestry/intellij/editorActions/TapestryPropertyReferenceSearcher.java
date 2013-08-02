@@ -28,7 +28,7 @@ public class TapestryPropertyReferenceSearcher extends QueryExecutorBase<PsiRefe
     if (!(refElement instanceof PsiField)) return;
     final String name = ((PsiField)refElement).getName();
     if (name == null) return;
-    SearchScope searchScope = queryParameters.getScope();
+    SearchScope searchScope = queryParameters.getEffectiveSearchScope();
     if (searchScope instanceof GlobalSearchScope) {
       searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes((GlobalSearchScope)searchScope, TmlFileType.INSTANCE);
     }
@@ -37,6 +37,8 @@ public class TapestryPropertyReferenceSearcher extends QueryExecutorBase<PsiRefe
         GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.allScope(refElement.getProject()), TmlFileType.INSTANCE)
           .intersectWith(searchScope);
     }
+    if (searchScope instanceof GlobalSearchScope && ((GlobalSearchScope)searchScope).getProject() == null) return;
+
     queryParameters.getOptimizer().searchWord(name, searchScope, UsageSearchContext.IN_FOREIGN_LANGUAGES, false, refElement);
     queryParameters.getOptimizer().searchWord("get" + name, searchScope, UsageSearchContext.IN_FOREIGN_LANGUAGES, false, refElement);
     queryParameters.getOptimizer().searchWord("set" + name, searchScope, UsageSearchContext.IN_FOREIGN_LANGUAGES, false, refElement);
