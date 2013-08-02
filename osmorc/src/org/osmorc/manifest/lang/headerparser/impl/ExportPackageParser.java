@@ -41,7 +41,7 @@ public class ExportPackageParser extends AbstractHeaderParserImpl {
   private final ExportPackageDirectiveParser directiveParser = new ExportPackageDirectiveParser();
 
   public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
-    if (headerValuePart.getParent() != null && headerValuePart.getParent() instanceof Clause) {
+    if (headerValuePart.getParent() instanceof Clause) {
       return clauseParser.getReferences(headerValuePart);
     }
     else if (headerValuePart.getParent() instanceof Attribute) {
