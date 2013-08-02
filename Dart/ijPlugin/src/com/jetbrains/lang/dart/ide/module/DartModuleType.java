@@ -7,6 +7,7 @@ import com.intellij.openapi.module.ModuleTypeManager;
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider;
 import com.jetbrains.lang.dart.DartBundle;
 import com.jetbrains.lang.dart.ide.DartSdkType;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -24,11 +25,13 @@ public class DartModuleType extends DartModuleTypeBase<DartModuleBuilder> {
     return (DartModuleType)ModuleTypeManager.getInstance().findByID(MODULE_TYPE_ID);
   }
 
+  @NotNull
   @Override
   public String getName() {
     return DartBundle.message("dart.module.type.name");
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return DartBundle.message("dart.module.type.description");
@@ -44,15 +47,17 @@ public class DartModuleType extends DartModuleTypeBase<DartModuleBuilder> {
     return icons.DartIcons.Dart_16;
   }
 
+  @NotNull
   @Override
   public DartModuleBuilder createModuleBuilder() {
     return new DartModuleBuilder();
   }
 
 
-  public ModuleWizardStep[] createWizardSteps(final WizardContext wizardContext,
-                                              final DartModuleBuilder moduleBuilder,
-                                              final ModulesProvider modulesProvider) {
+  @NotNull
+  public ModuleWizardStep[] createWizardSteps(@NotNull final WizardContext wizardContext,
+                                              @NotNull final DartModuleBuilder moduleBuilder,
+                                              @NotNull final ModulesProvider modulesProvider) {
     return new ModuleWizardStep[]{new ProjectJdkForModuleStep(wizardContext, DartSdkType.getInstance()) {
       public void updateDataModel() {
         super.updateDataModel();
