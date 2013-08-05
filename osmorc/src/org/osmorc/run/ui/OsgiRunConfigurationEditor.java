@@ -111,6 +111,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     //noinspection unchecked
     myFrameworkInstances.setModel(model);
     myFrameworkInstances.addActionListener(new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         onFrameworkChange();
       }

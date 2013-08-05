@@ -25,58 +25,27 @@
 package org.osmorc.run;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
 import org.osmorc.i18n.OsmorcBundle;
-
-import javax.swing.*;
 
 /**
  * Configuration type for a bundle run configuration.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class OsgiConfigurationType implements ConfigurationType {
-  private final ConfigurationFactory myFactory;
+public class OsgiConfigurationType extends ConfigurationTypeBase {
+  private static final String ID = "#org.osmorc.OsgiConfigurationType";
 
   public OsgiConfigurationType() {
-    myFactory = new ConfigurationFactory(this) {
+    super(ID, OsmorcBundle.message("run.configuration.name"), OsmorcBundle.message("run.configuration.description"), OsmorcBundle.getSmallIcon());
+
+    addFactory(new ConfigurationFactory(this) {
+      @Override
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new OsgiRunConfiguration(project, this, "");
       }
-
-      public RunConfiguration createConfiguration(String name, RunConfiguration template) {
-        OsgiRunConfiguration runConfiguration = (OsgiRunConfiguration)template;
-        return super.createConfiguration(name, runConfiguration);
-      }
-    };
-  }
-
-  @Override
-  public String getDisplayName() {
-    return OsmorcBundle.message("run.configuration.name");
-  }
-
-  @Override
-  public String getConfigurationTypeDescription() {
-    return OsmorcBundle.message("run.configuration.description");
-  }
-
-  @Override
-  public Icon getIcon() {
-    return OsmorcBundle.getSmallIcon();
-  }
-
-  @NotNull
-  @Override
-  public String getId() {
-    return "#org.osmorc.OsgiConfigurationType";
-  }
-
-  @Override
-  public ConfigurationFactory[] getConfigurationFactories() {
-    return new ConfigurationFactory[]{myFactory};
+    });
   }
 }
