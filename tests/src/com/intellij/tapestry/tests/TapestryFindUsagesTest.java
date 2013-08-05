@@ -47,7 +47,7 @@ public class TapestryFindUsagesTest extends TapestryBaseTestCase {
     final GlobalSearchScope scope = GlobalSearchScope.projectScope(myFixture.getProject());
     Query<PsiReference> query = referenceTo instanceof PsiMethod
                                 ? MethodReferencesSearch.search((PsiMethod)referenceTo, scope, false)
-                                : ReferencesSearch.search(referenceTo, scope, false);
+                                : ReferencesSearch.search(referenceTo, scope, true);
     return query.toArray(new PsiReference[0]);
   }
 
