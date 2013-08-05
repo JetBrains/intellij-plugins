@@ -13,10 +13,12 @@ import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.Function;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 
 public class BCBasedRunnerParameters implements Cloneable {
@@ -111,10 +113,11 @@ public class BCBasedRunnerParameters implements Cloneable {
     }
   }
 
-  public void handleModulesRename(final Map<String, String> renamedModules) {
-    for (String oldName : renamedModules.keySet()) {
+  public void handleModulesRename(List<Module> modules, Function<Module, String> oldNameProvider) {
+    for (Module module : modules) {
+      String oldName = oldNameProvider.fun(module);
       if (oldName.equals(myModuleName)) {
-        myModuleName = renamedModules.get(oldName);
+        myModuleName = module.getName();
         break;
       }
     }

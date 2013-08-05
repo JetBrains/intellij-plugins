@@ -40,9 +40,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.Alarm;
+import com.intellij.util.Function;
 import com.intellij.util.PlatformUtils;
 import com.intellij.util.containers.BidirectionalMap;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.text.StringTokenizer;
 import gnu.trove.THashMap;
@@ -106,19 +106,14 @@ public class FlexCompilerHandler extends AbstractProjectComponent {
 
     connection.subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
       @Override
-      public void modulesRenamed(Project project, List<Module> modules) {
-        Map<String, String> old2newNames = ContainerUtil.newHashMap();
-        for (Module module : modules) {
-          old2newNames.put(module.getUserData(OLD_NAME_KEY), module.getName());
-        }
-
+      public void modulesRenamed(Project project, List<Module> modules, Function<Module, String> oldNameProvider) {
         for (RunnerAndConfigurationSettings settings : RunManagerEx.getInstanceEx(project).getSortedConfigurations()) {
           RunConfiguration runConfiguration = settings.getConfiguration();
           if (runConfiguration instanceof FlashRunConfiguration) {
-            ((FlashRunConfiguration)runConfiguration).getRunnerParameters().handleModulesRename(old2newNames);
+            ((FlashRunConfiguration)runConfiguration).getRunnerParameters().handleModulesRename(modules, oldNameProvider);
           }
           else if (runConfiguration instanceof FlexUnitRunConfiguration) {
-            ((FlexUnitRunConfiguration)runConfiguration).getRunnerParameters().handleModulesRename(old2newNames);
+            ((FlexUnitRunConfiguration)runConfiguration).getRunnerParameters().handleModulesRename(modules, oldNameProvider);
           }
         }
       }
