@@ -2,7 +2,6 @@ package com.jetbrains.lang.dart.ide;
 
 import com.intellij.conversion.*;
 import com.intellij.javascript.debugger.execution.JavaScriptDebugConfiguration;
-import com.intellij.javascript.debugger.execution.JavaScriptDebuggerConfigurationSettings;
 import com.intellij.javascript.debugger.execution.JavascriptDebugConfigurationType;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -62,10 +61,10 @@ public class DartRunConfigurationConverterProvider extends ConverterProvider {
     element.setAttribute("type", JavascriptDebugConfigurationType.getTypeInstance().getId());
     element.setAttribute("singleton", "true");
     element.removeAttribute("factoryName");
-    JavaScriptDebuggerConfigurationSettings settings = new JavaScriptDebuggerConfigurationSettings();
+    JavaScriptDebugConfiguration settings = new JavaScriptDebugConfiguration(null, JavascriptDebugConfigurationType.getTypeInstance().getFactory(), "");
     for (Object obj : element.getChildren("option")) {
       if ("fileUrl".equals(((Element)obj).getAttributeValue("name"))) {
-        settings.uri = ((Element)obj).getAttributeValue("value");
+        settings.setUri(((Element)obj).getAttributeValue("value"));
       }
     }
     element.removeContent();
@@ -76,11 +75,11 @@ public class DartRunConfigurationConverterProvider extends ConverterProvider {
     element.setAttribute("type", JavascriptDebugConfigurationType.getTypeInstance().getId());
     element.setAttribute("singleton", "true");
     element.removeAttribute("factoryName");
-    JavaScriptDebuggerConfigurationSettings settings = new JavaScriptDebuggerConfigurationSettings();
+    JavaScriptDebugConfiguration settings = new JavaScriptDebugConfiguration(null, JavascriptDebugConfigurationType.getTypeInstance().getFactory(), "");
     Element mappings = null;
     for (Object obj : element.getChildren("option")) {
       if ("fileUrl".equals(((Element)obj).getAttributeValue("name"))) {
-        settings.uri = ((Element)obj).getAttributeValue("value");
+        settings.setUri(((Element)obj).getAttributeValue("value"));
       }
       else if ("mappings".equals(((Element)obj).getAttributeValue("name"))) {
         mappings = (Element)obj;
