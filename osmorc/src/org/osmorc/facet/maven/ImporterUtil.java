@@ -1,8 +1,9 @@
 package org.osmorc.facet.maven;
 
-import aQute.lib.osgi.Analyzer;
-import aQute.lib.osgi.Constants;
-import aQute.libg.header.OSGiHeader;
+import aQute.bnd.header.Parameters;
+import aQute.bnd.osgi.Analyzer;
+import aQute.bnd.osgi.Constants;
+import aQute.bnd.header.OSGiHeader;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
@@ -189,9 +190,9 @@ public class ImporterUtil {
       return;
     }
 
-    Map<String, Map<String, String>> map = OSGiHeader.parseHeader(includeResourceHeader);
+    Parameters parameters = OSGiHeader.parseHeader(includeResourceHeader);
     StringBuilder sanitizedHeader = new StringBuilder();
-    for (Iterator<String> iterator = map.keySet().iterator(); iterator.hasNext(); ) {
+    for (Iterator<String> iterator = parameters.keySet().iterator(); iterator.hasNext(); ) {
       String name = iterator.next();
       String prefix = "";
       String suffix = "";

@@ -20,8 +20,8 @@
  */
 package org.osmorc.facet.maven;
 
-import aQute.lib.osgi.Analyzer;
-import aQute.lib.osgi.Constants;
+import aQute.bnd.osgi.Analyzer;
+import aQute.bnd.osgi.Constants;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;

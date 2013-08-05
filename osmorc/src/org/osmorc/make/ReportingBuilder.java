@@ -25,7 +25,7 @@
 
 package org.osmorc.make;
 
-import aQute.lib.osgi.Builder;
+import aQute.bnd.osgi.Builder;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 import com.intellij.openapi.components.ServiceManager;
@@ -89,21 +89,24 @@ class ReportingBuilder extends Builder {
   }
 
   @Override
-  public void error(String s, Object... objects) {
+  public SetLocation error(String s, Object... objects) {
     String message = MessageFormat.format(myMessagePrefix + s, objects);
     myContext.addMessage(CompilerMessageCategory.ERROR, message, mySourceFileName, 0, 0);
+    return super.error(s, objects);
   }
 
   @Override
-  public void error(String s, Throwable throwable, Object... objects) {
+  public SetLocation error(String s, Throwable throwable, Object... objects) {
     String message = MessageFormat.format(myMessagePrefix + s, objects) + "(" + throwable.getMessage() + ")";
     myContext.addMessage(CompilerMessageCategory.ERROR, message, mySourceFileName, 0, 0);
+    return super.error(s, throwable, objects);
   }
 
   @Override
-  public void warning(String s, Object... objects) {
+  public SetLocation warning(String s, Object... objects) {
     String message = MessageFormat.format(myMessagePrefix + s, objects);
     myContext.addMessage(CompilerMessageCategory.WARNING, message, mySourceFileName, 0, 0);
+    return super.warning(s, objects);
   }
 
   @Override

@@ -24,7 +24,8 @@
  */
 package org.osmorc.facet;
 
-import aQute.libg.header.OSGiHeader;
+import aQute.bnd.header.OSGiHeader;
+import aQute.bnd.header.Parameters;
 import com.intellij.facet.FacetConfiguration;
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
@@ -56,7 +57,7 @@ import java.io.StringReader;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static aQute.lib.osgi.Constants.INCLUDE_RESOURCE;
+import static aQute.bnd.osgi.Constants.INCLUDE_RESOURCE;
 
 /**
  * The facet configuration of an osmorc facet.
@@ -136,7 +137,7 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
       else if (!osmorcControlsManifest && !useBndFile && useBundlorFile) {
         setManifestGenerationMode(ManifestGenerationMode.Bundlor);
       }
-      else if (!osmorcControlsManifest && !useBndFile && !useBundlorFile) {
+      else if (!osmorcControlsManifest && !useBndFile) {
         setManifestGenerationMode(ManifestGenerationMode.Manually);
       }
       else {
@@ -234,9 +235,9 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
       if (key.equals(INCLUDE_RESOURCE)) {
         // there are paths in there, collapse these so the IML files don't get mixed up on every machine. The built in macro manager
         // does not recognize these, so we have to do this manually here.
-        Map<String, Map<String, String>> map = OSGiHeader.parseHeader(value);
+        Parameters parameters = OSGiHeader.parseHeader(value);
 
-        for (String name : map.keySet()) {
+        for (String name : parameters.keySet()) {
           if (StringUtil.startsWithChar(name, '{') && name.endsWith("}")) {
             name = name.substring(1, name.length() - 1).trim();
           }
@@ -518,7 +519,10 @@ public class OsmorcFacetConfiguration implements FacetConfiguration {
     Map<String, String> result = getAdditionalPropertiesAsMap();
     result.put(Constants.BUNDLE_SYMBOLICNAME, getBundleSymbolicName());
     result.put(Constants.BUNDLE_VERSION, getBundleVersion());
-    result.put(Constants.BUNDLE_ACTIVATOR, getBundleActivator());
+    final String bundleActivator = getBundleActivator();
+    if(!bundleActivator.isEmpty()) {
+      result.put(Constants.BUNDLE_ACTIVATOR, bundleActivator);
+    }
     return result;
   }
 

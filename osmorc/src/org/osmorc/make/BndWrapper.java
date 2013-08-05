@@ -25,9 +25,9 @@
 
 package org.osmorc.make;
 
-import aQute.lib.osgi.Analyzer;
-import aQute.lib.osgi.Jar;
-import aQute.lib.osgi.Verifier;
+import aQute.bnd.osgi.Analyzer;
+import aQute.bnd.osgi.Jar;
+import aQute.bnd.osgi.Verifier;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.compiler.CompileContext;
@@ -290,7 +290,7 @@ public class BndWrapper {
     builder.setClasspath(classPath);
 
     // Check if the manifest version is missing (IDEADEV-41174)
-    String manifest = builder.getProperty(aQute.lib.osgi.Constants.MANIFEST);
+    String manifest = builder.getProperty(aQute.bnd.osgi.Constants.MANIFEST);
     if (manifest != null) {
       File manifestFile = builder.getFile(manifest);
       if (manifestFile != null && manifestFile.canRead()) {

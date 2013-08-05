@@ -106,11 +106,11 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/biz.aQute.bndlib.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/bndlib-2.1.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/biz.aQute.bndlib.jar!/OSGI-OPT/src" />
+          <root url="jar://$MODULE_DIR$/lib/bndlib-2.1.0.jar!/OSGI-OPT/src" />
         </SOURCES>
       </library>
     </orderEntry>

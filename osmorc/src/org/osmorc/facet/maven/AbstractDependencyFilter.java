@@ -23,8 +23,10 @@ package org.osmorc.facet.maven;
  * Modified for usage within IntelliJ IDEA.
  */
 
-import aQute.lib.osgi.Instruction;
-import aQute.libg.header.OSGiHeader;
+import aQute.bnd.header.Attrs;
+import aQute.bnd.header.Parameters;
+import aQute.bnd.osgi.Instruction;
+import aQute.bnd.header.OSGiHeader;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 
 import java.util.Collection;
@@ -64,7 +66,7 @@ public abstract class AbstractDependencyFilter {
 
 
     public DependencyFilter(String expression, String defaultValue) {
-      m_instruction = Instruction.getPattern(expression);
+      m_instruction = new Instruction(expression);
       m_defaultValue = defaultValue;
     }
 
@@ -97,19 +99,19 @@ public abstract class AbstractDependencyFilter {
 
 
   protected final void processInstructions(String header) throws DependencyEmbedderException {
-    Map<String, Map<String, String>> instructions = OSGiHeader.parseHeader(MISSING_KEY_PATTERN.matcher(header).replaceAll("$1$2*;$3"));
+    Parameters instructions = OSGiHeader.parseHeader(MISSING_KEY_PATTERN.matcher(header).replaceAll("$1$2*;$3"));
 
     Collection<MavenArtifact> availableDependencies = new LinkedHashSet<MavenArtifact>(m_dependencyArtifacts);
 
     DependencyFilter filter;
-    for (Iterator<Map.Entry<String, Map<String, String>>> clauseIterator = instructions.entrySet().iterator(); clauseIterator.hasNext(); ) {
+    for (Iterator<Map.Entry<String, Attrs>> clauseIterator = instructions.entrySet().iterator(); clauseIterator.hasNext(); ) {
       String inline = "false";
 
       // always start with a fresh *modifiable* collection for each unique clause
       Collection<MavenArtifact> filteredDependencies = new LinkedHashSet<MavenArtifact>(availableDependencies);
 
       // CLAUSE: REGEXP --> { ATTRIBUTE MAP }
-      Map.Entry<String, Map<String, String>> clause = clauseIterator.next();
+      Map.Entry<String, Attrs> clause = clauseIterator.next();
       String primaryKey = (clause.getKey()).replaceFirst("~+$", "");
       boolean isNegative = primaryKey.startsWith("!");
       if (isNegative) {

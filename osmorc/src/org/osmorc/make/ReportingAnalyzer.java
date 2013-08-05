@@ -25,7 +25,7 @@
 
 package org.osmorc.make;
 
-import aQute.lib.osgi.Analyzer;
+import aQute.bnd.osgi.Analyzer;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerMessageCategory;
 
@@ -43,20 +43,23 @@ class ReportingAnalyzer extends Analyzer {
   }
 
   @Override
-  public void error(String s, Object... objects) {
+  public SetLocation error(String s, Object... objects) {
     _context.addMessage(CompilerMessageCategory.ERROR, MessageFormat.format(s, objects), _sourceFileName, 0, 0);
+    return super.error(s, objects);
   }
 
   @Override
-  public void error(String s, Throwable throwable, Object... objects) {
+  public SetLocation error(String s, Throwable throwable, Object... objects) {
     _context
       .addMessage(CompilerMessageCategory.ERROR, MessageFormat.format(s, objects) + "(" + throwable.getMessage() + ")", _sourceFileName, 0,
                   0);
+    return super.error(s, throwable, objects);
   }
 
   @Override
-  public void warning(String s, Object... objects) {
+  public SetLocation warning(String s, Object... objects) {
     _context.addMessage(CompilerMessageCategory.WARNING, MessageFormat.format(s, objects), _sourceFileName, 0, 0);
+    return super.warning(s, objects);
   }
 
   @Override
