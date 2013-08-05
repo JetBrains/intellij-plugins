@@ -34,10 +34,7 @@ import com.intellij.openapi.roots.CompilerProjectExtension;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.pointers.VirtualFilePointer;
-import com.intellij.ui.AnActionButton;
-import com.intellij.ui.AnActionButtonRunnable;
-import com.intellij.ui.RawCommandLineEditor;
-import com.intellij.ui.ToolbarDecorator;
+import com.intellij.ui.*;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
@@ -153,6 +150,7 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
         }
       }
     });
+    new TableSpeedSearch(myBundlesTable).setComparator(new SpeedSearchComparator(false));
 
     myOsmorcControlledDir.addChangeListener(new ChangeListener() {
       @Override
