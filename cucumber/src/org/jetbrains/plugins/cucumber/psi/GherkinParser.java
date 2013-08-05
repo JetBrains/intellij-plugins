@@ -121,9 +121,14 @@ public class GherkinParser implements PsiParser {
   }
 
   private static boolean atScenarioEnd(PsiBuilder builder) {
-    return builder.eof() ||
-           builder.getTokenType() == GherkinTokenTypes.SCENARIO_KEYWORD ||
-           builder.getTokenType() == GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD;
+    int i = 0;
+    while (builder.lookAhead(i) == GherkinTokenTypes.TAG) {
+      i++;
+    }
+    final IElementType tokenType = builder.lookAhead(i);
+    return tokenType == null ||
+           tokenType == GherkinTokenTypes.SCENARIO_KEYWORD ||
+           tokenType == GherkinTokenTypes.SCENARIO_OUTLINE_KEYWORD;
   }
 
   private static void parseStep(PsiBuilder builder) {
