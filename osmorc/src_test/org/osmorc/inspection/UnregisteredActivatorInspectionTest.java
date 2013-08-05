@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.inspection;
 
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -44,131 +43,123 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
- * TODO: for some odd reasons the PSIReference to BundleActivator is no longer resolved which makes this test fail. The
- * inspection works. Fix this.
- *
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class UnregisteredActivatorInspectionTest {
-    public UnregisteredActivatorInspectionTest() {
-        fixture = TestUtil.createTestFixture();
-    }
+  private final IdeaProjectTestFixture fixture;
+  private TempDirTestFixture myTempDirFixture;
 
-    //@Before
-    public void setUp() throws Exception {
-        myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
-        myTempDirFixture.setUp();
-        fixture.setUp();
-        TestUtil.loadModules("UnregisteredActivatorInspectionTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
-        TestUtil.createOsmorcFacetForAllModules(fixture.getProject());
-    }
+  public UnregisteredActivatorInspectionTest() {
+    fixture = TestUtil.createTestFixture();
+  }
 
-    //@After
-    public void tearDown() throws Exception {
-        fixture.tearDown();
-        myTempDirFixture.tearDown();
-    }
+  //@Before
+  public void setUp() throws Exception {
+    myTempDirFixture = IdeaTestFixtureFactory.getFixtureFactory().createTempDirTestFixture();
+    myTempDirFixture.setUp();
+    fixture.setUp();
+    TestUtil.loadModules("UnregisteredActivatorInspectionTest", fixture.getProject(), myTempDirFixture.getTempDirPath());
+    TestUtil.createOsmorcFacetForAllModules(fixture.getProject());
+  }
 
-    //@Test
-    public void testInspectionWithErrorForManuallyEditedManifest() {
-        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t0", "t0/Activator.java");
+  //@After
+  public void tearDown() throws Exception {
+    fixture.tearDown();
+    myTempDirFixture.tearDown();
+  }
 
-        List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
+  //@Test
+  public void testInspectionWithErrorForManuallyEditedManifest() {
+    PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t0", "t0/Activator.java");
 
-        assertThat(list, notNullValue());
-        assertThat(list.size(), equalTo(1));
+    List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
 
-        final ProblemDescriptor problem = list.get(0);
-        assertThat(problem.getLineNumber(), equalTo(6));
+    assertThat(list, notNullValue());
+    assertThat(list.size(), equalTo(1));
 
-        final QuickFix[] fixes = problem.getFixes();
-        assertThat(fixes, notNullValue());
-        assertThat(fixes.length, equalTo(1));
+    final ProblemDescriptor problem = list.get(0);
+    assertThat(problem.getLineNumber(), equalTo(6));
 
-        CommandProcessor.getInstance().executeCommand(fixture.getProject(), new Runnable() {
-            public void run() {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    public void run() {
-                        //noinspection unchecked
-                        fixes[0].applyFix(fixture.getProject(), problem);
-                    }
-                });
-            }
-        }, "test", "test");
+    final QuickFix[] fixes = problem.getFixes();
+    assertThat(fixes, notNullValue());
+    assertThat(fixes.length, equalTo(1));
 
-        list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
-      assertTrue(list.isEmpty());
-
-    }
-
-    //@Test
-    public void testInspectionWithoutErrorForManuallyEditedManifest() {
-        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
-
-        List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
-
-      assertTrue(list.isEmpty());
-
-    }
-
-    //@Test
-    public void testInspectionWithErrorForGeneratedManifest() {
-        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t0", "t0/Activator.java");
-        final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(psiFile).getConfiguration();
+    CommandProcessor.getInstance().executeCommand(fixture.getProject(), new Runnable() {
+      public void run() {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            public void run() {
-                configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
-                configuration.setBundleActivator("");
-            }
+          public void run() {
+            //noinspection unchecked
+            fixes[0].applyFix(fixture.getProject(), problem);
+          }
         });
+      }
+    }, "test", "test");
 
-        List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
+    list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
+    assertTrue(list.isEmpty());
+  }
 
-        assertThat(list, notNullValue());
-        assertThat(list.size(), equalTo(1));
+  //@Test
+  public void testInspectionWithoutErrorForManuallyEditedManifest() {
+    PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
 
-        final ProblemDescriptor problem = list.get(0);
-        assertThat(problem.getLineNumber(), equalTo(6));
+    List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
 
-        final QuickFix[] fixes = problem.getFixes();
-        assertThat(fixes, notNullValue());
-        assertThat(fixes.length, equalTo(1));
+    assertTrue(list.isEmpty());
+  }
 
-        CommandProcessor.getInstance().executeCommand(fixture.getProject(), new Runnable() {
-            public void run() {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    public void run() {
-                        //noinspection unchecked
-                        fixes[0].applyFix(fixture.getProject(), problem);
-                    }
-                });
-            }
-        }, "test", "test");
+  //@Test
+  public void testInspectionWithErrorForGeneratedManifest() {
+    PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t0", "t0/Activator.java");
+    final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(psiFile).getConfiguration();
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      public void run() {
+        configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
+        configuration.setBundleActivator("");
+      }
+    });
 
-        list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
-      assertTrue(list.isEmpty());
+    List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
 
-    }
+    assertThat(list, notNullValue());
+    assertThat(list.size(), equalTo(1));
 
-    //@Test
-    public void testInspectionWithoutErrorForGeneratedManifest() {
-        PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
-        final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(psiFile).getConfiguration();
+    final ProblemDescriptor problem = list.get(0);
+    assertThat(problem.getLineNumber(), equalTo(6));
+
+    final QuickFix[] fixes = problem.getFixes();
+    assertThat(fixes, notNullValue());
+    assertThat(fixes.length, equalTo(1));
+
+    CommandProcessor.getInstance().executeCommand(fixture.getProject(), new Runnable() {
+      public void run() {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            public void run() {
-                configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
-                configuration.setBundleActivator("t1.Activator");
-            }
+          public void run() {
+            //noinspection unchecked
+            fixes[0].applyFix(fixture.getProject(), problem);
+          }
         });
+      }
+    }, "test", "test");
+
+    list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
+    assertTrue(list.isEmpty());
+  }
+
+  //@Test
+  public void testInspectionWithoutErrorForGeneratedManifest() {
+    PsiFile psiFile = TestUtil.loadPsiFile(fixture.getProject(), "t1", "t1/Activator.java");
+    final OsmorcFacetConfiguration configuration = OsmorcFacet.getInstance(psiFile).getConfiguration();
+    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+      public void run() {
+        configuration.setManifestGenerationMode(OsmorcFacetConfiguration.ManifestGenerationMode.OsmorcControlled);
+        configuration.setBundleActivator("t1.Activator");
+      }
+    });
 
 
-        List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
+    List<ProblemDescriptor> list = TestUtil.runInspection(new UnregisteredActivatorInspection(), psiFile, fixture.getProject());
 
-      assertTrue(list.isEmpty());
-
-    }
-
-
-    private final IdeaProjectTestFixture fixture;
-    private TempDirTestFixture myTempDirFixture;
+    assertTrue(list.isEmpty());
+  }
 }

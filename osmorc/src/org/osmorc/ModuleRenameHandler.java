@@ -33,6 +33,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.run.OsgiConfigurationType;
@@ -69,11 +70,11 @@ public class ModuleRenameHandler implements ProjectComponent {
   public void initComponent() {
     myProject.getMessageBus().connect(myProject).subscribe(ProjectTopics.MODULES, new ModuleAdapter() {
       @Override
-      public void modulesRenamed(Project project, List<Module> modules) {
+      public void modulesRenamed(Project project, List<Module> modules, Function<Module, String> oldNameProvider) {
         final List<Pair<SelectedBundle, String>> pairs = ContainerUtil.newSmartList();
 
         for (Module module : modules) {
-          String oldName = module.getUserData(OLD_NAME_KEY);
+          String oldName = oldNameProvider.fun(module);
           for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurations(myConfigurationType)) {
             for (SelectedBundle bundle : ((OsgiRunConfiguration)runConfiguration).getBundlesToDeploy()) {
               if (bundle.isModule() && bundle.getName().equals(oldName)) {
