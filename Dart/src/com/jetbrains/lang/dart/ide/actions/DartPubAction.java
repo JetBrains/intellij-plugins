@@ -56,7 +56,7 @@ public class DartPubAction extends AnAction {
     presentation.setEnabled(enabled);
 
     if (enabled) {
-      boolean update = DartResolveUtil.findPackagesFolder(psiFile) != null;
+      boolean update = DartResolveUtil.findPackagesFolderByFile(psiFile.getVirtualFile()) != null;
       presentation.setText(update ? DartBundle.message("dart.pub.update") : DartBundle.message("dart.pub.install"));
     }
   }

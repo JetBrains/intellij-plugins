@@ -1043,7 +1043,7 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  private static VirtualFile findPackagesFolderByFile(@Nullable VirtualFile file) {
+  public static VirtualFile findPackagesFolderByFile(@Nullable VirtualFile file) {
     final VirtualFile folder = file == null ? null : file.getParent();
     return folder == null ? null : folder.findChild("packages");
   }
