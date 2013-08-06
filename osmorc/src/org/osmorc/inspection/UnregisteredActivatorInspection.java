@@ -87,7 +87,7 @@ public class UnregisteredActivatorInspection extends LocalInspectionTool {
     return new JavaElementVisitor() {
       @Override
       public void visitClass(PsiClass psiClass) {
-        if (OsmorcFacet.hasOsmorcFacet(psiClass)) {
+        if (!psiClass.hasModifierProperty(PsiModifier.ABSTRACT) && OsmorcFacet.hasOsmorcFacet(psiClass)) {
           PsiType[] types = psiClass.getSuperTypes();
           for (PsiType type : types) {
             if (type.equalsToText(BundleActivator.class.getName())) {
