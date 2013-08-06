@@ -51,7 +51,7 @@ public class FlexBreakpointType extends XLineBreakpointType<XBreakpointPropertie
   }
 
   @Override
-  public XDebuggerEditorsProvider getEditorsProvider() {
+  public XDebuggerEditorsProvider getEditorsProvider(@NotNull XLineBreakpoint<XBreakpointProperties> breakpoint, @NotNull Project project) {
     return myEditorProvider;
   }
 
