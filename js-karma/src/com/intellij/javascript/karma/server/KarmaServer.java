@@ -108,7 +108,7 @@ public class KarmaServer {
       }
     });
 
-    registerStreamEventHandler(new KarmaWatcher().getEventHandler());
+    registerStreamEventHandler(new KarmaWatcher(this).getEventHandler());
 
     myProcessOutputArchive.addStreamEventListener(new StreamEventListener() {
       @Override
