@@ -7,8 +7,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.*;
 import com.intellij.javascript.karma.KarmaConfig;
-import com.intellij.javascript.karma.coverage.KarmaCoverageSession;
-import com.intellij.javascript.karma.util.GsonUtil;
+import com.intellij.javascript.karma.coverage.KarmaCoveragePeer;
 import com.intellij.javascript.karma.util.ProcessOutputArchive;
 import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.openapi.Disposable;
@@ -17,8 +16,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +38,7 @@ public class KarmaServer {
   private final ProcessOutputArchive myProcessOutputArchive;
   private final KarmaJsSourcesLocator myKarmaJsSourcesLocator;
   private final KarmaServerState myState;
+  private final KarmaCoveragePeer myCoveragePeer = new KarmaCoveragePeer();
 
   private final AtomicBoolean myOnReadyFired = new AtomicBoolean(false);
   private boolean myOnReadyExecuted = false;
@@ -49,9 +47,7 @@ public class KarmaServer {
   private final List<KarmaServerTerminatedListener> myDoListWhenTerminated = Lists.newCopyOnWriteArrayList();
   private final List<Runnable> myDoListWhenReadyWithCapturedBrowser = Lists.newCopyOnWriteArrayList();
 
-  private volatile KarmaCoverageSession myActiveCoverageSession;
   private final Map<String, StreamEventHandler> myHandlers = ContainerUtil.newConcurrentMap();
-  private final File myCoverageTempDir;
 
   private volatile KarmaConfig myKarmaConfig;
 
@@ -60,7 +56,6 @@ public class KarmaServer {
                      @NotNull File configurationFile) throws IOException {
     /* 'nodeInterpreter', 'karmaPackageDir' and 'configurationFile'
         are already checked in KarmaRunConfiguration.checkConfiguration */
-    myCoverageTempDir = FileUtil.createTempDirectory("karma-intellij-coverage-", null);
     myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(karmaPackageDir);
     myState = new KarmaServerState(this);
     final ProcessHandler processHandler = startServer(nodeInterpreter, configurationFile);
@@ -78,23 +73,7 @@ public class KarmaServer {
   }
 
   private void registerStreamEventHandlers() {
-    registerStreamEventHandler(new StreamEventHandler() {
-      @NotNull
-      @Override
-      public String getEventType() {
-        return "coverageFinished";
-      }
-
-      @Override
-      public void handle(@NotNull JsonElement eventBody) {
-        KarmaCoverageSession coverageSession = myActiveCoverageSession;
-        myActiveCoverageSession = null;
-        if (coverageSession != null) {
-          String path = GsonUtil.asString(eventBody);
-          coverageSession.onCoverageSessionFinished(new File(path));
-        }
-      }
-    });
+    registerStreamEventHandler(myCoveragePeer.getStreamEventHandler());
     registerStreamEventHandler(new StreamEventHandler() {
       @NotNull
       @Override
@@ -135,6 +114,11 @@ public class KarmaServer {
   }
 
   @NotNull
+  public KarmaCoveragePeer getCoveragePeer() {
+    return myCoveragePeer;
+  }
+
+  @NotNull
   public KarmaJsSourcesLocator getKarmaJsSourcesLocator() {
     return myKarmaJsSourcesLocator;
   }
@@ -153,7 +137,7 @@ public class KarmaServer {
     commandLine.addParameter(serverFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaJsSourcesLocator.getKarmaPackageDir().getAbsolutePath());
     commandLine.addParameter("--configFile=" + configurationFile.getAbsolutePath());
-    commandLine.addParameter("--coverageTempDir=" + myCoverageTempDir.getAbsolutePath());
+    commandLine.addParameter("--coverageTempDir=" + myCoveragePeer.getCoverageTempDir());
 
     LOG.info("Starting karma server: " + commandLine.getCommandLineString());
     final Process process;
@@ -172,7 +156,7 @@ public class KarmaServer {
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(final ProcessEvent event) {
-        FileUtil.asyncDelete(myCoverageTempDir);
+        FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
         UIUtil.invokeLaterIfNeeded(new Runnable() {
           @Override
           public void run() {
@@ -311,20 +295,6 @@ public class KarmaServer {
   @NotNull
   public Collection<String> getCapturedBrowsers() {
     return myState.getCapturedBrowsers();
-  }
-
-  public void startCoverageSession(@NotNull KarmaCoverageSession coverageSession) {
-    // clear directory
-    if (myCoverageTempDir.isDirectory()) {
-      File[] children = ObjectUtils.notNull(myCoverageTempDir.listFiles(), ArrayUtil.EMPTY_FILE_ARRAY);
-      for (File child : children) {
-        FileUtil.delete(child);
-      }
-    }
-    else {
-      FileUtil.createDirectory(myCoverageTempDir);
-    }
-    myActiveCoverageSession = coverageSession;
   }
 
 }

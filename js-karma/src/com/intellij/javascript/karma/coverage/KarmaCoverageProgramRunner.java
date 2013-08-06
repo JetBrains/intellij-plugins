@@ -92,7 +92,8 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
     if (coverageFilePath != null) {
-      karmaServer.startCoverageSession(new KarmaCoverageSession() {
+      KarmaCoveragePeer coveragePeer = karmaServer.getCoveragePeer();
+      coveragePeer.startCoverageSession(new KarmaCoverageSession() {
         public void onCoverageSessionFinished(@NotNull final File lcovFile) {
           UIUtil.invokeLaterIfNeeded(new Runnable() {
             @Override
