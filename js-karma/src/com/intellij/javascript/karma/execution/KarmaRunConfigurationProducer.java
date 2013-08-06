@@ -78,7 +78,7 @@ public class KarmaRunConfigurationProducer extends RunConfigurationProducer<Karm
     String path = FileUtil.toSystemDependentName(configVirtualFile.getPath());
     KarmaRunSettings runSettingsPattern = new KarmaRunSettings.Builder().setConfigPath(path).build();
 
-    KarmaRunSettings runSettingsCandidate = configuration.getRunSetting();
+    KarmaRunSettings runSettingsCandidate = configuration.getRunSettings();
     return runSettingsCandidate.getConfigPath().equals(runSettingsPattern.getConfigPath());
   }
 

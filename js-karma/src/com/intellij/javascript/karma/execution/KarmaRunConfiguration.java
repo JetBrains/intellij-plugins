@@ -112,7 +112,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   }
 
   @NotNull
-  public KarmaRunSettings getRunSetting() {
+  public KarmaRunSettings getRunSettings() {
     return myRunSettings;
   }
 
@@ -129,7 +129,7 @@ public class KarmaRunConfiguration extends LocatableConfigurationBase implements
   @Nullable
   @Override
   public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
-    return null;
+    return KarmaRunConfigurationRefactoringHandler.getRefactoringElementListener(this, element);
   }
 
   private static class GlobalSettings {
