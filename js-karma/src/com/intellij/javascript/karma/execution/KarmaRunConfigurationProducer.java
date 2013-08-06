@@ -1,12 +1,13 @@
 package com.intellij.javascript.karma.execution;
 
 import com.intellij.execution.Location;
-import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.execution.actions.ConfigurationFromContext;
+import com.intellij.execution.actions.RunConfigurationProducer;
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.lang.javascript.psi.JSFile;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -18,82 +19,74 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Sergey Simonchik
  */
-public class KarmaRunConfigurationProducer extends RuntimeConfigurationProducer {
-
-  private PsiElement mySourceElement;
+public class KarmaRunConfigurationProducer extends RunConfigurationProducer<KarmaRunConfiguration> {
 
   public KarmaRunConfigurationProducer() {
     super(KarmaConfigurationType.getInstance());
   }
 
   @Override
-  public PsiElement getSourceElement() {
-    return mySourceElement;
-  }
-
-  @Nullable
-  @Override
-  protected RunnerAndConfigurationSettings createConfigurationByElement(Location location, ConfigurationContext context) {
+  protected boolean setupConfigurationFromContext(KarmaRunConfiguration configuration,
+                                                  ConfigurationContext context,
+                                                  Ref<PsiElement> sourceElement) {
+    if (configuration == null) {
+      return false;
+    }
     RunConfiguration original = context.getOriginalConfiguration(null);
     if (original != null && !ConfigurationTypeUtil.equals(original.getType(), KarmaConfigurationType.getInstance())) {
-      return null;
+      return false;
     }
-    JSFile jsFile = getConfigJsFile(location);
+
+    JSFile jsFile = getConfigJsFile(context.getLocation());
     if (jsFile == null) {
-      return null;
-    }
-    mySourceElement = jsFile;
-
-    final RunnerAndConfigurationSettings runnerSettings = cloneTemplateConfiguration(location.getProject(), context);
-    KarmaRunConfiguration runConfiguration = ObjectUtils.tryCast(runnerSettings.getConfiguration(), KarmaRunConfiguration.class);
-    if (runConfiguration == null) {
-      return null;
+      return false;
     }
 
-    VirtualFile vFile = jsFile.getVirtualFile();
-    if (vFile == null) {
-      return null;
+    VirtualFile configVirtualFile = jsFile.getVirtualFile();
+    if (configVirtualFile == null) {
+      return false;
     }
-    String path = FileUtil.toSystemDependentName(vFile.getPath());
+
+    sourceElement.set(jsFile);
+    setupKarmaConfiguration(configuration, configVirtualFile);
+
+    return true;
+  }
+
+  private static void setupKarmaConfiguration(@NotNull KarmaRunConfiguration configuration, @NotNull VirtualFile configVirtualFile) {
+    String path = FileUtil.toSystemDependentName(configVirtualFile.getPath());
     KarmaRunSettings settings = new KarmaRunSettings.Builder().setConfigPath(path).build();
-    runConfiguration.setRunSettings(settings);
+    configuration.setRunSettings(settings);
 
-    String name = runConfiguration.suggestedName();
-    runConfiguration.setName(name);
-    runnerSettings.setName(name);
-
-    return runnerSettings;
+    String name = configuration.suggestedName();
+    configuration.setName(name);
   }
 
-  @Nullable
   @Override
-  protected RunnerAndConfigurationSettings findExistingByElement(Location location,
-                                                                 @NotNull RunnerAndConfigurationSettings[] existingConfigurations,
-                                                                 ConfigurationContext context) {
-    JSFile jsFile = getConfigJsFile(location);
+  public boolean isConfigurationFromContext(KarmaRunConfiguration configuration, ConfigurationContext context) {
+    if (configuration == null) {
+      return false;
+    }
+    JSFile jsFile = getConfigJsFile(context.getLocation());
     if (jsFile == null) {
-      return null;
+      return false;
     }
-    VirtualFile vFile = jsFile.getVirtualFile();
-    if (vFile == null) {
-      return null;
+    VirtualFile configVirtualFile = jsFile.getVirtualFile();
+    if (configVirtualFile == null) {
+      return false;
     }
-    String path = FileUtil.toSystemDependentName(vFile.getPath());
+    String path = FileUtil.toSystemDependentName(configVirtualFile.getPath());
     KarmaRunSettings runSettingsPattern = new KarmaRunSettings.Builder().setConfigPath(path).build();
-    for (RunnerAndConfigurationSettings candidateRaCSettings : existingConfigurations) {
-      KarmaRunConfiguration runConfiguration = ObjectUtils.tryCast(candidateRaCSettings.getConfiguration(), KarmaRunConfiguration.class);
-      if (runConfiguration != null) {
-        KarmaRunSettings runSettingsCandidate = runConfiguration.getRunSetting();
-        if (runSettingsCandidate.getConfigPath().equals(runSettingsPattern.getConfigPath())) {
-          return candidateRaCSettings;
-        }
-      }
-    }
-    return null;
+
+    KarmaRunSettings runSettingsCandidate = configuration.getRunSettings();
+    return runSettingsCandidate.getConfigPath().equals(runSettingsPattern.getConfigPath());
   }
 
   @Nullable
-  private static JSFile getConfigJsFile(@NotNull Location location) {
+  private static JSFile getConfigJsFile(@Nullable Location location) {
+    if (location == null) {
+      return null;
+    }
     PsiElement element = location.getPsiElement();
     final JSFile jsFile;
     if (element instanceof PsiFile) {
@@ -109,7 +102,7 @@ public class KarmaRunConfigurationProducer extends RuntimeConfigurationProducer 
   }
 
   @Override
-  public int compareTo(Object o) {
-    return PREFERED;
+  public boolean isPreferredConfiguration(ConfigurationFromContext self, ConfigurationFromContext other) {
+    return true;
   }
 }

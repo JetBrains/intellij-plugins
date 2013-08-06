@@ -194,7 +194,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
 
   @Override
   protected void resetEditorFrom(@NotNull KarmaRunConfiguration runConfiguration) {
-    KarmaRunSettings runSettings = runConfiguration.getRunSetting();
+    KarmaRunSettings runSettings = runConfiguration.getRunSettings();
 
     String nodeInterpreterPath = KarmaGlobalSettingsUtil.getNodeInterpreterPath();
     setTextAndAddToHistory(myNodeInterpreterPathTextFieldWithBrowseButton.getChildComponent(), nodeInterpreterPath);
