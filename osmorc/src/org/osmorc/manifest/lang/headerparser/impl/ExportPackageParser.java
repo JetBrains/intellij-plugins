@@ -24,10 +24,12 @@
  */
 package org.osmorc.manifest.lang.headerparser.impl;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PackageReferenceSet;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PsiPackageReference;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.ManifestConstants;
 import org.osmorc.manifest.lang.ManifestTokenType;
@@ -35,6 +37,9 @@ import org.osmorc.manifest.lang.psi.Attribute;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.psi.ManifestToken;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -51,8 +56,15 @@ public class ExportPackageParser extends AbstractHeaderParserImpl {
     else if (headerValuePart.getParent() instanceof Attribute) {
       final Attribute attribute = (Attribute)headerValuePart.getParent();
       if (ManifestConstants.Attributes.USES.equals(attribute.getName())) {
-
-        return packageReferences(headerValuePart);
+        List<PsiPackageReference> references = new ArrayList<PsiPackageReference>();
+        for (ASTNode astNode : headerValuePart.getNode().getChildren(TokenSet.create(ManifestTokenType.HEADER_VALUE_PART))) {
+          if (astNode instanceof ManifestToken) {
+            ManifestToken manifestToken = (ManifestToken)astNode;
+            PackageReferenceSet referenceSet = new PackageReferenceSet(manifestToken.getText(), manifestToken, 0);
+            references.addAll(referenceSet.getReferences());
+          }
+        }
+        return references.toArray(new PsiPackageReference[references.size()]);
       }
     }
     return EMPTY_PSI_REFERENCE_ARRAY;
