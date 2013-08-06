@@ -108,6 +108,8 @@ public class KarmaServer {
       }
     });
 
+    registerStreamEventHandler(new KarmaWatcher().getEventHandler());
+
     myProcessOutputArchive.addStreamEventListener(new StreamEventListener() {
       @Override
       public void on(@NotNull String eventType, @NotNull String eventBody) {
@@ -137,7 +139,7 @@ public class KarmaServer {
     return myKarmaJsSourcesLocator;
   }
 
-  void registerStreamEventHandler(@NotNull StreamEventHandler handler) {
+  public void registerStreamEventHandler(@NotNull StreamEventHandler handler) {
     myHandlers.put(handler.getEventType(), handler);
   }
 
