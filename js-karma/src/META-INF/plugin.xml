@@ -32,7 +32,7 @@
                      level="WARNING"
                      implementationClass="com.intellij.javascript.karma.config.KarmaConfigFileInspection"
     />
-    <configurationProducer implementation="com.intellij.javascript.karma.execution.KarmaRunConfigurationProducer"/>
+    <runConfigurationProducer implementation="com.intellij.javascript.karma.execution.KarmaRunConfigurationProducer"/>
     <projectService serviceImplementation="com.intellij.javascript.karma.execution.KarmaPackageDirSetting"/>
   </extensions>
 
