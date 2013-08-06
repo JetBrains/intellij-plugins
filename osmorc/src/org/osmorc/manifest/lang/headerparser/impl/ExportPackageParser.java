@@ -24,36 +24,59 @@
  */
 package org.osmorc.manifest.lang.headerparser.impl;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.PackageReferenceSet;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.PsiPackageReference;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.manifest.ManifestConstants;
+import org.osmorc.manifest.lang.ManifestTokenType;
 import org.osmorc.manifest.lang.psi.Attribute;
 import org.osmorc.manifest.lang.psi.Clause;
-import org.osmorc.manifest.lang.psi.Directive;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.osmorc.manifest.lang.psi.ManifestToken;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ExportPackageParser extends AbstractHeaderParserImpl {
 
-  private final ExportPackageClauseParser clauseParser = new ExportPackageClauseParser();
-  private final ExportPackageAttributeParser attributeParser = new ExportPackageAttributeParser();
-  private final ExportPackageDirectiveParser directiveParser = new ExportPackageDirectiveParser();
-
   public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
     if (headerValuePart.getParent() instanceof Clause) {
-      return clauseParser.getReferences(headerValuePart);
+      final PsiElement element = headerValuePart.getOriginalElement();
+      if (isPackageRef(element.getPrevSibling())) {
+        return packageReferences(headerValuePart);
+      }
     }
     else if (headerValuePart.getParent() instanceof Attribute) {
-      return attributeParser.getReferences(headerValuePart);
-    }
-    else if (headerValuePart.getParent() instanceof Directive) {
-      return directiveParser.getReferences(headerValuePart);
+      final Attribute attribute = (Attribute)headerValuePart.getParent();
+      if (ManifestConstants.Attributes.USES.equals(attribute.getName())) {
+
+        return packageReferences(headerValuePart);
+      }
     }
     return EMPTY_PSI_REFERENCE_ARRAY;
   }
 
   public boolean isSimpleHeader() {
     return false;
+  }
+
+  private static PsiReference[] packageReferences(HeaderValuePart headerValuePart) {
+    PackageReferenceSet referenceSet = new PackageReferenceSet(headerValuePart.getUnwrappedText(), headerValuePart, 0);
+    return referenceSet.getReferences().toArray(new PsiPackageReference[referenceSet.getReferences().size()]);
+  }
+
+  private static boolean isPackageRef(final PsiElement element) {
+    final boolean result;
+    if (element instanceof ManifestToken) {
+      ManifestToken manifestToken = (ManifestToken)element;
+      result = manifestToken.getTokenType() != ManifestTokenType.SEMICOLON;
+    }
+    else {
+      result = true;
+    }
+
+    return result;
   }
 }

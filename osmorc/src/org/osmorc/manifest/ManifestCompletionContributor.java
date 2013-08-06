@@ -28,11 +28,15 @@ package org.osmorc.manifest;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.patterns.PlatformPatterns;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.manifest.completion.ExportPackageCompletionProvider;
 import org.osmorc.manifest.lang.ManifestLanguage;
 import org.osmorc.manifest.lang.ManifestTokenType;
 import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
+import org.osmorc.manifest.lang.psi.Directive;
+import org.osmorc.manifest.lang.psi.Header;
 
 /**
  * Completion contributor which adds the name of all known headers to the autocomplete list.
@@ -42,19 +46,68 @@ import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
  * @version $Id:$
  */
 public class ManifestCompletionContributor extends CompletionContributor {
+
   public ManifestCompletionContributor() {
     extend(CompletionType.BASIC,
            PlatformPatterns.psiElement(ManifestTokenType.HEADER_NAME).withLanguage(ManifestLanguage.INSTANCE),
            new CompletionProvider<CompletionParameters>() {
 
-             public void addCompletions(@NotNull CompletionParameters completionparameters,
-                                        ProcessingContext processingcontext,
-                                        @NotNull CompletionResultSet completionresultset) {
+             public void addCompletions(@NotNull CompletionParameters completionParameters,
+                                        ProcessingContext processingContext,
+                                        @NotNull CompletionResultSet completionResultSet) {
                for (String availableHeader : HeaderParserRepository.getInstance().getAllHeaderNames()) {
-                 completionresultset.addElement(LookupElementBuilder.create(availableHeader));
+                 completionResultSet.addElement(LookupElementBuilder.create(availableHeader));
                }
              }
            }
+    );
+
+    extend(CompletionType.BASIC,
+           PlatformPatterns.psiElement(ManifestTokenType.HEADER_VALUE_PART).withLanguage(ManifestLanguage.INSTANCE)
+             .withSuperParent(2, PlatformPatterns.psiElement(Directive.class).withName(ManifestConstants.Directives.NO_IMPORT))
+             .withSuperParent(4, PlatformPatterns.psiElement(Header.class).withName(ManifestConstants.Headers.EXPORT_PACKAGE)),
+           new CompletionProvider<CompletionParameters>() {
+             public void addCompletions(@NotNull CompletionParameters completionParameters,
+                                        ProcessingContext processingContext,
+                                        @NotNull CompletionResultSet completionResultSet) {
+               PsiElement psiElement = completionParameters.getOriginalPosition();
+               if (psiElement!= null && psiElement.getPrevSibling() == null) {
+                 completionResultSet.addElement(LookupElementBuilder.create("true"));
+                 completionResultSet.addElement(LookupElementBuilder.create("false"));
+               }
+             }
+           }
+    );
+
+    extend(CompletionType.BASIC,
+           PlatformPatterns.psiElement(ManifestTokenType.HEADER_VALUE_PART).withLanguage(ManifestLanguage.INSTANCE)
+             .withSuperParent(2, PlatformPatterns.psiElement(Directive.class).withName(ManifestConstants.Directives.SPLIT_PACKAGE))
+             .withSuperParent(4, PlatformPatterns.psiElement(Header.class).withName(ManifestConstants.Headers.EXPORT_PACKAGE)),
+           new CompletionProvider<CompletionParameters>() {
+             public void addCompletions(@NotNull CompletionParameters completionParameters,
+                                        ProcessingContext processingContext,
+                                        @NotNull CompletionResultSet completionResultSet) {
+               PsiElement psiElement = completionParameters.getOriginalPosition();
+               if (psiElement != null && psiElement.getPrevSibling() == null) {
+                 completionResultSet.addElement(LookupElementBuilder.create("merge-first"));
+                 completionResultSet.addElement(LookupElementBuilder.create("merge-last"));
+                 completionResultSet.addElement(LookupElementBuilder.create("first"));
+                 completionResultSet.addElement(LookupElementBuilder.create("error"));
+               }
+             }
+           }
+    );
+
+    extend(CompletionType.BASIC,
+           PlatformPatterns.psiElement(ManifestTokenType.HEADER_VALUE_PART).withLanguage(ManifestLanguage.INSTANCE)
+             .withSuperParent(4, PlatformPatterns.psiElement(Header.class).withName(ManifestConstants.Headers.EXPORT_PACKAGE)),
+           new ExportPackageCompletionProvider()
+    );
+
+    extend(CompletionType.BASIC,
+           PlatformPatterns.psiElement(ManifestTokenType.HEADER_VALUE_PART).withLanguage(ManifestLanguage.INSTANCE)
+             .withSuperParent(3, PlatformPatterns.psiElement(Header.class).withName(ManifestConstants.Headers.EXPORT_PACKAGE)),
+           new ExportPackageCompletionProvider()
     );
   }
 }
