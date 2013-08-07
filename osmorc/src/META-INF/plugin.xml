@@ -110,6 +110,8 @@
                         serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.ExportPackageParser"/>
     <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.ImportPackageParser"
                         serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.ImportPackageParser"/>
+    <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.PrivatePackageParser"
+                        serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.PrivatePackageParser"/>
     <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.RequireBundleParser"
                         serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.RequireBundleParser"/>
     <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.BundleActivatorParser"
@@ -167,6 +169,8 @@
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassInDefaultPackageInspection"/>
     <!--<localInspection shortName="osmorcClassUnavailable" displayName="Class not available" groupName="OSGi"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassUnavailableInspection"/>-->
+    <localInspection shortName="osmorcUnknownManifestPackage" displayName="Unknown import package" groupName="OSGi"
+                     enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.UnknownManifectPackageInspection"/>
 
     <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
     <framework.detector implementation="org.osmorc.facet.OsmorcFrameworkDetector"/>

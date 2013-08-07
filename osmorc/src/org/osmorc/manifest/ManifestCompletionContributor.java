@@ -32,6 +32,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.completion.ExportPackageCompletionProvider;
+import org.osmorc.manifest.completion.ImportPackageCompletionProvider;
 import org.osmorc.manifest.lang.ManifestLanguage;
 import org.osmorc.manifest.lang.ManifestTokenType;
 import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
@@ -109,5 +110,12 @@ public class ManifestCompletionContributor extends CompletionContributor {
              .withSuperParent(3, PlatformPatterns.psiElement(Header.class).withName(ManifestConstants.Headers.EXPORT_PACKAGE)),
            new ExportPackageCompletionProvider()
     );
+
+    extend(CompletionType.BASIC,
+           PlatformPatterns.psiElement(ManifestTokenType.HEADER_VALUE_PART).withLanguage(ManifestLanguage.INSTANCE)
+             .withSuperParent(4, PlatformPatterns.psiElement(Header.class).withName(ManifestConstants.Headers.IMPORT_PACKAGE)),
+           new ImportPackageCompletionProvider()
+    );
+
   }
 }

@@ -47,6 +47,7 @@ public class OSGiManifestHeaderProviderRepository implements HeaderParserProvide
                                               BundleVersionParser bundleVersionParser,
                                               ExportPackageParser exportPackageParser,
                                               ImportPackageParser importPackageParser,
+                                              PrivatePackageParser privatePackageParser,
                                               RequireBundleParser requireBundleParser,
                                               BundleActivatorParser bundleActivatorParser) {
     AbstractHeaderParserImpl simpleHeaderParser = AbstractHeaderParserImpl.SIMPLE;
@@ -58,6 +59,7 @@ public class OSGiManifestHeaderProviderRepository implements HeaderParserProvide
     headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_VERSION, bundleVersionParser));
     headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.EXPORT_PACKAGE, exportPackageParser));
     headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.IMPORT_PACKAGE, importPackageParser));
+    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.PRIVATE_PACKAGE, privatePackageParser));
     headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.REQUIRE_BUNDLE, requireBundleParser));
     headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_REQUIRED_EXECUTION_ENV, genericComplexHeaderParser));
     headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.FRAGMENT_HOST, simpleHeaderParser));

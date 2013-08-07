@@ -8,13 +8,14 @@ public class ManifestConstants {
   private ManifestConstants() {
   }
 
-  public class Headers {
+  public static class Headers {
     public static final String BUNDLE_MANIFEST_VERSION = "Bundle-ManifestVersion";
     public static final String BUNDLE_NAME = "Bundle-Name";
     public static final String BUNDLE_SYMBOLIC_NAME = "Bundle-SymbolicName";
     public static final String BUNDLE_VERSION = "Bundle-Version";
     public static final String EXPORT_PACKAGE = "Export-Package";
     public static final String IMPORT_PACKAGE = "Import-Package";
+    public static final String PRIVATE_PACKAGE = "Private-Package";
     public static final String REQUIRE_BUNDLE = "Require-Bundle";
     public static final String BUNDLE_REQUIRED_EXECUTION_ENV = "Bundle-RequiredExecutionEnvironment";
     public static final String FRAGMENT_HOST = "Fragment-Host";
@@ -39,7 +40,7 @@ public class ManifestConstants {
     }
   }
 
-  public class Attributes {
+  public static class Attributes {
     public final static String USES = "uses";
     public final static String VERSION = "version";
 
@@ -47,9 +48,10 @@ public class ManifestConstants {
     }
   }
 
-  public class Directives {
+  public static class Directives {
     public final static String NO_IMPORT = "-noimport";
     public final static String SPLIT_PACKAGE = "-split-package";
+    public final static String RESOLUTION = "resolution";
 
     private Directives() {
     }
