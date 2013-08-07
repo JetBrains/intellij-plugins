@@ -62,9 +62,14 @@ public class ActionScriptTypeEvaluator extends JSTypeEvaluator {
           text = "*";
         } else {
           BaseJSSymbolProcessor.SimpleTypeProcessor subProcessor = new BaseJSSymbolProcessor.SimpleTypeProcessor();
-          evaluateTypes(methodExpr, myContext.targetFile, subProcessor);
+          JSTypeEvaluator.evaluateTypes(methodExpr, myContext.targetFile, subProcessor);
 
-          final JSType type = subProcessor.getType();
+          JSType type = subProcessor.getType();
+          if (type != JSType.ANY && JSTypeUtils.hasFunctionType(type)) {
+            type = JSType.ANY;
+            text = "*";
+          }
+
           if (type != JSType.NO_TYPE && (type != JSType.ANY || isNotValidType(text))) {
             text = "Class".equals(type.getTypeText())? "*": type.getTypeText();
           }
