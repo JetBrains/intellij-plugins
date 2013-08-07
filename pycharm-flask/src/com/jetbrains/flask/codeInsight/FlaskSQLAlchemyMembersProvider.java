@@ -45,6 +45,7 @@ public class FlaskSQLAlchemyMembersProvider implements PyClassMembersProvider {
 
   public static final String FLASK_SQLALCHEMY = "flask_sqlalchemy.SQLAlchemy";
 
+  @NotNull
   @Override
   public Collection<PyDynamicMember> getMembers(PyClassType clazz, PsiElement location) {
     if (FLASK_SQLALCHEMY.equals(clazz.getClassQName())) {
