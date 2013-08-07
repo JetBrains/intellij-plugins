@@ -91,6 +91,7 @@ public class KarmaRunProfileState implements RunProfileState {
 
       return null;
     }
+    server.getWatcher().flush();
     KarmaExecutionSession session = new KarmaExecutionSession(myProject,
                                                               myExecutionEnvironment,
                                                               executor,

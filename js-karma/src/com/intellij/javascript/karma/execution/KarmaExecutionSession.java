@@ -3,7 +3,6 @@ package com.intellij.javascript.karma.execution;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.execution.process.KillableColoredProcessHandler;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
@@ -63,7 +62,7 @@ public class KarmaExecutionSession {
   private SMTRunnerConsoleView createSMTRunnerConsoleView() {
     KarmaRunConfiguration runConfiguration = (KarmaRunConfiguration) myEnvironment.getRunProfile();
     TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(
-      new RuntimeConfigurationProducer.DelegatingRuntimeConfiguration<KarmaRunConfiguration>(runConfiguration),
+      runConfiguration,
       FRAMEWORK_NAME,
       myExecutor
     );

@@ -39,6 +39,7 @@ public class KarmaServer {
   private final KarmaJsSourcesLocator myKarmaJsSourcesLocator;
   private final KarmaServerState myState;
   private final KarmaCoveragePeer myCoveragePeer = new KarmaCoveragePeer();
+  private final KarmaWatcher myWatcher;
 
   private final AtomicBoolean myOnReadyFired = new AtomicBoolean(false);
   private boolean myOnReadyExecuted = false;
@@ -60,8 +61,10 @@ public class KarmaServer {
     myState = new KarmaServerState(this);
     final ProcessHandler processHandler = startServer(nodeInterpreter, configurationFile);
     myProcessOutputArchive = new ProcessOutputArchive(processHandler);
+    myWatcher = new KarmaWatcher(this);
     registerStreamEventHandlers();
     myProcessOutputArchive.startNotify();
+
     Disposer.register(ApplicationManager.getApplication(), new Disposable() {
       @Override
       public void dispose() {
@@ -87,7 +90,7 @@ public class KarmaServer {
       }
     });
 
-    registerStreamEventHandler(new KarmaWatcher(this).getEventHandler());
+    registerStreamEventHandler(myWatcher.getEventHandler());
 
     myProcessOutputArchive.addStreamEventListener(new StreamEventListener() {
       @Override
@@ -119,6 +122,11 @@ public class KarmaServer {
   }
 
   @NotNull
+  public KarmaWatcher getWatcher() {
+    return myWatcher;
+  }
+
+  @NotNull
   public KarmaJsSourcesLocator getKarmaJsSourcesLocator() {
     return myKarmaJsSourcesLocator;
   }
@@ -134,6 +142,7 @@ public class KarmaServer {
     commandLine.setWorkDirectory(configurationFile.getParentFile());
     commandLine.setExePath(nodeInterpreter.getAbsolutePath());
     File serverFile = myKarmaJsSourcesLocator.getServerAppFile();
+    //commandLine.addParameter("--debug=34598");
     commandLine.addParameter(serverFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaJsSourcesLocator.getKarmaPackageDir().getAbsolutePath());
     commandLine.addParameter("--configFile=" + configurationFile.getAbsolutePath());

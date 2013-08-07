@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -21,10 +22,14 @@ public class KarmaWatcher {
 
   private static final Logger LOG = Logger.getInstance(KarmaWatcher.class);
   private static final Pattern BASE_DIR_PATTERN = Pattern.compile("/[^/]*[*(].*$");
+
   private final KarmaServer myServer;
+  private final KarmaChangedFilesManager myChangedFilesManager;
+  private final List<VirtualFile> myRoots = ContainerUtil.newArrayList();
 
   public KarmaWatcher(@NotNull KarmaServer server) {
     myServer = server;
+    myChangedFilesManager = new KarmaChangedFilesManager(server);
   }
 
   private void startWatching(@NotNull final List<String> paths) {
@@ -62,37 +67,64 @@ public class KarmaWatcher {
     });
   }
 
+  private boolean insideRoots(@NotNull VirtualFile file) {
+    for (VirtualFile root : myRoots) {
+      if (VfsUtilCore.isAncestor(root, file, false)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private void listenForChanges(@NotNull LocalFileSystem fileSystem) {
     fileSystem.addVirtualFileListener(new VirtualFileListener() {
       @Override
       public void propertyChanged(VirtualFilePropertyEvent event) {
-        // ignored
+        if ("name".equals(event.getPropertyName())) {
+          VirtualFile parent = event.getParent();
+          if (parent != null) {
+            String oldPath = FileUtil.join(parent.getPath(), event.getOldValue().toString());
+            String newPath = FileUtil.join(parent.getPath(), event.getNewValue().toString());
+            if (insideRoots(parent)) {
+              myChangedFilesManager.onFileRemoved(oldPath);
+              myChangedFilesManager.onFileAdded(newPath);
+            }
+          }
+        }
       }
 
       @Override
       public void contentsChanged(VirtualFileEvent event) {
-        System.out.println("contentsChanged(" + event.getFile().getPath() + ")");
+        VirtualFile file = event.getFile();
+        if (insideRoots(file)) {
+          myChangedFilesManager.onFileChanged(file);
+        }
       }
 
       @Override
       public void fileCreated(VirtualFileEvent event) {
-        System.out.println("fileCreated(" + event.getFile().getPath() + ")");
-
+        VirtualFile file = event.getFile();
+        if (insideRoots(file)) {
+          myChangedFilesManager.onFileAdded(file.getPath());
+        }
       }
 
       @Override
       public void fileDeleted(VirtualFileEvent event) {
-        System.out.println("fileDeleted(" + event.getFile().getPath() + ")");
+        VirtualFile file = event.getFile();
+        if (insideRoots(file)) {
+          myChangedFilesManager.onFileRemoved(file.getPath());
+        }
       }
 
       @Override
       public void fileMoved(VirtualFileMoveEvent event) {
-        System.out.println("fileMoved(" + event.getFile().getPath() + ")");
+        System.out.println("move " + event);
       }
 
       @Override
       public void fileCopied(VirtualFileCopyEvent event) {
-        System.out.println("fileCopied(" + event.getFile().getPath() + ")");
+        System.out.println("copy " + event);
       }
 
       @Override
@@ -118,7 +150,7 @@ public class KarmaWatcher {
   }
 
   @Nullable
-  private static LocalFileSystem.WatchRequest doWatch(@NotNull LocalFileSystem fileSystem, @NotNull String path) {
+  private LocalFileSystem.WatchRequest doWatch(@NotNull LocalFileSystem fileSystem, @NotNull String path) {
     LOG.info("Starting watching " + path);
     String vfsPath = path.replace(File.separatorChar, '/');
     final VirtualFile file = fileSystem.findFileByPath(vfsPath);
@@ -146,7 +178,9 @@ public class KarmaWatcher {
     return watchRequest;
   }
 
-  private static LocalFileSystem.WatchRequest watchDirectory(@NotNull LocalFileSystem fileSystem, @NotNull VirtualFile dir) {
+  @Nullable
+  private LocalFileSystem.WatchRequest watchDirectory(@NotNull LocalFileSystem fileSystem, @NotNull VirtualFile dir) {
+    myRoots.add(dir);
     VfsUtilCore.visitChildrenRecursively(dir, new VirtualFileVisitor() {
       @Override
       public boolean visitFile(@NotNull VirtualFile file) {
@@ -167,7 +201,7 @@ public class KarmaWatcher {
       @NotNull
       @Override
       public String getEventType() {
-        return "config-file-patterns";
+        return "configFilePatterns";
       }
 
       @Override
@@ -181,6 +215,10 @@ public class KarmaWatcher {
         startWatching(paths);
       }
     };
+  }
+
+  public void flush() {
+    myChangedFilesManager.flush();
   }
 
 }
