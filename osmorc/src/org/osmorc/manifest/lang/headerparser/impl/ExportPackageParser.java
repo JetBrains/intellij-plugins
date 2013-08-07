@@ -55,7 +55,8 @@ public class ExportPackageParser extends AbstractHeaderParserImpl {
     }
     else if (headerValuePart.getParent() instanceof Attribute) {
       final Attribute attribute = (Attribute)headerValuePart.getParent();
-      if (ManifestConstants.Attributes.USES.equals(attribute.getName())) {
+      if (ManifestConstants.Attributes.USES.equals(attribute.getName()) &&
+          !ManifestConstants.Attributes.USES.equals(headerValuePart.getUnwrappedText())) {
         List<PsiPackageReference> references = new ArrayList<PsiPackageReference>();
         for (ASTNode astNode : headerValuePart.getNode().getChildren(TokenSet.create(ManifestTokenType.HEADER_VALUE_PART))) {
           if (astNode instanceof ManifestToken) {
