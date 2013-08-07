@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.facet;
 
 import com.intellij.openapi.application.Application;
@@ -38,25 +37,24 @@ import org.jetbrains.annotations.Nullable;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsmorcFacetRefactoringListenerProvider implements RefactoringElementListenerProvider {
-  private final OsmorcFacetUtil osmorcFacetUtil;
-  private final Application application;
+  private final Application myApplication;
 
-  public OsmorcFacetRefactoringListenerProvider(final OsmorcFacetUtil osmorcFacetUtil,
-                                                final Application application) {
-    this.osmorcFacetUtil = osmorcFacetUtil;
-    this.application = application;
+  public OsmorcFacetRefactoringListenerProvider(final Application application) {
+    myApplication = application;
   }
 
   @Nullable
   public RefactoringElementListener getListener(final PsiElement element) {
-    if (element instanceof PsiClass && osmorcFacetUtil.hasOsmorcFacet(element)) {
-      OsmorcFacet osmorcFacet = osmorcFacetUtil.getOsmorcFacet(element);
-      OsmorcFacetConfiguration osmorcFacetConfiguration = osmorcFacet.getConfiguration();
-      PsiClass psiClass = (PsiClass)element;
-      if (osmorcFacetConfiguration.isOsmorcControlsManifest() &&
-          osmorcFacetConfiguration.getBundleActivator() != null &&
-          osmorcFacetConfiguration.getBundleActivator().equals(psiClass.getQualifiedName())) {
-        return new ActivatorClassRefactoringListener(osmorcFacetConfiguration, application);
+    if (element instanceof PsiClass) {
+      OsmorcFacet osmorcFacet = OsmorcFacet.getInstance(element);
+      if (osmorcFacet != null) {
+        OsmorcFacetConfiguration osmorcFacetConfiguration = osmorcFacet.getConfiguration();
+        PsiClass psiClass = (PsiClass)element;
+        if (osmorcFacetConfiguration.isOsmorcControlsManifest() &&
+            osmorcFacetConfiguration.getBundleActivator() != null &&
+            osmorcFacetConfiguration.getBundleActivator().equals(psiClass.getQualifiedName())) {
+          return new ActivatorClassRefactoringListener(osmorcFacetConfiguration, myApplication);
+        }
       }
     }
 

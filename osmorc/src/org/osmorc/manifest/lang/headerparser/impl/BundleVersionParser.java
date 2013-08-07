@@ -26,6 +26,7 @@ package org.osmorc.manifest.lang.headerparser.impl;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.manifest.lang.headerparser.HeaderParser;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.valueparser.ValueParser;
 import org.osmorc.manifest.lang.valueparser.impl.VersionParser;
@@ -34,18 +35,20 @@ import org.osmorc.valueobject.Version;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class BundleVersionParser extends AbstractHeaderParserImpl {
-  private static final ValueParser<Version> VERSION_PARSER = new VersionParser();
+public class BundleVersionParser extends AbstractHeaderParser {
+  public static final HeaderParser INSTANCE = new BundleVersionParser();
 
+  private final ValueParser<Version> myVersionParser = new VersionParser();
+
+  private BundleVersionParser() { }
+
+  @Override
   public void annotate(@NotNull HeaderValuePart headerValue, @NotNull AnnotationHolder holder) {
-    getVersionParser().parseValue(headerValue, holder);
+    myVersionParser.parseValue(headerValue, holder);
   }
 
-  private static ValueParser<Version> getVersionParser() {
-    return VERSION_PARSER;
-  }
-
+  @Override
   public Object getValue(@NotNull HeaderValuePart headerValuePart) {
-    return getVersionParser().parseValue(headerValuePart, null);
+    return myVersionParser.parseValue(headerValuePart, null);
   }
 }

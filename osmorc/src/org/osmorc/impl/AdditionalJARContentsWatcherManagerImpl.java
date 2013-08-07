@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.impl;
 
 import com.intellij.openapi.module.Module;
@@ -33,17 +32,23 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.osmorc.AdditionalJARContentsWatcherManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
-import org.osmorc.facet.OsmorcFacetUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class AdditionalJARContentsWatcherManagerImpl implements AdditionalJARContentsWatcherManager {
-  public AdditionalJARContentsWatcherManagerImpl(Module module, OsmorcFacetUtil osmorcFacetUtil, LocalFileSystem fileSystem) {
+  private final LocalFileSystem _fileSystem;
+  private final Module _module;
+  private final List<VirtualFile> _additionalBundleJARContents;
+  private final List<LocalFileSystem.WatchRequest> _watchRequests;
+
+  public AdditionalJARContentsWatcherManagerImpl(Module module, LocalFileSystem fileSystem) {
     _module = module;
-    _osmorcFacetUtil = osmorcFacetUtil;
     _fileSystem = fileSystem;
     _additionalBundleJARContents = new ArrayList<VirtualFile>();
     _watchRequests = new ArrayList<LocalFileSystem.WatchRequest>();
@@ -52,8 +57,8 @@ public class AdditionalJARContentsWatcherManagerImpl implements AdditionalJARCon
   }
 
   public void updateWatcherSetup() {
-    if (_osmorcFacetUtil.hasOsmorcFacet(_module)) {
-      OsmorcFacet osmorcFacet = _osmorcFacetUtil.getOsmorcFacet(_module);
+    OsmorcFacet osmorcFacet = OsmorcFacet.getInstance(_module);
+    if (osmorcFacet != null) {
       List<VirtualFile> newAdditionalJARContents = new ArrayList<VirtualFile>();
 
       OsmorcFacetConfiguration osmorcFacetConfiguration = osmorcFacet.getConfiguration();
@@ -105,10 +110,4 @@ public class AdditionalJARContentsWatcherManagerImpl implements AdditionalJARCon
     _watchRequests.clear();
     _additionalBundleJARContents.clear();
   }
-
-  private final LocalFileSystem _fileSystem;
-  private final List<VirtualFile> _additionalBundleJARContents;
-  private final List<LocalFileSystem.WatchRequest> _watchRequests;
-  private final Module _module;
-  private final OsmorcFacetUtil _osmorcFacetUtil;
 }

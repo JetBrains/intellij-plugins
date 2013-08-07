@@ -89,64 +89,28 @@
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
-    <!-- Applications settings and application settings editors -->
-    <applicationService serviceInterface="org.osmorc.settings.ApplicationSettings"
-                        serviceImplementation="org.osmorc.settings.ApplicationSettings"/>
+    <!-- Applications services -->
+    <applicationService serviceImplementation="org.osmorc.settings.ApplicationSettings"/>
+    <applicationService serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
+    <applicationService serviceImplementation="org.osmorc.manifest.lang.headerparser.HeaderParserRepository"/>
+    <applicationService serviceImplementation="org.osmorc.obrimport.ObrProvider"/>
 
-    <!-- Framework integration -->
-    <applicationService serviceInterface="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"
-                        serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
-
-    <!-- Manifest header parsing and annotation -->
-    <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.HeaderParserRepository"
-                        serviceImplementation="org.osmorc.manifest.lang.headerparser.HeaderParserRepository"/>
-    <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.HeaderAnnotator"
-                        serviceImplementation="org.osmorc.manifest.lang.headerparser.HeaderAnnotator"/>
-    <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.BundleSymbolicNameParser"
-                        serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.BundleSymbolicNameParser"/>
-    <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.BundleVersionParser"
-                        serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.BundleVersionParser"/>
-    <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.ExportPackageParser"
-                        serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.ExportPackageParser"/>
-    <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.ImportPackageParser"
-                        serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.ImportPackageParser"/>
-    <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.PrivatePackageParser"
-                        serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.PrivatePackageParser"/>
-    <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.RequireBundleParser"
-                        serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.RequireBundleParser"/>
-    <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.BundleActivatorParser"
-                        serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.BundleActivatorParser"/>
-    <applicationService serviceInterface="org.osmorc.manifest.lang.headerparser.impl.GenericComplexHeaderParser"
-                        serviceImplementation="org.osmorc.manifest.lang.headerparser.impl.GenericComplexHeaderParser"/>
-
-    <!-- Other application services -->
-    <applicationService serviceInterface="org.osmorc.facet.OsmorcFacetUtil"
-                        serviceImplementation="org.osmorc.facet.impl.OsmorcFacetUtilImpl"/>
-    <applicationService serviceInterface="org.osmorc.obrimport.ObrProvider"
-                        serviceImplementation="org.osmorc.obrimport.ObrProvider"/>
+    <!-- Project services -->
+    <projectService serviceImplementation="org.osmorc.settings.ProjectSettings"/>
+    <projectService serviceInterface="org.osmorc.BundleManager"
+                    serviceImplementation="org.osmorc.impl.MyBundleManager"/>
+    <projectService serviceInterface="org.osmorc.manifest.ManifestHolderRegistry"
+                    serviceImplementation="org.osmorc.manifest.impl.ManifestHolderRegistryImpl"/>
 
     <!-- Module services -->
     <moduleService serviceInterface="org.osmorc.manifest.ManifestHolder"
                    serviceImplementation="org.osmorc.manifest.impl.ModuleManifestHolderImpl"/>
     <moduleService serviceInterface="org.osmorc.AdditionalJARContentsWatcherManager"
                    serviceImplementation="org.osmorc.impl.AdditionalJARContentsWatcherManagerImpl"/>
-    <moduleService serviceInterface="org.osmorc.ModuleDependencySynchronizer"
-                   serviceImplementation="org.osmorc.ModuleDependencySynchronizer"/>
-
-    <!-- Project services -->
-    <!-- Project settings and editors -->
-    <projectService serviceInterface="org.osmorc.settings.ProjectSettings"
-                    serviceImplementation="org.osmorc.settings.ProjectSettings"/>
-
-    <!-- Other project services -->
-    <projectService serviceInterface="org.osmorc.BundleManager"
-                    serviceImplementation="org.osmorc.impl.MyBundleManager"/>
-    <projectService serviceInterface="org.osmorc.manifest.ManifestHolderRegistry"
-                    serviceImplementation="org.osmorc.manifest.impl.ManifestHolderRegistryImpl"/>
+    <moduleService serviceImplementation="org.osmorc.ModuleDependencySynchronizer"/>
 
     <!-- IDEA extensions -->
     <colorSettingsPage implementation="org.osmorc.manifest.lang.ManifestColorsAndFontsPage"/>
-    <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
     <lang.parserDefinition language="Manifest" implementationClass="org.osmorc.manifest.lang.ManifestParserDefinition"/>
     <completion.contributor language="Manifest" implementationClass="org.osmorc.manifest.ManifestCompletionContributor"/>
     <syntaxHighlighter key="Manifest" factoryClass="org.osmorc.manifest.lang.ManifestSyntaxHighlighterProvider"/>

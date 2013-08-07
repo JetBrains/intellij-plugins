@@ -30,7 +30,7 @@ import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeRegistry;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -39,9 +39,6 @@ import org.jetbrains.annotations.Nullable;
 import org.osmorc.settings.ProjectSettings;
 
 /**
- * The Osmorc facet.
- * <p/>
- *
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
@@ -80,7 +77,7 @@ public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
    */
   @Nullable
   public static OsmorcFacet getInstance(@NotNull PsiElement element) {
-    Module module = ModuleUtil.findModuleForPsiElement(element);
+    Module module = ModuleUtilCore.findModuleForPsiElement(element);
     if (module != null) {
       return getInstance(module);
     }
@@ -101,7 +98,7 @@ public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
    *         otherwise.
    */
   public static boolean hasOsmorcFacet(@NotNull PsiElement element) {
-    Module module = ModuleUtil.findModuleForPsiElement(element);
+    Module module = ModuleUtilCore.findModuleForPsiElement(element);
     return module != null && hasOsmorcFacet(module);
   }
 

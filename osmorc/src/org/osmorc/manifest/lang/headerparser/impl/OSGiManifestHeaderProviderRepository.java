@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.headerparser.impl;
 
 import org.jetbrains.annotations.NotNull;
@@ -30,59 +29,45 @@ import org.osmorc.manifest.ManifestConstants;
 import org.osmorc.manifest.lang.headerparser.HeaderParserProvider;
 import org.osmorc.manifest.lang.headerparser.HeaderParserProviderRepository;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class OSGiManifestHeaderProviderRepository implements HeaderParserProviderRepository {
-  private final List<HeaderParserProvider> headerProviders;
-
-  public OSGiManifestHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser,
-                                              BundleSymbolicNameParser bundleSymbolicNameParser,
-                                              BundleVersionParser bundleVersionParser,
-                                              ExportPackageParser exportPackageParser,
-                                              ImportPackageParser importPackageParser,
-                                              PrivatePackageParser privatePackageParser,
-                                              RequireBundleParser requireBundleParser,
-                                              BundleActivatorParser bundleActivatorParser) {
-    AbstractHeaderParserImpl simpleHeaderParser = AbstractHeaderParserImpl.SIMPLE;
-    headerProviders = new ArrayList<HeaderParserProvider>();
-
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_MANIFEST_VERSION, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_NAME, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_SYMBOLIC_NAME, bundleSymbolicNameParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_VERSION, bundleVersionParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.EXPORT_PACKAGE, exportPackageParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.IMPORT_PACKAGE, importPackageParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.PRIVATE_PACKAGE, privatePackageParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.REQUIRE_BUNDLE, requireBundleParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_REQUIRED_EXECUTION_ENV, genericComplexHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.FRAGMENT_HOST, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_ACTIVATION_POLICY, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_ACTIVATOR, bundleActivatorParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_CATEGORY, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_CLASS_PATH, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_CONTACT_ADDRESS, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_COPYRIGHT, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_DESCRIPTION, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_DOC_URL, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_LOCALIZATION, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_NATIVE_CODE, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_UPDATE_LOCATION, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_VENDOR, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.DYNAMIC_IMPORT_PACKAGE, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.EXPORT_SERVICE, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.IMPORT_SERVICE, simpleHeaderParser));
-    headerProviders.add(new HeaderParserProviderImpl(ManifestConstants.Headers.SERVICE_COMPONENT, simpleHeaderParser));
-  }
+  private final List<HeaderParserProvider> myProviders = Arrays.<HeaderParserProvider>asList(
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_MANIFEST_VERSION, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_NAME, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_SYMBOLIC_NAME, AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_VERSION, BundleVersionParser.INSTANCE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.EXPORT_PACKAGE, ExportPackageParser.INSTANCE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.IMPORT_PACKAGE, BasePackageParser.INSTANCE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.PRIVATE_PACKAGE, BasePackageParser.INSTANCE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.REQUIRE_BUNDLE, RequireBundleParser.INSTANCE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_REQUIRED_EXECUTION_ENV, AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.FRAGMENT_HOST, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_ACTIVATION_POLICY, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_ACTIVATOR, BundleActivatorParser.INSTANCE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_CATEGORY, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_CLASS_PATH, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_CONTACT_ADDRESS, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_COPYRIGHT, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_DESCRIPTION, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_DOC_URL, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_LOCALIZATION, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_NATIVE_CODE, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_UPDATE_LOCATION, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_VENDOR, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.DYNAMIC_IMPORT_PACKAGE, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.EXPORT_SERVICE, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.IMPORT_SERVICE, AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.SERVICE_COMPONENT, AbstractHeaderParser.SIMPLE));
 
   @NotNull
+  @Override
   public Collection<HeaderParserProvider> getHeaderParserProviders() {
-    return Collections.unmodifiableList(headerProviders);
+    return myProviders;
   }
 }

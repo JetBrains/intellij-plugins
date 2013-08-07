@@ -33,24 +33,32 @@ import org.osmorc.manifest.lang.psi.HeaderValuePart;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class AbstractHeaderParserImpl implements HeaderParser {
-  public static final AbstractHeaderParserImpl SIMPLE = new AbstractHeaderParserImpl();
+public abstract class AbstractHeaderParser implements HeaderParser {
+  public static final HeaderParser SIMPLE = new AbstractHeaderParser() { };
 
+  public static final HeaderParser COMPLEX = new AbstractHeaderParser() {
+    @Override
+    public boolean isSimpleHeader() {
+      return false;
+    }
+  };
+
+  @Override
   public Object getValue(@NotNull HeaderValuePart headerValuePart) {
     return headerValuePart.getUnwrappedText();
   }
 
+  @Override
   public boolean isSimpleHeader() {
     return true;
   }
 
+  @Override
   public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
-    return EMPTY_PSI_REFERENCE_ARRAY;
+    return PsiReference.EMPTY_ARRAY;
   }
 
+  @Override
   public void annotate(@NotNull HeaderValuePart headerValue, @NotNull AnnotationHolder holder) {
-
   }
-
-  static final PsiReference[] EMPTY_PSI_REFERENCE_ARRAY = new PsiReference[0];
 }

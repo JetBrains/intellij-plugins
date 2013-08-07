@@ -29,16 +29,18 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
-import static org.easymock.EasyMock.*;
-import static org.hamcrest.Matchers.equalTo;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osmorc.SwingRunner;
+import org.osmorc.manifest.lang.headerparser.HeaderParser;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.valueobject.Version;
+
+import static org.easymock.EasyMock.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -68,7 +70,7 @@ public class BundleVersionParserTest {
 
         replay(headerValueMock);
 
-        BundleVersionParser testObject = new BundleVersionParser();
+        HeaderParser testObject = BundleVersionParser.INSTANCE;
 
         assertThat(testObject.getValue(headerValueMock), equalTo((Object) new Version(1, 2, 3, "b300")));
 
@@ -86,7 +88,7 @@ public class BundleVersionParserTest {
 
         replay(headerValueMock, annotationHolderMock);
 
-        BundleVersionParser testObject = new BundleVersionParser();
+        HeaderParser testObject = BundleVersionParser.INSTANCE;
 
         testObject.annotate(headerValueMock, annotationHolderMock);
 

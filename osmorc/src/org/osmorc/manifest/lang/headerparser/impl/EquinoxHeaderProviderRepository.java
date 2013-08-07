@@ -22,40 +22,32 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.headerparser.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.headerparser.HeaderParserProvider;
 import org.osmorc.manifest.lang.headerparser.HeaderParserProviderRepository;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class EquinoxHeaderProviderRepository implements HeaderParserProviderRepository {
-  public EquinoxHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser) {
-    AbstractHeaderParserImpl simpleHeaderParser = AbstractHeaderParserImpl.SIMPLE;
-
-    _headerProviders = new ArrayList<HeaderParserProvider>();
-
-    _headerProviders.add(new HeaderParserProviderImpl("Eclipse-LazyStart", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Eclipse-PlatformFilter", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Eclipse-BuddyPolicy", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Eclipse-RegisterBuddy", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Eclipse-ExtensibleAPI", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Eclipse-GenericCapability", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Eclipse-GenericRequire", simpleHeaderParser));
-  }
+  private final List<HeaderParserProvider> myProviders = Arrays.<HeaderParserProvider>asList(
+    new HeaderParserProviderImpl("Eclipse-LazyStart", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Eclipse-PlatformFilter", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Eclipse-BuddyPolicy", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Eclipse-RegisterBuddy", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Eclipse-ExtensibleAPI", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Eclipse-GenericCapability", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Eclipse-GenericRequire", AbstractHeaderParser.SIMPLE));
 
   @NotNull
+  @Override
   public Collection<HeaderParserProvider> getHeaderParserProviders() {
-    return Collections.unmodifiableList(_headerProviders);
+    return myProviders;
   }
-
-  private final List<HeaderParserProvider> _headerProviders;
 }

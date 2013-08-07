@@ -33,6 +33,7 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.ManifestConstants;
 import org.osmorc.manifest.lang.ManifestTokenType;
+import org.osmorc.manifest.lang.headerparser.HeaderParser;
 import org.osmorc.manifest.lang.psi.Attribute;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
@@ -44,8 +45,12 @@ import java.util.List;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ExportPackageParser extends AbstractHeaderParserImpl {
+public class ExportPackageParser extends AbstractHeaderParser {
+  public static final HeaderParser INSTANCE = new ExportPackageParser();
 
+  private ExportPackageParser() { }
+
+  @Override
   public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
     if (headerValuePart.getParent() instanceof Clause) {
       final PsiElement element = headerValuePart.getOriginalElement();
@@ -68,9 +73,10 @@ public class ExportPackageParser extends AbstractHeaderParserImpl {
         return references.toArray(new PsiPackageReference[references.size()]);
       }
     }
-    return EMPTY_PSI_REFERENCE_ARRAY;
+    return PsiReference.EMPTY_ARRAY;
   }
 
+  @Override
   public boolean isSimpleHeader() {
     return false;
   }

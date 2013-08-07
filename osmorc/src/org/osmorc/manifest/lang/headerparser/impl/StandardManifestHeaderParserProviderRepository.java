@@ -22,51 +22,44 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.headerparser.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.headerparser.HeaderParserProvider;
 import org.osmorc.manifest.lang.headerparser.HeaderParserProviderRepository;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class StandardManifestHeaderParserProviderRepository implements HeaderParserProviderRepository {
-  public StandardManifestHeaderParserProviderRepository() {
-    AbstractHeaderParserImpl simpleHeaderParser = AbstractHeaderParserImpl.SIMPLE;
-    _headerProviders = new ArrayList<HeaderParserProvider>();
-
-    _headerProviders.add(new HeaderParserProviderImpl("Manifest-Version", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Created-By", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Signature-Version", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Class-Path", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Implementation-Title", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Implementation-Version", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Implementation-Vendor", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Implementation-Vendor-Id", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Implementation-URL", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Specification-Title", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Specification-Version", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Specification-Vendor", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Sealed", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Content-Type", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Java-Bean", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("MD5-Digest", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("SHA-Digest", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Magic", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Name", simpleHeaderParser));
-  }
+  private final List<HeaderParserProvider> myProviders = Arrays.<HeaderParserProvider>asList(
+    new HeaderParserProviderImpl("Manifest-Version", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Created-By", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Signature-Version", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Class-Path", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Implementation-Title", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Implementation-Version", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Implementation-Vendor", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Implementation-Vendor-Id", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Implementation-URL", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Specification-Title", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Specification-Version", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Specification-Vendor", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Sealed", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Content-Type", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Java-Bean", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("MD5-Digest", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("SHA-Digest", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Magic", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Name", AbstractHeaderParser.SIMPLE));
 
   @NotNull
+  @Override
   public Collection<HeaderParserProvider> getHeaderParserProviders() {
-    return Collections.unmodifiableList(_headerProviders);
+    return myProviders;
   }
-
-  private final List<HeaderParserProvider> _headerProviders;
 }

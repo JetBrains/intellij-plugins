@@ -22,44 +22,37 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.headerparser.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.headerparser.HeaderParserProvider;
 import org.osmorc.manifest.lang.headerparser.HeaderParserProviderRepository;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class SpringDMHeaderProviderRepository implements HeaderParserProviderRepository {
-  public SpringDMHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser) {
-    AbstractHeaderParserImpl simpleHeaderParser = AbstractHeaderParserImpl.SIMPLE;
-    _headerProviders = new ArrayList<HeaderParserProvider>();
-
-    _headerProviders.add(new HeaderParserProviderImpl("Spring-Context", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Import-Library", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Library-SymbolicName", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Library-Version", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Library-Name", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Library-Description", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Import-Bundle", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Application-TraceLevels", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("SpringExtender-Version", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Module-Type", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Web-ContextPath", simpleHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Web-DispatcherServletUrlPatterns", simpleHeaderParser));
-  }
+  private final List<HeaderParserProvider> myProviders = Arrays.<HeaderParserProvider>asList(
+    new HeaderParserProviderImpl("Spring-Context", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Import-Library", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Library-SymbolicName", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Library-Version", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Library-Name", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Library-Description", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Import-Bundle", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Application-TraceLevels", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("SpringExtender-Version", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Module-Type", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Web-ContextPath", AbstractHeaderParser.SIMPLE),
+    new HeaderParserProviderImpl("Web-DispatcherServletUrlPatterns", AbstractHeaderParser.SIMPLE));
 
   @NotNull
+  @Override
   public Collection<HeaderParserProvider> getHeaderParserProviders() {
-    return Collections.unmodifiableList(_headerProviders);
+    return myProviders;
   }
-
-  private final List<HeaderParserProvider> _headerProviders;
 }

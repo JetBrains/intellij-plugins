@@ -26,6 +26,7 @@ package org.osmorc.manifest.lang.headerparser.impl;
 
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.manifest.lang.headerparser.HeaderParser;
 import org.osmorc.manifest.lang.psi.BundleReference;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
@@ -33,15 +34,20 @@ import org.osmorc.manifest.lang.psi.HeaderValuePart;
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class RequireBundleParser extends AbstractHeaderParserImpl {
+public class RequireBundleParser extends AbstractHeaderParser {
+  public static final HeaderParser INSTANCE = new RequireBundleParser();
 
+  private RequireBundleParser() { }
+
+  @Override
   public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
     if (headerValuePart.getParent() instanceof Clause) {
       return new PsiReference[]{new BundleReference(headerValuePart)};
     }
-    return EMPTY_PSI_REFERENCE_ARRAY;
+    return PsiReference.EMPTY_ARRAY;
   }
 
+  @Override
   public boolean isSimpleHeader() {
     return false;
   }

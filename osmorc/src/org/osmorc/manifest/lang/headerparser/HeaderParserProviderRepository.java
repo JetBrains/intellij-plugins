@@ -22,9 +22,9 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.headerparser;
 
+import com.intellij.openapi.extensions.ExtensionPointName;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -33,10 +33,10 @@ import java.util.Collection;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface HeaderParserProviderRepository {
+  ExtensionPointName<HeaderParserProviderRepository> EP_NAME = ExtensionPointName.create("Osmorc.headerParserProviderRepository");
+
   /**
-   * Return the unmodifieable collection of header providers of this repository.
-   *
-   * @return the unmodifieable collection of header providers of this repository
+   * Return the unmodifiable collection of header providers of this repository.
    */
   @NotNull
   Collection<HeaderParserProvider> getHeaderParserProviders();

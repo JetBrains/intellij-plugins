@@ -22,35 +22,27 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.headerparser.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.headerparser.HeaderParserProvider;
 import org.osmorc.manifest.lang.headerparser.HeaderParserProviderRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class BndHeaderProviderRepository implements HeaderParserProviderRepository {
-  public BndHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser) {
-    _headerProviders = new ArrayList<HeaderParserProvider>();
-
-    _headerProviders.add(new HeaderParserProviderImpl("Private-Package", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Tool", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Bnd-LastModified", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Include-Resource", genericComplexHeaderParser));
-  }
+  private final List<HeaderParserProvider> myProviders = Arrays.<HeaderParserProvider>asList(
+    new HeaderParserProviderImpl("Private-Package", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Tool", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Bnd-LastModified", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Include-Resource", AbstractHeaderParser.COMPLEX));
 
   @NotNull
+  @Override
   public Collection<HeaderParserProvider> getHeaderParserProviders() {
-    return Collections.unmodifiableList(_headerProviders);
+    return myProviders;
   }
-
-  private final List<HeaderParserProvider> _headerProviders;
 }

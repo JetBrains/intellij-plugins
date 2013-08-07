@@ -22,27 +22,31 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.headerparser.impl;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.JavaClassReferenceProvider;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.manifest.lang.headerparser.HeaderParser;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class BundleActivatorParser extends AbstractHeaderParserImpl {
+public class BundleActivatorParser extends AbstractHeaderParser {
+  public static final HeaderParser INSTANCE = new BundleActivatorParser();
 
+  private BundleActivatorParser() { }
+
+  @Override
   public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
     if (headerValuePart.getParent() instanceof Clause) {
-      final Module module = ModuleUtil.findModuleForPsiElement(headerValuePart);
+      final Module module = ModuleUtilCore.findModuleForPsiElement(headerValuePart);
       JavaClassReferenceProvider provider;
       if (module != null) {
         provider = new JavaClassReferenceProvider() {
@@ -60,6 +64,6 @@ public class BundleActivatorParser extends AbstractHeaderParserImpl {
       provider.setOption(JavaClassReferenceProvider.CONCRETE, true);
       return provider.getReferencesByElement(headerValuePart);
     }
-    return EMPTY_PSI_REFERENCE_ARRAY;
+    return PsiReference.EMPTY_ARRAY;
   }
 }

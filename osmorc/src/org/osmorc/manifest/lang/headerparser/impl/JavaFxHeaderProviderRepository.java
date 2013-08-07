@@ -22,37 +22,31 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.headerparser.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.headerparser.HeaderParserProvider;
 import org.osmorc.manifest.lang.headerparser.HeaderParserProviderRepository;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class JavaFxHeaderProviderRepository implements HeaderParserProviderRepository {
-  public JavaFxHeaderProviderRepository(GenericComplexHeaderParser genericComplexHeaderParser) {
-    _headerProviders = new ArrayList<HeaderParserProvider>();
-
-    _headerProviders.add(new HeaderParserProviderImpl("JavaFX-Application-Class", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("JavaFX-Version", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("JavaFX-Class-Path", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("Main-Class", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("implementation-vendor", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("implementation-title", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("implementation-version", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("JavaFX-Preloader-Class", genericComplexHeaderParser));
-    _headerProviders.add(new HeaderParserProviderImpl("JavaFX-Fallback-Class", genericComplexHeaderParser));
-  }
+  private final List<HeaderParserProvider> myProviders  = Arrays.<HeaderParserProvider>asList(
+    new HeaderParserProviderImpl("JavaFX-Application-Class", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("JavaFX-Version", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("JavaFX-Class-Path", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("Main-Class", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("implementation-vendor", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("implementation-title", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("implementation-version", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("JavaFX-Preloader-Class", AbstractHeaderParser.COMPLEX),
+    new HeaderParserProviderImpl("JavaFX-Fallback-Class", AbstractHeaderParser.COMPLEX));
 
   @NotNull
+  @Override
   public Collection<HeaderParserProvider> getHeaderParserProviders() {
-    return Collections.unmodifiableList(_headerProviders);
+    return myProviders;
   }
-
-  private final List<HeaderParserProvider> _headerProviders;
 }
