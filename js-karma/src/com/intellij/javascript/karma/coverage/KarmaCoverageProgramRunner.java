@@ -19,6 +19,7 @@ import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -65,6 +66,14 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
       throw new RuntimeException("KarmaConsoleView was expected!");
     }
     final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
+    if (karmaServer.getCoveragePeer().isKarmaCoveragePluginMissing()) {
+      Messages.showErrorDialog(project,
+                               "<html><body>To gather coverage info, karma-coverage node package is needed."
+                               + "<div style=\"padding-top:4px\">To install it, run the command:</div>"
+                               + "<pre><code> npm install karma-coverage</code></pre>" +
+                               "</body></html>",
+                               "Karma Coverage");
+    }
     if (karmaServer.isReady() && karmaServer.hasCapturedBrowsers()) {
       return doCoverage(project, executionResult, contentToReuse, env, karmaServer);
     }

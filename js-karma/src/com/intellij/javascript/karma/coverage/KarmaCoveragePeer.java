@@ -1,6 +1,7 @@
 package com.intellij.javascript.karma.coverage;
 
 import com.google.gson.JsonElement;
+import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.StreamEventHandler;
 import com.intellij.javascript.karma.util.GsonUtil;
 import com.intellij.openapi.util.io.FileUtil;
@@ -18,6 +19,7 @@ public class KarmaCoveragePeer {
 
   private final File myCoverageTempDir;
   private volatile KarmaCoverageSession myActiveCoverageSession;
+  private volatile boolean myKarmaCoveragePluginMissing;
 
   public KarmaCoveragePeer() throws IOException {
     myCoverageTempDir = FileUtil.createTempDirectory("karma-intellij-coverage-", null);
@@ -42,8 +44,12 @@ public class KarmaCoveragePeer {
     myActiveCoverageSession = coverageSession;
   }
 
-  public StreamEventHandler getStreamEventHandler() {
-    return new StreamEventHandler() {
+  public boolean isKarmaCoveragePluginMissing() {
+    return myKarmaCoveragePluginMissing;
+  }
+
+  public void registerEventHandlers(@NotNull KarmaServer server) {
+    server.registerStreamEventHandler(new StreamEventHandler() {
       @NotNull
       @Override
       public String getEventType() {
@@ -59,7 +65,19 @@ public class KarmaCoveragePeer {
           coverageSession.onCoverageSessionFinished(new File(path));
         }
       }
-    };
+    });
+    server.registerStreamEventHandler(new StreamEventHandler() {
+      @NotNull
+      @Override
+      public String getEventType() {
+        return "karmaCoveragePluginMissing";
+      }
+
+      @Override
+      public void handle(@NotNull JsonElement eventBody) {
+        myKarmaCoveragePluginMissing = true;
+      }
+    });
   }
 
 }

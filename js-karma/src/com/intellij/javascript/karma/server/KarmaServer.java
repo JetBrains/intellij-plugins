@@ -76,7 +76,7 @@ public class KarmaServer {
   }
 
   private void registerStreamEventHandlers() {
-    registerStreamEventHandler(myCoveragePeer.getStreamEventHandler());
+    myCoveragePeer.registerEventHandlers(this);
     registerStreamEventHandler(new StreamEventHandler() {
       @NotNull
       @Override
