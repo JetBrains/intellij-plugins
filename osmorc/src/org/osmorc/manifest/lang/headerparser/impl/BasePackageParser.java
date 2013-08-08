@@ -20,7 +20,8 @@ public class BasePackageParser extends AbstractHeaderParser {
   @Override
   public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
     if (headerValuePart.getParent() instanceof Clause) {
-      PackageReferenceSet referenceSet = new PatternPackageReferenceSet(headerValuePart.getUnwrappedText(), headerValuePart, 0);
+      final int offset = headerValuePart.getText().indexOf(headerValuePart.getUnwrappedText());
+      PackageReferenceSet referenceSet = new PatternPackageReferenceSet(headerValuePart.getUnwrappedText(), headerValuePart, offset);
       return referenceSet.getReferences().toArray(new PsiPackageReference[referenceSet.getReferences().size()]);
     }
     return PsiReference.EMPTY_ARRAY;

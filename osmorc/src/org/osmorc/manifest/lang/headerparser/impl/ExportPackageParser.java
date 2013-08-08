@@ -67,7 +67,8 @@ public class ExportPackageParser extends AbstractHeaderParser {
         for (ASTNode astNode : headerValuePart.getNode().getChildren(TokenSet.create(ManifestTokenType.HEADER_VALUE_PART))) {
           if (astNode instanceof ManifestToken) {
             ManifestToken manifestToken = (ManifestToken)astNode;
-            PackageReferenceSet referenceSet = new PatternPackageReferenceSet(manifestToken.getText(), manifestToken, 0);
+            final int offset = headerValuePart.getText().indexOf(headerValuePart.getUnwrappedText());
+            PackageReferenceSet referenceSet = new PatternPackageReferenceSet(manifestToken.getText(), manifestToken, offset);
             references.addAll(referenceSet.getReferences());
           }
         }
@@ -83,7 +84,8 @@ public class ExportPackageParser extends AbstractHeaderParser {
   }
 
   private static PsiReference[] packageReferences(HeaderValuePart headerValuePart) {
-    PackageReferenceSet referenceSet = new PatternPackageReferenceSet(headerValuePart.getUnwrappedText(), headerValuePart, 0);
+    final int offset = headerValuePart.getText().indexOf(headerValuePart.getUnwrappedText());
+    PackageReferenceSet referenceSet = new PatternPackageReferenceSet(headerValuePart.getUnwrappedText(), headerValuePart, offset);
     return referenceSet.getReferences().toArray(new PsiPackageReference[referenceSet.getReferences().size()]);
   }
 
