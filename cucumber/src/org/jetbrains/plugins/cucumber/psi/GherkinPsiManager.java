@@ -27,23 +27,28 @@ public class GherkinPsiManager extends AbstractModificationTracker implements Pr
     return project.getComponent(GherkinPsiManager.class);
   }
 
+  @Override
   public void projectOpened() {
     // Do nothing
   }
 
+  @Override
   public void projectClosed() {
     // Do nothing
   }
 
+  @Override
   @NotNull
   public String getComponentName() {
     return "GherkinPsiManager";
   }
 
+  @Override
   public void initComponent() {
     initTracker();
   }
 
+  @Override
   public void disposeComponent() {
     // Do nothing
   }
