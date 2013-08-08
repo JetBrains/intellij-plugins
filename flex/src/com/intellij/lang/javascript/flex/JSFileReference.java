@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex;
 
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -35,6 +35,7 @@ public class JSFileReference extends FileReference {
 
   // - absolute paths remain absolute (i.e. not relative to project root)
   // - relative paths are kept relative to what they were relative to before refactoring
+  @Override
   public PsiElement bindToElement(@NotNull final PsiElement element) throws IncorrectOperationException {
     if (!(element instanceof PsiFileSystemItem)) {
       throw new IncorrectOperationException("Cannot bind to element, should be instanceof PsiFileSystemItem: " + element);
@@ -74,7 +75,7 @@ public class JSFileReference extends FileReference {
           newName = getRelativePath(sourceRootForFile, destVFile, '/');
         }
         else {
-          final Module module = ModuleUtil.findModuleForFile(currentVFile, project);
+          final Module module = ModuleUtilCore.findModuleForFile(currentVFile, project);
           if (module != null) {
             final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots();
             for (final VirtualFile sourceRoot : sourceRoots) {
@@ -111,7 +112,6 @@ public class JSFileReference extends FileReference {
         while (!Comparing.equal(src.getParent(), commonAncestor)) {
           buffer.append("..").append(separatorChar);
           src = src.getParent();
-          assert src != null;
         }
       }
       buffer.append(VfsUtilCore.getRelativePath(dst, commonAncestor, separatorChar));
