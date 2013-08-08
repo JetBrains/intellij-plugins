@@ -29,6 +29,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.osmorc.impl.BundleCache;
 import org.osmorc.manifest.BundleManifest;
 
 import java.util.Collection;
@@ -109,4 +110,6 @@ public interface BundleManager {
    * @param libraries
    */
   void reindex(@NotNull Collection<Library> libraries);
+
+  BundleCache getBundleCache();
 }

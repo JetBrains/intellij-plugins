@@ -135,6 +135,8 @@
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassUnavailableInspection"/>-->
     <localInspection shortName="osmorcUnknownManifestPackage" displayName="Unknown import package" groupName="OSGi"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.UnknownManifectPackageInspection"/>
+    <localInspection shortName="osmorcWrongImportPackage" displayName="Wrong imported package" groupName="OSGi"
+                     enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.WrongImportPackageInspection"/>
 
     <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
     <framework.detector implementation="org.osmorc.facet.OsmorcFrameworkDetector"/>

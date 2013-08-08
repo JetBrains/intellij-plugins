@@ -370,4 +370,10 @@ public class MyBundleManager implements BundleManager {
 
     return hostManifest.isFragmentHostFor(fragmentManifest);
   }
+
+  @Override
+  @NotNull
+  public BundleCache getBundleCache() {
+    return myBundleCache;
+  }
 }
