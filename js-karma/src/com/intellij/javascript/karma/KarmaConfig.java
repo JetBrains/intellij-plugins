@@ -1,25 +1,30 @@
 package com.intellij.javascript.karma;
 
-import com.google.common.collect.Sets;
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.intellij.openapi.diagnostic.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Collections;
-import java.util.Set;
 
 /**
  * @author Sergey Simonchik
  */
 public class KarmaConfig {
 
-  private static final String BASE_PATH_NAME = "basePath";
+  private static final Logger LOG = Logger.getInstance(KarmaConfig.class);
+  private static final String BASE_PATH = "basePath";
+  private static final String HOST_NAME = "hostname";
+  private static final String URL_ROOT = "urlRoot";
 
   private final String myBasePath;
-  private Set<String> myFiles;
+  private final String myHostname;
+  private final String myUrlRoot;
 
-  public KarmaConfig(@Nullable String basePath) {
+  public KarmaConfig(@Nullable String basePath, @NotNull String hostname, @NotNull String urlRoot) {
     myBasePath = basePath;
+    myHostname = hostname;
+    myUrlRoot = urlRoot;
   }
 
   @Nullable
@@ -28,38 +33,40 @@ public class KarmaConfig {
   }
 
   @NotNull
-  public Set<String> getFiles() {
-    return myFiles;
+  public String getHostname() {
+    return myHostname;
+  }
+
+  @NotNull
+  public String getUrlRoot() {
+    return myUrlRoot;
   }
 
   @Nullable
   public static KarmaConfig parseFromJson(@NotNull JsonElement jsonElement) {
     if (jsonElement.isJsonObject()) {
       JsonObject rootObject = jsonElement.getAsJsonObject();
-      String basePath = getAsString(rootObject.get(BASE_PATH_NAME));
-      return new KarmaConfig(basePath);
+      String basePath = getAsString(rootObject.get(BASE_PATH));
+      String hostname = getAsString(rootObject.get(HOST_NAME));
+      String urlRoot = getAsString(rootObject.get(URL_ROOT));
+      if (hostname == null) {
+        LOG.warn("Can not parse Karma config.hostname from " + jsonElement.toString());
+        hostname = "localhost";
+      }
+      hostname = hostname.toLowerCase();
+      if (urlRoot == null) {
+        LOG.warn("Can not parse Karma config.urlRoot from " + jsonElement.toString());
+        urlRoot = "/";
+      }
+      if (!urlRoot.startsWith("/")) {
+        urlRoot = "/" + urlRoot;
+      }
+      if (!urlRoot.isEmpty() && urlRoot.endsWith("/")) {
+        urlRoot = urlRoot.substring(0, urlRoot.length() - 1);
+      }
+      return new KarmaConfig(basePath, hostname, urlRoot);
     }
     return null;
-  }
-
-  @NotNull
-  private static Set<String> buildFileSet(@Nullable JsonElement filesElement) {
-    if (filesElement == null || !filesElement.isJsonArray()) {
-      return Collections.emptySet();
-    }
-    JsonArray filesArray = filesElement.getAsJsonArray();
-    Set<String> files = Sets.newHashSetWithExpectedSize(filesArray.size());
-    for (JsonElement fileElement : filesArray) {
-      if (fileElement.isJsonObject()) {
-        JsonObject object = fileElement.getAsJsonObject();
-        String pattern = getAsString(object.get("pattern"));
-        Boolean included = getAsBoolean(object.get("included"));
-        if (pattern != null && Boolean.TRUE.equals(included)) {
-          files.add(pattern);
-        }
-      }
-    }
-    return files;
   }
 
   @Nullable
@@ -68,17 +75,6 @@ public class KarmaConfig {
       JsonPrimitive primitive = element.getAsJsonPrimitive();
       if (primitive.isString()) {
         return primitive.getAsString();
-      }
-    }
-    return null;
-  }
-
-  @Nullable
-  private static Boolean getAsBoolean(@Nullable JsonElement element) {
-    if (element != null && element.isJsonPrimitive()) {
-      JsonPrimitive primitive = element.getAsJsonPrimitive();
-      if (primitive.isBoolean()) {
-        return primitive.getAsBoolean();
       }
     }
     return null;

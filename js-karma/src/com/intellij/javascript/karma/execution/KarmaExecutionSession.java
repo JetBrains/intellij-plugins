@@ -12,6 +12,7 @@ import com.intellij.execution.testframework.TestConsoleProperties;
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil;
 import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties;
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView;
+import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.javascript.karma.tree.KarmaTestProxyFilterProvider;
@@ -19,6 +20,7 @@ import com.intellij.javascript.karma.util.NopProcessHandler;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -99,7 +101,7 @@ public class KarmaExecutionSession {
         throw new ExecutionException("Can't find karma-intellij test runner", e);
       }
       if (server.isReady() && server.hasCapturedBrowsers()) {
-        return createOSProcessHandler(server.getServerPort(), clientAppFile);
+        return createOSProcessHandler(server.getServerPort(), server.getKarmaConfig(), clientAppFile);
       }
     }
     final NopProcessHandler nopProcessHandler = new NopProcessHandler();
@@ -113,8 +115,10 @@ public class KarmaExecutionSession {
   }
 
   @NotNull
-  private OSProcessHandler createOSProcessHandler(int serverPort, @NotNull File clientAppFile) throws ExecutionException {
-    GeneralCommandLine commandLine = createCommandLine(serverPort, clientAppFile);
+  private OSProcessHandler createOSProcessHandler(int serverPort,
+                                                  @Nullable KarmaConfig config,
+                                                  @NotNull File clientAppFile) throws ExecutionException {
+    GeneralCommandLine commandLine = createCommandLine(serverPort, config, clientAppFile);
     Process process = commandLine.createProcess();
     OSProcessHandler osProcessHandler = new KillableColoredProcessHandler(process, commandLine.getCommandLineString());
     ProcessTerminatedListener.attach(osProcessHandler);
@@ -123,7 +127,9 @@ public class KarmaExecutionSession {
   }
 
   @NotNull
-  private GeneralCommandLine createCommandLine(int serverPort, @NotNull File clientAppFile) {
+  private GeneralCommandLine createCommandLine(int serverPort,
+                                               @Nullable KarmaConfig config,
+                                               @NotNull File clientAppFile) {
     GeneralCommandLine commandLine = new GeneralCommandLine();
     File configFile = new File(myRunSettings.getConfigPath());
     // looks like it should work with any working directory
@@ -133,6 +139,9 @@ public class KarmaExecutionSession {
     commandLine.addParameter(clientAppFile.getAbsolutePath());
     commandLine.addParameter("--karmaPackageDir=" + myKarmaServer.getKarmaJsSourcesLocator().getKarmaPackageDir());
     commandLine.addParameter("--serverPort=" + serverPort);
+    if (config != null) {
+      commandLine.addParameter("--urlRoot=" + config.getUrlRoot());
+    }
     if (isDebug()) {
       commandLine.addParameter("--debug=true");
     }
