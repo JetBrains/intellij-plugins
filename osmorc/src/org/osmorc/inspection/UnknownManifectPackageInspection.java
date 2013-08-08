@@ -52,13 +52,18 @@ public class UnknownManifectPackageInspection extends LocalInspectionTool {
   public PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new PsiElementVisitor() {
 
-      public void visitElement(PsiElement element) {
-        if (OsmorcFacet.hasOsmorcFacet(element) && element instanceof HeaderValuePart) {
-          for (PsiReference reference : element.getReferences()) {
+      public void visitElement(final PsiElement element) {
+        if (OsmorcFacet.hasOsmorcFacet(element) && element instanceof HeaderValuePart && !element.getText().isEmpty()) {
+          PsiReference[] references = element.getReferences();
+          for (int i = 0; i < references.length; i++) {
+            PsiReference reference = references[i];
+            if (reference.getCanonicalText().equals("*") && i == references.length - 1) {
+              break;
+            }
             if (reference instanceof PsiPackageReference && reference.resolve() == null) {
-              holder.registerProblemForReference(reference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                                 OsmorcBundle.message("UnknownManifestPackageInspection.problem.message.unknown-package",
-                                                                      reference.getCanonicalText()));
+              holder.registerProblemForReference(
+                reference, ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                OsmorcBundle.message("UnknownManifestPackageInspection.problem.message.unknown-package", reference.getCanonicalText()));
             }
           }
         }

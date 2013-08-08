@@ -28,6 +28,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PackageReferenceSet;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.PatternPackageReferenceSet;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PsiPackageReference;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +67,7 @@ public class ExportPackageParser extends AbstractHeaderParser {
         for (ASTNode astNode : headerValuePart.getNode().getChildren(TokenSet.create(ManifestTokenType.HEADER_VALUE_PART))) {
           if (astNode instanceof ManifestToken) {
             ManifestToken manifestToken = (ManifestToken)astNode;
-            PackageReferenceSet referenceSet = new PackageReferenceSet(manifestToken.getText(), manifestToken, 0);
+            PackageReferenceSet referenceSet = new PatternPackageReferenceSet(manifestToken.getText(), manifestToken, 0);
             references.addAll(referenceSet.getReferences());
           }
         }
@@ -82,7 +83,7 @@ public class ExportPackageParser extends AbstractHeaderParser {
   }
 
   private static PsiReference[] packageReferences(HeaderValuePart headerValuePart) {
-    PackageReferenceSet referenceSet = new PackageReferenceSet(headerValuePart.getUnwrappedText(), headerValuePart, 0);
+    PackageReferenceSet referenceSet = new PatternPackageReferenceSet(headerValuePart.getUnwrappedText(), headerValuePart, 0);
     return referenceSet.getReferences().toArray(new PsiPackageReference[referenceSet.getReferences().size()]);
   }
 
