@@ -203,14 +203,14 @@ public class CucumberCompletionContributor extends CompletionContributor {
   }
 
   private static class StepInsertHandler implements InsertHandler<LookupElement> {
-    private List<TextRange> ranges;
+    private final List<TextRange> ranges;
 
     private StepInsertHandler(List<TextRange> ranges) {
       this.ranges = ranges;
     }
 
+    @Override
     public void handleInsert(final InsertionContext context, LookupElement item) {
-
       if (!ranges.isEmpty()) {
         final PsiElement element = context.getFile().findElementAt(context.getStartOffset());
         final GherkinStep step = PsiTreeUtil.getParentOfType(element, GherkinStep.class);

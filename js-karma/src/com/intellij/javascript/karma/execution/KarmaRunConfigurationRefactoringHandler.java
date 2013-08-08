@@ -3,7 +3,7 @@ package com.intellij.javascript.karma.execution;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileSystemItem;
+import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import com.intellij.refactoring.listeners.UndoRefactoringElementAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ public class KarmaRunConfigurationRefactoringHandler {
   @Nullable
   public static RefactoringElementListener getRefactoringElementListener(@NotNull KarmaRunConfiguration configuration,
                                                                          @Nullable PsiElement element) {
-    VirtualFile fileAtElement = toVirtualFile(element);
+    VirtualFile fileAtElement = PsiUtilBase.asVirtualFile(element);
     if (fileAtElement == null) {
       return null;
     }
@@ -26,15 +26,6 @@ public class KarmaRunConfigurationRefactoringHandler {
     String configPath = FileUtil.toSystemIndependentName(settings.getConfigPath());
     if (configPath.equals(path)) {
       return new FilePathRefactoringElementListener(configuration);
-    }
-    return null;
-  }
-
-  @Nullable
-  public static VirtualFile toVirtualFile(@Nullable PsiElement element) {
-    if (element instanceof PsiFileSystemItem) {
-      PsiFileSystemItem psiFileSystemItem = (PsiFileSystemItem) element;
-      return psiFileSystemItem.getVirtualFile();
     }
     return null;
   }
@@ -48,7 +39,7 @@ public class KarmaRunConfigurationRefactoringHandler {
 
     @Override
     protected void refactored(@NotNull PsiElement element, @Nullable String oldQualifiedName) {
-      VirtualFile newFile = toVirtualFile(element);
+      VirtualFile newFile = PsiUtilBase.asVirtualFile(element);
       if (newFile != null) {
         String newPath = FileUtil.toSystemDependentName(newFile.getPath());
         KarmaRunSettings.Builder builder = new KarmaRunSettings.Builder();
