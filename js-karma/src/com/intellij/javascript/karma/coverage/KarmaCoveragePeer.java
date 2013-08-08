@@ -1,6 +1,8 @@
 package com.intellij.javascript.karma.coverage;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.StreamEventHandler;
 import com.intellij.javascript.karma.util.GsonUtil;
@@ -19,7 +21,7 @@ public class KarmaCoveragePeer {
 
   private final File myCoverageTempDir;
   private volatile KarmaCoverageSession myActiveCoverageSession;
-  private volatile boolean myKarmaCoveragePluginMissing;
+  private volatile boolean myKarmaCoveragePluginInstalled;
 
   public KarmaCoveragePeer() throws IOException {
     myCoverageTempDir = FileUtil.createTempDirectory("karma-intellij-coverage-", null);
@@ -45,7 +47,7 @@ public class KarmaCoveragePeer {
   }
 
   public boolean isKarmaCoveragePluginMissing() {
-    return myKarmaCoveragePluginMissing;
+    return myKarmaCoveragePluginInstalled;
   }
 
   public void registerEventHandlers(@NotNull KarmaServer server) {
@@ -70,12 +72,28 @@ public class KarmaCoveragePeer {
       @NotNull
       @Override
       public String getEventType() {
-        return "karmaCoveragePluginMissing";
+        return "coverageAvailability";
       }
 
       @Override
       public void handle(@NotNull JsonElement eventBody) {
-        myKarmaCoveragePluginMissing = true;
+        if (eventBody.isJsonObject()) {
+          JsonObject object = eventBody.getAsJsonObject();
+          JsonElement installedElement = object.get("plugin-installed");
+          if (installedElement != null && installedElement.isJsonPrimitive()) {
+            JsonPrimitive installedPrimitive = installedElement.getAsJsonPrimitive();
+            if (installedPrimitive.isBoolean()) {
+              myKarmaCoveragePluginInstalled = installedPrimitive.getAsBoolean();
+            }
+          }
+          JsonElement reporterElement = object.get("reporter-configured");
+          if (reporterElement != null && reporterElement.isJsonPrimitive()) {
+            JsonPrimitive installedPrimitive = reporterElement.getAsJsonPrimitive();
+            if (installedPrimitive.isBoolean()) {
+              myKarmaCoveragePluginInstalled = installedPrimitive.getAsBoolean();
+            }
+          }
+        }
       }
     });
   }

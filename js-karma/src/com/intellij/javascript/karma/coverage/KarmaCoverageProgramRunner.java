@@ -67,12 +67,11 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     }
     final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
     if (karmaServer.getCoveragePeer().isKarmaCoveragePluginMissing()) {
-      Messages.showErrorDialog(project,
-                               "<html><body>To gather coverage info, karma-coverage node package is needed."
-                               + "<div style=\"padding-top:4px\">To install it, run the command:</div>"
-                               + "<pre><code> npm install karma-coverage</code></pre>" +
-                               "</body></html>",
-                               "Karma Coverage");
+      KarmaCoveragePluginMissingDialog dialog = new KarmaCoveragePluginMissingDialog(project);
+      dialog.show();
+      if (dialog.isOK()) {
+        System.out.println("OK");
+      }
       return null;
     }
     if (karmaServer.isReady() && karmaServer.hasCapturedBrowsers()) {
