@@ -50,16 +50,14 @@ public class KarmaServer {
 
   private final Map<String, StreamEventHandler> myHandlers = ContainerUtil.newConcurrentMap();
 
-  private volatile KarmaConfig myKarmaConfig;
-
   public KarmaServer(@NotNull File nodeInterpreter,
                      @NotNull File karmaPackageDir,
                      @NotNull File configurationFile) throws IOException {
     /* 'nodeInterpreter', 'karmaPackageDir' and 'configurationFile'
         are already checked in KarmaRunConfiguration.checkConfiguration */
     myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(karmaPackageDir);
-    myState = new KarmaServerState(this);
     final ProcessHandler processHandler = startServer(nodeInterpreter, configurationFile);
+    myState = new KarmaServerState(this, processHandler);
     myProcessOutputArchive = new ProcessOutputArchive(processHandler);
     myWatcher = new KarmaWatcher(this);
     registerStreamEventHandlers();
@@ -77,18 +75,6 @@ public class KarmaServer {
 
   private void registerStreamEventHandlers() {
     myCoveragePeer.registerEventHandlers(this);
-    registerStreamEventHandler(new StreamEventHandler() {
-      @NotNull
-      @Override
-      public String getEventType() {
-        return "configFile";
-      }
-
-      @Override
-      public void handle(@NotNull JsonElement eventBody) {
-        myKarmaConfig = KarmaConfig.parseFromJson(eventBody);
-      }
-    });
 
     registerStreamEventHandler(myWatcher.getEventHandler());
 
@@ -176,7 +162,6 @@ public class KarmaServer {
         });
       }
     });
-    processHandler.addProcessListener(myState);
     ProcessTerminatedListener.attach(processHandler);
     processHandler.setShouldDestroyProcessRecursively(true);
     return processHandler;
@@ -268,7 +253,33 @@ public class KarmaServer {
 
   @Nullable
   public KarmaConfig getKarmaConfig() {
-    return myKarmaConfig;
+    return myState.getKarmaConfig();
+  }
+
+  @NotNull
+  public String formatUrlWithoutUrlRoot(@NotNull String path) {
+    if (!path.startsWith("/")) {
+      path = "/" + path;
+    }
+    KarmaConfig config = myState.getKarmaConfig();
+    if (config != null) {
+      return "http://" + config.getHostname() + ":" + getServerPort() + path;
+    }
+    LOG.error("Karma config isn't ready yet.");
+    return "http://localhost:" + getServerPort() + path;
+  }
+
+  @NotNull
+  public String formatUrl(@NotNull String path) {
+    if (!path.startsWith("/")) {
+      path = "/" + path;
+    }
+    KarmaConfig config = myState.getKarmaConfig();
+    if (config != null) {
+      return "http://" + config.getHostname() + ":" + getServerPort() + config.getUrlRoot() + path;
+    }
+    LOG.error("Karma config isn't ready yet.");
+    return "http://localhost:" + getServerPort() + path;
   }
 
   public int getServerPort() {

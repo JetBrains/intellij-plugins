@@ -73,6 +73,7 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
                                + "<pre><code> npm install karma-coverage</code></pre>" +
                                "</body></html>",
                                "Karma Coverage");
+      return null;
     }
     if (karmaServer.isReady() && karmaServer.hasCapturedBrowsers()) {
       return doCoverage(project, executionResult, contentToReuse, env, karmaServer);

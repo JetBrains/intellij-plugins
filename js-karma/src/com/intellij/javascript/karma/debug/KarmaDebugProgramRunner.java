@@ -98,7 +98,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
       return null;
     }
     final Connection connection = debugEngine.openConnection(true);
-    final String url = "http://localhost:" + karmaServer.getServerPort() + "/debug.html";
+    final String url = karmaServer.formatUrl("/debug.html");
 
     final DebuggableFileFinder fileFinder = getDebuggableFileFinder(karmaServer);
     XDebugSession session = XDebuggerManager.getInstance(project).startSession(
@@ -121,23 +121,25 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
   private static DebuggableFileFinder getDebuggableFileFinder(@NotNull KarmaServer karmaServer) {
     BiMap<String, VirtualFile> mappings = HashBiMap.create();
     KarmaConfig karmaConfig = karmaServer.getKarmaConfig();
-    String urlPrefix = "http://localhost:" + karmaServer.getServerPort();
     if (karmaConfig != null) {
       @SuppressWarnings("ConstantConditions")
       File basePath = new File(karmaConfig.getBasePath());
       VirtualFile vBasePath = VfsUtil.findFileByIoFile(basePath, false);
       if (vBasePath != null && vBasePath.isValid()) {
-        mappings.put(urlPrefix + "/base", vBasePath);
+        String baseUrl = karmaServer.formatUrlWithoutUrlRoot("/base");
+        mappings.put(baseUrl, vBasePath);
       }
     }
     VirtualFile root = LocalFileSystem.getInstance().getRoot();
     if (SystemInfo.isWindows) {
       for (VirtualFile child : root.getChildren()) {
-        mappings.put(urlPrefix + "/absolute" + child.getName(), child);
+        String url = karmaServer.formatUrlWithoutUrlRoot("/absolute" + child.getName());
+        mappings.put(url, child);
       }
     }
     else {
-      mappings.put(urlPrefix + "/absolute", root);
+      String url = karmaServer.formatUrlWithoutUrlRoot("/absolute");
+      mappings.put(url, root);
     }
     return new RemoteDebuggingFileFinder(mappings, false);
   }

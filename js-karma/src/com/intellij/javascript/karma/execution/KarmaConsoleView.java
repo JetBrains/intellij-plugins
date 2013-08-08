@@ -88,7 +88,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
         public void run() {
           if (myServer.isReady() && !myServer.hasCapturedBrowsers()) {
             print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
-            String url = "http://localhost:" + myServer.getServerPort();
+            String url = myServer.formatUrl("/");
             printHyperlink(url + "\n", new OpenUrlHyperlinkInfo(url));
           }
         }
