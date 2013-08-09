@@ -59,6 +59,7 @@ import javax.swing.*;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -228,7 +229,14 @@ public class OsmorcFacetJAREditorTab extends FacetEditorTab {
   }
 
   private void onRemoveAdditionalJARContent() {
-    myAdditionalJARContentsTableModel.deleteAdditionalJARContent(myAdditionalJARContentsTable.getSelectedRow());
+    final int row = myAdditionalJARContentsTable.getSelectedRow();
+    final int editingCol = myAdditionalJARContentsTable.getEditingColumn();
+    final int editingRow = myAdditionalJARContentsTable.getEditingRow();
+    if (editingCol != -1 && editingRow != -1) {
+      TableCellEditor editor = myAdditionalJARContentsTable.getCellEditor(editingRow, editingCol);
+      editor.cancelCellEditing();
+    }
+    myAdditionalJARContentsTableModel.deleteAdditionalJARContent(row);
   }
 
   private void onAddAdditionalJARContent() {
