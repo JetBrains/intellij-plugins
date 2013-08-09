@@ -31,6 +31,8 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class TypoScriptParserDefinition implements ParserDefinition {
+  private static final IStubFileElementType myFileElementType = new IStubFileElementType(TypoScriptLanguage.INSTANCE);
+
   @NotNull
   @Override
   public Lexer createLexer(Project project) {
@@ -44,7 +46,7 @@ public class TypoScriptParserDefinition implements ParserDefinition {
 
   @Override
   public IFileElementType getFileNodeType() {
-    return new IStubFileElementType(TypoScriptLanguage.INSTANCE);
+    return myFileElementType;
   }
 
   @NotNull
