@@ -67,10 +67,7 @@ public class ModuleManifestHolderImpl extends AbstractManifestHolderImpl {
     // only try to load the manifest if we have an osmorc facet for that module
     OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
     if (myBundleManifest == null && facet != null) {
-      // and only if this manifest is manually edited
-      if (facet.getConfiguration().isManifestManuallyEdited()) {
-        myBundleManifest = loadManifest();
-      }
+      myBundleManifest = loadManifest();
     }
     return myBundleManifest;
   }

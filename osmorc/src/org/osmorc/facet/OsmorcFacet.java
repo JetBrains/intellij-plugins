@@ -32,6 +32,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.vfs.JarFileSystem;
+import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -133,6 +135,23 @@ public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
   @Nullable
   public VirtualFile getManifestFile() {
     if (getConfiguration().isOsmorcControlsManifest()) {
+      String pathToJar = getConfiguration().getJarFileLocation();
+      VirtualFile jarFile = LocalFileSystem.getInstance().findFileByPath(pathToJar);
+      if (jarFile == null) {
+        return null;
+      }
+
+      VirtualFile jarRoot = JarFileSystem.getInstance().getJarRootForLocalFile(jarFile);
+      if (jarRoot != null) {
+        final VirtualFile manifestFile = jarRoot.findFileByRelativePath("META-INF/MANIFEST.MF");
+        if (manifestFile == null) {
+          return null;
+        }
+        else {
+          return manifestFile;
+        }
+      }
+
       return null;
     }
     String path = getManifestLocation();

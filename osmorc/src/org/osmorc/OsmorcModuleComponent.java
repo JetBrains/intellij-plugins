@@ -103,11 +103,11 @@ public class OsmorcModuleComponent implements ModuleComponent {
   }
 
   /**
-   * Runs over the module which has a manually edited manifest and refreshes it's information in the bundle manager.
+   * Runs over the module refreshes it's information in the bundle manager.
    */
-  private void buildManuallyEditedManifestIndex() {
+  private void buildManifestIndex() {
     final OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
-    if (facet != null && facet.getConfiguration().isManifestManuallyEdited()) {
+    if (facet != null) {
       myApplication.invokeLater(new Runnable() {
         public void run() {
           if (myModule.isDisposed()) return;
@@ -126,7 +126,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
     if (myConnection != null && facet.getTypeId() == OsmorcFacetType.ID) {
       if (facet.getModule().getProject().isInitialized()) {
         // reindex the module itself
-        buildManuallyEditedManifestIndex();
+        buildManifestIndex();
       }
       myAdditionalJARContentsWatcherManager.updateWatcherSetup();
     }
