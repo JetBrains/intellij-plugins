@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class FelixInstanceManager extends AbstractFrameworkInstanceManager {
-  private static final String[] BUNDLE_DIRS = {"bin", "bundle"};
+  private static final String[] BUNDLE_DIRS = {"bin", "bundle", "bundles"};
   private static final Pattern SYSTEM_BUNDLE = Pattern.compile("felix.*\\.jar");
   private static final Pattern SHELL_BUNDLES = Pattern.compile(".*\\.gogo\\.(command|runtime|shell).*\\.jar");
 

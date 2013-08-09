@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class EquinoxInstanceManager extends AbstractFrameworkInstanceManager {
-  private static final String[] BUNDLE_DIRS = {"plugins"};
+  private static final String[] BUNDLE_DIRS = {"plugins", "bundles"};
   private static final Pattern SYSTEM_BUNDLE = Pattern.compile("org.eclipse.osgi_.*\\.jar");
   private static final Pattern SHELL_BUNDLES = Pattern.compile(".*\\.gogo\\.(command|runtime|shell).*\\.jar");
 

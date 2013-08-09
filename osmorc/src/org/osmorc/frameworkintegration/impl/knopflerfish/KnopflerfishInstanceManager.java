@@ -42,7 +42,7 @@ import java.util.zip.ZipEntry;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class KnopflerfishInstanceManager extends AbstractFrameworkInstanceManager {
-  private static final String[] BUNDLE_DIRS = {"knopflerfish.org/osgi", "knopflerfish.org/osgi/jars/*", "osgi", "osgi/jars/*"};
+  private static final String[] BUNDLE_DIRS = {"knopflerfish.org/osgi", "knopflerfish.org/osgi/jars/*", "osgi", "osgi/jars/*", "bundles"};
   private static final Pattern SYSTEM_BUNDLE = Pattern.compile("framework.*\\.jar");
   private static final Pattern SHELL_BUNDLES = Pattern.compile("(log_api|cm_api|console_all|consoletty|frameworkcommands).*\\.jar");
 
