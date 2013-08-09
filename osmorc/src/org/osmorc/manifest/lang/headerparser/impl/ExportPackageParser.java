@@ -27,9 +27,6 @@ package org.osmorc.manifest.lang.headerparser.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.PackageReferenceSet;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.PatternPackageReferenceSet;
-import com.intellij.psi.impl.source.resolve.reference.impl.providers.PsiPackageReference;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.ManifestConstants;
@@ -41,53 +38,14 @@ import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.psi.ManifestToken;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ExportPackageParser extends AbstractHeaderParser {
+public class ExportPackageParser extends BasePackageParser {
   public static final HeaderParser INSTANCE = new ExportPackageParser();
-
-  private ExportPackageParser() { }
-
-  @Override
-  public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
-    if (headerValuePart.getParent() instanceof Clause) {
-      final PsiElement element = headerValuePart.getOriginalElement();
-      if (isPackageRef(element.getPrevSibling())) {
-        return packageReferences(headerValuePart);
-      }
-    }
-    else if (headerValuePart.getParent() instanceof Attribute) {
-      final Attribute attribute = (Attribute)headerValuePart.getParent();
-      if (ManifestConstants.Attributes.USES.equals(attribute.getName()) &&
-          !ManifestConstants.Attributes.USES.equals(headerValuePart.getUnwrappedText())) {
-        List<PsiPackageReference> references = new ArrayList<PsiPackageReference>();
-        for (ASTNode astNode : headerValuePart.getNode().getChildren(TokenSet.create(ManifestTokenType.HEADER_VALUE_PART))) {
-          if (astNode instanceof ManifestToken) {
-            ManifestToken manifestToken = (ManifestToken)astNode;
-            final int offset = headerValuePart.getText().indexOf(headerValuePart.getUnwrappedText());
-            PackageReferenceSet referenceSet = new PatternPackageReferenceSet(manifestToken.getText(), manifestToken, offset);
-            references.addAll(referenceSet.getReferences());
-          }
-        }
-        return references.toArray(new PsiPackageReference[references.size()]);
-      }
-    }
-    return PsiReference.EMPTY_ARRAY;
-  }
-
-  @Override
-  public boolean isSimpleHeader() {
-    return false;
-  }
-
-  private static PsiReference[] packageReferences(HeaderValuePart headerValuePart) {
-    final int offset = headerValuePart.getText().indexOf(headerValuePart.getUnwrappedText());
-    PackageReferenceSet referenceSet = new PatternPackageReferenceSet(headerValuePart.getUnwrappedText(), headerValuePart, offset);
-    return referenceSet.getReferences().toArray(new PsiPackageReference[referenceSet.getReferences().size()]);
-  }
 
   private static boolean isPackageRef(final PsiElement element) {
     final boolean result;
@@ -100,5 +58,35 @@ public class ExportPackageParser extends AbstractHeaderParser {
     }
 
     return result;
+  }
+
+  @Override
+  public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
+    if (headerValuePart.getParent() instanceof Clause) {
+      final PsiElement element = headerValuePart.getOriginalElement();
+      if (isPackageRef(element.getPrevSibling())) {
+        return getPackageReferences(headerValuePart, headerValuePart.getUnwrappedText());
+      }
+    }
+    else if (headerValuePart.getParent() instanceof Attribute) {
+      final Attribute attribute = (Attribute)headerValuePart.getParent();
+      if (ManifestConstants.Attributes.USES.equals(attribute.getName()) &&
+          !ManifestConstants.Attributes.USES.equals(headerValuePart.getUnwrappedText())) {
+        List<PsiReference> references = new ArrayList<PsiReference>();
+        for (ASTNode astNode : headerValuePart.getNode().getChildren(TokenSet.create(ManifestTokenType.HEADER_VALUE_PART))) {
+          if (astNode instanceof ManifestToken) {
+            ManifestToken manifestToken = (ManifestToken)astNode;
+            references.addAll(Arrays.asList(getPackageReferences(manifestToken, manifestToken.getText())));
+          }
+        }
+        return references.toArray(new PsiReference[references.size()]);
+      }
+    }
+    return PsiReference.EMPTY_ARRAY;
+  }
+
+  @Override
+  public boolean isSimpleHeader() {
+    return false;
   }
 }

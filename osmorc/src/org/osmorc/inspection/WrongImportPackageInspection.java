@@ -76,7 +76,15 @@ public class WrongImportPackageInspection extends LocalInspectionTool {
           for (Clause clause : header.getClauses()) {
             HeaderValuePart valuePart = clause.getValue();
             String packageSpec = clause.getClauseText();
-            if (valuePart != null && !valuePart.getText().isEmpty() && !isProvided(element, packageSpec)) {
+            if (valuePart == null ||
+                packageSpec == null ||
+                /* TODO add wildcard patterns support. May require update of the Manifest parser lib of the plugin (felix-utils.jar) to the newer version.*/
+                packageSpec.indexOf('*') != -1 ||
+                packageSpec.indexOf('?') != -1) {
+              continue;
+            }
+
+            if (!valuePart.getText().isEmpty() && !isProvided(element, packageSpec)) {
               holder.registerProblem(valuePart, OsmorcBundle.message(
                 "WrongImportPackageInspection.problem.message.not-exported-package",
                 valuePart.getUnwrappedText(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING));
@@ -88,13 +96,8 @@ public class WrongImportPackageInspection extends LocalInspectionTool {
   }
 
   private boolean isProvided(PsiElement element, String packageSpec) {
-    if(packageSpec != null && !packageSpec.contains("*")) {
-      Set<ManifestHolder> manifestHolders = getBundleManager(element).getBundleCache().whoProvides(packageSpec);
-      return !manifestHolders.isEmpty();
-    } else {
-      // TODO add '*' patterns support. May require update of the Manifest parser lib of the plugin (felix-utils.jar) to the newer version.
-      return true;
-    }
+    Set<ManifestHolder> manifestHolders = getBundleManager(element).getBundleCache().whoProvides(packageSpec);
+    return !manifestHolders.isEmpty();
   }
 
   private BundleManager getBundleManager(PsiElement element) {
