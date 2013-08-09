@@ -136,7 +136,7 @@ public class OsmorcFacet extends Facet<OsmorcFacetConfiguration> {
   public VirtualFile getManifestFile() {
     if (getConfiguration().isOsmorcControlsManifest()) {
       String pathToJar = getConfiguration().getJarFileLocation();
-      VirtualFile jarFile = LocalFileSystem.getInstance().findFileByPath(pathToJar);
+      VirtualFile jarFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(pathToJar);
       if (jarFile == null) {
         return null;
       }
