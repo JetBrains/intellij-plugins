@@ -28,6 +28,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.ObjectUtils;
@@ -111,19 +112,21 @@ public class CreateFrameworkInstanceDialog extends DialogWrapper {
   }
 
   private void updateVersion() {
-    FrameworkInstanceDefinition instance = createDefinition();
+    String version = null;
     FrameworkInstanceManager manager = myIntegrator.getFrameworkInstanceManager();
     if (manager instanceof AbstractFrameworkInstanceManager) {
-      String version = ((AbstractFrameworkInstanceManager)manager).getVersion(instance);
-      if (version != null) {
-        myNameField.setText(myIntegrator.getDisplayName() + " (" + version + ")");
-        myVersionLabel.setText(version);
-        return;
-      }
+      version = ((AbstractFrameworkInstanceManager)manager).getVersion(createDefinition());
     }
 
-    myNameField.setText(myIntegrator.getDisplayName());
-    myVersionLabel.setText("");
+    myVersionLabel.setText(ObjectUtils.notNull(version, ""));
+
+    if (StringUtil.isEmptyOrSpaces(myNameField.getText())) {
+      String name = myIntegrator.getDisplayName();
+      if (version != null) {
+        name = name + " (" + version + ")";
+      }
+      myNameField.setText(name);
+    }
   }
 
   @Override
