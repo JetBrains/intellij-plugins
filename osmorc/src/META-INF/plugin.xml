@@ -69,9 +69,6 @@
     <component>
       <implementation-class>org.osmorc.OsmorcProjectComponent</implementation-class>
     </component>
-    <component>
-      <implementation-class>org.osmorc.ModuleRenameHandler</implementation-class>
-    </component>
   </project-components>
 
   <module-components>

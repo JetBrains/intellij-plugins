@@ -26,50 +26,67 @@ package org.osmorc;
 
 import com.intellij.ProjectTopics;
 import com.intellij.compiler.impl.FileProcessingCompilerAdapterTask;
+import com.intellij.execution.RunManager;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.ModuleAdapter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootAdapter;
 import com.intellij.openapi.roots.ModuleRootEvent;
+import com.intellij.openapi.util.Pair;
 import com.intellij.util.Alarm;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.make.BundleCompiler;
+import org.osmorc.run.OsgiConfigurationType;
+import org.osmorc.run.OsgiRunConfiguration;
+import org.osmorc.run.ui.SelectedBundle;
 import org.osmorc.settings.ApplicationSettings;
 import org.osmorc.settings.ProjectSettings;
+
+import java.util.List;
 
 /**
  * A project level component which enables some listeners to keep data in sync when the project opens or it's settings change.
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings.ProjectSettingsListener,
-                                               ApplicationSettings.ApplicationSettingsListener {
+public class OsmorcProjectComponent
+       implements ProjectComponent, ProjectSettings.ProjectSettingsListener, ApplicationSettings.ApplicationSettingsListener {
 
   public static final NotificationGroup IMPORTANT_ERROR_NOTIFICATION =
-    new NotificationGroup("OSGi important errors", NotificationDisplayType.STICKY_BALLOON, true);
+    new NotificationGroup("OSGi Important Messages", NotificationDisplayType.STICKY_BALLOON, true);
 
-  private final BundleManager myBundleManager;
   private final ApplicationSettings myApplicationSettings;
-  private final ProjectSettings myProjectSettings;
+  private final OsgiConfigurationType myConfigurationType;
   private final Project myProject;
   private final CompilerManager myCompilerManager;
+  private final ProjectSettings myProjectSettings;
+  private final BundleManager myBundleManager;
   private final Alarm myAlarm;
 
-  public OsmorcProjectComponent(BundleManager bundleManager,
-                                ApplicationSettings applicationSettings,
-                                ProjectSettings projectSettings,
-                                Project project,
-                                CompilerManager compilerManager) {
-    myBundleManager = bundleManager;
+  public OsmorcProjectComponent(@NotNull ApplicationSettings applicationSettings,
+                                @NotNull OsgiConfigurationType configurationType,
+                                @NotNull Project project,
+                                @NotNull CompilerManager compilerManager,
+                                @NotNull ProjectSettings projectSettings,
+                                @NotNull BundleManager bundleManager) {
     myApplicationSettings = applicationSettings;
-    myProjectSettings = projectSettings;
+    myConfigurationType = configurationType;
     myProject = project;
     myCompilerManager = compilerManager;
+    myBundleManager = bundleManager;
+    myProjectSettings = projectSettings;
+
     myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, myProject);
   }
 
@@ -81,9 +98,13 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
 
   @Override
   public void initComponent() {
-    myProjectSettings.addProjectSettingsListener(this);
     myApplicationSettings.addApplicationSettingsListener(this);
-    myProject.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener());
+    myProjectSettings.addProjectSettingsListener(this);
+
+    MessageBusConnection projectBus = myProject.getMessageBus().connect(myProject);
+    projectBus.subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener());
+    projectBus.subscribe(ProjectTopics.MODULES, new MyModuleRenameHandler());
+
     myCompilerManager.addAfterTask(new FileProcessingCompilerAdapterTask(new BundleCompiler()));
   }
 
@@ -95,8 +116,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
 
   @Override
   public void projectOpened() {
-    refreshFrameworkInstanceLibrary();
-    rebuildOSGiIndices();
+    scheduleIndexRebuild();
   }
 
   @Override
@@ -104,42 +124,34 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
 
   @Override
   public void projectSettingsChanged() {
-    refreshFrameworkInstanceLibrary();
+    scheduleIndexRebuild();
   }
 
   @Override
   public void frameworkInstancesChanged() {
-    refreshFrameworkInstanceLibrary();
+    scheduleIndexRebuild();
   }
 
-  /**
-   * Refreshes the framework instance library.
-   */
-  private void refreshFrameworkInstanceLibrary() {
-    if (ApplicationManager.getApplication().isUnitTestMode()) return;
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        if (!myProject.isOpen()) return;
-        myAlarm.cancelAllRequests();
-        myAlarm.addRequest(new Runnable() {
-          @Override
-          public void run() {
-            rebuildOSGiIndices();
-          }
-        }, 500);
-      }
-    }, myProject.getDisposed());
+  private void scheduleIndexRebuild() {
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      myAlarm.cancelAllRequests();
+      myAlarm.addRequest(new Runnable() {
+        @Override
+        public void run() {
+          rebuildOSGiIndices();
+        }
+      }, 500);
+    }
   }
 
   private void rebuildOSGiIndices() {
-    if (ApplicationManager.getApplication().isUnitTestMode()) return;
     ApplicationManager.getApplication().invokeLater(new Runnable() {
       @Override
       public void run() {
         new Task.Backgroundable(myProject, "Updating OSGi indices", false) {
           @Override
           public void run(@NotNull ProgressIndicator indicator) {
+            //noinspection ConstantConditions
             if (!myProject.isOpen()) return;
             indicator.setIndeterminate(true);
             indicator.setText("Updating OSGi indices");
@@ -155,13 +167,37 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
     @Override
     public void rootsChanged(ModuleRootEvent event) {
       if (!event.isCausedByFileTypesChange()) {
-        myAlarm.cancelAllRequests();
-        myAlarm.addRequest(new Runnable() {
+        scheduleIndexRebuild();
+      }
+    }
+  }
+
+  private class MyModuleRenameHandler extends ModuleAdapter {
+    @Override
+    public void modulesRenamed(Project project, List<Module> modules, Function<Module, String> oldNameProvider) {
+      final List<Pair<SelectedBundle, String>> pairs = ContainerUtil.newSmartList();
+
+      for (Module module : modules) {
+        String oldName = oldNameProvider.fun(module);
+        for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurations(myConfigurationType)) {
+          for (SelectedBundle bundle : ((OsgiRunConfiguration)runConfiguration).getBundlesToDeploy()) {
+            if (bundle.isModule() && bundle.getName().equals(oldName)) {
+              pairs.add(Pair.create(bundle, module.getName()));
+              break;
+            }
+          }
+        }
+      }
+
+      if (!pairs.isEmpty()) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
           @Override
           public void run() {
-            rebuildOSGiIndices();
+            for (Pair<SelectedBundle, String> pair : pairs) {
+              pair.first.setName(pair.second);
+            }
           }
-        }, 500);
+        });
       }
     }
   }
