@@ -29,13 +29,14 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.*;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestHighlightingAnnotator implements Annotator {
-  public void annotate(PsiElement psiElement, AnnotationHolder holder) {
+  public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
     if (psiElement instanceof Attribute) {
       annotate(((Attribute)psiElement).getNamePsi(), ManifestColorsAndFonts.ATTRIBUTE_NAME_KEY, holder);
     }
