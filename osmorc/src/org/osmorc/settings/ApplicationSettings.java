@@ -26,7 +26,6 @@
 package org.osmorc.settings;
 
 import com.intellij.openapi.components.*;
-import com.intellij.util.EventDispatcher;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
@@ -34,7 +33,6 @@ import org.jetbrains.annotations.Nullable;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.LibraryBundlificationRule;
 
-import java.util.EventListener;
 import java.util.List;
 
 /**
@@ -50,7 +48,6 @@ import java.util.List;
 public class ApplicationSettings implements PersistentStateComponent<ApplicationSettings> {
   private List<FrameworkInstanceDefinition> myInstances = ContainerUtil.newArrayList();
   private List<LibraryBundlificationRule> myRules = ContainerUtil.newArrayList(new LibraryBundlificationRule());
-  private EventDispatcher<ApplicationSettingsListener> myDispatcher = EventDispatcher.create(ApplicationSettingsListener.class);
 
   public static ApplicationSettings getInstance() {
     return ServiceManager.getService(ApplicationSettings.class);
@@ -73,7 +70,6 @@ public class ApplicationSettings implements PersistentStateComponent<Application
 
   public void setFrameworkInstanceDefinitions(List<FrameworkInstanceDefinition> instances) {
     myInstances = instances;
-    myDispatcher.getMulticaster().frameworkInstancesChanged();
   }
 
   @AbstractCollection(elementTag = "libraryBundlificationRule")
@@ -98,17 +94,5 @@ public class ApplicationSettings implements PersistentStateComponent<Application
       }
     }
     return null;
-  }
-
-  public void addApplicationSettingsListener(ApplicationSettingsListener listener) {
-    myDispatcher.addListener(listener);
-  }
-
-  public void removeApplicationSettingsListener(ApplicationSettingsListener listener) {
-    myDispatcher.removeListener(listener);
-  }
-
-  public interface ApplicationSettingsListener extends EventListener {
-    void frameworkInstancesChanged();
   }
 }

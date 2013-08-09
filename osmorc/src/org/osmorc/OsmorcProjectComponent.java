@@ -30,6 +30,7 @@ import com.intellij.execution.RunManager;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
+import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.components.ProjectComponent;
@@ -46,11 +47,12 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
+import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.make.BundleCompiler;
 import org.osmorc.run.OsgiConfigurationType;
 import org.osmorc.run.OsgiRunConfiguration;
 import org.osmorc.run.ui.SelectedBundle;
-import org.osmorc.settings.ApplicationSettings;
+import org.osmorc.settings.FrameworkDefinitionListener;
 import org.osmorc.settings.ProjectSettings;
 
 import java.util.List;
@@ -60,13 +62,11 @@ import java.util.List;
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class OsmorcProjectComponent
-       implements ProjectComponent, ProjectSettings.ProjectSettingsListener, ApplicationSettings.ApplicationSettingsListener {
-
+public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings.ProjectSettingsListener {
   public static final NotificationGroup IMPORTANT_ERROR_NOTIFICATION =
     new NotificationGroup("OSGi Important Messages", NotificationDisplayType.STICKY_BALLOON, true);
 
-  private final ApplicationSettings myApplicationSettings;
+  private final Application myApplication;
   private final OsgiConfigurationType myConfigurationType;
   private final Project myProject;
   private final CompilerManager myCompilerManager;
@@ -74,13 +74,13 @@ public class OsmorcProjectComponent
   private final BundleManager myBundleManager;
   private final Alarm myAlarm;
 
-  public OsmorcProjectComponent(@NotNull ApplicationSettings applicationSettings,
+  public OsmorcProjectComponent(@NotNull Application application,
                                 @NotNull OsgiConfigurationType configurationType,
                                 @NotNull Project project,
                                 @NotNull CompilerManager compilerManager,
                                 @NotNull ProjectSettings projectSettings,
                                 @NotNull BundleManager bundleManager) {
-    myApplicationSettings = applicationSettings;
+    myApplication = application;
     myConfigurationType = configurationType;
     myProject = project;
     myCompilerManager = compilerManager;
@@ -98,7 +98,9 @@ public class OsmorcProjectComponent
 
   @Override
   public void initComponent() {
-    myApplicationSettings.addApplicationSettingsListener(this);
+    MessageBusConnection appBus = myApplication.getMessageBus().connect(myProject);
+    appBus.subscribe(FrameworkDefinitionListener.TOPIC, new MyFrameworkDefinitionListener());
+
     myProjectSettings.addProjectSettingsListener(this);
 
     MessageBusConnection projectBus = myProject.getMessageBus().connect(myProject);
@@ -111,7 +113,6 @@ public class OsmorcProjectComponent
   @Override
   public void disposeComponent() {
     myProjectSettings.removeProjectSettingsListener(this);
-    myApplicationSettings.removeApplicationSettingsListener(this);
   }
 
   @Override
@@ -124,11 +125,6 @@ public class OsmorcProjectComponent
 
   @Override
   public void projectSettingsChanged() {
-    scheduleIndexRebuild();
-  }
-
-  @Override
-  public void frameworkInstancesChanged() {
     scheduleIndexRebuild();
   }
 
@@ -162,6 +158,23 @@ public class OsmorcProjectComponent
     }, myProject.getDisposed());
   }
 
+
+  private class MyFrameworkDefinitionListener implements FrameworkDefinitionListener {
+    @Override
+    public void definitionsChanged(@NotNull List<Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition>> changes) {
+      scheduleIndexRebuild();
+
+      for (Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition> pair : changes) {
+        if (pair.first == null) continue;
+        for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurations(myConfigurationType)) {
+          OsgiRunConfiguration osgiRunConfiguration = (OsgiRunConfiguration)runConfiguration;
+          if (pair.first.equals(osgiRunConfiguration.getInstanceToUse())) {
+            osgiRunConfiguration.setInstanceToUse(pair.second);
+          }
+        }
+      }
+    }
+  }
 
   private class MyModuleRootListener extends ModuleRootAdapter {
     @Override

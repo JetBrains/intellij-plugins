@@ -28,8 +28,10 @@ import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.Pair;
 import com.intellij.ui.AnActionButton;
 import com.intellij.ui.AnActionButtonRunnable;
 import com.intellij.ui.DoubleClickListener;
@@ -37,6 +39,7 @@ import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.frameworkintegration.FrameworkInstanceDefinition;
 import org.osmorc.frameworkintegration.FrameworkIntegrator;
@@ -58,17 +61,21 @@ import java.util.List;
  */
 public class FrameworkDefinitionsEditorComponent {
   private JPanel myMainPanel;
+  private JPanel myFrameworkInstancesPanel;
   private JBList myFrameworkInstances;
   private JLabel myFrameworkIntegrator;
   private JLabel myHomeDir;
   private JLabel myFrameworkInstanceName;
   private JLabel myVersion;
-  private JPanel myFrameworkInstancesPanel;
-  private boolean myModified;
-  private DefaultListModel myModel;
+  private final DefaultListModel myModel;
+  private final MessageBus myBus;
+  private final List<Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition>> myModified;
 
   public FrameworkDefinitionsEditorComponent() {
     myModel = new DefaultListModel();
+    myBus = ApplicationManager.getApplication().getMessageBus();
+    myModified = ContainerUtil.newArrayList();
+
     myFrameworkInstances = new JBList(myModel);
     myFrameworkInstances.getEmptyText().setText(OsmorcBundle.message("frameworks.empty"));
     myFrameworkInstances.setCellRenderer(new OsgiUiUtil.FrameworkInstanceRenderer());
@@ -143,16 +150,17 @@ public class FrameworkDefinitionsEditorComponent {
       //noinspection unchecked
       myModel.addElement(instance);
       myFrameworkInstances.setSelectedIndex(myModel.getSize() - 1);
-      myModified = true;
+      myModified.add(Pair.create((FrameworkInstanceDefinition)null, instance));
     }
   }
 
   private void removeFrameworkInstance() {
     int index = myFrameworkInstances.getSelectedIndex();
     if (index != -1) {
+      FrameworkInstanceDefinition instance = (FrameworkInstanceDefinition)myModel.get(index);
       myModel.remove(index);
       myFrameworkInstances.setSelectedIndex(0);
-      myModified = true;
+      myModified.add(Pair.create(instance, (FrameworkInstanceDefinition)null));
     }
   }
 
@@ -164,10 +172,10 @@ public class FrameworkDefinitionsEditorComponent {
       dialog.pack();
       dialog.show();
       if (dialog.isOK()) {
-        instance = dialog.createDefinition();
+        FrameworkInstanceDefinition newInstance = dialog.createDefinition();
         //noinspection unchecked
-        myModel.set(index, instance);
-        myModified = true;
+        myModel.set(index, newInstance);
+        myModified.add(Pair.create(instance, newInstance));
       }
     }
   }
@@ -182,7 +190,7 @@ public class FrameworkDefinitionsEditorComponent {
       //noinspection unchecked
       myModel.addElement(instance);
     }
-    myModified = false;
+    myModified.clear();
   }
 
   public void applyTo(@NotNull ApplicationSettings settings) {
@@ -192,11 +200,13 @@ public class FrameworkDefinitionsEditorComponent {
       definitions.add((FrameworkInstanceDefinition)myModel.get(i));
     }
     settings.setFrameworkInstanceDefinitions(definitions);
-    myModified = false;
+
+    myBus.syncPublisher(FrameworkDefinitionListener.TOPIC).definitionsChanged(myModified);
+    myModified.clear();
   }
 
   public boolean isModified() {
-    return myModified;
+    return !myModified.isEmpty();
   }
 
 

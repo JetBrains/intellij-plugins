@@ -54,7 +54,7 @@ import java.util.List;
 /**
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  */
-public class ProjectSettingsEditorComponent implements ApplicationSettings.ApplicationSettingsListener {
+public class ProjectSettingsEditorComponent {
   private boolean myModified;
   @SuppressWarnings({"FieldAccessedSynchronizedAndUnsynchronized"}) private ProjectSettings mySettings;
   private UserActivityWatcher myWatcher;
@@ -112,7 +112,6 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
         ModuleDependencySynchronizer.resynchronizeAll(myProject);
       }
     });
-    ApplicationSettings.getInstance().addApplicationSettingsListener(this);
   }
 
   private void onOutputPathSelect() {
@@ -177,7 +176,6 @@ public class ProjectSettingsEditorComponent implements ApplicationSettings.Appli
 
   public void dispose() {
     myWatcher = null;
-    ApplicationSettings.getInstance().removeApplicationSettingsListener(this);
   }
 
   public JPanel getMainPanel() {
