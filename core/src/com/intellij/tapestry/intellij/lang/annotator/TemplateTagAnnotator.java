@@ -23,6 +23,7 @@ import com.intellij.tapestry.intellij.core.java.IntellijJavaClassType;
 import com.intellij.tapestry.intellij.lang.TemplateColorSettingsPage;
 import com.intellij.tapestry.intellij.util.IdeaUtils;
 import com.intellij.tapestry.intellij.util.TapestryUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Annotates a Tapestry template.
@@ -39,7 +40,7 @@ public class TemplateTagAnnotator extends XmlRecursiveElementVisitor implements 
     annotationHolder = null;
   }//Constructor
 
-  public void annotate(PsiElement psiElement, AnnotationHolder annotationHolder) {
+  public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder annotationHolder) {
     this.annotationHolder = annotationHolder;
 
     try {
