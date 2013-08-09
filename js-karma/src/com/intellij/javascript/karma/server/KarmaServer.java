@@ -42,6 +42,7 @@ public class KarmaServer {
   private final KarmaWatcher myWatcher;
 
   private final AtomicBoolean myOnReadyFired = new AtomicBoolean(false);
+  private final File myKarmaPackageDir;
   private boolean myOnReadyExecuted = false;
   private Integer myExitCode = null;
   private final List<KarmaServerReadyListener> myDoListWhenReady = Lists.newCopyOnWriteArrayList();
@@ -55,6 +56,7 @@ public class KarmaServer {
                      @NotNull File configurationFile) throws IOException {
     /* 'nodeInterpreter', 'karmaPackageDir' and 'configurationFile'
         are already checked in KarmaRunConfiguration.checkConfiguration */
+    myKarmaPackageDir = karmaPackageDir;
     myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(karmaPackageDir);
     final ProcessHandler processHandler = startServer(nodeInterpreter, configurationFile);
     myState = new KarmaServerState(this, processHandler);
@@ -100,6 +102,11 @@ public class KarmaServer {
         }
       }
     });
+  }
+
+  @NotNull
+  public File getKarmaPackageDir() {
+    return myKarmaPackageDir;
   }
 
   @NotNull

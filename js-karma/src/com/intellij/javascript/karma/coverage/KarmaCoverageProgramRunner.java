@@ -3,6 +3,8 @@ package com.intellij.javascript.karma.coverage;
 import com.intellij.coverage.*;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
+import com.intellij.execution.ProgramRunnerUtil;
+import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.ConfigurationInfoProvider;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
@@ -12,17 +14,18 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
+import com.intellij.javascript.karma.execution.KarmaRunProfileState;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,34 +55,54 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
   }
 
   @Override
-  protected RunContentDescriptor doExecute(Project project,
+  protected RunContentDescriptor doExecute(@NotNull final Project project,
                                            RunProfileState state,
-                                           RunContentDescriptor contentToReuse,
-                                           ExecutionEnvironment env) throws ExecutionException {
+                                           @Nullable RunContentDescriptor contentToReuse,
+                                           @NotNull final ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
-    ExecutionResult executionResult = state.execute(env.getExecutor(), this);
-    if (executionResult == null) {
+    KarmaRunProfileState karmaState = ObjectUtils.tryCast(state, KarmaRunProfileState.class);
+    if (karmaState == null) {
       return null;
     }
-    KarmaConsoleView consoleView = KarmaConsoleView.get(executionResult);
-    if (consoleView == null) {
-      throw new RuntimeException("KarmaConsoleView was expected!");
+    KarmaServer server = karmaState.getServerOrStart(env.getExecutor());
+    if (server == null) {
+      return null;
     }
-    final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
-    if (karmaServer.getCoveragePeer().isKarmaCoveragePluginMissing()) {
-      KarmaCoveragePluginMissingDialog dialog = new KarmaCoveragePluginMissingDialog(project);
-      dialog.show();
-      if (dialog.isOK()) {
-        System.out.println("OK");
+    KarmaCoveragePeer coveragePeer = server.getCoveragePeer();
+    KarmaCoverageInitStatus initStatus = coveragePeer.getInitStatus();
+    if (initStatus != null) {
+      if (!initStatus.isCoveragePluginInstalled()) {
+        KarmaCoveragePluginMissingDialog dialog = new KarmaCoveragePluginMissingDialog(project);
+        dialog.show();
+        return null;
       }
-      return null;
+      return executeAfterSuccessfulInitialization(project, karmaState, contentToReuse, env, server);
     }
-    if (karmaServer.isReady() && karmaServer.hasCapturedBrowsers()) {
-      return doCoverage(project, executionResult, contentToReuse, env, karmaServer);
+    coveragePeer.doWhenCoverageInitialized(new KarmaCoverageInitializationListener() {
+      @Override
+      public void onCoverageInitialized(@NotNull KarmaCoverageInitStatus initStatus) {
+        RunnerAndConfigurationSettings configuration = env.getRunnerAndConfigurationSettings();
+        if (configuration != null) {
+          ProgramRunnerUtil.executeConfiguration(project, configuration, env.getExecutor());
+        }
+      }
+    }, project);
+    return null;
+  }
+
+  @NotNull
+  private RunContentDescriptor executeAfterSuccessfulInitialization(@NotNull Project project,
+                                                                    @NotNull KarmaRunProfileState state,
+                                                                    @Nullable RunContentDescriptor contentToReuse,
+                                                                    @NotNull ExecutionEnvironment env,
+                                                                    @NotNull KarmaServer server) throws ExecutionException {
+    ExecutionResult executionResult = state.executeWithServer(env.getExecutor(), server);
+    if (server.isReady() && server.hasCapturedBrowsers()) {
+      return doCoverage(project, executionResult, contentToReuse, env, server);
     }
     RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
-    karmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
+    server.doWhenReadyWithCapturedBrowser(new Runnable() {
       @Override
       public void run() {
         KarmaUtil.restart(descriptor);

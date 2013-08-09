@@ -47,20 +47,18 @@ public class KarmaRunProfileState implements RunProfileState {
     myExecutionType = findExecutionType(executor);
   }
 
-  @NotNull
-  private static KarmaExecutionType findExecutionType(@NotNull Executor executor) {
-    if (executor.equals(DefaultDebugExecutor.getDebugExecutorInstance())) {
-      return KarmaExecutionType.DEBUG;
-    }
-    if (executor.equals(ExecutorRegistry.getInstance().getExecutorById(CoverageExecutor.EXECUTOR_ID))) {
-      return KarmaExecutionType.COVERAGE;
-    }
-    return KarmaExecutionType.RUN;
-  }
-
   @Override
   @Nullable
   public ExecutionResult execute(@NotNull final Executor executor, @NotNull final ProgramRunner runner) throws ExecutionException {
+    KarmaServer server = getServerOrStart(executor);
+    if (server != null) {
+      return executeWithServer(executor, server);
+    }
+    return null;
+  }
+
+  @Nullable
+  public KarmaServer getServerOrStart(@NotNull final Executor executor) throws ExecutionException {
     File configurationFile = new File(myRunSettings.getConfigPath());
     KarmaServer server = KarmaServerRegistry.getServerByConfigurationFile(configurationFile);
     if (server == null) {
@@ -88,9 +86,13 @@ public class KarmaRunProfileState implements RunProfileState {
           }
         }
       );
-
-      return null;
     }
+    return server;
+  }
+
+  @NotNull
+  public ExecutionResult executeWithServer(@NotNull final Executor executor,
+                                           @NotNull KarmaServer server) throws ExecutionException {
     server.getWatcher().flush();
     KarmaExecutionSession session = new KarmaExecutionSession(myProject,
                                                               myExecutionEnvironment,
@@ -106,6 +108,17 @@ public class KarmaRunProfileState implements RunProfileState {
     DefaultExecutionResult executionResult = new DefaultExecutionResult(smtRunnerConsoleView, processHandler);
     executionResult.setRestartActions(new ToggleAutoTestAction());
     return executionResult;
+  }
+
+  @NotNull
+  private static KarmaExecutionType findExecutionType(@NotNull Executor executor) {
+    if (executor.equals(DefaultDebugExecutor.getDebugExecutorInstance())) {
+      return KarmaExecutionType.DEBUG;
+    }
+    if (executor.equals(ExecutorRegistry.getInstance().getExecutorById(CoverageExecutor.EXECUTOR_ID))) {
+      return KarmaExecutionType.COVERAGE;
+    }
+    return KarmaExecutionType.RUN;
   }
 
   private void showServerStartupError(@NotNull final Exception serverException) {
