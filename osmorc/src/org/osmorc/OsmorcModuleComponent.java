@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc;
 
 import com.intellij.facet.Facet;
@@ -32,8 +31,7 @@ import com.intellij.openapi.application.Application;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.openapi.progress.Task;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
@@ -47,7 +45,6 @@ public class OsmorcModuleComponent implements ModuleComponent {
   private final BundleManager myBundleManager;
   private final AdditionalJARContentsWatcherManager myAdditionalJARContentsWatcherManager;
   private final Application myApplication;
-  private MessageBusConnection myConnection;
 
   public OsmorcModuleComponent(Module module,
                                BundleManager bundleManager,
@@ -68,8 +65,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
 
   @Override
   public void initComponent() {
-    myConnection = myModule.getMessageBus().connect();
-    myConnection.subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
+    myModule.getMessageBus().connect(myModule).subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
       public void facetAdded(@NotNull Facet facet) {
         handleFacetChange(facet);
       }
@@ -81,12 +77,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
   }
 
   @Override
-  public void disposeComponent() {
-    if (myConnection != null) {
-      myConnection.disconnect();
-      myConnection = null;
-    }
-  }
+  public void disposeComponent() { }
 
   @Override
   public void projectOpened() {
@@ -99,36 +90,37 @@ public class OsmorcModuleComponent implements ModuleComponent {
   }
 
   @Override
-  public void moduleAdded() {
+  public void moduleAdded() { }
+
+  private void handleFacetChange(Facet facet) {
+    if (facet.getTypeId() == OsmorcFacetType.ID) {
+      if (facet.getModule().getProject().isInitialized()) {
+        // reindex the module itself
+        buildManifestIndex();
+      }
+      myAdditionalJARContentsWatcherManager.updateWatcherSetup();
+    }
   }
 
   /**
-   * Runs over the module refreshes it's information in the bundle manager.
+   * Runs over the module and refreshes it's information in the bundle manager.
    */
   private void buildManifestIndex() {
     final OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
     if (facet != null) {
       myApplication.invokeLater(new Runnable() {
         public void run() {
-          if (myModule.isDisposed()) return;
-          ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-          if (indicator != null) {
-            indicator.setIndeterminate(true);
-            indicator.setText("Updating manifest indices.");
-          }
-          myBundleManager.reindex(myModule);
+          new Task.Backgroundable(myModule.getProject(), "Updating OSGi indices", false) {
+            @Override
+            public void run(@NotNull ProgressIndicator indicator) {
+              if (myModule.isDisposed()) return;
+              indicator.setIndeterminate(true);
+              indicator.setText("Updating OSGi indices");
+              myBundleManager.reindex(myModule);
+            }
+          }.queue();
         }
       }, myModule.getDisposed());
-    }
-  }
-
-  private void handleFacetChange(Facet facet) {
-    if (myConnection != null && facet.getTypeId() == OsmorcFacetType.ID) {
-      if (facet.getModule().getProject().isInitialized()) {
-        // reindex the module itself
-        buildManifestIndex();
-      }
-      myAdditionalJARContentsWatcherManager.updateWatcherSetup();
     }
   }
 }

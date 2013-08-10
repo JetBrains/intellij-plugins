@@ -141,14 +141,13 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
   }
 
   private void rebuildOSGiIndices() {
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
+    myApplication.invokeLater(new Runnable() {
       @Override
       public void run() {
         new Task.Backgroundable(myProject, "Updating OSGi indices", false) {
           @Override
           public void run(@NotNull ProgressIndicator indicator) {
-            //noinspection ConstantConditions
-            if (!myProject.isOpen()) return;
+            if (OsmorcProjectComponent.this.myProject.isOpen()) return;
             indicator.setIndeterminate(true);
             indicator.setText("Updating OSGi indices");
             myBundleManager.reindexAll();
