@@ -16,6 +16,8 @@ import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class DartCommandLineRuntimeConfigurationProducer extends RuntimeConfigurationProducer {
   private PsiElement mySourceElement;
 
@@ -64,7 +66,7 @@ public class DartCommandLineRuntimeConfigurationProducer extends RuntimeConfigur
   @Nullable
   @Override
   protected RunnerAndConfigurationSettings findExistingByElement(Location location,
-                                                                 @NotNull RunnerAndConfigurationSettings[] existingConfigurations,
+                                                                 @NotNull List<RunnerAndConfigurationSettings> existingConfigurations,
                                                                  ConfigurationContext context) {
     final PsiElement element = location.getPsiElement();
     final PsiFile containingFile = element.getContainingFile();

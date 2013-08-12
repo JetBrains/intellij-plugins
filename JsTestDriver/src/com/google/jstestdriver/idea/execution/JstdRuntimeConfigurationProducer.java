@@ -118,7 +118,7 @@ public class JstdRuntimeConfigurationProducer extends RuntimeConfigurationProduc
   @SuppressWarnings({"RawUseOfParameterizedType"})
   @Override
   protected RunnerAndConfigurationSettings findExistingByElement(final Location location,
-                                                                 @NotNull final RunnerAndConfigurationSettings[] existingConfigurations,
+                                                                 @NotNull final List<RunnerAndConfigurationSettings> existingConfigurations,
                                                                  ConfigurationContext context) {
     long startTimeNano = System.nanoTime();
     RunSettingsContext runSettingsContext = buildRunSettingsContext(location);

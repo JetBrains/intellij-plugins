@@ -165,7 +165,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
 
       for (Pair<FrameworkInstanceDefinition, FrameworkInstanceDefinition> pair : changes) {
         if (pair.first == null) continue;
-        for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurations(myConfigurationType)) {
+        for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurationsList(myConfigurationType)) {
           OsgiRunConfiguration osgiRunConfiguration = (OsgiRunConfiguration)runConfiguration;
           if (pair.first.equals(osgiRunConfiguration.getInstanceToUse())) {
             osgiRunConfiguration.setInstanceToUse(pair.second);
@@ -191,7 +191,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
 
       for (Module module : modules) {
         String oldName = oldNameProvider.fun(module);
-        for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurations(myConfigurationType)) {
+        for (RunConfiguration runConfiguration : RunManager.getInstance(myProject).getConfigurationsList(myConfigurationType)) {
           for (SelectedBundle bundle : ((OsgiRunConfiguration)runConfiguration).getBundlesToDeploy()) {
             if (bundle.isModule() && bundle.getName().equals(oldName)) {
               pairs.add(Pair.create(bundle, module.getName()));
