@@ -28,11 +28,11 @@ import jetbrains.communicator.ide.ProgressIndicator;
 import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;
-import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -53,8 +53,9 @@ public class UIUtil {
     final JFrame jFrame = new JFrame();
     jFrame.getContentPane().setLayout(new BorderLayout());
     jFrame.getContentPane().add(component);
-    jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     invokeLater(new Runnable() {
+      @Override
       public void run() {
         jFrame.pack();
         jFrame.setVisible(true);
@@ -74,6 +75,7 @@ public class UIUtil {
   public static void setupUserList(JList userListComponent, List<User> users) {
 
     Collections.sort(users, new Comparator<User>() {
+      @Override
       public int compare(User o1, User o2) {
         return compareUsers(o1, o2);
       }
@@ -82,6 +84,7 @@ public class UIUtil {
     userListComponent.setUI(new MultipleSelectionListUI());
     userListComponent.setListData(users.toArray());
     userListComponent.setCellRenderer(new DefaultListCellRenderer(){
+      @Override
       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         User user = (User) value;
         Component rendererComponent = super.getListCellRendererComponent(list, user.getDisplayName(), index, isSelected, cellHasFocus);
@@ -98,6 +101,7 @@ public class UIUtil {
       throws CanceledException {
 
     IDEFacade.Process process = new IDEFacade.Process() {
+      @Override
       public void run(ProgressIndicator indicator) {
         indicator.setIndefinite(true);
         indicator.setText(title);
@@ -110,13 +114,13 @@ public class UIUtil {
             indicator.setFraction(0.5f); // Update indicator
             workerThreadFuture.get(100, TimeUnit.MILLISECONDS);
           }
-          catch (TimeoutException e) {
+          catch (TimeoutException ignored) {
             // Ok, spin a while
           }
           catch (ExecutionException e) {
             workerThreadFuture.cancel(true);
             throw new RuntimeException(e);
-          } catch (InterruptedException e) {
+          } catch (InterruptedException ignored) {
             workerThreadFuture.cancel(true);
             break;
           }
@@ -136,6 +140,7 @@ public class UIUtil {
 
   public static void requestFocus(final Component c) {
     Timer timer = com.intellij.util.ui.UIUtil.createNamedTimer("IDETalk request focus",150, new ActionListener() {
+      @Override
       public void actionPerformed(ActionEvent e) {
         c.requestFocus();
       }
@@ -150,6 +155,7 @@ public class UIUtil {
     jTextArea.setLineWrap(true);
 
     jTextArea.addComponentListener(new ComponentAdapter() {
+      @Override
       public void componentResized(ComponentEvent e) {
         System.out.println("size:" + jTextArea.getSize());
         jTextArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -187,13 +193,13 @@ public class UIUtil {
     cleanupParent(container);
   }
 
-  public static void setDefaultSelection(JList recepients, User[] selectedUsers) {
+  public static void setDefaultSelection(JList recipients, User[] selectedUsers) {
     List<User> selected = Arrays.asList(selectedUsers);
-    final ListModel listModel = recepients.getModel();
+    final ListModel listModel = recipients.getModel();
     for (int i = 0; i < listModel.getSize(); i++) {
       if (selected.contains(listModel.getElementAt(i))) {
-        recepients.addSelectionInterval(i, i);
-        recepients.ensureIndexIsVisible(i);
+        recipients.addSelectionInterval(i, i);
+        recipients.ensureIndexIsVisible(i);
       }
     }
   }
@@ -268,6 +274,7 @@ public class UIUtil {
 
     final HierarchyListener[] l = new HierarchyListener[1];
     final HierarchyListener hierarchyListener = new HierarchyListener() {
+      @Override
       public void hierarchyChanged(HierarchyEvent e) {
         if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) > 0 && c.isShowing()) {
           invokeLater(r);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2006 JetBrains s.r.o.
+ * Copyright 2000-2009 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionToolbar;
 import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.wm.ToolWindow;
@@ -52,12 +50,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.lang.reflect.Field;
 
 public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalkMessagesWindow {
-
   @NonNls
   public static final String PLACE_TOOLBAR = "MessageWindowToolbar";
 
@@ -74,7 +69,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     super(toolWindowManager, actionManager, project);
   }
 
-  private TabbedPaneWrapper getWrapper(TabbedPaneContentUI contentUI) throws IllegalAccessException {
+  private static TabbedPaneWrapper getWrapper(TabbedPaneContentUI contentUI) throws IllegalAccessException {
     Field[] fields = contentUI.getClass().getDeclaredFields();
     for (Field field : fields) {
       field.setAccessible(true);
@@ -83,18 +78,21 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     return null;
   }
 
+  @Override
   protected String getToolWindowId() {
     return TOOL_WINDOW_ID;
   }
 
+  @Override
   @NotNull
   public String getComponentName() {
     return "IDEtalkMessagesWindowImpl";
   }
 
+  @Override
   protected void createToolWindowComponent() {
     myContentFactory = ContentFactory.SERVICE.getInstance();
-    TabbedPaneContentUI contentUI = new TabbedPaneContentUI(JTabbedPane.TOP);
+    TabbedPaneContentUI contentUI = new TabbedPaneContentUI(SwingConstants.TOP);
     myContentManager = myContentFactory.createContentManager(contentUI, true, myProject);
     try {
       myTabsWrapper = getWrapper(contentUI);
@@ -104,10 +102,12 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
 
     myContentManager.addContentManagerListener(new ContentManagerAdapter(){
 
+      @Override
       public void selectionChanged(ContentManagerEvent event) {
         super.selectionChanged(event);
         // Process tab switching:
         UIUtil.invokeLater(new Runnable() {
+          @Override
           public void run() {
             processMessagesOfVisibleTab();
           }
@@ -117,6 +117,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
 
     myPanel = new NonOpaquePanel(new BorderLayout());
     UIUtil.runWhenShown(myPanel, new Runnable() {
+      @Override
       public void run() {
         showAllTabsOfUsersWithMessages();
       }
@@ -153,9 +154,11 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     return MessagesTab.getTab(myContentManager.getSelectedContent());
   }
 
+  @Override
   public void initComponent() {
   }
 
+  @Override
   public void projectClosed() {
     if (myIconBlinker != null) {
       myIconBlinker.stop();
@@ -167,6 +170,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     super.projectClosed();
   }
 
+  @Override
   public void projectOpened() {
     super.projectOpened();
 
@@ -182,10 +186,12 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     myToolWindow.installWatcher(myContentManager);
   }
 
+  @Override
   protected ToolWindowAnchor getAnchor() {
     return ToolWindowAnchor.BOTTOM;
   }
 
+  @Override
   public void deliverMessage(ConsoleMessage consoleMessage) {
 
     final User user = consoleMessage.getUser();
@@ -196,6 +202,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     if (isFrameActive()) {
       final boolean wasInvisible = !myToolWindow.isVisible();
       myToolWindow.show(new Runnable() {
+        @Override
         public void run() {
           MessagesTab tab = getTabForUser(user);
           if (tab != null && wasInvisible) {
@@ -234,31 +241,37 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     return messagesTab;
   }
 
+  @Override
   public void newMessageAvailable(final User from, @Nullable final TransportEvent event) {
     UIUtil.invokeLater( new Runnable() {
+      @Override
       public void run() {
         processNewMessage(from);
       }
     });
   }
 
+  @Override
   public void showUserTabAndRequestFocus(User user) {
     MessagesTab tab = createAndSetSelectedTab(user, true);
     processMessagesOfVisibleTab();
     tab.requestFocus();
   }
 
+  @Override
   @Nullable
   public User getSelectedUser() {
     MessagesTab selectedTab = getSelectedTab();
     return selectedTab != null ? selectedTab.getUser() : null;
   }
 
+  @Override
   public void appendInputText(User user, String message) {
     MessagesTab tab = getTabForUser(user);
     tab.append(message);
   }
 
+  @Override
   public Window getWindow() {
     Project[] projects = ProjectManager.getInstance().getOpenProjects();
     if (projects.length > 0 && projects[0] == myProject) {
@@ -267,6 +280,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     return null;
   }
 
+  @Override
   public boolean hasFocus() {
     Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
     return focusOwner != null && myPanel != null && SwingUtilities.isDescendingFrom(focusOwner, myPanel);
@@ -279,10 +293,12 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
   }
 
 
+  @Override
   public void expandToolWindow() {
     super.expandToolWindow();
   }
 
+  @Override
   public void removeToolWindow() {
     myContentManager.removeAllContents(true);
   }
@@ -300,6 +316,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
     }
 
     UIUtil.runWhenShown(tab.getComponent(), new Runnable(){
+      @Override
       public void run() {
         tab.showAllIncomingMessages();
       }
@@ -309,8 +326,7 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
   private void installIconBlinker(final ToolWindow toolWindow) {
     final LocalMessageDispatcher dispatcher = getLocalDispatcher();
 
-    myIconBlinker = com.intellij.util.ui.UIUtil.createNamedTimer("IDETalk icon blinker",UIUtil.BLINK_DELAY, new IconBlinker(dispatcher, toolWindow));
-
+    myIconBlinker = com.intellij.util.ui.UIUtil.createNamedTimer("IDETalk icon blinker", UIUtil.BLINK_DELAY, new IconBlinker(dispatcher, toolWindow));
     myIconBlinker.start();
   }
 
@@ -324,42 +340,23 @@ public class IDEtalkMessagesWindowImpl extends BaseToolWindow implements IDEtalk
       myToolWindow = toolWindow;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       final Icon blinkingIcon = myDispatcher.getBlinkingIcon();
       if (blinkingIcon == null) {
         myToolWindow.setIcon(IdetalkCoreIcons.IdeTalk.User_toolwindow);
-      } else {
+      }
+      else {
         if (System.getProperty(IDEtalkProperties.IDEA_IDE_TALK_NO_TOOLBAR_BLINK) == null) {
           myFlag = !myFlag;
         }
 
         if (myFlag) {
           myToolWindow.setIcon(new EmptyIcon(13, 13));
-        } else {
+        }
+        else {
           myToolWindow.setIcon(new IconSizeWrapper(IdetalkCoreIcons.IdeTalk.User_toolwindow, blinkingIcon));
         }
-      }
-    }
-  }
-
-  private static class MyExpandListener implements HierarchyListener {
-    private final JComponent myComponent;
-    private final Runnable myRunOnExpand;
-
-    MyExpandListener(JComponent component, Runnable runOnExpand) {
-      myComponent = component;
-      myRunOnExpand = runOnExpand;
-    }
-
-    public void hierarchyChanged(HierarchyEvent e) {
-      if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) > 0) {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-          public void run() {
-            if (myComponent.isShowing()) {
-              myRunOnExpand.run();
-            }
-          }
-        }, ModalityState.stateForComponent(myComponent));
       }
     }
   }
