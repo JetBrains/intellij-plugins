@@ -1,39 +1,36 @@
 package com.intellij.javascript.karma.coverage;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.openapi.ui.Messages;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.awt.*;
+import java.io.File;
 
 /**
  * @author Sergey Simonchik
  */
-public class KarmaCoveragePluginMissingDialog extends DialogWrapper {
+public class KarmaCoveragePluginMissingDialog {
 
-  protected KarmaCoveragePluginMissingDialog(@Nullable Project project) {
-    super(project, false);
+  public static void showWarning(@Nullable Project project, @NotNull File karmaPackageDir) {
+    File nodeModulesDir = karmaPackageDir.getParentFile();
+    final String path;
+    if ("node_modules".equals(nodeModulesDir.getName())) {
+      path = nodeModulesDir.getAbsolutePath();
+    }
+    else {
+      path = karmaPackageDir.getAbsolutePath();
+    }
+    String text = "<html><body>Node.js package \"karma-coverage\" is required for test coverage."
+                  + "<div style=\"padding-top:3px\">To install it execute the following commands:</div>"
+                  + "<pre><code>"
+                  + "cd " + path + "\n"
+                  + "npm install karma-coverage"
+                  + "</code></pre>"
+                  + "As the package is installed, run coverage again."
+                  + "</body></html>";
 
-    setTitle("Karma Coverage Plugin Missing");
-    setOKButtonText("Install");
-    setCancelButtonText("Cancel");
-
-    init();
-  }
-
-  @Nullable
-  @Override
-  protected JComponent createCenterPanel() {
-    String text = "<html><body>To gather coverage info, karma-coverage node package is needed."
-                + "<div style=\"padding-top:4px\">To install it, run the command:</div>"
-                + "<pre><code> npm install karma-coverage</code></pre>" +
-                "</body></html>";
-    JLabel label = new JLabel(text, UIUtil.getWarningIcon(), SwingConstants.LEFT);
-    JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-    panel.add(label);
-    return panel;
+    Messages.showWarningDialog(project, text, "Karma Coverage Plugin Missing");
   }
 
 }

@@ -71,9 +71,9 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     KarmaCoveragePeer coveragePeer = server.getCoveragePeer();
     KarmaCoverageInitStatus initStatus = coveragePeer.getInitStatus();
     if (initStatus != null) {
-      if (!initStatus.isCoveragePluginInstalled()) {
-        KarmaCoveragePluginMissingDialog dialog = new KarmaCoveragePluginMissingDialog(project);
-        dialog.show();
+      if (!initStatus.isCoverageReportFound() && !initStatus.isCoveragePluginInstalled()) {
+        KarmaCoveragePluginMissingDialog.showWarning(project, server.getKarmaPackageDir());
+        server.getRestarter().requestRestart();
         return null;
       }
       return executeAfterSuccessfulInitialization(project, karmaState, contentToReuse, env, server);
