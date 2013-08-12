@@ -7,6 +7,7 @@ import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
+import com.intellij.execution.runners.RerunTestsAction;
 import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.karma.server.KarmaServer;
@@ -62,6 +63,7 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
         }
       });
     }
+    RerunTestsAction.register(descriptor, env, this);
     return descriptor;
   }
 
