@@ -21,6 +21,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -213,7 +214,8 @@ public class DartUnitRunningState extends CommandLineState {
   }
 
   private static String pathToDartUrl(@NonNls @NotNull String path) {
-    return VfsUtilCore.pathToUrl(path);
+    final String url = VfsUtilCore.pathToUrl(path);
+    return SystemInfo.isWindows ? url.replace("file://", "file:///") : url;
   }
 
   private static String getRunnerCode() throws IOException {
