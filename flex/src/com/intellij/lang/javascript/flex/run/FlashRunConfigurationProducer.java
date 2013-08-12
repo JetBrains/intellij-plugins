@@ -24,6 +24,8 @@ import com.intellij.psi.xml.XmlFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer implements Cloneable {
 
   private static final String WINDOWED_APPLICATION_CLASS_NAME_1 = "mx.core.WindowedApplication";
@@ -85,7 +87,7 @@ public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer 
         }
       }
 
-      runConfig.setName(params.suggestUniqueName(context.getRunManager().getConfigurations(FlashRunConfigurationType.getInstance())));
+      runConfig.setName(params.suggestUniqueName(context.getRunManager().getConfigurationsList(FlashRunConfigurationType.getInstance())));
       return settings;
     }
 
@@ -113,9 +115,9 @@ public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer 
 
   @Override
   protected RunnerAndConfigurationSettings findExistingByElement(final Location location,
-                                                                 final @NotNull RunnerAndConfigurationSettings[] existingConfigurations,
+                                                                 final @NotNull List<RunnerAndConfigurationSettings> existingConfigurations,
                                                                  final ConfigurationContext context) {
-    if (existingConfigurations.length == 0) return null;
+    if (existingConfigurations.size() == 0) return null;
     if (!(location instanceof PsiLocation)) return null;
     final Module module = location.getModule();
     if (module == null || ModuleType.get(module) != FlexModuleType.getInstance()) return null;
@@ -134,7 +136,7 @@ public class FlashRunConfigurationProducer extends RuntimeConfigurationProducer 
   @Nullable
   private static RunnerAndConfigurationSettings findSuitableRunConfig(final Module module,
                                                                       final String fqn,
-                                                                      final RunnerAndConfigurationSettings[] existing) {
+                                                                      final List<RunnerAndConfigurationSettings> existing) {
     final FlexBuildConfigurationManager manager = FlexBuildConfigurationManager.getInstance(module);
 
     RunnerAndConfigurationSettings basedOnBC = null;

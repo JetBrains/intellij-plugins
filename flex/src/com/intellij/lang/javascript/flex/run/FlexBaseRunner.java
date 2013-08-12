@@ -658,7 +658,7 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
     int count =
       RunManagerEx.getTasksCount(project, (RunConfiguration)runProfile, CompileStepBeforeRun.ID, CompileStepBeforeRunNoErrorCheck.ID);
     if (count == 0) {
-      for (RunnerAndConfigurationSettings settings : runManager.getConfigurationSettings(((RunConfiguration)runProfile).getType())) {
+      for (RunnerAndConfigurationSettings settings : runManager.getConfigurationSettingsList(((RunConfiguration)runProfile).getType())) {
         if (settings.getConfiguration() == runProfile) {
           showMakeBeforeRunTurnedOffWarning(project, settings);
           break;
@@ -732,8 +732,8 @@ public abstract class FlexBaseRunner extends GenericProgramRunner {
         @Override
         protected void hyperlinkActivated(final HyperlinkEvent e) {
           if ("RunConfiguration".equals(e.getDescription())) {
-            final RunnerAndConfigurationSettings[] allConfigurations =
-              RunManagerEx.getInstanceEx(project).getConfigurationSettings(((RunConfiguration)runProfile).getType());
+            final List<RunnerAndConfigurationSettings> allConfigurations =
+              RunManagerEx.getInstanceEx(project).getConfigurationSettingsList(((RunConfiguration)runProfile).getType());
             for (RunnerAndConfigurationSettings configuration : allConfigurations) {
               if (configuration.getConfiguration() == runProfile) {
                 RunDialog.editConfiguration(project, configuration, FlexBundle.message("edit.configuration.title"));

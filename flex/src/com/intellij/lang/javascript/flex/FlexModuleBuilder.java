@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 public class FlexModuleBuilder extends ModuleBuilder {
 
@@ -215,7 +216,7 @@ public class FlexModuleBuilder extends ModuleBuilder {
   public static void createRunConfiguration(final Module module, final FlexBuildConfiguration bc) {
     final RunManagerEx runManager = RunManagerEx.getInstanceEx(module.getProject());
 
-    final RunConfiguration[] existingConfigurations = runManager.getConfigurations(FlashRunConfigurationType.getInstance());
+    final List<RunConfiguration> existingConfigurations = runManager.getConfigurationsList(FlashRunConfigurationType.getInstance());
     for (RunConfiguration configuration : existingConfigurations) {
       final FlashRunnerParameters parameters = ((FlashRunConfiguration)configuration).getRunnerParameters();
       if (module.getName().equals(parameters.getModuleName()) && bc.getName().equals(parameters.getBCName())) {

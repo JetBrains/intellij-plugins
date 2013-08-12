@@ -8,7 +8,6 @@ import com.intellij.flex.model.bc.OutputType;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.lang.javascript.flex.actions.airpackage.AirPackageUtil;
-import com.intellij.lang.javascript.flex.actions.airpackage.DeviceInfo;
 import com.intellij.lang.javascript.flex.projectStructure.model.*;
 import com.intellij.lang.javascript.flex.projectStructure.model.impl.Factory;
 import com.intellij.lang.javascript.flex.projectStructure.options.BCUtils;
@@ -28,7 +27,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.xmlb.annotations.Transient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +34,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 
 public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cloneable {
 
@@ -600,12 +599,12 @@ public class FlashRunnerParameters extends BCBasedRunnerParameters implements Cl
                                  : (getBCName() + " (" + getModuleName() + ")");
   }
 
-  public String suggestUniqueName(final RunConfiguration[] existingConfigurations) {
+  public String suggestUniqueName(final List<RunConfiguration> existingConfigurations) {
     final String suggestedName = suggestName();
 
-    final String[] used = new String[existingConfigurations.length];
-    for (int i = 0; i < existingConfigurations.length; i++) {
-      used[i] = existingConfigurations[i].getName();
+    final String[] used = new String[existingConfigurations.size()];
+    for (int i = 0; i < existingConfigurations.size(); i++) {
+      used[i] = existingConfigurations.get(i).getName();
     }
 
     if (ArrayUtil.contains(suggestedName, used)) {
