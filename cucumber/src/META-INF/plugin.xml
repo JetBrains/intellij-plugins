@@ -72,6 +72,9 @@
     <gotoRelatedProvider implementation="org.jetbrains.plugins.cucumber.navigation.CucumberGoToRelatedProvider"/>
 
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
+
+    <additionalTextAttributes scheme="Default" file="colorSchemes/GherkinDefault.xml"/>
+    <additionalTextAttributes scheme="Darcula" file="colorSchemes/GherkinDarcula.xml"/>
   </extensions>
 
   <extensionPoints>
