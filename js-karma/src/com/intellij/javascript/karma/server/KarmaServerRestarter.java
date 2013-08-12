@@ -1,0 +1,74 @@
+package com.intellij.javascript.karma.server;
+
+import com.intellij.execution.process.OSProcessHandler;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
+import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.event.DocumentAdapter;
+import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * @author Sergey Simonchik
+ */
+public class KarmaServerRestarter {
+
+  private final AtomicInteger myActiveRunners = new AtomicInteger(0);
+  private final AtomicBoolean myConfigChanged = new AtomicBoolean(false);
+
+  public KarmaServerRestarter(@NotNull File configurationFile, @NotNull Disposable parentDisposable) {
+    listenForConfigurationFileChanges(configurationFile, parentDisposable);
+  }
+
+  private void listenForConfigurationFileChanges(@NotNull final File configurationFile,
+                                                 @NotNull final Disposable parentDisposable) {
+    ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          @Override
+          public void run() {
+            VirtualFile virtualFile = VfsUtil.findFileByIoFile(configurationFile, false);
+            if (virtualFile != null && virtualFile.isValid()) {
+              Document document = FileDocumentManager.getInstance().getDocument(virtualFile);
+              if (document != null) {
+                document.addDocumentListener(new DocumentAdapter() {
+                  @Override
+                  public void documentChanged(DocumentEvent e) {
+                    myConfigChanged.set(true);
+                  }
+                }, parentDisposable);
+              }
+            }
+          }
+        });
+      }
+    }, ModalityState.any());
+  }
+
+  public void onRunnerExecutionStarted(@NotNull final OSProcessHandler processHandler) {
+    myActiveRunners.incrementAndGet();
+    processHandler.addProcessListener(new ProcessAdapter() {
+      @Override
+      public void processTerminated(ProcessEvent event) {
+        myActiveRunners.decrementAndGet();
+        processHandler.removeProcessListener(this);
+      }
+    });
+  }
+
+  public boolean isRestartRequired() {
+    return myActiveRunners.get() == 0 && myConfigChanged.get();
+  }
+
+}

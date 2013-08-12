@@ -50,6 +50,8 @@ public class KarmaServer {
   private final List<Runnable> myDoListWhenReadyWithCapturedBrowser = Lists.newCopyOnWriteArrayList();
 
   private final Map<String, StreamEventHandler> myHandlers = ContainerUtil.newConcurrentMap();
+  private final MyDisposable myDisposable;
+  private final KarmaServerRestarter myRestarter;
 
   public KarmaServer(@NotNull File nodeInterpreter,
                      @NotNull File karmaPackageDir,
@@ -65,14 +67,9 @@ public class KarmaServer {
     registerStreamEventHandlers();
     myProcessOutputArchive.startNotify();
 
-    Disposer.register(ApplicationManager.getApplication(), new Disposable() {
-      @Override
-      public void dispose() {
-        if (!processHandler.isProcessTerminated()) {
-          ScriptRunnerUtil.terminateProcessHandler(processHandler, 500, null);
-        }
-      }
-    });
+    myDisposable = new MyDisposable();
+    Disposer.register(ApplicationManager.getApplication(), myDisposable);
+    myRestarter = new KarmaServerRestarter(configurationFile, myDisposable);
   }
 
   private void registerStreamEventHandlers() {
@@ -102,6 +99,11 @@ public class KarmaServer {
         }
       }
     });
+  }
+
+  @NotNull
+  public KarmaServerRestarter getRestarter() {
+    return myRestarter;
   }
 
   @NotNull
@@ -158,12 +160,10 @@ public class KarmaServer {
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(final ProcessEvent event) {
-        FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
+        Disposer.dispose(myDisposable);
         UIUtil.invokeLaterIfNeeded(new Runnable() {
           @Override
           public void run() {
-            myDoListWhenReady.clear();
-            myDoListWhenReadyWithCapturedBrowser.clear();
             fireOnTerminated(event.getExitCode());
           }
         });
@@ -172,6 +172,22 @@ public class KarmaServer {
     ProcessTerminatedListener.attach(processHandler);
     processHandler.setShouldDestroyProcessRecursively(true);
     return processHandler;
+  }
+
+  public void shutdownAsync() {
+    ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+      @Override
+      public void run() {
+        shutdown();
+      }
+    });
+  }
+
+  private void shutdown() {
+    ProcessHandler processHandler = myProcessOutputArchive.getProcessHandler();
+    if (!processHandler.isProcessTerminated()) {
+      ScriptRunnerUtil.terminateProcessHandler(processHandler, 500, null);
+    }
   }
 
   @NotNull
@@ -327,6 +343,17 @@ public class KarmaServer {
   @NotNull
   public Collection<String> getCapturedBrowsers() {
     return myState.getCapturedBrowsers();
+  }
+
+  private class MyDisposable implements Disposable {
+
+    @Override
+    public void dispose() {
+      FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
+      myDoListWhenReady.clear();
+      myDoListWhenReadyWithCapturedBrowser.clear();
+      shutdown();
+    }
   }
 
 }

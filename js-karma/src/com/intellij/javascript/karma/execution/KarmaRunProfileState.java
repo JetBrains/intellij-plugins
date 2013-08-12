@@ -61,6 +61,10 @@ public class KarmaRunProfileState implements RunProfileState {
   public KarmaServer getServerOrStart(@NotNull final Executor executor) throws ExecutionException {
     File configurationFile = new File(myRunSettings.getConfigPath());
     KarmaServer server = KarmaServerRegistry.getServerByConfigurationFile(configurationFile);
+    if (server != null && server.getRestarter().isRestartRequired()) {
+      server.shutdownAsync();
+      server = null;
+    }
     if (server == null) {
       KarmaServerRegistry.startServer(
         new File(myNodeInterpreterPath),

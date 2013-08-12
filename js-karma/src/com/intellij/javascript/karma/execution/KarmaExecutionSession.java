@@ -101,7 +101,7 @@ public class KarmaExecutionSession {
         throw new ExecutionException("Can't find karma-intellij test runner", e);
       }
       if (server.isReady() && server.hasCapturedBrowsers()) {
-        return createOSProcessHandler(server.getServerPort(), server.getKarmaConfig(), clientAppFile);
+        return createOSProcessHandler(server, clientAppFile);
       }
     }
     final NopProcessHandler nopProcessHandler = new NopProcessHandler();
@@ -115,15 +115,15 @@ public class KarmaExecutionSession {
   }
 
   @NotNull
-  private OSProcessHandler createOSProcessHandler(int serverPort,
-                                                  @Nullable KarmaConfig config,
+  private OSProcessHandler createOSProcessHandler(@NotNull KarmaServer server,
                                                   @NotNull File clientAppFile) throws ExecutionException {
-    GeneralCommandLine commandLine = createCommandLine(serverPort, config, clientAppFile);
+    GeneralCommandLine commandLine = createCommandLine(server.getServerPort(), server.getKarmaConfig(), clientAppFile);
     Process process = commandLine.createProcess();
-    OSProcessHandler osProcessHandler = new KillableColoredProcessHandler(process, commandLine.getCommandLineString());
-    ProcessTerminatedListener.attach(osProcessHandler);
-    mySmtConsoleView.attachToProcess(osProcessHandler);
-    return osProcessHandler;
+    OSProcessHandler processHandler = new KillableColoredProcessHandler(process, commandLine.getCommandLineString());
+    server.getRestarter().onRunnerExecutionStarted(processHandler);
+    ProcessTerminatedListener.attach(processHandler);
+    mySmtConsoleView.attachToProcess(processHandler);
+    return processHandler;
   }
 
   @NotNull

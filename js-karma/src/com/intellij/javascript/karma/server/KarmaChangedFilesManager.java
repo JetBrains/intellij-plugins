@@ -37,7 +37,6 @@ public class KarmaChangedFilesManager {
   }
 
   public void onFileChanged(@NotNull VirtualFile file) {
-    System.out.println("fileChanged:" + file.getPath());
     synchronized (LOCK) {
       myServerProcessInput.print("changed-file:");
       myServerProcessInput.print(file.getPath());
@@ -46,7 +45,6 @@ public class KarmaChangedFilesManager {
   }
 
   public void onFileAdded(@NotNull String path) {
-    System.out.println("fileAdded:" + path);
     synchronized (LOCK) {
       myServerProcessInput.print("added-file:");
       myServerProcessInput.print(path);
@@ -55,7 +53,6 @@ public class KarmaChangedFilesManager {
   }
 
   public void onFileRemoved(@NotNull String path) {
-    System.out.println("fileRemoved:" + path);
     synchronized (LOCK) {
       myServerProcessInput.print("removed-file:");
       myServerProcessInput.print(path);
@@ -64,7 +61,6 @@ public class KarmaChangedFilesManager {
   }
 
   public void flush() {
-    System.out.println("Flushing");
     synchronized (LOCK) {
       myServerProcessInput.flush();
     }

@@ -119,12 +119,10 @@ public class KarmaWatcher {
 
       @Override
       public void fileMoved(VirtualFileMoveEvent event) {
-        System.out.println("move " + event);
       }
 
       @Override
       public void fileCopied(VirtualFileCopyEvent event) {
-        System.out.println("copy " + event);
       }
 
       @Override

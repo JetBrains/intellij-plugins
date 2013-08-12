@@ -49,13 +49,13 @@ public class KarmaServerRegistry {
       @Override
       public void run() {
         try {
-          KarmaServer server = new KarmaServer(nodeInterpreter, karmaPackageDir, configurationFile);
+          final KarmaServer server = new KarmaServer(nodeInterpreter, karmaPackageDir, configurationFile);
           myServers.put(configurationFile.getAbsolutePath(), server);
           consumer.consume(server);
           server.doWhenTerminated(new KarmaServerTerminatedListener() {
             @Override
             public void onTerminated(int exitCode) {
-              myServers.remove(configPath);
+              myServers.remove(configPath, server);
             }
           });
         }
