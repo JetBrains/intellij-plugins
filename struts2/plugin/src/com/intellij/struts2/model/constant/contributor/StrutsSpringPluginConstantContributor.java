@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,7 +33,7 @@ public class StrutsSpringPluginConstantContributor extends StrutsConstantContrib
 
   @NonNls
   private static final List<StrutsConstant> CONSTANTS = Arrays.asList(
-      addStringValuesProperty("struts.objectFactory.spring.autoWire", "name", "type", "auto", "constructor"),
+      addStringValuesProperty("struts.objectFactory.spring.autoWire", "name", "type", "auto", "constructor", "no"),
       addBooleanProperty("struts.objectFactory.spring.autoWire.alwaysRespect"),
       addBooleanProperty("struts.objectFactory.spring.useClassCache"),
 
