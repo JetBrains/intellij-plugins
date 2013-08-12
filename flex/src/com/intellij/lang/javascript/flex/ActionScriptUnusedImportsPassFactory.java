@@ -149,7 +149,7 @@ public class ActionScriptUnusedImportsPassFactory extends AbstractProjectCompone
     }
 
     private static void createHighlights(Collection<? extends JSElement> elements, AnnotationHolder annotationHolder, IntentionAction action, String message, List<HighlightInfo> result,
-                                  ProblemHighlightType type) {
+                                         @NotNull ProblemHighlightType type) {
       for (JSElement unusedImport : elements) {
         TextRange range = InjectedLanguageManager.getInstance(unusedImport.getProject()).injectedToHost(unusedImport, unusedImport.getTextRange());
         if (range.isEmpty()) continue;
