@@ -61,7 +61,7 @@ public class KarmaConfig {
       if (!urlRoot.startsWith("/")) {
         urlRoot = "/" + urlRoot;
       }
-      if (!urlRoot.isEmpty() && urlRoot.endsWith("/")) {
+      if (urlRoot.length() > 1 && urlRoot.endsWith("/")) {
         urlRoot = urlRoot.substring(0, urlRoot.length() - 1);
       }
       return new KarmaConfig(basePath, hostname, urlRoot);

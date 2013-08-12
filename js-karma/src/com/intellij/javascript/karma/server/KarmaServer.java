@@ -283,7 +283,12 @@ public class KarmaServer {
     }
     KarmaConfig config = myState.getKarmaConfig();
     if (config != null) {
-      return "http://" + config.getHostname() + ":" + getServerPort() + config.getUrlRoot() + path;
+      String baseUrl = "http://" + config.getHostname() + ":" + getServerPort();
+      String urlRoot = config.getUrlRoot();
+      if ("/".equals(urlRoot)) {
+        return baseUrl + path;
+      }
+      return baseUrl + config.getUrlRoot() + path;
     }
     LOG.error("Karma config isn't ready yet.");
     return "http://localhost:" + getServerPort() + path;
