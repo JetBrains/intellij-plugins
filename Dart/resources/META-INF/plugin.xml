@@ -244,7 +244,7 @@
     <moduleConfigurationEditorProvider
         implementation="com.jetbrains.lang.dart.ide.projectStructure.DartModuleConfigurationEditorProvider"/>
     <configurationType implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRunConfigurationType"/>
-    <configurationProducer implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer"/>
+    <runConfigurationProducer implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineRuntimeConfigurationProducer"/>
 
     <programRunner implementation="com.jetbrains.lang.dart.ide.runner.server.DartCommandLineDebugRunner"/>
 
