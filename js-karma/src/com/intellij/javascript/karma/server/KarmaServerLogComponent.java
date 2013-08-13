@@ -127,10 +127,10 @@ public class KarmaServerLogComponent implements ComponentWithActions {
                                                     myConsole.getPreferredFocusableComponent());
     consoleContent.setCloseable(false);
     ui.addContent(consoleContent, 4, PlaceInGrid.bottom, false);
-    if (!myKarmaServer.isReady()) {
+    if (!myKarmaServer.isPortBound()) {
       ui.selectAndFocus(consoleContent, false, false);
     }
-    myKarmaServer.doWhenTerminated(new KarmaServerTerminatedListener() {
+    myKarmaServer.onTerminated(new KarmaServerTerminatedListener() {
       @Override
       public void onTerminated(int exitCode) {
         if (!ui.isDisposed()) {

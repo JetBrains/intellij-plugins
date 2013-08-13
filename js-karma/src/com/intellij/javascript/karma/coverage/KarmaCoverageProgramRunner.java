@@ -97,12 +97,12 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
                                                                     @NotNull ExecutionEnvironment env,
                                                                     @NotNull KarmaServer server) throws ExecutionException {
     ExecutionResult executionResult = state.executeWithServer(env.getExecutor(), server);
-    if (server.isReady() && server.hasCapturedBrowsers()) {
+    if (server.areBrowsersReady()) {
       return doCoverage(project, executionResult, contentToReuse, env, server);
     }
     RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
-    server.doWhenReadyWithCapturedBrowser(new Runnable() {
+    server.onBrowsersReady(new Runnable() {
       @Override
       public void run() {
         KarmaUtil.restart(descriptor);

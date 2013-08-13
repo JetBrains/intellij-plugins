@@ -100,12 +100,12 @@ public class KarmaExecutionSession {
       catch (IOException e) {
         throw new ExecutionException("Can't find karma-intellij test runner", e);
       }
-      if (server.isReady() && server.hasCapturedBrowsers()) {
+      if (server.areBrowsersReady()) {
         return createOSProcessHandler(server, clientAppFile);
       }
     }
     final NopProcessHandler nopProcessHandler = new NopProcessHandler();
-    server.doWhenTerminated(new KarmaServerTerminatedListener() {
+    server.onTerminated(new KarmaServerTerminatedListener() {
       @Override
       public void onTerminated(int exitCode) {
         nopProcessHandler.destroyProcess();

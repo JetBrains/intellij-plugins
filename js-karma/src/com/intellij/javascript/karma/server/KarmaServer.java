@@ -41,13 +41,14 @@ public class KarmaServer {
   private final KarmaCoveragePeer myCoveragePeer = new KarmaCoveragePeer();
   private final KarmaWatcher myWatcher;
 
-  private final AtomicBoolean myOnReadyFired = new AtomicBoolean(false);
+  private final AtomicBoolean myOnPortBoundFired = new AtomicBoolean(false);
   private final File myKarmaPackageDir;
-  private boolean myOnReadyExecuted = false;
+
+  private List<Runnable> myOnPortBoundCallbacks = Lists.newCopyOnWriteArrayList();
+  private List<Runnable> myOnBrowsersReadyCallbacks = Lists.newCopyOnWriteArrayList();
+
   private Integer myExitCode = null;
-  private final List<KarmaServerReadyListener> myDoListWhenReady = Lists.newCopyOnWriteArrayList();
-  private final List<KarmaServerTerminatedListener> myDoListWhenTerminated = Lists.newCopyOnWriteArrayList();
-  private final List<Runnable> myDoListWhenReadyWithCapturedBrowser = Lists.newCopyOnWriteArrayList();
+  private final List<KarmaServerTerminatedListener> myTerminationCallbacks = Lists.newCopyOnWriteArrayList();
 
   private final Map<String, StreamEventHandler> myHandlers = ContainerUtil.newConcurrentMap();
   private final MyDisposable myDisposable;
@@ -161,12 +162,7 @@ public class KarmaServer {
       @Override
       public void processTerminated(final ProcessEvent event) {
         Disposer.dispose(myDisposable);
-        UIUtil.invokeLaterIfNeeded(new Runnable() {
-          @Override
-          public void run() {
-            fireOnTerminated(event.getExitCode());
-          }
-        });
+        fireOnTerminated(event.getExitCode());
       }
     });
     ProcessTerminatedListener.attach(processHandler);
@@ -195,51 +191,91 @@ public class KarmaServer {
     return myProcessOutputArchive;
   }
 
-  void fireOnReady(final int webServerPort) {
-    if (myOnReadyFired.compareAndSet(false, true)) {
+  public boolean isPortBound() {
+    return myOnPortBoundFired.get();
+  }
+
+  public int getServerPort() {
+    return myState.getServerPort();
+  }
+
+  /**
+   * Executes {@code callback} in EDT when the server port is bound.
+   */
+  public void onPortBound(@NotNull final Runnable callback) {
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        if (myOnPortBoundCallbacks != null) {
+          myOnPortBoundCallbacks.add(callback);
+        }
+        else {
+          callback.run();
+        }
+      }
+    });
+  }
+
+  void fireOnPortBound() {
+    if (myOnPortBoundFired.compareAndSet(false, true)) {
       UIUtil.invokeLaterIfNeeded(new Runnable() {
         @Override
         public void run() {
-          myOnReadyExecuted = true;
-          List<KarmaServerReadyListener> listeners = ContainerUtil.newArrayList(myDoListWhenReady);
-          myDoListWhenReady.clear();
-          for (KarmaServerReadyListener listener : listeners) {
-            listener.onReady(webServerPort);
+          List<Runnable> callbacks = ContainerUtil.newArrayList(myOnPortBoundCallbacks);
+          myOnPortBoundCallbacks.clear();
+          myOnPortBoundCallbacks = null;
+          for (Runnable callback : callbacks) {
+            callback.run();
           }
-          processWhenReadyWithCapturedBrowserQueue();
         }
       });
     }
   }
 
-  private void fireOnTerminated(final int exitCode) {
-    myExitCode = exitCode;
-    for (KarmaServerTerminatedListener listener : myDoListWhenTerminated) {
-      listener.onTerminated(exitCode);
-    }
+  public boolean areBrowsersReady() {
+    return myState.areBrowsersReady();
+  }
+
+  @NotNull
+  public Collection<CapturedBrowser> getCapturedBrowsers() {
+    return myState.getCapturedBrowsers();
   }
 
   /**
-   * Executes {@code} task in EDT when the server is ready
+   * Executes {@code callback} in EDT when at least one browser is captured and all config.browsers are captured.
    */
-  public void doWhenReady(@NotNull final KarmaServerReadyListener readyCallback) {
+  public void onBrowsersReady(@NotNull final Runnable callback) {
     UIUtil.invokeLaterIfNeeded(new Runnable() {
       @Override
       public void run() {
-        if (myOnReadyExecuted) {
-          readyCallback.onReady(myState.getServerPort());
+        if (myOnBrowsersReadyCallbacks != null) {
+          myOnBrowsersReadyCallbacks.add(callback);
         }
         else {
-          myDoListWhenReady.add(readyCallback);
+          callback.run();
+        }
+      }
+    });
+  }
+
+  void fireOnBrowsersReady() {
+    UIUtil.invokeLaterIfNeeded(new Runnable() {
+      @Override
+      public void run() {
+        List<Runnable> callbacks = ContainerUtil.newArrayList(myOnBrowsersReadyCallbacks);
+        myOnBrowsersReadyCallbacks.clear();
+        myOnBrowsersReadyCallbacks = null;
+        for (Runnable callback : callbacks) {
+          callback.run();
         }
       }
     });
   }
 
   /**
-   * Executes {@code} task in EDT when the server is ready
+   * Executes {@code terminationCallback} in EDT when the server is shut down.
    */
-  public void doWhenTerminated(@NotNull final KarmaServerTerminatedListener terminationCallback) {
+  public void onTerminated(@NotNull final KarmaServerTerminatedListener terminationCallback) {
     UIUtil.invokeLaterIfNeeded(new Runnable() {
       @Override
       public void run() {
@@ -247,31 +283,24 @@ public class KarmaServer {
           terminationCallback.onTerminated(myExitCode);
         }
         else {
-          myDoListWhenTerminated.add(terminationCallback);
+          myTerminationCallbacks.add(terminationCallback);
         }
       }
     });
   }
 
-  /**
-   * Executes {@code} task in EDT when the server is ready and has at least one captured browser.
-   */
-  public void doWhenReadyWithCapturedBrowser(@NotNull final Runnable task) {
+  private void fireOnTerminated(final int exitCode) {
     UIUtil.invokeLaterIfNeeded(new Runnable() {
       @Override
       public void run() {
-        if (myOnReadyFired.get() && hasCapturedBrowsers()) {
-          task.run();
-        }
-        else {
-          myDoListWhenReadyWithCapturedBrowser.add(task);
+        myExitCode = exitCode;
+        List<KarmaServerTerminatedListener> listeners = ContainerUtil.newArrayList(myTerminationCallbacks);
+        myTerminationCallbacks.clear();
+        for (KarmaServerTerminatedListener listener : listeners) {
+          listener.onTerminated(exitCode);
         }
       }
     });
-  }
-
-  public boolean isReady() {
-    return myOnReadyFired.get();
   }
 
   @Nullable
@@ -307,48 +336,17 @@ public class KarmaServer {
     return "http://localhost:" + getServerPort() + path;
   }
 
-  public int getServerPort() {
-    return myState.getServerPort();
-  }
-
-  public boolean hasCapturedBrowsers() {
-    return myState.hasCapturedBrowser();
-  }
-
-  void onBrowsersReady() {
-    UIUtil.invokeLaterIfNeeded(new Runnable() {
-      @Override
-      public void run() {
-        processWhenReadyWithCapturedBrowserQueue();
-      }
-    });
-  }
-
-  private void processWhenReadyWithCapturedBrowserQueue() {
-    if (myDoListWhenReadyWithCapturedBrowser.isEmpty()) {
-      return;
-    }
-    if (myOnReadyFired.get() && hasCapturedBrowsers()) {
-      List<Runnable> tasks = ContainerUtil.newArrayList(myDoListWhenReadyWithCapturedBrowser);
-      myDoListWhenReadyWithCapturedBrowser.clear();
-      for (Runnable task : tasks) {
-        task.run();
-      }
-    }
-  }
-
-  @NotNull
-  public Collection<CapturedBrowser> getCapturedBrowsers() {
-    return myState.getCapturedBrowsers();
-  }
-
   private class MyDisposable implements Disposable {
 
     @Override
     public void dispose() {
       FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
-      myDoListWhenReady.clear();
-      myDoListWhenReadyWithCapturedBrowser.clear();
+      if (myOnPortBoundCallbacks != null) {
+        myOnPortBoundCallbacks.clear();
+      }
+      if (myOnBrowsersReadyCallbacks != null) {
+        myOnBrowsersReadyCallbacks.clear();
+      }
       shutdown();
     }
   }

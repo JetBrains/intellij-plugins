@@ -52,7 +52,7 @@ public class KarmaServerRegistry {
           final KarmaServer server = new KarmaServer(nodeInterpreter, karmaPackageDir, configurationFile);
           myServers.put(configurationFile.getAbsolutePath(), server);
           consumer.consume(server);
-          server.doWhenTerminated(new KarmaServerTerminatedListener() {
+          server.onTerminated(new KarmaServerTerminatedListener() {
             @Override
             public void onTerminated(int exitCode) {
               myServers.remove(configPath, server);

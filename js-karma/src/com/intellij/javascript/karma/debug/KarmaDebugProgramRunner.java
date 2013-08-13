@@ -71,12 +71,12 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
     }
 
     final KarmaServer karmaServer = consoleView.getKarmaExecutionSession().getKarmaServer();
-    if (karmaServer.isReady() && karmaServer.hasCapturedBrowsers()) {
+    if (karmaServer.areBrowsersReady()) {
       return doStart(project, karmaServer, consoleView, executionResult, contentToReuse, env);
     }
     RunContentBuilder contentBuilder = new RunContentBuilder(this, executionResult, env);
     final RunContentDescriptor descriptor = contentBuilder.showRunContent(contentToReuse);
-    karmaServer.doWhenReadyWithCapturedBrowser(new Runnable() {
+    karmaServer.onBrowsersReady(new Runnable() {
       @Override
       public void run() {
         KarmaUtil.restart(descriptor);

@@ -50,7 +50,7 @@ public class KarmaWatcher {
             listenForChanges(fileSystem);
           }
         });
-        myServer.doWhenTerminated(new KarmaServerTerminatedListener() {
+        myServer.onTerminated(new KarmaServerTerminatedListener() {
           @Override
           public void onTerminated(int exitCode) {
             ApplicationManager.getApplication().runReadAction(new Runnable() {

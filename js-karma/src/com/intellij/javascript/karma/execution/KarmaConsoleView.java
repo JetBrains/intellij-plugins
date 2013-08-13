@@ -60,7 +60,6 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   @Override
   public Content registerConsoleContent(@NotNull ExecutionConsole console, @NotNull final RunnerLayoutUi ui) {
     ui.getOptions().setMinimizeActionEnabled(false);
-    boolean readyToRun = myServer.isReady() && myServer.hasCapturedBrowsers();
     final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
                                                     getComponent(),
                                                     "Test Run",
@@ -72,13 +71,13 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     final KarmaRootTestProxyFormatter rootFormatter = new KarmaRootTestProxyFormatter(this,
                                                                                       myServer,
                                                                                       myExecutionSession.isDebug());
-    if (readyToRun) {
+    if (myServer.areBrowsersReady()) {
       ui.selectAndFocus(consoleContent, false, false);
     }
     else {
-      myServer.doWhenReady(new KarmaServerReadyListener() {
+      myServer.onPortBound(new Runnable() {
         @Override
-        public void onReady(int serverPort) {
+        public void run() {
           ui.selectAndFocus(consoleContent, false, false);
         }
       });
@@ -86,20 +85,20 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       alarm.addRequest(new Runnable() {
         @Override
         public void run() {
-          if (myServer.isReady() && !myServer.hasCapturedBrowsers()) {
+          if (myServer.isPortBound() && !myServer.areBrowsersReady()) {
             print("To capture a browser open ", ConsoleViewContentType.SYSTEM_OUTPUT);
             String url = myServer.formatUrl("/");
             printHyperlink(url + "\n", new OpenUrlHyperlinkInfo(url));
           }
         }
       }, 1000, ModalityState.any());
-      myServer.doWhenReadyWithCapturedBrowser(new Runnable() {
+      myServer.onBrowsersReady(new Runnable() {
         @Override
         public void run() {
           alarm.cancelAllRequests();
         }
       });
-      myServer.doWhenTerminated(new KarmaServerTerminatedListener() {
+      myServer.onTerminated(new KarmaServerTerminatedListener() {
         @Override
         public void onTerminated(int exitCode) {
           alarm.cancelAllRequests();
@@ -162,7 +161,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
           renderer.append("Test tree is not available in a debug session");
         }
         if (!myTestRunProcessTerminated && !myServerProcessTerminated) {
-          if (myServer.isReady() && !myServer.hasCapturedBrowsers()) {
+          if (myServer.isPortBound() && !myServer.areBrowsersReady()) {
             renderer.clear();
             renderer.append("Waiting for browser capturing...");
           }

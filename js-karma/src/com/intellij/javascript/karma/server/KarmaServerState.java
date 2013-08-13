@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,6 +35,7 @@ public class KarmaServerState {
   private final ConcurrentMap<String, CapturedBrowser> myCapturedBrowsers = Maps.newConcurrentMap();
   private volatile int myServerPort = -1;
   private volatile KarmaConfig myConfig;
+  private final AtomicBoolean myBrowsersReady = new AtomicBoolean(false);
 
   public KarmaServerState(@NotNull KarmaServer server,
                           @NotNull ProcessHandler serverProcessHandler,
@@ -57,11 +59,11 @@ public class KarmaServerState {
       if (config != null) {
         int autoCapturedBrowsers = getAutoCapturedBrowserCount();
         if (autoCapturedBrowsers == config.getBrowsers().size()) {
-          myServer.onBrowsersReady();
+          setBrowsersReady();
         }
       }
       else {
-        myServer.onBrowsersReady();
+        setBrowsersReady();
       }
     }
     else {
@@ -79,8 +81,14 @@ public class KarmaServerState {
     return res;
   }
 
-  public boolean hasCapturedBrowser() {
-    return !myCapturedBrowsers.isEmpty();
+  private void setBrowsersReady() {
+    if (myBrowsersReady.compareAndSet(false, true)) {
+      myServer.fireOnBrowsersReady();
+    }
+  }
+
+  public boolean areBrowsersReady() {
+    return myBrowsersReady.get();
   }
 
   @NotNull
@@ -92,9 +100,9 @@ public class KarmaServerState {
     return myServerPort;
   }
 
-  private void onServerPortBound(int serverPort) {
+  private void setBoundServerPort(int serverPort) {
     myServerPort = serverPort;
-    myServer.fireOnReady(serverPort);
+    myServer.fireOnPortBound();
   }
 
   @Nullable
@@ -200,7 +208,7 @@ public class KarmaServerState {
         serverPort = parseServerPort(text);
         if (serverPort != -1) {
           myHandler.removeProcessListener(this);
-          myState.onServerPortBound(serverPort);
+          myState.setBoundServerPort(serverPort);
         }
       }
     }
