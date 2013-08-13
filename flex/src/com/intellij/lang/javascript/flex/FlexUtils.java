@@ -37,6 +37,7 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -77,6 +78,7 @@ public class FlexUtils {
     return allowedExtensions == null
            ? new FileChooserDescriptor(true, false, true, true, false, false)
            : new FileChooserDescriptor(true, false, true, true, false, false) {
+             @Override
              public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles) {
                return super.isFileVisible(file, showHiddenFiles) &&
                       (file.isDirectory() || isAllowedExtension(file.getExtension()));
@@ -117,6 +119,7 @@ public class FlexUtils {
     final VirtualFile sampleApplicationFile = addFileWithContent(sampleFileName, sampleFileContent, sourceRoot);
     if (sampleApplicationFile != null) {
       final Runnable runnable = new Runnable() {
+        @Override
         public void run() {
           FileEditorManager.getInstance(project).openFile(sampleApplicationFile, true);
         }
@@ -185,11 +188,13 @@ public class FlexUtils {
       private String currentElement = "";
       private final StringBuilder currentElementContent = new StringBuilder();
 
+      @Override
       public void startElement(final String name, final String nsPrefix, final String nsURI, final String systemID, final int lineNr)
         throws Exception {
         currentElement += "<" + name + ">";
       }
 
+      @Override
       public void endElement(final String name, final String nsPrefix, final String nsURI) throws Exception {
         if (xmlElements.contains(currentElement)) {
           resultMap.get(currentElement).add(currentElementContent.toString());
@@ -199,6 +204,7 @@ public class FlexUtils {
         currentElement = currentElement.substring(0, currentElement.length() - (name.length() + 2));
       }
 
+      @Override
       public void addPCData(final Reader reader, final String systemID, final int lineNr) throws Exception {
         if (xmlElements.contains(currentElement)) {
           char[] chars = new char[128];
@@ -233,11 +239,13 @@ public class FlexUtils {
       private String currentElement = "";
       private final StringBuilder xmlElementContent = new StringBuilder();
 
+      @Override
       public void startElement(final String name, final String nsPrefix, final String nsURI, final String systemID, final int lineNr)
         throws Exception {
         currentElement += "<" + name + ">";
       }
 
+      @Override
       public void endElement(final String name, final String nsPrefix, final String nsURI) throws Exception {
         if (xmlElement.equals(currentElement)) {
           result.set(xmlElementContent.toString());
@@ -247,6 +255,7 @@ public class FlexUtils {
         currentElement = currentElement.substring(0, currentElement.length() - (name.length() + 2));
       }
 
+      @Override
       public void addPCData(final Reader reader, final String systemID, final int lineNr) throws Exception {
         if (xmlElement.equals(currentElement)) {
           char[] chars = new char[128];
@@ -269,7 +278,7 @@ public class FlexUtils {
       if (!m.find()) return null;
       return appFolderPath + "/Contents/MacOS/" + m.group(1);
     }
-    catch (IOException e) {
+    catch (IOException ignored) {
       return null;
     }
   }
@@ -306,7 +315,7 @@ public class FlexUtils {
 
     for (final VirtualFile sourceRoot : ModuleRootManager.getInstance(module).getSourceRoots()) {
       for (final String classFileRelPath : classFileRelPaths) {
-        final VirtualFile mainClassFile = VfsUtil.findRelativeFile(classFileRelPath, sourceRoot);
+        final VirtualFile mainClassFile = VfsUtilCore.findRelativeFile(classFileRelPath, sourceRoot);
         if (mainClassFile != null) {
           return mainClassFile.getPath();
         }
@@ -318,15 +327,17 @@ public class FlexUtils {
 
   public static void removeFileLater(@NotNull final VirtualFile file) {
     ApplicationManager.getApplication().invokeLater(new Runnable() {
+      @Override
       public void run() {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
+          @Override
           public void run() {
             try {
               if (file.exists()) {
                 file.delete(this);
               }
             }
-            catch (IOException e) {/*ignore*/}
+            catch (IOException ignored) {/*ignore*/}
           }
         });
       }
@@ -447,7 +458,7 @@ public class FlexUtils {
 
   public static String getContentOrModuleFolderPath(final Module module) {
     final String[] contentRootUrls = ModuleRootManager.getInstance(module).getContentRootUrls();
-    return contentRootUrls.length > 0 ? VfsUtil.urlToPath(contentRootUrls[0]) : PathUtil.getParentPath(module.getModuleFilePath());
+    return contentRootUrls.length > 0 ? VfsUtilCore.urlToPath(contentRootUrls[0]) : PathUtil.getParentPath(module.getModuleFilePath());
   }
 
   @Nullable
