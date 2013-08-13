@@ -1,33 +1,32 @@
-var cli = require('./intellijCli');
-var RESUME_TEST_RUNNING_MESSAGE = 'resume-test-running';
+var cli = require('./intellijCli')
+  , intellijUtil = require('./intellijUtil')
+  , RESUME_TEST_RUNNING_MESSAGE = 'resume-test-running';
 
 function runTests() {
   var runner = cli.requireKarmaModule('lib/runner.js');
   var serverPort = cli.getServerPort();
+  var urlRoot = cli.getUrlRoot() || '/';
+  if (urlRoot.charAt(urlRoot.length - 1) !== '/') {
+    urlRoot = urlRoot + '/';
+  }
   runner.run(
-    { port: serverPort },
+    {
+      port: serverPort,
+      refresh: false,
+      urlRoot: urlRoot
+    },
     function() {}
   );
 }
 
 if (cli.isDebug()) {
-  process.stdin.resume();
-  process.stdin.setEncoding('utf8');
-  var text = '';
-  var listener = function(data) {
-    text += data;
-    var lines = text.split('\n');
-    if (lines.indexOf(RESUME_TEST_RUNNING_MESSAGE) >= 0) {
-      process.stdin.removeListener('data', listener);
-      process.stdin.pause();
-      process.stdin.destroy();
+  intellijUtil.processStdInput(function(line) {
+    var resume = RESUME_TEST_RUNNING_MESSAGE === line;
+    if (resume) {
       runTests();
     }
-    else if (lines.length > 0) {
-      text = lines[lines.length - 1];
-    }
-  };
-  process.stdin.on('data', listener);
+    return !resume;
+  });
 }
 else {
   runTests();

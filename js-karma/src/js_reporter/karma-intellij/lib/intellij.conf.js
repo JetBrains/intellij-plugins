@@ -1,6 +1,5 @@
 var cli = require('./intellijCli.js')
   , intellijUtil = require('./intellijUtil.js')
-  , constants = cli.requireKarmaModule('lib/constants.js')
   , originalConfigPath = cli.getConfigFile();
 
 function setBasePath(config) {
@@ -27,12 +26,26 @@ module.exports = function(config) {
   plugins.push(require.resolve('./intellijPlugin.js'));
   config.plugins = plugins;
 
+  // Don't load the original configuration file in the browser.
+  // https://github.com/karma-runner/karma-intellij/issues/9
+  config.exclude = config.exclude || [];
+  config.exclude.push(originalConfigPath);
+
   config.singleRun = false;
   var originalAutoWatch = config.autoWatch;
   config.autoWatch = false;
-  // specify runner port to have runner port info dumped to standard output
-  config.runnerPort = constants.DEFAULT_RUNNER_PORT + 1;
+  config.autoWatchBatchDelay = 0;
 
   setBasePath(config);
-  intellijUtil.sendIntellijEvent('configFile', {basePath: config.basePath, autoWatch: originalAutoWatch});
+
+  intellijUtil.sendIntellijEvent(
+    'configFile',
+    {
+      autoWatch: originalAutoWatch,
+      basePath: config.basePath,
+      browsers: config.browsers || [],
+      hostname: config.hostname || 'localhost',
+      urlRoot: config.urlRoot || '/'
+    }
+  );
 };

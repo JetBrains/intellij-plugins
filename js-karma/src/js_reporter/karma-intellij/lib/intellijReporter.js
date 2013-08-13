@@ -1,7 +1,8 @@
 var cli = require("./intellijCli.js")
   , intellijUtil = require('./intellijUtil.js')
   , util = require('util')
-  , Tree = require('./tree.js');
+  , Tree = require('./tree.js')
+  , FileListUpdater = require('./fileListUpdater').FileListUpdater;
 
 function getOrCreateBrowserNode(tree, browser) {
   var configFileNode = tree.configFileNode;
@@ -59,28 +60,15 @@ function createSpecNode(suiteNode, suiteNames, specName) {
   return specNode;
 }
 
-function FileListTracker(globalEmitter) {
-  var currentFilesPromise = null;
-  globalEmitter.on('file_list_modified', function(filesPromise) {
-    currentFilesPromise = filesPromise;
-  });
-  this.dumpFiles = function() {
-    if (currentFilesPromise) {
-      currentFilesPromise.then(function(files) {
-        if (files) {
-          intellijUtil.sendIntellijEvent('servedFiles', files.served);
+function sendBrowserEvents(eventType, connectionId2BrowserObjA, connectionId2BrowserObjB, addAutoCapturingInfo) {
+  for (var connectionId in connectionId2BrowserObjA) {
+    if (connectionId2BrowserObjA.hasOwnProperty(connectionId)) {
+      if (!connectionId2BrowserObjB.hasOwnProperty(connectionId)) {
+        var browser = connectionId2BrowserObjA[connectionId];
+        var event = {id: connectionId, name: browser.name};
+        if (addAutoCapturingInfo) {
+          event.isAutoCaptured = !!browser.launchId;
         }
-        currentFilesPromise = null;
-      });
-    }
-  };
-}
-
-function sendBrowserEvents(eventType, connectionId2BrowserNameObjA, connectionId2BrowserNameObjB) {
-  for (var connectionId in connectionId2BrowserNameObjA) {
-    if (connectionId2BrowserNameObjA.hasOwnProperty(connectionId)) {
-      if (!connectionId2BrowserNameObjB.hasOwnProperty(connectionId)) {
-        var event = {id: connectionId, name: connectionId2BrowserNameObjA[connectionId]};
         intellijUtil.sendIntellijEvent(eventType, event);
       }
     }
@@ -88,30 +76,31 @@ function sendBrowserEvents(eventType, connectionId2BrowserNameObjA, connectionId
 }
 
 function startBrowsersTracking(globalEmitter) {
-  var oldConnectionId2BrowserNameObj = {};
+  var oldConnectionId2BrowserObj = {};
   globalEmitter.on('browsers_change', function(capturedBrowsers) {
     if (!capturedBrowsers.forEach) {
       // filter out events from Browser object
       return;
     }
-    var newConnectionId2BrowserNameObj = {};
+    var newConnectionId2BrowserObj = {};
     var proceed = true;
     capturedBrowsers.forEach(function(newBrowser) {
       if (!newBrowser.id || !newBrowser.name || newBrowser.id === newBrowser.name) {
         proceed = false;
       }
-      newConnectionId2BrowserNameObj[newBrowser.id] = newBrowser.name;
+      newConnectionId2BrowserObj[newBrowser.id] = newBrowser;
     });
     if (proceed) {
-      sendBrowserEvents('browserConnected', newConnectionId2BrowserNameObj, oldConnectionId2BrowserNameObj);
-      sendBrowserEvents('browserDisconnected', oldConnectionId2BrowserNameObj, newConnectionId2BrowserNameObj);
-      oldConnectionId2BrowserNameObj = newConnectionId2BrowserNameObj;
+      sendBrowserEvents('browserConnected', newConnectionId2BrowserObj, oldConnectionId2BrowserObj, true);
+      sendBrowserEvents('browserDisconnected', oldConnectionId2BrowserObj, newConnectionId2BrowserObj, false);
+      oldConnectionId2BrowserObj = newConnectionId2BrowserObj;
     }
   });
 }
 
-function IntellijReporter(formatError, globalEmitter) {
-  var fileListManager = new FileListTracker(globalEmitter);
+function IntellijReporter(config, fileList, formatError, globalEmitter) {
+  var fileListUpdater = new FileListUpdater(config, fileList);
+//  var fileListManager = new FileListTracker(globalEmitter);
   startBrowsersTracking(globalEmitter);
   this.adapters = [];
   var totalTestCount, uncheckedBrowserCount;
@@ -129,7 +118,7 @@ function IntellijReporter(formatError, globalEmitter) {
     totalTestCount = 0;
     uncheckedBrowserCount = browsers.length;
     tree = new Tree(cli.getConfigFile(), write);
-    fileListManager.dumpFiles();
+//    fileListManager.dumpFiles();
     process.nextTick(function() {
       tree.write('##teamcity[enteredTheMatrix]\n');
     });
@@ -183,6 +172,6 @@ function IntellijReporter(formatError, globalEmitter) {
   };
 }
 
-IntellijReporter.$inject = ['formatError', 'emitter'];
+IntellijReporter.$inject = ['config', 'fileList', 'formatError', 'emitter'];
 
 module.exports = IntellijReporter;

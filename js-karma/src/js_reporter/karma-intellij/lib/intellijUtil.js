@@ -109,13 +109,49 @@ function sendIntellijEvent(eventType, eventBody) {
   process.stdout.write('##intellij-event[' + eventType + ':' + JSON.stringify(eventBody) + ']\n');
 }
 
-var toString = Object().toString;
+var toString = {}.toString;
 
 function isString(value) {
   return typeof value === 'string' || toString.call(value) === '[object String]';
+}
+
+/**
+ *
+ * @param processor this function gets called with line as a single parameter.
+ *                  If the function returns false, standard input processing is stopped.
+ */
+function processStdInput(processor) {
+  process.stdin.resume();
+  process.stdin.setEncoding('utf8');
+  var text = '';
+  var listener = function (data) {
+    text += data;
+    var startInd = 0;
+    var proceed = true;
+    while (true) {
+      var nlInd = text.indexOf('\n', startInd);
+      if (nlInd < 0) {
+        break;
+      }
+      var line = text.substring(startInd, nlInd);
+      proceed = processor(line);
+      if (!proceed) {
+        break;
+      }
+      startInd = nlInd + 1;
+    }
+    text = text.substring(startInd);
+    if (!proceed) {
+      process.stdin.removeListener('data', listener);
+      process.stdin.pause();
+      process.stdin.destroy();
+    }
+  };
+  process.stdin.on('data', listener);
 }
 
 exports.attributeValueEscape = attributeValueEscape;
 exports.joinList = joinList;
 exports.sendIntellijEvent = sendIntellijEvent;
 exports.isString = isString;
+exports.processStdInput = processStdInput;
