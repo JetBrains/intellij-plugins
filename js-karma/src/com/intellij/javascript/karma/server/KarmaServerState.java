@@ -1,5 +1,6 @@
 package com.intellij.javascript.karma.server;
 
+import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.intellij.execution.process.ProcessEvent;
@@ -10,10 +11,11 @@ import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.util.GsonUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
-import com.intellij.util.containers.ConcurrentHashMap;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
@@ -29,28 +31,52 @@ public class KarmaServerState {
   private static final String BROWSER_DISCONNECTED_EVENT_TYPE = "browserDisconnected";
 
   private final KarmaServer myServer;
-  private final ConcurrentMap<String, String> myCapturedBrowsers = new ConcurrentHashMap<String, String>();
+  private final ConcurrentMap<String, CapturedBrowser> myCapturedBrowsers = Maps.newConcurrentMap();
   private volatile int myServerPort = -1;
   private volatile KarmaConfig myConfig;
 
-  public KarmaServerState(@NotNull KarmaServer server, @NotNull ProcessHandler serverProcessHandler) {
+  public KarmaServerState(@NotNull KarmaServer server,
+                          @NotNull ProcessHandler serverProcessHandler,
+                          @NotNull File configurationFile) {
     myServer = server;
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_CONNECTED_EVENT_TYPE));
     myServer.registerStreamEventHandler(new BrowserEventHandler(BROWSER_DISCONNECTED_EVENT_TYPE));
-    myServer.registerStreamEventHandler(new ConfigHandler());
+    myServer.registerStreamEventHandler(new ConfigHandler(configurationFile));
     new ServerProcessListener(this, serverProcessHandler);
   }
 
   private void handleBrowsersChange(@NotNull String eventType,
                                     @NotNull String browserId,
-                                    @NotNull String browserName) {
+                                    @NotNull String browserName,
+                                    @Nullable Boolean autoCaptured) {
     if (BROWSER_CONNECTED_EVENT_TYPE.equals(eventType)) {
-      myCapturedBrowsers.put(browserId, browserName);
-      myServer.onBrowserCaptured();
+      boolean captured = ObjectUtils.notNull(autoCaptured, true);
+      CapturedBrowser browser = new CapturedBrowser(browserName, browserId, captured);
+      myCapturedBrowsers.put(browserId, browser);
+      KarmaConfig config = myConfig;
+      if (config != null) {
+        int autoCapturedBrowsers = getAutoCapturedBrowserCount();
+        if (autoCapturedBrowsers == config.getBrowsers().size()) {
+          myServer.onBrowsersReady();
+        }
+      }
+      else {
+        myServer.onBrowsersReady();
+      }
     }
     else {
       myCapturedBrowsers.remove(browserId);
     }
+  }
+
+  private int getAutoCapturedBrowserCount() {
+    int res = 0;
+    for (CapturedBrowser browser : myCapturedBrowsers.values()) {
+      if (browser.isAutoCaptured()) {
+        res++;
+      }
+    }
+    return res;
   }
 
   public boolean hasCapturedBrowser() {
@@ -58,7 +84,7 @@ public class KarmaServerState {
   }
 
   @NotNull
-  public Collection<String> getCapturedBrowsers() {
+  public Collection<CapturedBrowser> getCapturedBrowsers() {
     return myCapturedBrowsers.values();
   }
 
@@ -96,8 +122,9 @@ public class KarmaServerState {
         JsonObject event = eventBody.getAsJsonObject();
         String id = GsonUtil.getStringProperty(event, "id");
         String name = GsonUtil.getStringProperty(event, "name");
+        Boolean autoCaptured = GsonUtil.getBooleanProperty(event, "isAutoCaptured");
         if (id != null && name != null) {
-          handleBrowsersChange(myEventType, id, name);
+          handleBrowsersChange(myEventType, id, name, autoCaptured);
         }
         else {
           LOG.warn("Illegal browser event. Type: " + myEventType + ", body: " + eventBody.toString());
@@ -108,6 +135,12 @@ public class KarmaServerState {
 
   private class ConfigHandler implements StreamEventHandler {
 
+    private final File myConfigurationFileDir;
+
+    public ConfigHandler(@NotNull File configurationFile) {
+      myConfigurationFileDir = configurationFile.getParentFile();
+    }
+
     @NotNull
     @Override
     public String getEventType() {
@@ -116,7 +149,7 @@ public class KarmaServerState {
 
     @Override
     public void handle(@NotNull JsonElement eventBody) {
-      myConfig = KarmaConfig.parseFromJson(eventBody);
+      myConfig = KarmaConfig.parseFromJson(eventBody, myConfigurationFileDir);
     }
   }
 

@@ -78,7 +78,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     else {
       myServer.doWhenReady(new KarmaServerReadyListener() {
         @Override
-        public void onReady(int webServerPort) {
+        public void onReady(int serverPort) {
           ui.selectAndFocus(consoleContent, false, false);
         }
       });

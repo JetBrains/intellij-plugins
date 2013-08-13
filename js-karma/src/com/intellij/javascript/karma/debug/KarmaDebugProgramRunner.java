@@ -17,6 +17,7 @@ import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
+import com.intellij.javascript.karma.server.CapturedBrowser;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -145,13 +146,13 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
   }
 
   @Nullable
-  private static <C> JSDebugEngine<C> getDebugEngine(@NotNull Collection<String> capturedBrowsers) {
+  private static <C> JSDebugEngine<C> getDebugEngine(@NotNull Collection<CapturedBrowser> browsers) {
     //noinspection unchecked
     JSDebugEngine<C>[] engines = (JSDebugEngine<C>[])JSDebugEngine.getEngines();
     Set<JSDebugEngine<C>> capturedEngines = ContainerUtil.newHashSet();
     for (JSDebugEngine<C> engine : engines) {
-      for (String capturedBrowserName : capturedBrowsers) {
-        if (capturedBrowserName.contains(engine.getBrowserFamily().getName())) {
+      for (CapturedBrowser browser : browsers) {
+        if (browser.getName().contains(engine.getBrowserFamily().getName())) {
           capturedEngines.add(engine);
           break;
         }

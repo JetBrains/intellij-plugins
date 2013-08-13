@@ -4,5 +4,5 @@ package com.intellij.javascript.karma.server;
  * @author Sergey Simonchik
  */
 public interface KarmaServerReadyListener {
-  void onReady(int webServerPort);
+  void onReady(int serverPort);
 }

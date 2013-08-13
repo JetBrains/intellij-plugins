@@ -61,7 +61,7 @@ public class KarmaServer {
     myKarmaPackageDir = karmaPackageDir;
     myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(karmaPackageDir);
     final ProcessHandler processHandler = startServer(nodeInterpreter, configurationFile);
-    myState = new KarmaServerState(this, processHandler);
+    myState = new KarmaServerState(this, processHandler, configurationFile);
     myProcessOutputArchive = new ProcessOutputArchive(processHandler);
     myWatcher = new KarmaWatcher(this);
     registerStreamEventHandlers();
@@ -281,19 +281,16 @@ public class KarmaServer {
 
   @NotNull
   public String formatUrlWithoutUrlRoot(@NotNull String path) {
-    if (!path.startsWith("/")) {
-      path = "/" + path;
-    }
-    KarmaConfig config = myState.getKarmaConfig();
-    if (config != null) {
-      return "http://" + config.getHostname() + ":" + getServerPort() + path;
-    }
-    LOG.error("Karma config isn't ready yet.");
-    return "http://localhost:" + getServerPort() + path;
+    return formatUrl(path, false);
   }
 
   @NotNull
   public String formatUrl(@NotNull String path) {
+    return formatUrl(path, true);
+  }
+
+  @NotNull
+  private String formatUrl(@NotNull String path, boolean withUrlRoot) {
     if (!path.startsWith("/")) {
       path = "/" + path;
     }
@@ -301,7 +298,7 @@ public class KarmaServer {
     if (config != null) {
       String baseUrl = "http://" + config.getHostname() + ":" + getServerPort();
       String urlRoot = config.getUrlRoot();
-      if ("/".equals(urlRoot)) {
+      if (!withUrlRoot || "/".equals(urlRoot)) {
         return baseUrl + path;
       }
       return baseUrl + config.getUrlRoot() + path;
@@ -318,7 +315,7 @@ public class KarmaServer {
     return myState.hasCapturedBrowser();
   }
 
-  void onBrowserCaptured() {
+  void onBrowsersReady() {
     UIUtil.invokeLaterIfNeeded(new Runnable() {
       @Override
       public void run() {
@@ -341,7 +338,7 @@ public class KarmaServer {
   }
 
   @NotNull
-  public Collection<String> getCapturedBrowsers() {
+  public Collection<CapturedBrowser> getCapturedBrowsers() {
     return myState.getCapturedBrowsers();
   }
 

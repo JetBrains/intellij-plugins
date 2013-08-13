@@ -147,7 +147,7 @@ public class KarmaCoveragePeer {
         KarmaCoverageSession coverageSession = myActiveCoverageSession;
         myActiveCoverageSession = null;
         if (coverageSession != null) {
-          String path = GsonUtil.asString(eventBody);
+          String path = GsonUtil.getAsString(eventBody);
           coverageSession.onCoverageSessionFinished(new File(path));
         }
       }
