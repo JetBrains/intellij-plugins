@@ -21,6 +21,7 @@ import jetbrains.communicator.util.XmlRpcTarget;
 import org.apache.log4j.Logger;
 import org.apache.xmlrpc.XmlRpcClient;
 import org.apache.xmlrpc.XmlRpcException;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.*;
@@ -61,9 +62,8 @@ public class NetworkUtil {
   private NetworkUtil() {
   }
 
-  public static InetAddress[] getSelfAddresses() {
-    final List<InetAddress> res = ourInterfaces.getValue();
-    return res.toArray(new InetAddress[res.size()]);
+  public static Collection<InetAddress> getSelfAddresses() {
+    return ourInterfaces.getValue();
   }
 
   public static Object sendMessage(XmlRpcTarget target, String xmlRpcId, String method, Object... parameters) {
@@ -110,8 +110,7 @@ public class NetworkUtil {
     }
   }
 
-  public static boolean isOwnAddress(InetAddress address) {
-    if (address == null) return false;
-    return address.isLoopbackAddress() || Arrays.asList(getSelfAddresses()).contains(address);
+  public static boolean isOwnAddress(@Nullable InetAddress address) {
+    return address != null && (address.isLoopbackAddress() || getSelfAddresses().contains(address));
   }
 }
