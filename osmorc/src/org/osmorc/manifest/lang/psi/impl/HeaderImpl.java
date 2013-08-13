@@ -22,12 +22,11 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.psi.impl;
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.ManifestTokenType;
@@ -35,34 +34,23 @@ import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.Header;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.psi.ManifestToken;
-import org.osmorc.manifest.lang.psi.stub.HeaderStub;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class HeaderImpl extends ManifestElementBase<HeaderStub> implements Header {
-  public HeaderImpl(HeaderStub stub, @NotNull IStubElementType nodeType) {
-    super(stub, nodeType);
-  }
-
+public class HeaderImpl extends ASTWrapperPsiElement implements Header {
   public HeaderImpl(@NotNull ASTNode node) {
     super(node);
   }
 
+  @Override
   public String getName() {
-    String result;
-    HeaderStub stub = getStub();
-    if (stub != null) {
-      result = stub.getName();
-    }
-    else {
-      ManifestToken nameToken = getNameToken();
-      result = nameToken != null ? nameToken.getText() : null;
-    }
-
+    ManifestToken nameToken = getNameToken();
+    String result = nameToken != null ? nameToken.getText() : null;
     return result != null ? result : "";
   }
 
+  @Override
   public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
     ManifestToken nameToken = getNameToken();
     if (nameToken != null) {
@@ -71,10 +59,12 @@ public class HeaderImpl extends ManifestElementBase<HeaderStub> implements Heade
     return this;
   }
 
+  @Override
   public ManifestToken getNameToken() {
     return (ManifestToken)getNode().findChildByType(ManifestTokenType.HEADER_NAME);
   }
 
+  @Override
   public ManifestToken getColonToken() {
     return (ManifestToken)getNode().findChildByType(ManifestTokenType.COLON);
   }
@@ -95,5 +85,10 @@ public class HeaderImpl extends ManifestElementBase<HeaderStub> implements Heade
       }
     }
     return null;
+  }
+
+  @Override
+  public String toString() {
+    return "Header:" + getName();
   }
 }

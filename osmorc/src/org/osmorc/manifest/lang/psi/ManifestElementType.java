@@ -22,32 +22,71 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.psi;
 
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
-import com.intellij.psi.tree.IStubFileElementType;
 import org.osmorc.manifest.lang.ManifestLanguage;
-import org.osmorc.manifest.lang.psi.elementtype.*;
+import org.osmorc.manifest.lang.psi.impl.*;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ManifestStubElementTypes {
-  public static final HeaderElementType HEADER = new HeaderElementType();
-  public static final SectionElementType SECTION = new SectionElementType();
-  public static final HeaderValuePartElementType HEADER_VALUE_PART = new HeaderValuePartElementType();
-  public static final AttributeElementType ATTRIBUTE = new AttributeElementType();
-  public static final DirectiveElementType DIRECTIVE = new DirectiveElementType();
-  public static final ClauseElementType CLAUSE = new ClauseElementType();
-
-  public static final IFileElementType FILE = new IStubFileElementType("ManifestFile", ManifestLanguage.INSTANCE) {
+public abstract class ManifestElementType extends IElementType {
+  public static final IElementType HEADER = new ManifestElementType("HEADER") {
     @Override
-    public int getStubVersion() {
-      return 1;
+    public PsiElement createPsi(ASTNode node) {
+      return new HeaderImpl(node);
     }
   };
 
-  private ManifestStubElementTypes() {
+  public static final IElementType SECTION = new ManifestElementType("SECTION") {
+    @Override
+    public PsiElement createPsi(ASTNode node) {
+      return new SectionImpl(node);
+    }
+  };
+
+  public static final IElementType HEADER_VALUE_PART = new ManifestElementType("HEADER_VALUE_PART") {
+    @Override
+    public PsiElement createPsi(ASTNode node) {
+      return new HeaderValuePartImpl(node);
+    }
+  };
+
+  public static final IElementType ATTRIBUTE = new ManifestElementType("ATTRIBUTE") {
+    @Override
+    public PsiElement createPsi(ASTNode node) {
+      return new AttributeImpl(node);
+    }
+  };
+
+  public static final IElementType DIRECTIVE = new ManifestElementType("DIRECTIVE") {
+    @Override
+    public PsiElement createPsi(ASTNode node) {
+      return new DirectiveImpl(node);
+    }
+  };
+
+  public static final IElementType CLAUSE = new ManifestElementType("CLAUSE") {
+    @Override
+    public PsiElement createPsi(ASTNode node) {
+      return new ClauseImpl(node);
+    }
+  };
+
+  public static final IFileElementType FILE = new IFileElementType("ManifestFile", ManifestLanguage.INSTANCE);
+
+  private ManifestElementType(String name) {
+    super(name, ManifestLanguage.INSTANCE);
+  }
+
+  public abstract PsiElement createPsi(ASTNode node);
+
+  @Override
+  public String toString() {
+    return "MF:" + super.toString();
   }
 }

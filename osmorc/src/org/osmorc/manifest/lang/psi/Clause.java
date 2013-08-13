@@ -25,46 +25,33 @@
 package org.osmorc.manifest.lang.psi;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.StubBasedPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.manifest.lang.psi.stub.ClauseStub;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface Clause extends PsiElement, StubBasedPsiElement<ClauseStub> {
-
-
+public interface Clause extends PsiElement {
   /**
-   * Returns the value of this clause
-   *
-   * @return the value of this clause
+   * Returns the value of this clause.
    */
   @Nullable
   HeaderValuePart getValue();
 
   /**
    * Returns all directives of this clause.
-   *
-   * @return the directives of this clause
    */
   @NotNull
   Directive[] getDirectives();
 
   /**
    * Returns the directive with the given name.
-   *
-   * @param name the name of the directive
-   * @return the directive, or null if there is no such directive
    */
   @Nullable
   Directive getDirectiveByName(@NotNull String name);
 
   /**
    * Same as {@link #getText()} but filters out line breaks and trims whitespace around it.
-   *
-   * @return
    */
   String getClauseText();
 }

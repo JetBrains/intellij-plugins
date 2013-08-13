@@ -51,8 +51,4 @@ public final class ManifestTokenType extends IElementType {
   private ManifestTokenType(@NotNull @NonNls String debugName) {
     super(debugName, ManifestFileTypeFactory.MANIFEST.getLanguage());
   }
-
-  public String toString() {
-    return "ManifestTokenType: " + super.toString();
-  }
 }

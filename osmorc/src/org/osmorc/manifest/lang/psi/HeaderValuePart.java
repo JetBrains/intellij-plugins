@@ -22,24 +22,21 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.psi;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.StubBasedPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.manifest.lang.psi.stub.HeaderValuePartStub;
 
 /**
  * A header value part is in the case of a simple header the whole value of a header or in the
- * complex case the building block for attributes, diretives and clauses. It can the the directive or attribute name.
+ * complex case the building block for attributes, directives and clauses. It can the the directive or attribute name.
  * It can be the value of an attribute or directive or it can be the main part of a clause to which parameters are
  * applied in the form of directives and clauses.
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface HeaderValuePart extends PsiElement, StubBasedPsiElement<HeaderValuePartStub> {
+public interface HeaderValuePart extends PsiElement {
 
   /**
    * The text of a header value part can be broken into several parts. This method returns the unwrapped text without

@@ -22,24 +22,22 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.Directive;
-import org.osmorc.manifest.lang.psi.stub.AssignmentExpressionStub;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class DirectiveImpl extends AbstractAssignmentExpression implements Directive {
-  public DirectiveImpl(AssignmentExpressionStub stub, @NotNull IStubElementType nodeType) {
-    super(stub, nodeType);
-  }
-
   public DirectiveImpl(@NotNull ASTNode node) {
     super(node);
+  }
+
+  @Override
+  public String toString() {
+    return "Directive:" + getName();
   }
 }

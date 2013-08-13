@@ -44,13 +44,9 @@ public class ManifestFileImpl extends PsiFileBase implements ManifestFile {
   }
 
   @NotNull
+  @Override
   public FileType getFileType() {
     return ManifestFileTypeFactory.MANIFEST;
-  }
-
-  @Override
-  public String toString() {
-    return "ManifestFile:" + getName();
   }
 
   @NotNull
@@ -62,7 +58,6 @@ public class ManifestFileImpl extends PsiFileBase implements ManifestFile {
 
   @Override
   public Header getHeaderByName(@NotNull String name) {
-
     Header childOfType = PsiTreeUtil.findChildOfType(getFirstChild(), Header.class);
     while (childOfType != null) {
       if (name.equals(childOfType.getName())) {
@@ -71,5 +66,10 @@ public class ManifestFileImpl extends PsiFileBase implements ManifestFile {
       childOfType = PsiTreeUtil.getNextSiblingOfType(childOfType, Header.class);
     }
     return null;
+  }
+
+  @Override
+  public String toString() {
+    return "ManifestFile:" + getName();
   }
 }

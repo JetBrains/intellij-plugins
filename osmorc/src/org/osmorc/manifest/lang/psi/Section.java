@@ -22,15 +22,12 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.psi;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.StubBasedPsiElement;
-import org.osmorc.manifest.lang.psi.stub.SectionStub;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface Section extends PsiElement, StubBasedPsiElement<SectionStub> {
+public interface Section extends PsiElement {
 }

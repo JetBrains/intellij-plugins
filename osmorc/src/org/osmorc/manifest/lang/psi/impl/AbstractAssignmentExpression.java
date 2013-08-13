@@ -24,69 +24,51 @@
  */
 package org.osmorc.manifest.lang.psi.impl;
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.AssignmentExpression;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
-import org.osmorc.manifest.lang.psi.stub.AssignmentExpressionStub;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public abstract class AbstractAssignmentExpression extends ManifestElementBase<AssignmentExpressionStub> implements AssignmentExpression {
-
-  protected AbstractAssignmentExpression(AssignmentExpressionStub stub, @NotNull IStubElementType nodeType) {
-    super(stub, nodeType);
-  }
-
+public abstract class AbstractAssignmentExpression extends ASTWrapperPsiElement implements AssignmentExpression {
   public AbstractAssignmentExpression(@NotNull ASTNode node) {
     super(node);
   }
 
+  @Override
   public String getName() {
-    String result;
-    AssignmentExpressionStub stub = getStub();
-    if (stub != null) {
-      result = stub.getName();
-    }
-    else {
-      HeaderValuePart namePsi = getNamePsi();
-      result = namePsi != null ? namePsi.getUnwrappedText() : null;
-    }
-
+    HeaderValuePart namePsi = getNamePsi();
+    String result = namePsi != null ? namePsi.getUnwrappedText() : null;
     return result != null ? result : "<unnamed>";
   }
 
+  @Override
   public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
     // TODO: Implement
     return this;
   }
 
+  @Override
   public HeaderValuePart getNamePsi() {
     return PsiTreeUtil.getChildOfType(this, HeaderValuePart.class);
   }
 
+  @Override
   public String getValue() {
-    String result;
-    AssignmentExpressionStub stub = getStub();
-    if (stub != null) {
-      result = stub.getValue();
-    }
-    else {
-      HeaderValuePart valuePsi = getValuePsi();
-      result = valuePsi != null ? valuePsi.getUnwrappedText() : null;
-    }
-
+    HeaderValuePart valuePsi = getValuePsi();
+    String result = valuePsi != null ? valuePsi.getUnwrappedText() : null;
     return result != null ? result : "";
   }
 
+  @Override
   public HeaderValuePart getValuePsi() {
     HeaderValuePart namePsi = getNamePsi();
-
     return namePsi != null ? PsiTreeUtil.getNextSiblingOfType(namePsi, HeaderValuePart.class) : null;
   }
 }

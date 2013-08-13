@@ -22,84 +22,69 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.psi.impl;
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.ManifestTokenType;
 import org.osmorc.manifest.lang.headerparser.HeaderParser;
 import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.psi.ManifestToken;
-import org.osmorc.manifest.lang.psi.stub.HeaderValuePartStub;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class HeaderValuePartImpl extends ManifestElementBase<HeaderValuePartStub> implements HeaderValuePart {
-  private final HeaderParserRepository headerParserRepository;
-
-  public HeaderValuePartImpl(HeaderValuePartStub stub, @NotNull IStubElementType nodeType) {
-    super(stub, nodeType);
-    headerParserRepository = ServiceManager.getService(HeaderParserRepository.class);
-  }
+public class HeaderValuePartImpl extends ASTWrapperPsiElement implements HeaderValuePart {
+  private final HeaderParserRepository myRepository;
 
   public HeaderValuePartImpl(ASTNode node) {
     super(node);
-    headerParserRepository = ServiceManager.getService(HeaderParserRepository.class);
+    myRepository = ServiceManager.getService(HeaderParserRepository.class);
   }
-
 
   @NotNull
+  @Override
   public String getUnwrappedText() {
-    String result;
-    HeaderValuePartStub stub = getStub();
-    if (stub != null) {
-      result = stub.getUnwrappedText();
-    }
-    else {
-      StringBuilder builder = new StringBuilder();
-      PsiElement element = getFirstChild();
-      while (element != null) {
-        boolean ignore = false;
-        if (element instanceof ManifestToken) {
-          ManifestToken manifestToken = (ManifestToken)element;
-          if (manifestToken.getTokenType() == ManifestTokenType.NEWLINE ||
-              manifestToken.getTokenType() == ManifestTokenType.SIGNIFICANT_SPACE) {
-            ignore = true;
-          }
+    StringBuilder builder = new StringBuilder();
+    PsiElement element = getFirstChild();
+    while (element != null) {
+      boolean ignore = false;
+      if (element instanceof ManifestToken) {
+        ManifestToken manifestToken = (ManifestToken)element;
+        if (manifestToken.getTokenType() == ManifestTokenType.NEWLINE ||
+            manifestToken.getTokenType() == ManifestTokenType.SIGNIFICANT_SPACE) {
+          ignore = true;
         }
-        if (!ignore) {
-          builder.append(element.getText());
-        }
-        element = element.getNextSibling();
       }
-
-      result = builder.toString();
+      if (!ignore) {
+        builder.append(element.getText());
+      }
+      element = element.getNextSibling();
     }
-    return result.trim();
+
+    return builder.toString().trim();
   }
 
+  @Override
   public Object getConvertedValue() {
-    HeaderParser headerParser = headerParserRepository.getHeaderParser(this);
-    if (headerParser != null) {
-      return headerParser.getValue(this);
-    }
-    return null;
+    HeaderParser headerParser = myRepository.getHeaderParser(this);
+    return headerParser != null ? headerParser.getValue(this) : null;
   }
 
   @NotNull
   @Override
   public PsiReference[] getReferences() {
-    HeaderParser headerParser = headerParserRepository.getHeaderParser(this);
-    if (headerParser != null) {
-      return headerParser.getReferences(this);
-    }
-    return PsiReference.EMPTY_ARRAY;
+    HeaderParser headerParser = myRepository.getHeaderParser(this);
+    return headerParser != null ? headerParser.getReferences(this) : PsiReference.EMPTY_ARRAY;
+  }
+
+  @Override
+  public String toString() {
+    return "HeaderValuePart";
   }
 }

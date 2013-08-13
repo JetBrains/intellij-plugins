@@ -36,65 +36,71 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.util.PsiUtil;
+import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
 import org.osmorc.manifest.lang.psi.Header;
-import org.osmorc.manifest.lang.psi.ManifestStubElementTypes;
-import org.osmorc.manifest.lang.psi.elementtype.AbstractManifestStubElementType;
+import org.osmorc.manifest.lang.psi.ManifestElementType;
 import org.osmorc.manifest.lang.psi.impl.ManifestFileImpl;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestParserDefinition implements ParserDefinition {
-
   @NotNull
+  @Override
   public Lexer createLexer(Project project) {
     return new ManifestLexer();
   }
 
+  @Override
   public PsiParser createParser(Project project) {
     return new ManifestParser(ServiceManager.getService(HeaderParserRepository.class));
   }
 
+  @Override
   public IFileElementType getFileNodeType() {
-    return ManifestStubElementTypes.FILE;
+    return ManifestElementType.FILE;
   }
 
   @NotNull
+  @Override
   public TokenSet getWhitespaceTokens() {
     return TokenSet.EMPTY;
   }
 
   @NotNull
+  @Override
   public TokenSet getCommentTokens() {
     return TokenSet.EMPTY;
   }
 
   @NotNull
+  @Override
   public TokenSet getStringLiteralElements() {
     return TokenSet.EMPTY;
   }
 
   @NotNull
+  @Override
   public PsiElement createElement(ASTNode node) {
-    final IElementType type = node.getElementType();
-    if (type instanceof AbstractManifestStubElementType) {
-      return ((AbstractManifestStubElementType)type).createPsi(node);
+    IElementType type = node.getElementType();
+    if (type instanceof ManifestElementType) {
+      return ((ManifestElementType)type).createPsi(node);
     }
 
-    return PsiUtil.NULL_PSI_ELEMENT;
+    return PsiUtilCore.NULL_PSI_ELEMENT;
   }
 
+  @Override
   public PsiFile createFile(FileViewProvider viewProvider) {
     return new ManifestFileImpl(viewProvider);
   }
 
-  @SuppressWarnings({"MethodNameWithMistakes"})
+  @SuppressWarnings("SpellCheckingInspection")
+  @Override
   public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
     return (left.getPsi() instanceof Header || right.getPsi() instanceof Header)
-           ? SpaceRequirements.MUST_LINE_BREAK
-           : SpaceRequirements.MUST_NOT;
+           ? SpaceRequirements.MUST_LINE_BREAK : SpaceRequirements.MUST_NOT;
   }
 }

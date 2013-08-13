@@ -22,24 +22,22 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.psi.impl;
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
-import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.Section;
-import org.osmorc.manifest.lang.psi.stub.SectionStub;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class SectionImpl extends ManifestElementBase<SectionStub> implements Section {
-  public SectionImpl(SectionStub stub, @NotNull IStubElementType nodeType) {
-    super(stub, nodeType);
-  }
-
+public class SectionImpl extends ASTWrapperPsiElement implements Section {
   public SectionImpl(ASTNode node) {
     super(node);
+  }
+
+  @Override
+  public String toString() {
+    return "Section";
   }
 }

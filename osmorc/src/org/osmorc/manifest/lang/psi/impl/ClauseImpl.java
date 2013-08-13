@@ -22,26 +22,20 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.psi.impl;
 
+import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.Directive;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
-import org.osmorc.manifest.lang.psi.stub.ClauseStub;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ClauseImpl extends ManifestElementBase<ClauseStub> implements Clause {
-  public ClauseImpl(ClauseStub stub, @NotNull IStubElementType nodeType) {
-    super(stub, nodeType);
-  }
-
+public class ClauseImpl extends ASTWrapperPsiElement implements Clause {
   public ClauseImpl(ASTNode node) {
     super(node);
   }
@@ -71,7 +65,11 @@ public class ClauseImpl extends ManifestElementBase<ClauseStub> implements Claus
 
   @Override
   public String getClauseText() {
-    String text = getText();
-    return text.replaceAll("(?s)\\s*\n\\s*", "").trim();
+    return getText().replaceAll("(?s)\\s*\n\\s*", "").trim();
+  }
+
+  @Override
+  public String toString() {
+    return "Clause";
   }
 }

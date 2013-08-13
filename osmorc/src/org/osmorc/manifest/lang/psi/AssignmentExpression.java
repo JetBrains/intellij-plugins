@@ -22,17 +22,14 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.psi;
 
 import com.intellij.psi.PsiNamedElement;
-import com.intellij.psi.StubBasedPsiElement;
-import org.osmorc.manifest.lang.psi.stub.AssignmentExpressionStub;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface AssignmentExpression extends PsiNamedElement, StubBasedPsiElement<AssignmentExpressionStub> {
+public interface AssignmentExpression extends PsiNamedElement {
   HeaderValuePart getNamePsi();
 
   HeaderValuePart getValuePsi();

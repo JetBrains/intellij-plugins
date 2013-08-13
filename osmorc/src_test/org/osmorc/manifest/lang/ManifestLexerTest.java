@@ -22,191 +22,199 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang;
 
 import com.intellij.psi.tree.IElementType;
-import static com.intellij.psi.TokenType.BAD_CHARACTER;
-import com.intellij.openapi.util.Pair;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import static org.osmorc.manifest.lang.ManifestTokenType.*;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestLexerTest {
-    @Test
-    public void testValid() {
-        checkTokens("Name: Value",
-                token(HEADER_NAME, 4),
-                token(COLON, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(HEADER_VALUE_PART, 5));
+  private ManifestLexer myLexer;
+
+  @Before
+  public void setUp() throws Exception {
+    myLexer = new ManifestLexer();
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    myLexer = null;
+  }
+
+  @Test
+  public void testValid() {
+    doTest("Name: Value",
+
+           "HEADER_NAME_TOKEN ('Name')\n" +
+           "COLON_TOKEN (':')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "HEADER_VALUE_PART_TOKEN ('Value')");
+  }
+
+  @Test
+  public void testInvalidSpaceBeforeColon() {
+    doTest("Name : Value",
+
+           "HEADER_NAME_TOKEN ('Name')\n" +
+           "BAD_CHARACTER (' ')\n" +
+           "COLON_TOKEN (':')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "HEADER_VALUE_PART_TOKEN ('Value')");
+  }
+
+  @Test
+  public void testMissingSpaceAfterColon() {
+    doTest("Name:Value",
+
+           "HEADER_NAME_TOKEN ('Name')\n" +
+           "COLON_TOKEN (':')\n" +
+           "BAD_CHARACTER ('V')\n" +
+           "HEADER_VALUE_PART_TOKEN ('alue')");
+  }
+
+  @Test
+  public void testTwoHeaders() {
+    doTest("Name: Value\nName2: Value2",
+
+           "HEADER_NAME_TOKEN ('Name')\n" +
+           "COLON_TOKEN (':')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "HEADER_VALUE_PART_TOKEN ('Value')\n" +
+           "NEWLINE_TOKEN ('\n')\n" +
+           "HEADER_NAME_TOKEN ('Name2')\n" +
+           "COLON_TOKEN (':')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "HEADER_VALUE_PART_TOKEN ('Value2')");
+  }
+
+  @Test
+  public void testContinuation() {
+    doTest("Name: Value\n Value2",
+
+           "HEADER_NAME_TOKEN ('Name')\n" +
+           "COLON_TOKEN (':')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "HEADER_VALUE_PART_TOKEN ('Value')\n" +
+           "NEWLINE_TOKEN ('\n')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "HEADER_VALUE_PART_TOKEN ('Value2')");
+  }
+
+  @Test
+  public void testSection() {
+    doTest("Name: Value\n\nName2: Value2",
+
+           "HEADER_NAME_TOKEN ('Name')\n" +
+           "COLON_TOKEN (':')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "HEADER_VALUE_PART_TOKEN ('Value')\n" +
+           "NEWLINE_TOKEN ('\n')\n" +
+           "SECTION_END_TOKEN ('\n')\n" +
+           "HEADER_NAME_TOKEN ('Name2')\n" +
+           "COLON_TOKEN (':')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "HEADER_VALUE_PART_TOKEN ('Value2')");
+  }
+
+  @Test
+  public void testNoIgnoredSpaces() {
+    doTest("Name: Value \n   Value2",
+
+           "HEADER_NAME_TOKEN ('Name')\n" +
+           "COLON_TOKEN (':')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "HEADER_VALUE_PART_TOKEN ('Value ')\n" +
+           "NEWLINE_TOKEN ('\n')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "HEADER_VALUE_PART_TOKEN ('  Value2')");
+  }
+
+  @Test
+  public void testSpecialCharacters() {
+    doTest("Name: ;:=,\"",
+
+           "HEADER_NAME_TOKEN ('Name')\n" +
+           "COLON_TOKEN (':')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "SEMICOLON_TOKEN (';')\n" +
+           "COLON_TOKEN (':')\n" +
+           "EQUALS_TOKEN ('=')\n" +
+           "COMMA_TOKEN (',')\n" +
+           "QUOTE_TOKEN ('\"')");
+  }
+
+  @Test
+  public void testErrorEndsAtNewline() {
+    doTest("Name \n value",
+
+           "HEADER_NAME_TOKEN ('Name')\n" +
+           "BAD_CHARACTER (' ')\n" +
+           "NEWLINE_TOKEN ('\n')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "HEADER_VALUE_PART_TOKEN ('value')");
+  }
+
+  @Test
+  public void testNewlineBetweenSpecialChars() {
+    doTest("Name: ab;dir:\n =value\n",
+
+           "HEADER_NAME_TOKEN ('Name')\n" +
+           "COLON_TOKEN (':')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "HEADER_VALUE_PART_TOKEN ('ab')\n" +
+           "SEMICOLON_TOKEN (';')\n" +
+           "HEADER_VALUE_PART_TOKEN ('dir')\n" +
+           "COLON_TOKEN (':')\n" +
+           "NEWLINE_TOKEN ('\n')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "EQUALS_TOKEN ('=')\n" +
+           "HEADER_VALUE_PART_TOKEN ('value')\n" +
+           "NEWLINE_TOKEN ('\n')");
+  }
+
+  @Test
+  public void testBadHeaderStart() {
+    doTest("Name: ab;dir:\n=value;a:=b\n",
+
+           "HEADER_NAME_TOKEN ('Name')\n" +
+           "COLON_TOKEN (':')\n" +
+           "SIGNIFICANT_SPACE_TOKEN (' ')\n" +
+           "HEADER_VALUE_PART_TOKEN ('ab')\n" +
+           "SEMICOLON_TOKEN (';')\n" +
+           "HEADER_VALUE_PART_TOKEN ('dir')\n" +
+           "COLON_TOKEN (':')\n" +
+           "NEWLINE_TOKEN ('\n')\n" +
+           "HEADER_NAME_TOKEN ('')\n" +
+           "BAD_CHARACTER ('=')\n" +
+           "BAD_CHARACTER ('v')\n" +
+           "BAD_CHARACTER ('a')\n" +
+           "BAD_CHARACTER ('l')\n" +
+           "BAD_CHARACTER ('u')\n" +
+           "BAD_CHARACTER ('e')\n" +
+           "BAD_CHARACTER (';')\n" +
+           "BAD_CHARACTER ('a')\n" +
+           "COLON_TOKEN (':')\n" +
+           "BAD_CHARACTER ('=')\n" +
+           "HEADER_VALUE_PART_TOKEN ('b')\n" +
+           "NEWLINE_TOKEN ('\n')");
+  }
+
+  private void doTest(String text, String expected) {
+    myLexer.start(text);
+
+    StringBuilder actual = new StringBuilder();
+    IElementType token;
+    while ((token = myLexer.getTokenType()) != null) {
+      actual.append(token).append(" ('").append(myLexer.getTokenText()).append("')\n");
+      myLexer.advance();
     }
 
-    @Test
-    public void testInvalidSpaceBeforeColon() {
-        checkTokens("Name : Value",
-                token(HEADER_NAME, 4),
-                token(BAD_CHARACTER, 1),
-                token(COLON, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(HEADER_VALUE_PART, 5));
-    }
-
-    @Test
-    public void testMissingSpaceAfterColon() {
-        checkTokens("Name:Value",
-                token(HEADER_NAME, 4),
-                token(COLON, 1),
-                token(BAD_CHARACTER, 1),
-                token(HEADER_VALUE_PART, 4));
-    }
-
-    @Test
-    public void testTwoLines() {
-        checkTokens("Name: Value\nName2: Value2",
-                token(HEADER_NAME, 4),
-                token(COLON, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(HEADER_VALUE_PART, 5),
-                token(NEWLINE, 1),
-                token(HEADER_NAME, 5),
-                token(COLON, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(HEADER_VALUE_PART, 6));
-    }
-
-    @Test
-    public void testContinuation() {
-        checkTokens("Name: Value\n Value2",
-                token(HEADER_NAME, 4),
-                token(COLON, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(HEADER_VALUE_PART, 5),
-                token(NEWLINE, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(HEADER_VALUE_PART, 6));
-    }
-
-    @Test
-    public void testSection() {
-        checkTokens("Name: Value\n\nName2: Value2",
-                token(HEADER_NAME, 4),
-                token(COLON, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(HEADER_VALUE_PART, 5),
-                token(NEWLINE, 1),
-                token(SECTION_END, 1),
-                token(HEADER_NAME, 5),
-                token(COLON, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(HEADER_VALUE_PART, 6));
-    }
-
-    @Test
-    public void testNoIgnoredSpaces() {
-        checkTokens("Name: Value \n   Value2",
-                token(HEADER_NAME, 4),
-                token(COLON, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(HEADER_VALUE_PART, 6),
-                token(NEWLINE, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(HEADER_VALUE_PART, 8));
-    }
-
-    @Test
-    public void testSpecialCharacters() {
-        checkTokens("Name: ;:=,\"",
-                token(HEADER_NAME, 4),
-                token(COLON, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(SEMICOLON, 1),
-                token(COLON, 1),
-                token(EQUALS, 1),
-                token(COMMA, 1),
-                token(QUOTE, 1));
-    }
-
-    @Test
-    public void testErrorEndsAtNewline() {
-        checkTokens("Name \n value",
-                token(HEADER_NAME, 4),
-                token(BAD_CHARACTER, 1),
-                token(NEWLINE, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(HEADER_VALUE_PART, 5));
-    }
-
-    @Test
-    public void testNewlineBetweenSpecialChars() {
-        checkTokens("Name: ab;dir:\n =value\n",
-                token(HEADER_NAME, 4),
-                token(COLON, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(HEADER_VALUE_PART, 2),
-                token(SEMICOLON, 1),
-                token(HEADER_VALUE_PART, 3),
-                token(COLON, 1),
-                token(NEWLINE, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(EQUALS, 1),
-                token(HEADER_VALUE_PART, 5),
-                token(NEWLINE, 1)
-        );
-    }
-
-    @Test
-    public void testBadHeaderStart() {
-        checkTokens("Name: ab;dir:\n=value;a:=b\n",
-                token(HEADER_NAME, 4),
-                token(COLON, 1),
-                token(SIGNIFICANT_SPACE, 1),
-                token(HEADER_VALUE_PART, 2),
-                token(SEMICOLON, 1),
-                token(HEADER_VALUE_PART, 3),
-                token(COLON, 1),
-                token(NEWLINE, 1),
-                token(HEADER_NAME, 0),
-                token(BAD_CHARACTER, 1),
-                token(BAD_CHARACTER, 1),
-                token(BAD_CHARACTER, 1),
-                token(BAD_CHARACTER, 1),
-                token(BAD_CHARACTER, 1),
-                token(BAD_CHARACTER, 1),
-                token(BAD_CHARACTER, 1),
-                token(BAD_CHARACTER, 1),
-                token(COLON, 1),
-                token(BAD_CHARACTER, 1),
-                token(HEADER_VALUE_PART, 1),
-                token(NEWLINE, 1)
-        );
-    }
-
-    private void checkTokens(String manifest, Pair<IElementType,Integer>... tokens) {
-        ManifestLexer lexer = new ManifestLexer();
-        lexer.start(manifest);
-        int lastTokenEnd = 0;
-        for (Pair<IElementType,Integer> token : tokens) {
-            IElementType tokenType = token.getFirst();
-            int tokenStart = lastTokenEnd;
-            int tokenEnd = tokenStart + token.getSecond();
-
-            assertThat(lexer.getTokenType(), sameInstance(tokenType));
-            assertThat(lexer.getTokenStart(), equalTo(tokenStart));
-            assertThat(lexer.getTokenEnd(), equalTo(tokenEnd));
-            lastTokenEnd = lexer.getTokenEnd();
-            lexer.advance();
-        }
-        assertThat(lexer.getTokenType(), nullValue());
-        assertThat(lexer.getTokenStart(), equalTo(lastTokenEnd));
-        assertThat(lexer.getTokenEnd(), equalTo(lastTokenEnd));
-    }
-
-    private Pair<IElementType,Integer> token(IElementType type, int length) {
-        return new Pair<IElementType, Integer>(type, length);
-    }
+    assertEquals(expected.trim(), actual.toString().trim());
+  }
 }

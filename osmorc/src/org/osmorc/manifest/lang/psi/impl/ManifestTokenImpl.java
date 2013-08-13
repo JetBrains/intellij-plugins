@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.manifest.lang.psi.impl;
 
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
@@ -34,22 +33,22 @@ import org.osmorc.manifest.lang.psi.ManifestToken;
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestTokenImpl extends LeafPsiElement implements ManifestToken {
-  private static final String TO_STRING_PREFIX = "ManifestToken: ";
-
   public ManifestTokenImpl(ManifestTokenType type, CharSequence text) {
     super(type, text);
   }
 
+  @Override
   public ManifestTokenType getTokenType() {
     return (ManifestTokenType)getElementType();
   }
 
+  @Override
   public ManifestToken replaceToken(@NotNull String text) {
     return (ManifestToken)replaceWithText(text);
   }
 
   @Override
   public String toString() {
-    return TO_STRING_PREFIX + getTokenType();
+    return "ManifestToken:" + getTokenType();
   }
 }

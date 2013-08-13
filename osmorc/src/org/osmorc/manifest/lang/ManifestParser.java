@@ -32,6 +32,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.headerparser.HeaderParser;
 import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
+import org.osmorc.manifest.lang.psi.ManifestElementType;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -182,7 +183,7 @@ class ManifestParser implements PsiParser {
   private boolean parseDirective(PsiBuilder builder) {
     if (builder.getTokenType() == ManifestTokenType.COLON && assignmentMarkerType == null) {
       assignmentMarker = headerValuePartMarker.precede();
-      assignmentMarkerType = ManifestElementTypes.DIRECTIVE;
+      assignmentMarkerType = ManifestElementType.DIRECTIVE;
       closeHeaderValuePart();
       builder.advanceLexer();
       if (builder.getTokenType() == ManifestTokenType.NEWLINE) {
@@ -202,7 +203,7 @@ class ManifestParser implements PsiParser {
   private boolean parseAttribute(PsiBuilder builder) {
     if (builder.getTokenType() == ManifestTokenType.EQUALS && assignmentMarkerType == null) {
       assignmentMarker = headerValuePartMarker.precede();
-      assignmentMarkerType = ManifestElementTypes.ATTRIBUTE;
+      assignmentMarkerType = ManifestElementType.ATTRIBUTE;
       closeHeaderValuePart();
       builder.advanceLexer();
       return true;
@@ -229,21 +230,21 @@ class ManifestParser implements PsiParser {
 
   private void closeHeader() {
     if (headerMarker != null) {
-      headerMarker.done(ManifestElementTypes.HEADER);
+      headerMarker.done(ManifestElementType.HEADER);
       headerMarker = null;
     }
   }
 
   private void closeClause() {
     if (clauseMarker != null) {
-      clauseMarker.done(ManifestElementTypes.CLAUSE);
+      clauseMarker.done(ManifestElementType.CLAUSE);
       clauseMarker = null;
     }
   }
 
   private void closeSection() {
     if (sectionMarker != null) {
-      sectionMarker.done(ManifestElementTypes.SECTION);
+      sectionMarker.done(ManifestElementType.SECTION);
       sectionMarker = null;
     }
   }
@@ -258,7 +259,7 @@ class ManifestParser implements PsiParser {
 
   private void closeHeaderValuePart() {
     if (headerValuePartMarker != null) {
-      headerValuePartMarker.done(ManifestElementTypes.HEADER_VALUE_PART);
+      headerValuePartMarker.done(ManifestElementType.HEADER_VALUE_PART);
       headerValuePartMarker = null;
     }
   }
