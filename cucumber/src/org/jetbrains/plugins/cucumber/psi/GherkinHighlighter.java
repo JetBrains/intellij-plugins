@@ -23,14 +23,15 @@ public final class GherkinHighlighter {
     DefaultLanguageHighlighterColors.KEYWORD
   );
 
-
   @NonNls
-  static final String GHERKIN_TABLE_HEADER_CELL_ID = "GHERKIN_TABLE_HEADER_CELL";
   static final String GHERKIN_OUTLINE_PARAMETER_SUBSTITUTION_ID = "GHERKIN_OUTLINE_PARAMETER_SUBSTITUTION";
   public static final TextAttributesKey OUTLINE_PARAMETER_SUBSTITUTION = TextAttributesKey.createTextAttributesKey(
     GHERKIN_OUTLINE_PARAMETER_SUBSTITUTION_ID,
     DefaultLanguageHighlighterColors.INSTANCE_FIELD
   );
+
+  @NonNls
+  static final String GHERKIN_TABLE_HEADER_CELL_ID = "GHERKIN_TABLE_HEADER_CELL";
   public static final TextAttributesKey TABLE_HEADER_CELL = TextAttributesKey.createTextAttributesKey(
     GHERKIN_TABLE_HEADER_CELL_ID,
     OUTLINE_PARAMETER_SUBSTITUTION
@@ -44,14 +45,14 @@ public final class GherkinHighlighter {
   );
 
   @NonNls
-  static final String GHERKIN_TABLE_CELL_ID = "GHERKIN_TABLE_CELL";
-  @NonNls
   static final String GHERKIN_REGEXP_PARAMETER_ID = "GHERKIN_REGEXP_PARAMETER";
   public static final TextAttributesKey REGEXP_PARAMETER = TextAttributesKey.createTextAttributesKey(
     GHERKIN_REGEXP_PARAMETER_ID,
     DefaultLanguageHighlighterColors.PARAMETER
   );
 
+  @NonNls
+  static final String GHERKIN_TABLE_CELL_ID = "GHERKIN_TABLE_CELL";
   public static final TextAttributesKey TABLE_CELL = TextAttributesKey.createTextAttributesKey(
     GHERKIN_TABLE_CELL_ID,
     REGEXP_PARAMETER
