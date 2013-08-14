@@ -22,6 +22,7 @@ public class BasePackageParser extends AbstractHeaderParser {
     }
 
     int offset = psiElement.getText().indexOf(unwrappedPackage);
+    offset = offset == -1 ? 0 : offset;
     if (unwrappedPackage.charAt(0) == '!') {
       unwrappedPackage = unwrappedPackage.substring(1);
       offset++;
