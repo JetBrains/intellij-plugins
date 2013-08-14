@@ -2,7 +2,7 @@ package com.intellij.lang.javascript.uml.actions;
 
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
-import com.intellij.lang.javascript.parsing.Parsing;
+import com.intellij.lang.javascript.parsing.JavaScriptParserBase;
 import com.intellij.lang.javascript.psi.JSElementFactory;
 import com.intellij.lang.javascript.psi.JSExpressionCodeFragment;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
@@ -77,7 +77,7 @@ public class JSCreateFieldDialog extends DialogWrapper {
   }
 
   public static JSReferenceEditor createTypeField(Project project, GlobalSearchScope scope) {
-    return JSReferenceEditor.forClassName("", project, "JSCreateFieldDialog", scope, Parsing.ForceContext.Type, null,
+    return JSReferenceEditor.forClassName("", project, "JSCreateFieldDialog", scope, JavaScriptParserBase.ForceContext.Type, null,
                                           JSBundle.message("choose.field.type"));
   }
 
