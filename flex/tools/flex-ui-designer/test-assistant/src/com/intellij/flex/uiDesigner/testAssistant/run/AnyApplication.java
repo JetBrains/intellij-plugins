@@ -134,9 +134,5 @@ public class AnyApplication implements ConfigurationType {
     protected JComponent createEditor() {
       return myPanel;
     }
-
-    @Override
-    protected void disposeEditor() {
-    }
   }
 }
