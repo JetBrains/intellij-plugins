@@ -130,7 +130,7 @@
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassInDefaultPackageInspection"/>
     <!--<localInspection shortName="osmorcClassUnavailable" displayName="Class not available" groupName="OSGi"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassUnavailableInspection"/>-->
-    <localInspection shortName="osmorcUnknownManifestPackage" displayName="Unknown import package" groupName="OSGi"
+    <localInspection shortName="osmorcUnknownManifestPackage" displayName="Unknown package" groupName="OSGi"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.UnknownManifectPackageInspection"/>
     <localInspection shortName="osmorcWrongImportPackage" displayName="Wrong imported package" groupName="OSGi"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.WrongImportPackageInspection"/>
