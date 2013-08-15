@@ -28,6 +28,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.ManifestConstants;
 import org.osmorc.manifest.lang.ManifestTokenType;
@@ -37,8 +39,6 @@ import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
 import org.osmorc.manifest.lang.psi.ManifestToken;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -65,21 +65,21 @@ public class ExportPackageParser extends BasePackageParser {
     if (headerValuePart.getParent() instanceof Clause) {
       final PsiElement element = headerValuePart.getOriginalElement();
       if (isPackageRef(element.getPrevSibling())) {
-        return getPackageReferences(headerValuePart, headerValuePart.getUnwrappedText());
+        return getPackageReferences(headerValuePart);
       }
     }
     else if (headerValuePart.getParent() instanceof Attribute) {
       final Attribute attribute = (Attribute)headerValuePart.getParent();
       if (ManifestConstants.Attributes.USES.equals(attribute.getName()) &&
           !ManifestConstants.Attributes.USES.equals(headerValuePart.getUnwrappedText())) {
-        List<PsiReference> references = new ArrayList<PsiReference>();
+        List<PsiReference> references = ContainerUtil.newArrayList();
         for (ASTNode astNode : headerValuePart.getNode().getChildren(TokenSet.create(ManifestTokenType.HEADER_VALUE_PART))) {
           if (astNode instanceof ManifestToken) {
             ManifestToken manifestToken = (ManifestToken)astNode;
-            references.addAll(Arrays.asList(getPackageReferences(manifestToken, manifestToken.getText())));
+            ContainerUtil.addAll(references, getPackageReferences(manifestToken));
           }
         }
-        return references.toArray(new PsiReference[references.size()]);
+        return ContainerUtilRt.toArray(references, new PsiReference[references.size()]);
       }
     }
     return PsiReference.EMPTY_ARRAY;

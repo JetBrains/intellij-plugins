@@ -15,6 +15,7 @@ public class ManifestConstants {
     public static final String BUNDLE_VERSION = "Bundle-Version";
     public static final String EXPORT_PACKAGE = "Export-Package";
     public static final String IMPORT_PACKAGE = "Import-Package";
+    public static final String IGNORE_PACKAGE = "Ignore-Package";
     public static final String PRIVATE_PACKAGE = "Private-Package";
     public static final String REQUIRE_BUNDLE = "Require-Bundle";
     public static final String BUNDLE_REQUIRED_EXECUTION_ENV = "Bundle-RequiredExecutionEnvironment";

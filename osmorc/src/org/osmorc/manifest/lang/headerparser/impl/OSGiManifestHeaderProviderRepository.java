@@ -44,6 +44,7 @@ public class OSGiManifestHeaderProviderRepository implements HeaderParserProvide
     new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_VERSION, BundleVersionParser.INSTANCE),
     new HeaderParserProviderImpl(ManifestConstants.Headers.EXPORT_PACKAGE, ExportPackageParser.INSTANCE),
     new HeaderParserProviderImpl(ManifestConstants.Headers.IMPORT_PACKAGE, BasePackageParser.INSTANCE),
+    new HeaderParserProviderImpl(ManifestConstants.Headers.IGNORE_PACKAGE, BasePackageParser.INSTANCE),
     new HeaderParserProviderImpl(ManifestConstants.Headers.PRIVATE_PACKAGE, BasePackageParser.INSTANCE),
     new HeaderParserProviderImpl(ManifestConstants.Headers.REQUIRE_BUNDLE, RequireBundleParser.INSTANCE),
     new HeaderParserProviderImpl(ManifestConstants.Headers.BUNDLE_REQUIRED_EXECUTION_ENV, AbstractHeaderParser.COMPLEX),

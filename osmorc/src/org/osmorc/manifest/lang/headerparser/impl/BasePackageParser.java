@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.headerparser.HeaderParser;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.osmorc.manifest.resolve.reference.providers.ManifestPackageReferenceSet;
 
 /**
  * @author Vladislav.Soroka
@@ -15,31 +16,30 @@ import org.osmorc.manifest.lang.psi.HeaderValuePart;
 public class BasePackageParser extends AbstractHeaderParser {
   public static final HeaderParser INSTANCE = new BasePackageParser();
 
-  protected static PsiReference[] getPackageReferences(final PsiElement psiElement, final String unwrappedText) {
-    String unwrappedPackage = unwrappedText;
-    if (unwrappedPackage.isEmpty()) {
+  protected static PsiReference[] getPackageReferences(final PsiElement psiElement) {
+    String packageName = psiElement.getText();
+    if (packageName.isEmpty()) {
       return PsiReference.EMPTY_ARRAY;
     }
 
-    int offset = psiElement.getText().indexOf(unwrappedPackage);
-    offset = offset == -1 ? 0 : offset;
-    if (unwrappedPackage.charAt(0) == '!') {
-      unwrappedPackage = unwrappedPackage.substring(1);
+    int offset = 0;
+    if (packageName.charAt(0) == '!') {
+      packageName = packageName.substring(1);
       offset++;
     }
 
-    int size = unwrappedPackage.length() - 1;
-    if (unwrappedPackage.charAt(size) == '?') {
-      unwrappedPackage = unwrappedPackage.substring(0, size);
+    int size = packageName.length() - 1;
+    if (packageName.charAt(size) == '?') {
+      packageName = packageName.substring(0, size);
     }
-    PackageReferenceSet referenceSet = new PackageReferenceSet(unwrappedPackage, psiElement, offset);
+    PackageReferenceSet referenceSet = new ManifestPackageReferenceSet(packageName, psiElement, offset);
     return referenceSet.getReferences().toArray(new PsiPackageReference[referenceSet.getReferences().size()]);
   }
 
   @Override
   public PsiReference[] getReferences(@NotNull HeaderValuePart headerValuePart) {
     if (headerValuePart.getParent() instanceof Clause) {
-      return getPackageReferences(headerValuePart, headerValuePart.getUnwrappedText());
+      return getPackageReferences(headerValuePart);
     }
     return PsiReference.EMPTY_ARRAY;
   }
