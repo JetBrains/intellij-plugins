@@ -275,7 +275,7 @@ public class BundleCompiler implements PackagingCompiler {
         if (resources != null) {
           includedResources.append(resources).append(",").append(pathBuilder);
         } else{
-          includedResources.append(",").append(pathBuilder);
+          includedResources.append(pathBuilder);
         }
       } else {
         includedResources.append(pathBuilder);
