@@ -340,6 +340,7 @@ public class KarmaServer {
 
     @Override
     public void dispose() {
+      myWatcher.stop();
       FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
       if (myOnPortBoundCallbacks != null) {
         myOnPortBoundCallbacks.clear();

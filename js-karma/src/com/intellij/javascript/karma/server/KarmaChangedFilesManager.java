@@ -1,14 +1,10 @@
 package com.intellij.javascript.karma.server;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Set;
-import java.util.concurrent.*;
 
 /**
  * @author Sergey Simonchik
@@ -16,24 +12,12 @@ import java.util.concurrent.*;
 public class KarmaChangedFilesManager {
 
   private final Object LOCK = new Object();
-  private final KarmaServer myServer;
   private final PrintWriter myServerProcessInput;
-  //private final ExecutorService myService;
-  private final Set<String> myChangedFilePaths = ContainerUtil.newHashSet();
-  private final Set<String> myAddedFilePaths = ContainerUtil.newHashSet();
-  private final Set<String> myRemovedFilePaths = ContainerUtil.newHashSet();
 
-  public KarmaChangedFilesManager(KarmaServer server) {
-    myServer = server;
+  public KarmaChangedFilesManager(@NotNull KarmaServer server) {
     OutputStream outputStream = server.getProcessOutputArchive().getProcessHandler().getProcessInput();
     //noinspection IOResourceOpenedButNotSafelyClosed
     myServerProcessInput = new PrintWriter(outputStream, false);
-    BlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>();
-    ThreadFactoryBuilder threadFactoryBuilder = new ThreadFactoryBuilder();
-    threadFactoryBuilder.setDaemon(false);
-    threadFactoryBuilder.setDaemon(false);
-    threadFactoryBuilder.setNameFormat("karma-changed-files-tracker");
-    //myService = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, queue, threadFactoryBuilder.build());
   }
 
   public void onFileChanged(@NotNull VirtualFile file) {
