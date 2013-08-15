@@ -228,8 +228,4 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     return myRootComponent;
   }
 
-  @Override
-  protected void disposeEditor() {
-  }
-
 }

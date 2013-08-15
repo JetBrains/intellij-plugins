@@ -130,10 +130,6 @@ public class DartUnitConfigurationEditorForm extends SettingsEditor<DartUnitRunC
     return myMainPanel;
   }
 
-  @Override
-  protected void disposeEditor() {
-  }
-
   public DartUnitRunnerParameters.Scope getScope() {
     final String selectedScope = myScopeCombo.getSelectedItem().toString();
     return DartUnitRunnerParameters.Scope.valueOf(selectedScope.toUpperCase());

@@ -57,8 +57,4 @@ public class CfmlRunConfigurationEditor extends SettingsEditor<CfmlRunConfigurat
   protected JComponent createEditor() {
     return myMainPanel;
   }
-
-  @Override
-  protected void disposeEditor() {
-  }
 }

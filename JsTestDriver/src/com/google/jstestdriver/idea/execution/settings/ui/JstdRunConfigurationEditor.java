@@ -72,10 +72,6 @@ public class JstdRunConfigurationEditor extends SettingsEditor<JstdRunConfigurat
     return myRootComponent;
   }
 
-  @Override
-  protected void disposeEditor() {
-  }
-
   private static class RootSection extends AbstractRunSettingsSection {
 
     private JComboBox myTestTypeComboBox;

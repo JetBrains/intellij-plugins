@@ -73,8 +73,4 @@ public class DartCommandLineConfigurationEditorForm extends SettingsEditor<DartC
   protected JComponent createEditor() {
     return myMainPanel;
   }
-
-  @Override
-  protected void disposeEditor() {
-  }
 }

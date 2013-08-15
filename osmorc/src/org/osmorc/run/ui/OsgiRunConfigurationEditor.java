@@ -304,10 +304,6 @@ public class OsgiRunConfigurationEditor extends SettingsEditor<OsgiRunConfigurat
     return root;
   }
 
-  @Override
-  protected void disposeEditor() { }
-
-
   private static class RunConfigurationTableModel extends AbstractTableModel {
     private final List<SelectedBundle> mySelectedBundles;
 

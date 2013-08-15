@@ -148,8 +148,4 @@ public class CucumberJavaApplicationConfigurable extends SettingsEditor<Cucumber
   protected JComponent createEditor() {
     return myWholePanel;
   }
-
-  @Override
-  protected void disposeEditor() {
-  }
 }

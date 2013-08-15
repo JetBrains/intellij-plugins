@@ -132,8 +132,4 @@ public class CfmlUnitRunConfigurationForm extends SettingsEditor<CfmlUnitRunConf
   protected JComponent createEditor() {
     return myPanel;
   }
-
-  @Override
-  protected void disposeEditor() {
-  }
 }
