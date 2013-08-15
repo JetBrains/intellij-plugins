@@ -269,14 +269,18 @@ public class BundleCompiler implements PackagingCompiler {
       }
 
       // and tell bnd what resources to include
-      String includedResources = configuration.getAdditionalPropertiesAsMap().get("Include-Resource");
-      if (includedResources == null) {
-        includedResources = pathBuilder.toString();
+      StringBuilder includedResources = new StringBuilder();
+      if(!configuration.isManifestManuallyEdited()) {
+        String resources = configuration.getAdditionalPropertiesAsMap().get("Include-Resource");
+        if (resources != null) {
+          includedResources.append(resources).append(",").append(pathBuilder);
+        } else{
+          includedResources.append(",").append(pathBuilder);
+        }
+      } else {
+        includedResources.append(pathBuilder);
       }
-      else {
-        includedResources = includedResources + "," + pathBuilder.toString();
-      }
-      buildProperties.put("Include-Resource", includedResources);
+      buildProperties.put("Include-Resource", includedResources.toString());
 
       // add the ignore pattern for the resources
       if (!configuration.getIgnoreFilePattern().isEmpty()) {
