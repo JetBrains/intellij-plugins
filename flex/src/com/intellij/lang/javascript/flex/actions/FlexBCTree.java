@@ -91,7 +91,10 @@ public class FlexBCTree extends CheckboxTree {
   }
 
   public void setChecked(final String moduleName, final String bcName, final boolean checked) {
-    getBCNode(moduleName, bcName).setChecked(checked);
+    final CheckedTreeNode node = getBCNode(moduleName, bcName);
+    if (node != null) {
+      node.setChecked(checked);
+    }
   }
 
   private CheckedTreeNode getBCNode(final String moduleName, final String bcName) {
