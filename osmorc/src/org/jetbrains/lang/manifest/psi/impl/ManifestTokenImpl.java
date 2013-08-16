@@ -25,7 +25,6 @@
 package org.jetbrains.lang.manifest.psi.impl;
 
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.psi.ManifestToken;
 import org.jetbrains.lang.manifest.psi.ManifestTokenType;
 
@@ -40,11 +39,6 @@ public class ManifestTokenImpl extends LeafPsiElement implements ManifestToken {
   @Override
   public ManifestTokenType getTokenType() {
     return (ManifestTokenType)getElementType();
-  }
-
-  @Override
-  public ManifestToken replaceToken(@NotNull String text) {
-    return (ManifestToken)replaceWithText(text);
   }
 
   @Override

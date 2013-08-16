@@ -110,7 +110,6 @@
     <fileTypeFactory implementation="org.jetbrains.lang.manifest.ManifestFileTypeFactory"/>
     <lang.parserDefinition language="Manifest" implementationClass="org.jetbrains.lang.manifest.parser.ManifestParserDefinition"/>
     <annotator language="Manifest" implementationClass="org.jetbrains.lang.manifest.highlighting.HeaderAnnotator"/>
-    <lang.ast.factory language="Manifest" implementationClass="org.jetbrains.lang.manifest.psi.impl.ManifestASTFactory"/>
     <lang.elementManipulator forClass="org.jetbrains.lang.manifest.psi.HeaderValuePart"
                              implementationClass="org.jetbrains.lang.manifest.psi.impl.HeaderValuePartManipulator"/>
     <localInspection language="Manifest" displayName="Missing Final New Line" groupName="Manifest"

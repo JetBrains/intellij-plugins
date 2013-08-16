@@ -24,15 +24,18 @@
  */
 package org.jetbrains.lang.manifest.psi;
 
+import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.ILeafElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
+import org.jetbrains.lang.manifest.psi.impl.ManifestTokenImpl;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public final class ManifestTokenType extends IElementType {
+public final class ManifestTokenType extends IElementType implements ILeafElementType {
   public static final ManifestTokenType HEADER_NAME = new ManifestTokenType("HEADER_NAME_TOKEN");
   public static final ManifestTokenType NEWLINE = new ManifestTokenType("NEWLINE_TOKEN");
   public static final ManifestTokenType SECTION_END = new ManifestTokenType("SECTION_END_TOKEN");
@@ -50,5 +53,11 @@ public final class ManifestTokenType extends IElementType {
 
   private ManifestTokenType(@NotNull @NonNls String debugName) {
     super(debugName, ManifestFileTypeFactory.MANIFEST.getLanguage());
+  }
+
+  @NotNull
+  @Override
+  public ASTNode createLeafNode(CharSequence text) {
+    return new ManifestTokenImpl(this, text);
   }
 }

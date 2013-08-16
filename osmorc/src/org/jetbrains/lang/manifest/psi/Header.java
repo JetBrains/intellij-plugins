@@ -37,7 +37,7 @@ public interface Header extends PsiNamedElement {
   String getName();
 
   @NotNull
-  ManifestToken getNameToken();
+  ManifestToken getNameElement();
 
   @Nullable
   HeaderValuePart getValuePart();

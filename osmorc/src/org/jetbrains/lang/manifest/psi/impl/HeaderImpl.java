@@ -27,6 +27,7 @@ package org.jetbrains.lang.manifest.psi.impl;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -47,18 +48,18 @@ public class HeaderImpl extends ASTWrapperPsiElement implements Header {
   @NotNull
   @Override
   public String getName() {
-    return getNameToken().getText();
+    return getNameElement().getText();
   }
 
   @Override
   public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
-    getNameToken().replaceToken(name);
+    ((LeafElement)getNameElement().getNode()).replaceWithText(name);
     return this;
   }
 
   @NotNull
   @Override
-  public ManifestToken getNameToken() {
+  public ManifestToken getNameElement() {
     ManifestToken token = (ManifestToken)getNode().findChildByType(ManifestTokenType.HEADER_NAME);
     assert token != null : getText();
     return token;
