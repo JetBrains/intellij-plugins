@@ -1,3 +1,9 @@
+web_8831() {
+  var map = new Map()
+    ..[1] = 1
+    ..[2] = 2;
+}
+
 class A {
   int x;
   int y;

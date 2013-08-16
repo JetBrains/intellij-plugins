@@ -520,8 +520,10 @@ private callOrArrayAccess ::= (referenceExpression | thisExpression | superExpre
 
 left callExpression ::= arguments
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
-left arrayAccessExpression ::= '[' expression? ']'
+left arrayAccessExpression ::= arrayAccess
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+
+private arrayAccess ::= '[' expression? ']' {pin=1}
 
 libraryComponentReferenceExpression ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartLibraryComponentReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
@@ -530,7 +532,7 @@ referenceExpression ::= << nonStrictID >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 left qualifiedReferenceExpression ::= '.' referenceExpression {elementType="referenceExpression"}
-left cascadeReferenceExpression ::= '.''.' << cascadeStopper >> callOrArrayAccess << varInitWrapper >>
+left cascadeReferenceExpression ::= '.''.' << cascadeStopper >> (arrayAccess | callOrArrayAccess) << varInitWrapper >>
 {mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 simpleQualifiedReferenceExpression ::= referenceExpression qualifiedReferenceExpression* {elementType="referenceExpression"}

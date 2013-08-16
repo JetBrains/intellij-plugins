@@ -744,6 +744,36 @@ public class DartParser implements PsiParser {
 
   /* ********************************************************** */
   // '[' expression? ']'
+  static boolean arrayAccess(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "arrayAccess")) return false;
+    if (!nextTokenIs(builder_, LBRACKET)) return false;
+    boolean result_ = false;
+    boolean pinned_ = false;
+    Marker marker_ = builder_.mark();
+    enterErrorRecordingSection(builder_, level_, _SECTION_GENERAL_, null);
+    result_ = consumeToken(builder_, LBRACKET);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, arrayAccess_1(builder_, level_ + 1));
+    result_ = pinned_ && consumeToken(builder_, RBRACKET) && result_;
+    if (!result_ && !pinned_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
+    }
+    result_ = exitErrorRecordingSection(builder_, level_, result_, pinned_, _SECTION_GENERAL_, null);
+    return result_ || pinned_;
+  }
+
+  // expression?
+  private static boolean arrayAccess_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "arrayAccess_1")) return false;
+    expression(builder_, level_ + 1);
+    return true;
+  }
+
+  /* ********************************************************** */
+  // arrayAccess
   public static boolean arrayAccessExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "arrayAccessExpression")) return false;
     if (!nextTokenIs(builder_, LBRACKET)) return false;
@@ -751,9 +781,7 @@ public class DartParser implements PsiParser {
     Marker left_marker_ = (Marker)builder_.getLatestDoneMarker();
     if (!invalid_left_marker_guard_(builder_, left_marker_, "arrayAccessExpression")) return false;
     Marker marker_ = builder_.mark();
-    result_ = consumeToken(builder_, LBRACKET);
-    result_ = result_ && arrayAccessExpression_1(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, RBRACKET);
+    result_ = arrayAccess(builder_, level_ + 1);
     if (result_) {
       marker_.drop();
       left_marker_.precede().done(ARRAY_ACCESS_EXPRESSION);
@@ -762,13 +790,6 @@ public class DartParser implements PsiParser {
       marker_.rollbackTo();
     }
     return result_;
-  }
-
-  // expression?
-  private static boolean arrayAccessExpression_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "arrayAccessExpression_1")) return false;
-    expression(builder_, level_ + 1);
-    return true;
   }
 
   /* ********************************************************** */
@@ -1183,7 +1204,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '.''.' << cascadeStopper >> callOrArrayAccess << varInitWrapper >>
+  // '.''.' << cascadeStopper >> (arrayAccess | callOrArrayAccess) << varInitWrapper >>
   public static boolean cascadeReferenceExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "cascadeReferenceExpression")) return false;
     if (!nextTokenIs(builder_, DOT)) return false;
@@ -1194,7 +1215,7 @@ public class DartParser implements PsiParser {
     result_ = consumeToken(builder_, DOT);
     result_ = result_ && consumeToken(builder_, DOT);
     result_ = result_ && cascadeStopper(builder_, level_ + 1);
-    result_ = result_ && callOrArrayAccess(builder_, level_ + 1);
+    result_ = result_ && cascadeReferenceExpression_3(builder_, level_ + 1);
     result_ = result_ && varInitWrapper(builder_, level_ + 1);
     if (result_) {
       marker_.drop();
@@ -1202,6 +1223,22 @@ public class DartParser implements PsiParser {
     }
     else {
       marker_.rollbackTo();
+    }
+    return result_;
+  }
+
+  // arrayAccess | callOrArrayAccess
+  private static boolean cascadeReferenceExpression_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "cascadeReferenceExpression_3")) return false;
+    boolean result_ = false;
+    Marker marker_ = builder_.mark();
+    result_ = arrayAccess(builder_, level_ + 1);
+    if (!result_) result_ = callOrArrayAccess(builder_, level_ + 1);
+    if (!result_) {
+      marker_.rollbackTo();
+    }
+    else {
+      marker_.drop();
     }
     return result_;
   }
