@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.BundleManifest;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.ManifestHolderDisposedException;
-import org.osmorc.manifest.lang.psi.ManifestFile;
+import org.jetbrains.lang.manifest.psi.ManifestFile;
 
 import java.util.*;
 

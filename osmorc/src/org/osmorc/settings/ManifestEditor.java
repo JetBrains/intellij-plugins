@@ -32,7 +32,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.EditorTextField;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.manifest.ManifestFileTypeFactory;
+import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
 
 /**
  * Editor component for editing a Manifest with syntax highlighting and code completion. This is used in various settings dialogs.

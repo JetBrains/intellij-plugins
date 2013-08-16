@@ -26,7 +26,7 @@ package org.osmorc.manifest;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.manifest.lang.psi.ManifestFile;
+import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.osmorc.valueobject.Version;
 
 import java.util.List;

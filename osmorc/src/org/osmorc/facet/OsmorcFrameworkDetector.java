@@ -17,7 +17,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileContent;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.Constants;
-import org.osmorc.manifest.ManifestFileTypeFactory;
+import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;

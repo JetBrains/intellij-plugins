@@ -24,6 +24,9 @@
  */
 package org.osmorc.manifest.impl;
 
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.apache.felix.framework.util.manifestparser.Capability;
 import org.apache.felix.framework.util.manifestparser.ManifestParser;
 import org.apache.felix.framework.util.manifestparser.R4Attribute;
@@ -33,10 +36,11 @@ import org.apache.felix.moduleloader.IRequirement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.BundleManifest;
+import org.jetbrains.lang.manifest.header.HeaderParserRepository;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.Directive;
-import org.osmorc.manifest.lang.psi.Header;
-import org.osmorc.manifest.lang.psi.ManifestFile;
+import org.jetbrains.lang.manifest.psi.Header;
+import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.osmorc.valueobject.Version;
 
 import java.util.ArrayList;
@@ -51,51 +55,48 @@ import static org.osgi.framework.Constants.*;
  * @author Jan Thom&auml; (janthomae@janthomae.de)
  */
 public class BundleManifestImpl implements BundleManifest {
-  @NotNull
+  private final HeaderParserRepository myRepository;
   private final ManifestFile myManifestFile;
 
-  /**
-   * Ctor.
-   *
-   * @param manifestFile the manifest file to work on.
-   */
   public BundleManifestImpl(@NotNull ManifestFile manifestFile) {
+    myRepository = ServiceManager.getService(HeaderParserRepository.class);
     myManifestFile = manifestFile;
   }
 
   @NotNull
+  @Override
   public ManifestFile getManifestFile() {
     return myManifestFile;
   }
 
   @NotNull
+  @Override
   public Version getBundleVersion() {
     Version headerValue = (Version)getHeaderValue(BUNDLE_VERSION);
-    if (headerValue == null) {
-      headerValue = new Version(0, 0, 0, null);
-    }
-    return headerValue;
+    return headerValue != null ? headerValue : new Version(0, 0, 0, null);
   }
 
   @Nullable
+  @Override
   public String getBundleSymbolicName() {
     return (String)getHeaderValue(BUNDLE_SYMBOLICNAME);
   }
 
   @Nullable
+  @Override
   public String getBundleActivator() {
     return (String)getHeaderValue(BUNDLE_ACTIVATOR);
   }
 
+  @Override
   public boolean exportsPackage(@NotNull String packageSpec) {
-    Header header = myManifestFile.getHeaderByName(EXPORT_PACKAGE);
+    Header header = myManifestFile.getHeader(EXPORT_PACKAGE);
     if (header == null) {
       return false;
     }
 
     List<ICapability> capabilities = new ArrayList<ICapability>();
-    Clause[] clauses = header.getClauses();
-    for (Clause clause : clauses) {
+    for (Clause clause : PsiTreeUtil.getChildrenOfTypeAsList(header, Clause.class)) {
       try {
         capabilities.addAll(Arrays.asList(ManifestParser.parseExportHeader(clause.getClauseText())));
       }
@@ -128,51 +129,32 @@ public class BundleManifestImpl implements BundleManifest {
       }
     }
 
-    // all requiremets are satisfied
+    // all requirements are satisfied
     return true;
   }
 
   @NotNull
   @Override
   public List<String> getImports() {
-    Header header = myManifestFile.getHeaderByName(IMPORT_PACKAGE);
-    if (header == null) {
-      return Collections.emptyList();
-    }
-    Clause[] clauses = header.getClauses();
-    List<String> result = new ArrayList<String>(clauses.length);
-    for (Clause clause : clauses) {
-      result.add(clause.getClauseText());
-    }
-    return result;
+    return getHeaderValues(IMPORT_PACKAGE);
   }
 
   @Override
   @NotNull
   public List<String> getRequiredBundles() {
-    Header header = myManifestFile.getHeaderByName(REQUIRE_BUNDLE);
-    if (header == null) {
-      return Collections.emptyList();
-    }
-    Clause[] clauses = header.getClauses();
-    List<String> result = new ArrayList<String>(clauses.length);
-    for (Clause clause : clauses) {
-      result.add(clause.getClauseText());
-    }
-    return result;
+    return getHeaderValues(REQUIRE_BUNDLE);
   }
 
   @NotNull
   @Override
   public List<String> getReExportedBundles() {
-    Header header = myManifestFile.getHeaderByName(REQUIRE_BUNDLE);
-    if (header == null) {
-      return Collections.emptyList();
-    }
-    Clause[] clauses = header.getClauses();
-    List<String> result = new ArrayList<String>(clauses.length);
+    Header header = myManifestFile.getHeader(REQUIRE_BUNDLE);
+    if (header == null) return Collections.emptyList();
+
+    List<Clause> clauses = PsiTreeUtil.getChildrenOfTypeAsList(header, Clause.class);
+    List<String> result = ContainerUtil.newArrayListWithCapacity(clauses.size());
     for (Clause clause : clauses) {
-      Directive visibilityDirectiveName = clause.getDirectiveByName(VISIBILITY_DIRECTIVE);
+      Directive visibilityDirectiveName = clause.getDirective(VISIBILITY_DIRECTIVE);
       if (visibilityDirectiveName != null && VISIBILITY_REEXPORT.equals(visibilityDirectiveName.getValue())) {
         result.add(clause.getClauseText());
       }
@@ -220,15 +202,13 @@ public class BundleManifestImpl implements BundleManifest {
 
   @Override
   public boolean reExportsBundle(@NotNull BundleManifest otherBundle) {
-    Header header = myManifestFile.getHeaderByName(REQUIRE_BUNDLE);
-    if (header == null) {
-      return false;
-    }
-    Clause[] clauses = header.getClauses();
-    for (Clause clause : clauses) {
+    Header header = myManifestFile.getHeader(REQUIRE_BUNDLE);
+    if (header == null) return false;
+
+    for (Clause clause : PsiTreeUtil.getChildrenOfTypeAsList(header, Clause.class)) {
       String requireSpec = clause.getClauseText();
       // first check if the clause is set to re-export, if not, we can skip the more expensive checks
-      Directive directiveByName = clause.getDirectiveByName(VISIBILITY_DIRECTIVE);
+      Directive directiveByName = clause.getDirective(VISIBILITY_DIRECTIVE);
       if (directiveByName == null) {
         continue; // skip to the next require
       }
@@ -239,54 +219,46 @@ public class BundleManifestImpl implements BundleManifest {
         }
       }
     }
+
     return false;
   }
 
   @Override
   public boolean isFragmentBundle() {
-    Header header = myManifestFile.getHeaderByName(FRAGMENT_HOST);
-    return header != null;
+    return myManifestFile.getHeader(FRAGMENT_HOST) != null;
   }
 
   @NotNull
+  @Override
   public List<String> getBundleClassPathEntries() {
-    Header header = myManifestFile.getHeaderByName(BUNDLE_CLASSPATH);
-    if (header == null) {
-      return Collections.emptyList();
-    }
-    Clause[] clauses = header.getClauses();
-    List<String> result = new ArrayList<String>(clauses.length);
-    for (Clause clause : clauses) {
-      result.add(clause.getClauseText());
-    }
-
-    return result;
+    return getHeaderValues(BUNDLE_CLASSPATH);
   }
-
 
   @Override
   public boolean isFragmentHostFor(@NotNull BundleManifest fragmentBundle) {
-    Header header = fragmentBundle.getManifestFile().getHeaderByName(FRAGMENT_HOST);
-    if (header == null) {
-      return false;
-    }
+    Header header = fragmentBundle.getManifestFile().getHeader(FRAGMENT_HOST);
+    if (header == null) return false;
 
-    Clause[] clauses = header.getClauses();
-    if (clauses.length != 1) { // bundle should have exactly one clause
-      return false;
-    }
-    Clause clause = clauses[0];
-    String hostSpec = clause.getClauseText();
+    List<Clause> clauses = PsiTreeUtil.getChildrenOfTypeAsList(header, Clause.class);
+    // bundle should have exactly one clause
     // they follow the same semantics so i think it is safe to reuse this method here. We do not handle extension bundles at all.
-    return isRequiredBundle(hostSpec);
+    return clauses.size() == 1 && isRequiredBundle(clauses.get(0).getClauseText());
   }
 
-  @Nullable
-  private Object getHeaderValue(@NotNull String headerName) {
-    Header header = myManifestFile.getHeaderByName(headerName);
-    if (header != null) {
-      return header.getSimpleConvertedValue();
+  private Object getHeaderValue(String headerName) {
+    Header header = myManifestFile.getHeader(headerName);
+    return header != null ? myRepository.getConvertedValue(header) : null;
+  }
+
+  private List<String> getHeaderValues(String headerName) {
+    Header header = myManifestFile.getHeader(headerName);
+    if (header == null) return Collections.emptyList();
+
+    List<Clause> clauses = PsiTreeUtil.getChildrenOfTypeAsList(header, Clause.class);
+    List<String> result = ContainerUtil.newArrayListWithCapacity(clauses.size());
+    for (Clause clause : clauses) {
+      result.add(clause.getClauseText());
     }
-    return null;
+    return result;
   }
 }

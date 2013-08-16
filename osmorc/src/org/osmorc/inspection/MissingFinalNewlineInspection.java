@@ -33,10 +33,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.manifest.lang.ManifestTokenType;
-import org.osmorc.manifest.lang.psi.Header;
-import org.osmorc.manifest.lang.psi.ManifestFile;
-import org.osmorc.manifest.lang.psi.Section;
+import org.jetbrains.lang.manifest.psi.ManifestTokenType;
+import org.jetbrains.lang.manifest.psi.Header;
+import org.jetbrains.lang.manifest.psi.ManifestFile;
+import org.jetbrains.lang.manifest.psi.Section;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)

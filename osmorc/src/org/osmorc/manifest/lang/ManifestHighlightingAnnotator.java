@@ -30,6 +30,9 @@ import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.lang.manifest.psi.Header;
+import org.jetbrains.lang.manifest.psi.ManifestToken;
+import org.jetbrains.lang.manifest.psi.ManifestTokenType;
 import org.osmorc.manifest.lang.psi.*;
 
 /**
@@ -38,10 +41,10 @@ import org.osmorc.manifest.lang.psi.*;
 public class ManifestHighlightingAnnotator implements Annotator {
   public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder holder) {
     if (psiElement instanceof Attribute) {
-      annotate(((Attribute)psiElement).getNamePsi(), ManifestColorsAndFonts.ATTRIBUTE_NAME_KEY, holder);
+      annotate(((Attribute)psiElement).getNameElement(), ManifestColorsAndFonts.ATTRIBUTE_NAME_KEY, holder);
     }
     else if (psiElement instanceof Directive) {
-      annotate(((Directive)psiElement).getNamePsi(), ManifestColorsAndFonts.DIRECTIVE_NAME_KEY, holder);
+      annotate(((Directive)psiElement).getNameElement(), ManifestColorsAndFonts.DIRECTIVE_NAME_KEY, holder);
     }
     else if (psiElement instanceof ManifestToken) {
       ManifestToken manifestToken = (ManifestToken)psiElement;

@@ -41,9 +41,9 @@ import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.manifest.BundleManifest;
-import org.osmorc.manifest.lang.ManifestTokenType;
-import org.osmorc.manifest.lang.psi.Header;
-import org.osmorc.manifest.lang.psi.Section;
+import org.jetbrains.lang.manifest.psi.ManifestTokenType;
+import org.jetbrains.lang.manifest.psi.Header;
+import org.jetbrains.lang.manifest.psi.Section;
 
 /**
  * Inspection that reports classes implementing BundleActivator which are not registered in the manifest / facet

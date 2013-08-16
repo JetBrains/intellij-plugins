@@ -27,7 +27,7 @@ package org.osmorc.manifest.lang.valueparser.impl;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.osmorc.valueobject.Version;
 
 import java.util.regex.Pattern;

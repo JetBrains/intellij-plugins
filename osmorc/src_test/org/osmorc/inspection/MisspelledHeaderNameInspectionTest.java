@@ -31,16 +31,18 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TempDirTestFixture;
-import static org.hamcrest.Matchers.*;
 import org.junit.After;
-import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.osmorc.SwingRunner;
 import org.osmorc.TestUtil;
+import org.jetbrains.lang.manifest.header.HeaderParserRepository;
 
 import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -70,7 +72,8 @@ public class MisspelledHeaderNameInspectionTest {
     public void testInspection() {
         PsiFile psiFile = TestUtil.loadPsiFileUnderContent(fixture.getProject(), "t0", "META-INF/MANIFEST.MF");
 
-        List<ProblemDescriptor> list = TestUtil.runInspection(new MisspelledHeaderNameInspection(), psiFile, fixture.getProject());
+        HeaderParserRepository repo = HeaderParserRepository.getInstance();
+        List<ProblemDescriptor> list = TestUtil.runInspection(new MisspelledHeaderNameInspection(repo), psiFile, fixture.getProject());
 
         assertThat(list, notNullValue());
         assertThat(list.size(), equalTo(4));

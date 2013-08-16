@@ -28,9 +28,11 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.osmorc.manifest.lang.psi.Attribute;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.Directive;
-import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -47,19 +49,40 @@ public class ClauseImpl extends ASTWrapperPsiElement implements Clause {
 
   @NotNull
   @Override
+  public Attribute[] getAttributes() {
+    return findChildrenByClass(Attribute.class);
+  }
+
+  @Nullable
+  @Override
+  public Attribute getAttribute(@NotNull String name) {
+    for (Attribute child = PsiTreeUtil.findChildOfType(this, Attribute.class);
+         child != null;
+         child = PsiTreeUtil.getNextSiblingOfType(child, Attribute.class)) {
+      if (name.equals(child.getName())) {
+        return child;
+      }
+    }
+
+    return null;
+  }
+
+  @NotNull
+  @Override
   public Directive[] getDirectives() {
     return findChildrenByClass(Directive.class);
   }
 
   @Override
-  public Directive getDirectiveByName(@NotNull String name) {
-    Directive childOfType = PsiTreeUtil.findChildOfType(this, Directive.class);
-    while (childOfType != null) {
-      if (name.equals(childOfType.getName())) {
-        return childOfType;
+  public Directive getDirective(@NotNull String name) {
+    for (Directive child = PsiTreeUtil.findChildOfType(this, Directive.class);
+         child != null;
+         child = PsiTreeUtil.getNextSiblingOfType(child, Directive.class)) {
+      if (name.equals(child.getName())) {
+        return child;
       }
-      childOfType = PsiTreeUtil.getNextSiblingOfType(childOfType, Directive.class);
     }
+
     return null;
   }
 

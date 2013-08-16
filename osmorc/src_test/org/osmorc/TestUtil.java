@@ -42,6 +42,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.*;
+import com.intellij.testFramework.IdeaTestCase;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
@@ -67,7 +68,8 @@ import static org.osmorc.facet.OsmorcFacetConfiguration.ManifestGenerationMode.O
  */
 public class TestUtil {
   public static IdeaProjectTestFixture createTestFixture() {
-    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = JavaTestFixtureFactory.createFixtureBuilder();
+    IdeaTestCase.initPlatformPrefix();
+    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = JavaTestFixtureFactory.createFixtureBuilder("Osmorc Tests");
     return fixtureBuilder.getFixture();
   }
 

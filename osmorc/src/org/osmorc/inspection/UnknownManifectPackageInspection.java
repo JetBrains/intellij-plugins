@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.i18n.OsmorcBundle;
-import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 
 /**
  * Created by IntelliJ IDEA.

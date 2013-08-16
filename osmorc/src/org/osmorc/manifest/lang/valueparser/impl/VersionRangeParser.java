@@ -28,7 +28,7 @@ import com.intellij.lang.annotation.Annotation;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.osmorc.valueobject.Version;
 import org.osmorc.valueobject.VersionRange;
 

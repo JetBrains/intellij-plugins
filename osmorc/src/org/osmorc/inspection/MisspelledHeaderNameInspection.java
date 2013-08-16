@@ -26,63 +26,73 @@ package org.osmorc.inspection;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.*;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.osmorc.manifest.lang.headerparser.HeaderNameMatch;
-import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
-import org.osmorc.manifest.lang.psi.Header;
+import org.jetbrains.lang.manifest.header.HeaderNameMatch;
+import org.jetbrains.lang.manifest.header.HeaderParserRepository;
+import org.jetbrains.lang.manifest.psi.Header;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class MisspelledHeaderNameInspection extends LocalInspectionTool {
+  private HeaderParserRepository myRepository;
+
+  public MisspelledHeaderNameInspection(HeaderParserRepository repository) {
+    myRepository = repository;
+  }
+
   @Nls
   @NotNull
+  @Override
   public String getGroupDisplayName() {
     return "OSGi";
   }
 
+  @Override
   public boolean isEnabledByDefault() {
     return true;
   }
 
   @NotNull
+  @Override
   public HighlightDisplayLevel getDefaultLevel() {
     return HighlightDisplayLevel.WARNING;
   }
 
   @Nls
   @NotNull
+  @Override
   public String getDisplayName() {
     return "Unknown or Misspelled Header Name";
   }
 
   @NonNls
   @NotNull
+  @Override
   public String getShortName() {
     return "osmorcMisspelledHeaderName";
   }
 
   @NotNull
+  @Override
   public PsiElementVisitor buildVisitor(@NotNull final ProblemsHolder holder, boolean isOnTheFly) {
     return new PsiElementVisitor() {
+      @Override
       public void visitElement(PsiElement element) {
         if (element instanceof Header) {
           final Header header = (Header)element;
           String name = header.getName();
           if (name != null && name.length() > 0) {
             final List<HeaderNameSpellingQuickFix> quickFixes = new ArrayList<HeaderNameSpellingQuickFix>();
-            final Collection<HeaderNameMatch> matches = getHeaderParserRepository().getMatches(name);
-            for (HeaderNameMatch match : matches) {
+            for (HeaderNameMatch match : myRepository.getMatches(name)) {
               quickFixes.add(new HeaderNameSpellingQuickFix(header, match));
               if (quickFixes.size() > 20) {
                 break;
@@ -100,36 +110,30 @@ public class MisspelledHeaderNameInspection extends LocalInspectionTool {
     };
   }
 
-  HeaderParserRepository getHeaderParserRepository() {
-    if (_headerParserRepository == null) {
-      _headerParserRepository = ServiceManager.getService(HeaderParserRepository.class);
-    }
-    return _headerParserRepository;
-  }
-
   private static class HeaderNameSpellingQuickFix implements LocalQuickFix {
-    private final Header header;
-    private final HeaderNameMatch match;
+    private final Header myHeader;
+    private final String myNewName;
 
     private HeaderNameSpellingQuickFix(Header header, HeaderNameMatch match) {
-      this.header = header;
-      this.match = match;
+      myHeader = header;
+      myNewName = match.getHeaderName();
     }
 
     @NotNull
+    @Override
     public String getName() {
-      return String.format("Change to (%03d) \"%s\"", match.getDistance(), match.getProvider().getHeaderName());
+      return String.format("Change to '%s'", myNewName);
     }
 
     @NotNull
+    @Override
     public String getFamilyName() {
       return "Osmorc";
     }
 
+    @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      header.setName(match.getProvider().getHeaderName());
+      myHeader.setName(myNewName);
     }
   }
-
-  private HeaderParserRepository _headerParserRepository;
 }

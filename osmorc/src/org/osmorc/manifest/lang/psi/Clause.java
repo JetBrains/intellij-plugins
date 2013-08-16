@@ -27,6 +27,7 @@ package org.osmorc.manifest.lang.psi;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -39,6 +40,18 @@ public interface Clause extends PsiElement {
   HeaderValuePart getValue();
 
   /**
+   * Returns all attributes of this clause.
+   */
+  @NotNull
+  Attribute[] getAttributes();
+
+  /**
+   * Returns the attribute with the given name.
+   */
+  @Nullable
+  Attribute getAttribute(@NotNull String name);
+
+  /**
    * Returns all directives of this clause.
    */
   @NotNull
@@ -48,7 +61,7 @@ public interface Clause extends PsiElement {
    * Returns the directive with the given name.
    */
   @Nullable
-  Directive getDirectiveByName(@NotNull String name);
+  Directive getDirective(@NotNull String name);
 
   /**
    * Same as {@link #getText()} but filters out line breaks and trims whitespace around it.

@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -16,64 +17,62 @@ import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.manifest.ManifestConstants;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.lang.psi.Clause;
-import org.osmorc.manifest.lang.psi.Header;
-import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.jetbrains.lang.manifest.psi.Header;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 
 import java.util.Set;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Vladislav.Soroka
+ * @author Vladislav.Soroka
  */
 public class WrongImportPackageInspection extends LocalInspectionTool {
-
   private BundleManager bundleManager;
 
   private static boolean isImportPackageHeader(PsiElement element) {
-    if (element instanceof Header &&
-        ManifestConstants.Headers.IMPORT_PACKAGE.equals(Header.class.cast(element).getName())) {
-      return true;
-    }
-    else {
-      return false;
-    }
+    return element instanceof Header && ManifestConstants.Headers.IMPORT_PACKAGE.equals(((Header)element).getName());
   }
 
   @Nls
   @NotNull
+  @Override
   public String getGroupDisplayName() {
     return OsmorcBundle.message("WrongImportPackageInspection.group-name");
   }
 
+  @Override
   public boolean isEnabledByDefault() {
     return true;
   }
 
   @NotNull
+  @Override
   public HighlightDisplayLevel getDefaultLevel() {
     return HighlightDisplayLevel.ERROR;
   }
 
   @Nls
   @NotNull
+  @Override
   public String getDisplayName() {
     return OsmorcBundle.message("WrongImportPackageInspection.display-name");
   }
 
   @NonNls
   @NotNull
+  @Override
   public String getShortName() {
     return "osmorcWrongImportPackage";
   }
 
   @NotNull
+  @Override
   public PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new PsiElementVisitor() {
-
+      @Override
       public void visitElement(PsiElement element) {
-        if (OsmorcFacet.hasOsmorcFacet(element) && isImportPackageHeader(element)) {
+        if (isImportPackageHeader(element) && OsmorcFacet.hasOsmorcFacet(element)) {
           Header header = (Header)element;
-          for (Clause clause : header.getClauses()) {
+          for (Clause clause : PsiTreeUtil.getChildrenOfTypeAsList(header, Clause.class)) {
             HeaderValuePart valuePart = clause.getValue();
             String packageSpec = clause.getClauseText();
             if (valuePart == null ||

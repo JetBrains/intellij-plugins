@@ -25,14 +25,15 @@
 package org.osmorc.manifest.lang.psi;
 
 import com.intellij.psi.PsiNamedElement;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public interface AssignmentExpression extends PsiNamedElement {
-  HeaderValuePart getNamePsi();
+  HeaderValuePart getNameElement();
 
-  HeaderValuePart getValuePsi();
+  HeaderValuePart getValueElement();
 
   String getValue();
 }

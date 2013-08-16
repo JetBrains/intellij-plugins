@@ -31,6 +31,7 @@ import com.intellij.psi.PsiReferenceBase;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.osmorc.BundleManager;
 import org.osmorc.manifest.BundleManifest;
 

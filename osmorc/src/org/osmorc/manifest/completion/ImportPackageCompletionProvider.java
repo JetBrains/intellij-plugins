@@ -12,10 +12,10 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.ManifestConstants;
-import org.osmorc.manifest.lang.ManifestTokenType;
+import org.jetbrains.lang.manifest.psi.ManifestTokenType;
 import org.osmorc.manifest.lang.psi.Attribute;
 import org.osmorc.manifest.lang.psi.Directive;
-import org.osmorc.manifest.lang.psi.ManifestToken;
+import org.jetbrains.lang.manifest.psi.ManifestToken;
 
 import java.util.Set;
 

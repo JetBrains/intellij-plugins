@@ -14,8 +14,8 @@ import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBus;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
-import org.osmorc.manifest.ManifestFileTypeFactory;
-import org.osmorc.manifest.lang.psi.ManifestFile;
+import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
+import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.osmorc.settings.ProjectSettings;
 
 import java.util.List;

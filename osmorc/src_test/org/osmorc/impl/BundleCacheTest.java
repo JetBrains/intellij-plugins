@@ -2,13 +2,11 @@ package org.osmorc.impl;
 
 import com.intellij.testFramework.LightIdeaTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Before;
-import org.junit.Test;
 import org.osmorc.manifest.BundleManifest;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.ManifestHolderDisposedException;
-import org.osmorc.manifest.lang.psi.ManifestFile;
+import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.osmorc.testutil.TestManifestHolder;
 
 import java.util.List;

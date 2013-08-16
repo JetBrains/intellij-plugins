@@ -78,18 +78,19 @@
   </module-components>
 
   <extensionPoints>
+    <extensionPoint name="manifest.parser.provider" interface="org.jetbrains.lang.manifest.header.HeaderParserProvider"/>
+
     <extensionPoint name="frameworkIntegrator" interface="org.osmorc.frameworkintegration.FrameworkIntegrator"/>
-    <extensionPoint name="headerParserProviderRepository" interface="org.osmorc.manifest.lang.headerparser.HeaderParserProviderRepository"/>
     <extensionPoint name="obr" interface="org.osmorc.obrimport.Obr"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
     <errorHandler implementation="com.intellij.diagnostic.ITNReporter"/>
 
+    <applicationService serviceImplementation="org.jetbrains.lang.manifest.header.HeaderParserRepository"/>
     <!-- Applications services -->
     <applicationService serviceImplementation="org.osmorc.settings.ApplicationSettings"/>
     <applicationService serviceImplementation="org.osmorc.frameworkintegration.FrameworkIntegratorRegistry"/>
-    <applicationService serviceImplementation="org.osmorc.manifest.lang.headerparser.HeaderParserRepository"/>
     <applicationService serviceImplementation="org.osmorc.obrimport.ObrProvider"/>
 
     <!-- Project services -->
@@ -106,16 +107,17 @@
                    serviceImplementation="org.osmorc.impl.AdditionalJARContentsWatcherManagerImpl"/>
     <moduleService serviceImplementation="org.osmorc.ModuleDependencySynchronizer"/>
 
+    <fileTypeFactory implementation="org.jetbrains.lang.manifest.ManifestFileTypeFactory"/>
+    <lang.parserDefinition language="Manifest" implementationClass="org.jetbrains.lang.manifest.parser.ManifestParserDefinition"/>
+    <annotator language="Manifest" implementationClass="org.jetbrains.lang.manifest.highlighting.HeaderAnnotator"/>
+    <lang.ast.factory language="Manifest" implementationClass="org.jetbrains.lang.manifest.psi.impl.ManifestASTFactory"/>
+    <lang.elementManipulator forClass="org.jetbrains.lang.manifest.psi.HeaderValuePart"
+                             implementationClass="org.jetbrains.lang.manifest.psi.impl.HeaderValuePartManipulator"/>
     <!-- IDEA extensions -->
     <colorSettingsPage implementation="org.osmorc.manifest.lang.ManifestColorsAndFontsPage"/>
-    <lang.parserDefinition language="Manifest" implementationClass="org.osmorc.manifest.lang.ManifestParserDefinition"/>
     <completion.contributor language="Manifest" implementationClass="org.osmorc.manifest.ManifestCompletionContributor"/>
     <syntaxHighlighter key="Manifest" factoryClass="org.osmorc.manifest.lang.ManifestSyntaxHighlighterProvider"/>
-    <annotator language="Manifest" implementationClass="org.osmorc.manifest.lang.headerparser.HeaderAnnotator"/>
     <annotator language="Manifest" implementationClass="org.osmorc.manifest.lang.ManifestHighlightingAnnotator"/>
-    <lang.elementManipulator forClass="org.osmorc.manifest.lang.psi.HeaderValuePart"
-                             implementationClass="org.osmorc.manifest.lang.psi.HeaderValuePartManipulator"/>
-    <lang.ast.factory language="Manifest" implementationClass="org.osmorc.manifest.lang.psi.impl.ManifestASTFactory"/>
     <configurationType implementation="org.osmorc.run.OsgiConfigurationType"/>
 
     <project.converterProvider implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxRunConfigurationConverterProvider"/>
@@ -137,7 +139,6 @@
 
     <facetType implementation="org.osmorc.facet.OsmorcFacetType"/>
     <framework.detector implementation="org.osmorc.facet.OsmorcFrameworkDetector"/>
-    <fileTypeFactory implementation="org.osmorc.manifest.ManifestFileTypeFactory"/>
     <compiler implementation="org.osmorc.make.BundleCompiler"/>
     <refactoring.elementListenerProvider implementation="org.osmorc.facet.OsmorcFacetRefactoringListenerProvider"/>
 
@@ -159,12 +160,12 @@
     <frameworkIntegrator implementation="org.osmorc.frameworkintegration.impl.felix.FelixIntegrator"/>
     <frameworkIntegrator implementation="org.osmorc.frameworkintegration.impl.concierge.ConciergeIntegrator"/>
 
-    <headerParserProviderRepository implementation="org.osmorc.manifest.lang.headerparser.impl.StandardManifestHeaderParserProviderRepository"/>
-    <headerParserProviderRepository implementation="org.osmorc.manifest.lang.headerparser.impl.OSGiManifestHeaderProviderRepository"/>
-    <headerParserProviderRepository implementation="org.osmorc.manifest.lang.headerparser.impl.EquinoxHeaderProviderRepository"/>
-    <headerParserProviderRepository implementation="org.osmorc.manifest.lang.headerparser.impl.SpringDMHeaderProviderRepository"/>
-    <headerParserProviderRepository implementation="org.osmorc.manifest.lang.headerparser.impl.BndHeaderProviderRepository"/>
-    <headerParserProviderRepository implementation="org.osmorc.manifest.lang.headerparser.impl.JavaFxHeaderProviderRepository"/>
+    <manifest.parser.provider implementation="org.jetbrains.lang.manifest.header.impl.StandardManifestHeaderParsers"/>
+    <!--<manifest.parser.provider implementation="org.jetbrains.lang.manifest.header.impl.JavaFxManifestHeaderParsers"/>-->
+
+    <manifest.parser.provider implementation="org.osmorc.manifest.lang.header.OsgiManifestHeaderParsers"/>
+    <manifest.parser.provider implementation="org.osmorc.manifest.lang.header.BndManifestHeaderParsers"/>
+    <manifest.parser.provider implementation="org.osmorc.manifest.lang.header.EquinoxManifestHeaderParsers"/>
 
     <obr implementation="org.osmorc.obrimport.springsource.SpringSourceObr"/>
   </extensions>

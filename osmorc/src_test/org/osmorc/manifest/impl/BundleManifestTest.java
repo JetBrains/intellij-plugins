@@ -4,7 +4,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightIdeaTestCase;
 import org.junit.Test;
 import org.osmorc.manifest.BundleManifest;
-import org.osmorc.manifest.lang.psi.ManifestFile;
+import org.jetbrains.lang.manifest.psi.ManifestFile;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class BundleManifestTest extends LightIdeaTestCase {
 
   private static final String Manifest8 =
     "Bundle-SymbolicName: foo.bam\nBundle-Version: 1.0.0\nExport-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\nFragment-Host: foo.bar;bundle-version=\"(2.0.0, 2.5.0]\"";
-  
+
   @Test
   public void testExportsPackage() {
     PsiFile lightFile = createLightFile("MANIFEST.MF", Manifest1);

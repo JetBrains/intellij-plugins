@@ -33,11 +33,11 @@ import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.completion.ExportPackageCompletionProvider;
 import org.osmorc.manifest.completion.ImportPackageCompletionProvider;
-import org.osmorc.manifest.lang.ManifestLanguage;
-import org.osmorc.manifest.lang.ManifestTokenType;
-import org.osmorc.manifest.lang.headerparser.HeaderParserRepository;
+import org.jetbrains.lang.manifest.ManifestLanguage;
+import org.jetbrains.lang.manifest.psi.ManifestTokenType;
+import org.jetbrains.lang.manifest.header.HeaderParserRepository;
 import org.osmorc.manifest.lang.psi.Directive;
-import org.osmorc.manifest.lang.psi.Header;
+import org.jetbrains.lang.manifest.psi.Header;
 
 /**
  * Completion contributor which adds the name of all known headers to the autocomplete list.

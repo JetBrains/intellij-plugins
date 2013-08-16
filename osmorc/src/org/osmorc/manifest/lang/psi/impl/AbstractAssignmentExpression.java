@@ -31,7 +31,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.manifest.lang.psi.AssignmentExpression;
-import org.osmorc.manifest.lang.psi.HeaderValuePart;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -43,7 +43,7 @@ public abstract class AbstractAssignmentExpression extends ASTWrapperPsiElement 
 
   @Override
   public String getName() {
-    HeaderValuePart namePsi = getNamePsi();
+    HeaderValuePart namePsi = getNameElement();
     String result = namePsi != null ? namePsi.getUnwrappedText() : null;
     return result != null ? result : "<unnamed>";
   }
@@ -51,24 +51,24 @@ public abstract class AbstractAssignmentExpression extends ASTWrapperPsiElement 
   @Override
   public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
     // TODO: Implement
-    return this;
+    throw new IncorrectOperationException();
   }
 
   @Override
-  public HeaderValuePart getNamePsi() {
+  public HeaderValuePart getNameElement() {
     return PsiTreeUtil.getChildOfType(this, HeaderValuePart.class);
   }
 
   @Override
-  public String getValue() {
-    HeaderValuePart valuePsi = getValuePsi();
-    String result = valuePsi != null ? valuePsi.getUnwrappedText() : null;
-    return result != null ? result : "";
+  public HeaderValuePart getValueElement() {
+    HeaderValuePart namePsi = getNameElement();
+    return namePsi != null ? PsiTreeUtil.getNextSiblingOfType(namePsi, HeaderValuePart.class) : null;
   }
 
   @Override
-  public HeaderValuePart getValuePsi() {
-    HeaderValuePart namePsi = getNamePsi();
-    return namePsi != null ? PsiTreeUtil.getNextSiblingOfType(namePsi, HeaderValuePart.class) : null;
+  public String getValue() {
+    HeaderValuePart valuePsi = getValueElement();
+    String result = valuePsi != null ? valuePsi.getUnwrappedText() : null;
+    return result != null ? result : "";
   }
 }

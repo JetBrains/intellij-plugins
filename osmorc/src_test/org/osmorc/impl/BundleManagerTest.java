@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.impl.ManifestHolderRegistryImpl;
-import org.osmorc.manifest.lang.psi.ManifestFile;
+import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.osmorc.testutil.TestManifestHolder;
 
 import java.util.Set;

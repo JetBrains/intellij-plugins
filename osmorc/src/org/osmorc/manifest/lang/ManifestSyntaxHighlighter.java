@@ -29,6 +29,8 @@ import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.lang.manifest.parser.ManifestLexer;
+import org.jetbrains.lang.manifest.psi.ManifestTokenType;
 
 import java.util.HashMap;
 import java.util.Map;
