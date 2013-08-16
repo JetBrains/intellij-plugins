@@ -44,6 +44,7 @@ public class HeaderImpl extends ASTWrapperPsiElement implements Header {
     super(node);
   }
 
+  @NotNull
   @Override
   public String getName() {
     return getNameToken().getText();

@@ -113,6 +113,10 @@
     <lang.ast.factory language="Manifest" implementationClass="org.jetbrains.lang.manifest.psi.impl.ManifestASTFactory"/>
     <lang.elementManipulator forClass="org.jetbrains.lang.manifest.psi.HeaderValuePart"
                              implementationClass="org.jetbrains.lang.manifest.psi.impl.HeaderValuePartManipulator"/>
+    <localInspection language="Manifest" displayName="Missing Final New Line" groupName="Manifest"
+                     enabledByDefault="true" level="ERROR" implementationClass="org.jetbrains.lang.manifest.highlighting.MissingFinalNewlineInspection"/>
+    <localInspection language="Manifest" displayName="Unknown or Misspelled Header Name" groupName="Manifest"
+                     enabledByDefault="true" level="WARNING" implementationClass="org.jetbrains.lang.manifest.highlighting.MisspelledHeaderInspection"/>
     <!-- IDEA extensions -->
     <colorSettingsPage implementation="org.osmorc.manifest.lang.ManifestColorsAndFontsPage"/>
     <completion.contributor language="Manifest" implementationClass="org.osmorc.manifest.ManifestCompletionContributor"/>
@@ -122,12 +126,8 @@
 
     <project.converterProvider implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxRunConfigurationConverterProvider"/>
 
-    <localInspection shortName="osmorcMisspelledHeaderName" displayName="Unknown or Misspelled Header Name" groupName="OSGi"
-                     enabledByDefault="true" level="WARNING" implementationClass="org.osmorc.inspection.MisspelledHeaderNameInspection"/>
     <localInspection shortName="osmorcUnregisteredActivator" displayName="Bundle Activator not registered" groupName="OSGi"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.UnregisteredActivatorInspection"/>
-    <localInspection shortName="osmorcMissingFinalNewline" displayName="Missing Final New Line" groupName="OSGi" enabledByDefault="true"
-                     level="ERROR" implementationClass="org.osmorc.inspection.MissingFinalNewlineInspection"/>
     <localInspection shortName="osmorcClassInDefaultPackage" displayName="Class is in default package" groupName="OSGi"
                      enabledByDefault="true" level="ERROR" implementationClass="org.osmorc.inspection.ClassInDefaultPackageInspection"/>
     <!--<localInspection shortName="osmorcClassUnavailable" displayName="Class not available" groupName="OSGi"

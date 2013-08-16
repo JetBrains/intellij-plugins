@@ -22,98 +22,67 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.jetbrains.lang.manifest.highlighting;
 
-package org.osmorc.inspection;
-
-import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.*;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.lang.manifest.psi.ManifestTokenType;
+import org.jetbrains.lang.manifest.ManifestBundle;
 import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
+import org.jetbrains.lang.manifest.psi.ManifestTokenType;
 import org.jetbrains.lang.manifest.psi.Section;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class MissingFinalNewlineInspection extends LocalInspectionTool {
-  @Nls
-  @NotNull
-  public String getGroupDisplayName() {
-    return "OSGi";
-  }
-
-  @Nls
-  @NotNull
-  public String getDisplayName() {
-    return "Missing Final New Line";
-  }
-
-  @NotNull
-  public String getShortName() {
-    return "osmorcMissingFinalNewline";
-  }
-
-  public boolean isEnabledByDefault() {
-    return true;
-  }
-
-  @NotNull
-  public HighlightDisplayLevel getDefaultLevel() {
-    return HighlightDisplayLevel.ERROR;
-  }
-
   @Override
   public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
     if (file instanceof ManifestFile) {
       String text = file.getText();
-      // http://ea.jetbrains.com/browser/ea_problems/22570
-      if (text != null && text.length() > 0) {
-        if (text.charAt(text.length() - 1) != '\n') {
-          Section section = PsiTreeUtil.findElementOfClassAtOffset(file, text.length() - 1,
-                                                                   Section.class, false);
-          if (section != null) {
-            return new ProblemDescriptor[]{manager.createProblemDescriptor(section.getLastChild(),
-                                                                           "Manifest file doesn't end with a final newline",
-                                                                           new AddNewlineQuickFix(section),
-                                                                           ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly)};
-          }
-        }
+      if (text != null && text.length() > 0 && !StringUtil.endsWith(text, "\n")) {
+        Section[] sections = ((ManifestFile)file).getSections();
+        assert sections.length > 0 : text;
+        Section section = sections[sections.length - 1];
+        ProblemDescriptor descriptor = manager.createProblemDescriptor(
+          section.getLastChild(), ManifestBundle.message("inspection.newline.message"),
+          new AddNewlineQuickFix(section), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly
+        );
+        return new ProblemDescriptor[]{descriptor};
       }
     }
-    return new ProblemDescriptor[0];
+
+    return null;
   }
 
   private static class AddNewlineQuickFix implements LocalQuickFix {
-    private final Section section;
+    private final Section mySection;
 
     private AddNewlineQuickFix(Section section) {
-      this.section = section;
+      mySection = section;
     }
 
     @NotNull
+    @Override
     public String getName() {
-      return "Add newline";
+      return ManifestBundle.message("inspection.newline.fix");
     }
 
     @NotNull
+    @Override
     public String getFamilyName() {
-      return "Osmorc";
+      return ManifestBundle.message("inspection.group");
     }
 
+    @Override
     public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
-      PsiElement lastChild = section.getLastChild();
+      PsiElement lastChild = mySection.getLastChild();
       if (lastChild instanceof Header) {
-        Header header = (Header)lastChild;
-        header.getNode().addLeaf(ManifestTokenType.NEWLINE, "\n", null);
-      }
-      else {
-        throw new RuntimeException("No header found to add a newline to");
+        lastChild.getNode().addLeaf(ManifestTokenType.NEWLINE, "\n", null);
       }
     }
   }

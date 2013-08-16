@@ -33,6 +33,10 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface Header extends PsiNamedElement {
   @NotNull
+  @Override
+  String getName();
+
+  @NotNull
   ManifestToken getNameToken();
 
   @Nullable

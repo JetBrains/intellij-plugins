@@ -22,63 +22,32 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.inspection;
+package org.jetbrains.lang.manifest.highlighting;
 
-import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.lang.manifest.ManifestBundle;
 import org.jetbrains.lang.manifest.header.HeaderNameMatch;
 import org.jetbrains.lang.manifest.header.HeaderParserRepository;
 import org.jetbrains.lang.manifest.psi.Header;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class MisspelledHeaderNameInspection extends LocalInspectionTool {
+public class MisspelledHeaderInspection extends LocalInspectionTool {
+  private static final int MAX_SUGGESTIONS = 10;
+
   private HeaderParserRepository myRepository;
 
-  public MisspelledHeaderNameInspection(HeaderParserRepository repository) {
-    myRepository = repository;
-  }
-
-  @Nls
-  @NotNull
-  @Override
-  public String getGroupDisplayName() {
-    return "OSGi";
-  }
-
-  @Override
-  public boolean isEnabledByDefault() {
-    return true;
-  }
-
-  @NotNull
-  @Override
-  public HighlightDisplayLevel getDefaultLevel() {
-    return HighlightDisplayLevel.WARNING;
-  }
-
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return "Unknown or Misspelled Header Name";
-  }
-
-  @NonNls
-  @NotNull
-  @Override
-  public String getShortName() {
-    return "osmorcMisspelledHeaderName";
+  public MisspelledHeaderInspection() {
+    myRepository = HeaderParserRepository.getInstance();
   }
 
   @NotNull
@@ -88,22 +57,20 @@ public class MisspelledHeaderNameInspection extends LocalInspectionTool {
       @Override
       public void visitElement(PsiElement element) {
         if (element instanceof Header) {
-          final Header header = (Header)element;
-          String name = header.getName();
-          if (name != null && name.length() > 0) {
-            final List<HeaderNameSpellingQuickFix> quickFixes = new ArrayList<HeaderNameSpellingQuickFix>();
-            for (HeaderNameMatch match : myRepository.getMatches(name)) {
-              quickFixes.add(new HeaderNameSpellingQuickFix(header, match));
-              if (quickFixes.size() > 20) {
+          Header header = (Header)element;
+          Collection<HeaderNameMatch> matches = myRepository.getMatches(header.getName());
+          if (!matches.isEmpty()) {
+            List<HeaderNameSpellingQuickFix> fixes = ContainerUtil.newArrayListWithCapacity(MAX_SUGGESTIONS);
+            for (HeaderNameMatch match : matches) {
+              fixes.add(new HeaderNameSpellingQuickFix(header, match));
+              if (fixes.size() == MAX_SUGGESTIONS) {
                 break;
               }
             }
-
-            if (quickFixes.size() > 0) {
-              holder.registerProblem(header.getNameToken(), "Header name is unknown or spelled incorrectly",
-                                     ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                     quickFixes.toArray(new HeaderNameSpellingQuickFix[quickFixes.size()]));
-            }
+            holder.registerProblem(
+              header.getNameToken(), ManifestBundle.message("inspection.header.message"),
+              ProblemHighlightType.GENERIC_ERROR_OR_WARNING, fixes.toArray(new HeaderNameSpellingQuickFix[fixes.size()])
+            );
           }
         }
       }
@@ -122,13 +89,13 @@ public class MisspelledHeaderNameInspection extends LocalInspectionTool {
     @NotNull
     @Override
     public String getName() {
-      return String.format("Change to '%s'", myNewName);
+      return ManifestBundle.message("inspection.header.fix", myNewName);
     }
 
     @NotNull
     @Override
     public String getFamilyName() {
-      return "Osmorc";
+      return ManifestBundle.message("inspection.group");
     }
 
     @Override
