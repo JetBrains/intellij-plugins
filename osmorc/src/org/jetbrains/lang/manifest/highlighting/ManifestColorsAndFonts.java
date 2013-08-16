@@ -22,21 +22,21 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.jetbrains.lang.manifest.highlighting;
 
-package org.osmorc.manifest.lang;
-
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterProvider;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
+import com.intellij.openapi.editor.colors.TextAttributesKey;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class ManifestSyntaxHighlighterProvider implements SyntaxHighlighterProvider {
-  public SyntaxHighlighter create(FileType fileType, @Nullable Project project, @Nullable VirtualFile file) {
-    return new ManifestSyntaxHighlighter();
-  }
+public class ManifestColorsAndFonts {
+  public static final TextAttributesKey HEADER_NAME_KEY =
+    TextAttributesKey.createTextAttributesKey("manifest.header.name", DefaultLanguageHighlighterColors.KEYWORD);
+  public static final TextAttributesKey HEADER_ASSIGNMENT_KEY =
+    TextAttributesKey.createTextAttributesKey("manifest.header.assignment", DefaultLanguageHighlighterColors.OPERATION_SIGN);
+  public static final TextAttributesKey HEADER_VALUE_KEY =
+    TextAttributesKey.createTextAttributesKey("manifest.header.value", DefaultLanguageHighlighterColors.IDENTIFIER);
+
+  private ManifestColorsAndFonts() { }
 }

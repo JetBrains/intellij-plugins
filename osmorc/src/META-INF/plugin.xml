@@ -109,6 +109,7 @@
 
     <fileTypeFactory implementation="org.jetbrains.lang.manifest.ManifestFileTypeFactory"/>
     <lang.parserDefinition language="Manifest" implementationClass="org.jetbrains.lang.manifest.parser.ManifestParserDefinition"/>
+    <lang.syntaxHighlighterFactory key="Manifest" implementationClass="org.jetbrains.lang.manifest.highlighting.ManifestSyntaxHighlighterFactory"/>
     <annotator language="Manifest" implementationClass="org.jetbrains.lang.manifest.highlighting.HeaderAnnotator"/>
     <lang.elementManipulator forClass="org.jetbrains.lang.manifest.psi.HeaderValuePart"
                              implementationClass="org.jetbrains.lang.manifest.psi.impl.HeaderValuePartManipulator"/>
@@ -117,10 +118,9 @@
     <localInspection language="Manifest" displayName="Unknown or Misspelled Header Name" groupName="Manifest"
                      enabledByDefault="true" level="WARNING" implementationClass="org.jetbrains.lang.manifest.highlighting.MisspelledHeaderInspection"/>
     <!-- IDEA extensions -->
-    <colorSettingsPage implementation="org.osmorc.manifest.lang.ManifestColorsAndFontsPage"/>
+    <colorSettingsPage implementation="org.osmorc.manifest.lang.OsgiManifestColorsAndFontsPage"/>
+    <annotator language="Manifest" implementationClass="org.osmorc.manifest.lang.OsgiManifestHighlightingAnnotator"/>
     <completion.contributor language="Manifest" implementationClass="org.osmorc.manifest.ManifestCompletionContributor"/>
-    <syntaxHighlighter key="Manifest" factoryClass="org.osmorc.manifest.lang.ManifestSyntaxHighlighterProvider"/>
-    <annotator language="Manifest" implementationClass="org.osmorc.manifest.lang.ManifestHighlightingAnnotator"/>
     <configurationType implementation="org.osmorc.run.OsgiConfigurationType"/>
 
     <project.converterProvider implementation="org.osmorc.frameworkintegration.impl.equinox.EquinoxRunConfigurationConverterProvider"/>
