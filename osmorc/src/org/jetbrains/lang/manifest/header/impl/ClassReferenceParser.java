@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.lang.manifest.ManifestBundle;
 import org.jetbrains.lang.manifest.header.HeaderParser;
 import org.jetbrains.lang.manifest.psi.Header;
+import org.jetbrains.lang.manifest.psi.HeaderValue;
 import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 
 public class ClassReferenceParser extends StandardHeaderParser {
@@ -41,12 +42,12 @@ public class ClassReferenceParser extends StandardHeaderParser {
 
   @Override
   public boolean annotate(@NotNull Header header, @NotNull AnnotationHolder holder) {
-    HeaderValuePart value = header.getValuePart();
-    if (value == null) return false;
+    HeaderValue value = header.getHeaderValue();
+    if (!(value instanceof HeaderValuePart)) return false;
 
     PsiReference[] references = value.getReferences();
     if (references.length == 0) {
-      holder.createErrorAnnotation(value.getHighlightingRange(), ManifestBundle.message("header.reference.invalid"));
+      holder.createErrorAnnotation(((HeaderValuePart)value).getHighlightingRange(), ManifestBundle.message("header.reference.invalid"));
       return true;
     }
 

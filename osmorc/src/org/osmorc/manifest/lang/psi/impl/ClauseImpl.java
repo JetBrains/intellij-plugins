@@ -34,12 +34,20 @@ import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.Directive;
 import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 
+import java.util.List;
+
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ClauseImpl extends ASTWrapperPsiElement implements Clause {
   public ClauseImpl(ASTNode node) {
     super(node);
+  }
+
+  @NotNull
+  @Override
+  public String getUnwrappedText() {
+    return getText().replaceAll("(?s)\\s*\n\\s*", "").trim();
   }
 
   @Override
@@ -49,8 +57,8 @@ public class ClauseImpl extends ASTWrapperPsiElement implements Clause {
 
   @NotNull
   @Override
-  public Attribute[] getAttributes() {
-    return findChildrenByClass(Attribute.class);
+  public List<Attribute> getAttributes() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, Attribute.class);
   }
 
   @Nullable
@@ -69,8 +77,8 @@ public class ClauseImpl extends ASTWrapperPsiElement implements Clause {
 
   @NotNull
   @Override
-  public Directive[] getDirectives() {
-    return findChildrenByClass(Directive.class);
+  public List<Directive> getDirectives() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, Directive.class);
   }
 
   @Override
@@ -84,11 +92,6 @@ public class ClauseImpl extends ASTWrapperPsiElement implements Clause {
     }
 
     return null;
-  }
-
-  @Override
-  public String getClauseText() {
-    return getText().replaceAll("(?s)\\s*\n\\s*", "").trim();
   }
 
   @Override

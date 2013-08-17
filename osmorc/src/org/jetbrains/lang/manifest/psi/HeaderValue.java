@@ -22,28 +22,21 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.jetbrains.lang.manifest.psi.impl;
+package org.jetbrains.lang.manifest.psi;
 
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.AbstractElementManipulator;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
-import org.jetbrains.lang.manifest.psi.HeaderValue;
-import org.jetbrains.lang.manifest.psi.HeaderValuePart;
-import org.jetbrains.lang.manifest.psi.ManifestFile;
+import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 /**
+ * A manifest header value is a "common ground" for any element
+ * produced by {@link org.jetbrains.lang.manifest.header.HeaderParser} implementations.
+ *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class HeaderValuePartManipulator extends AbstractElementManipulator<HeaderValuePart> {
-  @Override
-  public HeaderValuePart handleContentChange(HeaderValuePart element, TextRange range, String newContent) throws IncorrectOperationException {
-    String text = "HeaderValuePartManipulator: " + range.replace(element.getText(), newContent);
-    PsiFile file = PsiFileFactory.getInstance(element.getProject()).createFileFromText("DUMMY.MF", ManifestFileTypeFactory.MANIFEST, text);
-    HeaderValue value = ((ManifestFile)file).getHeaders().get(0).getHeaderValue();
-    assert value != null : text;
-    return (HeaderValuePart)element.replace(value);
-  }
+public interface HeaderValue extends PsiElement {
+  /**
+   * Returns the unwrapped text without the newlines and extra continuation spaces.
+   */
+  @NotNull
+  String getUnwrappedText();
 }

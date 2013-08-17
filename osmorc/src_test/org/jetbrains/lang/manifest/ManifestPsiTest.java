@@ -4,20 +4,20 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightIdeaTestCase;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.psi.Header;
-import org.jetbrains.lang.manifest.psi.HeaderValuePart;
+import org.jetbrains.lang.manifest.psi.HeaderValue;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
 
 public class ManifestPsiTest extends LightIdeaTestCase {
   public void testFile() {
     ManifestFile file = createFile("");
-    assertEquals(0, file.getSections().length);
+    assertEquals(0, file.getSections().size());
     assertNull(file.getMainSection());
-    assertEquals(0, file.getHeaders().length);
+    assertEquals(0, file.getHeaders().size());
 
     file = createFile("Header: value\n\nAnother-Header: another value\n");
-    assertEquals(2, file.getSections().length);
+    assertEquals(2, file.getSections().size());
     assertNotNull(file.getMainSection());
-    assertEquals(1, file.getHeaders().length);
+    assertEquals(1, file.getHeaders().size());
     assertNotNull(file.getHeader("Header"));
     assertNull(file.getHeader("Another-Header"));
   }
@@ -39,7 +39,7 @@ public class ManifestPsiTest extends LightIdeaTestCase {
     Header header = file.getHeader(name);
     assertNotNull(header);
 
-    HeaderValuePart value = header.getValuePart();
+    HeaderValue value = header.getHeaderValue();
     if (expected == null) {
       assertNull(value);
     }

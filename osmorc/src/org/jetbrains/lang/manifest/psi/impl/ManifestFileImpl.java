@@ -31,19 +31,19 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
+import org.jetbrains.lang.manifest.ManifestLanguage;
 import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.jetbrains.lang.manifest.psi.Section;
+
+import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
 public class ManifestFileImpl extends PsiFileBase implements ManifestFile {
-  private static final Section[] EMPTY_SECTION_ARRAY = new Section[0];
-  private static final Header[] EMPTY_HEADER_ARRAY = new Header[0];
-
   public ManifestFileImpl(FileViewProvider viewProvider) {
-    super(viewProvider, ManifestFileTypeFactory.MANIFEST.getLanguage());
+    super(viewProvider, ManifestLanguage.INSTANCE);
   }
 
   @NotNull
@@ -54,23 +54,20 @@ public class ManifestFileImpl extends PsiFileBase implements ManifestFile {
 
   @NotNull
   @Override
-  public Section[] getSections() {
-    Section[] sections = PsiTreeUtil.getChildrenOfType(this, Section.class);
-    return sections != null ? sections : EMPTY_SECTION_ARRAY;
+  public List<Section> getSections() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, Section.class);
   }
 
   @Nullable
   @Override
   public Section getMainSection() {
-    Section[] sections = getSections();
-    return sections.length > 0 ? sections[0] : null;
+    return findChildByClass(Section.class);
   }
 
   @NotNull
   @Override
-  public Header[] getHeaders() {
-    Header[] childrenOfType = PsiTreeUtil.getChildrenOfType(getFirstChild(), Header.class);
-    return childrenOfType == null ? EMPTY_HEADER_ARRAY : childrenOfType;
+  public List<Header> getHeaders() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(getFirstChild(), Header.class);
   }
 
   @Nullable

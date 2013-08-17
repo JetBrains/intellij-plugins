@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.header.HeaderParser;
 import org.jetbrains.lang.manifest.psi.Header;
+import org.jetbrains.lang.manifest.psi.HeaderValue;
 import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.jetbrains.lang.manifest.header.impl.StandardHeaderParser;
 import org.osmorc.manifest.lang.valueparser.ValueParser;
@@ -47,9 +48,9 @@ public class BundleVersionParser extends StandardHeaderParser {
 
   @Override
   public boolean annotate(@NotNull Header header, @NotNull AnnotationHolder holder) {
-    HeaderValuePart value = header.getValuePart();
-    if (value != null) {
-      myVersionParser.parseValue(value, holder);
+    HeaderValue value = header.getHeaderValue();
+    if (value instanceof HeaderValuePart) {
+      myVersionParser.parseValue((HeaderValuePart)value, holder);
     }
     return false;
   }
@@ -57,7 +58,7 @@ public class BundleVersionParser extends StandardHeaderParser {
   @Nullable
   @Override
   public Object getConvertedValue(@NotNull Header header) {
-    HeaderValuePart value = header.getValuePart();
-    return value != null ? myVersionParser.parseValue(value, null) : null;
+    HeaderValue value = header.getHeaderValue();
+    return value instanceof HeaderValuePart ? myVersionParser.parseValue((HeaderValuePart)value, null) : null;
   }
 }

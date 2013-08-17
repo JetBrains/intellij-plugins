@@ -29,7 +29,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.ILeafElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.lang.manifest.ManifestFileTypeFactory;
+import org.jetbrains.lang.manifest.ManifestLanguage;
 import org.jetbrains.lang.manifest.psi.impl.ManifestTokenImpl;
 
 /**
@@ -52,7 +52,7 @@ public final class ManifestTokenType extends IElementType implements ILeafElemen
   public static final ManifestTokenType CLOSING_BRACKET_TOKEN = new ManifestTokenType("CLOSING_BRACKET_TOKEN");
 
   private ManifestTokenType(@NotNull @NonNls String debugName) {
-    super(debugName, ManifestFileTypeFactory.MANIFEST.getLanguage());
+    super(debugName, ManifestLanguage.INSTANCE);
   }
 
   @NotNull

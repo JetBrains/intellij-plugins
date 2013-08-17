@@ -27,17 +27,12 @@ package org.osmorc.manifest.lang.header;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.header.HeaderParser;
 import org.jetbrains.lang.manifest.header.impl.StandardHeaderParser;
 import org.jetbrains.lang.manifest.parser.ManifestParser;
-import org.jetbrains.lang.manifest.psi.Header;
-import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.jetbrains.lang.manifest.psi.ManifestElementType;
 import org.jetbrains.lang.manifest.psi.ManifestTokenType;
-import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.OsgiManifestElementType;
 
 import static com.intellij.lang.PsiBuilderUtil.expect;
@@ -155,19 +150,5 @@ public class OsgiHeaderParser extends StandardHeaderParser {
 
     marker.done(OsgiManifestElementType.DIRECTIVE);
     return result;
-  }
-
-  @Nullable
-  @Override
-  public Object getConvertedValue(@NotNull Header header) {
-    Clause clause = PsiTreeUtil.getChildOfType(header, Clause.class);
-    if (clause != null) {
-      HeaderValuePart value = clause.getValue();
-      if (value != null) {
-        return value.getUnwrappedText();
-      }
-    }
-
-    return null;
   }
 }

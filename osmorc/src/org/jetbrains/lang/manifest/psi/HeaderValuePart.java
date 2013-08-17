@@ -25,7 +25,6 @@
 package org.jetbrains.lang.manifest.psi;
 
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,13 +32,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface HeaderValuePart extends PsiElement {
-  /**
-   * Returns the unwrapped text without the newlines and extra continuation spaces.
-   */
-  @NotNull
-  String getUnwrappedText();
-
+public interface HeaderValuePart extends HeaderValue {
   /**
    * Returns the range to highlight in the element.
    */

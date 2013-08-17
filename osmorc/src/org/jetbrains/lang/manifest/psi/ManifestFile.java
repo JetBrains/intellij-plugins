@@ -28,6 +28,8 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
@@ -36,7 +38,7 @@ public interface ManifestFile extends PsiFile {
    * Returns all sections of the file.
    */
   @NotNull
-  Section[] getSections();
+  List<Section> getSections();
 
   /**
    * Returns main (first) section if not empty.
@@ -48,7 +50,7 @@ public interface ManifestFile extends PsiFile {
    * Returns all headers from the main section in this file.
    */
   @NotNull
-  Header[] getHeaders();
+  List<Header> getHeaders();
 
   /**
    * Returns the header from the main section with the given name, or null if no such header exists.

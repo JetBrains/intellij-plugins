@@ -1,10 +1,10 @@
 package org.osmorc.manifest.lang;
 
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightIdeaTestCase;
 import org.jetbrains.lang.manifest.header.HeaderParserRepository;
 import org.jetbrains.lang.manifest.psi.Header;
+import org.jetbrains.lang.manifest.psi.HeaderValue;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.osmorc.manifest.lang.psi.AssignmentExpression;
 import org.osmorc.manifest.lang.psi.Clause;
@@ -17,16 +17,17 @@ public class OsgiManifestPsiTest extends LightIdeaTestCase {
     ManifestFile file = createFile("Import-Package: a.b,c.d;a=value;d:=value");
     Header header = file.getHeader("Import-Package");
     assertNotNull(header);
-    List<Clause> clauses = PsiTreeUtil.getChildrenOfTypeAsList(header, Clause.class);
+    List<HeaderValue> clauses = header.getHeaderValues();
     assertEquals(2, clauses.size());
-    assertEquals(0, clauses.get(0).getAttributes().length);
-    assertEquals(0, clauses.get(0).getDirectives().length);
-    assertEquals(1, clauses.get(1).getAttributes().length);
-    assertEquals(1, clauses.get(1).getDirectives().length);
-    assertNotNull(clauses.get(1).getAttribute("a"));
-    assertNull(clauses.get(1).getAttribute("b"));
-    assertNotNull(clauses.get(1).getDirective("d"));
-    assertNull(clauses.get(1).getDirective("z"));
+    Clause clause1 = (Clause)clauses.get(0), clause2 = (Clause)clauses.get(1);
+    assertEquals(0, clause1.getAttributes().size());
+    assertEquals(0, clause1.getDirectives().size());
+    assertEquals(1, clause2.getAttributes().size());
+    assertEquals(1, clause2.getDirectives().size());
+    assertNotNull(clause2.getAttribute("a"));
+    assertNull(clause2.getAttribute("b"));
+    assertNotNull(clause2.getDirective("d"));
+    assertNull(clause2.getDirective("z"));
   }
 
   public void testAttributes() {
@@ -60,11 +61,13 @@ public class OsgiManifestPsiTest extends LightIdeaTestCase {
   }
 
   private static void assertAssignment(ManifestFile file, boolean attribute, String name, String expected) {
-    Header[] headers = file.getHeaders();
-    assertEquals(1, headers.length);
-    List<Clause> clauses = PsiTreeUtil.getChildrenOfTypeAsList(headers[0], Clause.class);
+    List<Header> headers = file.getHeaders();
+    assertEquals(1, headers.size());
+    List<HeaderValue> clauses = headers.get(0).getHeaderValues();
     assertEquals(1, clauses.size());
-    AssignmentExpression element = attribute ? clauses.get(0).getAttribute(name) : clauses.get(0).getDirective(name);
+    assertTrue(clauses.get(0) instanceof Clause);
+    Clause clause = (Clause)clauses.get(0);
+    AssignmentExpression element = attribute ? clause.getAttribute(name) : clause.getDirective(name);
     if (expected != null) {
       assertNotNull(element);
       assertEquals(expected, element.getValue());

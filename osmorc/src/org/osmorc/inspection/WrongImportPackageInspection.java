@@ -7,18 +7,18 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.lang.manifest.psi.Header;
+import org.jetbrains.lang.manifest.psi.HeaderValue;
+import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.manifest.ManifestConstants;
 import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.lang.psi.Clause;
-import org.jetbrains.lang.manifest.psi.Header;
-import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 
 import java.util.Set;
 
@@ -72,11 +72,10 @@ public class WrongImportPackageInspection extends LocalInspectionTool {
       public void visitElement(PsiElement element) {
         if (isImportPackageHeader(element) && OsmorcFacet.hasOsmorcFacet(element)) {
           Header header = (Header)element;
-          for (Clause clause : PsiTreeUtil.getChildrenOfTypeAsList(header, Clause.class)) {
-            HeaderValuePart valuePart = clause.getValue();
-            String packageSpec = clause.getClauseText();
+          for (HeaderValue value : header.getHeaderValues()) {
+            HeaderValuePart valuePart = ((Clause)value).getValue();
+            String packageSpec = value.getUnwrappedText();
             if (valuePart == null ||
-                packageSpec == null ||
                 /* TODO add wildcard patterns support. May require update of the Manifest parser lib of the plugin (felix-utils.jar) to the newer version.*/
                 packageSpec.indexOf('*') != -1 ||
                 packageSpec.indexOf('?') != -1) {

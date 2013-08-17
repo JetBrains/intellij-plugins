@@ -32,10 +32,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.lang.manifest.psi.Header;
-import org.jetbrains.lang.manifest.psi.HeaderValuePart;
-import org.jetbrains.lang.manifest.psi.ManifestToken;
-import org.jetbrains.lang.manifest.psi.ManifestTokenType;
+import org.jetbrains.lang.manifest.psi.*;
+
+import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -67,8 +66,14 @@ public class HeaderImpl extends ASTWrapperPsiElement implements Header {
 
   @Nullable
   @Override
-  public HeaderValuePart getValuePart() {
-    return PsiTreeUtil.getChildOfType(this, HeaderValuePart.class);
+  public HeaderValue getHeaderValue() {
+    return PsiTreeUtil.getChildOfType(this, HeaderValue.class);
+  }
+
+  @NotNull
+  @Override
+  public List<HeaderValue> getHeaderValues() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, HeaderValue.class);
   }
 
   @Override

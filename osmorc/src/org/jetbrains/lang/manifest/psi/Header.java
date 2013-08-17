@@ -28,6 +28,8 @@ import com.intellij.psi.PsiNamedElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
@@ -39,6 +41,15 @@ public interface Header extends PsiNamedElement {
   @NotNull
   ManifestToken getNameElement();
 
+  /**
+   * Returns a first header value element if exists.
+   */
   @Nullable
-  HeaderValuePart getValuePart();
+  HeaderValue getHeaderValue();
+
+  /**
+   * Returns a list of all header value elements.
+   */
+  @NotNull
+  List<HeaderValue> getHeaderValues();
 }

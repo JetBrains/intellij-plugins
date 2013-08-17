@@ -24,15 +24,17 @@
  */
 package org.osmorc.manifest.lang.psi;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.lang.manifest.psi.HeaderValue;
 import org.jetbrains.lang.manifest.psi.HeaderValuePart;
+
+import java.util.List;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public interface Clause extends PsiElement {
+public interface Clause extends HeaderValue {
   /**
    * Returns the value of this clause.
    */
@@ -43,7 +45,7 @@ public interface Clause extends PsiElement {
    * Returns all attributes of this clause.
    */
   @NotNull
-  Attribute[] getAttributes();
+  List<Attribute> getAttributes();
 
   /**
    * Returns the attribute with the given name.
@@ -55,16 +57,11 @@ public interface Clause extends PsiElement {
    * Returns all directives of this clause.
    */
   @NotNull
-  Directive[] getDirectives();
+  List<Directive> getDirectives();
 
   /**
    * Returns the directive with the given name.
    */
   @Nullable
   Directive getDirective(@NotNull String name);
-
-  /**
-   * Same as {@link #getText()} but filters out line breaks and trims whitespace around it.
-   */
-  String getClauseText();
 }

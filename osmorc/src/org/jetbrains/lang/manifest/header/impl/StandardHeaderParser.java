@@ -32,10 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.header.HeaderParser;
 import org.jetbrains.lang.manifest.parser.ManifestParser;
-import org.jetbrains.lang.manifest.psi.Header;
-import org.jetbrains.lang.manifest.psi.HeaderValuePart;
-import org.jetbrains.lang.manifest.psi.ManifestElementType;
-import org.jetbrains.lang.manifest.psi.ManifestTokenType;
+import org.jetbrains.lang.manifest.psi.*;
 
 /**
  * @author Robert F. Beeger (robert@beeger.net)
@@ -64,7 +61,7 @@ public class StandardHeaderParser implements HeaderParser {
   @Nullable
   @Override
   public Object getConvertedValue(@NotNull Header header) {
-    HeaderValuePart value = header.getValuePart();
+    HeaderValue value = header.getHeaderValue();
     return value != null ? value.getUnwrappedText() : null;
   }
 

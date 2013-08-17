@@ -25,7 +25,8 @@
 package org.osmorc.manifest.impl;
 
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.Function;
+import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
 import org.apache.felix.framework.util.manifestparser.Capability;
 import org.apache.felix.framework.util.manifestparser.ManifestParser;
@@ -35,17 +36,17 @@ import org.apache.felix.moduleloader.ICapability;
 import org.apache.felix.moduleloader.IRequirement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.osmorc.manifest.BundleManifest;
 import org.jetbrains.lang.manifest.header.HeaderParserRepository;
+import org.jetbrains.lang.manifest.psi.Header;
+import org.jetbrains.lang.manifest.psi.HeaderValue;
+import org.jetbrains.lang.manifest.psi.ManifestFile;
+import org.osmorc.manifest.BundleManifest;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.Directive;
-import org.jetbrains.lang.manifest.psi.Header;
-import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.osmorc.valueobject.Version;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.osgi.framework.Constants.*;
@@ -96,9 +97,9 @@ public class BundleManifestImpl implements BundleManifest {
     }
 
     List<ICapability> capabilities = new ArrayList<ICapability>();
-    for (Clause clause : PsiTreeUtil.getChildrenOfTypeAsList(header, Clause.class)) {
+    for (HeaderValue value : header.getHeaderValues()) {
       try {
-        capabilities.addAll(Arrays.asList(ManifestParser.parseExportHeader(clause.getClauseText())));
+        capabilities.addAll(Arrays.asList(ManifestParser.parseExportHeader(value.getUnwrappedText())));
       }
       catch (Exception e) {
         // unparseable header
@@ -149,17 +150,13 @@ public class BundleManifestImpl implements BundleManifest {
   @Override
   public List<String> getReExportedBundles() {
     Header header = myManifestFile.getHeader(REQUIRE_BUNDLE);
-    if (header == null) return Collections.emptyList();
-
-    List<Clause> clauses = PsiTreeUtil.getChildrenOfTypeAsList(header, Clause.class);
-    List<String> result = ContainerUtil.newArrayListWithCapacity(clauses.size());
-    for (Clause clause : clauses) {
-      Directive visibilityDirectiveName = clause.getDirective(VISIBILITY_DIRECTIVE);
-      if (visibilityDirectiveName != null && VISIBILITY_REEXPORT.equals(visibilityDirectiveName.getValue())) {
-        result.add(clause.getClauseText());
-      }
-    }
-    return result;
+    return header == null ? ContainerUtil.<String>emptyList() : ContainerUtil.mapNotNull(header.getHeaderValues(), new NullableFunction<HeaderValue, String>() {
+             @Override
+             public String fun(HeaderValue value) {
+               Directive directive = ((Clause)value).getDirective(VISIBILITY_DIRECTIVE);
+               return directive != null && VISIBILITY_REEXPORT.equals(directive.getValue()) ? value.getUnwrappedText() : null;
+             }
+           });
   }
 
   @Override
@@ -205,14 +202,14 @@ public class BundleManifestImpl implements BundleManifest {
     Header header = myManifestFile.getHeader(REQUIRE_BUNDLE);
     if (header == null) return false;
 
-    for (Clause clause : PsiTreeUtil.getChildrenOfTypeAsList(header, Clause.class)) {
-      String requireSpec = clause.getClauseText();
+    for (HeaderValue value : header.getHeaderValues()) {
+      String requireSpec = value.getUnwrappedText();
       // first check if the clause is set to re-export, if not, we can skip the more expensive checks
-      Directive directiveByName = clause.getDirective(VISIBILITY_DIRECTIVE);
-      if (directiveByName == null) {
+      Directive directive = ((Clause)value).getDirective(VISIBILITY_DIRECTIVE);
+      if (directive == null) {
         continue; // skip to the next require
       }
-      if (VISIBILITY_REEXPORT.equals(directiveByName.getValue())) {
+      if (VISIBILITY_REEXPORT.equals(directive.getValue())) {
         // ok it's a re-export. Now check if the bundle would satisfy the dependency
         if (otherBundle.isRequiredBundle(requireSpec)) {
           return true;
@@ -239,10 +236,10 @@ public class BundleManifestImpl implements BundleManifest {
     Header header = fragmentBundle.getManifestFile().getHeader(FRAGMENT_HOST);
     if (header == null) return false;
 
-    List<Clause> clauses = PsiTreeUtil.getChildrenOfTypeAsList(header, Clause.class);
+    List<HeaderValue> clauses = header.getHeaderValues();
     // bundle should have exactly one clause
     // they follow the same semantics so i think it is safe to reuse this method here. We do not handle extension bundles at all.
-    return clauses.size() == 1 && isRequiredBundle(clauses.get(0).getClauseText());
+    return clauses.size() == 1 && isRequiredBundle(clauses.get(0).getUnwrappedText());
   }
 
   private Object getHeaderValue(String headerName) {
@@ -252,13 +249,11 @@ public class BundleManifestImpl implements BundleManifest {
 
   private List<String> getHeaderValues(String headerName) {
     Header header = myManifestFile.getHeader(headerName);
-    if (header == null) return Collections.emptyList();
-
-    List<Clause> clauses = PsiTreeUtil.getChildrenOfTypeAsList(header, Clause.class);
-    List<String> result = ContainerUtil.newArrayListWithCapacity(clauses.size());
-    for (Clause clause : clauses) {
-      result.add(clause.getClauseText());
-    }
-    return result;
+    return header == null ? ContainerUtil.<String>emptyList() : ContainerUtil.map(header.getHeaderValues(), new Function<HeaderValue, String>() {
+      @Override
+      public String fun(HeaderValue value) {
+        return value.getUnwrappedText();
+      }
+    });
   }
 }

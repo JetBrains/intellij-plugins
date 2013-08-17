@@ -36,6 +36,8 @@ import org.jetbrains.lang.manifest.psi.ManifestFile;
 import org.jetbrains.lang.manifest.psi.ManifestTokenType;
 import org.jetbrains.lang.manifest.psi.Section;
 
+import java.util.List;
+
 /**
  * @author Robert F. Beeger (robert@beeger.net)
  */
@@ -45,9 +47,9 @@ public class MissingFinalNewlineInspection extends LocalInspectionTool {
     if (file instanceof ManifestFile) {
       String text = file.getText();
       if (text != null && text.length() > 0 && !StringUtil.endsWith(text, "\n")) {
-        Section[] sections = ((ManifestFile)file).getSections();
-        assert sections.length > 0 : text;
-        Section section = sections[sections.length - 1];
+        List<Section> sections = ((ManifestFile)file).getSections();
+        assert sections.size() > 0 : text;
+        Section section = sections.get(sections.size() - 1);
         ProblemDescriptor descriptor = manager.createProblemDescriptor(
           section.getLastChild(), ManifestBundle.message("inspection.newline.message"),
           new AddNewlineQuickFix(section), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly
