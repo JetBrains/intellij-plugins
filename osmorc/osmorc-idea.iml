@@ -21,6 +21,7 @@
     <orderEntry type="module" module-name="execution-openapi" />
     <orderEntry type="module" module-name="execution-impl" />
     <orderEntry type="module" module-name="debugger-impl" />
+    <orderEntry type="module" module-name="manifest" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
