@@ -25,6 +25,8 @@
 package org.osmorc.manifest.lang.header;
 
 import com.intellij.lang.annotation.AnnotationHolder;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
@@ -47,11 +49,14 @@ public class BundleActivatorParser extends ClassReferenceParser {
   @Override
   protected boolean checkClass(@NotNull PsiReference reference, @NotNull PsiElement element, @NotNull AnnotationHolder holder) {
     if (element instanceof PsiClass) {
-      JavaPsiFacade facade = JavaPsiFacade.getInstance(element.getProject());
-      GlobalSearchScope scope = GlobalSearchScope.projectScope(element.getProject());
-      PsiClass activatorClass = facade.findClass("org.osgi.framework.BundleActivator", scope);
-      if (activatorClass != null && ((PsiClass)element).isInheritor(activatorClass, true)) {
-        return false;
+      Module module = ModuleUtilCore.findModuleForPsiElement(element);
+      if (module != null) {
+        GlobalSearchScope scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module);
+        JavaPsiFacade facade = JavaPsiFacade.getInstance(element.getProject());
+        PsiClass activatorClass = facade.findClass("org.osgi.framework.BundleActivator", scope);
+        if (activatorClass != null && ((PsiClass)element).isInheritor(activatorClass, true)) {
+          return false;
+        }
       }
     }
 
