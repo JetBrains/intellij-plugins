@@ -147,7 +147,7 @@ public class OsmorcProjectComponent implements ProjectComponent, ProjectSettings
         new Task.Backgroundable(myProject, "Updating OSGi indices", false) {
           @Override
           public void run(@NotNull ProgressIndicator indicator) {
-            if (OsmorcProjectComponent.this.myProject.isOpen()) return;
+            if (!OsmorcProjectComponent.this.myProject.isOpen()) return;
             indicator.setIndeterminate(true);
             indicator.setText("Updating OSGi indices");
             myBundleManager.reindexAll();

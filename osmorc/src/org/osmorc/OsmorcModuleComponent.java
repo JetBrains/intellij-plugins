@@ -66,10 +66,12 @@ public class OsmorcModuleComponent implements ModuleComponent {
   @Override
   public void initComponent() {
     myModule.getMessageBus().connect(myModule).subscribe(FacetManager.FACETS_TOPIC, new FacetManagerAdapter() {
+      @Override
       public void facetAdded(@NotNull Facet facet) {
         handleFacetChange(facet);
       }
 
+      @Override
       public void facetConfigurationChanged(@NotNull Facet facet) {
         handleFacetChange(facet);
       }
@@ -109,6 +111,7 @@ public class OsmorcModuleComponent implements ModuleComponent {
     final OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
     if (facet != null) {
       myApplication.invokeLater(new Runnable() {
+        @Override
         public void run() {
           new Task.Backgroundable(myModule.getProject(), "Updating OSGi indices", false) {
             @Override
