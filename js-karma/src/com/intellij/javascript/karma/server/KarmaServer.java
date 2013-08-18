@@ -13,6 +13,7 @@ import com.intellij.javascript.karma.util.StreamEventListener;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
@@ -54,7 +55,8 @@ public class KarmaServer {
   private final MyDisposable myDisposable;
   private final KarmaServerRestarter myRestarter;
 
-  public KarmaServer(@NotNull File nodeInterpreter,
+  public KarmaServer(@NotNull Project project,
+                     @NotNull File nodeInterpreter,
                      @NotNull File karmaPackageDir,
                      @NotNull File configurationFile) throws IOException {
     /* 'nodeInterpreter', 'karmaPackageDir' and 'configurationFile'
@@ -69,7 +71,7 @@ public class KarmaServer {
     myProcessOutputArchive.startNotify();
 
     myDisposable = new MyDisposable();
-    Disposer.register(ApplicationManager.getApplication(), myDisposable);
+    Disposer.register(project, myDisposable);
     myRestarter = new KarmaServerRestarter(configurationFile, myDisposable);
   }
 

@@ -62,13 +62,14 @@ public class KarmaRunProfileState implements RunProfileState {
     File nodeInterpreter = new File(myNodeInterpreterPath);
     File karmaPackageDir = new File(myKarmaPackageDirPath);
     File configurationFile = new File(myRunSettings.getConfigPath());
-    KarmaServer server = KarmaServerRegistry.getServer(nodeInterpreter, karmaPackageDir, configurationFile);
+    KarmaServerRegistry registry = KarmaServerRegistry.getInstance(myProject);
+    KarmaServer server = registry.getServer(nodeInterpreter, karmaPackageDir, configurationFile);
     if (server != null && server.getRestarter().isRestartRequired()) {
       server.shutdownAsync();
       server = null;
     }
     if (server == null) {
-      KarmaServerRegistry.startServer(
+      registry.startServer(
         nodeInterpreter,
         karmaPackageDir,
         configurationFile,

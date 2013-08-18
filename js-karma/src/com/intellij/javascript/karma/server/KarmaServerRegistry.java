@@ -2,7 +2,9 @@ package com.intellij.javascript.karma.server;
 
 import com.intellij.concurrency.JobScheduler;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.util.CatchingConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -18,22 +20,33 @@ import java.util.concurrent.TimeUnit;
 public class KarmaServerRegistry {
 
   private static final Logger LOG = Logger.getInstance(KarmaServerRegistry.class);
-  private static final ConcurrentMap<String, KarmaServer> myServerByConfigFile = new ConcurrentHashMap<String, KarmaServer>();
-  private static final ConcurrentMap<Key, KarmaServer> myServers = new ConcurrentHashMap<Key, KarmaServer>();
-  private static final ConcurrentMap<Key, Object> myStartingServers = new ConcurrentHashMap<Key, Object>();
+
+  private final Project myProject;
+  private final ConcurrentMap<String, KarmaServer> myServerByConfigFile = new ConcurrentHashMap<String, KarmaServer>();
+  private final ConcurrentMap<Key, KarmaServer> myServers = new ConcurrentHashMap<Key, KarmaServer>();
+  private final ConcurrentMap<Key, Object> myStartingServers = new ConcurrentHashMap<Key, Object>();
+
+  public KarmaServerRegistry(@NotNull Project project) {
+    myProject = project;
+  }
+
+  @NotNull
+  public static KarmaServerRegistry getInstance(@NotNull Project project) {
+    return ServiceManager.getService(project, KarmaServerRegistry.class);
+  }
 
   @Nullable
-  public static KarmaServer getServer(@NotNull File nodeInterpreter,
+  public KarmaServer getServer(@NotNull File nodeInterpreter,
                                       @NotNull File karmaPackageDir,
                                       @NotNull File configurationFile) {
     Key key = new Key(nodeInterpreter, karmaPackageDir, configurationFile);
     return myServers.get(key);
   }
 
-  public static void startServer(@NotNull final File nodeInterpreter,
-                                 @NotNull final File karmaPackageDir,
-                                 @NotNull final File configurationFile,
-                                 final CatchingConsumer<KarmaServer, Exception> consumer) {
+  public void startServer(@NotNull final File nodeInterpreter,
+                          @NotNull final File karmaPackageDir,
+                          @NotNull final File configurationFile,
+                          final CatchingConsumer<KarmaServer, Exception> consumer) {
     final Key key = new Key(nodeInterpreter, karmaPackageDir, configurationFile);
     KarmaServer prevServer = myServerByConfigFile.get(key.getConfigurationFilePath());
     if (prevServer != null) {
@@ -50,8 +63,8 @@ public class KarmaServerRegistry {
     }
   }
 
-  private static void doStartServer(@NotNull final Key key,
-                                    @NotNull final CatchingConsumer<KarmaServer, Exception> consumer) {
+  private void doStartServer(@NotNull final Key key,
+                             @NotNull final CatchingConsumer<KarmaServer, Exception> consumer) {
     if (myStartingServers.putIfAbsent(key, key) != null) {
       LOG.warn(new Throwable("Unexpected subsequent karma server starting:" + key.toString()));
       JobScheduler.getScheduler().schedule(new Runnable() {
@@ -67,7 +80,10 @@ public class KarmaServerRegistry {
         try {
           final KarmaServer server;
           try {
-            server = new KarmaServer(key.getNodeInterpreter(), key.getKarmaPackageDir(), key.getConfigurationFile());
+            server = new KarmaServer(myProject,
+                                     key.getNodeInterpreter(),
+                                     key.getKarmaPackageDir(),
+                                     key.getConfigurationFile());
             myServers.put(key, server);
             myServerByConfigFile.put(key.getConfigurationFilePath(), server);
           }
@@ -121,14 +137,6 @@ public class KarmaServerRegistry {
 
     private File getConfigurationFile() {
       return myConfigurationFile;
-    }
-
-    private String getNodeInterpreterPath() {
-      return myNodeInterpreterPath;
-    }
-
-    private String getKarmaPackageDirPath() {
-      return myKarmaPackageDirPath;
     }
 
     private String getConfigurationFilePath() {
