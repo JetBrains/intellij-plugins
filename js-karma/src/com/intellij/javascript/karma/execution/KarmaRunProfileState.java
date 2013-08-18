@@ -29,20 +29,20 @@ public class KarmaRunProfileState implements RunProfileState {
   private final Project myProject;
   private final ExecutionEnvironment myExecutionEnvironment;
   private final String myNodeInterpreterPath;
-  private final String myKarmaPackageDir;
+  private final String myKarmaPackageDirPath;
   private final KarmaRunSettings myRunSettings;
   private final KarmaExecutionType myExecutionType;
 
   public KarmaRunProfileState(@NotNull Project project,
                               @NotNull ExecutionEnvironment executionEnvironment,
                               @NotNull String nodeInterpreterPath,
-                              @NotNull String karmaPackageDir,
+                              @NotNull String karmaPackageDirPath,
                               @NotNull KarmaRunSettings runSettings,
                               @NotNull Executor executor) {
     myProject = project;
     myExecutionEnvironment = executionEnvironment;
     myNodeInterpreterPath = nodeInterpreterPath;
-    myKarmaPackageDir = karmaPackageDir;
+    myKarmaPackageDirPath = karmaPackageDirPath;
     myRunSettings = runSettings;
     myExecutionType = findExecutionType(executor);
   }
@@ -59,16 +59,18 @@ public class KarmaRunProfileState implements RunProfileState {
 
   @Nullable
   public KarmaServer getServerOrStart(@NotNull final Executor executor) throws ExecutionException {
+    File nodeInterpreter = new File(myNodeInterpreterPath);
+    File karmaPackageDir = new File(myKarmaPackageDirPath);
     File configurationFile = new File(myRunSettings.getConfigPath());
-    KarmaServer server = KarmaServerRegistry.getServerByConfigurationFile(configurationFile);
+    KarmaServer server = KarmaServerRegistry.getServer(nodeInterpreter, karmaPackageDir, configurationFile);
     if (server != null && server.getRestarter().isRestartRequired()) {
       server.shutdownAsync();
       server = null;
     }
     if (server == null) {
       KarmaServerRegistry.startServer(
-        new File(myNodeInterpreterPath),
-        new File(myKarmaPackageDir),
+        nodeInterpreter,
+        karmaPackageDir,
         configurationFile,
         new CatchingConsumer<KarmaServer, Exception>() {
           @Override
