@@ -2,6 +2,7 @@ package org.osmorc.manifest.resolve.reference.providers;
 
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPackage;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PackageReferenceSet;
@@ -18,7 +19,7 @@ public class ManifestPackageReferenceSet extends PackageReferenceSet {
 
   @Override
   public Collection<PsiPackage> resolvePackageName(@Nullable final PsiPackage context, final String packageName) {
-    final String unwrappedPackageName = packageName.replaceAll("\n ", "").trim();
+    final String unwrappedPackageName = StringUtil.replace(packageName, "\n ", "").trim();
     if (context != null) {
       return ContainerUtil.filter(context.getSubPackages(), new Condition<PsiPackage>() {
         @Override

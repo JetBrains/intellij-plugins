@@ -1,5 +1,6 @@
 package org.osmorc.manifest.lang.header;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.PackageReferenceSet;
@@ -18,7 +19,7 @@ public class BasePackageParser extends OsgiHeaderParser {
 
   protected static PsiReference[] getPackageReferences(final PsiElement psiElement) {
     String packageName = psiElement.getText();
-    if (packageName.isEmpty()) {
+    if (StringUtil.isEmptyOrSpaces(packageName) ) {
       return PsiReference.EMPTY_ARRAY;
     }
 
