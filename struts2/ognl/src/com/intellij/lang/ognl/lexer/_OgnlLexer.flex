@@ -25,8 +25,6 @@ import com.intellij.lang.ognl.OgnlTypes;
 %unicode
 %function advance
 %type IElementType
-%eof{  return;
-%eof}
 
 ALPHA=[:letter:]
 DIGIT=[0-9]
