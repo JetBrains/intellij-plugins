@@ -91,6 +91,15 @@ public class GherkinBlock implements ASTBlock {
           continue;
         }
       }
+      if (child.getElementType() == GherkinTokenTypes.COMMENT) {
+        final ASTNode previous = child.getTreePrev();
+
+        if (previous != null && previous.getText().contains("\n")) {
+          final String whiteSpaceText = previous.getText();
+          final int lineBreakIndex = whiteSpaceText.lastIndexOf("\n");
+          indent = Indent.getSpaceIndent(whiteSpaceText.length() - lineBreakIndex - 1);
+        }
+      }
       result.add(new GherkinBlock(child, indent));
     }
     return result;
