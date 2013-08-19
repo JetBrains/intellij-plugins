@@ -31,7 +31,7 @@ public class FlexClassMemberNode extends ProjectViewNode<JSElement> {
   @Override
   public boolean canRepresent(Object element) {
     JSElement value = getValue();
-    return value != null && element instanceof JSElement && value.isEquivalentTo((PsiElement)element);
+    return value != null && value.isValid() && element instanceof JSElement && value.isEquivalentTo((PsiElement)element);
   }
 
   @NotNull
@@ -79,7 +79,10 @@ public class FlexClassMemberNode extends ProjectViewNode<JSElement> {
 
   @Override
   public void navigate(boolean requestFocus) {
-    getValue().navigate(true);
+    final JSElement value = getValue();
+    if (value != null && value.isValid()) {
+      value.navigate(true);
+    }
   }
 
   @Override

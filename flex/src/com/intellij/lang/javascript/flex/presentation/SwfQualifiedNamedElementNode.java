@@ -28,7 +28,7 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
   @Override
   public boolean canRepresent(Object element) {
     JSQualifiedNamedElement value = getValue();
-    return value != null && element != null && value.getClass() == element.getClass() &&
+    return value != null && value.isValid() && element != null && value.getClass() == element.getClass() &&
            Comparing.equal(value.getQualifiedName(), ((JSQualifiedNamedElement)element).getQualifiedName());
   }
 
@@ -40,8 +40,11 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
 
   @Override
   protected void update(PresentationData presentation) {
-    presentation.setPresentableText(getValue().getName());
-    presentation.setIcon(getValue().getIcon(Iconable.ICON_FLAG_VISIBILITY));
+    final JSQualifiedNamedElement value = getValue();
+    if (value != null && value.isValid()) {
+      presentation.setPresentableText(value.getName());
+      presentation.setIcon(value.getIcon(Iconable.ICON_FLAG_VISIBILITY));
+    }
   }
 
   @Override
@@ -56,7 +59,10 @@ public class SwfQualifiedNamedElementNode extends ProjectViewNode<JSQualifiedNam
 
   @Override
   public void navigate(boolean requestFocus) {
-    getValue().navigate(true);
+    final JSQualifiedNamedElement value = getValue();
+    if (value != null && value.isValid()) {
+      value.navigate(true);
+    }
   }
 
   @Override
