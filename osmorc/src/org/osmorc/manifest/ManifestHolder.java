@@ -24,38 +24,29 @@
  */
 package org.osmorc.manifest;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.Library;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A manifest holder holds a bundle manifest and the object ({@link Project} or
- * {@link Library}) that this manifest belongs to.
+ * A manifest holder holds a bundle manifest and the object ({@link com.intellij.openapi.module.Module} or
+ * {@link com.intellij.openapi.roots.libraries.Library}) that this manifest belongs to.
  *
  * @author Robert F. Beeger (robert@beeger.net)
  * @author Jan Thomae (janthomae@janthomae.de)
  */
 public interface ManifestHolder {
   /**
-   * Returns the bundle manifest.
-   *
-   * @return the bundle manifest or null if the bound object is no OSGi bundle.
+   * Returns the bundle manifest or null if the bound object has no OSGi bundle.
    */
   @Nullable
   BundleManifest getBundleManifest() throws ManifestHolderDisposedException;
 
   /**
    * The object that this manifest belongs to.
-   *
-   * @return the bound object
    */
   Object getBoundObject() throws ManifestHolderDisposedException;
 
-
   /**
-   * Returns the information if this holder is disposed and should not be used.
-   *
-   * @return true if the holder is disposed, false otherwise.
+   * Returns true if this holder is disposed and should not be used, false otherwise.
    */
   boolean isDisposed();
 }

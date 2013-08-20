@@ -50,7 +50,6 @@ public final class ManifestHolderRegistryImpl implements ManifestHolderRegistry 
     return ModuleServiceManager.getService(module, ManifestHolder.class);
   }
 
-
   @NotNull
   @Override
   public Collection<ManifestHolder> getManifestHolders(@NotNull Library library) {
