@@ -12,10 +12,14 @@ import com.intellij.lang.javascript.index.JSSymbolUtil;
 import com.intellij.lang.javascript.index.JSSymbolVisitor;
 import com.intellij.lang.javascript.psi.ExpectedTypeEvaluator;
 import com.intellij.lang.javascript.psi.JSExpression;
+import com.intellij.lang.javascript.psi.ecmal4.JSQualifiedNamedElement;
 import com.intellij.lang.javascript.psi.impl.JSReferenceExpressionImpl;
 import com.intellij.lang.javascript.psi.resolve.BaseJSSymbolProcessor;
 import com.intellij.lang.javascript.psi.resolve.JSResolveUtil;
 import com.intellij.lang.javascript.psi.resolve.JSTypeEvaluator;
+import com.intellij.lang.javascript.psi.resolve.VariantsProcessor;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -56,5 +60,16 @@ public class ActionScriptSpecificHandlersFactory extends JSDialectSpecificHandle
   @Override
   public ExpectedTypeEvaluator newExpectedTypeEvaluator(JSExpression parent) {
     return new ActionScriptExpectedTypeEvaluator(parent);
+  }
+
+  public int getSpecificCompletionVariantPriority(final PsiElement element) {
+    if (element instanceof JSQualifiedNamedElement) {
+      final String qName = ((JSQualifiedNamedElement)element).getQualifiedName();
+      if (qName != null && "avmplus".equals(StringUtil.getPackageName(qName))) {
+        return VariantsProcessor.LookupPriority.NO_RELEVANT_SMARTNESS_PRIORITY;
+      }
+    }
+
+    return -1;
   }
 }
