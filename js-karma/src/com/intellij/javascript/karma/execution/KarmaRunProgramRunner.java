@@ -12,6 +12,7 @@ import com.intellij.execution.runners.RunContentBuilder;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.util.KarmaUtil;
+import com.intellij.execution.runners.RerunTestsNotification;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
@@ -62,6 +63,9 @@ public class KarmaRunProgramRunner extends GenericProgramRunner {
           KarmaUtil.restart(descriptor);
         }
       });
+    }
+    else {
+      RerunTestsNotification.showRerunNotification(contentToReuse, executionResult.getExecutionConsole());
     }
     RerunTestsAction.register(descriptor, env, this);
     return descriptor;
