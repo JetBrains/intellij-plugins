@@ -356,7 +356,7 @@
       <add-to-group group-id="BuildMenu" anchor="before" relative-to-action="CompileProject"/>
     </group>
     <group>
-      <action id="AddAsSwcLib" class="com.intellij.lang.javascript.flex.actions.addAsLib.AddAsSwcLibAction" />
+      <action id="AddAsSwcLib" class="com.intellij.lang.javascript.flex.actions.addAsLib.AddAsSwcLibAction" text="Add as SWC Library..." />
       <add-to-group group-id="ProjectViewPopupMenuSettingsGroup" relative-to-action="MarkRootGroup" anchor="after"/>
     </group>
 
