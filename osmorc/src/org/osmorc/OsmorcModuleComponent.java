@@ -30,8 +30,6 @@ import com.intellij.facet.FacetManagerAdapter;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.Task;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.osmorc.facet.OsmorcFacet;
@@ -108,20 +106,13 @@ public class OsmorcModuleComponent implements ModuleComponent {
    * Runs over the module and refreshes it's information in the bundle manager.
    */
   private void buildManifestIndex() {
-    final OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
+    OsmorcFacet facet = OsmorcFacet.getInstance(myModule);
     if (facet != null) {
       myApplication.invokeLater(new Runnable() {
         @Override
         public void run() {
-          new Task.Backgroundable(myModule.getProject(), "Updating OSGi indices", false) {
-            @Override
-            public void run(@NotNull ProgressIndicator indicator) {
-              if (myModule.isDisposed()) return;
-              indicator.setIndeterminate(true);
-              indicator.setText("Updating OSGi indices");
-              myBundleManager.reindex(myModule);
-            }
-          }.queue();
+          if (myModule.isDisposed()) return;
+          myBundleManager.reindex(myModule);
         }
       }, myModule.getDisposed());
     }
