@@ -310,6 +310,16 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
     return result[0];
   }
 
+  @Override
+  protected PsiElement getEnumeratedValueDeclaration(XmlAttributeValue attributeValue, String value) {
+    for (String s : getEnumeratedValues()) {
+      if (Comparing.equal(s, value, myEnumeratedValuesCaseSensitive)) {
+        return getDeclaration();
+      }
+    }
+    return null;
+  }
+
   @Nullable
   private XmlAttributeValue findDeclarationByIdAttributeValue(final PsiElement descriptorDeclaration, final Set<JSClass> visited) {
     final Ref<XmlAttributeValue> resultRef = new Ref<XmlAttributeValue>(null);
@@ -541,19 +551,6 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
 
     if (myAnnotationName != null && CLEAR_DIRECTIVE.equals(value)) {
       return checkClearDirectiveContext(context);
-    }
-
-    if (isEnumerated()) {
-      boolean inEnumeration = false;
-
-      for (String s : getEnumeratedValues()) {
-        if (Comparing.strEqual(value, s, myEnumeratedValuesCaseSensitive)) {
-          inEnumeration = true;
-          break;
-        }
-      }
-
-      if (!inEnumeration) return FlexBundle.message("flex.invalid.enumeration.value", value);
     }
 
     if (isAllowsPercentage() && value.endsWith("%")) {
