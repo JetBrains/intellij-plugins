@@ -17,21 +17,12 @@ import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.manifest.ManifestConstants;
-import org.osmorc.manifest.ManifestHolder;
 import org.osmorc.manifest.lang.psi.Clause;
-
-import java.util.Set;
 
 /**
  * @author Vladislav.Soroka
  */
 public class WrongImportPackageInspection extends LocalInspectionTool {
-  private BundleManager bundleManager;
-
-  private static boolean isImportPackageHeader(PsiElement element) {
-    return element instanceof Header && ManifestConstants.Headers.IMPORT_PACKAGE.equals(((Header)element).getName());
-  }
-
   @Nls
   @NotNull
   @Override
@@ -68,6 +59,8 @@ public class WrongImportPackageInspection extends LocalInspectionTool {
   @Override
   public PsiElementVisitor buildVisitor(final @NotNull ProblemsHolder holder, boolean isOnTheFly) {
     return new PsiElementVisitor() {
+      private final BundleManager myBundleManager = ServiceManager.getService(holder.getProject(), BundleManager.class);
+
       @Override
       public void visitElement(PsiElement element) {
         if (isImportPackageHeader(element) && OsmorcFacet.hasOsmorcFacet(element)) {
@@ -82,7 +75,7 @@ public class WrongImportPackageInspection extends LocalInspectionTool {
               continue;
             }
 
-            if (!valuePart.getText().isEmpty() && !isProvided(element, packageSpec)) {
+            if (!valuePart.getText().isEmpty() && !myBundleManager.isProvided(packageSpec)) {
               holder.registerProblem(valuePart, OsmorcBundle.message(
                 "WrongImportPackageInspection.problem.message.not-exported-package",
                 valuePart.getUnwrappedText(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING));
@@ -93,15 +86,7 @@ public class WrongImportPackageInspection extends LocalInspectionTool {
     };
   }
 
-  private boolean isProvided(PsiElement element, String packageSpec) {
-    Set<ManifestHolder> manifestHolders = getBundleManager(element).getBundleCache().whoProvides(packageSpec);
-    return !manifestHolders.isEmpty();
-  }
-
-  private BundleManager getBundleManager(PsiElement element) {
-    if (bundleManager == null) {
-      bundleManager = ServiceManager.getService(element.getProject(), BundleManager.class);
-    }
-    return bundleManager;
+  private static boolean isImportPackageHeader(PsiElement element) {
+    return element instanceof Header && ManifestConstants.Headers.IMPORT_PACKAGE.equals(((Header)element).getName());
   }
 }

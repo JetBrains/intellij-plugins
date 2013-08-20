@@ -13,8 +13,7 @@ import java.util.*;
 /**
  * The bundle cache holds information about all bundles within the project.
  */
-public class BundleCache {
-
+class BundleCache {
   private volatile Set<ManifestHolder> myManifestHolders;
 
   public BundleCache() {
@@ -247,7 +246,7 @@ public class BundleCache {
         BundleManifest manifest = holder.getBundleManifest();
         if (manifest != null) {
           String bundleSymbolicName = manifest.getBundleSymbolicName();
-          Set<ManifestHolder> set = null;
+          Set<ManifestHolder> set;
           if (sets.containsKey(bundleSymbolicName)) {
             set = sets.get(bundleSymbolicName);
           }

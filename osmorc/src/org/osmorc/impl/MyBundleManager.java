@@ -27,8 +27,10 @@ import java.util.regex.Pattern;
  */
 public class MyBundleManager implements BundleManager {
   private static final Logger LOG = Logger.getInstance("#org.osmorc.impl.MyBundleManager");
+
   public final static Topic<BundleModificationListener> BUNDLE_INDEX_CHANGE_TOPIC =
     Topic.create("Bundle Index Changed", BundleModificationListener.class);
+
   private BundleCache myBundleCache;
   private ManifestHolderRegistry myManifestHolderRegistry;
   private Project myProject;
@@ -51,47 +53,17 @@ public class MyBundleManager implements BundleManager {
   }
 
   @Override
-  public void reindexAll() {
-    boolean needsNotification = false;
-
-    // there are no osgi structures on project level, so we can simply get all modules and index these.
-    Module[] modules = ModuleManager.getInstance(myProject).getModules();
-    for (Module module : modules) {
-      needsNotification |= doReindex(module, false);
-    }
-
-    // finally index the project level libraries
-    Library[] libraries = ProjectLibraryTable.getInstance(myProject).getLibraries();
-    needsNotification |= doReindex(Arrays.asList(libraries), false);
-    if (needsNotification) {
+  public void reindex(@NotNull Module module) {
+    if (doReindex(module)) {
       notifyListenersOfBundleIndexChange();
     }
   }
 
-  @Override
-  public void reindex(@NotNull final Module module) {
-    doReindex(module, true);
-  }
-
-  /**
-   * Allows to manually add manifest holders to the bundle manager. This is intended for tests only. Do not use in production code.
-   *
-   * @param manifestHolder the manifest holder to add.
-   */
-  @TestOnly
-  public void addManifestHolder(@NotNull ManifestHolder manifestHolder) {
-    myBundleCache.updateWith(manifestHolder);
-  }
-
   /**
    * Adds the given module to the cache.
-   *
-   * @param module            the module to add
-   * @param sendNotifications a flag indicating, if listeners should be notified of a library change.
-   * @return a boolean indicating if the operations of this method have changed the internal state, so that listeners should be notified.
-   *         If this method already notified the listeners, this will return false in any case.
+   * Returns true if the internal state was changed (so that listeners should be notified).
    */
-  private boolean doReindex(Module module, boolean sendNotifications) {
+  private boolean doReindex(Module module) {
     if (module.isDisposed()) {
       return false; // don't work on disposed modules
     }
@@ -106,28 +78,24 @@ public class MyBundleManager implements BundleManager {
       ManifestHolder manifestHolder = myManifestHolderRegistry.getManifestHolder(module);
       boolean needsNotification = myBundleCache.updateWith(manifestHolder);
       needsNotification |= myBundleCache.cleanup();
-      if (needsNotification && sendNotifications) {
-        notifyListenersOfBundleIndexChange();
-      }
-      return needsNotification && !sendNotifications;
+      return needsNotification;
     }
+
     return false;
   }
 
   @Override
   public void reindex(@NotNull Collection<Library> libraries) {
-    doReindex(libraries, true);
+    if (doReindex(libraries)) {
+      notifyListenersOfBundleIndexChange();
+    }
   }
 
   /**
    * Adds the given libraries to the cache.
-   *
-   * @param libraries         the libraries
-   * @param sendNotifications a flag indicating if listeners should be notified of a library change
-   * @return a boolean indicating if the operations of this method have changed the internal state, so that listeners should be notified.
-   *         If this method already notified the listeners, this will return false in any case.
+   * Returns true if the internal state was changed (so that listeners should be notified).
    */
-  private boolean doReindex(Collection<Library> libraries, boolean sendNotifications) {
+  private boolean doReindex(Collection<Library> libraries) {
     boolean needsNotification = false;
     for (Library library : libraries) {
       Collection<ManifestHolder> manifestHolders = myManifestHolderRegistry.getManifestHolders(library);
@@ -136,12 +104,27 @@ public class MyBundleManager implements BundleManager {
       }
     }
     needsNotification |= myBundleCache.cleanup();
-    if (needsNotification && sendNotifications) {
-      notifyListenersOfBundleIndexChange();
-    }
-    return needsNotification && !sendNotifications;
+    return needsNotification;
   }
 
+  @Override
+  public void reindexAll() {
+    boolean needsNotification = false;
+
+    // there are no osgi structures on project level, so we can simply get all modules and index these.
+    Module[] modules = ModuleManager.getInstance(myProject).getModules();
+    for (Module module : modules) {
+      needsNotification |= doReindex(module);
+    }
+
+    // finally index the project level libraries
+    Library[] libraries = ProjectLibraryTable.getInstance(myProject).getLibraries();
+    needsNotification |= doReindex(Arrays.asList(libraries));
+
+    if (needsNotification) {
+      notifyListenersOfBundleIndexChange();
+    }
+  }
 
   @Override
   @NotNull
@@ -168,7 +151,6 @@ public class MyBundleManager implements BundleManager {
     }
     dependencyHolders.addAll(allRequiredBundles);
 
-
     // Resolve Fragment-Hosts
     ManifestHolder manifestHolder = myBundleCache.getManifestHolder(module);
     if (manifestHolder != null) {
@@ -181,16 +163,12 @@ public class MyBundleManager implements BundleManager {
       try {
         result.add(holder.getBoundObject());
       }
-      catch (ManifestHolderDisposedException e) {
-        // ignore it, holder is gone.
-      }
+      catch (ManifestHolderDisposedException ignored) { }
     }
 
     // Resolve Bundle-ClassPath (this might contain non-osgi-bundles so we have to work on the library level here)
     List<String> entries = manifest.getBundleClassPathEntries();
     result.addAll(resolveBundleClassPath(entries));
-
-
     return result;
   }
 
@@ -201,9 +179,7 @@ public class MyBundleManager implements BundleManager {
    * @param requireBundleSpec    the spec to resolve
    * @param resolvedDependencies the resolved dependencies.
    */
-  private void resolveRequiredBundle(@NotNull String requireBundleSpec,
-                                     @NotNull List<ManifestHolder> resolvedDependencies) {
-
+  private void resolveRequiredBundle(@NotNull String requireBundleSpec, @NotNull List<ManifestHolder> resolvedDependencies) {
     // first get the manifest holder of the required bundle
     ManifestHolder manifestHolder = myBundleCache.whoIsRequiredBundle(requireBundleSpec);
 
@@ -226,7 +202,6 @@ public class MyBundleManager implements BundleManager {
       return;
     }
 
-
     if (requireBundleManifest != null) {
       // its kosher, so add it to the result list.
       resolvedDependencies.add(manifestHolder);
@@ -248,9 +223,7 @@ public class MyBundleManager implements BundleManager {
         try {
           manifest = fragment.getBundleManifest();
         }
-        catch (ManifestHolderDisposedException e) {
-          // ok it's gone, ignore it.
-        }
+        catch (ManifestHolderDisposedException ignored) { }
         if (manifest != null) {
           toResolve.addAll(manifest.getReExportedBundles());
         }
@@ -312,42 +285,32 @@ public class MyBundleManager implements BundleManager {
       try {
         result.add(holder.getBoundObject());
       }
-      catch (ManifestHolderDisposedException ignore) {
-        // ok, ignore it then.
-      }
+      catch (ManifestHolderDisposedException ignore) { }
     }
     return result;
   }
-
 
   @Override
   public boolean isReExported(@NotNull Object dependency, @NotNull Module module) {
     BundleManifest depManifest = getManifestByObject(dependency);
     BundleManifest moduleManifest = getManifestByObject(module);
-
-    if (depManifest == null || moduleManifest == null) {
-      return false;
-    }
-
-    return moduleManifest.reExportsBundle(depManifest);
+    return depManifest != null && moduleManifest != null && moduleManifest.reExportsBundle(depManifest);
   }
 
-
   @Nullable
+  @Override
   public BundleManifest getManifestByObject(@NotNull Object object) {
     ManifestHolder manifestHolder = myBundleCache.getManifestHolder(object);
     if (manifestHolder != null) {
       try {
         return manifestHolder.getBundleManifest();
       }
-      catch (ManifestHolderDisposedException ignore) {
-        // in that case the object was already disposed.
-        return null;
-      }
+      catch (ManifestHolderDisposedException ignore) { }
     }
     return null;
   }
 
+  @Override
   public BundleManifest getManifestBySymbolicName(@NotNull String bundleSymbolicName) {
     List<Object> objects = whoIs(bundleSymbolicName);
     if (!objects.isEmpty()) {
@@ -356,13 +319,13 @@ public class MyBundleManager implements BundleManager {
     return null;
   }
 
-
   @Override
   public boolean isFragmentHost(@NotNull Object host, @NotNull Object fragment) {
     BundleManifest fragmentManifest = getManifestByObject(fragment);
     if (fragmentManifest == null || !fragmentManifest.isFragmentBundle()) {
       return false;
     }
+
     BundleManifest hostManifest = getManifestByObject(host);
     if (hostManifest == null) {
       return false;
@@ -372,8 +335,15 @@ public class MyBundleManager implements BundleManager {
   }
 
   @Override
-  @NotNull
-  public BundleCache getBundleCache() {
-    return myBundleCache;
+  public boolean isProvided(@NotNull String packageSpec) {
+    return !myBundleCache.whoProvides(packageSpec).isEmpty();
+  }
+
+  /**
+   * Allows to manually add manifest holders to the bundle manager. This is intended for tests only. Do not use in production code.
+   */
+  @TestOnly
+  public void addManifestHolder(@NotNull ManifestHolder manifestHolder) {
+    myBundleCache.updateWith(manifestHolder);
   }
 }
