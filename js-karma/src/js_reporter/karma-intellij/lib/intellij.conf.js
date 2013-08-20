@@ -31,6 +31,17 @@ module.exports = function(config) {
   config.exclude = config.exclude || [];
   config.exclude.push(originalConfigPath);
 
+
+  // remove 'logLevel' changing as soon as
+  // https://github.com/karma-runner/karma/issues/614 is ready
+  var logLevel = config.logLevel;
+  if (logLevel === config.LOG_DISABLE ||
+      logLevel === config.LOG_ERROR ||
+      logLevel === config.LOG_WARN) {
+    console.log("IntelliJ integration changed logLevel to LOG_INFO, because otherwise it doesn't work.");
+    config.logLevel = config.LOG_INFO;
+  }
+
   config.singleRun = false;
   var originalAutoWatch = config.autoWatch;
   config.autoWatch = false;
