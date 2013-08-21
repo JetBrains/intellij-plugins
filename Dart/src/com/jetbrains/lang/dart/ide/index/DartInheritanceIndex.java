@@ -6,7 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.searches.DefinitionsSearch;
+import com.intellij.psi.search.searches.DefinitionsScopedSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.QueryExecutor;
@@ -80,7 +80,7 @@ public class DartInheritanceIndex extends FileBasedIndexExtension<String, List<D
 
   public static List<DartClass> getItemsByName(final DartClass dartClass) {
     final List<DartClass> result = new ArrayList<DartClass>();
-    DefinitionsSearch.search(dartClass).forEach(new Processor<PsiElement>() {
+    DefinitionsScopedSearch.search(dartClass).forEach(new Processor<PsiElement>() {
       @Override
       public boolean process(PsiElement element) {
         if (element instanceof DartClass) {
