@@ -164,6 +164,7 @@ public class KarmaCoveragePeer {
 
       @Override
       public void handle(@NotNull JsonElement eventBody) {
+        LOG.info("coverageInitialized " + eventBody.toString());
         if (myCoverageInitialized.compareAndSet(true, false)) {
           String crfPropertyName = "coverage-reporter-found";
           Boolean coverageReporterFound = null;
