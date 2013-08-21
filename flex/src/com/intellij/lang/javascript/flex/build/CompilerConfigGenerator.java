@@ -149,10 +149,13 @@ public class CompilerConfigGenerator {
         swfVersion = FlexCommonUtils.getSwfVersionForTargetPlayer(targetPlayer);
       }
       else {
-        final String airVersion = getAirVersionIfCustomDescriptor(myBC);
+        String airVersion = getAirVersionIfCustomDescriptor(myBC);
+        if (airVersion == null) {
+          airVersion = FlexCommonUtils.getAirVersion(mySdk.getHomePath(), mySdk.getVersionString());
+        }
         swfVersion = airVersion != null
                      ? FlexCommonUtils.getSwfVersionForAirVersion(airVersion)
-                     : FlexCommonUtils.getSwfVersionForSdk(mySdk.getVersionString());
+                     : FlexCommonUtils.getSwfVersionForSdk_THE_WORST_WAY(mySdk.getVersionString());
       }
 
       addOption(rootElement, CompilerOptionInfo.SWF_VERSION_INFO, swfVersion);
@@ -189,7 +192,7 @@ public class CompilerConfigGenerator {
     if (bc.getTargetPlatform() == TargetPlatform.Desktop) {
       final AirDesktopPackagingOptions packagingOptions = bc.getAirDesktopPackagingOptions();
       if (!packagingOptions.isUseGeneratedDescriptor()) {
-        return FlexCommonUtils.parseAirVersion(packagingOptions.getCustomDescriptorPath());
+        return FlexCommonUtils.parseAirVersionFromDescriptorFile(packagingOptions.getCustomDescriptorPath());
       }
     }
     else if (bc.getTargetPlatform() == TargetPlatform.Mobile) {
@@ -206,11 +209,11 @@ public class CompilerConfigGenerator {
       String iosAirVersion = null;
 
       if (androidOptions.isEnabled() && !androidOptions.isUseGeneratedDescriptor()) {
-        androidAirVersion = FlexCommonUtils.parseAirVersion(androidOptions.getCustomDescriptorPath());
+        androidAirVersion = FlexCommonUtils.parseAirVersionFromDescriptorFile(androidOptions.getCustomDescriptorPath());
       }
 
       if (iosPackagingOptions.isEnabled() && !iosPackagingOptions.isUseGeneratedDescriptor()) {
-        iosAirVersion = FlexCommonUtils.parseAirVersion(iosPackagingOptions.getCustomDescriptorPath());
+        iosAirVersion = FlexCommonUtils.parseAirVersionFromDescriptorFile(iosPackagingOptions.getCustomDescriptorPath());
       }
 
       if (androidAirVersion == null) return iosAirVersion;

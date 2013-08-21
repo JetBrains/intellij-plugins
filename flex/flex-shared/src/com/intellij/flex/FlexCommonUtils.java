@@ -926,8 +926,8 @@ public class FlexCommonUtils {
   }
 
   @Nullable
-  public static String getAirSdkVersion(final String flexSdkHome) {
-    final File adtFile = new File(flexSdkHome + "/lib/adt.jar");
+  public static String getVersionOfAirSdkIncludedInFlexSdk(final String flexSdkHomePath) {
+    final File adtFile = new File(flexSdkHomePath + "/lib/adt.jar");
     if (!adtFile.isFile()) {
       return null;
     }
@@ -987,50 +987,45 @@ public class FlexCommonUtils {
     }
   }
 
-  public static String getAirVersion(final String sdkVersion) {
-    if (sdkVersion.startsWith(AIR_SDK_VERSION_PREFIX)) {
-      final Trinity<String, String, String> majorMinorRevision =
-        getMajorMinorRevisionVersion(sdkVersion.substring(AIR_SDK_VERSION_PREFIX.length()));
+  @Nullable
+  public static String getAirVersion(final String sdkHomePath, final String sdkVersion) {
+    final String version;
+
+    if (sdkVersion != null && sdkVersion.startsWith(AIR_SDK_VERSION_PREFIX)) {
+      version = sdkVersion.substring(AIR_SDK_VERSION_PREFIX.length());
+    }
+    else if (sdkHomePath != null && sdkHomePath.endsWith(".pom") && new File(sdkHomePath).isFile()) {
+      version = guessAirSdkVersionByFlexmojosSdkVersion(sdkVersion);
+    }
+    else {
+      version = getVersionOfAirSdkIncludedInFlexSdk(sdkHomePath);
+    }
+
+    if (version != null) {
+      final Trinity<String, String, String> majorMinorRevision = getMajorMinorRevisionVersion(version);
       return majorMinorRevision.third.isEmpty() || "0".equals(majorMinorRevision.third)
              ? majorMinorRevision.first + "." + majorMinorRevision.second
              : majorMinorRevision.first + "." + majorMinorRevision.second + "." + majorMinorRevision.third;
     }
 
-    // todo store adt -version
+    return null;
+  }
 
-    if (sdkVersion.startsWith("4.")) {
-      if (sdkVersion.startsWith("4.0")) {
-        return "1.5.3";
-      }
-      if (sdkVersion.startsWith("4.1")) {
-        return "2.0";
-      }
-      if (sdkVersion.startsWith("4.5")) {
-        return "2.6";
-      }
-
-      return "3.1";
-    }
-
-    if (sdkVersion.startsWith("3.")) {
-      if (sdkVersion.startsWith("3.0")) {
-        return "1.0";
-      }
-      if (sdkVersion.startsWith("3.1")) {
-        return "1.1";
-      }
-      if (sdkVersion.startsWith("3.2")) {
-        return "1.5";
-      }
-      if (sdkVersion.startsWith("3.3")) {
-        return "1.5";
-      }
-      if (sdkVersion.startsWith("3.4")) {
-        return "1.5.2";
-      }
+  private static String guessAirSdkVersionByFlexmojosSdkVersion(final String sdkVersion) {
+    // todo consider separate Flex and AIR SDK management supported by Flexmojos 6.
+    if (StringUtil.compareVersionNumbers(sdkVersion, "4") < 0) {
+      if (StringUtil.compareVersionNumbers(sdkVersion, "3.1") < 0) return "1.0";
+      if (StringUtil.compareVersionNumbers(sdkVersion, "3.2") < 0) return "1.1";
+      if (StringUtil.compareVersionNumbers(sdkVersion, "3.3") < 0) return "1.5";
+      if (StringUtil.compareVersionNumbers(sdkVersion, "3.4") < 0) return "1.5";
+      if (StringUtil.compareVersionNumbers(sdkVersion, "3.5") < 0) return "1.5.2";
 
       return "1.5.3";
     }
+
+    if (StringUtil.compareVersionNumbers(sdkVersion, "4.1") < 0) return "1.5.3";
+    if (StringUtil.compareVersionNumbers(sdkVersion, "4.5") < 0) return "2.0";
+    if (StringUtil.compareVersionNumbers(sdkVersion, "4.6") < 0) return "2.6";
 
     return "3.1";
   }
@@ -1047,7 +1042,7 @@ public class FlexCommonUtils {
   }
 
   @Nullable
-  public static String parseAirVersion(final String descriptorFilePath) {
+  public static String parseAirVersionFromDescriptorFile(final String descriptorFilePath) {
     if (StringUtil.isEmpty(descriptorFilePath)) return null;
 
     try {
@@ -1101,7 +1096,10 @@ public class FlexCommonUtils {
     return "9";
   }
 
-  public static String getSwfVersionForSdk(final String sdkVersion) {
+  /**
+   * Try not to use this method. Correct swf version can be obtained only by target player or AIR version.
+   */
+  public static String getSwfVersionForSdk_THE_WORST_WAY(final String sdkVersion) {
     if (sdkVersion.startsWith(AIR_SDK_VERSION_PREFIX)) {
       return getSwfVersionForAirVersion(sdkVersion.substring(AIR_SDK_VERSION_PREFIX.length()));
     }

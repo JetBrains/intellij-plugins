@@ -308,7 +308,12 @@ public class FlexBuilderUtils {
       return;
     }
 
-    final String airVersion = FlexCommonUtils.getAirVersion(StringUtil.notNullize(sdk.getVersionString()));
+    final String airVersion = FlexCommonUtils.getAirVersion(sdk.getHomePath(), sdk.getVersionString());
+    if (airVersion == null) {
+      context.processMessage(new CompilerMessage(getCompilerName(bc), BuildMessage.Kind.ERROR,
+                                                 FlexCommonBundle.message("failed.to.get.air.sdk.version.use.custom.descriptor")));
+      return;
+    }
     final String appId = FlexCommonUtils.fixApplicationId(bc.getMainClass());
     final String appName = StringUtil.getShortName(bc.getMainClass());
     final String swfName = PathUtilRt.getFileName(outputFilePath);

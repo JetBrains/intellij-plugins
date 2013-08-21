@@ -373,7 +373,9 @@ public class FlexBCConfigurable extends ProjectStructureElementConfigurable<Modi
 
       public String getAirVersion() {
         final Sdk sdk = myDependenciesConfigurable.getCurrentSdk();
-        return sdk == null || sdk.getVersionString() == null ? "" : FlexCommonUtils.getAirVersion(sdk.getVersionString());
+        return sdk == null || sdk.getVersionString() == null
+               ? ""
+               : StringUtil.notNullize(FlexCommonUtils.getAirVersion(sdk.getHomePath(), sdk.getVersionString()));
       }
 
       public String[] getExtensionIDs() {

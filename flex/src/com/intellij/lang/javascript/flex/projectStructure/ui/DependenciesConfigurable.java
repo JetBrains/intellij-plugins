@@ -561,7 +561,7 @@ public class DependenciesConfigurable extends NamedConfigurable<Dependencies> im
       else {
         text.append("Flex SDK " + sdkVersion, SimpleTextAttributes.REGULAR_ATTRIBUTES);
 
-        final String airSdkVersion = FlexCommonUtils.getAirSdkVersion(mySdk.getHomePath());
+        final String airSdkVersion = FlexCommonUtils.getVersionOfAirSdkIncludedInFlexSdk(mySdk.getHomePath());
         if (airSdkVersion != null) {
           text.append(", AIR SDK " + airSdkVersion, SimpleTextAttributes.REGULAR_ATTRIBUTES);
         }
