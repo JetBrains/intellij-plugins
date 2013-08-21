@@ -9,6 +9,7 @@ import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.javascript.karma.util.ArchivedOutputListener;
 import com.intellij.javascript.karma.util.ProcessOutputArchive;
 import com.intellij.javascript.nodejs.BaseNodeJSFilter;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -17,6 +18,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithActions;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.content.Content;
@@ -32,20 +34,21 @@ public class KarmaServerLogComponent implements ComponentWithActions {
 
   private final ProcessOutputArchive myProcessOutputArchive;
   private final ConsoleView myConsole;
-  private final KarmaServer myKarmaServer;
+  private final KarmaServer myServer;
   private ActionGroup myActionGroup;
 
   public KarmaServerLogComponent(@NotNull Project project,
-                                 @NotNull KarmaServer karmaServer) {
-    myKarmaServer = karmaServer;
-    myProcessOutputArchive = karmaServer.getProcessOutputArchive();
+                                 @NotNull KarmaServer server,
+                                 @Nullable Disposable parentDisposable) {
+    myServer = server;
+    myProcessOutputArchive = server.getProcessOutputArchive();
     GlobalSearchScope scope = GlobalSearchScope.allScope(project);
     TextConsoleBuilderImpl builder = new TextConsoleBuilderImpl(project, scope);
     builder.setUsePredefinedMessageFilter(false);
     builder.addFilter(new BaseNodeJSFilter(project));
     myConsole = builder.getConsole();
-    if (myConsole == null) {
-      throw new RuntimeException("Console shouldn't be null!");
+    if (parentDisposable != null) {
+      Disposer.register(parentDisposable, myConsole);
     }
   }
 
@@ -127,10 +130,10 @@ public class KarmaServerLogComponent implements ComponentWithActions {
                                                     myConsole.getPreferredFocusableComponent());
     consoleContent.setCloseable(false);
     ui.addContent(consoleContent, 4, PlaceInGrid.bottom, false);
-    if (!myKarmaServer.isPortBound()) {
+    if (!myServer.isPortBound()) {
       ui.selectAndFocus(consoleContent, false, false);
     }
-    myKarmaServer.onTerminated(new KarmaServerTerminatedListener() {
+    myServer.onTerminated(new KarmaServerTerminatedListener() {
       @Override
       public void onTerminated(int exitCode) {
         if (!ui.isDisposed()) {

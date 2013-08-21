@@ -17,7 +17,9 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
-import com.intellij.javascript.karma.server.*;
+import com.intellij.javascript.karma.server.KarmaServer;
+import com.intellij.javascript.karma.server.KarmaServerLogComponent;
+import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
@@ -118,7 +120,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
   @Override
   public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
-    KarmaServerLogComponent logComponent = new KarmaServerLogComponent(getProperties().getProject(), myServer);
+    KarmaServerLogComponent logComponent = new KarmaServerLogComponent(getProperties().getProject(), myServer, this);
     logComponent.installOn(ui);
   }
 
