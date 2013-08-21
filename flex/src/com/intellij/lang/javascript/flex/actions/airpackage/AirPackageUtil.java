@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -42,7 +41,6 @@ public class AirPackageUtil {
 
   public static final String TEMP_KEYSTORE_PASSWORD = "keystore_password";
 
-  private static final Pattern AIR_VERSION_PATTERN = Pattern.compile("[1-9]\\.[0-9]{1,2}(\\.[0-9]{1,6})*");
   static final String ADB_RELATIVE_PATH = "/lib/android/bin/adb" + (SystemInfo.isWindows ? ".exe" : "");
   private static final String IDB_RELATIVE_PATH = "/lib/aot/bin/iOSBin/idb" + (SystemInfo.isWindows ? ".exe" : "");
 
@@ -67,19 +65,8 @@ public class AirPackageUtil {
 
       protected boolean checkMessages() {
         if (myMessages.size() == 1) {
-          String output = myMessages.get(0);
-          // adt version "1.5.0.7220"
-          // 2.6.0.19120
-
-          final String prefix = "adt version \"";
-          final String suffix = "\"";
-
-          if (output.startsWith(prefix) && output.endsWith(suffix)) {
-            output = output.substring(prefix.length(), output.length() - suffix.length());
-          }
-
-          if (AIR_VERSION_PATTERN.matcher(output).matches()) {
-            versionRef.set(output);
+          FlexCommonUtils.parseAirVersionFromAdtOutput(myMessages.get(0), versionRef);
+          if (!versionRef.isNull()) {
             return true;
           }
         }
@@ -126,7 +113,7 @@ public class AirPackageUtil {
               versionRef.set("");
               return true;
             }
-            else if (AIR_VERSION_PATTERN.matcher(output).matches()) {
+            else if (FlexCommonUtils.AIR_VERSION_PATTERN.matcher(output).matches()) {
               versionRef.set(output);
               return true;
             }

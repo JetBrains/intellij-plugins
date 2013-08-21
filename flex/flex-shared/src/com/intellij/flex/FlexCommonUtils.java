@@ -21,13 +21,13 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.PairConsumer;
 import com.intellij.util.PathUtilRt;
 import com.intellij.util.SystemProperties;
+import gnu.trove.THashMap;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.cmdline.ProjectDescriptor;
 import org.jetbrains.jps.incremental.Utils;
 import org.jetbrains.jps.model.JpsElement;
 import org.jetbrains.jps.model.JpsProject;
@@ -96,6 +96,9 @@ public class FlexCommonUtils {
   private static final Logger LOG = Logger.getInstance(FlexCommonUtils.class.getName());
 
   public static final boolean KEEP_TEMP_FILES = Boolean.parseBoolean(System.getProperty("idea.keep.flex.temporary.files"));
+  public static final Pattern AIR_VERSION_PATTERN = Pattern.compile("[1-9]\\.[0-9]{1,2}(\\.[0-9]{1,10})*");
+
+  private static Map<Pair<String, Long>, String> ourAdtJarPathAndTimestampToVersion = new THashMap<Pair<String, Long>, String>();
 
   public static boolean isSourceFile(final String fileName) {
     final String ext = FileUtilRt.getExtension(fileName);
@@ -920,6 +923,68 @@ public class FlexCommonUtils {
     }
 
     return StringUtil.replace(text, from, to);
+  }
+
+  @Nullable
+  public static String getAirSdkVersion(final String flexSdkHome) {
+    final File adtFile = new File(flexSdkHome + "/lib/adt.jar");
+    if (!adtFile.isFile()) {
+      return null;
+    }
+
+    String version = ourAdtJarPathAndTimestampToVersion.get(Pair.create(adtFile.getPath(), adtFile.lastModified()));
+    if (version != null) {
+      return version;
+    }
+
+    try {
+      final Ref<String> versionRef = Ref.create();
+
+      final String javaExecutable =
+        FileUtil.toSystemDependentName((SystemProperties.getJavaHome() + "/bin/java" + (SystemInfo.isWindows ? ".exe" : "")));
+
+      final Process process = Runtime.getRuntime().exec(new String[]{javaExecutable, "-jar", adtFile.getPath(), "-version"});
+      final BaseOSProcessHandler handler = new BaseOSProcessHandler(process, "doesn't matter", Charset.defaultCharset());
+
+      handler.addProcessListener(new ProcessAdapter() {
+        public void onTextAvailable(ProcessEvent event, Key outputType) {
+          if (outputType != ProcessOutputTypes.SYSTEM) {
+            parseAirVersionFromAdtOutput(event.getText().trim(), versionRef);
+          }
+        }
+      });
+
+      handler.startNotify();
+      handler.waitFor(3000);
+
+      if (!handler.isProcessTerminated()) {
+        handler.destroyProcess();
+      }
+
+      version = versionRef.get();
+      ourAdtJarPathAndTimestampToVersion.put(Pair.create(adtFile.getPath(), adtFile.lastModified()), version);
+
+      return version;
+    }
+    catch (IOException e) {/*ignore*/}
+
+    return null;
+  }
+
+  public static void parseAirVersionFromAdtOutput(String adtOutput, final Ref<String> versionRef) {
+    // adt version "1.5.0.7220"
+    // 2.6.0.19120
+
+    final String prefix = "adt version \"";
+    final String suffix = "\"";
+
+    if (adtOutput.startsWith(prefix) && adtOutput.endsWith(suffix)) {
+      adtOutput = adtOutput.substring(prefix.length(), adtOutput.length() - suffix.length());
+    }
+
+    if (AIR_VERSION_PATTERN.matcher(adtOutput).matches()) {
+      versionRef.set(adtOutput);
+    }
   }
 
   public static String getAirVersion(final String sdkVersion) {
