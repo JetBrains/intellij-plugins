@@ -143,7 +143,6 @@ public abstract class TelQualifiedReference implements PsiPolyVariantReference {
     PsiFile file = myElement.getContainingFile();
     if (file.getLanguage() == TelLanguage.INSTANCE) file =
       InjectedLanguageManager.getInstance(file.getProject()).getInjectionHost(file).getContainingFile();
-    assert file instanceof TmlFile;
     final TapestryProject project = TapestryUtils.getTapestryProject(file);
     if (project == null) return null;
     PresentationLibraryElement libraryElement = project.findElementByTemplate(file);
