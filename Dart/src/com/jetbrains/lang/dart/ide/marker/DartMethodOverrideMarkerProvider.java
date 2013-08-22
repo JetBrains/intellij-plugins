@@ -21,14 +21,12 @@ import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.psi.DartInterfaceDefinition;
-import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -56,22 +54,7 @@ public class DartMethodOverrideMarkerProvider implements LineMarkerProvider {
 
   @Nullable
   private static LineMarkerInfo createOverrideMarker(DartClass dartClass, DartComponent dartComponent) {
-    final List<DartClass> supers = new ArrayList<DartClass>();
-    final DartClassResolveResult dartClassResolveResult = DartResolveUtil.resolveClassByType(dartClass.getSuperClass());
-    if (dartClassResolveResult.getDartClass() != null) {
-      supers.add(dartClassResolveResult.getDartClass());
-    }
-    List<DartClassResolveResult> implementsAndMixinsList = DartResolveUtil.resolveClassesByTypes(
-      DartResolveUtil.getImplementsAndMixinsList(dartClass)
-    );
-    for (DartClassResolveResult resolveResult : implementsAndMixinsList) {
-      final DartClass resolveResultDartClass = resolveResult.getDartClass();
-      if (resolveResultDartClass != null) {
-        supers.add(resolveResultDartClass);
-      }
-    }
-    final List<DartComponent> superItems = DartResolveUtil.findNamedSubComponents(supers.toArray(new DartClass[supers.size()]));
-    return tryCreateOverrideMarker(dartComponent, superItems);
+    return tryCreateOverrideMarker(dartComponent, DartResolveUtil.findNamedSuperComponents(dartClass));
   }
 
   @Nullable

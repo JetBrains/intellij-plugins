@@ -27,6 +27,7 @@ import com.intellij.psi.xml.XmlTag;
 import com.intellij.util.BooleanValueHolder;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.ContainerUtilRt;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.DartTokenTypes;
 import com.jetbrains.lang.dart.DartTokenTypesSets;
@@ -1121,5 +1122,26 @@ public class DartResolveUtil {
 
   public static List<DartType> getImplementsAndMixinsList(DartClass dartClass) {
     return ContainerUtil.concat(dartClass.getImplementsList(), dartClass.getMixinsList());
+  }
+
+  public static List<DartComponent> findNamedSuperComponents(@Nullable DartClass dartClass) {
+    if (dartClass == null) {
+      return ContainerUtilRt.emptyList();
+    }
+    final List<DartClass> supers = new ArrayList<DartClass>();
+    final DartClassResolveResult dartClassResolveResult = resolveClassByType(dartClass.getSuperClass());
+    if (dartClassResolveResult.getDartClass() != null) {
+      supers.add(dartClassResolveResult.getDartClass());
+    }
+    List<DartClassResolveResult> implementsAndMixinsList = resolveClassesByTypes(
+      getImplementsAndMixinsList(dartClass)
+    );
+    for (DartClassResolveResult resolveResult : implementsAndMixinsList) {
+      final DartClass resolveResultDartClass = resolveResult.getDartClass();
+      if (resolveResultDartClass != null) {
+        supers.add(resolveResultDartClass);
+      }
+    }
+    return findNamedSubComponents(supers.toArray(new DartClass[supers.size()]));
   }
 }

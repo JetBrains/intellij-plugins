@@ -50,6 +50,18 @@ public class DartRenameTest extends DartCodeInsightFixtureTestCase {
     doTest("fooNew");
   }
 
+  public void testOverriddenMethod1() throws Throwable {
+    doTest("fooNew");
+  }
+
+  public void testOverriddenMethod2() throws Throwable {
+    doTest("fooNew");
+  }
+
+  public void testOverriddenMethod3() throws Throwable {
+    doTest("fooNew");
+  }
+
   public void testMainClass() throws Throwable {
     doTest("MainClassAfter");
   }
