@@ -311,7 +311,7 @@ public class AnnotationBackedDescriptorImpl extends BasicXmlAttributeDescriptor
   }
 
   @Override
-  protected PsiElement getEnumeratedValueDeclaration(XmlAttributeValue attributeValue, String value) {
+  public PsiElement getEnumeratedValueDeclaration(XmlAttributeValue attributeValue, String value) {
     for (String s : getEnumeratedValues()) {
       if (Comparing.equal(s, value, myEnumeratedValuesCaseSensitive)) {
         return getDeclaration();
