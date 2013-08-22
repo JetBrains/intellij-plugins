@@ -32,15 +32,15 @@ public class OgnlMethodCallExpressionImpl extends OgnlExpressionImpl implements 
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitMethodCallExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<OgnlExpression> getExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitMethodCallExpression(this);
-    else super.accept(visitor);
   }
 
   @Override

@@ -32,15 +32,15 @@ public class OgnlVariableAssignmentExpressionImpl extends OgnlExpressionImpl imp
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitVariableAssignmentExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public OgnlExpression getAssignment() {
     return findChildByClass(OgnlExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitVariableAssignmentExpression(this);
-    else super.accept(visitor);
   }
 
 }

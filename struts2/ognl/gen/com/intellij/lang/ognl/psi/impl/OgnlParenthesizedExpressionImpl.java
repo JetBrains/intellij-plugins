@@ -32,15 +32,15 @@ public class OgnlParenthesizedExpressionImpl extends OgnlExpressionImpl implemen
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitParenthesizedExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public OgnlExpression getExpression() {
     return findChildByClass(OgnlExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitParenthesizedExpression(this);
-    else super.accept(visitor);
   }
 
 }

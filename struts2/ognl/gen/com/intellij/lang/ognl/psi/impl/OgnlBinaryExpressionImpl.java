@@ -17,14 +17,17 @@
 // Generated from ognl.bnf, do not modify
 package com.intellij.lang.ognl.psi.impl;
 
-import java.util.List;
-import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
+import com.intellij.lang.ognl.psi.OgnlBinaryExpression;
+import com.intellij.lang.ognl.psi.OgnlExpression;
+import com.intellij.lang.ognl.psi.OgnlTokenType;
+import com.intellij.lang.ognl.psi.OgnlVisitor;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import static com.intellij.lang.ognl.OgnlTypes.*;
-import com.intellij.lang.ognl.psi.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class OgnlBinaryExpressionImpl extends OgnlExpressionImpl implements OgnlBinaryExpression {
 
@@ -32,15 +35,15 @@ public class OgnlBinaryExpressionImpl extends OgnlExpressionImpl implements Ognl
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitBinaryExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<OgnlExpression> getExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, OgnlExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof OgnlVisitor) ((OgnlVisitor)visitor).visitBinaryExpression(this);
-    else super.accept(visitor);
   }
 
   @Override
