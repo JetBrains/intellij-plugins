@@ -74,18 +74,16 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
       return null;
     }
     KarmaCoveragePeer coveragePeer = server.getCoveragePeer();
-    KarmaCoverageInitStatus initStatus = coveragePeer.getInitStatus();
-    if (initStatus != null) {
-      if (!initStatus.isCoverageReportFound() && !initStatus.isCoveragePluginInstalled()) {
-        KarmaCoveragePluginMissingDialog.showWarning(project, server.getKarmaPackageDir());
-        server.getRestarter().requestRestart();
-        return showKarmaServerOnly(server, env, contentToReuse);
+    KarmaCoverageStartupStatus status = coveragePeer.getStartupStatus();
+    if (status != null) {
+      if (isSuccessStatus(project, server, status)) {
+        return executeAfterSuccessfulInitialization(project, karmaState, contentToReuse, env, server);
       }
-      return executeAfterSuccessfulInitialization(project, karmaState, contentToReuse, env, server);
+      return showKarmaServerOnly(server, env, contentToReuse);
     }
     coveragePeer.doWhenCoverageInitialized(new KarmaCoverageInitializationListener() {
       @Override
-      public void onCoverageInitialized(@NotNull KarmaCoverageInitStatus initStatus) {
+      public void onCoverageInitialized(@NotNull KarmaCoverageStartupStatus initStatus) {
         RunnerAndConfigurationSettings configuration = env.getRunnerAndConfigurationSettings();
         if (configuration != null) {
           ProgramRunnerUtil.executeConfiguration(project, configuration, env.getExecutor());
@@ -93,6 +91,27 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
       }
     }, project);
     return null;
+  }
+
+  private static boolean isSuccessStatus(@NotNull Project project,
+                                         @NotNull KarmaServer server,
+                                         @NotNull KarmaCoverageStartupStatus status) {
+    if (!status.isCoverageReporterSpecifiedInConfig()) {
+      KarmaCoverageWarnings.warnAboutMissingCoverageReporterInConfigFile(project);
+    }
+    else if (!status.isCoverageReportFound()) {
+      if (!status.isCoveragePluginInstalled()) {
+        KarmaCoverageWarnings.suggestCoveragePluginInstallation(project, server.getKarmaPackageDir());
+        server.getRestarter().requestRestart();
+      }
+      else {
+        KarmaCoverageWarnings.warnAboutMissingCoveragePluginInConfigFile(project);
+      }
+    }
+    else {
+      return true;
+    }
+    return false;
   }
 
   private RunContentDescriptor showKarmaServerOnly(@NotNull final KarmaServer server,

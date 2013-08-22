@@ -3,7 +3,6 @@ package com.intellij.javascript.karma.coverage;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.StreamEventHandler;
 import com.intellij.javascript.karma.util.GsonUtil;
@@ -37,7 +36,7 @@ public class KarmaCoveragePeer {
 
   private final File myCoverageTempDir;
   private volatile KarmaCoverageSession myActiveCoverageSession;
-  private KarmaCoverageInitStatus myInitStatus;
+  private KarmaCoverageStartupStatus myStartupStatus;
   private List<KarmaCoverageInitializationListener> myInitListeners = Lists.newCopyOnWriteArrayList();
 
   public KarmaCoveragePeer() throws IOException {
@@ -64,23 +63,23 @@ public class KarmaCoveragePeer {
   }
 
   @Nullable
-  public KarmaCoverageInitStatus getInitStatus() {
-    return myInitStatus;
+  public KarmaCoverageStartupStatus getStartupStatus() {
+    return myStartupStatus;
   }
 
   /**
    * Should be called in EDT
    */
   public void doWhenCoverageInitialized(@NotNull KarmaCoverageInitializationListener listener, @NotNull Disposable parent) {
-    if (myInitStatus != null) {
-      listener.onCoverageInitialized(myInitStatus);
+    if (myStartupStatus != null) {
+      listener.onCoverageInitialized(myStartupStatus);
     }
     else {
       final int timeoutMillis = 10000;
       new Alarm(Alarm.ThreadToUse.SWING_THREAD, parent).addRequest(new Runnable() {
         @Override
         public void run() {
-          if (myInitStatus == null) {
+          if (myStartupStatus == null) {
             LOG.error("Karma coverage hasn't been initialized in " + timeoutMillis + " ms");
             myInitListeners.clear();
           }
@@ -90,11 +89,11 @@ public class KarmaCoveragePeer {
     }
   }
 
-  private void fireOnCoverageInitialized(@NotNull final KarmaCoverageInitStatus initStatus) {
+  private void fireOnCoverageInitialized(@NotNull final KarmaCoverageStartupStatus initStatus) {
     UIUtil.invokeLaterIfNeeded(new Runnable() {
       @Override
       public void run() {
-        myInitStatus = initStatus;
+        myStartupStatus = initStatus;
         for (KarmaCoverageInitializationListener listener : myInitListeners) {
           listener.onCoverageInitialized(initStatus);
         }
@@ -104,9 +103,13 @@ public class KarmaCoveragePeer {
   }
 
   private void onCoverageInitialized(@NotNull final KarmaServer server,
-                                     final boolean coverageReporterFound) {
+                                     boolean coverageReporterSpecifiedInConfig,
+                                     boolean coverageReporterFound) {
+    if (!coverageReporterSpecifiedInConfig) {
+      fireOnCoverageInitialized(new KarmaCoverageStartupStatus(false, true, true));
+    }
     if (coverageReporterFound) {
-      fireOnCoverageInitialized(new KarmaCoverageInitStatus(true, true));
+      fireOnCoverageInitialized(new KarmaCoverageStartupStatus(true, true, true));
     }
     else {
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
@@ -131,7 +134,7 @@ public class KarmaCoveragePeer {
       NodeModuleSearchUtil.findModulesWithName(modules, "karma-coverage", karmaPackageVirtualDir, null, false);
       coveragePluginInstalled = !modules.isEmpty();
     }
-    fireOnCoverageInitialized(new KarmaCoverageInitStatus(false, coveragePluginInstalled));
+    fireOnCoverageInitialized(new KarmaCoverageStartupStatus(true, false, coveragePluginInstalled));
   }
 
   public void registerEventHandlers(@NotNull final KarmaServer server) {
@@ -159,31 +162,30 @@ public class KarmaCoveragePeer {
       @NotNull
       @Override
       public String getEventType() {
-        return "coverageInitialized";
+        return "coverageStartupStatus";
       }
 
       @Override
       public void handle(@NotNull JsonElement eventBody) {
-        LOG.info("coverageInitialized " + eventBody.toString());
         if (myCoverageInitialized.compareAndSet(true, false)) {
-          String crfPropertyName = "coverage-reporter-found";
           Boolean coverageReporterFound = null;
+          Boolean coverageReporterSpecifiedInConfig = null;
           if (eventBody.isJsonObject()) {
-            JsonObject object = eventBody.getAsJsonObject();
-            JsonElement crfElement = object.get(crfPropertyName);
-            if (crfElement != null && crfElement.isJsonPrimitive()) {
-              JsonPrimitive crfPrimitive = crfElement.getAsJsonPrimitive();
-              if (crfPrimitive.isBoolean()) {
-                coverageReporterFound = crfPrimitive.getAsBoolean();
-              }
-            }
+            JsonObject eventObj = eventBody.getAsJsonObject();
+            coverageReporterSpecifiedInConfig = GsonUtil.getBooleanProperty(eventObj, "coverageReporterSpecifiedInConfig");
+            coverageReporterFound = GsonUtil.getBooleanProperty(eventObj, "coverageReporterFound");
+          }
+          if (coverageReporterSpecifiedInConfig == null) {
+            LOG.warn("Malformed '" + getEventType()
+                     + "' event: can not found boolean property 'coverageReporterSpecifiedInConfig'!");
+            coverageReporterSpecifiedInConfig = true;
           }
           if (coverageReporterFound == null) {
-            LOG.warn("Malformed 'coverageInitialized' event: can not found boolean property "
-                     + crfPropertyName + " in " + eventBody.toString());
+            LOG.warn("Malformed '" + getEventType()
+                     + "' event: can not found boolean property 'coverageReporterFound'!");
             coverageReporterFound = true;
           }
-          onCoverageInitialized(server, coverageReporterFound);
+          onCoverageInitialized(server, coverageReporterSpecifiedInConfig, coverageReporterFound);
         }
       }
     });

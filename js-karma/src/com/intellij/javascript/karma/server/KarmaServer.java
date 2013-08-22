@@ -83,6 +83,7 @@ public class KarmaServer {
     myProcessOutputArchive.addStreamEventListener(new StreamEventListener() {
       @Override
       public void on(@NotNull String eventType, @NotNull String eventBody) {
+        LOG.info("Processing Karma event " + eventType + " " + eventBody);
         JsonElement jsonElement;
         try {
           JsonParser jsonParser = new JsonParser();
