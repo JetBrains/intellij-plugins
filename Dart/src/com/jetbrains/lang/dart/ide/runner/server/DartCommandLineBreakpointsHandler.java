@@ -46,6 +46,7 @@ public class DartCommandLineBreakpointsHandler {
                 final int id = result.get("breakpointId").getAsInt();
                 myBreakpointToIndexMap.put(breakpoint, id);
                 myIndexToBreakpointMap.put(id, breakpoint);
+                myDebugProcess.getSession().updateBreakpointPresentation(breakpoint, AllIcons.Debugger.Db_verified_breakpoint, null);
                 return true;
               }
             });
