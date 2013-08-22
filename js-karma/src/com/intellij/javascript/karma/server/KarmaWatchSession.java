@@ -32,7 +32,7 @@ public class KarmaWatchSession {
       @Override
       public void run() {
         for (String path : paths) {
-          WatchPattern watchPattern = new WatchPattern(myFileSystem, path);
+          WatchPattern watchPattern = new WatchPattern(myFileSystem, myChangedFilesManager, path);
           myWatchPatterns.add(watchPattern);
         }
         myFileSystem.addVirtualFileListener(myVfsListener);
@@ -48,6 +48,12 @@ public class KarmaWatchSession {
       }
     }
     return false;
+  }
+
+  private void updateWatchPatterns() {
+    for (WatchPattern pattern : myWatchPatterns) {
+      pattern.update(true);
+    }
   }
 
   public void stop() {
@@ -80,6 +86,7 @@ public class KarmaWatchSession {
 
     @Override
     public void propertyChanged(VirtualFilePropertyEvent event) {
+      updateWatchPatterns();
       if ("name".equals(event.getPropertyName())) {
         VirtualFile parent = event.getParent();
         if (parent != null) {
@@ -103,6 +110,7 @@ public class KarmaWatchSession {
 
     @Override
     public void fileCreated(VirtualFileEvent event) {
+      updateWatchPatterns();
       VirtualFile file = event.getFile();
       if (insideRoots(file)) {
         myChangedFilesManager.onFileAdded(file.getPath());
@@ -111,6 +119,7 @@ public class KarmaWatchSession {
 
     @Override
     public void fileDeleted(VirtualFileEvent event) {
+      updateWatchPatterns();
       VirtualFile file = event.getFile();
       if (insideRoots(file)) {
         myChangedFilesManager.onFileRemoved(file.getPath());
@@ -119,6 +128,7 @@ public class KarmaWatchSession {
 
     @Override
     public void fileMoved(VirtualFileMoveEvent event) {
+      updateWatchPatterns();
       String fileName = event.getFileName();
       VirtualFile oldParent = event.getOldParent();
       if (insideRoots(oldParent)) {
@@ -134,6 +144,7 @@ public class KarmaWatchSession {
 
     @Override
     public void fileCopied(VirtualFileCopyEvent event) {
+      updateWatchPatterns();
       VirtualFile file = event.getFile();
       if (insideRoots(file)) {
         myChangedFilesManager.onFileAdded(file.getPath());
@@ -166,16 +177,21 @@ public class KarmaWatchSession {
     private static final Pattern BASE_DIR_PATTERN = Pattern.compile("/[^/]*[*(].*$");
 
     private final LocalFileSystem myFileSystem;
+    private final KarmaChangedFilesManager myChangedFileManager;
     private final String myVfsPath;
     private final String myBasePathDir;
     private final boolean myCheckBasePathDir;
     private LocalFileSystem.WatchRequest myWatchRequest;
     private VirtualFile myRoot;
+    private String myRootPath;
 
-    private WatchPattern(@NotNull LocalFileSystem fileSystem, @NotNull final String pattern) {
+    private WatchPattern(@NotNull LocalFileSystem fileSystem,
+                         @NotNull KarmaChangedFilesManager changedFilesManager,
+                         @NotNull final String pattern) {
       LOG.info("Start watching path pattern " + pattern);
 
       myFileSystem = fileSystem;
+      myChangedFileManager = changedFilesManager;
       myVfsPath = pattern.replace(File.separatorChar, SEPARATOR_CHAR);
       String baseDirPath = BASE_DIR_PATTERN.matcher(myVfsPath).replaceFirst("");
       if (baseDirPath.isEmpty()) {
@@ -184,42 +200,69 @@ public class KarmaWatchSession {
       myBasePathDir = baseDirPath;
       myCheckBasePathDir = !myVfsPath.equals(myBasePathDir);
 
-      if (myRoot != null) {
-        myWatchRequest = watchDirectory(myRoot);
-      }
-      else {
-        LOG.warn("Can not find watch root for " + myBasePathDir);
-      }
+      update(false);
     }
 
-    public void check() {
-      if (myWatchRequest != null) {
-        return;
+    public void update(boolean rescan) {
+      boolean noRootBefore = false;
+      boolean rootValid = myRoot != null && myRoot.isValid();
+      if (rootValid) {
+        String path = myRoot.getPath();
+        if (!path.equals(myRootPath)) {
+          rootValid = false;
+          if (myRootPath != null) {
+            VfsUtilCore.visitChildrenRecursively(myRoot, new VirtualFileVisitor() {
+              @Override
+              public boolean visitFile(@NotNull VirtualFile file) {
+                if (!file.isDirectory()) {
+                  String subPath = VfsUtilCore.getRelativePath(file, myRoot, SEPARATOR_CHAR);
+                  if (subPath != null) {
+                    myChangedFileManager.onFileRemoved(join(myRootPath, subPath));
+                  }
+                }
+                return true;
+              }
+            });
+          }
+        }
       }
-      if (myRoot == null || !myRoot.isValid()) {
-        VirtualFile newRoot = null;
+      if (!rootValid) {
+        noRootBefore = true;
+        myRoot = null;
+        myRootPath = null;
+        stopWatching();
         final VirtualFile file = myFileSystem.findFileByPath(myVfsPath);
         if (file != null && file.isValid()) {
-          newRoot = file;
+          myRoot = file;
         }
         else if (myCheckBasePathDir) {
           final VirtualFile baseDir = myFileSystem.findFileByPath(myBasePathDir);
           if (baseDir != null && baseDir.isValid()) {
-            newRoot = baseDir;
+            myRoot = baseDir;
           }
         }
-        myRoot = newRoot;
+        if (myRoot != null) {
+          myRootPath = myRoot.getPath();
+        }
       }
-      if (myRoot != null) {
-        myWatchRequest = watchDirectory(myRoot);
+      if (myRoot == null) {
+        LOG.warn("[Karma watch] Can not find vfs root for " + myBasePathDir);
+        return;
+      }
+      if (myWatchRequest == null) {
+        myWatchRequest = watchRoot(myRoot, rescan && noRootBefore);
+        LOG.info("Watching " + myRoot.getPath());
       }
     }
 
     @Nullable
-    private LocalFileSystem.WatchRequest watchDirectory(@NotNull VirtualFile dir) {
+    private LocalFileSystem.WatchRequest watchRoot(@NotNull final VirtualFile dir, final boolean reportChildren) {
       VfsUtilCore.visitChildrenRecursively(dir, new VirtualFileVisitor() {
         @Override
         public boolean visitFile(@NotNull VirtualFile file) {
+          if (reportChildren && !file.isDirectory()) {
+            myChangedFileManager.onFileAdded(file.getPath());
+          }
           file.getChildren();
           return true;
         }
@@ -236,6 +279,7 @@ public class KarmaWatchSession {
       if (watchRequest != null) {
         myFileSystem.removeWatchedRoot(watchRequest);
       }
+      myWatchRequest = null;
     }
   }
 
