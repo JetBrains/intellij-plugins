@@ -99,8 +99,7 @@ function startBrowsersTracking(globalEmitter) {
 }
 
 function IntellijReporter(config, fileList, formatError, globalEmitter) {
-  var fileListUpdater = new FileListUpdater(config, fileList);
-//  var fileListManager = new FileListTracker(globalEmitter);
+  new FileListUpdater(config, fileList);
   startBrowsersTracking(globalEmitter);
   this.adapters = [];
   var totalTestCount, uncheckedBrowserCount;
@@ -118,7 +117,6 @@ function IntellijReporter(config, fileList, formatError, globalEmitter) {
     totalTestCount = 0;
     uncheckedBrowserCount = browsers.length;
     tree = new Tree(cli.getConfigFile(), write);
-//    fileListManager.dumpFiles();
     process.nextTick(function() {
       tree.write('##teamcity[enteredTheMatrix]\n');
     });
@@ -173,5 +171,7 @@ function IntellijReporter(config, fileList, formatError, globalEmitter) {
 }
 
 IntellijReporter.$inject = ['config', 'fileList', 'formatError', 'emitter'];
+
+IntellijReporter.reporterName = 'intellij_c831a91b03572bad3b3db88354641e3b';
 
 module.exports = IntellijReporter;

@@ -1,7 +1,8 @@
-var IntellijReporter = require('./intellijReporter.js')
-  , IntellijCoverageReporter = require('./intellijCoverageReporter.js');
+var IntellijReporter = require('./intellijReporter')
+  , IntellijCoverageReporter = require('./intellijCoverageReporter');
 
-module.exports = {
-  'reporter:intellij' : ['type', IntellijReporter],
-  'reporter:intellijCoverage' : ['type', IntellijCoverageReporter]
-};
+var extensions = {};
+extensions['reporter:' + IntellijReporter.reporterName] = ['type', IntellijReporter];
+extensions['reporter:' + IntellijCoverageReporter.reporterName] = ['type', IntellijCoverageReporter];
+
+module.exports = extensions;

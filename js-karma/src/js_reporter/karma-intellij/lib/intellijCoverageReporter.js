@@ -39,19 +39,27 @@ function findKarmaCoverageReporterConstructor(injector) {
 }
 
 function IntellijCoverageReporter(injector, config, helper, logger) {
-  var KarmaCoverageReporter = findKarmaCoverageReporterConstructor(injector);
-  if (KarmaCoverageReporter != null) {
-    init.call(this, KarmaCoverageReporter, config, helper, logger);
+  var KarmaCoverageReporterConstructor = findKarmaCoverageReporterConstructor(injector);
+  if (KarmaCoverageReporterConstructor != null) {
+    init.call(this, KarmaCoverageReporterConstructor, config, helper, logger);
   }
   else {
     console.warn("IDE coverage reporter is disabled");
     this.adapters = [];
   }
-  var coverageReporterFound = KarmaCoverageReporter != null;
-  intellijUtil.sendIntellijEvent('coverageInitialized', {
-    'coverage-reporter-found' : coverageReporterFound
-  });
+  IntellijCoverageReporter.reportCoverageStartupStatus(true, KarmaCoverageReporterConstructor != null);
 }
+
+IntellijCoverageReporter.reportCoverageStartupStatus = function (coverageReporterSpecifiedInConfig, coverageReporterFound) {
+  var event = {
+    coverageReporterSpecifiedInConfig : coverageReporterSpecifiedInConfig
+  };
+  if (coverageReporterFound == null) {
+    coverageReporterFound = true;
+  }
+  event.coverageReporterFound = coverageReporterFound;
+  intellijUtil.sendIntellijEvent('coverageStartupStatus', event);
+};
 
 function init(KarmaCoverageReporter, config, helper, logger) {
   var rootConfig = {
@@ -82,5 +90,6 @@ function init(KarmaCoverageReporter, config, helper, logger) {
 }
 
 IntellijCoverageReporter.$inject = ['injector', 'config', 'helper', 'logger'];
+IntellijCoverageReporter.reporterName = 'intellijCoverage_33e284dac2b015a9da50d767dc3fa58a';
 
 module.exports = IntellijCoverageReporter;

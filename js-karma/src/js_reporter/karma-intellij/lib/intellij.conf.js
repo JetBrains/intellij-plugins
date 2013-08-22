@@ -1,6 +1,8 @@
-var cli = require('./intellijCli.js')
-  , intellijUtil = require('./intellijUtil.js')
-  , originalConfigPath = cli.getConfigFile();
+var cli = require('./intellijCli')
+  , intellijUtil = require('./intellijUtil')
+  , originalConfigPath = cli.getConfigFile()
+  , IntellijReporter = require('./intellijReporter')
+  , IntellijCoverageReporter = require('./intellijCoverageReporter');
 
 function setBasePath(config) {
   var path = require('path');
@@ -15,10 +17,13 @@ module.exports = function(config) {
   var originalReporters = config.reporters || [];
   var coverageEnabled = originalReporters.indexOf('coverage') >= 0;
   // Is resetting 'reporters' list safe?
-  var reporters = ['intellij'];
+  var reporters = [IntellijReporter.reporterName];
   if (coverageEnabled) {
     reporters.push('coverage');
-    reporters.push('intellijCoverage');
+    reporters.push(IntellijCoverageReporter.reporterName);
+  }
+  else {
+    IntellijCoverageReporter.reportCoverageStartupStatus(false);
   }
   config.reporters = reporters;
 
