@@ -17,13 +17,12 @@ import java.util.regex.Pattern;
 public class KarmaWatchSession {
 
   private static final Logger LOG = Logger.getInstance(KarmaWatcher.class);
-  private static final Pattern BASE_DIR_PATTERN = Pattern.compile("/[^/]*[*(].*$");
-  private static final String SEPARATOR = "/";
+  private static final char SEPARATOR_CHAR = '/';
+  private static final String SEPARATOR = String.valueOf(SEPARATOR_CHAR);
 
   private final KarmaChangedFilesManager myChangedFilesManager;
   private final LocalFileSystem myFileSystem;
-  private final List<VirtualFile> myRoots = ContainerUtil.newArrayList();
-  private final List<LocalFileSystem.WatchRequest> myWatchRequests = ContainerUtil.newArrayList();
+  private final List<WatchPattern> myWatchPatterns = ContainerUtil.newArrayList();
   private final MyVirtualFileListener myVfsListener = new MyVirtualFileListener();
 
   public KarmaWatchSession(@NotNull KarmaServer server, @NotNull final List<String> paths) {
@@ -33,10 +32,8 @@ public class KarmaWatchSession {
       @Override
       public void run() {
         for (String path : paths) {
-          LocalFileSystem.WatchRequest watchRequest = doWatch(myFileSystem, path);
-          if (watchRequest != null) {
-            myWatchRequests.add(watchRequest);
-          }
+          WatchPattern watchPattern = new WatchPattern(myFileSystem, path);
+          myWatchPatterns.add(watchPattern);
         }
         myFileSystem.addVirtualFileListener(myVfsListener);
       }
@@ -44,66 +41,21 @@ public class KarmaWatchSession {
   }
 
   private boolean insideRoots(@NotNull VirtualFile file) {
-    for (VirtualFile root : myRoots) {
-      if (VfsUtilCore.isAncestor(root, file, false)) {
+    for (WatchPattern watchPattern : myWatchPatterns) {
+      VirtualFile root = watchPattern.myRoot;
+      if (root != null && VfsUtilCore.isAncestor(root, file, false)) {
         return true;
       }
     }
     return false;
   }
 
-  @Nullable
-  private LocalFileSystem.WatchRequest doWatch(@NotNull LocalFileSystem fileSystem, @NotNull String path) {
-    LOG.info("Starting watching " + path);
-    String vfsPath = path.replace(File.separatorChar, '/');
-    final VirtualFile file = fileSystem.findFileByPath(vfsPath);
-    final LocalFileSystem.WatchRequest watchRequest;
-    if (file != null && file.isValid()) {
-      watchRequest = watchDirectory(fileSystem, file);
-    }
-    else {
-      String baseDirPath = BASE_DIR_PATTERN.matcher(vfsPath).replaceFirst("");
-      if (baseDirPath.isEmpty()) {
-        baseDirPath = "/";
-      }
-      final VirtualFile baseDir = fileSystem.findFileByPath(baseDirPath);
-      if (baseDir != null && baseDir.isValid()) {
-        watchRequest = watchDirectory(fileSystem, baseDir);
-      }
-      else {
-        LOG.warn("Can not identify watch pattern for " + baseDirPath);
-        watchRequest = null;
-      }
-    }
-    if (watchRequest == null) {
-      LOG.warn("Can not watch " + path);
-    }
-    return watchRequest;
-  }
-
-  @Nullable
-  private LocalFileSystem.WatchRequest watchDirectory(@NotNull LocalFileSystem fileSystem, @NotNull VirtualFile dir) {
-    myRoots.add(dir);
-    VfsUtilCore.visitChildrenRecursively(dir, new VirtualFileVisitor() {
-      @Override
-      public boolean visitFile(@NotNull VirtualFile file) {
-        file.getChildren();
-        return true;
-      }
-    });
-    LocalFileSystem.WatchRequest watchRequest = fileSystem.addRootToWatch(dir.getPath(), true);
-    if (watchRequest == null) {
-      LOG.error("Can not watch valid directory " + dir.getPath());
-    }
-    return watchRequest;
-  }
-
   public void stop() {
     ApplicationManager.getApplication().runReadAction(new Runnable() {
       @Override
       public void run() {
-        for (LocalFileSystem.WatchRequest watchRequest : myWatchRequests) {
-          myFileSystem.removeWatchedRoot(watchRequest);
+        for (WatchPattern watchPattern : myWatchPatterns) {
+          watchPattern.stopWatching();
         }
         myFileSystem.removeVirtualFileListener(myVfsListener);
       }
@@ -206,6 +158,84 @@ public class KarmaWatchSession {
     @Override
     public void beforeFileMovement(VirtualFileMoveEvent event) {
       // ignored
+    }
+  }
+
+  private static class WatchPattern {
+
+    private static final Pattern BASE_DIR_PATTERN = Pattern.compile("/[^/]*[*(].*$");
+
+    private final LocalFileSystem myFileSystem;
+    private final String myVfsPath;
+    private final String myBasePathDir;
+    private final boolean myCheckBasePathDir;
+    private LocalFileSystem.WatchRequest myWatchRequest;
+    private VirtualFile myRoot;
+
+    private WatchPattern(@NotNull LocalFileSystem fileSystem, @NotNull final String pattern) {
+      LOG.info("Start watching path pattern " + pattern);
+
+      myFileSystem = fileSystem;
+      myVfsPath = pattern.replace(File.separatorChar, SEPARATOR_CHAR);
+      String baseDirPath = BASE_DIR_PATTERN.matcher(myVfsPath).replaceFirst("");
+      if (baseDirPath.isEmpty()) {
+        baseDirPath = SEPARATOR;
+      }
+      myBasePathDir = baseDirPath;
+      myCheckBasePathDir = !myVfsPath.equals(myBasePathDir);
+
+      if (myRoot != null) {
+        myWatchRequest = watchDirectory(myRoot);
+      }
+      else {
+        LOG.warn("Can not find watch root for " + myBasePathDir);
+      }
+    }
+
+    public void check() {
+      if (myWatchRequest != null) {
+        return;
+      }
+      if (myRoot == null || !myRoot.isValid()) {
+        VirtualFile newRoot = null;
+        final VirtualFile file = myFileSystem.findFileByPath(myVfsPath);
+        if (file != null && file.isValid()) {
+          newRoot = file;
+        }
+        else if (myCheckBasePathDir) {
+          final VirtualFile baseDir = myFileSystem.findFileByPath(myBasePathDir);
+          if (baseDir != null && baseDir.isValid()) {
+            newRoot = baseDir;
+          }
+        }
+        myRoot = newRoot;
+      }
+      if (myRoot != null) {
+        myWatchRequest = watchDirectory(myRoot);
+      }
+    }
+
+    @Nullable
+    private LocalFileSystem.WatchRequest watchDirectory(@NotNull VirtualFile dir) {
+      VfsUtilCore.visitChildrenRecursively(dir, new VirtualFileVisitor() {
+        @Override
+        public boolean visitFile(@NotNull VirtualFile file) {
+          file.getChildren();
+          return true;
+        }
+      });
+      LocalFileSystem.WatchRequest watchRequest = myFileSystem.addRootToWatch(dir.getPath(), true);
+      if (watchRequest == null) {
+        LOG.warn("Can not watch valid directory " + dir.getPath());
+      }
+      return watchRequest;
+    }
+
+    public void stopWatching() {
+      LocalFileSystem.WatchRequest watchRequest = myWatchRequest;
+      if (watchRequest != null) {
+        myFileSystem.removeWatchedRoot(watchRequest);
+      }
     }
   }
 
