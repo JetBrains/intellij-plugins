@@ -10,7 +10,6 @@ import com.intellij.psi.PsiBundle;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartFileType;
 import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
-import com.jetbrains.lang.dart.psi.DartFile;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -19,7 +18,8 @@ import org.jetbrains.annotations.NotNull;
 public class Dart2JSTaskConsumer extends BackgroundTaskConsumer {
   @Override
   public boolean isAvailable(PsiFile file) {
-    return file instanceof DartFile && DartSettingsUtil.getSettings().getDart2JS() != null;
+    // do not suggest for file.
+    return false;
   }
 
   @NotNull
