@@ -107,7 +107,6 @@ public class DartCommandLineRunConfiguration extends LocatableConfigurationBase
     if (StringUtil.isEmpty(filePath)) {
       throw new ExecutionException("Empty file path");
     }
-    assert filePath != null;
     return new DartCommandLineRunningState(
       env,
       getModule(),

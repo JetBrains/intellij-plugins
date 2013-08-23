@@ -54,6 +54,10 @@ public class DartCommandLineRunningState extends CommandLineState {
     if (dartSettings == null || dartExecutablePath == null) {
       throw new ExecutionException(DartBundle.message("bad.home.for.sdk", module.getName()));
     }
+    final VirtualFile libraryFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(filePath));
+    if (libraryFile == null) {
+      throw new ExecutionException(DartBundle.message("bad.script.path", filePath));
+    }
     final GeneralCommandLine commandLine = new GeneralCommandLine();
 
     commandLine.setExePath(dartExecutablePath);
@@ -61,7 +65,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     commandLine.setPassParentEnvironment(true);
 
     setupUserProperties(
-      module,
+      libraryFile,
       commandLine,
       dartSettings
     );
@@ -71,7 +75,7 @@ public class DartCommandLineRunningState extends CommandLineState {
     return commandLine;
   }
 
-  private void setupUserProperties(@NotNull Module module,
+  private void setupUserProperties(VirtualFile libraryFile,
                                    GeneralCommandLine commandLine,
                                    @NotNull DartSettings sdk) {
     commandLine.getEnvironment().put("com.google.dart.sdk", sdk.getSdkPath());
@@ -83,8 +87,7 @@ public class DartCommandLineRunningState extends CommandLineState {
       commandLine.addParameter(argumentsTokenizer.nextToken());
     }
 
-    String libUrl = VfsUtilCore.pathToUrl(filePath);
-    final VirtualFile packages = DartResolveUtil.findPackagesFolder(module);
+    final VirtualFile packages = DartResolveUtil.findPackagesFolder(libraryFile, module.getProject());
     if (packages != null && packages.isDirectory()) {
       commandLine.addParameter("--package-root=" + packages.getPath() + "/");
     }

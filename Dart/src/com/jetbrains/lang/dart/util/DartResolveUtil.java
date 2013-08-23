@@ -1019,11 +1019,6 @@ public class DartResolveUtil {
   }
 
   @Nullable
-  public static VirtualFile findPackagesFolder(@NotNull Module module) {
-    return findPackagesFolder(module.getProject(), GlobalSearchScope.moduleScope(module));
-  }
-
-  @Nullable
   public static VirtualFile findPackagesFolder(@NotNull Project project, @NotNull GlobalSearchScope scope) {
     for (VirtualFile file : FilenameIndex.getVirtualFilesByName(project, "pubspec.yaml", scope)) {
       final VirtualFile packagesFolder = findPackagesFolderByFile(file);
