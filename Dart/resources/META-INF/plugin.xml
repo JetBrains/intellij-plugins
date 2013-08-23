@@ -240,6 +240,8 @@
     <codeInspection.InspectionExtension id="dartGlobalInspection"
                                         implementation="com.jetbrains.lang.dart.ide.inspections.analyzer.DartInspectionExtensionsFactory"/>
 
+    <treeStructureProvider implementation="com.jetbrains.lang.dart.ide.projectView.DartTreeStructureProvider"/>
+
     <!--command line-->
     <moduleConfigurationEditorProvider
         implementation="com.jetbrains.lang.dart.ide.projectStructure.DartModuleConfigurationEditorProvider"/>
