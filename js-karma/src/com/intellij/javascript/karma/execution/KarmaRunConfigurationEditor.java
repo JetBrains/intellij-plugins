@@ -65,7 +65,7 @@ public class KarmaRunConfigurationEditor extends SettingsEditor<KarmaRunConfigur
     ));
 
     myKarmaPackageDirPathTextFieldWithBrowseButton = createKarmaPackageDirPathTextField(project);
-    panel.add(new JLabel("Karma Node.js package:"), new GridBagConstraints(
+    panel.add(new JLabel("Karma node package:"), new GridBagConstraints(
       0, 2,
       1, 1,
       0.0, 0.0,
