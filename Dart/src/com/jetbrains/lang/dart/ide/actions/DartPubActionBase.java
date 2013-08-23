@@ -13,34 +13,26 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.module.WebModuleTypeBase;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.module.DartModuleTypeBase;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
-import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import icons.DartIcons;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.yaml.psi.YAMLFile;
 
 /**
  * @author: Fedor.Korotkov
  */
-public class DartPubAction extends AnAction {
-  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.actions.DartPubAction");
+abstract public class DartPubActionBase extends AnAction {
+  private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.actions.DartPubActionBase");
 
-  public DartPubAction() {
+  public DartPubActionBase() {
     super(DartIcons.Dart_16);
   }
 
@@ -50,16 +42,24 @@ public class DartPubAction extends AnAction {
     final Presentation presentation = e.getPresentation();
 
     final PsiFile psiFile = LangDataKeys.PSI_FILE.getData(dataContext);
-    final boolean enabled = psiFile instanceof YAMLFile;
+    final boolean enabled = psiFile instanceof YAMLFile && isEnabled((YAMLFile)psiFile);
 
     presentation.setVisible(enabled);
     presentation.setEnabled(enabled);
 
     if (enabled) {
-      boolean update = DartResolveUtil.findPackagesFolderByFile(psiFile.getVirtualFile()) != null;
-      presentation.setText(update ? DartBundle.message("dart.pub.update") : DartBundle.message("dart.pub.install"));
+      presentation.setText(getPresentationText());
     }
   }
+
+  @Nls
+  protected abstract String getPresentationText();
+
+  protected abstract boolean isEnabled(YAMLFile file);
+
+  protected abstract String getPubCommandArgument();
+
+  protected abstract boolean isOK(@NotNull String output);
 
   @Override
   public void actionPerformed(final AnActionEvent e) {
@@ -77,7 +77,6 @@ public class DartPubAction extends AnAction {
       return;
     }
 
-    final boolean update = DartResolveUtil.findPackagesFolder(module) != null;
     final DartSettings settings = DartSettings.getSettingsForModule(module);
     final VirtualFile dartPub = settings == null ? null : settings.getPub();
     if (dartPub == null) {
@@ -95,12 +94,8 @@ public class DartPubAction extends AnAction {
         final GeneralCommandLine command = new GeneralCommandLine();
         command.setExePath(dartPub.getPath());
         command.setWorkDirectory(virtualFile.getParent().getPath());
-        command.addParameter(update ? "update" : "install");
-
-        final DartSettings dartSettings = getSettings(psiFile);
-        if (dartSettings != null) {
-          command.getEnvironment().put("DART_SDK", settings.getSdkPath());
-        }
+        command.addParameter(getPubCommandArgument());
+        command.getEnvironment().put("DART_SDK", settings.getSdkPath());
 
         // save on disk
         ApplicationManager.getApplication().invokeAndWait(new Runnable() {
@@ -114,12 +109,12 @@ public class DartPubAction extends AnAction {
         try {
           final ProcessOutput processOutput = new CapturingProcessHandler(command).runProcess();
 
-          LOG.debug("pub exited with exit code: " + processOutput.getExitCode());
+          LOG.debug("pub terminated with exit code: " + processOutput.getExitCode());
           LOG.debug(processOutput.getStdout());
           LOG.debug(processOutput.getStderr());
 
           final String output = processOutput.getStdout().trim();
-          final boolean ok = isOK(update, output);
+          final boolean ok = isOK(output);
 
           if (!ok) {
             Notifications.Bus.notify(new Notification(e.getPresentation().getText(),
@@ -145,31 +140,5 @@ public class DartPubAction extends AnAction {
         indicator.setFraction(1.0);
       }
     }.setCancelText("Stop").queue();
-  }
-
-  private static boolean isOK(boolean update, String status) {
-    if (update && status.contains("Dependencies updated!")) {
-      return true;
-    }
-    if (!update && status.contains("Dependencies installed!")) {
-      return true;
-    }
-    return false;
-  }
-
-  @Nullable
-  private static DartSettings getSettings(PsiFile psiFile) {
-    final Module module = ModuleUtilCore.findModuleForPsiElement(psiFile);
-    DartSettings settings = null;
-    if (ModuleType.get(module) instanceof WebModuleTypeBase) {
-      settings = DartSettingsUtil.getSettings();
-    }
-    else if (ModuleType.get(module) instanceof DartModuleTypeBase) {
-      assert module != null;
-      final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-      final Sdk sdk = moduleRootManager.getSdk();
-      settings = new DartSettings(StringUtil.notNullize(sdk == null ? null : sdk.getHomePath()));
-    }
-    return settings;
   }
 }
