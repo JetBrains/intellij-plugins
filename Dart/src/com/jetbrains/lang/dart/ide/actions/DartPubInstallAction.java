@@ -22,7 +22,7 @@ public class DartPubInstallAction extends DartPubActionBase {
 
   @Override
   protected String getPubCommandArgument() {
-    return "update";
+    return "install";
   }
 
   @Override
