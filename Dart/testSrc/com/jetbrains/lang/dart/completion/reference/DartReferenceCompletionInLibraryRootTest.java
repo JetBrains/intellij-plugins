@@ -246,4 +246,9 @@ public class DartReferenceCompletionInLibraryRootTest extends DartCompletionTest
     DartSdkTestUtil.configFakeSdk(myFixture, "../../sdk");
     doTest();
   }
+
+  public void testWEB_8100() throws Throwable {
+    myFixture.addFileToProject("pubspec.yaml", "");
+    doTest("WEB_8100.dart", "packages/foo/Foo.dart");
+  }
 }

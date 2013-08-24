@@ -421,6 +421,20 @@ public class DartResolveUtil {
     return VfsUtil.findRelativeFile(file, ("../" + path).split("/"));
   }
 
+  public static boolean sameLibrary(@NotNull PsiElement context1, @NotNull PsiElement context2) {
+    final List<VirtualFile> librariesForContext1 = findLibrary(context1.getContainingFile());
+    if (librariesForContext1.isEmpty()) return false;
+    final List<VirtualFile> librariesForContext2 = findLibrary(context2.getContainingFile());
+    if (librariesForContext2.isEmpty()) return false;
+    final THashSet<VirtualFile> librariesSetForContext1 = new THashSet<VirtualFile>(librariesForContext1);
+    return ContainerUtil.find(librariesForContext2, new Condition<VirtualFile>() {
+      @Override
+      public boolean value(VirtualFile file) {
+        return librariesSetForContext1.contains(file);
+      }
+    }) != null;
+  }
+
   @NotNull
   public static List<VirtualFile> findLibrary(final PsiFile context) {
     return findLibrary(context, GlobalSearchScope.allScope(context.getProject()));
@@ -660,6 +674,19 @@ public class DartResolveUtil {
       result.put(key, dartComponent);
     }
     return result;
+  }
+
+  public static List<DartComponentName> getComponentNames(List<? extends DartComponent> fields, boolean filterPrivate) {
+    return getComponentNames(
+      filterPrivate ?
+      ContainerUtil.filter(fields, new Condition<DartComponent>() {
+        @Override
+        public boolean value(DartComponent component) {
+          return component.isPublic();
+        }
+      }) :
+      fields
+    );
   }
 
   public static List<DartComponentName> getComponentNames(List<? extends DartComponent> fields) {

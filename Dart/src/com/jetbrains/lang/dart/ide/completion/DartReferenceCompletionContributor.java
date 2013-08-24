@@ -100,16 +100,19 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
     }
 
     if (dartClass != null) {
-      suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getFields()));
-      suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getMethods()));
-      suggestedVariants.addAll(DartResolveUtil.getComponentNames(ContainerUtil.filter(
-        dartClass.getConstructors(),
-        new Condition<DartComponent>() {
-          @Override
-          public boolean value(DartComponent component) {
-            return component instanceof DartNamedConstructorDeclaration || component instanceof DartFactoryConstructorDeclaration;
-          }
-        })
+      final boolean needFilterPrivateMembers = !DartResolveUtil.sameLibrary(reference, dartClass);
+      suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getFields(), needFilterPrivateMembers));
+      suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getMethods(), needFilterPrivateMembers));
+      suggestedVariants.addAll(DartResolveUtil.getComponentNames(
+        ContainerUtil.filter(
+          dartClass.getConstructors(),
+          new Condition<DartComponent>() {
+            @Override
+            public boolean value(DartComponent component) {
+              return component instanceof DartNamedConstructorDeclaration || component instanceof DartFactoryConstructorDeclaration;
+            }
+          }),
+        needFilterPrivateMembers
       ));
     }
 
