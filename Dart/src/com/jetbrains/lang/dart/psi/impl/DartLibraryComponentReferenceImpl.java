@@ -96,18 +96,11 @@ public class DartLibraryComponentReferenceImpl extends DartExpressionImpl implem
   @NotNull
   @Override
   public Object[] getVariants() {
-    final PsiElement library = resolveLibrary();
-    if (library != null) {
-      final Set<DartComponentName> suggestedVariants = new THashSet<DartComponentName>();
-      DartResolveUtil.processTopLevelDeclarations(this, new ComponentNameScopeProcessor(suggestedVariants),
-                                                  DartResolveUtil.getRealVirtualFile(library.getContainingFile()), null);
-      return DartLookupElement.convert(suggestedVariants, false).toArray();
-    }
     return ResolveResult.EMPTY_ARRAY;
   }
 
   @Nullable
-  private PsiElement resolveLibrary() {
+  public PsiElement resolveLibrary() {
     final DartPsiCompositeElementImpl statement =
       PsiTreeUtil.getParentOfType(this, DartImportStatementImpl.class, DartExportStatementImpl.class);
     final DartPathOrLibraryReference pathOrLibraryReference = PsiTreeUtil.getChildOfType(statement, DartPathOrLibraryReference.class);

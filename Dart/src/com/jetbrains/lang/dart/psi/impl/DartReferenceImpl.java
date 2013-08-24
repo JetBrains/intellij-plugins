@@ -1,29 +1,23 @@
 package com.jetbrains.lang.dart.psi.impl;
 
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ResolveResult;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
-import com.intellij.psi.scope.PsiScopeProcessor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
-import com.jetbrains.lang.dart.ide.DartLookupElement;
 import com.jetbrains.lang.dart.psi.*;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
-import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author: Fedor.Korotkov
@@ -167,65 +161,6 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
   @NotNull
   @Override
   public Object[] getVariants() {
-    final Set<DartComponentName> suggestedVariants = new THashSet<DartComponentName>();
-    DartClass dartClass = null;
-    // if do not contain references
-    if (DartResolveUtil.aloneOrFirstInChain(this)) {
-      final PsiElement context = this;
-      final PsiScopeProcessor processor = new ComponentNameScopeProcessor(suggestedVariants);
-
-      DartResolveUtil.treeWalkUpAndTopLevelDeclarations(context, processor);
-
-      dartClass = PsiTreeUtil.getParentOfType(this, DartClass.class);
-    }
-
-    final DartReference leftReference = DartResolveUtil.getLeftReference(this);
-    if (leftReference != null) {
-      final DartClassResolveResult classResolveResult = leftReference.resolveDartClass();
-      dartClass = classResolveResult.getDartClass();
-      // prefix
-      if (PsiTreeUtil.getParentOfType(leftReference.resolve(), DartImportStatement.class, DartExportStatement.class) != null) {
-        final VirtualFile virtualFile = DartResolveUtil.getFileByPrefix(getContainingFile(), leftReference.getText());
-        DartResolveUtil.processTopLevelDeclarations(this, new ComponentNameScopeProcessor(suggestedVariants), virtualFile, null);
-      }
-    }
-
-    if (dartClass != null) {
-      suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getFields()));
-      suggestedVariants.addAll(DartResolveUtil.getComponentNames(dartClass.getMethods()));
-      suggestedVariants.addAll(DartResolveUtil.getComponentNames(ContainerUtil.filter(
-        dartClass.getConstructors(),
-        new Condition<DartComponent>() {
-          @Override
-          public boolean value(DartComponent component) {
-            return component instanceof DartNamedConstructorDeclaration || component instanceof DartFactoryConstructorDeclaration;
-          }
-        })
-      ));
-    }
-
-    final boolean typeInNew = getParent() instanceof DartType && getParent().getParent() instanceof DartNewExpression;
-
-    if (typeInNew) {
-      final Set<DartComponentName> constructors = new THashSet<DartComponentName>();
-      for (DartComponentName componentName : suggestedVariants) {
-        final PsiElement parent = componentName.getParent();
-        if (!(parent instanceof DartClass)) continue;
-        constructors.addAll(DartResolveUtil.getComponentNames(ContainerUtil.filter(
-          ((DartClass)parent).getConstructors(),
-          new Condition<DartComponent>() {
-            @Override
-            public boolean value(DartComponent component) {
-              boolean namedOrFactory = component instanceof DartNamedConstructorDeclaration ||
-                                       component instanceof DartFactoryConstructorDeclaration;
-              return namedOrFactory && component.isPublic();
-            }
-          })
-        ));
-      }
-      suggestedVariants.addAll(constructors);
-    }
-
-    return DartLookupElement.convert(suggestedVariants, typeInNew).toArray();
+    return LookupElement.EMPTY_ARRAY;
   }
 }

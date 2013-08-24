@@ -229,6 +229,8 @@
                             implementationClass="com.jetbrains.lang.dart.ide.completion.DartArgumentNameContributor"/>
     <completion.contributor language="Dart"
                             implementationClass="com.jetbrains.lang.dart.ide.completion.DartClassNameCompletionContributor"/>
+    <completion.contributor language="Dart"
+                            implementationClass="com.jetbrains.lang.dart.ide.completion.DartReferenceCompletionContributor"/>
 
     <externalAnnotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartExternalAnnotator"/>
     <annotator language="Dart" implementationClass="com.jetbrains.lang.dart.ide.annotator.DartColorAnnotator"/>
