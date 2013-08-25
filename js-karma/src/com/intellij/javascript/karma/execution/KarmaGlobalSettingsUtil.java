@@ -65,9 +65,11 @@ public class KarmaGlobalSettingsUtil {
   @Nullable
   public static VirtualFile getRequester(@NotNull Project project, @Nullable String configFilePath) {
     VirtualFile requester = null;
-    File configFile = new File(configFilePath);
-    if (configFile.isFile()) {
-      requester = VfsUtil.findFileByIoFile(configFile, false);
+    if (configFilePath != null) {
+      File configFile = new File(configFilePath);
+      if (configFile.isFile()) {
+        requester = VfsUtil.findFileByIoFile(configFile, false);
+      }
     }
     if (requester == null || !requester.isValid()) {
       requester = project.getBaseDir();
