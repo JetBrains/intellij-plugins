@@ -8,6 +8,7 @@ import com.intellij.openapi.roots.ui.configuration.CommonContentEntriesEditor;
 import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationEditorProvider;
 import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationState;
 import com.jetbrains.lang.dart.ide.module.DartModuleType;
+import org.jetbrains.jps.model.java.JavaSourceRootType;
 
 /**
  * @author: Fedor.Korotkov
@@ -19,7 +20,7 @@ public class DartModuleConfigurationEditorProvider implements ModuleConfiguratio
       return ModuleConfigurationEditor.EMPTY;
     }
     return new ModuleConfigurationEditor[]{
-      new CommonContentEntriesEditor(module.getName(), state, true, true),
+      new CommonContentEntriesEditor(module.getName(), state, JavaSourceRootType.SOURCE, JavaSourceRootType.TEST_SOURCE),
       new ClasspathEditor(state)
     };
   }
