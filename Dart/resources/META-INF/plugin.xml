@@ -244,6 +244,8 @@
 
     <treeStructureProvider implementation="com.jetbrains.lang.dart.ide.projectView.DartTreeStructureProvider"/>
 
+    <stepsBeforeRunProvider implementation="com.jetbrains.lang.dart.ide.runner.before.Dart2JSBeforeRunTaskProvider"/>
+
     <!--command line-->
     <moduleConfigurationEditorProvider
         implementation="com.jetbrains.lang.dart.ide.projectStructure.DartModuleConfigurationEditorProvider"/>

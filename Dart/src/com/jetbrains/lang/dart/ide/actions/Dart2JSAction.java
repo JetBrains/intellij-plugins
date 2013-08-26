@@ -26,6 +26,7 @@ import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.ide.settings.DartSettingsUtil;
 import com.jetbrains.lang.dart.psi.DartFile;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
+import icons.DartIcons;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -35,7 +36,7 @@ public class Dart2JSAction extends AnAction {
   private static final Logger LOG = Logger.getInstance("#com.jetbrains.lang.dart.ide.actions.Dart2JSAction");
 
   public Dart2JSAction() {
-    super(icons.DartIcons.Dart_16);
+    super(DartIcons.Dart_16);
   }
 
   @Override
@@ -55,7 +56,7 @@ public class Dart2JSAction extends AnAction {
     if (!(psiFile instanceof DartFile)) {
       return;
     }
-    final VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(psiFile);
+    VirtualFile virtualFile = DartResolveUtil.getRealVirtualFile(psiFile);
     if (virtualFile == null) {
       return;
     }
@@ -64,31 +65,29 @@ public class Dart2JSAction extends AnAction {
     if (dart2js == null) {
       Messages.showOkCancelDialog(e.getProject(), DartBundle.message("dart.sdk.bad.dart2js.path", settings.getDart2JSUrl()),
                                   DartBundle.message("dart.warning"),
-                                  icons.DartIcons.Dart_16);
+                                  DartIcons.Dart_16);
       return;
     }
 
     final String jsFilePath = virtualFile.getPath() + ".js";
-    final Dart2JSSettingsDialog dialog = new Dart2JSSettingsDialog(psiFile.getProject(), jsFilePath);
+    final Dart2JSSettingsDialog dialog = new Dart2JSSettingsDialog(psiFile.getProject(), virtualFile.getPath(), jsFilePath);
+    dialog.disableInput();
     dialog.show();
     if (!dialog.isOK()) {
       return;
     }
 
-    new Task.Backgroundable(psiFile.getProject(), "dart2js", true) {
+    new Task.Backgroundable(psiFile.getProject(), "dart2js", false) {
       public void run(@NotNull ProgressIndicator indicator) {
         indicator.setText("Running dart2js...");
         indicator.setFraction(0.0);
-        final GeneralCommandLine command = new GeneralCommandLine();
-        command.setExePath(dart2js.getPath());
-        if (dialog.isCheckedMode()) {
-          command.addParameter("--checked");
-        }
-        if (dialog.isMinify()) {
-          command.addParameter("--minify");
-        }
-        command.addParameter("--out=" + dialog.getOutputPath());
-        command.addParameter(virtualFile.getPath());
+        final GeneralCommandLine command = getCommandLine(
+          dart2js,
+          dialog.getInputPath(),
+          dialog.getOutputPath(),
+          dialog.isCheckedMode(),
+          dialog.isMinify()
+        );
 
         // save on disk
         ApplicationManager.getApplication().invokeAndWait(new Runnable() {
@@ -115,7 +114,7 @@ public class Dart2JSAction extends AnAction {
                                                     DartBundle.message("dart2js.js.file.created", jsFilePath),
                                                     NotificationType.INFORMATION));
 
-          final String parentDir = VfsUtil.getParentDir(dialog.getOutputPath());
+          final String parentDir = VfsUtil.getParentDir(dialog.getInputPath());
           assert parentDir != null;
           final VirtualFile outputParentVirtualFile = VirtualFileManager.getInstance().findFileByUrl(VfsUtilCore.pathToUrl(parentDir));
           if (outputParentVirtualFile != null) {
@@ -131,6 +130,24 @@ public class Dart2JSAction extends AnAction {
         }
         indicator.setFraction(1.0);
       }
-    }.setCancelText("Stop").queue();
+    }.queue();
+  }
+
+  public static GeneralCommandLine getCommandLine(VirtualFile dart2js,
+                                                  String inputPath,
+                                                  String outputPath,
+                                                  boolean checkedMode,
+                                                  boolean minifyMode) {
+    final GeneralCommandLine command = new GeneralCommandLine();
+    command.setExePath(dart2js.getPath());
+    if (checkedMode) {
+      command.addParameter("--checked");
+    }
+    if (minifyMode) {
+      command.addParameter("--minify");
+    }
+    command.addParameter("--out=" + outputPath);
+    command.addParameter(inputPath);
+    return command;
   }
 }
