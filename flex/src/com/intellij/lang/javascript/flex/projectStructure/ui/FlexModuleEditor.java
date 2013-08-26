@@ -8,6 +8,7 @@ import com.intellij.openapi.roots.ui.configuration.CommonContentEntriesEditor;
 import com.intellij.openapi.roots.ui.configuration.ModuleConfigurationState;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.jps.model.java.JavaSourceRootType;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -24,7 +25,7 @@ public class FlexModuleEditor implements ModuleConfigurationEditor {
 
   public FlexModuleEditor(ModuleConfigurationState state) {
     myModule = state.getRootModel().getModule();
-    myEntriesEditor = new CommonContentEntriesEditor(myModule.getName(), state, true, true) {
+    myEntriesEditor = new CommonContentEntriesEditor(myModule.getName(), state, JavaSourceRootType.SOURCE, JavaSourceRootType.TEST_SOURCE) {
       @Override
       protected List<ContentEntry> addContentEntries(VirtualFile[] files) {
         List<ContentEntry> entries = super.addContentEntries(files);
