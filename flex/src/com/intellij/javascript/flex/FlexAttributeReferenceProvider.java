@@ -328,7 +328,7 @@ public class FlexAttributeReferenceProvider extends PsiReferenceProvider {
 
     @NotNull
     public String getUnresolvedMessagePattern() {
-      return XmlErrorMessages.message("wrong.attribute.value");
+      return XmlErrorMessages.message("wrong.value", "attribute");
     }
   }
 }
