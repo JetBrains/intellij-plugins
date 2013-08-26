@@ -32,7 +32,6 @@ import org.jetbrains.annotations.Nullable;
 * @author Sergey Simonchik
 */
 public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionConsoleEx, XDebugLayoutCustomizer {
-
   private final KarmaServer myServer;
   private final KarmaExecutionSession myExecutionSession;
 
@@ -181,5 +180,4 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       myTreeView.repaint();
     }
   }
-
 }
