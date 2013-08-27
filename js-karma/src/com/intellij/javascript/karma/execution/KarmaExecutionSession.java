@@ -70,6 +70,7 @@ public class KarmaExecutionSession {
     );
     testConsoleProperties.setUsePredefinedMessageFilter(false);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_PASSED_TESTS, false);
+    testConsoleProperties.setIfUndefined(TestConsoleProperties.HIDE_IGNORED_TEST, true);
     testConsoleProperties.setIfUndefined(TestConsoleProperties.SCROLL_TO_SOURCE, true);
 
     KarmaConsoleView consoleView = new KarmaConsoleView(testConsoleProperties,
