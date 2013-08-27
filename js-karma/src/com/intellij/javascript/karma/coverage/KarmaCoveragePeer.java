@@ -38,6 +38,7 @@ public class KarmaCoveragePeer {
   private volatile KarmaCoverageSession myActiveCoverageSession;
   private KarmaCoverageStartupStatus myStartupStatus;
   private List<KarmaCoverageInitializationListener> myInitListeners = Lists.newCopyOnWriteArrayList();
+  private volatile boolean myDisposed = false;
 
   public KarmaCoveragePeer() throws IOException {
     myCoverageTempDir = FileUtil.createTempDirectory("karma-intellij-coverage-", null);
@@ -67,6 +68,10 @@ public class KarmaCoveragePeer {
     return myStartupStatus;
   }
 
+  public void dispose() {
+    myDisposed = true;
+  }
+
   /**
    * Should be called in EDT
    */
@@ -80,8 +85,13 @@ public class KarmaCoveragePeer {
         @Override
         public void run() {
           if (myStartupStatus == null) {
-            LOG.error("Karma coverage hasn't been initialized in " + timeoutMillis + " ms");
-            myInitListeners.clear();
+            if (myDisposed) {
+              LOG.info("Karma coverage was already disposed");
+            }
+            else {
+              LOG.error("Karma coverage hasn't been initialized in " + timeoutMillis + " ms");
+              myInitListeners.clear();
+            }
           }
         }
       }, timeoutMillis, ModalityState.any());

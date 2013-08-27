@@ -54,6 +54,7 @@ public class KarmaServer {
   private final Map<String, StreamEventHandler> myHandlers = ContainerUtil.newConcurrentMap();
   private final MyDisposable myDisposable;
   private final KarmaServerRestarter myRestarter;
+  private final int myProcessHashCode;
 
   public KarmaServer(@NotNull Project project,
                      @NotNull File nodeInterpreter,
@@ -63,7 +64,8 @@ public class KarmaServer {
         are already checked in KarmaRunConfiguration.checkConfiguration */
     myKarmaPackageDir = karmaPackageDir;
     myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(karmaPackageDir);
-    final ProcessHandler processHandler = startServer(nodeInterpreter, configurationFile);
+    KillableColoredProcessHandler processHandler = startServer(nodeInterpreter, configurationFile);
+    myProcessHashCode = System.identityHashCode(processHandler.getProcess());
     myState = new KarmaServerState(this, processHandler, configurationFile);
     myProcessOutputArchive = new ProcessOutputArchive(processHandler);
     myWatcher = new KarmaWatcher(this);
@@ -147,14 +149,15 @@ public class KarmaServer {
     commandLine.addParameter("--configFile=" + configurationFile.getAbsolutePath());
     commandLine.addParameter("--coverageTempDir=" + myCoveragePeer.getCoverageTempDir());
 
-    LOG.info("Starting karma server: " + commandLine.getCommandLineString());
     final Process process;
     try {
       process = commandLine.createProcess();
     }
     catch (ExecutionException e) {
-      throw new IOException("Can not launch process " + commandLine.getCommandLineString() + "\"", e);
+      throw new IOException("Can not start Karma server: " + commandLine.getCommandLineString(), e);
     }
+    LOG.info("Karma server " + System.identityHashCode(process) + " started successfully: "
+             + commandLine.getCommandLineString());
     KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(
       process,
       commandLine.getCommandLineString(),
@@ -164,6 +167,7 @@ public class KarmaServer {
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
       public void processTerminated(final ProcessEvent event) {
+        LOG.info("Karma server " + myProcessHashCode + " terminated with exit code " + event.getExitCode());
         Disposer.dispose(myDisposable);
         fireOnTerminated(event.getExitCode());
       }
@@ -174,6 +178,7 @@ public class KarmaServer {
   }
 
   public void shutdownAsync() {
+    LOG.info("Shutting down asynchronously Karma server " + myProcessHashCode);
     ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
       @Override
       public void run() {
@@ -341,10 +346,16 @@ public class KarmaServer {
 
   private class MyDisposable implements Disposable {
 
+    private volatile boolean myDisposed = false;
+
     @Override
     public void dispose() {
-      LOG.info("Disposing Karma server");
+      if (myDisposed) {
+        return;
+      }
+      LOG.info("Disposing Karma server " + myProcessHashCode);
       myWatcher.stop();
+      myCoveragePeer.dispose();
       FileUtil.asyncDelete(myCoveragePeer.getCoverageTempDir());
       if (myOnPortBoundCallbacks != null) {
         myOnPortBoundCallbacks.clear();
