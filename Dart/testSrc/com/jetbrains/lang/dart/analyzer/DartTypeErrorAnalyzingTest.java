@@ -1,8 +1,5 @@
 package com.jetbrains.lang.dart.analyzer;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.jetbrains.lang.dart.util.DartTestUtils;
-
 public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
   @Override
   protected String getBasePath() {
@@ -67,6 +64,12 @@ public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
 
   public void testCannotBeResolved8() throws Throwable {
     doTest("Undefined name 'Unknown'");
+  }
+
+  public void testCannotBeResolved9() throws Throwable {
+    doTestWithoutCheck("There is no such getter 'foo' in 'Foo'", "cannotBeResolved9_Foo.dart");
+    myFixture.checkResultByFile("cannotBeResolved9.dart");
+    myFixture.checkResultByFile("cannotBeResolved9_Foo.dart", "cannotBeResolved9_Foo.after.dart", true);
   }
 
   public void ConcreteClassHasUnimplementedMembers1() throws Throwable {

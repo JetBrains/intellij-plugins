@@ -46,8 +46,9 @@ public class CreateDartClassAction extends BaseCreateFix {
     template.addEndVariable();
     template.addTextSegment("\n}\n");
 
-    navigate(project, editor, anchor.getTextOffset(), anchor.getContainingFile().getVirtualFile());
-
-    templateManager.startTemplate(editor, template);
+    final Editor openedEditor = navigate(project, anchor.getTextOffset(), anchor.getContainingFile().getVirtualFile());
+    if (openedEditor != null) {
+      templateManager.startTemplate(openedEditor, template);
+    }
   }
 }

@@ -58,9 +58,10 @@ abstract public class CreateVariableActionBase extends BaseCreateFix {
       return;
     }
 
-    navigate(project, editor, anchor.getTextOffset(), anchor.getContainingFile().getVirtualFile());
-
-    templateManager.startTemplate(editor, template);
+    final Editor openedEditor = navigate(project, anchor.getTextOffset(), anchor.getContainingFile().getVirtualFile());
+    if (openedEditor != null) {
+      templateManager.startTemplate(openedEditor, template);
+    }
   }
 
   protected void buildTemplate(Template template, PsiElement element) {

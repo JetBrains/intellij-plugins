@@ -42,6 +42,11 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
   }
 
   void doTest(String message, String... additionalFiles) throws IOException {
+    doTestWithoutCheck(message, additionalFiles);
+    myFixture.checkResultByFile(getTestName(true) + ".after.dart");
+  }
+
+  void doTestWithoutCheck(String message, String... additionalFiles) throws IOException {
     final String fullTestName = getTestName(true);
     final int dollarIndex = fullTestName.lastIndexOf('$');
     final String fixSimpleClassName = dollarIndex > 0 ? fullTestName.substring(dollarIndex + 1) : null;
@@ -74,7 +79,6 @@ abstract public class DartAnalyzerTestBase extends CodeInsightFixtureTestCase {
         quickFixInfo.quickFix.invoke(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile());
       }
     });
-    myFixture.checkResultByFile(fullTestName + ".after.dart");
   }
 
   @Nullable
