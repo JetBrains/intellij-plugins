@@ -1,6 +1,7 @@
 package com.intellij.javascript.flex.mxml;
 
 import com.intellij.javascript.flex.FlexPredefinedTagNames;
+import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.injection.MultiHostInjector;
 import com.intellij.lang.injection.MultiHostRegistrar;
@@ -60,10 +61,10 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
             .addPlace("class Foo implements ", " {}", (PsiLanguageInjectionHost)host, range)
             .doneInjecting();
         }
-        else if("source".equals(attrName) &&
-                FlexPredefinedTagNames.BINDING.equals(((XmlTag)tag).getLocalName()) &&
-                JavaScriptSupportLoader.isLanguageNamespace(((XmlTag)tag).getNamespace()) &&
-                !host.textContains('{')) {
+        else if ("source".equals(attrName) &&
+                 FlexPredefinedTagNames.BINDING.equals(((XmlTag)tag).getLocalName()) &&
+                 JavaScriptSupportLoader.isLanguageNamespace(((XmlTag)tag).getNamespace()) &&
+                 !host.textContains('{')) {
           TextRange range = new TextRange(1, host.getTextLength() - 1);
           registrar.startInjecting(JavaScriptSupportLoader.ECMA_SCRIPT_L4)
             .addPlace(FUNCTION_CALL_PREFIX, FUNCTION_CALL_SUFFIX, (PsiLanguageInjectionHost)host, range)
@@ -84,7 +85,8 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
                 .addPlace(null, null, (PsiLanguageInjectionHost)host, range)
                 .doneInjecting();
             }
-          } else {
+          }
+          else {
             injectInMxmlFile(registrar, host, ((XmlAttribute)attribute).getDescriptor(), (XmlTag)tag);
           }
         }
@@ -105,7 +107,7 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
         final @NonNls String localName = tag.getLocalName();
 
         if ((XmlBackedJSClassImpl.SCRIPT_TAG_NAME.equals(localName) ||
-             FlexPredefinedTagNames.METADATA.equals(localName) ) &&
+             FlexPredefinedTagNames.METADATA.equals(localName)) &&
             tag.getAttributeValue("source") == null) {
           JSLanguageInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, null, null);
         }
@@ -134,7 +136,6 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
     }
   }
 
-
   @NotNull
   @Override
   public List<? extends Class<? extends PsiElement>> elementsToInjectIn() {
@@ -157,12 +158,16 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
     return false;
   }
 
-  private static void injectInMxmlFile(final MultiHostRegistrar registrar, final PsiElement host, final PsiMetaData descriptor, XmlTag tag) {
+  private static void injectInMxmlFile(final MultiHostRegistrar registrar,
+                                       final PsiElement host,
+                                       final PsiMetaData descriptor,
+                                       XmlTag tag) {
     int offset = host instanceof XmlText ? 0 : 1;
 
-    if (descriptor instanceof AnnotationBackedDescriptor && ((XmlElementDescriptorWithCDataContent)descriptor).requiresCdataBracesInContext(tag)) {
+    if (descriptor instanceof AnnotationBackedDescriptor &&
+        ((XmlElementDescriptorWithCDataContent)descriptor).requiresCdataBracesInContext(tag)) {
       final int length = host.getTextLength();
-      if (length < 2* offset) return;
+      if (length < 2 * offset) return;
       String type = ((AnnotationBackedDescriptor)descriptor).getType();
       if (type == null) type = "*";
       @NonNls String prefix = "(function (event:" + type + ") {";
@@ -170,7 +175,8 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
 
       if (host instanceof XmlText) {
         JSLanguageInjector.injectToXmlText(registrar, host, JavaScriptSupportLoader.ECMA_SCRIPT_L4, prefix, suffix);
-      } else {
+      }
+      else {
         if (JSCommonTypeNames.FUNCTION_CLASS_NAME.equals(type) && host.textContains('{')) {
           final String text = StringUtil.stripQuotesAroundValue(host.getText());
           if (text.startsWith("{") && text.endsWith("}")) {
@@ -183,24 +189,27 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
         TextRange range = new TextRange(offset, length - offset);
 
         registrar.startInjecting(JavaScriptSupportLoader.ECMA_SCRIPT_L4)
-          .addPlace(prefix, (host instanceof XmlAttributeValue ? "\n":"") + suffix, (PsiLanguageInjectionHost)host, range)
+          .addPlace(prefix, (host instanceof XmlAttributeValue ? "\n" : "") + suffix, (PsiLanguageInjectionHost)host, range)
           .doneInjecting();
       }
-    } else {
+    }
+    else if (!(host instanceof XmlText) || !hasCDATA((XmlText)host)){
       final String text = StringUtil.stripQuotesAroundValue(host.getText());
       int openedBraces = 0;
       int start = -1;
       boolean addedSomething = false;
       boolean quoted = false;
 
-      for(int i = 0; i < text.length(); ++i) {
+      for (int i = 0; i < text.length(); ++i) {
         final char ch = text.charAt(i);
 
         if (quoted) {
           quoted = false;
           continue;
         }
-        if (ch == '\\') quoted = true;
+        if (ch == '\\') {
+          quoted = true;
+        }
         else if (ch == '{') {
           if (openedBraces == 0) start = i + 1;
           openedBraces++;
@@ -209,7 +218,8 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
           openedBraces--;
           if (openedBraces == 0 && start != -1) {
             registrar.startInjecting(JavaScriptSupportLoader.ECMA_SCRIPT_L4)
-              .addPlace(FUNCTION_CALL_PREFIX, FUNCTION_CALL_SUFFIX, (PsiLanguageInjectionHost)host, new TextRange(offset + start, i + offset))
+              .addPlace(FUNCTION_CALL_PREFIX, FUNCTION_CALL_SUFFIX, (PsiLanguageInjectionHost)host,
+                        new TextRange(offset + start, i + offset))
               .doneInjecting();
             addedSomething = true;
             start = -1;
@@ -231,5 +241,15 @@ public class MxmlLanguageInjector implements MultiHostInjector, JSTargetedInject
         }
       }
     }
+  }
+
+  private static boolean hasCDATA(final XmlText xmlText) {
+    for (PsiElement element : xmlText.getChildren()) {
+      final ASTNode node = element.getNode();
+      if (node != null && node.getElementType() == XmlElementType.XML_CDATA) {
+        return true;
+      }
+    }
+    return false;
   }
 }
