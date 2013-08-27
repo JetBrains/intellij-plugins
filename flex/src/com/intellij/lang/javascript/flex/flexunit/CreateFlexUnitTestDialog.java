@@ -1,7 +1,7 @@
 package com.intellij.lang.javascript.flex.flexunit;
 
 import com.intellij.codeInsight.CodeInsightBundle;
-import com.intellij.ide.projectView.actions.MarkRootAction;
+import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.javascript.JSBundle;
 import com.intellij.lang.javascript.psi.JSFunction;
@@ -94,7 +94,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
 
   private static String suggestTestSourceRootPath(final Module module, final VirtualFile file) {
     if (file != null) {
-      final ContentEntry contentEntry = MarkRootAction.findContentEntry(ModuleRootManager.getInstance(module), file);
+      final ContentEntry contentEntry = MarkRootActionBase.findContentEntry(ModuleRootManager.getInstance(module), file);
       if (contentEntry != null) {
         boolean mavenStyle = false;
         for (VirtualFile srcRoot : contentEntry.getSourceFolderFiles()) {
@@ -234,7 +234,7 @@ public class CreateFlexUnitTestDialog extends DialogWrapper {
                 VfsUtil.createDirectoryIfMissing(finalContentRoot, path.substring((finalContentRoot.getPath() + "/").length()));
               final VirtualFile folder =
                 packageName.isEmpty() ? srcRoot : VfsUtil.createDirectoryIfMissing(srcRoot, packageName.replace('.', '/'));
-              final ContentEntry contentEntry = MarkRootAction.findContentEntry(model, folder);
+              final ContentEntry contentEntry = MarkRootActionBase.findContentEntry(model, folder);
               if (contentEntry != null) {
                 contentEntry.addSourceFolder(srcRoot, true);
                 model.commit();
