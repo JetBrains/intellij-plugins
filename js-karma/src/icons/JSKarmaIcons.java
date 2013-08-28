@@ -13,5 +13,5 @@ public class JSKarmaIcons {
     return IconLoader.getIcon(path, JSKarmaIcons.class);
   }
 
-  public static final Icon Karma16x16 = load("/com/intellij/javascript/karma/icons/karma16x16.png"); // 16x16
+  public static final Icon Karma = load("/com/intellij/javascript/karma/icons/karma.png"); // 16x16
 }
