@@ -94,7 +94,7 @@ public class DartSdkType extends SdkType {
   }
 
   @Override
-  public void saveAdditionalData(SdkAdditionalData additionalData, Element additional) {
+  public void saveAdditionalData(@NotNull SdkAdditionalData additionalData, @NotNull Element additional) {
     if (additionalData instanceof DartSdkData) {
       XmlSerializer.serializeInto(additionalData, additional);
     }
