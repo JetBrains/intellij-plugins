@@ -19,8 +19,8 @@ import com.intellij.lang.javascript.inspections.JSCheckFunctionSignaturesInspect
 import com.intellij.lang.javascript.inspections.JSUnresolvedFunctionInspection;
 import com.intellij.lang.javascript.inspections.JSValidateTypesInspection;
 import com.intellij.lang.javascript.psi.*;
-import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.e4x.JSE4XFilterQueryArgumentList;
+import com.intellij.lang.javascript.psi.e4x.JSE4XNamespaceReference;
 import com.intellij.lang.javascript.psi.ecmal4.*;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeImpl;
 import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
@@ -1565,5 +1565,13 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
         "javascript.argument.type.mismatch",
         null);
     }
+  }
+
+  @Override
+  protected JSType getResolveResultType(JSExpression qualifier, PsiElement resultElement) {
+    if (resultElement instanceof JSVariable) { // do not evaluate initializer
+      return ((JSVariable)resultElement).getType();
+    }
+    return super.getResolveResultType(qualifier, resultElement);
   }
 }
