@@ -358,7 +358,7 @@ public class ActionScriptAnnotatingVisitor extends TypedJSAnnotatingVisitor {
               }
               return false;
             }
-            else if (!hasOverride && (holder = myHighlighter.getDialectOptionsHolder()) != null && holder.isECMAL4Level) {
+            else if (!hasOverride && (holder = myHighlighter.getDialectOptionsHolder()) != null && holder.isECMA4) {
               final Annotation annotation = myHolder.createErrorAnnotation(nameIdentifier, JSBundle.message(
                 "javascript.validation.message.function.override.without.override.modifier", className));
 
