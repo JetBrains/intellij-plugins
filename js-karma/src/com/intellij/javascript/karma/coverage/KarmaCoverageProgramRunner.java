@@ -13,13 +13,11 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.runners.RunContentBuilder;
-import com.intellij.execution.ui.ExecutionConsoleEx;
+import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
 import com.intellij.javascript.karma.execution.KarmaRunProfileState;
 import com.intellij.javascript.karma.server.KarmaServer;
-import com.intellij.javascript.karma.server.KarmaServerLogComponent;
 import com.intellij.javascript.karma.util.KarmaUtil;
 import com.intellij.javascript.karma.util.NopProcessHandler;
 import com.intellij.openapi.diagnostic.Logger;
@@ -31,7 +29,6 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -76,10 +73,10 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     KarmaCoveragePeer coveragePeer = server.getCoveragePeer();
     KarmaCoverageStartupStatus status = coveragePeer.getStartupStatus();
     if (status != null) {
-      if (isSuccessStatus(project, server, status)) {
+      if (status.isSuccessful()) {
         return executeAfterSuccessfulInitialization(project, karmaState, contentToReuse, env, server);
       }
-      return showKarmaServerOnly(server, env, contentToReuse);
+      return showWarningUi(status, server, env, contentToReuse);
     }
     coveragePeer.doWhenCoverageInitialized(new KarmaCoverageInitializationListener() {
       @Override
@@ -89,35 +86,15 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
           ProgramRunnerUtil.executeConfiguration(project, configuration, env.getExecutor());
         }
       }
-    }, project);
+    });
     return null;
   }
 
-  private static boolean isSuccessStatus(@NotNull Project project,
-                                         @NotNull KarmaServer server,
-                                         @NotNull KarmaCoverageStartupStatus status) {
-    if (!status.isCoverageReporterSpecifiedInConfig()) {
-      KarmaCoverageWarnings.warnAboutMissingCoverageReporterInConfigFile(project);
-    }
-    else if (!status.isCoverageReportFound()) {
-      if (!status.isCoveragePluginInstalled()) {
-        KarmaCoverageWarnings.suggestCoveragePluginInstallation(project, server.getKarmaPackageDir());
-        server.getRestarter().requestRestart();
-      }
-      else {
-        KarmaCoverageWarnings.warnAboutMissingCoveragePluginInConfigFile(project);
-      }
-    }
-    else {
-      return true;
-    }
-    return false;
-  }
-
-  private RunContentDescriptor showKarmaServerOnly(@NotNull final KarmaServer server,
-                                                   @NotNull final ExecutionEnvironment env,
-                                                   @Nullable RunContentDescriptor contentToReuse) {
-    ServerOutputConsole console = new ServerOutputConsole(env.getProject(), server);
+  private RunContentDescriptor showWarningUi(@NotNull KarmaCoverageStartupStatus status,
+                                             @NotNull KarmaServer server,
+                                             @NotNull ExecutionEnvironment env,
+                                             @Nullable RunContentDescriptor contentToReuse) {
+    ExecutionConsole console = new KarmaCoverageBadlyConfiguredConsole(env.getProject(), server, status);
     final ProcessHandler processHandler = new NopProcessHandler();
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override
@@ -189,43 +166,6 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
       });
     }
     return descriptor;
-  }
-
-  private static class ServerOutputConsole implements ExecutionConsoleEx {
-
-    private final Project myProject;
-    private final KarmaServer myServer;
-
-    private ServerOutputConsole(@NotNull Project project, @NotNull KarmaServer server) {
-      myProject = project;
-      myServer = server;
-    }
-
-    @Override
-    public void buildUi(RunnerLayoutUi ui) {
-      KarmaServerLogComponent logComponent = new KarmaServerLogComponent(myProject, myServer, this);
-      logComponent.installOn(ui);
-    }
-
-    @Nullable
-    @Override
-    public String getExecutionConsoleId() {
-      return null;
-    }
-
-    @Override
-    public JComponent getComponent() {
-      return null;
-    }
-
-    @Override
-    public JComponent getPreferredFocusableComponent() {
-      return null;
-    }
-
-    @Override
-    public void dispose() {
-    }
   }
 
 }

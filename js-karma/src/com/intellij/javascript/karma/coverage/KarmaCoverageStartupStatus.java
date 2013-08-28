@@ -28,4 +28,9 @@ public class KarmaCoverageStartupStatus {
   public boolean isCoveragePluginInstalled() {
     return myCoveragePluginInstalled;
   }
+
+  public boolean isSuccessful() {
+    return myCoverageReporterSpecifiedInConfig && myCoverageReportFound;
+  }
+
 }
