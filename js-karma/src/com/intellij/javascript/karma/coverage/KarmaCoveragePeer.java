@@ -8,10 +8,10 @@ import com.intellij.javascript.karma.server.StreamEventHandler;
 import com.intellij.javascript.karma.util.GsonUtil;
 import com.intellij.javascript.nodejs.CompletionModuleInfo;
 import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -75,13 +75,14 @@ public class KarmaCoveragePeer {
   /**
    * Should be called in EDT
    */
-  public void doWhenCoverageInitialized(@NotNull KarmaCoverageInitializationListener listener, @NotNull Disposable parent) {
+  public void doWhenCoverageInitialized(@NotNull KarmaCoverageInitializationListener listener) {
     if (myStartupStatus != null) {
       listener.onCoverageInitialized(myStartupStatus);
     }
     else {
       final int timeoutMillis = 10000;
-      new Alarm(Alarm.ThreadToUse.SWING_THREAD, parent).addRequest(new Runnable() {
+      final Alarm alarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD);
+      alarm.addRequest(new Runnable() {
         @Override
         public void run() {
           if (myStartupStatus == null) {
@@ -93,6 +94,7 @@ public class KarmaCoveragePeer {
               myInitListeners.clear();
             }
           }
+          Disposer.dispose(alarm);
         }
       }, timeoutMillis, ModalityState.any());
       myInitListeners.add(listener);
@@ -118,7 +120,7 @@ public class KarmaCoveragePeer {
     if (!coverageReporterSpecifiedInConfig) {
       fireOnCoverageInitialized(new KarmaCoverageStartupStatus(false, true, true));
     }
-    if (coverageReporterFound) {
+    else if (coverageReporterFound) {
       fireOnCoverageInitialized(new KarmaCoverageStartupStatus(true, true, true));
     }
     else {
