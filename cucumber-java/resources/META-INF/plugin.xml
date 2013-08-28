@@ -5,7 +5,7 @@
   <description>Provides support of Cucumber for Java</description>
   <version>1.0</version>
   <depends>cucumber</depends>
-  <idea-version since-build="123.0" until-build="131.0"/>
+  <idea-version since-build="123.0" until-build="133.0"/>
   <vendor>JetBrains</vendor>
 
   <extensions defaultExtensionNs="com.intellij">
