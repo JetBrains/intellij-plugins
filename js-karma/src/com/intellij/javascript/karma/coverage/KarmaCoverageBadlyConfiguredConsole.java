@@ -1,5 +1,6 @@
 package com.intellij.javascript.karma.coverage;
 
+import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.ExecutionConsoleEx;
 import com.intellij.execution.ui.RunnerLayoutUi;
@@ -7,14 +8,22 @@ import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.colors.EditorFontType;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.BrowserHyperlinkListener;
 import com.intellij.ui.content.Content;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicHTML;
+import javax.swing.text.html.HTMLEditorKit;
+import java.awt.*;
 import java.io.File;
 
 /**
@@ -43,11 +52,11 @@ public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
 
   private void registerTestRunTab(@NotNull RunnerLayoutUi ui) {
     ui.getOptions().setMinimizeActionEnabled(false);
-    final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
-                                                    getComponent(),
-                                                    "Coverage Configuration Error",
-                                                    AllIcons.Debugger.Console,
-                                                    getPreferredFocusableComponent());
+    Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
+                                              getComponent(),
+                                              "Coverage Configuration Error",
+                                              AllIcons.Debugger.Console,
+                                              getPreferredFocusableComponent());
     ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
     consoleContent.setCloseable(false);
     ui.selectAndFocus(consoleContent, false, false);
@@ -67,7 +76,9 @@ public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
   @Override
   public JComponent getComponent() {
     if (myComponent == null) {
-      myComponent = createTextPane();
+      JTextPane textPane = createTextPane();
+      textPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+      myComponent = textPane;
     }
     return myComponent;
   }
@@ -76,8 +87,40 @@ public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
   private JTextPane createTextPane() {
     JTextPane textPane = new JTextPane();
     String text = getWarningMessage();
-    Messages.configureMessagePaneUi(textPane, text);
+    configureMessagePaneUi(textPane, text, true);
     return textPane;
+  }
+
+  public static void configureMessagePaneUi(@NotNull JTextPane messageComponent,
+                                            @NotNull String message,
+                                            final boolean addBrowserHyperlinkListener) {
+    Color foreground = UIUtil.getLabelForeground();
+    EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
+    TextAttributes textAttributes = colorsScheme.getAttributes(ConsoleViewContentType.ERROR_OUTPUT_KEY);
+    if (textAttributes != null) {
+      foreground = textAttributes.getForegroundColor();
+    }
+    Font font = colorsScheme.getFont(EditorFontType.PLAIN);
+
+    messageComponent.setFont(font);
+    if (BasicHTML.isHTMLString(message)) {
+      final HTMLEditorKit editorKit = new HTMLEditorKit();
+      editorKit.getStyleSheet().addRule(UIUtil.displayPropertiesToCSS(font, foreground));
+      messageComponent.setEditorKit(editorKit);
+      messageComponent.setContentType(UIUtil.HTML_MIME);
+      if (addBrowserHyperlinkListener) {
+        messageComponent.addHyperlinkListener(new BrowserHyperlinkListener());
+      }
+    }
+    messageComponent.setText(message);
+    messageComponent.setEditable(false);
+    if (messageComponent.getCaret() != null) {
+      messageComponent.setCaretPosition(0);
+    }
+
+    messageComponent.setBackground(UIUtil.getTableBackground());
+
+    messageComponent.setForeground(foreground);
   }
 
   @NotNull
@@ -125,11 +168,16 @@ public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
     else {
       path = karmaPackageDir.getAbsolutePath();
     }
-    return "<html><body>Node.js package \"karma-coverage\" is required for test coverage."
+    String[] codeLines = new String[] {
+      "cd " + path,
+      "npm install karma-coverage"
+    };
+    return "<html><body>"
+           + "<strong>Looks like something went wrong!</strong>"
+           + "<p>Node.js package \"karma-coverage\" is required for test coverage."
            + "<div style='padding-top:3px'>To install it execute the following commands:</div>"
            + "<pre><code>"
-           + "cd " + path + "\n"
-           + "npm install karma-coverage"
+           + StringUtil.join(codeLines, "\n")
            + "</code></pre>"
            + "As the package is installed, run coverage again."
            + "</body></html>";
