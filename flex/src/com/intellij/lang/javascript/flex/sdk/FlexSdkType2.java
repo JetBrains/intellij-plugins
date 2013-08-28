@@ -61,7 +61,7 @@ public class FlexSdkType2 extends SdkType {
     return null;
   }
 
-  public void saveAdditionalData(final SdkAdditionalData additionalData, final Element additional) {
+  public void saveAdditionalData(@NotNull final SdkAdditionalData additionalData, @NotNull final Element additional) {
 
   }
 

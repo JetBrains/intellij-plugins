@@ -58,7 +58,7 @@ public class FlexmojosSdkType extends SdkType {
     return additionalData;
   }
 
-  public void saveAdditionalData(final SdkAdditionalData additionalData, final Element element) {
+  public void saveAdditionalData(@NotNull final SdkAdditionalData additionalData, @NotNull final Element element) {
     ((FlexmojosSdkAdditionalData)additionalData).save(element);
   }
 
