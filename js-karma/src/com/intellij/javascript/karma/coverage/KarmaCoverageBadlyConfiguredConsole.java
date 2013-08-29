@@ -8,9 +8,7 @@ import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
-import com.intellij.openapi.editor.colors.EditorFontType;
+import com.intellij.openapi.editor.colors.*;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
@@ -30,6 +28,9 @@ import java.io.File;
  * @author Sergey Simonchik
  */
 public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
+
+  private static final String TITLE = "<strong>Sorry, looks like we can't measure code coverage!</strong>";
+  private static final String SEE_KARMA_SERVER_TAB = "<div style='padding-top:5px;'>See 'Karma Server' tab for details.</div>";
 
   private final Project myProject;
   private final KarmaServer myServer;
@@ -91,16 +92,13 @@ public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
     return textPane;
   }
 
-  public static void configureMessagePaneUi(@NotNull JTextPane messageComponent,
-                                            @NotNull String message,
-                                            final boolean addBrowserHyperlinkListener) {
-    Color foreground = UIUtil.getLabelForeground();
+  private static void configureMessagePaneUi(@NotNull JTextPane messageComponent,
+                                             @NotNull String message,
+                                             final boolean addBrowserHyperlinkListener) {
     EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
-    TextAttributes textAttributes = colorsScheme.getAttributes(ConsoleViewContentType.ERROR_OUTPUT_KEY);
-    if (textAttributes != null) {
-      foreground = textAttributes.getForegroundColor();
-    }
     Font font = colorsScheme.getFont(EditorFontType.PLAIN);
+    Color background = colorsScheme.getDefaultBackground();
+    Color foreground = getTextForeground(colorsScheme);
 
     messageComponent.setFont(font);
     if (BasicHTML.isHTMLString(message)) {
@@ -118,9 +116,17 @@ public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
       messageComponent.setCaretPosition(0);
     }
 
-    messageComponent.setBackground(UIUtil.getTableBackground());
-
+    messageComponent.setBackground(background);
     messageComponent.setForeground(foreground);
+  }
+
+  @NotNull
+  private static Color getTextForeground(@NotNull EditorColorsScheme colorsScheme) {
+    TextAttributes textAttributes = colorsScheme.getAttributes(ConsoleViewContentType.ERROR_OUTPUT_KEY);
+    if (textAttributes != null && textAttributes.getForegroundColor() != null) {
+      return textAttributes.getForegroundColor();
+    }
+    return UIUtil.getLabelForeground();
   }
 
   @NotNull
@@ -138,22 +144,67 @@ public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
   }
 
   @NotNull
-  private static String getWarningAboutMissingCoverageReporterInConfigFile() {
-    String[] program = new String[] {
-      "module.exports = function (config) {",
-      "  config.set({",
-      "    ...",
-      "    reporters: [..., 'coverage', ...],",
-      "    ...",
-      "  });",
-      "};"
-    };
+  private static Color getCodeBackground() {
+    TextAttributesKey[] keys;
+    if (UIUtil.isUnderDarcula()) {
+      keys = new TextAttributesKey[] { CodeInsightColors.FOLLOWED_HYPERLINK_ATTRIBUTES };
+    }
+    else {
+      keys = new TextAttributesKey[] {
+        EditorColors.DELETED_TEXT_ATTRIBUTES,
+        CodeInsightColors.FOLLOWED_HYPERLINK_ATTRIBUTES
+      };
+    }
+    EditorColorsScheme colorsScheme = EditorColorsManager.getInstance().getGlobalScheme();
+    for (TextAttributesKey key : keys) {
+      TextAttributes textAttributes = colorsScheme.getAttributes(key);
+      if (textAttributes != null && textAttributes.getBackgroundColor() != null) {
+        return textAttributes.getBackgroundColor();
+      }
+    }
+    return UIUtil.getOptionPaneBackground();
+  }
 
-    return "<html><body>"
-           + "Make sure <code>'coverage'</code> reporter is specified in config file:"
+  private static String formatHtmlCode(@NotNull String[] lines) {
+    Color background = getCodeBackground();
+    StringBuilder colorBuf = new StringBuilder();
+    UIUtil.appendColor(background, colorBuf);
+    return   "<div style='padding-left:10px; padding-top:5px; padding-bottom:5px;'>"
+           + "<table cellspacing='0' cellpadding='0' style='border: none;'>"
+           + "<tr>"
+           + "<td>"
+           + "<div style='padding-left:6px;" +
+                        " padding-top:2px;" +
+                        " padding-bottom:2px;" +
+                        " padding-right:6px;" +
+                        " background-color:#" + colorBuf.toString() + ";'>"
            + "<pre><code>"
-           + StringUtil.join(program, "\n")
+           + StringUtil.join(lines, "\n")
            + "</code></pre>"
+           + "</div>"
+           + "</td>"
+           + "<td></td>"
+           + "</tr>"
+           + "</table>"
+           + "</div>";
+  }
+
+  @NotNull
+  private static String getWarningAboutMissingCoverageReporterInConfigFile() {
+    return "<html><body>"
+           + TITLE
+           + SEE_KARMA_SERVER_TAB
+           + "<div style='padding-top:3px'>Make sure <code>'coverage'</code> reporter is specified like this:</div>"
+           + formatHtmlCode(new String[]{
+              "module.exports = function (config) {",
+              "  config.set({",
+              "    ...",
+              "    reporters: [..., 'coverage', ...],",
+              "    ...",
+              "  });",
+              "};"
+             })
+           + "As the reporter is specified, run with coverage again."
            + "</body></html>";
   }
 
@@ -168,40 +219,38 @@ public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
     else {
       path = karmaPackageDir.getAbsolutePath();
     }
-    String[] codeLines = new String[] {
-      "cd " + path,
-      "npm install karma-coverage"
-    };
     return "<html><body>"
-           + "<strong>Looks like something went wrong!</strong>"
-           + "<p>Node.js package \"karma-coverage\" is required for test coverage."
+           + TITLE
+           + SEE_KARMA_SERVER_TAB
+           + "<div style='padding-top:3px'>It seems that 'karma-coverage' node package isn't installed.</div>"
            + "<div style='padding-top:3px'>To install it execute the following commands:</div>"
-           + "<pre><code>"
-           + StringUtil.join(codeLines, "\n")
-           + "</code></pre>"
-           + "As the package is installed, run coverage again."
+           + formatHtmlCode(new String[]{
+              "cd " + path,
+              "npm install karma-coverage"
+             })
+           + "As the package is installed, run with coverage again."
            + "</body></html>";
   }
 
   @NotNull
   private static String getWarningAboutMissingCoveragePluginInConfigFile() {
-    String[] program = new String[] {
-      "module.exports = function (config) {",
-      "  config.set({",
-      "    ...",
-      "    plugins: [..., 'karma-coverage', ...],",
-      "    ...",
-      "  });",
-      "};"
-    };
     return "<html><body>"
-           + "Implementation of <code>'coverage'</code> reporter is not found.<br/>"
-           + "<div style='padding-top:3px; padding-bottom:3px\' >"
-           +   "Make sure <code>'karma-coverage'</code> plugin is specified." +
-           " </div>"
-           + "<pre><code>"
-           + StringUtil.join(program, "\n")
-           + "</code></pre>"
+           + TITLE
+           + SEE_KARMA_SERVER_TAB
+           + "<div style='padding-top:3px'>It seems that <code>'coverage'</code> reporter isn't available.</div>"
+           + "<div style='padding-top:3px; padding-bottom:3px\'>"
+           +   "Make sure <code>'karma-coverage'</code> plugin is specified like this:"
+           + "</div>"
+           + formatHtmlCode(new String[]{
+              "module.exports = function (config) {",
+              "  config.set({",
+              "    ...",
+              "    plugins: [..., 'karma-coverage', ...],",
+              "    ...",
+              "  });",
+              "};"
+             })
+           + "As the plugin is specified, run with coverage again."
            + "</body></html>";
   }
 
