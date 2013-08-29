@@ -17,6 +17,7 @@ import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilCore;
+import com.intellij.util.Consumer;
 import com.intellij.util.FileContentUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ui.UIUtil;
@@ -94,9 +95,9 @@ public class JstdAssertionFrameworkSupportInspection extends AbstractMethodBased
             false
           );
           AsyncResult<Boolean> result = dialog.showAndGetOk();
-          result.doWhenDone(new AsyncResult.Handler<Boolean>() {
+          result.doWhenDone(new Consumer<Boolean>() {
             @Override
-            public void run(Boolean done) {
+            public void consume(Boolean done) {
               if (done) {
                 FileContentUtil.reparseFiles(project, Collections.singletonList(fileRequestor), true);
               }
