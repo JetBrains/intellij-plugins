@@ -4,10 +4,10 @@ import com.intellij.ide.SelectInContext;
 import com.intellij.ide.SelectInTargetBase;
 import com.intellij.internal.statistic.UsageTrigger;
 import com.intellij.javascript.flex.mxml.schema.ClassBackedElementDescriptor;
-import com.intellij.openapi.util.AsyncResult;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.Consumer;
 import org.jetbrains.annotations.Nullable;
 
 import static com.intellij.flex.uiDesigner.DocumentFactoryManager.DocumentInfo;
@@ -39,9 +39,9 @@ public class SelectInDesigner extends SelectInTargetBase {
       return;
     }
 
-    DesignerApplicationManager.getInstance().renderIfNeed((XmlFile)element.getContainingFile(), new AsyncResult.Handler<DocumentInfo>() {
+    DesignerApplicationManager.getInstance().renderIfNeed((XmlFile)element.getContainingFile(), new Consumer<DocumentInfo>() {
       @Override
-      public void run(DocumentInfo info) {
+      public void consume(DocumentInfo info) {
         int componentId = 0;
         if (!(element instanceof XmlFile)) {
           PsiElement effectiveElement = element;

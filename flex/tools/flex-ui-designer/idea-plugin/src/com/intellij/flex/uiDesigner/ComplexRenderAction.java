@@ -20,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.css.CssFileType;
 import com.intellij.psi.xml.XmlFile;
+import com.intellij.util.Consumer;
 import com.intellij.util.messages.MessageBus;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -60,9 +61,9 @@ class ComplexRenderAction extends RenderActionQueue.RenderAction<AsyncResult<Lis
   @Override
   protected void doRun() {
     renderDocumentsAndCheckLocalStyleModification(result);
-    result.doWhenDone(new AsyncResult.Handler<List<DocumentFactoryManager.DocumentInfo>>() {
+    result.doWhenDone(new Consumer<List<DocumentFactoryManager.DocumentInfo>>() {
       @Override
-      public void run(List<DocumentFactoryManager.DocumentInfo> infos) {
+      public void consume(List<DocumentFactoryManager.DocumentInfo> infos) {
         Application application = ApplicationManager.getApplication();
         if (application.isDisposed()) {
           return;

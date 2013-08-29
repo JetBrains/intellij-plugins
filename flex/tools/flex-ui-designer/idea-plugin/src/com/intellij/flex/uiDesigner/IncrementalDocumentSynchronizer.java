@@ -242,10 +242,10 @@ final class IncrementalDocumentSynchronizer extends Update {
 
       needRollbackStringWriter = false;
     }
-    catch (InvalidPropertyException e) {
+    catch (InvalidPropertyException ignored) {
       return true;
     }
-    catch (NumberFormatException e) {
+    catch (NumberFormatException ignored) {
       return true;
     }
     finally {
@@ -264,7 +264,7 @@ final class IncrementalDocumentSynchronizer extends Update {
     }).doWhenDone(new Runnable() {
       @Override
       public void run() {
-        DesignerApplicationManager.createDocumentRenderedNotificationDoneHandler(true).run(info);
+        DesignerApplicationManager.createDocumentRenderedNotificationDoneHandler(true).consume(info);
       }
     });
 

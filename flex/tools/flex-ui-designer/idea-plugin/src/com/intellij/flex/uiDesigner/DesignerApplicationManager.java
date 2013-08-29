@@ -153,7 +153,6 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
       }
     }
 
-    LOG.assertTrue(version != null);
     if (version.length() < 5 || version.charAt(0) < '4') {
       return false;
     }
@@ -174,12 +173,12 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     return true;
   }
 
-  public void renderIfNeed(@NotNull XmlFile psiFile, @Nullable AsyncResult.Handler<DocumentInfo> handler) {
+  public void renderIfNeed(@NotNull XmlFile psiFile, @Nullable Consumer<DocumentInfo> handler) {
     renderIfNeed(psiFile, handler, null, false);
   }
 
   public void renderIfNeed(@NotNull XmlFile psiFile,
-                           @Nullable final AsyncResult.Handler<DocumentInfo> handler,
+                           @Nullable final Consumer<DocumentInfo> handler,
                            @Nullable ActionCallback renderRejectedCallback,
                            final boolean debug) {
     boolean needInitialRender = isApplicationClosed();
@@ -205,12 +204,12 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
         app.executeOnPooledThread(new Runnable() {
           @Override
           public void run() {
-            handler.run(finalDocumentInfo);
+            handler.consume(finalDocumentInfo);
           }
         });
       }
       else {
-        handler.run(documentInfo);
+        handler.consume(documentInfo);
       }
       return;
     }
@@ -258,10 +257,10 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
     }
   }
 
-  public static AsyncResult.Handler<DocumentInfo> createDocumentRenderedNotificationDoneHandler(final boolean syncTimestamp) {
-    return new AsyncResult.Handler<DocumentInfo>() {
+  public static Consumer<DocumentInfo> createDocumentRenderedNotificationDoneHandler(final boolean syncTimestamp) {
+    return new Consumer<DocumentInfo>() {
       @Override
-      public void run(DocumentInfo info) {
+      public void consume(DocumentInfo info) {
         Document document = FileDocumentManager.getInstance().getCachedDocument(info.getElement());
         if (document != null) {
           if (syncTimestamp) {
@@ -276,9 +275,9 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   @NotNull
   public AsyncResult<BufferedImage> getDocumentImage(@NotNull XmlFile psiFile) {
     final AsyncResult<BufferedImage> result = new AsyncResult<BufferedImage>();
-    renderIfNeed(psiFile, new AsyncResult.Handler<DocumentInfo>() {
+    renderIfNeed(psiFile, new Consumer<DocumentInfo>() {
       @Override
-      public void run(DocumentInfo documentInfo) {
+      public void consume(DocumentInfo documentInfo) {
         Client.getInstance().getDocumentImage(documentInfo, result);
       }
     }, result, false);
@@ -286,9 +285,9 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
   }
 
   public void openDocument(@NotNull final XmlFile psiFile, final boolean debug) {
-    renderIfNeed(psiFile, new AsyncResult.Handler<DocumentInfo>() {
+    renderIfNeed(psiFile, new Consumer<DocumentInfo>() {
       @Override
-      public void run(DocumentInfo documentInfo) {
+      public void consume(DocumentInfo documentInfo) {
         Client.getInstance().selectComponent(documentInfo.getId(), 0);
       }
     }, null, debug);
@@ -535,9 +534,9 @@ public class DesignerApplicationManager extends ServiceManagerImpl {
 
       final AtomicBoolean processed = new AtomicBoolean(false);
       indicator.setText(FlashUIDesignerBundle.message("loading.libraries"));
-      renderResult.doWhenDone(new AsyncResult.Handler<DocumentInfo>() {
+      renderResult.doWhenDone(new Consumer<DocumentInfo>() {
         @Override
-        public void run(DocumentInfo documentInfo) {
+        public void consume(DocumentInfo documentInfo) {
           if (asyncResult != null) {
             asyncResult.setDone(documentInfo);
           }
