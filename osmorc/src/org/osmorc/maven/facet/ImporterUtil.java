@@ -1,4 +1,4 @@
-package org.osmorc.facet.maven;
+package org.osmorc.maven.facet;
 
 import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Analyzer;
@@ -13,6 +13,7 @@ import org.jetbrains.idea.maven.model.MavenArtifact;
 import org.jetbrains.idea.maven.model.MavenArtifactNode;
 import org.jetbrains.idea.maven.project.MavenProject;
 import org.osmorc.OsmorcProjectComponent;
+import org.osmorc.make.BndWrapper;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -22,19 +23,16 @@ import java.util.regex.Pattern;
  * Helper class for importing settings from the maven bundle plugin.
  */
 public class ImporterUtil {
+  private static final Pattern FUZZY_VERSION = Pattern.compile("(\\d+)(\\.(\\d+)(\\.(\\d+))?)?([^a-zA-Z0-9](.*))?", Pattern.DOTALL);
 
-  private static final Pattern FUZZY_VERSION = Pattern.compile("(\\d+)(\\.(\\d+)(\\.(\\d+))?)?([^a-zA-Z0-9](.*))?",
-                                                               Pattern.DOTALL);
-
-  private ImporterUtil() {
-  }
+  private ImporterUtil() { }
 
   /**
    * Removes a tag (like {maven-resources}) from the given instruction string.
    *
    * @param instruction the instruction string.
    * @param tag         the tag  to remove
-   * @return the string wihtout the tag.
+   * @return the string without the tag.
    */
   @NotNull
   static String removeTagFromInstruction(@NotNull String instruction, @NotNull String tag) {
@@ -89,9 +87,6 @@ public class ImporterUtil {
    * Clean up version parameters. Other builders use more fuzzy definitions of
    * the version syntax. This method cleans up such a version to match an OSGi
    * version.
-   *
-   * @param VERSION_STRING
-   * @return
    */
   static String cleanupVersion(String version) {
     StringBuffer result = new StringBuffer();
@@ -158,9 +153,8 @@ public class ImporterUtil {
    * @param props   the properties
    * @param project the maven project.
    */
-  static void postprocessAdditionalProperties(@NotNull Map<String, String> props, @NotNull MavenProject project) {
-
-    Analyzer myFakeAnalyzer = makeFakeAnalyzer(props);
+  static void postProcessAdditionalProperties(@NotNull Map<String, String> props, @NotNull MavenProject project) {
+    Analyzer myFakeAnalyzer = BndWrapper.makeFakeAnalyzer(props);
     Collection<MavenArtifact> dependencies = collectDependencies(props, project);
 
     DependencyEmbedder embedder = new DependencyEmbedder(dependencies);
@@ -234,36 +228,5 @@ public class ImporterUtil {
       }
     }
     props.put(Constants.INCLUDE_RESOURCE, sanitizedHeader.toString());
-  }
-
-  /**
-   * Creates a fake analyzer instance around the given map. This is mostly done so the felix bnd maven plugin code doesn't have to be
-   * changed that much.
-   * @param props the properties to wrap
-   * @return a fake analyzer.
-   */
-  @NotNull
-  public static Analyzer makeFakeAnalyzer(final @NotNull Map<String, String> props) {
-    return new Analyzer() {
-      @Override
-      public String getProperty(String key) {
-        return props.get(key);
-      }
-
-      @Override
-      public String getProperty(String key, String deflt) {
-        if (props.containsKey(key)) {
-          return key;
-        }
-        else {
-          return deflt;
-        }
-      }
-
-      @Override
-      public void setProperty(String key, String value) {
-        props.put(key, value);
-      }
-    };
   }
 }

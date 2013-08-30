@@ -1,5 +1,3 @@
-package org.osmorc.facet.maven;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,16 +15,15 @@ package org.osmorc.facet.maven;
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- */
-
-/**
+ *
  * Modified for usage within IntelliJ IDEA.
  */
+package org.osmorc.maven.facet;
 
 import aQute.bnd.header.Attrs;
+import aQute.bnd.header.OSGiHeader;
 import aQute.bnd.header.Parameters;
 import aQute.bnd.osgi.Instruction;
-import aQute.bnd.header.OSGiHeader;
 import org.jetbrains.idea.maven.model.MavenArtifact;
 
 import java.util.Collection;
@@ -35,9 +32,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-
 /**
- * Apply clause-based filter over given dependencies
+ * Apply clause-based filter over given dependencies.
  *
  * @author <a href="mailto:dev@felix.apache.org">Felix Project Team</a>
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
@@ -216,4 +212,3 @@ public abstract class AbstractDependencyFilter {
 
   protected abstract void processDependencies(Collection<MavenArtifact> dependencies, String inline);
 }
-

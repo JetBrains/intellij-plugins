@@ -18,7 +18,7 @@
  *
  * Modified for usage within IntelliJ IDEA.
  */
-package org.osmorc.facet.maven;
+package org.osmorc.maven.facet;
 
 import aQute.bnd.osgi.Analyzer;
 import aQute.bnd.osgi.Constants;

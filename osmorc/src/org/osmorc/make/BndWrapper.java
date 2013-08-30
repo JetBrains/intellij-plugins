@@ -359,4 +359,35 @@ public class BndWrapper {
     }
     return outputDir;
   }
+
+  /**
+   * Creates a fake analyzer instance around the given map. This is mostly done so the felix bnd maven plugin code doesn't have to be
+   * changed that much.
+   * @param props the properties to wrap
+   * @return a fake analyzer.
+   */
+  @NotNull
+  public static Analyzer makeFakeAnalyzer(final @NotNull Map<String, String> props) {
+    return new Analyzer() {
+      @Override
+      public String getProperty(String key) {
+        return props.get(key);
+      }
+
+      @Override
+      public String getProperty(String key, String deflt) {
+        if (props.containsKey(key)) {
+          return key;
+        }
+        else {
+          return deflt;
+        }
+      }
+
+      @Override
+      public void setProperty(String key, String value) {
+        props.put(key, value);
+      }
+    };
+  }
 }

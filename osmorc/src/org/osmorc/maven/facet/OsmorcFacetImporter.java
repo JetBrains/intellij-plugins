@@ -22,7 +22,7 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.osmorc.facet.maven;
+package org.osmorc.maven.facet;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
@@ -50,13 +50,10 @@ import java.util.Map;
  * The OsmorcFacetImporter tries to read maven metadata and import OSGi specific settings as an Osmorc facet.
  *
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
- * @version $Id:$
  */
 public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetConfiguration, OsmorcFacetType> {
-
-  private final Logger logger = Logger.getInstance("#org.osmorc.facet.maven.OsmorcFacetImporter");
+  private static final Logger logger = Logger.getInstance("#org.osmorc.facet.maven.OsmorcFacetImporter");
   private static final String IncludeExistingManifest = "_include";
-
 
   public OsmorcFacetImporter() {
     super("org.apache.felix", "maven-bundle-plugin", OsmorcFacetType.getInstance());
@@ -183,8 +180,8 @@ public class OsmorcFacetImporter extends FacetImporter<OsmorcFacet, OsmorcFacetC
         }
       }
 
-      // now postprocess the settings, to make Embed-Dependency work
-      ImporterUtil.postprocessAdditionalProperties(props, mavenProject);
+      // now post-process the settings, to make Embed-Dependency work
+      ImporterUtil.postProcessAdditionalProperties(props, mavenProject);
 
       // Fix for IDEA-63242 - don't merge it with the existing settings, overwrite them
       conf.importAdditionalProperties(props, true);

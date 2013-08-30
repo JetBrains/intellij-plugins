@@ -18,7 +18,7 @@
  *
  * Modified for usage within IntelliJ IDEA.
  */
-package org.osmorc.facet.maven;
+package org.osmorc.make;
 
 import aQute.bnd.osgi.Analyzer;
 import aQute.bnd.osgi.Constants;
@@ -36,9 +36,7 @@ import java.util.Map;
  * felix bnd maven plugin.
  */
 public class LocalPackageCollector {
-
   private static final String LOCAL_PACKAGES = "{local-packages}";
-
 
   /**
    * Adds the local packages to the headers in the given manifest.
@@ -46,7 +44,7 @@ public class LocalPackageCollector {
    * @param currentManifest the currently calculated manifest contents.
    */
   public static void addLocalPackages(File outputDirectory, Map<String, String> currentManifest) {
-    Analyzer fakeAnalyzer = ImporterUtil.makeFakeAnalyzer(currentManifest);
+    Analyzer fakeAnalyzer = BndWrapper.makeFakeAnalyzer(currentManifest);
     addLocalPackages(outputDirectory, fakeAnalyzer);
   }
 

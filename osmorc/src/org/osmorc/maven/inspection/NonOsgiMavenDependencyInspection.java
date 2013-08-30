@@ -23,7 +23,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.osmorc.inspection.maven;
+package org.osmorc.maven.inspection;
 
 import com.intellij.codeInspection.*;
 import com.intellij.openapi.application.Result;

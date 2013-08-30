@@ -24,10 +24,10 @@
   -->
 <idea-plugin url="http://www.jetbrains.com/idea">
     <extensions defaultExtensionNs="org.jetbrains.idea.maven">
-        <importer implementation="org.osmorc.facet.maven.OsmorcFacetImporter"/>
+        <importer implementation="org.osmorc.maven.facet.OsmorcFacetImporter"/>
     </extensions>
     <extensions defaultExtensionNs="com.intellij">
       <localInspection shortName="osmorcNonOsgiMavenDependency" displayName="Non-OSGi dependency" groupName="OSGi" enabledByDefault="true"
-                       level="WARNING" implementationClass="org.osmorc.inspection.maven.NonOsgiMavenDependencyInspection"/>
+                       level="WARNING" implementationClass="org.osmorc.maven.inspection.NonOsgiMavenDependencyInspection"/>
     </extensions>
 </idea-plugin>

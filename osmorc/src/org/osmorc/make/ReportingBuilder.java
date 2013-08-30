@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.make;
 
 import aQute.bnd.osgi.Builder;
@@ -33,13 +32,11 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import org.jetbrains.idea.maven.model.MavenPlugin;
-import org.jetbrains.idea.maven.project.MavenProject;
-import org.jetbrains.idea.maven.project.MavenProjectsManager;
 import org.osmorc.BundleManager;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.manifest.BundleManifest;
+import org.osmorc.util.MavenIntegrationUtil;
 
 import java.text.MessageFormat;
 
@@ -72,14 +69,10 @@ class ReportingBuilder extends Builder {
       }
       else {
         // try if module was imported from maven.
-        MavenProjectsManager projectsManager = MavenProjectsManager.getInstance(module.getProject());
-        MavenProject project = projectsManager.findProject(module);
-        if (project != null) {
-          MavenPlugin plugin = project.findPlugin("org.apache.felix", "maven-bundle-plugin");
-          if (plugin != null) {
-            // ok it's imported from maven, link warnings/errors back to pom.xml
-            sourceFileName = VfsUtilCore.pathToUrl(project.getPath());
-          }
+        String mavenProjectPath = MavenIntegrationUtil.getMavenProjectPath(module);
+        if (mavenProjectPath != null) {
+          // ok it's imported from maven, link warnings/errors back to pom.xml
+          sourceFileName = mavenProjectPath;
         }
       }
     }

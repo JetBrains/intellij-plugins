@@ -42,7 +42,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
-import org.osmorc.facet.maven.LocalPackageCollector;
 import org.osmorc.frameworkintegration.CachingBundleInfoProvider;
 
 import java.io.DataInput;

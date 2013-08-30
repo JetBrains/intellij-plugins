@@ -1,4 +1,4 @@
-package org.osmorc.facet.maven;
+package org.osmorc.maven.facet;
 
 /**
  * Exception thrown by the dependency embedder in case something is not readable.

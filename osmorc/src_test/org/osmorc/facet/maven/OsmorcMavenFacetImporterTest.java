@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.osmorc.facet.OsmorcFacet;
 import org.osmorc.facet.OsmorcFacetConfiguration;
 import org.osmorc.facet.OsmorcFacetType;
+import org.osmorc.maven.facet.OsmorcFacetImporter;
 
 import java.io.IOException;
 
