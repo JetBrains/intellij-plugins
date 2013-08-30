@@ -140,8 +140,7 @@ public class JavaStepDefinitionCreator implements StepDefinitionCreator {
           //noinspection ConstantConditions
           final Module module = ProjectRootManager.getInstance(step.getProject()).getFileIndex().getModuleForFile(featureFile.getVirtualFile());
           if (module != null) {
-            final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-            final VirtualFile[] sourceRoots = moduleRootManager.getSourceRoots();
+            final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots();
             if (sourceRoot != null && sourceRoot.getName().equals("resources")) {
               final VirtualFile resourceParent = sourceRoot.getParent();
               for (VirtualFile vFile : sourceRoots) {
