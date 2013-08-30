@@ -135,7 +135,7 @@
     <configurationType implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRunConfigurationType"/>
     <configurationProducer implementation="com.intellij.lang.javascript.flex.flexunit.FlexUnitRuntimeConfigurationProducer"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.run.FlashRunConfigurationType"/>
-    <configurationProducer implementation="com.intellij.lang.javascript.flex.run.FlashRunConfigurationProducer"/>
+    <runConfigurationProducer implementation="com.intellij.lang.javascript.flex.run.FlashRunConfigurationProducer"/>
     <configurationType implementation="com.intellij.lang.javascript.flex.run.RemoteFlashRunConfigurationType"/>
 
     <configuration.ModuleStructureExtension id="FlexBuildConfigurations"
