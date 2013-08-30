@@ -51,6 +51,7 @@ import com.intellij.util.containers.ContainerUtil;
 import icons.Struts2Icons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 
 import javax.swing.*;
 import java.util.Collections;
@@ -163,11 +164,11 @@ public class CreateValidationXmlIntention extends PsiElementBaseIntentionAction 
 
     final Module module = ModuleUtilCore.findModuleForPsiElement(actionClass);
     assert module != null;
-    final VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots(false);
-    final VirtualFile sourceRoot = sourceRoots.length == 1 ? sourceRoots[0] :
+    final List<VirtualFile> sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots(JavaModuleSourceRootTypes.PRODUCTION);
+    final VirtualFile sourceRoot = sourceRoots.size() == 1 ? sourceRoots.get(0) :
         MoveClassesOrPackagesUtil.chooseSourceRoot(targetPackage,
                                                    sourceRoots,
-                                                   manager.findDirectory(sourceRoots[0]));
+                                                   manager.findDirectory(sourceRoots.get(0)));
     if (sourceRoot == null) {
       return;
     }
