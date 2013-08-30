@@ -124,17 +124,12 @@ public class GrCucumberExtension extends NotIndexedCucumberExtension {
   @Override
   public void findRelatedStepDefsRoots(@NotNull final Module module, @NotNull final PsiFile featureFile,
                                        List<PsiDirectory> newStepDefinitionsRoots, Set<String> processedStepDirectories) {
-    final ContentEntry[] contentEntries = ModuleRootManager.getInstance(module).getContentEntries();
-    for (final ContentEntry contentEntry : contentEntries) {
-      final SourceFolder[] sourceFolders = contentEntry.getSourceFolders();
-      for (SourceFolder sf : sourceFolders) {
-        // ToDo: check if inside test folder
-        VirtualFile sfDirectory = sf.getFile();
-        if (sfDirectory != null && sfDirectory.isDirectory()) {
-          PsiDirectory sourceRoot = PsiDirectoryFactory.getInstance(module.getProject()).createDirectory(sfDirectory);
-          if (!processedStepDirectories.contains(sourceRoot.getVirtualFile().getPath())) {
-            newStepDefinitionsRoots.add(sourceRoot);
-          }
+    // ToDo: check if inside test folder
+    for (VirtualFile sfDirectory : ModuleRootManager.getInstance(module).getSourceRoots()) {
+      if (sfDirectory.isDirectory()) {
+        PsiDirectory sourceRoot = PsiDirectoryFactory.getInstance(module.getProject()).createDirectory(sfDirectory);
+        if (!processedStepDirectories.contains(sourceRoot.getVirtualFile().getPath())) {
+          newStepDefinitionsRoots.add(sourceRoot);
         }
       }
     }
