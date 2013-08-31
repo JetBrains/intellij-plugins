@@ -135,7 +135,7 @@ public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
       return getWarningAboutMissingCoverageReporterInConfigFile();
     }
     if (!myStatus.isCoverageReportFound()) {
-      if (!myStatus.isCoveragePluginInstalled()) {
+      if (myStatus.isKarmaCoveragePackageNeededToBeInstalled()) {
         return getSuggestionAboutCoveragePluginInstallation();
       }
       return getWarningAboutMissingCoveragePluginInConfigFile();

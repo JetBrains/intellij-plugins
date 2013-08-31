@@ -6,15 +6,14 @@ import com.google.gson.JsonObject;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.StreamEventHandler;
 import com.intellij.javascript.karma.util.GsonUtil;
-import com.intellij.javascript.nodejs.CompletionModuleInfo;
-import com.intellij.javascript.nodejs.NodeModuleSearchUtil;
+import com.intellij.javascript.karma.util.NodeInstalledPackage;
+import com.intellij.javascript.karma.util.NodeInstalledPackagesLocator;
+import com.intellij.javascript.nodejs.NodeSettings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
@@ -130,7 +129,7 @@ public class KarmaCoveragePeer {
           ApplicationManager.getApplication().runReadAction(new Runnable() {
             @Override
             public void run() {
-              checkCoveragePlugin(server.getKarmaPackageDir());
+              checkCoveragePlugin(server);
             }
           });
         }
@@ -138,15 +137,11 @@ public class KarmaCoveragePeer {
     }
   }
 
-  private void checkCoveragePlugin(@NotNull File karmaPackageDir) {
-    VirtualFile karmaPackageVirtualDir = VfsUtil.findFileByIoFile(karmaPackageDir, false);
-    boolean coveragePluginInstalled = true;
-    if (karmaPackageVirtualDir != null && karmaPackageVirtualDir.isValid()) {
-      List<CompletionModuleInfo> modules = Lists.newArrayList();
-      NodeModuleSearchUtil.findModulesWithName(modules, "karma-coverage", karmaPackageVirtualDir, null, false);
-      coveragePluginInstalled = !modules.isEmpty();
-    }
-    fireOnCoverageInitialized(new KarmaCoverageStartupStatus(true, false, coveragePluginInstalled));
+  private void checkCoveragePlugin(@NotNull KarmaServer server) {
+    NodeInstalledPackagesLocator locator = NodeInstalledPackagesLocator.getInstance();
+    NodeSettings nodeSettings = new NodeSettings(server.getNodeInterpreterPath());
+    NodeInstalledPackage pkg = locator.findInstalledPackages("karma-coverage", server.getKarmaPackageDir(), nodeSettings);
+    fireOnCoverageInitialized(new KarmaCoverageStartupStatus(true, false, pkg != null));
   }
 
   public void registerEventHandlers(@NotNull final KarmaServer server) {

@@ -43,6 +43,7 @@ public class KarmaServer {
   private final KarmaWatcher myWatcher;
 
   private final AtomicBoolean myOnPortBoundFired = new AtomicBoolean(false);
+  private final File myNodeInterpreter;
   private final File myKarmaPackageDir;
 
   private List<Runnable> myOnPortBoundCallbacks = Lists.newCopyOnWriteArrayList();
@@ -62,6 +63,7 @@ public class KarmaServer {
                      @NotNull File configurationFile) throws IOException {
     /* 'nodeInterpreter', 'karmaPackageDir' and 'configurationFile'
         are already checked in KarmaRunConfiguration.checkConfiguration */
+    myNodeInterpreter = nodeInterpreter;
     myKarmaPackageDir = karmaPackageDir;
     myKarmaJsSourcesLocator = new KarmaJsSourcesLocator(karmaPackageDir);
     KillableColoredProcessHandler processHandler = startServer(nodeInterpreter, configurationFile);
@@ -105,6 +107,11 @@ public class KarmaServer {
         }
       }
     });
+  }
+
+  @NotNull
+  public String getNodeInterpreterPath() {
+    return myNodeInterpreter.getAbsolutePath();
   }
 
   @NotNull
