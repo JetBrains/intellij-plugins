@@ -94,6 +94,9 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
                                              @NotNull KarmaServer server,
                                              @NotNull ExecutionEnvironment env,
                                              @Nullable RunContentDescriptor contentToReuse) {
+    if (status.isKarmaCoveragePackageNeededToBeInstalled()) {
+      server.getRestarter().requestRestart();
+    }
     ExecutionConsole console = new KarmaCoverageBadlyConfiguredConsole(env.getProject(), server, status);
     final ProcessHandler processHandler = new NopProcessHandler();
     processHandler.addProcessListener(new ProcessAdapter() {
