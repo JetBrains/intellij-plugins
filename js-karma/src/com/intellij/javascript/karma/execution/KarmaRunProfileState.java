@@ -49,7 +49,7 @@ public class KarmaRunProfileState implements RunProfileState {
 
   @Override
   @Nullable
-  public ExecutionResult execute(@NotNull final Executor executor, @NotNull final ProgramRunner runner) throws ExecutionException {
+  public ExecutionResult execute(@NotNull Executor executor, @NotNull ProgramRunner runner) throws ExecutionException {
     KarmaServer server = getServerOrStart(executor);
     if (server != null) {
       return executeWithServer(executor, server);
@@ -98,7 +98,7 @@ public class KarmaRunProfileState implements RunProfileState {
   }
 
   @NotNull
-  public ExecutionResult executeWithServer(@NotNull final Executor executor,
+  public ExecutionResult executeWithServer(@NotNull Executor executor,
                                            @NotNull KarmaServer server) throws ExecutionException {
     server.getWatcher().flush();
     KarmaExecutionSession session = new KarmaExecutionSession(myProject,
