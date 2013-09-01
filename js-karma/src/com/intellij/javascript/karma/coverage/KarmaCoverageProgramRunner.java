@@ -62,11 +62,11 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
                                            @Nullable RunContentDescriptor contentToReuse,
                                            @NotNull final ExecutionEnvironment env) throws ExecutionException {
     FileDocumentManager.getInstance().saveAllDocuments();
-    KarmaRunProfileState karmaState = ObjectUtils.tryCast(state, KarmaRunProfileState.class);
-    if (karmaState == null) {
+    KarmaRunProfileState runProfileState = ObjectUtils.tryCast(state, KarmaRunProfileState.class);
+    if (runProfileState == null) {
       return null;
     }
-    final KarmaServer server = karmaState.getServerOrStart(env.getExecutor());
+    final KarmaServer server = runProfileState.getServerOrStart(env.getExecutor());
     if (server == null) {
       return null;
     }
@@ -74,9 +74,9 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
     KarmaCoverageStartupStatus status = coveragePeer.getStartupStatus();
     if (status != null) {
       if (status.isSuccessful()) {
-        return executeAfterSuccessfulInitialization(project, karmaState, contentToReuse, env, server);
+        return executeAfterSuccessfulInitialization(project, runProfileState, contentToReuse, env, server);
       }
-      return showWarningUi(status, server, env, contentToReuse);
+      return showWarningConsole(status, server, env, contentToReuse);
     }
     coveragePeer.doWhenCoverageInitialized(new KarmaCoverageInitializationListener() {
       @Override
@@ -87,17 +87,17 @@ public class KarmaCoverageProgramRunner extends GenericProgramRunner {
         }
       }
     });
-    return null;
+    return showWarningConsole(null, server, env, contentToReuse);
   }
 
-  private RunContentDescriptor showWarningUi(@NotNull KarmaCoverageStartupStatus status,
-                                             @NotNull KarmaServer server,
-                                             @NotNull ExecutionEnvironment env,
-                                             @Nullable RunContentDescriptor contentToReuse) {
-    if (status.isKarmaCoveragePackageNeededToBeInstalled()) {
+  private RunContentDescriptor showWarningConsole(@Nullable KarmaCoverageStartupStatus status,
+                                                  @NotNull KarmaServer server,
+                                                  @NotNull ExecutionEnvironment env,
+                                                  @Nullable RunContentDescriptor contentToReuse) {
+    if (status != null && status.isKarmaCoveragePackageNeededToBeInstalled()) {
       server.getRestarter().requestRestart();
     }
-    ExecutionConsole console = new KarmaCoverageBadlyConfiguredConsole(env.getProject(), server, status);
+    ExecutionConsole console = new KarmaCoverageConfigurationErrorConsole(env.getProject(), server, status);
     final ProcessHandler processHandler = new NopProcessHandler();
     processHandler.addProcessListener(new ProcessAdapter() {
       @Override

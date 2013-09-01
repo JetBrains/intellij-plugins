@@ -27,7 +27,7 @@ import java.io.File;
 /**
  * @author Sergey Simonchik
  */
-public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
+public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleEx {
 
   private static final String TITLE = "<strong>Sorry, looks like we can't measure code coverage!</strong>";
   private static final String SEE_KARMA_SERVER_TAB = "<div style='padding-top:5px;'>See 'Karma Server' tab for details.</div>";
@@ -37,9 +37,9 @@ public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
   private final KarmaCoverageStartupStatus myStatus;
   private JComponent myComponent;
 
-  public KarmaCoverageBadlyConfiguredConsole(@NotNull Project project,
-                                             @NotNull KarmaServer server,
-                                             @NotNull KarmaCoverageStartupStatus status) {
+  public KarmaCoverageConfigurationErrorConsole(@NotNull Project project,
+                                                @NotNull KarmaServer server,
+                                                @Nullable KarmaCoverageStartupStatus status) {
     myProject = project;
     myServer = server;
     myStatus = status;
@@ -131,6 +131,9 @@ public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
 
   @NotNull
   private String getWarningMessage() {
+    if (myStatus == null) {
+      return getCommonWarning();
+    }
     if (!myStatus.isCoverageReporterSpecifiedInConfig()) {
       return getWarningAboutMissingCoverageReporterInConfigFile();
     }
@@ -141,6 +144,14 @@ public class KarmaCoverageBadlyConfiguredConsole implements ExecutionConsoleEx {
       return getWarningAboutMissingCoveragePluginInConfigFile();
     }
     return "";
+  }
+
+  @NotNull
+  private static String getCommonWarning() {
+    return "<html><body>"
+           + TITLE
+           + SEE_KARMA_SERVER_TAB
+           + "</body></html>";
   }
 
   @NotNull
