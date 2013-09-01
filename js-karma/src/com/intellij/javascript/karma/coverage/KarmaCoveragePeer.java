@@ -115,12 +115,13 @@ public class KarmaCoveragePeer {
 
   private void onCoverageInitialized(@NotNull final KarmaServer server,
                                      boolean coverageReporterSpecifiedInConfig,
+                                     boolean coveragePreprocessorSpecifiedInConfig,
                                      boolean coverageReporterFound) {
-    if (!coverageReporterSpecifiedInConfig) {
-      fireOnCoverageInitialized(new KarmaCoverageStartupStatus(false, true, true));
-    }
-    else if (coverageReporterFound) {
-      fireOnCoverageInitialized(new KarmaCoverageStartupStatus(true, true, true));
+    if (!coverageReporterSpecifiedInConfig || !coveragePreprocessorSpecifiedInConfig || coverageReporterFound) {
+      fireOnCoverageInitialized(new KarmaCoverageStartupStatus(coverageReporterSpecifiedInConfig,
+                                                               coveragePreprocessorSpecifiedInConfig,
+                                                               coverageReporterFound,
+                                                               true));
     }
     else {
       ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
@@ -141,7 +142,7 @@ public class KarmaCoveragePeer {
     NodeInstalledPackagesLocator locator = NodeInstalledPackagesLocator.getInstance();
     NodeSettings nodeSettings = new NodeSettings(server.getNodeInterpreterPath());
     NodeInstalledPackage pkg = locator.findInstalledPackages("karma-coverage", server.getKarmaPackageDir(), nodeSettings);
-    fireOnCoverageInitialized(new KarmaCoverageStartupStatus(true, false, pkg != null));
+    fireOnCoverageInitialized(new KarmaCoverageStartupStatus(true, true, false, pkg != null));
   }
 
   public void registerEventHandlers(@NotNull final KarmaServer server) {
@@ -165,6 +166,9 @@ public class KarmaCoveragePeer {
     server.registerStreamEventHandler(new StreamEventHandler() {
 
       private AtomicBoolean myCoverageInitialized = new AtomicBoolean(true);
+      private static final String COVERAGE_REPORTER_SPECIFIED_IN_CONFIG = "coverageReporterSpecifiedInConfig";
+      private static final String COVERAGE_PREPROCESSOR_SPECIFIED_IN_CONFIG = "coveragePreprocessorSpecifiedInConfig";
+      private static final String COVERAGE_REPORTER_FOUND = "coverageReporterFound";
 
       @NotNull
       @Override
@@ -177,23 +181,35 @@ public class KarmaCoveragePeer {
         if (myCoverageInitialized.compareAndSet(true, false)) {
           Boolean coverageReporterFound = null;
           Boolean coverageReporterSpecifiedInConfig = null;
+          Boolean coveragePreprocessorSpecifiedInConfig = null;
           if (eventBody.isJsonObject()) {
             JsonObject eventObj = eventBody.getAsJsonObject();
-            coverageReporterSpecifiedInConfig = GsonUtil.getBooleanProperty(eventObj, "coverageReporterSpecifiedInConfig");
-            coverageReporterFound = GsonUtil.getBooleanProperty(eventObj, "coverageReporterFound");
+            coverageReporterSpecifiedInConfig = GsonUtil.getBooleanProperty(eventObj, COVERAGE_REPORTER_SPECIFIED_IN_CONFIG);
+            coveragePreprocessorSpecifiedInConfig = GsonUtil.getBooleanProperty(eventObj, COVERAGE_PREPROCESSOR_SPECIFIED_IN_CONFIG);
+            coverageReporterFound = GsonUtil.getBooleanProperty(eventObj, COVERAGE_REPORTER_FOUND);
           }
           if (coverageReporterSpecifiedInConfig == null) {
-            LOG.warn("Malformed '" + getEventType()
-                     + "' event: can not found boolean property 'coverageReporterSpecifiedInConfig'!");
+            warnAboutMissingProperty(COVERAGE_REPORTER_SPECIFIED_IN_CONFIG);
             coverageReporterSpecifiedInConfig = true;
           }
+          if (coveragePreprocessorSpecifiedInConfig == null) {
+            if (coverageReporterSpecifiedInConfig) {
+              warnAboutMissingProperty(COVERAGE_PREPROCESSOR_SPECIFIED_IN_CONFIG);
+            }
+            coveragePreprocessorSpecifiedInConfig = true;
+          }
           if (coverageReporterFound == null) {
-            LOG.warn("Malformed '" + getEventType()
-                     + "' event: can not found boolean property 'coverageReporterFound'!");
+            if (coverageReporterSpecifiedInConfig) {
+              warnAboutMissingProperty(COVERAGE_REPORTER_FOUND);
+            }
             coverageReporterFound = true;
           }
-          onCoverageInitialized(server, coverageReporterSpecifiedInConfig, coverageReporterFound);
+          onCoverageInitialized(server, coverageReporterSpecifiedInConfig, coveragePreprocessorSpecifiedInConfig, coverageReporterFound);
         }
+      }
+
+      private void warnAboutMissingProperty(@NotNull String propertyName) {
+        LOG.warn("Malformed event '" + getEventType() + "': can not found boolean property '" + propertyName + "'!");
       }
     });
   }

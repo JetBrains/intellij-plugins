@@ -29,8 +29,8 @@ import java.io.File;
  */
 public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleEx {
 
-  private static final String TITLE = "<strong>Sorry, looks like we can't measure code coverage!</strong>";
-  private static final String SEE_KARMA_SERVER_TAB = "<div style='padding-top:5px;'>See 'Karma Server' tab for details.</div>";
+  private static final String TITLE = "<div style='padding-bottom:4px;'><strong>Sorry, looks like we can't measure code coverage!</strong></div>";
+  private static final String SEE_KARMA_SERVER_TAB = "<div style='padding-top:3px;'>See 'Karma Server' tab for details.</div>";
 
   private final Project myProject;
   private final KarmaServer myServer;
@@ -55,7 +55,7 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
     ui.getOptions().setMinimizeActionEnabled(false);
     Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
                                               getComponent(),
-                                              "Coverage Configuration Error",
+                                              myStatus != null ? "Coverage Configuration Error" : "Test Run",
                                               AllIcons.Debugger.Console,
                                               getPreferredFocusableComponent());
     ui.addContent(consoleContent, 1, PlaceInGrid.bottom, false);
@@ -137,6 +137,9 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
     if (!myStatus.isCoverageReporterSpecifiedInConfig()) {
       return getWarningAboutMissingCoverageReporterInConfigFile();
     }
+    if (myStatus.isCoveragePreprocessorNeededToBeSpecified()) {
+      return getWarningAboutMissingCoveragePreprocessorInConfigFile();
+    }
     if (!myStatus.isCoverageReportFound()) {
       if (myStatus.isKarmaCoveragePackageNeededToBeInstalled()) {
         return getSuggestionAboutCoveragePluginInstallation();
@@ -210,12 +213,35 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
               "module.exports = function (config) {",
               "  config.set({",
               "    ...",
-              "    reporters: [..., 'coverage', ...],",
+              "    reporters: [..., 'coverage'],",
               "    ...",
               "  });",
               "};"
              })
            + "As the reporter is specified, run with coverage again."
+           + "</body></html>";
+  }
+
+  @NotNull
+  private static String getWarningAboutMissingCoveragePreprocessorInConfigFile() {
+    return "<html><body>"
+           + TITLE
+           + "<div style='padding-top:3px'>Make sure coverage preprocessor is configured like this:</div>"
+           + formatHtmlCode(new String[]{
+              "module.exports = function (config) {",
+              "  config.set({",
+              "    ...",
+              "    preprocessors: {",
+              "      // source files, that you wanna generate coverage for",
+              "      // do not include tests or libraries",
+              "      // (these files will be instrumented by Istanbul)",
+              "      'src/*.js': ['coverage']",
+              "    },",
+              "    ...",
+              "  });",
+              "};"
+             })
+           + "As the preprocessor is configured, run with coverage again."
            + "</body></html>";
   }
 
@@ -256,7 +282,7 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
               "module.exports = function (config) {",
               "  config.set({",
               "    ...",
-              "    plugins: [..., 'karma-coverage', ...],",
+              "    plugins: [..., 'karma-coverage'],",
               "    ...",
               "  });",
               "};"
