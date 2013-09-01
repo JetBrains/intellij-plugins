@@ -10,17 +10,14 @@ function FileListUpdater(config, fileList) {
     if (line.indexOf(FILE_CHANGED_PREFIX) === 0) {
       path = line.substring(FILE_CHANGED_PREFIX.length);
       fileList.changeFile(path);
-      console.log("changeFile:" + path);
     }
     else if (line.indexOf(FILE_ADDED_PREFIX) === 0) {
       path = line.substring(FILE_ADDED_PREFIX.length);
       fileList.addFile(path);
-      console.log("addFile:" + path);
     }
     else if (line.indexOf(FILE_REMOVED_PREFIX) === 0) {
       path = line.substring(FILE_REMOVED_PREFIX.length);
       fileList.removeFile(path);
-      console.log("removeFile:" + path);
     }
     return true;
   });
