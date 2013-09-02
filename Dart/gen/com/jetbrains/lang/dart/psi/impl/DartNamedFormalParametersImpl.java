@@ -17,15 +17,15 @@ public class DartNamedFormalParametersImpl extends DartPsiCompositeElementImpl i
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitNamedFormalParameters(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartDefaultFormalNamedParameter> getDefaultFormalNamedParameterList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartDefaultFormalNamedParameter.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitNamedFormalParameters(this);
-    else super.accept(visitor);
   }
 
 }

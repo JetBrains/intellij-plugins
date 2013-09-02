@@ -17,6 +17,11 @@ public class DartFieldFormalParameterImpl extends DartPsiCompositeElementImpl im
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFieldFormalParameter(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartFinalVarOrType getFinalVarOrType() {
@@ -27,11 +32,6 @@ public class DartFieldFormalParameterImpl extends DartPsiCompositeElementImpl im
   @NotNull
   public DartReferenceExpression getReferenceExpression() {
     return findNotNullChildByClass(DartReferenceExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFieldFormalParameter(this);
-    else super.accept(visitor);
   }
 
 }

@@ -17,15 +17,15 @@ public class DartFinallyPartImpl extends DartPsiCompositeElementImpl implements 
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFinallyPart(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartBlock getBlock() {
     return findChildByClass(DartBlock.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFinallyPart(this);
-    else super.accept(visitor);
   }
 
 }

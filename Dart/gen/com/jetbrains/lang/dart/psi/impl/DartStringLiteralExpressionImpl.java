@@ -17,6 +17,11 @@ public class DartStringLiteralExpressionImpl extends DartClassReferenceImpl impl
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitStringLiteralExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartLongTemplateEntry> getLongTemplateEntryList() {
@@ -27,11 +32,6 @@ public class DartStringLiteralExpressionImpl extends DartClassReferenceImpl impl
   @NotNull
   public List<DartShortTemplateEntry> getShortTemplateEntryList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartShortTemplateEntry.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitStringLiteralExpression(this);
-    else super.accept(visitor);
   }
 
 }

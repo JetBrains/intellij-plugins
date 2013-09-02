@@ -17,15 +17,15 @@ public class DartTypeParametersImpl extends DartPsiCompositeElementImpl implemen
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitTypeParameters(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartTypeParameter> getTypeParameterList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartTypeParameter.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitTypeParameters(this);
-    else super.accept(visitor);
   }
 
 }

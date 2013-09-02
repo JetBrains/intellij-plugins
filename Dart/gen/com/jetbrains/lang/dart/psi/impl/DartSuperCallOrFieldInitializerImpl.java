@@ -17,6 +17,11 @@ public class DartSuperCallOrFieldInitializerImpl extends DartPsiCompositeElement
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSuperCallOrFieldInitializer(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartArguments getArguments() {
@@ -33,11 +38,6 @@ public class DartSuperCallOrFieldInitializerImpl extends DartPsiCompositeElement
   @Nullable
   public DartReferenceExpression getReferenceExpression() {
     return findChildByClass(DartReferenceExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSuperCallOrFieldInitializer(this);
-    else super.accept(visitor);
   }
 
 }

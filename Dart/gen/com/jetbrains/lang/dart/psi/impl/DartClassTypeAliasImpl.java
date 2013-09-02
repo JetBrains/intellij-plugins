@@ -17,6 +17,11 @@ public class DartClassTypeAliasImpl extends TypedefDartPsiClass implements DartC
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitClassTypeAlias(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartComponentName getComponentName() {
@@ -39,11 +44,6 @@ public class DartClassTypeAliasImpl extends TypedefDartPsiClass implements DartC
   @Nullable
   public DartTypeParameters getTypeParameters() {
     return findChildByClass(DartTypeParameters.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitClassTypeAlias(this);
-    else super.accept(visitor);
   }
 
 }

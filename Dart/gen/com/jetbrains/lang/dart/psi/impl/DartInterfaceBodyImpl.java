@@ -17,6 +17,11 @@ public class DartInterfaceBodyImpl extends DartPsiCompositeElementImpl implement
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitInterfaceBody(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartGetterDeclaration> getGetterDeclarationList() {
@@ -57,11 +62,6 @@ public class DartInterfaceBodyImpl extends DartPsiCompositeElementImpl implement
   @NotNull
   public List<DartVarDeclarationList> getVarDeclarationListList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartVarDeclarationList.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitInterfaceBody(this);
-    else super.accept(visitor);
   }
 
 }

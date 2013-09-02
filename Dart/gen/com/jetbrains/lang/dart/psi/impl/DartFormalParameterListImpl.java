@@ -17,6 +17,11 @@ public class DartFormalParameterListImpl extends DartPsiCompositeElementImpl imp
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFormalParameterList(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartNamedFormalParameters getNamedFormalParameters() {
@@ -27,11 +32,6 @@ public class DartFormalParameterListImpl extends DartPsiCompositeElementImpl imp
   @NotNull
   public List<DartNormalFormalParameter> getNormalFormalParameterList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartNormalFormalParameter.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFormalParameterList(this);
-    else super.accept(visitor);
   }
 
 }

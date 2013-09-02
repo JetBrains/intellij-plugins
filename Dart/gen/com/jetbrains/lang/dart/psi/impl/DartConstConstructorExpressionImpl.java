@@ -17,6 +17,11 @@ public class DartConstConstructorExpressionImpl extends DartReferenceImpl implem
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitConstConstructorExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartArguments getArguments() {
@@ -33,11 +38,6 @@ public class DartConstConstructorExpressionImpl extends DartReferenceImpl implem
   @Nullable
   public DartType getType() {
     return findChildByClass(DartType.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitConstConstructorExpression(this);
-    else super.accept(visitor);
   }
 
 }

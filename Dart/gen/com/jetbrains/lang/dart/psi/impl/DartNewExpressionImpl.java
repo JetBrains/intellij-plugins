@@ -17,6 +17,11 @@ public class DartNewExpressionImpl extends DartReferenceImpl implements DartNewE
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitNewExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartArguments getArguments() {
@@ -33,11 +38,6 @@ public class DartNewExpressionImpl extends DartReferenceImpl implements DartNewE
   @Nullable
   public DartType getType() {
     return findChildByClass(DartType.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitNewExpression(this);
-    else super.accept(visitor);
   }
 
 }

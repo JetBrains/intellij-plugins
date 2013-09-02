@@ -17,6 +17,11 @@ public class DartCallExpressionImpl extends DartReferenceImpl implements DartCal
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitCallExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartArguments getArguments() {
@@ -27,11 +32,6 @@ public class DartCallExpressionImpl extends DartReferenceImpl implements DartCal
   @NotNull
   public DartExpression getExpression() {
     return findNotNullChildByClass(DartExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitCallExpression(this);
-    else super.accept(visitor);
   }
 
 }

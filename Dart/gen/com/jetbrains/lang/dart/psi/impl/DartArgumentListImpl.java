@@ -17,6 +17,11 @@ public class DartArgumentListImpl extends DartPsiCompositeElementImpl implements
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitArgumentList(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartExpression> getExpressionList() {
@@ -27,11 +32,6 @@ public class DartArgumentListImpl extends DartPsiCompositeElementImpl implements
   @NotNull
   public List<DartNamedArgument> getNamedArgumentList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartNamedArgument.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitArgumentList(this);
-    else super.accept(visitor);
   }
 
 }

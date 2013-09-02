@@ -17,6 +17,11 @@ public class DartTryStatementImpl extends DartPsiCompositeElementImpl implements
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitTryStatement(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartBlock getBlock() {
@@ -39,11 +44,6 @@ public class DartTryStatementImpl extends DartPsiCompositeElementImpl implements
   @NotNull
   public List<DartOnPart> getOnPartList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartOnPart.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitTryStatement(this);
-    else super.accept(visitor);
   }
 
 }

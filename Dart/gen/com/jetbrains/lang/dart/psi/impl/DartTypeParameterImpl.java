@@ -17,6 +17,11 @@ public class DartTypeParameterImpl extends AbstractDartComponentImpl implements 
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitTypeParameter(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartComponentName getComponentName() {
@@ -27,11 +32,6 @@ public class DartTypeParameterImpl extends AbstractDartComponentImpl implements 
   @Nullable
   public DartType getType() {
     return findChildByClass(DartType.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitTypeParameter(this);
-    else super.accept(visitor);
   }
 
 }

@@ -17,6 +17,11 @@ public class DartBitwiseExpressionImpl extends DartOperatorExpressionImpl implem
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitBitwiseExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartBitwiseOperator getBitwiseOperator() {
@@ -27,11 +32,6 @@ public class DartBitwiseExpressionImpl extends DartOperatorExpressionImpl implem
   @NotNull
   public List<DartExpression> getExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitBitwiseExpression(this);
-    else super.accept(visitor);
   }
 
 }

@@ -17,6 +17,11 @@ public class DartForInPartImpl extends DartPsiCompositeElementImpl implements Da
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitForInPart(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartComponentName getComponentName() {
@@ -33,11 +38,6 @@ public class DartForInPartImpl extends DartPsiCompositeElementImpl implements Da
   @Nullable
   public DartVarAccessDeclaration getVarAccessDeclaration() {
     return findChildByClass(DartVarAccessDeclaration.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitForInPart(this);
-    else super.accept(visitor);
   }
 
 }

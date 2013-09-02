@@ -17,6 +17,11 @@ public class DartUserDefinableOperatorImpl extends DartPsiCompositeElementImpl i
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitUserDefinableOperator(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartAdditiveOperator getAdditiveOperator() {
@@ -45,11 +50,6 @@ public class DartUserDefinableOperatorImpl extends DartPsiCompositeElementImpl i
   @Nullable
   public DartShiftOperator getShiftOperator() {
     return findChildByClass(DartShiftOperator.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitUserDefinableOperator(this);
-    else super.accept(visitor);
   }
 
 }

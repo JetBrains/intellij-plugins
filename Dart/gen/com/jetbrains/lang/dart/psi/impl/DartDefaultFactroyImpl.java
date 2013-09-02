@@ -17,6 +17,11 @@ public class DartDefaultFactroyImpl extends DartPsiCompositeElementImpl implemen
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitDefaultFactroy(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartReferenceExpression getReferenceExpression() {
@@ -27,11 +32,6 @@ public class DartDefaultFactroyImpl extends DartPsiCompositeElementImpl implemen
   @Nullable
   public DartTypeParameters getTypeParameters() {
     return findChildByClass(DartTypeParameters.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitDefaultFactroy(this);
-    else super.accept(visitor);
   }
 
 }

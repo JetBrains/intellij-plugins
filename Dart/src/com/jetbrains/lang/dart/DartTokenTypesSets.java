@@ -119,7 +119,7 @@ public interface DartTokenTypesSets {
 
       final PsiBuilder psiBuilder = PsiBuilderFactory.getInstance().createBuilder(file.getProject(), chameleon);
 
-      final PsiBuilder builder = adapt_builder_(EMBEDDED_CONTENT, psiBuilder, new DartParser());
+      final PsiBuilder builder = adapt_builder_(EMBEDDED_CONTENT, psiBuilder, new DartParser(), DartParser.EXTENDS_SETS_);
 
       final PsiBuilder.Marker marker = builder.mark();
       enterErrorRecordingSection(builder, 0, _SECTION_GENERAL_, "<code fragment>");

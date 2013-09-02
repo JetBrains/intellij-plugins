@@ -17,6 +17,11 @@ public class DartVarDeclarationImpl extends DartPsiCompositeElementImpl implemen
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitVarDeclaration(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartVarAccessDeclaration getVarAccessDeclaration() {
@@ -27,11 +32,6 @@ public class DartVarDeclarationImpl extends DartPsiCompositeElementImpl implemen
   @Nullable
   public DartVarInit getVarInit() {
     return findChildByClass(DartVarInit.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitVarDeclaration(this);
-    else super.accept(visitor);
   }
 
 }

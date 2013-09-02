@@ -17,6 +17,11 @@ public class DartCompoundLiteralExpressionImpl extends DartClassReferenceImpl im
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitCompoundLiteralExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartExpression getExpression() {
@@ -27,11 +32,6 @@ public class DartCompoundLiteralExpressionImpl extends DartClassReferenceImpl im
   @Nullable
   public DartTypeArguments getTypeArguments() {
     return findChildByClass(DartTypeArguments.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitCompoundLiteralExpression(this);
-    else super.accept(visitor);
   }
 
 }

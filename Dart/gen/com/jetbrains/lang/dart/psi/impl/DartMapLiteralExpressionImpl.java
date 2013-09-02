@@ -17,15 +17,15 @@ public class DartMapLiteralExpressionImpl extends DartClassReferenceImpl impleme
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitMapLiteralExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartMapLiteralEntry> getMapLiteralEntryList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMapLiteralEntry.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitMapLiteralExpression(this);
-    else super.accept(visitor);
   }
 
 }

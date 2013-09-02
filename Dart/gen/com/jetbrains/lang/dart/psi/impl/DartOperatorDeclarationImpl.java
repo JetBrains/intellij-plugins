@@ -17,6 +17,11 @@ public class DartOperatorDeclarationImpl extends AbstractDartOperator implements
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitOperatorDeclaration(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartFormalParameterList getFormalParameterList() {
@@ -45,11 +50,6 @@ public class DartOperatorDeclarationImpl extends AbstractDartOperator implements
   @NotNull
   public DartUserDefinableOperator getUserDefinableOperator() {
     return findNotNullChildByClass(DartUserDefinableOperator.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitOperatorDeclaration(this);
-    else super.accept(visitor);
   }
 
 }

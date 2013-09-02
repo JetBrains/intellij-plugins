@@ -17,15 +17,15 @@ public class DartTypeListImpl extends DartPsiCompositeElementImpl implements Dar
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitTypeList(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartType> getTypeList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartType.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitTypeList(this);
-    else super.accept(visitor);
   }
 
 }

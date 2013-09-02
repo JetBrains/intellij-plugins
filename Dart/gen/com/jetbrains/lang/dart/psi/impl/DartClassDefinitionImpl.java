@@ -17,6 +17,11 @@ public class DartClassDefinitionImpl extends AbstractDartPsiClass implements Dar
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitClassDefinition(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartClassBody getClassBody() {
@@ -57,11 +62,6 @@ public class DartClassDefinitionImpl extends AbstractDartPsiClass implements Dar
   @Nullable
   public DartTypeParameters getTypeParameters() {
     return findChildByClass(DartTypeParameters.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitClassDefinition(this);
-    else super.accept(visitor);
   }
 
 }

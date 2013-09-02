@@ -17,6 +17,11 @@ public class DartAsExpressionImpl extends DartClassReferenceImpl implements Dart
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitAsExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartExpression getExpression() {
@@ -27,11 +32,6 @@ public class DartAsExpressionImpl extends DartClassReferenceImpl implements Dart
   @NotNull
   public DartType getType() {
     return findNotNullChildByClass(DartType.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitAsExpression(this);
-    else super.accept(visitor);
   }
 
 }

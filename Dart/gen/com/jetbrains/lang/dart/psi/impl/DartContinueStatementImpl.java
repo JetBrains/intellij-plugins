@@ -17,15 +17,15 @@ public class DartContinueStatementImpl extends DartPsiCompositeElementImpl imple
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitContinueStatement(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartReferenceExpression getReferenceExpression() {
     return findChildByClass(DartReferenceExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitContinueStatement(this);
-    else super.accept(visitor);
   }
 
 }

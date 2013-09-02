@@ -17,6 +17,11 @@ public class DartTypeImpl extends DartPsiCompositeElementImpl implements DartTyp
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitType(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartReferenceExpression getReferenceExpression() {
@@ -27,11 +32,6 @@ public class DartTypeImpl extends DartPsiCompositeElementImpl implements DartTyp
   @Nullable
   public DartTypeArguments getTypeArguments() {
     return findChildByClass(DartTypeArguments.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitType(this);
-    else super.accept(visitor);
   }
 
   @Nullable

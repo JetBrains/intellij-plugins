@@ -17,15 +17,15 @@ public class DartSuffixExpressionImpl extends DartOperatorExpressionImpl impleme
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSuffixExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartExpression getExpression() {
     return findNotNullChildByClass(DartExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSuffixExpression(this);
-    else super.accept(visitor);
   }
 
 }

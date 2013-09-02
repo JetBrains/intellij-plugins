@@ -17,15 +17,15 @@ public class DartShiftOperatorImpl extends DartPsiCompositeElementImpl implement
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitShiftOperator(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartShiftRightOperator getShiftRightOperator() {
     return findChildByClass(DartShiftRightOperator.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitShiftOperator(this);
-    else super.accept(visitor);
   }
 
 }

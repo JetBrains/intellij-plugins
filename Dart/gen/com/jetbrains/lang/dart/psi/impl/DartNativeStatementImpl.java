@@ -17,15 +17,15 @@ public class DartNativeStatementImpl extends DartPsiCompositeElementImpl impleme
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitNativeStatement(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartPathOrLibraryReference getPathOrLibraryReference() {
     return findChildByClass(DartPathOrLibraryReference.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitNativeStatement(this);
-    else super.accept(visitor);
   }
 
   @NotNull

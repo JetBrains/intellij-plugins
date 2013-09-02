@@ -17,6 +17,11 @@ public class DartCatchPartImpl extends DartPsiCompositeElementImpl implements Da
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitCatchPart(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartBlock getBlock() {
@@ -27,11 +32,6 @@ public class DartCatchPartImpl extends DartPsiCompositeElementImpl implements Da
   @Nullable
   public DartFormalParameterList getFormalParameterList() {
     return findChildByClass(DartFormalParameterList.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitCatchPart(this);
-    else super.accept(visitor);
   }
 
 }

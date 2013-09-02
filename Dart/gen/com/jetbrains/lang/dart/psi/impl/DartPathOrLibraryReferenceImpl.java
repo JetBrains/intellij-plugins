@@ -17,15 +17,15 @@ public class DartPathOrLibraryReferenceImpl extends DartFileReferenceImpl implem
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitPathOrLibraryReference(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartStringLiteralExpression getStringLiteralExpression() {
     return findNotNullChildByClass(DartStringLiteralExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitPathOrLibraryReference(this);
-    else super.accept(visitor);
   }
 
 }

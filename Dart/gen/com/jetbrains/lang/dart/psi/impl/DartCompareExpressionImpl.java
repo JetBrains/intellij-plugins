@@ -17,6 +17,11 @@ public class DartCompareExpressionImpl extends DartOperatorExpressionImpl implem
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitCompareExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartEqualityOperator getEqualityOperator() {
@@ -33,11 +38,6 @@ public class DartCompareExpressionImpl extends DartOperatorExpressionImpl implem
   @Nullable
   public DartRelationalOperator getRelationalOperator() {
     return findChildByClass(DartRelationalOperator.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitCompareExpression(this);
-    else super.accept(visitor);
   }
 
 }

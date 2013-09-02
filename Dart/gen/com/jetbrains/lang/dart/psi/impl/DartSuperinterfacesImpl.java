@@ -17,15 +17,15 @@ public class DartSuperinterfacesImpl extends DartPsiCompositeElementImpl impleme
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSuperinterfaces(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartTypeList getTypeList() {
     return findChildByClass(DartTypeList.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSuperinterfaces(this);
-    else super.accept(visitor);
   }
 
 }

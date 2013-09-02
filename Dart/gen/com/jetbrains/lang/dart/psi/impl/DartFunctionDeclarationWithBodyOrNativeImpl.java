@@ -17,6 +17,11 @@ public class DartFunctionDeclarationWithBodyOrNativeImpl extends AbstractDartCom
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFunctionDeclarationWithBodyOrNative(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartComponentName getComponentName() {
@@ -45,11 +50,6 @@ public class DartFunctionDeclarationWithBodyOrNativeImpl extends AbstractDartCom
   @Nullable
   public DartStringLiteralExpression getStringLiteralExpression() {
     return findChildByClass(DartStringLiteralExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFunctionDeclarationWithBodyOrNative(this);
-    else super.accept(visitor);
   }
 
 }
