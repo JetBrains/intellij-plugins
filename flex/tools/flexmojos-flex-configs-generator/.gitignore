@@ -3,3 +3,5 @@ target
 .DS_Store
 .idea/libraries
 out
+idea-configurator/src/main/java/com/intellij/flex/maven/IdeaConfiguratorFlexmojos5.java
+generator-server-31/src/com/intellij/flex/maven/*.java

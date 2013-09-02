@@ -98,7 +98,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
         //noinspection BusyWait
         Thread.sleep(500);
       }
-      catch (InterruptedException e) {
+      catch (InterruptedException ignored) {
         break;
       }
       if (indicator.isCanceled()) {
@@ -114,6 +114,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
       MavenUtil.invokeAndWait(project, postTask);
 
       MavenUtil.invokeAndWaitWriteAction(project, new Runnable() {
+        @Override
         public void run() {
           for (Map.Entry<Module, String> entry : myModuleToConfigFilePath.entrySet()) {
             if (entry.getKey().isDisposed()) continue;
@@ -302,6 +303,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
       this.project = project;
     }
 
+    @Override
     public void run() {
       final AccessToken token = WriteAction.start();
       try {
@@ -380,13 +382,17 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   }
 
   private static void configureMavenClassPath(MavenGeneralSettings mavenGeneralSettings, PathsList classPath) throws ExecutionException {
-    String pathToBundledJar = FlexCommonUtils.getPathToBundledJar("flexmojos-flex-configs-generator-server.jar");
+    String mavenHome = MavenExternalParameters.resolveMavenHome(mavenGeneralSettings);
+    String version = MavenUtil.getMavenVersion(mavenHome);
+    String pathToBundledJar = FlexCommonUtils.getPathToBundledJar(StringUtil.compareVersionNumbers(version, "3.1") >= 0
+                                                                  ? "flexmojos-flex-configs-generator-server-31.jar"
+                                                                  : "flexmojos-flex-configs-generator-server.jar");
     LOG.info("Generating flex configs pathToBundledJar: " + pathToBundledJar);
     LOG.assertTrue(!StringUtil.isEmpty(pathToBundledJar));
     classPath.add(pathToBundledJar);
 
-    final String mavenHome = MavenExternalParameters.resolveMavenHome(mavenGeneralSettings) + File.separator;
-    final String libDirPath = mavenHome + "lib";
+
+    final String libDirPath = mavenHome + "/lib";
     for (String s : new File(libDirPath).list()) {
       if (s.endsWith(".jar") && !s.startsWith("maven-embedder-") && !s.startsWith("commons-cli-") && !s.startsWith("nekohtml-")) {
         classPath.add(libDirPath + File.separator + s);
@@ -394,7 +400,7 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
     }
 
     // plexus-classworlds
-    final String libBootDirPath = mavenHome + "boot";
+    final String libBootDirPath = mavenHome + "/boot";
     for (String s : new File(libBootDirPath).list()) {
       if (s.endsWith(".jar")) {
         classPath.add(libBootDirPath + File.separator + s);
@@ -408,13 +414,12 @@ class Flexmojos4GenerateConfigTask extends MavenProjectsProcessorBasicTask {
   }
 
   private static void showWarningWithDetails(final Project project, final String details) {
-    final NotificationListener listener = new NotificationListener() {
-      public void hyperlinkUpdate(@NotNull final Notification notification, @NotNull final HyperlinkEvent event) {
-        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          Messages.showErrorDialog(project, FlexBundle.message("flexmojos4.details.start") + details,
-                                   FlexBundle.message("flexmojos.project.import"));
-          notification.expire();
-        }
+    final NotificationListener listener = new NotificationListener.Adapter() {
+      @Override
+      protected void hyperlinkActivated(@NotNull Notification notification, @NotNull HyperlinkEvent e) {
+        Messages.showErrorDialog(project, FlexBundle.message("flexmojos4.details.start") + details,
+                                 FlexBundle.message("flexmojos.project.import"));
+        notification.expire();
       }
     };
     new Notification("Maven", FlexBundle.message("flexmojos.project.import"), FlexBundle.message("flexmojos4.warning.with.link"),

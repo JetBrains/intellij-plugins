@@ -1,5 +1,4 @@
 <project name="Source generation for Flexmojos 5 support" default="generate" basedir="src/main/java/com/intellij/flex/maven">
-
   <property name="flexmojos4.support.main.class" value="IdeaConfigurator"/>
   <property name="flexmojos5.support.main.class" value="IdeaConfiguratorFlexmojos5"/>
   <property name="flexmojos4.import.statement" value="import org.sonatype.flexmojos.compiler.*;"/>

@@ -121,7 +121,9 @@ class WorkspaceReaderImpl implements WorkspaceReader {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) return true;
+      if (this == o) {
+        return true;
+      }
       if (o instanceof ArtifactKey) {
         ArtifactKey other = (ArtifactKey)o;
         return groupId.equals(other.groupId) && artifactId.equals(other.artifactId) && version.equals(other.version);
@@ -136,6 +138,7 @@ class WorkspaceReaderImpl implements WorkspaceReader {
   }
 
   static class ArtifactData {
+    @SuppressWarnings("ClassEscapesDefinedScope")
     public final ArtifactKey key;
     private final String filePath;
 
