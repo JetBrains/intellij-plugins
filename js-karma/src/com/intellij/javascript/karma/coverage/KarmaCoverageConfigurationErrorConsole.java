@@ -65,7 +65,7 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
 
   private void registerKarmaServerTab(RunnerLayoutUi ui) {
     KarmaServerLogComponent logComponent = new KarmaServerLogComponent(myProject, myServer, this);
-    logComponent.installOn(ui);
+    logComponent.installOn(ui, false);
   }
 
   @Nullable

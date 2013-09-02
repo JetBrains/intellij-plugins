@@ -122,7 +122,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
     return false;
   }
 
-  public void installOn(@NotNull final RunnerLayoutUi ui) {
+  public void installOn(@NotNull final RunnerLayoutUi ui, boolean requestFocus) {
     final Content consoleContent = ui.createContent("KarmaServer",
                                                     this,
                                                     "Karma Server",
@@ -130,7 +130,7 @@ public class KarmaServerLogComponent implements ComponentWithActions {
                                                     myConsole.getPreferredFocusableComponent());
     consoleContent.setCloseable(false);
     ui.addContent(consoleContent, 4, PlaceInGrid.bottom, false);
-    if (!myServer.isPortBound()) {
+    if (requestFocus && !myServer.isPortBound()) {
       ui.selectAndFocus(consoleContent, false, false);
     }
     myServer.onTerminated(new KarmaServerTerminatedListener() {
