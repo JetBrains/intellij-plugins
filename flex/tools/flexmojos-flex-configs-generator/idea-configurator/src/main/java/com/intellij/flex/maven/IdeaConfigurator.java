@@ -124,7 +124,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
       }
 
       final Class<?> returnType = method.getReturnType();
-      final String name = camelCaseToSnake(methodName);
+      final String name = camelCaseToSnake(methodName, true);
 
       if (value instanceof IFlexConfiguration) {
         build(value, returnType, indent + '\t', name.substring(0, name.length() - 14));
@@ -195,7 +195,15 @@ public class IdeaConfigurator implements FlexConfigGenerator {
               }
             }
             else if (argValue != null) {
-              writeTag(indent, argMethodName.equals("serialNumber") ? "serial-number" : argMethodName, (String)argValue, name);
+              // IDEA-109745
+              String xmlSrgMethodName;
+              if (argMethodName.equals("serialNumber") || name.equals("default-script-limits")) {
+                xmlSrgMethodName = camelCaseToSnake(argMethodName, false);
+              }
+              else {
+                xmlSrgMethodName = argMethodName;
+              }
+              writeTag(indent, xmlSrgMethodName, (String)argValue, name);
             }
           }
 
@@ -283,9 +291,9 @@ public class IdeaConfigurator implements FlexConfigGenerator {
     out.append(indent).append("\t<").append(name).append('>').append(value).append("</").append(name).append('>');
   }
 
-  private static String camelCaseToSnake(final String s) {
+  private static String camelCaseToSnake(final String s, boolean removePrefix) {
     StringBuilder builder = new StringBuilder(s.length() + 4 /* probable max hyphen count */);
-    for (int i = removePrefix(s), n = s.length(); i < n; i++) {
+    for (int i = removePrefix ? removePrefix(s) : 0, n = s.length(); i < n; i++) {
       char c = s.charAt(i);
       if (Character.isUpperCase(c)) {
         builder.append('-').append(Character.toLowerCase(c));
