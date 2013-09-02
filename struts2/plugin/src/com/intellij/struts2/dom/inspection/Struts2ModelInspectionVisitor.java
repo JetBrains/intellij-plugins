@@ -46,9 +46,12 @@ import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
 class Struts2ModelInspectionVisitor implements DomElementVisitor {
 
   private final DomElementAnnotationHolder holder;
+  private final boolean myIgnoreExtendableClass;
 
-  Struts2ModelInspectionVisitor(final DomElementAnnotationHolder holder) {
+  Struts2ModelInspectionVisitor(final DomElementAnnotationHolder holder,
+                                boolean ignoreExtendableClass) {
     this.holder = holder;
+    myIgnoreExtendableClass = ignoreExtendableClass;
   }
 
   public void visitDomElement(final DomElement element) {
@@ -89,6 +92,8 @@ class Struts2ModelInspectionVisitor implements DomElementVisitor {
   }
 
   private void checkExtendableClassConverter(final GenericAttributeValue clazzAttributeValue) {
+    if (myIgnoreExtendableClass) return;
+
     final XmlElement xmlElement = DomUtil.getValueElement(clazzAttributeValue);
     if (xmlElement == null) {
       return;

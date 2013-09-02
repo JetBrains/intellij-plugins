@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 package com.intellij.struts2.dom.inspection;
 
+import com.intellij.codeInspection.ui.SingleCheckboxOptionsPanel;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -41,7 +42,9 @@ import com.intellij.util.xml.highlighting.DomElementAnnotationHolder;
 import com.intellij.util.xml.highlighting.DomHighlightingHelper;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import java.util.Set;
 
 /**
@@ -51,8 +54,20 @@ import java.util.Set;
  */
 public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoot> {
 
+  /**
+   * @noinspection PublicField
+   */
+  public boolean ignoreExtendableClass;
+
   public Struts2ModelInspection() {
     super(StrutsRoot.class);
+  }
+
+  @Nullable
+  @Override
+  public JComponent createOptionsPanel() {
+    return new SingleCheckboxOptionsPanel(
+      StrutsBundle.message("inspections.struts2.model.do.not.check.extendable.class"), this, "ignoreExtendableClass");
   }
 
   /**
@@ -159,7 +174,7 @@ public class Struts2ModelInspection extends BasicDomElementsInspection<StrutsRoo
                                  final DomHighlightingHelper helper) {
     final int oldSize = holder.getSize();
 
-    element.accept(new Struts2ModelInspectionVisitor(holder));
+    element.accept(new Struts2ModelInspectionVisitor(holder, ignoreExtendableClass));
 
     if (oldSize == holder.getSize()) {
       super.checkDomElement(element, holder, helper);
