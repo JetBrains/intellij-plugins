@@ -80,8 +80,8 @@ public class IdeaConfigurator implements FlexConfigGenerator {
     return pathBuilder.append(".xml").toString();
   }
 
-  @SuppressWarnings({"ConstantConditions"})
-  private <E> void build(E configuration, Class configClass, String indent, String configurationName) throws Exception {
+  @SuppressWarnings("ConstantConditions")
+  private <E> void build(E configuration, Class<?> configClass, String indent, String configurationName) throws Exception {
     boolean parentTagWritten = configurationName == null;
 
     final Method[] methods = configClass.getMethods();
@@ -99,7 +99,8 @@ public class IdeaConfigurator implements FlexConfigGenerator {
       }
 
       final String methodName = method.getName();
-      if (methodName.equals("getLoadConfig") || methodName.equals("getDumpConfig") || ("metadata".equals(configurationName) && methodName.equals("getDate"))) {
+      if (methodName.equals("getLoadConfig") || methodName.equals(
+        "getDumpConfig") || "metadata".equals(configurationName) && methodName.equals("getDate")) {
         continue;
       }
 
@@ -126,7 +127,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
       final String name = camelCaseToSnake(methodName);
 
       if (value instanceof IFlexConfiguration) {
-        build(value, returnType, indent + "\t", name.substring(0, name.length() - 14));
+        build(value, returnType, indent + '\t', name.substring(0, name.length() - 14));
       }
       else if (configuration instanceof IASDocConfiguration && "footer".equals(name)) {
         // todo
@@ -184,7 +185,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
               }
             }
             else if (argValue instanceof Map<?, ?>) {
-              Map<?, ?> map = ((Map<?, ?>) argValue);
+              Map<?, ?> map = (Map<?, ?>) argValue;
               for (Object argValue1 : map.entrySet()) {
                 @SuppressWarnings("unchecked")
                 Map.Entry<String, ?> entry = (Map.Entry<String, ?>) argValue1;
@@ -202,10 +203,10 @@ public class IdeaConfigurator implements FlexConfigGenerator {
         }
       }
       else if (name.equals("load-externs") ||
-               (configuration instanceof IMetadataConfiguration &&
-                (name.equals("language") || name.equals("creator") || name.equals("publisher") || name.equals("contributor")))) {
+               configuration instanceof IMetadataConfiguration &&
+               (name.equals("language") || name.equals("creator") || name.equals("publisher") || name.equals("contributor"))) {
         for (String v : (String[])value) {
-          out.append(indent).append("<").append(name).append(">").append(v).append("</").append(name).append('>');
+          out.append(indent).append('<').append(name).append('>').append(v).append("</").append(name).append('>');
         }
       }
       else if (returnType.isArray() || value instanceof Collection<?>) {
@@ -264,6 +265,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
       if (value.equals(defaultPath)) {
         if (sharedFontsSerPath == null) {
           sharedFontsSer = new File(outputDirectory, FONTS_SER);
+          //noinspection NonThreadSafeLazyInitialization
           sharedFontsSerPath = sharedFontsSer.getPath();
           if (!sharedFontsSer.exists()) {
             Utils.copyFile(fontsSer, sharedFontsSer);
@@ -278,7 +280,7 @@ public class IdeaConfigurator implements FlexConfigGenerator {
   }
 
   protected void writeTag(String indent, String name, String value, String parentName) throws IOException {
-    out.append(indent).append("\t<").append(name).append(">").append(value).append("</").append(name).append('>');
+    out.append(indent).append("\t<").append(name).append('>').append(value).append("</").append(name).append('>');
   }
 
   private static String camelCaseToSnake(final String s) {

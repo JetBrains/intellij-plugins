@@ -245,7 +245,7 @@ public class GeneratorServer {
           m.invoke(mojo, firstLocale, localeMojo);
 
           //noinspection unchecked
-          ((Map)Flexmojos.invokePublicMethod(localeMojo, "getCache")).put("getProjectType", "rb.swc");
+          ((Map<String, String>)Flexmojos.invokePublicMethod(localeMojo, "getCache")).put("getProjectType", "rb.swc");
           data.localeOutputFilepathPattern = Flexmojos.getOutput(localeMojo).replace(firstLocale, "{_locale_}");
           // we don't release localeMojo (plexusContainer.release) — flexmojos doesn't do it too
         }
@@ -290,6 +290,7 @@ public class GeneratorServer {
 
     Properties systemProperties = new Properties();
     EnvironmentUtils.addEnvVars(systemProperties);
+    //noinspection UseOfPropertiesAsHashtable
     systemProperties.putAll(System.getProperties());
     request.setSystemProperties(systemProperties);
 
