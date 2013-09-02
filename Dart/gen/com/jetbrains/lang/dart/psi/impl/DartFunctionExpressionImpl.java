@@ -17,6 +17,11 @@ public class DartFunctionExpressionImpl extends AbstractDartComponentImpl implem
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFunctionExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartComponentName getComponentName() {
@@ -39,11 +44,6 @@ public class DartFunctionExpressionImpl extends AbstractDartComponentImpl implem
   @Nullable
   public DartReturnType getReturnType() {
     return findChildByClass(DartReturnType.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFunctionExpression(this);
-    else super.accept(visitor);
   }
 
 }

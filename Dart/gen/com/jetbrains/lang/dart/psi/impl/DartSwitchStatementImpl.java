@@ -17,6 +17,11 @@ public class DartSwitchStatementImpl extends DartPsiCompositeElementImpl impleme
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSwitchStatement(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartDefaultCase getDefaultCase() {
@@ -33,11 +38,6 @@ public class DartSwitchStatementImpl extends DartPsiCompositeElementImpl impleme
   @NotNull
   public List<DartSwitchCase> getSwitchCaseList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartSwitchCase.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitSwitchStatement(this);
-    else super.accept(visitor);
   }
 
 }

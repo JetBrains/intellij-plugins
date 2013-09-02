@@ -17,15 +17,15 @@ public class DartResourceStatementImpl extends DartPsiCompositeElementImpl imple
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitResourceStatement(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartPathOrLibraryReference getPathOrLibraryReference() {
     return findChildByClass(DartPathOrLibraryReference.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitResourceStatement(this);
-    else super.accept(visitor);
   }
 
   @NotNull

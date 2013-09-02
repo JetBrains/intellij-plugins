@@ -17,15 +17,15 @@ public class DartAssertStatementImpl extends DartPsiCompositeElementImpl impleme
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitAssertStatement(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartExpression getExpression() {
     return findChildByClass(DartExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitAssertStatement(this);
-    else super.accept(visitor);
   }
 
 }

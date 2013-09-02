@@ -119,7 +119,7 @@ public class DartExpressionCodeFragmentImpl extends DartFile implements DartExpr
     protected ASTNode doParseContents(@NotNull ASTNode chameleon, @NotNull PsiElement psi) {
       final PsiBuilderFactory factory = PsiBuilderFactory.getInstance();
       final PsiBuilder psiBuilder = factory.createBuilder(getProject(), chameleon);
-      final PsiBuilder builder = adapt_builder_(DartTokenTypes.STATEMENTS, psiBuilder, new DartParser());
+      final PsiBuilder builder = adapt_builder_(DartTokenTypes.STATEMENTS, psiBuilder, new DartParser(), DartParser.EXTENDS_SETS_);
 
       final PsiBuilder.Marker marker = builder.mark();
       enterErrorRecordingSection(builder, 0, _SECTION_GENERAL_, "<code fragment>");

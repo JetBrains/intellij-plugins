@@ -17,6 +17,11 @@ public class DartForLoopPartsImpl extends DartPsiCompositeElementImpl implements
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitForLoopParts(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartExpression getExpression() {
@@ -39,11 +44,6 @@ public class DartForLoopPartsImpl extends DartPsiCompositeElementImpl implements
   @Nullable
   public DartVarDeclarationList getVarDeclarationList() {
     return findChildByClass(DartVarDeclarationList.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitForLoopParts(this);
-    else super.accept(visitor);
   }
 
 }

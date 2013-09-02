@@ -17,15 +17,15 @@ public class DartPartOfStatementImpl extends DartPsiCompositeElementImpl impleme
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitPartOfStatement(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartLibraryId getLibraryId() {
     return findNotNullChildByClass(DartLibraryId.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitPartOfStatement(this);
-    else super.accept(visitor);
   }
 
 }

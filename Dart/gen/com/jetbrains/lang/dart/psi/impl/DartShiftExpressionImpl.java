@@ -17,6 +17,11 @@ public class DartShiftExpressionImpl extends DartOperatorExpressionImpl implemen
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitShiftExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartExpression> getExpressionList() {
@@ -27,11 +32,6 @@ public class DartShiftExpressionImpl extends DartOperatorExpressionImpl implemen
   @NotNull
   public DartShiftOperator getShiftOperator() {
     return findNotNullChildByClass(DartShiftOperator.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitShiftExpression(this);
-    else super.accept(visitor);
   }
 
 }

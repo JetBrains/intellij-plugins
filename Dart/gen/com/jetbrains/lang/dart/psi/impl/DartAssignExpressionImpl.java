@@ -17,6 +17,11 @@ public class DartAssignExpressionImpl extends DartExpressionImpl implements Dart
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitAssignExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartAssignmentOperator getAssignmentOperator() {
@@ -27,11 +32,6 @@ public class DartAssignExpressionImpl extends DartExpressionImpl implements Dart
   @NotNull
   public List<DartExpression> getExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitAssignExpression(this);
-    else super.accept(visitor);
   }
 
 }

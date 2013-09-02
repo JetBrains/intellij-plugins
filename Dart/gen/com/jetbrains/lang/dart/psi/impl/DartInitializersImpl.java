@@ -17,15 +17,15 @@ public class DartInitializersImpl extends DartPsiCompositeElementImpl implements
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitInitializers(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartSuperCallOrFieldInitializer> getSuperCallOrFieldInitializerList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartSuperCallOrFieldInitializer.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitInitializers(this);
-    else super.accept(visitor);
   }
 
 }

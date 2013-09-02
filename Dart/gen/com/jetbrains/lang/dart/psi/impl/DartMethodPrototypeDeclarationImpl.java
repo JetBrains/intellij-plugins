@@ -17,6 +17,11 @@ public class DartMethodPrototypeDeclarationImpl extends AbstractDartComponentImp
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitMethodPrototypeDeclaration(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartComponentName getComponentName() {
@@ -39,11 +44,6 @@ public class DartMethodPrototypeDeclarationImpl extends AbstractDartComponentImp
   @Nullable
   public DartReturnType getReturnType() {
     return findChildByClass(DartReturnType.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitMethodPrototypeDeclaration(this);
-    else super.accept(visitor);
   }
 
 }

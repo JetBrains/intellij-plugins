@@ -17,15 +17,15 @@ public class DartFieldInitializerImpl extends DartPsiCompositeElementImpl implem
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFieldInitializer(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartExpression> getExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFieldInitializer(this);
-    else super.accept(visitor);
   }
 
 }

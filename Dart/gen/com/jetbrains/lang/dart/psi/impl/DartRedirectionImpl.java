@@ -17,6 +17,11 @@ public class DartRedirectionImpl extends DartPsiCompositeElementImpl implements 
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitRedirection(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartArguments getArguments() {
@@ -27,11 +32,6 @@ public class DartRedirectionImpl extends DartPsiCompositeElementImpl implements 
   @Nullable
   public DartReferenceExpression getReferenceExpression() {
     return findChildByClass(DartReferenceExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitRedirection(this);
-    else super.accept(visitor);
   }
 
 }

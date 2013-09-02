@@ -17,6 +17,11 @@ public class DartDefaultFormalNamedParameterImpl extends DartPsiCompositeElement
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitDefaultFormalNamedParameter(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartExpression getExpression() {
@@ -27,11 +32,6 @@ public class DartDefaultFormalNamedParameterImpl extends DartPsiCompositeElement
   @NotNull
   public DartNormalFormalParameter getNormalFormalParameter() {
     return findNotNullChildByClass(DartNormalFormalParameter.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitDefaultFormalNamedParameter(this);
-    else super.accept(visitor);
   }
 
 }

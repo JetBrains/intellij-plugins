@@ -17,15 +17,15 @@ public class DartLibraryReferenceListImpl extends DartPsiCompositeElementImpl im
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitLibraryReferenceList(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartLibraryComponentReferenceExpression> getLibraryComponentReferenceExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartLibraryComponentReferenceExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitLibraryReferenceList(this);
-    else super.accept(visitor);
   }
 
 }

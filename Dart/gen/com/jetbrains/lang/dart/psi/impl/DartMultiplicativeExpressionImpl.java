@@ -17,6 +17,11 @@ public class DartMultiplicativeExpressionImpl extends DartOperatorExpressionImpl
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitMultiplicativeExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartExpression> getExpressionList() {
@@ -27,11 +32,6 @@ public class DartMultiplicativeExpressionImpl extends DartOperatorExpressionImpl
   @NotNull
   public DartMultiplicativeOperator getMultiplicativeOperator() {
     return findNotNullChildByClass(DartMultiplicativeOperator.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitMultiplicativeExpression(this);
-    else super.accept(visitor);
   }
 
 }

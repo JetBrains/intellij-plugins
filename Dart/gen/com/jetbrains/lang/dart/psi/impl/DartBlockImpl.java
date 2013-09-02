@@ -17,15 +17,15 @@ public class DartBlockImpl extends DartPsiCompositeElementImpl implements DartBl
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitBlock(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartStatements getStatements() {
     return findChildByClass(DartStatements.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitBlock(this);
-    else super.accept(visitor);
   }
 
 }

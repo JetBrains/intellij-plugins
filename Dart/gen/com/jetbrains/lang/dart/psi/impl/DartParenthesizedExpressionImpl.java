@@ -17,6 +17,11 @@ public class DartParenthesizedExpressionImpl extends DartClassReferenceImpl impl
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitParenthesizedExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartAssertStatement getAssertStatement() {
@@ -117,11 +122,6 @@ public class DartParenthesizedExpressionImpl extends DartClassReferenceImpl impl
   @Nullable
   public DartWhileStatement getWhileStatement() {
     return findChildByClass(DartWhileStatement.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitParenthesizedExpression(this);
-    else super.accept(visitor);
   }
 
 }

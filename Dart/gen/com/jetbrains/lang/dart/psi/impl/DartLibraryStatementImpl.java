@@ -17,6 +17,11 @@ public class DartLibraryStatementImpl extends DartPsiCompositeElementImpl implem
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitLibraryStatement(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartPathOrLibraryReference getPathOrLibraryReference() {
@@ -27,11 +32,6 @@ public class DartLibraryStatementImpl extends DartPsiCompositeElementImpl implem
   @Nullable
   public DartQualifiedComponentName getQualifiedComponentName() {
     return findChildByClass(DartQualifiedComponentName.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitLibraryStatement(this);
-    else super.accept(visitor);
   }
 
   @NotNull

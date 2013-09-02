@@ -17,15 +17,15 @@ public class DartHideCombinatorImpl extends DartPsiCompositeElementImpl implemen
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitHideCombinator(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartLibraryReferenceList getLibraryReferenceList() {
     return findNotNullChildByClass(DartLibraryReferenceList.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitHideCombinator(this);
-    else super.accept(visitor);
   }
 
 }

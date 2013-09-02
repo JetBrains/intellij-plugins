@@ -17,6 +17,11 @@ public class DartNamedConstructorDeclarationImpl extends AbstractDartComponentIm
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitNamedConstructorDeclaration(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartComponentName getComponentName() {
@@ -51,11 +56,6 @@ public class DartNamedConstructorDeclarationImpl extends AbstractDartComponentIm
   @Nullable
   public DartRedirection getRedirection() {
     return findChildByClass(DartRedirection.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitNamedConstructorDeclaration(this);
-    else super.accept(visitor);
   }
 
 }

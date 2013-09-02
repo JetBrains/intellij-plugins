@@ -17,15 +17,15 @@ public class DartListLiteralExpressionImpl extends DartClassReferenceImpl implem
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitListLiteralExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartExpressionList getExpressionList() {
     return findChildByClass(DartExpressionList.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitListLiteralExpression(this);
-    else super.accept(visitor);
   }
 
 }

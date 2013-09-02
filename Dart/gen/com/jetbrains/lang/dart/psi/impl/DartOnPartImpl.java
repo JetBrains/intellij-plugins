@@ -17,6 +17,11 @@ public class DartOnPartImpl extends DartPsiCompositeElementImpl implements DartO
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitOnPart(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartCatchPart getCatchPart() {
@@ -27,11 +32,6 @@ public class DartOnPartImpl extends DartPsiCompositeElementImpl implements DartO
   @Nullable
   public DartType getType() {
     return findChildByClass(DartType.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitOnPart(this);
-    else super.accept(visitor);
   }
 
 }

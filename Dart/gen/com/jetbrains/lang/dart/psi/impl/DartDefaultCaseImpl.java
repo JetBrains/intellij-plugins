@@ -17,6 +17,11 @@ public class DartDefaultCaseImpl extends DartPsiCompositeElementImpl implements 
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitDefaultCase(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartExpression> getExpressionList() {
@@ -33,11 +38,6 @@ public class DartDefaultCaseImpl extends DartPsiCompositeElementImpl implements 
   @NotNull
   public DartStatements getStatements() {
     return findNotNullChildByClass(DartStatements.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitDefaultCase(this);
-    else super.accept(visitor);
   }
 
 }

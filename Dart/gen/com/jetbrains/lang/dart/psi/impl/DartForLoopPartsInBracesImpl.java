@@ -17,15 +17,15 @@ public class DartForLoopPartsInBracesImpl extends DartPsiCompositeElementImpl im
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitForLoopPartsInBraces(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartForLoopParts getForLoopParts() {
     return findNotNullChildByClass(DartForLoopParts.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitForLoopPartsInBraces(this);
-    else super.accept(visitor);
   }
 
 }

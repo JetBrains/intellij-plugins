@@ -17,15 +17,15 @@ public class DartLogicAndExpressionImpl extends DartOperatorExpressionImpl imple
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitLogicAndExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartExpression> getExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitLogicAndExpression(this);
-    else super.accept(visitor);
   }
 
 }

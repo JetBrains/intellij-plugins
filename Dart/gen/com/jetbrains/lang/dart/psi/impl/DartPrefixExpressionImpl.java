@@ -17,15 +17,15 @@ public class DartPrefixExpressionImpl extends DartOperatorExpressionImpl impleme
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitPrefixExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartPrefixOperator getPrefixOperator() {
     return findChildByClass(DartPrefixOperator.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitPrefixExpression(this);
-    else super.accept(visitor);
   }
 
 }

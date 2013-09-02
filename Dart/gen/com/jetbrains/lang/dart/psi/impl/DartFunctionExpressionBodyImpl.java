@@ -17,6 +17,11 @@ public class DartFunctionExpressionBodyImpl extends DartPsiCompositeElementImpl 
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFunctionExpressionBody(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartBlock getBlock() {
@@ -27,11 +32,6 @@ public class DartFunctionExpressionBodyImpl extends DartPsiCompositeElementImpl 
   @Nullable
   public DartExpression getExpression() {
     return findChildByClass(DartExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFunctionExpressionBody(this);
-    else super.accept(visitor);
   }
 
 }

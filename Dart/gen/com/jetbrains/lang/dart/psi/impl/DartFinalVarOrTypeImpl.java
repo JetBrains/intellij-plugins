@@ -17,15 +17,15 @@ public class DartFinalVarOrTypeImpl extends DartPsiCompositeElementImpl implemen
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFinalVarOrType(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartType getType() {
     return findChildByClass(DartType.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitFinalVarOrType(this);
-    else super.accept(visitor);
   }
 
 }

@@ -17,6 +17,11 @@ public class DartStatementsImpl extends DartPsiCompositeElementImpl implements D
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitStatements(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartAssertStatement> getAssertStatementList() {
@@ -117,11 +122,6 @@ public class DartStatementsImpl extends DartPsiCompositeElementImpl implements D
   @NotNull
   public List<DartWhileStatement> getWhileStatementList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartWhileStatement.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitStatements(this);
-    else super.accept(visitor);
   }
 
 }

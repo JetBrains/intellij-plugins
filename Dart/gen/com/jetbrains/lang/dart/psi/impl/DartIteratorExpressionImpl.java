@@ -17,15 +17,15 @@ public class DartIteratorExpressionImpl extends DartExpressionImpl implements Da
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitIteratorExpression(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public List<DartExpression> getExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitIteratorExpression(this);
-    else super.accept(visitor);
   }
 
 }

@@ -17,6 +17,11 @@ public class DartWhileStatementImpl extends DartPsiCompositeElementImpl implemen
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitWhileStatement(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @Nullable
   public DartAssertStatement getAssertStatement() {
@@ -117,11 +122,6 @@ public class DartWhileStatementImpl extends DartPsiCompositeElementImpl implemen
   @Nullable
   public DartWhileStatement getWhileStatement() {
     return findChildByClass(DartWhileStatement.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitWhileStatement(this);
-    else super.accept(visitor);
   }
 
 }

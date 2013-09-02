@@ -17,6 +17,11 @@ public class DartNamedArgumentImpl extends DartPsiCompositeElementImpl implement
     super(node);
   }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitNamedArgument(this);
+    else super.accept(visitor);
+  }
+
   @Override
   @NotNull
   public DartExpression getExpression() {
@@ -27,11 +32,6 @@ public class DartNamedArgumentImpl extends DartPsiCompositeElementImpl implement
   @NotNull
   public DartLabel getLabel() {
     return findNotNullChildByClass(DartLabel.class);
-  }
-
-  public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof DartVisitor) ((DartVisitor)visitor).visitNamedArgument(this);
-    else super.accept(visitor);
   }
 
 }
