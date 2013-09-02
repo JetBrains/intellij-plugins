@@ -67,12 +67,23 @@ function sendBrowserEvents(eventType, connectionId2BrowserObjA, connectionId2Bro
         var browser = connectionId2BrowserObjA[connectionId];
         var event = {id: connectionId, name: browser.name};
         if (addAutoCapturingInfo) {
-          event.isAutoCaptured = !!browser.launchId;
+          event.isAutoCaptured = isAutoCapturedBrowser(browser);
         }
         intellijUtil.sendIntellijEvent(eventType, event);
       }
     }
   }
+}
+
+function isAutoCapturedBrowser(browser) {
+  if (browser.launchId != null) {
+    return true;
+  }
+  var idStr = browser.id;
+  if (intellijUtil.isString(idStr)) {
+    return /^\d+$/.test(idStr);
+  }
+  return false;
 }
 
 function startBrowsersTracking(globalEmitter) {
