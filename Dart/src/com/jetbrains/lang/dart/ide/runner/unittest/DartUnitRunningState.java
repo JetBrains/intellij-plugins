@@ -7,7 +7,6 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.filters.Filter;
-import com.intellij.execution.junit.RuntimeConfigurationProducer;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -32,7 +31,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.util.ResourceUtil;
 import com.intellij.util.text.StringTokenizer;
 import com.jetbrains.lang.dart.DartBundle;
-import com.jetbrains.lang.dart.ide.runner.DartStackTraceMessageFiler;
+import com.jetbrains.lang.dart.ide.runner.DartStackTraceMessageFilter;
 import com.jetbrains.lang.dart.ide.settings.DartSettings;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import com.jetbrains.lang.dart.util.DartSdkUtil;
@@ -84,9 +83,8 @@ public class DartUnitRunningState extends CommandLineState {
   }
 
   private ConsoleView createConsole(@NotNull ExecutionEnvironment env) throws ExecutionException {
-    final DartUnitRunConfiguration runConfiguration = (DartUnitRunConfiguration)env.getRunProfile();
     TestConsoleProperties testConsoleProperties = new SMTRunnerConsoleProperties(
-      new RuntimeConfigurationProducer.DelegatingRuntimeConfiguration<DartUnitRunConfiguration>(runConfiguration),
+      (DartUnitRunConfiguration)env.getRunProfile(),
       DART_FRAMEWORK_NAME,
       env.getExecutor()
     );
@@ -100,7 +98,7 @@ public class DartUnitRunningState extends CommandLineState {
       null
     );
     testConsoleProperties.setUsePredefinedMessageFilter(false);
-    Filter filter = new DartStackTraceMessageFiler(testConsoleProperties.getProject(), myUnitParameters.getFilePath());
+    Filter filter = new DartStackTraceMessageFilter(testConsoleProperties.getProject(), myUnitParameters.getFilePath());
     smtConsoleView.addMessageFilter(filter);
 
     final Project project = env.getProject();
