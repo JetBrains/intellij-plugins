@@ -23,6 +23,7 @@ import java.util.List;
  */
 public class DartDocumentationProvider implements DocumentationProvider {
   private static final String BASE_DART_DOC_URL = "http://api.dartlang.org/docs/releases/latest/";
+  private static final String STD_LIB_PREFIX = "dart.";
 
   @Override
   public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
@@ -63,7 +64,12 @@ public class DartDocumentationProvider implements DocumentationProvider {
     // function:  http://api.dartlang.org/docs/releases/latest/observe.html#toObservable
 
     final StringBuilder resultUrl = new StringBuilder(BASE_DART_DOC_URL);
-    resultUrl.append(libName);
+    if (libName.startsWith(STD_LIB_PREFIX)) {
+      resultUrl.append("dart_").append(libName.substring(STD_LIB_PREFIX.length()));
+    }
+    else {
+      resultUrl.append(libName);
+    }
 
     final DartClass dartClass = PsiTreeUtil.getParentOfType(namedComponent, DartClass.class, true);
     final DartComponentType componentType = DartComponentType.typeOf(namedComponent);
