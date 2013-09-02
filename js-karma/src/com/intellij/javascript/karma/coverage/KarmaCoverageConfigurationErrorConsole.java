@@ -13,6 +13,7 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.BrowserHyperlinkListener;
+import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -79,7 +80,9 @@ public class KarmaCoverageConfigurationErrorConsole implements ExecutionConsoleE
     if (myComponent == null) {
       JTextPane textPane = createTextPane();
       textPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-      myComponent = textPane;
+      myComponent = ScrollPaneFactory.createScrollPane(textPane,
+                                                       ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                                       ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }
     return myComponent;
   }
