@@ -510,8 +510,10 @@ private value ::=  (literalExpression qualifiedReferenceTail?)
                  | newExpressionOrConstOrCall cascadeReferenceExpression*
                  | callOrArrayAccess cascadeReferenceExpression*
 
-parenthesizedExpression ::= '(' (expression | statement) ')'
-{mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+parenthesizedExpression ::= '(' expressionInParentheses ')'
+{pin=1 mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
+private expressionInParentheses ::= expression | statement {recoverUntil=parenthesesRecovery}
+private parenthesesRecovery ::= !')'
 
 private newExpressionOrConstOrCall ::= (newExpression | constConstructorExpression) qualifiedReferenceTail?
 private qualifiedReferenceTail ::= qualifiedReferenceExpression (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*

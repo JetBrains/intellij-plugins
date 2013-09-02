@@ -1748,6 +1748,18 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
+  // expression | statement
+  static boolean expressionInParentheses(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "expressionInParentheses")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = expression(builder_, level_ + 1);
+    if (!result_) result_ = statement(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, null, result_, false, parenthesesRecovery_parser_);
+    return result_;
+  }
+
+  /* ********************************************************** */
   // expression (',' expression)*
   public static boolean expressionList(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "expressionList")) return false;
@@ -4487,28 +4499,30 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // '(' (expression | statement) ')'
+  // !')'
+  static boolean parenthesesRecovery(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "parenthesesRecovery")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
+    result_ = !consumeToken(builder_, RPAREN);
+    exit_section_(builder_, level_, marker_, null, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // '(' expressionInParentheses ')'
   public static boolean parenthesizedExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "parenthesizedExpression")) return false;
     if (!nextTokenIs(builder_, LPAREN)) return false;
     boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, LPAREN);
-    result_ = result_ && parenthesizedExpression_1(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, RPAREN);
-    exit_section_(builder_, marker_, PARENTHESIZED_EXPRESSION, result_);
-    return result_;
-  }
-
-  // expression | statement
-  private static boolean parenthesizedExpression_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "parenthesizedExpression_1")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = expression(builder_, level_ + 1);
-    if (!result_) result_ = statement(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, expressionInParentheses(builder_, level_ + 1));
+    result_ = pinned_ && consumeToken(builder_, RPAREN) && result_;
+    exit_section_(builder_, level_, marker_, PARENTHESIZED_EXPRESSION, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
   /* ********************************************************** */
@@ -6483,6 +6497,11 @@ public class DartParser implements PsiParser {
   final static Parser not_paren_recover_parser_ = new Parser() {
     public boolean parse(PsiBuilder builder_, int level_) {
       return not_paren_recover(builder_, level_ + 1);
+    }
+  };
+  final static Parser parenthesesRecovery_parser_ = new Parser() {
+    public boolean parse(PsiBuilder builder_, int level_) {
+      return parenthesesRecovery(builder_, level_ + 1);
     }
   };
   final static Parser semicolon_recover_parser_ = new Parser() {
