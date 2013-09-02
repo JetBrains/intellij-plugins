@@ -4,6 +4,7 @@ import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.OpenFileHyperlinkInfo;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -16,24 +17,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DartStackTraceMessageFiler implements Filter {
-  // #0      DefaultFailureHandler.fail (file:///C:/dart/dart-sdk/lib/unittest/expect.dart:85:5)
-  private static final Pattern tracePattern = Pattern.compile("(#[0-9]+\\s+)(.*)\\s+\\((.*):(\\d+):(\\d+)\\)");
+public class DartStackTraceMessageFilter implements Filter {
+  // main.<anonymous closure>                file:///C:/WebstormProjects/dartUnitWin/MyTest.dart 8:39
+  private static final Pattern tracePattern = Pattern.compile(".*\\s(.*)\\s(\\d+):(\\d+).*");
+  private static final Pattern oldTracePattern = Pattern.compile(".*\\((.*):(\\d+):(\\d+)\\).*");
   private final Project myProject;
   private final String myLibraryRootPath;
 
   @Nullable
   public static Result parseLine(String line, @NotNull Project project, @Nullable String libraryRootPath) {
-    final Matcher matcher = tracePattern.matcher(line.trim());
-    if (!matcher.matches()) {
+    final Trinity<String, Integer, Integer> position = findPosition(line);
+    if (position == null) {
       return null;
     }
-    final String prefix = matcher.group(1);
-    final String name = matcher.group(2);
-    final String fileUrl = matcher.group(3);
-
-    final int lineNumber = Integer.parseInt(matcher.group(4)) - 1;
-    final int offset = Integer.parseInt(matcher.group(5)) - 1;
+    final String fileUrl = position.getFirst();
     VirtualFile file = VirtualFileManager.getInstance().findFileByUrl(fileUrl);
     if (fileUrl.startsWith(DartResolveUtil.PACKAGE_PREFIX) && libraryRootPath != null) {
       String libUrl = VfsUtilCore.pathToUrl(libraryRootPath);
@@ -51,13 +48,33 @@ public class DartStackTraceMessageFiler implements Filter {
     OpenFileHyperlinkInfo hyperlinkInfo = new OpenFileHyperlinkInfo(
       project,
       file,
-      lineNumber,
-      offset
+      position.getSecond(),
+      position.getThird()
     );
-    return new Result(prefix.length(), prefix.length() + name.length(), hyperlinkInfo);
+    final int urlOffset = line.indexOf(fileUrl);
+    return new Result(urlOffset, urlOffset + fileUrl.length(), hyperlinkInfo);
   }
 
-  public DartStackTraceMessageFiler(@NotNull Project project, @Nullable String libraryRootPath) {
+  @Nullable
+  static Trinity<String, Integer, Integer> findPosition(String line) {
+    final Trinity<String, Integer, Integer> position = findPosition(line, tracePattern);
+    return position != null ? position : findPosition(line, oldTracePattern);
+  }
+
+  @Nullable
+  static Trinity<String, Integer, Integer> findPosition(String line, Pattern pattern) {
+    final Matcher matcher = pattern.matcher(line.trim());
+    if (!matcher.matches()) {
+      return null;
+    }
+    final String fileUrl = matcher.group(1);
+
+    final int lineNumber = Integer.parseInt(matcher.group(2)) - 1;
+    final int offset = Integer.parseInt(matcher.group(3)) - 1;
+    return Trinity.create(fileUrl, lineNumber, offset);
+  }
+
+  public DartStackTraceMessageFilter(@NotNull Project project, @Nullable String libraryRootPath) {
     myProject = project;
     myLibraryRootPath = libraryRootPath;
   }
