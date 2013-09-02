@@ -92,12 +92,19 @@ public class GherkinBlock implements ASTBlock {
         }
       }
       if (child.getElementType() == GherkinTokenTypes.COMMENT) {
-        final ASTNode previous = child.getTreePrev();
+        final ASTNode commentIndentElement = child.getTreePrev();
+        final ASTNode parentIndentElement = myNode.getTreePrev();
 
-        if (previous != null && previous.getText().contains("\n")) {
-          final String whiteSpaceText = previous.getText();
+        if (commentIndentElement != null && (commentIndentElement.getText().contains("\n") || commentIndentElement.getTreePrev() == null)) {
+          final String whiteSpaceText = commentIndentElement.getText();
           final int lineBreakIndex = whiteSpaceText.lastIndexOf("\n");
-          indent = Indent.getSpaceIndent(whiteSpaceText.length() - lineBreakIndex - 1);
+
+          int parentIndent = 0;
+          if (parentIndentElement != null && parentIndentElement.getText().contains("\n")) {
+            String parentIndentText = parentIndentElement.getText();
+            parentIndent = parentIndentText.length() - parentIndentText.lastIndexOf("\n") - 1;
+          }
+          indent = Indent.getSpaceIndent(whiteSpaceText.length() - lineBreakIndex - 1 - parentIndent);
         }
       }
       result.add(new GherkinBlock(child, indent));
@@ -175,7 +182,7 @@ public class GherkinBlock implements ASTBlock {
     if (getNode().getElementType() == GherkinElementTypes.FEATURE) {
       return getNode().getChildren(TokenSet.create(GherkinElementTypes.FEATURE_HEADER,
                                                    GherkinElementTypes.SCENARIO,
-                                                   GherkinElementTypes.SCENARIO_OUTLINE)).length == 0; 
+                                                   GherkinElementTypes.SCENARIO_OUTLINE)).length == 0;
     }
     return false;
   }
