@@ -41,8 +41,16 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
 
   @Override
   public boolean isConfigurationFromContext(DartUnitRunConfiguration configuration, ConfigurationContext context) {
-    final String testName = "Test: " + findTestName(PsiTreeUtil.getParentOfType(context.getPsiLocation(), DartCallExpression.class));
-    return testName.equals(configuration.getName());
+    final PsiElement location = context.getPsiLocation();
+    if (location == null) {
+      return false;
+    }
+    final String testName = "Test: " + findTestName(PsiTreeUtil.getParentOfType(location, DartCallExpression.class));
+    if (testName.equals(configuration.getName())) {
+      return true;
+    }
+    final VirtualFile virtualFile = location.getContainingFile().getVirtualFile();
+    return virtualFile != null && configuration.getRunnerParameters().getFilePath().equals(virtualFile.getPath());
   }
 
   private static boolean setupRunConfiguration(DartUnitRunConfiguration configuration, @NotNull PsiElement expression) {
@@ -94,7 +102,7 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
   }
 
   @Nullable
-  private static PsiElement findTestElement(PsiElement element) {
+  private static PsiElement findTestElement(@Nullable PsiElement element) {
     DartCallExpression callExpression = PsiTreeUtil.getParentOfType(element, DartCallExpression.class);
     while (callExpression != null) {
       if (isGroup(callExpression) || isTest(callExpression)) {
@@ -102,7 +110,7 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
       }
       callExpression = PsiTreeUtil.getParentOfType(callExpression, DartCallExpression.class, true);
     }
-    return element.getContainingFile();
+    return element != null ? element.getContainingFile() : null;
   }
 
   private static boolean isTest(DartCallExpression expression) {
