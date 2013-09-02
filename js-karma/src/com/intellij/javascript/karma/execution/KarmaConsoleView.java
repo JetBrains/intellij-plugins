@@ -120,7 +120,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   @Override
   public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
     KarmaServerLogComponent logComponent = new KarmaServerLogComponent(getProperties().getProject(), myServer, this);
-    logComponent.installOn(ui);
+    logComponent.installOn(ui, true);
   }
 
   @NotNull
