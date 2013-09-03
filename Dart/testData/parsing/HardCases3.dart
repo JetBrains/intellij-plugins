@@ -32,4 +32,6 @@ main () {
   var map = {
     TEST : 'some value'
   };
+
+  print([]..addAll([1,2,3]));
 }

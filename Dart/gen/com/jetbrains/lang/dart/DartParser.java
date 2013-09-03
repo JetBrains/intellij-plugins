@@ -6159,8 +6159,8 @@ public class DartParser implements PsiParser {
   // (literalExpression qualifiedReferenceTail?)
   //                  | functionExpression
   //                  | compoundLiteralExpression
-  //                  | newExpressionOrConstOrCall cascadeReferenceExpression*
-  //                  | callOrArrayAccess cascadeReferenceExpression*
+  //                  | newExpressionOrConstOrCall 
+  //                  | callOrArrayAccess
   static boolean value(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "value")) return false;
     boolean result_ = false;
@@ -6168,8 +6168,8 @@ public class DartParser implements PsiParser {
     result_ = value_0(builder_, level_ + 1);
     if (!result_) result_ = functionExpression(builder_, level_ + 1);
     if (!result_) result_ = compoundLiteralExpression(builder_, level_ + 1);
-    if (!result_) result_ = value_3(builder_, level_ + 1);
-    if (!result_) result_ = value_4(builder_, level_ + 1);
+    if (!result_) result_ = newExpressionOrConstOrCall(builder_, level_ + 1);
+    if (!result_) result_ = callOrArrayAccess(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -6192,82 +6192,45 @@ public class DartParser implements PsiParser {
     return true;
   }
 
-  // newExpressionOrConstOrCall cascadeReferenceExpression*
-  private static boolean value_3(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "value_3")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = newExpressionOrConstOrCall(builder_, level_ + 1);
-    result_ = result_ && value_3_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // cascadeReferenceExpression*
-  private static boolean value_3_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "value_3_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
-    while (true) {
-      if (!cascadeReferenceExpression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "value_3_1");
-        break;
-      }
-      offset_ = next_offset_;
-    }
-    return true;
-  }
-
-  // callOrArrayAccess cascadeReferenceExpression*
-  private static boolean value_4(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "value_4")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = callOrArrayAccess(builder_, level_ + 1);
-    result_ = result_ && value_4_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // cascadeReferenceExpression*
-  private static boolean value_4_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "value_4_1")) return false;
-    int offset_ = builder_.getCurrentOffset();
-    while (true) {
-      if (!cascadeReferenceExpression(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "value_4_1");
-        break;
-      }
-      offset_ = next_offset_;
-    }
-    return true;
-  }
-
   /* ********************************************************** */
-  // value (isExpression | asExpression)?
+  // value cascadeReferenceExpression* (isExpression | asExpression)?
   public static boolean valueExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "valueExpression")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<value expression>");
     result_ = value(builder_, level_ + 1);
     result_ = result_ && valueExpression_1(builder_, level_ + 1);
+    result_ = result_ && valueExpression_2(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, VALUE_EXPRESSION, result_, false, null);
     return result_;
   }
 
-  // (isExpression | asExpression)?
+  // cascadeReferenceExpression*
   private static boolean valueExpression_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "valueExpression_1")) return false;
-    valueExpression_1_0(builder_, level_ + 1);
+    int offset_ = builder_.getCurrentOffset();
+    while (true) {
+      if (!cascadeReferenceExpression(builder_, level_ + 1)) break;
+      int next_offset_ = builder_.getCurrentOffset();
+      if (offset_ == next_offset_) {
+        empty_element_parsed_guard_(builder_, offset_, "valueExpression_1");
+        break;
+      }
+      offset_ = next_offset_;
+    }
+    return true;
+  }
+
+  // (isExpression | asExpression)?
+  private static boolean valueExpression_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "valueExpression_2")) return false;
+    valueExpression_2_0(builder_, level_ + 1);
     return true;
   }
 
   // isExpression | asExpression
-  private static boolean valueExpression_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "valueExpression_1_0")) return false;
+  private static boolean valueExpression_2_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "valueExpression_2_0")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_);
     result_ = isExpression(builder_, level_ + 1);

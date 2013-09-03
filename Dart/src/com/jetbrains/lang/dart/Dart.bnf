@@ -503,7 +503,7 @@ private suffixExpressionWrapper ::= valueExpression suffixExpression*
 left suffixExpression ::= ('--' | '++')
 {mixin="com.jetbrains.lang.dart.psi.impl.DartOperatorExpressionImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-valueExpression ::= value (isExpression | asExpression)?
+valueExpression ::= value cascadeReferenceExpression* (isExpression | asExpression)?
 left isExpression ::= 'is' '!'? type
 left asExpression ::= 'as' type
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
@@ -511,8 +511,8 @@ left asExpression ::= 'as' type
 private value ::=  (literalExpression qualifiedReferenceTail?)
                  | functionExpression
                  | compoundLiteralExpression
-                 | newExpressionOrConstOrCall cascadeReferenceExpression*
-                 | callOrArrayAccess cascadeReferenceExpression*
+                 | newExpressionOrConstOrCall
+                 | callOrArrayAccess
 
 parenthesizedExpression ::= '(' expressionInParentheses ')'
 {pin=1 mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
