@@ -79,4 +79,14 @@ public class DartEditorCompletionTest extends DartCompletionTestBase {
     myFixture.configureByText(DartFileType.INSTANCE, "import <caret>");
     doTypeAndCheck('"', "import \"<caret>\"");
   }
+
+  public void testWEB_8315() throws Throwable {
+    myFixture.configureByText(DartFileType.INSTANCE, "class X {\n" +
+                                                     "  num x;<caret>\n" +
+                                                     "}");
+    doTypeAndCheck('\n', "class X {\n" +
+                         "  num x;\n" +
+                         "  <caret>\n" +
+                         "}");
+  }
 }
