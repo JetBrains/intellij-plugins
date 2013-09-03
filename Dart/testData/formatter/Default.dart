@@ -2,6 +2,10 @@
          // comment
     Array<Array<Int>> tmp;
     function foo (int x,z) {
+      switch (1) {
+        case KeyCode.LEFT:
+          action = Action.LEFT;
+      }
         new Foo(x,2);
         int absSum (int a, int b) {
             int value = a+b;

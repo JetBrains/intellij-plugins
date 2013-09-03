@@ -77,7 +77,7 @@ public class DartSpacingProcessor {
       }
       return Spacing.createSpacing(0, 0, lineFeeds, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
-    if (type2 != SEMICOLON && (parentType == SWITCH_CASE || parentType == DEFAULT_CASE)) {
+    if (type2 != SEMICOLON && elementType == STATEMENTS && (parentType == SWITCH_CASE || parentType == DEFAULT_CASE)) {
       return Spacing.createSpacing(0, 0, 1, false, mySettings.KEEP_BLANK_LINES_IN_CODE);
     }
     if (type1 == SEMICOLON && !COMMENTS.contains(type2) && parentType == BLOCK) {
