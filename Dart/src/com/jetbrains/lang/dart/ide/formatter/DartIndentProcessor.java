@@ -76,6 +76,9 @@ public class DartIndentProcessor {
       }
       return Indent.getContinuationIndent();
     }
+    if (elementType == CLASS_MEMBERS || elementType == INTERFACE_MEMBERS) {
+      return Indent.getNormalIndent();
+    }
     if (needIndent(parentType)) {
       final PsiElement psi = node.getPsi();
       if (psi.getParent() instanceof PsiFile) {
