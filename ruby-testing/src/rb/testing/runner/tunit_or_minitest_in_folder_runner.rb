@@ -77,10 +77,14 @@ def drb_launch_tests(drb_runner, test_scripts)
   # drb runner
   cmdline << drb_runner
 
-  load_path = cmdline.find_all{ |param|
-    (not param.nil?) and param.start_with?('-I')
-  }
-  cmdline.concat load_path
+  if drb_runner.end_with?('zeus')
+    cmdline << 'test'
+  else
+    load_path = cmdline.find_all{ |param|
+      (not param.nil?) and param.start_with?('-I')
+    }
+    cmdline.concat load_path
+  end
 
   ARGV.each { |arg|
     cmdline << arg
