@@ -20,6 +20,16 @@ public class KarmaConfigurationType extends ConfigurationTypeBase {
       public RunConfiguration createTemplateConfiguration(Project project) {
         return new KarmaRunConfiguration(project, this, "Karma");
       }
+
+      @Override
+      public boolean isConfigurationSingletonByDefault() {
+        return true;
+      }
+
+      @Override
+      public boolean canConfigurationBeSingleton() {
+        return false;
+      }
     });
   }
 
