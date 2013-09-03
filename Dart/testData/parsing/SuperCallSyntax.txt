@@ -5,65 +5,20 @@ Dart File
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('SuperCallSyntax')
-    PsiElement({)('{')
     CLASS_BODY
-      METHOD_DECLARATION
-        COMPONENT_NAME
-          ID
-            PsiElement(IDENTIFIER)('method')
-        FORMAL_PARAMETER_LIST
-          PsiElement(()('(')
-          PsiElement())(')')
-        FUNCTION_BODY
-          BLOCK
-            PsiElement({)('{')
-            STATEMENTS
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  SUPER_EXPRESSION
-                    PsiElement(super)('super')
-                  PsiElement(.)('.')
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('foo')
-                ARGUMENTS
-                  PsiElement(()('(')
-                  PsiElement())(')')
-              PsiElement(;)(';')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  SUPER_EXPRESSION
-                    PsiElement(super)('super')
-                  PsiElement(.)('.')
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('foo')
-                ARGUMENTS
-                  PsiElement(()('(')
-                  ARGUMENT_LIST
-                    LITERAL_EXPRESSION
-                      PsiElement(NUMBER)('1')
-                  PsiElement())(')')
-              PsiElement(;)(';')
-              CALL_EXPRESSION
-                REFERENCE_EXPRESSION
-                  SUPER_EXPRESSION
-                    PsiElement(super)('super')
-                  PsiElement(.)('.')
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('foo')
-                ARGUMENTS
-                  PsiElement(()('(')
-                  ARGUMENT_LIST
-                    LITERAL_EXPRESSION
-                      PsiElement(NUMBER)('1')
-                    PsiElement(,)(',')
-                    LITERAL_EXPRESSION
-                      PsiElement(NUMBER)('2')
-                  PsiElement())(')')
-              PsiElement(;)(';')
-              REFERENCE_EXPRESSION
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        METHOD_DECLARATION
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('method')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            PsiElement())(')')
+          FUNCTION_BODY
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     SUPER_EXPRESSION
@@ -75,12 +30,7 @@ Dart File
                   ARGUMENTS
                     PsiElement(()('(')
                     PsiElement())(')')
-                PsiElement(.)('.')
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('x')
-              PsiElement(;)(';')
-              ARRAY_ACCESS_EXPRESSION
+                PsiElement(;)(';')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     SUPER_EXPRESSION
@@ -91,48 +41,11 @@ Dart File
                         PsiElement(IDENTIFIER)('foo')
                   ARGUMENTS
                     PsiElement(()('(')
+                    ARGUMENT_LIST
+                      LITERAL_EXPRESSION
+                        PsiElement(NUMBER)('1')
                     PsiElement())(')')
-                PsiElement([)('[')
-                LITERAL_EXPRESSION
-                  PsiElement(NUMBER)('42')
-                PsiElement(])(']')
-              PsiElement(;)(';')
-              SUFFIX_EXPRESSION
-                REFERENCE_EXPRESSION
-                  CALL_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      SUPER_EXPRESSION
-                        PsiElement(super)('super')
-                      PsiElement(.)('.')
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('foo')
-                    ARGUMENTS
-                      PsiElement(()('(')
-                      PsiElement())(')')
-                  PsiElement(.)('.')
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('x')
-                PsiElement(++)('++')
-              PsiElement(;)(';')
-              CALL_EXPRESSION
-                CALL_EXPRESSION
-                  REFERENCE_EXPRESSION
-                    SUPER_EXPRESSION
-                      PsiElement(super)('super')
-                    PsiElement(.)('.')
-                    REFERENCE_EXPRESSION
-                      ID
-                        PsiElement(IDENTIFIER)('foo')
-                  ARGUMENTS
-                    PsiElement(()('(')
-                    PsiElement())(')')
-                ARGUMENTS
-                  PsiElement(()('(')
-                  PsiElement())(')')
-              PsiElement(;)(';')
-              CALL_EXPRESSION
+                PsiElement(;)(';')
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     SUPER_EXPRESSION
@@ -150,24 +63,8 @@ Dart File
                       LITERAL_EXPRESSION
                         PsiElement(NUMBER)('2')
                     PsiElement())(')')
-                ARGUMENTS
-                  PsiElement(()('(')
-                  ARGUMENT_LIST
-                    LITERAL_EXPRESSION
-                      PsiElement(NUMBER)('3')
-                    PsiElement(,)(',')
-                    LITERAL_EXPRESSION
-                      PsiElement(NUMBER)('4')
-                  PsiElement())(')')
-              PsiElement(;)(';')
-              VAR_DECLARATION_LIST
-                VAR_ACCESS_DECLARATION
-                  PsiElement(var)('var')
-                  COMPONENT_NAME
-                    ID
-                      PsiElement(IDENTIFIER)('v1')
-                VAR_INIT
-                  PsiElement(=)('=')
+                PsiElement(;)(';')
+                REFERENCE_EXPRESSION
                   CALL_EXPRESSION
                     REFERENCE_EXPRESSION
                       SUPER_EXPRESSION
@@ -179,15 +76,12 @@ Dart File
                     ARGUMENTS
                       PsiElement(()('(')
                       PsiElement())(')')
-              PsiElement(;)(';')
-              VAR_DECLARATION_LIST
-                VAR_ACCESS_DECLARATION
-                  PsiElement(var)('var')
-                  COMPONENT_NAME
+                  PsiElement(.)('.')
+                  REFERENCE_EXPRESSION
                     ID
-                      PsiElement(IDENTIFIER)('v2')
-                VAR_INIT
-                  PsiElement(=)('=')
+                      PsiElement(IDENTIFIER)('x')
+                PsiElement(;)(';')
+                ARRAY_ACCESS_EXPRESSION
                   CALL_EXPRESSION
                     REFERENCE_EXPRESSION
                       SUPER_EXPRESSION
@@ -198,19 +92,48 @@ Dart File
                           PsiElement(IDENTIFIER)('foo')
                     ARGUMENTS
                       PsiElement(()('(')
-                      ARGUMENT_LIST
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('1')
                       PsiElement())(')')
-              PsiElement(;)(';')
-              VAR_DECLARATION_LIST
-                VAR_ACCESS_DECLARATION
-                  PsiElement(var)('var')
-                  COMPONENT_NAME
-                    ID
-                      PsiElement(IDENTIFIER)('v3')
-                VAR_INIT
-                  PsiElement(=)('=')
+                  PsiElement([)('[')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('42')
+                  PsiElement(])(']')
+                PsiElement(;)(';')
+                SUFFIX_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        SUPER_EXPRESSION
+                          PsiElement(super)('super')
+                        PsiElement(.)('.')
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('foo')
+                      ARGUMENTS
+                        PsiElement(()('(')
+                        PsiElement())(')')
+                    PsiElement(.)('.')
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('x')
+                  PsiElement(++)('++')
+                PsiElement(;)(';')
+                CALL_EXPRESSION
+                  CALL_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      SUPER_EXPRESSION
+                        PsiElement(super)('super')
+                      PsiElement(.)('.')
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('foo')
+                    ARGUMENTS
+                      PsiElement(()('(')
+                      PsiElement())(')')
+                  ARGUMENTS
+                    PsiElement(()('(')
+                    PsiElement())(')')
+                PsiElement(;)(';')
+                CALL_EXPRESSION
                   CALL_EXPRESSION
                     REFERENCE_EXPRESSION
                       SUPER_EXPRESSION
@@ -228,41 +151,24 @@ Dart File
                         LITERAL_EXPRESSION
                           PsiElement(NUMBER)('2')
                       PsiElement())(')')
-              PsiElement(;)(';')
-              VAR_DECLARATION_LIST
-                VAR_ACCESS_DECLARATION
-                  PsiElement(var)('var')
-                  COMPONENT_NAME
-                    ID
-                      PsiElement(IDENTIFIER)('v4')
-                VAR_INIT
-                  PsiElement(=)('=')
-                  REFERENCE_EXPRESSION
-                    CALL_EXPRESSION
-                      REFERENCE_EXPRESSION
-                        SUPER_EXPRESSION
-                          PsiElement(super)('super')
-                        PsiElement(.)('.')
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('foo')
-                      ARGUMENTS
-                        PsiElement(()('(')
-                        PsiElement())(')')
-                    PsiElement(.)('.')
-                    REFERENCE_EXPRESSION
+                  ARGUMENTS
+                    PsiElement(()('(')
+                    ARGUMENT_LIST
+                      LITERAL_EXPRESSION
+                        PsiElement(NUMBER)('3')
+                      PsiElement(,)(',')
+                      LITERAL_EXPRESSION
+                        PsiElement(NUMBER)('4')
+                    PsiElement())(')')
+                PsiElement(;)(';')
+                VAR_DECLARATION_LIST
+                  VAR_ACCESS_DECLARATION
+                    PsiElement(var)('var')
+                    COMPONENT_NAME
                       ID
-                        PsiElement(IDENTIFIER)('x')
-              PsiElement(;)(';')
-              VAR_DECLARATION_LIST
-                VAR_ACCESS_DECLARATION
-                  PsiElement(var)('var')
-                  COMPONENT_NAME
-                    ID
-                      PsiElement(IDENTIFIER)('v5')
-                VAR_INIT
-                  PsiElement(=)('=')
-                  ARRAY_ACCESS_EXPRESSION
+                        PsiElement(IDENTIFIER)('v1')
+                  VAR_INIT
+                    PsiElement(=)('=')
                     CALL_EXPRESSION
                       REFERENCE_EXPRESSION
                         SUPER_EXPRESSION
@@ -274,47 +180,15 @@ Dart File
                       ARGUMENTS
                         PsiElement(()('(')
                         PsiElement())(')')
-                    PsiElement([)('[')
-                    LITERAL_EXPRESSION
-                      PsiElement(NUMBER)('42')
-                    PsiElement(])(']')
-              PsiElement(;)(';')
-              VAR_DECLARATION_LIST
-                VAR_ACCESS_DECLARATION
-                  PsiElement(var)('var')
-                  COMPONENT_NAME
-                    ID
-                      PsiElement(IDENTIFIER)('v6')
-                VAR_INIT
-                  PsiElement(=)('=')
-                  SUFFIX_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      CALL_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          SUPER_EXPRESSION
-                            PsiElement(super)('super')
-                          PsiElement(.)('.')
-                          REFERENCE_EXPRESSION
-                            ID
-                              PsiElement(IDENTIFIER)('foo')
-                        ARGUMENTS
-                          PsiElement(()('(')
-                          PsiElement())(')')
-                      PsiElement(.)('.')
-                      REFERENCE_EXPRESSION
-                        ID
-                          PsiElement(IDENTIFIER)('x')
-                    PsiElement(++)('++')
-              PsiElement(;)(';')
-              VAR_DECLARATION_LIST
-                VAR_ACCESS_DECLARATION
-                  PsiElement(var)('var')
-                  COMPONENT_NAME
-                    ID
-                      PsiElement(IDENTIFIER)('v7')
-                VAR_INIT
-                  PsiElement(=)('=')
-                  CALL_EXPRESSION
+                PsiElement(;)(';')
+                VAR_DECLARATION_LIST
+                  VAR_ACCESS_DECLARATION
+                    PsiElement(var)('var')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('v2')
+                  VAR_INIT
+                    PsiElement(=)('=')
                     CALL_EXPRESSION
                       REFERENCE_EXPRESSION
                         SUPER_EXPRESSION
@@ -325,20 +199,19 @@ Dart File
                             PsiElement(IDENTIFIER)('foo')
                       ARGUMENTS
                         PsiElement(()('(')
+                        ARGUMENT_LIST
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('1')
                         PsiElement())(')')
-                    ARGUMENTS
-                      PsiElement(()('(')
-                      PsiElement())(')')
-              PsiElement(;)(';')
-              VAR_DECLARATION_LIST
-                VAR_ACCESS_DECLARATION
-                  PsiElement(var)('var')
-                  COMPONENT_NAME
-                    ID
-                      PsiElement(IDENTIFIER)('v8')
-                VAR_INIT
-                  PsiElement(=)('=')
-                  CALL_EXPRESSION
+                PsiElement(;)(';')
+                VAR_DECLARATION_LIST
+                  VAR_ACCESS_DECLARATION
+                    PsiElement(var)('var')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('v3')
+                  VAR_INIT
+                    PsiElement(=)('=')
                     CALL_EXPRESSION
                       REFERENCE_EXPRESSION
                         SUPER_EXPRESSION
@@ -356,38 +229,157 @@ Dart File
                           LITERAL_EXPRESSION
                             PsiElement(NUMBER)('2')
                         PsiElement())(')')
-                    ARGUMENTS
-                      PsiElement(()('(')
-                      ARGUMENT_LIST
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('3')
-                        PsiElement(,)(',')
-                        LITERAL_EXPRESSION
-                          PsiElement(NUMBER)('4')
-                      PsiElement())(')')
-              PsiElement(;)(';')
-            PsiElement(})('}')
-      GETTER_DECLARATION
-        PsiElement(get)('get')
-        COMPONENT_NAME
-          ID
-            PsiElement(IDENTIFIER)('field')
-        FORMAL_PARAMETER_LIST
-          PsiElement(()('(')
-          PsiElement())(')')
-        FUNCTION_BODY
-          BLOCK
-            PsiElement({)('{')
-            STATEMENTS
-              REFERENCE_EXPRESSION
-                SUPER_EXPRESSION
-                  PsiElement(super)('super')
-                PsiElement(.)('.')
-                REFERENCE_EXPRESSION
-                  ID
-                    PsiElement(IDENTIFIER)('field')
-              PsiElement(;)(';')
-              ASSIGN_EXPRESSION
+                PsiElement(;)(';')
+                VAR_DECLARATION_LIST
+                  VAR_ACCESS_DECLARATION
+                    PsiElement(var)('var')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('v4')
+                  VAR_INIT
+                    PsiElement(=)('=')
+                    REFERENCE_EXPRESSION
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          SUPER_EXPRESSION
+                            PsiElement(super)('super')
+                          PsiElement(.)('.')
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('foo')
+                        ARGUMENTS
+                          PsiElement(()('(')
+                          PsiElement())(')')
+                      PsiElement(.)('.')
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('x')
+                PsiElement(;)(';')
+                VAR_DECLARATION_LIST
+                  VAR_ACCESS_DECLARATION
+                    PsiElement(var)('var')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('v5')
+                  VAR_INIT
+                    PsiElement(=)('=')
+                    ARRAY_ACCESS_EXPRESSION
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          SUPER_EXPRESSION
+                            PsiElement(super)('super')
+                          PsiElement(.)('.')
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('foo')
+                        ARGUMENTS
+                          PsiElement(()('(')
+                          PsiElement())(')')
+                      PsiElement([)('[')
+                      LITERAL_EXPRESSION
+                        PsiElement(NUMBER)('42')
+                      PsiElement(])(']')
+                PsiElement(;)(';')
+                VAR_DECLARATION_LIST
+                  VAR_ACCESS_DECLARATION
+                    PsiElement(var)('var')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('v6')
+                  VAR_INIT
+                    PsiElement(=)('=')
+                    SUFFIX_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        CALL_EXPRESSION
+                          REFERENCE_EXPRESSION
+                            SUPER_EXPRESSION
+                              PsiElement(super)('super')
+                            PsiElement(.)('.')
+                            REFERENCE_EXPRESSION
+                              ID
+                                PsiElement(IDENTIFIER)('foo')
+                          ARGUMENTS
+                            PsiElement(()('(')
+                            PsiElement())(')')
+                        PsiElement(.)('.')
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('x')
+                      PsiElement(++)('++')
+                PsiElement(;)(';')
+                VAR_DECLARATION_LIST
+                  VAR_ACCESS_DECLARATION
+                    PsiElement(var)('var')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('v7')
+                  VAR_INIT
+                    PsiElement(=)('=')
+                    CALL_EXPRESSION
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          SUPER_EXPRESSION
+                            PsiElement(super)('super')
+                          PsiElement(.)('.')
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('foo')
+                        ARGUMENTS
+                          PsiElement(()('(')
+                          PsiElement())(')')
+                      ARGUMENTS
+                        PsiElement(()('(')
+                        PsiElement())(')')
+                PsiElement(;)(';')
+                VAR_DECLARATION_LIST
+                  VAR_ACCESS_DECLARATION
+                    PsiElement(var)('var')
+                    COMPONENT_NAME
+                      ID
+                        PsiElement(IDENTIFIER)('v8')
+                  VAR_INIT
+                    PsiElement(=)('=')
+                    CALL_EXPRESSION
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          SUPER_EXPRESSION
+                            PsiElement(super)('super')
+                          PsiElement(.)('.')
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('foo')
+                        ARGUMENTS
+                          PsiElement(()('(')
+                          ARGUMENT_LIST
+                            LITERAL_EXPRESSION
+                              PsiElement(NUMBER)('1')
+                            PsiElement(,)(',')
+                            LITERAL_EXPRESSION
+                              PsiElement(NUMBER)('2')
+                          PsiElement())(')')
+                      ARGUMENTS
+                        PsiElement(()('(')
+                        ARGUMENT_LIST
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('3')
+                          PsiElement(,)(',')
+                          LITERAL_EXPRESSION
+                            PsiElement(NUMBER)('4')
+                        PsiElement())(')')
+                PsiElement(;)(';')
+              PsiElement(})('}')
+        GETTER_DECLARATION
+          PsiElement(get)('get')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('field')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            PsiElement())(')')
+          FUNCTION_BODY
+            BLOCK
+              PsiElement({)('{')
+              STATEMENTS
                 REFERENCE_EXPRESSION
                   SUPER_EXPRESSION
                     PsiElement(super)('super')
@@ -395,35 +387,33 @@ Dart File
                   REFERENCE_EXPRESSION
                     ID
                       PsiElement(IDENTIFIER)('field')
-                ASSIGNMENT_OPERATOR
-                  PsiElement(=)('=')
-                LITERAL_EXPRESSION
-                  PsiElement(NUMBER)('42')
-              PsiElement(;)(';')
-              ASSIGN_EXPRESSION
-                REFERENCE_EXPRESSION
-                  SUPER_EXPRESSION
-                    PsiElement(super)('super')
-                  PsiElement(.)('.')
+                PsiElement(;)(';')
+                ASSIGN_EXPRESSION
                   REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('field')
-                ASSIGNMENT_OPERATOR
-                  PsiElement(+=)('+=')
-                LITERAL_EXPRESSION
-                  PsiElement(NUMBER)('87')
-              PsiElement(;)(';')
-              ARRAY_ACCESS_EXPRESSION
-                SUPER_EXPRESSION
-                  PsiElement(super)('super')
-                PsiElement([)('[')
-                STRING_LITERAL_EXPRESSION
-                  PsiElement(OPEN_QUOTE)(''')
-                  PsiElement(REGULAR_STRING_PART)('baz')
-                  PsiElement(CLOSING_QUOTE)(''')
-                PsiElement(])(']')
-              PsiElement(;)(';')
-              ASSIGN_EXPRESSION
+                    SUPER_EXPRESSION
+                      PsiElement(super)('super')
+                    PsiElement(.)('.')
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('field')
+                  ASSIGNMENT_OPERATOR
+                    PsiElement(=)('=')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('42')
+                PsiElement(;)(';')
+                ASSIGN_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    SUPER_EXPRESSION
+                      PsiElement(super)('super')
+                    PsiElement(.)('.')
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('field')
+                  ASSIGNMENT_OPERATOR
+                    PsiElement(+=)('+=')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('87')
+                PsiElement(;)(';')
                 ARRAY_ACCESS_EXPRESSION
                   SUPER_EXPRESSION
                     PsiElement(super)('super')
@@ -433,25 +423,36 @@ Dart File
                     PsiElement(REGULAR_STRING_PART)('baz')
                     PsiElement(CLOSING_QUOTE)(''')
                   PsiElement(])(']')
-                ASSIGNMENT_OPERATOR
-                  PsiElement(=)('=')
-                LITERAL_EXPRESSION
-                  PsiElement(NUMBER)('42')
-              PsiElement(;)(';')
-              ASSIGN_EXPRESSION
-                ARRAY_ACCESS_EXPRESSION
-                  SUPER_EXPRESSION
-                    PsiElement(super)('super')
-                  PsiElement([)('[')
-                  STRING_LITERAL_EXPRESSION
-                    PsiElement(OPEN_QUOTE)(''')
-                    PsiElement(REGULAR_STRING_PART)('baz')
-                    PsiElement(CLOSING_QUOTE)(''')
-                  PsiElement(])(']')
-                ASSIGNMENT_OPERATOR
-                  PsiElement(+=)('+=')
-                LITERAL_EXPRESSION
-                  PsiElement(NUMBER)('87')
-              PsiElement(;)(';')
-            PsiElement(})('}')
-    PsiElement(})('}')
+                PsiElement(;)(';')
+                ASSIGN_EXPRESSION
+                  ARRAY_ACCESS_EXPRESSION
+                    SUPER_EXPRESSION
+                      PsiElement(super)('super')
+                    PsiElement([)('[')
+                    STRING_LITERAL_EXPRESSION
+                      PsiElement(OPEN_QUOTE)(''')
+                      PsiElement(REGULAR_STRING_PART)('baz')
+                      PsiElement(CLOSING_QUOTE)(''')
+                    PsiElement(])(']')
+                  ASSIGNMENT_OPERATOR
+                    PsiElement(=)('=')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('42')
+                PsiElement(;)(';')
+                ASSIGN_EXPRESSION
+                  ARRAY_ACCESS_EXPRESSION
+                    SUPER_EXPRESSION
+                      PsiElement(super)('super')
+                    PsiElement([)('[')
+                    STRING_LITERAL_EXPRESSION
+                      PsiElement(OPEN_QUOTE)(''')
+                      PsiElement(REGULAR_STRING_PART)('baz')
+                      PsiElement(CLOSING_QUOTE)(''')
+                    PsiElement(])(']')
+                  ASSIGNMENT_OPERATOR
+                    PsiElement(+=)('+=')
+                  LITERAL_EXPRESSION
+                    PsiElement(NUMBER)('87')
+                PsiElement(;)(';')
+              PsiElement(})('}')
+      PsiElement(})('}')

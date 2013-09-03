@@ -23,57 +23,9 @@ public class DartClassBodyImpl extends DartPsiCompositeElementImpl implements Da
   }
 
   @Override
-  @NotNull
-  public List<DartAbstractOperatorDeclaration> getAbstractOperatorDeclarationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartAbstractOperatorDeclaration.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartFactoryConstructorDeclaration> getFactoryConstructorDeclarationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartFactoryConstructorDeclaration.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartGetterDeclaration> getGetterDeclarationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartGetterDeclaration.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartMetadata> getMetadataList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartMethodDeclaration> getMethodDeclarationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMethodDeclaration.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartNamedConstructorDeclaration> getNamedConstructorDeclarationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartNamedConstructorDeclaration.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartOperatorDeclaration> getOperatorDeclarationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartOperatorDeclaration.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartSetterDeclaration> getSetterDeclarationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartSetterDeclaration.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartVarDeclarationList> getVarDeclarationListList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartVarDeclarationList.class);
+  @Nullable
+  public DartClassMembers getClassMembers() {
+    return findChildByClass(DartClassMembers.class);
   }
 
 }

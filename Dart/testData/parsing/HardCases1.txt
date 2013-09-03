@@ -168,29 +168,30 @@ Dart File
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('JsEvaluator')
-    PsiElement({)('{')
     INTERFACE_BODY
-      METHOD_PROTOTYPE_DECLARATION
-        RETURN_TYPE
-          PsiElement(var)('var')
-        COMPONENT_NAME
-          ID
-            PsiElement(IDENTIFIER)('eval')
-        FORMAL_PARAMETER_LIST
-          PsiElement(()('(')
-          NORMAL_FORMAL_PARAMETER
-            VAR_DECLARATION
-              VAR_ACCESS_DECLARATION
-                TYPE
-                  REFERENCE_EXPRESSION
+      PsiElement({)('{')
+      INTERFACE_MEMBERS
+        METHOD_PROTOTYPE_DECLARATION
+          RETURN_TYPE
+            PsiElement(var)('var')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('eval')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            NORMAL_FORMAL_PARAMETER
+              VAR_DECLARATION
+                VAR_ACCESS_DECLARATION
+                  TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('String')
+                  COMPONENT_NAME
                     ID
-                      PsiElement(IDENTIFIER)('String')
-                COMPONENT_NAME
-                  ID
-                    PsiElement(source)('source')
-          PsiElement())(')')
-        PsiElement(;)(';')
-    PsiElement(})('}')
+                      PsiElement(source)('source')
+            PsiElement())(')')
+          PsiElement(;)(';')
+      PsiElement(})('}')
   INTERFACE_DEFINITION
     PsiElement(interface)('interface')
     COMPONENT_NAME
@@ -230,10 +231,11 @@ Dart File
             ID
               PsiElement(IDENTIFIER)('T')
         PsiElement(>)('>')
-    PsiElement({)('{')
     INTERFACE_BODY
-      <empty list>
-    PsiElement(})('}')
+      PsiElement({)('{')
+      INTERFACE_MEMBERS
+        <empty list>
+      PsiElement(})('}')
   INTERFACE_DEFINITION
     PsiElement(interface)('interface')
     COMPONENT_NAME
@@ -273,44 +275,45 @@ Dart File
             ID
               PsiElement(IDENTIFIER)('V')
         PsiElement(>)('>')
-    PsiElement({)('{')
     INTERFACE_BODY
-      NAMED_CONSTRUCTOR_DECLARATION
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Map')
-        PsiElement(.)('.')
-        COMPONENT_NAME
-          ID
-            PsiElement(IDENTIFIER)('from')
-        FORMAL_PARAMETER_LIST
-          PsiElement(()('(')
-          NORMAL_FORMAL_PARAMETER
-            VAR_DECLARATION
-              VAR_ACCESS_DECLARATION
-                TYPE
-                  REFERENCE_EXPRESSION
+      PsiElement({)('{')
+      INTERFACE_MEMBERS
+        NAMED_CONSTRUCTOR_DECLARATION
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Map')
+          PsiElement(.)('.')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('from')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            NORMAL_FORMAL_PARAMETER
+              VAR_DECLARATION
+                VAR_ACCESS_DECLARATION
+                  TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('Map')
+                    TYPE_ARGUMENTS
+                      PsiElement(<)('<')
+                      TYPE_LIST
+                        TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('K')
+                        PsiElement(,)(',')
+                        TYPE
+                          REFERENCE_EXPRESSION
+                            ID
+                              PsiElement(IDENTIFIER)('V')
+                      PsiElement(>)('>')
+                  COMPONENT_NAME
                     ID
-                      PsiElement(IDENTIFIER)('Map')
-                  TYPE_ARGUMENTS
-                    PsiElement(<)('<')
-                    TYPE_LIST
-                      TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('K')
-                      PsiElement(,)(',')
-                      TYPE
-                        REFERENCE_EXPRESSION
-                          ID
-                            PsiElement(IDENTIFIER)('V')
-                    PsiElement(>)('>')
-                COMPONENT_NAME
-                  ID
-                    PsiElement(IDENTIFIER)('other')
-          PsiElement())(')')
-        PsiElement(;)(';')
-    PsiElement(})('}')
+                      PsiElement(IDENTIFIER)('other')
+            PsiElement())(')')
+          PsiElement(;)(';')
+      PsiElement(})('}')
   VAR_DECLARATION_LIST
     VAR_ACCESS_DECLARATION
       PsiElement(final)('final')
@@ -342,26 +345,27 @@ Dart File
       REFERENCE_EXPRESSION
         ID
           PsiElement(IDENTIFIER)('ExceptionImplementation')
-    PsiElement({)('{')
     INTERFACE_BODY
-      METHOD_PROTOTYPE_DECLARATION
-        PsiElement(const)('const')
-        COMPONENT_NAME
-          ID
-            PsiElement(IDENTIFIER)('Exception')
-        FORMAL_PARAMETER_LIST
-          PsiElement(()('(')
-          NAMED_FORMAL_PARAMETERS
-            PsiElement([)('[')
-            DEFAULT_FORMAL_NAMED_PARAMETER
-              NORMAL_FORMAL_PARAMETER
-                VAR_DECLARATION
-                  VAR_ACCESS_DECLARATION
-                    PsiElement(var)('var')
-                    COMPONENT_NAME
-                      ID
-                        PsiElement(IDENTIFIER)('msg')
-            PsiElement(])(']')
-          PsiElement())(')')
-        PsiElement(;)(';')
-    PsiElement(})('}')
+      PsiElement({)('{')
+      INTERFACE_MEMBERS
+        METHOD_PROTOTYPE_DECLARATION
+          PsiElement(const)('const')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('Exception')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            NAMED_FORMAL_PARAMETERS
+              PsiElement([)('[')
+              DEFAULT_FORMAL_NAMED_PARAMETER
+                NORMAL_FORMAL_PARAMETER
+                  VAR_DECLARATION
+                    VAR_ACCESS_DECLARATION
+                      PsiElement(var)('var')
+                      COMPONENT_NAME
+                        ID
+                          PsiElement(IDENTIFIER)('msg')
+              PsiElement(])(']')
+            PsiElement())(')')
+          PsiElement(;)(';')
+      PsiElement(})('}')

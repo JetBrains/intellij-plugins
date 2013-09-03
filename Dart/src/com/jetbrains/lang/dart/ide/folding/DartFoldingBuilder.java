@@ -41,9 +41,6 @@ public class DartFoldingBuilder implements FoldingBuilder {
   @Nullable
   @Override
   public String getPlaceholderText(@NotNull ASTNode node) {
-    if (node.getElementType() == DartTokenTypes.CLASS_BODY) {
-      return "...";
-    }
     return "{...}";
   }
 

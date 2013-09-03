@@ -12,10 +12,7 @@ import com.jetbrains.lang.dart.psi.DartClass;
 import com.jetbrains.lang.dart.psi.DartClassBody;
 import com.jetbrains.lang.dart.psi.DartClassDefinition;
 import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.util.DartClassResolveResult;
-import com.jetbrains.lang.dart.util.DartElementGenerator;
-import com.jetbrains.lang.dart.util.DartGenericSpecialization;
-import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
+import com.jetbrains.lang.dart.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +36,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     if (editor == null) return;
     final int caretOffset = editor.getCaretModel().getOffset();
     if (myDartClass instanceof DartClassDefinition) {
-      final DartClassBody body = ((DartClassDefinition)myDartClass).getClassBody();
+      final PsiElement body = DartResolveUtil.getBody(myDartClass);
       assert body != null;
       for (PsiElement child : body.getChildren()) {
         if (child.getTextOffset() > caretOffset) break;
@@ -81,7 +78,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
     if (functionsText != null && functionsText.length() > 0) {
       List<DartComponent> elements = DartElementGenerator.createFunctionsFromText(project, functionsText);
       final PsiElement insert = myDartClass instanceof DartClassDefinition ?
-                                ((DartClassDefinition)myDartClass).getClassBody() : myDartClass;
+                                DartResolveUtil.getBody(myDartClass) : myDartClass;
       assert insert != null;
       for (DartComponent element : elements) {
         anchor = insert.addAfter(element, anchor);

@@ -23,45 +23,9 @@ public class DartInterfaceBodyImpl extends DartPsiCompositeElementImpl implement
   }
 
   @Override
-  @NotNull
-  public List<DartGetterDeclaration> getGetterDeclarationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartGetterDeclaration.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartMetadata> getMetadataList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMetadata.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartMethodPrototypeDeclaration> getMethodPrototypeDeclarationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartMethodPrototypeDeclaration.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartNamedConstructorDeclaration> getNamedConstructorDeclarationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartNamedConstructorDeclaration.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartOperatorPrototype> getOperatorPrototypeList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartOperatorPrototype.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartSetterDeclaration> getSetterDeclarationList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartSetterDeclaration.class);
-  }
-
-  @Override
-  @NotNull
-  public List<DartVarDeclarationList> getVarDeclarationListList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartVarDeclarationList.class);
+  @Nullable
+  public DartInterfaceMembers getInterfaceMembers() {
+    return findChildByClass(DartInterfaceMembers.class);
   }
 
 }

@@ -222,11 +222,12 @@ abstractOperatorDeclaration ::= 'abstract' returnType? 'operator' userDefinableO
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartOperator" implements="com.jetbrains.lang.dart.psi.DartOperator"}
 operatorDeclaration ::= returnType? 'operator' userDefinableOperator formalParameterList (';' | functionBodyOrNative)
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartOperator" implements="com.jetbrains.lang.dart.psi.DartOperator"}
-classDefinition ::= 'abstract'? 'class' componentName typeParameters? (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBodyWithBracesPrivate
+classDefinition ::= 'abstract'? 'class' componentName typeParameters? (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody
 {pin=3 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 
-private classBodyWithBracesPrivate ::= '{' classBody '}'
-classBody ::= (metadata* classMemberDefinition)* {recoverUntil="simple_scope_recover" implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
+classBody ::= '{' classMembers '}' {pin=1}
+classMembers ::= (metadata* classMemberDefinition)*
+{recoverUntil="simple_scope_recover" implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
 private simple_scope_recover ::= !'}'
 
 private getterOrSetterDeclaration ::= getterDeclaration | setterDeclaration
@@ -283,7 +284,7 @@ private super_call_or_field_initializer_recover ::= !(')' | ',' | ':' | ';' | '=
                                                     | 'final' | 'get' | 'native' | 'operator' | 'set' | 'static' | 'var' | '{' | '}'
                                                     | <<nonStrictID>>)
 
-interfaceDefinition ::= 'interface' componentName typeParameters? superinterfaces? defaultFactroy? factorySpecification? '{' interfaceBody '}'
+interfaceDefinition ::= 'interface' componentName typeParameters? superinterfaces? defaultFactroy? factorySpecification? interfaceBody
 {pin=2 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartClass"}
 factorySpecification ::= 'factory' type {pin=1}
 
@@ -293,7 +294,10 @@ functionTypeAlias ::= 'typedef' functionPrefix typeParameters? formalParameterLi
 classTypeAlias ::= 'typedef' componentName typeParameters? '=' 'abstract'? type mixins? ';'
 {pin=4 mixin="com.jetbrains.lang.dart.psi.impl.TypedefDartPsiClass" implements="com.jetbrains.lang.dart.psi.DartComponent"}
 
-interfaceBody ::= (metadata* interfaceMemberDefinition)* {recoverUntil="simple_scope_recover" implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
+interfaceBody ::= '{' interfaceMembers '}' {pin=1}
+interfaceMembers ::= (metadata* interfaceMemberDefinition)*
+{recoverUntil="simple_scope_recover" implements="com.jetbrains.lang.dart.psi.DartExecutionScope"}
+
 private interfaceMemberDefinition ::= methodPrototypeDeclaration
                                     | varDeclarationListWithSemicolon
                                     | namedConstructorDeclaration

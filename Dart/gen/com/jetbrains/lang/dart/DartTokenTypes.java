@@ -27,6 +27,7 @@ public interface DartTokenTypes {
   IElementType CATCH_PART = new DartElementType("CATCH_PART");
   IElementType CLASS_BODY = new DartElementType("CLASS_BODY");
   IElementType CLASS_DEFINITION = new DartElementType("CLASS_DEFINITION");
+  IElementType CLASS_MEMBERS = new DartElementType("CLASS_MEMBERS");
   IElementType CLASS_TYPE_ALIAS = new DartElementType("CLASS_TYPE_ALIAS");
   IElementType COMPARE_EXPRESSION = new DartElementType("COMPARE_EXPRESSION");
   IElementType COMPONENT_NAME = new DartElementType("COMPONENT_NAME");
@@ -68,6 +69,7 @@ public interface DartTokenTypes {
   IElementType INTERFACES = new DartElementType("INTERFACES");
   IElementType INTERFACE_BODY = new DartElementType("INTERFACE_BODY");
   IElementType INTERFACE_DEFINITION = new DartElementType("INTERFACE_DEFINITION");
+  IElementType INTERFACE_MEMBERS = new DartElementType("INTERFACE_MEMBERS");
   IElementType IS_EXPRESSION = new DartElementType("IS_EXPRESSION");
   IElementType ITERATOR_EXPRESSION = new DartElementType("ITERATOR_EXPRESSION");
   IElementType LABEL = new DartElementType("LABEL");
@@ -319,6 +321,9 @@ public interface DartTokenTypes {
       else if (type == CLASS_DEFINITION) {
         return new DartClassDefinitionImpl(node);
       }
+      else if (type == CLASS_MEMBERS) {
+        return new DartClassMembersImpl(node);
+      }
       else if (type == CLASS_TYPE_ALIAS) {
         return new DartClassTypeAliasImpl(node);
       }
@@ -441,6 +446,9 @@ public interface DartTokenTypes {
       }
       else if (type == INTERFACE_DEFINITION) {
         return new DartInterfaceDefinitionImpl(node);
+      }
+      else if (type == INTERFACE_MEMBERS) {
+        return new DartInterfaceMembersImpl(node);
       }
       else if (type == IS_EXPRESSION) {
         return new DartIsExpressionImpl(node);

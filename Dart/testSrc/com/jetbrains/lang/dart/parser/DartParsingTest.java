@@ -23,107 +23,111 @@ public class DartParsingTest extends ParsingTestCase {
     return true;
   }
 
-  public void testAbstractMethodSyntax() throws Throwable {
+  private void doTest() {
     doTest(true);
+  }
+
+  public void testAbstractMethodSyntax() throws Throwable {
+    doTest();
   }
 
   public void testCascades() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testClass1() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testClass2() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testConstructors() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testErrors() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testFormalParameterSyntax() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testFunctionTypeSyntax() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testGeneric() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testLiterals() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testMethodSignatureSyntax() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testMilestone1() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testMilestone2() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testMilestone3() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testOperators() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testOther() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testParametersAndArguments() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testSetGetSyntax() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testStrings() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testSuperCallSyntax() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testTopLevel() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testTypedef() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testLibrary() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testHardCases1() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testHardCases2() throws Throwable {
-    doTest(true);
+    doTest();
   }
 
   public void testHardCases3() throws Throwable {
-    doTest(true);
+    doTest();
   }
 }

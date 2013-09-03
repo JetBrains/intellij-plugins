@@ -86,14 +86,14 @@ public class DartSpacingProcessor {
     if (type1 == STATEMENTS || type2 == STATEMENTS) {
       return addLineBreak();
     }
-    if (type1 == CLASS_BODY || type2 == CLASS_BODY) {
+    if (type1 == CLASS_MEMBERS || type2 == CLASS_MEMBERS) {
       return addSingleSpaceIf(false, true);
     }
-    if (type1 == INTERFACE_BODY || type2 == INTERFACE_BODY) {
+    if (type1 == INTERFACE_MEMBERS || type2 == INTERFACE_MEMBERS) {
       return addSingleSpaceIf(false, true);
     }
 
-    if (type1 == CLASS_BODY || type1 == INTERFACE_BODY) {
+    if (type1 == CLASS_MEMBERS || type1 == INTERFACE_MEMBERS) {
       return addLineBreak();
     }
 
@@ -163,8 +163,11 @@ public class DartSpacingProcessor {
       return setBraceSpace(mySettings.SPACE_BEFORE_METHOD_LBRACE, mySettings.METHOD_BRACE_STYLE, child1.getTextRange());
     }
 
-    if ((elementType == CLASS_DEFINITION || elementType == INTERFACE_DEFINITION) &&
-        type2 == LBRACE) {
+    if (elementType == CLASS_DEFINITION && type2 == CLASS_BODY) {
+      return setBraceSpace(mySettings.SPACE_BEFORE_CLASS_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
+    }
+
+    if (elementType == INTERFACE_DEFINITION && type2 == INTERFACE_BODY) {
       return setBraceSpace(mySettings.SPACE_BEFORE_CLASS_LBRACE, mySettings.BRACE_STYLE, child1.getTextRange());
     }
 

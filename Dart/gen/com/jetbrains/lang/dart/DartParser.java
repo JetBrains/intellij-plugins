@@ -77,6 +77,9 @@ public class DartParser implements PsiParser {
     else if (root_ == CLASS_DEFINITION) {
       result_ = classDefinition(builder_, level_ + 1);
     }
+    else if (root_ == CLASS_MEMBERS) {
+      result_ = classMembers(builder_, level_ + 1);
+    }
     else if (root_ == CLASS_TYPE_ALIAS) {
       result_ = classTypeAlias(builder_, level_ + 1);
     }
@@ -196,6 +199,9 @@ public class DartParser implements PsiParser {
     }
     else if (root_ == INTERFACE_DEFINITION) {
       result_ = interfaceDefinition(builder_, level_ + 1);
+    }
+    else if (root_ == INTERFACE_MEMBERS) {
+      result_ = interfaceMembers(builder_, level_ + 1);
     }
     else if (root_ == INTERFACES) {
       result_ = interfaces(builder_, level_ + 1);
@@ -1036,67 +1042,23 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (metadata* classMemberDefinition)*
+  // '{' classMembers '}'
   public static boolean classBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classBody")) return false;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<class body>");
-    int offset_ = builder_.getCurrentOffset();
-    while (true) {
-      if (!classBody_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "classBody");
-        break;
-      }
-      offset_ = next_offset_;
-    }
-    exit_section_(builder_, level_, marker_, CLASS_BODY, true, false, simple_scope_recover_parser_);
-    return true;
-  }
-
-  // metadata* classMemberDefinition
-  private static boolean classBody_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classBody_0")) return false;
-    boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = classBody_0_0(builder_, level_ + 1);
-    result_ = result_ && classMemberDefinition(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // metadata*
-  private static boolean classBody_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classBody_0_0")) return false;
-    int offset_ = builder_.getCurrentOffset();
-    while (true) {
-      if (!metadata(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "classBody_0_0");
-        break;
-      }
-      offset_ = next_offset_;
-    }
-    return true;
-  }
-
-  /* ********************************************************** */
-  // '{' classBody '}'
-  static boolean classBodyWithBracesPrivate(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "classBodyWithBracesPrivate")) return false;
     if (!nextTokenIs(builder_, LBRACE)) return false;
     boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
     result_ = consumeToken(builder_, LBRACE);
-    result_ = result_ && classBody(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, RBRACE);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, classMembers(builder_, level_ + 1));
+    result_ = pinned_ && consumeToken(builder_, RBRACE) && result_;
+    exit_section_(builder_, level_, marker_, CLASS_BODY, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
   /* ********************************************************** */
-  // 'abstract'? 'class' componentName typeParameters? (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBodyWithBracesPrivate
+  // 'abstract'? 'class' componentName typeParameters? (superclass mixins?)? interfaces? ('native' stringLiteralExpression?)? classBody
   public static boolean classDefinition(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "classDefinition")) return false;
     if (!nextTokenIs(builder_, ABSTRACT) && !nextTokenIs(builder_, CLASS)
@@ -1112,7 +1074,7 @@ public class DartParser implements PsiParser {
     result_ = pinned_ && report_error_(builder_, classDefinition_4(builder_, level_ + 1)) && result_;
     result_ = pinned_ && report_error_(builder_, classDefinition_5(builder_, level_ + 1)) && result_;
     result_ = pinned_ && report_error_(builder_, classDefinition_6(builder_, level_ + 1)) && result_;
-    result_ = pinned_ && classBodyWithBracesPrivate(builder_, level_ + 1) && result_;
+    result_ = pinned_ && classBody(builder_, level_ + 1) && result_;
     exit_section_(builder_, level_, marker_, CLASS_DEFINITION, result_, pinned_, null);
     return result_ || pinned_;
   }
@@ -1209,6 +1171,52 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = varDeclarationListWithSemicolon(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, class_member_recover_parser_);
     return result_;
+  }
+
+  /* ********************************************************** */
+  // (metadata* classMemberDefinition)*
+  public static boolean classMembers(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classMembers")) return false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<class members>");
+    int offset_ = builder_.getCurrentOffset();
+    while (true) {
+      if (!classMembers_0(builder_, level_ + 1)) break;
+      int next_offset_ = builder_.getCurrentOffset();
+      if (offset_ == next_offset_) {
+        empty_element_parsed_guard_(builder_, offset_, "classMembers");
+        break;
+      }
+      offset_ = next_offset_;
+    }
+    exit_section_(builder_, level_, marker_, CLASS_MEMBERS, true, false, simple_scope_recover_parser_);
+    return true;
+  }
+
+  // metadata* classMemberDefinition
+  private static boolean classMembers_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classMembers_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = classMembers_0_0(builder_, level_ + 1);
+    result_ = result_ && classMemberDefinition(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // metadata*
+  private static boolean classMembers_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "classMembers_0_0")) return false;
+    int offset_ = builder_.getCurrentOffset();
+    while (true) {
+      if (!metadata(builder_, level_ + 1)) break;
+      int next_offset_ = builder_.getCurrentOffset();
+      if (offset_ == next_offset_) {
+        empty_element_parsed_guard_(builder_, offset_, "classMembers_0_0");
+        break;
+      }
+      offset_ = next_offset_;
+    }
+    return true;
   }
 
   /* ********************************************************** */
@@ -2982,53 +2990,23 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (metadata* interfaceMemberDefinition)*
+  // '{' interfaceMembers '}'
   public static boolean interfaceBody(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "interfaceBody")) return false;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<interface body>");
-    int offset_ = builder_.getCurrentOffset();
-    while (true) {
-      if (!interfaceBody_0(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "interfaceBody");
-        break;
-      }
-      offset_ = next_offset_;
-    }
-    exit_section_(builder_, level_, marker_, INTERFACE_BODY, true, false, simple_scope_recover_parser_);
-    return true;
-  }
-
-  // metadata* interfaceMemberDefinition
-  private static boolean interfaceBody_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "interfaceBody_0")) return false;
+    if (!nextTokenIs(builder_, LBRACE)) return false;
     boolean result_ = false;
-    Marker marker_ = enter_section_(builder_);
-    result_ = interfaceBody_0_0(builder_, level_ + 1);
-    result_ = result_ && interfaceMemberDefinition(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // metadata*
-  private static boolean interfaceBody_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "interfaceBody_0_0")) return false;
-    int offset_ = builder_.getCurrentOffset();
-    while (true) {
-      if (!metadata(builder_, level_ + 1)) break;
-      int next_offset_ = builder_.getCurrentOffset();
-      if (offset_ == next_offset_) {
-        empty_element_parsed_guard_(builder_, offset_, "interfaceBody_0_0");
-        break;
-      }
-      offset_ = next_offset_;
-    }
-    return true;
+    boolean pinned_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, null);
+    result_ = consumeToken(builder_, LBRACE);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, interfaceMembers(builder_, level_ + 1));
+    result_ = pinned_ && consumeToken(builder_, RBRACE) && result_;
+    exit_section_(builder_, level_, marker_, INTERFACE_BODY, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
   /* ********************************************************** */
-  // 'interface' componentName typeParameters? superinterfaces? defaultFactroy? factorySpecification? '{' interfaceBody '}'
+  // 'interface' componentName typeParameters? superinterfaces? defaultFactroy? factorySpecification? interfaceBody
   public static boolean interfaceDefinition(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "interfaceDefinition")) return false;
     if (!nextTokenIs(builder_, INTERFACE)) return false;
@@ -3042,9 +3020,7 @@ public class DartParser implements PsiParser {
     result_ = pinned_ && report_error_(builder_, interfaceDefinition_3(builder_, level_ + 1)) && result_;
     result_ = pinned_ && report_error_(builder_, interfaceDefinition_4(builder_, level_ + 1)) && result_;
     result_ = pinned_ && report_error_(builder_, interfaceDefinition_5(builder_, level_ + 1)) && result_;
-    result_ = pinned_ && report_error_(builder_, consumeToken(builder_, LBRACE)) && result_;
-    result_ = pinned_ && report_error_(builder_, interfaceBody(builder_, level_ + 1)) && result_;
-    result_ = pinned_ && consumeToken(builder_, RBRACE) && result_;
+    result_ = pinned_ && interfaceBody(builder_, level_ + 1) && result_;
     exit_section_(builder_, level_, marker_, INTERFACE_DEFINITION, result_, pinned_, null);
     return result_ || pinned_;
   }
@@ -3094,6 +3070,52 @@ public class DartParser implements PsiParser {
     if (!result_) result_ = operatorPrototypeWithSemicolon(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, null, result_, false, interface_member_definition_recover_parser_);
     return result_;
+  }
+
+  /* ********************************************************** */
+  // (metadata* interfaceMemberDefinition)*
+  public static boolean interfaceMembers(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "interfaceMembers")) return false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<interface members>");
+    int offset_ = builder_.getCurrentOffset();
+    while (true) {
+      if (!interfaceMembers_0(builder_, level_ + 1)) break;
+      int next_offset_ = builder_.getCurrentOffset();
+      if (offset_ == next_offset_) {
+        empty_element_parsed_guard_(builder_, offset_, "interfaceMembers");
+        break;
+      }
+      offset_ = next_offset_;
+    }
+    exit_section_(builder_, level_, marker_, INTERFACE_MEMBERS, true, false, simple_scope_recover_parser_);
+    return true;
+  }
+
+  // metadata* interfaceMemberDefinition
+  private static boolean interfaceMembers_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "interfaceMembers_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = interfaceMembers_0_0(builder_, level_ + 1);
+    result_ = result_ && interfaceMemberDefinition(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // metadata*
+  private static boolean interfaceMembers_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "interfaceMembers_0_0")) return false;
+    int offset_ = builder_.getCurrentOffset();
+    while (true) {
+      if (!metadata(builder_, level_ + 1)) break;
+      int next_offset_ = builder_.getCurrentOffset();
+      if (offset_ == next_offset_) {
+        empty_element_parsed_guard_(builder_, offset_, "interfaceMembers_0_0");
+        break;
+      }
+      offset_ = next_offset_;
+    }
+    return true;
   }
 
   /* ********************************************************** */
