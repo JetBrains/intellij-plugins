@@ -3538,15 +3538,26 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // stringLiteralExpression ':' expression
+  // (stringLiteralExpression | referenceExpression) ':' expression
   public static boolean mapLiteralEntry(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "mapLiteralEntry")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<map literal entry>");
-    result_ = stringLiteralExpression(builder_, level_ + 1);
+    result_ = mapLiteralEntry_0(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, COLON);
     result_ = result_ && expression(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, MAP_LITERAL_ENTRY, result_, false, map_literal_entry_recover_parser_);
+    return result_;
+  }
+
+  // stringLiteralExpression | referenceExpression
+  private static boolean mapLiteralEntry_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "mapLiteralEntry_0")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_);
+    result_ = stringLiteralExpression(builder_, level_ + 1);
+    if (!result_) result_ = referenceExpression(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 

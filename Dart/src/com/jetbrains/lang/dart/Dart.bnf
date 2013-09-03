@@ -571,7 +571,7 @@ listLiteralExpression ::= '[' (expressionList ','?)? ']'
 mapLiteralExpression ::= '{' (mapLiteralEntry (',' mapLiteralEntry)* ','? )? '}'
 {mixin="com.jetbrains.lang.dart.psi.impl.DartClassReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
-mapLiteralEntry ::= stringLiteralExpression ':' expression {recoverUntil="map_literal_entry_recover"}
+mapLiteralEntry ::= (stringLiteralExpression | referenceExpression) ':' expression {recoverUntil="map_literal_entry_recover"}
 private map_literal_entry_recover ::= !('!=' | '!==' | 'is' | '%' | '&&' | '&' | '(' | ')' | '*' | '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<'
                                       | '<<' | '<=' | '==' | '===' | '=>' | '>' | '>=' | '?' | '[' | ']' | '^'
                                       | 'native' | '{' | '|' | '||' | '}' | '~/' | shiftRightOperator | ('.' '.'))

@@ -26,3 +26,10 @@ class AbstractWorker extends EventTarget {
 
   Stream<Event> get onError => errorEvent.forTarget(this);
 }
+
+main () {
+  const TEST = "foo";
+  var map = {
+    TEST : 'some value'
+  };
+}
