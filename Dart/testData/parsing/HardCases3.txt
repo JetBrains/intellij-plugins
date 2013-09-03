@@ -386,3 +386,49 @@ Dart File
                 PsiElement())(')')
             PsiElement(;)(';')
       PsiElement(})('}')
+  FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('main')
+    FORMAL_PARAMETER_LIST
+      PsiElement(()('(')
+      PsiElement())(')')
+    FUNCTION_BODY
+      BLOCK
+        PsiElement({)('{')
+        STATEMENTS
+          VAR_DECLARATION_LIST
+            VAR_ACCESS_DECLARATION
+              PsiElement(const)('const')
+              COMPONENT_NAME
+                ID
+                  PsiElement(IDENTIFIER)('TEST')
+            VAR_INIT
+              PsiElement(=)('=')
+              STRING_LITERAL_EXPRESSION
+                PsiElement(OPEN_QUOTE)('"')
+                PsiElement(REGULAR_STRING_PART)('foo')
+                PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(;)(';')
+          VAR_DECLARATION_LIST
+            VAR_ACCESS_DECLARATION
+              PsiElement(var)('var')
+              COMPONENT_NAME
+                ID
+                  PsiElement(IDENTIFIER)('map')
+            VAR_INIT
+              PsiElement(=)('=')
+              MAP_LITERAL_EXPRESSION
+                PsiElement({)('{')
+                MAP_LITERAL_ENTRY
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('TEST')
+                  PsiElement(:)(':')
+                  STRING_LITERAL_EXPRESSION
+                    PsiElement(OPEN_QUOTE)(''')
+                    PsiElement(REGULAR_STRING_PART)('some value')
+                    PsiElement(CLOSING_QUOTE)(''')
+                PsiElement(})('}')
+          PsiElement(;)(';')
+        PsiElement(})('}')
