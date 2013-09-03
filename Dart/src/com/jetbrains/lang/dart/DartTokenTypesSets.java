@@ -90,8 +90,8 @@ public interface DartTokenTypesSets {
 
   TokenSet BLOCKS = TokenSet.create(
     BLOCK,
-    CLASS_BODY,
-    INTERFACE_BODY,
+    CLASS_MEMBERS,
+    INTERFACE_MEMBERS,
     DART_FILE,
     EMBEDDED_CONTENT
   );

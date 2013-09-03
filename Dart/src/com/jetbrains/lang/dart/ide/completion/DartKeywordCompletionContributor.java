@@ -97,7 +97,7 @@ public class DartKeywordCompletionContributor extends CompletionContributor {
     final PsiElement posFile = position.getContainingFile();
 
     final List<PsiElement> pathToBlockStatement = UsefulPsiTreeUtil.getPathToParentOfType(position, DartBlock.class);
-    final DartPsiCompositeElement classInterface = PsiTreeUtil.getParentOfType(position, DartClassBody.class, DartInterfaceBody.class);
+    final DartPsiCompositeElement classInterface = PsiTreeUtil.getParentOfType(position, DartClassMembers.class, DartInterfaceMembers.class);
 
     final String text;
     final int offset;

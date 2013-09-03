@@ -42,7 +42,7 @@ public class DartIndentProcessor {
     }
     if (COMMENTS.contains(elementType) &&
         prevSiblingType == LBRACE &&
-        (parentType == CLASS_DEFINITION || parentType == INTERFACE_DEFINITION)) {
+        (parentType == CLASS_BODY || parentType == INTERFACE_BODY)) {
       return Indent.getNormalIndent();
     }
     if (elementType == LBRACE || elementType == RBRACE) {
@@ -123,8 +123,6 @@ public class DartIndentProcessor {
       return false;
     }
     boolean result = type == BLOCK;
-    result = result || type == CLASS_BODY;
-    result = result || type == INTERFACE_BODY;
     result = result || type == SWITCH_CASE;
     result = result || type == DEFAULT_CASE;
     return result;

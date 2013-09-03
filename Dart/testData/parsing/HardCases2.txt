@@ -246,47 +246,48 @@ Dart File
     COMPONENT_NAME
       ID
         PsiElement(IDENTIFIER)('Foo')
-    PsiElement({)('{')
     CLASS_BODY
-      NAMED_CONSTRUCTOR_DECLARATION
-        REFERENCE_EXPRESSION
-          ID
-            PsiElement(IDENTIFIER)('Foo')
-        PsiElement(.)('.')
-        COMPONENT_NAME
-          ID
-            PsiElement(IDENTIFIER)('from')
-        FORMAL_PARAMETER_LIST
-          PsiElement(()('(')
-          NORMAL_FORMAL_PARAMETER
-            VAR_DECLARATION
-              VAR_ACCESS_DECLARATION
-                TYPE
-                  REFERENCE_EXPRESSION
-                    ID
-                      PsiElement(IDENTIFIER)('int')
-                COMPONENT_NAME
-                  ID
-                    PsiElement(IDENTIFIER)('type')
-          PsiElement())(')')
-        INITIALIZERS
-          PsiElement(:)(':')
-          SUPER_CALL_OR_FIELD_INITIALIZER
-            PsiElement(this)('this')
-            ARGUMENTS
-              PsiElement(()('(')
-              ARGUMENT_LIST
-                COMPARE_EXPRESSION
-                  REFERENCE_EXPRESSION
+      PsiElement({)('{')
+      CLASS_MEMBERS
+        NAMED_CONSTRUCTOR_DECLARATION
+          REFERENCE_EXPRESSION
+            ID
+              PsiElement(IDENTIFIER)('Foo')
+          PsiElement(.)('.')
+          COMPONENT_NAME
+            ID
+              PsiElement(IDENTIFIER)('from')
+          FORMAL_PARAMETER_LIST
+            PsiElement(()('(')
+            NORMAL_FORMAL_PARAMETER
+              VAR_DECLARATION
+                VAR_ACCESS_DECLARATION
+                  TYPE
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('int')
+                  COMPONENT_NAME
                     ID
                       PsiElement(IDENTIFIER)('type')
-                  RELATIONAL_OPERATOR
-                    PsiElement(>)('>')
-                  LITERAL_EXPRESSION
-                    PsiElement(NUMBER)('0')
-              PsiElement())(')')
-        PsiElement(;)(';')
-    PsiElement(})('}')
+            PsiElement())(')')
+          INITIALIZERS
+            PsiElement(:)(':')
+            SUPER_CALL_OR_FIELD_INITIALIZER
+              PsiElement(this)('this')
+              ARGUMENTS
+                PsiElement(()('(')
+                ARGUMENT_LIST
+                  COMPARE_EXPRESSION
+                    REFERENCE_EXPRESSION
+                      ID
+                        PsiElement(IDENTIFIER)('type')
+                    RELATIONAL_OPERATOR
+                      PsiElement(>)('>')
+                    LITERAL_EXPRESSION
+                      PsiElement(NUMBER)('0')
+                PsiElement())(')')
+          PsiElement(;)(';')
+      PsiElement(})('}')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     COMPONENT_NAME
       ID

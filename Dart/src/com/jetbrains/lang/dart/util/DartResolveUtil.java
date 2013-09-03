@@ -738,10 +738,12 @@ public class DartResolveUtil {
     PsiElement body = null;
     final DartComponentType type = DartComponentType.typeOf(dartClass);
     if (type == DartComponentType.CLASS) {
-      body = PsiTreeUtil.getChildOfAnyType(dartClass, DartClassBody.class);
+      final DartClassBody classBody = PsiTreeUtil.getChildOfAnyType(dartClass, DartClassBody.class);
+      body = classBody != null ? classBody.getClassMembers() : null;
     }
     else if (type == DartComponentType.INTERFACE) {
-      body = PsiTreeUtil.getChildOfType(dartClass, DartInterfaceBody.class);
+      final DartInterfaceBody interfaceBody = PsiTreeUtil.getChildOfType(dartClass, DartInterfaceBody.class);
+      body = interfaceBody != null ? interfaceBody.getInterfaceMembers() : null;
     }
     return body;
   }

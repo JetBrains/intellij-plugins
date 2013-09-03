@@ -81,11 +81,15 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitClassBody(@NotNull DartClassBody o) {
-    visitExecutionScope(o);
+    visitPsiCompositeElement(o);
   }
 
   public void visitClassDefinition(@NotNull DartClassDefinition o) {
     visitClass(o);
+  }
+
+  public void visitClassMembers(@NotNull DartClassMembers o) {
+    visitExecutionScope(o);
   }
 
   public void visitClassTypeAlias(@NotNull DartClassTypeAlias o) {
@@ -245,11 +249,15 @@ public class DartVisitor extends PsiElementVisitor {
   }
 
   public void visitInterfaceBody(@NotNull DartInterfaceBody o) {
-    visitExecutionScope(o);
+    visitPsiCompositeElement(o);
   }
 
   public void visitInterfaceDefinition(@NotNull DartInterfaceDefinition o) {
     visitClass(o);
+  }
+
+  public void visitInterfaceMembers(@NotNull DartInterfaceMembers o) {
+    visitExecutionScope(o);
   }
 
   public void visitInterfaces(@NotNull DartInterfaces o) {
