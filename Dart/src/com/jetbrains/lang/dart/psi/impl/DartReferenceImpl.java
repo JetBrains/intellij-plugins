@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.psi.impl;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.UnfairTextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiPolyVariantReference;
 import com.intellij.psi.PsiReference;
@@ -44,13 +45,13 @@ public class DartReferenceImpl extends DartExpressionImpl implements DartReferen
     DartReference[] dartReferences = PsiTreeUtil.getChildrenOfType(this, DartReference.class);
     if (dartReferences != null && dartReferences.length > 0) {
       TextRange lastReferenceRange = dartReferences[dartReferences.length - 1].getTextRange();
-      return new TextRange(
+      return new UnfairTextRange(
         lastReferenceRange.getStartOffset() - textRange.getStartOffset(),
         lastReferenceRange.getEndOffset() - textRange.getEndOffset()
       );
     }
 
-    return new TextRange(0, textRange.getEndOffset() - textRange.getStartOffset());
+    return new UnfairTextRange(0, textRange.getEndOffset() - textRange.getStartOffset());
   }
 
   @NotNull
