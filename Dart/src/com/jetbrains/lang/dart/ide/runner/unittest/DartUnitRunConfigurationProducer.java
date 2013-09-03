@@ -41,16 +41,16 @@ public class DartUnitRunConfigurationProducer extends RunConfigurationProducer<D
 
   @Override
   public boolean isConfigurationFromContext(DartUnitRunConfiguration configuration, ConfigurationContext context) {
-    final PsiElement location = context.getPsiLocation();
-    if (location == null) {
-      return false;
+    final PsiElement testElement = findTestElement(context.getPsiLocation());
+    final DartUnitRunnerParameters parameters = configuration.getRunnerParameters();
+    if (parameters.getScope() == DartUnitRunnerParameters.Scope.ALL && testElement != null) {
+      final VirtualFile virtualFile = testElement.getContainingFile().getVirtualFile();
+      return virtualFile != null && parameters.getFilePath().equals(virtualFile.getPath());
     }
-    final String testName = "Test: " + findTestName(PsiTreeUtil.getParentOfType(location, DartCallExpression.class));
-    if (testName.equals(configuration.getName())) {
-      return true;
+    else if (parameters.getScope() != DartUnitRunnerParameters.Scope.ALL && testElement instanceof DartCallExpression) {
+      return StringUtil.equalsIgnoreCase(parameters.getTestName(), findTestName((DartCallExpression)testElement));
     }
-    final VirtualFile virtualFile = location.getContainingFile().getVirtualFile();
-    return virtualFile != null && configuration.getRunnerParameters().getFilePath().equals(virtualFile.getPath());
+    return false;
   }
 
   private static boolean setupRunConfiguration(DartUnitRunConfiguration configuration, @NotNull PsiElement expression) {
