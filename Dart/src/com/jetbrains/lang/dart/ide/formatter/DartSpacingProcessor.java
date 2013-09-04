@@ -362,6 +362,10 @@ public class DartSpacingProcessor {
       return addSingleSpaceIf(true);
     }
 
+    if (type1 != DOT && type2 == DOT && elementType == CASCADE_REFERENCE_EXPRESSION) {
+      return addLineBreak();
+    }
+
     return Spacing.createSpacing(0, 1, 0, mySettings.KEEP_LINE_BREAKS, mySettings.KEEP_BLANK_LINES_IN_CODE);
   }
 
