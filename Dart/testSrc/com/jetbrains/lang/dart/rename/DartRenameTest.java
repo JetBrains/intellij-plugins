@@ -77,4 +77,8 @@ public class DartRenameTest extends DartCodeInsightFixtureTestCase {
   public void testStrings() throws Throwable {
     doTest("hello");
   }
+
+  public void testWEB_7218() throws Throwable {
+    doTest("colorTextNew");
+  }
 }
