@@ -14,6 +14,7 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.javascript.debugger.engine.JSDebugEngine;
 import com.intellij.javascript.debugger.execution.RemoteDebuggingFileFinder;
 import com.intellij.javascript.debugger.impl.DebuggableFileFinder;
+import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.javascript.karma.KarmaConfig;
 import com.intellij.javascript.karma.execution.KarmaConsoleView;
 import com.intellij.javascript.karma.execution.KarmaRunConfiguration;
@@ -110,7 +111,8 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
         @Override
         @NotNull
         public XDebugProcess start(@NotNull final XDebugSession session) {
-          XDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
+          JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
+          debugProcess.setElementsInspectorEnabled(false);
           debugProcess.setLayoutCustomizer(consoleView);
           return debugProcess;
         }
