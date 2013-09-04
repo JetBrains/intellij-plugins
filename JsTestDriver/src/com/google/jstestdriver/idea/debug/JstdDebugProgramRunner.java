@@ -7,7 +7,6 @@ import com.google.jstestdriver.idea.execution.JstdTestRunnerCommandLineState;
 import com.google.jstestdriver.idea.server.ui.JstdToolWindowPanel;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
-import com.intellij.execution.Executor;
 import com.intellij.execution.RunnerRegistry;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
@@ -106,7 +105,9 @@ public class JstdDebugProgramRunner extends GenericProgramRunner {
       @Override
       @NotNull
       public XDebugProcess start(@NotNull final XDebugSession session) {
-        return debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
+        JSDebugProcess process = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
+        process.setElementsInspectorEnabled(false);
+        return process;
       }
     });
 
