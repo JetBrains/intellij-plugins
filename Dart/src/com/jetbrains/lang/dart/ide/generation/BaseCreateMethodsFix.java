@@ -9,7 +9,6 @@ import com.intellij.psi.PsiParserFacade;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.ide.DartNamedElementNode;
 import com.jetbrains.lang.dart.psi.DartClass;
-import com.jetbrains.lang.dart.psi.DartClassBody;
 import com.jetbrains.lang.dart.psi.DartClassDefinition;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.util.*;
@@ -76,6 +75,7 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
   public PsiElement doAddMethodsForOne(final Project project, final String functionsText, PsiElement anchor)
     throws IncorrectOperationException {
     if (functionsText != null && functionsText.length() > 0) {
+      // todo: change to TemplateManager. See CreateDartFunctionActionBase for example.
       List<DartComponent> elements = DartElementGenerator.createFunctionsFromText(project, functionsText);
       final PsiElement insert = myDartClass instanceof DartClassDefinition ?
                                 DartResolveUtil.getBody(myDartClass) : myDartClass;

@@ -29,6 +29,10 @@ abstract public class DartGenerateActionTestBase extends LightPlatformCodeInsigh
     });
   }
 
+  protected void doConstructor() {
+    doTest(new DartGenerateConstructorHandler());
+  }
+
   protected void doTest(BaseDartGenerateHandler anAction) {
     configure();
     anAction.invoke(getProject(), getEditor(), getFile());

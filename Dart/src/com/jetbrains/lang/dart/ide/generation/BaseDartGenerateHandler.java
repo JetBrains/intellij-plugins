@@ -106,7 +106,7 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     }
   }
 
-  protected abstract BaseCreateMethodsFix createFix(DartClass haxeClass);
+  protected abstract BaseCreateMethodsFix createFix(DartClass dartClass);
 
   protected abstract String getTitle();
 
@@ -143,6 +143,12 @@ public abstract class BaseDartGenerateHandler implements LanguageCodeInsightActi
     collectCandidates(classMembersMap, superClassesMembersMap, superInterfacesMembersMap, candidates);
   }
 
+  /**
+   * @param classMembersMap           of (component name, isGetter) -> component
+   * @param superClassesMembersMap    of (component name, isGetter) -> component
+   * @param superInterfacesMembersMap of (component name, isGetter) -> component
+   * @param candidates                to process
+   */
   protected abstract void collectCandidates(Map<Pair<String, Boolean>, DartComponent> classMembersMap,
                                             Map<Pair<String, Boolean>, DartComponent> superClassesMembersMap,
                                             Map<Pair<String, Boolean>, DartComponent> superInterfacesMembersMap,
