@@ -53,11 +53,6 @@ public class XmlObjectEvaluator {
     }
 
     @Override
-    public boolean isAlreadySorted() {
-      return false;
-    }
-
-    @Override
     public void setAlreadySorted(boolean alreadySorted) {
     }
 
