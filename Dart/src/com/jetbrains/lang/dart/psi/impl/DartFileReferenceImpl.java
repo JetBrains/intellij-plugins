@@ -206,6 +206,7 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
         );
       }
     }, FileReference.EMPTY);
+  }
 
   public static class DartPathOrLibraryManipulator implements ElementManipulator<DartPathOrLibraryReference> {
     @Override
