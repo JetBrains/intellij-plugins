@@ -53,3 +53,12 @@
           tmp.push(new Array<Int>());
     }
 }
+
+void main() {
+  query("#text")
+  ..text = "Click me!"
+  ..onClick.listen(reverseText)
+  ..onMouseOver.listen(colorText);
+
+  query("#text")..text = "Click me!"..onClick.listen(reverseText)..onMouseOver.listen(colorText);
+}
