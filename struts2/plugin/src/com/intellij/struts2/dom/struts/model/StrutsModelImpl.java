@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 The authors
+ * Copyright 2013 The authors
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,11 +17,7 @@ package com.intellij.struts2.dom.struts.model;
 
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.struts2.dom.struts.StrutsRoot;
 import com.intellij.struts2.dom.struts.action.Action;
@@ -33,7 +29,6 @@ import com.intellij.util.Function;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.Processor;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ConcurrentFactoryMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.xml.DomFileElement;
 import com.intellij.util.xml.model.impl.DomModelImpl;
@@ -41,7 +36,10 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Yann C&eacute;bron
@@ -49,29 +47,19 @@ import java.util.*;
 class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
 
   private static final NotNullFunction<DomFileElement<StrutsRoot>, StrutsRoot> ROOT_ELEMENT_MAPPER =
-      new NotNullFunction<DomFileElement<StrutsRoot>, StrutsRoot>() {
-        @NotNull
-        public StrutsRoot fun(final DomFileElement<StrutsRoot> strutsRootDomFileElement) {
-          return strutsRootDomFileElement.getRootElement();
-        }
-      };
+    new NotNullFunction<DomFileElement<StrutsRoot>, StrutsRoot>() {
+      @NotNull
+      public StrutsRoot fun(final DomFileElement<StrutsRoot> strutsRootDomFileElement) {
+        return strutsRootDomFileElement.getRootElement();
+      }
+    };
 
   private static final Function<StrutsRoot, Collection<? extends StrutsPackage>> STRUTS_PACKAGE_COLLECTOR =
-      new Function<StrutsRoot, Collection<? extends StrutsPackage>>() {
-        public Collection<? extends StrutsPackage> fun(final StrutsRoot strutsRoot) {
-          return strutsRoot.getPackages();
-        }
-      };
-
-  private final StrutsModelImpl.ActionsForNamespaceCachedValuesProvider actionsCachedValueProvider =
-      new ActionsForNamespaceCachedValuesProvider();
-
-  /**
-   * Dummy identifier for "all namespaces".
-   */
-  @NonNls
-  private static final String EMPTY_NAMESPACE = "STRUTS2_PLUGIN_EMPTY_NAMESPACE";
-
+    new Function<StrutsRoot, Collection<? extends StrutsPackage>>() {
+      public Collection<? extends StrutsPackage> fun(final StrutsRoot strutsRoot) {
+        return strutsRoot.getPackages();
+      }
+    };
 
   StrutsModelImpl(@NotNull final DomFileElement<StrutsRoot> strutsRootDomFileElement,
                   @NotNull final Set<XmlFile> xmlFiles) {
@@ -140,10 +128,15 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
   }
 
   public List<Action> getActionsForNamespace(@Nullable @NonNls final String namespace) {
-    final Map<String, List<Action>> packageToActionMap =
-        CachedValuesManager.getManager(myMergedModel.getManager().getProject())
-                           .getCachedValue(myMergedModel, actionsCachedValueProvider);
-    return packageToActionMap.get(StringUtil.notNullize(namespace, EMPTY_NAMESPACE));
+    final List<Action> actionResultList = new SmartList<Action>();
+
+    for (final StrutsPackage strutsPackage : getStrutsPackages()) {
+      if (namespace == null ||
+          Comparing.equal(namespace, strutsPackage.searchNamespace())) {
+        actionResultList.addAll(strutsPackage.getActions());
+      }
+    }
+    return actionResultList;
   }
 
   public boolean processActions(final Processor<Action> processor) {
@@ -153,28 +146,4 @@ class StrutsModelImpl extends DomModelImpl<StrutsRoot> implements StrutsModel {
     }
     return true;
   }
-
-
-  private final class ActionsForNamespaceCachedValuesProvider
-      implements CachedValueProvider<Map<String, List<Action>>> {
-    public Result<Map<String, List<Action>>> compute() {
-      final Map<String, List<Action>> map = new ConcurrentFactoryMap<String, List<Action>>() {
-        @Override
-        protected List<Action> create(final String namespace) {
-          final List<Action> actionResultList = new SmartList<Action>();
-
-          for (final StrutsPackage strutsPackage : getStrutsPackages()) {
-            if (Comparing.equal(namespace, EMPTY_NAMESPACE) ||
-                Comparing.equal(namespace, strutsPackage.searchNamespace())) {
-              actionResultList.addAll(strutsPackage.getActions());
-            }
-          }
-          return actionResultList;
-        }
-      };
-
-      return Result.create(map, PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
-    }
-  }
-
 }
