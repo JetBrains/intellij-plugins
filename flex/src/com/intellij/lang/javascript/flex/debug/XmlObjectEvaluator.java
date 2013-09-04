@@ -62,7 +62,7 @@ public class XmlObjectEvaluator {
     }
 
     @Override
-    public void addChildren(@NotNull XValueChildrenProvider children, boolean last) {
+    public void addChildren(@NotNull XValueChildrenList children, boolean last) {
       if (getRootNode().myCallback.isObsolete()) {
         return;
       }

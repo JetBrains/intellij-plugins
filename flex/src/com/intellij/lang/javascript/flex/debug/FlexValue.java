@@ -641,7 +641,7 @@ class FlexValue extends XValue {
   }
 
   private static XValueChildrenList getWrappingSingletonList(final String nodeName, final XValueChildrenList... listsToWrap) {
-    final XValue inheritedNode = new XGroupingValue() {
+    final XNamedValue inheritedNode = new XGroupingValue(nodeName) {
       @Override
       public void computeChildren(@NotNull final XCompositeNode node) {
         for (final XValueChildrenList list : listsToWrap) {
@@ -652,7 +652,7 @@ class FlexValue extends XValue {
     };
 
     final XValueChildrenList inheritedSingleNodeList = new XValueChildrenList();
-    inheritedSingleNodeList.add(nodeName, inheritedNode);
+    inheritedSingleNodeList.add(inheritedNode);
     return inheritedSingleNodeList;
   }
 
