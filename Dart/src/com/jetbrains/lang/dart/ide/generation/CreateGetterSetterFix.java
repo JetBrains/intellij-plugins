@@ -1,5 +1,7 @@
 package com.jetbrains.lang.dart.ide.generation;
 
+import com.intellij.codeInsight.template.Template;
+import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -59,52 +61,53 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
   }
 
   @Override
-  protected String buildFunctionsText(DartComponent namedComponent) {
+  protected Template buildFunctionsText(TemplateManager templateManager, DartComponent namedComponent) {
     final DartReturnType returnType = PsiTreeUtil.getChildOfType(namedComponent, DartReturnType.class);
     final DartType dartType = returnType == null ? PsiTreeUtil.getChildOfType(namedComponent, DartType.class) : returnType.getType();
     final String typeText = DartPresentableUtil.buildTypeText(namedComponent, dartType);
-    final StringBuilder result = new StringBuilder();
+    final Template template = templateManager.createTemplate(getClass().getName(), DART_TEMPLATE_GROUP);
+    template.setToReformat(true);
     if (myStratagy == Strategy.GETTER || myStratagy == Strategy.GETTERSETTER) {
-      buildGetter(result, namedComponent.getName(), typeText);
+      buildGetter(template, namedComponent.getName(), typeText);
     }
     if (myStratagy == Strategy.SETTER || myStratagy == Strategy.GETTERSETTER) {
-      buildSetter(result, namedComponent.getName(), typeText);
+      buildSetter(template, namedComponent.getName(), typeText);
     }
-    return result.toString();
+    return template;
   }
 
-  private static void buildGetter(StringBuilder result, String name, String typeText) {
-    build(result, name, typeText, true);
+  private static void buildGetter(Template template, String name, String typeText) {
+    build(template, name, typeText, true);
   }
 
-  private static void buildSetter(StringBuilder result, String name, String typeText) {
-    build(result, name, typeText, false);
+  private static void buildSetter(Template template, String name, String typeText) {
+    build(template, name, typeText, false);
   }
 
-  private static void build(StringBuilder result, String name, String typeText, boolean isGetter) {
+  private static void build(Template template, String name, String typeText, boolean isGetter) {
     if (isGetter) {
-      result.append(typeText);
-      result.append(" ");
+      template.addTextSegment(typeText);
+      template.addTextSegment(" ");
     }
 
-    result.append(isGetter ? "get" : "set");
-    result.append(" ");
-    result.append(DartPresentableUtil.setterGetterName(name));
+    template.addTextSegment(isGetter ? "get" : "set");
+    template.addTextSegment(" ");
+    template.addEndVariable();
+    template.addTextSegment(DartPresentableUtil.setterGetterName(name));
     if (!isGetter) {
-      result.append("(");
-      result.append(typeText);
-      result.append(" value");
-      result.append(")");
+      template.addTextSegment("(");
+      template.addTextSegment(typeText);
+      template.addTextSegment(" value");
+      template.addTextSegment(")");
     }
-    result.append(" => ");
+    template.addTextSegment(" => ");
     if (isGetter) {
-      result.append(name);
-      result.append(";");
+      template.addTextSegment(name);
+      template.addTextSegment(";");
     }
     else {
-      result.append(name);
-      result.append("=value;");
+      template.addTextSegment(name);
+      template.addTextSegment("=value;\n");
     }
-    result.append("\n");
   }
 }

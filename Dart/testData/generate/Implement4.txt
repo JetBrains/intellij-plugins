@@ -4,10 +4,12 @@ interface I {
 }
 
 class Foo implements I {
-
   get foo() {
+    <spaces>
   }
 
   set foo(x) {
+    <caret>
   }
+
 }

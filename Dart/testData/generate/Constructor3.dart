@@ -1,3 +1,2 @@
-class Foo {
-    <caret>
+class Foo {<caret>
 }

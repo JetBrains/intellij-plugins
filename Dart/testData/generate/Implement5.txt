@@ -4,7 +4,7 @@ abstract class I {
 }
 
 class Foo extends I {
-
   set foo(x) {
+    <caret>
   }
 }

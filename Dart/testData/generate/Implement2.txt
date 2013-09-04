@@ -1,6 +1,7 @@
 class TestMock implements Test {
 
   get foo() {
+    <caret>
   }
 }
 

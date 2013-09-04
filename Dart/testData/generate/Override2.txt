@@ -1,6 +1,7 @@
 class Foo extends Bar<Baz> {
 
   Baz find(boolean condition(Baz item)) {
+    <caret>
   }
 }
 
