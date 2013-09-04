@@ -12,7 +12,7 @@ public class OsgiManifestHighlightingTest extends LightCodeInsightFixtureTestCas
   }
 
   public void testBundleActivator() {
-    PsiTestUtil.addLibrary(myModule, "osgi.core", PluginPathManager.getPluginHomePath("Osmorc") + "/lib", "org.eclipse.osgi.jar");
+    PsiTestUtil.addLibrary(myModule, "osgi.core", PluginPathManager.getPluginHomePath("Osmorc") + "/lib", "org.apache.felix.framework-4.2.1.jar");
 
     myFixture.addClass(
       "package main;\n" +

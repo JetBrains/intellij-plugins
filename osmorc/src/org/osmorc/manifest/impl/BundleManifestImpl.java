@@ -28,25 +28,20 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.util.Function;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.containers.ContainerUtil;
-import org.apache.felix.framework.util.manifestparser.Capability;
-import org.apache.felix.framework.util.manifestparser.ManifestParser;
-import org.apache.felix.framework.util.manifestparser.R4Attribute;
-import org.apache.felix.framework.util.manifestparser.R4Directive;
-import org.apache.felix.moduleloader.ICapability;
-import org.apache.felix.moduleloader.IRequirement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.lang.manifest.header.HeaderParserRepository;
 import org.jetbrains.lang.manifest.psi.Header;
 import org.jetbrains.lang.manifest.psi.HeaderValue;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
+import org.osgi.framework.wiring.BundleCapability;
+import org.osgi.framework.wiring.BundleRequirement;
 import org.osmorc.manifest.BundleManifest;
 import org.osmorc.manifest.lang.psi.Clause;
 import org.osmorc.manifest.lang.psi.Directive;
 import org.osmorc.valueobject.Version;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.osgi.framework.Constants.*;
@@ -96,42 +91,19 @@ public class BundleManifestImpl implements BundleManifest {
       return false;
     }
 
-    List<ICapability> capabilities = new ArrayList<ICapability>();
-    for (HeaderValue value : header.getHeaderValues()) {
-      try {
-        capabilities.addAll(Arrays.asList(ManifestParser.parseExportHeader(value.getUnwrappedText())));
-      }
-      catch (Exception e) {
-        // unparseable header
-        return false;
-      }
+    List<BundleCapability> capabilities = ContainerUtil.newArrayList();
+    String bsn = getBundleSymbolicName();
+    String bv = getBundleVersion().toString();
+    for (HeaderValue headerValue : header.getHeaderValues()) {
+      List<BundleCapability> caps = FelixManifestParser.parseExportHeader(headerValue.getUnwrappedText(), bsn, bv);
+      if (caps == null) return false;  // parse error
+      capabilities.addAll(caps);
     }
 
-    IRequirement[] requirements;
-    try {
-      requirements = ManifestParser.parseImportHeader(packageSpec);
-    }
-    catch (Exception e) {
-      // unparseable header
-      return false;
-    }
+    List<BundleRequirement> requirements = FelixManifestParser.parseImportHeader(packageSpec);
+    if (requirements == null) return false;  // parse error
 
-    for (IRequirement requirement : requirements) {
-      boolean satisfied = false;
-      for (ICapability capability : capabilities) {
-        if (requirement.isSatisfied(capability)) {
-          satisfied = true;
-          break;
-        }
-      }
-      if (!satisfied) {
-        // at least one requirement is not satisfied by any of the capabilities in this bundle
-        return false;
-      }
-    }
-
-    // all requirements are satisfied
-    return true;
+    return satisfies(capabilities, requirements);
   }
 
   @NotNull
@@ -161,40 +133,13 @@ public class BundleManifestImpl implements BundleManifest {
 
   @Override
   public boolean isRequiredBundle(@NotNull String bundleSpec) {
+    BundleCapability capability = FelixManifestParser.constructBundleCapability(getBundleSymbolicName(), getBundleVersion().toString());
+    if (capability == null) return false;  // parse error
 
-    IRequirement[] requirements;
-    try {
-      requirements = ManifestParser.parseRequireBundleHeader(bundleSpec);
-    }
-    catch (Exception e) {
-      // invalid require spec
-      return false;
-    }
+    List<BundleRequirement> requirements = FelixManifestParser.parseRequireBundleHeader(bundleSpec);
+    if (requirements == null) return false;  // parse error
 
-    // build a capability for this
-
-    String symbolicName = getBundleSymbolicName();
-    if (symbolicName == null) {
-      return false;
-    }
-    Version version = getBundleVersion();
-
-    ICapability moduleCapability = new Capability(ICapability.MODULE_NAMESPACE,
-                                                  new R4Directive[]{new R4Directive(BUNDLE_SYMBOLICNAME, symbolicName)}, new R4Attribute[]{
-      new R4Attribute(BUNDLE_SYMBOLICNAME_ATTRIBUTE, symbolicName, false),
-      new R4Attribute(BUNDLE_VERSION_ATTRIBUTE,
-                      new org.osgi.framework.Version(version.getMajor(), version.getMinor(), version.getMicro(), version.getQualifier()),
-                      false)
-    });
-
-
-    for (IRequirement requirement : requirements) {
-      if (!requirement.isSatisfied(moduleCapability)) {
-        return false;
-      }
-    }
-    // all requirements are satisfied
-    return true;
+    return satisfies(Collections.singletonList(capability), requirements);
   }
 
   @Override
@@ -255,5 +200,19 @@ public class BundleManifestImpl implements BundleManifest {
         return value.getUnwrappedText();
       }
     });
+  }
+
+  private static boolean satisfies(List<BundleCapability> capabilities, List<BundleRequirement> requirements) {
+    nextRequirement:
+    for (BundleRequirement requirement : requirements) {
+      for (BundleCapability capability : capabilities) {
+        if (requirement.matches(capability)) {
+          continue nextRequirement;
+        }
+      }
+      return false;  // requirement is not satisfied by any of the capabilities
+    }
+
+    return true;
   }
 }

@@ -23,13 +23,13 @@
     <orderEntry type="module" module-name="debugger-impl" />
     <orderEntry type="module" module-name="manifest" />
     <orderEntry type="module-library" exported="">
-      <library>
+      <library name="org.apache.felix.framework">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/org.eclipse.osgi.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/org.apache.felix.framework-4.2.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/org.eclipse.osgi_src.zip!/" />
+          <root url="jar://$MODULE_DIR$/lib/org.apache.felix.framework-4.2.1.jar!/OSGI-OPT/src/java" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -119,15 +119,6 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/plexus-utils-3.0.10.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/felix-utils.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

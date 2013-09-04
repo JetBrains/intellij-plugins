@@ -22,7 +22,6 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.inspection;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
@@ -34,8 +33,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.psi.*;
-import org.eclipse.osgi.service.resolver.BundleDescription;
-import org.eclipse.osgi.service.resolver.ExportPackageDescription;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -315,7 +312,7 @@ public class ClassUnavailableInspection extends LocalInspectionTool {
 //                                                                                                   containingPackage.getQualifiedName() +
 //                                                                                                   "' but does not export it.");
 //      }
-//      // TODO: actually it could also not be exported somehwere but this case is not handled.
+//      // TODO: actually it could also not be exported somewhere but this case is not handled.
 //      if (!recursiveRequired) {
 //        return new AvailabilityCheckResult(AvailabilityCheckResult.ResultType.SymbolIsNotImported,
 //                                           "The package  '" + containingPackage.getQualifiedName() + "' is not imported in the manifest.");
@@ -329,17 +326,17 @@ public class ClassUnavailableInspection extends LocalInspectionTool {
 //
   }
 
-  private boolean isContainerExportingPackage(PsiPackage containingPackage, BundleDescription containerDescription) {
-    boolean containerExportsPackage = false;
-    final ExportPackageDescription[] exportPackageDescriptions = containerDescription.getExportPackages();
-    for (ExportPackageDescription exportPackageDescription : exportPackageDescriptions) {
-      if (exportPackageDescription.getName().equals(containingPackage.getQualifiedName())) {
-        containerExportsPackage = true;
-        break;
-      }
-    }
-    return containerExportsPackage;
-  }
+  //private boolean isContainerExportingPackage(PsiPackage containingPackage, BundleDescription containerDescription) {
+  //  boolean containerExportsPackage = false;
+  //  final ExportPackageDescription[] exportPackageDescriptions = containerDescription.getExportPackages();
+  //  for (ExportPackageDescription exportPackageDescription : exportPackageDescriptions) {
+  //    if (exportPackageDescription.getName().equals(containingPackage.getQualifiedName())) {
+  //      containerExportsPackage = true;
+  //      break;
+  //    }
+  //  }
+  //  return containerExportsPackage;
+  //}
 
   //private boolean isDirectImportExport(PsiPackage containingPackage,
   //                                     BundleDescription exporterDescription,
