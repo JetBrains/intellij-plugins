@@ -2,9 +2,8 @@ package org.osmorc.manifest.impl;
 
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.LightIdeaTestCase;
-import org.junit.Test;
-import org.osmorc.manifest.BundleManifest;
 import org.jetbrains.lang.manifest.psi.ManifestFile;
+import org.osmorc.manifest.BundleManifest;
 
 import java.util.List;
 
@@ -13,103 +12,104 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * Test for {@link BundleManifestImpl}
+ * Test for {@link BundleManifestImpl}.
  */
 public class BundleManifestTest extends LightIdeaTestCase {
-
   private static final String Manifest1 =
-    "Bundle-SymbolicName: foo.bar\nBundle-Version: 1.0.0\nExport-Package: foo.bar.baz;version= 1.0.0,foo.bar.bam;version= 1.0.0\n";
+    "Bundle-SymbolicName: foo.bar\n" +
+    "Bundle-Version: 1.0.0\n" +
+    "Export-Package: foo.bar.baz;version= 1.0.0,foo.bar.bam;version= 1.0.0\n";
 
   private static final String Manifest2 =
-    "Bundle-SymbolicName: foo.bar\nBundle-Version: 2.1.1\nExport-Package: foo.bar.baz;version= 1.0.0,foo.bar.bam;version= 2.1.1\n";
+    "Bundle-SymbolicName: foo.bar\n" +
+    "Bundle-Version: 2.1.1\n" +
+    "Export-Package: foo.bar.baz;version= 1.0.0,foo.bar.bam;version= 2.1.1\n";
 
   private static final String Manifest3 =
-    "Bundle-SymbolicName: foo.bam\nBundle-Version: 1.0.0\nExport-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\nRequire-Bundle: foo.bar";
+    "Bundle-SymbolicName: foo.bam\n" +
+    "Bundle-Version: 1.0.0\n" +
+    "Export-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\n" +
+    "Require-Bundle: foo.bar";
+
   private static final String Manifest4 =
-    "Bundle-SymbolicName: foo.bam\nBundle-Version: 1.0.0\nExport-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\nRequire-Bundle: foo.bar;bundle-version=1.0.0";
+    "Bundle-SymbolicName: foo.bam\n" +
+    "Bundle-Version: 1.0.0\n" +
+    "Export-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\n" +
+    "Require-Bundle: foo.bar;bundle-version=1.0.0\n";
 
   private static final String Manifest5 =
-    "Bundle-SymbolicName: foo.bam\nBundle-Version: 1.0.0\nExport-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\nRequire-Bundle: foo.bar;bundle-version=\"(2.0.0, 2.5.0]\"";
+    "Bundle-SymbolicName: foo.bam\n" +
+    "Bundle-Version: 1.0.0\n" +
+    "Export-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\n" +
+    "Require-Bundle: foo.bar;bundle-version=\"(2.0.0, 2.5.0]\"\n";
 
   private static final String Manifest6 =
-    "Bundle-SymbolicName: foo.bam\nBundle-Version: 1.0.0\nExport-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\nRequire-Bundle: foo.bar;bundle-version=\"(2.0.0, 2.5.0]\",foo.bam,foo.baz;bundle-version=10.0.5";
+    "Bundle-SymbolicName: foo.bam\n" +
+    "Bundle-Version: 1.0.0\n" +
+    "Export-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\n" +
+    "Require-Bundle: foo.bar;bundle-version=\"(2.0.0, 2.5.0]\",foo.bam,foo.baz;bundle-version=10.0.5\n";
 
   private static final String Manifest7 =
-    "Bundle-SymbolicName: foo.bam\nBundle-Version: 1.0.0\nExport-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\nRequire-Bundle: foo.bar;bundle-version=\"(2.0.0, 2.5.0]\";visibility:=reexport";
+    "Bundle-SymbolicName: foo.bam\n" +
+    "Bundle-Version: 1.0.0\n" +
+    "Export-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\n" +
+    "Require-Bundle: foo.bar;bundle-version=\"(2.0.0, 2.5.0]\";visibility:=reexport\n";
 
   private static final String Manifest8 =
-    "Bundle-SymbolicName: foo.bam\nBundle-Version: 1.0.0\nExport-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\nFragment-Host: foo.bar;bundle-version=\"(2.0.0, 2.5.0]\"";
+    "Bundle-SymbolicName: foo.bam\n" +
+    "Bundle-Version: 1.0.0\n" +
+    "Export-Package: foo.bam.baz;version= 1.0.0,foo.bam.bam;version= 2.1.1\n" +
+    "Fragment-Host: foo.bar;bundle-version=\"(2.0.0, 2.5.0]\"\n";
 
-  @Test
   public void testExportsPackage() {
-    PsiFile lightFile = createLightFile("MANIFEST.MF", Manifest1);
-    BundleManifest bundleManifest = new BundleManifestImpl((ManifestFile)lightFile);
+    BundleManifest bundleManifest = getManifest(Manifest1);
 
     assertThat(bundleManifest.getBundleSymbolicName(), equalTo("foo.bar"));
     assertThat(bundleManifest.exportsPackage("foo.bar.baz"), is(true));
     assertThat(bundleManifest.exportsPackage("foo.bar.bam"), is(true));
-    assertThat(bundleManifest.exportsPackage("narf.blah"), is(false));
+    assertThat(bundleManifest.exportsPackage("naff.blah"), is(false));
     assertThat(bundleManifest.exportsPackage("foo.bar.baz;version=1.0.0"), is(true));
     assertThat(bundleManifest.exportsPackage("foo.bar.baz;version=2.0.0"), is(false));
     assertThat(bundleManifest.exportsPackage("foo.bar.baz;version=\"[1.0.0, 2.0.0)\""), is(true));
     assertThat(bundleManifest.exportsPackage("foo.bar.baz;version=\"[1.1.0, 2.0.0)\""), is(false));
   }
 
-  @Test
   public void testSimpleRequireBundle() {
-    PsiFile provider1 = createLightFile("MANIFEST.MF", Manifest1);
-    BundleManifestImpl providerManifest1 = new BundleManifestImpl((ManifestFile)provider1);
-
-    PsiFile provider2 = createLightFile("MANIFEST2.MF", Manifest1);
-    BundleManifestImpl providerManifest2 = new BundleManifestImpl((ManifestFile)provider2);
-
-    PsiFile requestor = createLightFile("MANIFEST3.MF", Manifest3);
-    BundleManifestImpl requestorManifest = new BundleManifestImpl((ManifestFile)requestor);
+    BundleManifest providerManifest1 = getManifest(Manifest1);
+    BundleManifest providerManifest2 = getManifest(Manifest1);
+    BundleManifest requestorManifest = getManifest(Manifest3);
 
     List<String> requiredBundles = requestorManifest.getRequiredBundles();
     assertThat(requiredBundles.size(), is(1));
-    assertThat(providerManifest1.isRequiredBundle(requiredBundles.iterator().next()), is(true));
-    assertThat(providerManifest2.isRequiredBundle(requiredBundles.iterator().next()), is(true));
+    assertThat(providerManifest1.isRequiredBundle(requiredBundles.get(0)), is(true));
+    assertThat(providerManifest2.isRequiredBundle(requiredBundles.get(0)), is(true));
   }
 
-  @Test
   public void testVersionedRequireBundle() {
-    PsiFile provider1 = createLightFile("MANIFEST.MF", Manifest1);
-    BundleManifestImpl providerManifest1 = new BundleManifestImpl((ManifestFile)provider1);
-
-    PsiFile provider2 = createLightFile("MANIFEST2.MF", Manifest2);
-    BundleManifestImpl providerManifest2 = new BundleManifestImpl((ManifestFile)provider2);
-
-    PsiFile requestor = createLightFile("MANIFEST4.MF", Manifest4);
-    BundleManifestImpl requestorManifest = new BundleManifestImpl((ManifestFile)requestor);
+    BundleManifest providerManifest1 = getManifest(Manifest1);
+    BundleManifest providerManifest2 = getManifest(Manifest2);
+    BundleManifest requestorManifest = getManifest(Manifest4);
 
     List<String> requiredBundles = requestorManifest.getRequiredBundles();
     assertThat(requiredBundles.size(), is(1));
-    assertThat(providerManifest1.isRequiredBundle(requiredBundles.iterator().next()), is(true));
-    assertThat(providerManifest2.isRequiredBundle(requiredBundles.iterator().next()), is(true)); // 1.0.0 is implict [1.0.0, infinity], so should be true
+    assertThat(providerManifest1.isRequiredBundle(requiredBundles.get(0)), is(true));
+    assertThat(providerManifest2.isRequiredBundle(requiredBundles.get(0)), is(true));  // 1.0.0 is implicit [1.0.0, INF], hence true
   }
 
-  @Test
   public void testVersionRangeRequireBundle() {
-    PsiFile provider1 = createLightFile("MANIFEST.MF", Manifest1);
-    BundleManifestImpl providerManifest1 = new BundleManifestImpl((ManifestFile)provider1);
-
-    PsiFile provider2 = createLightFile("MANIFEST2.MF", Manifest2);
-    BundleManifestImpl providerManifest2 = new BundleManifestImpl((ManifestFile)provider2);
-
-    PsiFile requestor = createLightFile("MANIFEST5.MF", Manifest5);
-    BundleManifestImpl requestorManifest = new BundleManifestImpl((ManifestFile)requestor);
+    BundleManifest providerManifest1 = getManifest(Manifest1);
+    BundleManifest providerManifest2 = getManifest(Manifest2);
+    BundleManifest requestorManifest = getManifest(Manifest5);
 
     List<String> requiredBundles = requestorManifest.getRequiredBundles();
     assertThat(requiredBundles.size(), is(1));
-    assertThat(providerManifest1.isRequiredBundle(requiredBundles.iterator().next()), is(false));
-    assertThat(providerManifest2.isRequiredBundle(requiredBundles.iterator().next()), is(true));
+    assertThat(providerManifest1.isRequiredBundle(requiredBundles.get(0)), is(false));
+    assertThat(providerManifest2.isRequiredBundle(requiredBundles.get(0)), is(true));
   }
 
-  @Test
   public void testMultipleRequirements() {
-    PsiFile requestor = createLightFile("MANIFEST6.MF", Manifest6);
-    BundleManifestImpl requestorManifest = new BundleManifestImpl((ManifestFile)requestor);
+    BundleManifest requestorManifest = getManifest(Manifest6);
+
     List<String> requiredBundles = requestorManifest.getRequiredBundles();
     assertThat(requiredBundles.size(), is(3));
     assertThat(requiredBundles.get(0), equalTo("foo.bar;bundle-version=\"(2.0.0, 2.5.0]\""));
@@ -117,37 +117,29 @@ public class BundleManifestTest extends LightIdeaTestCase {
     assertThat(requiredBundles.get(2), equalTo("foo.baz;bundle-version=10.0.5"));
   }
 
-  @Test
   public void testReexport() {
-    PsiFile provider = createLightFile("MANIFEST2.MF", Manifest2);
-    BundleManifestImpl providerManifest = new BundleManifestImpl((ManifestFile)provider);
-
-    PsiFile requestor1 = createLightFile("MANIFEST5.MF", Manifest5);
-    BundleManifestImpl requestorManifest1 = new BundleManifestImpl((ManifestFile)requestor1);
-
-    PsiFile requestor2 = createLightFile("MANIFEST7.MF", Manifest7);
-    BundleManifestImpl requestorManifest2 = new BundleManifestImpl((ManifestFile)requestor2);
+    BundleManifest providerManifest = getManifest(Manifest2);
+    BundleManifest requestorManifest1 = getManifest(Manifest5);
+    BundleManifest requestorManifest2 = getManifest(Manifest7);
 
     assertThat(requestorManifest1.reExportsBundle(providerManifest), is(false));
     assertThat(requestorManifest2.reExportsBundle(providerManifest), is(true));
   }
 
-
-  @Test
-  public void testFragmenBundles() {
-    PsiFile potentialHost1File = createLightFile("MANIFEST.MF", Manifest1);
-    BundleManifestImpl potentialHost1 = new BundleManifestImpl((ManifestFile)potentialHost1File);
-
-    PsiFile potentialHost2File = createLightFile("MANIFEST2.MF", Manifest2);
-    BundleManifestImpl potentialHost2 = new BundleManifestImpl((ManifestFile)potentialHost2File);
-
-    PsiFile fragmenFile = createLightFile("MANIFEST8.MF", Manifest8);
-    BundleManifestImpl fragment = new BundleManifestImpl((ManifestFile)fragmenFile);
+  public void testFragmentBundles() {
+    BundleManifest potentialHost1 = getManifest(Manifest1);
+    BundleManifest potentialHost2 = getManifest(Manifest2);
+    BundleManifest fragment = getManifest(Manifest8);
 
     assertThat(fragment.isFragmentBundle(), is(true));
     assertThat(potentialHost1.isFragmentBundle(), is(false));
     assertThat(potentialHost2.isFragmentBundle(), is(false));
     assertThat(potentialHost1.isFragmentHostFor(fragment), is(false));
     assertThat(potentialHost2.isFragmentHostFor(fragment), is(true));
+  }
+
+  private static BundleManifest getManifest(String text) {
+    PsiFile file = createLightFile("MANIFEST.MF", text);
+    return new BundleManifestImpl((ManifestFile)file);
   }
 }
