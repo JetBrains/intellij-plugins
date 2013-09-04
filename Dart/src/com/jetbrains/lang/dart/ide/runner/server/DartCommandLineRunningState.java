@@ -5,6 +5,7 @@ import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -45,7 +46,9 @@ public class DartCommandLineRunningState extends CommandLineState {
   protected ProcessHandler startProcess() throws ExecutionException {
     GeneralCommandLine commandLine = getCommand();
 
-    return new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString());
+    final OSProcessHandler processHandler = new OSProcessHandler(commandLine.createProcess(), commandLine.getCommandLineString());
+    ProcessTerminatedListener.attach(processHandler, getEnvironment().getProject());
+    return processHandler;
   }
 
   public GeneralCommandLine getCommand() throws ExecutionException {
