@@ -513,12 +513,21 @@ public class DartResolveUtil {
       }
       return candidate instanceof DartReference && candidate != node ? (DartReference)candidate : null;
     }
-    PsiElement parent = PsiTreeUtil.getParentOfType(node, DartCascadeReferenceExpression.class, DartVarInit.class);
-    if (parent instanceof DartCascadeReferenceExpression) {
-      DartReference[] references = PsiTreeUtil.getChildrenOfType(parent, DartReference.class);
-      DartReference result = references != null && references.length == 2 ? references[0] : null;
-      // if not starts with node
-      return !PsiTreeUtil.isAncestor(result, node, false) ? result : null;
+    DartReference reference = PsiTreeUtil.getParentOfType(node, DartReference.class, false);
+    while (reference != null) {
+      final PsiElement parent = reference.getParent();
+      if (parent instanceof DartCascadeReferenceExpression) {
+        DartReference[] references = PsiTreeUtil.getChildrenOfType(parent, DartReference.class);
+        DartReference result = references != null && references.length == 2 ? references[0] : null;
+        // if not starts with node
+        return !PsiTreeUtil.isAncestor(result, node, false) ? result : null;
+      }
+      else if (parent instanceof DartReference && parent.getFirstChild() == reference) {
+        reference = (DartReference)parent;
+      }
+      else {
+        break;
+      }
     }
     return null;
   }
