@@ -12,7 +12,9 @@ import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferen
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
 import com.jetbrains.lang.dart.psi.DartPathOrLibraryReference;
 import com.jetbrains.lang.dart.psi.DartReference;
@@ -183,16 +185,27 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
       return null;
     }
     prefix += "/";
-    int index = startIndex - prefix.length();
-    final FileReferenceSet referenceSet = new FileReferenceSet(prefix + path, this, index, null, false, true);
+    int shift = startIndex - prefix.length();
+    final FileReferenceSet referenceSet = new FileReferenceSet(prefix + path, this, 0, null, false, true);
     FileReference[] references = referenceSet.getAllReferences();
     int nestedLevel = StringUtil.countChars(prefix, '/');
-    return references.length < nestedLevel ? PsiReference.EMPTY_ARRAY : Arrays.copyOfRange(references, nestedLevel, references.length);
+    return references.length < nestedLevel ?
+           PsiReference.EMPTY_ARRAY :
+           shiftReferences(Arrays.copyOfRange(references, nestedLevel, references.length), shift);
   }
 
-  private int getNestedLevel(int startIndex, VirtualFile packagesFolder) {
-    return new FileReferenceSet(packagesFolder.getPath(), this, startIndex, null, false, true).getAllReferences().length;
-  }
+  private static FileReference[] shiftReferences(FileReference[] references, final int shift) {
+    return ContainerUtil.map(references, new Function<FileReference, FileReference>() {
+      @Override
+      public FileReference fun(FileReference reference) {
+        return new FileReference(
+          reference.getFileReferenceSet(),
+          reference.getRangeInElement().shiftRight(shift),
+          reference.getIndex(),
+          reference.getText()
+        );
+      }
+    }, FileReference.EMPTY);
 
   public static class DartPathOrLibraryManipulator implements ElementManipulator<DartPathOrLibraryReference> {
     @Override
