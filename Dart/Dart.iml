@@ -30,6 +30,7 @@
     <orderEntry type="module" module-name="fileWatcher" />
     <orderEntry type="module" module-name="lang-impl" />
     <orderEntry type="module" module-name="webide-impl" />
+    <orderEntry type="module" module-name="IntelliLang-js" scope="RUNTIME" />
   </component>
 </module>
 
