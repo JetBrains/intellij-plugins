@@ -11,8 +11,8 @@ import com.jetbrains.lang.dart.util.DartPresentableUtil;
  * @author: Fedor.Korotkov
  */
 public class OverrideImplementMethodFix extends BaseCreateMethodsFix<DartComponent> {
-  public OverrideImplementMethodFix(final DartClass haxeClass) {
-    super(haxeClass);
+  public OverrideImplementMethodFix(final DartClass dartClass) {
+    super(dartClass);
   }
 
   @Override

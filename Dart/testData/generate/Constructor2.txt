@@ -1,0 +1,7 @@
+class IntValue {
+    num _value;
+
+    IntValue(this._value) {
+    }
+
+}

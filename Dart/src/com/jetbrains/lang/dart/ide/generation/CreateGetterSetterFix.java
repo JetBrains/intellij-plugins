@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @author: Fedor.Korotkov
  */
-public class CreateGetterSetterFix extends BaseCreateMethodsFix {
+public class CreateGetterSetterFix extends BaseCreateMethodsFix<DartComponent> {
   public enum Strategy {
     GETTER {
       @Override
@@ -53,8 +53,8 @@ public class CreateGetterSetterFix extends BaseCreateMethodsFix {
 
   private final Strategy myStratagy;
 
-  public CreateGetterSetterFix(final DartClass haxeClass, Strategy strategy) {
-    super(haxeClass);
+  public CreateGetterSetterFix(final DartClass dartClass, Strategy strategy) {
+    super(dartClass);
     myStratagy = strategy;
   }
 

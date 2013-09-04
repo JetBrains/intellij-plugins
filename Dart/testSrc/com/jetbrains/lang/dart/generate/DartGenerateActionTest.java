@@ -15,6 +15,18 @@ public class DartGenerateActionTest extends DartGenerateActionTestBase {
     return DartTestUtils.BASE_TEST_DATA_PATH +  FileUtil.toSystemDependentName("/generate/");
   }
 
+  public void testConstructor1() throws Throwable {
+    doConstructor();
+  }
+
+  public void testConstructor2() throws Throwable {
+    doConstructor();
+  }
+
+  public void testConstructor3() throws Throwable {
+    doConstructor();
+  }
+
   public void testImplement1() throws Throwable {
     doImplementTest();
   }
