@@ -1,17 +1,22 @@
 package com.jetbrains.lang.dart.ide.generation;
 
 import com.intellij.codeInsight.FileModificationService;
+import com.intellij.codeInsight.template.Template;
+import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiParserFacade;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.jetbrains.lang.dart.ide.DartNamedElementNode;
 import com.jetbrains.lang.dart.psi.DartClass;
-import com.jetbrains.lang.dart.psi.DartClassDefinition;
 import com.jetbrains.lang.dart.psi.DartComponent;
-import com.jetbrains.lang.dart.util.*;
+import com.jetbrains.lang.dart.util.DartClassResolveResult;
+import com.jetbrains.lang.dart.util.DartGenericSpecialization;
+import com.jetbrains.lang.dart.util.DartResolveUtil;
+import com.jetbrains.lang.dart.util.UsefulPsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,6 +26,7 @@ import java.util.*;
  * @author: Fedor.Korotkov
  */
 abstract public class BaseCreateMethodsFix<T extends DartComponent> {
+  protected static final String DART_TEMPLATE_GROUP = "Dart";
   private final Set<T> elementsToProcess = new LinkedHashSet<T>();
   protected final DartClass myDartClass;
   protected final DartGenericSpecialization specializations;
@@ -34,21 +40,30 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
   protected void evalAnchor(@Nullable Editor editor, PsiElement context) {
     if (editor == null) return;
     final int caretOffset = editor.getCaretModel().getOffset();
-    if (myDartClass instanceof DartClassDefinition) {
-      final PsiElement body = DartResolveUtil.getBody(myDartClass);
-      assert body != null;
-      for (PsiElement child : body.getChildren()) {
-        if (child.getTextOffset() > caretOffset) break;
-        anchor = child;
-      }
-    }
-    else {
-      anchor = context.findElementAt(caretOffset);
+    final PsiElement body = DartResolveUtil.getBody(myDartClass);
+    assert body != null;
+    for (PsiElement child : body.getChildren()) {
+      if (child.getTextOffset() > caretOffset) break;
+      anchor = child;
     }
     PsiElement next = anchor == null ? null : anchor.getNextSibling();
     while (next != null && (UsefulPsiTreeUtil.isWhitespaceOrComment(next) || ";".equals(next.getText()))) {
       anchor = next;
       next = anchor.getNextSibling();
+    }
+    if (anchor == null) {
+      anchor = body;
+    }
+  }
+
+  public void setCaretSafe(Editor editor, int offset) {
+    final PsiElement body = DartResolveUtil.getBody(myDartClass);
+    if (body == null) {
+      editor.getCaretModel().moveToOffset(offset);
+    }
+    else {
+      final TextRange bodyRange = body.getTextRange();
+      editor.getCaretModel().moveToOffset(bodyRange.containsOffset(offset) ? offset : bodyRange.getEndOffset());
     }
   }
 
@@ -61,37 +76,32 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
   public void invoke(@NotNull final Project project, final Editor editor, final PsiElement context) throws IncorrectOperationException {
     if (!FileModificationService.getInstance().prepareFileForWrite(context.getContainingFile())) return;
     evalAnchor(editor, context);
-    processElements(project, getElementsToProcess());
+    processElements(project, editor, getElementsToProcess());
   }
 
-  protected void processElements(Project project, Set<T> elementsToProcess) {
+  protected void processElements(@NotNull Project project, @NotNull Editor editor, Set<T> elementsToProcess) {
+    final TemplateManager templateManager = TemplateManager.getInstance(project);
     for (T e : elementsToProcess) {
-      anchor = doAddMethodsForOne(project, buildFunctionsText(e), anchor);
+      anchor = doAddMethodsForOne(editor, templateManager, buildFunctionsText(templateManager, e), anchor);
     }
   }
 
-  protected abstract String buildFunctionsText(T e);
+  @Nullable
+  protected abstract Template buildFunctionsText(TemplateManager templateManager, T e);
 
-  public PsiElement doAddMethodsForOne(final Project project, final String functionsText, PsiElement anchor)
-    throws IncorrectOperationException {
-    if (functionsText != null && functionsText.length() > 0) {
-      // todo: change to TemplateManager. See CreateDartFunctionActionBase for example.
-      List<DartComponent> elements = DartElementGenerator.createFunctionsFromText(project, functionsText);
-      final PsiElement insert = myDartClass instanceof DartClassDefinition ?
-                                DartResolveUtil.getBody(myDartClass) : myDartClass;
-      assert insert != null;
-      for (DartComponent element : elements) {
-        anchor = insert.addAfter(element, anchor);
-        anchor = afterAddHandler(element, anchor);
-      }
+  public PsiElement doAddMethodsForOne(@NotNull Editor editor,
+                                       @NotNull TemplateManager templateManager,
+                                       @Nullable Template functionTemplate,
+                                       @NotNull PsiElement anchor) throws IncorrectOperationException {
+    if (functionTemplate != null) {
+      setCaretSafe(editor, anchor.getTextRange().getEndOffset());
+      templateManager.startTemplate(editor, functionTemplate);
+      final PsiElement dartComponent = PsiTreeUtil.getParentOfType(
+        anchor.findElementAt(editor.getCaretModel().getOffset()),
+        DartComponent.class
+      );
+      return dartComponent != null ? dartComponent : anchor;
     }
-    return anchor;
-  }
-
-  protected PsiElement afterAddHandler(DartComponent element, PsiElement anchor) {
-    final PsiElement newLineNode =
-      PsiParserFacade.SERVICE.getInstance(element.getProject()).createWhiteSpaceFromText("\n\n");
-    anchor.getParent().addBefore(newLineNode, anchor);
     return anchor;
   }
 
@@ -104,11 +114,13 @@ abstract public class BaseCreateMethodsFix<T extends DartComponent> {
       return;
     }
     for (DartNamedElementNode el : selectedElements) {
+      //noinspection unchecked
       addElementToProcess((T)el.getPsiElement());
     }
   }
 
   public Set<T> getElementsToProcess() {
+    //noinspection unchecked,SuspiciousToArrayCall
     final T[] objects = (T[])elementsToProcess.toArray(new DartComponent[elementsToProcess.size()]);
     final Comparator<T> tComparator = new Comparator<T>() {
       public int compare(final T o1, final T o2) {

@@ -4,6 +4,5 @@ class GetterSetter2 {
 
   int get foo() {
     return foo;
-  }
-  <caret>
+  }<caret>
 }

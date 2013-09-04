@@ -1,4 +1,3 @@
 class Setter1 {
-  int _foo;
-  <caret>
+  int _foo;<caret>
 }

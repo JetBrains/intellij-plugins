@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.generate;
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase;
 import com.intellij.testFramework.PlatformTestCase;
 import com.jetbrains.lang.dart.ide.generation.*;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author: Fedor.Korotkov
@@ -37,6 +38,16 @@ abstract public class DartGenerateActionTestBase extends LightPlatformCodeInsigh
     configure();
     anAction.invoke(getProject(), getEditor(), getFile());
     checkResultByFile(getTestName(false) + ".txt");
+  }
+
+  @Override
+  protected void checkResultByText(String message,
+                                   @NotNull String fileText,
+                                   boolean ignoreTrailingSpaces,
+                                   String filePath) {
+
+    //remove all
+    super.checkResultByText(message, fileText.replaceAll("<spaces>", ""), ignoreTrailingSpaces, filePath);
   }
 
   protected void configure() {

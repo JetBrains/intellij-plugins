@@ -18,5 +18,6 @@ abstract class Warrior extends Object with Persistence {
 class Ninja extends Warrior {
 
   Object toJson() {
+    <caret>
   }
 }

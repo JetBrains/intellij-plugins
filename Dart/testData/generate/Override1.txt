@@ -1,6 +1,7 @@
 class Override1 extends Foo<Bar> {
 
   Bar getFoo() {
+    <caret>
   }
 }
 

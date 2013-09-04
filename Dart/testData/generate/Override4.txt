@@ -4,9 +4,10 @@ class I {
 }
 
 class Foo extends I {
+  get foo() => 239;
 
   set foo(x) {
+    <caret>
   }
 
-  get foo() => 239;
 }

@@ -1,5 +1,4 @@
 class Point {
-    num x;
-    num y;
-    <caret>
+  num x;
+  num y<caret>;
 }

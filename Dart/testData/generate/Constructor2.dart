@@ -1,4 +1,3 @@
 class IntValue {
-    num _value;
-    <caret>
+  num _value;<caret>
 }

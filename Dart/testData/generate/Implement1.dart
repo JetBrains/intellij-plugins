@@ -3,7 +3,7 @@ class Implement1 implements IFoo<Bar> {
 }
 
 interface IFoo<T> {
-    T getFoo();
+  T getFoo();
 }
 
 class Bar {

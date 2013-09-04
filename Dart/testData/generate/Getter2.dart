@@ -1,4 +1,3 @@
 class Getter2 {
-  var _foo;
-  <caret>
+  var _foo;<caret>
 }
