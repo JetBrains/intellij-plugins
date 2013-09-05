@@ -37,7 +37,7 @@
     <global-exception-mappings>
       <!-- "exception" -->
       <exception-mapping exception="MyException" result="global1"/>
-      <exception-mapping exception="<error descr="'MyInterface' is not assignable to 'java.lang.Exception'"><error descr="Interface not allowed">MyInterface</error></error>" result="global1"/>
+      <exception-mapping exception="<error descr="'MyInterface' is not assignable to 'java.lang.Exception'"><error descr="Interface is not allowed">MyInterface</error></error>" result="global1"/>
       <exception-mapping exception="<error descr="Cannot resolve class 'INVALID_VALUE'">INVALID_VALUE</error>" result="global1"/>
 
       <!-- "result" -->
@@ -57,7 +57,7 @@
 
     <action name="TestExceptionMapping">
       <exception-mapping exception="MyException" result="exceptionResult"/>
-      <exception-mapping exception="<error descr="'MyInterface' is not assignable to 'java.lang.Exception'"><error descr="Interface not allowed">MyInterface</error></error>" result="exceptionResult"/>
+      <exception-mapping exception="<error descr="'MyInterface' is not assignable to 'java.lang.Exception'"><error descr="Interface is not allowed">MyInterface</error></error>" result="exceptionResult"/>
       <exception-mapping exception="<error descr="Cannot resolve class 'INVALID_VALUE'">INVALID_VALUE</error>" result="exceptionResult"/>
       <exception-mapping exception="MyException" result="<error descr="Cannot resolve action-result 'INVALID_VALUE'">INVALID_VALUE</error>"/>
 
