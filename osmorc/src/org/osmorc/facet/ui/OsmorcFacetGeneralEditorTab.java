@@ -22,13 +22,12 @@
  * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.osmorc.facet.ui;
 
 import com.intellij.facet.ui.FacetEditorContext;
 import com.intellij.facet.ui.FacetEditorTab;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.Result;
+import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
@@ -36,14 +35,14 @@ import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.*;
-import com.intellij.ui.PanelWithAnchor;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VfsUtilCore;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UserActivityListener;
 import com.intellij.ui.UserActivityWatcher;
-import com.intellij.ui.components.JBLabel;
 import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.Nullable;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
 import org.osmorc.facet.OsmorcFacetConfiguration;
@@ -65,8 +64,10 @@ import java.util.jar.Attributes;
  * @author <a href="mailto:janthomae@janthomae.de">Jan Thom&auml;</a>
  * @author Robert F. Beeger (robert@beeger.net)
  */
-public class OsmorcFacetGeneralEditorTab extends FacetEditorTab implements PanelWithAnchor {
-
+public class OsmorcFacetGeneralEditorTab extends FacetEditorTab {
+  static final Key<Boolean> MANUAL_MANIFEST_EDITING_KEY = Key.create("MANUAL_MANIFEST_EDITING");
+  static final Key<Boolean> BND_CREATION_KEY = Key.create("BND_CREATION");
+  static final Key<Boolean> BUNDLOR_CREATION_KEY = Key.create("BUNDLOR_CREATION");
 
   private JRadioButton myManuallyEditedRadioButton;
   private JRadioButton myControlledByOsmorcRadioButton;
@@ -85,16 +86,10 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab implements Panel
   private TextFieldWithBrowseButton myBundlorFile;
   private JPanel myBundlorPanel;
   private JCheckBox myDoNotSynchronizeFacetCheckBox;
-  private JBLabel myBndFileLocationJBLabel;
-  private JBLabel myBundlorFileLocationJBLabel;
-  private JBLabel myManifestFileLocationJBLabel;
-  private boolean myModified;
+
   private final FacetEditorContext myEditorContext;
   private final Module myModule;
-  static final Key<Boolean> MANUAL_MANIFEST_EDITING_KEY = Key.create("MANUAL_MANIFEST_EDITING");
-  static final Key<Boolean> BND_CREATION_KEY = Key.create("BND_CREATION");
-  static final Key<Boolean> BUNDLOR_CREATION_KEY = Key.create("BUNDLOR_CREATION");
-  private JComponent myAnchor;
+  private boolean myModified;
 
   public OsmorcFacetGeneralEditorTab(FacetEditorContext editorContext) {
     myEditorContext = editorContext;
@@ -146,8 +141,6 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab implements Panel
         checkFileExisting();
       }
     });
-
-    setAnchor(myManifestFileLocationJBLabel);
   }
 
   private void updateGui() {
@@ -199,33 +192,27 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab implements Panel
     }
   }
 
-  @Override
-  public JComponent getAnchor() {
-    return myAnchor;
-  }
-
-  @Override
-  public void setAnchor(@Nullable JComponent anchor) {
-    this.myAnchor = anchor;
-    myBundlorFileLocationJBLabel.setAnchor(anchor);
-    myBndFileLocationJBLabel.setAnchor(anchor);
-    myManifestFileLocationJBLabel.setAnchor(anchor);
-  }
-
-
   private static VirtualFile[] getContentRoots(Module module) {
     return ModuleRootManager.getInstance(module).getContentRoots();
   }
 
   @Nls
+  @Override
   public String getDisplayName() {
     return "General";
   }
 
+  @Override
+  public String getHelpTopic() {
+    return "reference.settings.module.facet.osgi";
+  }
+
+  @Override
   public JComponent createComponent() {
     return myRoot;
   }
 
+  @Override
   public boolean isModified() {
     return myModified;
   }
@@ -251,6 +238,7 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab implements Panel
     updateGui();
   }
 
+  @Override
   public void apply() {
     OsmorcFacetConfiguration configuration =
       (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
@@ -272,9 +260,9 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab implements Panel
     configuration.setDoNotSynchronizeWithMaven(myDoNotSynchronizeFacetCheckBox.isSelected());
   }
 
+  @Override
   public void reset() {
-    OsmorcFacetConfiguration configuration =
-      (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
+    OsmorcFacetConfiguration configuration = (OsmorcFacetConfiguration)myEditorContext.getFacet().getConfiguration();
     if (configuration.isUseBndFile()) {
       myUseBndFileRadioButton.setSelected(true);
     }
@@ -307,8 +295,8 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab implements Panel
     updateGui();
   }
 
+  @Override
   public void disposeUIResources() {
-
   }
 
   private String getManifestLocation() {
@@ -351,89 +339,65 @@ public class OsmorcFacetGeneralEditorTab extends FacetEditorTab implements Panel
   }
 
   private void tryCreateBundleManifest() {
-
     // check if a manifest path has been set up
-    final String manifestPath = getManifestLocation();
+    String manifestPath = getManifestLocation();
     if (StringUtil.isEmpty(manifestPath)) {
       return;
     }
-
-    final VirtualFile[] contentRoots = getContentRoots(myModule);
-    if (contentRoots.length > 0) {
-
-      Application application = ApplicationManager.getApplication();
-
-      application.runWriteAction(new Runnable() {
-        public void run() {
-          try {
-
-            VirtualFile contentRoot = contentRoots[0];
-            String completePath = contentRoot.getPath() + File.separator + manifestPath;
-
-            // unify file separators
-            completePath = completePath.replace('\\', '/');
-
-            // strip off the last part (its the filename)
-            int lastPathSep = completePath.lastIndexOf('/');
-            String path = completePath.substring(0, lastPathSep);
-            String filename = completePath.substring(lastPathSep + 1);
-
-            // make sure the folders exist
-            VfsUtil.createDirectories(path);
-
-            // and get the virtual file for it
-            VirtualFile parentFolder = LocalFileSystem.getInstance().refreshAndFindFileByPath(path);
-
-            // some heuristics for bundle name and version
-            String bundleName = myModule.getName();
-            Version bundleVersion = null;
-            int nextDotPos = bundleName.indexOf('.');
-            while (bundleVersion == null && nextDotPos >= 0) {
-              try {
-                bundleVersion = new Version(bundleName.substring(nextDotPos + 1));
-                bundleName = bundleName.substring(0, nextDotPos);
-              }
-              catch (IllegalArgumentException e) {
-                // Retry after next dot.
-              }
-              nextDotPos = bundleName.indexOf('.', nextDotPos + 1);
-            }
-
-
-            VirtualFile manifest = parentFolder.createChildData(this, filename);
-            String text = Attributes.Name.MANIFEST_VERSION + ": 1.0.0\n" +
-                          Constants.BUNDLE_MANIFESTVERSION + ": 2\n" +
-                          Constants.BUNDLE_NAME + ": " + bundleName + "\n" +
-                          Constants.BUNDLE_SYMBOLICNAME + ": " + bundleName + "\n" +
-                          Constants.BUNDLE_VERSION + ": " +
-                          (bundleVersion != null ? bundleVersion.toString() : "1.0.0") +
-                          "\n";
-            VfsUtil.saveText(manifest, text);
-          }
-          catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        }
-      });
-      VirtualFileManager.getInstance().syncRefresh();
+    VirtualFile[] contentRoots = getContentRoots(myModule);
+    if (contentRoots.length <= 0) {
+      return;
     }
-  }
 
-  @Override
-  public String getHelpTopic() {
-    return "reference.settings.module.facet.osgi";
+    // some heuristics for bundle name and version
+    String bundleName = myModule.getName();
+    Version bundleVersion = null;
+    int nextDotPos = bundleName.indexOf('.');
+    while (bundleVersion == null && nextDotPos >= 0) {
+      try {
+        bundleVersion = new Version(bundleName.substring(nextDotPos + 1));
+        bundleName = bundleName.substring(0, nextDotPos);
+      }
+      catch (IllegalArgumentException e) {
+        // Retry after next dot.
+      }
+      nextDotPos = bundleName.indexOf('.', nextDotPos + 1);
+    }
+
+    String text =
+      Attributes.Name.MANIFEST_VERSION + ": 1.0.0\n" +
+      Constants.BUNDLE_MANIFESTVERSION + ": 2\n" +
+      Constants.BUNDLE_NAME + ": " + bundleName + "\n" +
+      Constants.BUNDLE_SYMBOLICNAME + ": " + bundleName + "\n" +
+      Constants.BUNDLE_VERSION + ": " + (bundleVersion != null ? bundleVersion.toString() : "1.0.0") + "\n";
+
+    final File path = new File(contentRoots[0].getPath(), manifestPath);
+    try {
+      FileUtil.writeToFile(path, text);
+    }
+    catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    VirtualFile file = new WriteAction<VirtualFile>() {
+      @Override
+      protected void run(Result<VirtualFile> result) throws Throwable {
+        result.setResult(LocalFileSystem.getInstance().refreshAndFindFileByIoFile(path));
+      }
+    }.execute().getResultObject();
+
+    if (file == null) {
+      throw new RuntimeException("Not found: '" + path + "'");
+    }
   }
 
   private static VirtualFile findFileInContentRoots(String fileName, Module module) {
-    VirtualFile[] roots = getContentRoots(module);
-    VirtualFile currentFile = null;
-    for (VirtualFile root : roots) {
-      currentFile = VfsUtil.findRelativeFile(fileName, root);
-      if (currentFile != null) {
-        break;
+    for (VirtualFile root : getContentRoots(module)) {
+      VirtualFile file = VfsUtilCore.findRelativeFile(fileName, root);
+      if (file != null) {
+        return file;
       }
     }
-    return currentFile;
+    return null;
   }
 }
-
