@@ -483,8 +483,9 @@ public class FlexStackFrame extends XStackFrame {
       myDebugProcess.sendCommand(command);
     }
 
+    @Nullable
     @Override
-    public TextRange getExpressionRangeAtOffset(final Project project, final Document document, final int offset, boolean sideEffectsAllowed) {
+    public Pair<TextRange, String> getExpressionAtOffset(@NotNull Project project, @NotNull Document document, final int offset, boolean sideEffectsAllowed) {
       return JSDebuggerSupportUtils.getExpressionAtOffset(project, document, offset);
     }
   }
