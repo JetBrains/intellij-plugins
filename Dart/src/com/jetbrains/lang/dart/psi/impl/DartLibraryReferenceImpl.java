@@ -96,22 +96,19 @@ public class DartLibraryReferenceImpl extends DartExpressionImpl implements Dart
   }
 
   private ResolveResult[] tryResolveLibraries() {
-    final String libraryName = StringUtil.unquoteString(getText());
+    final String libraryName = DartResolveUtil.normalizeLibraryName(StringUtil.unquoteString(getText()));
     final List<VirtualFile> virtualFiles = DartLibraryIndex.findLibraryClass(this, libraryName);
     final List<PsiElementResolveResult> result = new ArrayList<PsiElementResolveResult>();
     for (VirtualFile virtualFile : virtualFiles) {
       final PsiFile psiFile = getManager().findFile(virtualFile);
       for (PsiElement root : DartResolveUtil.findDartRoots(psiFile)) {
-        DartLibraryStatement[] libs = PsiTreeUtil.getChildrenOfType(root, DartLibraryStatement.class);
-        if (libs == null) {
+        DartLibraryStatement lib = PsiTreeUtil.getChildOfType(root, DartLibraryStatement.class);
+        if (lib == null) {
           continue;
         }
-
-        for (DartLibraryStatement lib : libs) {
-          DartQualifiedComponentName componentName = lib.getQualifiedComponentName();
-          if (componentName != null && libraryName.equals(componentName.getName())) {
-            result.add(new PsiElementResolveResult(componentName));
-          }
+        DartQualifiedComponentName componentName = lib.getQualifiedComponentName();
+        if (componentName != null) {
+          result.add(new PsiElementResolveResult(componentName));
         }
       }
     }

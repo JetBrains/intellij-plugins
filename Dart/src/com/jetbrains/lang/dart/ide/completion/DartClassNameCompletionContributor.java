@@ -2,9 +2,12 @@ package com.jetbrains.lang.dart.ide.completion;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.openapi.util.Condition;
 import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ProcessingContext;
+import com.jetbrains.lang.dart.DartComponentType;
+import com.jetbrains.lang.dart.ide.index.DartComponentInfo;
 import com.jetbrains.lang.dart.psi.ClassNameScopeProcessor;
 import com.jetbrains.lang.dart.psi.DartComponentName;
 import com.jetbrains.lang.dart.psi.DartId;
@@ -38,6 +41,17 @@ public class DartClassNameCompletionContributor extends CompletionContributor {
 
                for (DartComponentName variant : suggestedVariants) {
                  result.addElement(LookupElementBuilder.create(variant));
+               }
+               if (parameters.getInvocationCount() > 1) {
+                 DartGlobalVariantsHelper.addAdditionalGlobalVariants(
+                   result, parameters.getPosition(), suggestedVariants,
+                   new Condition<DartComponentInfo>() {
+                     @Override
+                     public boolean value(DartComponentInfo info) {
+                       return info.getType() == DartComponentType.CLASS || info.getType() == DartComponentType.INTERFACE;
+                     }
+                   }
+                 );
                }
              }
            });
