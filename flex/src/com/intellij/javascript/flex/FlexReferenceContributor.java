@@ -432,7 +432,13 @@ public class FlexReferenceContributor extends PsiReferenceContributor {
             return ReferenceSupport.getFileRefs(element, element, 1, ReferenceSupport.LookupOptions.SCRIPT_SOURCE);
           }
 
-          if (MxmlJSClass.XML_TAG_NAME.equals(tagName) || FlexPredefinedTagNames.MODEL.equals(tagName)) {
+          final String[] tagsWithSourceAttr = {
+            MxmlJSClass.XML_TAG_NAME, FlexPredefinedTagNames.MODEL,
+            JSCommonTypeNames.STRING_CLASS_NAME, JSCommonTypeNames.BOOLEAN_CLASS_NAME,
+            JSCommonTypeNames.INT_TYPE_NAME, JSCommonTypeNames.UINT_TYPE_NAME, JSCommonTypeNames.NUMBER_CLASS_NAME
+          };
+
+          if (ArrayUtil.contains(tagName, tagsWithSourceAttr)) {
             return ReferenceSupport.getFileRefs(element, element, 1, ReferenceSupport.LookupOptions.XML_AND_MODEL_SOURCE);
           }
 

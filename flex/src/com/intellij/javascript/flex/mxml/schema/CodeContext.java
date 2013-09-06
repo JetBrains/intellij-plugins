@@ -7,6 +7,7 @@ import com.intellij.javascript.flex.FlexPredefinedTagNames;
 import com.intellij.javascript.flex.FlexReferenceContributor;
 import com.intellij.javascript.flex.FlexStateElementNames;
 import com.intellij.javascript.flex.mxml.MxmlJSClass;
+import com.intellij.javascript.flex.resolve.SwcCatalogXmlUtil;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.lang.javascript.flex.FlexModuleType;
 import com.intellij.lang.javascript.flex.FlexUtils;
@@ -23,7 +24,6 @@ import com.intellij.lang.javascript.psi.JSCommonTypeNames;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSParameter;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
-import com.intellij.javascript.flex.resolve.SwcCatalogXmlUtil;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -98,10 +98,20 @@ public class CodeContext {
   }
 
   private void putDescriptor(final String name, final ClassBackedElementDescriptor descriptor, final boolean addGumboAttributesIfNeeded) {
-    if (JavaScriptSupportLoader.isLanguageNamespace(namespace) &&
-        (MxmlJSClass.XML_TAG_NAME.equals(name) || MxmlJSClass.XMLLIST_TAG_NAME.equals(name))) {
-      // XML and XMLList are added in constructor
-      return;
+    if (JavaScriptSupportLoader.isLanguageNamespace(namespace)) {
+      if (MxmlJSClass.XML_TAG_NAME.equals(name) || MxmlJSClass.XMLLIST_TAG_NAME.equals(name)) {
+        // XML and XMLList are added in constructor
+        return;
+      }
+
+      if (JSCommonTypeNames.STRING_CLASS_NAME.equals(name) ||
+          JSCommonTypeNames.BOOLEAN_CLASS_NAME.equals(name) ||
+          JSCommonTypeNames.INT_TYPE_NAME.equals(name) ||
+          JSCommonTypeNames.UINT_TYPE_NAME.equals(name) ||
+          JSCommonTypeNames.NUMBER_CLASS_NAME.equals(name)) {
+        descriptor.addPredefinedMemberDescriptor(
+          new AnnotationBackedDescriptorImpl(FlexReferenceContributor.SOURCE_ATTR_NAME, descriptor, true, null, null, null));
+      }
     }
 
     if (JavaScriptSupportLoader.MXML_URI3.equals(namespace) && JSCommonTypeNames.VECTOR_CLASS_NAME.equals(name)) {
