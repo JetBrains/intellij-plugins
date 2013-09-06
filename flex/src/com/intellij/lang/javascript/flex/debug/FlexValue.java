@@ -607,25 +607,25 @@ class FlexValue extends XValue {
     if (inheritedStaticFields.size() + inheritedStaticProperties.size() + inheritedFields.size() + inheritedProperties.size() > 0) {
       if (inheritedStaticFields.size() + inheritedStaticProperties.size() > 0) {
         final XValueChildrenList inheritedStatics =
-          getWrappingSingletonList("Static members", inheritedStaticFields, inheritedStaticProperties);
-        inheritedNodeSingletonList = getWrappingSingletonList("Inherited members", inheritedStatics, inheritedFields, inheritedProperties);
+          createWrappingGroupList("Static members", inheritedStaticFields, inheritedStaticProperties);
+        inheritedNodeSingletonList = createWrappingGroupList("Inherited members", inheritedStatics, inheritedFields, inheritedProperties);
       }
       else {
-        inheritedNodeSingletonList = getWrappingSingletonList("Inherited members", inheritedStaticFields, inheritedStaticProperties,
-                                                              inheritedFields, inheritedProperties);
+        inheritedNodeSingletonList = createWrappingGroupList("Inherited members", inheritedStaticFields, inheritedStaticProperties,
+                                                             inheritedFields, inheritedProperties);
       }
     }
 
     if (nodeClassInfo != null && isCollectionWithDirectContent(nodeClassInfo.myFqn)) {
       final XValueChildrenList fieldsAndPropertiesSingletonList =
-        getWrappingSingletonList("Fields and properties", inheritedNodeSingletonList, ownStaticFields, ownStaticProperties, ownFields,
-                                 ownProperties);
+        createWrappingGroupList("Fields and properties", inheritedNodeSingletonList, ownStaticFields, ownStaticProperties, ownFields,
+                                ownProperties);
       node.addChildren(fieldsAndPropertiesSingletonList, false);
     }
     else {
       node.addChildren(inheritedNodeSingletonList, false);
       if (ownStaticFields.size() + ownStaticProperties.size() > 0) {
-        node.addChildren(getWrappingSingletonList("Static members", ownStaticFields, ownStaticProperties), false);
+        node.addChildren(createWrappingGroupList("Static members", ownStaticFields, ownStaticProperties), false);
       }
       node.addChildren(ownFields, false);
       node.addChildren(ownProperties, false);
@@ -635,13 +635,11 @@ class FlexValue extends XValue {
     for (final FlexValue flexValue : elementsOfCollection) {
       elementsOfCollectionList.add(flexValue.myName, flexValue);
     }
-    node.addChildren(elementsOfCollectionList, false);
-
-    node.addChildren(XValueChildrenList.EMPTY, true);
+    node.addChildren(elementsOfCollectionList, true);
   }
 
-  private static XValueChildrenList getWrappingSingletonList(final String nodeName, final XValueChildrenList... listsToWrap) {
-    final XNamedValue inheritedNode = new XGroupingValue(nodeName) {
+  private static XValueChildrenList createWrappingGroupList(final String groupName, final XValueChildrenList... listsToWrap) {
+    final XValueGroup group = new XValueGroup(groupName) {
       @Override
       public void computeChildren(@NotNull final XCompositeNode node) {
         for (final XValueChildrenList list : listsToWrap) {
@@ -652,7 +650,7 @@ class FlexValue extends XValue {
     };
 
     final XValueChildrenList inheritedSingleNodeList = new XValueChildrenList();
-    inheritedSingleNodeList.add(inheritedNode);
+    inheritedSingleNodeList.addTopGroup(group);
     return inheritedSingleNodeList;
   }
 
