@@ -1,10 +1,15 @@
 package com.intellij.lang.javascript.flex.debug;
 
+import com.intellij.javascript.flex.mxml.MxmlJSClass;
 import com.intellij.lang.javascript.psi.JSFunction;
 import com.intellij.lang.javascript.psi.JSVariable;
 import com.intellij.lang.javascript.psi.ecmal4.JSAttributeList;
 import com.intellij.lang.javascript.psi.ecmal4.JSClass;
 import com.intellij.openapi.util.Iconable;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.xml.XmlFile;
+import com.intellij.psi.xml.XmlTag;
+import com.intellij.util.Processor;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
@@ -114,6 +119,31 @@ public class NodeClassInfo {
         else {
           properties.put(function.getName(), function.getIcon(Iconable.ICON_FLAG_VISIBILITY));
         }
+      }
+    }
+
+    if (jsClass instanceof MxmlJSClass) {
+      final PsiFile file = jsClass.getContainingFile();
+      final XmlFile xmlFile = file instanceof XmlFile ? (XmlFile)file : null;
+      final XmlTag rootTag = xmlFile == null ? null : xmlFile.getRootTag();
+      if (rootTag != null) {
+        processSubtagsRecursively(rootTag, new Processor<XmlTag>() {
+          public boolean process(final XmlTag tag) {
+            final String id = tag.getAttributeValue("id");
+            if (id != null) {
+              fields.put(id, tag.getIcon(Iconable.ICON_FLAG_VISIBILITY));
+            }
+            return !MxmlJSClass.isTagThatAllowsAnyXmlContent(tag);
+          }
+        });
+      }
+    }
+  }
+
+  private static void processSubtagsRecursively(final XmlTag tag, final Processor<XmlTag> processor) {
+    for (XmlTag subTag : tag.getSubTags()) {
+      if (processor.process(subTag)) {
+        processSubtagsRecursively(subTag, processor);
       }
     }
   }
