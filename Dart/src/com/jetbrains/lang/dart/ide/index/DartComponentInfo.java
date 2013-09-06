@@ -10,10 +10,12 @@ import org.jetbrains.annotations.Nullable;
 public class DartComponentInfo {
   @NotNull private final String value;
   @Nullable private final DartComponentType type;
+  @Nullable private final String libraryId;
 
-  public DartComponentInfo(@NotNull String value, DartComponentType type) {
+  public DartComponentInfo(@NotNull String value, @Nullable DartComponentType type, @Nullable String libraryId) {
     this.value = value;
     this.type = type;
+    this.libraryId = libraryId;
   }
 
   @NotNull
@@ -24,5 +26,10 @@ public class DartComponentInfo {
   @Nullable
   public DartComponentType getType() {
     return type;
+  }
+
+  @Nullable
+  public String getLibraryId() {
+    return libraryId;
   }
 }

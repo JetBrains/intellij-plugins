@@ -17,12 +17,19 @@ public class DartComponentInfoExternalizer implements DataExternalizer<DartCompo
     final DartComponentType dartComponentType = componentInfo.getType();
     final int key = dartComponentType == null ? -1 : dartComponentType.getKey();
     out.writeInt(key);
+    final String libraryId = componentInfo.getLibraryId();
+    out.writeBoolean(libraryId != null);
+    if (libraryId != null) {
+      out.writeUTF(libraryId);
+    }
   }
 
   @Override
   public DartComponentInfo read(DataInput in) throws IOException {
     final String value = in.readUTF();
     final int key = in.readInt();
-    return new DartComponentInfo(value, DartComponentType.valueOf(key));
+    final boolean haveLibraryId = in.readBoolean();
+    final String libraryId = haveLibraryId ? in.readUTF() : null;
+    return new DartComponentInfo(value, DartComponentType.valueOf(key), libraryId);
   }
 }

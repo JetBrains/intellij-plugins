@@ -6,6 +6,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.XmlRecursiveElementVisitor;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.xml.XmlFile;
 import com.intellij.util.indexing.FileContent;
 import com.jetbrains.lang.dart.DartComponentType;
@@ -22,7 +23,7 @@ import java.util.Set;
 
 public class DartIndexUtil {
   // inc when change parser
-  public static int BASE_VERSION = 2;
+  public static int BASE_VERSION = 3;
 
   private static final Key<DartFileIndexData> ourDartCachesData = Key.create("dart.caches.index.data");
 
@@ -39,10 +40,16 @@ public class DartIndexUtil {
   }
 
   private static DartFileIndexData indexFileRoots(PsiFile psiFile) {
-    List<String> paths = new ArrayList<String>();
     DartFileIndexData result = new DartFileIndexData();
+    result.setLibraryName(DartResolveUtil.getLibraryName(psiFile));
     for (PsiElement rootElement : findDartRoots(psiFile)) {
       PsiElement[] children = rootElement.getChildren();
+
+      final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(rootElement, DartPartOfStatement.class);
+      String libraryId = partOfStatement != null ?
+                         DartResolveUtil.normalizeLibraryName(partOfStatement.getLibraryId().getCanonicalText()) :
+                         result.getLibraryName();
+
       for (DartComponentName componentName : DartControlFlowUtil.getSimpleDeclarations(children, null, false)) {
         final String name = componentName.getName();
         if (name == null) {
@@ -52,11 +59,11 @@ public class DartIndexUtil {
         PsiElement parent = componentName.getParent();
         final DartComponentType type = DartComponentType.typeOf(parent);
         if (type != null) {
-          result.addComponentInfo(name, new DartComponentInfo(psiFile.getName(), type));
+          result.addComponentInfo(name, new DartComponentInfo(psiFile.getName(), type, libraryId));
         }
         if (parent instanceof DartClass) {
           result.addClassName(name);
-          processInheritors(result, name, (DartClass)parent);
+          processInheritors(result, name, (DartClass)parent, libraryId);
           for (DartComponent subComponent : DartResolveUtil.getNamedSubComponents((DartClass)parent)) {
             result.addSymbol(subComponent.getName());
           }
@@ -77,12 +84,11 @@ public class DartIndexUtil {
         }
       }
     }
-    result.setLibraryName(DartResolveUtil.getLibraryName(psiFile));
     return result;
   }
 
-  private static void processInheritors(DartFileIndexData result, @NotNull String dartClassName, DartClass dartClass) {
-    final DartComponentInfo value = new DartComponentInfo(dartClassName, DartComponentType.typeOf(dartClass));
+  private static void processInheritors(DartFileIndexData result, @NotNull String dartClassName, DartClass dartClass, String libraryId) {
+    final DartComponentInfo value = new DartComponentInfo(dartClassName, DartComponentType.typeOf(dartClass), libraryId);
     final DartType superClass = dartClass.getSuperClass();
     if (superClass != null) {
       result.addInheritor(superClass.getReferenceExpression().getText(), value);
@@ -114,7 +120,7 @@ public class DartIndexUtil {
     final String prefix = prefixName != null ? prefixName.getName() : null;
 
     result.addImport(new DartPathInfo(pathValue, prefix, showComponentNames, hideComponentNames));
-    result.addComponentInfo(prefix, new DartComponentInfo(importStatement.getContainingFile().getName(), DartComponentType.LABEL));
+    result.addComponentInfo(prefix, new DartComponentInfo(importStatement.getContainingFile().getName(), DartComponentType.LABEL, null));
   }
 
   private static List<PsiElement> findDartRoots(PsiFile psiFile) {

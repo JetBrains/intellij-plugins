@@ -195,7 +195,6 @@
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartSourceIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartClassIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartLibraryIndex"/>
-    <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartReversedLibraryIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartComponentIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartSymbolIndex"/>
     <fileBasedIndex implementation="com.jetbrains.lang.dart.ide.index.DartInheritanceIndex"/>

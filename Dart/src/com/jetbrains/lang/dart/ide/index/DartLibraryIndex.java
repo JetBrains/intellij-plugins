@@ -63,10 +63,7 @@ public class DartLibraryIndex extends ScalarIndexExtension<String> {
         return Arrays.asList(stdLibFile);
       }
     }
-    else {
-      return new ArrayList<VirtualFile>(findSingleLibraryClass(context.getProject(), libraryName));
-    }
-    return Collections.emptyList();
+    return new ArrayList<VirtualFile>(findSingleLibraryClass(context.getProject(), libraryName));
   }
 
   private static Collection<VirtualFile> findSingleLibraryClass(Project project, String libraryName) {

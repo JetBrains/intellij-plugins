@@ -42,8 +42,12 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
                                            @NotNull CompletionResultSet result) {
                final DartReference reference = PsiTreeUtil.getParentOfType(parameters.getPosition(), DartReference.class);
                if (reference != null) {
-                 for (LookupElement element : DartReferenceCompletionContributor.addCompletionVariants(reference)) {
+                 final THashSet<DartComponentName> variants = new THashSet<DartComponentName>();
+                 for (LookupElement element : DartReferenceCompletionContributor.addCompletionVariants(reference, variants)) {
                    result.addElement(element);
+                 }
+                 if (parameters.getInvocationCount() > 1 && DartResolveUtil.aloneOrFirstInChain(reference)) {
+                   DartGlobalVariantsHelper.addAdditionalGlobalVariants(result, reference, variants, null);
                  }
                }
              }
@@ -78,8 +82,8 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
            });
   }
 
-  private static Collection<DartLookupElement> addCompletionVariants(@NotNull DartReference reference) {
-    final Set<DartComponentName> suggestedVariants = new THashSet<DartComponentName>();
+  private static Collection<DartLookupElement> addCompletionVariants(@NotNull DartReference reference,
+                                                                     Set<DartComponentName> suggestedVariants) {
     DartClass dartClass = null;
     // if do not contain references
     if (DartResolveUtil.aloneOrFirstInChain(reference)) {

@@ -231,7 +231,12 @@ public class DartResolveUtil {
       return psiFile.getName();
     }
     final String libraryName = libraryStatement.getLibraryName();
-    return libraryName.isEmpty() ? psiFile.getName() : libraryName;
+    return libraryName.isEmpty() ? psiFile.getName() : normalizeLibraryName(libraryName);
+  }
+
+  @NotNull
+  public static String normalizeLibraryName(@NotNull String libraryName) {
+    return libraryName.startsWith("dart.") ? "dart:" + libraryName.substring("dart.".length()) : libraryName;
   }
 
   @NotNull

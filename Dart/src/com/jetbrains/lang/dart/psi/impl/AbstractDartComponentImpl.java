@@ -132,7 +132,7 @@ abstract public class AbstractDartComponentImpl extends DartPsiCompositeElementI
         }
         DartExecutionScope root = PsiTreeUtil.getTopmostParentOfType(AbstractDartComponentImpl.this, DartExecutionScope.class);
         DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(root, DartPartOfStatement.class);
-        return partOfStatement == null ? null : partOfStatement.getLibraryId().getCanonicalText();
+        return partOfStatement == null ? null : DartResolveUtil.normalizeLibraryName(partOfStatement.getLibraryId().getCanonicalText());
       }
 
       @Override

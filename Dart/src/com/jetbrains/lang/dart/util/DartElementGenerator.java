@@ -80,9 +80,27 @@ public class DartElementGenerator {
   }
 
   @Nullable
+  public static DartLibraryComponentReferenceExpression createLibraryComponentReference(Project myProject, String name) {
+    final PsiFile dummyFile = createDummyFile(myProject, "import 'dummy' show " + name + ";");
+    final DartImportStatement importStatement = PsiTreeUtil.getChildOfType(dummyFile, DartImportStatement.class);
+    final List<DartShowCombinator> combinators = importStatement != null ? importStatement.getShowCombinatorList() : null;
+    final DartLibraryReferenceList libraryReferences = combinators != null && !combinators.isEmpty() ?
+                                                       combinators.iterator().next().getLibraryReferenceList() : null;
+    final List<DartLibraryComponentReferenceExpression> references = libraryReferences != null ?
+                                                                     libraryReferences.getLibraryComponentReferenceExpressionList() : null;
+    return references == null ? null : references.iterator().next();
+  }
+
+  @Nullable
   public static DartSourceStatement createSourceStatementFromPath(Project myProject, String path) {
     final PsiFile dummyFile = createDummyFile(myProject, "#source(" + path + ");");
     return PsiTreeUtil.getChildOfType(dummyFile, DartSourceStatement.class);
+  }
+
+  @Nullable
+  public static PsiElement createTopLevelStatementFromText(Project myProject, String text) {
+    final PsiFile file = createDummyFile(myProject, text);
+    return file.getFirstChild();
   }
 
   public static PsiFile createDummyFile(Project myProject, String text) {
