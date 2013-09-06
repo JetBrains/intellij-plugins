@@ -15,6 +15,7 @@
   event CDATA #IMPLIED
   style CDATA #IMPLIED
 >
+<!ELEMENT Clear EMPTY>
 <!ELEMENT DataBindingInfo EMPTY>
 <!ELEMENT RequiresDataBinding EMPTY>
 <!ELEMENT DefaultTriggerEvent EMPTY>
