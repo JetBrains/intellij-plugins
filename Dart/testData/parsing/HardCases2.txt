@@ -1,14 +1,11 @@
 Dart File
-  NATIVE_STATEMENT
-    PsiElement(#)('#')
-    PsiElement(native)('native')
-    PsiElement(()('(')
+  PART_STATEMENT
+    PsiElement(part)('part')
     PATH_OR_LIBRARY_REFERENCE
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)('"')
         PsiElement(REGULAR_STRING_PART)('frog/natives.js')
         PsiElement(CLOSING_QUOTE)('"')
-    PsiElement())(')')
     PsiElement(;)(';')
   VAR_DECLARATION_LIST
     VAR_ACCESS_DECLARATION

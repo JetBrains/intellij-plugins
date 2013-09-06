@@ -188,7 +188,7 @@ Dart File
                         PsiElement(IDENTIFIER)('String')
                   COMPONENT_NAME
                     ID
-                      PsiElement(source)('source')
+                      PsiElement(IDENTIFIER)('source')
             PsiElement())(')')
           PsiElement(;)(';')
       PsiElement(})('}')

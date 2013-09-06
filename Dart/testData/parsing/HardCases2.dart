@@ -1,4 +1,4 @@
-#native("frog/natives.js");
+part "frog/natives.js";
 
 var lives = new Set<HInstruction>.from(other.lives);
 

@@ -1,1 +1,1 @@
-#source('bar/Foo.dart');
+part 'bar/Foo.dart';

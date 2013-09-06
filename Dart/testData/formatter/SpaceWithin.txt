@@ -1,4 +1,4 @@
-#import('superLib');
+import 'superLib';
 
 class Foo {
     // comment

@@ -59,6 +59,7 @@ import static com.jetbrains.lang.dart.DartTokenTypesSets.*;
 DIGIT=[0-9]
 LETTER=[a-z]|[A-Z]
 WHITE_SPACE=[ \n\r\t\f]+
+PROGRAM_COMMENT="#""!"[^\r\n]*
 SINGLE_LINE_COMMENT="/""/"[^\r\n]*
 SINGLE_LINE_DOC_COMMENT="/""/""/"[^\r\n]*
 MULTI_LINE_STYLE_COMMENT=("/*"[^"*"]{COMMENT_TAIL})|"/*"  //TODO doccomment may nest
@@ -130,8 +131,9 @@ FLOAT_LITERAL=(({FLOATING_POINT_LITERAL1})|({FLOATING_POINT_LITERAL2}))
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {WHITE_SPACE}                  { return WHITE_SPACE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {MULTI_LINE_STYLE_COMMENT}     { return MULTI_LINE_COMMENT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {DOC_COMMENT}                  { return DOC_COMMENT; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> {SINGLE_LINE_DOC_COMMENT}                  { return DOC_COMMENT; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> {SINGLE_LINE_DOC_COMMENT}      { return DOC_COMMENT; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {SINGLE_LINE_COMMENT}          { return SINGLE_LINE_COMMENT; }
+<YYINITIAL, LONG_TEMPLATE_ENTRY> {PROGRAM_COMMENT}              { return SINGLE_LINE_COMMENT; }
 
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "break"                { return BREAK; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "case"                 { return CASE; }
@@ -183,9 +185,7 @@ FLOAT_LITERAL=(({FLOATING_POINT_LITERAL1})|({FLOATING_POINT_LITERAL2}))
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "show"                 { return SHOW; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "hide"                 { return HIDE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "part"                 { return PART; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "source"               { return SOURCE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "library"              { return LIBRARY; }
-<YYINITIAL, LONG_TEMPLATE_ENTRY> "resource"             { return RESOURCE; }
 <YYINITIAL, LONG_TEMPLATE_ENTRY> "external"             { return EXTERNAL; }
 
 <YYINITIAL, LONG_TEMPLATE_ENTRY> {IDENTIFIER}           { return IDENTIFIER; }

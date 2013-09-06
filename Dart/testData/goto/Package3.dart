@@ -1,4 +1,4 @@
-#import('foo');
+import 'foo';
 
 main() {
   _privateFunction<caret>InFoo();

@@ -7,8 +7,6 @@ export 'a.dart';
 
 import "QualifiedReturnTypeA.dart" as pref;
 
-external print(String message);
-
 part 'test.dart';
 
 class B {

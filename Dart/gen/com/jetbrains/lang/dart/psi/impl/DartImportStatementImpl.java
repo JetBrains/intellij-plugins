@@ -46,12 +46,6 @@ public class DartImportStatementImpl extends DartPsiCompositeElementImpl impleme
     return PsiTreeUtil.getChildrenOfTypeAsList(this, DartShowCombinator.class);
   }
 
-  @Override
-  @Nullable
-  public DartStringLiteralExpression getStringLiteralExpression() {
-    return findChildByClass(DartStringLiteralExpression.class);
-  }
-
   @NotNull
   public String getLibraryName() {
     return DartPsiImplUtil.getLibraryName(this);

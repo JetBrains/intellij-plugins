@@ -1,4 +1,4 @@
-#import('Reference7Helper.dart', prefix : 'helper');
+import 'Reference7Helper.dart' as helper;
 
 class ConstructorSyntax {
   ConstructorSyntax(x, y) : super(), this.x = x, this.y = y {}

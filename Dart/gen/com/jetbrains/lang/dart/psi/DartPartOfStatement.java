@@ -10,4 +10,7 @@ public interface DartPartOfStatement extends DartPsiCompositeElement {
   @NotNull
   DartLibraryId getLibraryId();
 
+  @NotNull
+  String getLibraryName();
+
 }

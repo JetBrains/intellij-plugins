@@ -317,8 +317,7 @@ public class DartGotoDeclarationActionTest extends DartGotoDeclarationActionTest
   }
 
   public void testReference24() throws Throwable {
-    DartSdkTestUtil.configFakeSdk(myFixture);
-    doTest(myFixture.configureByFiles("Reference24.dart", "Reference24Helper.dart"), 1);
+    doTestWithSDK(1);
   }
 
   public void testReference25() throws Throwable {

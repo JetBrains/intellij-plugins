@@ -1,4 +1,4 @@
-#library('test');
+library test;
 
 // line comment
 /// line doc comment

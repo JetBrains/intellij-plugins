@@ -63,26 +63,7 @@ Dart File
       ID
         PsiElement(IDENTIFIER)('pref')
     PsiElement(;)(';')
-  FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
-    PsiElement(external)('external')
-    COMPONENT_NAME
-      ID
-        PsiElement(IDENTIFIER)('print')
-    FORMAL_PARAMETER_LIST
-      PsiElement(()('(')
-      NORMAL_FORMAL_PARAMETER
-        VAR_DECLARATION
-          VAR_ACCESS_DECLARATION
-            TYPE
-              REFERENCE_EXPRESSION
-                ID
-                  PsiElement(IDENTIFIER)('String')
-            COMPONENT_NAME
-              ID
-                PsiElement(IDENTIFIER)('message')
-      PsiElement())(')')
-    PsiElement(;)(';')
-  SOURCE_STATEMENT
+  PART_STATEMENT
     PsiElement(part)('part')
     PATH_OR_LIBRARY_REFERENCE
       STRING_LITERAL_EXPRESSION

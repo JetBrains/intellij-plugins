@@ -1,2 +1,2 @@
-#source('TypeInExtends2.dart');
-#native('TypeInExtends2Bar.dart');
+part 'TypeInExtends2.dart';
+part 'TypeInExtends2Bar.dart';

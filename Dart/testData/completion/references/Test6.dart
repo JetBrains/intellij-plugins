@@ -1,4 +1,4 @@
-#source("Test6Helper.dart");
+part "Test6Helper.dart";
 main() {
   <caret>
 }

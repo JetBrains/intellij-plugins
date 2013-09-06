@@ -1,3 +1,5 @@
+#!/bin/dart
+
 class AssignableSyntax {
   test(a) {
     a[0] ? "a" : "b";

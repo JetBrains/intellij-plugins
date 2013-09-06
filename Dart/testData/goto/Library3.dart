@@ -1,4 +1,4 @@
-#import("Library3Foo.dart");
+import "Library3Foo.dart";
 
 main(){
   fo<caret>o();

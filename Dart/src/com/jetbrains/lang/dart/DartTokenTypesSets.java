@@ -31,8 +31,8 @@ public interface DartTokenTypesSets {
   TokenSet UNRESERVED = TokenSet.create(ABSTRACT, ASSERT,
                                         FACTORY, GET, IMPLEMENTS,
                                         IMPORT, INTERFACE, IS, AS, ON, LIBRARY,
-                                        NEGATE, OPERATOR, SET, SOURCE,
-                                        STATIC, TYPEDEF, NATIVE, RESOURCE, WITH);
+                                        NEGATE, OPERATOR, SET,
+                                        STATIC, TYPEDEF, WITH);
 
   TokenSet RESERVED = TokenSet.create(IF, ELSE, TRY, THROW, CATCH, FINALLY, TRUE,
                                       FALSE, NULL, SWITCH, CASE, DEFAULT,

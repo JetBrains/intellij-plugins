@@ -46,9 +46,7 @@ public class DartIndexUtil {
       PsiElement[] children = rootElement.getChildren();
 
       final DartPartOfStatement partOfStatement = PsiTreeUtil.getChildOfType(rootElement, DartPartOfStatement.class);
-      String libraryId = partOfStatement != null ?
-                         DartResolveUtil.normalizeLibraryName(partOfStatement.getLibraryId().getCanonicalText()) :
-                         result.getLibraryName();
+      String libraryId = partOfStatement != null ? partOfStatement.getLibraryName() : result.getLibraryName();
 
       for (DartComponentName componentName : DartControlFlowUtil.getSimpleDeclarations(children, null, false)) {
         final String name = componentName.getName();
@@ -74,12 +72,8 @@ public class DartIndexUtil {
         if (child instanceof DartImportStatement) {
           processImportStatement(result, (DartImportStatement)child);
         }
-        if (child instanceof DartSourceStatement) {
-          final String pathValue = FileUtil.toSystemIndependentName(StringUtil.unquoteString(((DartSourceStatement)child).getPath()));
-          result.addPath(pathValue);
-        }
-        if (child instanceof DartNativeStatement) {
-          final String pathValue = FileUtil.toSystemIndependentName(StringUtil.unquoteString(((DartNativeStatement)child).getPath()));
+        if (child instanceof DartPartStatement) {
+          final String pathValue = FileUtil.toSystemIndependentName(StringUtil.unquoteString(((DartPartStatement)child).getPath()));
           result.addPath(pathValue);
         }
       }

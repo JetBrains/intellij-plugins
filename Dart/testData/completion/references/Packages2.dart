@@ -1,1 +1,1 @@
-#import('package:foo/<caret>');
+import 'package:foo/<caret>';
