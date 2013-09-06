@@ -16,11 +16,9 @@ import org.osmorc.i18n.OsmorcBundle;
 import org.jetbrains.lang.manifest.psi.HeaderValuePart;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Vladislav.Soroka
+ * @author Vladislav.Soroka
  */
-public class UnknownManifectPackageInspection extends LocalInspectionTool {
-
+public class UnknownManifestPackageInspection extends LocalInspectionTool {
   @Nls
   @NotNull
   public String getGroupDisplayName() {
