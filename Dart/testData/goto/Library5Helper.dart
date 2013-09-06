@@ -1,3 +1,3 @@
-#library("test");
+library test;
 foo() {
 }

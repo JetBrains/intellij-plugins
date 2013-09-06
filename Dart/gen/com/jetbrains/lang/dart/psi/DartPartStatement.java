@@ -5,9 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface DartResourceStatement extends DartPsiCompositeElement {
+public interface DartPartStatement extends DartPsiCompositeElement {
 
-  @Nullable
+  @NotNull
   DartPathOrLibraryReference getPathOrLibraryReference();
 
   @NotNull

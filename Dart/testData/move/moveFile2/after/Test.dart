@@ -1,1 +1,1 @@
-#source('Foo.dart');
+import 'Foo.dart';

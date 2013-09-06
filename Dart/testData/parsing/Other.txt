@@ -1,4 +1,5 @@
 Dart File
+  PsiComment(SINGLE_LINE_COMMENT)('#!/bin/dart')
   CLASS_DEFINITION
     PsiElement(class)('class')
     COMPONENT_NAME

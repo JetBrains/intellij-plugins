@@ -16,9 +16,9 @@ import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
+import com.jetbrains.lang.dart.psi.DartPartStatement;
 import com.jetbrains.lang.dart.psi.DartPathOrLibraryReference;
 import com.jetbrains.lang.dart.psi.DartReference;
-import com.jetbrains.lang.dart.psi.DartSourceStatement;
 import com.jetbrains.lang.dart.psi.DartStringLiteralExpression;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
@@ -66,8 +66,8 @@ public class DartFileReferenceImpl extends DartExpressionImpl implements DartRef
   }
 
   private void setNewPath(String newPath) {
-    final DartSourceStatement sourceStatement =
-      DartElementGenerator.createSourceStatementFromPath(getProject(), "'" + newPath + "'");
+    final DartPartStatement sourceStatement =
+      DartElementGenerator.createPartStatementFromPath(getProject(), newPath);
     final DartPathOrLibraryReference newPathReference = sourceStatement == null ? null : sourceStatement.getPathOrLibraryReference();
     final DartStringLiteralExpression myStringLiteralExpression = PsiTreeUtil.getChildOfType(this, DartStringLiteralExpression.class);
     if (newPathReference != null && myStringLiteralExpression != null) {

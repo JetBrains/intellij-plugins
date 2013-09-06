@@ -20,34 +20,32 @@ import java.util.List;
  */
 public class DartPsiImplUtil {
   @NotNull
-  public static String getPath(@NotNull DartSourceStatement sourceStatement) {
-    final DartExpression expression = sourceStatement.getPathOrLibraryReference();
-    return expression == null ? "" : FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
+  public static String normalizeLibraryName(@NotNull String libraryName) {
+    return libraryName.startsWith("dart.") ? "dart:" + libraryName.substring("dart.".length()) : libraryName;
   }
 
   @NotNull
-  public static String getPath(@NotNull DartResourceStatement resourceStatement) {
-    final DartExpression expression = resourceStatement.getPathOrLibraryReference();
-    return expression == null ? "" : FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
+  public static String getPath(@NotNull DartPartStatement partStatement) {
+    final DartExpression expression = partStatement.getPathOrLibraryReference();
+    return FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
   }
 
   @NotNull
-  public static String getPath(@NotNull DartNativeStatement nativeStatement) {
-    final DartExpression expression = nativeStatement.getPathOrLibraryReference();
-    return expression == null ? "" : FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
+  public static String getLibraryName(@NotNull DartLibraryStatement libraryStatement) {
+    final DartQualifiedComponentName componentName = libraryStatement.getQualifiedComponentName();
+    return normalizeLibraryName(StringUtil.notNullize(componentName.getName()));
   }
 
   @NotNull
-  public static String getLibraryName(@NotNull DartLibraryStatement resourceStatement) {
-    final DartExpression expression = resourceStatement.getPathOrLibraryReference();
-    if (expression != null) {
-      return FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
-    }
-    final DartQualifiedComponentName componentName = resourceStatement.getQualifiedComponentName();
-    if (componentName != null) {
-      return StringUtil.notNullize(componentName.getName());
-    }
-    return "";
+  public static String getLibraryName(@NotNull DartImportStatement importStatement) {
+    final DartExpression expression = importStatement.getLibraryExpression();
+    return FileUtil.toSystemIndependentName(normalizeLibraryName(StringUtil.unquoteString(expression.getText())));
+  }
+
+  @NotNull
+  public static String getLibraryName(@NotNull DartPartOfStatement importStatement) {
+    final DartLibraryId expression = importStatement.getLibraryId();
+    return FileUtil.toSystemIndependentName(normalizeLibraryName(StringUtil.unquoteString(expression.getText())));
   }
 
   @Nullable
@@ -60,18 +58,12 @@ public class DartPsiImplUtil {
     return childrenOfType == null || childrenOfType.length < 2 ? null : childrenOfType[1];
   }
 
-  @NotNull
-  public static String getLibraryName(@NotNull DartImportStatement importStatement) {
-    final DartExpression expression = importStatement.getLibraryExpression();
-    return expression == null ? "" : FileUtil.toSystemIndependentName(StringUtil.unquoteString(expression.getText()));
-  }
-
   @Nullable
   public static PsiElement resolveReference(@NotNull DartType dartType) {
     final DartExpression expression = dartType.getReferenceExpression();
     final String typeName = expression.getText();
     if (typeName.indexOf('.') != -1) {
-      return expression instanceof DartReference ? ((DartReference)expression).resolve() : null;
+      return ((DartReference)expression).resolve();
     }
     List<DartComponentName> result = new ArrayList<DartComponentName>();
     final ResolveScopeProcessor resolveScopeProcessor = new ResolveScopeProcessor(result, typeName);

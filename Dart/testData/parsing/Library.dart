@@ -1,8 +1,7 @@
-#library('custom');
+library custom;
 
-#import('dart:html', prefix : 'html');
-#source('Util.dart');
-#resource('main.css');
+import 'dart:html' as html;
+part 'Util.dart';
 
 void main() {
   "".length;

@@ -1,54 +1,29 @@
 Dart File
   LIBRARY_STATEMENT
-    PsiElement(#)('#')
     PsiElement(library)('library')
-    PsiElement(()('(')
-    PATH_OR_LIBRARY_REFERENCE
-      STRING_LITERAL_EXPRESSION
-        PsiElement(OPEN_QUOTE)(''')
-        PsiElement(REGULAR_STRING_PART)('custom')
-        PsiElement(CLOSING_QUOTE)(''')
-    PsiElement())(')')
+    QUALIFIED_COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('custom')
     PsiElement(;)(';')
   IMPORT_STATEMENT
-    PsiElement(#)('#')
     PsiElement(import)('import')
-    PsiElement(()('(')
     PATH_OR_LIBRARY_REFERENCE
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''')
         PsiElement(REGULAR_STRING_PART)('dart:html')
         PsiElement(CLOSING_QUOTE)(''')
-    PsiElement(,)(',')
-    PsiElement(IDENTIFIER)('prefix')
-    PsiElement(:)(':')
-    STRING_LITERAL_EXPRESSION
-      PsiElement(OPEN_QUOTE)(''')
-      PsiElement(REGULAR_STRING_PART)('html')
-      PsiElement(CLOSING_QUOTE)(''')
-    PsiElement())(')')
+    PsiElement(as)('as')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('html')
     PsiElement(;)(';')
-  SOURCE_STATEMENT
-    PsiElement(#)('#')
-    PsiElement(source)('source')
-    PsiElement(()('(')
+  PART_STATEMENT
+    PsiElement(part)('part')
     PATH_OR_LIBRARY_REFERENCE
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''')
         PsiElement(REGULAR_STRING_PART)('Util.dart')
         PsiElement(CLOSING_QUOTE)(''')
-    PsiElement())(')')
-    PsiElement(;)(';')
-  RESOURCE_STATEMENT
-    PsiElement(#)('#')
-    PsiElement(resource)('resource')
-    PsiElement(()('(')
-    PATH_OR_LIBRARY_REFERENCE
-      STRING_LITERAL_EXPRESSION
-        PsiElement(OPEN_QUOTE)(''')
-        PsiElement(REGULAR_STRING_PART)('main.css')
-        PsiElement(CLOSING_QUOTE)(''')
-    PsiElement())(')')
     PsiElement(;)(';')
   FUNCTION_DECLARATION_WITH_BODY_OR_NATIVE
     RETURN_TYPE

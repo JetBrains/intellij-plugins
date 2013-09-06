@@ -92,9 +92,9 @@ public class DartElementGenerator {
   }
 
   @Nullable
-  public static DartSourceStatement createSourceStatementFromPath(Project myProject, String path) {
-    final PsiFile dummyFile = createDummyFile(myProject, "#source(" + path + ");");
-    return PsiTreeUtil.getChildOfType(dummyFile, DartSourceStatement.class);
+  public static DartPartStatement createPartStatementFromPath(Project myProject, String path) {
+    final PsiFile dummyFile = createDummyFile(myProject, "part '" + path + "';");
+    return PsiTreeUtil.getChildOfType(dummyFile, DartPartStatement.class);
   }
 
   @Nullable

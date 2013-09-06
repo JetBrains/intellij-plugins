@@ -1,4 +1,4 @@
-#import('superLib');class Foo {
+import 'superLib';class Foo {
          // comment
     Array<Array<Int>> tmp;
     function foo (int x,z) {

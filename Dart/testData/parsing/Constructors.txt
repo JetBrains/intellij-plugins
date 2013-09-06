@@ -1,21 +1,15 @@
 Dart File
   IMPORT_STATEMENT
-    PsiElement(#)('#')
     PsiElement(import)('import')
-    PsiElement(()('(')
     PATH_OR_LIBRARY_REFERENCE
       STRING_LITERAL_EXPRESSION
         PsiElement(OPEN_QUOTE)(''')
         PsiElement(REGULAR_STRING_PART)('Reference7Helper.dart')
         PsiElement(CLOSING_QUOTE)(''')
-    PsiElement(,)(',')
-    PsiElement(IDENTIFIER)('prefix')
-    PsiElement(:)(':')
-    STRING_LITERAL_EXPRESSION
-      PsiElement(OPEN_QUOTE)(''')
-      PsiElement(REGULAR_STRING_PART)('helper')
-      PsiElement(CLOSING_QUOTE)(''')
-    PsiElement())(')')
+    PsiElement(as)('as')
+    COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('helper')
     PsiElement(;)(';')
   CLASS_DEFINITION
     PsiElement(class)('class')

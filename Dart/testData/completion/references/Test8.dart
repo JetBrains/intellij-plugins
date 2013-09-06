@@ -1,2 +1,2 @@
-#source("Test8Foo.dart");
-#source("Test8Bar.dart");
+part "Test8Foo.dart";
+part "Test8Bar.dart";

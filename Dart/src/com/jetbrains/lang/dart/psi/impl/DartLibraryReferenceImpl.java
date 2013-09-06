@@ -14,6 +14,7 @@ import com.jetbrains.lang.dart.psi.DartQualifiedComponentName;
 import com.jetbrains.lang.dart.psi.DartReference;
 import com.jetbrains.lang.dart.util.DartClassResolveResult;
 import com.jetbrains.lang.dart.util.DartElementGenerator;
+import com.jetbrains.lang.dart.util.DartPsiImplUtil;
 import com.jetbrains.lang.dart.util.DartResolveUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -96,7 +97,7 @@ public class DartLibraryReferenceImpl extends DartExpressionImpl implements Dart
   }
 
   private ResolveResult[] tryResolveLibraries() {
-    final String libraryName = DartResolveUtil.normalizeLibraryName(StringUtil.unquoteString(getText()));
+    final String libraryName = DartPsiImplUtil.normalizeLibraryName(StringUtil.unquoteString(getText()));
     final List<VirtualFile> virtualFiles = DartLibraryIndex.findLibraryClass(this, libraryName);
     final List<PsiElementResolveResult> result = new ArrayList<PsiElementResolveResult>();
     for (VirtualFile virtualFile : virtualFiles) {
@@ -107,9 +108,7 @@ public class DartLibraryReferenceImpl extends DartExpressionImpl implements Dart
           continue;
         }
         DartQualifiedComponentName componentName = lib.getQualifiedComponentName();
-        if (componentName != null) {
-          result.add(new PsiElementResolveResult(componentName));
-        }
+        result.add(new PsiElementResolveResult(componentName));
       }
     }
     return result.toArray(new ResolveResult[result.size()]);

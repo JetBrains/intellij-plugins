@@ -1,1 +1,1 @@
-#import('p<caret>');
+import 'p<caret>';

@@ -36,7 +36,7 @@ HtmlFile:Html1.html
                   PsiElement(IDENTIFIER)('test')
               PsiElement(;)(';')
             PsiWhiteSpace('\n\n      ')
-            SOURCE_STATEMENT
+            PART_STATEMENT
               PsiElement(part)('part')
               PsiWhiteSpace(' ')
               PATH_OR_LIBRARY_REFERENCE

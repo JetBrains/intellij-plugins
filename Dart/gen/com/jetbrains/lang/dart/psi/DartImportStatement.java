@@ -19,9 +19,6 @@ public interface DartImportStatement extends DartPsiCompositeElement {
   @NotNull
   List<DartShowCombinator> getShowCombinatorList();
 
-  @Nullable
-  DartStringLiteralExpression getStringLiteralExpression();
-
   @NotNull
   String getLibraryName();
 

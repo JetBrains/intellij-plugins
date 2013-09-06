@@ -1,4 +1,4 @@
-#import('package:foo/Foo.dart');
+import 'package:foo/Foo.dart';
 
 main(){
   var tmp = new Ba<caret>r();

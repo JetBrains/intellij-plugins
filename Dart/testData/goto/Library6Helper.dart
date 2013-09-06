@@ -1,1 +1,1 @@
-#library("test");
+library test;

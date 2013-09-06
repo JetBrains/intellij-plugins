@@ -1,5 +1,5 @@
-#library('foo');
-#import('package:bar/Bar.dart');
+library foo;
+import 'package:bar/Bar.dart';
 
 class Foo {
   foo(){}

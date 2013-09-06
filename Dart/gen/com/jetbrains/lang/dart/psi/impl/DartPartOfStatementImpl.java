@@ -28,4 +28,9 @@ public class DartPartOfStatementImpl extends DartPsiCompositeElementImpl impleme
     return findNotNullChildByClass(DartLibraryId.class);
   }
 
+  @NotNull
+  public String getLibraryName() {
+    return DartPsiImplUtil.getLibraryName(this);
+  }
+
 }

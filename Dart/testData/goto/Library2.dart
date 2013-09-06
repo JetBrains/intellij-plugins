@@ -1,2 +1,2 @@
-#source("Library2Foo.dart");
-#source("Library2Bar.dart");
+part "Library2Foo.dart";
+part "Library2Bar.dart";

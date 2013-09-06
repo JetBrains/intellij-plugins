@@ -93,7 +93,6 @@ public interface DartTokenTypes {
   IElementType NAMED_ARGUMENT = new DartElementType("NAMED_ARGUMENT");
   IElementType NAMED_CONSTRUCTOR_DECLARATION = new DartElementType("NAMED_CONSTRUCTOR_DECLARATION");
   IElementType NAMED_FORMAL_PARAMETERS = new DartElementType("NAMED_FORMAL_PARAMETERS");
-  IElementType NATIVE_STATEMENT = new DartElementType("NATIVE_STATEMENT");
   IElementType NEW_EXPRESSION = new DartElementType("NEW_EXPRESSION");
   IElementType NORMAL_FORMAL_PARAMETER = new DartElementType("NORMAL_FORMAL_PARAMETER");
   IElementType ON_PART = new DartElementType("ON_PART");
@@ -101,6 +100,7 @@ public interface DartTokenTypes {
   IElementType OPERATOR_PROTOTYPE = new DartElementType("OPERATOR_PROTOTYPE");
   IElementType PARENTHESIZED_EXPRESSION = new DartElementType("PARENTHESIZED_EXPRESSION");
   IElementType PART_OF_STATEMENT = new DartElementType("PART_OF_STATEMENT");
+  IElementType PART_STATEMENT = new DartElementType("PART_STATEMENT");
   IElementType PATH_OR_LIBRARY_REFERENCE = new DartElementType("PATH_OR_LIBRARY_REFERENCE");
   IElementType PREFIX_EXPRESSION = new DartElementType("PREFIX_EXPRESSION");
   IElementType PREFIX_OPERATOR = new DartElementType("PREFIX_OPERATOR");
@@ -108,7 +108,6 @@ public interface DartTokenTypes {
   IElementType REDIRECTION = new DartElementType("REDIRECTION");
   IElementType REFERENCE_EXPRESSION = new DartElementType("REFERENCE_EXPRESSION");
   IElementType RELATIONAL_OPERATOR = new DartElementType("RELATIONAL_OPERATOR");
-  IElementType RESOURCE_STATEMENT = new DartElementType("RESOURCE_STATEMENT");
   IElementType RETURN_STATEMENT = new DartElementType("RETURN_STATEMENT");
   IElementType RETURN_TYPE = new DartElementType("RETURN_TYPE");
   IElementType SETTER_DECLARATION = new DartElementType("SETTER_DECLARATION");
@@ -117,7 +116,6 @@ public interface DartTokenTypes {
   IElementType SHIFT_RIGHT_OPERATOR = new DartElementType("SHIFT_RIGHT_OPERATOR");
   IElementType SHORT_TEMPLATE_ENTRY = new DartElementType("SHORT_TEMPLATE_ENTRY");
   IElementType SHOW_COMBINATOR = new DartElementType("SHOW_COMBINATOR");
-  IElementType SOURCE_STATEMENT = new DartElementType("SOURCE_STATEMENT");
   IElementType STATEMENTS = new DartElementType("STATEMENTS");
   IElementType STRING_LITERAL_EXPRESSION = new DartElementType("STRING_LITERAL_EXPRESSION");
   IElementType SUFFIX_EXPRESSION = new DartElementType("SUFFIX_EXPRESSION");
@@ -239,14 +237,12 @@ public interface DartTokenTypes {
   IElementType REGULAR_STRING_PART = new DartElementType("REGULAR_STRING_PART");
   IElementType REM = new DartElementType("%");
   IElementType REM_EQ = new DartElementType("%=");
-  IElementType RESOURCE = new DartElementType("resource");
   IElementType RETURN = new DartElementType("return");
   IElementType RPAREN = new DartElementType(")");
   IElementType SEMICOLON = new DartElementType(";");
   IElementType SET = new DartElementType("set");
   IElementType SHORT_TEMPLATE_ENTRY_START = new DartElementType("SHORT_TEMPLATE_ENTRY_START");
   IElementType SHOW = new DartElementType("show");
-  IElementType SOURCE = new DartElementType("source");
   IElementType STATIC = new DartElementType("static");
   IElementType SUPER = new DartElementType("super");
   IElementType SWITCH = new DartElementType("switch");
@@ -519,9 +515,6 @@ public interface DartTokenTypes {
       else if (type == NAMED_FORMAL_PARAMETERS) {
         return new DartNamedFormalParametersImpl(node);
       }
-      else if (type == NATIVE_STATEMENT) {
-        return new DartNativeStatementImpl(node);
-      }
       else if (type == NEW_EXPRESSION) {
         return new DartNewExpressionImpl(node);
       }
@@ -543,6 +536,9 @@ public interface DartTokenTypes {
       else if (type == PART_OF_STATEMENT) {
         return new DartPartOfStatementImpl(node);
       }
+      else if (type == PART_STATEMENT) {
+        return new DartPartStatementImpl(node);
+      }
       else if (type == PATH_OR_LIBRARY_REFERENCE) {
         return new DartPathOrLibraryReferenceImpl(node);
       }
@@ -563,9 +559,6 @@ public interface DartTokenTypes {
       }
       else if (type == RELATIONAL_OPERATOR) {
         return new DartRelationalOperatorImpl(node);
-      }
-      else if (type == RESOURCE_STATEMENT) {
-        return new DartResourceStatementImpl(node);
       }
       else if (type == RETURN_STATEMENT) {
         return new DartReturnStatementImpl(node);
@@ -590,9 +583,6 @@ public interface DartTokenTypes {
       }
       else if (type == SHOW_COMBINATOR) {
         return new DartShowCombinatorImpl(node);
-      }
-      else if (type == SOURCE_STATEMENT) {
-        return new DartSourceStatementImpl(node);
       }
       else if (type == STATEMENTS) {
         return new DartStatementsImpl(node);

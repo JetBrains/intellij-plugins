@@ -1,4 +1,4 @@
-#library("test");
+library test;
 main() {
   fo<caret>o();
 }

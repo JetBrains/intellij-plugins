@@ -1,14 +1,9 @@
 Dart File
   LIBRARY_STATEMENT
-    PsiElement(#)('#')
     PsiElement(library)('library')
-    PsiElement(()('(')
-    PATH_OR_LIBRARY_REFERENCE
-      STRING_LITERAL_EXPRESSION
-        PsiElement(OPEN_QUOTE)(''')
-        PsiElement(REGULAR_STRING_PART)('test')
-        PsiElement(CLOSING_QUOTE)(''')
-    PsiElement())(')')
+    QUALIFIED_COMPONENT_NAME
+      ID
+        PsiElement(IDENTIFIER)('test')
     PsiElement(;)(';')
   PsiComment(SINGLE_LINE_COMMENT)('// line comment')
   PsiComment(DOC_COMMENT)('/// line doc comment')

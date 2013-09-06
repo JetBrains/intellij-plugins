@@ -1,1 +1,1 @@
-#import('foo/B<caret>');
+import 'foo/B<caret>';

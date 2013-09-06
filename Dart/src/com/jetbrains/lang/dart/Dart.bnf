@@ -68,13 +68,11 @@
   NATIVE="native"
 
   LIBRARY="library"
-  SOURCE="source"
   IMPORT="import"
   EXPORT="export"
   SHOW="show"
   HIDE="hide"
   PART="part"
-  RESOURCE="resource"
   EXTERNAL="external"
   WITH="with"
 
@@ -139,9 +137,7 @@ private topLevelDefinition ::= libraryStatement
                              | partOfStatement
                              | importStatement
                              | exportStatement
-                             | sourceStatement
-                             | nativeStatement
-                             | resourceStatement
+                             | partStatement
                              | classDefinition
                              | interfaceDefinition
                              | classTypeAlias
@@ -150,26 +146,27 @@ private topLevelDefinition ::= libraryStatement
                              | getterOrSetterDeclaration
                              | varDeclarationListWithSemicolon
                              {recoverUntil="top_level_recover"}
-private top_level_recover ::= !('#' | '@' | 'import' | 'library' | 'source' | 'native' | 'resource' | 'class' | 'const' | 'final' | 'get' | 'interface'
+private top_level_recover ::= !('#' | '@' | 'import' | 'library' | 'native' | 'class' | 'const' | 'final' | 'get' | 'interface'
                               | 'set' | 'static' | 'typedef' | 'var' | <<nonStrictID>> | 'abstract' | 'part'| 'export' | 'external')
 
-partOfStatement ::= 'part' 'of' libraryId ';' {pin=3}
+partOfStatement ::= 'part' 'of' libraryId ';' {
+  pin=3
+  methods = [ getLibraryName ]
+}
 
-libraryStatement ::= '#' 'library' '(' pathOrLibraryReference ')' ';' |
-                     'library' qualifiedComponentName ';' {
+libraryStatement ::= 'library' qualifiedComponentName ';' {
   pin=2
   methods = [ getLibraryName ]
 }
 
-importStatement ::= oldImportStatement | newImportStatement {
+importStatement ::= 'import' pathOrLibraryReference ('as' componentName )? combinator* ';' {
+  pin=2
   methods = [
     getLibraryName
     libraryExpression = "pathOrLibraryReference"
     getLibraryPrefix
   ]
 }
-private oldImportStatement ::= '#' 'import' '(' pathOrLibraryReference (',' IDENTIFIER ':' stringLiteralExpression)? ')' ';' {pin=4}
-private newImportStatement ::= 'import' pathOrLibraryReference ('as' componentName )? combinator* ';' {pin=2}
 
 private combinator ::= showCombinator | hideCombinator
 
@@ -179,17 +176,7 @@ libraryReferenceList ::= libraryComponentReferenceExpression (',' libraryCompone
 
 exportStatement ::= 'export' pathOrLibraryReference ('as' componentName )? combinator* ';'
 
-sourceStatement ::= source1 | source2 {
-  methods = [ getPath ]
-}
-private source2 ::= 'part' pathOrLibraryReference ';' {pin=2}
-private source1 ::= '#' 'source' '(' pathOrLibraryReference ')' ';' {pin=2}
-
-nativeStatement ::= '#' 'native' '(' pathOrLibraryReference ')' ';' {
-  pin=2
-  methods = [ getPath ]
-}
-resourceStatement ::= '#' 'resource' '(' pathOrLibraryReference ')' ';' {
+partStatement ::= 'part' pathOrLibraryReference ';' {
   pin=2
   methods = [ getPath ]
 }
@@ -306,7 +293,7 @@ private interfaceMemberDefinition ::= methodPrototypeDeclaration
                                     {recoverUntil="interface_member_definition_recover"}
 private interface_member_definition_recover::= !('abstract' | 'assert' | 'class' | 'const' | 'extends' | 'factory' | 'final' | 'get'
                                                | 'implements' | 'import' | 'interface' | 'is' | 'library' | 'native' | 'negate'
-                                               | 'operator' | 'set' | '@' | 'source' | 'static' | 'typedef' | 'var' | '}' | <<nonStrictID>>)
+                                               | 'operator' | 'set' | '@' | 'static' | 'typedef' | 'var' | '}' | <<nonStrictID>>)
 
 factoryConstructorDeclaration ::= ('external' | 'const')* 'factory' referenceExpression ('.' componentName)? formalParameterList (varInit ';' | functionBodyOrNative | ';')?
 {pin=2 mixin="com.jetbrains.lang.dart.psi.impl.AbstractDartComponentImpl" implements="com.jetbrains.lang.dart.psi.DartComponent"}
@@ -377,7 +364,7 @@ private statement_recover ::= !('!' | '(' | ')' | '+' | '++' | '-' | '--' | ';' 
                               | 'static' | 'super' | 'switch' | 'this' | 'throw' | 'true' | 'try' | 'var' | 'while' | '{' | '}' | '~'
                               | HEX_NUMBER | <<nonStrictID>> | NUMBER | OPEN_QUOTE | RAW_SINGLE_QUOTED_STRING | RAW_TRIPLE_QUOTED_STRING
                               | "abstract" | "assert" | "class"  | "extends" | "factory" | "get" | "implements" | "import" | "interface"
-                              | "is" | "@" | "library" | "native" | "negate" | "as" | "on" | "set" | "source" | "static" | "typedef" | "operator")
+                              | "is" | "@" | "library" | "native" | "negate" | "as" | "on" | "set" | "static" | "typedef" | "operator")
 
 private nonLabelledStatement ::= block // Guard to break tie with map literal.
                                | metadata* functionDeclarationWithBody ';'?

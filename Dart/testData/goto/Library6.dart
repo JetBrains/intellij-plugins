@@ -1,1 +1,1 @@
-#import('te<caret>st');
+import 'te<caret>st';

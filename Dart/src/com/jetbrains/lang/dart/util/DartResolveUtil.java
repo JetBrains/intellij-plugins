@@ -218,7 +218,7 @@ public class DartResolveUtil {
       libraryStatement = PsiTreeUtil.getChildOfType(root, DartLibraryStatement.class);
       if (libraryStatement != null) break;
     }
-    final DartSourceStatement[] sources = PsiTreeUtil.getChildrenOfType(psiFile, DartSourceStatement.class);
+    final DartPartStatement[] sources = PsiTreeUtil.getChildrenOfType(psiFile, DartPartStatement.class);
     if (libraryStatement == null && sources == null) {
       return hasMainFunction(psiFile) ? psiFile.getName() : null;
     }
@@ -231,12 +231,7 @@ public class DartResolveUtil {
       return psiFile.getName();
     }
     final String libraryName = libraryStatement.getLibraryName();
-    return libraryName.isEmpty() ? psiFile.getName() : normalizeLibraryName(libraryName);
-  }
-
-  @NotNull
-  public static String normalizeLibraryName(@NotNull String libraryName) {
-    return libraryName.startsWith("dart.") ? "dart:" + libraryName.substring("dart.".length()) : libraryName;
+    return libraryName.isEmpty() ? psiFile.getName() : libraryName;
   }
 
   @NotNull
@@ -489,8 +484,7 @@ public class DartResolveUtil {
   public static boolean isLibraryRoot(PsiFile psiFile) {
     for (PsiElement root : findDartRoots(psiFile)) {
       DartPsiCompositeElement oneOfLibraryStatement =
-        PsiTreeUtil.getChildOfAnyType(root, DartLibraryStatement.class, DartSourceStatement.class, DartImportStatement.class,
-                                      DartNativeStatement.class);
+        PsiTreeUtil.getChildOfAnyType(root, DartLibraryStatement.class, DartPartStatement.class, DartImportStatement.class);
       if (oneOfLibraryStatement != null || hasMainFunction(psiFile)) {
         return true;
       }

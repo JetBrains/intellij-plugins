@@ -1,4 +1,4 @@
-#source("Library1Helper.dart");
+part "Library1Helper.dart";
 main(){
   fo<caret>o();
 }
