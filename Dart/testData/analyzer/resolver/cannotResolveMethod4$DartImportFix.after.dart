@@ -1,0 +1,4 @@
+import 'printer';
+main() {
+  superPrint();
+}

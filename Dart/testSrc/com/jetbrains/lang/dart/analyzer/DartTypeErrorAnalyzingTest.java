@@ -66,6 +66,10 @@ public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
     doTest("Undefined name 'Unknown'");
   }
 
+  public void testCannotBeResolved8$DartImportFix() throws Throwable {
+    doTest("Undefined name 'Unknown'", "foo.dart");
+  }
+
   public void testCannotBeResolved9() throws Throwable {
     doTestWithoutCheck("There is no such getter 'foo' in 'Foo'", "cannotBeResolved9_Foo.dart");
     myFixture.checkResultByFile("cannotBeResolved9.dart");
@@ -105,6 +109,10 @@ public class DartTypeErrorAnalyzingTest extends DartAnalyzerTestBase {
 
   public void testNoSuchType1() throws Throwable {
     doTest("Undefined class 'Foo'");
+  }
+
+  public void testNoSuchType1$DartImportFix() throws Throwable {
+    doTest("Undefined class 'Foo'", "foo.dart");
   }
 
   public void testNoSuchType2() throws Throwable {

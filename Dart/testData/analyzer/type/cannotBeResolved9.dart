@@ -1,4 +1,4 @@
-import "cannotBeResolved9_Foo.dart"
+import "cannotBeResolved9_Foo.dart";
 
 main() {
   print(Foo.foo);

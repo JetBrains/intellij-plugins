@@ -6,6 +6,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.PairProcessor;
+import com.intellij.util.Processor;
 import com.intellij.util.indexing.*;
 import com.intellij.util.io.DataExternalizer;
 import com.intellij.util.io.EnumeratorStringDescriptor;
@@ -70,20 +71,34 @@ public class DartComponentIndex extends FileBasedIndexExtension<String, DartComp
   }
 
   public static void processAllComponents(@NotNull PsiElement contex,
-                                          PairProcessor<String, DartComponentInfo> processor,
+                                          final PairProcessor<String, DartComponentInfo> processor,
                                           Condition<String> nameFilter) {
     final Collection<String> allKeys = FileBasedIndex.getInstance().getAllKeys(DART_COMPONENT_INDEX, contex.getProject());
-    for (String componentName : allKeys) {
+    for (final String componentName : allKeys) {
       if (nameFilter.value(componentName)) {
         continue;
       }
-      final List<DartComponentInfo> allComponents = FileBasedIndex.getInstance().getValues(
-        DART_COMPONENT_INDEX, componentName, contex.getResolveScope()
-      );
-      for (DartComponentInfo componentInfo : allComponents) {
-        if (!processor.process(componentName, componentInfo)) return;
+      if (processComponentsByName(contex, new Processor<DartComponentInfo>() {
+        @Override
+        public boolean process(DartComponentInfo info) {
+          return processor.process(componentName, info);
+        }
+      }, componentName)) {
+        return;
       }
     }
+  }
+
+  public static boolean processComponentsByName(PsiElement contex,
+                                                Processor<DartComponentInfo> processor,
+                                                String componentName) {
+    final List<DartComponentInfo> allComponents = FileBasedIndex.getInstance().getValues(
+      DART_COMPONENT_INDEX, componentName, contex.getResolveScope()
+    );
+    for (DartComponentInfo componentInfo : allComponents) {
+      if (!processor.process(componentInfo)) return true;
+    }
+    return false;
   }
 
   private static class MyDataIndexer implements DataIndexer<String, DartComponentInfo, FileContent> {
