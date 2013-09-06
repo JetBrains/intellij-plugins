@@ -19,7 +19,13 @@ import java.util.regex.Pattern;
  */
 public class KarmaBrowserErrorFilter implements Filter {
 
-  private static final Pattern LINE_PATTERN = Pattern.compile("^\\s*at (http://localhost:\\d+/base/([^?]+)?.*)$");
+  private static final Pattern[] LINE_PATTERNS = new Pattern[] {
+    //at http://localhost:9876/base/spec/personSpec.js?1368878723000:22
+    Pattern.compile("^\\s*at (http://localhost:\\d+/base/([^?]+)?.*)$"),
+
+    //at http://localhost:9876/absolute/home/segrey/WebstormProjects/karma-chai-sample/test/test.js?1378466989000:1
+    Pattern.compile("^\\s*at (http://localhost:\\d+/absolute(/[^?]+)?.*)$"),
+};
 
   private final Project myProject;
   private final KarmaConfig myConfig;
@@ -32,9 +38,8 @@ public class KarmaBrowserErrorFilter implements Filter {
   @Nullable
   @Override
   public Result applyFilter(String line, int entireLength) {
-    //at http://localhost:9876/base/spec/personSpec.js?1368878723000:22
-    Matcher m = LINE_PATTERN.matcher(line);
-    if (m.find()) {
+    Matcher m = findMatcher(line);
+    if (m != null) {
       int hyperlinkStartInd = m.start(1);
       int hyperlinkEndInd = m.end(1);
       File file = findFile(m.group(2));
@@ -51,15 +56,29 @@ public class KarmaBrowserErrorFilter implements Filter {
     return null;
   }
 
+  @Nullable
+  private static Matcher findMatcher(@NotNull String line) {
+    for (Pattern pattern : LINE_PATTERNS) {
+      Matcher m = pattern.matcher(line);
+      if (m.find()) {
+        return m;
+      }
+    }
+    return null;
+  }
+
+  @Nullable
   private File findFile(@NotNull String path) {
+    File absFile = new File(path);
+    if (absFile.isAbsolute() && absFile.isFile()) {
+      return absFile;
+    }
     String basePath = myConfig.getBasePath();
-    if (basePath != null) {
-      File baseDir = new File(basePath);
-      if (baseDir.isDirectory()) {
-        File file = new File(baseDir, path);
-        if (file.isFile()) {
-          return file;
-        }
+    File baseDir = new File(basePath);
+    if (baseDir.isDirectory()) {
+      File file = new File(baseDir, path);
+      if (file.isFile()) {
+        return file;
       }
     }
     return null;
