@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<artifacts>
+  <artifact version="5.0.0">
+    <item url="http://search.maven.org/remotecontent?filepath=org/osgi/org.osgi.core/5.0.0/org.osgi.core-5.0.0.jar"
+          srcUrl="http://search.maven.org/remotecontent?filepath=org/osgi/org.osgi.core/5.0.0/org.osgi.core-5.0.0-sources.jar"/>
+  </artifact>
+  <artifact version="4.3.1">
+    <item url="http://search.maven.org/remotecontent?filepath=org/osgi/org.osgi.core/4.3.1/org.osgi.core-4.3.1.jar"
+          srcUrl="http://search.maven.org/remotecontent?filepath=org/osgi/org.osgi.core/4.3.1/org.osgi.core-4.3.1-sources.jar"/>
+  </artifact>
+  <artifact version="4.2.0">
+    <item url="http://search.maven.org/remotecontent?filepath=org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0.jar"
+          srcUrl="http://search.maven.org/remotecontent?filepath=org/osgi/org.osgi.core/4.2.0/org.osgi.core-4.2.0-sources.jar"/>
+  </artifact>
+  <artifact version="4.1.0">
+    <item url="http://search.maven.org/remotecontent?filepath=org/osgi/org.osgi.core/4.1.0/org.osgi.core-4.1.0.jar"
+          srcUrl="http://search.maven.org/remotecontent?filepath=org/osgi/org.osgi.core/4.1.0/org.osgi.core-4.0.0-sources.jar"/>
+  </artifact>
+  <artifact version="4.0.1">
+    <item url="http://search.maven.org/remotecontent?filepath=org/osgi/org.osgi.core/4.0.1/org.osgi.core-4.0.1.jar"
+          srcUrl="http://search.maven.org/remotecontent?filepath=org/osgi/org.osgi.core/4.0.1/org.osgi.core-4.0.1-sources.jar"/>
+  </artifact>
+</artifacts>
