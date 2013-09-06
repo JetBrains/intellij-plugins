@@ -47,7 +47,7 @@ public class DartReferenceCompletionContributor extends CompletionContributor {
                    result.addElement(element);
                  }
                  if (parameters.getInvocationCount() > 1 && DartResolveUtil.aloneOrFirstInChain(reference)) {
-                   DartGlobalVariantsHelper.addAdditionalGlobalVariants(result, reference, variants, null);
+                   DartGlobalVariantsCompletionHelper.addAdditionalGlobalVariants(result, reference, variants, null);
                  }
                }
              }

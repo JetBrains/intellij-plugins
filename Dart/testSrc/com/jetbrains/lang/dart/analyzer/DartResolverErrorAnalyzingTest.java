@@ -21,6 +21,10 @@ public class DartResolverErrorAnalyzingTest extends DartAnalyzerTestBase {
     doTest("The FUNCTION 'add' is not defined");
   }
 
+  public void testCannotResolveMethod4$DartImportFix() throws Throwable {
+    doTest("The FUNCTION 'superPrint' is not defined", "cannotResolveMethod4PrinterLibrary.dart");
+  }
+
   public void testCannotResolveMethodInClass1() throws Throwable {
     doTest("The method 'bar' is not defined for the class 'Foo'");
   }

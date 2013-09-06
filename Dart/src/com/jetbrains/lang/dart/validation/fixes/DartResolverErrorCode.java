@@ -3,6 +3,7 @@ package com.jetbrains.lang.dart.validation.fixes;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.SmartList;
 import com.jetbrains.lang.dart.analyzer.AnalyzerMessage;
 import com.jetbrains.lang.dart.psi.DartComponent;
 import com.jetbrains.lang.dart.util.DartPresentableUtil;
@@ -29,7 +30,12 @@ public enum DartResolverErrorCode {
     public List<? extends IntentionAction> getFixes(@NotNull PsiFile file, int startOffset, @NotNull AnalyzerMessage message) {
       // Undefined class '%s'
       String className = DartPresentableUtil.findLastQuotedWord(message.getMessage());
-      return className == null ? Collections.<IntentionAction>emptyList() : Arrays.asList(new CreateDartClassAction(className));
+      if (className != null) {
+        final List<BaseCreateFix> result = new SmartList<BaseCreateFix>(new CreateDartClassAction(className));
+        DartFixesUtil.suggestImports(result, file, className);
+        return result;
+      }
+      return Collections.<IntentionAction>emptyList();
     }
   },
   UNDEFINED_GETTER {

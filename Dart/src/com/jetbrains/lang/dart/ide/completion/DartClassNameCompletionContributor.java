@@ -43,7 +43,7 @@ public class DartClassNameCompletionContributor extends CompletionContributor {
                  result.addElement(LookupElementBuilder.create(variant));
                }
                if (parameters.getInvocationCount() > 1) {
-                 DartGlobalVariantsHelper.addAdditionalGlobalVariants(
+                 DartGlobalVariantsCompletionHelper.addAdditionalGlobalVariants(
                    result, parameters.getPosition(), suggestedVariants,
                    new Condition<DartComponentInfo>() {
                      @Override
