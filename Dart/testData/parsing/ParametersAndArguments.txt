@@ -396,11 +396,10 @@ Dart File
                           PsiElement(IDENTIFIER)('x')
                       PsiElement(,)(',')
                       NAMED_ARGUMENT
-                        LABEL
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('n1')
-                          PsiElement(:)(':')
+                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('n1')
+                        PsiElement(:)(':')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('x')
@@ -422,21 +421,19 @@ Dart File
                           PsiElement(IDENTIFIER)('y')
                       PsiElement(,)(',')
                       NAMED_ARGUMENT
-                        LABEL
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('n1')
-                          PsiElement(:)(':')
+                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('n1')
+                        PsiElement(:)(':')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('x')
                       PsiElement(,)(',')
                       NAMED_ARGUMENT
-                        LABEL
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('n2')
-                          PsiElement(:)(':')
+                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('n2')
+                        PsiElement(:)(':')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('x')
@@ -462,31 +459,28 @@ Dart File
                           PsiElement(IDENTIFIER)('z')
                       PsiElement(,)(',')
                       NAMED_ARGUMENT
-                        LABEL
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('n1')
-                          PsiElement(:)(':')
+                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('n1')
+                        PsiElement(:)(':')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('x')
                       PsiElement(,)(',')
                       NAMED_ARGUMENT
-                        LABEL
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('n2')
-                          PsiElement(:)(':')
+                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('n2')
+                        PsiElement(:)(':')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('x')
                       PsiElement(,)(',')
                       NAMED_ARGUMENT
-                        LABEL
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('n3')
-                          PsiElement(:)(':')
+                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('n3')
+                        PsiElement(:)(':')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('x')
@@ -500,11 +494,10 @@ Dart File
                     PsiElement(()('(')
                     ARGUMENT_LIST
                       NAMED_ARGUMENT
-                        LABEL
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('n1')
-                          PsiElement(:)(':')
+                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('n1')
+                        PsiElement(:)(':')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('x')
@@ -518,21 +511,19 @@ Dart File
                     PsiElement(()('(')
                     ARGUMENT_LIST
                       NAMED_ARGUMENT
-                        LABEL
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('n1')
-                          PsiElement(:)(':')
+                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('n1')
+                        PsiElement(:)(':')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('x')
                       PsiElement(,)(',')
                       NAMED_ARGUMENT
-                        LABEL
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('n2')
-                          PsiElement(:)(':')
+                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('n2')
+                        PsiElement(:)(':')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('x')
@@ -546,31 +537,28 @@ Dart File
                     PsiElement(()('(')
                     ARGUMENT_LIST
                       NAMED_ARGUMENT
-                        LABEL
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('n1')
-                          PsiElement(:)(':')
+                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('n1')
+                        PsiElement(:)(':')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('x')
                       PsiElement(,)(',')
                       NAMED_ARGUMENT
-                        LABEL
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('n2')
-                          PsiElement(:)(':')
+                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('n2')
+                        PsiElement(:)(':')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('x')
                       PsiElement(,)(',')
                       NAMED_ARGUMENT
-                        LABEL
-                          COMPONENT_NAME
-                            ID
-                              PsiElement(IDENTIFIER)('n3')
-                          PsiElement(:)(':')
+                        PARAMETER_NAME_REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('n3')
+                        PsiElement(:)(':')
                         REFERENCE_EXPRESSION
                           ID
                             PsiElement(IDENTIFIER)('x')

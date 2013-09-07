@@ -331,7 +331,9 @@ private default_formal_parameter_recover ::= !(')' | ',' | ']' | '}')
 normalFormalParameter ::= functionDeclaration
                         | fieldFormalParameter
                         | varDeclaration
-                        | componentName
+                        | componentName {
+  methods = [findComponentName]
+}
 
 returnType ::= type | 'var'
 
@@ -431,7 +433,15 @@ private argument_list_recover ::= !(')')
 private argumentListPart ::= namedArgument | expression {recoverUntil="argument_list_part_recover"}
 private argument_list_part_recover ::= !(')' | ',')
 
-namedArgument ::= label expression
+namedArgument ::= parameterNameReferenceExpression ':' expression {
+  methods = [
+    getParameterReferenceExpression
+    getExpression
+  ]
+}
+
+parameterNameReferenceExpression ::= << nonStrictID >>
+{mixin="com.jetbrains.lang.dart.psi.impl.DartReferenceImpl" implements="com.jetbrains.lang.dart.psi.DartReference"}
 
 expression ::= assignExpressionWrapper {recoverUntil="expression_recover"}
 private expression_recover ::= !('!' | '!=' | '!==' | 'is'| '%' | '%=' | '&&' | '&' | '&=' | '(' | ')' | '*' | '*=' | '+' | '++'

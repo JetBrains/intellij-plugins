@@ -384,6 +384,11 @@ public class DartVisitor extends PsiElementVisitor {
     visitOperator(o);
   }
 
+  public void visitParameterNameReferenceExpression(@NotNull DartParameterNameReferenceExpression o) {
+    visitExpression(o);
+    // visitReference(o);
+  }
+
   public void visitParenthesizedExpression(@NotNull DartParenthesizedExpression o) {
     visitExpression(o);
     // visitReference(o);

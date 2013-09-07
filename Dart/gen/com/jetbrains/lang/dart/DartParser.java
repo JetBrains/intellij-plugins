@@ -290,6 +290,9 @@ public class DartParser implements PsiParser {
     else if (root_ == OPERATOR_PROTOTYPE) {
       result_ = operatorPrototype(builder_, level_ + 1);
     }
+    else if (root_ == PARAMETER_NAME_REFERENCE_EXPRESSION) {
+      result_ = parameterNameReferenceExpression(builder_, level_ + 1);
+    }
     else if (root_ == PARENTHESIZED_EXPRESSION) {
       result_ = parenthesizedExpression(builder_, level_ + 1);
     }
@@ -440,9 +443,10 @@ public class DartParser implements PsiParser {
       COMPOUND_LITERAL_EXPRESSION, CONST_CONSTRUCTOR_EXPRESSION, EXPRESSION, FUNCTION_EXPRESSION,
       IS_EXPRESSION, ITERATOR_EXPRESSION, LIBRARY_COMPONENT_REFERENCE_EXPRESSION, LIST_LITERAL_EXPRESSION,
       LITERAL_EXPRESSION, LOGIC_AND_EXPRESSION, LOGIC_OR_EXPRESSION, MAP_LITERAL_EXPRESSION,
-      MULTIPLICATIVE_EXPRESSION, NEW_EXPRESSION, PARENTHESIZED_EXPRESSION, PREFIX_EXPRESSION,
-      REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION, SUFFIX_EXPRESSION,
-      SUPER_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION, VALUE_EXPRESSION),
+      MULTIPLICATIVE_EXPRESSION, NEW_EXPRESSION, PARAMETER_NAME_REFERENCE_EXPRESSION, PARENTHESIZED_EXPRESSION,
+      PREFIX_EXPRESSION, REFERENCE_EXPRESSION, SHIFT_EXPRESSION, STRING_LITERAL_EXPRESSION,
+      SUFFIX_EXPRESSION, SUPER_EXPRESSION, TERNARY_EXPRESSION, THIS_EXPRESSION,
+      VALUE_EXPRESSION),
   };
 
   /* ********************************************************** */
@@ -3894,12 +3898,13 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // label expression
+  // parameterNameReferenceExpression ':' expression
   public static boolean namedArgument(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "namedArgument")) return false;
     boolean result_ = false;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<named argument>");
-    result_ = label(builder_, level_ + 1);
+    result_ = parameterNameReferenceExpression(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, COLON);
     result_ = result_ && expression(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, NAMED_ARGUMENT, result_, false, null);
     return result_;
@@ -4423,6 +4428,17 @@ public class DartParser implements PsiParser {
     result_ = result_ && consumeToken(builder_, SEMICOLON);
     exit_section_(builder_, level_, marker_, null, result_, pinned_, null);
     return result_ || pinned_;
+  }
+
+  /* ********************************************************** */
+  // << nonStrictID >>
+  public static boolean parameterNameReferenceExpression(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "parameterNameReferenceExpression")) return false;
+    boolean result_ = false;
+    Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, "<parameter name reference expression>");
+    result_ = nonStrictID(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, PARAMETER_NAME_REFERENCE_EXPRESSION, result_, false, null);
+    return result_;
   }
 
   /* ********************************************************** */

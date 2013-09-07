@@ -166,7 +166,7 @@ public class DartPresentableUtil {
     final List<DartNamedArgument> namedArgumentList = argumentList.getNamedArgumentList();
     final Set<String> additionalUsedNamed = new THashSet<String>();
     for (DartNamedArgument namedArgument : namedArgumentList) {
-      additionalUsedNamed.add(namedArgument.getLabel().getText());
+      additionalUsedNamed.add(namedArgument.getParameterReferenceExpression().getText());
     }
 
     boolean needComma = false;
@@ -209,9 +209,7 @@ public class DartPresentableUtil {
         }
       }
 
-      String labelText = namedArgument.getLabel().getText();
-      labelText = labelText.substring(0, labelText.length() - 1);
-      result.addVariable(getExpression(labelText), true);
+      result.addVariable(getExpression(namedArgument.getParameterReferenceExpression().getText()), true);
       needComma = true;
     }
     result.addTextSegment("}");

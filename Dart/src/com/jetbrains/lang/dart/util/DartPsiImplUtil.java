@@ -94,4 +94,26 @@ public class DartPsiImplUtil {
     }
     return result.isEmpty() ? null : result.iterator().next();
   }
+
+  @Nullable
+  public static DartComponentName findComponentName(@NotNull DartNormalFormalParameter namedFormalParameters) {
+    final DartVarDeclaration varDeclaration = namedFormalParameters.getVarDeclaration();
+    if (varDeclaration != null) {
+      return varDeclaration.getVarAccessDeclaration().getComponentName();
+    }
+    final DartFunctionDeclaration functionDeclaration = namedFormalParameters.getFunctionDeclaration();
+    if (functionDeclaration != null) {
+      return functionDeclaration.getComponentName();
+    }
+    return namedFormalParameters.getComponentName();
+  }
+
+  public static DartExpression getParameterReferenceExpression(DartNamedArgument argument) {
+    return PsiTreeUtil.getChildOfType(argument, DartExpression.class);
+  }
+
+  public static DartExpression getExpression(DartNamedArgument argument) {
+    final DartExpression[] expressions = PsiTreeUtil.getChildrenOfType(argument, DartExpression.class);
+    return expressions != null && expressions.length > 1 ? expressions[expressions.length - 1] : null;
+  }
 }

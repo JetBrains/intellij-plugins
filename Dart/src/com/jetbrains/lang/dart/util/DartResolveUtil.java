@@ -896,6 +896,34 @@ public class DartResolveUtil {
   }
 
   @Nullable
+  public static DartComponentName findParameterByName(@Nullable DartFormalParameterList parameterList, final String name) {
+    if (parameterList == null) {
+      return null;
+    }
+    final DartNormalFormalParameter parameter = ContainerUtil.find(
+      parameterList.getNormalFormalParameterList(),
+      new Condition<DartNormalFormalParameter>() {
+        @Override
+        public boolean value(DartNormalFormalParameter parameter) {
+          final DartComponentName componentName = parameter.findComponentName();
+          return componentName != null && name.equals(componentName.getText());
+        }
+      }
+    );
+
+    if (parameter != null) return parameter.getComponentName();
+
+    final DartNamedFormalParameters namedFormalParameters = parameterList.getNamedFormalParameters();
+    if (namedFormalParameters == null) return null;
+
+    for (DartDefaultFormalNamedParameter namedParameter : namedFormalParameters.getDefaultFormalNamedParameterList()) {
+      final DartComponentName parameterName = namedParameter.getNormalFormalParameter().findComponentName();
+      if (parameterName != null && name.equals(parameterName.getText())) return parameterName;
+    }
+    return null;
+  }
+
+  @Nullable
   private static PsiElement findParameter(@Nullable PsiElement element, int index) {
     final DartFormalParameterList parameterList = PsiTreeUtil.getChildOfType(element, DartFormalParameterList.class);
     if (parameterList == null) {
