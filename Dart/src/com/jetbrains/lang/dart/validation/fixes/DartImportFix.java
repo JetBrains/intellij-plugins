@@ -36,6 +36,6 @@ public class DartImportFix extends BaseCreateFix {
   public String getName() {
     final DartComponentType type = myInfo.getType();
     assert type != null;
-    return DartBundle.message("dart.import.fix.name", type.toString(), myComponentName, myInfo.getLibraryId());
+    return DartBundle.message("dart.import.fix.name", type.toString().toLowerCase(), myComponentName, myInfo.getLibraryId());
   }
 }
