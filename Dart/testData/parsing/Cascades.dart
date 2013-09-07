@@ -1,4 +1,10 @@
 web_8831() {
+  var person = new Person()
+    ..name = 'Bob Smith'
+    ..address = (new Address()
+      ..city = 'Springfield'
+      ..zip = '99999');
+
   var map = new Map()
     ..[1] = 1
     ..[2] = 2;

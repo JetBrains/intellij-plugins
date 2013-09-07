@@ -940,7 +940,7 @@ public class DartParser implements PsiParser {
   }
 
   /* ********************************************************** */
-  // (referenceExpression | thisExpression | superExpression | parenthesizedExpression) (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
+  // (referenceExpression | thisExpression | superExpression | << parenthesizedExpressionWrapper >>) (callExpression | arrayAccessExpression | qualifiedReferenceExpression)*
   static boolean callOrArrayAccess(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "callOrArrayAccess")) return false;
     boolean result_ = false;
@@ -951,7 +951,7 @@ public class DartParser implements PsiParser {
     return result_;
   }
 
-  // referenceExpression | thisExpression | superExpression | parenthesizedExpression
+  // referenceExpression | thisExpression | superExpression | << parenthesizedExpressionWrapper >>
   private static boolean callOrArrayAccess_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "callOrArrayAccess_0")) return false;
     boolean result_ = false;
@@ -959,7 +959,7 @@ public class DartParser implements PsiParser {
     result_ = referenceExpression(builder_, level_ + 1);
     if (!result_) result_ = thisExpression(builder_, level_ + 1);
     if (!result_) result_ = superExpression(builder_, level_ + 1);
-    if (!result_) result_ = parenthesizedExpression(builder_, level_ + 1);
+    if (!result_) result_ = parenthesizedExpressionWrapper(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }

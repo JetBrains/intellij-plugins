@@ -15,6 +15,80 @@ Dart File
               PsiElement(var)('var')
               COMPONENT_NAME
                 ID
+                  PsiElement(IDENTIFIER)('person')
+            VAR_INIT
+              PsiElement(=)('=')
+              CASCADE_REFERENCE_EXPRESSION
+                CASCADE_REFERENCE_EXPRESSION
+                  NEW_EXPRESSION
+                    PsiElement(new)('new')
+                    TYPE
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('Person')
+                    ARGUMENTS
+                      PsiElement(()('(')
+                      PsiElement())(')')
+                  PsiElement(.)('.')
+                  PsiElement(.)('.')
+                  REFERENCE_EXPRESSION
+                    ID
+                      PsiElement(IDENTIFIER)('name')
+                  VAR_INIT
+                    PsiElement(=)('=')
+                    STRING_LITERAL_EXPRESSION
+                      PsiElement(OPEN_QUOTE)(''')
+                      PsiElement(REGULAR_STRING_PART)('Bob Smith')
+                      PsiElement(CLOSING_QUOTE)(''')
+                PsiElement(.)('.')
+                PsiElement(.)('.')
+                REFERENCE_EXPRESSION
+                  ID
+                    PsiElement(IDENTIFIER)('address')
+                VAR_INIT
+                  PsiElement(=)('=')
+                  PARENTHESIZED_EXPRESSION
+                    PsiElement(()('(')
+                    CASCADE_REFERENCE_EXPRESSION
+                      CASCADE_REFERENCE_EXPRESSION
+                        NEW_EXPRESSION
+                          PsiElement(new)('new')
+                          TYPE
+                            REFERENCE_EXPRESSION
+                              ID
+                                PsiElement(IDENTIFIER)('Address')
+                          ARGUMENTS
+                            PsiElement(()('(')
+                            PsiElement())(')')
+                        PsiElement(.)('.')
+                        PsiElement(.)('.')
+                        REFERENCE_EXPRESSION
+                          ID
+                            PsiElement(IDENTIFIER)('city')
+                        VAR_INIT
+                          PsiElement(=)('=')
+                          STRING_LITERAL_EXPRESSION
+                            PsiElement(OPEN_QUOTE)(''')
+                            PsiElement(REGULAR_STRING_PART)('Springfield')
+                            PsiElement(CLOSING_QUOTE)(''')
+                      PsiElement(.)('.')
+                      PsiElement(.)('.')
+                      REFERENCE_EXPRESSION
+                        ID
+                          PsiElement(IDENTIFIER)('zip')
+                      VAR_INIT
+                        PsiElement(=)('=')
+                        STRING_LITERAL_EXPRESSION
+                          PsiElement(OPEN_QUOTE)(''')
+                          PsiElement(REGULAR_STRING_PART)('99999')
+                          PsiElement(CLOSING_QUOTE)(''')
+                    PsiElement())(')')
+          PsiElement(;)(';')
+          VAR_DECLARATION_LIST
+            VAR_ACCESS_DECLARATION
+              PsiElement(var)('var')
+              COMPONENT_NAME
+                ID
                   PsiElement(IDENTIFIER)('map')
             VAR_INIT
               PsiElement(=)('=')

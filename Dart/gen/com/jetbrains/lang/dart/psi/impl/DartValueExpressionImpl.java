@@ -22,4 +22,10 @@ public class DartValueExpressionImpl extends DartExpressionImpl implements DartV
     else super.accept(visitor);
   }
 
+  @Override
+  @Nullable
+  public DartExpression getExpression() {
+    return findChildByClass(DartExpression.class);
+  }
+
 }
