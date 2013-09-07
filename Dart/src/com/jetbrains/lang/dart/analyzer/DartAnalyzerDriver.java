@@ -36,6 +36,7 @@ public class DartAnalyzerDriver {
   public List<AnalyzerMessage> analyze() {
     final GeneralCommandLine command = new GeneralCommandLine();
     command.setExePath(analyzerExecutable.getPath());
+    command.setWorkDirectory(libraryRoot.getParent().getPath());
 
     command.getEnvironment().put("com.google.dart.sdk", sdkPath);
 
@@ -48,7 +49,7 @@ public class DartAnalyzerDriver {
         command.addParameter(packages.getPath() + "/");
       }
 
-      command.addParameter(libraryRoot.getPath());
+      command.addParameter(libraryRoot.getName());
 
       LOG.debug("executing:\n" + command.getCommandLineString());
       final ProcessOutput output = new CapturingProcessHandler(command).runProcess();
