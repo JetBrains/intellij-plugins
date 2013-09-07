@@ -66,20 +66,6 @@ public abstract class DartNamedElementImpl extends DartPsiCompositeElementImpl i
 
   @NotNull
   @Override
-  public SearchScope getUseScope() {
-    final DartComponentType type = DartComponentType.typeOf(getParent());
-    final DartComponent component = PsiTreeUtil.getParentOfType(getParent(), DartComponent.class, true);
-    final boolean localType = type == DartComponentType.FUNCTION
-                              || type == DartComponentType.PARAMETER
-                              || type == DartComponentType.VARIABLE;
-    if (localType && component != null) {
-      return new LocalSearchScope(component);
-    }
-    return super.getUseScope();
-  }
-
-  @NotNull
-  @Override
   public DartId getId() {
     return PsiTreeUtil.getChildOfType(this, DartId.class);
   }

@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.ResolveState;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.jetbrains.lang.dart.DartComponentType;
 import com.jetbrains.lang.dart.ide.index.DartLibraryIndex;
@@ -16,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,6 +31,14 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
   public List<? extends PsiElement> resolve(@NotNull DartReference reference, boolean incompleteCode) {
     if (reference instanceof DartThisExpression) {
       return toResult(PsiTreeUtil.getParentOfType(reference, DartClass.class));
+    }
+    if (reference instanceof DartParameterNameReferenceExpression) {
+      final DartCallExpression callExpression = PsiTreeUtil.getParentOfType(reference, DartCallExpression.class);
+      final DartExpression expression = callExpression != null ? callExpression.getExpression() : null;
+      final PsiElement target = expression instanceof DartReference ? ((DartReference)expression).resolve() : null;
+      final DartFormalParameterList parameters =
+        PsiTreeUtil.getChildOfType(target != null ? target.getParent() : null, DartFormalParameterList.class);
+      return toResult(DartResolveUtil.findParameterByName(parameters, reference.getText()));
     }
     if (DartResolveUtil.aloneOrFirstInChain(reference)) {
       return resolveSimpleReference(reference);
@@ -82,7 +90,7 @@ public class DartResolver implements ResolveCache.AbstractResolver<DartReference
     if (element == null) {
       return Collections.emptyList();
     }
-    return Arrays.asList(element);
+    return new SmartList<PsiElement>(element);
   }
 
   @Nullable

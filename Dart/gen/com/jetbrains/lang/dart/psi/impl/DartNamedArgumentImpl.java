@@ -24,14 +24,16 @@ public class DartNamedArgumentImpl extends DartPsiCompositeElementImpl implement
 
   @Override
   @NotNull
-  public DartExpression getExpression() {
-    return findNotNullChildByClass(DartExpression.class);
+  public List<DartExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, DartExpression.class);
   }
 
-  @Override
-  @NotNull
-  public DartLabel getLabel() {
-    return findNotNullChildByClass(DartLabel.class);
+  public DartExpression getParameterReferenceExpression() {
+    return DartPsiImplUtil.getParameterReferenceExpression(this);
+  }
+
+  public DartExpression getExpression() {
+    return DartPsiImplUtil.getExpression(this);
   }
 
 }

@@ -8,9 +8,10 @@ import com.intellij.psi.PsiElement;
 public interface DartNamedArgument extends DartPsiCompositeElement {
 
   @NotNull
-  DartExpression getExpression();
+  List<DartExpression> getExpressionList();
 
-  @NotNull
-  DartLabel getLabel();
+  DartExpression getParameterReferenceExpression();
+
+  DartExpression getExpression();
 
 }
