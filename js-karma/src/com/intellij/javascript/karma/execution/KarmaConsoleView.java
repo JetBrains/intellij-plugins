@@ -17,6 +17,9 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.browsers.OpenUrlHyperlinkInfo;
+import com.intellij.javascript.debugger.impl.BrowserConnection;
+import com.intellij.javascript.debugger.impl.JSDebugLayouter;
+import com.intellij.javascript.debugger.impl.JSDebugProcess;
 import com.intellij.javascript.karma.server.KarmaServer;
 import com.intellij.javascript.karma.server.KarmaServerLogComponent;
 import com.intellij.javascript.karma.server.KarmaServerTerminatedListener;
@@ -24,14 +27,14 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
 import com.intellij.util.ObjectUtils;
-import com.intellij.xdebugger.ui.XDebugLayoutCustomizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
 * @author Sergey Simonchik
 */
-public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionConsoleEx, XDebugLayoutCustomizer {
+public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionConsoleEx {
+
   private final KarmaServer myServer;
   private final KarmaExecutionSession myExecutionSession;
 
@@ -47,7 +50,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
 
   @Override
   public void buildUi(final RunnerLayoutUi ui) {
-    registerConsoleContent(this, ui);
+    registerConsoleContent(ui);
     registerAdditionalContent(ui);
   }
 
@@ -58,8 +61,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   }
 
   @NotNull
-  @Override
-  public Content registerConsoleContent(@NotNull ExecutionConsole console, @NotNull final RunnerLayoutUi ui) {
+  private Content registerConsoleContent(@NotNull final RunnerLayoutUi ui) {
     ui.getOptions().setMinimizeActionEnabled(false);
     final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID,
                                                     getComponent(),
@@ -117,8 +119,7 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
     return consoleContent;
   }
 
-  @Override
-  public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
+  private void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
     KarmaServerLogComponent logComponent = new KarmaServerLogComponent(getProperties().getProject(), myServer, this);
     logComponent.installOn(ui, true);
   }
@@ -126,6 +127,10 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
   @NotNull
   public KarmaExecutionSession getKarmaExecutionSession() {
     return myExecutionSession;
+  }
+
+  public <C extends BrowserConnection> KarmaDebugLayouter<C> createDebugLayouter(@NotNull JSDebugProcess<C> debugProcess) {
+    return new KarmaDebugLayouter<C>(debugProcess);
   }
 
   @Nullable
@@ -180,4 +185,24 @@ public class KarmaConsoleView extends SMTRunnerConsoleView implements ExecutionC
       myTreeView.repaint();
     }
   }
+
+  private class KarmaDebugLayouter<C extends BrowserConnection> extends JSDebugLayouter<C> {
+
+    public KarmaDebugLayouter(@NotNull JSDebugProcess<C> debugProcess) {
+      super(debugProcess);
+    }
+
+    @NotNull
+    @Override
+    public Content registerConsoleContent(@NotNull RunnerLayoutUi ui, @NotNull ExecutionConsole console) {
+      return KarmaConsoleView.this.registerConsoleContent(ui);
+    }
+
+    @Override
+    public void registerAdditionalContent(@NotNull RunnerLayoutUi ui) {
+      super.registerAdditionalContent(ui);
+      KarmaConsoleView.this.registerAdditionalContent(ui);
+    }
+  }
+
 }

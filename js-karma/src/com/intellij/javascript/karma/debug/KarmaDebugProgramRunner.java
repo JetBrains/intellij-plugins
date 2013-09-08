@@ -113,7 +113,7 @@ public class KarmaDebugProgramRunner extends GenericProgramRunner {
         public XDebugProcess start(@NotNull final XDebugSession session) {
           JSDebugProcess debugProcess = debugEngine.createDebugProcess(session, fileFinder, connection, url, executionResult);
           debugProcess.setElementsInspectorEnabled(false);
-          debugProcess.setLayoutCustomizer(consoleView);
+          debugProcess.setLayouter(consoleView.createDebugLayouter(debugProcess));
           return debugProcess;
         }
       }
