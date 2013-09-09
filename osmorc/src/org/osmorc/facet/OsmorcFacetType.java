@@ -29,19 +29,14 @@ import com.intellij.facet.FacetType;
 import com.intellij.facet.FacetTypeId;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleServiceManager;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.roots.CompilerModuleExtension;
-import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.osmorc.i18n.OsmorcBundle;
 import org.osmorc.settings.ProjectSettings;
 
 import javax.swing.*;
-import java.io.IOException;
 
 /**
  * The facet type of Osmorc.
@@ -60,56 +55,41 @@ public class OsmorcFacetType extends FacetType<OsmorcFacet, OsmorcFacetConfigura
     super(ID, "Osmorc", "OSGi");
   }
 
+  @Override
   public OsmorcFacetConfiguration createDefaultConfiguration() {
     return new OsmorcFacetConfiguration();
   }
 
-  public OsmorcFacet createFacet(
-    @NotNull Module module, String name,
-    @NotNull OsmorcFacetConfiguration configuration, @Nullable Facet underlyingFacet) {
+  @Override
+  public OsmorcFacet createFacet(@NotNull Module module, String name, @NotNull OsmorcFacetConfiguration configuration, @Nullable Facet facet) {
     completeDefaultConfiguration(configuration, module);
-    return new OsmorcFacet(this, module, configuration, underlyingFacet, name);
+    return new OsmorcFacet(this, module, configuration, facet, name);
   }
 
+  @Override
   public boolean isSuitableModuleType(ModuleType moduleType) {
     return moduleType instanceof JavaModuleType;
   }
 
-  private void completeDefaultConfiguration(final OsmorcFacetConfiguration configuration, final Module module) {
-    if (configuration.getJarFileLocation().length() == 0) {
-      final String outputPathUrl = CompilerModuleExtension.getInstance(module).getCompilerOutputUrl();
-      StartupManager.getInstance(module.getProject()).runWhenProjectIsInitialized(new Runnable() {
-        public void run() {
-          try {
-            // Must be run in event dispatch thread therefore... we put all there..
-            VfsUtil.createDirectories(VfsUtil.urlToPath(outputPathUrl));
-          }
-          catch (IOException e) {
-            return;
-          }
-          VirtualFile moduleCompilerOutputPath = CompilerModuleExtension.getInstance(module).getCompilerOutputPath();
-          if (moduleCompilerOutputPath == null) {
-            return;
-          }
+  private static void completeDefaultConfiguration(OsmorcFacetConfiguration configuration, Module module) {
+    if (StringUtil.isEmpty(configuration.getJarFileLocation())) {
+      String jarFileName = module.getName().replaceAll("[\\s]", "_") + ".jar";
 
-          String jarFileName = module.getName();
-          jarFileName = jarFileName.replaceAll("[\\s]", "_") + ".jar";
-          // by default put stuff into the compiler output path.
-          OsmorcFacetConfiguration.OutputPathType outputPathType = OsmorcFacetConfiguration.OutputPathType.CompilerOutputPath;
-          final ProjectSettings projectSettings = ModuleServiceManager.getService(module, ProjectSettings.class);
-          if (projectSettings != null) {
-            String bundlesOutputPath = projectSettings.getBundlesOutputPath();
-            if (bundlesOutputPath != null && bundlesOutputPath.length() > 0) {
-              outputPathType = OsmorcFacetConfiguration.OutputPathType.OsgiOutputPath;
-            }
-          }
-          configuration.setJarFileLocation(jarFileName, outputPathType);
+      // by default put stuff into the compiler output path.
+      OsmorcFacetConfiguration.OutputPathType outputPathType = OsmorcFacetConfiguration.OutputPathType.CompilerOutputPath;
+      ProjectSettings projectSettings = ProjectSettings.getInstance(module.getProject());
+      if (projectSettings != null) {
+        String bundlesOutputPath = projectSettings.getBundlesOutputPath();
+        if (StringUtil.isNotEmpty(bundlesOutputPath)) {
+          outputPathType = OsmorcFacetConfiguration.OutputPathType.OsgiOutputPath;
         }
-      });
+      }
+
+      configuration.setJarFileLocation(jarFileName, outputPathType);
     }
   }
 
-
+  @Override
   public Icon getIcon() {
     return OsmorcBundle.getSmallIcon();
   }
